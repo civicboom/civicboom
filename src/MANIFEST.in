@@ -1,0 +1,3 @@
+include civicboom/config/deployment.ini_tmpl
+recursive-include civicboom/public *
+recursive-include civicboom/templates *
