@@ -37,7 +37,7 @@ class Content(Base):
     parent_id  = Column(Integer(), ForeignKey('content.id'), nullable=True)
     location   = GISColumn(Point()) # FIXME: area?
     timestamp  = Column(DateTime())
-    status     = Column(Enum(["show", "pending", "locked"])) # FIXME: "etc"?
+    status     = Column(Enum("show", "pending", "locked", name="content_status")) # FIXME: "etc"?
     private    = Column(Boolean(), default=False, doc=_private_content_doc)
     license    = Column(Integer(), ForeignKey('license.id'))
 
@@ -112,18 +112,13 @@ class ContentEditHistory(Base):
     member      = relationship("Member", primaryjoin="member_id==Member.id")
 
 
-_mime_types = [
-    "application", "audio", "example", "image",
-    "message", "model", "multipart", "text", "video"
-]
-
 class Media(Base):
     __tablename__ = "media"
 
     id          = Column(Integer(), primary_key=True)
     content_id  = Column(Integer(), ForeignKey('content.id'))
     name        = Column(UnicodeText(250))
-    type        = Column(Enum(_mime_types), doc="MIME type, eg 'text', 'video'")
+    type        = Column(Enum("application", "audio", "example", "image", "message", "model", "multipart", "text", "video", name="media_types"), doc="MIME type, eg 'text', 'video'")
     subtype     = Column(String(32), doc="MIME subtype, eg 'jpeg', '3gpp'")
     hash        = Column(String(32), index=True) # FIXME: 32=md5? do we want md5?
     caption     = Column(UnicodeText())

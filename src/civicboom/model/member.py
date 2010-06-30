@@ -20,7 +20,7 @@ class Member(Base):
     description   = Column(UnicodeText())
     num_followers = Column(Integer()) #FIXME: derived
     webpage       = Column(Unicode())
-    status        = Column(Enum(["active", "pending", "removed"]))
+    status        = Column(Enum("active", "pending", "removed", name="member_statuses"))
     avatar        = Column(String(32), doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar") # FIXME: 32=md5? do we want md5?
 
 
@@ -38,9 +38,9 @@ class Group(Member):
     __tablename__ = "member_group"
 
     id               = Column(Integer(), ForeignKey('member.id'), primary_key=True)
-    permissions_join = Column(Enum(["open", "invite_only"]), default="open")
-    permissions_view = Column(Enum(["open", "members_only"]), default="open")
-    behaviour        = Column(Enum(["normal", "education", "organisation"]), default="normal") # FIXME: document this
+    permissions_join = Column(Enum("open", "invite_only", name="group_permissions_join"), default="open")
+    permissions_view = Column(Enum("open", "members_only", name="group_permissions_view"), default="open")
+    behaviour        = Column(Enum("normal", "education", "organisation", name="group_behaviours"), default="normal") # FIXME: document this
     num_members      = Column(Integer()) # FIXME: derived
 
 
@@ -50,7 +50,7 @@ class GroupMembership(Base):
     id          = Column(Integer(), primary_key=True)
     group_id    = Column(Integer(), ForeignKey('member.id'))
     member_id   = Column(Integer(), ForeignKey('member.id'))
-    premissions = Column(Enum(["admin", "normal", "view_only"]), default="normal")
+    premissions = Column(Enum("admin", "normal", "view_only", name="group_membership_permissions"), default="normal")
 
     group       = relationship("Member", primaryjoin="group_id==Member.id")
     member      = relationship("Member", primaryjoin="member_id==Member.id")
