@@ -3,6 +3,7 @@ Version: VERSION
 Architecture: all
 Maintainer: Shish <shish@civicboom.com>
 Depends: python,
- python-pylons,
- apache2, libapache2-mod-wsgi
+ python-pylons, python-psycopg2,
+ apache2, libapache2-mod-wsgi,
+ postgresql-8.4, postgresql-8.4-postgis
 Description: The code for the main civicboom website rewrite
