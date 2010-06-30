@@ -4,10 +4,5 @@ Architecture: all
 Maintainer: Shish <shish@civicboom.com>
 Depends: python,
  python-pylons,
- apache2, libapache-mod-wsgi
-# python-openid, python-imaging, python-mysqldb, python-twitter,
-# python-webhelpers, python-pylons, python-setuptools,
-# python-paste, python-pastedeploy, python-dns,
-# apache2, libapache2-mod-wsgi,
-# ffmpeg, cron, memcached, curl
+ apache2, libapache2-mod-wsgi
 Description: The code for the main civicboom website rewrite
