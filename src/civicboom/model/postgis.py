@@ -3,6 +3,8 @@ from sqlalchemy.orm.properties import ColumnProperty
 from sqlalchemy.types import TypeEngine
 from sqlalchemy.sql import expression
 
+from sqlalchemy import Column
+
 # Python datatypes
 
 class GisElement(object):
@@ -182,7 +184,7 @@ def GISColumn(*args, **kw):
     the Column for inclusion in the mapped table.
     
     """
-    return column_property(
+    return ColumnProperty(
                 Column(*args, **kw), 
                 extension=GisAttribute(), 
                 comparator_factory=GisComparator
