@@ -4,16 +4,10 @@ you would include information such as the information below:
 Installation and Setup
 ======================
 
-Install ``civicboom`` using easy_install::
-
-    easy_install civicboom
-
-Make a config file as follows::
-
-    paster make-config civicboom config.ini
-
 Tweak the config file as appropriate and then setup the application::
 
-    paster setup-app config.ini
+    ../admin_scripts/init_cbdb
+    paster setup-app development.ini
+    paster serve --reload development.ini
 
 Then you are ready to go.
