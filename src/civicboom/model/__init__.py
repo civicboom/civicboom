@@ -16,11 +16,11 @@ def init_model(engine):
     meta.engine = engine
 
 
-# 0.9.7 had this included in meta.py, copied it here for 1.0
-# would it be better over there?
+# FIXME:
+# 0.9.7 had this included, 1.0 doesn't?
+# docs mention including this in meta.py, but it doesn't work there? :S
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
-
 
 # civicboom objects
 from sqlalchemy import Column, ForeignKey
