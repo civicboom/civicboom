@@ -3,9 +3,11 @@ Version: VERSION
 Architecture: all
 Maintainer: Shish <shish@civicboom.com>
 Depends: python,
- python-openid, python-imaging, python-mysqldb, python-twitter,
- python-webhelpers, python-pylons, python-setuptools,
- python-paste, python-pastedeploy, python-dns,
- apache2, libapache2-mod-wsgi,
- ffmpeg, cron, memcached, curl
-Description: The code for the main civicboom website
+ python-pylons,
+ apache2, libapache-mod-wsgi
+# python-openid, python-imaging, python-mysqldb, python-twitter,
+# python-webhelpers, python-pylons, python-setuptools,
+# python-paste, python-pastedeploy, python-dns,
+# apache2, libapache2-mod-wsgi,
+# ffmpeg, cron, memcached, curl
+Description: The code for the main civicboom website rewrite
