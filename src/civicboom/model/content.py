@@ -4,7 +4,7 @@ from civicboom.model.meta import Base
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
-from postgis    import GISColumn, Point, Curve, LineString
+from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects import postgresql
 
@@ -35,7 +35,7 @@ class Content(Base):
     content    = Column(UnicodeText(), doc="The body of text")
     creator_id = Column(Integer(), ForeignKey('member.id'))
     parent_id  = Column(Integer(), ForeignKey('content.id'), nullable=True)
-    location   = GISColumn(Point()) # FIXME: area?
+    location   = GeometryColumn(Point(2)) # FIXME: area?
     timestamp  = Column(DateTime())
     status     = Column(Enum("show", "pending", "locked", name="content_status")) # FIXME: "etc"?
     private    = Column(Boolean(), default=False, doc=_private_content_doc)
@@ -168,3 +168,4 @@ class Media(Base):
 #    contentAssignmentId
 #    memberId
 
+GeometryDDL(Content.__table__)

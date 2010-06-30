@@ -4,7 +4,7 @@ from civicboom.model.meta import Base
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
-from postgis    import GISColumn, Point, Curve, LineString
+from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects import postgresql
 
@@ -30,7 +30,7 @@ class User(Member):
     id               = Column(Integer(), ForeignKey('member.id'), primary_key=True)
     notification_check_timestamp = Column(DateTime())
     new_messages     = Column(Boolean()) # FIXME: derived
-    location         = GISColumn(Point(), nullable=True, doc="Current location, for geo-targeted assignments. Nullable for privacy")
+    location         = GeometryColumn(Point(2), nullable=True, doc="Current location, for geo-targeted assignments. Nullable for privacy")
     location_updated = Column(DateTime())
 
 
@@ -87,3 +87,5 @@ class GroupMembership(Base):
 #class MemberUserSettingsAggregationFacebook(Base):
 #    memberId
 #    OAuth token?
+
+GeometryDDL(User.__table__)

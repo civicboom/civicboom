@@ -3,7 +3,15 @@ if [ `whoami` != "root" ] ; then
 	exec sudo $0 $*
 fi
 
+sudo -u postgres createdb -E UNICODE civicboom
+sudo -u postgres createlang plpgsql civicboom
+sudo -u postgres psql -d civicboom -f /usr/share/postgresql/8.4/contrib/postgis.sql
+sudo -u postgres psql -d civicboom -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
+sudo -u postgres createuser -P civicboom
+
+#Grant permissions to user 'civicboom' on the new database
 echo "
-CREATE USER civicboom WITH PASSWORD 'civicboom';
-CREATE DATABASE civicboom WITH OWNER civicboom ENCODING 'utf8';
-" | sudo -u postgres psql
+grant all on database civicboom to "civicboom";
+grant all on spatial_ref_sys to "civicboom";
+grant all on geometry_columns to "civicboom";
+" | sudo -u postgres psql civicboom
