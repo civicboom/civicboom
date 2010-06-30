@@ -19,6 +19,6 @@ make-ssl-cert generate-default-snakeoil
 #cd /opt/cb/share/website
 #python deploy.py deployment.ini
 
-. /usr/share/debconf/confmodule
-. /usr/share/dbconfig-common/dpkg/postinst.pgsql
-dbc_go cb-website $@
+#. /usr/share/debconf/confmodule
+#. /usr/share/dbconfig-common/dpkg/postinst.pgsql
+#dbc_go cb-website $@

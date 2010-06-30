@@ -1,0 +1,9 @@
+#!/bin/bash
+if [ `whoami` != "root" ] ; then
+	exec sudo $0 $*
+fi
+
+echo "
+CREATE USER civicboom WITH PASSWORD 'civicboom';
+CREATE DATABASE civicboom WITH OWNER civicboom ENCODING 'utf8';
+" | sudo -u postgres psql
