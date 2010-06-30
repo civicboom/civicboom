@@ -3,7 +3,7 @@
 mkdir -p /var/log/apache2/civicboom.com/
 make-ssl-cert generate-default-snakeoil
 
-chown -R www-data:www-data /opt/cb/share/website/data
+#chown -R www-data:www-data /opt/cb/share/website/data
 
 # FIXME: when the package is first installed, we
 # want to activate the live site. This code doesn't
@@ -16,6 +16,9 @@ chown -R www-data:www-data /opt/cb/share/website/data
 #	a2ensite civicboom.com-live
 #fi
 
-. /opt/cb-env/bin/activate
-cd /opt/cb/share/website
-python deploy.py deployment.ini
+#cd /opt/cb/share/website
+#python deploy.py deployment.ini
+
+. /usr/share/debconf/confmodule
+. /usr/share/dbconfig-common/dpkg/postinst.pgsql
+dbc_go cb-website $@
