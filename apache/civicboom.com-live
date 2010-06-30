@@ -1,0 +1,128 @@
+<VirtualHost *:80>
+	ServerAdmin admin@civicboom.com
+	ServerName civicboom.com
+	ServerAlias www.civicboom.com
+	ServerAlias test.civicboom.com
+	ServerAlias alpha.civicboom.com
+	ServerAlias beta.civicboom.com
+
+	DocumentRoot /opt/cb/share/website/indicofb/public/
+
+	Options +FollowSymLinks
+	RewriteEngine On
+	RewriteCond %{HTTP_HOST} !^www\.civicboom\.com$ [NC]
+	RewriteCond %{HTTP_HOST} !^test\.civicboom\.com$ [NC]
+	RewriteCond %{HTTP_HOST} !^alpha\.civicboom\.com$ [NC]
+	RewriteCond %{HTTP_HOST} !^beta\.civicboom\.com$ [NC]
+	RewriteRule ^(.*)$ http://www.civicboom.com$1 [R=301,L]
+	RewriteRule ^(.*/)?\.svn/ - [R=404,L]
+
+	#The deployment include file
+	#Include /opt/cb/share/website/apache/apache_config.deployment
+	<Directory /opt/cb/share/website/apache/wsgi/>
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	WSGIDaemonProcess indicofb user=www-data group=www-data processes=1 threads=2
+	WSGIScriptAlias / /opt/cb/share/website/apache/wsgi/indicofb.wsgi
+	<Location />
+		WSGIProcessGroup indicofb
+		#WSGIReloadMechanism Process
+		#Options FollowSymLinks 
+		SetEnv inifile deployment.ini
+	</Location>
+
+	<Directory /opt/cb/share/website/indicofb/public/>
+		Order allow,deny
+		Allow from all 
+
+		# Deflate (gzip) compression of content
+		# Insert filter
+		SetOutputFilter DEFLATE
+
+		# Netscape 4.x has some problems...
+		BrowserMatch ^Mozilla/4 gzip-only-text/html
+
+		# Netscape 4.06-4.08 have some more problems
+		BrowserMatch ^Mozilla/4\.0[678] no-gzip
+
+		# MSIE masquerades as Netscape, but it is fine
+		BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+		# Don't compress images
+		SetEnvIfNoCase Request_URI     \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+
+		# Make sure proxies don't deliver the wrong content
+		Header append Vary User-Agent env=!dont-vary
+
+		# ETags
+		# We don't use FileETag All here as this includes the inode number
+		# which could very well be differnet from server to server. Ie if
+		# you failover, or start doing content distribution across multiple
+		# servers.
+		FileETag MTime Size
+
+		# Expires headers 
+		# These tells the browser not to bother making a request for the
+		# content until it has expired, potentially greatly reducing the
+		# number of requests made per page load once the cache is primed
+		#ExpiresActive On
+		#
+		#AddType application/javascript .js
+
+		#ExpiresByType image/gif "access plus 1 days"
+		#ExpiresByType image/jpeg "access plus 1 days"
+		#ExpiresByType image/jpg "access plus 1 days"
+		#ExpiresByType image/png "access plus 1 days"
+		#ExpiresByType text/css "access plus 1 days"
+		#ExpiresByType application/javascript "access plus 1 days"
+	</Directory>
+	Alias /assets /opt/cb/share/website/indicofb/public/assets
+	Alias /yui_2.7.0 /opt/cb/share/website/indicofb/public/yui_2.7.0
+	Alias /IN_letter /opt/cb/share/website/indicofb/public/IN_letter
+	Alias /flvplayer.swf /opt/cb/share/website/indicofb/public/flvplayer.swf
+	Alias /stylesheets /opt/cb/share/website/indicofb/public/stylesheets
+	Alias /design09 /opt/cb/share/website/indicofb/public/design09
+	Alias /pulse_interest /opt/cb/share/website/indicofb/public/pulse_interest
+	Alias /scripts /opt/cb/share/website/indicofb/public/scripts
+	Alias /organisation_branding /opt/cb/share/website/indicofb/public/organisation_branding
+	Alias /profilepics /opt/cb/share/website/indicofb/public/profilepics
+	Alias /flags25x15 /opt/cb/share/website/indicofb/public/flags25x15
+	Alias /robots.txt /opt/cb/share/website/indicofb/public/robots.txt
+	Alias /CreativeCommons /opt/cb/share/website/indicofb/public/CreativeCommons
+	Alias /captcha /opt/cb/share/website/indicofb/public/captcha
+	Alias /image-borders /opt/cb/share/website/indicofb/public/image-borders
+	Alias /static /opt/cb/share/website/indicofb/public/static
+	Alias /default_avantar_thumb.jpg /opt/cb/share/website/indicofb/public/default_avantar_thumb.jpg
+	Alias /article_files /opt/cb/share/website/indicofb/public/article_files
+	Alias /assignment_files /opt/cb/share/website/indicofb/public/assignment_files
+	Alias /images /opt/cb/share/website/indicofb/public/images
+	Alias /imagerotator.swf /opt/cb/share/website/indicofb/public/imagerotator.swf
+	Alias /ad_files /opt/cb/share/website/indicofb/public/ad_files
+
+
+	# Possibl evalues include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+	CustomLog /var/log/apache2/civicboom.com/access.log combined
+	ErrorLog /var/log/apache2/civicboom.com/error.log
+</VirtualHost>
+
+<VirtualHost *:443>
+	ServerAdmin admin@civicboom.com
+	ServerName www.civicboom.com
+	ServerAlias civicboom.com
+
+	DocumentRoot /opt/cb/share/website/indicofb/public/
+
+	Options +FollowSymLinks
+	RewriteEngine On
+	RewriteCond %{HTTP_HOST} !^www\.civicboom\.com$ [NC]
+	RewriteRule ^(.*)$ https://www.civicboom.com$1 [R=301,L]
+	RewriteRule ^(.*/)?\.svn/ - [R=404,L]
+
+	SSLEngine on
+	SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
+	SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+</VirtualHost>
+

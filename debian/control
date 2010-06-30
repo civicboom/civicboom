@@ -1,0 +1,13 @@
+Package: cb-website
+Version: VERSION
+Architecture: all
+Maintainer: Shish <shish@civicboom.com>
+Depends: cb-env, python,
+ python-openid, python-imaging, python-mysqldb, python-twitter,
+ python-webhelpers, python-pylons, python-setuptools,
+ python-paste, python-pastedeploy, python-dns,
+ ffmpeg, flvtool2, cron,
+ mysql-server, phpmyadmin,
+ apache2, libapache2-mod-wsgi,
+ memcached, curl
+Description: The code for the main civicboom website

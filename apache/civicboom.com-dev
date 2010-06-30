@@ -1,0 +1,75 @@
+<VirtualHost 89.16.176.123:443>
+  ServerAdmin admin@civicboom.com
+  ServerName www.civicboom.com
+  ServerAlias civicboom.com
+  
+  SSLEngine on
+  
+  # The original certificate:
+  #SSLCertificateFile /etc/apache2/ssl/www.indiconews.com.crt
+  #SSLCertificateKeyFile /etc/apache2/ssl/indiconews.key
+  
+  # The "real" certificate (that needs a passphrase):
+  SSLCertificateFile /etc/ssl/private/civicboom.crt
+  SSLCertificateKeyFile /etc/ssl/private/civicboom.key
+  
+  #SSLCertificateChainFile
+  SetEnvIf User-Agent ".*MSIE.*" nokeepalive ssl-unclean-shutdown
+
+  DocumentRoot /data/website/indicofb/public/
+
+  RewriteEngine On
+  #RewriteCond %{HTTP_HOST} !^www\.civicboom\.com$ [NC]
+  #RewriteRule ^(.*)$ https://www.civicboom.com$1 [R=301,L]
+  RewriteRule ^(.*/)?\.svn/ - [R=404,L]
+  RewriteRule ^/index.php / [R=permanent,L]
+
+  #this needs to be above the indiconews alias, otherwise it's ignored
+  WSGIScriptAlias /trac /data/wsgi/load_trac.wsgi
+
+  #The deployment include file
+  Include /data/website/apache/apache_config_ssl.deployment
+
+  <Location /svn/indiconews>
+      DAV svn
+      SVNPath /data/svn/indiconews
+      AuthType Basic
+      AuthName "Project indico"
+      AuthUserFile /data/htpasswd
+      AuthGroupFile /data/htgroup
+      require group svn
+      SSLRequireSSL
+  </Location>
+
+  Alias /webdav /data/webdav
+  <Location /webdav>
+        DAV On
+        Options Indexes MultiViews
+        AuthType Basic
+        AuthName "ganntwebdav"
+        AuthUserFile /data/htpasswd
+        AuthGroupFile /data/htgroup
+        Require group webdav
+  </Location>
+
+  #The trac config
+  WSGIDaemonProcess trac user=www-data group=www-data threads=2
+  <Location /trac>
+      WSGIProcessGroup trac
+      WSGIApplicationGroup %{GLOBAL}
+      AuthName "Indiconews Trac"
+      AuthUserFile /data/htpasswd
+      AuthGroupFile /data/htgroup
+      AuthType Basic
+      require group trac
+  </Location>
+
+    ErrorLog /var/log/apache2/error.log
+
+  # Possible values include: debug, info, notice, warn, error, crit,
+  # alert, emerg.
+  LogLevel warn
+
+  CustomLog /var/log/apache2/access.log combined
+  ServerSignature On
+</VirtualHost>

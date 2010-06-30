@@ -1,0 +1,16 @@
+#!/bin/sh
+. /opt/cb-env/bin/activate
+
+cd /opt/cb/share/website/
+
+# only stop if running
+if paster serve --status --pid-file=/tmp/cb-website.pid development.ini ; then
+	paster serve --daemon \
+		--pid-file=/tmp/cb-website.pid \
+		--log-file=/tmp/cb-website.log \
+		development.ini stop
+else
+	true
+fi
+
+#/sbin/start-stop-daemon --stop --oknodo --exec /opt/cb-env/bin/python

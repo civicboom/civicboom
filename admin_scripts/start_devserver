@@ -1,0 +1,17 @@
+#!/bin/bash
+. /opt/cb-env/bin/activate
+
+cd /opt/cb/share/website/
+paster serve --daemon \
+	--user=www-data \
+	--group=www-data \
+	--pid-file=/tmp/cb-website.pid \
+	--log-file=/tmp/cb-website.log \
+	development.ini start
+
+#/sbin/start-stop-daemon \
+#	--start --background \
+#	--exec /opt/cb-env/bin/paster \
+#	--pidfile /tmp/cb-website.pid \
+#	--chdir /opt/cb/share/website/ \
+#	-- serve --reload development.ini

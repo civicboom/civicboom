@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ $# -eq 1 ] ; then
+	FROM=$1
+	rsync -avz --exclude=.svn $FROM:/data/website/indicofb/public/ /opt/cb/share/website/indicofb/public/
+	ssh -C $FROM mysqldump -uindiconews -pindiconews indiconews > /tmp/indiconewsdump.sql
+	mysql -uindiconews -pindiconews indiconews < /tmp/indiconewsdump.sql
+	rm /tmp/indiconewsdump.sql
+	chown -R www-data:www-data /opt/cb/share/website/indicofb/public/
+else
+	echo "Usage: $0 username@mainserver.com"
+	echo "eg. $0 bob@civicboom.com"
+fi
+
