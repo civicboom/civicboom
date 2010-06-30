@@ -13,3 +13,7 @@ Session = scoped_session(sessionmaker())
 # Global metadata. If you have multiple databases with overlapping table
 # names, you'll need a metadata for each database
 metadata = MetaData()
+
+# Shish - 0.9.7 had this included, 1.0 doesn't?
+from sqlalchemy.ext.declarative import declarative_base
+Base = declarative_base()

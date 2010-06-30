@@ -1,3 +1,6 @@
+
+from civicboom.model.meta import Base
+
 from sqlalchemy.orm.interfaces import AttributeExtension
 from sqlalchemy.orm.properties import ColumnProperty
 from sqlalchemy.types import TypeEngine
