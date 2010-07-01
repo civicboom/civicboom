@@ -50,7 +50,9 @@ options['openlayers_lib'] = 'http://openlayers.org/api/OpenLayers.js'
                 ${default_lon or options['default_lon']},
                 ${default_lat or options['default_lat']},
                 ${zoom or options['zoom']},
-                ${base_layer or options['base_layer'] | n},
+				// FIXME: hack to force OSM
+                //${base_layer or options['base_layer'] | n},
+				new OpenLayers.Layer.OSM("OSM"),
                 '${wkt}'
         );
     </script>
