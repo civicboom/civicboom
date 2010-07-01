@@ -5,12 +5,14 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from geoalchemy import GeometryColumn, Point, GeometryDDL
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects import postgresql
 
 class Member(Base):
     "Abstract class"
-    __tablename__ = "member"
+    __tablename__   = "member"
+    __type_col__    = Column(Enum("user", "group", name="member_type")) # FIXME: need full list
+    __mapper_args__ = {'polymorphic_on': __type_col__}
 
     id            = Column(Integer(), primary_key=True)
     username      = Column(String(32), unique=True, index=True) # FIXME: check for invalid chars
@@ -23,9 +25,13 @@ class Member(Base):
     status        = Column(Enum("active", "pending", "removed", name="member_statuses"))
     avatar        = Column(String(32), doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar") # FIXME: 32=md5? do we want md5?
 
+    created_content    = relationship("Content", backref=backref('creator'))
+#    parent_memberships = relationship("GroupMembership", backref=backref("members"))
+
 
 class User(Member):
     __tablename__ = "member_user"
+    __mapper_args__ = {'polymorphic_identity': 'user'}
 
     id               = Column(Integer(), ForeignKey('member.id'), primary_key=True)
     notification_check_timestamp = Column(DateTime())
@@ -36,12 +42,15 @@ class User(Member):
 
 class Group(Member):
     __tablename__ = "member_group"
+    __mapper_args__ = {'polymorphic_identity': 'group'}
 
     id               = Column(Integer(), ForeignKey('member.id'), primary_key=True)
     permissions_join = Column(Enum("open", "invite_only", name="group_permissions_join"), default="open")
     permissions_view = Column(Enum("open", "members_only", name="group_permissions_view"), default="open")
     behaviour        = Column(Enum("normal", "education", "organisation", name="group_behaviours"), default="normal") # FIXME: document this
     num_members      = Column(Integer()) # FIXME: derived
+
+#    members          = relationship("GroupMembership", backref=backref("groups"))
 
 
 class GroupMembership(Base):
@@ -51,9 +60,6 @@ class GroupMembership(Base):
     group_id    = Column(Integer(), ForeignKey('member.id'))
     member_id   = Column(Integer(), ForeignKey('member.id'))
     premissions = Column(Enum("admin", "normal", "view_only", name="group_membership_permissions"), default="normal")
-
-    group       = relationship("Member", primaryjoin="group_id==Member.id")
-    member      = relationship("Member", primaryjoin="member_id==Member.id")
 
 
 # FIXME: incomplete

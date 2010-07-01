@@ -1,10 +1,11 @@
 
 from civicboom.model.meta import Base
+from civicboom.model.member import Member
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import UnicodeText
 from sqlalchemy import Integer, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 class Message(Base):
     __tablename__ = "message"
@@ -15,8 +16,8 @@ class Message(Base):
     timestamp   = Column(DateTime())
     text        = Column(UnicodeText())
 
-    source      = relationship("Member", primaryjoin="source_id==Member.id")
-    target      = relationship("Member", primaryjoin="target_id==Member.id")
+    source      = relationship("Member", primaryjoin=source_id==Member.id, backref=backref('messages_from', order_by=id))
+    target      = relationship("Member", primaryjoin=target_id==Member.id, backref=backref('messages_to', order_by=id))
 
 
 

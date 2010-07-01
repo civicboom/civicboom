@@ -1,11 +1,12 @@
 
 from civicboom.model.meta import Base
+from civicboom.model.member import Member
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from geoalchemy import GeometryColumn, Point, GeometryDDL
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects import postgresql
 
 _private_content_doc = """
@@ -28,7 +29,9 @@ FIXME: is this correct?
 
 class Content(Base):
     "Abstract class"
-    __tablename__ = "content"
+    __tablename__   = "content"
+    __type_col__    = Column(Enum("comment", "draft", "article", name="content_type")) # FIXME: need full list
+    __mapper_args__ = {'polymorphic_on': __type_col__}
 
     id         = Column(Integer(), primary_key=True)
     title      = Column(Unicode(250))
@@ -39,25 +42,28 @@ class Content(Base):
     timestamp  = Column(DateTime())
     status     = Column(Enum("show", "pending", "locked", name="content_status")) # FIXME: "etc"?
     private    = Column(Boolean(), default=False, doc=_private_content_doc)
-    license    = Column(Integer(), ForeignKey('license.id'))
+    license_id = Column(Integer(), ForeignKey('license.id'))
 
-    creator    = relationship("Member", primaryjoin="creator_id==Member.id")
-    parent     = relationship("Content", primaryjoin="parent_id==Content.id")
+    responses   = relationship("Content", backref=backref('parent', remote_side=id)) # FIXME: remote_side is confusing
+    attachments = relationship("Media", backref=backref('content', order_by=id))
 
 
 class CommentContent(Content):
     __tablename__ = "content_comment"
+    __mapper_args__ = {'polymorphic_identity': 'comment'}
 
     id = Column(Integer(), ForeignKey('content.id'), primary_key=True)
 
 
 class DraftContent(Content):
     __tablename__ = "content_draft"
+    __mapper_args__ = {'polymorphic_identity': 'draft'}
 
     id = Column(Integer(), ForeignKey('content.id'), primary_key=True)
 
 
 class UserVisibleContent(Content):
+    "Abstract class"
     __tablename__ = "content_user_visible"
 
     id         = Column(Integer(), ForeignKey('content.id'), primary_key=True)
@@ -67,6 +73,7 @@ class UserVisibleContent(Content):
 
 class ArticleContent(UserVisibleContent):
     __tablename__ = "content_article"
+    __mapper_args__ = {'polymorphic_identity': 'article'}
 
     id         = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
     rating     = Column(Integer()) # FIXME: derived
@@ -82,6 +89,14 @@ class License(Base):
     description = Column(UnicodeText())
     url         = Column(UnicodeText())
 
+    articles    = relationship("Content", backref=backref('license'))
+
+    def __init__(self, code, name, description, url):
+        self.code = code
+        self.name = name
+        self.description = description
+        self.url = url
+
 
 # TODO: populate
 # science, technology, politics, environment
@@ -89,14 +104,18 @@ class Tag(Base):
     __tablename__ = "tag"
 
     id        = Column(Integer(), primary_key=True)
-    name      = Column(Unicode(250), unique=True)
+    name      = Column(Unicode(250)) # FIXME: type::name should be unique
     type      = Column(Unicode(250))
     parent_id = Column(Integer(), ForeignKey('tag.id'), nullable=True)
 
-    parent    = relationship("Tag", primaryjoin="parent_id==Tag.id")
+    children  = relationship("Tag", backref=backref('parent', remote_side=id))
+
+    def __init__(self, name, type="Topic", parent=None):
+        self.name = name
+        self.type = type
+        self.parent = parent
 
 
-# FIXME: incomplete
 class ContentEditHistory(Base):
     __tablename__ = "content_edit_history"
 
@@ -108,8 +127,8 @@ class ContentEditHistory(Base):
     source      = Column(Unicode(250), doc="civicboom, mobile, another_webpage, other service")
     text_change = Column(UnicodeText())
 
-    content     = relationship("Content", primaryjoin="content_id==Content.id")
-    member      = relationship("Member", primaryjoin="member_id==Member.id")
+    content     = relationship("Content", backref=backref('edit_history', order_by=id))
+    member      = relationship("Member", backref=backref('edits_made', order_by=id))
 
 
 class Media(Base):
@@ -124,8 +143,6 @@ class Media(Base):
     caption     = Column(UnicodeText())
     credit      = Column(UnicodeText())
     ip          = Column(postgresql.INET(), index=True)
-
-    content     = relationship("Content", primaryjoin="content_id==Content.id")
 
     def get_mime_type(self):
         return self.type + "/" + self.subtype
