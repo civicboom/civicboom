@@ -11,8 +11,8 @@ from sqlalchemy.dialects import postgresql
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
-    __type_col__    = Column(Enum("user", "group", name="member_type")) # FIXME: need full list
-    __mapper_args__ = {'polymorphic_on': __type_col__}
+    __type__        = Column(Enum("user", "group", name="member_type")) # FIXME: need full list
+    __mapper_args__ = {'polymorphic_on': __type__}
     _member_status  = Enum("active", "pending", "removed", name="member_status")
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars
