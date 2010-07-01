@@ -42,8 +42,9 @@ class Content(Base):
     status          = Column(_content_status,  nullable=False, default="show")
     private         = Column(Boolean(),        nullable=False, default=False, doc=_private_content_doc)
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False)
-    responses       = relationship("Content", backref=backref('parent', remote_side=id)) # FIXME: remote_side is confusing
-    attachments     = relationship("Media",   backref=backref('attached_to', order_by=id))
+    responses       = relationship("Content", backref=backref('parent', remote_side=id), cascade="all") # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
+    attachments     = relationship("Media",   backref=backref('attached_to'), cascade="all,delete-orphan")
+    edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
 
     def __repr__(self):
         return self.title + " ("+self.__type__+")"
@@ -120,8 +121,6 @@ class ContentEditHistory(Base):
     timestamp     = Column(DateTime(),    nullable=False, default="now()")
     source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
     text_change   = Column(UnicodeText(), nullable=False)
-    content       = relationship("Content", backref=backref('edit_history', order_by=id))
-    member        = relationship("Member",  backref=backref('edits_made', order_by=id))
 
 
 class Media(Base):

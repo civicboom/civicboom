@@ -14,8 +14,6 @@ class Message(Base):
     target_id   = Column(Integer(),     ForeignKey('member.id'), nullable=True)
     timestamp   = Column(DateTime(),    nullable=False, default="now()")
     text        = Column(UnicodeText(), nullable=False)
-    source      = relationship("Member", primaryjoin=source_id==Member.id, backref=backref('messages_from', order_by=id))
-    target      = relationship("Member", primaryjoin=target_id==Member.id, backref=backref('messages_to', order_by=id))
 
     def __repr__(self):
         return self.text[0:50]+"..."

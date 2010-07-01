@@ -24,6 +24,9 @@ class Member(Base):
     status          = Column(_member_status, nullable=False, default="active")
     avatar          = Column(String(32),     nullable=True,  doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar") # FIXME: 32=md5? do we want md5?
     created_content = relationship("Content", backref=backref('creator'))
+    edited_content  = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
+    messages_to     = relationship("Message", primaryjoin="Message.target_id==Member.id", backref=backref('target', order_by=id))
+    messages_from   = relationship("Message", primaryjoin="Message.source_id==Member.id", backref=backref('source', order_by=id))
 #    parent_memberships = relationship("GroupMembership", backref=backref("members"))
 
     def __repr__(self):

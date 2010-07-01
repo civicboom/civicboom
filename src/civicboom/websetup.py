@@ -79,6 +79,15 @@ def setup_app(command, conf, vars):
     u.description   = u"A user for automated tests to log in as"
     u.status        = "active"
 
+    m = Media()
+    m.name        = u"hello.jpg"
+    m.type        = "image"
+    m.subtype     = "jpeg"
+    m.hash        = "00000000000000000000000000000000"
+    m.caption     = u"A photo of people saying hello"
+    m.credit      = u"Shish"
+    m.ip          = "0.0.0.0"
+
     c = ArticleContent()
     c.title      = u"A test article"
     c.content    = u"""
@@ -97,16 +106,7 @@ def setup_app(command, conf, vars):
     c.status     = "show"
     c.license_id = cc_by.id
     # c.tags       = [open_source, the_moon_loc]
-
-    m = Media()
-    m.content     = c
-    m.name        = u"hello.jpg"
-    m.type        = "image"
-    m.subtype     = "jpeg"
-    m.hash        = "00000000000000000000000000000000"
-    m.caption     = u"A photo of people saying hello"
-    m.credit      = u"Shish"
-    m.ip          = "0.0.0.0"
+    c.attachments = [m, ]
 
     Session.add_all([u, c, m])
     Session.commit()
