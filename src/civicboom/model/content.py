@@ -7,7 +7,6 @@ from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.dialects import postgresql as pg
 
 _private_content_doc = """
 means different things depending on which child table extends it:
@@ -110,7 +109,6 @@ class ContentEditHistory(Base):
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False)
     member_id     = Column(Integer(),     ForeignKey('member.id'), nullable=False)
     timestamp     = Column(DateTime(),    nullable=False, default="now()")
-    ip            = Column(pg.INET(),     nullable=False, index=True)
     source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
     text_change   = Column(UnicodeText(), nullable=False)
     content       = relationship("Content", backref=backref('edit_history', order_by=id))
@@ -128,7 +126,6 @@ class Media(Base):
     hash          = Column(String(32),       nullable=False, index=True) # FIXME: 32=md5? do we want md5?
     caption       = Column(UnicodeText(),    nullable=False)
     credit        = Column(UnicodeText(),    nullable=False)
-    ip            = Column(pg.INET(),        nullable=False, index=True)
 
     def get_mime_type(self):
         return self.type + "/" + self.subtype

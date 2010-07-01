@@ -6,7 +6,6 @@ from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.dialects import postgresql
 
 class Member(Base):
     "Abstract class"
