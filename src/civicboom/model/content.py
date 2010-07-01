@@ -43,7 +43,7 @@ class Content(Base):
     private         = Column(Boolean(),        nullable=False, default=False, doc=_private_content_doc)
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False)
     responses       = relationship("Content", backref=backref('parent', remote_side=id)) # FIXME: remote_side is confusing
-    attachments     = relationship("Media",   backref=backref('content', order_by=id))
+    attachments     = relationship("Media",   backref=backref('attached_to', order_by=id))
 
     def __repr__(self):
         return self.title + " ("+self.__type__+")"

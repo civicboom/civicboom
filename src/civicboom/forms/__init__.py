@@ -33,6 +33,12 @@ class Grid(tables.Grid):
 #FooGrid = Grid(model.Foo)
 #ReflectedGrid = Grid(Reflected)
 
+# custom renderers from geoformalchemy
 from geoformalchemy.base import GeometryFieldRenderer
 from geoalchemy import geometry
 FieldSet.default_renderers[geometry.Geometry] = GeometryFieldRenderer
+
+# custom renderers
+from formalchemy.fields import TextAreaFieldRenderer
+import sqlalchemy
+FieldSet.default_renderers[sqlalchemy.UnicodeText] = TextAreaFieldRenderer
