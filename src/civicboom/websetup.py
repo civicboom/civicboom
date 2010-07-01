@@ -95,7 +95,7 @@ def setup_app(command, conf, vars):
     """
     c.creator    = u
     c.status     = "show"
-    c.license    = cc_by
+    c.license_id = cc_by.id
     # c.tags       = [open_source, the_moon_loc]
 
     m = Media()

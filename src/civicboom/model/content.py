@@ -80,9 +80,9 @@ class License(Base):
     name          = Column(Unicode(250),  nullable=False, unique=True)
     description   = Column(UnicodeText(), nullable=False)
     url           = Column(UnicodeText(), nullable=False)
-    articles      = relationship("Content", backref=backref('license'))
+    #articles      = relationship("Content", backref=backref('license'))
 
-    def __init__(self, code, name, description, url):
+    def __init__(self, code=None, name=None, description=None, url=None):
         self.code = code
         self.name = name
         self.description = description
@@ -95,9 +95,9 @@ class Tag(Base):
     name          = Column(Unicode(250), nullable=False) # FIXME: type::name should be unique
     type          = Column(Unicode(250), nullable=False, default=u"Topic")
     parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True)
-    children      = relationship("Tag", backref=backref('parent', remote_side=id))
+    #children      = relationship("Tag", backref=backref('parent', remote_side=id))
 
-    def __init__(self, name, type=u"Topic", parent=None):
+    def __init__(self, name=None, type=u"Topic", parent=None):
         self.name = name
         self.type = type
         self.parent = parent
