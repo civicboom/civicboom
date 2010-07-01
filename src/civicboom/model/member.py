@@ -4,7 +4,7 @@ from civicboom.model.meta import Base
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
-from geoalchemy import GeometryColumn, Point, GeometryDDL
+from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects import postgresql
 
@@ -13,41 +13,38 @@ class Member(Base):
     __tablename__   = "member"
     __type_col__    = Column(Enum("user", "group", name="member_type")) # FIXME: need full list
     __mapper_args__ = {'polymorphic_on': __type_col__}
-
-    id            = Column(Integer(), primary_key=True)
-    username      = Column(String(32), unique=True, index=True) # FIXME: check for invalid chars
-    name          = Column(Unicode(250))
-    join_date     = Column(Date())
-    home_location = Column(Unicode(250), nullable=True, doc="Name of a location for informational purposes, eg 'London', 'Global', 'Wherever the sun shines'")
-    description   = Column(UnicodeText())
-    num_followers = Column(Integer()) #FIXME: derived
-    webpage       = Column(Unicode())
-    status        = Column(Enum("active", "pending", "removed", name="member_statuses"))
-    avatar        = Column(String(32), doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar") # FIXME: 32=md5? do we want md5?
-
-    created_content    = relationship("Content", backref=backref('creator'))
+    _member_status  = Enum("active", "pending", "removed", name="member_status")
+    id              = Column(Integer(),      primary_key=True)
+    username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars
+    name            = Column(Unicode(250),   nullable=False  )
+    join_date       = Column(Date(),         nullable=False, default="now()")
+    home_location   = Column(Unicode(250),   nullable=True,  doc="Name of a location for informational purposes, eg 'London', 'Global', 'Wherever the sun shines'")
+    description     = Column(UnicodeText(),  nullable=False, default=u"")
+    num_followers   = Column(Integer(),      nullable=False, default=0) #FIXME: derived
+    webpage         = Column(Unicode(),      nullable=False, default=u"")
+    status          = Column(_member_status, nullable=False, default="active")
+    avatar          = Column(String(32),     nullable=True,  doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar") # FIXME: 32=md5? do we want md5?
+    created_content = relationship("Content", backref=backref('creator'))
 #    parent_memberships = relationship("GroupMembership", backref=backref("members"))
 
 
 class User(Member):
-    __tablename__ = "member_user"
-    __mapper_args__ = {'polymorphic_identity': 'user'}
-
-    id               = Column(Integer(), ForeignKey('member.id'), primary_key=True)
-    notification_check_timestamp = Column(DateTime())
-    new_messages     = Column(Boolean()) # FIXME: derived
-    location         = GeometryColumn(Point(2), nullable=True, doc="Current location, for geo-targeted assignments. Nullable for privacy")
-    location_updated = Column(DateTime())
+    __tablename__    = "member_user"
+    __mapper_args__  = {'polymorphic_identity': 'user'}
+    id               = Column(Integer(),  ForeignKey('member.id'), primary_key=True)
+    last_message     = Column(DateTime(), nullable=False,   default="now()", doc="the last time the user saw a message")
+    new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
+    location         = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
+    location_updated = Column(DateTime(), nullable=False,   default="now()")
 
 
 class Group(Member):
-    __tablename__ = "member_group"
-    __mapper_args__ = {'polymorphic_identity': 'group'}
-
+    __tablename__    = "member_group"
+    __mapper_args__  = {'polymorphic_identity': 'group'}
     id               = Column(Integer(), ForeignKey('member.id'), primary_key=True)
-    permissions_join = Column(Enum("open", "invite_only", name="group_permissions_join"), default="open")
-    permissions_view = Column(Enum("open", "members_only", name="group_permissions_view"), default="open")
-    behaviour        = Column(Enum("normal", "education", "organisation", name="group_behaviours"), default="normal") # FIXME: document this
+    permissions_join = Column(Enum("open", "invite_only", name="group_permissions_join"), nullable=False, default="open")
+    permissions_view = Column(Enum("open", "members_only", name="group_permissions_view"), nullable=False, default="open")
+    behaviour        = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
     num_members      = Column(Integer()) # FIXME: derived
 
 #    members          = relationship("GroupMembership", backref=backref("groups"))
@@ -55,11 +52,11 @@ class Group(Member):
 
 class GroupMembership(Base):
     __tablename__ = "member_group_members"
-
-    id          = Column(Integer(), primary_key=True)
-    group_id    = Column(Integer(), ForeignKey('member.id'))
-    member_id   = Column(Integer(), ForeignKey('member.id'))
-    premissions = Column(Enum("admin", "normal", "view_only", name="group_membership_permissions"), default="normal")
+    _gmp          = Enum("admin", "normal", "view_only", name="group_membership_permission")
+    id            = Column(Integer(), primary_key=True)
+    group_id      = Column(Integer(), ForeignKey('member.id'), nullable=False)
+    member_id     = Column(Integer(), ForeignKey('member.id'), nullable=False)
+    premissions   = Column(_gmp,      nullable=False, default="normal")
 
 
 # FIXME: incomplete

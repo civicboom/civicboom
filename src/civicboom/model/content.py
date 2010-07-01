@@ -7,7 +7,7 @@ from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.dialects import postgresql
+from sqlalchemy.dialects import postgresql as pg
 
 _private_content_doc = """
 means different things depending on which child table extends it:
@@ -30,66 +30,58 @@ FIXME: is this correct?
 class Content(Base):
     "Abstract class"
     __tablename__   = "content"
-    __type_col__    = Column(Enum("comment", "draft", "article", name="content_type")) # FIXME: need full list
-    __mapper_args__ = {'polymorphic_on': __type_col__}
-
-    id         = Column(Integer(), primary_key=True)
-    title      = Column(Unicode(250))
-    content    = Column(UnicodeText(), doc="The body of text")
-    creator_id = Column(Integer(), ForeignKey('member.id'))
-    parent_id  = Column(Integer(), ForeignKey('content.id'), nullable=True)
-    location   = GeometryColumn(Point(2)) # FIXME: area?
-    timestamp  = Column(DateTime())
-    status     = Column(Enum("show", "pending", "locked", name="content_status")) # FIXME: "etc"?
-    private    = Column(Boolean(), default=False, doc=_private_content_doc)
-    license_id = Column(Integer(), ForeignKey('license.id'))
-
-    responses   = relationship("Content", backref=backref('parent', remote_side=id)) # FIXME: remote_side is confusing
-    attachments = relationship("Media", backref=backref('content', order_by=id))
+    __type__        = Column(Enum("comment", "draft", "article", name="content_type"), nullable=False) # FIXME: need full list
+    __mapper_args__ = {'polymorphic_on': __type__}
+    _content_status = Enum("show", "pending", "locked", name="content_status") # FIXME: "etc"?
+    id              = Column(Integer(),        primary_key=True)
+    title           = Column(Unicode(250),     nullable=False  )
+    content         = Column(UnicodeText(),    nullable=False, doc="The body of text")
+    creator_id      = Column(Integer(),        ForeignKey('member.id'), nullable=False)
+    parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True)
+    location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point?
+    timestamp       = Column(DateTime(),       nullable=False, default="now()")
+    status          = Column(_content_status,  nullable=False, default="show")
+    private         = Column(Boolean(),        nullable=False, default=False, doc=_private_content_doc)
+    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False)
+    responses       = relationship("Content", backref=backref('parent', remote_side=id)) # FIXME: remote_side is confusing
+    attachments     = relationship("Media",   backref=backref('content', order_by=id))
 
 
 class CommentContent(Content):
-    __tablename__ = "content_comment"
+    __tablename__   = "content_comment"
     __mapper_args__ = {'polymorphic_identity': 'comment'}
-
-    id = Column(Integer(), ForeignKey('content.id'), primary_key=True)
+    id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
 
 
 class DraftContent(Content):
-    __tablename__ = "content_draft"
+    __tablename__   = "content_draft"
     __mapper_args__ = {'polymorphic_identity': 'draft'}
-
-    id = Column(Integer(), ForeignKey('content.id'), primary_key=True)
+    id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
 
 
 class UserVisibleContent(Content):
     "Abstract class"
     __tablename__ = "content_user_visible"
-
-    id         = Column(Integer(), ForeignKey('content.id'), primary_key=True)
-    views      = Column(Integer())
-    boom_count = Column(Integer()) # FIXME: derived
+    id            = Column(Integer(), ForeignKey('content.id'), primary_key=True)
+    views         = Column(Integer(), nullable=False, default=0)
+    boom_count    = Column(Integer(), nullable=False, default=0) # FIXME: derived
 
 
 class ArticleContent(UserVisibleContent):
-    __tablename__ = "content_article"
+    __tablename__   = "content_article"
     __mapper_args__ = {'polymorphic_identity': 'article'}
+    id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
+    rating          = Column(Integer(), nullable=False, default=0) # FIXME: derived
 
-    id         = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
-    rating     = Column(Integer()) # FIXME: derived
 
-
-# TODO: populate
 class License(Base):
     __tablename__ = "license"
-
-    id          = Column(Integer(), primary_key=True)
-    code        = Column(Unicode(32), unique=True)
-    name        = Column(Unicode(250), unique=True)
-    description = Column(UnicodeText())
-    url         = Column(UnicodeText())
-
-    articles    = relationship("Content", backref=backref('license'))
+    id            = Column(Integer(),     primary_key=True)
+    code          = Column(Unicode(32),   nullable=False, unique=True)
+    name          = Column(Unicode(250),  nullable=False, unique=True)
+    description   = Column(UnicodeText(), nullable=False)
+    url           = Column(UnicodeText(), nullable=False)
+    articles      = relationship("Content", backref=backref('license'))
 
     def __init__(self, code, name, description, url):
         self.code = code
@@ -98,19 +90,15 @@ class License(Base):
         self.url = url
 
 
-# TODO: populate
-# science, technology, politics, environment
 class Tag(Base):
     __tablename__ = "tag"
+    id            = Column(Integer(),    primary_key=True)
+    name          = Column(Unicode(250), nullable=False) # FIXME: type::name should be unique
+    type          = Column(Unicode(250), nullable=False, default=u"Topic")
+    parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True)
+    children      = relationship("Tag", backref=backref('parent', remote_side=id))
 
-    id        = Column(Integer(), primary_key=True)
-    name      = Column(Unicode(250)) # FIXME: type::name should be unique
-    type      = Column(Unicode(250))
-    parent_id = Column(Integer(), ForeignKey('tag.id'), nullable=True)
-
-    children  = relationship("Tag", backref=backref('parent', remote_side=id))
-
-    def __init__(self, name, type="Topic", parent=None):
+    def __init__(self, name, type=u"Topic", parent=None):
         self.name = name
         self.type = type
         self.parent = parent
@@ -118,31 +106,29 @@ class Tag(Base):
 
 class ContentEditHistory(Base):
     __tablename__ = "content_edit_history"
-
-    id          = Column(Integer(), primary_key=True)
-    content_id  = Column(Integer(), ForeignKey('content.id'))
-    member_id   = Column(Integer(), ForeignKey('member.id'))
-    timestamp   = Column(DateTime())
-    ip          = Column(postgresql.INET(), index=True)
-    source      = Column(Unicode(250), doc="civicboom, mobile, another_webpage, other service")
-    text_change = Column(UnicodeText())
-
-    content     = relationship("Content", backref=backref('edit_history', order_by=id))
-    member      = relationship("Member", backref=backref('edits_made', order_by=id))
+    id            = Column(Integer(),     primary_key=True)
+    content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False)
+    member_id     = Column(Integer(),     ForeignKey('member.id'), nullable=False)
+    timestamp     = Column(DateTime(),    nullable=False, default="now()")
+    ip            = Column(pg.INET(),     nullable=False, index=True)
+    source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
+    text_change   = Column(UnicodeText(), nullable=False)
+    content       = relationship("Content", backref=backref('edit_history', order_by=id))
+    member        = relationship("Member",  backref=backref('edits_made', order_by=id))
 
 
 class Media(Base):
     __tablename__ = "media"
-
-    id          = Column(Integer(), primary_key=True)
-    content_id  = Column(Integer(), ForeignKey('content.id'))
-    name        = Column(UnicodeText(250))
-    type        = Column(Enum("application", "audio", "example", "image", "message", "model", "multipart", "text", "video", name="media_types"), doc="MIME type, eg 'text', 'video'")
-    subtype     = Column(String(32), doc="MIME subtype, eg 'jpeg', '3gpp'")
-    hash        = Column(String(32), index=True) # FIXME: 32=md5? do we want md5?
-    caption     = Column(UnicodeText())
-    credit      = Column(UnicodeText())
-    ip          = Column(postgresql.INET(), index=True)
+    _media_types  = Enum("application", "audio", "example", "image", "message", "model", "multipart", "text", "video", name="media_types")
+    id            = Column(Integer(),        primary_key=True)
+    content_id    = Column(Integer(),        ForeignKey('content.id'), nullable=False)
+    name          = Column(UnicodeText(250), nullable=False)
+    type          = Column(_media_types,     nullable=False, doc="MIME type, eg 'text', 'video'")
+    subtype       = Column(String(32),       nullable=False, doc="MIME subtype, eg 'jpeg', '3gpp'")
+    hash          = Column(String(32),       nullable=False, index=True) # FIXME: 32=md5? do we want md5?
+    caption       = Column(UnicodeText(),    nullable=False)
+    credit        = Column(UnicodeText(),    nullable=False)
+    ip            = Column(pg.INET(),        nullable=False, index=True)
 
     def get_mime_type(self):
         return self.type + "/" + self.subtype
