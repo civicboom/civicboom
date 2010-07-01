@@ -26,6 +26,9 @@ class Member(Base):
     created_content = relationship("Content", backref=backref('creator'))
 #    parent_memberships = relationship("GroupMembership", backref=backref("members"))
 
+    def __repr__(self):
+        return self.name + " ("+self.username+")"
+
 
 class User(Member):
     __tablename__    = "member_user"

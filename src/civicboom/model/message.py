@@ -17,5 +17,7 @@ class Message(Base):
     source      = relationship("Member", primaryjoin=source_id==Member.id, backref=backref('messages_from', order_by=id))
     target      = relationship("Member", primaryjoin=target_id==Member.id, backref=backref('messages_to', order_by=id))
 
+    def __repr__(self):
+        return self.text[0:50]+"..."
 
 

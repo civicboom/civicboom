@@ -45,6 +45,9 @@ class Content(Base):
     responses       = relationship("Content", backref=backref('parent', remote_side=id)) # FIXME: remote_side is confusing
     attachments     = relationship("Media",   backref=backref('content', order_by=id))
 
+    def __repr__(self):
+        return self.title + " ("+self.__type__+")"
+
 
 class CommentContent(Content):
     __tablename__   = "content_comment"
@@ -88,6 +91,9 @@ class License(Base):
         self.description = description
         self.url = url
 
+    def __repr__(self):
+        return self.code
+
 
 class Tag(Base):
     __tablename__ = "tag"
@@ -101,6 +107,9 @@ class Tag(Base):
         self.name = name
         self.type = type
         self.parent = parent
+
+    def __repr__(self):
+        return self.name
 
 
 class ContentEditHistory(Base):
@@ -126,6 +135,9 @@ class Media(Base):
     hash          = Column(String(32),       nullable=False, index=True) # FIXME: 32=md5? do we want md5?
     caption       = Column(UnicodeText(),    nullable=False)
     credit        = Column(UnicodeText(),    nullable=False)
+
+    def __repr__(self):
+        return self.name
 
     def get_mime_type(self):
         return self.type + "/" + self.subtype
