@@ -77,6 +77,28 @@ class ArticleContent(UserVisibleContent):
     rating          = Column(Integer(), nullable=False, default=0) # FIXME: derived
 
 
+# FIXME: incomplete
+class AssignmentContent(UserVisibleContent):
+    __tablename__   = "content_assignment"
+    event_date      = Column(DateTime(),       nullable=True)
+    due_date        = Column(DateTime(),       nullable=True)
+    #private D (if any AssignmentClosed records exist)
+    #private_response (bool) (already exisits? see content)
+
+
+# FIXME: incomplete
+#class AssignmentAccepted(Base):
+#    contentAssignmentId
+#    memberId
+#    withdrawn (boolean)
+
+
+# FIXME: incomplete
+#class AssignmentClosed(Base):
+#    contentAssignmentId
+#    memberId
+
+
 class License(Base):
     __tablename__ = "license"
     id            = Column(Integer(),     primary_key=True)
