@@ -135,48 +135,51 @@ class Media(Base):
     caption       = Column(UnicodeText(),    nullable=False)
     credit        = Column(UnicodeText(),    nullable=False)
 
+    def __init__(self, tmp_file=None, original_name=None, caption=None, credit=None):
+        "Create a Media object from a blob of data + upload form details"
+        self.name = original_name
+        (self.type, self.subtype) = magic(tmp_file).split("/")
+        self.hash = hashlib.md5(file(tmp_file).read()).hexdigest() # FIXME: send chunks to md5, not the whole file
+        self.caption = caption
+        self.credit = credit
+
+        # process tmp_file
+        # create processed_file
+        # create thumbnail
+
+        # copy to mirror via SCP
+        #scp = SCPClient(SSHTransport("static.civicboom.com"))
+        #scp.put(self.name, "~/staticdata/%s/%s/%s" % (self.hash[0:1], self.hash[2:3], self.hash))
+
+        # copy to amazon s3
+        # ...
+
     def __repr__(self):
         return self.name
 
-    def get_mime_type(self):
+    @property
+    def mime_type(self):
         return self.type + "/" + self.subtype
 
-    def get_url(self):
-        """
-        http://static-e.civicboom.com/e16c819f/my_face.jpg
-        """
-        return "http://static-%s.civicboom.com/%s/%s" % (self.hash[0], self.hash, self.name)
-        # return "http://s3.amazonaws.com/civicboom-media/%s/%s" % (self.hash, self.name)
+    @property
+    def original_url(self):
+        "The URL of the original as-uploaded file"
+        return "http://static.civicboom.com/originals/%s/%s" % (self.hash, self.name)
 
-    def copy_to_mirror(self):
-        """
-        scp my_face.jpg static-e.civicboom.com:~/staticdata/e1/6c/e16c819f
-        """
-        # see paramiko
-        #scp = SCPClient(SSHTransport("static-%s.civicboom.com" % (self.hash[0], )))
-        #scp.put(self.name, "~/staticdata/%s/%s/%s" % (self.hash[0:1], self.hash[2:3], self.hash))
-        # upload to S3
-        return True
+    @property
+    def media_url(self):
+        "The URL of the processed media, eg .flv file for video"
+        exts = {
+            "audio": "ogg",
+            "image": "jpeg",
+            "video": "flv"
+        }
+        return "http://static.civicboom.com/media/%s/data.%s" % (self.hash, exts[self.type])
 
+    @property
+    def thumbnail_url(self):
+        "The URL of a JPEG-format thumbnail of this media"
+        return "http://static.civicboom.com/thumbnails/%s/thumb.jpg" % (self.hash, )
 
-# FIXME: incomplete
-#class ContentAssignment(ContentUserVisable):
-#    (?date of event?)
-#    dateDue
-#    private D (if any AssignmentClosed records exist)
-#    private_response (bool) (already exisits? see content)
-
-
-# FIXME: incomplete
-#class AssignmentAccepted(Base):
-#    contentAssignmentId
-#    memberId
-#    withdrawn (boolean)
-
-
-# FIXME: incomplete
-#class AssignmentClosed(Base):
-#    contentAssignmentId
-#    memberId
 
 GeometryDDL(Content.__table__)
