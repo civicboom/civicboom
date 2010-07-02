@@ -1,17 +1,40 @@
 #!/bin/bash
-if [ `whoami` != "root" ] ; then
-	exec sudo $0 $*
+if [ `whoami` != "postgres" ] ; then
+	exec sudo -u postgres $0 $*
 fi
 
-sudo -u postgres createdb -E UNICODE civicboom
-sudo -u postgres createlang plpgsql civicboom
-sudo -u postgres psql -d civicboom -f /usr/share/postgresql/8.4/contrib/postgis.sql
-sudo -u postgres psql -d civicboom -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
-sudo -u postgres createuser -P civicboom
+echo "Creating civicboom database"
+dropdb civicboom
+createdb -E utf8 civicboom
+createlang plpgsql civicboom
+echo "Loading PostGIS extras"
+psql -q -d civicboom -f /usr/share/postgresql/8.4/contrib/postgis.sql
+psql -q -d civicboom -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
+
+echo "Creating civicboom_log database"
+dropdb civicboom_log
+createdb -E utf8 civicboom_log
+echo "
+CREATE TABLE events(
+	id SERIAL PRIMARY KEY NOT NULL,
+	date_sent TIMESTAMP NOT NULL,
+	section VARCHAR(64) NOT NULL,
+	username VARCHAR(64) NOT NULL,
+	address INET NOT NULL,
+	priority INT NOT NULL,
+	message TEXT NOT NULL
+);
+" | psql -d civicboom_log
 
 #Grant permissions to user 'civicboom' on the new database
+echo "Creating civicboom user and granting permissions"
+dropuser civicboom
 echo "
-grant all on database civicboom to "civicboom";
-grant all on spatial_ref_sys to "civicboom";
-grant all on geometry_columns to "civicboom";
-" | sudo -u postgres psql civicboom
+create user civicboom with password 'civicboom';
+grant all on database civicboom to civicboom;
+grant all on database civicboom_log to civicboom;
+grant all on spatial_ref_sys to civicboom;
+grant all on geometry_columns to civicboom;
+" | psql -q -d civicboom
+
+
