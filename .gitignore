@@ -1,3 +1,5 @@
 *.pyc
 env
 src/data
+debian/*.deb
+debian/fs-*
