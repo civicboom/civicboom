@@ -54,7 +54,7 @@ class Member(Base):
     def __repr__(self):
         return self.name + " ("+self.username+")"
 
-
+# FIXME: should a user have an email address?
 class User(Member):
     __tablename__    = "member_user"
     __mapper_args__  = {'polymorphic_identity': 'user'}
@@ -76,12 +76,12 @@ class Group(Member):
     members          = relationship("Member", secondary=GroupMembership.__table__)
 
 
-
-# FIXME: incomplete
-#class MemberUserLogin(Base):
-#    member      = Column(Integer(), ForeignKey('member.id'))
-#    type (facebook, google, yahoo?)
-#    password? id?
+class MemberUserLogin(Base):
+    id          = Column(Integer(),    primary_key=True)
+    member      = Column(Integer(),    ForeignKey('member.id'))
+    # FIXME: need full list; facebook, google, yahoo?
+    type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
+    token       = Column(Unicode(250), nullable=False)
 
 
 # FIXME: incomplete
