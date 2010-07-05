@@ -18,6 +18,11 @@ class GroupMembership(Base):
     member_id     = Column(Integer(), ForeignKey('member.id'), primary_key=True)
     premissions   = Column(_gmp,      nullable=False, default="normal")
 
+class Follow(Base):
+    __tablename__ = "map_member_to_follower"
+    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+
 
 class Member(Base):
     "Abstract class"
@@ -40,6 +45,8 @@ class Member(Base):
     messages_to     = relationship("Message", primaryjoin="Message.target_id==Member.id", backref=backref('target', order_by=id))
     messages_from   = relationship("Message", primaryjoin="Message.source_id==Member.id", backref=backref('source', order_by=id))
     groups          = relationship("Group", secondary=GroupMembership.__table__)
+    followers       = relationship("Member", primaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
+    following       = relationship("Member", primaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
 
     def __repr__(self):
         return self.name + " ("+self.username+")"

@@ -19,45 +19,68 @@ class ContentTagMapping(Base):
     content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
     tag_id        = Column(Integer(),    ForeignKey('tag.id'), nullable=False, primary_key=True)
 
+class MemberAssignmentMapping(Base):
+    __tablename__ = "map_member_to_assignment"
+    content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
+    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    withdrawn     = Column(Boolean(),    nullable=False, default=False)
 
-_private_content_doc = """
-means different things depending on which child table extends it:
+class Boom(Base):
+    __tablename__ = "map_booms"
+    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
+    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
 
-ContentComment
-  only visible to the user and the user/group who wrote the content being replied to
+class Rating(Base):
+    __tablename__ = "map_ratings"
+    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
+    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    rating        = Column(Integer(),    nullable=False, default=0)
 
-ContentDraft
-  only visible to the user writing it (otherwise group visible)
-
-ContentArticle
-  only visible to creator and requester
-
-ContentAssignment
-  only visible to creator and creator-specificed users/groups
-
-FIXME: is this correct?
-"""
 
 class Content(Base):
-    "Abstract class"
+    """
+    Abstract class
+
+    "private" means different things depending on which child table extends it:
+
+    ContentComment
+      only visible to the user and the user/group who wrote the content being replied to
+
+    ContentDraft
+      only visible to the user writing it (otherwise group visible)
+
+    ContentArticle
+      only visible to creator and requester
+
+    ContentAssignment
+      only visible to creator and creator-specificed users/groups
+
+    (FIXME: is this correct?)
+    """
     __tablename__   = "content"
-    __type__        = Column(Enum("comment", "draft", "article", "assignment", name="content_type"), nullable=False) # FIXME: need full list
+    # FIXME: is this list complete?
+    __type__        = Column(Enum("comment", "draft", "article", "assignment", name="content_type"), nullable=False)
     __mapper_args__ = {'polymorphic_on': __type__}
-    _content_status = Enum("show", "pending", "locked", name="content_status") # FIXME: "etc"?
+    # FIXME: "etc"?
+    _content_status = Enum("show", "pending", "locked", name="content_status")
     id              = Column(Integer(),        primary_key=True)
     title           = Column(Unicode(250),     nullable=False  )
     content         = Column(UnicodeText(),    nullable=False, doc="The body of text")
     creator_id      = Column(Integer(),        ForeignKey('member.id'), nullable=False)
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True)
-    location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point?
+    # FIXME: area rather than point?
+    location        = GeometryColumn(Point(2), nullable=True   )
     timestamp       = Column(DateTime(),       nullable=False, default="now()")
     status          = Column(_content_status,  nullable=False, default="show")
     private         = Column(Boolean(),        nullable=False, default=False, doc=_private_content_doc)
-    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False) # FIXME: default license? People just making comments probably don't want to pick one every time
-    responses       = relationship("Content", backref=backref('parent', remote_side=id), cascade="all") # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
-    attachments     = relationship("Media",   backref=backref('attached_to'), cascade="all,delete-orphan")
+    # FIXME: default license? People just making comments probably don't want to pick one every time
+    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False)
+    # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
+    responses       = relationship("Content",            backref=backref('parent', remote_side=id), cascade="all")
+    attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
-    tags            = relationship("Tag", secondary=ContentTagMapping.__table__)
+    tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
+    assignments     = relationship("AssignmentContent",  secondary=MemberAssignmentMapping.__table__)
 
     def __repr__(self):
         return self.title + " ("+self.__type__+")"
@@ -90,25 +113,18 @@ class ArticleContent(UserVisibleContent):
     rating          = Column(Integer(), nullable=False, default=0) # FIXME: derived
 
 
-# FIXME: incomplete, unseeded
 class AssignmentContent(UserVisibleContent):
     __tablename__   = "content_assignment"
     __mapper_args__ = {'polymorphic_identity': 'assignment'}
-    id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
+    id              = Column(Integer(),        ForeignKey('content_user_visible.id'), primary_key=True)
     event_date      = Column(DateTime(),       nullable=True)
     due_date        = Column(DateTime(),       nullable=True)
-    #private D (if any AssignmentClosed records exist)
+    assigned_to     = relationship("Member", secondary=MemberAssignmentMapping.__table__)
+    #private D (if any AssignmentClosed records exist) # FIXME: "content" already has this?
     #private_response (bool) (already exisits? see content)
 
 
-# FIXME: incomplete, unseeded
-#class AssignmentAccepted(Base):
-#    contentAssignmentId
-#    memberId
-#    withdrawn (boolean)
-
-
-# FIXME: incomplete, unseeded
+# FIXME: is this needed?
 #class AssignmentClosed(Base):
 #    contentAssignmentId
 #    memberId
@@ -139,6 +155,15 @@ class License(Base):
 # article_contents->photo_of->red_box instead
 # Shish - assuming we don't need types
 class Tag(Base):
+    """
+    A topic for an article, eg "cakes", "printers"
+
+    Tags can have parents, eg:
+    Food > Cakes
+    Science & Technology > Hardware > Printers
+
+    Tags should normally be capitalised and plural
+    """
     __tablename__ = "tag"
     id            = Column(Integer(),    primary_key=True)
     name          = Column(Unicode(250), nullable=False) # FIXME: should be unique within its category

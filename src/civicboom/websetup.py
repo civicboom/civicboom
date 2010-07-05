@@ -9,7 +9,7 @@ from civicboom.model import meta
 from civicboom.model.meta import Base, Session
 from civicboom.model import License, Tag
 from civicboom.model import User, Group
-from civicboom.model import ArticleContent, CommentContent, DraftContent, Media
+from civicboom.model import ArticleContent, CommentContent, DraftContent, AssignmentContent, Media
 import datetime
 
 log = logging.getLogger(__name__)
@@ -82,15 +82,6 @@ def setup_app(command, conf, vars):
         mic1, mic2
         ])
     Session.commit()
-
-    #
-    # u1
-    # u2
-    # ca
-    # |- m
-    # |- cc
-    # |- cc2
-    #    |- m2
 
     u1 = User()
     u1.username      = u"unittest"
@@ -182,6 +173,17 @@ def setup_app(command, conf, vars):
     g.status        = "active"
     g.members.append(u2)
     Session.add_all([g, ])
+    Session.commit()
+
+    asc = AssignmentContent()
+    asc.title      = u"Silence Mr U. Test"
+    asc.content    = u"Get Mr Test to stop singing, write an article about how you did it"
+    asc.status     = "show"
+    asc.private    = True
+    asc.license_id = cc_by.id
+    asc.assigned_to.append(g)
+    g.content.append(u2)
+    Session.add_all([asc, ])
     Session.commit()
 
     ###################################################################
