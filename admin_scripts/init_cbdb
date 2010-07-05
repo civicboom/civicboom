@@ -1,41 +1,53 @@
 #!/bin/bash
 if [ `whoami` != "postgres" ] ; then
-	exec sudo -u postgres $0 $*
+	exec sudo -u postgres $0 $* 2> /tmp/init_cbdb.log
 fi
 
-echo "Creating civicboom database"
+date >&2
+
+echo "Removing old data"
+echo "Removing old data" >&2
+dropdb civicboom_log
 dropdb civicboom
-createdb -E utf8 civicboom
+dropuser civicboom
+
+echo "Creating civicboom user"
+echo "Creating civicboom user" >&2
+echo "create user civicboom with password 'civicboom';" | psql -q
+
+echo "Creating civicboom database"
+echo "Creating civicboom database" >&2
+dropdb civicboom
+createdb -E utf8 -O civicboom civicboom
 createlang plpgsql civicboom
-echo "Loading PostGIS extras"
+echo "  Loading PostGIS extras"
 psql -q -d civicboom -f /usr/share/postgresql/8.4/contrib/postgis.sql
 psql -q -d civicboom -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
 
 echo "Creating civicboom_log database"
-dropdb civicboom_log
-createdb -E utf8 civicboom_log
+echo "Creating civicboom_log database" >&2
+createdb -E utf8 -O civicboom civicboom_log
+export PGPASSWORD=civicboom
 echo "
 CREATE TABLE events(
 	id SERIAL PRIMARY KEY NOT NULL,
 	date_sent TIMESTAMP NOT NULL DEFAULT now(),
-	section VARCHAR(64) NOT NULL,
+	module VARCHAR(250) NOT NULL,
 	username VARCHAR(64) NOT NULL,
 	url TEXT NOT NULL,
 	address INET NOT NULL,
 	priority INT NOT NULL,
 	message TEXT NOT NULL
 );
-" | psql -d civicboom_log
+CREATE INDEX events__date_sent ON events(date_sent);
+CREATE INDEX events__section ON events(section);
+CREATE INDEX events__username ON events(username);
+CREATE INDEX events__priority ON events(priority);
+" | psql -U civicboom -d civicboom_log
 
-#Grant permissions to user 'civicboom' on the new database
-echo "Creating civicboom user and granting permissions"
-dropuser civicboom
-echo "
-create user civicboom with password 'civicboom';
-grant all on database civicboom to civicboom;
-grant all on database civicboom_log to civicboom;
-grant all on spatial_ref_sys to civicboom;
-grant all on geometry_columns to civicboom;
-" | psql -q -d civicboom
+echo "Granting extra permissions"
+echo "Granting extra permissions" >&2
+echo "grant all on spatial_ref_sys to civicboom;"  | psql -q -d civicboom
+echo "grant all on geometry_columns to civicboom;" | psql -q -d civicboom
 
 
