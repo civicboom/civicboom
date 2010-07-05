@@ -8,6 +8,18 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
+import hashlib
+
+
+# many-to-many mappings need to be at the top, so that other classes can
+# say "I am joined to other table X using mapping Y as defined above"
+
+class ContentTagMapping(Base):
+    __tablename__ = "map_content_to_tag"
+    content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
+    tag_id        = Column(Integer(),    ForeignKey('tag.id'), nullable=False, primary_key=True)
+
+
 _private_content_doc = """
 means different things depending on which child table extends it:
 
@@ -29,7 +41,7 @@ FIXME: is this correct?
 class Content(Base):
     "Abstract class"
     __tablename__   = "content"
-    __type__        = Column(Enum("comment", "draft", "article", name="content_type"), nullable=False) # FIXME: need full list
+    __type__        = Column(Enum("comment", "draft", "article", "assignment", name="content_type"), nullable=False) # FIXME: need full list
     __mapper_args__ = {'polymorphic_on': __type__}
     _content_status = Enum("show", "pending", "locked", name="content_status") # FIXME: "etc"?
     id              = Column(Integer(),        primary_key=True)
@@ -41,10 +53,11 @@ class Content(Base):
     timestamp       = Column(DateTime(),       nullable=False, default="now()")
     status          = Column(_content_status,  nullable=False, default="show")
     private         = Column(Boolean(),        nullable=False, default=False, doc=_private_content_doc)
-    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False)
+    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False) # FIXME: default license? People just making comments probably don't want to pick one every time
     responses       = relationship("Content", backref=backref('parent', remote_side=id), cascade="all") # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
     attachments     = relationship("Media",   backref=backref('attached_to'), cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
+    tags            = relationship("Tag", secondary=ContentTagMapping.__table__)
 
     def __repr__(self):
         return self.title + " ("+self.__type__+")"
@@ -77,23 +90,25 @@ class ArticleContent(UserVisibleContent):
     rating          = Column(Integer(), nullable=False, default=0) # FIXME: derived
 
 
-# FIXME: incomplete
+# FIXME: incomplete, unseeded
 class AssignmentContent(UserVisibleContent):
     __tablename__   = "content_assignment"
+    __mapper_args__ = {'polymorphic_identity': 'assignment'}
+    id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
     event_date      = Column(DateTime(),       nullable=True)
     due_date        = Column(DateTime(),       nullable=True)
     #private D (if any AssignmentClosed records exist)
     #private_response (bool) (already exisits? see content)
 
 
-# FIXME: incomplete
+# FIXME: incomplete, unseeded
 #class AssignmentAccepted(Base):
 #    contentAssignmentId
 #    memberId
 #    withdrawn (boolean)
 
 
-# FIXME: incomplete
+# FIXME: incomplete, unseeded
 #class AssignmentClosed(Base):
 #    contentAssignmentId
 #    memberId
@@ -118,23 +133,28 @@ class License(Base):
         return self.code
 
 
+# FIXME: do we need types *and* parents?
+# "type" was added so that "artist_name:red_box" and "photo_of:red_box" could
+# be separated, but we could have category->artists->red_box and
+# article_contents->photo_of->red_box instead
+# Shish - assuming we don't need types
 class Tag(Base):
     __tablename__ = "tag"
     id            = Column(Integer(),    primary_key=True)
-    name          = Column(Unicode(250), nullable=False) # FIXME: type::name should be unique
-    type          = Column(Unicode(250), nullable=False, default=u"Topic")
+    name          = Column(Unicode(250), nullable=False) # FIXME: should be unique within its category
+    #type          = Column(Unicode(250), nullable=False, default=u"Topic")
     parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True)
     #children      = relationship("Tag", backref=backref('parent', remote_side=id))
 
-    def __init__(self, name=None, type=u"Topic", parent=None):
+    def __init__(self, name=None, parent=None):
         self.name = name
-        self.type = type
         self.parent = parent
 
     def __repr__(self):
         return self.name
 
 
+# FIXME: unseeded
 class ContentEditHistory(Base):
     __tablename__ = "content_edit_history"
     id            = Column(Integer(),     primary_key=True)
@@ -159,11 +179,12 @@ class Media(Base):
 
     def __init__(self, tmp_file=None, original_name=None, caption=None, credit=None):
         "Create a Media object from a blob of data + upload form details"
-        self.name = original_name
-        (self.type, self.subtype) = magic(tmp_file).split("/")
-        self.hash = hashlib.md5(file(tmp_file).read()).hexdigest() # FIXME: send chunks to md5, not the whole file
-        self.caption = caption
-        self.credit = credit
+        if tmp_file:
+            self.name = original_name
+            (self.type, self.subtype) = ["video", "3gpp"] # FIXME: magic(tmp_file).split("/")
+            self.hash = hashlib.md5(file(tmp_file).read()).hexdigest() # FIXME: send chunks to md5, not the whole file
+            self.caption = caption
+            self.credit = credit
 
         # process tmp_file
         # create processed_file

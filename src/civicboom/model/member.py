@@ -7,6 +7,18 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
+
+# many-to-many mappings need to be at the top, so that other classes can
+# say "I am joined to other table X using mapping Y as defined above"
+
+class GroupMembership(Base):
+    __tablename__ = "map_user_to_group"
+    _gmp          = Enum("admin", "normal", "view_only", name="group_membership_permission")
+    group_id      = Column(Integer(), ForeignKey('member_group.id'), primary_key=True)
+    member_id     = Column(Integer(), ForeignKey('member.id'), primary_key=True)
+    premissions   = Column(_gmp,      nullable=False, default="normal")
+
+
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
@@ -23,11 +35,11 @@ class Member(Base):
     webpage         = Column(Unicode(),      nullable=False, default=u"")
     status          = Column(_member_status, nullable=False, default="active")
     avatar          = Column(String(32),     nullable=True,  doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar") # FIXME: 32=md5? do we want md5?
-    created_content = relationship("Content", backref=backref('creator'))
-    edited_content  = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
+    content         = relationship("Content", backref=backref('creator'))
+    content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
     messages_to     = relationship("Message", primaryjoin="Message.target_id==Member.id", backref=backref('target', order_by=id))
     messages_from   = relationship("Message", primaryjoin="Message.source_id==Member.id", backref=backref('source', order_by=id))
-#    parent_memberships = relationship("GroupMembership", backref=backref("members"))
+    groups          = relationship("Group", secondary=GroupMembership.__table__)
 
     def __repr__(self):
         return self.name + " ("+self.username+")"
@@ -37,7 +49,7 @@ class User(Member):
     __tablename__    = "member_user"
     __mapper_args__  = {'polymorphic_identity': 'user'}
     id               = Column(Integer(),  ForeignKey('member.id'), primary_key=True)
-    last_message     = Column(DateTime(), nullable=False,   default="now()", doc="the last time the user saw a message")
+    last_check       = Column(DateTime(), nullable=False,   default="now()", doc="The last time the user checked their messages. You probably want to use the new_messages derived boolean instead.")
     new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
     location         = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
     location_updated = Column(DateTime(), nullable=False,   default="now()")
@@ -50,18 +62,9 @@ class Group(Member):
     permissions_join = Column(Enum("open", "invite_only", name="group_permissions_join"), nullable=False, default="open")
     permissions_view = Column(Enum("open", "members_only", name="group_permissions_view"), nullable=False, default="open")
     behaviour        = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
-    num_members      = Column(Integer()) # FIXME: derived
+    num_members      = Column(Integer(), nullable=False, default=0) # FIXME: derived
+    members          = relationship("Member", secondary=GroupMembership.__table__)
 
-#    members          = relationship("GroupMembership", backref=backref("groups"))
-
-
-class GroupMembership(Base):
-    __tablename__ = "member_group_members"
-    _gmp          = Enum("admin", "normal", "view_only", name="group_membership_permission")
-    id            = Column(Integer(), primary_key=True)
-    group_id      = Column(Integer(), ForeignKey('member.id'), nullable=False)
-    member_id     = Column(Integer(), ForeignKey('member.id'), nullable=False)
-    premissions   = Column(_gmp,      nullable=False, default="normal")
 
 
 # FIXME: incomplete
