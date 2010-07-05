@@ -76,7 +76,8 @@ class Group(Member):
     members          = relationship("Member", secondary=GroupMembership.__table__)
 
 
-class MemberUserLogin(Base):
+class UserLogin(Base):
+    __tablename__    = "member_user_login"
     id          = Column(Integer(),    primary_key=True)
     member      = Column(Integer(),    ForeignKey('member.id'))
     # FIXME: need full list; facebook, google, yahoo?
