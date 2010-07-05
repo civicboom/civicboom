@@ -106,6 +106,7 @@ class ArticleContent(UserVisibleContent):
     id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
     rating          = Column(Integer(), nullable=False, default=0) # FIXME: derived
     ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
+    # FIXME: type (news, feature, article, etc?)
 
 
 class AssignmentContent(UserVisibleContent):

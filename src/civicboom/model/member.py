@@ -55,6 +55,9 @@ class Member(Base):
     def __unicode__(self):
         return self.name + " ("+self.username+")"
 
+    def __str__(self):
+        return unicode(self).encode('ascii', 'replace')
+
 # FIXME: should a user have an email address?
 class User(Member):
     __tablename__    = "member_user"
@@ -64,6 +67,9 @@ class User(Member):
     new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
     location         = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
     location_updated = Column(DateTime(), nullable=False,   default="now()")
+
+    def __unicode__(self):
+        return self.name + " ("+self.username+") (User)"
 
 
 class Group(Member):
@@ -75,6 +81,9 @@ class Group(Member):
     behaviour        = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
     num_members      = Column(Integer(), nullable=False, default=0) # FIXME: derived
     members          = relationship("Member", secondary=GroupMembership.__table__)
+
+    def __unicode__(self):
+        return self.name + " ("+self.username+") (Group)"
 
 
 class UserLogin(Base):
