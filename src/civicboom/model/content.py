@@ -72,7 +72,7 @@ class Content(Base):
     location        = GeometryColumn(Point(2), nullable=True   )
     timestamp       = Column(DateTime(),       nullable=False, default="now()")
     status          = Column(_content_status,  nullable=False, default="show")
-    private         = Column(Boolean(),        nullable=False, default=False, doc=_private_content_doc)
+    private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     # FIXME: default license? People just making comments probably don't want to pick one every time
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False)
     # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
