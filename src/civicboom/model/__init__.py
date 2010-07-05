@@ -3,8 +3,9 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from civicboom.model import meta
-from civicboom.model.content import Content, CommentContent, DraftContent, UserVisibleContent, ArticleContent
+from civicboom.model.content import Content, CommentContent, DraftContent, UserVisibleContent, ArticleContent, AssignmentContent
 from civicboom.model.content import License, Tag, ContentEditHistory, Media
+from civicboom.model.content import MemberAssignmentMapping
 from civicboom.model.member import Member, User, Group, GroupMembership
 from civicboom.model.message import Message
 

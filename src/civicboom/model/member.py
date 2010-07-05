@@ -7,6 +7,8 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
+#from civicboom.model import MemberAssignmentMapping
+
 
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
@@ -45,8 +47,9 @@ class Member(Base):
     messages_to     = relationship("Message", primaryjoin="Message.target_id==Member.id", backref=backref('target', order_by=id))
     messages_from   = relationship("Message", primaryjoin="Message.source_id==Member.id", backref=backref('source', order_by=id))
     groups          = relationship("Group", secondary=GroupMembership.__table__)
-    followers       = relationship("Member", primaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
-    following       = relationship("Member", primaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
+    followers       = relationship("Member", primaryjoin="Member.id==Follow.member_id", secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
+    following       = relationship("Member", primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
+    #assignments     = relationship("AssignmentContent",  secondary=MemberAssignmentMapping.__table__)
 
     def __repr__(self):
         return self.name + " ("+self.username+")"

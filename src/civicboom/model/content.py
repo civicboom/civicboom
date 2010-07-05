@@ -80,7 +80,6 @@ class Content(Base):
     attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
-    assignments     = relationship("AssignmentContent",  secondary=MemberAssignmentMapping.__table__)
 
     def __repr__(self):
         return self.title + " ("+self.__type__+")"
