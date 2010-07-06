@@ -52,7 +52,7 @@ class Member(Base):
     assignments     = relationship("MemberAssignment",  backref=backref("member"), cascade="all,delete-orphan")
     ratings         = relationship("Rating",  backref=backref('member'), cascade="all,delete-orphan")
 
-    def __repr__(self):
+    def __unicode__(self):
         return self.name + " ("+self.username+")"
 
 # FIXME: should a user have an email address?

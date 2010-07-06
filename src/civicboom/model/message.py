@@ -15,7 +15,7 @@ class Message(Base):
     timestamp   = Column(DateTime(),    nullable=False, default="now()")
     text        = Column(UnicodeText(), nullable=False)
 
-    def __repr__(self):
+    def __unicode__(self):
         return self.text[0:50]+"..."
 
 

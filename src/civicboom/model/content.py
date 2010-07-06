@@ -76,8 +76,8 @@ class Content(Base):
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
 
-    def __repr__(self):
-        return self.title + " ("+self.__type__+")"
+    def __unicode__(self):
+        return self.title + u" (" + self.__type__ + u")"
 
 
 class CommentContent(Content):
@@ -147,7 +147,7 @@ class License(Base):
         self.description = description
         self.url = url
 
-    def __repr__(self):
+    def __unicode__(self):
         return self.code
 
 
@@ -177,7 +177,7 @@ class Tag(Base):
         self.name = name
         self.parent = parent
 
-    def __repr__(self):
+    def __unicode__(self):
         return self.name
 
 
@@ -224,7 +224,7 @@ class Media(Base):
         # copy to amazon s3
         # ...
 
-    def __repr__(self):
+    def __unicode__(self):
         return self.name
 
     @property
