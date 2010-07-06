@@ -19,12 +19,6 @@ class ContentTagMapping(Base):
     content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
     tag_id        = Column(Integer(),    ForeignKey('tag.id'), nullable=False, primary_key=True)
 
-class MemberAssignmentMapping(Base):
-    __tablename__ = "map_member_to_assignment"
-    content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
-    withdrawn     = Column(Boolean(),    nullable=False, default=False)
-
 class Boom(Base):
     __tablename__ = "map_booms"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
@@ -70,7 +64,8 @@ class Content(Base):
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True)
     # FIXME: area rather than point?
     location        = GeometryColumn(Point(2), nullable=True   )
-    timestamp       = Column(DateTime(),       nullable=False, default="now()")
+    creation_date   = Column(DateTime(),       nullable=False, default="now()")
+    update_date     = Column(DateTime(),       nullable=False, default="now()")
     status          = Column(_content_status,  nullable=False, default="show")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     # FIXME: default license? People just making comments probably don't want to pick one every time
@@ -110,6 +105,7 @@ class ArticleContent(UserVisibleContent):
     __mapper_args__ = {'polymorphic_identity': 'article'}
     id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
     rating          = Column(Integer(), nullable=False, default=0) # FIXME: derived
+    ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
 
 
 class AssignmentContent(UserVisibleContent):
@@ -118,9 +114,16 @@ class AssignmentContent(UserVisibleContent):
     id              = Column(Integer(),        ForeignKey('content_user_visible.id'), primary_key=True)
     event_date      = Column(DateTime(),       nullable=True)
     due_date        = Column(DateTime(),       nullable=True)
-    assigned_to     = relationship("Member", secondary=MemberAssignmentMapping.__table__)
+    assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #private D (if any AssignmentClosed records exist) # FIXME: "content" already has this?
     #private_response (bool) (already exisits? see content)
+
+class MemberAssignment(Base):
+    __tablename__ = "member_assignment"
+    content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
+    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    withdrawn     = Column(Boolean(),    nullable=False, default=False)
+
 
 
 # FIXME: is this needed?

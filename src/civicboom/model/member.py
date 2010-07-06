@@ -46,10 +46,11 @@ class Member(Base):
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
     messages_to     = relationship("Message", primaryjoin="Message.target_id==Member.id", backref=backref('target', order_by=id))
     messages_from   = relationship("Message", primaryjoin="Message.source_id==Member.id", backref=backref('source', order_by=id))
-    groups          = relationship("Group", secondary=GroupMembership.__table__)
-    followers       = relationship("Member", primaryjoin="Member.id==Follow.member_id", secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
-    following       = relationship("Member", primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
-    #assignments     = relationship("AssignmentContent",  secondary=MemberAssignmentMapping.__table__)
+    groups          = relationship("Group",   secondary=GroupMembership.__table__)
+    followers       = relationship("Member",  primaryjoin="Member.id==Follow.member_id", secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
+    following       = relationship("Member",  primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
+    assignments     = relationship("MemberAssignment",  backref=backref("member"), cascade="all,delete-orphan")
+    ratings         = relationship("Rating",  backref=backref('member'), cascade="all,delete-orphan")
 
     def __repr__(self):
         return self.name + " ("+self.username+")"

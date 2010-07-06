@@ -5,8 +5,8 @@ from sqlalchemy import orm
 from civicboom.model import meta
 from civicboom.model.content import Content, CommentContent, DraftContent, UserVisibleContent, ArticleContent, AssignmentContent
 from civicboom.model.content import License, Tag, ContentEditHistory, Media
-from civicboom.model.content import MemberAssignmentMapping
-from civicboom.model.member import Member, User, Group, GroupMembership
+from civicboom.model.content import MemberAssignment, Rating
+from civicboom.model.member import Member, User, Group, GroupMembership, Follow
 from civicboom.model.message import Message
 
 def init_model(main_engine, log_engine, legacy_engine=None):
