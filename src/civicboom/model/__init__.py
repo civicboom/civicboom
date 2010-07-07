@@ -21,6 +21,9 @@ def init_model(main_engine, log_engine, legacy_engine=None):
     meta.LogSession.configure(bind=log_engine)
     if legacy_engine:
         meta.LegacySession.configure(bind=legacy_engine)
+
     meta.engine = main_engine
+    meta.log_engine = log_engine
+    meta.legacy_engine = legacy_engine
 
 

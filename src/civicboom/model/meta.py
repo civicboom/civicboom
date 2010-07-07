@@ -6,6 +6,8 @@ __all__ = ['Session', 'LogSession', 'LegacySession', 'engine', 'metadata', 'Base
 
 # SQLAlchemy database engine. Updated by model.init_model()
 engine = None
+log_engine = None
+legacy_engine = None
 
 # SQLAlchemy session manager. Updated by model.init_model()
 Session = scoped_session(sessionmaker())
