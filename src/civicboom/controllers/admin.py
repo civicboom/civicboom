@@ -1,12 +1,9 @@
-import logging
 from formalchemy.ext.pylons.controller import ModelsController
 from webhelpers.paginate import Page
 from civicboom.lib.base import BaseController, render
 from civicboom import model
 from civicboom import forms
 from civicboom.model import meta
-
-log = logging.getLogger(__name__)
 
 class AdminControllerBase(BaseController):
     model = model # where your SQLAlchemy mappers are
@@ -16,7 +13,6 @@ class AdminControllerBase(BaseController):
 
     ## customize the query for a model listing
     #def get_page(self):
-    #    log.info("Requested a page")
     #    if self.model_name == 'Foo':
     #        return Page(meta.Session.query(model.Foo).order_by(model.Foo.bar)
     #    return super(AdminControllerBase, self).get_page()
