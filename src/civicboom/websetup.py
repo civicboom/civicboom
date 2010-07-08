@@ -181,12 +181,31 @@ def setup_app(command, conf, vars):
 
         # FIXME: make this work
         def get_location(row):
-            #  `CityId` int(10) unsigned default NULL,
+            #  `CityId` int(10) unsigned default NULL,       # standardish
             #  `CountyId` int(10) unsigned default NULL,
             #  `StateId` int(10) unsigned default NULL,
             #  `CountryId` int(10) unsigned default NULL,
             #  `ZipId` int(10) unsigned default NULL,
+            #  `Address` varchar(255) default NULL,          # reporters
+            #  `Address2` varchar(255) default NULL,
+            #  `geolocation_latitude` double default NULL,   # newsarticles
+            #  `geolocation_longitude` double default NULL,
             return None
+
+        def get_media(row, type):
+            from glob import glob
+            import os
+
+            caption = None
+            credit = None
+            if "imageCredit" in row and row["imageCredit"]:
+                credit = row["imageCredit"].decode("ascii")
+
+            attachments = []
+            for fn in glob("./tmp/"+type+"_files/"+str(row["id"])+"*.*"):
+                log.info("Guessing that "+fn+" is associated with "+type+" "+str(row["id"]))
+                attachments.append(Media().load_from_file(fn, os.path.basename(fn).decode("ascii"), caption, credit))
+            return attachments
         # }}}
 
         log.info("|- Converting reporters to users") # {{{
@@ -199,13 +218,6 @@ def setup_app(command, conf, vars):
                 u.name = u.username.decode("ascii")
             u.email         = row["Email"]
             u.join_date     = row["Join_Date"]
-#  `CityId` int(10) unsigned default NULL,
-#  `CountyId` int(10) unsigned default NULL,
-#  `StateId` int(10) unsigned default NULL,
-#  `CountryId` int(10) unsigned default NULL,
-#  `ZipId` int(10) unsigned default NULL,
-#  `Address` varchar(255) default NULL,
-#  `Address2` varchar(255) default NULL,
             u.home_location = get_location(row)
             u.description   = get_description(row)
             u.status        = convert_status(row["Status"])
@@ -242,11 +254,7 @@ def setup_app(command, conf, vars):
             a.boom_count    = row["boom_count"]
             a.creator       = reporters_by_old_id[row["creatorReporterId"]]
             a.license_id    = licenses_by_old_id[row["CreaviveCommonsLicenceTypeId"]].id
-#  `fileExtension` varchar(50) default NULL,
-#  `image` tinyint(1) NOT NULL default '0',
-#  `movie` tinyint(1) NOT NULL default '0',
-#  `imageCredit` varchar(100) default NULL,
-            a.attachments   = []
+            a.attachments   = get_media(row, "assignment")
             a.assigned_to   = []
             a.creation_date = row["creationDate"]
             a.due_date      = row["expiryDate"]
@@ -257,10 +265,12 @@ def setup_app(command, conf, vars):
             Session.add(a)
             assignments_by_old_id[row["id"]] = a
         Session.commit()
-
-        log.info("|- Converting newsarticles to content")
+        # }}}
+        log.info("|- Converting newsarticles to content") # {{{
         newsarticles_by_old_id = {}
         for row in leg_conn.execute("SELECT * FROM newsarticles"):
+            if row["status"] == "deleted":
+                continue
             a               = ArticleContent()
             a.title         = row["Title"].strip().decode("utf-8") # mobile bug added newlines to everything
             a.content       = get_content(row).decode("utf-8")
@@ -270,28 +280,17 @@ def setup_app(command, conf, vars):
             a.update_date   = row["TimeStamp"]
             a.license_id    = licenses_by_old_id[row["CreaviveCommonsLicenceTypeId"]].id
             a.boom_count    = row["boom_count"]
+            a.attachments   = get_media(row, "article")
 #  `TypeId` int(10) unsigned NOT NULL default '1',
 #  `AssignmentId` int(10) unsigned default NULL,
 #  `ParentArticleId` int(10) unsigned default NULL,
 #  `interviewId` int(10) unsigned default NULL,
 #  `Counter` int(10) NOT NULL default '0',
-#  `Photo` tinyint(1) NOT NULL default '0',
 #  `rating` int(10) NOT NULL default '0',
 #  `total_rate` int(10) NOT NULL default '0',
 #  `Status` enum('display','pending','suspend','deleted','failed','syndicate','syndicated') default 'display',
 #  `IP` varchar(20) NOT NULL,
-#  `upload_format` varchar(20) NOT NULL,
-#  `raw_file` varchar(255) default NULL,
-#  `extraimages` tinyint(1) NOT NULL default '0',
-#  `image_no2` tinyint(1) NOT NULL default '0',
-#  `image_no3` tinyint(1) NOT NULL default '0',
-#  `image_no4` tinyint(1) NOT NULL default '0',
-#  `image_no5` tinyint(1) NOT NULL default '0',
 #  `locked` tinyint(1) NOT NULL default '0' COMMENT 'no further editing allowed',
-#  `imageCredit` varchar(100) default NULL,
-#  `geolocation_latitude` double default NULL,
-#  `geolocation_longitude` double default NULL,
-
             log.debug("   |- %3d - %s" % (row["id"], a.title, ))
             Session.add(a)
             newsarticles_by_old_id[row["id"]] = a
