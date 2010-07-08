@@ -1,6 +1,7 @@
 
 from civicboom.model.meta import Base
 from civicboom.model.member import Member
+import civicboom.lib.warehouse as wh
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
@@ -8,13 +9,7 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
-import hashlib
 import magic
-import logging
-import os
-import shutil
-
-log = logging.getLogger(__name__)
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -211,42 +206,30 @@ class Media(Base):
     caption       = Column(UnicodeText(),    nullable=False)
     credit        = Column(UnicodeText(),    nullable=False)
 
-    def __init__(self):
-        pass
-
     def load_from_file(self, tmp_file=None, original_name=None, caption=None, credit=None):
         "Create a Media object from a blob of data + upload form details"
         self.name = original_name
         self.type, self.subtype = magic.from_file(tmp_file, mime=True).split("/")
-        self.hash = hashlib.sha1(file(tmp_file).read()).hexdigest() # FIXME: send chunks to hashlib, not the whole file
+        self.hash = wh.hash_file(tmp_file)
         self.caption = caption if caption else u""
         self.credit = credit if credit else u""
 
-        def copy_to_warehouse(src, warehouse, hash):
-            dest = "./civicboom/public/warehouse/%s/%s/%s/%s" % (warehouse, self.hash[0:2], self.hash[2:4], self.hash)
-            if not os.path.exists(os.path.dirname(dest)):
-                os.makedirs(os.path.dirname(dest))
-            shutil.copy(src, dest)
-
-        copy_to_warehouse(tmp_file, "originals", self.hash)
+        wh.copy_to_local_warehouse(tmp_file, "originals", self.hash)
 
         # FIXME: turn tmp_file into something suitable for web viewing
-        copy_to_warehouse(tmp_file, "media", self.hash)
+        wh.copy_to_local_warehouse(tmp_file, "media", self.hash)
 
         # FIXME: turn tmp_file into a thumbnail
-        copy_to_warehouse(tmp_file, "thumbnails", self.hash)
+        wh.copy_to_local_warehouse(tmp_file, "thumbnails", self.hash)
 
-        log.debug("Created Media from file %s -> %s" % (self.name, self.hash))
+        #log.debug("Created Media from file %s -> %s" % (self.name, self.hash))
 
         return self
 
     def sync(self):
-        # copy to mirror via SCP
-        #scp = SCPClient(SSHTransport("static.civicboom.com"))
-        #scp.put(self.name, "~/staticdata/%s/%s/%s" % (self.hash[0:1], self.hash[2:3], self.hash))
-
-        # copy to amazon s3
-        # ...
+        wh.copy_to_remote_warehouse("originals", self.hash)
+        wh.copy_to_remote_warehouse("media", self.hash)
+        wh.copy_to_remote_warehouse("thumbnails", self.hash)
         return self
 
     def __unicode__(self):
