@@ -205,7 +205,7 @@ def setup_app(command, conf, vars):
             bases  = glob("./tmp/"+type+"_files/"+str(row["id"])+".*")
             extras = glob("./tmp/"+type+"_files/"+str(row["id"])+"_*.*")
             for fn in bases + extras:
-                log.debug("Guessing that "+fn+" is associated with "+type+" "+str(row["id"]))
+                #log.debug("Guessing that "+fn+" is associated with "+type+" "+str(row["id"]))
                 attachments.append(Media().load_from_file(fn, os.path.basename(fn).decode("ascii"), caption, credit))
             return attachments
         # }}}
