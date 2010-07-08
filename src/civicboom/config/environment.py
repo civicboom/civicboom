@@ -39,11 +39,10 @@ def load_environment(global_conf, app_conf):
 
     # Setup the SQLAlchemy database engine
     engine1 = engine_from_config(config, 'sqlalchemy.main.')
-    engine2 = engine_from_config(config, 'sqlalchemy.log.')
     engine3 = None
     if config['sqlalchemy.legacy.url']:
         engine3 = engine_from_config(config, 'sqlalchemy.legacy.')
-    init_model(engine1, engine2, engine3)
+    init_model(engine1, engine3)
 
     # CONFIGURATION OPTIONS HERE (note: all config options will override
     # any Pylons config options)

@@ -9,7 +9,7 @@ from civicboom.model.content import MemberAssignment, Rating
 from civicboom.model.member import Member, User, Group, GroupMembership, Follow
 from civicboom.model.message import Message
 
-def init_model(main_engine, log_engine, legacy_engine=None):
+def init_model(main_engine, legacy_engine=None):
     """Call me before using any of the tables or classes in the model"""
     ## Reflected tables must be defined and mapped here
     #global reflected_table
@@ -18,12 +18,10 @@ def init_model(main_engine, log_engine, legacy_engine=None):
     #orm.mapper(Reflected, reflected_table)
     #
     meta.Session.configure(bind=main_engine)
-    meta.LogSession.configure(bind=log_engine)
     if legacy_engine:
         meta.LegacySession.configure(bind=legacy_engine)
 
     meta.engine = main_engine
-    meta.log_engine = log_engine
     meta.legacy_engine = legacy_engine
 
 
