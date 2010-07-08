@@ -217,9 +217,21 @@ class Media(Base):
         wh.copy_to_local_warehouse(tmp_file, "originals", self.hash)
 
         # FIXME: turn tmp_file into something suitable for web viewing
+        if self.type == "image":
+            pass
+        elif self.type == "audio":
+            pass
+        elif self.type == "video":
+            pass
         wh.copy_to_local_warehouse(tmp_file, "media", self.hash)
 
         # FIXME: turn tmp_file into a thumbnail
+        if self.type == "image":
+            pass
+        elif self.type == "audio":
+            pass
+        elif self.type == "video":
+            pass
         wh.copy_to_local_warehouse(tmp_file, "thumbnails", self.hash)
 
         #log.debug("Created Media from file %s -> %s" % (self.name, self.hash))
