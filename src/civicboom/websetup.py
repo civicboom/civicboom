@@ -202,8 +202,10 @@ def setup_app(command, conf, vars):
                 credit = row["imageCredit"].decode("ascii")
 
             attachments = []
-            for fn in glob("./tmp/"+type+"_files/"+str(row["id"])+"*.*"):
-                log.info("Guessing that "+fn+" is associated with "+type+" "+str(row["id"]))
+            bases  = glob("./tmp/"+type+"_files/"+str(row["id"])+".*")
+            extras = glob("./tmp/"+type+"_files/"+str(row["id"])+"_*.*")
+            for fn in bases + extras:
+                log.debug("Guessing that "+fn+" is associated with "+type+" "+str(row["id"]))
                 attachments.append(Media().load_from_file(fn, os.path.basename(fn).decode("ascii"), caption, credit))
             return attachments
         # }}}
@@ -298,28 +300,34 @@ def setup_app(command, conf, vars):
         # }}}
         log.info("|- Converting comments to content") # {{{
         for row in leg_conn.execute("SELECT * FROM comments"):
-            c               = CommentContent()
-            c.parent        = newsarticles_by_old_id[row["ArticleId"]]
-            c.title         = u"Re: " + c.parent.title
-            c.content       = row["contents"].decode("utf-8")
-            c.creator       = reporters_by_old_id[row["ReporterId"]]
-            c.creation_date = row["creation_time"]
-            c.license_id    = unspecified.id
-            # `status` enum('display','pending','deleted') NOT NULL default 'display',
-            log.debug("   |- %3d - %s" % (row["id"], c.title, ))
-            Session.add(c)
+            if row["ArticleId"] in newsarticles_by_old_id:
+                c               = CommentContent()
+                c.parent        = newsarticles_by_old_id[row["ArticleId"]]
+                c.title         = u"Re: " + c.parent.title
+                c.content       = row["contents"].decode("utf-8")
+                c.creator       = reporters_by_old_id[row["ReporterId"]]
+                c.creation_date = row["creation_time"]
+                c.license_id    = unspecified.id
+                # `status` enum('display','pending','deleted') NOT NULL default 'display',
+                log.debug("   |- %3d - %s" % (row["id"], c.title, ))
+                Session.add(c)
+            else:
+                log.info("   |- Comment's parent was deleted: %3d" % (row["id"], ))
         Session.commit()
         # }}}
         log.info("|- Converting ratings to rating") # {{{
         for row in leg_conn.execute("SELECT * FROM ratings"):
-            r = Rating()
-            r.content    = newsarticles_by_old_id[row["NewsArticleId"]]
-            r.member     = reporters_by_old_id[row["RatedByReporterId"]]
-            r.rating     = row["Rating"]
-            # `update_time` datetime default NULL,
-            # `CatId` int(3) unsigned NOT NULL,
-            log.debug("   |- %s - %s - %d" % (r.member.username, r.content.title, r.rating))
-            Session.add(r)
+            if row["NewsArticleId"] in newsarticles_by_old_id:
+                r = Rating()
+                r.content    = newsarticles_by_old_id[row["NewsArticleId"]]
+                r.member     = reporters_by_old_id[row["RatedByReporterId"]]
+                r.rating     = row["Rating"]
+                # `update_time` datetime default NULL,
+                # `CatId` int(3) unsigned NOT NULL,
+                log.debug("   |- %s - %s - %d" % (r.member.username, r.content.title, r.rating))
+                Session.add(r)
+            else:
+                log.info("   |- Rating's parent was deleted: %3d" % (row["id"], ))
         Session.commit()
         # }}}
         log.info("|- Converting assignments_accepted to map_member_to_assignment") # {{{
