@@ -9,6 +9,12 @@ from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
 import hashlib
+import magic
+import logging
+import os
+import shutil
+
+log = logging.getLogger(__name__)
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -201,29 +207,47 @@ class Media(Base):
     name          = Column(UnicodeText(250), nullable=False)
     type          = Column(_media_types,     nullable=False, doc="MIME type, eg 'text', 'video'")
     subtype       = Column(String(32),       nullable=False, doc="MIME subtype, eg 'jpeg', '3gpp'")
-    hash          = Column(String(32),       nullable=False, index=True) # FIXME: 32=md5? do we want md5?
+    hash          = Column(String(40),       nullable=False, index=True)
     caption       = Column(UnicodeText(),    nullable=False)
     credit        = Column(UnicodeText(),    nullable=False)
 
-    def __init__(self, tmp_file=None, original_name=None, caption=None, credit=None):
+    def __init__(self):
+        pass
+
+    def load_from_file(self, tmp_file=None, original_name=None, caption=None, credit=None):
         "Create a Media object from a blob of data + upload form details"
-        if tmp_file:
-            self.name = original_name
-            (self.type, self.subtype) = ["video", "3gpp"] # FIXME: magic(tmp_file).split("/")
-            self.hash = hashlib.md5(file(tmp_file).read()).hexdigest() # FIXME: send chunks to md5, not the whole file
-            self.caption = caption
-            self.credit = credit
+        self.name = original_name
+        self.type, self.subtype = magic.from_file(tmp_file, mime=True).split("/")
+        self.hash = hashlib.sha1(file(tmp_file).read()).hexdigest() # FIXME: send chunks to hashlib, not the whole file
+        self.caption = caption if caption else u""
+        self.credit = credit if credit else u""
 
-        # process tmp_file
-        # create processed_file
-        # create thumbnail
+        def copy_to_warehouse(src, warehouse, hash):
+            dest = "./civicboom/public/warehouse/%s/%s/%s/%s" % (warehouse, self.hash[0:2], self.hash[2:4], self.hash)
+            if not os.path.exists(os.path.dirname(dest)):
+                os.makedirs(os.path.dirname(dest))
+            shutil.copy(src, dest)
 
+        copy_to_warehouse(tmp_file, "originals", self.hash)
+
+        # FIXME: turn tmp_file into something suitable for web viewing
+        copy_to_warehouse(tmp_file, "media", self.hash)
+
+        # FIXME: turn tmp_file into a thumbnail
+        copy_to_warehouse(tmp_file, "thumbnails", self.hash)
+
+        log.debug("Created Media from file %s -> %s" % (self.name, self.hash))
+
+        return self
+
+    def sync(self):
         # copy to mirror via SCP
         #scp = SCPClient(SSHTransport("static.civicboom.com"))
         #scp.put(self.name, "~/staticdata/%s/%s/%s" % (self.hash[0:1], self.hash[2:3], self.hash))
 
         # copy to amazon s3
         # ...
+        return self
 
     def __unicode__(self):
         return self.name
