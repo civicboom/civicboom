@@ -1,8 +1,6 @@
  # vim: set fileencoding=utf8:
 
 """Setup the civicboom application"""
-import logging
-
 from civicboom.config.environment import load_environment
 from civicboom.model import meta
 
@@ -12,7 +10,16 @@ from civicboom.model import User, Group
 from civicboom.model import ArticleContent, CommentContent, DraftContent, AssignmentContent, Media
 from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
+from civicboom.lib import warehouse as wh
+
+import logging
 import datetime
+from glob import glob
+import os
+import re
+import Image
+import tempfile
+
 
 log = logging.getLogger(__name__)
 
@@ -70,7 +77,6 @@ def setup_app(command, conf, vars):
     ###################################################################
     if meta.legacy_engine:
         log.info("Converting from legacy database") # {{{
-        import re
         leg_sess = LegacySession()
         leg_conn = leg_sess.connection()
 
@@ -193,9 +199,6 @@ def setup_app(command, conf, vars):
             return None
 
         def get_media(row, type):
-            from glob import glob
-            import os
-
             caption = None
             credit = None
             if "imageCredit" in row and row["imageCredit"]:
@@ -208,6 +211,27 @@ def setup_app(command, conf, vars):
                 #log.debug("Guessing that "+fn+" is associated with "+type+" "+str(row["id"]))
                 attachments.append(Media().load_from_file(fn, os.path.basename(fn).decode("ascii"), caption, credit))
             return attachments
+
+        def get_avatar(id):
+            hash = None
+            files = glob("./tmp/profilepics/"+str(row["id"])+".*")
+            if len(files) == 1:
+                fn = files[0]
+                hash = wh.hash_file(fn)
+                wh.copy_to_local_warehouse(fn, "avatars-original", hash)
+
+                processed = tempfile.NamedTemporaryFile(suffix=".jpg")
+                im = Image.open(fn)
+                if im.mode != "RGB":
+                    im = im.convert("RGB")
+                im.thumbnail([128, 128], Image.ANTIALIAS)
+                im.save(processed.name, "JPEG")
+                wh.copy_to_local_warehouse(processed.name, "avatars", hash)
+                processed.close()
+
+                wh.copy_to_remote_warehouse("avatars-original", hash)
+                wh.copy_to_remote_warehouse("avatars", hash)
+            return hash
         # }}}
 
         log.info("|- Converting reporters to users") # {{{
@@ -224,6 +248,7 @@ def setup_app(command, conf, vars):
             u.description   = get_description(row)
             u.status        = convert_status(row["Status"])
             u.last_check    = row["notification_check"]
+            u.avatar        = get_avatar(row["id"])
 #  `Password` varchar(40) default NULL,
 #  `Birth` date default NULL,
 #  `Gender` enum('M','F','U') NOT NULL default 'U',

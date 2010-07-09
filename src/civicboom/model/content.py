@@ -235,7 +235,7 @@ class Media(Base):
         self.caption = caption if caption else u""
         self.credit = credit if credit else u""
 
-        wh.copy_to_local_warehouse(tmp_file, "originals", self.hash)
+        wh.copy_to_local_warehouse(tmp_file, "media-originals", self.hash)
 
         # FIXME: turn tmp_file into something suitable for web viewing
         if self.type == "image":
@@ -276,7 +276,7 @@ class Media(Base):
                 im = im.convert("RGB")
             im.thumbnail(size, Image.ANTIALIAS)
             im.save(processed.name, "JPEG")
-            wh.copy_to_local_warehouse(processed.name, "thumbnails", self.hash)
+            wh.copy_to_local_warehouse(processed.name, "media-thumbnails", self.hash)
             processed.close()
         elif self.type == "audio":
             # audio has no thumb; what is displayed to the user is
@@ -291,7 +291,7 @@ class Media(Base):
                 "-s", "%dx%d" % (size[0], size[1]),
                 "-f", "image2", processed.name
             ])
-            wh.copy_to_local_warehouse(processed.name, "thumbnails", self.hash)
+            wh.copy_to_local_warehouse(processed.name, "media-thumbnails", self.hash)
             processed.close()
 
         #log.debug("Created Media from file %s -> %s" % (self.name, self.hash))
@@ -299,10 +299,10 @@ class Media(Base):
         return self
 
     def sync(self):
-        wh.copy_to_remote_warehouse("originals", self.hash)
+        wh.copy_to_remote_warehouse("media-originals", self.hash)
         wh.copy_to_remote_warehouse("media", self.hash)
         if self.type != "audio":
-            wh.copy_to_remote_warehouse("thumbnails", self.hash)
+            wh.copy_to_remote_warehouse("media-thumbnails", self.hash)
         return self
 
     def __unicode__(self):
