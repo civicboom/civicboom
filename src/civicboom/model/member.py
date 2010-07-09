@@ -41,7 +41,7 @@ class Member(Base):
     num_followers   = Column(Integer(),      nullable=False, default=0) #FIXME: derived
     webpage         = Column(Unicode(),      nullable=False, default=u"")
     status          = Column(_member_status, nullable=False, default="active")
-    avatar          = Column(String(32),     nullable=True,  doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar") # FIXME: 32=md5? do we want md5?
+    avatar          = Column(String(40),     nullable=True,  doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar")
     content         = relationship("Content", backref=backref('creator'))
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
     messages_to     = relationship("Message", primaryjoin="Message.target_id==Member.id", backref=backref('target', order_by=id))
