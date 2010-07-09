@@ -10,6 +10,13 @@ from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
 import magic
+import Image
+import tempfile
+import os
+import logging
+import subprocess
+
+log = logging.getLogger(__name__)
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -206,8 +213,22 @@ class Media(Base):
     caption       = Column(UnicodeText(),    nullable=False)
     credit        = Column(UnicodeText(),    nullable=False)
 
+    def _ffmpeg(self, args):
+        """
+        Convenience function to run ffmpeg and log the output
+        """
+        ffmpeg = "/usr/bin/ffmpeg" # FIXME: config variable?
+        cmd = [ffmpeg, ] + args
+        log.info(" ".join(cmd))
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output = proc.communicate()
+        log.debug("stdout: "+output[0])
+        log.debug("stderr: "+output[1])
+        log.debug("return: "+str(proc.returncode))
+
     def load_from_file(self, tmp_file=None, original_name=None, caption=None, credit=None):
         "Create a Media object from a blob of data + upload form details"
+        # Set up metadata
         self.name = original_name
         self.type, self.subtype = magic.from_file(tmp_file, mime=True).split("/")
         self.hash = wh.hash_file(tmp_file)
@@ -218,21 +239,60 @@ class Media(Base):
 
         # FIXME: turn tmp_file into something suitable for web viewing
         if self.type == "image":
-            pass
+            processed = tempfile.NamedTemporaryFile(suffix=".jpg")
+            size = 480, 360
+            im = Image.open(tmp_file)
+            if im.mode != "RGB":
+                im = im.convert("RGB")
+            im.thumbnail(size, Image.ANTIALIAS)
+            im.save(processed.name, "JPEG")
+            wh.copy_to_local_warehouse(processed.name, "media", self.hash)
+            processed.close()
         elif self.type == "audio":
-            pass
+            processed = tempfile.NamedTemporaryFile(suffix=".ogg")
+            self._ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
+            wh.copy_to_local_warehouse(processed.name, "media", self.hash)
+            processed.close()
         elif self.type == "video":
-            pass
-        wh.copy_to_local_warehouse(tmp_file, "media", self.hash)
+            processed = tempfile.NamedTemporaryFile(suffix=".flv")
+            size = 480, 360
+            self._ffmpeg([
+                "-y", "-i", tmp_file,
+                "-ab", "56k", "-ar", "22050",
+                "-qmin", "2", "-qmax", "16",
+                "-b", "320k", "-r", "15",
+                "-s", "%dx%d" % (size[0], size[1]),
+                processed.name
+            ])
+            wh.copy_to_local_warehouse(processed.name, "media", self.hash)
+            processed.close()
 
-        # FIXME: turn tmp_file into a thumbnail
+        # create a thumbnail
         if self.type == "image":
-            pass
+            processed = tempfile.NamedTemporaryFile(suffix=".jpg")
+            size = 128, 128 # FIXME: config value?
+            im = Image.open(tmp_file)
+            if im.mode != "RGB":
+                im = im.convert("RGB")
+            im.thumbnail(size, Image.ANTIALIAS)
+            im.save(processed.name, "JPEG")
+            wh.copy_to_local_warehouse(processed.name, "thumbnails", self.hash)
+            processed.close()
         elif self.type == "audio":
+            # audio has no thumb; what is displayed to the user is
+            # a player plugin
             pass
         elif self.type == "video":
-            pass
-        wh.copy_to_local_warehouse(tmp_file, "thumbnails", self.hash)
+            processed = tempfile.NamedTemporaryFile(suffix=".jpg")
+            size = 128, 128 # FIXME: config value?
+            self._ffmpeg([
+                "-y", "-i", tmp_file,
+                "-an", "-vframes", "1", "-r", "1",
+                "-s", "%dx%d" % (size[0], size[1]),
+                "-f", "image2", processed.name
+            ])
+            wh.copy_to_local_warehouse(processed.name, "thumbnails", self.hash)
+            processed.close()
 
         #log.debug("Created Media from file %s -> %s" % (self.name, self.hash))
 
@@ -241,7 +301,8 @@ class Media(Base):
     def sync(self):
         wh.copy_to_remote_warehouse("originals", self.hash)
         wh.copy_to_remote_warehouse("media", self.hash)
-        wh.copy_to_remote_warehouse("thumbnails", self.hash)
+        if self.type != "audio":
+            wh.copy_to_remote_warehouse("thumbnails", self.hash)
         return self
 
     def __unicode__(self):
