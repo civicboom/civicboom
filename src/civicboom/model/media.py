@@ -114,10 +114,10 @@ class Media(Base):
         return self
 
     def sync(self):
-        wh.copy_to_remote_warehouse("media-original", self.hash)
-        wh.copy_to_remote_warehouse("media", self.hash)
+        wh.copy_to_remote_warehouse("media-original", self.hash, self.name)
+        wh.copy_to_remote_warehouse("media", self.hash, self.media_name)
         if self.type != "audio":
-            wh.copy_to_remote_warehouse("media-thumbnail", self.hash)
+            wh.copy_to_remote_warehouse("media-thumbnail", self.hash, "thumb.jpg")
         return self
 
     def __unicode__(self):
@@ -128,6 +128,15 @@ class Media(Base):
         return self.type + "/" + self.subtype
 
     @property
+    def media_name(self):
+        exts = {
+            "audio": "ogg",
+            "image": self.subtype, # this just happens to work for PNG, GIF, JPEG
+            "video": "flv"
+        }
+        return "%d.%s" % (self.id, exts[self.type])
+
+    @property
     def original_url(self):
         "The URL of the original as-uploaded file"
         return "http://static.civicboom.com/media-originals/%s/%s" % (self.hash, self.name)
@@ -135,12 +144,7 @@ class Media(Base):
     @property
     def media_url(self):
         "The URL of the processed media, eg .flv file for video"
-        exts = {
-            "audio": "ogg",
-            "image": "jpeg",
-            "video": "flv"
-        }
-        return "http://static.civicboom.com/media/%s/data.%s" % (self.hash, exts[self.type])
+        return "http://static.civicboom.com/media/%s/%s" % (self.hash, self.media_filename)
 
     @property
     def thumbnail_url(self):
