@@ -13,8 +13,8 @@ cb-website.deb: $(shell find ../admin_scripts ../apache ../debian ../downtime ..
 	cp ../admin_scripts/* ./fs-website/opt/cb/bin/
 	mkdir -p fs-website/opt/cb/share/website
 	cp -r ../src/* ./fs-website/opt/cb/share/website/
-	mkdir -p fs-website/etc/apache2/sites-available/
-	cp ../apache/civicboom.com-* fs-website/etc/apache2/sites-available/
+	mkdir -p fs-website/etc/nginx/sites-available/
+	cp ../nginx/civicboom.com fs-website/etc/nginx/sites-available/
 	mkdir -p fs-website/etc/cron.d/
 	cp crontab fs-website/etc/cron.d/cb-website
 	mkdir -p fs-website/etc/init.d/

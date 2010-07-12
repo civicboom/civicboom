@@ -3,24 +3,11 @@
 mkdir -p /var/log/apache2/civicboom.com/
 make-ssl-cert generate-default-snakeoil
 
-#chown -R www-data:www-data /opt/cb/share/website/data
-
-# FIXME: when the package is first installed, we
-# want to activate the live site. This code doesn't
-# work though :(
-
-#if [ ! -f /etc/apache2/sites-enabled/civicboom.com-(live|down) ] ; then
-#	a2enmod rewrite
-#	a2enmod ssl
-#	a2enmod headers
-#	a2ensite civicboom.com-live
-#fi
-
-#cd /opt/cb/share/website
-#python deploy.py deployment.ini
+ln -s /etc/nginx/sites-available/civicboom.com /etc/nginx/sites-enabled/
 
 mkdir /var/log/civicboom
 chown www-data:www-data /var/log/civicboom
 
 update-rc.d cb-website defaults
 invoke-rc.d cb-website start
+invoke-rc.d nginx restart

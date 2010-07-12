@@ -6,7 +6,7 @@ Depends: python,
  python-pylons(>=1.0), python-sqlalchemy(>=0.6), python-webhelpers(>=1.0),
  python-psycopg2, python-imaging, python-boto,
  ffmpeg,
- apache2, libapache2-mod-wsgi,
+ nginx,
  postgresql-8.4, postgresql-8.4-postgis
 Description: The code for the main civicboom website rewrite
  Also requires some non-packaged python modules:
