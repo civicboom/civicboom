@@ -1,10 +1,21 @@
 #!/bin/sh -e
 
+### BEGIN INIT INFO
+# Provides:          cb-website
+# Required-Start:    $syslog
+# Required-Stop:     $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start cb-website at boot time
+# Description:       Run the cb-website pylons app using paster.
+### END INIT INFO
+
 . /opt/cb-env/bin/activate
 
 APP=/opt/cb/share/website
-UID=--user www-data --group www-data
-DAE=--daemon --pid-file=/var/run/cb-website.pid --log-file=/var/log/civicboom/pylons.log
+UID="--user www-data --group www-data"
+# FIXME /tmp should be /var/run
+DAE="--daemon --pid-file=/tmp/cb-website.pid --log-file=/var/log/civicboom/pylons.log"
 
 case "$1" in
   start)

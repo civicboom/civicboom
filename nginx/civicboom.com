@@ -3,8 +3,8 @@ server {
 	listen   443 default ssl;
 	server_name  .civicboom.com new-server;
 	access_log  /var/log/civicboom/nginx.log;
-	ssl_certificate      /etc/ssl/certs/ssl-cert-snakeoil.pem;
-	ssl_certificate_key  /etc/ssl/private/ssl-cert-snakeoil.key;
+	ssl_certificate      /opt/cb/etc/ssl/civicboom.com.crt;
+	ssl_certificate_key  /opt/cb/etc/ssl/civicboom.com.key;
 
 	location / {
 		# static files
