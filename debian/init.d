@@ -4,7 +4,7 @@
 
 APP=/opt/cb/share/website
 UID=--user www-data --group www-data
-DAE=--daemon --pid-file=/var/run/cb-website.pid --log-file=/var/log/cb-website.log
+DAE=--daemon --pid-file=/var/run/cb-website.pid --log-file=/var/log/civicboom/pylons.log
 
 case "$1" in
   start)

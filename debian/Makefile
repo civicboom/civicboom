@@ -21,6 +21,8 @@ cb-website.deb: $(shell find ../admin_scripts ../apache ../debian ../downtime ..
 	cp crontab fs-website/etc/cron.d/cb-website
 	mkdir -p fs-website/etc/init.d/
 	cp init.d fs-website/etc/init.d/civicboom
+	mkdir -p fs-website/var/log/civicboom
+	echo "this file can be deleted" > fs-website/var/log/civicboom/pkg.log
 	fakeroot dpkg -b fs-website cb-website_${VERSION}.deb 
 	ln -sf cb-website_${VERSION}.deb cb-website.deb
 
