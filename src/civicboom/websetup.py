@@ -205,8 +205,8 @@ def setup_app(command, conf, vars):
                 credit = row["imageCredit"].decode("ascii")
 
             attachments = []
-            bases  = glob("./tmp/"+type+"_files/"+str(row["id"])+".*")
-            extras = glob("./tmp/"+type+"_files/"+str(row["id"])+"_*.*")
+            bases  = glob("../tmp/"+type+"_files/"+str(row["id"])+".*")
+            extras = glob("../tmp/"+type+"_files/"+str(row["id"])+"_*.*")
             for fn in bases + extras:
                 #log.debug("Guessing that "+fn+" is associated with "+type+" "+str(row["id"]))
                 attachments.append(Media().load_from_file(fn, os.path.basename(fn).decode("ascii"), caption, credit))
@@ -214,7 +214,7 @@ def setup_app(command, conf, vars):
 
         def get_avatar(id):
             hash = None
-            files = glob("./tmp/profilepics/"+str(row["id"])+".*")
+            files = glob("../tmp/profilepics/"+str(row["id"])+".*")
             if len(files) == 1:
                 fn = files[0]
                 hash = wh.hash_file(fn)

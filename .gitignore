@@ -3,3 +3,4 @@ env
 src/data
 debian/*.deb
 debian/fs-*
+src/civicboom/public/warehouse
