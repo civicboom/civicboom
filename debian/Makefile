@@ -19,6 +19,8 @@ cb-website.deb: $(shell find ../admin_scripts ../apache ../debian ../downtime ..
 	cp ../apache/civicboom.com-* fs-website/etc/apache2/sites-available/
 	mkdir -p fs-website/etc/cron.d/
 	cp crontab fs-website/etc/cron.d/cb-website
+	mkdir -p fs-website/etc/init.d/
+	cp init.d fs-website/etc/init.d/civicboom
 	fakeroot dpkg -b fs-website cb-website_${VERSION}.deb 
 	ln -sf cb-website_${VERSION}.deb cb-website.deb
 

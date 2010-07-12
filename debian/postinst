@@ -22,3 +22,5 @@ make-ssl-cert generate-default-snakeoil
 #. /usr/share/debconf/confmodule
 #. /usr/share/dbconfig-common/dpkg/postinst.pgsql
 #dbc_go cb-website $@
+
+update-rc.d cb-website defaults
