@@ -509,7 +509,7 @@ def setup_app(command, conf, vars):
         asc.status     = "show"
         asc.private    = True
         asc.license_id = cc_by.id
-        asc.assigned_to.append(g)
+        #asc.assigned_to.append(g)
         g.content.append(asc)
         Session.add_all([asc, ])
         Session.commit()
