@@ -2,7 +2,7 @@ Package: cb-website
 Version: VERSION
 Architecture: all
 Maintainer: Shish <shish@civicboom.com>
-Depends: python,
+Depends: python, cb-env(>=0.3),
  python-pylons(>=1.0), python-sqlalchemy(>=0.6), python-webhelpers(>=1.0),
  python-psycopg2, python-imaging, python-boto,
  ffmpeg,
