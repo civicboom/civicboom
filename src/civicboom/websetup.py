@@ -97,7 +97,7 @@ def setup_app(command, conf, vars):
             if row["homepage"]:
                 d = d + "<a href='"+row["homepage"]+"'>My home page</a>"
             if row["Dream_Assignment"]:
-                d = d + "<p>Dream Assignment:<br>"+row["Dream_Assignment"]
+                d = d + "<p>Dream Assignment:<br/>"+row["Dream_Assignment"]
             if row["specialist_topic1"] or row["specialist_catId"]:
                 if row["interview_me"] == 1:
                     d = d + "<p>Willing to be interviewed about "
@@ -140,6 +140,7 @@ def setup_app(command, conf, vars):
             return m[old_status]
 
         # FIXME: put this in helpers, and make it work
+        # find a tag if it exisits already or create a new one
         def get_tag(name):
             return uncategorised
 
@@ -170,15 +171,15 @@ def setup_app(command, conf, vars):
             content = row["content"]
             if row["link1_text"]:
                 content = content + "<p>Links:"
-                content = content + ("<br><a href='%s'>%s</a>" % (row["link1_url"], row["link1_text"]))
+                content = content + ("<br/><a href='%s'>%s</a>" % (row["link1_url"], row["link1_text"]))
             if row["link2_text"]:
-                content = content + ("<br><a href='%s'>%s</a>" % (row["link2_url"], row["link2_text"]))
+                content = content + ("<br/><a href='%s'>%s</a>" % (row["link2_url"], row["link2_text"]))
             if row["link3_text"]:
-                content = content + ("<br><a href='%s'>%s</a>" % (row["link3_url"], row["link3_text"]))
+                content = content + ("<br/><a href='%s'>%s</a>" % (row["link3_url"], row["link3_text"]))
             if "link4_text" in row and row["link4_text"]:
-                content = content + ("<br><a href='%s'>%s</a>" % (row["link4_url"], row["link4_text"]))
+                content = content + ("<br/><a href='%s'>%s</a>" % (row["link4_url"], row["link4_text"]))
             if "link5_text" in row and row["link5_text"]:
-                content = content + ("<br><a href='%s'>%s</a>" % (row["link5_url"], row["link5_text"]))
+                content = content + ("<br/><a href='%s'>%s</a>" % (row["link5_url"], row["link5_text"]))
             return content
 
         def get_tag_by_old_category_id(c_id):
@@ -194,7 +195,7 @@ def setup_app(command, conf, vars):
             #  `ZipId` int(10) unsigned default NULL,
             #  `Address` varchar(255) default NULL,          # reporters
             #  `Address2` varchar(255) default NULL,
-            #  `geolocation_latitude` double default NULL,   # newsarticles
+            #  `geolocation_latitude` double default NULL,   # newsarticles AllanC - These are only used by mobile uploads currently
             #  `geolocation_longitude` double default NULL,
             return None
 
@@ -224,7 +225,7 @@ def setup_app(command, conf, vars):
                 im = Image.open(fn)
                 if im.mode != "RGB":
                     im = im.convert("RGB")
-                im.thumbnail([128, 128], Image.ANTIALIAS)
+                im.thumbnail([128, 128], Image.ANTIALIAS) #AllanC - FIXME size from config? default gravatar size
                 im.save(processed.name, "JPEG")
                 wh.copy_to_local_warehouse(processed.name, "avatars", hash)
                 processed.close()

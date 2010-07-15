@@ -59,7 +59,7 @@ def hash_file(name, method="sha1"):
     hash = hashlib.new(method)
     data = "x"
     while data:
-        data = fp.read(8192)
+        data = fp.read(1024 * 64)
         hash.update(data)
     fp.close()
     return hash.hexdigest()
