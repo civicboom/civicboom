@@ -7,7 +7,7 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
-#from civicboom.model import MemberAssignmentMapping
+import urllib, hashlib
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -70,6 +70,16 @@ class User(Member):
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (User)"
+
+    @property
+    def avatar_url(self, size=80):
+        # FIXME: this is the old server's default; it has a typo in and everything
+        # we should really come up with a new one (no built-in drop shadow) for the
+        # new site
+        default = "http://www.civicboom.com/images/default_avantar.jpeg"
+        hash = hashlib.md5(self.email.lower()).hexdigest()
+        args = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
+        gravatar_url = "http://www.gravatar.com/avatar/%s?"
 
 
 class Group(Member):
