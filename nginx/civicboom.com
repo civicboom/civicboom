@@ -1,14 +1,14 @@
 server {
 	listen   80;
 	listen   443 default ssl;
-	server_name  .civicboom.com new-server;
+	server_name  .civicboom.com new-server localhost;
 	access_log  /var/log/civicboom/nginx.log;
 	ssl_certificate      /opt/cb/etc/ssl/civicboom.com.crt;
 	ssl_certificate_key  /opt/cb/etc/ssl/civicboom.com.key;
 
 	location / {
 		# static files
-		root   /home/shish/website/src/civicboom/public/;
+		root   /opt/cb/share/website/civicboom/public/;
 		error_page   404  /404.html;
 		error_page   500 502 503 504  /50x.html;
 
