@@ -159,7 +159,7 @@ def setup_app(command, conf, vars):
             if "catId" in row:
                 a.tags.append(get_tag_by_old_category_id(row["catId"]))
             if "CatId" in row:
-                a.tags.append(get_tag_by_old_category_id(row["catId"]))
+                a.tags.append(get_tag_by_old_category_id(row["CatId"]))
             return list(set(tags))
 
         def get_content(row):
