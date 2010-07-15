@@ -4,6 +4,7 @@ from civicboom.model.meta import Base
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
+from sqlalchemy import and_
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
@@ -29,7 +30,7 @@ class Follow(Base):
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
-    __type__        = Column(Enum("user", "group", name="member_type")) # FIXME: need full list
+    __type__        = Column(Enum("user", "group", name="member_type"))
     __mapper_args__ = {'polymorphic_on': __type__}
     _member_status  = Enum("active", "pending", "removed", name="member_status")
     id              = Column(Integer(),      primary_key=True)
@@ -37,15 +38,21 @@ class Member(Base):
     name            = Column(Unicode(250),   nullable=False  )
     join_date       = Column(Date(),         nullable=False, default="now()")
     home_location   = Column(Unicode(250),   nullable=True,  doc="Name of a location for informational purposes, eg 'London', 'Global', 'Wherever the sun shines'")
+    # AllanC notes: home location? point? for individual, area by radius, countrys by polygons? - Shish maybe investigate?
     description     = Column(UnicodeText(),  nullable=False, default=u"")
     num_followers   = Column(Integer(),      nullable=False, default=0) #FIXME: derived
     webpage         = Column(Unicode(),      nullable=False, default=u"")
     status          = Column(_member_status, nullable=False, default="active")
     avatar          = Column(String(40),     nullable=True,  doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar")
+    
     content         = relationship("Content", backref=backref('creator'))
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
-    messages_to     = relationship("Message", primaryjoin="Message.target_id==Member.id", backref=backref('target', order_by=id))
-    messages_from   = relationship("Message", primaryjoin="Message.source_id==Member.id", backref=backref('source', order_by=id))
+    
+    messages_to           = relationship("Message", primaryjoin=and_("Message.source_id!=sa.null()", "Message.target_id==Member.id"), backref=backref('target', order_by=id))
+    messages_from         = relationship("Message", primaryjoin=and_("Message.source_id==Member.id", "Message.target_id!=sa.null()"), backref=backref('source', order_by=id))
+    messages_public       = relationship("Message", primaryjoin=and_("Message.source_id==Member.id", "Message.target_id==sa.null()"), backref=backref('source', order_by=id))
+    messages_notification = relationship("Message", primaryjoin=and_("Message.source_id==sa.null()", "Message.target_id==Member.id"), backref=backref('source', order_by=id))
+    
     groups          = relationship("Group",   secondary=GroupMembership.__table__)
     followers       = relationship("Member",  primaryjoin="Member.id==Follow.member_id", secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
     following       = relationship("Member",  primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)

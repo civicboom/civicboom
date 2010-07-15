@@ -46,31 +46,27 @@ class Content(Base):
       only visible to creator and requester
 
     ContentAssignment
-      only visible to creator and creator-specificed users/groups
+      responses are provate to oringinal creator
 
     (FIXME: is this correct?)
     """
     __tablename__   = "content"
-    # FIXME: is this list complete?
-    __type__        = Column(Enum("comment", "draft", "article", "assignment", name="content_type"), nullable=False)
+    __type__        = Column(Enum("comment", "draft", "article", "assignment", "syndicate", name="content_type"), nullable=False)
     __mapper_args__ = {'polymorphic_on': __type__}
-    # FIXME: "etc"?
     _content_status = Enum("show", "pending", "locked", name="content_status")
     id              = Column(Integer(),        primary_key=True)
     title           = Column(Unicode(250),     nullable=False  )
     content         = Column(UnicodeText(),    nullable=False, doc="The body of text")
     creator_id      = Column(Integer(),        ForeignKey('member.id'), nullable=False)
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True)
-    # FIXME: area rather than point?
-    location        = GeometryColumn(Point(2), nullable=True   )
+    location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)
     creation_date   = Column(DateTime(),       nullable=False, default="now()")
     update_date     = Column(DateTime(),       nullable=False, default="now()")
     status          = Column(_content_status,  nullable=False, default="show")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
-    # FIXME: default license? People just making comments probably don't want to pick one every time
-    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False)
+    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
     # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
-    responses       = relationship("Content",            backref=backref('parent', remote_side=id), cascade="all")
+    responses       = relationship("Content",            backref=backref('parent', remote_side=id)) #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content
     attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
@@ -105,7 +101,6 @@ class ArticleContent(UserVisibleContent):
     id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
     rating          = Column(Integer(), nullable=False, default=0) # FIXME: derived
     ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
-    # FIXME: type (news, feature, article, etc?)
 
 
 class AssignmentContent(UserVisibleContent):
@@ -115,21 +110,14 @@ class AssignmentContent(UserVisibleContent):
     event_date      = Column(DateTime(),       nullable=True)
     due_date        = Column(DateTime(),       nullable=True)
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
-    #private D (if any AssignmentClosed records exist) # FIXME: "content" already has this?
-    #private_response (bool) (already exisits? see content)
+    closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
 
 class MemberAssignment(Base):
     __tablename__ = "member_assignment"
+    _assignment_status = Enum("pending", "accepted", "withdrawn", name="assignment_status")
     content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
-    withdrawn     = Column(Boolean(),    nullable=False, default=False)
-
-
-
-# FIXME: is this needed?
-#class AssignmentClosed(Base):
-#    contentAssignmentId
-#    memberId
+    member_id     = Column(Integer(),    ForeignKey('member.id')            , nullable=False, primary_key=True)
+    status        = Column(_assignment_status,  nullable=False)
 
 
 class License(Base):
@@ -151,11 +139,10 @@ class License(Base):
         return self.code
 
 
-# FIXME: do we need types *and* parents?
 # "type" was added so that "artist_name:red_box" and "photo_of:red_box" could
 # be separated, but we could have category->artists->red_box and
 # article_contents->photo_of->red_box instead
-# Shish - assuming we don't need types
+# Shish - assuming we don't need types AllanC agreed
 class Tag(Base):
     """
     A topic for an article, eg "cakes", "printers"
