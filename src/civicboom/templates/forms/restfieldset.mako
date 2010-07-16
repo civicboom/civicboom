@@ -39,10 +39,34 @@ from pylons import url
 <div id="content" class="ui-admin ui-widget">
   %if isinstance(models, dict):
     <h1 id="header" class="ui-widget-header ui-corner-all">${F_('Models')}</h1>
+	<!-- Follow, GroupMembership, Media, MemberAssignment, Rating -->
+	<table>
+		<tr>
+			<td>
+				<p><a class="ui-state-default ui-corner-all" href="${models['ArticleContent']}">Articles</a></p>
+				<p><a class="ui-state-default ui-corner-all" href="${models['AssignmentContent']}">Assignments</a></p>
+				<p><a class="ui-state-default ui-corner-all" href="${models['CommentContent']}">Comments</a></p>
+				<p><a class="ui-state-default ui-corner-all" href="${models['DraftContent']}">Drafts</a></p>
+				<hr>
+				<p><a class="ui-state-default ui-corner-all" href="${models['ContentEditHistory']}">Content Edit History</a></p>
+			</td>
+			<td>
+				<p><a class="ui-state-default ui-corner-all" href="${models['User']}">Users</a></p>
+				<p><a class="ui-state-default ui-corner-all" href="${models['Group']}">Groups</a></p>
+				<p><a class="ui-state-default ui-corner-all" href="${models['Message']}">Messages</a></p>
+			</td>
+			<td>
+				<p><a class="ui-state-default ui-corner-all" href="${models['License']}">Licenses</a></p>
+				<p><a class="ui-state-default ui-corner-all" href="${models['Tag']}">Tags</a></p>
+				<p><a class="ui-state-default ui-corner-all" href="${models['Media']}">Media</a></p>
+			</td>
+		</tr>
+	</table>
+
+	<hr>
+	<p>Full List</p>
     %for name in sorted(models):
-      <p>
-        <a class="ui-state-default ui-corner-all" href="${models[name]}">${name}</a>
-      </p>
+      <a class="ui-state-default ui-corner-all" href="${models[name]}">${name}</a>,
     %endfor
   %elif is_grid:
     ${h1(model_name)}
