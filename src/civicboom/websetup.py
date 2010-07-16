@@ -34,6 +34,184 @@ def setup_app(command, conf, vars):
     Base.metadata.create_all(bind=Session.bind)
 
     # }}}
+    log.info("Creating triggers") # {{{
+    sess = Session()
+    conn = sess.connection()
+#model/member.py:    new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
+
+    conn.execute("""
+CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
+    DECLARE
+        tmp_member_id integer;
+    BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            tmp_member_id := NEW.member_id;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            RAISE EXCEPTION 'Can''t alter follows, only add or remove';
+        ELSIF (TG_OP = 'DELETE') THEN
+            tmp_member_id := OLD.member_id;
+        END IF;
+
+        UPDATE member SET num_followers = (
+            SELECT count(*)
+            FROM map_member_to_follower
+            WHERE member_id=tmp_member_id
+        ) WHERE id=tmp_member_id;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_follower_count
+    AFTER INSERT OR UPDATE OR DELETE ON map_member_to_follower
+    FOR EACH ROW EXECUTE PROCEDURE update_follower_count();
+    """)
+    conn.execute("""
+CREATE OR REPLACE FUNCTION update_group_size() RETURNS TRIGGER AS $$
+    DECLARE
+        tmp_group_id integer;
+    BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            tmp_group_id := NEW.group_id;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            IF (NEW.member_id != OLD.member_id OR NEW.group_id != OLD.group_id) THEN
+                RAISE EXCEPTION 'Can only alter membership types, not relations';
+            END IF;
+            tmp_group_id := NEW.group_id;
+        ELSIF (TG_OP = 'DELETE') THEN
+            tmp_group_id := OLD.group_id;
+        END IF;
+
+        UPDATE member_group SET num_members = (
+            SELECT count(*)
+            FROM map_user_to_group
+            WHERE group_id=tmp_group_id
+        ) WHERE id=tmp_group_id;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_group_size
+    AFTER INSERT OR UPDATE OR DELETE ON map_user_to_group
+    FOR EACH ROW EXECUTE PROCEDURE update_group_size();
+    """)
+    conn.execute("""
+CREATE OR REPLACE FUNCTION update_boom_count() RETURNS TRIGGER AS $$
+    DECLARE
+        tmp_content_id integer;
+    BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            tmp_content_id := NEW.content_id;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            RAISE EXCEPTION 'Can only add or remove booms, not alter';
+        ELSIF (TG_OP = 'DELETE') THEN
+            tmp_content_id := OLD.content_id;
+        END IF;
+
+        UPDATE content_user_visible SET boom_count = (
+            SELECT count(*)
+            FROM map_booms
+            WHERE content_id=tmp_content_id
+        ) WHERE id=tmp_content_id;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_boom_count
+    AFTER INSERT OR UPDATE OR DELETE ON map_booms
+    FOR EACH ROW EXECUTE PROCEDURE update_boom_count();
+    """)
+    conn.execute("""
+CREATE OR REPLACE FUNCTION pnormaldist(qn DOUBLE PRECISION) RETURNS NUMERIC AS $$
+    DECLARE
+        b NUMERIC[] := '{}';
+        w1 NUMERIC;
+        w3 NUMERIC;
+    BEGIN
+        b[0] := 1.570796288;
+        b[1] := 0.03706987906;
+        b[2] := -0.8364353589e-3;
+        b[3] := -0.2250947176e-3;
+        b[4] := 0.6841218299e-5;
+        b[5] := 0.5824238515e-5;
+        b[6] := -0.104527497e-5;
+        b[7] := 0.8360937017e-7;
+        b[8] := -0.3231081277e-8;
+        b[9] := 0.3657763036e-10;
+        b[10] := 0.6936233982e-12;
+
+        IF qn < 0.0 OR 1.0 < qn THEN
+            RETURN 0.0;
+        END IF;
+
+        IF qn = 0.5 THEN
+            RETURN 0.0;
+        END IF;
+
+        w1 := qn;
+        IF qn > 0.5 THEN
+            w1 := 1.0 - w1;
+        END IF;
+        w3 := -log(4.0 * w1 * (1.0 - w1));
+        w1 := b[0];
+        FOR i IN 1..10 LOOP
+            w1 := w1 + b[i] * power(w3,i);
+        END LOOP;
+
+        IF qn > 0.5 THEN
+            RETURN sqrt(w1*w3);
+        END IF;
+        RETURN -sqrt(w1*w3);
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION ci_lower_bound(positive BIGINT, total BIGINT, power NUMERIC) RETURNS NUMERIC AS $$
+    DECLARE
+        z NUMERIC;
+        phat NUMERIC;
+    BEGIN
+        IF total = 0 THEN
+            RETURN 0.0;
+        END IF;
+
+        z = pnormaldist(1-power/2);
+        phat = 1.0*positive/total;
+        RETURN (phat + z*z/(2*total) - z * sqrt((phat*(1-phat)+z*z/(4*total))/total))/(1+z*z/total);
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION update_rating() RETURNS TRIGGER AS $$
+    DECLARE
+        tmp_content_id integer;
+    BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            tmp_content_id := NEW.content_id;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            RAISE EXCEPTION 'Can only add or remove ratings, not alter';
+            IF (NEW.member_id != OLD.member_id OR NEW.content_id != OLD.content_id) THEN
+                RAISE EXCEPTION 'Can only alter rating numbers, not relations';
+            END IF;
+            tmp_content_id := NEW.content_id;
+        ELSIF (TG_OP = 'DELETE') THEN
+            tmp_content_id := OLD.content_id;
+        END IF;
+
+        UPDATE content_article SET rating = (
+            -- sum(rating)     = total score achieved
+            -- count(rating)*5 = total score possible
+            -- 0.1 = we want 95%% certainty of what minimum score is deserved
+            SELECT ci_lower_bound(sum(rating), count(rating)*5, 0.1)
+            FROM map_ratings
+            WHERE content_id=tmp_content_id
+        ) WHERE id=tmp_content_id;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_rating
+    AFTER INSERT OR UPDATE OR DELETE ON map_ratings
+    FOR EACH ROW EXECUTE PROCEDURE update_rating();
+    """)
+    #}}}
     ###################################################################
     log.info("Populating tables with base data") # {{{
 

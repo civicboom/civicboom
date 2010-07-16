@@ -8,6 +8,12 @@ from civicboom.model import meta
 class AdminControllerBase(BaseController):
     model = model # where your SQLAlchemy mappers are
     forms = forms # module containing FormAlchemy fieldsets definitions
+
+    # # Uncomment this to impose an authentication requirement
+    # @authorize(SignedIn())
+    # def __before__(self):
+    #     pass
+
     def Session(self): # Session factory
         return meta.Session
 

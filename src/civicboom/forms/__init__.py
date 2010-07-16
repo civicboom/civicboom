@@ -29,9 +29,97 @@ class Grid(tables.Grid):
 #Reflected = FieldSet(Reflected)
 
 ## Initialize grids
+# Not doing this will result in the object list being rendered with all fields visible
 
 #FooGrid = Grid(model.Foo)
 #ReflectedGrid = Grid(Reflected)
+
+
+ArticleContentGrid = Grid(model.ArticleContent)
+ArticleContentGrid.configure(include=[
+        ArticleContentGrid.title,
+        ArticleContentGrid.creator,
+        ArticleContentGrid.creation_date,
+        ArticleContentGrid.update_date,
+        ArticleContentGrid.status,
+        ArticleContentGrid.attachments,
+        ArticleContentGrid.tags,
+        ])
+
+AssignmentContentGrid = Grid(model.AssignmentContent)
+AssignmentContentGrid.configure(include=[
+        AssignmentContentGrid.title,
+        AssignmentContentGrid.creator,
+        AssignmentContentGrid.creation_date,
+        AssignmentContentGrid.update_date,
+        AssignmentContentGrid.status,
+        AssignmentContentGrid.attachments,
+        AssignmentContentGrid.tags,
+        ])
+
+CommentContentGrid = Grid(model.CommentContent)
+CommentContentGrid.configure(include=[
+        CommentContentGrid.title,
+        CommentContentGrid.creator,
+        CommentContentGrid.attachments,
+        CommentContentGrid.parent,
+        ])
+
+DraftContentGrid = Grid(model.DraftContent)
+DraftContentGrid.configure(include=[
+        DraftContentGrid.title,
+        DraftContentGrid.creator,
+        DraftContentGrid.creation_date,
+        DraftContentGrid.update_date,
+        DraftContentGrid.status,
+        DraftContentGrid.attachments,
+        DraftContentGrid.tags,
+        ])
+
+
+UserGrid = Grid(model.User)
+UserGrid.configure(include=[
+        UserGrid.name,
+        UserGrid.username,
+        UserGrid.join_date,
+        UserGrid.status,
+        ])
+
+GroupGrid = Grid(model.Group)
+GroupGrid.configure(include=[
+        GroupGrid.name,
+        GroupGrid.username,
+        GroupGrid.join_date,
+        GroupGrid.num_members,
+        ])
+
+MessageGrid = Grid(model.Message)
+MessageGrid.configure(include=[
+        MessageGrid.source,
+        MessageGrid.target,
+        MessageGrid.timestamp,
+        ])
+
+
+LicenseGrid = Grid(model.License)
+LicenseGrid.configure(include=[
+        LicenseGrid.code,
+        LicenseGrid.name,
+        ])
+
+TagGrid = Grid(model.Tag)
+TagGrid.configure(include=[
+        TagGrid.name,
+        TagGrid.parent_id,
+        ])
+
+MediaGrid = Grid(model.Media)
+MediaGrid.configure(include=[
+        MediaGrid.name,
+        MediaGrid.type,
+        MediaGrid.attached_to,
+        ])
+
 
 # custom renderers from geoformalchemy
 from geoformalchemy.base import GeometryFieldRenderer

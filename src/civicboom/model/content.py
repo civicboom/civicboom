@@ -5,7 +5,7 @@ from civicboom.model.media import Media
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
-from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
+from sqlalchemy import Enum, Integer, Date, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
@@ -92,14 +92,14 @@ class UserVisibleContent(Content):
     __tablename__ = "content_user_visible"
     id            = Column(Integer(), ForeignKey('content.id'), primary_key=True)
     views         = Column(Integer(), nullable=False, default=0)
-    boom_count    = Column(Integer(), nullable=False, default=0) # FIXME: derived
+    boom_count    = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
 
 
 class ArticleContent(UserVisibleContent):
     __tablename__   = "content_article"
     __mapper_args__ = {'polymorphic_identity': 'article'}
     id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
-    rating          = Column(Integer(), nullable=False, default=0) # FIXME: derived
+    rating          = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
     ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
 
 

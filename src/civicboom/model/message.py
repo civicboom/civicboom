@@ -1,6 +1,5 @@
 
 from civicboom.model.meta import Base
-from civicboom.model.member import Member
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import UnicodeText
