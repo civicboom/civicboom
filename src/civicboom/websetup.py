@@ -597,6 +597,7 @@ CREATE TRIGGER update_rating
         u1.home_location = u"The Moon"
         u1.description   = u"A user for automated tests to log in as"
         u1.status        = "active"
+        u1.email         = u"bob@bobcorp.com"
 
         u2 = User()
         u2.username      = u"unitfriend"
@@ -605,6 +606,7 @@ CREATE TRIGGER update_rating
         u2.home_location = u"The Moon"
         u2.description   = u"A user for automated tests to log in as"
         u2.status        = "active"
+        u2.email         = u"spam@shishnet.org"
 
         ca = ArticleContent()
         ca.title      = u"A test article"
