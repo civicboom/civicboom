@@ -13,8 +13,9 @@ setup(
     author_email='',
     url='',
     install_requires=[
-        "Pylons>=0.9.7",
-        "SQLAlchemy>=0.5",
+        "Pylons>=1.0.0",
+        "SQLAlchemy>=0.6",
+        "AuthKit",
     ],
     setup_requires=["PasteScript>=1.6.3"],
     packages=find_packages(exclude=['ez_setup']),
