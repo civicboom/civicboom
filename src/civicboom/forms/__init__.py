@@ -28,6 +28,17 @@ class Grid(tables.Grid):
 #Foo = FieldSet(model.Foo)
 #Reflected = FieldSet(Reflected)
 
+class CustomTemplateEngine(TemplateEngine):
+    def __init__(self, template):
+        self.template = template
+
+    def render(self, name, **kwargs):
+        return render("/forms/classes/%s.mako" % self.template, extra_vars=kwargs)
+
+User = FieldSet(model.User)
+User.engine = CustomTemplateEngine("user")
+
+
 ## Initialize grids
 # Not doing this will result in the object list being rendered with all fields visible
 
@@ -39,7 +50,6 @@ ArticleContentGrid = Grid(model.ArticleContent)
 ArticleContentGrid.configure(include=[
         ArticleContentGrid.title,
         ArticleContentGrid.creator,
-        ArticleContentGrid.creation_date,
         ArticleContentGrid.update_date,
         ArticleContentGrid.status,
         ArticleContentGrid.attachments,
@@ -50,7 +60,6 @@ AssignmentContentGrid = Grid(model.AssignmentContent)
 AssignmentContentGrid.configure(include=[
         AssignmentContentGrid.title,
         AssignmentContentGrid.creator,
-        AssignmentContentGrid.creation_date,
         AssignmentContentGrid.update_date,
         AssignmentContentGrid.status,
         AssignmentContentGrid.attachments,
@@ -69,7 +78,6 @@ DraftContentGrid = Grid(model.DraftContent)
 DraftContentGrid.configure(include=[
         DraftContentGrid.title,
         DraftContentGrid.creator,
-        DraftContentGrid.creation_date,
         DraftContentGrid.update_date,
         DraftContentGrid.status,
         DraftContentGrid.attachments,
