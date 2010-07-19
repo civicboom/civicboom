@@ -11,11 +11,24 @@ log = logging.getLogger(__name__)
 class EventlogController(BaseController):
 
     def index(self):
-        #s = request.params["s"]
-        connection = get_engine().connect()
+        # Old-fashioned SQL building since events aren't part of the
+        # SQLAlchemy model; beware of SQL injection
+        # FIXME: make this do something...
+        wheres = ["1=1", ]
+        args = []
+        if "module" in request.params:
+            wheres.append("module = %s")
+            args.append(request.params["module"])
+        if "username" in request.params:
+            wheres.append("username = %s")
+            args.append(request.params["username"])
+        if "address" in request.params:
+            wheres.append("address = %s")
+            args.append(request.params["address"])
 
-        result = connection.execute(
-            "SELECT * FROM events ORDER BY date_sent DESC"
-        )
-        #return "\n<p>".join([", ".join([str(col) for col in row]) for row in result])
+        connection = get_engine().connect()
+        query = "SELECT * FROM events WHERE "
+        where = " AND ".join(wheres)
+        order = " ORDER BY date_sent DESC"
+        result = connection.execute(query + where + order, args)
         return render("eventlog.mako", extra_vars={"events": list(result)})
