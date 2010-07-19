@@ -6,7 +6,7 @@ from civicboom.model import meta
 
 from civicboom.model.meta import Base, Session, LegacySession
 from civicboom.model import License, Tag, Rating
-from civicboom.model import User, Group
+from civicboom.model import User, Group, UserLogin
 from civicboom.model import ArticleContent, CommentContent, DraftContent, AssignmentContent, Media
 from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
@@ -601,7 +601,7 @@ CREATE TRIGGER update_rating
         u1.email         = u"bob@bobcorp.com"
 
         u1_login = UserLogin()
-        u1_login.member = u1
+        u1_login.user   = u1
         u1_login.type   = "password"
         u1_login.token  = hashlib.sha1("password").hexdigest()
 

@@ -8,8 +8,13 @@ from pylons import config
 from pylons.middleware import ErrorHandler, StatusCodeRedirect
 from pylons.wsgiapp import PylonsApp
 from routes.middleware import RoutesMiddleware
+import authkit.authenticate
 
 from civicboom.config.environment import load_environment
+
+from civicboom.middleware.MobileDetectionMiddleware import MobileDetectionMiddleware
+from civicboom.middleware.GZipMiddleware            import GZipMiddleware
+
 
 def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     """Create a Pylons WSGI application and return it
@@ -40,8 +45,12 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     # The Pylons WSGI app
     app = PylonsApp()
 
+    #app = MobileDetectionMiddleware(app)
+    #app = GZipMiddleware(app) #AllanC - not implemented yet, need a way for a controler to trigger Gziping, maybe via a decorator? is this the right place in the middleware stack? top executed last?
+
     # Routing/Session/Cache Middleware
     app = RoutesMiddleware(app, config['routes.map'])
+    app = authkit.authenticate.middleware(app, app_conf) #Here so AuthKit can use authkit.cookie.nouserincookie = true  at   http://pylonsbook.com/en/1.1/authentication-and-authorization.html#cookie-options
     app = SessionMiddleware(app, config)
     app = CacheMiddleware(app, config)
 

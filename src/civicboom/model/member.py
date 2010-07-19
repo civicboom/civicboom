@@ -54,11 +54,12 @@ class Member(Base):
     messages_public       = relationship("Message", primaryjoin=and_(Message.source_id==id, Message.target_id==null())  )
     messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id)  )
 
-    groups          = relationship("Group",   secondary=GroupMembership.__table__)
-    followers       = relationship("Member",  primaryjoin="Member.id==Follow.member_id", secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
-    following       = relationship("Member",  primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
+    login_details   = relationship("UserLogin", backref=('user'), cascade="all,delete-orphan")
+    groups          = relationship("Group",     secondary=GroupMembership.__table__)
+    followers       = relationship("Member",    primaryjoin="Member.id==Follow.member_id", secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
+    following       = relationship("Member",    primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
     assignments     = relationship("MemberAssignment",  backref=backref("member"), cascade="all,delete-orphan")
-    ratings         = relationship("Rating",  backref=backref('member'), cascade="all,delete-orphan")
+    ratings         = relationship("Rating",    backref=backref('member'), cascade="all,delete-orphan")
 
     def __unicode__(self):
         return self.name + " ("+self.username+")"
