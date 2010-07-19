@@ -4,7 +4,7 @@ Architecture: all
 Maintainer: Shish <shish@civicboom.com>
 Depends: python, cb-env(>=0.3),
  python-pylons(>=1.0), python-sqlalchemy(>=0.6), python-webhelpers(>=1.0),
- python-psycopg2, python-imaging, python-boto,
+ python-psycopg2, python-imaging, python-boto, python-authkit,
  ffmpeg,
  nginx,
  postgresql-8.4, postgresql-8.4-postgis
