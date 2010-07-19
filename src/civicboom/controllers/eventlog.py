@@ -15,14 +15,20 @@ class EventlogController(BaseController):
         # SQLAlchemy model; beware of SQL injection
         # FIXME: make this do something...
         wheres = ["1=1", ]
+        args = []
+        if "module" in request.params:
+            wheres.append("module = %s")
+            args.append(request.params["module"])
         if "username" in request.params:
-            wheres.append("username = 'blah'")
+            wheres.append("username = %s")
+            args.append(request.params["username"])
         if "address" in request.params:
-            wheres.append("address = '0.0.0.0'")
+            wheres.append("address = %s")
+            args.append(request.params["address"])
 
         connection = get_engine().connect()
         query = "SELECT * FROM events WHERE "
         where = " AND ".join(wheres)
         order = " ORDER BY date_sent DESC"
-        result = connection.execute(query + where + order)
+        result = connection.execute(query + where + order, args)
         return render("eventlog.mako", extra_vars={"events": list(result)})
