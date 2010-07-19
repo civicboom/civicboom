@@ -19,9 +19,9 @@ class UserLogHandler(logging.Handler):
     def emit(self, record):
         db_engine = get_engine()
 
-        #if c.has_key("username"):
-        #    username = c.username
         username = "None"
+        if c.logged_in_user:
+            username = c.logged_in_user.username
         url = request.url
         addr = request.environ["REMOTE_ADDR"]
         priority = record.levelno
