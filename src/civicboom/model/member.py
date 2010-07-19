@@ -66,7 +66,13 @@ class Member(Base):
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
 
-# FIXME: should a user have an email address?
+    @property
+    def avatar_url(self, size=80):
+        if self.avatar:
+            return "http://static.civicboom.com/avatars/"+self.avatar+"/avatar.jpg"
+        return "http://www.civicboom.com/images/default_avatar.jpg"
+
+
 class User(Member):
     __tablename__    = "member_user"
     __mapper_args__  = {'polymorphic_identity': 'user'}
@@ -75,16 +81,16 @@ class User(Member):
     new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
     location         = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
     location_updated = Column(DateTime(), nullable=False,   default="now()")
+    email            = Column(Unicode(250), nullable=False  )
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (User)"
 
     @property
     def avatar_url(self, size=80):
-        # FIXME: this is the old server's default; it has a typo in and everything
-        # we should really come up with a new one (no built-in drop shadow) for the
-        # new site
-        default = "http://www.civicboom.com/images/default_avantar.jpeg"
+        if self.avatar:
+            return "http://static.civicboom.com/avatars/"+self.avatar+"/avatar.jpg"
+        default = "http://www.civicboom.com/images/default_avatar.jpg"
         hash = hashlib.md5(self.email.lower()).hexdigest()
         args = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
         gravatar_url = "http://www.gravatar.com/avatar/%s?"

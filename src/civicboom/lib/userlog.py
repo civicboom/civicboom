@@ -7,12 +7,17 @@ from sqlalchemy.sql import text
 
 import logging
 
-class UserLogHandler(logging.Handler):
-    db_engine = None
+log_engine = None
 
+def get_engine():
+    global log_engine
+    if not log_engine:
+        log_engine = engine_from_config(config, 'sqlalchemy.log.')
+    return log_engine
+
+class UserLogHandler(logging.Handler):
     def emit(self, record):
-        if not self.db_engine:
-            self.db_engine = engine_from_config(config, 'sqlalchemy.log.')
+        db_engine = get_engine()
 
         #if c.has_key("username"):
         #    username = c.username
@@ -23,7 +28,7 @@ class UserLogHandler(logging.Handler):
         module = record.pathname[record.pathname.find("civicboom"):] # +":"+str(record.lineno)
         message = record.getMessage()
 
-        connection = self.db_engine.connect()
+        connection = db_engine.connect()
         connection.execute(text("""
             INSERT INTO events(module, username, url, address, priority, message)
             VALUES(:module, :username, :url, :address, :priority, :message)
