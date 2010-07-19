@@ -62,6 +62,7 @@ Group.configure(include=[
         Group.home_location,
         Group.webpage,
         Group.description,
+        Group.members,
         ])
 
 Message = FieldSet(model.Message)

@@ -42,7 +42,7 @@ class Member(Base):
     # AllanC notes: home location? point? for individual, area by radius, countrys by polygons? - Shish maybe investigate?
     description     = Column(UnicodeText(),  nullable=False, default=u"")
     num_followers   = Column(Integer(),      nullable=False, default=0, doc="Controlled by postgres trigger")
-    webpage         = Column(Unicode(),      nullable=False, default=u"")
+    webpage         = Column(Unicode(),      nullable=True, default=None)
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(String(40),     nullable=True,  doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar")
 

@@ -30,4 +30,10 @@ ${common.errors(fieldset)}
 </table>
 		</td>
 	</tr>
+	<tr>
+		<td colspan="2">
+			Members:
+			<br>${fieldset.members.render()|n}
+		</td>
+	</tr>
 </table>
