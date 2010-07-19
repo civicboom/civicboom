@@ -15,6 +15,9 @@ class Message(Base):
     text        = Column(UnicodeText(), nullable=False)
 
     def __unicode__(self):
-        return self.text[0:50]+"..."
+        if len(self.text) > 50:
+            return self.text[0:50]+"..."
+        else:
+            return self.text
 
 
