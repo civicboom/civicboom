@@ -21,8 +21,8 @@ class EventlogController(BaseController):
             wheres.append("address = '0.0.0.0'")
 
         connection = get_engine().connect()
-        query = "SELECT * FROM events"
+        query = "SELECT * FROM events WHERE "
         where = " AND ".join(wheres)
-        order = "ORDER BY date_sent DESC"
+        order = " ORDER BY date_sent DESC"
         result = connection.execute(query + where + order)
         return render("eventlog.mako", extra_vars={"events": list(result)})
