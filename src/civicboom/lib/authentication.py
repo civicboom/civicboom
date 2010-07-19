@@ -11,9 +11,11 @@ from authkit.authorize   import NotAuthorizedError, middleware
 from authkit.authorize.pylons_adaptors import authorize
 
 # Civicboom imports
-from civicboom.lib.misc     import flash_message
-from civicboom.model.member import User, UserLogin
-#from civicboom.model.meta
+from civicboom.lib.misc   import flash_message
+from civicboom.model      import User, UserLogin
+from civicboom.model.meta import Session
+
+from sqlalchemy.orm import join
 
 # Logging
 import logging
@@ -33,14 +35,14 @@ is_valid_user = ValidIndicoUser()
 # Check if a users username and password are valid
 #   function is pointed too from the development.ini file
 def valid_username_and_password(environ, username, password):
-  def get_user(username, password):
+  def get_username_password(username, password):
     password = hashlib.sha1(password).hexdigest()
-    try:    return session.query(User).select_from(join(User, UserLogin)).filter(User.username==username).filter(User.status=='active').filter(UserLogin.type=='password').filter(UserLogin.token==password).one()
+    try:    return Session.query(User).select_from(join(User, UserLogin, User.login_details)).filter(User.username==username).filter(User.status=='active').filter(UserLogin.type=='password').filter(UserLogin.token==password).one()
     except: return None
 
-  user = get_user(username, password)
+  user = get_username_password(username, password)
   if user:
-    user_log.info(user) #log_successful_login(reporter)
+    #user_log.info(user) #AllanC - TODO errors? does not have events relation?
     return True
   else:
     flash_message('Incorrect username and password')
