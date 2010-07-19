@@ -624,6 +624,11 @@ CREATE TRIGGER update_rating
         u2.status        = "active"
         u2.email         = u"spam@shishnet.org"
 
+        m = Message()
+        m.source = u1
+        m.target = u2
+        m.text   = u"My singing is fine!"
+
         ca = ArticleContent()
         ca.title      = u"A test article"
         ca.content    = u"""
