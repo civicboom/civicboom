@@ -24,7 +24,7 @@
 TD > INPUT[type="text"],
 TD > TEXTAREA,
 TD > SELECT {
-	width: 300px;
+	width: 100%;
 }
 TD > TEXTAREA {
 	height: 150px;
@@ -33,9 +33,16 @@ TD > TEXTAREA {
 	vertical-align: middle;
 	text-align: right;
 }
+TABLE.outer {
+	width: 90%;
+	margin: auto;
+}
 TABLE.outer > TBODY > TR > TD {
 	border: none;
 	width: 50%;
+}
+TABLE.outer TABLE {
+	width: 95%;
 }
 </style>
 </%def>
