@@ -117,7 +117,7 @@ class UserLogin(Base):
     member      = Column(Integer(),    ForeignKey('member.id'))
     # FIXME: need full list; facebook, google, yahoo?
     type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
-    token       = Column(Unicode(250), nullable=False)
+    token       = Column(String(250),  nullable=False)
 
 
 # FIXME: incomplete
