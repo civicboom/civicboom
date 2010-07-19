@@ -167,6 +167,13 @@ class Tag(Base):
     def __unicode__(self):
         return self.name
 
+    @property
+    def full_name(self):
+        if self.parent:
+            return self.parent.full_name + " - " + self.name
+        else:
+            return self.name
+
 
 # FIXME: unseeded
 class ContentEditHistory(Base):
