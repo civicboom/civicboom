@@ -14,7 +14,6 @@ ${common.errors(fieldset)}
 	${common.render_short_field(fieldset.username)|n}
 	${common.render_short_field(fieldset.name)|n}
 	${common.render_short_field(fieldset.join_date)|n}
-	${common.render_short_field(fieldset.email)|n}
 	${common.render_short_field(fieldset.status.dropdown(options=["pending", "active", "removed"]))|n}
 </table>
 		</td>
@@ -29,13 +28,6 @@ ${common.errors(fieldset)}
 		</td>
 	</tr>
 </table>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			Location Updated:
-			${fieldset.location_updated.render()|n}
-			<br>${fieldset.location.render()|n}
 		</td>
 	</tr>
 </table>

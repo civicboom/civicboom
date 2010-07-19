@@ -37,6 +37,46 @@ class CustomTemplateEngine(TemplateEngine):
 
 User = FieldSet(model.User)
 User.engine = CustomTemplateEngine("user")
+User.configure(include=[
+        User.username,
+        User.name,
+        User.join_date,
+        User.email,
+        User.status,
+        User.avatar,
+        User.home_location,
+        User.webpage,
+        User.description,
+        User.location_updated,
+        User.location,
+        ])
+
+Group = FieldSet(model.Group)
+Group.engine = CustomTemplateEngine("group")
+Group.configure(include=[
+        Group.username,
+        Group.name,
+        Group.join_date,
+        Group.status,
+        Group.avatar,
+        Group.home_location,
+        Group.webpage,
+        Group.description,
+        ])
+
+Message = FieldSet(model.Message)
+Message.configure(include=[
+        Message.source,
+        Message.target,
+        Message.timestamp,
+        Message.text,
+        ])
+
+Tag = FieldSet(model.Tag)
+Tag.configure(include=[
+        Tag.name,
+        Tag.parent,
+        ])
 
 
 ## Initialize grids
@@ -118,7 +158,7 @@ LicenseGrid.configure(include=[
 TagGrid = Grid(model.Tag)
 TagGrid.configure(include=[
         TagGrid.name,
-        TagGrid.parent_id,
+        TagGrid.parent,
         ])
 
 MediaGrid = Grid(model.Media)
