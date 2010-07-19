@@ -1,3 +1,8 @@
+"""
+TestController
+A conroller for miscilanious test functions
+Locked down for use in development mode only
+"""
 from pylons.controllers.util import abort
 
 from civicboom.lib.base import BaseController, render, app_globals, c
