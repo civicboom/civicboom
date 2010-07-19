@@ -21,12 +21,15 @@ import Image
 import tempfile
 import hashlib
 
+import pylons.test
+
 
 log = logging.getLogger(__name__)
 
 def setup_app(command, conf, vars):
     """Place any commands to setup civicboom here"""
-    load_environment(conf.global_conf, conf.local_conf)
+    if not pylons.test.pylonsapp:
+      load_environment(conf.global_conf, conf.local_conf)
 
     ###################################################################
     log.info("Creating tables") # {{{
@@ -429,6 +432,12 @@ CREATE TRIGGER update_rating
             u.status        = convert_status(row["Status"])
             u.last_check    = row["notification_check"]
             u.avatar        = get_avatar(row["id"])
+
+            u_login = UserLogin()
+            u_login.user   = u
+            u_login.type   = "password"
+            u_login.token  = row["Password"]
+
 #  `Password` varchar(40) default NULL,
 #  `Birth` date default NULL,
 #  `Gender` enum('M','F','U') NOT NULL default 'U',
@@ -446,6 +455,7 @@ CREATE TRIGGER update_rating
             if u.status:
                 log.debug("   |- %s (%s)" % (u.name, u.username))
                 Session.add(u)
+                Session.add(u_login)
                 reporters_by_old_id[row["id"]] = u
             else:
                 log.info("   |- Not importing %s account: %s (%s)" % (row["Status"], u.name, u.username))
