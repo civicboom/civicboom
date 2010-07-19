@@ -673,7 +673,7 @@ CREATE TRIGGER update_rating
         cc2.license_id = cc_by.id
 
         m = Media()
-        m.name        = u"hello2.jpg"
+        m.name        = u"hello2.3gp"
         m.type        = "video"
         m.subtype     = "3gpp"
         m.hash        = "00000000000000000000000000000000"

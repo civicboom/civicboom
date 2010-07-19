@@ -9,8 +9,8 @@ options = {}
 options['default_lon'] = 10
 options['default_lat'] = 45
 options['zoom'] = 4
-options['map_width'] = 512
-options['map_height'] = 256
+options['map_width'] = "100%"
+options['map_height'] = 200
 options['base_layer'] = 'new OpenLayers.Layer.WMS("WMS", "http://labs.metacarta.com/wms/vmap0", {layers: "basic"})'
 options['openlayers_lib'] = 'http://openlayers.org/api/OpenLayers.js'
 

@@ -125,8 +125,8 @@ class License(Base):
     id            = Column(Integer(),     primary_key=True)
     code          = Column(Unicode(32),   nullable=False, unique=True)
     name          = Column(Unicode(250),  nullable=False, unique=True)
+    url           = Column(Unicode(250),  nullable=False)
     description   = Column(UnicodeText(), nullable=False)
-    url           = Column(UnicodeText(), nullable=False)
     #articles      = relationship("Content", backref=backref('license'))
 
     def __init__(self, code=None, name=None, description=None, url=None):
@@ -170,7 +170,8 @@ class Tag(Base):
     @property
     def full_name(self):
         if self.parent:
-            return self.parent.full_name + " - " + self.name
+            # FIXME: unicode arrow? HTML &rarr?
+            return self.parent.full_name + " --> " + self.name
         else:
             return self.name
 

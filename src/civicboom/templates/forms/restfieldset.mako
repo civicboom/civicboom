@@ -38,7 +38,7 @@ from pylons import url
   <body>
 <div id="content" class="ui-admin ui-widget">
   %if isinstance(models, dict):
-    <h1 id="header" class="ui-widget-header ui-corner-all">${F_('Models')}</h1>
+    <h1 id="header" class="ui-widget-header ui-corner-all">${F_('Civicboom Database Editor')}</h1>
 	<!-- Follow, GroupMembership, Media, MemberAssignment, Rating -->
 	<table>
 		<tr>
@@ -64,10 +64,11 @@ from pylons import url
 	</table>
 
 	<hr>
-	<p>Full List</p>
+	<p>Full List:
     %for name in sorted(models):
       <a class="ui-state-default ui-corner-all" href="${models[name]}">${name}</a>,
     %endfor
+	</p>
   %elif is_grid:
     ${h1(model_name)}
     <div class="ui-pager">
