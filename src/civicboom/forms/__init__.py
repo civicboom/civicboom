@@ -35,6 +35,72 @@ class CustomTemplateEngine(TemplateEngine):
     def render(self, name, **kwargs):
         return render("/forms/classes/%s.mako" % self.template, extra_vars=kwargs)
 
+ArticleContent = FieldSet(model.ArticleContent)
+ArticleContent.engine = CustomTemplateEngine("content")
+ArticleContent.configure(include=[
+        ArticleContent.creator,
+        ArticleContent.title,
+        ArticleContent.status,
+        ArticleContent.private,
+        ArticleContent.parent,
+        ArticleContent.tags,
+        ArticleContent.content,
+        ArticleContent.responses,
+        ArticleContent.attachments,
+        ArticleContent.creation_date,
+        ArticleContent.update_date,
+        ArticleContent.edits,
+        ArticleContent.location,
+        ])
+
+AssignmentContent = FieldSet(model.AssignmentContent)
+AssignmentContent.engine = CustomTemplateEngine("content")
+AssignmentContent.configure(include=[
+        AssignmentContent.creator,
+        AssignmentContent.title,
+        AssignmentContent.status,
+        AssignmentContent.private,
+        AssignmentContent.parent,
+        AssignmentContent.tags,
+        AssignmentContent.content,
+        AssignmentContent.responses,
+        AssignmentContent.attachments,
+        AssignmentContent.creation_date,
+        AssignmentContent.update_date,
+        AssignmentContent.edits,
+        AssignmentContent.location,
+        ])
+
+DraftContent = FieldSet(model.DraftContent)
+DraftContent.engine = CustomTemplateEngine("content")
+DraftContent.configure(include=[
+        DraftContent.creator,
+        DraftContent.title,
+        DraftContent.status,
+        DraftContent.private,
+        DraftContent.parent,
+        DraftContent.tags,
+        DraftContent.content,
+        DraftContent.responses,
+        DraftContent.attachments,
+        DraftContent.creation_date,
+        DraftContent.update_date,
+        DraftContent.edits,
+        DraftContent.location,
+        ])
+
+CommentContent = FieldSet(model.CommentContent)
+CommentContent.engine = CustomTemplateEngine("comment")
+CommentContent.configure(include=[
+        CommentContent.creator,
+        CommentContent.title,
+        CommentContent.parent,
+        CommentContent.content,
+        CommentContent.responses,
+        CommentContent.attachments,
+        CommentContent.creation_date,
+        ])
+
 User = FieldSet(model.User)
 User.engine = CustomTemplateEngine("user")
 User.configure(include=[
@@ -47,7 +113,7 @@ User.configure(include=[
         User.home_location,
         User.webpage,
         User.description,
-        User.location_updated,
+        #User.location_updated, # FIXME: this should be updated by a trigger
         User.location,
         ])
 
@@ -66,6 +132,7 @@ Group.configure(include=[
         ])
 
 Message = FieldSet(model.Message)
+Message.engine = CustomTemplateEngine("message")
 Message.configure(include=[
         Message.source,
         Message.target,
@@ -74,10 +141,25 @@ Message.configure(include=[
         ])
 
 Tag = FieldSet(model.Tag)
+Tag.engine = CustomTemplateEngine("tag")
 Tag.configure(include=[
         Tag.name,
         Tag.parent,
         ])
+
+Media = FieldSet(model.Media)
+Media.engine = CustomTemplateEngine("media")
+Media.configure(include=[
+        Media.name.with_renderer(fields.TextFieldRenderer),
+        Media.type,
+        Media.subtype,
+        Media.caption.with_renderer(fields.TextFieldRenderer),
+        Media.credit.with_renderer(fields.TextFieldRenderer),
+        Media.attached_to,
+        ])
+
+License = FieldSet(model.License)
+License.engine = CustomTemplateEngine("license")
 
 
 ## Initialize grids

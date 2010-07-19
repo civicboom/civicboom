@@ -1,6 +1,6 @@
 <%def name="render_short_field(field)">
 % if field.requires_label:
-	<tr>
+	<tr class="input_row">
 		<td><label class="${field.is_required() and 'field_req' or 'field_opt'}" for="${field.renderer.name}">${[field.label_text, fieldset.prettify(field.key)][int(field.label_text is None)]|h}</label></td>
 		<td>
 			${field.render()|n}
@@ -21,8 +21,21 @@
 
 <%def name="style()">
 <style>
-TD > INPUT[type="text"] {
-	width: 100%;
+TD > INPUT[type="text"],
+TD > TEXTAREA,
+TD > SELECT {
+	width: 300px;
+}
+TD > TEXTAREA {
+	height: 150px;
+}
+.input_row TD:first-child {
+	vertical-align: middle;
+	text-align: right;
+}
+TABLE.outer > TBODY > TR > TD {
+	border: none;
+	width: 50%;
 }
 </style>
 </%def>
