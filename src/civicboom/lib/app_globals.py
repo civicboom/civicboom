@@ -4,6 +4,8 @@
 from beaker.cache import CacheManager
 from beaker.util import parse_cache_config_options
 
+from pylons import config
+
 
 class Globals(object):
 
@@ -20,6 +22,8 @@ class Globals(object):
     """
     
     self.cache = CacheManager(**parse_cache_config_options(config))
+
+    self.development_mode = True #AllanC - to be moved to config ASAP
     
     # AllanC - Placeholders for config globals
     #site_name        = config['site_name']
