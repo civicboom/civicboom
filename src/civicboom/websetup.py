@@ -19,6 +19,7 @@ import os
 import re
 import Image
 import tempfile
+import hashlib
 
 
 log = logging.getLogger(__name__)
@@ -598,6 +599,11 @@ CREATE TRIGGER update_rating
         u1.description   = u"A user for automated tests to log in as"
         u1.status        = "active"
 
+        u1_login = UserLogin()
+        u1_login.member = u1
+        u1_login.type   = "password"
+        u1_login.token  = hashlib.sha1("password").hexdigest()
+
         u2 = User()
         u2.username      = u"unitfriend"
         u2.name          = u"Mr U's Friend"
@@ -667,7 +673,7 @@ CREATE TRIGGER update_rating
         dc.license_id = cc_by.id
         u2.content.append(dc)
 
-        Session.add_all([u1, u2])
+        Session.add_all([u1, u2, u1_login])
         Session.commit()
 
 
