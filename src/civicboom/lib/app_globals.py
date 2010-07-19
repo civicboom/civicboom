@@ -6,6 +6,8 @@ from beaker.util import parse_cache_config_options
 
 from pylons import config
 
+from paste.deploy.converters import asbool
+
 
 class Globals(object):
 
@@ -21,12 +23,17 @@ class Globals(object):
 
     """
     
-    self.cache = CacheManager(**parse_cache_config_options(config))
+    self.cache         = CacheManager(**parse_cache_config_options(config))
+    self.cache_enabled = asbool(config['beaker.cache.enabled'])
 
-    self.development_mode = True #AllanC - to be moved to config ASAP
+    self.development_mode = config['debug']
     
-    # AllanC - Placeholders for config globals
-    #site_name        = config['site_name']
-    #site_description = "Building the world's first true community and audience assignment system"
-    #email_contact    = config['email_contact']
-    #terminology      = config['terminology']
+    self.site_name        = config['text.site_name']
+    self.site_description = config['text.site_description']
+    self.email_contact    = config['email.contact']
+    self.terminology      = eval(config['text.terminology']) #AllanC - Security!? is this safe? as this value comes from the server cfg file and is just a dictonary I am happy to use eval here. terminolgy is a dictonary of terms
+
+    self.feature_agregate_twitter   = asbool(config['feature.aggregate.twitter'])
+    self.feature_agregate_email     = asbool(config['feature.aggregate.email'])
+    self.feature_profanity_filter   = asbool(config['feature.profanity_filter'])
+    
