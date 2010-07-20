@@ -6,7 +6,7 @@
 ##------------------------------------------------------------------------------
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link rel="shortcut icon" href="/images/civicboom.ico" />
+  <link rel="shortcut icon" href="${h.wh_public("/images/civicboom.ico")}" />
   
   ##----------------------------------------------------------------------------
   ## Meta Text
