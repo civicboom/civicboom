@@ -22,7 +22,7 @@
   <%def name="title()">${_("tagline")}</%def>
   <% title_dev_prefix = "" %>
   <% if app_globals.development_mode: title_dev_prefix = "Dev-" %>
-  <title>${title_dev_prefix}${_("site name")}: ${self.title()}</title>
+  <title>${title_dev_prefix}${_("Civicboom")}: ${self.title()}</title>
 
   ##----------------------------------------------------------------------------
   ## CSS Style Sheets
@@ -90,7 +90,7 @@
   ## AllanC - IE6 Warning messge
   ##<!--[if lte IE 6]>
   ##<script type="text/javascript">
-  ##  alert("${app_globals.site_name} does not currently support Microsoft Internet Explorer 6 or below. Please use an alternative browser.");
+  ##  alert("${_("site name")} does not currently support Microsoft Internet Explorer 6 or below. Please use an alternative browser.");
   ##</script>
   ##<![endif]-->
 

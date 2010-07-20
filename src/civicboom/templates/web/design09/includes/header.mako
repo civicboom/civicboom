@@ -4,8 +4,8 @@
     <h1 class="mainLogo">
       <a href='/'>
         <img src='/styles/design09/logo_beta_overlay.png' alt='beta'                     style="position: absolute; max-width: 20px; margin-left: 120px;"/>
-        <img src='/styles/design09/logo.png'              alt='${app_globals.site_name}'/>
-        <span>{app_globals.site_name}</span>
+        <img src='/styles/design09/logo.png'              alt='${_("Civicboom")}'/>
+        <span>${_("Civicboom")}</span>
       </a>
     </h1>
     

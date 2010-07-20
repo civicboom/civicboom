@@ -7,7 +7,7 @@ ${common.errors(fieldset)}
 	<tr>
 		<td>
 <table>
-	<tr><th colspan="2">Content</th></tr>
+	<tr><th colspan="2">${_("Content")}</th></tr>
 	${common.render_short_field(fieldset.name)|n}
 	${common.render_short_field(fieldset.type)|n}
 	${common.render_short_field(fieldset.subtype)|n}
@@ -18,7 +18,7 @@ ${common.errors(fieldset)}
 		</td>
 		<td>
 <table>
-	<tr><th>Media</th></tr>
+	<tr><th>${_("Media")}</th></tr>
 	<tr><td>FIXME: preview goes here</td></tr>
 </table>
 		</td>
