@@ -215,6 +215,24 @@ CREATE TRIGGER update_rating
     AFTER INSERT OR UPDATE OR DELETE ON map_ratings
     FOR EACH ROW EXECUTE PROCEDURE update_rating();
     """)
+    conn.execute("""
+CREATE OR REPLACE FUNCTION update_location_time() RETURNS TRIGGER AS $$
+    BEGIN
+        IF (
+                (NEW.location IS NULL     AND OLD.location IS NOT NULL) OR
+                (NEW.location IS NOT NULL AND OLD.location IS NULL    ) OR
+                (NOT (NEW.location ~= OLD.location))
+        ) THEN
+            UPDATE member_user SET location_updated = now() WHERE id=NEW.id;
+        END IF;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_location_time
+    AFTER UPDATE ON member_user
+    FOR EACH ROW EXECUTE PROCEDURE update_location_time();
+    """)
     #}}}
     ###################################################################
     log.info("Populating tables with base data") # {{{
