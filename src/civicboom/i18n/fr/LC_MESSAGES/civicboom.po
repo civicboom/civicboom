@@ -19,54 +19,54 @@ msgstr ""
 
 #: civicboom/templates/admin/eventlog.mako:45
 msgid "Date / Time"
-msgstr ""
+msgstr "Le Timestamp"
 
 #: civicboom/templates/admin/eventlog.mako:46
 msgid "Module"
-msgstr ""
+msgstr "Le Module"
 
 #: civicboom/templates/admin/eventlog.mako:47
 msgid "URL"
-msgstr ""
+msgstr "Le URL"
 
 #: civicboom/templates/admin/eventlog.mako:48
 #: civicboom/templates/web/account/signin.mako:31
 #: civicboom/templates/web/account/signin.mako:41
 #: civicboom/templates/web/account/signin.mako:54
 msgid "Username"
-msgstr ""
+msgstr "Le Username"
 
 #: civicboom/templates/admin/eventlog.mako:49
 msgid "Message"
-msgstr ""
+msgstr "Le Message"
 
 #: civicboom/templates/forms/restfieldset.mako:41
 msgid "Civicboom Control Panel"
-msgstr ""
+msgstr "Le Civicboom Control Panel"
 
 #: civicboom/templates/forms/restfieldset.mako:58
 msgid "Database Editor"
-msgstr ""
+msgstr "Le Database Editor"
 
 #: civicboom/templates/forms/restfieldset.mako:82
 msgid "Misc Tools"
-msgstr ""
+msgstr "Le Misc Tools"
 
 #: civicboom/templates/forms/restfieldset.mako:86
 msgid "Event Log"
-msgstr ""
+msgstr "Le Event Log"
 
 #: civicboom/templates/web/html_header.mako:14
 msgid "site description"
-msgstr ""
+msgstr "Le Site Description"
 
 #: civicboom/templates/web/html_header.mako:22
 msgid "tagline"
-msgstr ""
+msgstr "Le Tagline"
 
 #: civicboom/templates/web/html_header.mako:25
 msgid "site name"
-msgstr ""
+msgstr "Le Civicboom"
 
 #: civicboom/templates/web/account/signin.mako:30
 #: civicboom/templates/web/account/signin.mako:33
@@ -75,31 +75,31 @@ msgstr "Le Sign In"
 
 #: civicboom/templates/web/account/signin.mako:32
 msgid "Password"
-msgstr ""
+msgstr "Le Password"
 
 #: civicboom/templates/web/account/signin.mako:40
 #: civicboom/templates/web/account/signin.mako:46
 msgid "Sign up"
-msgstr ""
+msgstr "Le Sign Up"
 
 #: civicboom/templates/web/account/signin.mako:42
 #: civicboom/templates/web/account/signin.mako:56
 msgid "Email"
-msgstr ""
+msgstr "Le Email"
 
 #: civicboom/templates/web/account/signin.mako:43
 msgid "Individual"
-msgstr ""
+msgstr "Un Individual"
 
 #: civicboom/templates/web/account/signin.mako:44
 msgid "Organisation"
-msgstr ""
+msgstr "Un Organisation"
 
 #: civicboom/templates/web/account/signin.mako:53
 msgid "Forgotten Password?"
-msgstr ""
+msgstr "Forgotten Le Password?"
 
 #: civicboom/templates/web/account/signin.mako:57
 msgid "Send password reminder"
-msgstr ""
+msgstr "Send le password reminder"
 
