@@ -1,0 +1,164 @@
+/*----------------------------------------------------------------------------*/
+/*                               Misc Pages                                   */
+/*----------------------------------------------------------------------------*/
+
+.misc_page        {color: white;}
+.misc_page_border {padding: 1em 2em;}
+.misc_page p      {margin-bottom: 0.5em;}
+
+.misc_page h2 {
+  border: none;
+  color: white;
+  margin: 0em;
+  padding: 0em;
+}
+
+.misc_page h1 {                 margin-bottom: 0.5em; font-size: 200%;}
+.misc_page h2 {margin-top: 1em; margin-bottom: 0.5em; font-size: 130%;}
+.misc_page h3 {margin-top: 1em; margin-bottom: 0.5em; font-size: 110%;}
+.misc_page h4 {margin-top: 1em; margin-bottom: 0.5em;}
+
+.misc_page ol li {list-style: decimal; margin-left: 2em;}
+
+.misc_page .link_float {
+  /* font-variant: small-caps; */
+  background: white;
+  border: 1px solid blue;
+  float: right;
+  padding: 0em 0.5em;
+  font-size: x-large;
+  -moz-border-radius: 0.25em;
+  -webkit-border-radius: 0.25em;
+  border-radius: 0.25em;
+}
+.misc_page .link_float a {color: #233946;}
+
+.misc_page a {color: white; font-weight: bold;}
+
+.misc_page .email_link {color: white; font-weight: bold; font-size: large;}
+
+
+.misc_page .section_border {
+  border: 1px solid white;
+  padding: 1em;
+  margin-top: 1em;
+  -moz-border-radius: 0.5em;
+  -webkit-border-radius: 0.5em;
+  border-radius: 0.5em;
+}
+.misc_page .section_border p  {margin: 0em;}
+.misc_page .section_border h2 {margin: 0em;}
+
+
+
+/*---------------------------------Get Started--------------------------------*/
+
+.misc_get_started {font-size: 150%;}
+
+.misc_get_started .get_started_container {padding: 0em 2em;}
+
+.misc_get_started fieldset {font-size: 13px;}
+.misc_get_started legend   {color: inherit;}
+
+/*.misc_get_started h2 {margin: 0em;}
+.misc_get_started h2:after {content: ':';}*/
+
+.misc_get_started .get_started_description {font-style: italic; font-size: 150%;}
+
+/*
+.misc_get_started .get_started_description:before {content: '"';}
+.misc_get_started .get_started_description:after  {content: '"';}
+*/
+
+.misc_page .list_bullet_number, #titlepage .list_bullet_number {
+  display: inline-block;
+  position: absolute;
+  width:  50px;
+  height: 40px;
+  background: transparent url('/images/misc/get_started/background_bullets.png') no-repeat;
+  color: #031793;
+  text-align: center;
+  padding-top: 10px;
+  font-weight: bold;  
+}
+.misc_get_started .list_bullet_number {
+  margin-left: -2em;
+  margin-top:  -0.6em;
+  font-size: larger;
+}
+
+.misc_get_started ol li {list-style: none;}
+.misc_get_started    li {margin: 1.5em; margin-left: 4em;}
+
+
+
+
+/*-----------------------------widget description-----------------------------*/
+
+.misc_widget_details        {font-size: x-small;}
+.misc_widget_details h1     {border: none; margin: 0em; padding: 1em; color: inherit; font-size: x-large;}
+.misc_widget_details strong {font-weight: bold;}
+.misc_widget_details img    {width: 700px;}
+.misc_widget_details h2     {padding-left: 1em; padding-top: 1em; font-size: large;}
+
+.misc_widget_details .txt1 {position: absolute; margin-left: 150px; margin-top:  60px; font-size: 100%; width:  80px;}
+.misc_widget_details .txt2 {position: absolute; margin-left: 270px; margin-top:  65px; font-size: 100%; width: 110px;}
+.misc_widget_details .txt3 {position: absolute; margin-left: 300px; margin-top: 120px; font-size: 100%; width: 200px;}
+.misc_widget_details .txt4 {position: absolute; margin-left: 240px; margin-top: 170px; font-size: 100%; width: 230px; text-align: right;}
+.misc_widget_details .txt5 {position: absolute; margin-left: 40px;  margin-top: 320px; font-size: 100%; width: 300px; text-align: right;}
+.misc_widget_details .txt6 {position: absolute; margin-left: 510px; margin-top: 400px; font-size: 100%; width: 140px;}
+.misc_widget_details .txt7 {position: absolute; margin-left: 700px; margin-top:  50px; font-size: 100%; width: 200px;}
+.misc_widget_details .txt8 {position: absolute; margin-left: 690px; margin-top: 170px; font-size: 100%; width: 250px;}
+
+.misc_widget_details .link_float {
+  margin-right: 2em;
+  margin-top: 1em;
+}
+
+/*------------------------------------------about-----------------------------*/
+
+.misc_about .bigger   {font-size: x-large; margin-bottom: 1em;}
+
+
+.misc_about    li {margin-left: 2em;}
+.misc_about ul li {list-style: disc;}
+.misc_about ol li {list-style: decimal;}
+
+
+.misc_about .list_bullet_number {
+  position: relative;
+  font-size: x-large;
+}
+
+.misc_about .about_flow {
+  font-weight: bold;
+  font-size: large;
+  margin-top: 1em;
+}
+.misc_about .about_flow .about_flow_background {
+  margin-left: 100px;
+  width: 700px;
+  margin-bottom: 1em;
+}
+
+.misc_about .about_flow .step1 {position: absolute; margin-left: 10px; margin-top: 20px; width: 280px;}
+.misc_about .about_flow .stepA {position: absolute; margin-left: 270px; margin-top: -10px; width: 400px; font-size: 80%;}
+.misc_about .about_flow .step2 {position: absolute; margin-left: 640px; margin-top: 40px; width: 250px; text-align: right;}
+.misc_about .about_flow .stepB {position: absolute; margin-left: 240px; margin-top: 210px; width: 390px; font-size: 80%;}
+.misc_about .about_flow .view_widget_link {position: absolute; margin-left: 390px; margin-top: 70px;}
+
+/*-------------------------------mobile---------------------------------------*/
+
+.misc_get_mobile li a {color: white; font-weight: bold;}
+.misc_get_mobile .mini_point {font-size: smaller; font-style: italic;}
+
+
+/*-------------------------------press---------------------------------------*/
+
+.misc_press  a          {font-size: large;}
+.misc_press .press_logo {border: 1px solid white; max-width: 280px; max-height: 100px;}
+.misc_press .post_date {float: right; font-size: large; font-weight: bold; display: none;}
+.misc_press .quote {font-style: italic;}
+.misc_press .quote:before {content: '"';}
+.misc_press .quote:after  {content: '"';}
+

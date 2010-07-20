@@ -22,7 +22,8 @@ class AccountController(BaseController):
     if not request.environ.get('REMOTE_USER'):
       abort(401) #This triggers the AuthKit middleware into displaying the sign-in form
     else:
-      redirect(url(controller='misc', action='test'))
+      #redirect(url(controller='misc', action='test'))
+      redirect(url('/'))
     
   def signout(self):
     flash_message("Successfully signed out!")

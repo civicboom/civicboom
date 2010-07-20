@@ -1,0 +1,93 @@
+/*----------------------------------------------------------------------------*/
+/*                        Public and Private Profiles                         */
+/*----------------------------------------------------------------------------*/
+
+.logo_pulse {
+	float: right;
+	max-width: 150px;
+	margin-bottom: 1em;
+}
+
+.instant_news {
+	background-color: #ddd;
+	border: 1px solid #888;
+	padding: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.instant_news strong {
+  font-weight: bold;
+}
+
+.instant_news_time {
+  font-weight: bold;
+  font-size: smaller;
+}
+
+.myhome_section_heading {
+	background-color: #233946;
+	padding: 0.25em;
+}
+
+
+/* .public_profile h2 {
+  font-size: 150%;
+  font-weight: bold;
+  margin-top: 0.1em;
+}*/
+
+.heading_information {
+  background-color: #233946;
+  border: 1px solid black;
+  font-size: smaller;
+  height: 5em;
+  max-width: 100%;
+  padding: 0.5em;
+  color: white;
+}
+
+.heading_information strong {
+	font-weight: bold;
+	font-size: small;
+}
+
+.heading_information ul li {
+  margin-left: 3em;
+  list-style-type: disc;
+}
+
+/*--------------- details list -------------------*/
+
+.profile_info td, .profile_info th {
+	font-size: x-small;
+}
+.profile_info th {
+	font-weight: bold;
+}
+
+/*--------------- Link Badge -------------------*/
+
+.link_badge_instructions {
+	font-size: smaller;
+}
+.link_badge_form_field {
+	width: 100%;
+}
+
+/*--------------- messages/notifications -------------*/
+
+.messages {font-size: smaller;}
+.messages li {
+  margin: 0.2em 0em;
+  padding: 0.2em;
+  border-bottom: 1px solid #ddd;
+}
+.messages .new_message {
+  border: 1px solid #888;
+  background-color: #ffc7c7;
+}
+.messages li a {font-weight: bold;}
+.messages li .time {
+  text-align: right;
+  font-style: italic;
+}

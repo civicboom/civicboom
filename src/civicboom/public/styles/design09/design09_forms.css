@@ -1,0 +1,152 @@
+
+
+
+/*----------------------------------------------------------------------------*/
+/*                               Form Lables                                  */
+/*----------------------------------------------------------------------------*/
+
+
+fieldset {
+  border: 1px solid #ddd;
+  padding: 0.25em;
+  /* margin: 1em; */
+}
+legend {
+  font-weight: bold;
+  margin-left: 0.5em;
+  color: inherit;
+}
+label {
+  display: inline-block;
+  width: 8em;
+  text-align: right;
+}
+/* label:after {content:' : ';} makes alignment wrong with lables over multiple lines*/
+input {
+  margin: 0.25em;
+}
+
+
+
+
+
+/*----------------------------------------------------------------------------*/
+/*                                 Signin page                                */
+/*----------------------------------------------------------------------------*/
+
+.inverted fieldset {
+  background: #04145a;
+  color: white;
+  border: none;
+}
+.inverted legend {
+  background: #04145a;
+  padding: 0em 0.5em;
+  border: inherit;
+  color: white;
+}
+
+/*----------------------------------------------------------------------------*/
+/*                         Form Field Styling                                 */
+/*----------------------------------------------------------------------------*/
+
+
+
+.form_field {
+	border: none;
+	width: 310px; /* the extra 10px are added by the left padding */
+	height: 24px;
+	background: url('/design09/form-field-bg.png') no-repeat 0px -50px;
+	padding-left: 10px;
+	padding-top: 5px;
+	margin-top:5px;
+	color: #798fa3;
+	vertical-align: middle;
+}
+
+
+.form_field_large {
+	border: none;
+	width: 217px; /* the extra 10px are added by the left padding */
+	height: 32px;
+	background: url('/design09/form-field-bg.png') no-repeat 0px 0px;
+	padding-left: 10px;
+	padding-top: 5px;
+	margin-top:5px;
+	color: #798fa3;
+	font-size: large;
+	font-weight: bold;
+	vertical-align: middle;
+}
+
+.form_field_small {
+	border: none;
+	width: 108px; /* the extra 5px are added by the left padding */
+	height: 18px;
+	background: url('/design09/form-field-bg.png') no-repeat 0px -100px;
+	padding-left: 5px;
+	padding-top: 2px;
+	margin-top:0px;
+	color: #798fa3;
+	font-size: smaller;
+	font-weight: bold;
+	vertical-align: bottom;
+}
+
+
+.form_radio {
+
+}
+
+
+/*--------Forms Table and layout--------*/
+
+.form th {
+  display: none;
+  /*
+  text-align: right;
+  vertical-align: center;
+   max-width: 18em; */
+}
+
+.form .form_number {
+  background-color: #798fa3;
+  width: 64px;
+  height: 64px;
+  text-align: right;
+  margin: 0.5em 2em;
+  overflow: hidden;
+}
+
+.form .form_number .form_number_text {
+  color: white;
+  font-size: 500%;
+  position: relative;
+  right: -12px;
+}
+
+.form .title_num {
+  vertical-align: top;
+  text-align: right;
+}
+
+.form .form_instructions {
+  font-size: smaller;
+  color: #777;
+  /* font-weight: bold; */
+}
+
+.form .form_instructions a {
+  color: #333;
+  font-weight: bold;
+}
+
+.form .form_instructions a:hover {
+  color: black;
+  background: #aaa;
+}
+
+.form .form_highlight {
+  background-color: #ddd;
+  padding: 0.25em;
+}

@@ -40,30 +40,34 @@ class TaskController(BaseController):
     return "timed task controller"
 
   def expire_syndication_articles(self):
+    """
+    Description to follow
+    """
     pass
   
-  """
-  Users who do not complete the signup process by entering an email address that is incorrect or a bots or cant use email should be removed if they have still not signed up after 1 week
-  """
   def remove_ghost_reporters(self):
+    """
+    Users who do not complete the signup process by entering an email address that is incorrect or a bots or cant use email should be removed if they have still not signed up after 1 week
+    """
     pass
 
-  """
-  Users who have accepted assigments but have not posted response question should be reminded via a notification that the assingment has not long left
-  """
   def assignment_near_expire(self):
+    """
+    Users who have accepted assigments but have not posted response question should be reminded via a notification that the assingment has not long left
+    """
     pass
   
-  """
-  The message table could expand out of control and the old messages need to be removed automatically from the db
-  """
   def message_clean(self):
+    """
+    The message table could expand out of control and the old messages need to be removed automatically from the db
+    """
     pass
 
   def sync_public_to_warehouse(self):
         """
-        copies files in the public data folder (should just be CSS / small images)
-        to whatever warehouse we're using (eg Amazon S3)
+        Copies files in the public data folder (should just be CSS / small images)
+        to whatever warehouse we're using (eg Amazon S3). Should be called whenever
+        the server software package is upgraded.
         """
         done = []
         if config["warehouse"] == "s3":
