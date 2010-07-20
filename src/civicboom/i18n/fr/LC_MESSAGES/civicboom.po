@@ -20,19 +20,19 @@ msgstr ""
 #: civicboom/templates/admin/eventlog.mako:6
 #: civicboom/templates/forms/restfieldset.mako:86
 msgid "Event Log"
-msgstr "Le Event Log"
+msgstr "Event Log"
 
 #: civicboom/templates/admin/eventlog.mako:45
 msgid "Date / Time"
-msgstr "Le Timestamp"
+msgstr "Date / Heure"
 
 #: civicboom/templates/admin/eventlog.mako:46
 msgid "Module"
-msgstr "Le Module"
+msgstr "Module"
 
 #: civicboom/templates/admin/eventlog.mako:47
 msgid "URL"
-msgstr "Le URL"
+msgstr "URL"
 
 #: civicboom/templates/admin/eventlog.mako:48
 #: civicboom/templates/web/account/signin.mako:31
@@ -40,16 +40,16 @@ msgstr "Le URL"
 #: civicboom/templates/web/account/signin.mako:54
 #: civicboom/templates/web/design09/misc/titlepage.mako:33
 msgid "Username"
-msgstr "Le Username"
+msgstr "Nom d&#39;utilisateur"
 
 #: civicboom/templates/admin/eventlog.mako:49
 msgid "Message"
-msgstr "Le Message"
+msgstr "Message"
 
 #: civicboom/templates/admin/classes/comment.mako:14
 #: civicboom/templates/admin/classes/content.mako:14
 msgid "General"
-msgstr ""
+msgstr "GÃ©nÃ©ral"
 
 #: civicboom/templates/admin/classes/comment.mako:23
 #: civicboom/templates/admin/classes/content.mako:21
@@ -59,72 +59,72 @@ msgstr ""
 #: civicboom/templates/admin/classes/tag.mako:7
 #: civicboom/templates/web/content_editor/content_editor.mako:24
 msgid "Content"
-msgstr ""
+msgstr "Teneur"
 
 #: civicboom/templates/admin/classes/content.mako:30
 #, fuzzy
 msgid "Timeline"
-msgstr "Le Tagline"
+msgstr "Chronologie"
 
 #: civicboom/templates/admin/classes/content.mako:36
 msgid "Other"
-msgstr ""
+msgstr "Autres"
 
 #: civicboom/templates/admin/classes/group.mako:14
 #: civicboom/templates/admin/classes/user.mako:14
 msgid "Information"
-msgstr ""
+msgstr "Informations"
 
 #: civicboom/templates/admin/classes/group.mako:22
 #: civicboom/templates/admin/classes/user.mako:24
 #, fuzzy
 msgid "Description"
-msgstr "Le Site Description"
+msgstr "Description"
 
 #: civicboom/templates/admin/classes/media.mako:21
 msgid "Media"
-msgstr ""
+msgstr "MÃ©dias"
 
 #: civicboom/templates/forms/restfieldset.mako:41
 msgid "Civicboom Control Panel"
-msgstr "Le Civicboom Control Panel"
+msgstr "Panneau de configuration Civicboom"
 
 #: civicboom/templates/forms/restfieldset.mako:58
 msgid "Database Editor"
-msgstr "Le Database Editor"
+msgstr "Database Editor"
 
 #: civicboom/templates/forms/restfieldset.mako:82
 msgid "Misc Tools"
-msgstr "Le Misc Tools"
+msgstr "Utilitaires Divers"
 
 #: civicboom/templates/web/html_base.mako:107
 msgid "_site_name is undergoing exciting changes!"
-msgstr ""
+msgstr "_site_name subit des changements excitants!"
 
 #: civicboom/templates/web/html_base.mako:108
 msgid "We want your feedback! Tell us what you think:"
-msgstr ""
+msgstr "Nous voulons votre avis! Dites-nous ce que vous pensez:"
 
 #: civicboom/templates/web/html_base.mako:110
 msgid "Thanks, from the _site_name Team."
-msgstr ""
+msgstr "Merci, de l&#39;Ã©quipe _site_name."
 
 #: civicboom/templates/web/html_base.mako:111
 msgid "close"
-msgstr ""
+msgstr "fermer"
 
 #: civicboom/templates/web/html_base.mako:128
 #: civicboom/templates/web/html_base.mako:129
 #: civicboom/templates/web/html_header.mako:22
 #, fuzzy
 msgid "_tagline"
-msgstr "Le Tagline"
+msgstr "_tagline"
 
 #: civicboom/templates/web/html_header.mako:14
 #: civicboom/templates/web/design09/misc/titlepage.mako:16
 #, fuzzy
 msgid "_site_description"
-msgstr "Le Site Description"
+msgstr "_site_description"
 
 #: civicboom/templates/web/html_header.mako:25
 #: civicboom/templates/web/design09/includes/header.mako:7
@@ -138,262 +138,255 @@ msgstr "Le Site Description"
 #: civicboom/templates/web/design09/misc/titlepage.mako:44
 #, fuzzy
 msgid "_site_name"
-msgstr "Le Civicboom"
+msgstr "_site_name"
 
 #: civicboom/templates/web/account/signin.mako:6
 #: civicboom/templates/web/account/signin.mako:30
 #: civicboom/templates/web/account/signin.mako:33
 msgid "Sign in"
-msgstr "Le Sign In"
+msgstr "Identifiez-vous"
 
 #: civicboom/templates/web/account/signin.mako:32
 msgid "Password"
-msgstr "Le Password"
+msgstr "Mot de passe"
 
 #: civicboom/templates/web/account/signin.mako:40
 #: civicboom/templates/web/account/signin.mako:46
 msgid "Sign up"
-msgstr "Le Sign Up"
+msgstr "Signer"
 
 #: civicboom/templates/web/account/signin.mako:42
 #: civicboom/templates/web/account/signin.mako:56
 #: civicboom/templates/web/design09/misc/titlepage.mako:32
 msgid "Email"
-msgstr "Le Email"
+msgstr "Email"
 
 #: civicboom/templates/web/account/signin.mako:43
 #: civicboom/templates/web/design09/misc/titlepage.mako:35
 msgid "Individual"
-msgstr "Un Individual"
+msgstr "Individuel"
 
 #: civicboom/templates/web/account/signin.mako:44
 #: civicboom/templates/web/design09/misc/titlepage.mako:36
 msgid "Organisation"
-msgstr "Un Organisation"
+msgstr "Organisation"
 
 #: civicboom/templates/web/account/signin.mako:53
 msgid "Forgotten Password?"
-msgstr "Forgotten Le Password?"
+msgstr "Mot de passe oubliÃ©?"
 
 #: civicboom/templates/web/account/signin.mako:57
 msgid "Send password reminder"
-msgstr "Send le password reminder"
+msgstr "Envoyer le mot de rappel"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:25
 msgid "Got an opinion? want to ask a question?"
-msgstr ""
+msgstr "Vous avez un avis? souhaitez poser une question?"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:28
 msgid "Title"
-msgstr ""
+msgstr "Titre"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:34
 msgid "By"
-msgstr ""
+msgstr "Par"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:43
 msgid "Tags"
-msgstr ""
+msgstr "Tags"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:45
 msgid "extra info"
-msgstr ""
+msgstr "infos supplÃ©mentaires"
 
 #: civicboom/templates/web/design09/includes/footer.mako:4
 msgid "Please send us your Feedback"
-msgstr ""
+msgstr "S&#39;il vous plaÃ®t envoyez-nous vos commentaires"
 
 #: civicboom/templates/web/design09/includes/footer.mako:5
 msgid "more contact details"
-msgstr ""
+msgstr "coordonnÃ©es plus"
 
 #: civicboom/templates/web/design09/includes/footer.mako:25
 msgid "Press Coverage"
-msgstr ""
+msgstr "Couverture de presse"
 
 #: civicboom/templates/web/design09/includes/footer.mako:26
 msgid "Terms and Conditions"
-msgstr ""
+msgstr "Termes et Conditions"
 
 #: civicboom/templates/web/design09/includes/footer.mako:27
 msgid "Privacy policy"
-msgstr ""
+msgstr "Politique de confidentialitÃ©"
 
 #: civicboom/templates/web/design09/includes/header.mako:14
 #: civicboom/templates/web/design09/misc/about.mako:6
 msgid "About"
-msgstr ""
+msgstr "Sur"
 
 #: civicboom/templates/web/design09/includes/header.mako:15
 msgid "Search _reporters"
-msgstr ""
+msgstr "_reporters Recherche"
 
 #: civicboom/templates/web/design09/includes/header.mako:16
 msgid "_assignment"
-msgstr ""
+msgstr "_assignment"
 
 #: civicboom/templates/web/design09/includes/header.mako:24
 msgid "Sign in or Sign up"
-msgstr ""
+msgstr "Ouvrez une session ou Inscrivez-vous"
 
 #: civicboom/templates/web/design09/includes/header.mako:29
 msgid "Content grab"
-msgstr ""
+msgstr "Contenu saisir"
 
 #: civicboom/templates/web/design09/includes/header.mako:30
 msgid "Public"
-msgstr ""
+msgstr "Public"
 
 #: civicboom/templates/web/design09/includes/header.mako:31
 msgid "Private"
-msgstr ""
+msgstr "PrivÃ©"
 
 #: civicboom/templates/web/design09/includes/header.mako:40
 msgid "Settings"
-msgstr ""
+msgstr "ParamÃ¨tres"
 
 #: civicboom/templates/web/design09/includes/header.mako:41
 #, fuzzy
 msgid "Sign out"
-msgstr "Le Sign Up"
+msgstr "DÃ©connexion"
 
 #: civicboom/templates/web/design09/includes/navigation.mako:9
 msgid "Create _assignment"
-msgstr ""
+msgstr "CrÃ©er _assignment"
 
 #: civicboom/templates/web/design09/includes/navigation.mako:10
 msgid ""
 "Posting an _assignment allows you to ask questions and make call to "
 "actions"
-msgstr ""
+msgstr "Poster un _assignment vous permet de poser des questions et faire appel Ã  des actions"
 
 #: civicboom/templates/web/design09/includes/navigation.mako:13
 msgid "Upload _article"
-msgstr ""
+msgstr "Envoyer _article"
 
 #: civicboom/templates/web/design09/includes/navigation.mako:14
 msgid ""
 "Uploading an _article allows you express your ideas, opinions and news to"
 " a wider community"
-msgstr ""
+msgstr "Le tÃ©lÃ©chargement d&#39;une _article vous permet d&#39;exprimer vos idÃ©es, opinions et des nouvelles d&#39;une communautÃ© plus large"
 
 #: civicboom/templates/web/design09/includes/navigation.mako:21
 msgid "Find"
-msgstr ""
+msgstr "Trouver"
 
 #: civicboom/templates/web/design09/misc/about.mako:14
 msgid "Start Now!"
-msgstr ""
+msgstr "Commencez dÃ¨s maintenant!"
 
 #: civicboom/templates/web/design09/misc/about.mako:16
 msgid "About _site_name &amp; FAQ"
-msgstr ""
+msgstr "_site_name propos & FAQ"
 
 #: civicboom/templates/web/design09/misc/about.mako:21
 msgid "_site_name is a tool that makes building a story easier."
-msgstr ""
+msgstr "_site_name est un outil qui permet de construire une histoire facile."
 
 #: civicboom/templates/web/design09/misc/about.mako:22
 msgid "It connects people with news and insight with people who need it."
-msgstr ""
+msgstr "Il relie les gens avec des nouvelles et des idÃ©es avec des gens qui en ont besoin."
 
 #: civicboom/templates/web/design09/misc/about.mako:28
 msgid ""
 "Add _site_name widget to your website. Request news &amp; insight from "
 "your community or wider public"
-msgstr ""
+msgstr "Ajouter _site_name widget Ã  votre site Web. Nouvelles Demande & aperÃ§u de votre communautÃ© ou un public plus large"
 
 #: civicboom/templates/web/design09/misc/about.mako:30
 msgid "Get relevant content from your audience"
-msgstr ""
+msgstr "Obtenir le contenu pertinent de votre audience"
 
 #: civicboom/templates/web/design09/misc/about.mako:31
 msgid "Connect more deeply with your audience"
-msgstr ""
+msgstr "Connecter plus profondÃ©ment avec votre public"
 
 #: civicboom/templates/web/design09/misc/about.mako:33
 msgid "Respond directly to _assignments by uploading relevant news and insight"
-msgstr ""
+msgstr "RÃ©pondez directement Ã  _assignments en tÃ©lÃ©chargeant des nouvelles pertinentes et un aperÃ§u"
 
 #: civicboom/templates/web/design09/misc/about.mako:49
 msgid "_site_name for the individual"
-msgstr ""
+msgstr "_site_name pour l&#39;individu"
 
 #: civicboom/templates/web/design09/misc/about.mako:56
 msgid "_site_name works in 3 ways"
-msgstr ""
+msgstr "Å“uvres _site_name de 3 faÃ§ons"
 
 #: civicboom/templates/web/design09/misc/about.mako:58
 msgid ""
 "You can search _site_name for call-to-action assignments from "
 "organisations and people that want your news, opinion and insight."
-msgstr ""
+msgstr "Vous pouvez rechercher _site_name pour des affectations d&#39;appel Ã  l&#39;action des organisations et des personnes qui veulent vos nouvelles, d&#39;opinion et de perspicacitÃ©."
 
 #: civicboom/templates/web/design09/misc/about.mako:59
 msgid ""
 "You can respond to specific _assignments for your news and insight "
 "wherever you see the _site_name widget on other websites that want to "
 "news and insight from you."
-msgstr ""
+msgstr "Vous pouvez rÃ©pondre Ã  _assignments spÃ©cifiques pour vos nouvelles et de perspicacitÃ© partout oÃ¹ vous voyez le widget _site_name sur d&#39;autres sites qui veulent des nouvelles et un aperÃ§u de votre part."
 
 #: civicboom/templates/web/design09/misc/about.mako:60
 msgid ""
 "You can upload your news and insight directly, share with your Followers,"
 " and if appropriate even syndicate exclusive content that you have "
 "(photo's or video) and earn money."
-msgstr ""
+msgstr "Vous pouvez tÃ©lÃ©charger vos nouvelles et de perspicacitÃ© directement, partager avec vos disciples, et le cas Ã©chÃ©ant le contenu mÃªme du syndicat exclusive que vous avez (photo ou vidÃ©o) et gagner de l&#39;argent."
 
 #: civicboom/templates/web/design09/misc/about.mako:67
 msgid "_site_name for organisations"
-msgstr ""
+msgstr "_site_name pour les organisations"
 
 #: civicboom/templates/web/design09/misc/about.mako:76
 msgid "_site_name works by enabling you to:"
-msgstr ""
+msgstr "Å“uvres _site_name en vous permettant de:"
 
 #: civicboom/templates/web/design09/misc/about.mako:78
 msgid ""
 "Set a call-to-action _assignment for news or insight directly from your "
 "community via the widget powered by _site_name as a public or \"closed\" "
 "_assignment."
-msgstr ""
-
-#: civicboom/templates/web/design09/misc/about.mako:79
-msgid ""
-"\"Approve\" relevant content for use in your publishing, news and "
-"research - plus if you are a media organisation, sell images or video on*"
-" (with share of revenue going back to the original creator)."
-msgstr ""
+msgstr "DÃ©finir une _assignment a plus si vous Ãªtes un organisme de presse, de vendre des images ou vidÃ©o sur * (avec une part des recettes datant de l&#39;auteur original)."
 
 #: civicboom/templates/web/design09/misc/about.mako:80
 msgid ""
 "Establish a better connection and understanding of issues that matter to "
 "the community you serve."
-msgstr ""
+msgstr "Etablir une meilleure connexion et la comprÃ©hension des questions qui importent Ã  la communautÃ© que vous servez."
 
 #: civicboom/templates/web/design09/misc/about.mako:102
 msgid "What is a \"closed\" _assignment**?"
-msgstr ""
+msgstr "Qu&#39;est-ce qu&#39;un Â«fermÃ©Â» _assignment **?"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:6
 msgid "Welcome"
-msgstr ""
+msgstr "Accueil"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:22
 msgid "Try us now"
-msgstr ""
+msgstr "Essayez-nous maintenant"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:23
 msgid "Organisations &amp; Media:"
-msgstr ""
+msgstr "Organisations & Media:"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:23
 #: civicboom/templates/web/design09/misc/titlepage.mako:24
 msgid "Learn more"
-msgstr ""
+msgstr "En savoir plus"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:24
 #, fuzzy
 msgid "Individuals:"
-msgstr "Un Individual"
+msgstr "Particuliers:"
 
