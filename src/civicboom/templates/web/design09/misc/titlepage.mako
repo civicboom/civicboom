@@ -13,7 +13,7 @@
   
   <div id="titlepage" class="background_gradient_dark">
     <div class="site_description">
-      ${app_globals.site_description}.
+      ${_("site description")}.
       ##Interested? Then sign up to learn more.
     </div>
 
@@ -41,7 +41,7 @@
 
     <div class="bullets">
       <ul>
-        <li><span class="list_bullet_number">1</span>Add ${app_globals.site_name} widget to your website. Request news and insight from your community or wider public</li>
+        <li><span class="list_bullet_number">1</span>Add ${_("site name")} widget to your website. Request news and insight from your community or wider public</li>
         <li><span class="list_bullet_number">2</span>Respond directly to requests by uploading relevant news and insight</li>
         <li><span class="list_bullet_number">3</span>Get relevant content from your audience and participate directly in issues you care about</li>
       </ul>

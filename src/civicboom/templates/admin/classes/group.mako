@@ -11,7 +11,7 @@ ${common.errors(fieldset)}
 	<tr>
 		<td>
 <table>
-	<tr><th colspan="2">Information</th></tr>
+	<tr><th colspan="2">${_("Information")}</th></tr>
 	${common.render_short_field(fieldset.username)|n}
 	${common.render_short_field(fieldset.status.dropdown(options=["pending", "active", "removed"]))|n}
 	${common.render_short_field(fieldset.members)|n}
@@ -19,7 +19,7 @@ ${common.errors(fieldset)}
 		</td>
 		<td>
 <table>
-	<tr><th colspan="2">Description</th></tr>
+	<tr><th colspan="2">${_("Description")}</th></tr>
 	${common.render_short_field(fieldset.name)|n}
 	${common.render_short_field(fieldset.join_date)|n}
 	${common.render_short_field(fieldset.avatar)|n}

@@ -11,7 +11,7 @@ ${common.errors(fieldset)}
 	<tr>
 		<td>
 <table>
-	<tr><th colspan="2">General</th></tr>
+	<tr><th colspan="2">${_("General")}</th></tr>
 	${common.render_short_field(fieldset.creator)|n}
 	${common.render_short_field(fieldset.parent)|n}
 	${common.render_short_field(fieldset.creation_date)|n}
@@ -20,7 +20,7 @@ ${common.errors(fieldset)}
 		</td>
 		<td>
 <table>
-	<tr><th colspan="2">Content</th></tr>
+	<tr><th colspan="2">${_("Content")}</th></tr>
 	${common.render_short_field(fieldset.title)|n}
 	${common.render_short_field(fieldset.content)|n}
 	${common.render_short_field(fieldset.attachments)|n}

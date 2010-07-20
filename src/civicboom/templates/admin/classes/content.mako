@@ -11,14 +11,14 @@ ${common.errors(fieldset)}
 	<tr>
 		<td>
 <table>
-	<tr><th colspan="2">General</th></tr>
+	<tr><th colspan="2">${_("General")}</th></tr>
 	${common.render_short_field(fieldset.creator)|n}
 	${common.render_short_field(fieldset.status.dropdown(options=["pending", "show", "locked"]))|n}
 	${common.render_short_field(fieldset.private)|n}
 	${common.render_short_field(fieldset.parent)|n}
 </table>
 <table>
-	<tr><th colspan="2">Content</th></tr>
+	<tr><th colspan="2">${_("Content")}</th></tr>
 	${common.render_short_field(fieldset.title)|n}
 	${common.render_short_field(fieldset.content)|n}
 	${common.render_short_field(fieldset.attachments)|n}
@@ -27,13 +27,13 @@ ${common.errors(fieldset)}
 		</td>
 		<td>
 <table>
-	<tr><th colspan="2">Timeline</th></tr>
+	<tr><th colspan="2">${_("Timeline")}</th></tr>
 	${common.render_short_field(fieldset.creation_date)|n}
 	${common.render_short_field(fieldset.update_date)|n}
 	${common.render_short_field(fieldset.edits)|n}
 </table>
 <table>
-	<tr><th colspan="2">Other</th></tr>
+	<tr><th colspan="2">${_("Other")}</th></tr>
 	${common.render_short_field(fieldset.responses)|n}
 	${common.render_short_field(fieldset.location)|n}
 </table>

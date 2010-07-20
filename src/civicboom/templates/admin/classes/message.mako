@@ -4,7 +4,7 @@ ${common.style()}
 ${common.errors(fieldset)}
 
 <table>
-	<tr><th colspan="2">Content</th></tr>
+	<tr><th colspan="2">${_("Content")}</th></tr>
 	${common.render_short_field(fieldset.source)|n}
 	${common.render_short_field(fieldset.target)|n}
 	${common.render_short_field(fieldset.timestamp)|n}

@@ -13,19 +13,19 @@
   
   <div class="link_float"><a href="${h.url(controller='account', action='signin')}">Start Now!</a></div>
   
-  <h1>About ${app_globals.site_name} &amp; FAQ</h1>
+  <h1>${_("About Civicboom &amp; FAQ")}</h1>
   
   
   <h2>What is it?</h2>
   <ul class="bigger">
-    <li>${app_globals.site_name} is a tool that makes building a story easier.</li>
-    <li>It connects people with news and insight with people who need it.</li>
+    <li>${_("Civicboom is a tool that makes building a story easier.")}</li>
+    <li>${_("It connects people with news and insight with people who need it.")}</li>
   </ul>
   
   
   <h2>How can it work for you?</h2>
   <div class="about_flow">
-    <p class="step1"><span class="list_bullet_number">1</span><br/>Add ${app_globals.site_name} widget to your website. Request news &amp; insight from your community or wider public</p>
+    <p class="step1"><span class="list_bullet_number">1</span><br/>Add ${_("site name")} widget to your website. Request news &amp; insight from your community or wider public</p>
     <ul class="stepA">
       <li>Get relevant content from your audience</li>
       <li>Connect more deeply with your audience</li>
