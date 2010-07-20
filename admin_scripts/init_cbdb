@@ -71,14 +71,10 @@ CREATE TABLE places(
 	type VARCHAR(32) NOT NULL
 );
 " | psql -q -U civicboom -d civicboom_gis
-if [ -f places.txt ] ; then
-	(
-		#echo "BEGIN;"
-		./places_to_sql places.txt
-		#echo "COMMIT;"
-	) | psql -q -U civicboom -d civicboom_gis
+if [ -f places.sql ] ; then
+	cat places.sql | psql -q -U civicboom -d civicboom_gis
 else
-	echo "Can't find places.txt, not populating locations table"
+	echo "Can't find places.sql, not populating locations table"
 fi
 echo "
 CREATE INDEX places__location ON places USING GIST (location); 

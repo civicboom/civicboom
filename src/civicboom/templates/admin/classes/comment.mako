@@ -2,7 +2,7 @@
 <!--
 vim:ft=html
 -->
-<%namespace name="common" file="/forms/classes/common.mako" />
+<%namespace name="common" file="/admin/classes/common.mako" />
 
 ${common.style()}
 ${common.errors(fieldset)}

@@ -2,7 +2,7 @@
 <!--
 vim:ft=html
 -->
-<%namespace name="common" file="/forms/classes/common.mako" />
+<%namespace name="common" file="/admin/classes/common.mako" />
 
 ${common.style()}
 ${common.errors(fieldset)}
@@ -13,10 +13,8 @@ ${common.errors(fieldset)}
 <table>
 	<tr><th colspan="2">Information</th></tr>
 	${common.render_short_field(fieldset.username)|n}
-	${common.render_short_field(fieldset.email)|n}
 	${common.render_short_field(fieldset.status.dropdown(options=["pending", "active", "removed"]))|n}
-	${common.render_short_field(fieldset.location)|n}
-	<tr class="input_row"><td>Updated</td><td>${fieldset.location_updated.render_readonly()|n}</td></tr>
+	${common.render_short_field(fieldset.members)|n}
 </table>
 		</td>
 		<td>
