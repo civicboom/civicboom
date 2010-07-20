@@ -36,7 +36,7 @@ def copy_to_remote_warehouse(warehouse, hash, filename=None):
     if config["warehouse"] == "s3":
         log.info("Copying %s/%s (%s) to S3 warehouse" % (warehouse, hash, filename))
         connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
-        bucket = conn.get_bucket(config["s3_bucket_name"])
+        bucket = connection.get_bucket(config["s3_bucket_name"])
         key = Key(bucket)
         key.key = warehouse+"/"+hash
         key.set_metadata('Content-Type', magic.from_file(src, mime=True))

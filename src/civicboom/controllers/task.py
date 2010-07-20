@@ -8,6 +8,16 @@ setup a cron job to run these tasks
 
 """
 
+from pylons                  import request, url, config
+from pylons.controllers.util import abort, redirect
+
+from civicboom.lib.base import BaseController, render
+
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
+from glob import glob
+import magic
+import os
 import logging
 import datetime
 
@@ -50,3 +60,25 @@ class TaskController(BaseController):
   """
   def message_clean(self):
     pass
+
+  def sync_public_to_warehouse(self):
+        """
+        copies files in the public data folder (should just be CSS / small images)
+        to whatever warehouse we're using (eg Amazon S3)
+        """
+        done = []
+        if config["warehouse"] == "s3":
+            log.info("Syncing /public to s3")
+            connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
+            bucket = connection.get_bucket(config["s3_bucket_name"])
+            bucket.set_acl('public-read')
+            for fname in glob("./civicboom/public/*"):
+                if os.path.exists(fname) and os.path.isfile(fname):
+                    kname = fname[fname.find("public"):]
+                    done.append(kname)
+                    k = Key(bucket)
+                    k.key = kname
+                    k.set_metadata('Content-Type', magic.from_file(fname, mime=True))
+                    k.set_contents_from_filename(fname)
+                    k.set_acl('public-read')
+        return "\n".join(done)
