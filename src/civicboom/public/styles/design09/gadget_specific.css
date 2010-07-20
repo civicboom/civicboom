@@ -1,0 +1,20 @@
+body {
+  color: #233946;
+  font-family: sans-serif;
+  font-size: x-small;
+}
+ 
+a {
+  color: #233946;
+	text-decoration: none;
+}
+
+a:hover {text-decoration: none;}
+
+h1 {
+  font-weight: bold;
+}
+
+.mini_list {
+  width: auto !important;
+}

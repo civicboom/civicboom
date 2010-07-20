@@ -1,0 +1,150 @@
+#titlepage {
+  font-size: 110%;
+}
+
+
+#titlepage h2 {
+  clear: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: white;
+  font-size: 123.1%;
+  font-weight: bold;
+}
+
+
+
+#titlepage .site_description {
+  font-size: 300%;
+  font-weight: bold;
+  padding: 0.5em;
+  width: 50%;
+  line-height: 1em;
+  letter-spacing: -0.05em;
+  float: left;
+}
+
+
+/*----- Learn More -----*/
+
+#titlepage .learn_more {
+  font-size: 123.1%;
+  float: right;
+  padding-top: 1.5em;
+  padding-right: 1em;
+  font-size: x-large;
+  font-weight: bold;  
+}
+
+
+#titlepage .learn_more_link {
+  padding: 0.25em;
+  border: 1px solid black;
+  -moz-border-radius: 0.25em;
+  border-radius: 0.25em;
+  background: white;
+  font-size: small;
+}
+
+/*----- Affiliates -----*/
+
+#titlepage .affiliates {
+  background: white;
+  border-top: 1px solid #ddd;
+  color: #395271;
+  padding-top: 1em;
+  padding-left: 1em;
+}
+#titlepage .affiliates .affiliates_title {
+  float: left;
+  padding-top: 0.5em;
+  padding-left: 0.5em;
+  font-size: small;
+  font-weight: bold;
+  /* display: inline-block; */
+}
+
+#titlepage .affiliates .affiliate_icons {
+  margin-left: 10em;
+}
+
+#titlepage .affiliates .affiliate_icon {
+  max-height: 64px;
+  padding: 0.3em;
+  vertical-align: top;
+}
+
+/*----- Sign up -----*/
+
+#titlepage .signup {
+  float: right;
+  display: inline-block;
+  /* position: absolute;
+  margin-left: 32em;
+  margin-top:-2em;
+    font-size: 18px;*/
+  float: right;
+  margin-right: 6em;
+
+}
+
+#titlepage .signup_submit {
+  position: absolute;
+  margin-left: 16em;
+}
+
+/*----- Example images-----*/
+
+#titlepage .example_container {float: right;}
+
+#titlepage .examples {
+  position: absolute;
+  background: white;
+  color: #04145a;
+  width: 44em;
+  margin-left: -45em;
+  height: 15em;
+  margin-top: -15.9em;
+  padding: 0.5em;
+  font-size: small;
+  -moz-border-radius-topleft: 0.5em;
+  -webkit-border-top-left-radius: 0.5em;
+  border-top-left-radius: 0.5em;
+}
+
+#titlepage .examples .example_image {
+  max-height: 160px;
+  float: left;
+  margin-right: 1em;
+}
+
+#titlepage .examples .example_title {
+  font-size: large;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+#titlepage .examples strong {
+  font-weight: bold;
+}
+
+#titlepage .examples li {
+  margin-bottom: 1em;
+}
+
+#titlepage .examples .view_widget_link {max-width: 60px;}
+
+#titlepage .examples .tooltip_special_qrcode:hover span{top:-300px; width:200px; height:300px;}
+
+
+/*----- Bullets -----*/
+
+#titlepage .bullets {
+  font-size: 18px;
+  font-weight: bold;
+  width: 20em;
+}
+
+#titlepage .bullets li {margin-left: 5em; margin-bottom: 2em;}
+#titlepage .bullets .list_bullet_number {margin-left: -2.5em; font-size: larger; font-size: 24px;}
