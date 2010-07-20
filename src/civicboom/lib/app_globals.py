@@ -28,7 +28,6 @@ class Globals(object):
         self.development_mode = config['debug']
 
         self.email_contact    = config['email.contact']
-        self.terminology      = eval(config['text.terminology']) #AllanC - Security!? is this safe? as this value comes from the server cfg file and is just a dictonary I am happy to use eval here. terminolgy is a dictonary of terms
 
         self.feature_agregate_twitter   = asbool(config['feature.aggregate.twitter'])
         self.feature_agregate_email     = asbool(config['feature.aggregate.email'])
