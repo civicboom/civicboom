@@ -9,8 +9,8 @@ server {
 	location / {
 		# static files
 		root   /opt/cb/share/website/civicboom/public/;
-		error_page   404  /404.html;
-		error_page   500 502 503 504  /50x.html;
+		error_page   404  /errors/404.html;
+		error_page   500 502 503 504  /errors/50x.html;
 
 		# if it's not a static file, let pylons handle it
 		rewrite ^/$ /misc/titlepage;
