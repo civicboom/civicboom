@@ -15,7 +15,6 @@ from civicboom.lib.base import BaseController, render
 
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
-from glob import glob
 import magic
 import os
 import logging
@@ -72,8 +71,9 @@ class TaskController(BaseController):
             connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
             bucket = connection.get_bucket(config["s3_bucket_name"])
             bucket.set_acl('public-read')
-            for fname in glob("./civicboom/public/*"):
-                if os.path.exists(fname) and os.path.isfile(fname):
+            for dirpath, subdirs, filenames in os.walk("./civicboom/public/"):
+                for fname in filenames:
+                    fname = os.path.join(dirpath, fname)
                     kname = fname[fname.find("public"):]
                     done.append(kname)
                     k = Key(bucket)
