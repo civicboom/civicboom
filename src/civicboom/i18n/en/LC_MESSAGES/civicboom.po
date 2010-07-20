@@ -1,17 +1,17 @@
-# Translations template for civicboom.
+# English translations for civicboom.
 # Copyright (C) 2010 ORGANIZATION
 # This file is distributed under the same license as the civicboom project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: civicboom 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-07-20 16:02+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2010-07-20 16:00+0100\n"
+"PO-Revision-Date: 2010-07-20 16:03+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -58,15 +58,15 @@ msgstr ""
 
 #: civicboom/templates/web/html_header.mako:14
 msgid "site description"
-msgstr ""
+msgstr "Building the world's first true community and audience assignment system"
 
 #: civicboom/templates/web/html_header.mako:22
 msgid "tagline"
-msgstr ""
+msgstr "News. Don't just read it. Feed it."
 
 #: civicboom/templates/web/html_header.mako:25
 msgid "site name"
-msgstr ""
+msgstr "Civicboom"
 
 #: civicboom/templates/web/account/signin.mako:30
 #: civicboom/templates/web/account/signin.mako:33
