@@ -16,5 +16,9 @@ invoke-rc.d nginx restart
 
 . /opt/cb-env/bin/activate
 cd /opt/cb/share/website
+
 echo "Copying static data to S3"
 paster request production.ini /task/sync_public_to_warehouse >/dev/null
+
+echo "Compiling translation catalog"
+python setup.py compile_catalog
