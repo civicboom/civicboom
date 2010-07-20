@@ -32,7 +32,8 @@ class TaskController(BaseController):
   def __before__(self, action, **params):
     ##  Only accept requests from 127.0.0.1 as we never want these being run by anyone other than the server at set times
     ##  the server cron system should have a script that makes URL requests at localhost to activate these actions
-    if not (request.environ['REMOTE_ADDR'] == "127.0.0.1" or request.environ['REMOTE_ADDR'] == request.environ['SERVER_ADDR']):
+    ##  Shish - no REMOTE_ADDR = "paster request foo.ini /task/blah" from the command line
+    if not ('REMOTE_ADDR' not in request.environ or request.environ['REMOTE_ADDR'] == "127.0.0.1" or request.environ['REMOTE_ADDR'] == request.environ['SERVER_ADDR']):
       return abort(403)
     BaseController.__before__(self)
 
