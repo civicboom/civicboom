@@ -38,29 +38,56 @@ from pylons import url
   <body>
 <div id="content" class="ui-admin ui-widget">
   %if isinstance(models, dict):
-    <h1 id="header" class="ui-widget-header ui-corner-all">${F_('Civicboom Database Editor')}</h1>
-	<!-- Follow, GroupMembership, Media, MemberAssignment, Rating -->
-	<table>
-		<tr>
-			<td>
-				<p><a class="ui-state-default ui-corner-all" href="${models['ArticleContent']}">Articles</a></p>
-				<p><a class="ui-state-default ui-corner-all" href="${models['AssignmentContent']}">Assignments</a></p>
-				<p><a class="ui-state-default ui-corner-all" href="${models['CommentContent']}">Comments</a></p>
-				<p><a class="ui-state-default ui-corner-all" href="${models['DraftContent']}">Drafts</a></p>
-				<hr>
-				<p><a class="ui-state-default ui-corner-all" href="${models['ContentEditHistory']}">Content Edit History</a></p>
-			</td>
-			<td>
-				<p><a class="ui-state-default ui-corner-all" href="${models['User']}">Users</a></p>
-				<p><a class="ui-state-default ui-corner-all" href="${models['Group']}">Groups</a></p>
-				<p><a class="ui-state-default ui-corner-all" href="${models['Message']}">Messages</a></p>
-			</td>
-			<td>
-				<p><a class="ui-state-default ui-corner-all" href="${models['License']}">Licenses</a></p>
-				<p><a class="ui-state-default ui-corner-all" href="${models['Tag']}">Tags</a></p>
-				<p><a class="ui-state-default ui-corner-all" href="${models['Media']}">Media</a></p>
-			</td>
-		</tr>
+    <h1 id="header" class="ui-widget-header ui-corner-all">${_('Civicboom Control Panel')}</h1>
+<style>
+TABLE.outer {
+	width: 90%;
+	margin: auto;
+}
+TABLE.outer > TBODY > TR > TD {
+	border: none;
+	width: 50%;
+}
+TABLE.outer TABLE {
+	width: 95%;
+}
+</style>
+	<table class="outer">
+		<tr><td>
+<table>
+	<tr><th colspan="3">${_("Database Editor")}</th></tr>
+	<tr>
+		<td>
+			<p><a class="ui-state-default ui-corner-all" href="${models['ArticleContent']}">Articles</a></p>
+			<p><a class="ui-state-default ui-corner-all" href="${models['AssignmentContent']}">Assignments</a></p>
+			<p><a class="ui-state-default ui-corner-all" href="${models['CommentContent']}">Comments</a></p>
+			<p><a class="ui-state-default ui-corner-all" href="${models['DraftContent']}">Drafts</a></p>
+			<hr>
+			<p><a class="ui-state-default ui-corner-all" href="${models['ContentEditHistory']}">Content Edit History</a></p>
+		</td>
+		<td>
+			<p><a class="ui-state-default ui-corner-all" href="${models['User']}">Users</a></p>
+			<p><a class="ui-state-default ui-corner-all" href="${models['Group']}">Groups</a></p>
+			<p><a class="ui-state-default ui-corner-all" href="${models['Message']}">Messages</a></p>
+		</td>
+		<td>
+			<p><a class="ui-state-default ui-corner-all" href="${models['License']}">Licenses</a></p>
+			<p><a class="ui-state-default ui-corner-all" href="${models['Tag']}">Tags</a></p>
+			<p><a class="ui-state-default ui-corner-all" href="${models['Media']}">Media</a></p>
+		</td>
+	</tr>
+</table>
+		</td><td>
+<table>
+	<tr><th colspan="3">${_("Misc Tools")}</th></tr>
+	<tr>
+		<td>
+			<ul>
+				<li><a href="/admin/event_log">${_("Event Log")}</a></li>
+			</ul>
+		</td>
+	</tr>
+</table>
 	</table>
 
 	<hr>
