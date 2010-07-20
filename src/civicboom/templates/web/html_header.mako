@@ -11,7 +11,7 @@
   ##----------------------------------------------------------------------------
   ## Meta Text
   ##----------------------------------------------------------------------------
-  <meta name="description" content="${_("site description")}"/>
+  <meta name="description" content="${_("_site_description")}"/>
   <meta name="keywords"    content="" />
   <meta name="authors"     content="${app_globals.email_contact}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
   <meta name="robots"      content="all" />
@@ -19,10 +19,10 @@
   ##----------------------------------------------------------------------------
   ## Title
   ##----------------------------------------------------------------------------  
-  <%def name="title()">${_("tagline")}</%def>
+  <%def name="title()">${_("_tagline")}</%def>
   <% title_dev_prefix = "" %>
   <% if app_globals.development_mode: title_dev_prefix = "Dev-" %>
-  <title>${title_dev_prefix}${_("Civicboom")}: ${self.title()}</title>
+  <title>${title_dev_prefix}${_("_site_name")}: ${self.title()}</title>
 
 
   ##----------------------------------------------------------------------------

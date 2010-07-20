@@ -3,7 +3,7 @@
 ##------------------------------------------------------------------------------
 ## Title - Override
 ##------------------------------------------------------------------------------
-<%def name="title()">Welcome</%def>
+<%def name="title()">${_("Welcome")}</%def>
 
 
 ##------------------------------------------------------------------------------
@@ -13,27 +13,27 @@
   
   <div id="titlepage" class="background_gradient_dark">
     <div class="site_description">
-      ${_("site description")}.
+      ${_("_site_description")}.
       ##Interested? Then sign up to learn more.
     </div>
 
     
     <div class="learn_more">
-      <p style="font-size: larger;">Try us now</p>
-      <p>Organisations &amp; Media: <a class="learn_more_link" href="${h.url(controller='misc', action='get_started_organisations')}">Learn more</a></p>
-      <p>Individuals:               <a class="learn_more_link" href="${h.url(controller='misc', action='get_started')}">Learn more</a></p>
+      <p style="font-size: larger;">${_("Try us now")}</p>
+      <p>${_("Organisations &amp; Media:")} <a class="learn_more_link" href="${h.url(controller='misc', action='get_started_organisations')}">${_("Learn more")}</a></p>
+      <p>${_("Individuals:")}               <a class="learn_more_link" href="${h.url(controller='misc', action='get_started')}">${_("Learn more")}</a></p>
     </div>
     
     <div class="clearboth_hack"></div>
     
     <div class="signup">
       <form action="${h.url(controller='register', action='register_email')}" method="post">
-        ##<fieldset><legend>Sign up today</legend>
-          <p><label for="email"   >Email   </label><input type="text" id="email"    name="email"   /></p>
-          <p><label for="username">Username</label><input type="text" id="username" name="username"/></p>
+        ##<fieldset><legend>${_("Sign up today")}</legend>
+          <p><label for="email"   >${_("Email")}   </label><input type="text" id="email"    name="email"   /></p>
+          <p><label for="username">${_("Username")}</label><input type="text" id="username" name="username"/></p>
           <input class="signup_submit" type="submit" name="submit" value="Sign up"/>
-          <p><label for="user_type_individual"  >Individual  </label><input type="radio" id="user_type_individual"   name="user_type" value="individual"   checked='checked'/></p>
-          <p><label for="user_type_organisation">Organisation</label><input type="radio" id="user_type_organisation" name="user_type" value="organisation"                  /></p>
+          <p><label for="user_type_individual"  >${_("Individual")}  </label><input type="radio" id="user_type_individual"   name="user_type" value="individual"   checked='checked'/></p>
+          <p><label for="user_type_organisation">${_("Organisation")}</label><input type="radio" id="user_type_organisation" name="user_type" value="organisation"                  /></p>
           
         ##</fieldset>
       </form>
@@ -41,7 +41,7 @@
 
     <div class="bullets">
       <ul>
-        <li><span class="list_bullet_number">1</span>Add ${_("site name")} widget to your website. Request news and insight from your community or wider public</li>
+        <li><span class="list_bullet_number">1</span>Add ${_("_site_name")} widget to your website. Request news and insight from your community or wider public</li>
         <li><span class="list_bullet_number">2</span>Respond directly to requests by uploading relevant news and insight</li>
         <li><span class="list_bullet_number">3</span>Get relevant content from your audience and participate directly in issues you care about</li>
       </ul>
@@ -80,7 +80,7 @@
     <div class="clearboth_hack"></div>
 
     <div class="affiliates">
-      ##<p style="font-weight: bold;">These organisations are using ${c.site_name}. Join them by signing up.</p>
+      ##<p style="font-weight: bold;">These organisations are using ${_("_site_name")}. Join them by signing up.</p>
       <div>
         ##<a href="http://www.swns.com/"            ><img class="affiliate_icon" alt="South West News Service"   src="http://www.swns.com/images/swns.png"                                           style="max-width: 180px; padding-top: 1em;"/></a>
         ##<a href="http://www.hackneycitizen.co.uk/"><img class="affiliate_icon" alt="Hackney Citizen"           src="http://www.hackneycitizen.co.uk/wp-content/themes/mimbo2.2/images/logo.gif"/></a>

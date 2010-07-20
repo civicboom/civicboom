@@ -22,7 +22,7 @@
 
 <div class="misc_page background_gradient_dark">
   ##% if c.http_referer:
-  ##<div class="link_float"><a href="${c.http_referer}">Back</a></div>
+  ##<div class="link_float"><a href="${c.http_referer}">${_("Back")}</a></div>
   ##% endif
   ${next.body()}
 </div>

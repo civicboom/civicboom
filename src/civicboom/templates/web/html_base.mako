@@ -104,11 +104,11 @@
     <div id="first_view_message" class="popup hidden_by_default">
       ##${session.get('first_view_message')}
       <a class="popup_close_button" href="#" onclick="swap('first_view_message'); return false;"></a>
-      <p><strong>${_("Civicboom is undergoing exciting changes!")}</strong></p>
+      <p><strong>${_("_site_name is undergoing exciting changes!")}</strong></p>
       <p>${_("We want your feedback! Tell us what you think:")} <a href="mailto:feedback@indiconews.com">feedback@indiconews.com</a></p>
       <br/>
-      <p>${_("Thanks, from the Civicboom Team.")}</p>
-      <a class="first_view_message_close" href="#" onclick="swap('first_view_message'); return false;">close</a>
+      <p>${_("Thanks, from the _site_name Team.")}</p>
+      <a class="first_view_message_close" href="#" onclick="swap('first_view_message'); return false;">${_("close")}</a>
     </div>
     <script type="text/javascript">swap('first_view_message');</script>
     <%
@@ -125,8 +125,8 @@
 ##------------------------------------------------------------------------------
 
 <%def name="tagline_markup()">
-%if _("tagline"):
-<span class="tagline">${_("tagline")}<sup>TM</sup></span>
+%if _("_tagline"):
+<span class="tagline">${_("_tagline")}<sup>TM</sup></span>
 %endif
 </%def>
 
