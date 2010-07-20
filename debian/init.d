@@ -17,18 +17,20 @@ UID="--user www-data --group www-data"
 # FIXME /tmp should be /var/run
 DAE="--daemon --pid-file=/tmp/cb-website.pid --log-file=/var/log/civicboom/pylons.log"
 
+cd $APP
+
 case "$1" in
   start)
-    paster serve $UID $DAE $APP/production.ini start
+    paster serve $UID $DAE production.ini start
     ;;
   stop)
-    paster serve $UID $DAE $APP/production.ini stop
+    paster serve $UID $DAE production.ini stop
     ;;
   restart)
-    paster serve $UID $DAE $APP/production.ini restart
+    paster serve $UID $DAE production.ini restart
     ;;
   force-reload)
-    paster serve $UID $DAE $APP/production.ini restart
+    paster serve $UID $DAE production.ini restart
     ;;
   *)
     echo "Usage: $0 {start|stop|restart|force-reload}"
