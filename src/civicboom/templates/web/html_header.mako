@@ -24,29 +24,34 @@
   <% if app_globals.development_mode: title_dev_prefix = "Dev-" %>
   <title>${title_dev_prefix}${app_globals.site_name}: ${self.title()}</title>
 
-  ##----------------------------------------------------------------------------
-  ## CSS Style Sheets
-  ##----------------------------------------------------------------------------
-  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css" />
-  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/skin.css" />
-  <link rel="stylesheet" type="text/css" href="/styles/design09/design09.css" />
 
-  <link rel="stylesheet" type="text/css" href="/styles/content_editor/content_editor.css" />
-  ## AllanC - rather than haveing this load on every page, could use mako inheritence to allow the template to add CSS includes
+  <%def name="head_links()">
+    ##----------------------------------------------------------------------------
+    ## CSS Style Sheets
+    ##----------------------------------------------------------------------------
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09.css" />
+    
+    ##----------------------------------------------------------------------------
+    ## Javascripts
+    ##----------------------------------------------------------------------------
+    
+    <!-- YUI 2.x global imports -->
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script><!-- Utility Dependencies -->
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"            ></script> 
+    
+    <!-- Civicboom global imports -->
+    <script type="text/javascript" src="/javascript/url_encode.js"      ></script>
+    <script type="text/javascript" src="/javascript/toggle_div.js"      ></script>
+  </%def>
+  ${self.head_links()}
+  ## Inheriting templates can add there own CSS and Javascript additions
+  ## if subtemplates implement head_links they should always call the parent template as follows
+  ## <%def name="head_links()">
+  ##   ${parent.head_links()}
+  ##   <link "your custom bits here">
+  ## </%def>
 
-  ##----------------------------------------------------------------------------
-  ## Javascripts
-  ##----------------------------------------------------------------------------
-  
-  ##<!-- YUI 2.x imports -->
-  <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script><!-- Utility Dependencies -->
-  <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"            ></script> 
-  <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js"   ></script><!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
-  <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/editor/simpleeditor-min.js"        ></script><!-- Source file for Rich Text Editor-->
-  
-  ##<!-- Civicboom imports -->
-  <script type="text/javascript" src="/javascript/url_encode.js"      ></script>
-  <script type="text/javascript" src="/javascript/toggle_div.js"      ></script>
 
   ##----------------------------------------------------------------------------
   ## Development Javascript Debug Console Output
