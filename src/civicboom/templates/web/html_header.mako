@@ -31,6 +31,9 @@
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/skin.css" />
   <link rel="stylesheet" type="text/css" href="/styles/design09/design09.css" />
 
+  <link rel="stylesheet" type="text/css" href="/styles/content_editor/content_editor.css" />
+  ## AllanC - rather than haveing this load on every page, could use mako inheritence to allow the template to add CSS includes
+
   ##----------------------------------------------------------------------------
   ## Javascripts
   ##----------------------------------------------------------------------------

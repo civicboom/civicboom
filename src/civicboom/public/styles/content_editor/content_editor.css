@@ -1,0 +1,34 @@
+.content_form {
+  width: 450px;
+  /*border: 1px solid black;
+  padding: 1em;
+  margin: 1em;*/
+  font-size: 86%;
+  background-color: white;
+}
+.content_form .form_instuctions {
+  font-size: 86%;
+  color: #555;
+}
+
+.content_form fieldset        {
+  border-top: 1px solid #888;
+  margin-top: 1em;
+}
+.content_form fieldset legend {
+  font-size: 120%;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 0.5em;
+}
+
+.content_form fieldset fieldset        {
+  border-top: 1px solid #aaa;
+  margin-top: 0.5em;
+}
+.content_form fieldset fieldset legend {
+  font-size: 110%;
+  color: #999;
+  margin-bottom: 0.25em;
+}
+

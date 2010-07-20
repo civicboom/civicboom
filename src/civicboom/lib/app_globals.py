@@ -30,6 +30,7 @@ class Globals(object):
     
     self.site_name        = config['text.site_name']
     self.site_description = config['text.site_description']
+    self.tagline          = config['text.tagline']
     self.email_contact    = config['email.contact']
     self.terminology      = eval(config['text.terminology']) #AllanC - Security!? is this safe? as this value comes from the server cfg file and is just a dictonary I am happy to use eval here. terminolgy is a dictonary of terms
 
