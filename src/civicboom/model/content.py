@@ -165,7 +165,7 @@ class Tag(Base):
         self.parent = parent
 
     def __unicode__(self):
-        return self.name
+        return self.full_name
 
     @property
     def full_name(self):
