@@ -7,10 +7,11 @@
   ${parent.head_links()}
   
   <!-- Content editor imports-->
-  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/skin.css" />
+  <link   type="text/css"        rel="stylesheet"  href="http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/skin.css" />
   <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js"   ></script><!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
   <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/editor/simpleeditor-min.js"        ></script><!-- Source file for Rich Text Editor-->
-  <link rel="stylesheet" type="text/css" href="/styles/content_editor/content_editor.css" />
+  
+  <link   type="text/css"        rel="stylesheet"  href="/styles/content_editor/content_editor.css" />
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -22,16 +23,16 @@
     <form action="" method="post">
       <fieldset><legend>Content</legend>
         <p class="form_instuctions">Got an opinion? want to ask a question?</p>
-  
-  
+
+
           <p><label for="form_title">Title</label><input id="form_title" name="form_title" type="text" style="width:80%;"/><span class="tooltip tooltip_icon"><span>extra info</span></span></p>
     
-          ${richtext()}
+          ${richtext("The cat was playing in the garden.")}
     
           <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
-    
+
           <p><label for="form_owner">By</label>
-          <select name="form_owner">
+          <select name="form_owner">"
             <option value="" selected="selected">my_username</option>
             <option value=""                    >Group I am member of 1</option>
             <option value=""                    >Group I am member of 2</option>
@@ -48,11 +49,11 @@
 ##------------------------------------------------------------------------------
 ## YUI Rich Text Component
 ##------------------------------------------------------------------------------
-<%def name="richtext(width='100%', height='300px')">
+<%def name="richtext(content, width='100%', height='300px')">
 
   <!-- Rich Text Component -->
   <div class="yui-skin-sam">
-    <textarea id="form_content" name="form_content" style="width:${width}; height:${height};">The cat was playing in the garden.</textarea>  
+    <textarea id="form_content" name="form_content" style="width:${width}; height:${height};">${content}</textarea>  
     <script type="text/javascript">
       var myEditor = new YAHOO.widget.SimpleEditor('form_content', {
           height: '${height}',

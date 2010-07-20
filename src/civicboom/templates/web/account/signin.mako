@@ -23,7 +23,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-  <div class="yui-gb">
+  <div class="form_signin yui-gb">
   
     <div class="yui-u first">
       <form action="FORM_ACTION" method="post">

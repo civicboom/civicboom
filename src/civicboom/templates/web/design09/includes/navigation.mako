@@ -6,11 +6,11 @@
   <div class="yui-u first navigation_items">
     <ul>
       <li>
-        <a href="${h.url(controller='content',action='upload'      )}">Create ${app_globals.terminology['assignment']}</a>
+        <a href="${h.url(controller='content',action='content'      )}">Create ${app_globals.terminology['assignment']}</a>
         <div class="tooltip tooltip_icon"><span>Posting a ${app_globals.terminology['assignment']} allows you to ask questions and make call to actions</span></div>
       </li>
       <li>
-        <a href="${h.url(controller='content'   ,action='upload'         )}">Upload ${app_globals.terminology['article']   }</a>
+        <a href="${h.url(controller='content'   ,action='content'         )}">Upload ${app_globals.terminology['article']   }</a>
         <div class="tooltip tooltip_icon"><span>Uploading ${app_globals.terminology['article']} allows you express your ideas, opinions and news to a wider community</span></div>
       </li>
     </ul>

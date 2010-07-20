@@ -6,23 +6,23 @@
 /*----------------------------------------------------------------------------*/
 
 
-fieldset {
+.form_signin fieldset {
   border: 1px solid #ddd;
   padding: 0.25em;
   /* margin: 1em; */
 }
-legend {
+.form_signin legend {
   font-weight: bold;
   margin-left: 0.5em;
   color: inherit;
 }
-label {
+.form_signin label {
   display: inline-block;
   width: 8em;
   text-align: right;
 }
 /* label:after {content:' : ';} makes alignment wrong with lables over multiple lines*/
-input {
+.form_signin input {
   margin: 0.25em;
 }
 

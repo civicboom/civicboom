@@ -1,4 +1,5 @@
 from civicboom.model.member import User
+from civicboom.model.content import Content
 
 from civicboom.model.meta   import Session
 
@@ -33,6 +34,14 @@ def get_user(user):
   if isinstance(user,User): return user
   return get_user_nocache(user)
 
+
+def get_content_nocache(content_id):
+  try   : return Session.query(Content).filter_by(id=content_id).one()
+  except: return None
+
+def get_content(content_id):
+  if not content_id: return None
+  return get_content_nocache(content_id)
 
 #-------------------------------------------------------------------------------
 # Database List Gets - Cached - Get data lists from database that is cached

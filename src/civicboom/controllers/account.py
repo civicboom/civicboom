@@ -1,7 +1,4 @@
-from pylons                  import request, url
-from pylons.controllers.util import abort, redirect
-
-from civicboom.lib.base import BaseController, render
+from civicboom.lib.base import BaseController, render, request, url, abort, redirect
 
 from civicboom.lib.misc import flash_message
 
@@ -23,7 +20,7 @@ class AccountController(BaseController):
       abort(401) #This triggers the AuthKit middleware into displaying the sign-in form
     else:
       #redirect(url(controller='misc', action='test'))
-      redirect(url('/'))
+      return redirect(url('/'))
     
   def signout(self):
     flash_message("Successfully signed out!")
