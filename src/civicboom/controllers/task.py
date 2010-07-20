@@ -19,6 +19,7 @@ import magic
 import os
 import logging
 import datetime
+import hashlib
 
 log = logging.getLogger(__name__)
 
@@ -80,10 +81,14 @@ class TaskController(BaseController):
                 for fname in filenames:
                     fname = os.path.join(dirpath, fname)
                     kname = fname[fname.find("public"):]
-                    done.append(kname)
+                    k = bucket.get_key(kname)
+                    if k and k.etag.strip('"') == hashlib.md5(file(fname).read()).hexdigest():
+                        done.append("No change: "+kname)
+                        continue
                     k = Key(bucket)
                     k.key = kname
                     k.set_metadata('Content-Type', magic.from_file(fname, mime=True))
                     k.set_contents_from_filename(fname)
                     k.set_acl('public-read')
+                    done.append("Synced: "+kname)
         return "\n".join(done)
