@@ -19,8 +19,10 @@ def make_map(config):
     map.connect('/error/{action}/{id}', controller='error')
 
     # CUSTOM ROUTES HERE
+    map.connect('/', controller='misc', action='titlepage')
+    
     # Map the /admin url to FA's AdminController
-    # Map static files
+    # Map static files  
     map.connect('fa_static', '/admin/_static/{path_info:.*}', controller='admin', action='static')
     # Index page
     map.connect('admin', '/admin', controller='admin', action='models')
@@ -28,6 +30,10 @@ def make_map(config):
     # Models
     map.resource('model', 'models', path_prefix='/admin/{model_name}', controller='admin')
 
+    
+    map.redirect('/{controller}/'         , '/{controller}'         )
+    map.redirect('/{controller}/{action}/', '/{controller}/{action}')
+    
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')
 

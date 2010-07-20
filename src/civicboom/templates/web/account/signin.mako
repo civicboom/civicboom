@@ -34,7 +34,7 @@
         </fieldset>
       </form>
     </div>
-<%doc>
+
     <div class="yui-u inverted">
       <form action="${h.url(controller='register', action='register_email')}" method="post">
         <fieldset><legend>Sign up</legend>
@@ -58,7 +58,7 @@
         </fieldset>
       </form>
     </div>
-</%doc>
+
   </div>
 
 </%def>

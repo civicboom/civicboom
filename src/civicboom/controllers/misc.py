@@ -12,3 +12,6 @@ class MiscController(BaseController):
 
   def about(self):
     return render(prefix+"about.mako")
+    
+  def titlepage(self):
+    return render(prefix+"titlepage.mako")

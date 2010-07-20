@@ -45,6 +45,7 @@
   border-radius: 0.25em;
   background: white;
   font-size: small;
+  color: #04145a;
 }
 
 /*----- Affiliates -----*/
@@ -97,6 +98,8 @@
 /*----- Example images-----*/
 
 #titlepage .example_container {float: right;}
+
+#titlepage .examples a {color: #04145a;}
 
 #titlepage .examples {
   position: absolute;
