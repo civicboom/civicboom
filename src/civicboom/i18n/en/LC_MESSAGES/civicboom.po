@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: civicboom 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-07-20 16:00+0100\n"
-"PO-Revision-Date: 2010-07-20 17:59+0100\n"
+"PO-Revision-Date: 2010-07-20 18:43+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -131,7 +131,6 @@ msgstr "Building the world's first true community and audience assignment system
 #: civicboom/templates/web/design09/misc/about.mako:129
 #: civicboom/templates/web/design09/misc/about.mako:136
 #: civicboom/templates/web/design09/misc/about.mako:141
-#: civicboom/templates/web/design09/misc/titlepage.mako:44
 msgid "_site_name"
 msgstr "Civicboom"
 
@@ -147,6 +146,7 @@ msgstr ""
 
 #: civicboom/templates/web/account/signin.mako:40
 #: civicboom/templates/web/account/signin.mako:46
+#: civicboom/templates/web/design09/misc/titlepage.mako:34
 msgid "Sign up"
 msgstr ""
 
@@ -313,6 +313,14 @@ msgstr ""
 msgid "Respond directly to _assignments by uploading relevant news and insight"
 msgstr "Respond directly to requests by uploading relevant news and insight"
 
+#: civicboom/templates/web/design09/misc/about.mako:35
+msgid "Participate directly in issues you care about"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/about.mako:36
+msgid "Get recognised as a credible news source"
+msgstr ""
+
 #: civicboom/templates/web/design09/misc/about.mako:49
 msgid "_site_name for the individual"
 msgstr "Civicboom for the individual"
@@ -400,5 +408,54 @@ msgstr ""
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:24
 msgid "Individuals:"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:44
+#, fuzzy
+#| msgid "" "Add _site_name widget to your website. Request news &amp; insight
+#| from " "your community or wider public"
+msgid ""
+"Add _site_name widget to your website. Request news and insight from your"
+" community or wider public"
+msgstr ""
+"Add the Civicboom widget to your website. Request news &amp; insight from"
+" your community or wider public"
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:45
+#, fuzzy
+#| msgid "Respond directly to _assignments by uploading relevant news and
+#| insight"
+msgid "Respond directly to requests by uploading relevant news and insight"
+msgstr "Respond directly to requests by uploading relevant news and insight"
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:46
+msgid ""
+"Get relevant content from your audience and participate directly in "
+"issues you care about"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:55
+msgid "Trial the widget now"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:57
+msgid "Widget skins available in 2 colours."
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:57
+msgid "Size customised to fit your website."
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:59
+#: civicboom/templates/web/design09/misc/titlepage.mako:69
+msgid "Read more!"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:64
+msgid "Trial the mobile app now"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:68
+msgid "Participate in the news agenda directly from you mobile phone."
 msgstr ""
 

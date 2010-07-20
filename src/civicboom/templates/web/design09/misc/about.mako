@@ -32,8 +32,8 @@
     </ul>  
     <p class="step2"><span class="list_bullet_number">2</span><br/>${_("Respond directly to _assignments by uploading relevant news and insight")}</p>
     <ul class="stepB">
-      <li>$_("Participate directly in issues you care about")}</li>
-      <li>$_("Get recognised as a credible news source")}</li>
+      <li>${_("Participate directly in issues you care about")}</li>
+      <li>${_("Get recognised as a credible news source")}</li>
     </ul>
     <a class="view_widget_link" href="${h.url(controller='misc', action='widget_details')}"><img src="/images/misc/view_widget_detail_button.png" alt="view widget in detail"/></a>
     <img class="about_flow_background" src="/images/misc/about_arrow_flow_background.png" alt="about flow background arrows"/>

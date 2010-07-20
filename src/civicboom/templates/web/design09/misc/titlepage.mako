@@ -31,7 +31,7 @@
         ##<fieldset><legend>${_("Sign up today")}</legend>
           <p><label for="email"   >${_("Email")}   </label><input type="text" id="email"    name="email"   /></p>
           <p><label for="username">${_("Username")}</label><input type="text" id="username" name="username"/></p>
-          <input class="signup_submit" type="submit" name="submit" value="Sign up"/>
+          <input class="signup_submit" type="submit" name="submit" value="${_("Sign up")}"/>
           <p><label for="user_type_individual"  >${_("Individual")}  </label><input type="radio" id="user_type_individual"   name="user_type" value="individual"   checked='checked'/></p>
           <p><label for="user_type_organisation">${_("Organisation")}</label><input type="radio" id="user_type_organisation" name="user_type" value="organisation"                  /></p>
           
@@ -41,9 +41,9 @@
 
     <div class="bullets">
       <ul>
-        <li><span class="list_bullet_number">1</span>Add ${_("_site_name")} widget to your website. Request news and insight from your community or wider public</li>
-        <li><span class="list_bullet_number">2</span>Respond directly to requests by uploading relevant news and insight</li>
-        <li><span class="list_bullet_number">3</span>Get relevant content from your audience and participate directly in issues you care about</li>
+        <li><span class="list_bullet_number">1</span>${_("Add _site_name widget to your website. Request news and insight from your community or wider public")}</li>
+        <li><span class="list_bullet_number">2</span>${_("Respond directly to requests by uploading relevant news and insight")}</li>
+        <li><span class="list_bullet_number">3</span>${_("Get relevant content from your audience and participate directly in issues you care about")}</li>
       </ul>
     </div>
 
@@ -52,20 +52,21 @@
         <div class="yui-g">
           <div class="yui-u first">
             <a href="${h.url(controller='misc', action='widget_details')}">
-            <p class="example_title">Trial the widget now</p>
+            <p class="example_title">${_("Trial the widget now")}</p>
             <img class="example_image" src="/images/misc/widget_preview.png" alt="widget preview"/>
-            <ul><li>Widget skins available in 2 colours.</li><li>Size customised to fit your website.</li></ul>
+            <ul><li>${_("Widget skins available in 2 colours.")}</li><li>${_("Size customised to fit your website.")}</li></ul>
             ##<img class="view_widget_link" src="/images/misc/view_widget_detail_button.png" alt="view widget in detail"/>
-            <strong>Read more!</strong>
+            <strong>${_("Read more!")}</strong>
             </a>
           </div>
           <div class="yui-u">
             <a href="${h.url(controller="misc", action="get_mobile")}">
-            <p class="example_title">Trial the mobile app now</p>
+            <p class="example_title">${_("Trial the mobile app now")}</p>
             <img class="example_image" src="/images/misc/mobile_preview.png" alt="mobile preview"/>
             ##<strong></strong>
             ##Get the civicboom mobile application now
-            Participate in the news agenda directly from you mobile phone. <strong>Read more!</strong>
+            ${_("Participate in the news agenda directly from you mobile phone.")}
+            <strong>${_("Read more!")}</strong>
             ##respond directly from mobile phone with video, text, images. Get footage. Get published.
             </a>
             <br/><br/>
