@@ -1,7 +1,7 @@
 server {
 	listen   80;
 	listen   443 default ssl;
-	server_name  .civicboom.com new-server localhost;
+	server_name  .civicboom.com new-server;
 	access_log  /var/log/civicboom/nginx.log;
 	ssl_certificate      /opt/cb/etc/ssl/civicboom.com.crt;
 	ssl_certificate_key  /opt/cb/etc/ssl/civicboom.com.key;
