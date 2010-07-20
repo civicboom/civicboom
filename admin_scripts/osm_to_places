@@ -1,0 +1,53 @@
+#!/usr/bin/python
+
+import xml.sax.handler
+import bz2
+
+class Node(object):
+    def __init__(self, attributes):
+        self.lat = float(attributes["lat"])
+        self.lon = float(attributes["lon"])
+        self.name = None
+        self.type = None
+        self.isin = None
+
+    def __unicode__(self):
+        return u"%f\t%f\t%s\t%s" % (self.lat, self.lon, self.name, self.type)
+
+class MapHandler(xml.sax.handler.ContentHandler):
+    def __init__(self):
+        self.node = None
+
+    def startElement(self, name, attributes):
+        if name == "node":
+            self.node = Node(attributes)
+        elif name == "tag":
+            if attributes["k"] == "name":
+                self.node.name = attributes["v"]
+            if attributes["k"] == "place":
+                self.node.type = attributes["v"]
+            if attributes["k"] == "is_in":
+                self.node.isin = attributes["v"]
+
+    def endElement(self, name):
+        if name == "node":
+            if self.node.name and self.node.type:
+                print(unicode(self.node).encode("ascii", "replace"))
+
+class ErrHandler(xml.sax.handler.ErrorHandler):
+    def error(self, ex):
+        print ex
+    def fatalError(self, ex):
+        print ex
+    def warning(self, ex):
+        print ex
+
+
+import xml.sax
+import sys
+parser = xml.sax.make_parser()
+parser.setErrorHandler(ErrHandler())
+parser.setContentHandler(MapHandler())
+# BZ2 broken?
+#parser.parse(bz2.BZ2File("planet-latest.osm.bz2"))
+parser.parse(sys.stdin)
