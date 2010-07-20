@@ -12,7 +12,8 @@ class Node(object):
         self.isin = None
 
     def __unicode__(self):
-        return u"%f\t%f\t%s\t%s" % (self.lat, self.lon, self.name, self.type)
+        print "INSERT INTO places(location, name, type)",
+        print "VALUES(ST_Point(%s, %s), '%s', '%s');" % (self.lat, self.lon, self.name.replace("'", "''"), self.type)
 
 class MapHandler(xml.sax.handler.ContentHandler):
     def __init__(self):
