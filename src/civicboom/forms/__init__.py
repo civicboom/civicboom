@@ -33,7 +33,7 @@ class CustomTemplateEngine(TemplateEngine):
         self.template = template
 
     def render(self, name, **kwargs):
-        return render("/forms/classes/%s.mako" % self.template, extra_vars=kwargs)
+        return render("/admin/classes/%s.mako" % self.template, extra_vars=kwargs)
 
 ArticleContent = FieldSet(model.ArticleContent)
 ArticleContent.engine = CustomTemplateEngine("content")
@@ -113,7 +113,6 @@ User.configure(include=[
         User.home_location,
         User.webpage,
         User.description,
-        #User.location_updated, # FIXME: this should be updated by a trigger
         User.location,
         ])
 
