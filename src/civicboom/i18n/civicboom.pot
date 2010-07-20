@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: civicboom 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-07-20 18:43+0100\n"
+"POT-Creation-Date: 2010-07-20 18:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -304,6 +304,7 @@ msgid "Connect more deeply with your audience"
 msgstr ""
 
 #: civicboom/templates/web/design09/misc/about.mako:33
+#: civicboom/templates/web/design09/misc/titlepage.mako:45
 msgid "Respond directly to _assignments by uploading relevant news and insight"
 msgstr ""
 
@@ -400,10 +401,6 @@ msgstr ""
 msgid ""
 "Add _site_name widget to your website. Request news and insight from your "
 "community or wider public"
-msgstr ""
-
-#: civicboom/templates/web/design09/misc/titlepage.mako:45
-msgid "Respond directly to requests by uploading relevant news and insight"
 msgstr ""
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:46

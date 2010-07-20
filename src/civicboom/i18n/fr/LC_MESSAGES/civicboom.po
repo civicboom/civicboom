@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: civicboom 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-07-20 12:12+0100\n"
-"PO-Revision-Date: 2010-07-20 18:43+0100\n"
+"PO-Revision-Date: 2010-07-20 18:48+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
@@ -322,6 +322,7 @@ msgid "Connect more deeply with your audience"
 msgstr "Connecter plus profondément avec votre public"
 
 #: civicboom/templates/web/design09/misc/about.mako:33
+#: civicboom/templates/web/design09/misc/titlepage.mako:45
 msgid "Respond directly to _assignments by uploading relevant news and insight"
 msgstr ""
 "Répondre directement aux demandes formulées par le téléchargement des "
@@ -435,8 +436,6 @@ msgstr "Particuliers:"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:44
 #, fuzzy
-#| msgid "" "Add _site_name widget to your website. Request news &amp; insight
-#| from " "your community or wider public"
 msgid ""
 "Add _site_name widget to your website. Request news and insight from your"
 " community or wider public"
@@ -444,18 +443,8 @@ msgstr ""
 "Ajouter le widget Civicboom à votre site Web. Nouvelles Demande & aperçu "
 "de votre communauté ou un public plus large"
 
-#: civicboom/templates/web/design09/misc/titlepage.mako:45
-#, fuzzy
-#| msgid "Respond directly to _assignments by uploading relevant news and
-#| insight"
-msgid "Respond directly to requests by uploading relevant news and insight"
-msgstr ""
-"Répondre directement aux demandes formulées par le téléchargement des "
-"nouvelles pertinentes et un aperçu"
-
 #: civicboom/templates/web/design09/misc/titlepage.mako:46
 #, fuzzy
-#| msgid "Participate directly in issues you care about"
 msgid ""
 "Get relevant content from your audience and participate directly in "
 "issues you care about"
@@ -476,7 +465,6 @@ msgstr ""
 #: civicboom/templates/web/design09/misc/titlepage.mako:59
 #: civicboom/templates/web/design09/misc/titlepage.mako:69
 #, fuzzy
-#| msgid "Learn more"
 msgid "Read more!"
 msgstr "En savoir plus"
 
@@ -487,4 +475,12 @@ msgstr ""
 #: civicboom/templates/web/design09/misc/titlepage.mako:68
 msgid "Participate in the news agenda directly from you mobile phone."
 msgstr ""
+
+# | msgid "Respond directly to _assignments by uploading relevant news and
+# | insight"
+#~ msgid "Respond directly to requests by uploading relevant news and insight"
+#~ msgstr ""
+#~ "Répondre directement aux demandes formulées"
+#~ " par le téléchargement des nouvelles "
+#~ "pertinentes et un aperçu"
 

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: civicboom 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-07-20 16:00+0100\n"
-"PO-Revision-Date: 2010-07-20 18:43+0100\n"
+"PO-Revision-Date: 2010-07-20 18:48+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -310,6 +310,7 @@ msgid "Connect more deeply with your audience"
 msgstr ""
 
 #: civicboom/templates/web/design09/misc/about.mako:33
+#: civicboom/templates/web/design09/misc/titlepage.mako:45
 msgid "Respond directly to _assignments by uploading relevant news and insight"
 msgstr "Respond directly to requests by uploading relevant news and insight"
 
@@ -411,22 +412,12 @@ msgid "Individuals:"
 msgstr ""
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:44
-#, fuzzy
-#| msgid "" "Add _site_name widget to your website. Request news &amp; insight
-#| from " "your community or wider public"
 msgid ""
 "Add _site_name widget to your website. Request news and insight from your"
 " community or wider public"
 msgstr ""
-"Add the Civicboom widget to your website. Request news &amp; insight from"
+"Add the Civicboom widget to your website. Request news and insight from"
 " your community or wider public"
-
-#: civicboom/templates/web/design09/misc/titlepage.mako:45
-#, fuzzy
-#| msgid "Respond directly to _assignments by uploading relevant news and
-#| insight"
-msgid "Respond directly to requests by uploading relevant news and insight"
-msgstr "Respond directly to requests by uploading relevant news and insight"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:46
 msgid ""
@@ -458,4 +449,9 @@ msgstr ""
 #: civicboom/templates/web/design09/misc/titlepage.mako:68
 msgid "Participate in the news agenda directly from you mobile phone."
 msgstr ""
+
+# | msgid "Respond directly to _assignments by uploading relevant news and
+# | insight"
+#~ msgid "Respond directly to requests by uploading relevant news and insight"
+#~ msgstr "Respond directly to requests by uploading relevant news and insight"
 

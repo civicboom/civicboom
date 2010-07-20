@@ -42,7 +42,7 @@
     <div class="bullets">
       <ul>
         <li><span class="list_bullet_number">1</span>${_("Add _site_name widget to your website. Request news and insight from your community or wider public")}</li>
-        <li><span class="list_bullet_number">2</span>${_("Respond directly to requests by uploading relevant news and insight")}</li>
+        <li><span class="list_bullet_number">2</span>${_("Respond directly to _assignments by uploading relevant news and insight")}</li>
         <li><span class="list_bullet_number">3</span>${_("Get relevant content from your audience and participate directly in issues you care about")}</li>
       </ul>
     </div>
