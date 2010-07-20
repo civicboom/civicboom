@@ -13,6 +13,7 @@ server {
 		error_page   500 502 503 504  /50x.html;
 
 		# if it's not a static file, let pylons handle it
+		rewrite ^/$ /misc/titlepage;
 		proxy_set_header  Host $host; 
 		proxy_set_header  X-Real-IP $remote_addr; 
 		proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for; 
