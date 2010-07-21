@@ -11,6 +11,9 @@ server {
 		root   /opt/cb/share/website/civicboom/public/;
 		error_page   404  /errors/404.html;
 		error_page   500 502 503 504  /errors/50x.html;
+		if (-e $request_filename) {
+			expires 1y;
+		}
 
 		# if it's not a static file, let pylons handle it
 		rewrite ^/$ /misc/titlepage;
