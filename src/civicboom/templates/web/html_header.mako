@@ -40,7 +40,11 @@
     ## CSS Style Sheets
     ##-------------------
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css" />
+    % if app_globals.development_mode:
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09.css" />
+	% else:
+    <link rel="stylesheet" type="text/css" href="/styles/design09/_combined.css" />
+	% endif
     
     ##-------------------
     ## Javascripts
@@ -50,8 +54,12 @@
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"            ></script> 
     
     <!-- Civicboom global imports -->
-    <script type="text/javascript" src="/javascript/url_encode.js"      ></script>
-    <script type="text/javascript" src="/javascript/toggle_div.js"      ></script>
+    % if app_globals.development_mode:
+    <script type="text/javascript" src="/javascript/url_encode.js"></script>
+    <script type="text/javascript" src="/javascript/toggle_div.js"></script>
+	% else:
+    <script type="text/javascript" src="/javascript/_combined.js" ></script>
+	% endif
   </%def>
   ${self.head_links()}
 
