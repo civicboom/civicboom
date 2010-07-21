@@ -70,7 +70,11 @@
             ##respond directly from mobile phone with video, text, images. Get footage. Get published.
             </a>
             <br/><br/>
-            <div class="tooltip tooltip_special_qrcode">Download the Android app now<span>Scan the QR code below with your Android mobile phone <br/>(or simply search for Civicboom on your mobile phones marketplace)<img src="/images/misc/android_civicboom_QR.png" alt="market://search?q=pname:com.civicboom.mobileapp"/></span></div>
+            <div class="tooltip tooltip_special_qrcode">
+				${_("Download the Android app now")}
+				<span>${_("Scan the QR code below with your Android mobile phone<br/>(or simply search for Civicboom on your mobile phone's marketplace)")|n}
+				<img src="/images/misc/android_civicboom_QR.png" alt="market://search?q=pname:com.civicboom.mobileapp"/></span>
+			</div>
             ##<strong>Mobile application launching Spring 2010:</strong> Send out news alerts and call-to-action requests; respond directly from mobile phone with video, text, images. Get footage. Get published.
           </div>
         </div>

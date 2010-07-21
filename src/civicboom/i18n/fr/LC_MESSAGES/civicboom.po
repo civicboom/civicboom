@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: civicboom 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-07-20 12:12+0100\n"
-"PO-Revision-Date: 2010-07-20 18:48+0100\n"
+"PO-Revision-Date: 2010-07-21 11:24+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
@@ -184,6 +184,12 @@ msgstr "Vous avez un avis? souhaitez poser une question?"
 msgid "Title"
 msgstr "Titre"
 
+#: civicboom/templates/web/content_editor/content_editor.mako:28
+#: civicboom/templates/web/content_editor/content_editor.mako:40
+#: civicboom/templates/web/content_editor/content_editor.mako:45
+msgid "extra info"
+msgstr "Plus d'infos"
+
 #: civicboom/templates/web/content_editor/content_editor.mako:34
 msgid "By"
 msgstr "Par"
@@ -191,10 +197,6 @@ msgstr "Par"
 #: civicboom/templates/web/content_editor/content_editor.mako:43
 msgid "Tags"
 msgstr "Tags"
-
-#: civicboom/templates/web/content_editor/content_editor.mako:45
-msgid "extra info"
-msgstr "Plus d'infos"
 
 #: civicboom/templates/web/design09/includes/footer.mako:4
 msgid "Please send us your Feedback"
@@ -334,6 +336,22 @@ msgstr "Soyez reconnu comme une source de nouvelles crédibles"
 msgid "_site_name for the individual"
 msgstr "Civicboom pour l'individu"
 
+#: civicboom/templates/web/design09/misc/about.mako:51
+msgid "Provide insight on issues, ideas, news and opinion."
+msgstr "Fournir un aperçu des questions, des idées, des nouvelles et des opinions."
+
+#: civicboom/templates/web/design09/misc/about.mako:52
+msgid "Become a trusted contributor and get recognition."
+msgstr "Devenez un collaborateur de confiance et d&#39;obtenir la reconnaissance."
+
+#: civicboom/templates/web/design09/misc/about.mako:53
+#, fuzzy
+#| msgid "Participate in the news agenda directly from you mobile phone."
+msgid "Participate in the news agenda at the local level."
+msgstr ""
+"Participer à l'ordre du jour des nouvelles directement depuis votre "
+"téléphone portable."
+
 #: civicboom/templates/web/design09/misc/about.mako:56
 msgid "_site_name works in 3 ways"
 msgstr "Civicboom œuvres de 3 façons"
@@ -372,6 +390,24 @@ msgstr ""
 msgid "_site_name for organisations"
 msgstr "Civicboom pour les organisations"
 
+#: civicboom/templates/web/design09/misc/about.mako:70
+msgid ""
+"Directly request and capture news, insights and opinion from your "
+"communities"
+msgstr "Directement demande et de capture nouvelles, points de vue et opinion de vos communautés"
+
+#: civicboom/templates/web/design09/misc/about.mako:71
+msgid "Plan and create news features or research"
+msgstr "Plan et de créer des fonctionnalités nouvelles ou de recherche"
+
+#: civicboom/templates/web/design09/misc/about.mako:72
+msgid "Improve your connection with and understanding of your community"
+msgstr "Améliorez votre relation avec la compréhension et de votre communauté"
+
+#: civicboom/templates/web/design09/misc/about.mako:75
+msgid "How?"
+msgstr "Comment?"
+
 #: civicboom/templates/web/design09/misc/about.mako:76
 msgid "_site_name works by enabling you to:"
 msgstr "Civicboom œuvres en vous permettant de:"
@@ -401,11 +437,35 @@ msgstr ""
 msgid ""
 "Establish a better connection and understanding of issues that matter to "
 "the community you serve."
-msgstr "Etablir une meilleure connexion et la compréhension des questions qui importent à la communauté que vous servez."
+msgstr ""
+"Etablir une meilleure connexion et la compréhension des questions qui "
+"importent à la communauté que vous servez."
+
+#: civicboom/templates/web/design09/misc/about.mako:91
+#, fuzzy
+#| msgid "What is a \"closed\" _assignment**?"
+msgid "What is \"approved\" content?"
+msgstr "Qu'est-ce qu'une demande de fermeture?"
 
 #: civicboom/templates/web/design09/misc/about.mako:102
 msgid "What is a \"closed\" _assignment**?"
 msgstr "Qu'est-ce qu'une demande de fermeture?"
+
+#: civicboom/templates/web/design09/misc/about.mako:115
+msgid "What if I change my mind once I've agreed to contribute?"
+msgstr "Que faire si je change d&#39;avis une fois que j&#39;ai accepté de contribuer?"
+
+#: civicboom/templates/web/design09/misc/about.mako:127
+msgid "Why do I need a profile?"
+msgstr "Pourquoi ai-je besoin d&#39;un profil?"
+
+#: civicboom/templates/web/design09/misc/about.mako:132
+msgid "How can I protect my content?"
+msgstr "Comment puis-je protéger mon contenu?"
+
+#: civicboom/templates/web/design09/misc/about.mako:140
+msgid "What about copyright?"
+msgstr "Qu&#39;en est-il le droit d&#39;auteur?"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:6
 msgid "Welcome"
@@ -417,7 +477,7 @@ msgstr "Essayez-nous maintenant"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:23
 msgid "Organisations &amp; Media:"
-msgstr "Organisations &amp; Media:"
+msgstr "Organisations & Media:"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:23
 #: civicboom/templates/web/design09/misc/titlepage.mako:24
@@ -436,17 +496,13 @@ msgstr ""
 "Ajouter le widget Civicboom à votre site Web. Nouvelles Demande & aperçu "
 "de votre communauté ou un public plus large"
 
-#: civicboom/templates/web/design09/misc/titlepage.mako:45
-msgid "Respond directly to _assignments by uploading relevant news and insight"
-msgstr ""
-"Répondre directement aux demandes formulées par le téléchargement des "
-"nouvelles pertinentes et un aperçu"
-
 #: civicboom/templates/web/design09/misc/titlepage.mako:46
 msgid ""
 "Get relevant content from your audience and participate directly in "
 "issues you care about"
-msgstr "Obtenir le contenu pertinent de votre audience et participer directement à des questions qui vous tiennent à"
+msgstr ""
+"Obtenir le contenu pertinent de votre audience et participer directement "
+"à des questions qui vous tiennent à"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:55
 msgid "Trial the widget now"
@@ -471,13 +527,20 @@ msgstr "De première instance l'application mobile maintenant"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:68
 msgid "Participate in the news agenda directly from you mobile phone."
-msgstr "Participer à l'ordre du jour des nouvelles directement depuis votre téléphone portable."
+msgstr ""
+"Participer à l'ordre du jour des nouvelles directement depuis votre "
+"téléphone portable."
 
-# | msgid "Respond directly to _assignments by uploading relevant news and
-# | insight"
-#~ msgid "Respond directly to requests by uploading relevant news and insight"
-#~ msgstr ""
-#~ "Répondre directement aux demandes formulées"
-#~ " par le téléchargement des nouvelles "
-#~ "pertinentes et un aperçu"
+#: civicboom/templates/web/design09/misc/titlepage.mako:74
+#, fuzzy
+#| msgid "Trial the mobile app now"
+msgid "Download the Android app now"
+msgstr "De première instance l'application mobile maintenant"
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:75
+msgid ""
+"Scan the QR code below with your Android mobile phone<br/>(or simply "
+"search for Civicboom on your mobile phone's marketplace)"
+msgstr "Scannez le code QR ci-dessous avec votre téléphone mobile Android <br/> (Ou tout simplement de la recherche pour Civicboom sur le marché de votre téléphone mobile)"
+
 

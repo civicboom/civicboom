@@ -25,7 +25,7 @@
   
   <h2>How can it work for you?</h2>
   <div class="about_flow">
-    <p class="step1"><span class="list_bullet_number">1</span><br/>${_("Add _site_name widget to your website. Request news &amp; insight from your community or wider public")}</p>
+    <p class="step1"><span class="list_bullet_number">1</span><br/>${_("Add _site_name widget to your website. Request news and insight from your community or wider public")}</p>
     <ul class="stepA">
       <li>${_("Get relevant content from your audience")}</li>
       <li>${_("Connect more deeply with your audience")}</li>
@@ -48,9 +48,9 @@
       <div class="section_border">
         <h2>${_("_site_name for the individual")}</h2>
         <ul>
-          <li>Provide insight on issues, ideas, news and opinion</li>
-          <li>Become a trusted contributor and get recognition</li>
-          <li>Participate in the news agenda at the local level.</li>
+          <li>${_("Provide insight on issues, ideas, news and opinion.")}</li>
+          <li>${_("Become a trusted contributor and get recognition.")}</li>
+          <li>${_("Participate in the news agenda at the local level.")}</li>
         </ul>
         <h3>How?</h3>
         <p>${_("_site_name works in 3 ways")}</p>
@@ -67,12 +67,12 @@
         <h2>${_("_site_name for organisations")}</h2>
         
         <ul>
-          <li>Directly request and capture news, insights and opinion from your communities</li>
-          <li>Plan and create news features or research</li>
-          <li>Improve your connection with and understanding of your community</li>
+          <li>${_("Directly request and capture news, insights and opinion from your communities")}</li>
+          <li>${_("Plan and create news features or research")}</li>
+          <li>${_("Improve your connection with and understanding of your community")}</li>
         </ul>
         
-        <h3>How?</h3>
+        <h3>${_("How?")}</h3>
         <p>${_("_site_name works by enabling you to:")}</p>
         <ol>
           <li>${_("Set a call-to-action _assignment for news or insight directly from your community via the widget powered by _site_name as a public or \"closed\" _assignment.")}</li>
@@ -88,7 +88,7 @@
     
     <div class="yui-u first">
   
-      <h2>What is "approved" content?</h2>
+      <h2>${_("What is \"approved\" content?")}</h2>
       
       <p>When responding to a call-to-action request, the content generated can be "approved" by the organisation or individual
       requesting it. If approved, the content will be used by that organisation or individual. For example, it could be published or
@@ -112,7 +112,7 @@
       on the creators ${_("_site_name")} profile but is also listed in the "responses" against the organisation's request, further building the
       profile of the creator.</p>
       
-      <h2>What if I change my mind once I've agreed to contribute?</h2>
+      <h2>${_("What if I change my mind once I've agreed to contribute?")}</h2>
       
       <p>Anyone who "accepts" to respond to a request can retract their commitment, giving you flexibility. Likewise, and organisation
       or individual setting a call-to-action request can edit a request and deadline, or delete the request completely. Furthermore,
@@ -124,12 +124,12 @@
     
     <div class="yui-u">
       
-      <h2>Why do I need a profile?</h2>
+      <h2>${_("Why do I need a profile?")}</h2>
       <p>In order to build a portfolio, download the widget, set requests or ensure you are credited (and even financially rewarded) for
       the content you have uploaded via ${_("_site_name")}, you need a profile. It also means that other users of ${_("_site_name")} can find and
       Follow you - heightening your presence and gaining better recognition as a contributor.
       
-      <h2>How can I protect my content?</h2>
+      <h2>${_("How can I protect my content?")}</h2>
       <p>You publish your news and insight, and ask for requests through the "Attribution" Creative Commons License. This means
       you let others copy, distribute, display, and perform your copyrighted work - and derivative works based upon it - but only if
       they give you credit. For more info click <a href="http://creativecommons.org/licenses/by/3.0/">HERE</a>.</p>
@@ -137,7 +137,7 @@
       revenue going back to you. This licence allows that, but you do have the ability to waive this if you so wish by stating it in
       your content.</p>
       
-      <h2>What about copyright?</h2>
+      <h2>${_("What about copyright?")}</h2>
       <p>${_("_site_name")} takes copyright very seriously. As a user, you are responsible for ensuring you have the adequate copyright
       to upload any image or video.</p>
       <p>If you do upload and you do not have the rights to the image, video or content then it is likely you will be liable for full
