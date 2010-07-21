@@ -4,6 +4,7 @@ from civicboom.lib.misc import flash_message
 
 import logging
 log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 
 #signin_page = url_for(controller='account', action='signin')
 
@@ -19,8 +20,10 @@ class AccountController(BaseController):
             abort(401) #This triggers the AuthKit middleware into displaying the sign-in form
         else:
             #redirect(url(controller='misc', action='test'))
+            user_log.info("logged in")
             return redirect(url('/'))
 
     def signout(self):
         flash_message("Successfully signed out!")
+        user_log.info("logged out")
         return redirect('/')

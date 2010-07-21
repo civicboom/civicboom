@@ -16,6 +16,7 @@ import logging
 
 
 log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 prefix = "/web/content_editor/"
 
 
@@ -42,6 +43,7 @@ class ContentController(BaseController):
         c.content = get_content(id)
 
         if request.POST: #Form contains post data
+            user_log.info("edited Content #%d" % (id, ))
             c.content = _form_to_content(request.POST, c.content)
             Session.save(c.content)
             Session.commit()
