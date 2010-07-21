@@ -1,3 +1,7 @@
 
 30 3 * * * root        sudo -u postgres pg_dump civicboom | gzip --rsyncable > /root/civicboom.sql.gz
-#30 2 * * * www-data    python /opt/cb/share/website/tasks.py
+
+30 2 * * * www-data    /opt/cb/bin/cb-task expire_syndication_articles
+35 2 * * * www-data    /opt/cb/bin/cb-task remove_ghost_reporters
+40 2 * * * www-data    /opt/cb/bin/cb-task assignment_near_expire
+45 2 * * * www-data    /opt/cb/bin/cb-task message_clean
