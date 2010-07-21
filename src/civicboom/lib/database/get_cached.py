@@ -26,7 +26,7 @@ def get_user_nocache(user):
                 return Session.query(User).filter_by(id=user).one()
             except:
                 pass
-  return None
+    return None
 
 #@cache_test.cache() #Cache decorator to go here
 def get_user(user):
