@@ -14,7 +14,7 @@ fa_config.encoding = 'utf-8'
 
 class TemplateEngine(templates.TemplateEngine):
     def render(self, name, **kwargs):
-        return render('/forms/%s.mako' % name, extra_vars=kwargs)
+        return render('/admin/formalchemy/%s.mako' % name, extra_vars=kwargs)
 fa_config.engine = TemplateEngine()
 
 class FieldSet(forms.FieldSet):
