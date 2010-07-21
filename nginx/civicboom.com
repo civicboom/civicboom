@@ -13,6 +13,7 @@ server {
 		error_page   500 502 503 504  /errors/50x.html;
 		if (-e $request_filename) {
 			expires 1y;
+			add_header Cache-Control public;
 		}
 
 		# if it's not a static file, let pylons handle it
