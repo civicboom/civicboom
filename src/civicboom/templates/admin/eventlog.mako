@@ -1,4 +1,4 @@
-<%inherit file="/web/html_base.mako"/>
+<%inherit file="/admin/html_base.mako"/>
 
 ##------------------------------------------------------------------------------
 ## Title - Override
@@ -24,6 +24,7 @@
 .event_log    {
 	border: 1px solid black;
 	margin: auto;
+	margin-top: 8px;
 }
 .event_log TR {
 	border-top: 1px solid black;
@@ -40,6 +41,12 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
+    <h1 id="header" class="ui-widget-header ui-corner-all">
+		<div class="breadcrumb"> 
+			/<a href="/admin">admin</a>/<a href="/admin/event_log">event log</a>
+		</div> 
+		Event Log
+	</h1>
 	<table class="event_log">
 		<tr>
 			<th>${_("Date / Time")}</th>

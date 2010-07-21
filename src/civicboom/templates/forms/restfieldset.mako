@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+<%inherit file="/admin/html_base.mako"/>
 <%!
 from formalchemy.ext.pylons.controller import model_url
 from pylons import url
@@ -28,30 +29,13 @@ from pylons import url
       </a>
     </p>
 </%def>
-<html>
-  <head>
-    <title>
+
+<%def name="title()">
     ${collection_name.title()}
-    </title>
-    <link rel="stylesheet" type="text/css" href="${url('fa_static', path_info='/admin.css')}" />
-  </head>
-  <body>
-<div id="content" class="ui-admin ui-widget">
+</%def>
+<%def name="body()">
   %if isinstance(models, dict):
     <h1 id="header" class="ui-widget-header ui-corner-all">${_('Civicboom Control Panel')}</h1>
-<style>
-TABLE.outer {
-	width: 90%;
-	margin: auto;
-}
-TABLE.outer > TBODY > TR > TD {
-	border: none;
-	width: 50%;
-}
-TABLE.outer TABLE {
-	width: 95%;
-}
-</style>
 	<table class="outer">
 		<tr><td>
 <table>
@@ -88,14 +72,17 @@ TABLE.outer TABLE {
 		</td>
 	</tr>
 </table>
+<table>
+	<tr><th colspan="3">${_("Full List")}</th></tr>
+	<tr>
+		<td>
+			%for name in sorted(models):
+			  <a style="display: inline;" href="${models[name]}">${name}</a>,
+			%endfor
+		</td>
+	</tr>
+</table>
 	</table>
-
-	<hr>
-	<p>Full List:
-    %for name in sorted(models):
-      <a class="ui-state-default ui-corner-all" href="${models[name]}">${name}</a>,
-    %endfor
-	</p>
   %elif is_grid:
     ${h1(model_name)}
     <div class="ui-pager">
@@ -135,11 +122,10 @@ TABLE.outer TABLE {
       </form>
     %endif
   %endif
-</div>
 <script type="text/javascript">
   var icons = document.getElementsByClassName('ui-icon')
   for (var i = 0; i < icons.length-1; i++) {
     icons[i].setAttribute('value', ' ');
   } 
 </script>
-</body></html>
+</%def>
