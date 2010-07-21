@@ -1,7 +1,6 @@
 from civicboom.model.member import User
 from civicboom.model.content import Content
-
-from civicboom.model.meta   import Session
+from civicboom.model.meta import Session
 
 
 #-------------------------------------------------------------------------------
@@ -17,31 +16,31 @@ from civicboom.model.meta   import Session
 #-------------------------------------------------------------------------------
 # Most methods will have a get_stuff and get_stuff_nocache. As the cache is a decorator we can bypass the cache by calling the _nocache variant
 def get_user_nocache(user):
-  try:
-    return Session.query(User).filter_by(username=user).one()
-  except:
     try:
-      return Session.query(User).filter_by(email=user).one()
+        return Session.query(User).filter_by(username=user).one()
     except:
-      try:
-        return Session.query(User).filter_by(id=user).one()
-      except:
-        pass
+        try:
+            return Session.query(User).filter_by(email=user).one()
+        except:
+            try:
+                return Session.query(User).filter_by(id=user).one()
+            except:
+                pass
   return None
+
 #@cache_test.cache() #Cache decorator to go here
 def get_user(user):
-  if not user             : return None
-  if isinstance(user,User): return user
-  return get_user_nocache(user)
-
+    if not user              : return None
+    if isinstance(user, User): return user
+    return get_user_nocache(user)
 
 def get_content_nocache(content_id):
-  try   : return Session.query(Content).filter_by(id=content_id).one()
-  except: return None
+    try   : return Session.query(Content).filter_by(id=content_id).one()
+    except: return None
 
 def get_content(content_id):
-  if not content_id: return None
-  return get_content_nocache(content_id)
+    if not content_id: return None
+    return get_content_nocache(content_id)
 
 #-------------------------------------------------------------------------------
 # Database List Gets - Cached - Get data lists from database that is cached

@@ -162,7 +162,8 @@ License.engine = CustomTemplateEngine("license")
 
 
 ## Initialize grids
-# Not doing this will result in the object list being rendered with all fields visible
+# Not doing this will result in the object list being rendered with
+# all fields visible
 
 #FooGrid = Grid(model.Foo)
 #ReflectedGrid = Grid(Reflected)

@@ -8,8 +8,7 @@ from civicboom.model.meta   import Session
 #
 
 def follow(followed, follower):
-  pass
-
+    pass
 
 def accept_assignment(user, assignment):
-  pass
+    pass

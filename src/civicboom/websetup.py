@@ -26,10 +26,11 @@ import pylons.test
 
 log = logging.getLogger(__name__)
 
-def setup_app(command, conf, vars):
+
+def setup_app(command, conf, variables):
     """Place any commands to setup civicboom here"""
     if not pylons.test.pylonsapp:
-      load_environment(conf.global_conf, conf.local_conf)
+        load_environment(conf.global_conf, conf.local_conf)
 
     ###################################################################
     log.info("Creating tables") # {{{
@@ -418,27 +419,27 @@ CREATE TRIGGER update_content_textsearch
             #  `geolocation_longitude` double default NULL,
             return None
 
-        def get_media(row, type):
+        def get_media(row, media_type):
             caption = None
             credit = None
             if "imageCredit" in row and row["imageCredit"]:
                 credit = row["imageCredit"].decode("ascii")
 
             attachments = []
-            bases  = glob("../tmp/"+type+"_files/"+str(row["id"])+".*")
-            extras = glob("../tmp/"+type+"_files/"+str(row["id"])+"_*.*")
+            bases  = glob("../tmp/"+media_type+"_files/"+str(row["id"])+".*")
+            extras = glob("../tmp/"+media_type+"_files/"+str(row["id"])+"_*.*")
             for fn in bases + extras:
                 #log.debug("Guessing that "+fn+" is associated with "+type+" "+str(row["id"]))
                 attachments.append(Media().load_from_file(fn, os.path.basename(fn).decode("ascii"), caption, credit))
             return attachments
 
-        def get_avatar(id):
-            hash = None
-            files = glob("../tmp/profilepics/"+str(row["id"])+".*")
+        def get_avatar(uid):
+            file_hash = None
+            files = glob("../tmp/profilepics/"+str(uid)+".*")
             if len(files) == 1:
                 fn = files[0]
-                hash = wh.hash_file(fn)
-                wh.copy_to_local_warehouse(fn, "avatars-original", hash)
+                file_hash = wh.file_hash_file(fn)
+                wh.copy_to_local_warehouse(fn, "avatars-original", file_hash)
 
                 processed = tempfile.NamedTemporaryFile(suffix=".jpg")
                 im = Image.open(fn)
@@ -446,12 +447,12 @@ CREATE TRIGGER update_content_textsearch
                     im = im.convert("RGB")
                 im.thumbnail([128, 128], Image.ANTIALIAS) #AllanC - FIXME size from config? default gravatar size
                 im.save(processed.name, "JPEG")
-                wh.copy_to_local_warehouse(processed.name, "avatars", hash)
+                wh.copy_to_local_warehouse(processed.name, "avatars", file_hash)
                 processed.close()
 
-                wh.copy_to_remote_warehouse("avatars-original", hash)
-                wh.copy_to_remote_warehouse("avatars", hash)
-            return hash
+                wh.copy_to_remote_warehouse("avatars-original", file_hash)
+                wh.copy_to_remote_warehouse("avatars", file_hash)
+            return file_hash
         # }}}
 
         log.info("|- Converting reporters to users") # {{{

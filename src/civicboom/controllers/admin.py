@@ -35,7 +35,6 @@ class AdminControllerBase(BaseController):
     def event_log(self):
         # Old-fashioned SQL building since events aren't part of the
         # SQLAlchemy model; beware of SQL injection
-        # FIXME: make this do something...
         wheres = ["1=1", ]
         args = []
         if "module" in request.params:

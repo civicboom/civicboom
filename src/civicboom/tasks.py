@@ -69,53 +69,53 @@ server_address = 'http://localhost/task/'
 option_verbose = False
 
 def main():
-  # Defaults
-  tasks = ["expire_syndication_articles","remove_ghost_reporters","assignment_near_expire","message_clean"]
-  
-  # Parse Command Line Options
-  (options, args) = parser.parse_args()
-  
-  # Setup Server URL
-  global server_address
-  server_port = ""
-  if options.server_port: server_port = ':%s' % options.server_port
-  server_address = 'http://localhost%s/task/' % server_port
+    # Defaults
+    tasks = ["expire_syndication_articles","remove_ghost_reporters","assignment_near_expire","message_clean"]
 
-  global option_verbose
-  option_verbose = options.verbose
+    # Parse Command Line Options
+    (options, args) = parser.parse_args()
 
-  # Create task list from arguments if exisit
-  if len(args) >= 1:
-    tasks = args
+    # Setup Server URL
+    global server_address
+    server_port = ""
+    if options.server_port: server_port = ':%s' % options.server_port
+    server_address = 'http://localhost%s/task/' % server_port
 
-  # Run tasks
-  print "Running indicofb timed tasks @ %s" % datetime.datetime.now()
-  for task in tasks:
-    do_task(task)
+    global option_verbose
+    option_verbose = options.verbose
+
+    # Create task list from arguments if exisit
+    if len(args) >= 1:
+        tasks = args
+
+    # Run tasks
+    print "Running indicofb timed tasks @ %s" % datetime.datetime.now()
+    for task in tasks:
+        do_task(task)
 
 # Execute Individual Task - Printing details and timing
 def do_task(task):
-  time_start = datetime.datetime.now()
-  url        = server_address + task
-  print "%s:" % url,
-  sys.stdout.flush()
-  print "%s" % execute_task(url),
-  time_duration = datetime.datetime.now() - time_start
-  print "(%s sec)" % time_duration.seconds
+    time_start = datetime.datetime.now()
+    url        = server_address + task
+    print "%s:" % url,
+    sys.stdout.flush()
+    print "%s" % execute_task(url),
+    time_duration = datetime.datetime.now() - time_start
+    print "(%s sec)" % time_duration.seconds
 
 # Execute Individual Task - safely - returning true if contains successful response - else print response and false
 def execute_task(url):
-  response_ok = False
-  try:
-    response_text = str(urllib2.urlopen(url).read())
-    if response_text.find(response_completed_ok) >= 0: response_ok = True
-    if option_verbose or (not option_verbose and response_text):
-      print ""
-      print line_break
-      print response_text
-      print line_break
-  except: pass
-  return response_ok
+    response_ok = False
+    try:
+        response_text = str(urllib2.urlopen(url).read())
+        if response_text.find(response_completed_ok) >= 0: response_ok = True
+        if option_verbose or (not option_verbose and response_text):
+            print ""
+            print line_break
+            print response_text
+            print line_break
+    except: pass
+    return response_ok
 
 # Main
 if __name__ == "__main__": main()
