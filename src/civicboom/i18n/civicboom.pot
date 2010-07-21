@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: civicboom 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-07-20 18:48+0100\n"
+"POT-Creation-Date: 2010-07-21 11:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -182,16 +182,18 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
+#: civicboom/templates/web/content_editor/content_editor.mako:28
+#: civicboom/templates/web/content_editor/content_editor.mako:40
+#: civicboom/templates/web/content_editor/content_editor.mako:45
+msgid "extra info"
+msgstr ""
+
 #: civicboom/templates/web/content_editor/content_editor.mako:34
 msgid "By"
 msgstr ""
 
 #: civicboom/templates/web/content_editor/content_editor.mako:43
 msgid "Tags"
-msgstr ""
-
-#: civicboom/templates/web/content_editor/content_editor.mako:45
-msgid "extra info"
 msgstr ""
 
 #: civicboom/templates/web/design09/includes/footer.mako:4
@@ -320,6 +322,18 @@ msgstr ""
 msgid "_site_name for the individual"
 msgstr ""
 
+#: civicboom/templates/web/design09/misc/about.mako:51
+msgid "Provide insight on issues, ideas, news and opinion."
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/about.mako:52
+msgid "Become a trusted contributor and get recognition."
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/about.mako:53
+msgid "Participate in the news agenda at the local level."
+msgstr ""
+
 #: civicboom/templates/web/design09/misc/about.mako:56
 msgid "_site_name works in 3 ways"
 msgstr ""
@@ -348,6 +362,22 @@ msgstr ""
 msgid "_site_name for organisations"
 msgstr ""
 
+#: civicboom/templates/web/design09/misc/about.mako:70
+msgid "Directly request and capture news, insights and opinion from your communities"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/about.mako:71
+msgid "Plan and create news features or research"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/about.mako:72
+msgid "Improve your connection with and understanding of your community"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/about.mako:75
+msgid "How?"
+msgstr ""
+
 #: civicboom/templates/web/design09/misc/about.mako:76
 msgid "_site_name works by enabling you to:"
 msgstr ""
@@ -372,8 +402,28 @@ msgid ""
 "community you serve."
 msgstr ""
 
+#: civicboom/templates/web/design09/misc/about.mako:91
+msgid "What is \"approved\" content?"
+msgstr ""
+
 #: civicboom/templates/web/design09/misc/about.mako:102
 msgid "What is a \"closed\" _assignment**?"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/about.mako:115
+msgid "What if I change my mind once I've agreed to contribute?"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/about.mako:127
+msgid "Why do I need a profile?"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/about.mako:132
+msgid "How can I protect my content?"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/about.mako:140
+msgid "What about copyright?"
 msgstr ""
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:6
@@ -432,5 +482,15 @@ msgstr ""
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:68
 msgid "Participate in the news agenda directly from you mobile phone."
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:74
+msgid "Download the Android app now"
+msgstr ""
+
+#: civicboom/templates/web/design09/misc/titlepage.mako:75
+msgid ""
+"Scan the QR code below with your Android mobile phone<br/>(or simply search "
+"for Civicboom on your mobile phone's marketplace)"
 msgstr ""
 

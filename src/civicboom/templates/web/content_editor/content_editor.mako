@@ -25,7 +25,7 @@
         <p class="form_instuctions">${_("Got an opinion? want to ask a question?")}</p>
 
 
-          <p><label for="form_title">${_("Title")}</label><input id="form_title" name="form_title" type="text" style="width:80%;"/><span class="tooltip tooltip_icon"><span>extra info</span></span></p>
+          <p><label for="form_title">${_("Title")}</label><input id="form_title" name="form_title" type="text" style="width:80%;"/><span class="tooltip tooltip_icon"><span>${_("extra info")}</span></span></p>
     
           ${richtext("The cat was playing in the garden.")}
     
@@ -37,7 +37,7 @@
             <option value=""                    >Group I am member of 1</option>
             <option value=""                    >Group I am member of 2</option>
           </select>
-          <span class="tooltip tooltip_icon"><span>extra info</span></span>
+          <span class="tooltip tooltip_icon"><span>${_("extra info")}</span></span>
           </p>
           <p>
 		    <label for="form_tags">${_("Tags")}</label>
