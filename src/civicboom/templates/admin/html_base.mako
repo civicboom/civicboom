@@ -42,6 +42,9 @@ TEXTAREA {
 	border-left-color:#DDD;
 	border-top-color:#DDD;
 }
+TD > A {
+    display: inline;
+}
 		</style>
 		% if hasattr(self,'styleOverides'):
 		<style type="text/css">
