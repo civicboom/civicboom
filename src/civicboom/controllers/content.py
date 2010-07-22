@@ -8,19 +8,26 @@ For managing content:
 -flagging
 """
 
+# Base controller imports
 from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort
 from civicboom.lib.misc                import flash_message
 from civicboom.lib.database.get_cached import get_content
 from civicboom.lib.authentication      import authorize, is_valid_user
 
+# Datamodel and database session imports
 from civicboom.model.content           import DraftContent
+from civicboom.model.meta              import Session
 
-from civicboom.model.meta import Session
+# Other imports
+from civicboom.lib.text import clean_html_markup
 
+
+# Logging setup
 import logging
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
+# Constants
 this_controller_name = __name__.split(".")[2] #Could get this from current request? so no need to store in a var or get it in a hacky way like this?
 
 prefix = "/web/content_editor/"
@@ -63,7 +70,10 @@ class ContentController(BaseController):
             
             #for key in form: print "%s:%s" % (key,form[key])
             
-            for field in ("title","content"):
+            if "form_content" in form:
+                content.content = clean_html_markup(form["form_content"])
+            
+            for field in ["title"]:
                 setattr(content,field,form["form_"+field])
             
             return content
