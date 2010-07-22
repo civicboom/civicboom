@@ -13,10 +13,9 @@ from civicboom.lib.misc                import flash_message
 from civicboom.lib.database.get_cached import get_content
 
 import logging
-
-
-log = logging.getLogger(__name__)
+log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
+
 prefix = "/web/content_editor/"
 
 
