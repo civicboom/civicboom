@@ -72,13 +72,14 @@ class Content(Base):
     attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
+    license         = relationship("License")
 
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"
 
     def hash(self):
         h = hashlib.md5()
-        for field in ("id","title","content","creator"): # AllanC: TODO unfinished field list
+        for field in ("id","title","content","creator","parent","update_date","status","private","license"): # AllanC: unfinished field list?
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
@@ -120,6 +121,13 @@ class AssignmentContent(UserVisibleContent):
     due_date        = Column(DateTime(),       nullable=True)
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
+    
+    def hash(self):
+        h = hashlib.md5(super())
+        for field in ("event_date","due_date","closed"): #TODO: includes assigned_to in list?
+            h.update(str(getattr(self,field)))
+        return h.hexdigest()
+
 
 class MemberAssignment(Base):
     __tablename__ = "member_assignment"

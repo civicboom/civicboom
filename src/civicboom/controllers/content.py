@@ -76,6 +76,7 @@ class ContentController(BaseController):
             
         # Get exisiting content from URL id
         c.content = get_content(id)
+        
         # If the content is None then create a blank content object
         #  This saves unnessisary null checking in template
         if c.content==None:
