@@ -9,6 +9,8 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
+import hashlib
+
 
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
@@ -73,6 +75,13 @@ class Content(Base):
 
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"
+
+    def hash(self):
+        h = hashlib.md5()
+        for field in ("id","title","content","creator"): # AllanC: TODO unfinished field list
+            h.update(str(getattr(self,field)))
+        return h.hexdigest()
+
 
 
 class CommentContent(Content):

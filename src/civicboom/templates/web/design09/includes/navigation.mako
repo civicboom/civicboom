@@ -6,11 +6,11 @@
   <div class="yui-u first navigation_items">
     <ul>
       <li>
-        <a href="${h.url(controller='content',action='content'      )}">${_("Create _assignment")}</a>
+        <a href="${h.url(controller='content',action='edit'      )}">${_("Create _assignment")}</a>
         <div class="tooltip tooltip_icon"><span>${_("Posting an _assignment allows you to ask questions and make call to actions")}</span></div>
       </li>
       <li>
-        <a href="${h.url(controller='content'   ,action='content'         )}">${_("Upload _article")}</a>
+        <a href="${h.url(controller='content'   ,action='edit'         )}">${_("Upload _article")}</a>
         <div class="tooltip tooltip_icon"><span>${_("Uploading an _article allows you express your ideas, opinions and news to a wider community")}</span></div>
       </li>
     </ul>
