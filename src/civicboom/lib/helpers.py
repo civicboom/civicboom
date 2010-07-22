@@ -5,9 +5,11 @@ available to Controllers. This module is available to templates as 'h'.
 """
 # Import helpers as desired, or define your own, ie:
 #from webhelpers.html.tags import checkbox, password
-from webhelpers.html import HTML
+from webhelpers.html import HTML, literal
 from pylons import url
 import re
+
+from civicboom.lib.text import scan_for_embedable_view_and_autolink
 
 
 def shorten_url(url):

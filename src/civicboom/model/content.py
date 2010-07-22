@@ -87,6 +87,14 @@ class Content(Base):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
+    def can_edit(self, member):
+        """
+        Check to see if a member object has the rights to edit this content
+        """
+        if self.status  == "locked": return False
+        if self.creator == member  : return True
+        # TODO check groups of creator to see if member is in the owning group
+        return False
 
 
 class CommentContent(Content):

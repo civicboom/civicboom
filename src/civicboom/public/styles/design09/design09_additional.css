@@ -144,7 +144,7 @@
   display: inline-block;
   min-width: 32px;
   min-height: 20px;
-  background: transparent url('/design09/icons.png') no-repeat scroll 0 -325px;
+  background: transparent url('icons.png') no-repeat scroll 0 -325px;
   text-align: center;
   color: #888;
   font-weight: bold;

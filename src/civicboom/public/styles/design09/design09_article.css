@@ -156,24 +156,24 @@ ul .icon:hover {
 	margin: 1em;
 }
 
-/*-------------------------Article Content Text-------------------------------*/
+/*-------------------------Content Text-------------------------------*/
 
 /*reinstate formatting for article markup tags
 need to investigate em's for various browsers*/
-.articletext {
+.content_text {
 	clear: left;
   padding-top: 1em;
 }
 
-.articletext ul, .articletext ol {
+.content_text ul, .articletext ol {
   margin-left:   3em;
   margin-top:    0.4em;
   margin-bottom: 0.4em;
 }
-.articletext ul li  {list-style-type: disc;     }
-.articletext ol li  {list-style-type: decimal;  }
-.articletext em     {font-style:      italic;   }
-.articletext strong {font-weight:     bold;     }
-.articletext a      {text-decoration: underline;
-                     color:           black;    }
-.articletext a:hover{color:           blue;     }
+.content_text ul li  {list-style-type: disc;     }
+.content_text ol li  {list-style-type: decimal;  }
+.content_text em     {font-style:      italic;   }
+.content_text strong {font-weight:     bold;     }
+.content_text a      {text-decoration: underline;
+                      color:           black;    }
+.content_text a:hover{color:           blue;     }

@@ -45,7 +45,7 @@ class ContentController(BaseController):
         Identify the object type and render with approriate renderer
         """
         c.content = get_content(id)
-        return "implement content render template"
+        return render('/web/design09/content/content_view.mako')
 
     #-----------------------------------------------------------------------------
     # Edit
@@ -130,8 +130,10 @@ class ContentController(BaseController):
     #-----------------------------------------------------------------------------
     # Delete
     #-----------------------------------------------------------------------------
+    @authorize(is_valid_user)
     def delete(self, id):
-        pass
+        flash_message("not implemented yet")
+        return redirect(request.environ.get('HTTP_REFERER'))
 
     #-----------------------------------------------------------------------------
     # Flag
