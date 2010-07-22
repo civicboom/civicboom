@@ -98,7 +98,6 @@ class ContentController(BaseController):
                 Session.commit()
                 user_log.info("edited Content #%d" % (c.content.id, )) # Update user log
 
-            #submit_action = request.POST['submit']
             if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
                 return redirect(url(controller=this_controller_name, action='view', id=c.content.id))
                 
