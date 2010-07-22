@@ -9,7 +9,7 @@ For managing content:
 """
 
 # Base controller imports
-from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort
+from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _
 from civicboom.lib.misc                import flash_message
 from civicboom.lib.database.get_cached import get_content
 from civicboom.lib.authentication      import authorize, is_valid_user
@@ -96,6 +96,7 @@ class ContentController(BaseController):
         # If the content is not being edited by the creator then "Unauthorised"
         # AllanC - todo: in future this will have to be a more involved process as the ower of the content could be a group the user is part of
         if c.content.creator != c.logged_in_user:
+            flash_message(_("your user does not have the permissions to edit this _content"))
             abort(401)
 
         # If form contains post data
@@ -132,7 +133,11 @@ class ContentController(BaseController):
     #-----------------------------------------------------------------------------
     @authorize(is_valid_user)
     def delete(self, id):
-        flash_message("not implemented yet")
+        c.content = get_content(id)
+        if not c.content.can_edit(c.logged_in_user):
+            flash_message(_("your current user does not have the permissions to delete this _content"))
+            abort(401)
+        flash_message(_("_content deletion is not implemented yet"))
         return redirect(request.environ.get('HTTP_REFERER'))
 
     #-----------------------------------------------------------------------------

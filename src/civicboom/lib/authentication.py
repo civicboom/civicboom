@@ -3,6 +3,7 @@ import hashlib
 
 # Pylons imports
 from pylons.templating import render_mako as render
+from pylons.i18n.translation import _, ungettext
 
 # Authkit imports
 from authkit.permissions import RequestPermission
@@ -15,7 +16,9 @@ from civicboom.lib.misc   import flash_message
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
 
+# Other imports
 from sqlalchemy.orm import join
+
 
 # Logging
 import logging
@@ -50,10 +53,10 @@ def valid_username_and_password(environ, username, password):
 
     user = get_username_password(username, password)
     if user:
-        #user_log.info(user) #AllanC - TODO errors? does not have events relation?
+        user_log.info(user)
         return True
     else:
-        flash_message('Incorrect username and password')
+        flash_message(_("Incorrect username and password"))
         return False
 
 
@@ -75,5 +78,5 @@ def render_signin():
 # authkit.cookie.badcookie.page = false
 # authkit.cookie.badcookie.template.obj = indicofb.lib.auth_permissions:render_badcookie
 def render_badcookie():
-    flash_message('Your login has expired please log in again')
+    flash_message(_("Your login has expired please log in again"))
     return redirect_to('/')
