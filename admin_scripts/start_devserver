@@ -3,8 +3,6 @@ if [ `whoami` != "root" ] ; then
 	exec sudo $0 $*
 fi
 
-. /opt/cb-env/bin/activate
-
 cd /opt/cb/share/website/
 paster serve --daemon \
 	--user=www-data \

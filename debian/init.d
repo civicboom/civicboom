@@ -10,8 +10,6 @@
 # Description:       Run the cb-website pylons app using paster.
 ### END INIT INFO
 
-. /opt/cb-env/bin/activate
-
 APP=/opt/cb/share/website
 UID="--user www-data --group www-data"
 # FIXME /tmp should be /var/run

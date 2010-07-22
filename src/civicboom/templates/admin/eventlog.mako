@@ -61,7 +61,7 @@
 			<td><a href="?module=${event.module}" title="${event.module}">${h.shorten_module(event.module)}</a></td>
 			<td><a href="${event.url}">${h.shorten_url(event.url)}</a></td>
 			<td>${h.username_plus_ip(event.username, event.address)|n}</td>
-			<td>${event.message}</td>
+			<td>${h.link_to_objects(event.message)|n}</td>
 		</tr>
 	% endfor
 	</table>

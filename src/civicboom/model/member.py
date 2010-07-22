@@ -33,7 +33,7 @@ class Member(Base):
     __tablename__   = "member"
     __type__        = Column(Enum("user", "group", name="member_type"))
     __mapper_args__ = {'polymorphic_on': __type__}
-    _member_status  = Enum("pending", "active", "removed", name="member_status")
+    _member_status  = Enum("pending", "active", "suspended", name="member_status")
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars
     name            = Column(Unicode(250),   nullable=False  )

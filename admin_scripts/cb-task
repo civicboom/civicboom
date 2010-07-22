@@ -1,4 +1,3 @@
 #!/bin/sh
-. /opt/cb-env/bin/activate
 cd /opt/cb/share/website
 paster request production.ini /task/$1

@@ -55,7 +55,7 @@ class Content(Base):
     __tablename__   = "content"
     __type__        = Column(Enum("comment", "draft", "article", "assignment", "syndicate", name="content_type"), nullable=False)
     __mapper_args__ = {'polymorphic_on': __type__}
-    _content_status = Enum("show", "pending", "locked", name="content_status")
+    _content_status = Enum("pending", "show", "locked", name="content_status")
     id              = Column(Integer(),        primary_key=True)
     title           = Column(Unicode(250),     nullable=False  )
     content         = Column(UnicodeText(),    nullable=False, doc="The body of text")
@@ -63,8 +63,8 @@ class Content(Base):
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True)
     location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)
     creation_date   = Column(DateTime(),       nullable=False, default="now()")
-    update_date     = Column(DateTime(),       nullable=False, default="now()")
-    status          = Column(_content_status,  nullable=False, default="show")
+    update_date     = Column(DateTime(),       nullable=False, default="now()", doc="Controlled by postgres trigger")
+    status          = Column(_content_status,  nullable=False, default="pending")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
     # FIXME: remote_side is confusing, and do we want to cascade to delete replies?

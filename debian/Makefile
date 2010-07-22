@@ -13,6 +13,7 @@ cb-website.deb: $(shell find ../admin_scripts ../debian ../nginx ../selenium ../
 	cp ../admin_scripts/* ./fs-website/opt/cb/bin/
 	mkdir -p fs-website/opt/cb/share/website
 	cp -r ../src/* ./fs-website/opt/cb/share/website/
+	cd ./fs-website/opt/cb/share/website/ && python setup.py compile_catalog
 	mkdir -p fs-website/etc/nginx/sites-available/
 	cp ../nginx/civicboom.com fs-website/etc/nginx/sites-available/
 	mkdir -p fs-website/etc/cron.d
