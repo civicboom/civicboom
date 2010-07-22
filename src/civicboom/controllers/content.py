@@ -12,12 +12,16 @@ from civicboom.lib.base                import BaseController, render, c, redirec
 from civicboom.lib.misc                import flash_message
 from civicboom.lib.database.get_cached import get_content
 from civicboom.lib.authentication      import authorize, is_valid_user
+
 from civicboom.model.content           import DraftContent
 
+from civicboom.model.meta import Session
 
 import logging
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
+
+this_controller_name = __name__.split(".")[2] #Could get this from current request? so no need to store in a var or get it in a hacky way like this?
 
 prefix = "/web/content_editor/"
 
@@ -56,7 +60,12 @@ class ContentController(BaseController):
             if not form   : return content #If there is no form data there is nothing to overlay or do
             if not content:
                 content = DraftContent()
-            #for key in request.POST: print "%s:%s" % (key,request.POST[key])                
+            
+            #for key in form: print "%s:%s" % (key,form[key])
+            
+            for field in ("title","content"):
+                setattr(content,field,form["form_"+field])
+            
             return content
         
             #commit content update with data from form
@@ -84,19 +93,17 @@ class ContentController(BaseController):
             c.content = form_to_content(request.POST, c.content)  # Overlay form data over the current content object
             content_hash_after  = c.content.hash()                # Generate hash of content again
             if content_hash_before != content_hash_after:         # If content has changed
-                Session.save(c.content)                           #   Save content to database
+                Session.add(c.content)                            #   Save content to database
                 Session.commit()
-
-            if c.content.id:
                 user_log.info("edited Content #%d" % (c.content.id, )) # Update user log
 
             #submit_action = request.POST['submit']
             if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
-                return redirect(url(controller=__name__, action='view', id=c.content.id))
-
+                return redirect(url(controller=this_controller_name, action='view', id=c.content.id))
+                
         # If this is the frist time saving the content then redirect to new substatiated id
         if id==None and c.content.id:
-            return redirect(url(controller=__name__, action='edit', id=c.content.id))
+            return redirect(url(controller=this_controller_name, action='edit', id=c.content.id))
 
         # Render content editor
         return render(prefix + "content_editor.mako")
