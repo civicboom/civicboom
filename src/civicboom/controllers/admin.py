@@ -17,6 +17,7 @@ prefix = '/admin/'
 class AdminControllerBase(BaseController):
     model = model # where your SQLAlchemy mappers are
     forms = forms # module containing FormAlchemy fieldsets definitions
+    template = "/admin/restfieldset.mako"
 
     # # Uncomment this to impose an authentication requirement
     # @authorize(SignedIn())
