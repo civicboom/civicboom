@@ -101,7 +101,7 @@ CREATE TABLE events(
 	message TEXT NOT NULL
 );
 CREATE INDEX events__date_sent ON events(date_sent);
-CREATE INDEX events__section ON events(section);
+CREATE INDEX events__module ON events(module);
 CREATE INDEX events__username ON events(username);
 CREATE INDEX events__priority ON events(priority);
 " | psql -U civicboom -d civicboom_log
