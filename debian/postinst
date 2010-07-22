@@ -18,6 +18,3 @@ cd /opt/cb/share/website
 
 echo "Copying static data to S3"
 /opt/cb/bin/cb-task sync_public_to_warehouse >/dev/null
-
-echo "Compiling translation catalog"
-python setup.py compile_catalog
