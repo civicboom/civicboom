@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
+<script>
+function search_on(col) {
+	v = prompt("Search based on "+col);
+	if(v) {
+		document.location.search = "?c=" + escape(col) + "&v=" + escape(v);
+	}
+}
+</script>
+
 <thead>
   <tr>
     %for field in collection.render_fields.itervalues():
-      <th>${F_(field.label_text or collection.prettify(field.key))|h}</th>
+      <th><a href="javascript:search_on('${field.key}');">${F_(field.label_text or collection.prettify(field.key))|h}</a></th>
     %endfor
   </tr>
 </thead>
