@@ -87,7 +87,7 @@ class Content(Base):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
-    def can_edit(self, member):
+    def editable_by(self, member):
         """
         Check to see if a member object has the rights to edit this content
         """
@@ -135,7 +135,7 @@ class AssignmentContent(UserVisibleContent):
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
     
     def hash(self):
-        h = hashlib.md5(super())
+        h = hashlib.md5(UserVisibleContent.hash(self))
         for field in ("event_date","due_date","closed"): #TODO: includes assigned_to in list?
             h.update(str(getattr(self,field)))
         return h.hexdigest()
