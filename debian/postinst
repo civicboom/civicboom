@@ -14,7 +14,6 @@ update-rc.d cb-website defaults
 invoke-rc.d cb-website start
 invoke-rc.d nginx restart
 
-. /opt/cb-env/bin/activate
 cd /opt/cb/share/website
 
 echo "Copying static data to S3"
