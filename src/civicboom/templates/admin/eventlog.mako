@@ -19,7 +19,7 @@
 .log20 {color: #000;} /* info, black          */
 .log30 {color: #800;} /* warning, dark red    */
 .log40 {color: #C00;} /* error, mid red       */
-.log50 {background: #F00;} /* critical, bright red background */
+.log50 {color: #F00;} /* critical, bright red */
 
 .event_log    {
 	border: 1px solid black;
@@ -55,9 +55,9 @@
 			<th>${_("Username")}</th>
 			<th>${_("Message")}</th>
 		</tr>
-	% for event in events:
-		<tr class='log${event.priority}'>
-			<td>${str(event.date_sent)[0:19]}</td>
+	% for i, event in enumerate(events):
+		<tr class='${i % 2 and 'odd' or 'even'} log${event.priority}'>
+			<td style="white-space: nowrap;">${str(event.date_sent)[0:19]}</td>
 			<td><a href="?module=${event.module}" title="${event.module}">${h.shorten_module(event.module)}</a></td>
 			<td><a href="${event.url}">${h.shorten_url(event.url)}</a></td>
 			<td>${h.username_plus_ip(event.username, event.address)|n}</td>
