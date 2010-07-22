@@ -11,12 +11,14 @@ from civicboom import forms
 from civicboom.model import meta
 
 import logging
+import re
 
 prefix = '/admin/'
 
 class AdminControllerBase(BaseController):
     model = model # where your SQLAlchemy mappers are
     forms = forms # module containing FormAlchemy fieldsets definitions
+    template = "/admin/restfieldset.mako"
 
     # # Uncomment this to impose an authentication requirement
     # @authorize(SignedIn())
@@ -31,6 +33,20 @@ class AdminControllerBase(BaseController):
     #    if self.model_name == 'Foo':
     #        return Page(meta.Session.query(model.Foo).order_by(model.Foo.bar)
     #    return super(AdminControllerBase, self).get_page()
+    def get_page(self, **kwargs):
+        S = self.Session()
+        q = S.query(self.get_model())
+
+        # FIXME: SQL injection; regex whitelist *should* stop it
+        if "c" in request.params and re.match("^[a-z0-9_]+$", request.params["c"]) and "v" in request.params:
+            q = q.filter("%s ILIKE :val" % request.params["c"])
+            q = q.params(val="%"+request.params["v"]+"%")
+
+        options = dict(collection=q, page=int(request.GET.get('page', '1')))
+        options.update(request.environ.get('pylons.routes_dict', {}))
+        options.update(kwargs)
+        collection = options.pop('collection')
+        return Page(collection, **options)
 
     def event_log(self):
         # Old-fashioned SQL building since events aren't part of the
