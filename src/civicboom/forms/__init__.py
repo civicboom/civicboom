@@ -35,6 +35,24 @@ class CustomTemplateEngine(TemplateEngine):
     def render(self, name, **kwargs):
         return render("/admin/classes/%s.mako" % self.template, extra_vars=kwargs)
 
+Content = FieldSet(model.Content)
+Content.engine = CustomTemplateEngine("content")
+Content.configure(include=[
+        Content.creator,
+        Content.title,
+        Content.status,
+        Content.private,
+        Content.parent,
+        Content.tags,
+        Content.content,
+        Content.responses,
+        Content.attachments,
+        Content.creation_date,
+        Content.update_date,
+        Content.edits,
+        Content.location,
+        ])
+
 ArticleContent = FieldSet(model.ArticleContent)
 ArticleContent.engine = CustomTemplateEngine("content")
 ArticleContent.configure(include=[
