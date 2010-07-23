@@ -43,6 +43,13 @@ class Media(Base):
 
     def load_from_file(self, tmp_file=None, original_name=None, caption=None, credit=None):
         "Create a Media object from a blob of data + upload form details"
+        # AllanC - Failed attempt at passing a temp file object rather than a filename
+        # All the sub methods require a filename, so filename it is
+        #if isinstance(tmp_file,str): tmp_file = open(tmp_file) #If tmp_file is a filename - open the file
+        #tmp_file_buffer_first_chunk = tmp_file.read(1024)
+        #tmp_file.seek(0)
+        #self.type, self.subtype = magic.from_buffer(tmp_file_buffer_first_chunk, mime=True).split("/")
+
         # Set up metadata
         self.name = original_name
         self.type, self.subtype = magic.from_file(tmp_file, mime=True).split("/")

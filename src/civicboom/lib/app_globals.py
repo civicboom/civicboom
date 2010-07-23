@@ -34,3 +34,9 @@ class Globals(object):
         self.feature_agregate_twitter   = asbool(config['feature.aggregate.twitter'])
         self.feature_agregate_email     = asbool(config['feature.aggregate.email'])
         self.feature_profanity_filter   = asbool(config['feature.profanity_filter'])
+
+        # Setup paths dictonary
+        self.path = {}
+        for p in ["temp"]:
+            self.path[p] = config['path.'+p]
+          

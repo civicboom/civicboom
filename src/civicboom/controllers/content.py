@@ -15,12 +15,13 @@ from civicboom.lib.database.get_cached import get_content
 from civicboom.lib.authentication      import authorize, is_valid_user
 
 # Datamodel and database session imports
-from civicboom.model.content           import DraftContent
+from civicboom.model                   import DraftContent, Media
 from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import update_content
 
 # Other imports
-from civicboom.lib.text import clean_html_markup
+from civicboom.lib.text  import clean_html_markup
+from civicboom.lib.files import form_upload_file_relocate
 
 
 # Logging setup
@@ -54,6 +55,21 @@ class ContentController(BaseController):
         """
         Create or Edit new content with an editable HTML form
         """
+        #------------------------------
+        # Form POST contains Content
+        #------------------------------
+        def form_post_contains_content(form):
+            """
+            Check if a range of required fields are not null
+            """
+            return_bool = False
+            if form:
+                for field in ("title","content","media_file"):
+                    if form["form_"+field]:
+                        return_bool = True
+            return return_bool
+          
+
         
         #------------------------------
         # Form POST to Content Object
@@ -71,12 +87,19 @@ class ContentController(BaseController):
             
             if "form_content" in form:
                 content.content = clean_html_markup(form["form_content"])
+
+            if "form_media_file" in form:
+                temp_file_obj = form["form_media_file"]
+                temp_filename = form_upload_file_relocate(temp_file_obj, destination_filename=str(content.id)) #+"_"+temp_file_obj.filename
+                media = Media()
+                media.load_from_file(tmp_file=temp_filename, original_name=temp_file_obj.filename, caption=form["form_media_caption"], credit=form["form_media_credit"])
+                content.attachments.append(media)
             
             for field in ["title"]:
                 setattr(content,field,form["form_"+field])
             
             return content
-        
+
             #commit content update with data from form
             # save media
             # if record type changed
@@ -99,7 +122,7 @@ class ContentController(BaseController):
             abort(401)
 
         # If form contains post data
-        if request.POST:
+        if form_post_contains_content(request.POST):
             content_hash_before = c.content.hash()                # Generate hash of content
             c.content = form_to_content(request.POST, c.content)  # Overlay form data over the current content object
             content_hash_after  = c.content.hash()                # Generate hash of content again
@@ -118,6 +141,7 @@ class ContentController(BaseController):
 
         # Render content editor
         return render(prefix + "content_editor.mako")
+        
 
     #-----------------------------------------------------------------------------
     # Add Media
@@ -149,6 +173,3 @@ class ContentController(BaseController):
         Flag this content as being inapproprate of copyright violoation
         """
         pass
-
-
-

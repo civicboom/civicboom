@@ -7,54 +7,76 @@
   ${parent.head_links()}
   
   <!-- Content editor imports-->
-  <link   type="text/css"        rel="stylesheet"  href="http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/skin.css" />
-  <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js"   ></script><!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
-  <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/editor/simpleeditor-min.js"        ></script><!-- Source file for Rich Text Editor-->
+  <link   type="text/css"        href="http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/skin.css"       rel="stylesheet" />
+  <script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js" ></script><!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
+  <script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/editor/simpleeditor-min.js"      ></script><!-- Source file for Rich Text Editor-->
   
-  <link   type="text/css"        rel="stylesheet"  href="/styles/content_editor/content_editor.css" />
+  <link   type="text/css"        href="/styles/content_editor/content_editor.css" rel="stylesheet" />
 </%def>
 
 ##------------------------------------------------------------------------------
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
-  <div class="content_form">
-  
-    <form action="" method="post">
-      <fieldset><legend>${_("Content")}</legend>
-        <p class="form_instuctions">${_("Got an opinion? want to ask a question?")}</p>
+    <div class="content_form">
+        <form action="" method="post" enctype="multipart/form-data">
+            ${base_content()}
+            ${media()}
+            
+            <div style="text-align: right;">
+                <input type="submit" name="submit_draft"   value="Save Draft"   />
+                <input type="submit" name="submit_preview" value="Preview Draft"/>
+                <input type="submit" name="submit_publish" value="Publish"      />
+            </div>
+
+        </form>  
+    </div>
+</%def>
 
 
-        <p><label for="form_title">${_("Title")}</label><input id="form_title" name="form_title" type="text" value="${c.content.title}" style="width:80%;"/><span class="tooltip tooltip_icon"><span>${_("extra info")}</span></span></p>
+##------------------------------------------------------------------------------
+## Popup
+##------------------------------------------------------------------------------
+<%def name="popup(text)">
+<span class="tooltip tooltip_icon"><span>${_(text)}</span></span>
+</%def>
+
+<%def name="instruction(text)">
+<p class="form_instuctions">${_(text)}</p>
+</%def>
+
+##------------------------------------------------------------------------------
+## Base Form Text Content
+##------------------------------------------------------------------------------
+<%def name="base_content()">
+    <fieldset><legend>${_("Content")}</legend>
+        ${instruction("Got an opinion? want to ask a question?")}
+
+        <p>
+            <label for="form_title">${_("Title")}</label>
+            <input id="form_title" name="form_title" type="text" value="${c.content.title}" style="width:80%;"/>
+            ${popup("extra info")}
+        </p>
   
         ${richtext(c.content.content)}
   
         <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
 
         <p><label for="form_owner">${_("By")}</label>
-        <select name="form_owner">"
-          <option value="" selected="selected">${c.logged_in_user.username}</option>
-          <option value=""                    >Group I am member of 1</option>
-          <option value=""                    >Group I am member of 2</option>
+        <select name="form_owner">
+            <option value="" selected="selected">${c.logged_in_user.username}</option>
+            <option value=""                    >Group I am member of 1</option>
+            <option value=""                    >Group I am member of 2</option>
         </select>
-        <span class="tooltip tooltip_icon"><span>${_("extra info")}</span></span>
+        ${popup("extra_info")}
         </p>
         <p>
-          <label for="form_tags">${_("Tags")}</label>
-          <input id="form_tags" name="form_tags" type="text" value="cat garden"/>
-          <span class="tooltip tooltip_icon"><span>${_("extra info")}</span></span>
+            <label for="form_tags">${_("Tags")}</label>
+            <input id="form_tags" name="form_tags" type="text" value="cat garden"/>
+            ${popup("extra_info")}
         </p>
-  
-        <div style="text-align: right;">
-          <input type="submit" name="submit_draft"   value="Save Draft"   />
-          <input type="submit" name="submit_preview" value="Preview Draft"/>
-          <input type="submit" name="submit_publish" value="Publish"      />
-        </div>
 
-  
-    </form>
-    
-  </div>
+    </fieldset>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -104,4 +126,59 @@
   </div>
   <!-- End Rich Text Component -->
 
+</%def>
+
+##------------------------------------------------------------------------------
+## Media Upload and Editor
+##------------------------------------------------------------------------------
+
+<%def name="media()">
+
+    <fieldset><legend>${_("Attach Media (optional)")}</legend>      
+        ${instruction("Add any relevent pictures, videos, sounds, links to your content")}
+        
+        <ul class="media_files">
+
+            <!-- List existing media -->
+            % for media in c.content.attachments:
+            <li>
+                <div class="file_type_overlay icon_${media.type}"></div>
+                <img src="${media.thumbnail_url}" class="media_preview"/>
+                
+                <div class="media_fields">
+                    <p><label for="form_media_file_${media.id}"   >File       </label><input id="form_media_file_${media.id}"    name="form_media_file_${media.id}"    type="text" disabled="true" value="${media.name}"   /><input type="submit" name="form_file_remove_${media.id}" value="Remove" class="form_file_remove"/></p>
+                    <p><label for="form_media_caption_${media.id}">Caption    </label><input id="form_media_caption_${media.id}" name="form_media_caption_${media.id}" type="text"                 value="${media.caption}"/></p>
+                    <p><label for="form_media_credit_${media.id}" >Credited to</label><input id="form_media_credit_${media.id}"  name="form_media_credit_${media.id}"  type="text"                 value="${media.credit}" /></p>
+                </div>
+            </li>
+            % endfor
+            <!-- End existing media -->
+
+            <!-- New media to be uploaded -->
+            <li>
+                <div class="media_preview">
+                    <div class="media_preview_none">${_("Select a file to upload")}</div>
+                </div>
+                <div class="media_fields">
+                    <!--<input type="submit" name="upload_file" value="Upload" class="form_file_upload"  />-->
+                    <p>
+                        <label for="form_media_file"   >File       </label><input id="form_media_file"    name="form_media_file"    type="file" class="form_field_file"/>
+                        <input type="submit" name="submit_draft" value="Upload" class="form_file_upload"/>
+                    </p>
+                    <p>
+                        <label for="form_media_caption">Caption    </label><input id="form_media_caption" name="form_media_caption" type="text" />
+                        ${popup("extra_info")}
+                    </p>
+                    <p>
+                        <label for="form_media_credit" >Credited to</label><input id="form_media_credit"  name="form_media_credit"  type="text" />
+                        ${popup("extra_info")}
+                    </p>
+                </div>              
+            </li>
+            <!-- End new media -->
+
+        </ul>
+        
+    </fieldset>
+                
 </%def>

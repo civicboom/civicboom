@@ -80,6 +80,7 @@ class Content(Base):
     def hash(self):
         h = hashlib.md5()
         # Problem? TODO?
+        # What about pythons own hash(obj) method?
         # AllanC - creator, parent and license are realtions and WILL trigger an additional query in most cases.
         #          we cant rely on just looking at creator_id etc as this may not be set until a commit
         #          solutions on a postcard?
