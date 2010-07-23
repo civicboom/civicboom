@@ -21,7 +21,7 @@
   ##-------Actions-------
   <h2>${_("Actions")}</h2>
   
-    % if c.content.can_edit(c.logged_in_user):
+    % if c.content.editable_by(c.logged_in_user):
       <a class="button_small button_small_style_2" href="${h.url(controller='content',action='edit',id=c.content.id)}">
         Edit
       </a>

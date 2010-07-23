@@ -83,6 +83,7 @@ class Content(Base):
         # AllanC - creator, parent and license are realtions and WILL trigger an additional query in most cases.
         #          we cant rely on just looking at creator_id etc as this may not be set until a commit
         #          solutions on a postcard?
+        # is there a way in SQLAlchemy to force and object to resolve ID's without a commit?
         for field in ("id","title","content","creator","parent","update_date","status","private","license"): # AllanC: unfinished field list? include relations?
             h.update(str(getattr(self,field)))
         return h.hexdigest()
