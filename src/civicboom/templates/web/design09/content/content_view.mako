@@ -26,7 +26,7 @@
         Edit
       </a>
       <a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=c.content.id)}"
-         onclick="confirm_before_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
+         onclick="confirm_before_follow_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
         Delete
       </a>
     % endif
