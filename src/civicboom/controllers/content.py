@@ -17,6 +17,7 @@ from civicboom.lib.authentication      import authorize, is_valid_user
 # Datamodel and database session imports
 from civicboom.model.content           import DraftContent
 from civicboom.model.meta              import Session
+from civicboom.lib.database.get_cached import update_content
 
 # Other imports
 from civicboom.lib.text import clean_html_markup
@@ -104,7 +105,8 @@ class ContentController(BaseController):
             content_hash_after  = c.content.hash()                # Generate hash of content again
             if content_hash_before != content_hash_after:         # If content has changed
                 Session.add(c.content)                            #   Save content to database
-                Session.commit()
+                Session.commit()                                  #
+                update_content(c.content)                         #   Invalidate any cache associated with this content
                 user_log.info("edited Content #%d" % (c.content.id, )) # Update user log
 
             if 'submit_publish' in request.POST or 'submit_preview' in request.POST:

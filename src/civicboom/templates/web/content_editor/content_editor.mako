@@ -25,25 +25,32 @@
         <p class="form_instuctions">${_("Got an opinion? want to ask a question?")}</p>
 
 
-          <p><label for="form_title">${_("Title")}</label><input id="form_title" name="form_title" type="text" value="${c.content.title}" style="width:80%;"/><span class="tooltip tooltip_icon"><span>${_("extra info")}</span></span></p>
-    
-          ${richtext(c.content.content)}
-    
-          <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
+        <p><label for="form_title">${_("Title")}</label><input id="form_title" name="form_title" type="text" value="${c.content.title}" style="width:80%;"/><span class="tooltip tooltip_icon"><span>${_("extra info")}</span></span></p>
+  
+        ${richtext(c.content.content)}
+  
+        <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
 
-          <p><label for="form_owner">${_("By")}</label>
-          <select name="form_owner">"
-            <option value="" selected="selected">${c.logged_in_user.username}</option>
-            <option value=""                    >Group I am member of 1</option>
-            <option value=""                    >Group I am member of 2</option>
-          </select>
+        <p><label for="form_owner">${_("By")}</label>
+        <select name="form_owner">"
+          <option value="" selected="selected">${c.logged_in_user.username}</option>
+          <option value=""                    >Group I am member of 1</option>
+          <option value=""                    >Group I am member of 2</option>
+        </select>
+        <span class="tooltip tooltip_icon"><span>${_("extra info")}</span></span>
+        </p>
+        <p>
+          <label for="form_tags">${_("Tags")}</label>
+          <input id="form_tags" name="form_tags" type="text" value="cat garden"/>
           <span class="tooltip tooltip_icon"><span>${_("extra info")}</span></span>
-          </p>
-          <p>
-		    <label for="form_tags">${_("Tags")}</label>
-		    <input id="form_tags" name="form_tags" type="text" value="cat garden"/>
-		    <span class="tooltip tooltip_icon"><span>${_("extra info")}</span></span>
-		  </p>
+        </p>
+  
+        <div style="text-align: right;">
+          <input type="submit" name="submit_draft"   value="Save Draft"   />
+          <input type="submit" name="submit_preview" value="Preview Draft"/>
+          <input type="submit" name="submit_publish" value="Publish"      />
+        </div>
+
   
     </form>
     
