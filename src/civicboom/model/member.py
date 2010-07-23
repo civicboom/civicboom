@@ -91,10 +91,11 @@ class User(Member):
     def avatar_url(self, size=80):
         if self.avatar:
             return "http://static.civicboom.com/avatars/"+self.avatar+"/avatar.jpg"
-        default = "http://www.civicboom.com/images/default_avatar.jpg"
+        #default = "http://www.civicboom.com/images/default_avatar.jpg"
+        default = "identicon"
         hash = hashlib.md5(self.email.lower()).hexdigest()
         args = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
-        gravatar_url = "http://www.gravatar.com/avatar/%s?"
+        return "http://www.gravatar.com/avatar/%s?%s" % (hash, args)
 
 
 class Group(Member):
