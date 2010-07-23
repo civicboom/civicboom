@@ -1,6 +1,6 @@
-from civicboom.model.member import User
+from civicboom.model.member  import User
 from civicboom.model.content import Content
-from civicboom.model.meta import Session
+from civicboom.model.meta    import Session
 
 
 #-------------------------------------------------------------------------------
@@ -9,6 +9,10 @@ from civicboom.model.meta import Session
 # A collection of functions used to setup + assit with caching
 # Part 2 contains all the functions for invalidating the cache and must be defined after the cached functions
 
+from civicboom.lib.database.etag_manager import etag_key_incement, add_etag_dependency_key
+
+add_etag_dependency_key("content")
+add_etag_dependency_key("user_content")
 
 
 #-------------------------------------------------------------------------------
@@ -51,3 +55,15 @@ def get_content(content_id):
 # Cache Management - Part 2 - Invalidating the Cache
 #-------------------------------------------------------------------------------
 
+def update_content(content):
+  #if not inheritFrom(content,Content): content = get_content_nocache(content)
+  
+  etag_key_incement("content",content.id)
+  #cache_test.invalidate(get_content, '', content.id)
+  
+  etag_key_incement("user_content",content.creator.id)
+  #cache_test.invalidate(get_content_from, '', article.reporter.id)
+  
+  if content.parent:               # If content has parent
+    #update_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now
+    pass

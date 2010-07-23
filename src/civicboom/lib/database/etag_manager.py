@@ -1,0 +1,58 @@
+"""
+Tools for the generation, managment and invalidation of eTags
+"""
+
+import civicboom.lib.app_globals
+
+from pylons import request, session, tmpl_context as c
+from pylons.controllers.util import etag_cache
+
+import hashlib
+
+#-------------------------------------------------------------------------------
+
+# List of dependencys to keep in memory
+etag_keys = {} #"assignment":{}, "article":{}, "reporter_articles":{}, "reporter":{}, "reporter_assignments_active":{}, "reporter_messages":{}, "reporter_assignments_accepted":{},"syndication_list":{}
+
+def add_etag_dependency_key(dependecy_key):
+    etag_keys[dependecy_key] = {}
+
+#-------------------------------------------------------------------------------
+
+def etag_key_incement(key, value):
+    """
+    eTags can be invalidated
+    to be called when an object is commited to the database and requires the tag to be updated
+    e.g.
+      
+    """
+    value    = str(value)
+    etag_key = etag_keys[key]
+    if value in etag_key: etag_key[value] += 1
+    else                : etag_key[value]  = 0
+
+#-------------------------------------------------------------------------------
+
+def gen_cache_key(**kargs):
+    """
+    eTags are generated for a page depending on the pages known dependancys
+    e.g.
+      cache_key = gen_cache_key(reporter=c.widget_reporter.id, assignment=id)  #if the etag is dependent on content of the listed reporter and listed assingnment
+    """
+    def getsafe_current_username():
+        if c.logged_in_user: return c.logged_in_user.username
+        return ""
+
+    cache_key = app_globals.version + request.environ.get('PATH_INFO') + request.environ.get('QUERY_STRING') + getsafe_current_username() + dictGetStringValue(session,'flash_message')
+    #for arg in args:
+    #  dependecys+=arg
+    for key in kargs:
+        #if key in etag_keys: #Unnessisary as if the code is using a non setup tag then it's wrong damn it!
+        etag_key   = etag_keys[key]
+        seek_value = str(kargs[key])
+        if seek_value in etag_key: cache_key+=str(etag_key[seek_value])+"-"
+        else                     : cache_key+=                         "X-"
+    if not app_globals.cache_enabled: log.debug('Cache disabled: eTag generated: %s' % cache_key)
+    cache_key = hashlib.md5(cache_key).hexdigest()
+    if app_globals.cache_enabled: etag_cache(cache_key)
+    return cache_key

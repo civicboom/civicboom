@@ -22,8 +22,10 @@ class Globals(object):
         'app_globals' variable
         """
 
+        self.version       = "temp string" #Needs to be replaced with version hash of this git build
+
         self.cache         = CacheManager(**parse_cache_config_options(config))
-        self.cache_enabled = asbool(config['beaker.cache.enabled'])
+        self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
 
         self.development_mode = config['debug']
 
