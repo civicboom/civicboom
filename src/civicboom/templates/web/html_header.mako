@@ -55,7 +55,7 @@
     
     <!-- Civicboom global imports -->
     % if app_globals.development_mode:
-    <script type="text/javascript" src="/javascript/civicboom_misc.js"></script>
+    <script type="text/javascript" src="/javascript/misc.js"></script>
     <script type="text/javascript" src="/javascript/url_encode.js"    ></script>
     <script type="text/javascript" src="/javascript/toggle_div.js"    ></script>
 	% else:
