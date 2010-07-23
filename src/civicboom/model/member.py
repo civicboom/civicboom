@@ -71,7 +71,7 @@ class Member(Base):
     def avatar_url(self, size=80):
         if self.avatar:
             return "http://static.civicboom.com/avatars/"+self.avatar+"/avatar.jpg"
-        return "http://www.civicboom.com/images/default_avatar.jpg"
+        return "/images/default_avatar.png"
 
 
 class User(Member):
