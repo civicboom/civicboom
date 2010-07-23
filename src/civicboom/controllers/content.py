@@ -29,8 +29,6 @@ log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 # Constants
-this_controller_name = __name__.split(".")[2] #Could get this from current request? so no need to store in a var or get it in a hacky way like this?
-
 prefix = "/web/content_editor/"
 
 
@@ -112,11 +110,11 @@ class ContentController(BaseController):
                 user_log.info("edited Content #%d" % (c.content.id, )) # Update user log
 
             if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
-                return redirect(url(controller=this_controller_name, action='view', id=c.content.id))
+                return redirect(url.current(action='view', id=c.content.id))
                 
         # If this is the frist time saving the content then redirect to new substatiated id
         if id==None and c.content.id:
-            return redirect(url(controller=this_controller_name, action='edit', id=c.content.id))
+            return redirect(url.current(action='edit', id=c.content.id))
 
         # Render content editor
         return render(prefix + "content_editor.mako")
