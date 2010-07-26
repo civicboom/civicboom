@@ -44,3 +44,6 @@ class TestController(BaseController):
 
     def ping(self):
         return 'pong'
+
+    def template_error(self):
+        render('test/template_error.mako')

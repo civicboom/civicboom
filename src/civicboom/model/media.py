@@ -1,10 +1,11 @@
-
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 
 from civicboom.model.meta import Base
 import civicboom.lib.warehouse as wh
+
+from pylons import app_globals # used in generation of URL's for media, in no warehouse url then look localy
 
 import magic
 import Image
@@ -15,6 +16,10 @@ import subprocess
 
 log = logging.getLogger(__name__)
 
+def media_path():
+    if hasattr(app_globals, 'warehouse_url'): return app_globals.warehouse_url
+    else                                    : return ""
+    
 
 class Media(Base):
     __tablename__ = "media"
@@ -42,24 +47,24 @@ class Media(Base):
         log.debug("return: "+str(proc.returncode))
 
     def load_from_file(self, tmp_file=None, original_name=None, caption=None, credit=None):
-        "Create a Media object from a blob of data + upload form details"
-        # AllanC - Failed attempt at passing a temp file object rather than a filename
-        # All the sub methods require a filename, so filename it is
-        #if isinstance(tmp_file,str): tmp_file = open(tmp_file) #If tmp_file is a filename - open the file
-        #tmp_file_buffer_first_chunk = tmp_file.read(1024)
-        #tmp_file.seek(0)
-        #self.type, self.subtype = magic.from_buffer(tmp_file_buffer_first_chunk, mime=True).split("/")
+        """
+        Create a Media object from a blob of data + upload form details
+        """
+
+        # Generate Hash and move file locally
+        self.hash               = wh.hash_file(tmp_file)
+        tmp_file                = wh.copy_to_local_warehouse(tmp_file, "media-original", self.hash)
 
         # Set up metadata
-        self.name = original_name
+        self.name               = original_name
+        self.caption            = caption if caption else u""
+        self.credit             = credit  if credit  else u""
         self.type, self.subtype = magic.from_file(tmp_file, mime=True).split("/")
-        self.hash = wh.hash_file(tmp_file)
-        self.caption = caption if caption else u""
-        self.credit = credit if credit else u""
-
-        wh.copy_to_local_warehouse(tmp_file, "media-original", self.hash)
+        
 
         # FIXME: turn tmp_file into something suitable for web viewing
+        # TODO: processing should he handled in a separte thead and not block
+        #       video thumbnails could have a placeholder thumb uploaded to warehouse first and then replaced once video transcoding complete
         if self.type == "image":
             processed = tempfile.NamedTemporaryFile(suffix=".jpg")
             size = 480, 360
@@ -117,14 +122,23 @@ class Media(Base):
             processed.close()
 
         #log.debug("Created Media from file %s -> %s" % (self.name, self.hash))
-
+        
         return self
 
     def sync(self):
-        wh.copy_to_remote_warehouse("media-original", self.hash, self.name)
-        wh.copy_to_remote_warehouse("media", self.hash, self.media_name)
+        """
+        copy localy processed files to warehouse
+        this will processed in a separte thead to allow this call to return quickly
+          the thumbnail should not be uploaded in a separte thread
+        """
+        # TODO - thread copy to warehouse
+        wh.copy_to_remote_warehouse("media-original", self.hash, self.name      )
+        wh.copy_to_remote_warehouse("media"         , self.hash, self.media_name)
         if self.type != "audio":
             wh.copy_to_remote_warehouse("media-thumbnail", self.hash, "thumb.jpg")
+            
+        # TODO: have the local file removed after all threads have finished processing the content
+
         return self
 
     def __unicode__(self):
@@ -141,19 +155,19 @@ class Media(Base):
             "image": self.subtype, # this just happens to work for PNG, GIF, JPEG
             "video": "flv"
         }
-        return "%d.%s" % (self.id, exts[self.type])
+        return "%s.%s" % (self.name, exts[self.type])
 
     @property
     def original_url(self):
         "The URL of the original as-uploaded file"
-        return "http://static.civicboom.com/media-originals/%s/%s" % (self.hash, self.name)
+        return "%s/media-original/%s/%s"         % (media_path(), self.hash, self.name)
 
     @property
     def media_url(self):
         "The URL of the processed media, eg .flv file for video"
-        return "http://static.civicboom.com/media/%s/%s" % (self.hash, self.media_filename)
+        return "%s/media/%s/%s"                   % (media_path(), self.hash, self.media_filename)
 
     @property
     def thumbnail_url(self):
         "The URL of a JPEG-format thumbnail of this media"
-        return "http://static.civicboom.com/media-thumbnails/%s/thumb.jpg" % (self.hash, )
+        return "%s/media-thumbnail/%s" % (media_path(), self.hash )

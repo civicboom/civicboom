@@ -21,7 +21,7 @@ from civicboom.lib.database.get_cached import update_content
 
 # Other imports
 from civicboom.lib.text  import clean_html_markup
-from civicboom.lib.files import form_upload_file_relocate
+#from civicboom.lib.files import form_file_to_file
 
 
 # Logging setup
@@ -89,12 +89,14 @@ class ContentController(BaseController):
                 content.content = clean_html_markup(form["form_content"])
 
             if "form_media_file" in form:
-                temp_file_obj = form["form_media_file"]
-                temp_filename = form_upload_file_relocate(temp_file_obj, destination_filename=str(content.id)) #+"_"+temp_file_obj.filename
+                form_file     = form["form_media_file"]
+                #temp_filename = form_file_to_file(form_file, destination_filename=str(content.id)+"_"+str(c.logged_in_user.id))
                 media = Media()
-                media.load_from_file(tmp_file=temp_filename, original_name=temp_file_obj.filename, caption=form["form_media_caption"], credit=form["form_media_credit"])
+                media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=form["form_media_caption"], credit=form["form_media_credit"])
+                media.sync()
                 content.attachments.append(media)
-            
+                #Session.add(media)
+
             for field in ["title"]:
                 setattr(content,field,form["form_"+field])
             

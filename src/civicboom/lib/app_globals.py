@@ -27,6 +27,9 @@ class Globals(object):
         self.cache         = CacheManager(**parse_cache_config_options(config))
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
 
+        if 'warehouse_url' in config:
+            self.warehouse_url = config['warehouse_url']
+
         self.development_mode = config['debug']
 
         self.email_contact    = config['email.contact']

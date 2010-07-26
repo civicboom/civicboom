@@ -41,3 +41,6 @@ def link_to_objects(text):
             active_word = None
         output = output + HTML.literal(" ")
     return output
+
+def raise_exception_test():
+    raise "broken"
