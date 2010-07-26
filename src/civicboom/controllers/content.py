@@ -83,23 +83,39 @@ class ContentController(BaseController):
             if not content:
                 content = DraftContent()
             
-            #for key in form: print "%s:%s" % (key,form[key])
+            # for key in form: print "%s:%s" % (key,form[key])
+            
+            # from most form values we need to escape '"' and "'" characters as these are used in HTML alt tags and value tags
             
             if "form_content" in form:
                 content.content = clean_html_markup(form["form_content"])
 
-            if "form_media_file" in form:
+            # Existing Media
+            for media in content.attachments:
+                # Update media item fields
+                caption_key = "form_media_caption_%d" % (media.id)
+                if caption_key in form:
+                    media.caption = form[caption_key]
+                credit_key = "form_media_credit_%d"   % (media.id)
+                if credit_key in form:
+                    media.credit = form[credit_key]
+                # Remove media if required
+                if "form_file_remove_%d" % media.id in form:
+                    content.attachments.remove(media)
+
+            # Add Media - if file present in form post
+            if 'form_media_file' in form and form['form_media_file'] != "":
                 form_file     = form["form_media_file"]
-                #temp_filename = form_file_to_file(form_file, destination_filename=str(content.id)+"_"+str(c.logged_in_user.id))
                 media = Media()
                 media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=form["form_media_caption"], credit=form["form_media_credit"])
                 media.sync()
                 content.attachments.append(media)
                 #Session.add(media)
-
+                
+                
             for field in ["title"]:
                 setattr(content,field,form["form_"+field])
-            
+
             return content
 
             #commit content update with data from form
@@ -127,7 +143,7 @@ class ContentController(BaseController):
         if form_post_contains_content(request.POST):
             content_hash_before = c.content.hash()                # Generate hash of content
             c.content = form_to_content(request.POST, c.content)  # Overlay form data over the current content object
-            content_hash_after  = c.content.hash()                # Generate hash of content again
+            content_hash_after  = "always trigger db commit on post" #c.content.hash()                # Generate hash of content again
             if content_hash_before != content_hash_after:         # If content has changed
                 Session.add(c.content)                            #   Save content to database
                 Session.commit()                                  #

@@ -48,7 +48,7 @@ def copy_to_remote_warehouse(warehouse, hash, filename=None):
 
     log.info("warehouse copy activated")
 
-    if config["warehouse"] == None:
+    if config["warehouse"] == None or config["warehouse"] == "":
         log.info("Copying %s/%s (%s) to Null warehouse" % (warehouse, hash, filename))
 
     if config["warehouse"] == "s3":

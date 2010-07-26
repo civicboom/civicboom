@@ -106,4 +106,5 @@ class TaskController(BaseController):
         Compare the warehouse files with the database media list.
         If media records have been removed then we can safly remove them from the warehouse
         """
+        #        it also may be worth looking for media records without an associated content record and removeing them as well
         pass

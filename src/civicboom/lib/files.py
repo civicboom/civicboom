@@ -1,11 +1,8 @@
 """
 File management utils for uploaded files
 """
-import os
-import shutil
-from pylons import app_globals
-
-
+#import os
+#import shutil
 
 
 

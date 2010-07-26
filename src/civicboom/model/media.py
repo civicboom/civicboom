@@ -5,7 +5,7 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from civicboom.model.meta import Base
 import civicboom.lib.warehouse as wh
 
-from pylons import app_globals # used in generation of URL's for media, in no warehouse url then look localy
+from pylons import config # used in generation of URL's for media, in no warehouse url then look localy
 
 import magic
 import Image
@@ -17,9 +17,10 @@ import subprocess
 log = logging.getLogger(__name__)
 
 def media_path():
-    if hasattr(app_globals, 'warehouse_url'): return app_globals.warehouse_url
-    else                                    : return ""
-    
+    if 'warehouse_url' in config: return config['warehouse_url']
+    else                        : return ""
+
+
 
 class Media(Base):
     __tablename__ = "media"
@@ -32,6 +33,8 @@ class Media(Base):
     hash          = Column(String(40),       nullable=False, index=True)
     caption       = Column(UnicodeText(),    nullable=False)
     credit        = Column(UnicodeText(),    nullable=False)
+
+
 
     def _ffmpeg(self, args):
         """

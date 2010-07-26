@@ -85,6 +85,7 @@ class Content(Base):
         #          we cant rely on just looking at creator_id etc as this may not be set until a commit
         #          solutions on a postcard?
         # is there a way in SQLAlchemy to force and object to resolve ID's without a commit?
+        # need to add hash to sub objects? like Media etc
         for field in ("id","title","content","creator","parent","update_date","status","private","license","attachments"): # AllanC: unfinished field list? include relations?
             h.update(str(getattr(self,field)))
         return h.hexdigest()
