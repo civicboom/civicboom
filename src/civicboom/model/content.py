@@ -7,6 +7,7 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
+from sqlalchemy import func
 from sqlalchemy.orm import relationship, backref
 
 import hashlib
@@ -62,8 +63,8 @@ class Content(Base):
     creator_id      = Column(Integer(),        ForeignKey('member.id'), nullable=False)
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True)
     location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)
-    creation_date   = Column(DateTime(),       nullable=False, default="now()")
-    update_date     = Column(DateTime(),       nullable=False, default="now()", doc="Controlled by postgres trigger")
+    creation_date   = Column(DateTime(),       nullable=False, default=func.now())
+    update_date     = Column(DateTime(),       nullable=False, default=func.now(), doc="Controlled by postgres trigger")
     status          = Column(_content_status,  nullable=False, default="pending")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
@@ -211,7 +212,7 @@ class ContentEditHistory(Base):
     id            = Column(Integer(),     primary_key=True)
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False)
     member_id     = Column(Integer(),     ForeignKey('member.id'), nullable=False)
-    timestamp     = Column(DateTime(),    nullable=False, default="now()")
+    timestamp     = Column(DateTime(),    nullable=False, default=func.now())
     source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
     text_change   = Column(UnicodeText(), nullable=False)
 
