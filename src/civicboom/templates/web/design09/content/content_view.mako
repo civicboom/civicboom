@@ -73,5 +73,12 @@
   <div class="content_text">
     ${h.literal(h.scan_for_embedable_view_and_autolink(c.content.content))}
   </div>
+
+  ##----Media-----
+  % for media in c.content.attachments:
+    ##% if media.type == "image":
+      <a href="${media.original_url}"><img src="${media.media_url}" alt="${media.caption}"/></a>
+    ##% endif
+  % endfor
   
 </%def>

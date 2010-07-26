@@ -98,6 +98,7 @@ def clean_html_markup(text):
     
     text = re.sub("-lt-","&lt;",text) #Add back the legitmate escapes for gt and lt
     text = re.sub("-gt-","&gt;",text)
+    text = re.sub("<br>","<br/>",text) #replace all line breaks with XHTML complient tags
     return text
 
 #-------------------------------------------------------------------------------

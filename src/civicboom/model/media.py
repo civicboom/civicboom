@@ -163,12 +163,12 @@ class Media(Base):
     @property
     def original_url(self):
         "The URL of the original as-uploaded file"
-        return "%s/media-original/%s/%s"         % (media_path(), self.hash, self.name)
+        return "%s/media-original/%s"         % (media_path(), self.hash) #/%s , self.name
 
     @property
     def media_url(self):
         "The URL of the processed media, eg .flv file for video"
-        return "%s/media/%s/%s"                   % (media_path(), self.hash, self.media_filename)
+        return "%s/media/%s"                   % (media_path(), self.hash) #/%s need to add filename to end for saving , self.name
 
     @property
     def thumbnail_url(self):

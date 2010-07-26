@@ -46,8 +46,6 @@ def copy_to_remote_warehouse(warehouse, hash, filename=None):
     """
     src = "./civicboom/public/warehouse/%s/%s/%s/%s" % (warehouse, hash[0:2], hash[2:4], hash)
 
-    log.info("warehouse copy activated")
-
     if config["warehouse"] == None or config["warehouse"] == "":
         log.info("Copying %s/%s (%s) to Null warehouse" % (warehouse, hash, filename))
 
