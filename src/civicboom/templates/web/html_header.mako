@@ -13,7 +13,7 @@
   ##----------------------------------------------------------------------------
   <meta name="description" content="${_("_site_description")}"/>
   <meta name="keywords"    content="" />
-  <meta name="authors"     content="${app_globals.email_contact}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
+  <meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
   <meta name="robots"      content="all" />
 
   ##----------------------------------------------------------------------------
@@ -21,7 +21,7 @@
   ##----------------------------------------------------------------------------  
   <%def name="title()">${_("_tagline")}</%def>
   <% title_dev_prefix = "" %>
-  <% if app_globals.development_mode: title_dev_prefix = "Dev-" %>
+  <% if config['development_mode']: title_dev_prefix = "Dev-" %>
   <title>${title_dev_prefix}${_("_site_name")}: ${self.title()}</title>
 
 
@@ -40,7 +40,7 @@
     ## CSS Style Sheets
     ##-------------------
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css" />
-    % if app_globals.development_mode:
+    % if config['development_mode']:
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09.css" />
 	% else:
     <link rel="stylesheet" type="text/css" href="/styles/design09/_combined.css" />
@@ -54,7 +54,7 @@
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"            ></script> 
     
     <!-- Civicboom global imports -->
-    % if app_globals.development_mode:
+    % if config['development_mode']:
     <script type="text/javascript" src="/javascript/misc.js"          ></script>
     <script type="text/javascript" src="/javascript/url_encode.js"    ></script>
     <script type="text/javascript" src="/javascript/toggle_div.js"    ></script>
@@ -68,7 +68,7 @@
   ##----------------------------------------------------------------------------
   ## Development Javascript Debug Console Output
   ##----------------------------------------------------------------------------
-  % if app_globals.development_mode:
+  % if config['development_mode']:
     <!-- Development Mode - Enabale Console Logging in client browser (recomend firebug) but could instate YUI log console here -->
     <!-- Use console output with: YAHOO.log("Loggy log log"); -->
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/logger/logger-min.js"></script>

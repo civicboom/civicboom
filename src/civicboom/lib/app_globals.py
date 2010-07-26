@@ -8,6 +8,9 @@ from pylons import config
 
 from paste.deploy.converters import asbool
 
+from civicboom.model.content           import License
+from civicboom.model.meta              import Session
+
 
 class Globals(object):
     """
@@ -27,19 +30,17 @@ class Globals(object):
         self.cache         = CacheManager(**parse_cache_config_options(config))
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
 
-        if 'warehouse_url' in config:
-            self.warehouse_url = config['warehouse_url']
-
-        self.development_mode = config['debug']
-
-        self.email_contact    = config['email.contact']
-
-        self.feature_agregate_twitter   = asbool(config['feature.aggregate.twitter'])
-        self.feature_agregate_email     = asbool(config['feature.aggregate.email'])
-        self.feature_profanity_filter   = asbool(config['feature.profanity_filter'])
+        #self.development_mode = config['debug']
 
         # Setup paths dictonary
-        self.path = {}
-        for p in ["temp"]:
-            self.path[p] = config['path.'+p]
-          
+        #self.path = {}
+        #for p in ["temp"]:
+        #    self.path[p] = config['path.'+p]
+
+
+    def load_database_globals(self):
+        """
+        Base database objects cannot be loaded into memory on __init__ as the database model has not been setup
+        this method call is activated after initial setup
+        """
+        self.licenses = Session.query(License).all()

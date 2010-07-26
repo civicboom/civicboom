@@ -1,6 +1,12 @@
 <%inherit file="/web/html_base.mako"/>
 
 ##------------------------------------------------------------------------------
+## Title - Override
+##------------------------------------------------------------------------------
+<%def name="title()">${_("Edit _article")}</%def>
+
+
+##------------------------------------------------------------------------------
 ## Additional CSS and Javascripts
 ##------------------------------------------------------------------------------
 <%def name="head_links()">
@@ -14,6 +20,7 @@
   <link   type="text/css"        href="/styles/content_editor/content_editor.css" rel="stylesheet" />
 </%def>
 
+
 ##------------------------------------------------------------------------------
 ## Body
 ##------------------------------------------------------------------------------
@@ -22,6 +29,7 @@
         <form action="" method="post" enctype="multipart/form-data">
             ${base_content()}
             ${media()}
+            ${license()}
             
             <div style="text-align: right;">
                 <input type="submit" name="submit_draft"   value="Save Draft"   />
@@ -44,6 +52,7 @@
 <%def name="instruction(text)">
 <p class="form_instuctions">${_(text)}</p>
 </%def>
+
 
 ##------------------------------------------------------------------------------
 ## Base Form Text Content
@@ -78,6 +87,7 @@
 
     </fieldset>
 </%def>
+
 
 ##------------------------------------------------------------------------------
 ## YUI Rich Text Component
@@ -128,6 +138,7 @@
 
 </%def>
 
+
 ##------------------------------------------------------------------------------
 ## Media Upload and Editor
 ##------------------------------------------------------------------------------
@@ -143,7 +154,7 @@
             % for media in c.content.attachments:
             <li>
                 <div class="file_type_overlay icon_${media.type}"></div>
-                <img src="${media.thumbnail_url}" class="media_preview" alt="${media.caption}"/>
+                <img class="media_preview" src="${media.thumbnail_url}" alt="${media.caption}"/>
                 
                 <div class="media_fields">
                     <p><label for="form_media_file_${media.id}"   >File       </label><input id="form_media_file_${media.id}"    name="form_media_file_${media.id}"    type="text" disabled="true" value="${media.name}"   /><input type="submit" name="form_file_remove_${media.id}" value="Remove" class="form_file_remove"/></p>
@@ -152,33 +163,56 @@
                 </div>
             </li>
             % endfor
-            <!-- End existing media -->
+            <!-- End list existing media -->
 
-            <!-- New media to be uploaded -->
+            <!-- Add media -->
             <li>
                 <div class="media_preview">
                     <div class="media_preview_none">${_("Select a file to upload")}</div>
                 </div>
                 <div class="media_fields">
-                    <!--<input type="submit" name="upload_file" value="Upload" class="form_file_upload"  />-->
-                    <p>
-                        <label for="form_media_file"   >File       </label><input id="form_media_file"    name="form_media_file"    type="file" class="form_field_file"/>
-                        <input type="submit" name="submit_draft" value="Upload" class="form_file_upload"/>
-                    </p>
-                    <p>
-                        <label for="form_media_caption">Caption    </label><input id="form_media_caption" name="form_media_caption" type="text" />
-                        ${popup("extra_info")}
-                    </p>
-                    <p>
-                        <label for="form_media_credit" >Credited to</label><input id="form_media_credit"  name="form_media_credit"  type="text" />
-                        ${popup("extra_info")}
-                    </p>
+                    <p><label for="form_media_file"   >File       </label><input id="form_media_file"    name="form_media_file"    type="file" class="form_field_file"/><input type="submit" name="submit_draft" value="Upload" class="form_file_upload"/></p>
+                    <p><label for="form_media_caption">Caption    </label><input id="form_media_caption" name="form_media_caption" type="text" />${popup("extra_info")}</p>
+                    <p><label for="form_media_credit" >Credited to</label><input id="form_media_credit"  name="form_media_credit"  type="text" />${popup("extra_info")}</p>
                 </div>              
             </li>
-            <!-- End new media -->
+            <!-- End Add media -->
 
         </ul>
         
     </fieldset>
                 
+</%def>
+
+
+##------------------------------------------------------------------------------
+## License
+##------------------------------------------------------------------------------
+
+
+
+
+<%def name="license()">
+    <!-- Licence -->
+    <fieldset><legend><span onclick="toggle(this);">Licence (optional)</span></legend>
+      <div class="hideable">
+        ${instruction("What is licencing explanation")}}
+        
+        ##<%doc>
+        % for license in app_globals.licenses:
+          <%
+            license_selected = ''
+            if license = c.content.license:
+              license_selected = 'checked="checked"'
+          %>
+          <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}"/>
+          <label for="form_licence_${license.id}">
+            <a href="{license.url}" target="_blank"><img src="images/licenses/${license.code}.png"/></a>
+          </label>
+          ${popup(license.description)}
+        % endfor
+        ##</%doc>
+        
+      </div>
+    </fieldset>
 </%def>

@@ -3,7 +3,7 @@
 Provides the BaseController class for subclassing.
 """
 from pylons.controllers      import WSGIController
-from pylons                  import request, app_globals, tmpl_context as c, url
+from pylons                  import request, app_globals, tmpl_context as c, url, config
 from pylons.controllers.util import abort, redirect
 from pylons.templating       import render_mako as render
 from pylons.i18n.translation import _, ungettext
@@ -38,7 +38,7 @@ class BaseController(WSGIController):
 
         # AllanC - Can these be moved to app_globals?
         c.host_name   = request.environ['SERVER_NAME']
-        if app_globals.development_mode:
+        if config['development_mode']:
             c.host_name = request.environ['HTTP_HOST']
         c.server_name  = "http://" + c.host_name
 

@@ -5,7 +5,8 @@ Locked down for use in development mode only
 """
 from pylons.controllers.util import abort
 
-from civicboom.lib.base import BaseController, render, app_globals, c
+from civicboom.lib.base import BaseController, render, c, config
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -13,7 +14,7 @@ log = logging.getLogger(__name__)
 class TestController(BaseController):
     def __before__(self, action, **params):
         #if not getattr(app_globals,'development_mode')==True:
-        if not app_globals.development_mode==True:
+        if not config['development_mode']==True:
             return abort(403)
         BaseController.__before__(self)
 
@@ -44,6 +45,3 @@ class TestController(BaseController):
 
     def ping(self):
         return 'pong'
-
-    def template_error(self):
-        render('test/template_error.mako')

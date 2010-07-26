@@ -5,7 +5,7 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from civicboom.model.meta import Base
 import civicboom.lib.warehouse as wh
 
-from pylons import config # used in generation of URL's for media, in no warehouse url then look localy
+from pylons import config # used in generation of URL's for media
 
 import magic
 import Image
@@ -15,10 +15,6 @@ import logging
 import subprocess
 
 log = logging.getLogger(__name__)
-
-def media_path():
-    if 'warehouse_url' in config: return config['warehouse_url']
-    else                        : return ""
 
 
 
@@ -163,14 +159,14 @@ class Media(Base):
     @property
     def original_url(self):
         "The URL of the original as-uploaded file"
-        return "%s/media-original/%s"         % (media_path(), self.hash) #/%s , self.name
+        return "%s/media-original/%s"         % (config['warehouse_url'], self.hash) #/%s , self.name
 
     @property
     def media_url(self):
         "The URL of the processed media, eg .flv file for video"
-        return "%s/media/%s"                   % (media_path(), self.hash) #/%s need to add filename to end for saving , self.name
+        return "%s/media/%s"                   % (config['warehouse_url'], self.hash) #/%s need to add filename to end for saving , self.name
 
     @property
     def thumbnail_url(self):
         "The URL of a JPEG-format thumbnail of this media"
-        return "%s/media-thumbnail/%s" % (media_path(), self.hash )
+        return "%s/media-thumbnail/%s" % (config['warehouse_url'], self.hash )

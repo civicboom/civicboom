@@ -34,6 +34,7 @@ prefix = "/web/content_editor/"
 
 
 class ContentController(BaseController):
+
         
     #-----------------------------------------------------------------------------
     # View
