@@ -13,11 +13,7 @@
 	  % elif field.key == "delete":
       <!-- none -->
 	  % else:
-	    % if field.key in request.GET:
-        <th><input type="text" style="width: 100%;" name="${field.key}" value="${request.GET[field.key]}"></th>
-		% else:
-        <th><input type="text" style="width: 100%;" name="${field.key}" value=""></th>
-		% endif
+      <th><input type="text" style="width: 100%;" name="${field.key}" value="${request.GET.get(field.key, '')}"></th>
 	  % endif
     %endfor
   </form>
