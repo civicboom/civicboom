@@ -1,19 +1,24 @@
 # -*- coding: utf-8 -*-
+<style>
+#searchrow INPUT {
+	width: 100%;
+}
+</style>
 <thead>
   <tr>
     %for field in collection.render_fields.itervalues():
       <th>${F_(field.label_text or collection.prettify(field.key))|h}</th>
     %endfor
   </tr>
-  <tr>
+  <tr id="searchrow">
   <form action="${url.current()}" method="GET">
     %for field in collection.render_fields.itervalues():
 	  % if field.key == "edit":
-      <th colspan="2"><input style="width: 100%;" type="submit" value="Search"></th>
+      <th colspan="2"><input type="submit" value="Search"></th>
 	  % elif field.key == "delete":
       <!-- none -->
 	  % else:
-      <th><input type="text" style="width: 100%;" name="${field.key}" value="${request.GET.get(field.key, '')}"></th>
+	  <th>${field.render()}</th>
 	  % endif
     %endfor
   </form>
