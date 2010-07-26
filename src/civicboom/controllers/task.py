@@ -101,3 +101,9 @@ class TaskController(BaseController):
                     done.append("Synced: "+kname)
         return "\n".join(done)
 
+    def purdge_unneeded_warehouse_media(self):
+        """
+        Compare the warehouse files with the database media list.
+        If media records have been removed then we can safly remove them from the warehouse
+        """
+        pass
