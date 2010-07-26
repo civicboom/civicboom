@@ -1,18 +1,26 @@
 # -*- coding: utf-8 -*-
-<script>
-function search_on(col) {
-	v = prompt("Search based on "+col);
-	if(v) {
-		document.location.search = "?c=" + escape(col) + "&v=" + escape(v);
-	}
-}
-</script>
-
 <thead>
   <tr>
     %for field in collection.render_fields.itervalues():
-      <th><a href="javascript:search_on('${field.key}');">${F_(field.label_text or collection.prettify(field.key))|h}</a></th>
+      <th>${F_(field.label_text or collection.prettify(field.key))|h}</th>
     %endfor
+  </tr>
+  <tr>
+  <form action="${url.current()}" method="GET">
+    %for field in collection.render_fields.itervalues():
+	  % if field.key == "edit":
+      <th colspan="2"><input style="width: 100%;" type="submit" value="Search"></th>
+	  % elif field.key == "delete":
+      <!-- none -->
+	  % else:
+	    % if field.key in request.GET:
+        <th><input type="text" style="width: 100%;" name="${field.key}" value="${request.GET[field.key]}"></th>
+		% else:
+        <th><input type="text" style="width: 100%;" name="${field.key}" value=""></th>
+		% endif
+	  % endif
+    %endfor
+  </form>
   </tr>
 </thead>
 
