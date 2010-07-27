@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base
+from civicboom.model.meta import Base, Session
 from civicboom.model.message import Message
 
 from sqlalchemy import Column, ForeignKey
@@ -26,6 +26,38 @@ class Follow(Base):
     __tablename__ = "map_member_to_follower"
     member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
     follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+
+
+class SettingsManager(object):
+    def __init__(self, member):
+        self.member = member
+
+    def get_integer(self, name, default=None):
+        s = Session
+        q = s.query(MemberSetting)
+        q = q.filter(MemberSetting.member_id==self.member.id)
+        q = q.filter(MemberSetting.name==name)
+        q = q.one()
+        if q:
+            return int(q["value"])
+        else:
+            return default
+
+    def set_integer(self, name, value):
+        s = Session
+        q = s.query(MemberSetting)
+        q = q.filter(MemberSetting.member_id==self.member.id)
+        q = q.filter(MemberSetting.name==name)
+        q = q.one()
+        if q:
+            q.value = str(value)
+        else:
+            ms = MemberSetting()
+            ms.member = self.member
+            ms.name = name
+            ms.value = value
+            Session.add(ms)
+            Session.commit()
 
 
 class Member(Base):
@@ -60,6 +92,12 @@ class Member(Base):
     following       = relationship("Member",    primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
     assignments     = relationship("MemberAssignment",  backref=backref("member"), cascade="all,delete-orphan")
     ratings         = relationship("Rating",    backref=backref('member'), cascade="all,delete-orphan")
+    settings        = relationship("MemberSetting", backref=backref('member', cascade="all,delete-orphan"))
+
+    @property
+    def config(self):
+        self._config = SettingsManager(self)
+        return self._config
 
     def __unicode__(self):
         return self.name + " ("+self.username+")"
@@ -83,6 +121,9 @@ class User(Member):
     location         = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
     location_updated = Column(DateTime(), nullable=False,   default=func.now())
     email            = Column(Unicode(250), nullable=False  )
+
+    def __init__(self):
+        self.config = SettingsManager(self)
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (User)"
@@ -122,9 +163,11 @@ class UserLogin(Base):
 
 
 # FIXME: incomplete
-#class MemberUserSettingsDetails(Base):
-#    memberId
-#    full name
+class MemberSetting(Base):
+    __tablename__    = "member_setting"
+    member_id   = Column(Integer(),    ForeignKey('member.id'), primary_key=True)
+    name        = Column(String(250),  primary_key=True)
+    value       = Column(Unicode(250), nullable=False)
 
 
 # FIXME: incomplete
