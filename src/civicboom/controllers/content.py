@@ -11,17 +11,18 @@ For managing content:
 # Base controller imports
 from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _
 from civicboom.lib.misc                import flash_message
-from civicboom.lib.database.get_cached import get_content
+from civicboom.lib.database.get_cached import get_content, get_tag
 from civicboom.lib.authentication      import authorize, is_valid_user
 
 # Datamodel and database session imports
-from civicboom.model                   import DraftContent, Media
+from civicboom.model                   import DraftContent, Media, Tag
 from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import update_content
 
 # Other imports
-from civicboom.lib.text  import clean_html_markup
-#from civicboom.lib.files import form_file_to_file
+from civicboom.lib.text import clean_html_markup
+from civicboom.lib.misc import remove_where
+from sets import Set # may not be needed in Python 2.7+
 
 
 # Logging setup
@@ -29,13 +30,13 @@ import logging
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
-# Constants
-prefix = "/web/content_editor/"
+
+
 
 
 class ContentController(BaseController):
 
-        
+
     #-----------------------------------------------------------------------------
     # View
     #-----------------------------------------------------------------------------
@@ -50,7 +51,7 @@ class ContentController(BaseController):
         # Check content is visable
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
             if c.content.status != "show":
-                render('/web/message/content_unavailable.mako')
+                return render('/web/message/content_unavailable.mako')
 
         # Increase content view count
         if hasattr(c.content,'views'):
@@ -74,9 +75,12 @@ class ContentController(BaseController):
         """
         Create or Edit new content with an editable HTML form
         """
+        
+        
         #------------------------------
         # Form POST contains Content
         #------------------------------
+        # AllanC - is there a way this can be placed at the end of the file away from the rest of the edit action for clarity?
         def form_post_contains_content(form):
             """
             Check if a range of required fields are not null
@@ -93,6 +97,7 @@ class ContentController(BaseController):
         #------------------------------
         # Form POST to Content Object
         #------------------------------
+        # AllanC - is there a way this can be placed at the end of the file away from the rest of the edit action for clarity?
         def form_to_content(form, content):
             """
             Takes form post data and either overlays the form with an existing object or create the relevent content object type and overlay form data
@@ -108,6 +113,20 @@ class ContentController(BaseController):
             
             if "form_content" in form:
                 content.content = clean_html_markup(form["form_content"])
+
+            # Tags
+            if "form_tags" in form:
+                form_tags    = [tag for tag in form["form_tags"].split(" ") if tag!=""] # Get tags from form removing any empty strings
+                content_tags = [tag.name for tag in c.content.tags]                     # Get tags form current content object
+                
+                # Add any new tag objects
+                for tag in Set(form_tags).difference(content_tags):
+                    c.content.tags.append(get_tag(tag))
+
+                # Remove any missing tag objects
+                def remove_check(tag):
+                    return tag.name in Set(content_tags).difference(form_tags)
+                remove_where(c.content.tags, remove_check)
 
             # Existing Media
             for media in content.attachments:
@@ -133,19 +152,16 @@ class ContentController(BaseController):
             
             if 'form_licence' in form:
                 content.license_id = form['form_licence']
-                print "yay %s" % content.license_id
                 
             for field in ["title"]:
                 setattr(content,field,form["form_"+field])
 
             return content
 
-            #commit content update with data from form
-            # save media
-            # if record type changed
-            #  remove previous record
-            #  redirect to new id
-
+        #------------------------------------------------
+        # Edit Content Main
+        #------------------------------------------------
+        
         # Get exisiting content from URL id
         c.content = get_content(id)
         
@@ -175,6 +191,10 @@ class ContentController(BaseController):
                 update_content(c.content)                         #   Invalidate any cache associated with this content
                 user_log.info("edited Content #%d" % (c.content.id, )) # Update user log
 
+            # if record type changed
+            #  remove previous record?
+            #  redirect to new id
+
             if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
                 return redirect(url.current(action='view', id=c.content.id))
                 
@@ -183,7 +203,7 @@ class ContentController(BaseController):
             return redirect(url.current(action='edit', id=c.content.id))
 
         # Render content editor
-        return render(prefix + "content_editor.mako")
+        return render("/web/content_editor/content_editor.mako")
         
 
     #-----------------------------------------------------------------------------
@@ -202,7 +222,8 @@ class ContentController(BaseController):
     def delete(self, id):
         c.content = get_content(id)
         if not c.content.editable_by(c.logged_in_user):
-            flash_message(_("your current user does not have the permissions to delete this _content")) #AllanC: todo - this message never gets seen?
+            flash_message(_("your current user does not have the permissions to delete this _content"))
+            #AllanC: todo - this message never gets seen as the session is not
             abort(401)
         flash_message(_("_content deletion is not implemented yet"))
         return redirect(request.environ.get('HTTP_REFERER'))

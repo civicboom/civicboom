@@ -9,3 +9,8 @@ def flash_message(message):
     else:
         session['flash_message'] = message
     session.save()
+
+def remove_where(list, check_for_removal_function):
+    for item in list:
+        if check_for_removal_function(item):
+            list.remove(item)
