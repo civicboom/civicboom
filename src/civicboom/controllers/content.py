@@ -46,6 +46,24 @@ class ContentController(BaseController):
         Identify the object type and render with approriate renderer
         """
         c.content = get_content(id)
+
+        # Check content is visable
+        if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
+            if c.content.status != "show":
+                render('/web/message/content_unavailable.mako')
+
+        # Increase content view count
+        if hasattr(c.content,'views'):
+            content_view_key = 'content_%s' % c.content.id
+            if content_view_key not in session:
+                session[content_view_key] = True
+                session.save()
+            c.content.views += 1
+            Session.commit()
+            # AllanC - invalidating the content on EVERY view does not make scence
+            #        - a cron should invalidate this OR the templates should expire after X time
+            #update_content(c.content)
+
         return render('/web/design09/content/content_view.mako')
 
     #-----------------------------------------------------------------------------
@@ -144,7 +162,7 @@ class ContentController(BaseController):
         # AllanC - todo: in future this will have to be a more involved process as the ower of the content could be a group the user is part of
         if not c.content.editable_by(c.logged_in_user):
             flash_message(_("your user does not have the permissions to edit this _content"))
-            abort(401)
+            abort(401) #Unauthorised
 
         # If form contains post data
         if form_post_contains_content(request.POST):
