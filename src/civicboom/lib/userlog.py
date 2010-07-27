@@ -22,17 +22,18 @@ class UserLogHandler(logging.Handler):
         username = "None"
         if c.logged_in_user:
             username = c.logged_in_user.username
-        url = request.url
-        addr = request.environ["REMOTE_ADDR"]
+        url      = request.url
+        addr     = request.environ["REMOTE_ADDR"]
         priority = record.levelno
-        module = record.pathname[record.pathname.find("civicboom"):] # +":"+str(record.lineno)
-        message = record.getMessage()
+        module   = record.pathname[record.pathname.find("civicboom"):]
+        line_num = record.lineno
+        message  = record.getMessage()
 
         connection = db_engine.connect()
         connection.execute(text("""
-            INSERT INTO events(module, username, url, address, priority, message)
-            VALUES(:module, :username, :url, :address, :priority, :message)
-        """), module=module, username=username, url=url, address=addr, priority=priority, message=message)
+            INSERT INTO events(module, line_num, username, url, address, priority, message)
+            VALUES(:module, :line_num, :username, :url, :address, :priority, :message)
+        """), module=module, line_num=line_num, username=username, url=url, address=addr, priority=priority, message=message)
         # connection.commit()
         connection.close()
 
