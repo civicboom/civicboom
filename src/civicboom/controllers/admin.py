@@ -38,9 +38,14 @@ class AdminControllerBase(BaseController):
         q = S.query(self.get_model())
 
         # FIXME: SQL injection; regex whitelist *should* stop it
-        if "c" in request.params and re.match("^[a-z0-9_]+$", request.params["c"]) and "v" in request.params:
-            q = q.filter("%s ILIKE :val" % request.params["c"])
-            q = q.params(val="%"+request.params["v"]+"%")
+        for name in request.GET.keys():
+            col_name = name[name.find("--")+2:]
+            value = request.GET[name];
+            if re.match("^[a-zA-Z0-9_]+$", col_name) and re.match("^[a-zA-Z0-9_]+$", value):
+                if re.match("^[0-9]+$", value):
+                    q = q.filter("%s = %s" % (col_name, str(value)))
+                else:
+                    q = q.filter("%s ILIKE '%s'" % (col_name, "%"+value+"%"))
 
         options = dict(collection=q, page=int(request.GET.get('page', '1')))
         options.update(request.environ.get('pylons.routes_dict', {}))
