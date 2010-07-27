@@ -103,9 +103,10 @@
 			<td style="white-space: nowrap;">
 				<a href="javascript: show_extra('extra_${event.id}_m');">${h.shorten_module(event.module)}</a>
 				<div id="extra_${event.id}_m" style="display: none;">
-					<center>${event.module}</center>
+					<center>${event.module}:${event.line_num}</center>
 					<br><a href="?module=${event.module}">Find other messages from this module</a>
-					<br><a href="https://dev.civicboom.com/gitweb/?p=website;a=blob;f=src/${event.module}">View source code</a>
+					<br><a href="?module=${event.module}&line_num=${event.line_num}">Find other messages from this line</a>
+					<br><a href="https://dev.civicboom.com/gitweb/?p=website;a=blob;f=src/${event.module}#l${event.line_num}">View source code</a>
 				</div>
 			</td>
 			<td>

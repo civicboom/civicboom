@@ -61,6 +61,9 @@ class AdminControllerBase(BaseController):
         if "module" in request.params:
             wheres.append("module = %s")
             args.append(request.params["module"])
+        if "line_num" in request.params:
+            wheres.append("line_num = %s")
+            args.append(int(request.params["line_num"]))
         if "username" in request.params:
             wheres.append("username = %s")
             args.append(request.params["username"])
