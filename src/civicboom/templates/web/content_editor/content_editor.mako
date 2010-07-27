@@ -74,14 +74,32 @@
   
         <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
 
+        ## Owner
         <p><label for="form_owner">${_("By")}</label>
         <select name="form_owner">
-            <option value="" selected="selected">${c.logged_in_user.username}</option>
-            <option value=""                    >Group I am member of 1</option>
-            <option value=""                    >Group I am member of 2</option>
+            <%
+            owners = []
+            owners.append(c.logged_in_user)
+            # TODO - unfinished
+            # AllanC - this is really odd! activating the hasattr triggers a query (im cool with that, it's expected) but an INSERT query?! that then errors?
+            #if hasattr(c.logged_in_user,"groups"):
+            #    pass
+            #owners += c.logged_in_user.groups
+            %>
+            % for owner in owners:
+                <%
+                owner_selected = ""
+                if owner.id == c.content.creator_id:
+                    owner_selected = h.literal('selected="selected"')
+                %>
+                <option value="${owner.id}" ${owner_selected}>${owner.username}</option>
+            % endfor
         </select>
         ${popup("extra_info")}
         </p>
+        
+        
+        ## Tags
         <p>
             <label for="form_tags">${_("Tags")}</label>
             <%

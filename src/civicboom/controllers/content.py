@@ -111,8 +111,14 @@ class ContentController(BaseController):
             
             # from most form values we need to escape '"' and "'" characters as these are used in HTML alt tags and value tags
             
+            # Content
             if "form_content" in form:
                 content.content = clean_html_markup(form["form_content"])
+
+            # Owner
+            if "form_owner" in form:
+                c.content.creator_id = form["form_owner"]
+                # Although the form limits the user to a selectable list, any id can be passed here, it is possible that with an API call a user can give content to anyone.
 
             # Tags
             if "form_tags" in form:
