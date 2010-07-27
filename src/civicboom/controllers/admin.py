@@ -62,6 +62,9 @@ class AdminControllerBase(BaseController):
         if "address" in request.params:
             wheres.append("address = %s")
             args.append(request.params["address"])
+        if "url" in request.params:
+            wheres.append("url = %s")
+            args.append(request.params["url"])
 
         connection = get_engine().connect()
         query = "SELECT * FROM events WHERE "
