@@ -1,5 +1,5 @@
 from civicboom.model.member  import User
-from civicboom.model.content import Content
+from civicboom.model.content import Content, Tag
 from civicboom.model.meta    import Session
 
 
@@ -45,6 +45,16 @@ def get_content_nocache(content_id):
 def get_content(content_id):
     if not content_id: return None
     return get_content_nocache(content_id)
+
+
+def get_tag(tag):
+    """
+    Returns a tag object for the string passed to it
+    If it does not appear in the database then return a new tag object
+    If it does exisit in the data then return the database object
+    """
+    try   : return Session.query(Tag).filter_by(name=tag).one()
+    except: return Tag(tag)
 
 #-------------------------------------------------------------------------------
 # Database List Gets - Cached - Get data lists from database that is cached

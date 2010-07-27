@@ -8,7 +8,7 @@
 
 
 ##------------------------------------------------------------------------------
-## Left Col
+## Left Col - Actions
 ##------------------------------------------------------------------------------
 
 <%def name="col_left()">
@@ -39,7 +39,7 @@
 
   ##-------- Licence----------
   <h2>${_("Licence")}</h2>
-    <a href="${c.content.license.url}" target="_blank">
+    <a href="${c.content.license.url}" target="_blank" title="${_(c.content.license.name)}">
       <img src="/images/licenses/${c.content.license.code}.png" alt="${_(c.content.license.name)}" />
     </a>
 
@@ -49,7 +49,7 @@
 </%def>
 
 ##------------------------------------------------------------------------------
-## Right Col
+## Right Col - Related Content
 ##------------------------------------------------------------------------------
 
 <%def name="col_right()">
@@ -66,6 +66,11 @@
 
 <%def name="body()">
 
+  ##----Details----
+  % if hasattr(c.content,'views'):
+  <p>views: ${c.content.views}</p>
+  % endif
+
   ##----Title----
   <h1>${c.content.title}</h1>
 
@@ -81,4 +86,15 @@
     ##% endif
   % endfor
   
+  ##----Comments----
+  ${comments()}
+  
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Comments
+##------------------------------------------------------------------------------
+<%def name="comments()">
+  <p>comments to be implmented</p>
 </%def>

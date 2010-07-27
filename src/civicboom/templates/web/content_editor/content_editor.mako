@@ -74,17 +74,40 @@
   
         <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
 
+        ## Owner
         <p><label for="form_owner">${_("By")}</label>
         <select name="form_owner">
-            <option value="" selected="selected">${c.logged_in_user.username}</option>
-            <option value=""                    >Group I am member of 1</option>
-            <option value=""                    >Group I am member of 2</option>
+            <%
+            owners = []
+            owners.append(c.logged_in_user)
+            # TODO - unfinished
+            # AllanC - this is really odd! activating the hasattr triggers a query (im cool with that, it's expected) but an INSERT query?! that then errors?
+            #if hasattr(c.logged_in_user,"groups"):
+            #    pass
+            #owners += c.logged_in_user.groups
+            %>
+            % for owner in owners:
+                <%
+                owner_selected = ""
+                if owner.id == c.content.creator_id:
+                    owner_selected = h.literal('selected="selected"')
+                %>
+                <option value="${owner.id}" ${owner_selected}>${owner.username}</option>
+            % endfor
         </select>
         ${popup("extra_info")}
         </p>
+        
+        
+        ## Tags
         <p>
             <label for="form_tags">${_("Tags")}</label>
-            <input id="form_tags" name="form_tags" type="text" value="cat garden"/>
+            <%
+            tag_string = u""
+            for tag in [tag.name for tag in c.content.tags]:
+                tag_string += tag + u" "
+            %>
+            <input id="form_tags" name="form_tags" type="text" value="${tag_string}"/>
             ${popup("extra_info")}
         </p>
 
@@ -160,9 +183,9 @@
                 <img class="media_preview" src="${media.thumbnail_url}" alt="${media.caption}"/>
                 
                 <div class="media_fields">
-                    <p><label for="form_media_file_${media.id}"   >File       </label><input id="form_media_file_${media.id}"    name="form_media_file_${media.id}"    type="text" disabled="true" value="${media.name}"   /><input type="submit" name="form_file_remove_${media.id}" value="Remove" class="form_file_remove"/></p>
-                    <p><label for="form_media_caption_${media.id}">Caption    </label><input id="form_media_caption_${media.id}" name="form_media_caption_${media.id}" type="text"                 value="${media.caption}"/></p>
-                    <p><label for="form_media_credit_${media.id}" >Credited to</label><input id="form_media_credit_${media.id}"  name="form_media_credit_${media.id}"  type="text"                 value="${media.credit}" /></p>
+                    <p><label for="form_media_file_${media.id}"   >${_("File")}       </label><input id="form_media_file_${media.id}"    name="form_media_file_${media.id}"    type="text" disabled="true" value="${media.name}"   /><input type="submit" name="form_file_remove_${media.id}" value="Remove" class="form_file_remove"/></p>
+                    <p><label for="form_media_caption_${media.id}">${_("Caption")}    </label><input id="form_media_caption_${media.id}" name="form_media_caption_${media.id}" type="text"                 value="${media.caption}"/></p>
+                    <p><label for="form_media_credit_${media.id}" >${_("Credited to")}</label><input id="form_media_credit_${media.id}"  name="form_media_credit_${media.id}"  type="text"                 value="${media.credit}" /></p>
                 </div>
             </li>
             % endfor
@@ -174,9 +197,9 @@
                     <div class="media_preview_none">${_("Select a file to upload")}</div>
                 </div>
                 <div class="media_fields">
-                    <p><label for="form_media_file"   >File       </label><input id="form_media_file"    name="form_media_file"    type="file" class="form_field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="form_file_upload"/></p>
-                    <p><label for="form_media_caption">Caption    </label><input id="form_media_caption" name="form_media_caption" type="text" />${popup("extra_info")}</p>
-                    <p><label for="form_media_credit" >Credited to</label><input id="form_media_credit"  name="form_media_credit"  type="text" />${popup("extra_info")}</p>
+                    <p><label for="form_media_file"   >${_("File")}       </label><input id="form_media_file"    name="form_media_file"    type="file" class="form_field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="form_file_upload"/></p>
+                    <p><label for="form_media_caption">${_("Caption")}    </label><input id="form_media_caption" name="form_media_caption" type="text" />${popup("extra_info")}</p>
+                    <p><label for="form_media_credit" >${_("Credited to")}</label><input id="form_media_credit"  name="form_media_credit"  type="text" />${popup("extra_info")}</p>
                 </div>              
             </li>
             <!-- End Add media -->
@@ -184,17 +207,13 @@
         </ul>
         
     </fieldset>
-                
+
 </%def>
 
 
 ##------------------------------------------------------------------------------
 ## License
 ##------------------------------------------------------------------------------
-
-
-
-
 <%def name="license()">
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
@@ -204,12 +223,12 @@
         % for license in app_globals.licenses:
           <%
             license_selected = ''
-            if c.content.license and license.id == c.content.license.id:
-              license_selected = 'checked="checked"'
+            if c.content.license and license.id == c.content.license_id:
+              license_selected = h.literal('checked="checked"')
           %>
-          <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}"/>
+          <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}" ${license_selected} />
           <label for="form_licence_${license.id}">
-            <a href="${license.url}" target="_blank" title="${license.name}"><img src="/images/licenses/${license.code}.png" alt="${license.name}"/></a>
+            <a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a>
           </label>
           ##${popup(license.description)}
         % endfor
