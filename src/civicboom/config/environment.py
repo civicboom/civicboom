@@ -7,6 +7,8 @@ from mako.lookup import TemplateLookup
 from pylons.error import handle_mako_error
 from sqlalchemy import engine_from_config
 
+from paste.deploy.converters import asbool
+
 import civicboom.lib.app_globals as app_globals
 import civicboom.lib.helpers
 from civicboom.config.routing import make_map
