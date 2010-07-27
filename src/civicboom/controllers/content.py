@@ -112,7 +112,10 @@ class ContentController(BaseController):
                 media.sync()
                 content.attachments.append(media)
                 #Session.add(media)
-                
+            
+            if 'form_licence' in form:
+                content.license_id = form['form_licence']
+                print "yay %s" % content.license_id
                 
             for field in ["title"]:
                 setattr(content,field,form["form_"+field])

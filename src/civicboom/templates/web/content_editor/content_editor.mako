@@ -204,10 +204,10 @@
         % for license in app_globals.licenses:
           <%
             license_selected = ''
-            if c.content.license and license.id == c.content.license.id:
-              license_selected = 'checked="checked"'
+            if c.content.license and license.id == c.content.license_id:
+              license_selected = h.literal('checked="checked"')
           %>
-          <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}"/>
+          <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}" ${license_selected} />
           <label for="form_licence_${license.id}">
             <a href="${license.url}" target="_blank" title="${license.name}"><img src="/images/licenses/${license.code}.png" alt="${license.name}"/></a>
           </label>
