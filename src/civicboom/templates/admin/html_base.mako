@@ -42,7 +42,7 @@ TEXTAREA {
 	border-left-color:#DDD;
 	border-top-color:#DDD;
 }
-TD > A {
+TD A {
     display: inline;
 }
 		</style>

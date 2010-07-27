@@ -21,7 +21,7 @@ def shorten_module(mod):
 def username_plus_ip(username, address):
     if username == "None":
         return address
-    return HTML.span(username, title=address)
+    return HTML.span(HTML.a(username, href=url(controller='user', action='view', id=username)), title=address)
 
 def link_to_objects(text):
     """

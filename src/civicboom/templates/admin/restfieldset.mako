@@ -73,6 +73,30 @@ from pylons import url
 	</tr>
 </table>
 <table>
+	<tr><th colspan="3">${_("Statistics")}</th></tr>
+	<%
+from civicboom.model.meta import Session
+from civicboom.model import Content, User, Group, Media
+	%>
+	<tr>
+		<td>
+			<ul>
+				<li>
+					${Session.query(Content).count()} ${_("bits of content")}
+					(<a href="/admin/Content/models?Content--status=pending">${Session.query(Content).filter(Content.status=="pending").count()} ${_("pending")}</a>)
+				</li>
+				<li>
+					${Session.query(User).count()} ${_("users")}
+					(<a href="/admin/User/models?User--status=pending">${Session.query(User).filter(User.status=="pending").count()} ${_("pending")}</a>,
+					<a href="/admin/User/models?User--status=suspended">${Session.query(User).filter(User.status=="suspended").count()} ${_("suspended")}</a>)
+				</li>
+				<li>${Session.query(Group).count()} ${_("groups")}</li>
+				<li>${Session.query(Media).count()} ${_("uploads")}</li>
+			</ul>
+		</td>
+	</tr>
+</table>
+<table>
 	<tr><th colspan="3">${_("Full List")}</th></tr>
 	<tr>
 		<td>
