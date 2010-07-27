@@ -28,18 +28,22 @@ def link_to_objects(text):
     Scan a string for "blah blah Content #42 blah blah" and replace
     "Content #42" with a link to the object editor
     """
-    active_word = None
     output = HTML.literal()
+    prev_word = None
     for word in text.split():
-        id_match = re.match("#(\d+)", word)
-        if active_word and id_match:
-            output = output + HTML.a(active_word + " " + word, href="/admin/"+active_word+"/models/"+id_match.group(1)+"/edit")
-        elif word[0] == word[0].capitalize(): # if the word starts with a capital
-            active_word = word
-        else:
-            output = output + HTML.literal(word)
-            active_word = None
-        output = output + HTML.literal(" ")
+        if prev_word:
+            id_match = re.match("#(\d+)", word)
+            if id_match:
+                output = output + HTML.a(
+                        prev_word+" #"+id_match.group(1),
+                        href="/admin/"+prev_word+"/models/"+id_match.group(1)+"/edit")
+                word = None
+            else:
+                output = output + HTML.literal(prev_word)
+            output = output + HTML.literal(" ")
+        prev_word = word
+    if prev_word:
+        output = output + HTML.literal(prev_word)
     return output
 
 def raise_exception_test():

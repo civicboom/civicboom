@@ -5,7 +5,7 @@ from civicboom.model.message import Message
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
-from sqlalchemy import and_, null
+from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
@@ -37,7 +37,7 @@ class Member(Base):
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars
     name            = Column(Unicode(250),   nullable=False  )
-    join_date       = Column(Date(),         nullable=False, default="now()")
+    join_date       = Column(Date(),         nullable=False, default=func.now())
     home_location   = Column(Unicode(250),   nullable=True,  doc="Name of a location for informational purposes, eg 'London', 'Global', 'Wherever the sun shines'")
     # AllanC notes: home location? point? for individual, area by radius, countrys by polygons? - Shish maybe investigate?
     description     = Column(UnicodeText(),  nullable=False, default=u"")
@@ -71,17 +71,17 @@ class Member(Base):
     def avatar_url(self, size=80):
         if self.avatar:
             return "http://static.civicboom.com/avatars/"+self.avatar+"/avatar.jpg"
-        return "http://www.civicboom.com/images/default_avatar.jpg"
+        return "/images/default_avatar.png"
 
 
 class User(Member):
     __tablename__    = "member_user"
     __mapper_args__  = {'polymorphic_identity': 'user'}
     id               = Column(Integer(),  ForeignKey('member.id'), primary_key=True)
-    last_check       = Column(DateTime(), nullable=False,   default="now()", doc="The last time the user checked their messages. You probably want to use the new_messages derived boolean instead.")
+    last_check       = Column(DateTime(), nullable=False,   default=func.now(), doc="The last time the user checked their messages. You probably want to use the new_messages derived boolean instead.")
     new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
     location         = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
-    location_updated = Column(DateTime(), nullable=False,   default="now()")
+    location_updated = Column(DateTime(), nullable=False,   default=func.now())
     email            = Column(Unicode(250), nullable=False  )
 
     def __unicode__(self):
