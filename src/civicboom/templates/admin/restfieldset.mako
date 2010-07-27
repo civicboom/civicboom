@@ -83,12 +83,12 @@ from civicboom.model import Content, User, Group, Media
 			<ul>
 				<li>
 					${Session.query(Content).count()} ${_("bits of content")}
-					(${Session.query(Content).filter(Content.status=="pending").count()} ${_("pending")})
+					(<a href="/admin/Content/models?Content--status=pending">${Session.query(Content).filter(Content.status=="pending").count()} ${_("pending")}</a>)
 				</li>
 				<li>
 					${Session.query(User).count()} ${_("users")}
-					(${Session.query(User).filter(User.status=="pending").count()} ${_("pending")}, 
-					${Session.query(User).filter(User.status=="suspended").count()} ${_("suspended")})
+					(<a href="/admin/User/models?User--status=pending">${Session.query(User).filter(User.status=="pending").count()} ${_("pending")}</a>,
+					<a href="/admin/User/models?User--status=suspended">${Session.query(User).filter(User.status=="suspended").count()} ${_("suspended")}</a>)
 				</li>
 				<li>${Session.query(Group).count()} ${_("groups")}</li>
 				<li>${Session.query(Media).count()} ${_("uploads")}</li>
