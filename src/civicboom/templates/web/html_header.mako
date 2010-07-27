@@ -40,6 +40,7 @@
     ## CSS Style Sheets
     ##-------------------
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css" />
+    
     % if config['development_mode']:
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09.css" />
 	% else:
@@ -51,7 +52,9 @@
     ##-------------------
     <!-- YUI 2.x global imports -->
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script><!-- Utility Dependencies -->
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"            ></script> 
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"            ></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/animation/animation-min.js"        ></script>
+
     
     <!-- Civicboom global imports -->
     % if config['development_mode']:

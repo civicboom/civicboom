@@ -32,9 +32,12 @@
             ${license()}
             
             <div style="text-align: right;">
-                <input type="submit" name="submit_draft"   value="Save Draft"   />
-                <input type="submit" name="submit_preview" value="Preview Draft"/>
-                <input type="submit" name="submit_publish" value="Publish"      />
+                % if c.content.id:
+                <input type="submit" name="submit_delete"  value="${_("Delete")}"       />
+                % endif
+                <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   />
+                <input type="submit" name="submit_preview" value="${_("Preview Draft")}"/>
+                <input type="submit" name="submit_publish" value="${_("Publish")}"      />
             </div>
 
         </form>  
@@ -171,7 +174,7 @@
                     <div class="media_preview_none">${_("Select a file to upload")}</div>
                 </div>
                 <div class="media_fields">
-                    <p><label for="form_media_file"   >File       </label><input id="form_media_file"    name="form_media_file"    type="file" class="form_field_file"/><input type="submit" name="submit_draft" value="Upload" class="form_file_upload"/></p>
+                    <p><label for="form_media_file"   >File       </label><input id="form_media_file"    name="form_media_file"    type="file" class="form_field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="form_file_upload"/></p>
                     <p><label for="form_media_caption">Caption    </label><input id="form_media_caption" name="form_media_caption" type="text" />${popup("extra_info")}</p>
                     <p><label for="form_media_credit" >Credited to</label><input id="form_media_credit"  name="form_media_credit"  type="text" />${popup("extra_info")}</p>
                 </div>              
@@ -194,24 +197,22 @@
 
 <%def name="license()">
     <!-- Licence -->
-    <fieldset><legend><span onclick="toggle(this);">Licence (optional)</span></legend>
+    <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
       <div class="hideable">
-        ${instruction("What is licencing explanation")}}
+        ${instruction("What is licensing explanation")}
         
-        ##<%doc>
         % for license in app_globals.licenses:
           <%
             license_selected = ''
-            if license = c.content.license:
+            if c.content.license and license.id == c.content.license.id:
               license_selected = 'checked="checked"'
           %>
           <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}"/>
           <label for="form_licence_${license.id}">
-            <a href="{license.url}" target="_blank"><img src="images/licenses/${license.code}.png"/></a>
+            <a href="${license.url}" target="_blank" title="${license.name}"><img src="/images/licenses/${license.code}.png" alt="${license.name}"/></a>
           </label>
-          ${popup(license.description)}
+          ##${popup(license.description)}
         % endfor
-        ##</%doc>
         
       </div>
     </fieldset>

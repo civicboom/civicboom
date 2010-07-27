@@ -124,7 +124,7 @@ class ContentController(BaseController):
             # if record type changed
             #  remove previous record
             #  redirect to new id
-            
+
         # Get exisiting content from URL id
         c.content = get_content(id)
         
@@ -133,7 +133,10 @@ class ContentController(BaseController):
         if c.content==None:
             c.content         = DraftContent()
             c.content.creator = c.logged_in_user
-        
+
+        if 'submit_delete' in request.POST:
+            return redirect(url.current(action='delete', id=c.content.id))
+
         # If the content is not being edited by the creator then "Unauthorised"
         # AllanC - todo: in future this will have to be a more involved process as the ower of the content could be a group the user is part of
         if not c.content.editable_by(c.logged_in_user):
