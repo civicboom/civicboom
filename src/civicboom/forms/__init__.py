@@ -173,38 +173,38 @@ ArticleContentGrid = Grid(model.ArticleContent)
 ArticleContentGrid.configure(include=[
         ArticleContentGrid.title,
         ArticleContentGrid.creator,
-        ArticleContentGrid.update_date,
+        ArticleContentGrid.update_date.readonly(),
         ArticleContentGrid.status,
-        ArticleContentGrid.attachments,
-        ArticleContentGrid.tags,
+        ArticleContentGrid.attachments.readonly(),
+        ArticleContentGrid.tags.readonly(),
         ])
 
 AssignmentContentGrid = Grid(model.AssignmentContent)
 AssignmentContentGrid.configure(include=[
         AssignmentContentGrid.title,
         AssignmentContentGrid.creator,
-        AssignmentContentGrid.update_date,
+        AssignmentContentGrid.update_date.readonly(),
         AssignmentContentGrid.status,
-        AssignmentContentGrid.attachments,
-        AssignmentContentGrid.tags,
+        AssignmentContentGrid.attachments.readonly(),
+        AssignmentContentGrid.tags.readonly(),
         ])
 
 CommentContentGrid = Grid(model.CommentContent)
 CommentContentGrid.configure(include=[
         CommentContentGrid.title,
         CommentContentGrid.creator,
-        CommentContentGrid.attachments,
         CommentContentGrid.parent,
+        CommentContentGrid.attachments.readonly().readonly(),
         ])
 
 DraftContentGrid = Grid(model.DraftContent)
 DraftContentGrid.configure(include=[
         DraftContentGrid.title,
         DraftContentGrid.creator,
-        DraftContentGrid.update_date,
+        DraftContentGrid.update_date.readonly(),
         DraftContentGrid.status,
-        DraftContentGrid.attachments,
-        DraftContentGrid.tags,
+        DraftContentGrid.attachments.readonly(),
+        DraftContentGrid.tags.readonly(),
         ])
 
 
@@ -212,7 +212,7 @@ UserGrid = Grid(model.User)
 UserGrid.configure(include=[
         UserGrid.name,
         UserGrid.username,
-        UserGrid.join_date,
+        UserGrid.join_date.readonly(),
         UserGrid.status,
         ])
 
@@ -220,7 +220,7 @@ GroupGrid = Grid(model.Group)
 GroupGrid.configure(include=[
         GroupGrid.name,
         GroupGrid.username,
-        GroupGrid.join_date,
+        GroupGrid.join_date.readonly(),
         GroupGrid.num_members,
         ])
 
@@ -228,7 +228,7 @@ MessageGrid = Grid(model.Message)
 MessageGrid.configure(include=[
         MessageGrid.source,
         MessageGrid.target,
-        MessageGrid.timestamp,
+        MessageGrid.timestamp.readonly(),
         ])
 
 
