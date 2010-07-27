@@ -54,4 +54,4 @@ def wh_public(filename):
     if config["warehouse"] == "s3":
         return "http://"+config["s3_bucket_name"]+".s3.amazonaws.com/public/"+filename
     else:
-        return filename
+        return "/"+filename
