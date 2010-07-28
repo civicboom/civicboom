@@ -103,7 +103,7 @@ class Member(Base):
     following       = relationship("Member",    primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
     assignments     = relationship("MemberAssignment",  backref=backref("member"), cascade="all,delete-orphan")
     ratings         = relationship("Rating",    backref=backref('member'), cascade="all,delete-orphan")
-    settings        = relationship("MemberSetting", backref=backref('member', cascade="all,delete-orphan"))
+    settings        = relationship("MemberSetting", backref=backref('member', cascade="all"))
 
     @property
     def config(self):
@@ -132,9 +132,6 @@ class User(Member):
     location         = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
     location_updated = Column(DateTime(), nullable=False,   default=func.now())
     email            = Column(Unicode(250), nullable=False  )
-
-    def __init__(self):
-        self.config = SettingsManager(self)
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (User)"
