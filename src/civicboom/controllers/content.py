@@ -217,11 +217,13 @@ class ContentController(BaseController):
     #-----------------------------------------------------------------------------
     # Add Media
     #-----------------------------------------------------------------------------
+    #@authorize(is_valid_user)
     def upload_media(self, id):
         """
         With javascript additional media can be uploaded individually
         """
-        pass
+        print "hello %s" % id
+        return "upload_media"
 
     #-----------------------------------------------------------------------------
     # Delete

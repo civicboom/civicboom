@@ -26,6 +26,15 @@ class BaseController(WSGIController):
         try:    c.logged_in_user = get_user(request.environ['REMOTE_USER'])
         except: pass
 
+        # Setup site app_globals on first request
+        if not hasattr(app_globals,'site_url'):
+            app_globals.site_host = request.environ['SERVER_NAME']
+            if config['development_mode']:
+                app_globals.site_host = request.environ['HTTP_HOST']
+            app_globals.site_url = "http://" + app_globals.site_host
+        #c.current_path = request.environ.get('PATH_INFO')
+
+
         #AllanC - For gadgets and emails links and static content need to be absolute
         #         A gadget controler could set this True, any image or URL created with helpers.py would have c.server_name appended to them
         c.absolute_links = False

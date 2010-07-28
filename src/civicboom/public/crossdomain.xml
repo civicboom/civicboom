@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE cross-domain-policy SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
+
+<cross-domain-policy>
+  <allow-access-from domain="*"/>
+  <site-control permitted-cross-domain-policies="master-only"/>
+</cross-domain-policy>
+
+<!--
+
+http://www.yswfblog.com/crossdomain.xml
+http://old.nabble.com/Security-error-for-file0:-td19649548.html
+http://swfupload.org/forum/generaldiscussion/193
+
+<cross-domain-policy>
+  <allow-access-from domain="localhost"   />
+  <allow-access-from domain="localhost:*" />
+  <allow-access-from domain="127.0.0.1"   />
+  <allow-access-from domain="127.0.0.1:*" />
+  <allow-access-from domain="*.yourhost.com" />
+</cross-domain-policy>
+
+-->

@@ -41,8 +41,10 @@
                 <input type="submit" name="submit_publish" value="${_("Publish")}"      />
             </div>
 
-        </form>  
+        </form>
     </div>
+    
+    ${file_uploader()}
 </%def>
 
 
@@ -236,4 +238,109 @@
         
       </div>
     </fieldset>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## File Uploader
+##------------------------------------------------------------------------------
+<%def name="file_uploader(progressbar_size=(300,5))">
+    
+    ## YUI 2.8.1 - File Uploader Component
+    ## Reference - http://developer.yahoo.com/yui/uploader/
+    
+    ## Overlay a transparent SWF object over the button by using CSS absolute positioning
+    <div id="uploaderContainer" style="width:80px; height:30px; position: absolute"></div>
+    <button type="button"                                            >Select file</button>
+    <button type="button" onClick="upload();           return false;">Upload     </button>
+    <button type="button" onClick="handleClearFiles(); return false;">Clear      </button>
+    
+    <div style="border: black 1px solid; width:${progressbar_size[0]}px; height:40px;">
+        <div id="upload_file"     style="text-align:center; margin:5px; font-size:15px; width:${progressbar_size[0]-10}px; height:25px; overflow:hidden"></div>
+        <div id="upload_progress" style="width:${progressbar_size[0]}px;height:${progressbar_size[1]}px;background-color:#CCCCCC"></div>
+    </div>
+
+    <script type="text/javascript">
+        YAHOO.widget.Uploader.SWFURL = "http://yui.yahooapis.com/2.8.1/build/uploader/assets/uploader.swf";
+        ## Flash has a security model to stop uploaded to unauthorised domains
+        ## If the .swf file is not served fromt the local server
+        ## the file crossdomain.xml MUST be present in the root public dir for the flash component to upload to the server
+        ## Example crossdomain.xml
+        ##  <?xml version="1.0"?>
+        ##  <!DOCTYPE cross-domain-policy SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
+        ##  <cross-domain-policy>
+        ##    <allow-access-from domain="*"/>
+        ##    <site-control permitted-cross-domain-policies="master-only"/>
+        ##  </cross-domain-policy>
+
+        
+        var uploader = new YAHOO.widget.Uploader( "uploaderContainer" ); //, "assets/buttonSprite.jpg"
+        var fileID;
+    
+        uploader.addListener('contentReady'      , handleContentReady);
+        uploader.addListener('fileSelect'        , onFileSelect      );
+        uploader.addListener('uploadStart'       , onUploadStart     );
+        uploader.addListener('uploadProgress'    , onUploadProgress  );
+        uploader.addListener('uploadCancel'      , onUploadCancel    );
+        uploader.addListener('uploadComplete'    , onUploadComplete  );
+        uploader.addListener('uploadCompleteData', onUploadResponse  );
+        uploader.addListener('uploadError'       , onUploadError     );
+    
+        function handleContentReady () {
+            uploader.setAllowLogging(true);  	   // Allows the uploader to send log messages to trace, as well as to YAHOO.log
+            uploader.setAllowMultipleFiles(false); // Restrict selection to a single file (that's what it is by default).
+            var ff = new Array({description:"Images", extensions:"*.jpg;*.png;*.gif;*.jpeg"}, // New set of file filters.
+                               {description:"Videos", extensions:"*.avi;*.mov;*.mpg;*.3gp;*.3gpp;*.flv;*.mp4"});
+            uploader.setFileFilters(ff);           // Apply new set of file filters to the uploader.
+        }
+
+        function handleClearFiles() {
+            uploader.clearFileList();
+            uploader.enable();
+            fileID = null;
+            document.getElementById("upload_file"    ).innerHTML = "";
+            document.getElementById("upload_progress").innerHTML = "";
+        }
+
+        function onFileSelect(event) {
+            for (var item in event.fileList) {
+                if(YAHOO.lang.hasOwnProperty(event.fileList, item)) {
+                    YAHOO.log(event.fileList[item].id);
+                    fileID = event.fileList[item].id;
+                }
+            }
+            uploader.disable();
+            document.getElementById("upload_file"    ).innerHTML = event.fileList[fileID].name;
+            document.getElementById("upload_progress").innerHTML = "";
+        }
+    
+        function upload() {
+            if (fileID != null) {
+                uploader.upload(fileID, "${app_globals.site_url}/content/upload_media/${c.content.id}", "POST");
+                fileID = null;
+            }
+        }
+    
+        function onUploadProgress(event) {
+            setProgressBar(event["bytesLoaded"]/event["bytesTotal"]);
+        }
+        
+        function onUploadComplete(event) {
+            uploader.clearFileList();
+            uploader.enable();
+            setProgressBar(1);
+            ## submit save draft (to reload page with preview thumbnail)
+        }
+
+        function onUploadStart   (event) {YAHOO.log("Upload Start");    YAHOO.log(event);}
+        function onUploadError   (event) {YAHOO.log("Upload Error");    YAHOO.log(event);}
+        function onUploadCancel  (event) {YAHOO.log("Upload Cancel");   YAHOO.log(event);}
+        function onUploadResponse(event) {YAHOO.log("Upload Response"); YAHOO.log(event);}
+
+        function setProgressBar(percent) {
+            document.getElementById("upload_progress").innerHTML = "<div style='background-color: #0f0; height: ${progressbar_size[1]}px; width: "+ Math.round(percent*${progressbar_size[0]}) + "px'/>";
+        }
+
+    </script>
+
 </%def>

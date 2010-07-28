@@ -29,6 +29,7 @@ class Globals(object):
 
         self.cache         = CacheManager(**parse_cache_config_options(config))
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
+        
 
         #self.development_mode = config['debug']
 
