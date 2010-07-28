@@ -12,11 +12,12 @@
 <%def name="head_links()">
   ${parent.head_links()}
   
-  <!-- Content editor imports-->
+  <!-- Additional YUI imports-->
   <link   type="text/css"        href="http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/skin.css"       rel="stylesheet" />
   <script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js" ></script><!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
   <script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/editor/simpleeditor-min.js"      ></script><!-- Source file for Rich Text Editor-->
-  
+  <script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/uploader/uploader-min.js"        ></script>
+
   <link   type="text/css"        href="/styles/content_editor/content_editor.css" rel="stylesheet" />
 </%def>
 
@@ -220,7 +221,7 @@
       <div class="hideable">
         ${instruction("What is licensing explanation")}
         
-        % for license in app_globals.licenses:
+        % for license in c.licenses:
           <%
             license_selected = ''
             if c.content.license and license.id == c.content.license_id:

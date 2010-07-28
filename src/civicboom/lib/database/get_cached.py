@@ -19,6 +19,11 @@ add_etag_dependency_key("user_content")
 # Database Object Gets - Cached - Get data from database that is cached
 #-------------------------------------------------------------------------------
 # Most methods will have a get_stuff and get_stuff_nocache. As the cache is a decorator we can bypass the cache by calling the _nocache variant
+
+#@cache_this
+def get_licenses():
+    return Session.query(License).all()
+
 def get_user_nocache(user):
     try:
         return Session.query(User).filter_by(username=user).one()

@@ -41,11 +41,3 @@ class Globals(object):
         #self.path = {}
         #for p in ["temp"]:
         #    self.path[p] = config['path.'+p]
-
-
-    def load_database_globals(self):
-        """
-        Base database objects cannot be loaded into memory on __init__ as the database model has not been setup
-        this method call is activated after initial setup
-        """
-        self.licenses = Session.query(License).all()
