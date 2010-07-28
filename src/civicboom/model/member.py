@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base, Session
+from civicboom.model.meta import Base
 from civicboom.model.message import Message
 
 from sqlalchemy import Column, ForeignKey
@@ -8,10 +8,8 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.orm.exc import NoResultFound
 
 import urllib, hashlib
-import UserDict
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -28,53 +26,6 @@ class Follow(Base):
     __tablename__ = "map_member_to_follower"
     member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
     follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
-
-
-class MemberSettingsManager(UserDict.DictMixin):
-    def __init__(self, member):
-        self.member = member
-
-    def __getitem__(self, name):
-        try:
-            q = Session.query(MemberSetting)
-            q = q.filter(MemberSetting.member_id==self.member.id)
-            q = q.filter(MemberSetting.name==name)
-            r = q.one()
-            return r.value
-        except NoResultFound:
-            raise KeyError(name)
-
-    def __setitem__(self, name, value):
-        try:
-            q = Session.query(MemberSetting)
-            q = q.filter(MemberSetting.member_id==self.member.id)
-            q = q.filter(MemberSetting.name==name)
-            r = q.one()
-            r.value = unicode(value)
-        except NoResultFound:
-            ms = MemberSetting()
-            ms.member = self.member
-            ms.name = name
-            ms.value = unicode(value)
-            Session.add(ms)
-        Session.commit()
-
-    def __delitem__(self, name):
-        try:
-            q = Session.query(MemberSetting)
-            q = q.filter(MemberSetting.member_id==self.member.id)
-            q = q.filter(MemberSetting.name==name)
-            r = q.one()
-            Session.delete(r)
-            Session.commit()
-        except NoResultFound:
-            raise KeyError(name)
-
-    def keys(self):
-        q = Session.query(MemberSetting)
-        q = q.filter(MemberSetting.member_id==self.member.id)
-        r = q.all()
-        return [row.name for row in r]
 
 
 class Member(Base):
@@ -116,6 +67,9 @@ class Member(Base):
     @property
     def config(self):
         if not self._config:
+            # import at the last minute -- importing at the start of the file
+            # causes a dependency loop
+            from civicboom.lib.settings import MemberSettingsManager
             self._config = MemberSettingsManager(self)
         return self._config
 
@@ -179,7 +133,6 @@ class UserLogin(Base):
     token       = Column(String(250),  nullable=False)
 
 
-# FIXME: incomplete
 class MemberSetting(Base):
     __tablename__    = "member_setting"
     member_id   = Column(Integer(),    ForeignKey('member.id'), primary_key=True)
