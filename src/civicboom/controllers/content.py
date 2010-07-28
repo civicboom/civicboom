@@ -136,7 +136,7 @@ class ContentController(BaseController):
                     return tag.name in Set(content_tags).difference(form_tags)
                 remove_where(c.content.tags, remove_check)
 
-            # Existing Media
+            # Existing Media Form Fields
             for media in content.attachments:
                 # Update media item fields
                 caption_key = "form_media_caption_%d" % (media.id)
@@ -218,12 +218,33 @@ class ContentController(BaseController):
     # Add Media
     #-----------------------------------------------------------------------------
     #@authorize(is_valid_user)
-    def upload_media(self, id):
+    def upload_media(self, id=None):
         """
-        With javascript additional media can be uploaded individually
+        With javascript/flash additional media can be uploaded individually
         """
-        print "hello %s" % id
-        return "upload_media"
+        if (not id or request.environ['REQUEST_METHOD']!='POST'):
+            print "no no no"
+            return "no"
+        
+        content = get_content(id)
+        form    = request.POST
+        
+        # for key in form: print "%s:%s" % (key,form[key])
+        
+        if 'Filedata' in form and form['Filedata'] != "":
+            print "begin process"
+            form_file     = form["Filedata"]
+            media = Media()
+            media.load_from_file(tmp_file=form_file, original_name=form_file.filename)
+            media.sync()
+            content.attachments.append(media)
+            Session.add(media)
+            Session.commit()
+            update_content(id)
+            #user_log.info("media appended to content #%d" % (id, )) # Update user log # err no user identifyable here
+            print "end process"
+
+        #return "upload_media"
 
     #-----------------------------------------------------------------------------
     # Delete

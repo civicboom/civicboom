@@ -44,7 +44,9 @@
         </form>
     </div>
     
-    ${file_uploader()}
+    % if c.content.id:
+      ${file_uploader()}
+    % endif
 </%def>
 
 

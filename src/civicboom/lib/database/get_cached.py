@@ -71,7 +71,7 @@ def get_tag(tag):
 #-------------------------------------------------------------------------------
 
 def update_content(content):
-  #if not inheritFrom(content,Content): content = get_content_nocache(content)
+  if not issubclass(content.__class__,Content): content = get_content_nocache(content)
   
   etag_key_incement("content",content.id)
   #cache_test.invalidate(get_content, '', content.id)
