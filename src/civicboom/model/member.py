@@ -10,6 +10,7 @@ from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 
 import urllib, hashlib
+import UserDict
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -28,36 +29,46 @@ class Follow(Base):
     follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
 
 
-class SettingsManager(object):
+class SettingsManager(UserDict.DictMixin):
     def __init__(self, member):
         self.member = member
 
-    def get_integer(self, name, default=None):
+    def __getitem__(self, name):
         s = Session
         q = s.query(MemberSetting)
         q = q.filter(MemberSetting.member_id==self.member.id)
         q = q.filter(MemberSetting.name==name)
-        q = q.one()
-        if q:
-            return int(q["value"])
+        r = q.one()
+        if r:
+            return r["value"]
         else:
             return default
 
-    def set_integer(self, name, value):
+    def __setitem__(self, name, value):
         s = Session
         q = s.query(MemberSetting)
         q = q.filter(MemberSetting.member_id==self.member.id)
         q = q.filter(MemberSetting.name==name)
-        q = q.one()
-        if q:
-            q.value = str(value)
+        r = q.one()
+        if r:
+            r.value = unicode(value)
         else:
             ms = MemberSetting()
             ms.member = self.member
             ms.name = name
-            ms.value = value
+            ms.value = unicode(value)
             Session.add(ms)
-            Session.commit()
+        Session.commit()
+
+    def __delitem__(self, name):
+        s = Session
+        q = s.query(MemberSetting)
+        q = q.filter(MemberSetting.member_id==self.member.id)
+        q = q.filter(MemberSetting.name==name)
+        r = q.one()
+        if r:
+            Session.delete(r)
+        Session.commit()
 
 
 class Member(Base):
