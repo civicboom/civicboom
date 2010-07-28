@@ -11,6 +11,8 @@ from paste.deploy.converters import asbool
 from civicboom.model.content           import License
 from civicboom.model.meta              import Session
 
+from ConfigParser import SafeConfigParser
+
 
 class Globals(object):
     """
@@ -29,6 +31,9 @@ class Globals(object):
 
         self.cache         = CacheManager(**parse_cache_config_options(config))
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
+
+        self.user_defaults = SafeConfigParser()
+        self.user_defaults.read("user_defaults.ini")
 
         #self.development_mode = config['debug']
 
