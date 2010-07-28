@@ -56,7 +56,6 @@ def load_environment(global_conf, app_conf):
 
     # CONFIGURATION OPTIONS HERE (note: all config options will override
     # any Pylons config options)
-    config['pylons.app_globals'].load_database_globals() # globals loaded from the database need to be done after the engine has been setup
     config['development_mode'] = asbool(config['debug'])
 
     # Booleans in config file

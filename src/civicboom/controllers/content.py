@@ -11,12 +11,12 @@ For managing content:
 # Base controller imports
 from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _
 from civicboom.lib.misc                import flash_message
-from civicboom.lib.database.get_cached import get_content, get_tag
 from civicboom.lib.authentication      import authorize, is_valid_user
 
 # Datamodel and database session imports
 from civicboom.model                   import DraftContent, Media, Tag
 from civicboom.model.meta              import Session
+from civicboom.lib.database.get_cached import get_content, get_tag, get_licenses
 from civicboom.lib.database.get_cached import update_content
 
 # Other imports
@@ -207,6 +207,9 @@ class ContentController(BaseController):
         # If this is the frist time saving the content then redirect to new substatiated id
         if id==None and c.content.id:
             return redirect(url.current(action='edit', id=c.content.id))
+
+        # Temp botch for licenses being passed to template
+        c.licenses = get_licenses()
 
         # Render content editor
         return render("/web/content_editor/content_editor.mako")
