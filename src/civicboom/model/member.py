@@ -8,6 +8,7 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm.exc import NoResultFound
 
 import urllib, hashlib
 import UserDict
@@ -29,30 +30,28 @@ class Follow(Base):
     follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
 
 
-class SettingsManager(UserDict.DictMixin):
+class MemberSettingsManager(UserDict.DictMixin):
     def __init__(self, member):
         self.member = member
 
     def __getitem__(self, name):
-        s = Session
-        q = s.query(MemberSetting)
-        q = q.filter(MemberSetting.member_id==self.member.id)
-        q = q.filter(MemberSetting.name==name)
-        r = q.one()
-        if r:
-            return r["value"]
-        else:
-            return default
+        try:
+            q = Session.query(MemberSetting)
+            q = q.filter(MemberSetting.member_id==self.member.id)
+            q = q.filter(MemberSetting.name==name)
+            r = q.one()
+            return r.value
+        except NoResultFound:
+            raise KeyError(name)
 
     def __setitem__(self, name, value):
-        s = Session
-        q = s.query(MemberSetting)
-        q = q.filter(MemberSetting.member_id==self.member.id)
-        q = q.filter(MemberSetting.name==name)
-        r = q.one()
-        if r:
+        try:
+            q = Session.query(MemberSetting)
+            q = q.filter(MemberSetting.member_id==self.member.id)
+            q = q.filter(MemberSetting.name==name)
+            r = q.one()
             r.value = unicode(value)
-        else:
+        except NoResultFound:
             ms = MemberSetting()
             ms.member = self.member
             ms.name = name
@@ -61,14 +60,21 @@ class SettingsManager(UserDict.DictMixin):
         Session.commit()
 
     def __delitem__(self, name):
-        s = Session
-        q = s.query(MemberSetting)
-        q = q.filter(MemberSetting.member_id==self.member.id)
-        q = q.filter(MemberSetting.name==name)
-        r = q.one()
-        if r:
+        try:
+            q = Session.query(MemberSetting)
+            q = q.filter(MemberSetting.member_id==self.member.id)
+            q = q.filter(MemberSetting.name==name)
+            r = q.one()
             Session.delete(r)
-        Session.commit()
+            Session.commit()
+        except NoResultFound:
+            raise KeyError(name)
+
+    def keys(self):
+        q = Session.query(MemberSetting)
+        q = q.filter(MemberSetting.member_id==self.member.id)
+        r = q.all()
+        return [row.name for row in r]
 
 
 class Member(Base):
@@ -105,9 +111,12 @@ class Member(Base):
     ratings         = relationship("Rating",    backref=backref('member'), cascade="all,delete-orphan")
     settings        = relationship("MemberSetting", backref=backref('member', cascade="all"))
 
+    _config         = None
+
     @property
     def config(self):
-        self._config = SettingsManager(self)
+        if not self._config:
+            self._config = MemberSettingsManager(self)
         return self._config
 
     def __unicode__(self):
