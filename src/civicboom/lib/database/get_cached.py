@@ -1,5 +1,5 @@
 from civicboom.model.member  import User
-from civicboom.model.content import Content, Tag
+from civicboom.model.content import Content, Tag, License
 from civicboom.model.meta    import Session
 
 

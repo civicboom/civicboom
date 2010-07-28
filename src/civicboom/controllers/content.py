@@ -76,6 +76,8 @@ class ContentController(BaseController):
         Create or Edit new content with an editable HTML form
         """
         
+        c.licenses = get_licenses() # Temp botch for licenses being passed to template, was in app_globals but moved it
+        
         
         #------------------------------
         # Form POST contains Content
@@ -207,9 +209,6 @@ class ContentController(BaseController):
         # If this is the frist time saving the content then redirect to new substatiated id
         if id==None and c.content.id:
             return redirect(url.current(action='edit', id=c.content.id))
-
-        # Temp botch for licenses being passed to template
-        c.licenses = get_licenses()
 
         # Render content editor
         return render("/web/content_editor/content_editor.mako")
