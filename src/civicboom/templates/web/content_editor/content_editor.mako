@@ -185,7 +185,9 @@
             % for media in c.content.attachments:
             <li>
                 <div class="file_type_overlay icon_${media.type}"></div>
-                <img class="media_preview" src="${media.thumbnail_url}" alt="${media.caption}"/>
+                <a href="${media.original_url}">
+                    <img class="media_preview" src="${media.thumbnail_url}" alt="${media.caption}"/>
+                </a>
                 
                 <div class="media_fields">
                     <p><label for="form_media_file_${media.id}"   >${_("File")}       </label><input id="form_media_file_${media.id}"    name="form_media_file_${media.id}"    type="text" disabled="true" value="${media.name}"   /><input type="submit" name="form_file_remove_${media.id}" value="Remove" class="form_file_remove"/></p>
