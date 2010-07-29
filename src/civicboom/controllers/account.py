@@ -1,10 +1,10 @@
-from civicboom.lib.base import BaseController, render, request, url, abort, redirect
+from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals
 
-from civicboom.lib.misc import flash_message
+from civicboom.lib.misc    import flash_message
+from civicboom.lib.janrain import janrain
+from civicboom.lib.misc    import dict_to_stringprint
 
 import urllib
-import urllib2
-import json
 
 import logging
 log = logging.getLogger(__name__)
@@ -32,32 +32,33 @@ class AccountController(BaseController):
         user_log.info("logged out")
         return redirect('/')
 
+    #-----------------------------------------------------------------------------
+    # Janrain Test - http://www.janrain.com/products/engage
+    #-----------------------------------------------------------------------------
+
     def signin_janrain(self):
+    
         if request.environ['REQUEST_METHOD']!='POST':
+            c.janrain_return_url = urllib.quote_plus(url.current(host=app_globals.site_host))
             return render("/web/account/signin_janrain.mako")
-            
-        token = request.POST.get('token')
-        api_params = {'token': token,
-                      'apiKey':'2f93094487a2e2af9f60725670e8cbd5bdc9fe8a',
-                      'format': 'json',
-                      }
-        http_response  = urllib2.urlopen('https://rpxnow.com/api/v2/auth_info', urllib.urlencode(api_params))
-        auth_info_json = http_response.read()
-        auth_info      = json.loads(auth_info_json)
+
+        auth_info = janrain('auth_info', token=request.POST.get('token'))
         
-        if auth_info['stat'] != 'ok':
-            print 'An error occured: ' + auth_info['err']['msg']
-        else:
+        if auth_info:
+
+            identifier = profile['identifier'] # 'identifier' will always be in the payload this is the unique idenfifier that you use to sign the user in to your site
+            
+            # if extended = true in API call, these fields could be avalable
+            # accessCredentials = profile['accessCredentials'] #OAuth tokens for facebook and twitter
+            # merged_poco # portable contacts dictonary
+            # friends     # list of friends
+   
             profile = auth_info['profile']
-   
-            # 'identifier' will always be in the payload this is the unique idenfifier that you use to sign the user in to your site
-            identifier = profile['identifier']
-   
-            # these fields MAY be in the profile, but are not guaranteed. it depends on the provider and their implementation.
             name            = profile.get('displayName')
             email           = profile.get('email')
             profile_pic_url = profile.get('photo')
 
             # actually sign the user in. this implementation depends highly on your platform, and is up to you.
-            #sign_in_user(identifier, name, email, profile_pic_url)
-            print "User: %s, %s, %s" % (name, email, profile_pic_url)
+            return "User: %s, %s, %s\n<br/>Identifyer:%s" % (name, email, profile_pic_url, identifier)
+
+        return "error"
