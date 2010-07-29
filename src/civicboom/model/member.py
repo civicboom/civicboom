@@ -60,6 +60,18 @@ class Member(Base):
     following       = relationship("Member",    primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
     assignments     = relationship("MemberAssignment",  backref=backref("member"), cascade="all,delete-orphan")
     ratings         = relationship("Rating",    backref=backref('member'), cascade="all,delete-orphan")
+    settings        = relationship("MemberSetting", backref=backref('member', cascade="all"))
+
+    _config         = None
+
+    @property
+    def config(self):
+        if not self._config:
+            # import at the last minute -- importing at the start of the file
+            # causes a dependency loop
+            from civicboom.lib.settings import MemberSettingsManager
+            self._config = MemberSettingsManager(self)
+        return self._config
 
     def __unicode__(self):
         return self.name + " ("+self.username+")"
@@ -121,10 +133,14 @@ class UserLogin(Base):
     token       = Column(String(250),  nullable=False)
 
 
-# FIXME: incomplete
-#class MemberUserSettingsDetails(Base):
-#    memberId
-#    full name
+# FIXME:
+# (member_id, name) should be the primary key, or at least unique
+class MemberSetting(Base):
+    __tablename__    = "member_setting"
+    id          = Column(Integer(),    primary_key=True)
+    member_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False)
+    name        = Column(String(250),  nullable=False)
+    value       = Column(Unicode(250), nullable=False)
 
 
 # FIXME: incomplete

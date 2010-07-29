@@ -5,6 +5,8 @@ Locked down for use in development mode only
 """
 from pylons.controllers.util import abort
 
+from civicboom.model.meta import Session
+from civicboom.model import Member
 from civicboom.lib.base import BaseController, render, c, config
 
 
@@ -45,3 +47,9 @@ class TestController(BaseController):
 
     def ping(self):
         return 'pong'
+
+    def setting(self):
+        s = Session
+        m = s.query(Member).first()
+        #m.config["height"] = 42
+        return m.config["width"]
