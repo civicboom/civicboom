@@ -9,7 +9,7 @@ For managing content:
 """
 
 # Base controller imports
-from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _
+from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _, app_globals
 from civicboom.lib.misc                import flash_message
 from civicboom.lib.authentication      import authorize, is_valid_user
 
@@ -22,7 +22,11 @@ from civicboom.lib.database.get_cached import update_content
 # Other imports
 from civicboom.lib.text import clean_html_markup
 from civicboom.lib.misc import remove_where
+
+
 from sets import Set # may not be needed in Python 2.7+
+import hashlib
+import random
 
 
 # Logging setup
@@ -210,6 +214,25 @@ class ContentController(BaseController):
         if id==None and c.content.id:
             return redirect(url.current(action='edit', id=c.content.id))
 
+        # Generate tempory content unique key in memcache for additional media appends from flash or javascript
+        def get_content_key(content):
+            """
+            Generate/Get a tempory key associated with this content
+            The tempory key stays active for "x" minuets in memcache (so page reloads can refer to the same key)
+            The key is used for file uploads from sources that cannot send the authentication cookie each time
+            """
+            content_id_key  = "content_upload_%d" % content.id
+            memcache_expire = 60*60 # memcache expire time in seconds 60*60 = 1 Hour
+            mc              = app_globals.memcache
+            key             = mc.get(content_id_key)
+            if not key:
+                key = hashlib.md5(str(random.random())).hexdigest()
+                mc.set(content_id_key,             key, time=memcache_expire)
+                mc.set(key           , str(content.id), time=memcache_expire)
+            return key
+
+        c.content_media_upload_key = get_content_key(c.content)
+
         # Render content editor
         return render("/web/content_editor/content_editor.mako")
         
@@ -222,9 +245,9 @@ class ContentController(BaseController):
         """
         With javascript/flash additional media can be uploaded individually
         """
-        if (not id or request.environ['REQUEST_METHOD']!='POST'):
-            print "no no no"
-            return "no"
+        if request.environ['REQUEST_METHOD']!='POST': return 
+        id = app_globals.memcache.get(str(id))
+        if not id: return
         
         content = get_content(id)
         form    = request.POST
@@ -232,7 +255,6 @@ class ContentController(BaseController):
         # for key in form: print "%s:%s" % (key,form[key])
         
         if 'Filedata' in form and form['Filedata'] != "":
-            print "begin process"
             form_file     = form["Filedata"]
             media = Media()
             media.load_from_file(tmp_file=form_file, original_name=form_file.filename)
@@ -242,8 +264,7 @@ class ContentController(BaseController):
             Session.commit()
             update_content(id)
             #user_log.info("media appended to content #%d" % (id, )) # Update user log # err no user identifyable here
-            print "end process"
-
+            
         #return "upload_media"
 
     #-----------------------------------------------------------------------------

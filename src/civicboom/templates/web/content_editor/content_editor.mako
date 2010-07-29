@@ -318,11 +318,11 @@
     
         function upload() {
             if (fileID != null) {
-                uploader.upload(fileID, "${app_globals.site_url}/content/upload_media/${c.content.id}", "POST");
+                uploader.upload(fileID, "${app_globals.site_url}/content/upload_media/${c.content_media_upload_key}", "POST");
                 fileID = null;
             }
         }
-    
+
         function onUploadProgress(event) {
             setProgressBar(event["bytesLoaded"]/event["bytesTotal"]);
         }
