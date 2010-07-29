@@ -51,5 +51,7 @@ class TestController(BaseController):
     def setting(self):
         s = Session
         m = s.query(Member).first()
-        #m.config["height"] = 42
-        return m.config["width"]
+        m.config["height"] = 41
+        m.config["height"] = 42
+        m.config["height"] = 43
+        return m.config["height"]

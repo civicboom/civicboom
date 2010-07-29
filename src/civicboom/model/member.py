@@ -60,7 +60,6 @@ class Member(Base):
     following       = relationship("Member",    primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
     assignments     = relationship("MemberAssignment",  backref=backref("member"), cascade="all,delete-orphan")
     ratings         = relationship("Rating",    backref=backref('member'), cascade="all,delete-orphan")
-    settings        = relationship("MemberSetting", backref=backref('member', cascade="all"))
 
     _config         = None
 
@@ -100,6 +99,15 @@ class User(Member):
         return self.name + " ("+self.username+") (User)"
 
     @property
+    def config(self):
+        if not self._config:
+            # import at the last minute -- importing at the start of the file
+            # causes a dependency loop
+            from civicboom.lib.settings import MemberSettingsManager
+            self._config = MemberSettingsManager(self)
+        return self._config
+
+    @property
     def avatar_url(self, size=80):
         if self.avatar:
             return "http://static.civicboom.com/avatars/"+self.avatar+"/avatar.jpg"
@@ -133,14 +141,13 @@ class UserLogin(Base):
     token       = Column(String(250),  nullable=False)
 
 
-# FIXME:
-# (member_id, name) should be the primary key, or at least unique
 class MemberSetting(Base):
     __tablename__    = "member_setting"
-    id          = Column(Integer(),    primary_key=True)
-    member_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False)
-    name        = Column(String(250),  nullable=False)
+    member_id   = Column(Integer(),    ForeignKey('member.id'), primary_key=True)
+    name        = Column(String(250),  primary_key=True)
     value       = Column(Unicode(250), nullable=False)
+
+    member      = relationship("Member", backref=backref('settings', cascade="all,delete-orphan"))
 
 
 # FIXME: incomplete

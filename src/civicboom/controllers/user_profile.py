@@ -31,9 +31,7 @@ class UserProfileController(BaseController):
         u_config = c.viewing_user.config
         current_keys = u_config.keys()
         for key in request.POST.keys():
-            # if the new value == the default, delete the setting
-            # FIXME: MemberSettingsManager.__delitem__ doesn't work
-            if False and request.POST[key] == app_globals.user_defaults.get("settings", key):
+            if request.POST[key] == app_globals.user_defaults.get("settings", key):
                 if key in current_keys:
                     del u_config[key]
             else:

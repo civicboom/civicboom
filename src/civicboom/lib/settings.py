@@ -3,6 +3,9 @@ from civicboom.model.meta import Session
 from civicboom.model import MemberSetting
 from sqlalchemy.orm.exc import NoResultFound
 import UserDict
+import logging
+
+log = logging.getLogger(__name__)
 
 class MemberSettingsManager(UserDict.DictMixin):
     def __init__(self, member):
@@ -19,6 +22,7 @@ class MemberSettingsManager(UserDict.DictMixin):
             return unicode(app_globals.user_defaults.get("settings", name))
 
     def __setitem__(self, name, value):
+        log.debug(self.member.username+":"+name+" = "+str(value))
         try:
             q = Session.query(MemberSetting)
             q = q.filter(MemberSetting.member_id==self.member.id)
@@ -34,6 +38,7 @@ class MemberSettingsManager(UserDict.DictMixin):
         Session.commit()
 
     def __delitem__(self, name):
+        log.debug(self.member.username+":"+name+" deleted")
         try:
             q = Session.query(MemberSetting)
             q = q.filter(MemberSetting.member_id==self.member.id)
