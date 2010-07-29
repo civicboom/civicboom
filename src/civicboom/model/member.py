@@ -38,13 +38,9 @@ class Member(Base):
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars
     name            = Column(Unicode(250),   nullable=False  )
     join_date       = Column(Date(),         nullable=False, default=func.now())
-    home_location   = Column(Unicode(250),   nullable=True,  doc="Name of a location for informational purposes, eg 'London', 'Global', 'Wherever the sun shines'")
-    # AllanC notes: home location? point? for individual, area by radius, countrys by polygons? - Shish maybe investigate?
-    description     = Column(UnicodeText(),  nullable=False, default=u"")
     num_followers   = Column(Integer(),      nullable=False, default=0, doc="Controlled by postgres trigger")
     webpage         = Column(Unicode(),      nullable=True, default=None)
     status          = Column(_member_status, nullable=False, default="pending")
-    avatar          = Column(String(40),     nullable=True,  doc="Hash of a static file on our mirrors; if null & group, use default; if null & user, use gravatar")
 
     content         = relationship("Content", backref=backref('creator'))
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
@@ -80,8 +76,8 @@ class Member(Base):
 
     @property
     def avatar_url(self, size=80):
-        if self.avatar:
-            return "http://static.civicboom.com/avatars/"+self.avatar+"/avatar.jpg"
+        if self.config["avatar"]:
+            return "http://static.civicboom.com/avatars/"+self.config["avatar"]+"/avatar.jpg"
         return "/images/default_avatar.png"
 
 
@@ -109,8 +105,8 @@ class User(Member):
 
     @property
     def avatar_url(self, size=80):
-        if self.avatar:
-            return "http://static.civicboom.com/avatars/"+self.avatar+"/avatar.jpg"
+        if self.config["avatar"]:
+            return "http://static.civicboom.com/avatars/"+self.config["avatar"]+"/avatar.jpg"
         #default = "http://www.civicboom.com/images/default_avatar.jpg"
         default = "identicon"
         hash = hashlib.md5(self.email.lower()).hexdigest()
