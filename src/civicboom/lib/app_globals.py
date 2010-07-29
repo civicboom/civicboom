@@ -33,10 +33,3 @@ class Globals(object):
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
         
         self.memcache      = memcache.Client([config['service.memcache.server']], debug=0)
-
-        #self.development_mode = config['debug']
-
-        # Setup paths dictonary
-        #self.path = {}
-        #for p in ["temp"]:
-        #    self.path[p] = config['path.'+p]

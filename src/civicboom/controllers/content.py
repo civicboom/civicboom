@@ -249,23 +249,18 @@ class ContentController(BaseController):
         id = app_globals.memcache.get(str(id))
         if not id: return
         
-        content = get_content(id)
-        form    = request.POST
-        
-        # for key in form: print "%s:%s" % (key,form[key])
-        
+        form = request.POST
         if 'Filedata' in form and form['Filedata'] != "":
             form_file     = form["Filedata"]
             media = Media()
             media.load_from_file(tmp_file=form_file, original_name=form_file.filename)
             media.sync()
-            content.attachments.append(media)
+            #media.content_id = id # This does not work because the database complains about orphan records :(, it feels unnessisary to 
+            get_content(id).attachments.append(media)
             Session.add(media)
             Session.commit()
             update_content(id)
             #user_log.info("media appended to content #%d" % (id, )) # Update user log # err no user identifyable here
-            
-        #return "upload_media"
 
     #-----------------------------------------------------------------------------
     # Delete
