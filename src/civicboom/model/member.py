@@ -61,6 +61,17 @@ class Member(Base):
     assignments     = relationship("MemberAssignment",  backref=backref("member"), cascade="all,delete-orphan")
     ratings         = relationship("Rating",    backref=backref('member'), cascade="all,delete-orphan")
 
+    _config         = None
+
+    @property
+    def config(self):
+        if not self._config:
+            # import at the last minute -- importing at the start of the file
+            # causes a dependency loop
+            from civicboom.lib.settings import MemberSettingsManager
+            self._config = MemberSettingsManager(self)
+        return self._config
+
     def __unicode__(self):
         return self.name + " ("+self.username+")"
 
@@ -86,6 +97,15 @@ class User(Member):
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (User)"
+
+    @property
+    def config(self):
+        if not self._config:
+            # import at the last minute -- importing at the start of the file
+            # causes a dependency loop
+            from civicboom.lib.settings import MemberSettingsManager
+            self._config = MemberSettingsManager(self)
+        return self._config
 
     @property
     def avatar_url(self, size=80):
@@ -121,10 +141,13 @@ class UserLogin(Base):
     token       = Column(String(250),  nullable=False)
 
 
-# FIXME: incomplete
-#class MemberUserSettingsDetails(Base):
-#    memberId
-#    full name
+class MemberSetting(Base):
+    __tablename__    = "member_setting"
+    member_id   = Column(Integer(),    ForeignKey('member.id'), primary_key=True)
+    name        = Column(String(250),  primary_key=True)
+    value       = Column(Unicode(250), nullable=False)
+
+    member      = relationship("Member", backref=backref('settings', cascade="all,delete-orphan"))
 
 
 # FIXME: incomplete

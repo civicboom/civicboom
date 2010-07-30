@@ -3,9 +3,12 @@ TestController
 A conroller for miscilanious test functions
 Locked down for use in development mode only
 """
-from pylons.controllers.util import abort
 
-from civicboom.lib.base import BaseController, render, c, config, app_globals
+from civicboom.lib.base   import BaseController, render, c, config, app_globals, abort
+from civicboom.model.meta import Session
+from civicboom.model      import Member
+
+
 
 
 import logging
@@ -58,3 +61,11 @@ class TestController(BaseController):
 
     def ping(self):
         return 'pong'
+
+    def setting(self):
+        s = Session
+        m = s.query(Member).first()
+        m.config["height"] = 41
+        m.config["height"] = 42
+        m.config["height"] = 43
+        return m.config["height"]

@@ -6,6 +6,7 @@ available to Controllers. This module is available to templates as 'h'.
 # Import helpers as desired, or define your own, ie:
 #from webhelpers.html.tags import checkbox, password
 from webhelpers.html import HTML, literal
+from webhelpers.pylonslib.secure_form import authentication_token
 from pylons import url
 import re
 

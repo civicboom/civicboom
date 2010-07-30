@@ -12,6 +12,8 @@ from civicboom.model.content           import License
 from civicboom.model.meta              import Session
 
 import memcache
+from ConfigParser import SafeConfigParser
+
 
 
 class Globals(object):
@@ -33,3 +35,6 @@ class Globals(object):
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
         
         self.memcache      = memcache.Client([config['service.memcache.server']], debug=0)
+
+        self.user_defaults = SafeConfigParser()
+        self.user_defaults.read("user_defaults.ini")
