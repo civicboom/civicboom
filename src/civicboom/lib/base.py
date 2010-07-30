@@ -45,11 +45,6 @@ class BaseController(WSGIController):
         c.action    = current_request.get("action")
         c.action_id = current_request.get("id")
 
-        # AllanC - Can these be moved to app_globals?
-        c.host_name   = request.environ['SERVER_NAME']
-        if config['development_mode']:
-            c.host_name = request.environ['HTTP_HOST']
-        c.server_name  = "http://" + c.host_name
 
 
     def __call__(self, environ, start_response):
