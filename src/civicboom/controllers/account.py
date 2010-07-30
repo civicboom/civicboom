@@ -8,7 +8,6 @@ import logging
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
-#signin_page = url_for(controller='account', action='signin')
 
 class AccountController(BaseController):
     #-----------------------------------------------------------------------------

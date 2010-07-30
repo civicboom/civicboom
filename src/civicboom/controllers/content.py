@@ -243,6 +243,7 @@ class ContentController(BaseController):
     def upload_media(self, id=None):
         """
         With javascript/flash additional media can be uploaded individually
+        There is no need to enforce session or cookie for identification because the media upload key should be provided in the URL to identify the user/content
         """
         if request.environ['REQUEST_METHOD']!='POST': return 
         id = app_globals.memcache.get(str(id))

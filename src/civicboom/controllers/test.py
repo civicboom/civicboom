@@ -44,7 +44,6 @@ class TestController(BaseController):
         return redirect('/')
 
     @authorize(is_valid_user)
-    #@login_redirector(is_valid_user)
     def test_logged_in(self):
         return "you are logged in"
 

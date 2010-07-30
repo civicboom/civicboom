@@ -119,6 +119,7 @@ def render_badcookie():
 
 #is_valid_user=None # Override for AuthKit transition, if this is remmed out AuthKit can be re-endabled without any changes to controlers
 #def login_redirector(authenticator):
+
 # Override AuthKits authorise method with our own custom login decorator
 def authorize(authenticator):
     """
