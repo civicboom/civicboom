@@ -107,4 +107,4 @@ CREATE INDEX events__username ON events(username);
 CREATE INDEX events__priority ON events(priority);
 " | psql -U civicboom -d civicboom_log
 
-
+exit 0
