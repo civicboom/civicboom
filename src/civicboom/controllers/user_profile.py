@@ -48,8 +48,19 @@ class UserProfileController(BaseController):
                 c.viewing_user.email = request.POST["email"]
             del request.POST["email"]
 
-        # TODO: password (check current_password, new_password_1, new_password_2)
-        if True:
+        # TODO: figure out stuff for User.logins[].password
+        if "current_password" in request.POST.keys():
+            hex_curr = hashlib.sha1(request.POST["current_password"]).hexdigest()
+            hex_new1 = hashlib.sha1(request.POST["new_password_1"]).hexdigest()
+            hex_new2 = hashlib.sha1(request.POST["new_password_2"]).hexdigest()
+            if False:
+                if hex_curr == c.viewing_user.password:
+                    if hex_new1 == hex_new2:
+                        c.viewing_user.password = hex_new1
+                    else:
+                        error = "New passwords don't match"
+                else:
+                    error = "Current password was wrong"
             del request.POST["current_password"]
             del request.POST["new_password_1"]
             del request.POST["new_password_2"]
