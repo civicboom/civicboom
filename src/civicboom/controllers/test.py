@@ -8,6 +8,7 @@ from civicboom.lib.base   import BaseController, render, c, config, app_globals,
 from civicboom.model.meta import Session
 from civicboom.model      import Member
 
+from civicboom.lib.authentication      import authorize, is_valid_user
 
 
 
@@ -41,6 +42,11 @@ class TestController(BaseController):
     def test_session(self):
         flash_message("hello session test")
         return redirect('/')
+
+    @authorize(is_valid_user)
+    #@login_redirector(is_valid_user)
+    def test_logged_in(self):
+        return "you are logged in"
 
     def environ(self):
         env_string = ""

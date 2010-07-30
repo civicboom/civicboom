@@ -2,22 +2,31 @@
 Tools used for Authentication of users
 """
 
-# Pyhton package imports
-import hashlib
-import decorator
-
 # Pylons imports
-from civicboom.lib.base import redirect, _, session, render
-#from pylons.i18n.translation import _, ungettext
+from civicboom.lib.base import redirect, _, ungettext, session, render, flash_message, c, request, url
 
 # Civicboom imports
-from civicboom.lib.misc   import flash_message
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
 
 # Other imports
 from sqlalchemy.orm import join
 
+# Pyhton package imports
+import hashlib
+from decorator import decorator
+
+# Logging
+import logging
+user_log = logging.getLogger("user")
+
+
+    
+
+#-------------------------------------------------------------------------------
+# AuthKit
+#-------------------------------------------------------------------------------
+# This section could be removed completely and the rest of the site will still function as authorise is overwritten in the Custom Login Section
 
 # Authkit imports
 from authkit.permissions import RequestPermission
@@ -25,55 +34,6 @@ from authkit.authorize   import PermissionError, NotAuthenticatedError
 from authkit.authorize   import NotAuthorizedError, middleware
 from authkit.authorize.pylons_adaptors import authorize
 #from pylons.templating  import render_mako as render # for render of the signin page (activated outside of the normal base controler as the middleware intercepts it)
-
-
-
-# Logging
-import logging
-user_log = logging.getLogger("user")
-
-
-#-------------------------------------------------------------------------------
-# Custom Civicboom Authentication
-#-------------------------------------------------------------------------------
-
-# Todo - look into how session data is verifyed - http://pylonshq.com/docs/en/1.0/sessions/#using-session-in-secure-forms
-
-#@authorize(is_valid_user)
-def login_redirector(func, *args, **kargs):
-    """
-    Check if logged in user has been set
-    If not sends you to a login page
-    Once you log in, it sends you back to the original url call.
-    """
-    if c.logged_in_user:
-        return func(*args, **kargs)
-    else:
-        session['login_redirect'] = request.environ.get('PATH_INFO')
-        # TODO: This could also save the the session POST data and reinstate it after the redirect
-        # TODO: save a timestamp with this url, expire after 10 min, if they do not complete the login process
-        #session.save()
-        return redirect(url(controller='account', action='signin_janrain'))
-#login_redirector = decorator(login_redirector)
-
-
-def get_user_from_openid_identifyer(identifyer):
-    """
-    Called by account controller to return a user from our db from an openid identifyer
-    """
-    try:
-        q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
-        q = q.filter(User.status     == 'active'  )
-        q = q.filter(UserLogin.token == identifyer )
-        q = q.one()
-        return q
-    except:
-        return None
-    
-
-#-------------------------------------------------------------------------------
-# AuthKit
-#-------------------------------------------------------------------------------
 
 
 class ValidCivicboomUser(RequestPermission):
@@ -146,3 +106,51 @@ def render_badcookie():
     """
     flash_message(_("Your login has expired please log in again"))
     return redirect_to('/')
+    
+    
+    
+   
+#-------------------------------------------------------------------------------
+# Custom Authentication
+#-------------------------------------------------------------------------------
+
+# Todo - look into how session is verifyed - http://pylonshq.com/docs/en/1.0/sessions/#using-session-in-secure-forms
+#        what is the secure form setting for?
+
+#is_valid_user=None # Override for AuthKit transition, if this is remmed out AuthKit can be re-endabled without any changes to controlers
+#def login_redirector(authenticator):
+# Override AuthKits authorise method with our own custom login decorator
+def authorize(authenticator):
+    """
+    Check if logged in user has been set
+    If not sends you to a login page
+    Once you log in, it sends you back to the original url call.
+    """
+    def my_decorator(target):
+        def wrapper(target, *args, **kwargs):
+
+            if c.logged_in_user:
+                result = target(*args, **kwargs)
+            else:
+                session['login_redirect'] = request.environ.get('PATH_INFO')
+                # TODO: This could also save the the session POST data and reinstate it after the redirect
+                # TODO: save a timestamp with this url, expire after 10 min, if they do not complete the login process
+                return redirect(url(controller='account', action='signin'))
+
+            return result
+        return decorator(wrapper)(target)
+    return my_decorator
+
+
+def get_user_from_openid_identifyer(identifyer):
+    """
+    Called by account controller to return a user from our db from an openid identifyer
+    """
+    try:
+        q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
+        q = q.filter(User.status     == 'active'  )
+        q = q.filter(UserLogin.token == identifyer )
+        q = q.one()
+        return q
+    except:
+        return None

@@ -1,9 +1,7 @@
-from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, session
+from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, session, flash_message
 
-from civicboom.lib.misc    import flash_message
+from civicboom.lib.authentication import get_user_from_openid_identifyer
 from civicboom.lib.janrain import janrain
-from civicboom.lib.misc    import dict_to_stringprint
-
 import urllib
 
 import logging
@@ -20,6 +18,10 @@ class AccountController(BaseController):
     # and http://pylonsbook.com/en/1.1/simplesite-tutorial-part-3.html#signing-in-and-signing-out
 
     def signin(self):
+        """
+        AuthKit implementation of signin
+        NOTE: this is OVERRIDDEN by the definition below and is here should we need to degrade back to AuthKit
+        """
         if not request.environ.get('REMOTE_USER'):
             abort(401) #This triggers the AuthKit middleware into displaying the sign-in form
         else:
@@ -28,6 +30,9 @@ class AccountController(BaseController):
             return redirect(url('/'))
 
     def signout(self):
+        """
+        This function is pointed to from the ini config to trigger AuthKit to remove cookies
+        """
         user_log.info("logged out")
         session.clear()
         #session.save()
@@ -35,16 +40,14 @@ class AccountController(BaseController):
         return redirect('/')
 
     #-----------------------------------------------------------------------------
-    # Janrain Test - http://www.janrain.com/products/engage
+    # Janrain Engage - http://www.janrain.com/products/engage
     #-----------------------------------------------------------------------------
 
-    def signin_janrain(self):
+    def signin(self):
     
         if request.environ['REQUEST_METHOD']!='POST':
             c.janrain_return_url = urllib.quote_plus(url.current(host=app_globals.site_host))
             return render("/web/account/signin_janrain.mako")
-
-
 
         auth_info = janrain('auth_info', token=request.POST.get('token'))
         if auth_info:
@@ -54,12 +57,11 @@ class AccountController(BaseController):
             if c.logged_in_user:
                 # User has existing account, log them in and redirect them back to where they were going
                 session['user_id'] = c.logged_in_user.id
-                #session.save()
+
                 login_redirect = session.get('login_redirect')
                 if login_redirect:
                     # TODO: Check timestamp of login_redirect for expiry
                     del session['login_redirect']
-                    #session.save()
                     return redirect(login_redirect)
                 return redirect('/')
             else:

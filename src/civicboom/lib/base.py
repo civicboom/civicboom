@@ -8,10 +8,11 @@ from pylons.controllers.util import abort, redirect
 from pylons.templating       import render_mako as render
 from pylons.i18n.translation import _, ungettext
 
-
-from civicboom.model import meta
+from civicboom.model                   import meta
 from civicboom.lib.database.get_cached import get_user
-from civicboom.lib.misc import flash_message
+from civicboom.lib.misc                import flash_message
+#from civicboom.lib.authentication      import authorize, is_valid_user
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -22,10 +23,12 @@ class BaseController(WSGIController):
 
         c.logged_in_user = get_user(session.get('user_id'))
 
-        # AuthKit would have already authenticated any cookies & sessions by this point
-        # so lookup the reporter of the remote user
-        # (someone who is slightly more security savy may want to double check the implications of this)
-        #c.logged_in_user = get_user(request.environ['REMOTE_USER'])
+        # AuthKit Login Fallback - if AuthKit is enabled this will set the logged_in_user
+        #   AuthKit would have already authenticated any cookies & sessions by this point
+        #   so lookup the reporter of the remote user
+        #   (someone who is slightly more security savy may want to double check the implications of this)
+        if not c.logged_in_user and 'authkit.setup.method' in config and 'REMOTE_USER' in request.environ:
+          c.logged_in_user = get_user(request.environ['REMOTE_USER'])
 
         # Setup Langauge
         #if c.logged_in_user has langauge prefernece:

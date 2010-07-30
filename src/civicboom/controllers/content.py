@@ -9,8 +9,7 @@ For managing content:
 """
 
 # Base controller imports
-from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _, app_globals
-from civicboom.lib.misc                import flash_message
+from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _, app_globals, flash_message
 from civicboom.lib.authentication      import authorize, is_valid_user
 
 # Datamodel and database session imports

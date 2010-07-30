@@ -46,7 +46,8 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     # Routing/Session/Cache Middleware
     app = RoutesMiddleware(app, config['routes.map'])
     app = SessionMiddleware(app, config)
-    app = authkit.authenticate.middleware(app, app_conf) #Here so AuthKit can use authkit.cookie.nouserincookie = true  at   http://pylonsbook.com/en/1.1/authentication-and-authorization.html#cookie-options
+    if 'authkit.setup.method' in config: # Enable AuthKit only if setup in ini file
+      app = authkit.authenticate.middleware(app, app_conf) #Here so AuthKit can use authkit.cookie.nouserincookie = true  at   http://pylonsbook.com/en/1.1/authentication-and-authorization.html#cookie-options
     #app = CacheMiddleware(app, config) # Cache now setup in app_globals as suggested in http://pylonshq.com/docs/en/1.0/upgrading/
 
     # CUSTOM MIDDLEWARE HERE (filtered by error handling middlewares)
@@ -56,8 +57,6 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     if asbool(full_stack):
         # Handle Python exceptions
         app = ErrorHandler(app, global_conf, **config['pylons.errorware'])
-
-        #app = authkit.authenticate.middleware(app, app_conf) # Pylons book suggested authkit should go here at first
 
         # Display error documents for 401, 403, 404 status codes (and
         # 500 when debug is disabled)
