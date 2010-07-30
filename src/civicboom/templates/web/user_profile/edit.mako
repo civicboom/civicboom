@@ -6,10 +6,12 @@
 <%def name="settings_general()">
 <fieldset>
 	<legend>${_("General Info")}</legend>
-		Display name: <input name="name" value="${c.viewing_user.name}">
-	<br>Home Location: <input name="location" value="${c.viewing_user.config["location"]}">
-	<br>Description: <textarea name="description">${c.viewing_user.config["description"]}</textarea>
-	<br>Home page: <input name="home_page" value="${c.viewing_user.config["home_page"]}">
+	<table>
+	<tr><td>Display name:</td><td><input name="name" value="${c.viewing_user.name}"></td></tr>
+	<tr><td>Home Location:</td><td><input name="location" value="${c.viewing_user.config["location"]}"></td></tr>
+	<tr><td>Description:</td><td><textarea name="description">${c.viewing_user.config["description"]}</textarea></td></tr>
+	<tr><td>Home page:</td><td><input name="home_page" value="${c.viewing_user.config["home_page"]}"></td></tr>
+	</table>
 </fieldset>
 </%def>
 
