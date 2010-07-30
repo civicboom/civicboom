@@ -1,4 +1,4 @@
-from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals
+from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, session
 
 from civicboom.lib.misc    import flash_message
 from civicboom.lib.janrain import janrain
@@ -28,8 +28,10 @@ class AccountController(BaseController):
             return redirect(url('/'))
 
     def signout(self):
-        flash_message("Successfully signed out!")
         user_log.info("logged out")
+        session.clear()
+        #session.save()
+        #flash_message("Successfully signed out!")
         return redirect('/')
 
     #-----------------------------------------------------------------------------
@@ -42,23 +44,38 @@ class AccountController(BaseController):
             c.janrain_return_url = urllib.quote_plus(url.current(host=app_globals.site_host))
             return render("/web/account/signin_janrain.mako")
 
+
+
         auth_info = janrain('auth_info', token=request.POST.get('token'))
-        
         if auth_info:
 
-            identifier = profile['identifier'] # 'identifier' will always be in the payload this is the unique idenfifier that you use to sign the user in to your site
-            
-            # if extended = true in API call, these fields could be avalable
-            # accessCredentials = profile['accessCredentials'] #OAuth tokens for facebook and twitter
-            # merged_poco # portable contacts dictonary
-            # friends     # list of friends
-   
-            profile = auth_info['profile']
-            name            = profile.get('displayName')
-            email           = profile.get('email')
-            profile_pic_url = profile.get('photo')
+            c.logged_in_user = get_user_from_openid_identifyer(auth_info['profile']['identifier'])
 
-            # actually sign the user in. this implementation depends highly on your platform, and is up to you.
-            return "User: %s, %s, %s\n<br/>Identifyer:%s" % (name, email, profile_pic_url, identifier)
+            if c.logged_in_user:
+                # User has existing account, log them in and redirect them back to where they were going
+                session['user_id'] = c.logged_in_user.id
+                #session.save()
+                login_redirect = session.get('login_redirect')
+                if login_redirect:
+                    # TODO: Check timestamp of login_redirect for expiry
+                    del session['login_redirect']
+                    #session.save()
+                    return redirect(login_redirect)
+                return redirect('/')
+            else:
+                # Register or link new user
+            
+            
+                # if extended = true in API call, these fields could be avalable
+                # accessCredentials = profile['accessCredentials'] #OAuth tokens for facebook and twitter
+                # merged_poco # portable contacts dictonary
+                # friends     # list of friends
+       
+                profile = auth_info['profile']
+                name            = profile.get('displayName')
+                email           = profile.get('email')
+                profile_pic_url = profile.get('photo')
+
+                return "User: %s, %s, %s\n<br/>Identifyer:%s" % (name, email, profile_pic_url, identifier)
 
         return "error"

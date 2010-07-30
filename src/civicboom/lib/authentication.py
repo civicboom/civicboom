@@ -1,12 +1,14 @@
 """
-Tools used for Authentication of Civicboom users
+Tools used for Authentication of users
 """
 
 # Pyhton package imports
 import hashlib
+import decorator
 
 # Pylons imports
-from pylons.i18n.translation import _, ungettext
+from civicboom.lib.base import redirect, _, session, render
+#from pylons.i18n.translation import _, ungettext
 
 # Civicboom imports
 from civicboom.lib.misc   import flash_message
@@ -16,23 +18,62 @@ from civicboom.model.meta import Session
 # Other imports
 from sqlalchemy.orm import join
 
-# Logging
-import logging
-user_log = logging.getLogger("user")
-
-
-#-------------------------------------------------------------------------------
-# AuthKit
-#-------------------------------------------------------------------------------
 
 # Authkit imports
 from authkit.permissions import RequestPermission
 from authkit.authorize   import PermissionError, NotAuthenticatedError
 from authkit.authorize   import NotAuthorizedError, middleware
 from authkit.authorize.pylons_adaptors import authorize
+#from pylons.templating  import render_mako as render # for render of the signin page (activated outside of the normal base controler as the middleware intercepts it)
 
-from pylons.templating  import render_mako as render # for render of the signin page (activated outside of the normal base controler as the middleware intercepts it)
 
+
+# Logging
+import logging
+user_log = logging.getLogger("user")
+
+
+#-------------------------------------------------------------------------------
+# Custom Civicboom Authentication
+#-------------------------------------------------------------------------------
+
+# Todo - look into how session data is verifyed - http://pylonshq.com/docs/en/1.0/sessions/#using-session-in-secure-forms
+
+#@authorize(is_valid_user)
+def login_redirector(func, *args, **kargs):
+    """
+    Check if logged in user has been set
+    If not sends you to a login page
+    Once you log in, it sends you back to the original url call.
+    """
+    if c.logged_in_user:
+        return func(*args, **kargs)
+    else:
+        session['login_redirect'] = request.environ.get('PATH_INFO')
+        # TODO: This could also save the the session POST data and reinstate it after the redirect
+        # TODO: save a timestamp with this url, expire after 10 min, if they do not complete the login process
+        #session.save()
+        return redirect(url(controller='account', action='signin_janrain'))
+#login_redirector = decorator(login_redirector)
+
+
+def get_user_from_openid_identifyer(identifyer):
+    """
+    Called by account controller to return a user from our db from an openid identifyer
+    """
+    try:
+        q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
+        q = q.filter(User.status     == 'active'  )
+        q = q.filter(UserLogin.token == identifyer )
+        q = q.one()
+        return q
+    except:
+        return None
+    
+
+#-------------------------------------------------------------------------------
+# AuthKit
+#-------------------------------------------------------------------------------
 
 
 class ValidCivicboomUser(RequestPermission):

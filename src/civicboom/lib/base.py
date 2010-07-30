@@ -3,7 +3,7 @@
 Provides the BaseController class for subclassing.
 """
 from pylons.controllers      import WSGIController
-from pylons                  import request, app_globals, tmpl_context as c, url, config
+from pylons                  import request, app_globals, tmpl_context as c, url, config, session
 from pylons.controllers.util import abort, redirect
 from pylons.templating       import render_mako as render
 from pylons.i18n.translation import _, ungettext
@@ -11,6 +11,7 @@ from pylons.i18n.translation import _, ungettext
 
 from civicboom.model import meta
 from civicboom.lib.database.get_cached import get_user
+from civicboom.lib.misc import flash_message
 
 import logging
 log = logging.getLogger(__name__)
@@ -18,13 +19,21 @@ log = logging.getLogger(__name__)
 
 class BaseController(WSGIController):
     def __before__(self):
-        # AllanC
+
+        c.logged_in_user = get_user(session.get('user_id'))
+
         # AuthKit would have already authenticated any cookies & sessions by this point
         # so lookup the reporter of the remote user
         # (someone who is slightly more security savy may want to double check the implications of this)
-        c.logged_in_user = None
-        try:    c.logged_in_user = get_user(request.environ['REMOTE_USER'])
-        except: pass
+        #c.logged_in_user = get_user(request.environ['REMOTE_USER'])
+
+        # Setup Langauge
+        #if c.logged_in_user has langauge prefernece:
+        #  pass
+        if 'lang' in session:
+            pass #unfinished
+            #set_lang(session['lang']) 
+
 
         # Setup site app_globals on first request
         if not hasattr(app_globals,'site_url'):

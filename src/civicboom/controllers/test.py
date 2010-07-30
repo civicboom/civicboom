@@ -4,7 +4,7 @@ A conroller for miscilanious test functions
 Locked down for use in development mode only
 """
 
-from civicboom.lib.base   import BaseController, render, c, config, app_globals, abort
+from civicboom.lib.base   import BaseController, render, c, config, app_globals, abort, session, redirect, flash_message
 from civicboom.model.meta import Session
 from civicboom.model      import Member
 
@@ -37,6 +37,10 @@ class TestController(BaseController):
         mc.incr("key")
         print "value: %s" % mc.get("some_key")
         print "inc  : %s" % mc.get("key")
+
+    def test_session(self):
+        flash_message("hello session test")
+        return redirect('/')
 
     def environ(self):
         env_string = ""

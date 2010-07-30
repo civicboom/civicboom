@@ -8,7 +8,7 @@ def flash_message(message):
         session['flash_message'] = session['flash_message'] + literal("<br/>") + message
     else:
         session['flash_message'] = message
-    session.save()
+    #session.save()
 
 
 def remove_where(list, check_for_removal_function):

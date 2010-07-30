@@ -62,7 +62,7 @@ class ContentController(BaseController):
             content_view_key = 'content_%s' % c.content.id
             if content_view_key not in session:
                 session[content_view_key] = True
-                session.save()
+                #session.save()
             c.content.views += 1
             Session.commit()
             # AllanC - invalidating the content on EVERY view does not make scence

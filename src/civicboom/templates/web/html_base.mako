@@ -90,7 +90,7 @@
     
     <%
       del session['flash_message']
-      session.save()
+      #session.save()
     %>
   %endif
 </%def>
@@ -113,7 +113,7 @@
     <script type="text/javascript">swap('first_view_message');</script>
     <%
       session['first_view_message'] = '1'
-      session.save()
+      #session.save()
     %>
   % endif
 </%def>
