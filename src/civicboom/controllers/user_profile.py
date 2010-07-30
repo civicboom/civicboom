@@ -8,6 +8,8 @@ from civicboom.lib.base import BaseController, render
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.authentication      import authorize, is_valid_user
 
+import hashlib
+
 log = logging.getLogger(__name__)
 
 class UserProfileController(BaseController):
