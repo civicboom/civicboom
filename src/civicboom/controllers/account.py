@@ -2,7 +2,7 @@ from civicboom.lib.base import BaseController, render, request, url, abort, redi
 
 from civicboom.lib.authentication import get_user_from_openid_identifyer, get_user_and_check_password
 from civicboom.lib.janrain import janrain
-from civicboom.lib.misc import session_remove, session_get, flash_message, redirect_to_referer
+from civicboom.lib.misc import session_remove, session_get
 
 import urllib
 
