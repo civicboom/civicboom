@@ -22,6 +22,11 @@ class MemberSettingsManager(UserDict.DictMixin):
             return unicode(app_globals.user_defaults.get("settings", name))
 
     def __setitem__(self, name, value):
+        if type(value) == type(True):
+            if value:
+                value = "True"
+            else:
+                value = "" # blank string evaluates to false
         log.debug(self.member.username+":"+name+" = "+str(value))
         try:
             q = Session.query(MemberSetting)
