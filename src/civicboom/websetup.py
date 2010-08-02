@@ -470,30 +470,28 @@ CREATE TRIGGER update_content
                 u.name = u.username.decode("ascii")
             u.email         = row["Email"]
             u.join_date     = row["Join_Date"]
-            u.home_location = get_location(row)
-            u.description   = get_description(row)
             u.status        = convert_status(row["Status"])
             u.last_check    = row["notification_check"]
-            u.avatar        = get_avatar(row["id"])
+            u.config["avatar"]      = get_avatar(row["id"])
+            u.config["location"]    = get_location(row)
+            u.config["description"] = get_description(row)
+            u.config["birthday"]    = str(row["Birth"])
+            u.config["gender"]      = row["Gender"]
+            u.config["twitter_username"]        = row["twitter_username"]
+            u.config["broadcast_instant_news"]  = (row["twitter_instantnews"] == 1)
+            u.config["broadcast_content_posts"] = (row["broadcast_content_posts"] == 1)
 
             u_login = UserLogin()
             u_login.user   = u
             u_login.type   = "password"
             u_login.token  = row["Password"]
 
-#  `Password` varchar(40) default NULL,
-#  `Birth` date default NULL,
-#  `Gender` enum('M','F','U') NOT NULL default 'U',
 #  `Photo` varchar(100) default NULL,
-#  `TimeStamp` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 #  `contact_status` tinyint(1) NOT NULL default '1',
 #  `affiliationId` int(10) NOT NULL default '2',
 #  `instant_news` varchar(200) character set utf8 collate utf8_unicode_ci default NULL,
 #  `instant_news_update_time` datetime default NULL,
-#  `twitter_username` varchar(100) default NULL,
 #  `twitter_password` varchar(100) default NULL,
-#  `twitter_instantnews` tinyint(1) default NULL,
-#  `twitter_reports` tinyint(1) default NULL,
 
             if u.status:
                 log.debug("   |- %s (%s)" % (u.name, u.username))
