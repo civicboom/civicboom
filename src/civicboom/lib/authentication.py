@@ -20,8 +20,40 @@ from decorator import decorator
 import logging
 user_log = logging.getLogger("user")
 
+#-------------------------------------------------------------------------------
+# Standard Tools
+#-------------------------------------------------------------------------------
 
-    
+def get_user_and_check_password(username, password):
+    """
+    Called by account controller and/or AuthKit valid_password to return a user from local db
+    """
+    password = hashlib.sha1(password).hexdigest()
+    try:
+        q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
+        q = q.filter(User.username   == username  )
+        q = q.filter(User.status     == 'active'  )
+        q = q.filter(UserLogin.type  == 'password')
+        q = q.filter(UserLogin.token == password  )
+        q = q.one()
+        return q
+    except:
+        return None
+
+
+def get_user_from_openid_identifyer(identifyer):
+    """
+    Called by account controller to return a user from our db from an openid identifyer
+    """
+    try:
+        q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
+        q = q.filter(User.status     == 'active'  )
+        q = q.filter(UserLogin.token == identifyer )
+        q = q.one()
+        return q
+    except:
+        return None    
+
 
 #-------------------------------------------------------------------------------
 # AuthKit
@@ -34,7 +66,6 @@ from authkit.authorize   import PermissionError, NotAuthenticatedError
 from authkit.authorize   import NotAuthorizedError, middleware
 from authkit.authorize.pylons_adaptors import authorize
 #from pylons.templating  import render_mako as render # for render of the signin page (activated outside of the normal base controler as the middleware intercepts it)
-
 
 class ValidCivicboomUser(RequestPermission):
     """
@@ -56,19 +87,6 @@ def valid_username_and_password(environ, username, password):
       for AuthKit, this function is pointed too from the development.ini file
       authkit.form.authenticate.function = civicboom.lib.authentication:valid_username_and_password
     """
-    def get_user_and_check_password(username, password):
-        password = hashlib.sha1(password).hexdigest()
-        try:
-            q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
-            q = q.filter(User.username   == username  )
-            q = q.filter(User.status     == 'active'  )
-            q = q.filter(UserLogin.type  == 'password')
-            q = q.filter(UserLogin.token == password  )
-            q = q.one()
-            return q
-        except:
-            return None
-
     user = get_user_and_check_password(username, password)
     if user:
         user_log.info(user)
@@ -76,6 +94,7 @@ def valid_username_and_password(environ, username, password):
     else:
         flash_message(_("Incorrect username and password"))
         return False
+
 
 def render_signin():
     """
@@ -142,16 +161,3 @@ def authorize(authenticator):
         return decorator(wrapper)(target)
     return my_decorator
 
-
-def get_user_from_openid_identifyer(identifyer):
-    """
-    Called by account controller to return a user from our db from an openid identifyer
-    """
-    try:
-        q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
-        q = q.filter(User.status     == 'active'  )
-        q = q.filter(UserLogin.token == identifyer )
-        q = q.one()
-        return q
-    except:
-        return None

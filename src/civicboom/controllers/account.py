@@ -5,11 +5,12 @@ from civicboom.lib.janrain import janrain
 import urllib
 
 import logging
-log = logging.getLogger(__name__)
+log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 
 class AccountController(BaseController):
+    
     #-----------------------------------------------------------------------------
     # Signin and Signout
     #-----------------------------------------------------------------------------
@@ -51,12 +52,16 @@ class AccountController(BaseController):
         auth_info = janrain('auth_info', token=request.POST.get('token'))
         if auth_info:
 
-            c.logged_in_user = get_user_from_openid_identifyer(auth_info['profile']['identifier'])
+            # Check user exisits
+            c.logged_in_user = get_user_from_openid_identifyer(auth_info['profile']['identifier']) #Janrain guarntees the identifyer to be set
 
+            # If user has existing account
             if c.logged_in_user:
-                # User has existing account, log them in and redirect them back to where they were going
-                session['user_id'] = c.logged_in_user.id
-
+                # Login
+                user_log.info(c.logged_in_user)          # Log user login
+                session['user_id'] = c.logged_in_user.id # Set server session variable to user.id
+                
+                # Redirect them back to where they were going
                 login_redirect = session.get('login_redirect')
                 if login_redirect:
                     # TODO: Check timestamp of login_redirect for expiry
@@ -65,7 +70,6 @@ class AccountController(BaseController):
                 return redirect('/')
             else:
                 # Register or link new user
-            
             
                 # if extended = true in API call, these fields could be avalable
                 # accessCredentials = profile['accessCredentials'] #OAuth tokens for facebook and twitter
@@ -79,4 +83,5 @@ class AccountController(BaseController):
 
                 return "User: %s, %s, %s\n<br/>Identifyer:%s" % (name, email, profile_pic_url, identifier)
 
-        return "error"
+        flash_message(_('Unable to authenticate user'))
+        return return redirect(url.current())
