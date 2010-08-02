@@ -127,10 +127,6 @@ User.configure(include=[
         User.join_date,
         User.email,
         User.status,
-        User.home_location,
-        User.webpage,
-        User.description,
-        User.location,
         ])
 
 Group = FieldSet(model.Group)
@@ -140,9 +136,6 @@ Group.configure(include=[
         Group.name,
         Group.join_date,
         Group.status,
-        Group.home_location,
-        Group.webpage,
-        Group.description,
         Group.members,
         ])
 
