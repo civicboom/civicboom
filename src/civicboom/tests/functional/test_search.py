@@ -20,4 +20,8 @@ class TestSearchController(TestController):
 
     def test_content_no_query(self):
         response = self.app.get(url(controller='search', action='content'), status=302) # redirect to search/index
-        #assert "Search for" in response
+        # FIXME: the above generates /search/content/ which redirects to /search/content...
+
+        response = self.app.get("/search/content", status=302)
+        # FIXME: redirect to search/index
+        # FIXME: assert "Search for" in response after redirection
