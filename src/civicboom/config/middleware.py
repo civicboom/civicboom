@@ -62,7 +62,7 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
         # 500 when debug is disabled)
         if asbool(config['debug']):
             app = StatusCodeRedirect(app)
-        else:
+        else: # pragma: no cover -- hopefully this won't break anything, so safe to not test? -- Shish
             app = StatusCodeRedirect(app, [400, 401, 403, 404, 500])
 
     # Establish the Registry for this application
