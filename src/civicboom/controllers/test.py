@@ -22,7 +22,7 @@ class TestController(BaseController):
             return abort(403)
         BaseController.__before__(self)
 
-    def test_memcache(self):
+    def memcache(self):
         mc = app_globals.memcache
         
         print "old: %s" % mc.get("old_key")
