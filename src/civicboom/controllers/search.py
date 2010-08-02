@@ -22,5 +22,5 @@ class SearchController(BaseController):
         if not id:
             return redirect(url(controller='search', action='index'))
         results = Session.query(Content).filter(or_(Content.title.match(id), Content.content.match(id)))
-        return render(tmpl_prefix+"/search/content.mako", extra_vars={"results":results})
+        return render(tmpl_prefix+"/search/content.mako", extra_vars={"term": id, "results":results})
 
