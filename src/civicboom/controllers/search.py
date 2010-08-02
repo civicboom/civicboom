@@ -16,9 +16,11 @@ class SearchController(BaseController):
         # Return a rendered template
         #return render('/search.mako')
         # or, return a string
-        return 'Hello World'
+        return 'Hello World. Search for: [box]'
 
-    def content(self, id):
+    def content(self, id=None):
+        if not id:
+            return redirect(url(controller='search', action='index'))
         results = Session.query(Content).filter(or_(Content.title.match(id), Content.content.match(id)))
         return render(tmpl_prefix+"/search/content.mako", extra_vars={"results":results})
 

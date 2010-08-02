@@ -13,5 +13,5 @@ class TestSearchController(TestController):
         assert "'cake' did not match any articles" in response
 
     def test_content_no_query(self):
-        response = self.app.get(url(controller='search', action='content'))
-        assert "Search for" in response
+        response = self.app.get(url(controller='search', action='content'), status=302) # redirect to search/index
+        #assert "Search for" in response
