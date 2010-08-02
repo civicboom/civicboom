@@ -18,17 +18,20 @@
 <%def name="settings_email()">
 <fieldset>
 	<legend>${_("Email Address")}</legend>
-		Address: <input name="email" value="${c.viewing_user.email}">
+	<table>
+	<tr><td>Address:</td><td><input name="email" value="${c.viewing_user.email}"></td></tr>
+	</table>
 </fieldset>
 </%def>
 
 <%def name="settings_login()">
 <fieldset>
 	<legend>${_("Login Details")}</legend>
-		Current password: <input name="current_password" type="password">
-	<br>New password: <input name="new_password_1" type="password">
-	<br>Repeat new password: <input name="new_password_2" type="password">
-	<br>&nbsp;
+	<table>
+	<tr><td>Current password:</td><td><input name="current_password" type="password"></td></tr>
+	<tr><td>New password:</td><td><input name="new_password_1" type="password"></td></tr>
+	<tr><td>Repeat new password:</td><td><input name="new_password_2" type="password"></td></tr>
+	</table>
 	<br><a href="">Link with Google, Facebook, etc</a>
 </fieldset>
 </%def>
@@ -36,10 +39,12 @@
 <%def name="settings_aggregation()">
 <fieldset>
 	<legend>${_("Aggregation")}</legend>
-		Twitter username: <input name="twitter_username" value="${c.viewing_user.config["twitter_username"]}">
-	<br>Twitter auth key: <input name="twitter_auth_key" value="${c.viewing_user.config["twitter_auth_key"]}">
-	<br>Broadcast instant news: <input type="checkbox" name="broadcast_instant_news" value="${c.viewing_user.config["broadcast_instant_news"]}">
-	<br>Broadcast content posts: <input type="checkbox" name="broadcast_content_posts" value="${c.viewing_user.config["broadcast_content_posts"]}">
+	<table>
+	<tr><td>Twitter username:</td><td><input name="twitter_username" value="${c.viewing_user.config["twitter_username"]}"></td></tr>
+	<tr><td>Twitter auth key:</td><td><input name="twitter_auth_key" value="${c.viewing_user.config["twitter_auth_key"]}"></td></tr>
+	<tr><td>Broadcast instant news:</td><td><input type="checkbox" name="broadcast_instant_news" value="${c.viewing_user.config["broadcast_instant_news"]}"></td></tr>
+	<tr><td>Broadcast content posts:</td><td><input type="checkbox" name="broadcast_content_posts" value="${c.viewing_user.config["broadcast_content_posts"]}"></td></tr>
+	</table>
 </fieldset>
 </%def>
 
@@ -68,6 +73,15 @@
 	border: 1px solid black;
 	border-radius: 8px;
 	padding: 8px;
+}
+#user_settings FIELDSET TD {
+	padding: 2px;
+	vertical-align: top;
+}
+#user_settings FIELDSET TABLE,
+#user_settings FIELDSET INPUT,
+#user_settings FIELDSET TEXTAREA {
+	width: 100%;
 }
 #user_settings FIELDSET LEGEND {
 	padding-left: 4px;
