@@ -25,6 +25,7 @@ def get_licenses():
     return Session.query(License).all()
 
 def get_user_nocache(user):
+    user = str(user) # AllanC - shish suspects that passing an integer may make the DB go mental
     try:
         return Session.query(User).filter_by(username=user).one()
     except:

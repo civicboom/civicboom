@@ -11,7 +11,7 @@ from pylons.i18n.translation import _, ungettext
 from civicboom.model                   import meta
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.misc                import flash_message, redirect_to_referer
-#from civicboom.lib.authentication      import authorize, is_valid_user
+
 
 
 import logging
@@ -30,6 +30,8 @@ class BaseController(WSGIController):
         if not c.logged_in_user and 'authkit.setup.method' in config and 'REMOTE_USER' in request.environ:
             c.logged_in_user = get_user(request.environ['REMOTE_USER'])
 
+
+
         # Setup Langauge
         #if c.logged_in_user has langauge prefernece:
         #  pass
@@ -39,6 +41,8 @@ class BaseController(WSGIController):
 
 
         # Setup site app_globals on first request
+        # AllanC - I dont like this, is there a call we can maybe put in the tasks controler? or an init controler? that we can fire when the site is restarted?
+        #          For development this is sufficent, but should not be used in a production env.
         if not hasattr(app_globals,'site_url'):
             app_globals.site_host = request.environ['SERVER_NAME']
             if config['development_mode']:

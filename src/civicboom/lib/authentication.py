@@ -3,7 +3,7 @@ Tools used for Authentication of users
 """
 
 # Pylons imports
-from civicboom.lib.base import redirect, _, ungettext, render, flash_message, c, request, url
+from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, flash_message
 
 # Civicboom imports
 from civicboom.model      import User, UserLogin
@@ -129,7 +129,7 @@ def render_badcookie():
     return redirect_to('/')
     
     
-    
+
    
 #-------------------------------------------------------------------------------
 # Custom Authentication

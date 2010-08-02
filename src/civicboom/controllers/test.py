@@ -47,6 +47,12 @@ class TestController(BaseController):
     def test_logged_in(self):
         return "you are logged in"
 
+    def test_db_read(self):
+        from civicboom.lib.database.get_cached import get_licenses
+        print "printing licence names"
+        for licence in get_licenses():
+            print licence.name
+
     def environ(self):
         env_string = ""
         from pylons import request
