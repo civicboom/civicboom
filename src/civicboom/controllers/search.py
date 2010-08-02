@@ -40,4 +40,4 @@ class SearchController(BaseController):
         elif format == "json":
             return json.dumps([row.name for row in result])
         elif format == "txt":
-            return "\n".join([row.name for row in result])
+            return "\n".join([row.name+"\t"+row.type for row in result])

@@ -36,14 +36,23 @@ YAHOO.example.BasicRemote = function() {
     oDS.responseType = YAHOO.util.XHRDataSource.TYPE_TEXT;
     // Define the schema of the delimited results
     oDS.responseSchema = {
-        recordDelim: "\\n",
-        fieldDelim: "\\t"
+        recordDelim: "\n",
+        fieldDelim: "\t",
+		fields: ["name", "type"]
     };
     // Enable caching
     oDS.maxCacheEntries = 5;
 
     // Instantiate the AutoComplete
     var oAC = new YAHOO.widget.AutoComplete("query", "myContainer", oDS);
+	oAC.maxResultsDisplayed = 20;
+	//oAC.minQueryLength = 3;
+	//oAC.typeAhead = true;
+
+	oAC.resultTypeList = false;
+	oAC.formatResult = function(oResultData, sQuery, sResultMatch) {
+		return (sResultMatch + " (" +  oResultData.type + ")");
+	};
 
     return {
         oDS: oDS,
