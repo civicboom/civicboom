@@ -2,6 +2,12 @@ from civicboom.tests import *
 
 class TestSearchController(TestController):
 
+    def test_index(self):
+        response = self.app.get(url(controller='search', action='index')) # this redirects to the next
+        response = self.app.get('/search/index')
+        assert "Search for" in response
+
+
     def test_content_results(self):
         response = self.app.get(url(controller='search', action='content', id='text'))
         assert "Here is some text" in response

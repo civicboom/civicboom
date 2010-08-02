@@ -6,6 +6,7 @@ class TestEventlogController(TestController):
         response = self.app.get(url(controller='test', action='fill_log'))
         response = self.app.get(url(controller='admin', action='event_log'))
         #assert "debug" in response /admin/event_log/ is redirected to /admin/event_log, *then* the page is visible
+        response = self.app.get("/admin/event_log?module=civicboom/controllers/test.py") # test searching
 
     def test_admin(self):
         response = self.app.get(url(controller='admin'))
