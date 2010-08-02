@@ -70,7 +70,7 @@ CREATE TABLE places(
 	name VARCHAR(250) NOT NULL,
 	type VARCHAR(32) NOT NULL
 );
-" | psql -q -U civicboom -d civicboom_gis
+" | psql -q -U civicboom -d civicboom_gis -h localhost # have to connect over TCP, unix sockets try ident auth
 if [ -f places.sql ] ; then
 	cat places.sql | psql -q -U civicboom -d civicboom_gis
 else
