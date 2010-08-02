@@ -10,7 +10,7 @@ from pylons.i18n.translation import _, ungettext
 
 from civicboom.model                   import meta
 from civicboom.lib.database.get_cached import get_user
-from civicboom.lib.misc                import flash_message
+from civicboom.lib.misc                import flash_message, redirect_to_referer
 #from civicboom.lib.authentication      import authorize, is_valid_user
 
 

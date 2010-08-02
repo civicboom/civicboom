@@ -23,6 +23,11 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
+
+  % if hasattr(c,'janrain_return_url'):
+    <iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=${c.janrain_return_url}"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>
+  % endif
+
   <div class="form_signin yui-gb">
   
     <div class="yui-u first">

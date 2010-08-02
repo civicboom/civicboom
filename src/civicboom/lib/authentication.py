@@ -3,11 +3,13 @@ Tools used for Authentication of users
 """
 
 # Pylons imports
-from civicboom.lib.base import redirect, _, ungettext, session, render, flash_message, c, request, url
+from civicboom.lib.base import redirect, _, ungettext, render, flash_message, c, request, url
 
 # Civicboom imports
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
+
+from civicboom.lib.misc import session_set
 
 # Other imports
 from sqlalchemy.orm import join
@@ -65,7 +67,7 @@ from authkit.permissions import RequestPermission
 from authkit.authorize   import PermissionError, NotAuthenticatedError
 from authkit.authorize   import NotAuthorizedError, middleware
 from authkit.authorize.pylons_adaptors import authorize
-#from pylons.templating  import render_mako as render # for render of the signin page (activated outside of the normal base controler as the middleware intercepts it)
+
 
 class ValidCivicboomUser(RequestPermission):
     """
@@ -152,9 +154,8 @@ def authorize(authenticator):
             if c.logged_in_user:
                 result = target(*args, **kwargs)
             else:
-                session['login_redirect'] = request.environ.get('PATH_INFO')
+                session_set('login_redirect', request.environ.get('PATH_INFO'), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
                 # TODO: This could also save the the session POST data and reinstate it after the redirect
-                # TODO: save a timestamp with this url, expire after 10 min, if they do not complete the login process
                 return redirect(url(controller='account', action='signin'))
 
             return result
