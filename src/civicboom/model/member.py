@@ -39,8 +39,10 @@ class Member(Base):
     name            = Column(Unicode(250),   nullable=False  )
     join_date       = Column(Date(),         nullable=False, default=func.now())
     num_followers   = Column(Integer(),      nullable=False, default=0, doc="Controlled by postgres trigger")
-    webpage         = Column(Unicode(),      nullable=True, default=None)
+    webpage         = Column(Unicode(),      nullable=True,  default=None)
     status          = Column(_member_status, nullable=False, default="pending")
+    avatar          = Column(Unicode(250),   nullable=True)
+    utc_offset      = Column(Integer(),      nullable=False, default=0)
 
     content         = relationship("Content", backref=backref('creator'))
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
@@ -89,6 +91,7 @@ class User(Member):
     new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
     location         = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
     location_updated = Column(DateTime(), nullable=False,   default=func.now())
+    #dob              = Column(DateTime(), nullable=True) # Needs to be stored in user settings but not nesiserally in the main db record
     email            = Column(Unicode(250), nullable=False  )
 
     def __unicode__(self):
@@ -133,7 +136,8 @@ class UserLogin(Base):
     id          = Column(Integer(),    primary_key=True)
     member      = Column(Integer(),    ForeignKey('member.id'))
     # FIXME: need full list; facebook, google, yahoo?
-    type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
+    #type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
+    type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time    
     token       = Column(String(250),  nullable=False)
 
 

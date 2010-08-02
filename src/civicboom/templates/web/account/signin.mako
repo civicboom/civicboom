@@ -29,7 +29,7 @@
   %>
 
   % if hasattr(c,'janrain_return_url'):
-    <iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=${c.janrain_return_url}"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>
+    <iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=${c.janrain_return_url}&language_preference=${c.lang}"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>
     <% authkit_form_action = ""%>
   % endif
 
@@ -46,7 +46,7 @@
     </div>
 
     <div class="yui-u inverted">
-      <form action="${h.url(controller='register', action='register_email')}" method="post">
+      <form action="${h.url(controller='register', action='email')}" method="post">
         <fieldset><legend>${_("Sign up")}</legend>
           <p><label for="username_register"     >${_("Username")}        </label><input type="text"  id="username_register"      name="username"/></p>
           <p><label for="email_signup"          >${_("Email")}           </label><input type="text"  id="email_signup"           name="email"   /></p>

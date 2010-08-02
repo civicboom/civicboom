@@ -30,12 +30,17 @@ class BaseController(WSGIController):
         if not c.logged_in_user and 'authkit.setup.method' in config and 'REMOTE_USER' in request.environ:
             c.logged_in_user = get_user(request.environ['REMOTE_USER'])
 
+        # If user is still pending - complete registration process
+        if c.logged_in_user and c.logged_in_user.status=='pending':
+            flash_message(_('Please complete the regisration process'))
+            redirect(url(controller='register', action='new_user'))
 
         # Setup Langauge
         #if c.logged_in_user has langauge prefernece:
         #  pass
+        c.lang = config['lang']
         if 'lang' in session:
-            pass #unfinished
+            c.lang = session['lang']
             #set_lang(session['lang']) 
 
 
