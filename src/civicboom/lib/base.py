@@ -31,7 +31,6 @@ class BaseController(WSGIController):
             c.logged_in_user = get_user(request.environ['REMOTE_USER'])
 
 
-
         # Setup Langauge
         #if c.logged_in_user has langauge prefernece:
         #  pass

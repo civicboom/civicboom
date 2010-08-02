@@ -45,6 +45,7 @@ class AccountController(BaseController):
     # Janrain Engage - http://www.janrain.com/products/engage
     #-----------------------------------------------------------------------------
 
+    # To degrade back to AuthKit rename this method
     def signin(self):
 
         # If no POST display signin template

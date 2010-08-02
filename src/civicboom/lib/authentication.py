@@ -60,7 +60,7 @@ def get_user_from_openid_identifyer(identifyer):
 #-------------------------------------------------------------------------------
 # AuthKit
 #-------------------------------------------------------------------------------
-# This section could be removed completely and the rest of the site will still function as authorise is overwritten in the Custom Login Section
+# This section could be block remmed or removed and the rest of the site will still function as authorise is overwritten in the Custom Login Section
 
 # Authkit imports
 from authkit.permissions import RequestPermission
@@ -142,6 +142,7 @@ def render_badcookie():
 #def login_redirector(authenticator):
 
 # Override AuthKits authorise method with our own custom login decorator
+# To degrade back to AuthKit rename this method
 def authorize(authenticator):
     """
     Check if logged in user has been set
