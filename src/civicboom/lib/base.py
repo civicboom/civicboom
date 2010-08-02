@@ -28,7 +28,7 @@ class BaseController(WSGIController):
         #   so lookup the reporter of the remote user
         #   (someone who is slightly more security savy may want to double check the implications of this)
         if not c.logged_in_user and 'authkit.setup.method' in config and 'REMOTE_USER' in request.environ:
-          c.logged_in_user = get_user(request.environ['REMOTE_USER'])
+            c.logged_in_user = get_user(request.environ['REMOTE_USER'])
 
         # Setup Langauge
         #if c.logged_in_user has langauge prefernece:

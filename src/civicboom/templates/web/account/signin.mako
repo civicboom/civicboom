@@ -24,14 +24,19 @@
 
 <%def name="body()">
 
+  <%
+    authkit_form_action = "FORM_ACTION" # A string that is replaced by the authkit system
+  %>
+
   % if hasattr(c,'janrain_return_url'):
     <iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=${c.janrain_return_url}"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>
+    <% authkit_form_action = ""%>
   % endif
 
   <div class="form_signin yui-gb">
   
     <div class="yui-u first">
-      <form action="FORM_ACTION" method="post">
+      <form action="${authkit_form_action}" method="post">
         <fieldset><legend>${_("Sign in")}</legend>
           <p><label for="username">${_("Username")}</label><input type="text"     id="username" name="username"/></p>
           <p><label for="password">${_("Password")}</label><input type="password" id="password" name="password"/></p>
