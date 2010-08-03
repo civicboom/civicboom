@@ -38,5 +38,9 @@ IMG.avatar {
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	${cl.content_list(results)}
+	% if len(list(results)) > 0:
+		${cl.content_list(results)}
+	% else:
+		'${term}' did not match any articles
+	% endif
 </%def>

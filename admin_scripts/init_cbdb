@@ -70,7 +70,7 @@ CREATE TABLE places(
 	name VARCHAR(250) NOT NULL,
 	type VARCHAR(32) NOT NULL
 );
-" | psql -q -U civicboom -d civicboom_gis
+" | psql -q -U civicboom -d civicboom_gis -h localhost # have to connect over TCP, unix sockets try ident auth
 if [ -f places.sql ] ; then
 	cat places.sql | psql -q -U civicboom -d civicboom_gis
 else
@@ -80,7 +80,7 @@ echo "
 CREATE INDEX places__location ON places USING GIST (location); 
 CREATE INDEX places__name ON places(name); 
 VACUUM ANALYZE places;
-" | psql -q -U civicboom -d civicboom_gis
+" | psql -q -U civicboom -d civicboom_gis -h localhost
 
 
 ##############################################################################
@@ -105,6 +105,6 @@ CREATE INDEX events__date_sent ON events(date_sent);
 CREATE INDEX events__module ON events(module);
 CREATE INDEX events__username ON events(username);
 CREATE INDEX events__priority ON events(priority);
-" | psql -U civicboom -d civicboom_log
+" | psql -U civicboom -d civicboom_log -h localhost
 
 exit 0

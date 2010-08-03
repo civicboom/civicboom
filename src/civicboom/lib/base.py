@@ -50,7 +50,7 @@ class BaseController(WSGIController):
         #          For development this is sufficent, but should not be used in a production env.
         if not hasattr(app_globals,'site_url'):
             app_globals.site_host = request.environ['SERVER_NAME']
-            if config['development_mode']:
+            if config['debug']:
                 app_globals.site_host = request.environ['HTTP_HOST']
             app_globals.site_url = "http://" + app_globals.site_host
 

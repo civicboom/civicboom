@@ -7,7 +7,7 @@ available to Controllers. This module is available to templates as 'h'.
 #from webhelpers.html.tags import checkbox, password
 from webhelpers.html import HTML, literal
 from webhelpers.pylonslib.secure_form import authentication_token
-from pylons import url
+from pylons import url, config
 import re
 
 from civicboom.lib.text import scan_for_embedable_view_and_autolink
@@ -49,3 +49,9 @@ def link_to_objects(text):
 
 def raise_exception_test():
     raise "broken"
+
+def wh_public(filename):
+    if config["warehouse"] == "s3":
+        return "http://"+config["s3_bucket_name"]+".s3.amazonaws.com/public/"+filename
+    else:
+        return "/"+filename

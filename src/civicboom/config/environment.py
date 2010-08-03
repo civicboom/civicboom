@@ -50,7 +50,7 @@ def load_environment(global_conf, app_conf):
     # Setup the SQLAlchemy database engine
     engine1 = engine_from_config(config, 'sqlalchemy.main.')
     engine3 = None
-    if 'sqlalchemy.legacy.url' in config:
+    if 'sqlalchemy.legacy.url' in config: # pragma: no cover -- legacy should not be in production
         engine3 = engine_from_config(config, 'sqlalchemy.legacy.')
     init_model(engine1, engine3)
 

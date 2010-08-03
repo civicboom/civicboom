@@ -11,6 +11,7 @@ For managing content:
 # Base controller imports
 from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _, app_globals, flash_message
 from civicboom.lib.authentication      import authorize, is_valid_user
+from pylons import session
 
 # Datamodel and database session imports
 from civicboom.model                   import DraftContent, Media, Tag

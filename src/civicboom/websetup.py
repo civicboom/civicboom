@@ -670,6 +670,11 @@ CREATE TRIGGER update_content
         m.target = u2
         m.text   = u"My singing is fine!"
 
+        m = Message()
+        m.source = u2
+        m.target = u1
+        m.text   = u"It is totally not! And to explain, I will use a sentence that is over 50 characters long, to test the Message.__unicode__ truncation feature"
+
         ca = ArticleContent()
         ca.title      = u"A test article"
         ca.content    = u"""
