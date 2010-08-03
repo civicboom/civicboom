@@ -1,13 +1,12 @@
 function autocomplete_location(location_box, completions_box, gis_box) {
 	// Data Source setup
-    var oDS = new YAHOO.util.XHRDataSource("/search/location.txt");
-    oDS.responseType = YAHOO.util.XHRDataSource.TYPE_TEXT;
-    oDS.responseSchema = {
-        recordDelim: "\n",
-        fieldDelim: "\t",
-		fields: ["name", "location", "type"]
-    };
+    var oDS = new YAHOO.util.XHRDataSource("/search/location.json");
+    oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
     oDS.maxCacheEntries = 5;
+	oDS.responseSchema = {
+		resultsList: "ResultSet.Results",
+		fields: ["name", "location", "type"]
+	};
 
     // AutoComplete setup
     var oAC = new YAHOO.widget.AutoComplete(location_box, completions_box, oDS);

@@ -43,8 +43,7 @@ class SearchController(BaseController):
             result = []
 
         if format == "html":
-            return render(tmpl_prefix+"/search/location.mako", extra_vars={"results": result})
+            return render(tmpl_prefix+"/search/location.mako")
         elif format == "json":
-            return json.dumps([row.name for row in result])
-        elif format == "txt":
-            return "\n".join([row.name+"\t"+row.location+"\t"+row.type for row in result])
+            json_rows = [{"name":row.name,"location":row.location,"type":row.type} for row in result]
+            return json.dumps({"ResultSet": {"Results": json_rows}})
