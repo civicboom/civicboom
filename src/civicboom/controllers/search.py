@@ -8,10 +8,14 @@ from civicboom.lib.base import BaseController, render
 from civicboom.lib.gis  import get_engine
 from civicboom.model.content           import Content, DraftContent
 from civicboom.model.meta              import Session
+from civicboom.forms import FieldSet
 from sqlalchemy                        import or_
 
 log = logging.getLogger(__name__)
 tmpl_prefix = '/web/design09'
+
+fsContent = FieldSet(model.Content)
+#fsFoo.configure(options=[Foo.bar.label('This is the bar field')])
 
 class SearchController(BaseController):
     def index(self):
@@ -41,3 +45,20 @@ class SearchController(BaseController):
             return json.dumps([row.name for row in result])
         elif format == "txt":
             return "\n".join([row.name+"\t"+row.type for row in result])
+
+    def set_location(self, id):
+        if id:
+            record = Session.query(Content).filter_by(id=id).first()
+        else:
+            record = Content()
+        assert record is not None, repr(id)
+        c.fs = fsContent.bind(record, data=request.POST or None)
+        if request.POST and c.fs.validate():
+            c.fs.sync()
+            if id:
+                Session.update(record)
+            else:
+                Session.add(record)
+            Session.commit()
+            redirect(url.current(id=record.id))
+        return render('/form.mako')
