@@ -5,7 +5,7 @@ from formalchemy.ext.pylons.controller import model_url
 from pylons import url
 %>
 <%def name="h1(title, href=None)">
-    <h1 id="header" class="ui-widget-header ui-corner-all">
+    <h1 id="header" style="padding-bottom: 0px;">
       %if breadcrumb:
         <div class="breadcrumb">
          /${'/'.join([u and '<a href="%s">%s</a>' % (u,n.lower()) or n.lower() for u,n in breadcrumb])|n} 
@@ -35,7 +35,7 @@ from pylons import url
 </%def>
 <%def name="body()">
   %if isinstance(models, dict):
-    <h1 id="header" class="ui-widget-header ui-corner-all">${_('Civicboom Control Panel')}</h1>
+    <h1 id="header" style="padding-bottom: 0px;">${_('Civicboom Control Panel')}</h1>
 	<table class="outer">
 		<tr><td>
 <table>
