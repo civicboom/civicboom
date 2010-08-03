@@ -27,11 +27,17 @@ cb-website.deb: $(shell find ../admin_scripts ../debian ../nginx ../selenium ../
 	fakeroot dpkg -b fs-website cb-website_${VERSION}_all.deb 
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
-_combined.js: ../src/civicboom/public/javascript/[a-z]*.js
-	cat ../src/civicboom/public/javascript/[a-z]*.js | yui-compressor --type js > _combined.js
+_combined.js: ../src/civicboom/public/javascript/[a-z]*.js ../src/civicboom/templates/web/html_header.mako
+	( \
+		cat ../src/civicboom/public/javascript/[a-z]*.js && \
+		curl `cat ../src/civicboom/templates/web/html_header.mako | grep -oE "http.*\.js"` \
+	) | yui-compressor --type js > _combined.js
 
-_combined.css: ../src/civicboom/public/styles/design09/design09_*.css
-	cat ../src/civicboom/public/styles/design09/design09_*.css | yui-compressor --type css > _combined.css
+_combined.css: ../src/civicboom/public/styles/design09/design09_*.css ../src/civicboom/templates/web/html_header.mako
+	( \
+		cat ../src/civicboom/public/styles/design09/design09_*.css && \
+		curl `cat ../src/civicboom/templates/web/html_header.mako | grep -oE "http.*\.css"` \
+	) | yui-compressor --type css > _combined.css
 
 clean:
 	rm -rf fs-* cb-*.deb _combined.*

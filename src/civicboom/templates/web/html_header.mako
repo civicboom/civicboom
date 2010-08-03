@@ -39,31 +39,33 @@
     ##-------------------
     ## CSS Style Sheets
     ##-------------------
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css" />
-    
     % if config['development_mode']:
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css" />
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/autocomplete/assets/skins/sam/autocomplete.css">
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09.css" />
-	% else:
+    % else:
     <link rel="stylesheet" type="text/css" href="/styles/design09/_combined.css" />
-	% endif
-    
+    % endif
+
     ##-------------------
     ## Javascripts
     ##-------------------
+    % if config['development_mode']:
     <!-- YUI 2.x global imports -->
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script><!-- Utility Dependencies -->
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"            ></script>
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/animation/animation-min.js"        ></script>
-
-    
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/connection/connection-min.js"      ></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/datasource/datasource-min.js"      ></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/autocomplete/autocomplete-min.js"  ></script>
     <!-- Civicboom global imports -->
-    % if config['development_mode']:
     <script type="text/javascript" src="/javascript/misc.js"          ></script>
     <script type="text/javascript" src="/javascript/url_encode.js"    ></script>
     <script type="text/javascript" src="/javascript/toggle_div.js"    ></script>
-	% else:
-    <script type="text/javascript" src="/javascript/_combined.js" ></script>
-	% endif
+    <script type="text/javascript" src="/javascript/location.js"      ></script>
+    % else:
+    <script type="text/javascript" src="/javascript/_combined.js"></script>
+    % endif
   </%def>
   ${self.head_links()}
 
