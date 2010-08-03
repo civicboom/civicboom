@@ -1,4 +1,6 @@
-from civicboom.lib.base import BaseController, render, request, url, app_globals, _, flash_message, config
+from civicboom.lib.base import BaseController, c, render, request, url, app_globals, _, flash_message, config
+
+import formencode
 
 # Database Objects
 from civicboom.model.member            import User, UserLogin
@@ -10,7 +12,12 @@ from civicboom.lib.database.actions    import follow, accept_assignment
 
 # Communication & Messages
 from   civicboom.lib.communication.email             import send_email
-import civicboom.lib.communication.message_generator
+#import civicboom.lib.communication.message_generator
+
+# Form Validators
+from civicboom.lib.form_validators.registration import RegisterSchemaEmailUsername
+
+from civicboom.lib.web import action_redirector
 
 import logging
 log      = logging.getLogger(__name__)
@@ -49,7 +56,8 @@ class RegisterController(BaseController):
           return render(registration_template)
         
         try: # Form validation
-            form = RegisterSchemaReporter().to_python(dict(request.params))
+            #form = RegisterSchemaReporter().to_python(dict(request.params))
+            pass
         except formencode.Invalid, error:  # If the form has errors overlay those errors over the previously rendered form
             form_result = error.value
             form_errors = error.error_dict or {}
@@ -63,7 +71,7 @@ class RegisterController(BaseController):
         redirect_to('/')
 
 
-    @action_redirector
+    @action_redirector()
     def email(self):
         """
         User submits a proposed username and email to this action
@@ -88,11 +96,12 @@ class RegisterController(BaseController):
         if 'refered_by' in request.params:
             refered_by = get_user(request.params['refered_by'])
             if follow(refered_by, u) == True:
-                message_generator.followed_on_signup(refered_by, reporter=u)
+                log.debug("message generation not implmented yet")
+                #message_generator.followed_on_signup(refered_by, reporter=u)
         
         # Accept assignment
         if 'accept_assignment' in request.params:
-            pass
+            log.debug("auto accepting not implemented yet")
             # TODO: Implement
             #assignment = get_assignment(request.params['accept_assignment'])
             #accept_assignment_status = accept_assignment(new_reporter, assignment)
@@ -103,8 +112,8 @@ class RegisterController(BaseController):
         
         # Send email verification link
         Session.refresh(u) #Needed for make_hash below becaususe the object must be persistant
-        validation_link = url(controller='register', action='new_user', id=u.id, host=app_globals.site_host, email=u.email, hash=u.hash())
+        validation_link = url(controller='register', action='new_user', id=u.id, host=app_globals.site_host, hash=u.hash())
         message         = _('Please complete the registration process by clicking on, or copying the following link into your browser: %s') % (validation_link)
-        send_email(new_reporter, subject='verify e-mail address', content_text=message)
+        send_email(u, subject='verify e-mail address', content_text=message)
         
         return "Thank you. Please check your email to complete the registration process"

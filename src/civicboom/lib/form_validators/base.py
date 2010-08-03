@@ -16,7 +16,7 @@ from civicboom.lib.misc import calculateAge
 # Misc Imports
 import datetime
 import hashlib
-
+import re
 
 
 class DefaultSchema(formencode.Schema):
@@ -69,12 +69,12 @@ class UniqueUsernameValidator(validators.FancyValidator):
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
         if len(value) >= self.max:
             raise formencode.Invalid(self.message("too_long", state, max=self.max), value, state)
-        if Session.query(Member).filter(username==value).count() > 0:
+        if Session.query(Member).filter(Member.username==value).count() > 0:
             raise formencode.Invalid(self.message("username_taken", state, name=value), value, state)
         return value
 
 class UniqueEmailValidator(validators.Email):
     def _to_python(self, value, state):
-        if Session.query(User).filter(email==value).count() > 0:
+        if Session.query(User).filter(User.email==value).count() > 0:
             raise formencode.Invalid('This email address is already registered with us. Please use a different address, or retrieve your password using the password recovery link.', value, state)
         return value

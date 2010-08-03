@@ -1,5 +1,9 @@
 from pylons             import tmpl_context as c, config
 from pylons.templating  import render_mako as render
+from pylons.i18n.translation import _
+
+from webhelpers.html.tools import auto_link
+from webhelpers.html       import literal
 
 from civicboom.lib.text import convert_html_to_plain_text
 
@@ -42,11 +46,11 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
     # If not already wrapped in HTML header
     if not re.search(r'<body.*</body>',content_html, re.DOTALL + re.IGNORECASE): #If content HTML is not a complete document with a head and body - put it in the standard email template
         c.email_content = literal(content_html)
-        content_html = render('/base_email_from_plaintext.mako')
+        content_html = render('/email/base_email_from_plaintext.mako')
   
     # Subject - append site name to subject
-    if subject==None or subject=='': subject = c.site_name
-    else                           : subject = c.site_name+': '+subject  
+    if subject==None or subject=='': subject = _("_site_name")
+    else                           : subject = _("_site_name")+': '+subject  
   
     # Log Debug data if send disabled
     if config['feature.aggregate.email'] is False: send_email_log (email_to, subject, content_text, content_html)

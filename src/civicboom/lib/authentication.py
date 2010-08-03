@@ -9,7 +9,7 @@ from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, 
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
 
-from civicboom.lib.misc import session_set
+from civicboom.lib.web import session_set
 
 # Other imports
 from sqlalchemy.orm import join
@@ -161,6 +161,7 @@ def authorize(authenticator):
                 return redirect(url(controller='account', action='signin'))
 
             return result
+        
         return decorator(wrapper)(target)
     return my_decorator
 

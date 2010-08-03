@@ -10,7 +10,7 @@ from pylons.i18n.translation import _, ungettext, set_lang
 
 from civicboom.model                   import meta
 from civicboom.lib.database.get_cached import get_user
-from civicboom.lib.misc                import flash_message, redirect_to_referer
+from civicboom.lib.web                 import flash_message, redirect_to_referer
 
 
 
@@ -40,10 +40,10 @@ class BaseController(WSGIController):
             redirect(url(controller='register', action='new_user'))
 
         # Setup Langauge
-        if   'lang' in request.params:  _set_lang(request.params['lang']) # If lang set in URL
-        elif 'lang' in session       :  _set_lang(       session['lang']) # Lang set for this users session
-        #elif c.logged_in_user has lang: _set_lang(c.logged_in_user.?)     # Lang in user preferences
-        else                         :  _set_lang(        config['lang']) # Default lang in config file
+        if   'lang' in request.params:  self._set_lang(request.params['lang']) # If lang set in URL
+        elif 'lang' in session       :  self._set_lang(       session['lang']) # Lang set for this users session
+        #elif c.logged_in_user has lang: self._set_lang(c.logged_in_user.?)     # Lang in user preferences
+        else                         :  self._set_lang(        config['lang']) # Default lang in config file
 
         # Setup site app_globals on first request
         # AllanC - I dont like this, is there a call we can maybe put in the tasks controler? or an init controler? that we can fire when the site is restarted?

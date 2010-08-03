@@ -1,11 +1,8 @@
-from civicboom.lib.base                import config, c
-from civicboom.lib.messages.email      import send_email
+from email                             import send_email
+from civicboom.lib.base                import config, c, url
 from civicboom.model                   import Message, Member
 from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import update_user_messages
-
-#, get_function_name
-#import indicofb.lib.helpers as h
 
 import re
 
@@ -20,17 +17,6 @@ message_default_route = {}
 message_title         = {}
 
 
-#-------------------------------------------------------------------------------
-# Message Markup processor
-#-------------------------------------------------------------------------------
-def term_replace(message):
-  def term_lookup(m):
-    term_type = m.group(1)
-    if term_type in config['terminology']:
-      return config['terminology'][term_type]
-    return term_type
-  term_regex = re.compile(r'term:(.+?)\b',re.DOTALL)
-  return term_regex.sub(term_lookup, message)
 
 #-------------------------------------------------------------------------------
 # Message Sender
@@ -155,6 +141,8 @@ def message_send(m):
 #-------------------------------------------------------------------------------
 # Message Creator
 #-------------------------------------------------------------------------------
+arg_regex = re.compile(r'arg:(.+?)\b',re.DOTALL)
+
 def message_creator(message, **kargs):
     """
     Used to process the mini markup of the message system and put in links
@@ -170,26 +158,26 @@ def message_creator(message, **kargs):
         if arg_type in kargs:
             def format_link_to(o):
                 def url_for_absolute(**kargs):
-                    return url_for(host=c.host_name, **kargs)
+                    return url(host=app_globals.site_host, **kargs)
                 def link(href,text):
                     return '<a href="%s">%s</a>' % (href,text)
-                if isinstance(o,Reporter):
-                    return link(url_for_absolute(controller='reporter', action='profile', id=o.ReporterName),o.ReporterName)
-                if isinstance(o,NewsArticle):
-                    return link(url_for_absolute(controller='article',action='view',id=o.id),o.Title)
-                if isinstance(o,Assignment):
-                    return link(url_for_absolute(controller='assignment',action='view_assignment',id=o.id),o.title)
-                if isinstance(o,TipoffTo):
-                    o = o.tipoff
-                if isinstance(o,Tipoff):
-                    return h.truncate(o.description, length=60, indicator='...', whole_word=True)  #AllanC - cant currently link directly to tipoffs, may be useful in future
+                if isinstance(o,User):
+                    return link(url_for_absolute(controller='reporter', action='profile', id=o.username),o.username)
+                #if isinstance(o,NewsArticle):
+                #    return link(url_for_absolute(controller='article',action='view',id=o.id),o.Title)
+                #if isinstance(o,Assignment):
+                #    return link(url_for_absolute(controller='assignment',action='view_assignment',id=o.id),o.title)
+                #if isinstance(o,TipoffTo):
+                #    o = o.tipoff
+                #if isinstance(o,Tipoff):
+                #    return h.truncate(o.description, length=60, indicator='...', whole_word=True)  #AllanC - cant currently link directly to tipoffs, may be useful in future
                 if isinstance(o,str):
                     return o
                 return str(o)
             return format_link_to(kargs[arg_type])
         log.debug(__name__+': Investigate! Unknown arg type'+arg_type)
         return arg_type
-    arg_regex = re.compile(r'arg:(.+?)\b',re.DOTALL)
+    
     message = arg_regex.sub(arg_formater, message)
 
     return message

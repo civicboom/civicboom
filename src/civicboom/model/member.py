@@ -36,7 +36,7 @@ class Member(Base):
     _member_status  = Enum("pending", "active", "suspended", name="member_status")
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars
-    name            = Column(Unicode(250),   nullable=False  )
+    name            = Column(Unicode(250),   nullable=False, default=u"")
     join_date       = Column(Date(),         nullable=False, default=func.now())
     num_followers   = Column(Integer(),      nullable=False, default=0, doc="Controlled by postgres trigger")
     webpage         = Column(Unicode(),      nullable=True,  default=None)
@@ -105,7 +105,7 @@ class User(Member):
 
     def hash(self):
         h = hashlib.md5(Member.hash(self))
-        for field in ("email"):
+        for field in ("email",):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 

@@ -10,7 +10,7 @@ from civicboom.model import User, Group, UserLogin
 from civicboom.model import ArticleContent, CommentContent, DraftContent, AssignmentContent, Media
 from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
-from civicboom.lib import warehouse as wh
+from civicboom.lib.services import warehouse as wh
 
 import logging
 import datetime

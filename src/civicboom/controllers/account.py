@@ -2,7 +2,7 @@ from civicboom.lib.base import BaseController, render, request, url, abort, redi
 
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password
 from civicboom.lib.services.janrain import janrain
-from civicboom.lib.misc             import session_remove, session_get
+from civicboom.lib.web              import session_remove, session_get
 
 from civicboom.model.member       import User, UserLogin
 from civicboom.model.meta         import Session
@@ -56,9 +56,9 @@ class AccountController(BaseController):
         if request.environ['REQUEST_METHOD'] == 'GET':
             c.janrain_return_url = urllib.quote_plus(url.current(host=app_globals.site_host))
             return render("/web/account/signin.mako")
-
-        c.auth_info = None
         
+        c.auth_info = None
+
         # Authenticate with Janrain
         if 'token' in request.POST:
             c.auth_info = janrain('auth_info', token=request.POST.get('token'))
