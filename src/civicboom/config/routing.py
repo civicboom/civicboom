@@ -34,7 +34,9 @@ def make_map(config):
     map.redirect('/{controller}/'         , '/{controller}'         )
     map.redirect('/{controller}/{action}/', '/{controller}/{action}')
 
+    map.connect('/{controller}/{action}.{format}')
     map.connect('/{controller}/{action}')
+    map.connect('/{controller}/{action}.{format}/{id}')
     map.connect('/{controller}/{action}/{id}')
 
     return map
