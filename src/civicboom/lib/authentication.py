@@ -9,7 +9,7 @@ from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, 
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
 
-from civicboom.lib.misc import session_set
+from civicboom.lib.web import session_set
 
 # Other imports
 from sqlalchemy.orm import join
@@ -150,6 +150,7 @@ def authorize(authenticator):
     Once you log in, it sends you back to the original url call.
     """
     def my_decorator(target):
+        # do something with authenticator here if needed
         def wrapper(target, *args, **kwargs):
 
             if c.logged_in_user:
@@ -160,6 +161,7 @@ def authorize(authenticator):
                 return redirect(url(controller='account', action='signin'))
 
             return result
+        
         return decorator(wrapper)(target)
     return my_decorator
 

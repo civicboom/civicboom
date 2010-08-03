@@ -1,5 +1,8 @@
+from pylons.i18n.translation import _, ungettext
+
 from message_sender import term_replace, message_to, message_to_from, message_public, message_creator
 from message_sender import message_default_route, message_title
+
 
 
 message_content = {}
@@ -99,7 +102,7 @@ def followed(to,**kargs):
 
 @messageDeafultRoute('ne')
 @messageTitle('new sign up via widget')
-@messageContent('arg:reporter has signed up via your widget and is now following you')
+@messageContent(_('%(user) has signed up via your widget and is now following you'))
 @messageSend
 def followed_on_signup(to,**kargs):
   pass

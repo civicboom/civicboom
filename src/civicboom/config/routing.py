@@ -31,8 +31,12 @@ def make_map(config):
     map.resource('model', 'models', path_prefix='/admin/{model_name}', controller='admin')
 
 
-    map.redirect('/{controller}/'         , '/{controller}'         )
-    map.redirect('/{controller}/{action}/', '/{controller}/{action}')
+    # Redirects were eating form posts so they have been remmed out for refernece
+    #map.redirect('/{controller}/'         , '/{controller}'         ) 
+    #map.redirect('/{controller}/{action}/', '/{controller}/{action}')
+    
+    map.connect('/{controller}/{action}/')
+    map.connect('/{controller}/{action}/{id}/')
 
     map.connect('/{controller}/{action}.{format}')
     map.connect('/{controller}/{action}')

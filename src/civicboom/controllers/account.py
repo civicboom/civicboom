@@ -1,8 +1,11 @@
 from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, _, session, flash_message, redirect_to_referer
 
-from civicboom.lib.authentication import get_user_from_openid_identifyer, get_user_and_check_password
-from civicboom.lib.janrain import janrain
-from civicboom.lib.misc import session_remove, session_get, flash_message, redirect_to_referer
+from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password
+from civicboom.lib.services.janrain import janrain
+from civicboom.lib.web              import session_remove, session_get
+
+from civicboom.model.member       import User, UserLogin
+from civicboom.model.meta         import Session
 
 import urllib
 
@@ -46,15 +49,16 @@ class AccountController(BaseController):
     #-----------------------------------------------------------------------------
 
     # To degrade back to AuthKit rename this method
+    #@https # redirect to https for transfer of password
     def signin(self):
 
         # If no POST display signin template
-        if request.environ['REQUEST_METHOD']!='POST':
+        if request.environ['REQUEST_METHOD'] == 'GET':
             c.janrain_return_url = urllib.quote_plus(url.current(host=app_globals.site_host))
             return render("/web/account/signin.mako")
-
-        c.auth_info = None
         
+        c.auth_info = None
+
         # Authenticate with Janrain
         if 'token' in request.POST:
             c.auth_info = janrain('auth_info', token=request.POST.get('token'))
@@ -65,9 +69,8 @@ class AccountController(BaseController):
         if 'username' in request.POST and 'password' in request.POST:
             c.logged_in_user = get_user_and_check_password(request.POST['username'], request.POST['password'])
 
-        # If user has existing account
+        # If user has existing account: Login
         if c.logged_in_user:
-            # Login
             user_log.info("logged in")               # Log user login
             session['user_id'] = c.logged_in_user.id # Set server session variable to user.id
             
@@ -78,21 +81,39 @@ class AccountController(BaseController):
                 return redirect(login_redirect)
             return redirect('/')
             
-        # If no user found but we have Janrain auth_info display registration
+        # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
-            # Register or link new user
-
-            # if extended = true in API call, these fields could be avalable
-            # accessCredentials = profile['accessCredentials'] #OAuth tokens for facebook and twitter
-            # merged_poco # portable contacts dictonary
-            # friends     # list of friends
-   
             profile = auth_info['profile']
-            name            = profile.get('displayName')
-            email           = profile.get('email')
-            profile_pic_url = profile.get('photo')
+            
+            u = User()
+            u.status        = "pending"
+            u.username      = valid_username(profile.get('displayName'))
+            u.name          = profile.get('name').get('formatted')
+            u.email         = profile.get('verifiedEmail') or profile.get('email')
+            u.avatar        = profile.get('photo')
+            u.webpage       = profile.get('url')
+            #u.location      = get_location_from_json(profile.get('address'))
+            
+            u_login = UserLogin()
+            u_login.user   = u()
+            u_login.type   = profile['providerName']
+            u_login.token  = profile['identifier']
+            
+            Session.addall([u,u_login])
+            Session.commit()
+            
+            u.config['dob']  = profile.get('birthday')
+            #u.config['url']  = profile.get('url')
+            
+            janrain('map', identifier=profile['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
 
-            return "User: %s, %s, %s\n<br/>Identifyer:%s" % (name, email, profile_pic_url, identifier)
+            # Future addition and enhancements
+            #   with janrain we could get a list of friends/contnact and automatically follow them?
+            #   Could we leverage twitter/facebook OAuth token?
+            # Reference - https://rpxnow.com/docs#api_auth_info
+            
+            redirect(url(controller='register', action='new_user', id=u.id))
+            
 
         # If not authenticated or any janrain info then error
         flash_message(_('Unable to authenticate user'))

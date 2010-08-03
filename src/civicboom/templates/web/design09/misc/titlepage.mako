@@ -27,13 +27,13 @@
     <div class="clearboth_hack"></div>
     
     <div class="signup">
-      <form action="${h.url(controller='register', action='register_email')}" method="post">
+      <form action="${h.url(controller='register', action='email')}" method="post">
         ##<fieldset><legend>${_("Sign up today")}</legend>
           <p><label for="email"   >${_("Email")}   </label><input type="text" id="email"    name="email"   /></p>
           <p><label for="username">${_("Username")}</label><input type="text" id="username" name="username"/></p>
           <input class="signup_submit" type="submit" name="submit" value="${_("Sign up")}"/>
-          <p><label for="user_type_individual"  >${_("Individual")}  </label><input type="radio" id="user_type_individual"   name="user_type" value="individual"   checked='checked'/></p>
-          <p><label for="user_type_organisation">${_("Organisation")}</label><input type="radio" id="user_type_organisation" name="user_type" value="organisation"                  /></p>
+          ##<p><label for="user_type_individual"  >${_("Individual")}  </label><input type="radio" id="user_type_individual"   name="user_type" value="individual"   checked='checked'/></p>
+          ##<p><label for="user_type_organisation">${_("Organisation")}</label><input type="radio" id="user_type_organisation" name="user_type" value="organisation"                  /></p>
           
         ##</fieldset>
       </form>

@@ -7,3 +7,4 @@ debian/_combined.*
 src/civicboom/public/warehouse
 *.mo
 tmp
+places.sql
