@@ -2,6 +2,7 @@ from pylons import config, app_globals
 from civicboom.model.meta import Session
 from civicboom.model import MemberSetting
 from sqlalchemy.orm.exc import NoResultFound
+from ConfigParser import NoOptionError
 import UserDict
 import logging
 
@@ -19,7 +20,16 @@ class MemberSettingsManager(UserDict.DictMixin):
             r = q.one()
             return r.value
         except NoResultFound:
-            return unicode(app_globals.user_defaults.get("settings", name))
+            try:
+                return unicode(app_globals.user_defaults.get("settings", name))
+            except NoOptionError:
+                raise KeyError(name)
+
+    def get(self, name, default):
+        if name in self:
+            return self[name]
+        else:
+            return default
 
     def __setitem__(self, name, value):
         if type(value) == type(True):
