@@ -76,6 +76,12 @@ class Member(Base):
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
 
+    def hash(self):
+        h = hashlib.md5()
+        for field in ("id","username","name","join_date","status","avatar","utc_offset"): #TODO: includes relationship fields in list?
+            h.update(str(getattr(self,field)))
+        return h.hexdigest()
+
     @property
     def avatar_url(self, size=80):
         if self.config["avatar"]:
@@ -96,6 +102,12 @@ class User(Member):
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (User)"
+
+    def hash(self):
+        h = hashlib.md5(Member.hash(self))
+        for field in ("email"):
+            h.update(str(getattr(self,field)))
+        return h.hexdigest()
 
     @property
     def config(self):

@@ -150,6 +150,7 @@ def authorize(authenticator):
     Once you log in, it sends you back to the original url call.
     """
     def my_decorator(target):
+        # do something with authenticator here if needed
         def wrapper(target, *args, **kwargs):
 
             if c.logged_in_user:

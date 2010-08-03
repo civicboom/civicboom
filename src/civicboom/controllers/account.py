@@ -1,8 +1,8 @@
 from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, _, session, flash_message, redirect_to_referer
 
-from civicboom.lib.authentication import get_user_from_openid_identifyer, get_user_and_check_password
-from civicboom.lib.janrain        import janrain
-from civicboom.lib.misc           import session_remove, session_get
+from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password
+from civicboom.lib.services.janrain import janrain
+from civicboom.lib.misc             import session_remove, session_get
 
 from civicboom.model.member       import User, UserLogin
 from civicboom.model.meta         import Session
@@ -53,7 +53,7 @@ class AccountController(BaseController):
     def signin(self):
 
         # If no POST display signin template
-        if request.environ['REQUEST_METHOD']!='POST':
+        if request.environ['REQUEST_METHOD'] == 'GET':
             c.janrain_return_url = urllib.quote_plus(url.current(host=app_globals.site_host))
             return render("/web/account/signin.mako")
 
@@ -91,6 +91,7 @@ class AccountController(BaseController):
             u.name          = profile.get('name').get('formatted')
             u.email         = profile.get('verifiedEmail') or profile.get('email')
             u.avatar        = profile.get('photo')
+            u.webpage       = profile.get('url')
             #u.location      = get_location_from_json(profile.get('address'))
             
             u_login = UserLogin()
@@ -102,7 +103,7 @@ class AccountController(BaseController):
             Session.commit()
             
             u.config['dob']  = profile.get('birthday')
-            u.config['url']  = profile.get('url')
+            #u.config['url']  = profile.get('url')
             
             janrain('map', identifier=profile['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
 
