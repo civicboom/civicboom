@@ -13,12 +13,13 @@ class Message(Base):
     source_id   = Column(Integer(),     ForeignKey('member.id'), nullable=True)
     target_id   = Column(Integer(),     ForeignKey('member.id'), nullable=True)
     timestamp   = Column(DateTime(),    nullable=False, default=func.now())
-    text        = Column(UnicodeText(), nullable=False)
+    subject     = Column(UnicodeText(), nullable=False)
+    content     = Column(UnicodeText(), nullable=False)
 
     def __unicode__(self):
-        if len(self.text) > 50:
-            return self.text[0:50]+"..."
+        if len(self.content) > 50:
+            return self.content[0:50]+"..."
         else:
-            return self.text
+            return self.content
 
 
