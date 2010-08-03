@@ -1,4 +1,4 @@
-from civicboom.lib.base import BaseController, c, render, request, url, app_globals, _, flash_message, config
+from civicboom.lib.base import BaseController, c, render, request, url, app_globals, _, flash_message, config, abort
 
 import formencode
 
@@ -43,7 +43,7 @@ class RegisterController(BaseController):
         registration_template = "/web/account/register.mako"
         
         c.new_user = get_user(id)
-
+        
         # Validate User
         if c.logged_in_user and c.logged_in_user == c.new_user: # from janrain login
             pass
@@ -51,7 +51,7 @@ class RegisterController(BaseController):
             c.logged_in_user = c.new_user
         else:
             abort(401)
-
+        
         if request.environ['REQUEST_METHOD'] == 'GET':
           return render(registration_template)
         
@@ -62,9 +62,9 @@ class RegisterController(BaseController):
             form_result = error.value
             form_errors = error.error_dict or {}
             return formencode.htmlfill.render(render(registration_template), defaults=form_result, errors=form_errors, prefix_error=False)
-
+        
         # If the validator has not forced a page render then the ...
-
+        
         # Set status to 'active'
         
         flash_message(_("Congratulations, you have successfully signed up for _site_name. Please login"))
@@ -116,4 +116,4 @@ class RegisterController(BaseController):
         message         = _('Please complete the registration process by clicking on, or copying the following link into your browser: %s') % (validation_link)
         send_email(u, subject='verify e-mail address', content_text=message)
         
-        return "Thank you. Please check your email to complete the registration process"
+        return _("Thank you. Please check your email to complete the registration process")

@@ -16,7 +16,7 @@ def janrain(method, **kargs):
     """
     Make Janrain API calls from python - more info for each call at https://rpxnow.com/docs
     """
-    kargs['apiKey'] = config['janrain.api_key']
+    kargs['apiKey'] = config['api_key.janrain']
     kargs['format'] = 'json'
     http_response  = urllib2.urlopen('https://rpxnow.com/api/v2/'+method, urllib.urlencode(kargs))
     janrain_python = json.loads(http_response.read())

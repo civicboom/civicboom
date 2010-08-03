@@ -1,6 +1,18 @@
 <%inherit file="/web/html_base.mako"/>
 
 ##------------------------------------------------------------------------------
+## Additional CSS and Javascripts
+##------------------------------------------------------------------------------
+<%def name="head_links()">
+  ${parent.head_links()}
+  
+  <!-- Additional YUI imports-->
+  <link   type="text/css"        href="http://yui.yahooapis.com/2.8.1/build/calendar/assets/skins/sam/calendar.css" rel="stylesheet">
+  <script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/calendar/calendar-min.js"></script>
+    
+</%def>
+
+##------------------------------------------------------------------------------
 ## Title - Override
 ##------------------------------------------------------------------------------
 <%def name="title()">${_("Register")}</%def>
@@ -19,16 +31,57 @@
 
 username
 
-% if not email:
-  email
+% if not c.logged_in_user.email or c.logged_in_user.email == "":
+  email needed
 % endif
 
-% if not janrain
+## if not janrain user then captcha is need
+% if True:
   captcha
+  
+  <script type="text/javascript"
+     src="http://www.google.com/recaptcha/api/challenge?k=${config['api_key.reCAPTCHA.public']}">
+  </script>
+  <noscript>
+     <iframe src="http://www.google.com/recaptcha/api/noscript?k=${config['api_key.reCAPTCHA.public']}" height="300" width="500" frameborder="0"></iframe><br>
+     <textarea name="recaptcha_challenge_field" rows="3" cols="40">
+     </textarea>
+     <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
+  </noscript>
+  
 % endif
 
-% if 'dob' not in c.logged_in_user.config:
-  dob
+% if True:
+##'dob' not in c.logged_in_user.config:
+  dob needed
+  
+    <script>
+        YAHOO.namespace("example.calendar");
+        YAHOO.example.calendar.init = function() {
+            
+            var navConfig = {
+                  strings : {
+                      month      : "${_('Choose Month')}",
+                      year       : "${_('Enter Year')}",
+                      submit     : "${_('OK')}",
+                      cancel     : "${_('Cancel')}",
+                      invalidYear: "${_('Please enter a valid year')}"
+                  },
+                  monthFormat: YAHOO.widget.Calendar.LONG,
+                  initialFocus: "year"
+            };
+            
+            YAHOO.example.calendar.cal1 = new YAHOO.widget.Calendar("cal1","cal1Container", {navigator:navConfig});
+            YAHOO.example.calendar.cal1.render();
+        }
+        YAHOO.util.Event.onDOMReady(YAHOO.example.calendar.init);
+    </script>
+
+  
+    <div class="yui-skin-sam">
+        <div id="cal1Container"></div>
+    </div>
+
 % endif
 
 

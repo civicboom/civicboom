@@ -19,7 +19,8 @@ class MemberSettingsManager(UserDict.DictMixin):
             r = q.one()
             return r.value
         except NoResultFound:
-            return unicode(app_globals.user_defaults.get("settings", name))
+            try   : return unicode(app_globals.user_defaults.get("settings", name))
+            except: return None # AllanC - this was a quick fix, rather than relying on an exception can we check settings with a hasattr instead? or would the preferned way be a null entry in the user_prefs.ini file?
 
     def __setitem__(self, name, value):
         if type(value) == type(True):
