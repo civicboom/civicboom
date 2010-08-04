@@ -63,6 +63,8 @@
 ##------------------------------------------------------------------------------
 ## Date Component
 ##------------------------------------------------------------------------------
+##
+## Reference: http://developer.yahoo.com/yui/examples/button/btn_example09.html
 
 <%def name="date_component()">
     <script>

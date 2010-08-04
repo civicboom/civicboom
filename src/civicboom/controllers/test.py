@@ -84,3 +84,8 @@ class TestController(BaseController):
         m.config["height"] = 42
         m.config["height"] = 43
         return m.config["height"]
+
+    def email_render(self):
+        from webhelpers.html import literal
+        c.email_content = literal("<h1>Email Test OK!</h1>")
+        return render('email/base_email_from_plaintext.mako')
