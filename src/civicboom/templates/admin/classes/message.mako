@@ -8,5 +8,6 @@ ${common.errors(fieldset)}
 	${common.render_short_field(fieldset.source)|n}
 	${common.render_short_field(fieldset.target)|n}
 	${common.render_short_field(fieldset.timestamp)|n}
-	${common.render_short_field(fieldset.text)|n}
+	${common.render_short_field(fieldset.subject)|n}
+	${common.render_short_field(fieldset.content)|n}
 </table>

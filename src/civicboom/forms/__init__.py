@@ -174,7 +174,8 @@ Message.configure(include=[
         Message.source,
         Message.target,
         Message.timestamp,
-        Message.text,
+        Message.subject.with_renderer(fields.TextFieldRenderer),
+        Message.content,
         ])
 
 Tag = FieldSet(model.Tag)
@@ -231,7 +232,7 @@ CommentContentGrid.configure(include=[
         CommentContentGrid.title,
         CommentContentGrid.creator,
         CommentContentGrid.parent,
-        CommentContentGrid.attachments.readonly().readonly(),
+        CommentContentGrid.attachments.readonly(),
         ])
 
 DraftContentGrid = Grid(model.DraftContent)
@@ -266,6 +267,7 @@ MessageGrid.configure(include=[
         MessageGrid.source,
         MessageGrid.target,
         MessageGrid.timestamp.readonly(),
+        MessageGrid.subject,
         ])
 
 

@@ -17,7 +17,7 @@ class TestUserProfileController(TestController):
         # FIXME: test it
 
         response = self.app.post(
-            "/account/signin", #url(controller='account', action='signin'),
+            url(controller='account', action='signin'),
             params={
                 'username': u'unittest',
                 'password': u'password'
@@ -34,13 +34,15 @@ class TestUserProfileController(TestController):
         # FIXME: this fails? :|
         # assert "Display name" in response
 
-        # test that settings get set
+        # test that a setting without CSRF protection is rejected
         response = self.app.post(
-            "/user_profile/save", #url(controller='account', action='signin'),
+            url(controller='user_profile', action='save'),
             params={
                 'email': u'waffle@iamtesting.com',
             },
+            status = 403
         )
+        # FIXME: test with CSRF protection passed
         # FIXME: check for session['flash'] = "Settings changed: email"
         # FIXME: check that we're redirected back to the settings page
         # FIXME: check that the new settings appear on the new page

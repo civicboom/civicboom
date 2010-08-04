@@ -39,15 +39,15 @@ class TestController(BaseController):
         print "value: %s" % mc.get("some_key")
         print "inc  : %s" % mc.get("key")
 
-    def test_session(self):
+    def session(self):
         flash_message("hello session test")
         return redirect('/')
 
     @authorize(is_valid_user)
-    def test_logged_in(self):
+    def logged_in(self):
         return "you are logged in"
 
-    def test_db_read(self):
+    def db_read(self):
         from civicboom.lib.database.get_cached import get_licenses
         print "printing licence names"
         for licence in get_licenses():
