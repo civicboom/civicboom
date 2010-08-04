@@ -17,7 +17,7 @@ from   civicboom.lib.communication.email             import send_email
 # Form Validators
 from civicboom.lib.form_validators.base         import build_schema
 from civicboom.lib.form_validators.registration import RegisterSchemaEmailUsername
-from formencode import validators
+from formencode import validators, htmlfill
 
 
 import logging
@@ -71,8 +71,9 @@ class RegisterController(BaseController):
         
         try: # Form validation
             # Build a dynamic validation scema based on these required fields and validate the form
-            schema = build_schema(c.required_fields)
-            setattr(schema, "terms", validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'}))
+            schema = build_schema(c.required_fields)        
+            schema.fields['terms'] = validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'})
+            print vars(schema)
             form = schema.to_python(dict(request.params))
         except formencode.Invalid, error:  # If the form has errors overlay those errors over the previously rendered form
             form_result = error.value

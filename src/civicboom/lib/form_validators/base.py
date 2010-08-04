@@ -97,11 +97,12 @@ def build_schema(*args, **kargs):
     schema = DynamicSchema()
     if kargs:
         for key in kargs:
-            setattr(schema, key, kargs[key])
+            schema.fields[key] = kargs[key]
     elif args:
         for field in args:
-            if field=='username': setattr(schema, field, UniqueUsernameValidator())
-            if field=='email'   : setattr(schema, field, UniqueEmailValidator()   )
-            if field=='dob'     : setattr(schema, field, MinimumAgeValidator()    )
-            if field=='password': setattr(schema, field, PasswordValidator()      )
+            print "buiding arg: %s" % field
+            if field=='username': schema.fields[field] = UniqueUsernameValidator()
+            if field=='email'   : schema.fields[field] = UniqueEmailValidator()
+            if field=='dob'     : schema.fields[field] = MinimumAgeValidator()
+            if field=='password': schema.fields[field] = PasswordValidator()
     return schema
