@@ -29,9 +29,23 @@
 
 <%def name="body()">
 
-    <form action="" method="post">}
+    <form action="" method="post">
         % for field in c.required_fields:
-            ${eval(field)}
+            % if field=='username':
+              ${username()}
+            % endif
+            % if field=='email':
+              ${email()}
+            % endif
+            % if field=='dob':
+              ${dob()}
+            % endif
+            % if field=='password':
+              ${password()}
+            % endif
+            ##${eval(field)} wanted to just eval the field name but mako defs use differnt python names :( it's going to have to be a set of IF's
+            
+
         % endfor
         <input type="checkbox" name="terms" value="True" />${_("Agree to terms")}
         <input type="submit" name="submit" value="${_("Register")}"/>
@@ -56,7 +70,7 @@
 </%def>
 
 <%def name="password()">.
-  captcha
+  captcha & password
 </%def>
 
 
