@@ -89,6 +89,9 @@ class DynamicSchema(DefaultSchema):
     pass
 
 def build_schema(**kargs):
+    """
+    Given a set of kargs win the form of string:validator will create a new dynamic validator
+    """
     schema = DynamicSchema()
     for key in kargs:
         setattr(schema, key, kargs[key])

@@ -39,7 +39,6 @@ class RegisterController(BaseController):
     """
     
     def new_user(self, id=None):
-        
         registration_template = "/web/account/register.mako"
         
         c.new_user = get_user(id)
@@ -52,10 +51,15 @@ class RegisterController(BaseController):
         else:
             abort(401)
         
+        # Build required fields list from current user data - the template will then display these
+        c.required_fields = []
+        
+
         if request.environ['REQUEST_METHOD'] == 'GET':
-          return render(registration_template)
+            return render(registration_template)
         
         try: # Form validation
+            # Build a dynamic validation scema based on these required fields
             #form = RegisterSchemaReporter().to_python(dict(request.params))
             pass
         except formencode.Invalid, error:  # If the form has errors overlay those errors over the previously rendered form
@@ -63,11 +67,15 @@ class RegisterController(BaseController):
             form_errors = error.error_dict or {}
             return formencode.htmlfill.render(render(registration_template), defaults=form_result, errors=form_errors, prefix_error=False)
         
-        # If the validator has not forced a page render then the ...
+        # If the validator has not forced a page render
+        # then the data is fine - save the new user data
         
-        # Set status to 'active'
+        c.logged_in_user.status = "active"
         
-        flash_message(_("Congratulations, you have successfully signed up for _site_name. Please login"))
+        #Session.add(c.logged_in_user) #Already in session?
+        Session.commit()
+        
+        flash_message(_("Congratulations, you have successfully signed up to _site_name."))
         redirect_to('/')
 
 
