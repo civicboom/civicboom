@@ -7,8 +7,5 @@ class TestAccountController(TestController):
             params={
                 'username': u'unittest',
                 'password': u'password'
-            },
-            extra_environ={
-                'REMOTE_ADDR': '127.0.0.1'
             }
         )
