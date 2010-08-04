@@ -82,6 +82,10 @@ class Member(Base):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
+    def send_message(m):
+        import civicboom.lib.communication.messages as messages
+        messages.send_message(self, m)
+
     @property
     def avatar_url(self, size=80):
         if self.config["avatar"]:
