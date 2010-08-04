@@ -4,10 +4,11 @@ except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup, find_packages
+import os
 
 setup(
     name='civicboom',
-    version='0.1',
+    version=os.popen('git describe').read(),
     description='',
     author='',
     author_email='',
