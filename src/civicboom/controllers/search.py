@@ -52,7 +52,7 @@ class SearchController(BaseController):
         if "query" in request.GET:
             s = request.GET["query"]
             q = Session.query(Member)
-            q = q.filter(or_(Member.name.match(s), Member.username.match(s)))
+            q = q.filter(or_(Member.name.ilike(s+"%"), Member.username.ilike(s+"%")))
             result = q[0:20]
         else:
             result = []
