@@ -6,6 +6,8 @@ Base Formencode Validators
 import formencode
 from formencode import validators, compound
 
+from pylons.i18n.translation import _
+
 # Database Objects
 from civicboom.model.meta              import Session
 from civicboom.model.member            import User, Member
@@ -32,7 +34,7 @@ class MinimumAgeValidator(validators.FancyValidator):
          try:
              date = datetime.datetime.strptime(value, '%d/%m/%Y')
          except exceptions.ValueError:
-              raise formencode.Invalid("Please enter your date of birth with the format DD/MM/YYYY", value, state)
+              raise formencode.Invalid(_("Please enter your date of birth with the format DD/MM/YYYY"), value, state)
          if calculateAge(date) < self.age_min:
               raise formencode.Invalid(_("Sorry, you have to be over %d to use this site") % self.age_min, value, state)
          return date
@@ -43,9 +45,9 @@ class PasswordValidator(validators.FancyValidator):
     letter_regex = re.compile(r'[a-zA-Z]')
     not_empty    = True
     messages = {
-        'empty'     : 'You must enter a password',
-        'too_few'   : 'Your password must be longer than %(min)i characters',
-        'non_letter': 'You must include at least %(non_letter)i non-letter in your password',
+        'empty'     : _('You must enter a password'),
+        'too_few'   : _('Your password must be longer than %(min)i characters'),
+        'non_letter': _('You must include at least %(non_letter)i non-letter in your password'),
         }
     def _to_python(self, value, state):
         value = value.strip()
@@ -60,12 +62,12 @@ class UniqueUsernameValidator(validators.FancyValidator):
     min =  4
     max = 32
     messages = {
-        'too_few'       : 'Your username must be longer than %(min)i characters',
-        'too_long'      : 'Your username must be shorter than %(max)i characters',
-        'username_taken': 'The username %(name)s is no longer available, please try a different one'
+        'too_few'       : _('Your username must be longer than %(min)i characters'),
+        'too_long'      : _('Your username must be shorter than %(max)i characters'),
+        'username_taken': _('The username %(name)s is no longer available, please try a different one'),
         }
     def _to_python(self, value, state):
-        value = value.strip()
+        value = unicode(value.strip())
         # TODO: Strip or alert any characters that make it non URL safe
         if len(value) <= self.min:
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
@@ -77,8 +79,9 @@ class UniqueUsernameValidator(validators.FancyValidator):
 
 class UniqueEmailValidator(validators.Email):
     def _to_python(self, value, state):
+        value = unicode(value)
         if Session.query(User).filter(User.email==value).count() > 0:
-            raise formencode.Invalid('This email address is already registered with us. Please use a different address, or retrieve your password using the password recovery link.', value, state)
+            raise formencode.Invalid(_('This email address is already registered with us. Please use a different address, or retrieve your password using the password recovery link.'), value, state)
         return value
 
 
@@ -91,7 +94,7 @@ class DynamicSchema(DefaultSchema):
 
 def build_schema(*args, **kargs):
     """
-    Given a list of strings will attach e best match validator to them
+    Given a list of strings will attach best match validator to them
     Given a set of kargs win the form of string:validator will create a new dynamic validator
     """
     schema = DynamicSchema()
@@ -100,9 +103,11 @@ def build_schema(*args, **kargs):
             schema.fields[key] = kargs[key]
     elif args:
         for field in args:
-            print "buiding arg: %s" % field
             if field=='username': schema.fields[field] = UniqueUsernameValidator()
             if field=='email'   : schema.fields[field] = UniqueEmailValidator()
             if field=='dob'     : schema.fields[field] = MinimumAgeValidator()
-            if field=='password': schema.fields[field] = PasswordValidator()
+            if field=='password':
+                schema.fields[field]                = PasswordValidator()
+                schema.fields['password_confirm']   = PasswordValidator()
+                #schema.fields['chained_validators'] = validators.FieldsMatch('password', 'password_confirm') #humm
     return schema

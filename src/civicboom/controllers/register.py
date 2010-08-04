@@ -71,9 +71,8 @@ class RegisterController(BaseController):
         
         try: # Form validation
             # Build a dynamic validation scema based on these required fields and validate the form
-            schema = build_schema(c.required_fields)        
+            schema = build_schema(*c.required_fields)
             schema.fields['terms'] = validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'})
-            print vars(schema)
             form = schema.to_python(dict(request.params))
         except formencode.Invalid, error:  # If the form has errors overlay those errors over the previously rendered form
             form_result = error.value
@@ -81,7 +80,7 @@ class RegisterController(BaseController):
             return formencode.htmlfill.render(render(registration_template), defaults=form_result, errors=form_errors, prefix_error=False)
         
         # If the validator has not forced a page render
-        # then the data is fine - save the new user data        
+        # then the data is fine - save the new user data
         if 'username' in form: c.logged_in_user.username      = form['username']
         if 'email'    in form: c.logged_in_user.email         = form['email']
         if 'dob'      in form: c.logged_in_user.config['dob'] = form['dob']
