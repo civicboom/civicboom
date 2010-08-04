@@ -1,6 +1,7 @@
-all: cb-website.deb
+all: cb-website.deb python-cbmisc.deb
 
-# VERSION := 0.1.$(shell date +%Y%m%d.%H%M%S)
+EASY_INSTALL_PACKAGES = geoalchemy formalchemy geoformalchemy \
+	python-magic gp.fileupload mako
 VERSION := $(shell git describe)
 
 cb-website.deb: $(shell find ../admin_scripts ../debian ../nginx ../selenium ../src -type f | grep -vE "(fs-website)") _combined.js _combined.css
@@ -39,6 +40,22 @@ _combined.css: ../src/civicboom/public/styles/design09/design09_*.css ../src/civ
 		curl `cat ../src/civicboom/templates/web/html_header.mako | grep -oE "http.*\.css"` \
 	) | yui-compressor --type css > _combined.css
 
+python-cbmisc.deb: control.env Makefile
+	mkdir -p fs-env/DEBIAN/
+	cp control.env fs-env/DEBIAN/control
+	sed -i s/VERSION/${VERSION}/ fs-env/DEBIAN/control
+	echo ================================================ >/dev/null
+	mkdir -p fs-env/opt/cb
+	virtualenv fs-env/opt/cb
+	./fs-env/opt/cb/bin/easy_install ${EASY_INSTALL_PACKAGES}
+	mkdir -p ./fs-env/usr/lib/python2.6/dist-packages/
+	cat fs-env/opt/cb/lib/python2.6/site-packages/easy-install.pth | \
+		sed "s#./#/opt/cb/lib/python2.6/site-packages/#" \
+		> fs-env/usr/lib/python2.6/dist-packages/cbmisc.pth
+	echo ================================================ >/dev/null
+	fakeroot dpkg -b fs-env python-cbmisc_${VERSION}.deb
+	ln -sf python-cbmisc_${VERSION}.deb python-cbmisc.deb
+
 clean:
-	rm -rf fs-* cb-*.deb _combined.*
+	rm -rf fs-* *.deb _combined.*
 

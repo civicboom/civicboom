@@ -1,10 +1,12 @@
 *.pyc
-env
+*.mo
 src/data
+src/.coverage
+src/civicboom/public/warehouse
 debian/*.deb
 debian/fs-*
 debian/_combined.*
-src/civicboom/public/warehouse
-*.mo
-tmp
+debian/distribute*
+coverage/
+tmp/
 places.sql
