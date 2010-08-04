@@ -12,7 +12,7 @@ from civicboom.lib.database.actions    import follow, accept_assignment
 
 # Communication & Messages
 from   civicboom.lib.communication.email             import send_email
-#import civicboom.lib.communication.message_generator
+#import civicboom.lib.communication.messages as messages
 
 # Form Validators
 from civicboom.lib.form_validators.registration import RegisterSchemaEmailUsername
@@ -97,7 +97,7 @@ class RegisterController(BaseController):
             refered_by = get_user(request.params['refered_by'])
             if follow(refered_by, u) == True:
                 log.debug("message generation not implmented yet")
-                #message_generator.followed_on_signup(refered_by, reporter=u)
+                #refered_by.send_message(messages.followed_on_signup(reporter=u)
         
         # Accept assignment
         if 'accept_assignment' in request.params:
@@ -106,7 +106,7 @@ class RegisterController(BaseController):
             #assignment = get_assignment(request.params['accept_assignment'])
             #accept_assignment_status = accept_assignment(new_reporter, assignment)
             #if accept_assignment_status == True:
-            #    message_generator.assignment_accepted(refered_by_reporter,reporter=new_reporter, assignment=assignment)
+            #    refered_by_reporter.send_message(messages.assignment_accepted(reporter=new_reporter, assignment=assignment))
         
         Session.commit()
         
