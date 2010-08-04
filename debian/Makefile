@@ -40,10 +40,14 @@ _combined.css: ../src/civicboom/public/styles/design09/design09_*.css ../src/civ
 		curl `cat ../src/civicboom/templates/web/html_header.mako | grep -oE "http.*\.css"` \
 	) | yui-compressor --type css > _combined.css
 
-python-cbmisc.deb: control.env Makefile
+python-cbmisc.deb: Makefile
 	mkdir -p fs-env/DEBIAN/
-	cp control.env fs-env/DEBIAN/control
-	sed -i s/VERSION/${VERSION}/ fs-env/DEBIAN/control
+	echo ================================================ >/dev/null
+	echo "Package: python-cbmisc" > fs-env/DEBIAN/control
+	echo "Version: ${VERSION}" >> fs-env/DEBIAN/control
+	echo "Architecture: all" >> fs-env/DEBIAN/control
+	echo "Maintainer: Shish <shish@civicboom.com>" >> fs-env/DEBIAN/control
+	echo "Description: a package to install a python virtualenv and easy_install packages into it" >> fs-env/DEBIAN/control
 	echo ================================================ >/dev/null
 	mkdir -p fs-env/opt/cb
 	virtualenv fs-env/opt/cb
