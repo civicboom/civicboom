@@ -13,22 +13,28 @@ setup(
     author='',
     author_email='',
     url='',
+    # IMPORTANT NOTE: the package build script does magic with the next few
+    # lines of text -- the first array is packages which need to be fetched
+    # from the python package index, the second array is packages which are
+    # supplied by debian
     install_requires=[
-        "Pylons>=1.0.0",
         "Mako>=0.3.4",
-        "SQLAlchemy>=0.6.3",
-        #"AuthKit",
-        "recaptcha-client",
-        "pyDNS",
         "python_magic",
-        "python_memcached",
-        "FormAlchemy",
         "GeoAlchemy",
         "GeoFormAlchemy",
+        "gp.fileupload",
+    ] + [
+        "Pylons>=1.0.0",
+        "SQLAlchemy>=0.6.3",
+        "FormAlchemy",
+        "recaptcha-client",
+        "pyDNS",
+        "python_memcached",
         "boto",
         "Babel",
         "PIL",
     ],
+
     setup_requires=["PasteScript>=1.6.3"],
     packages=find_packages(exclude=['ez_setup']),
     include_package_data=True,

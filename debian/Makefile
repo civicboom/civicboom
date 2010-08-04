@@ -1,10 +1,13 @@
 all: cb-website.deb python-cbmisc.deb
 
-EASY_INSTALL_PACKAGES = geoalchemy formalchemy geoformalchemy \
-	python-magic gp.fileupload mako
 VERSION := $(shell git describe)
 
-cb-website.deb: $(shell find ../admin_scripts ../debian ../nginx ../selenium ../src -type f | grep -vE "(fs-website)") _combined.js _combined.css
+# try and read dependencies from setup.py
+# this is full of magic because grep sucks at handling newline characters
+# the aim is to input setup.py, and output eg --> "Mako>=0.3.4" "gp.fileupload" "GeoFormAlchemy"
+EASY_INSTALL_PACKAGES := $(shell python -c "import re;print re.sub('[ \n]','',re.match('.*install_requires=\[([^]]*)\].*',file('../src/setup.py').read(),re.DOTALL).group(1)).replace(',', ' ')")
+
+cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type f) _combined.js _combined.css
 	rm -rf fs-website
 	mkdir -p fs-website/DEBIAN/
 	cp control fs-website/DEBIAN/control
@@ -40,7 +43,7 @@ _combined.css: ../src/civicboom/public/styles/design09/design09_*.css ../src/civ
 		curl `cat ../src/civicboom/templates/web/html_header.mako | grep -oE "http.*\.css"` \
 	) | yui-compressor --type css > _combined.css
 
-python-cbmisc.deb: Makefile
+python-cbmisc.deb: ../src/setup.py
 	mkdir -p fs-env/DEBIAN/
 	echo ================================================ >/dev/null
 	echo "Package: python-cbmisc" > fs-env/DEBIAN/control
@@ -61,5 +64,5 @@ python-cbmisc.deb: Makefile
 	ln -sf python-cbmisc_${VERSION}.deb python-cbmisc.deb
 
 clean:
-	rm -rf fs-* *.deb _combined.*
+	rm -rf fs-* *.deb _combined.* distribute*
 
