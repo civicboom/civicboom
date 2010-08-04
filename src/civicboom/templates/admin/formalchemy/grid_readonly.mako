@@ -18,7 +18,7 @@
 	  % elif field.key == "delete":
       <!-- none -->
 	  % else:
-	  <th>${field.render()}</th>
+	  <th>${field.render()|n}</th>
 	  % endif
     %endfor
   </form>

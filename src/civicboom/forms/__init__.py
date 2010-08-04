@@ -32,14 +32,18 @@ class Grid(tables.Grid):
 class MemberFieldRenderer(FieldRenderer):
     def render(self, options={}):
         value= self.value and self.value or ''
-        vars = dict(field_name=self.name, value=value)
+        cn = ""
+        for name, n in options:
+            if str(n) == self.value:
+                cn = name
+        vars = dict(field_name=self.name, value=value, value_name=cn)
         return """
-<div style="width: ${size}px; padding-bottom: 2em;">
-	<input id="${field_name}_name" name="${field_name}_name" type="text">
-	<div id="${field_name}_comp"></div>
-	<input id="${field_name}" name="${field_name}" type="hidden" value="${value}">
+<div style="padding-bottom: 2em;">
+	<input id="%(field_name)s_name" name="%(field_name)s_name" type="text" value="%(value_name)s">
+	<div id="%(field_name)s_comp"></div>
+	<input id="%(field_name)s" name="%(field_name)s" type="hidden" value="%(value)s">
 </div>
-<script>autocomplete_member("${field_name}_name", "${field_name}_comp", "${field_name}");</script>
+<script>autocomplete_member("%(field_name)s_name", "%(field_name)s_comp", "%(field_name)s");</script>
         """ % vars
 
 FieldSet.default_renderers[geometry.Geometry] = GeometryFieldRenderer
@@ -167,8 +171,8 @@ Group.configure(include=[
 Message = FieldSet(model.Message)
 Message.engine = CustomTemplateEngine("message")
 Message.configure(include=[
-        Message.source.with_renderer(MemberFieldRenderer),
-        Message.target.with_renderer(MemberFieldRenderer),
+        Message.source,
+        Message.target,
         Message.timestamp,
         Message.text,
         ])
