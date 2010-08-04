@@ -6,7 +6,7 @@
 	<input id="${field_name}" name="${field_name}" type="hidden">
 </div>
 % if map:
-<div style="width: ${size}; height: ${size}px; border: 1px solid black;" id="${field_name}_mapdiv"></div>
+<div style="width: ${size}; height: ${size}; border: 1px solid black;" id="${field_name}_mapdiv"></div>
 <script>
 ${field_name}_map = new OpenLayers.Map("${field_name}_mapdiv", { controls: [] });
 ${field_name}_map.addLayer(new OpenLayers.Layer.OSM());

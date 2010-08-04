@@ -34,13 +34,14 @@ def make_map(config):
     # Redirects were eating form posts so they have been remmed out for refernece
     #map.redirect('/{controller}/'         , '/{controller}'         ) 
     #map.redirect('/{controller}/{action}/', '/{controller}/{action}')
-    
-    map.connect('/{controller}/{action}/')
-    map.connect('/{controller}/{action}/{id}/')
 
     map.connect('/{controller}/{action}.{format}')
+    map.connect('/{controller}/{action}/')
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}.{format}/{id}')
+    map.connect('/{controller}/{action}/{id}/')
     map.connect('/{controller}/{action}/{id}')
+    map.connect('/{controller}/', action="index")
+    map.connect('/{controller}', action="index")
 
     return map

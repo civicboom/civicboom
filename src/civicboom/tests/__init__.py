@@ -29,7 +29,7 @@ class TestController(TestCase):
     def __init__(self, *args, **kwargs):
         wsgiapp = pylons.test.pylonsapp
         config = wsgiapp.config
-        self.app = TestApp(wsgiapp)
+        self.app = TestApp(wsgiapp, extra_environ={'REMOTE_ADDR': '0.0.0.0'})
         url._push_object(URLGenerator(config['routes.map'], environ))
         TestCase.__init__(self, *args, **kwargs)
 
