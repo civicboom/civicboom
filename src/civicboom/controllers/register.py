@@ -54,7 +54,7 @@ class RegisterController(BaseController):
         # Build required fields list from current user data - the template will then display these
         c.required_fields = []
         
-
+        
         if request.environ['REQUEST_METHOD'] == 'GET':
             return render(registration_template)
         

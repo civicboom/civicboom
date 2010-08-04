@@ -29,6 +29,10 @@
 
 <%def name="body()">
 
+  % for field in c.required_fields:
+    
+  % endfor
+
 username
 
 % if not c.logged_in_user.email or c.logged_in_user.email == "":
@@ -46,6 +50,18 @@ username
 ##'dob' not in c.logged_in_user.config:
   dob needed
   
+
+% endif
+
+
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Date Component
+##------------------------------------------------------------------------------
+
+<%def name="date_component()">
     <script>
         YAHOO.namespace("example.calendar");
         YAHOO.example.calendar.init = function() {
@@ -68,12 +84,7 @@ username
         YAHOO.util.Event.onDOMReady(YAHOO.example.calendar.init);
     </script>
 
-  
     <div class="yui-skin-sam">
         <div id="cal1Container"></div>
     </div>
-
-% endif
-
-
 </%def>
