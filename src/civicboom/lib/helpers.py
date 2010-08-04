@@ -12,6 +12,8 @@ import re
 
 from civicboom.lib.text import scan_for_embedable_view_and_autolink
 
+from civicboom.lib.services.reCAPTCHA import get_captcha
+
 
 def shorten_url(url):
     return re.sub("http://[^/]+", "", url)

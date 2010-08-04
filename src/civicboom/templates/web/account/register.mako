@@ -106,6 +106,7 @@
 
 <%def name="password()">
   captcha & password
+  ${h.get_captcha()}
 </%def>
 
 

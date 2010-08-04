@@ -8,6 +8,9 @@ from formencode import validators, compound
 
 from pylons.i18n.translation import _
 
+from civicboom.lib.services.reCAPTCHA import CaptchaValidator
+
+
 # Database Objects
 from civicboom.model.meta              import Session
 from civicboom.model.member            import User, Member
@@ -109,5 +112,5 @@ def build_schema(*args, **kargs):
             if field=='password':
                 schema.fields[field]                = PasswordValidator()
                 schema.fields['password_confirm']   = PasswordValidator()
-                #schema.fields['chained_validators'] = validators.FieldsMatch('password', 'password_confirm') #humm
+                #schema.fields['chained_validators'] = [validators.FieldsMatch('password', 'password_confirm'),]
     return schema
