@@ -75,7 +75,10 @@ class RegisterController(BaseController):
     def email(self):
         """
         User submits a proposed username and email to this action
+        A new skeleton user is created for the user to complete the registration
+        An email with a verification hash is sent
         """
+        
         # Check the form and raise any problems with the flash message session system
         try:
             form = RegisterSchemaEmailUsername().to_python(dict(request.params))
@@ -117,3 +120,40 @@ class RegisterController(BaseController):
         send_email(u, subject='verify e-mail address', content_text=message)
         
         return _("Thank you. Please check your email to complete the registration process")
+        
+        
+#-------------------------------------------------------------------------------
+# Regisration Utilitys (for import by other modules)
+#-------------------------------------------------------------------------------
+
+def register_new_janrain_user(profile):
+    """
+    With a Janrain user dictonary create a new user with whatever data has been provided as best we can
+    If additional information is required the account controler will redirect to the register action to ask for additional details
+    """
+    u = User()
+    u.status        = "pending"
+    u.username      = valid_username(profile.get('displayName'))
+    u.name          = profile.get('name').get('formatted')
+    u.email         = valid_email(profile.get('verifiedEmail') or profile.get('email'))
+    u.avatar        = profile.get('photo')
+    u.webpage       = profile.get('url')
+    #u.location      = get_location_from_json(profile.get('address'))
+    
+    u_login = UserLogin()
+    u_login.user   = u()
+    u_login.type   = profile['providerName']
+    u_login.token  = profile['identifier']
+    
+    Session.addall([u,u_login])
+    Session.commit()
+    
+    u.config['dob']  = profile.get('birthday') #Config vars? auto commiting?
+    #u.config['url']  = profile.get('url')
+    
+    # Future addition and enhancements
+    #   with janrain we could get a list of friends/contnact and automatically follow them?
+    #   Could we leverage twitter/facebook OAuth token?
+    # Reference - https://rpxnow.com/docs#api_auth_info
+    
+    return u

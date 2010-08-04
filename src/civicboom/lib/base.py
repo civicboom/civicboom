@@ -35,9 +35,9 @@ class BaseController(WSGIController):
             c.logged_in_user = get_user(request.environ['REMOTE_USER'])
 
         # If logged in user is still pending - redirect to complete registration process
-        if c.logged_in_user and c.logged_in_user.status=='pending':
+        if c.logged_in_user and c.logged_in_user.status=='pending' and url.current().find(url(controller='register', action='new_user'))<0:
             flash_message(_('Please complete the regisration process'))
-            redirect(url(controller='register', action='new_user'))
+            redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 
         # Setup Langauge
         if   'lang' in request.params:  self._set_lang(request.params['lang']) # If lang set in URL

@@ -65,6 +65,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
         }
     def _to_python(self, value, state):
         value = value.strip()
+        # TODO: Strip or alert any characters that make it non URL safe
         if len(value) <= self.min:
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
         if len(value) >= self.max:
@@ -78,3 +79,17 @@ class UniqueEmailValidator(validators.Email):
         if Session.query(User).filter(User.email==value).count() > 0:
             raise formencode.Invalid('This email address is already registered with us. Please use a different address, or retrieve your password using the password recovery link.', value, state)
         return value
+
+
+#-------------------------------------------------------------------------------
+# Schema Factory
+#-------------------------------------------------------------------------------
+
+class DynamicSchema(DefaultSchema):
+    pass
+
+def build_schema(**kargs):
+    schema = DynamicSchema()
+    for key in kargs:
+        setattr(schema, key, kargs[key])
+    return schema
