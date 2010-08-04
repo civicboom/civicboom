@@ -1,4 +1,4 @@
-function autocomplete_location(location_box, completions_box, gis_box) {
+function autocomplete_location(location_box, completions_box, gis_box, map) {
 	// Data Source setup
     var oDS = new YAHOO.util.XHRDataSource("/search/location.json");
     oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
@@ -21,6 +21,14 @@ function autocomplete_location(location_box, completions_box, gis_box) {
 		var oData = aArgs[2]; // object literal of data for the result
 		if(gis_box) {
 			document.getElementById(gis_box).value = oData.location;
+		}
+		if(map) {
+			var typelonlat = oData.location.split(/[ ()]/);
+			lonlat = new OpenLayers.LonLat(typelonlat[2], typelonlat[1]).transform(
+				new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+				new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+			);
+			map.setCenter(lonlat, 13);
 		}
 	});
 };
