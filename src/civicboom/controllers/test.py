@@ -88,3 +88,9 @@ class TestController(BaseController):
         import civicboom.lib.communication.messages as messages
         m = Session.query(Member).first()
         m.send_message(messages.msg_test(text="hello o/"))
+
+    def email_render(self):
+        from webhelpers.html import literal
+        c.email_content = literal("<h1>Email Test OK!</h1>")
+        return render('email/base_email_from_plaintext.mako')
+

@@ -30,6 +30,7 @@ def split_word(text,max_chars=None):
 
 #-------------------------------------------------------------------------------
 
+# AllanC - Is this needed now we have internationalisation?
 def format_multiple_prefix(number, **kargs):
     """
     prefix a name with a number
@@ -166,26 +167,27 @@ def convert_html_to_plain_text(content_html, ommit_links=False):
     text = content_html  
     text_body = re.sub(r'(?is)<body>(.*)</body>',r'\1',text)  #Extact the body if text if it is a full HTML doc
     if text_body:
-      text = text_body
+        text = text_body
     text = re.sub(r'(?is)<style.*</style>',r'',text)       # The style tag has contents that are not human readable, dispose of contents and not just the tag
     text = re.sub(r'(?i)<br>|<br/>|</p>|</li>',r'\n',text) # Replace any ends of sections with new lines
     text = re.sub(r'(?i)<li>',r' - ',text)                 # List items should have starters (enchancement? numbers for ol?)
     def heading_replace(m):
-      heading_level = m.group(2)
-      heading_decoration = ""
-      for i in range(int(heading_level)):
-        heading_decoration += "="
-      newline_before = ""
-      newline_after  = ""
-      if m.group(1)!='':
-        newline_after = '\n'
-      else:
-        newline_before = '\n'
-      return newline_before+" "+heading_decoration+" "+newline_after
+        # improvement idea: use str.center(width[, fillchar]) Return centered in a string of length width. Padding is done using the specified fillchar (default is a space).
+        heading_level = m.group(2)
+        heading_decoration = ""
+        for i in range(int(heading_level)):
+          heading_decoration += "="
+        newline_before = ""
+        newline_after  = ""
+        if m.group(1)!='':
+          newline_after = '\n'
+        else:
+          newline_before = '\n'
+        return newline_before+" "+heading_decoration+" "+newline_after
     text = re.sub(r'(?i)<(/?)h([1-9])>',heading_replace,text)  #Replace headdings with ==Heading==
     link_replacement_pattern = r'\2 (\1)'
     if ommit_links:  # Sometimes when we convert to plain text we dont want verbose http://site in it because we want it to be a concise and possible
-      link_replacement_pattern = r'\2'
+        link_replacement_pattern = r'\2'
     text = re.sub(r'(?is)<a.*?href=[\'"](.*?)[\'"].*?>(.*?)</a>', link_replacement_pattern, text)
     text = strip_html_tags(text)            # Remove all left over HTML tags
     text = re.sub(r' +' ,r' ' ,text)        # Concatinate multiple spaces into a single space
@@ -199,4 +201,4 @@ def convert_html_to_plain_text(content_html, ommit_links=False):
 #-------------------------------------------------------------------------------
 
 def get_html_links(text):
-  return re.findall(r'<a href=(.*?)>', text)
+    return re.findall(r'<a href=(.*?)>', text)

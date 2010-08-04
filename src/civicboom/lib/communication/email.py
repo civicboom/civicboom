@@ -60,10 +60,10 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
 
 def send_email_log(email_to, subject, content_text, content_html):
     log.debug("--Email Send Disabled-- logging email output\n"
-            + "To: %s Subject: %s" % (email_to, subject) +"\n"
-            + "Message (content_text): %s" % content_text +"\n"
+              "To: %s Subject: %s" % (email_to, subject) +"\n"
+              "Message (content_text): %s" % content_text +"\n"
             #+ "Message (content_html): %s" % content_html +"\n"
-            + "\n")
+              "\n")
 
 
 #-------------------------------------------------------------------------------
@@ -73,6 +73,7 @@ def send_email_smtp(email_to, subject, content_text, content_html, sender=config
     """
     Takes a comma separated list (email_to) with a subject and message body
     and sends it out to all the recipients
+    No modification is made to any content
     """
     from email.MIMEMultipart import MIMEMultipart
     from email.MIMEText import MIMEText

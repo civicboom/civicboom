@@ -1,11 +1,10 @@
 from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, _, session, flash_message, redirect_to_referer
 
-from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password
+from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user
 from civicboom.lib.services.janrain import janrain
 from civicboom.lib.web              import session_remove, session_get
 
-from civicboom.model.member       import User, UserLogin
-from civicboom.model.meta         import Session
+from civicboom.controllers.register import register_new_janrain_user
 
 import urllib
 
@@ -71,50 +70,15 @@ class AccountController(BaseController):
 
         # If user has existing account: Login
         if c.logged_in_user:
-            user_log.info("logged in")               # Log user login
-            session['user_id'] = c.logged_in_user.id # Set server session variable to user.id
-            
-            # Redirect them back to where they were going if a redirect was set
-            login_redirect = session_get('login_redirect')
-            if login_redirect:
-                session_remove('login_redirect')
-                return redirect(login_redirect)
-            return redirect('/')
-            
+            signin_user(c.logged_in_user)
+        
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
-            profile = auth_info['profile']
-            
-            u = User()
-            u.status        = "pending"
-            u.username      = valid_username(profile.get('displayName'))
-            u.name          = profile.get('name').get('formatted')
-            u.email         = profile.get('verifiedEmail') or profile.get('email')
-            u.avatar        = profile.get('photo')
-            u.webpage       = profile.get('url')
-            #u.location      = get_location_from_json(profile.get('address'))
-            
-            u_login = UserLogin()
-            u_login.user   = u()
-            u_login.type   = profile['providerName']
-            u_login.token  = profile['identifier']
-            
-            Session.addall([u,u_login])
-            Session.commit()
-            
-            u.config['dob']  = profile.get('birthday')
-            #u.config['url']  = profile.get('url')
-            
+            u = register_new_janrain_user(auth_info['profile'])               # Create new user from Janrain profile data
             janrain('map', identifier=profile['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
-
-            # Future addition and enhancements
-            #   with janrain we could get a list of friends/contnact and automatically follow them?
-            #   Could we leverage twitter/facebook OAuth token?
-            # Reference - https://rpxnow.com/docs#api_auth_info
+            signin_user(u)
+            #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             
-            redirect(url(controller='register', action='new_user', id=u.id))
-            
-
         # If not authenticated or any janrain info then error
         flash_message(_('Unable to authenticate user'))
         return redirect_to_referer()

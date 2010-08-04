@@ -10,8 +10,7 @@ from pylons.i18n.translation import _, ungettext, set_lang
 
 from civicboom.model                   import meta
 from civicboom.lib.database.get_cached import get_user
-from civicboom.lib.web                 import flash_message, redirect_to_referer
-
+from civicboom.lib.web                 import flash_message, redirect_to_referer, action_redirector
 
 
 import logging
@@ -26,6 +25,7 @@ class BaseController(WSGIController):
     
     def __before__(self):
 
+        # Login - Fetch logged in user from session id (if present)
         c.logged_in_user = get_user(session.get('user_id'))
 
         # AuthKit Login Fallback - if AuthKit is enabled this will set the logged_in_user
@@ -34,16 +34,17 @@ class BaseController(WSGIController):
         if not c.logged_in_user and 'authkit.setup.method' in config and 'REMOTE_USER' in request.environ:
             c.logged_in_user = get_user(request.environ['REMOTE_USER'])
 
-        # If logged in user is still pending - redirect to complete registration process
-        if c.logged_in_user and c.logged_in_user.status=='pending':
-            flash_message(_('Please complete the regisration process'))
-            redirect(url(controller='register', action='new_user'))
-
         # Setup Langauge
+        #  - there is a way of setting fallback langauges, investigate?
         if   'lang' in request.params:  self._set_lang(request.params['lang']) # If lang set in URL
         elif 'lang' in session       :  self._set_lang(       session['lang']) # Lang set for this users session
         #elif c.logged_in_user has lang: self._set_lang(c.logged_in_user.?)     # Lang in user preferences
         else                         :  self._set_lang(        config['lang']) # Default lang in config file
+
+        # User pending regisration? - redirect to complete registration process
+        if c.logged_in_user and c.logged_in_user.status=='pending' and url.current().find(url(controller='register', action='new_user'))<0:
+            flash_message(_('Please complete the regisration process'))
+            redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 
         # Setup site app_globals on first request
         # AllanC - I dont like this, is there a call we can maybe put in the tasks controler? or an init controler? that we can fire when the site is restarted?
@@ -60,8 +61,6 @@ class BaseController(WSGIController):
         c.absolute_links = False
 
         current_request = request.environ.get("pylons.routes_dict")
-        #for key in current_request:
-        #  print "%s:%s" % (key,current_request[key])
         c.action    = current_request.get("action")
         c.action_id = current_request.get("id")
 

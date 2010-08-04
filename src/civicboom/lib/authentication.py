@@ -3,13 +3,13 @@ Tools used for Authentication of users
 """
 
 # Pylons imports
-from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, flash_message
+from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, flash_message, session
 
 # Civicboom imports
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
 
-from civicboom.lib.web import session_set
+from civicboom.lib.web import session_set, session_get, session_remove
 
 # Other imports
 from sqlalchemy.orm import join
@@ -22,21 +22,25 @@ from decorator import decorator
 import logging
 user_log = logging.getLogger("user")
 
+
+
 #-------------------------------------------------------------------------------
 # Standard Tools
 #-------------------------------------------------------------------------------
+
+def encode_plain_text_password(password):
+    return hashlib.sha1(password).hexdigest()
 
 def get_user_and_check_password(username, password):
     """
     Called by account controller and/or AuthKit valid_password to return a user from local db
     """
-    password = hashlib.sha1(password).hexdigest()
     try:
         q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
         q = q.filter(User.username   == username  )
         q = q.filter(User.status     == 'active'  )
         q = q.filter(UserLogin.type  == 'password')
-        q = q.filter(UserLogin.token == password  )
+        q = q.filter(UserLogin.token == encode_plain_text_password(password))
         q = q.one()
         return q
     except:
@@ -165,3 +169,16 @@ def authorize(authenticator):
         return decorator(wrapper)(target)
     return my_decorator
 
+
+def signin_user(user):
+    user_log.info("logged in")   # Log user login
+    session['user_id'] = user.id # Set server session variable to user.id
+    
+    # Redirect them back to where they were going if a redirect was set
+    login_redirect = session_get('login_redirect')
+    if login_redirect:
+        session_remove('login_redirect')
+        return redirect(login_redirect)
+    
+    # If no redirect send them to the page root
+    return redirect('/')

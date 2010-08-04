@@ -4,6 +4,7 @@ from datetime import date
 Low level miscilanious calls
 """
 
+# AllanC - cant this be removed and replaced with filter()? see python docs for more info on filter
 def remove_where(list, check_for_removal_function):
     """
     Remove items from a list is the removal function returns True
