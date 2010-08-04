@@ -5,15 +5,15 @@ import bz2
 
 class Node(object):
     def __init__(self, attributes):
-        self.lat = float(attributes["lat"])
         self.lon = float(attributes["lon"])
+        self.lat = float(attributes["lat"])
         self.name = None
         self.type = None
         self.isin = None
 
     def __unicode__(self):
         print "INSERT INTO places(location, name, type)",
-        print "VALUES(ST_Point(%s, %s), '%s', '%s');" % (self.lat, self.lon, self.name.replace("'", "''"), self.type)
+        print "VALUES(ST_Point(%s, %s), '%s', '%s');" % (self.lon, self.lat, self.name.replace("'", "''"), self.type)
 
 class MapHandler(xml.sax.handler.ContentHandler):
     def __init__(self):
