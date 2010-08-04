@@ -19,27 +19,27 @@ msgstr ""
 
 #: civicboom/controllers/account.py:98
 msgid "Unable to authenticate user"
-msgstr ""
+msgstr "Impossible d&#39;authentifier l&#39;utilisateur"
 
 #: civicboom/controllers/content.py:192
 msgid "your user does not have the permissions to edit this _content"
-msgstr ""
+msgstr "votre nom d&#39;utilisateur ne dispose pas des autorisations nécessaires pour modifier cette _content"
 
 #: civicboom/controllers/content.py:273
 msgid "your current user does not have the permissions to delete this _content"
-msgstr ""
+msgstr "votre nom d&#39;utilisateur actuel ne dispose pas des autorisations pour supprimer ce _content"
 
 #: civicboom/controllers/content.py:276
 msgid "_content deletion is not implemented yet"
-msgstr ""
+msgstr "suppression _content n&#39;est pas encore implémentée"
 
 #: civicboom/lib/authentication.py:97
 msgid "Incorrect username and password"
-msgstr ""
+msgstr "nom d&#39;utilisateur et mot de passe incorrect"
 
 #: civicboom/lib/authentication.py:128
 msgid "Your login has expired please log in again"
-msgstr ""
+msgstr "Votre connexion a expiré s&#39;il vous plaît vous connecter à nouveau"
 
 #: civicboom/lib/messages/message_generator.py:113
 msgid "new follower"
@@ -52,7 +52,7 @@ msgstr "%(reporter)s is le following le you"
 
 #: civicboom/lib/messages/message_generator.py:119
 msgid "new sign up via widget"
-msgstr ""
+msgstr "nouveau signe via widget"
 
 #: civicboom/lib/messages/message_generator.py:120
 #, python-format
@@ -111,36 +111,36 @@ msgstr "Utilitaires Divers"
 
 #: civicboom/templates/admin/restfieldset.mako:76
 msgid "Statistics"
-msgstr ""
+msgstr "Statistiques"
 
 #: civicboom/templates/admin/restfieldset.mako:85
 msgid "bits of content"
-msgstr ""
+msgstr "des morceaux de contenu"
 
 #: civicboom/templates/admin/restfieldset.mako:86
 #: civicboom/templates/admin/restfieldset.mako:90
 msgid "pending"
-msgstr ""
+msgstr "en attendant"
 
 #: civicboom/templates/admin/restfieldset.mako:89
 msgid "users"
-msgstr ""
+msgstr "utilisateurs"
 
 #: civicboom/templates/admin/restfieldset.mako:91
 msgid "suspended"
-msgstr ""
+msgstr "suspendu"
 
 #: civicboom/templates/admin/restfieldset.mako:93
 msgid "groups"
-msgstr ""
+msgstr "groupes"
 
 #: civicboom/templates/admin/restfieldset.mako:94
 msgid "uploads"
-msgstr ""
+msgstr "Mises"
 
 #: civicboom/templates/admin/restfieldset.mako:100
 msgid "Full List"
-msgstr ""
+msgstr "Liste complète"
 
 #: civicboom/templates/admin/classes/comment.mako:14
 #: civicboom/templates/admin/classes/content.mako:14
@@ -268,15 +268,15 @@ msgstr "Télécharger du contenu"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:37
 msgid "Delete"
-msgstr ""
+msgstr "Effacer"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:39
 msgid "Save Draft"
-msgstr ""
+msgstr "Enregistrer comme brouillon"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:40
 msgid "Preview Draft"
-msgstr ""
+msgstr "Aperçu Projet"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:41
 #, fuzzy
@@ -297,7 +297,7 @@ msgstr "Tags"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:179
 msgid "Attach Media (optional)"
-msgstr ""
+msgstr "Fixez les médias (en option)"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:193
 #: civicboom/templates/web/content_editor/content_editor.mako:207
@@ -314,19 +314,19 @@ msgstr "Description"
 #: civicboom/templates/web/content_editor/content_editor.mako:195
 #: civicboom/templates/web/content_editor/content_editor.mako:209
 msgid "Credited to"
-msgstr ""
+msgstr "À valoir sur"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:204
 msgid "Select a file to upload"
-msgstr ""
+msgstr "Sélectionnez un fichier à télécharger"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:207
 msgid "Upload"
-msgstr ""
+msgstr "Envoyer"
 
 #: civicboom/templates/web/content_editor/content_editor.mako:226
 msgid "Licence (optional)"
-msgstr ""
+msgstr "Licence (en option)"
 
 #: civicboom/templates/web/design09/content/content_view.mako:17
 #, fuzzy
@@ -335,30 +335,26 @@ msgstr "Contenu saisir"
 
 #: civicboom/templates/web/design09/content/content_view.mako:22
 msgid "Actions"
-msgstr ""
+msgstr "Actes"
 
 #: civicboom/templates/web/design09/content/content_view.mako:29
 msgid "Are your sure you want to delete this _article?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir supprimer ce _article?"
 
 #: civicboom/templates/web/design09/content/content_view.mako:41
 msgid "Licence"
-msgstr ""
+msgstr "Licence"
 
 #: civicboom/templates/web/design09/content/content_view.mako:47
 msgid "Content issues?"
-msgstr ""
+msgstr "Questions de contenu?"
 
 #: civicboom/templates/web/design09/includes/content_list.mako:14
 #, python-format
-msgid "%d response"
-msgid_plural "%d responses"
-msgstr[0] ""
-msgstr[1] ""
 
 #: civicboom/templates/web/design09/includes/content_list.mako:22
 #, fuzzy
-msgid "Read More"
+msgid "%d response"
 msgstr "En savoir plus"
 
 #: civicboom/templates/web/design09/includes/footer.mako:4
@@ -448,15 +444,15 @@ msgstr "Trouver"
 
 #: civicboom/templates/web/design09/includes/share_links.mako:1
 msgid "Share this"
-msgstr ""
+msgstr "Partager cet"
 
 #: civicboom/templates/web/design09/includes/share_links.mako:36
 msgid "Boom this! Share this with all your Followers"
-msgstr ""
+msgstr "Boom ça! Partager cet article avec toute ta"
 
 #: civicboom/templates/web/design09/includes/share_links.mako:39
 msgid "Boom this"
-msgstr ""
+msgstr "Boom de ce"
 
 #: civicboom/templates/web/design09/misc/about.mako:14
 msgid "Start Now!"
@@ -717,7 +713,7 @@ msgstr ""
 
 #: civicboom/templates/web/design09/search/content.mako:7
 msgid "Search"
-msgstr ""
+msgstr "Recherche"
 
 #: civicboom/templates/web/user_profile/edit.mako:8
 #, fuzzy
@@ -726,7 +722,7 @@ msgstr "Plus d'infos"
 
 #: civicboom/templates/web/user_profile/edit.mako:20
 msgid "Email Address"
-msgstr ""
+msgstr "Adresse e-mail"
 
 #: civicboom/templates/web/user_profile/edit.mako:29
 #, fuzzy
@@ -740,5 +736,6 @@ msgstr "Organisation"
 
 #: civicboom/templates/web/user_profile/edit.mako:53
 msgid "Avatar"
-msgstr ""
+msgstr "Avatar"
+
 
