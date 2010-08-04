@@ -1,6 +1,6 @@
 from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, _, session, flash_message, redirect_to_referer
 
-from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password
+from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user
 from civicboom.lib.services.janrain import janrain
 from civicboom.lib.web              import session_remove, session_get
 
@@ -47,17 +47,6 @@ class AccountController(BaseController):
     # Janrain Engage - http://www.janrain.com/products/engage
     #-----------------------------------------------------------------------------
 
-    def _signin_user(self, user):
-        user_log.info("logged in")   # Log user login
-        session['user_id'] = user.id # Set server session variable to user.id
-        
-        # Redirect them back to where they were going if a redirect was set
-        login_redirect = session_get('login_redirect')
-        if login_redirect:
-            session_remove('login_redirect')
-            return redirect(login_redirect)
-        return redirect('/')
-
     # To degrade back to AuthKit rename this method
     #@https # redirect to https for transfer of password
     def signin(self):
@@ -81,13 +70,13 @@ class AccountController(BaseController):
 
         # If user has existing account: Login
         if c.logged_in_user:
-            self._signin_user(c.logged_in_user)
+            signin_user(c.logged_in_user)
         
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
             u = register_new_janrain_user(auth_info['profile'])               # Create new user from Janrain profile data
             janrain('map', identifier=profile['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
-            self._signin_user(u)
+            signin_user(u)
             #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             
         # If not authenticated or any janrain info then error

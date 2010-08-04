@@ -3,13 +3,13 @@ Tools used for Authentication of users
 """
 
 # Pylons imports
-from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, flash_message
+from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, flash_message, session
 
 # Civicboom imports
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
 
-from civicboom.lib.web import session_set
+from civicboom.lib.web import session_set, session_get, session_remove
 
 # Other imports
 from sqlalchemy.orm import join
@@ -165,3 +165,16 @@ def authorize(authenticator):
         return decorator(wrapper)(target)
     return my_decorator
 
+
+def signin_user(user):
+    user_log.info("logged in")   # Log user login
+    session['user_id'] = user.id # Set server session variable to user.id
+    
+    # Redirect them back to where they were going if a redirect was set
+    login_redirect = session_get('login_redirect')
+    if login_redirect:
+        session_remove('login_redirect')
+        return redirect(login_redirect)
+    
+    # If no redirect send them to the page root
+    return redirect('/')
