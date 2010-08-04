@@ -1,4 +1,4 @@
-from civicboom.lib.base import BaseController, c, render, request, url, app_globals, _, flash_message, config, abort, action_redirector
+from civicboom.lib.base import BaseController, c, render, request, url, app_globals, _, flash_message, config, abort, action_redirector, redirect
 
 import formencode
 
@@ -17,7 +17,7 @@ from   civicboom.lib.communication.email             import send_email
 # Form Validators
 from civicboom.lib.form_validators.base         import build_schema
 from civicboom.lib.form_validators.registration import RegisterSchemaEmailUsername
-
+from formencode import validators
 
 
 import logging
@@ -65,13 +65,15 @@ class RegisterController(BaseController):
         if len(c.logged_in_user.login_details) >   0 : c.required_fields.remove('password')
         if c.logged_in_user.config["dob"]            : c.required_fields.remove('dob')
         
-        # If no post data, displat the registration form with required fields
+        # If no post data, display the registration form with required fields
         if request.environ['REQUEST_METHOD'] == 'GET':
             return render(registration_template)
         
         try: # Form validation
             # Build a dynamic validation scema based on these required fields and validate the form
-            form = build_schema(c.required_fields).to_python(dict(request.params))
+            schema = build_schema(c.required_fields)
+            setattr(schema, "terms", validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'}))
+            form = schema.to_python(dict(request.params))
         except formencode.Invalid, error:  # If the form has errors overlay those errors over the previously rendered form
             form_result = error.value
             form_errors = error.error_dict or {}
@@ -91,10 +93,11 @@ class RegisterController(BaseController):
         c.logged_in_user.status = "active"
         
         #Session.add(c.logged_in_user) #Already in session?
-        Session.commit()
+        #Session.commit()
+        print "COMMIT DISABLED FOR TESTING"
         
         flash_message(_("Congratulations, you have successfully signed up to _site_name."))
-        redirect_to('/')
+        redirect('/')
 
 
     #---------------------------------------------------------------------------

@@ -11,7 +11,7 @@ from civicboom.model.meta              import Session
 from civicboom.model.member            import User, Member
 
 # Other
-from civicboom.lib.misc import calculateAge
+from civicboom.lib.misc           import calculateAge
 from civicboom.lib.authentication import encode_plain_text_password
 
 # Misc Imports

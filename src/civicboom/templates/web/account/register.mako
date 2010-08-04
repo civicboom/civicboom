@@ -47,7 +47,7 @@
             
 
         % endfor
-        <input type="checkbox" name="terms" value="True" />${_("Agree to terms")}
+        <input type="checkbox" name="terms" value="checked" />${_("Agree to terms")}
         <input type="submit" name="submit" value="${_("Register")}"/>
     </form>
 
