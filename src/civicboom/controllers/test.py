@@ -78,9 +78,13 @@ class TestController(BaseController):
         return 'pong'
 
     def setting(self):
-        s = Session
-        m = s.query(Member).first()
+        m = Session.query(Member).first()
         m.config["height"] = 41
         m.config["height"] = 42
         m.config["height"] = 43
         return m.config["height"]
+
+    def send_message(self):
+        import civicboom.lib.communication.messages as messages
+        m = Session.query(Member).first()
+        m.send_message(messages.msg_test(text="hello o/"))

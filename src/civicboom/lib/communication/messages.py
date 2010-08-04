@@ -8,11 +8,11 @@ m2 = Member()
 m1.send_message(messages.tipoff(reporter=m2, tipoff="there is a bomb"))
 """
 
-from civicboom.lib.email  import send_email
+from civicboom.lib.communication.email import send_email
 from civicboom.model      import Message
 from civicboom.model.meta import Session
-from pylons.i18n import lazy_ugettext as _
-from webhelpers.html import HTML
+from pylons.i18n          import lazy_ugettext as _
+from webhelpers.html      import HTML
 
 import re
 import logging
@@ -43,6 +43,7 @@ class MessageData(object):
 
 
 generators = [
+    ["msg_test",                             "",   _("a test message"),              _("%(text)s")],
     ["followed_by",                          "ne", _("new follower"),                _("%(reporter)s is now following you")],
     ["followed_on_signup",                   "ne", _("new sign up via widget"),      _("%(reporter)s has signed up via your widget and is now following you")],
     ["follow_stop",                          "",   _("lost a follower"),             _("%(reporter)s has stopped following you")],

@@ -82,7 +82,7 @@ class Member(Base):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
-    def send_message(m):
+    def send_message(self, m):
         import civicboom.lib.communication.messages as messages
         messages.send_message(self, m)
 
