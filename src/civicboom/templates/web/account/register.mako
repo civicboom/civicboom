@@ -23,7 +23,7 @@ username
   email
 % endif
 
-% if not janrain
+% if not janrain:
   captcha
 % endif
 
