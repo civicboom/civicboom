@@ -29,31 +29,34 @@
 
 <%def name="body()">
 
-  % for field in c.required_fields:
-    
-  % endfor
+    <form action="" method="post">}
+        % for field in c.required_fields:
+            ${eval(field)}
+        % endfor
+        <input type="checkbox" name="terms" value="True" />${_("Agree to terms")}
+        <input type="submit" name="submit" value="${_("Register")}"/>
+    </form>
 
-username
+</%def>
 
-% if not c.logged_in_user.email or c.logged_in_user.email == "":
-  email needed
-% endif
+##------------------------------------------------------------------------------
+## Optional Required component defs
+##------------------------------------------------------------------------------
+<%def name="username()">
+  username
+</%def>
 
-## if not janrain user then captcha is need
-% if True:
+<%def name="email()">
+  email
+</%def>
+
+<%def name="dob()">
+  dob
+  ${date_component()}
+</%def>
+
+<%def name="password()">.
   captcha
-  password
-  
-% endif
-
-% if True:
-##'dob' not in c.logged_in_user.config:
-  dob needed
-  
-
-% endif
-
-
 </%def>
 
 

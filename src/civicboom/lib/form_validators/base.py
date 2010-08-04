@@ -12,6 +12,7 @@ from civicboom.model.member            import User, Member
 
 # Other
 from civicboom.lib.misc import calculateAge
+from civicboom.lib.authentication import encode_plain_text_password
 
 # Misc Imports
 import datetime
@@ -53,7 +54,7 @@ class PasswordValidator(validators.FancyValidator):
         non_letters = self.letter_regex.sub('', value)
         if len(non_letters) < self.non_letter:
             raise formencode.Invalid(self.message("non_letter", state, non_letter=self.non_letter), value, state)
-        return hashlib.sha1(value).hexdigest()
+        return encode_plain_text_password(value)
 
 class UniqueUsernameValidator(validators.FancyValidator):
     min =  4
@@ -94,6 +95,13 @@ def build_schema(*args, **kargs):
     Given a set of kargs win the form of string:validator will create a new dynamic validator
     """
     schema = DynamicSchema()
-    for key in kargs:
-        setattr(schema, key, kargs[key])
+    if kargs:
+        for key in kargs:
+            setattr(schema, key, kargs[key])
+    elif args:
+        for field in args:
+            if field=='username': setattr(schema, field, UniqueUsernameValidator())
+            if field=='email'   : setattr(schema, field, UniqueEmailValidator()   )
+            if field=='dob'     : setattr(schema, field, MinimumAgeValidator()    )
+            if field=='password': setattr(schema, field, PasswordValidator()      )
     return schema

@@ -22,21 +22,25 @@ from decorator import decorator
 import logging
 user_log = logging.getLogger("user")
 
+
+
 #-------------------------------------------------------------------------------
 # Standard Tools
 #-------------------------------------------------------------------------------
+
+def encode_plain_text_password(password):
+    return hashlib.sha1(password).hexdigest()
 
 def get_user_and_check_password(username, password):
     """
     Called by account controller and/or AuthKit valid_password to return a user from local db
     """
-    password = hashlib.sha1(password).hexdigest()
     try:
         q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
         q = q.filter(User.username   == username  )
         q = q.filter(User.status     == 'active'  )
         q = q.filter(UserLogin.type  == 'password')
-        q = q.filter(UserLogin.token == password  )
+        q = q.filter(UserLogin.token == encode_plain_text_password(password))
         q = q.one()
         return q
     except:

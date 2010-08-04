@@ -109,7 +109,7 @@ class RegisterController(BaseController):
         An email with a verification hash is sent
         """
         
-        # Check the form and raise any problems with the flash message session system
+        # Check the username and email and raise any problems via the flash message session system
         try:
             form = RegisterSchemaEmailUsername().to_python(dict(request.params))
         except formencode.Invalid, error:
@@ -178,7 +178,7 @@ def register_new_janrain_user(profile):
     Session.addall([u,u_login])
     Session.commit()
     
-    u.config['dob']  = profile.get('birthday') #Config vars? auto commiting?
+    u.config['dob'] = profile.get('birthday') #Config vars? auto commiting?
     #u.config['url']  = profile.get('url')
     
     # Future addition and enhancements
