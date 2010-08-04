@@ -88,8 +88,8 @@ class Member(Base):
 
     @property
     def avatar_url(self, size=80):
-        if self.config["avatar"]:
-            return "http://static.civicboom.com/avatars/"+self.config["avatar"]+"/avatar.jpg"
+        if self.avatar:
+            return self.avatar
         return "/images/default_avatar.png"
 
 
@@ -124,8 +124,8 @@ class User(Member):
 
     @property
     def avatar_url(self, size=80):
-        if self.config["avatar"]:
-            return "http://static.civicboom.com/avatars/"+self.config["avatar"]+"/avatar.jpg"
+        if self.avatar:
+            return self.avatar
         #default = "http://www.civicboom.com/images/default_avatar.jpg"
         default = "identicon"
         hash = hashlib.md5(self.email.lower()).hexdigest()

@@ -35,7 +35,7 @@ class UserProfileController(BaseController):
         # handle special cases
         if "move_to_gravatar" in request.POST.keys():
             if request.POST["move_to_gravatar"] == "on":
-                del u_config["avatar"]
+                del c.viewing_user.avatar = None
             del request.POST["move_to_gravatar"]
 
         # FIXME: helper function for "is valid display name"

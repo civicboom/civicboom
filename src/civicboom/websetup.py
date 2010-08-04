@@ -472,7 +472,7 @@ CREATE TRIGGER update_content
             u.join_date     = row["Join_Date"]
             u.status        = convert_status(row["Status"])
             u.last_check    = row["notification_check"]
-            u.config["avatar"]      = get_avatar(row["id"])
+            u.avatar        = "http://static.civicboom.com/avatars/"+get_avatar(row["id"])
             u.config["location"]    = get_location(row)
             u.config["description"] = get_description(row)
             u.config["birthday"]    = str(row["Birth"])
