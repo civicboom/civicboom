@@ -17,5 +17,9 @@ lonlat = new OpenLayers.LonLat(1.08,51.28).transform(
 ${field_name}_map.setCenter(lonlat, 13);
 autocomplete_location("${field_name}_name", "${field_name}_comp", "${field_name}", ${field_name}_map);
 </script>
+% else:
+<script>
+autocomplete_location("${field_name}_name", "${field_name}_comp", "${field_name}", False);
+</script>
 % endif
 </%def>
