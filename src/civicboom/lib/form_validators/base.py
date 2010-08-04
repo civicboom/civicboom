@@ -88,8 +88,9 @@ class UniqueEmailValidator(validators.Email):
 class DynamicSchema(DefaultSchema):
     pass
 
-def build_schema(**kargs):
+def build_schema(*args, **kargs):
     """
+    Given a list of strings will attach e best match validator to them
     Given a set of kargs win the form of string:validator will create a new dynamic validator
     """
     schema = DynamicSchema()

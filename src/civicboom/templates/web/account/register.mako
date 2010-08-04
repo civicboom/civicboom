@@ -42,7 +42,7 @@ username
 ## if not janrain user then captcha is need
 % if True:
   captcha
-  
+  password
   
 % endif
 
