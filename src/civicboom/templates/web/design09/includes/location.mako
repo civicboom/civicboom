@@ -1,4 +1,4 @@
-<%def name="autocomplete_location(field_name='location', map=True, size=180)">
+<%def name="autocomplete_location(field_name='location', map=True, size=250)">
 <script src="/javascript/_openlayers.js"></script>
 <div style="width: ${size}px; padding-bottom: 2em;">
 	<input id="${field_name}_name" name="${field_name}_name" type="text">
