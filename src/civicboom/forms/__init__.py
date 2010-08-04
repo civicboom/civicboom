@@ -9,6 +9,11 @@ from formalchemy import forms
 from formalchemy import tables
 from formalchemy.ext.fsblob import FileFieldRenderer
 from formalchemy.ext.fsblob import ImageFieldRenderer
+from formalchemy.fields import FieldRenderer
+from formalchemy.fields import TextAreaFieldRenderer
+from geoformalchemy.base import GeometryFieldRenderer
+from geoalchemy import geometry
+import sqlalchemy
 
 fa_config.encoding = 'utf-8'
 
@@ -23,6 +28,26 @@ class FieldSet(forms.FieldSet):
 class Grid(tables.Grid):
     pass
 
+# custom renderers {{{
+class MemberFieldRenderer(FieldRenderer):
+    def render(self, options={}):
+        value= self.value and self.value or ''
+        vars = dict(field_name=self.name, value=value)
+        return """
+<div style="width: ${size}px; padding-bottom: 2em;">
+	<input id="${field_name}_name" name="${field_name}_name" type="text">
+	<div id="${field_name}_comp"></div>
+	<input id="${field_name}" name="${field_name}" type="hidden" value="${value}">
+</div>
+<script>autocomplete_member("${field_name}_name", "${field_name}_comp", "${field_name}");</script>
+        """ % vars
+
+FieldSet.default_renderers[geometry.Geometry] = GeometryFieldRenderer
+FieldSet.default_renderers[sqlalchemy.UnicodeText] = TextAreaFieldRenderer
+FieldSet.default_renderers[model.Member] = MemberFieldRenderer
+
+# }}}
+# object editors {{{
 ## Initialize fieldsets
 
 #Foo = FieldSet(model.Foo)
@@ -142,8 +167,8 @@ Group.configure(include=[
 Message = FieldSet(model.Message)
 Message.engine = CustomTemplateEngine("message")
 Message.configure(include=[
-        Message.source,
-        Message.target,
+        Message.source.with_renderer(MemberFieldRenderer),
+        Message.target.with_renderer(MemberFieldRenderer),
         Message.timestamp,
         Message.text,
         ])
@@ -168,15 +193,14 @@ Media.configure(include=[
 
 License = FieldSet(model.License)
 License.engine = CustomTemplateEngine("license")
-
-
+# }}}
+# object grids {{{
 ## Initialize grids
 # Not doing this will result in the object list being rendered with
 # all fields visible
 
 #FooGrid = Grid(model.Foo)
 #ReflectedGrid = Grid(Reflected)
-
 
 ArticleContentGrid = Grid(model.ArticleContent)
 ArticleContentGrid.configure(include=[
@@ -260,13 +284,4 @@ MediaGrid.configure(include=[
         MediaGrid.attached_to,
         ])
 
-
-# custom renderers from geoformalchemy
-from geoformalchemy.base import GeometryFieldRenderer
-from geoalchemy import geometry
-FieldSet.default_renderers[geometry.Geometry] = GeometryFieldRenderer
-
-# custom renderers
-from formalchemy.fields import TextAreaFieldRenderer
-import sqlalchemy
-FieldSet.default_renderers[sqlalchemy.UnicodeText] = TextAreaFieldRenderer
+# }}}
