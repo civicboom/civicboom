@@ -12,8 +12,11 @@ class Node(object):
         self.isin = None
 
     def __unicode__(self):
-        print "INSERT INTO places(location, name, type)",
-        print "VALUES(ST_Point(%s, %s), '%s', '%s');" % (self.lon, self.lat, self.name.replace("'", "''"), self.type)
+        return (
+            u"INSERT INTO places(location, name, type) "+
+            u"VALUES(ST_Point(%s, %s), '%s', '%s');" %
+            (self.lon, self.lat, self.name.replace("'", "''"), self.type)
+        )
 
 class MapHandler(xml.sax.handler.ContentHandler):
     def __init__(self):
@@ -33,7 +36,7 @@ class MapHandler(xml.sax.handler.ContentHandler):
     def endElement(self, name):
         if name == "node":
             if self.node.name and self.node.type:
-                print(unicode(self.node).encode("ascii", "replace"))
+                print(unicode(self.node).encode('utf-8'))
 
 class ErrHandler(xml.sax.handler.ErrorHandler):
     def error(self, ex):
