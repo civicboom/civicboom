@@ -5,7 +5,7 @@ Maintainer: Shish <shish@civicboom.com>
 Depends: python, python-cbmisc(>=0.3.2),
  python-pylons(>=1.0), python-sqlalchemy(>=0.6), python-webhelpers(>=1.0),
  python-psycopg2, python-imaging, python-boto, python-authkit, python-memcache,
- python-nose, python-coverage, python-dns,
+ python-nose, python-coverage, python-dns, python-recaptcha,
  ffmpeg,
  nginx, memcached,
  postgresql-8.4, postgresql-8.4-postgis
