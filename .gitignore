@@ -1,12 +1,20 @@
+# compiled files
 *.pyc
 *.mo
+*.sql
+*.bz2
+
+# the website creates these when it runs
 src/data
 src/.coverage
 src/civicboom/public/warehouse
+
+# files created while package building
 debian/*.deb
 debian/fs-*
 debian/_combined.*
 debian/distribute*
+
+# misc
 coverage/
 tmp/
-places.sql
