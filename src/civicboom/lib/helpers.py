@@ -5,7 +5,7 @@ available to Controllers. This module is available to templates as 'h'.
 """
 
 #from webhelpers.html.tags import checkbox, password
-#from webhelpers.pylonslib.secure_form import authentication_token
+from webhelpers.pylonslib.secure_form import authentication_token
 
 from pylons import url, config
 from webhelpers.html import HTML, literal
