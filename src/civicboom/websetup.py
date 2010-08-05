@@ -660,11 +660,26 @@ CREATE TRIGGER update_content
         u2 = User()
         u2.username      = u"unitfriend"
         u2.name          = u"Mr U's Friend"
-        u2.join_date     = datetime.datetime.now()
-        u2.home_location = u"The Moon"
-        u2.description   = u"A user for automated tests to log in as"
         u2.status        = "active"
         u2.email         = u"spam@shishnet.org"
+
+        u3 = User()
+        u3.username      = u"cookie"
+        u3.name          = u"Amy M. Anderson"
+        u3.status        = "active"
+        u3.email         = u"AmyMAnderson@example.com"
+
+        u4 = User()
+        u4.username      = u"jammy"
+        u4.name          = u"Jamie L. Riley"
+        u4.status        = "active"
+        u4.email         = u"waffleking@example.com"
+
+        u5 = User()
+        u5.username      = u"Davy_H"
+        u5.name          = u"David O. Hughes"
+        u5.status        = "active"
+        u5.email         = u""
 
         m = Message()
         m.source = u1
@@ -692,7 +707,7 @@ CREATE TRIGGER update_content
         여기에 일부 텍스트입니다.
         דאָ איז עטלעכע טעקסט.
         """
-        ca.creator    = u1
+        ca.creator    = u2
         ca.status     = "show"
         ca.license_id = cc_by.id
         ca.tags       = [open_source, the_moon_loc]
@@ -706,20 +721,45 @@ CREATE TRIGGER update_content
         m.credit      = u"Shish"
         ca.attachments.append(m)
 
-        cc = CommentContent()
-        cc.title      = u"A test response"
-        cc.content    = u"Here is a response"
-        cc.creator    = u2
-        cc.status     = "show"
-        cc.license_id = cc_by.id
-        ca.responses.append(cc)
+        cc1 = CommentContent()
+        cc1.title      = u"A test response"
+        cc1.content    = u"Here is a response"
+        cc1.creator    = u3
+        cc1.status     = "show"
+        cc1.license_id = cc_by.id
+        ca.responses.append(cc1)
 
         cc2 = CommentContent()
         cc2.title      = u"A test response with media"
-        cc2.content    = u"Here is a response with media"
+        cc2.content    = u"Here is a response by the article author"
         cc2.creator    = u2
         cc2.status     = "show"
         cc2.license_id = cc_by.id
+        ca.responses.append(cc2)
+
+        cc3 = CommentContent()
+        cc3.title      = u"A test response with media"
+        cc3.content    = u"Here is a response with media"
+        cc3.creator    = u4
+        cc3.status     = "show"
+        cc3.license_id = cc_by.id
+        ca.responses.append(cc3)
+
+        cc4 = CommentContent()
+        cc4.title      = u"A test response with media"
+        cc4.content    = u"Here is a response by you (if you = unittest)"
+        cc4.creator    = u1
+        cc4.status     = "show"
+        cc4.license_id = cc_by.id
+        ca.responses.append(cc4)
+
+        cc5 = CommentContent()
+        cc5.title      = u"A test response with media"
+        cc5.content    = u"Here is a response by someone else"
+        cc5.creator    = u5
+        cc5.status     = "show"
+        cc5.license_id = cc_by.id
+        ca.responses.append(cc5)
 
         m = Media()
         m.name        = u"hello2.3gp"
@@ -730,8 +770,6 @@ CREATE TRIGGER update_content
         m.credit      = u"Shish"
         cc2.attachments.append(m)
 
-        ca.responses.append(cc2)
-
         dc = DraftContent()
         dc.title      = u"Response!"
         dc.content    = u"I am writing a longer response, worthy of being published separately"
@@ -739,7 +777,7 @@ CREATE TRIGGER update_content
         dc.license_id = cc_by.id
         u2.content.append(dc)
 
-        Session.add_all([u1, u2, u1_login])
+        Session.add_all([u1, u2, u3, u1_login])
         Session.commit()
 
 
