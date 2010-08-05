@@ -15,8 +15,8 @@ from   civicboom.lib.communication.email             import send_email
 #import civicboom.lib.communication.messages as messages
 
 # Form Validators
-from civicboom.lib.form_validators.base         import build_schema
-from civicboom.lib.form_validators.registration import RegisterSchemaEmailUsername
+from civicboom.lib.form_validators.validator_factory import build_schema
+from civicboom.lib.form_validators.registration      import RegisterSchemaEmailUsername
 from formencode import validators, htmlfill
 
 

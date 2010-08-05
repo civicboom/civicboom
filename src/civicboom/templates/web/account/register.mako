@@ -92,11 +92,11 @@
 ## Optional Required component defs
 ##------------------------------------------------------------------------------
 <%def name="username()">
-    <input type="text" name="username" value="${c.logged_in_reporter.username}" />
+    Username<input type="text" name="username" value="${c.logged_in_reporter.username}" />
 </%def>
 
 <%def name="email()">
-    <input type="text" name="email" value="${c.logged_in_reporter.email}" />
+    email<input type="text" name="email" value="${c.logged_in_reporter.email}" />
 </%def>
 
 <%def name="dob()">
@@ -105,8 +105,10 @@
 </%def>
 
 <%def name="password()">
-  captcha & password
   ${h.get_captcha()}
+  
+  password<input type="password" name="password"         value="" />
+  password confirm<input type="password" name="password_confirm" value="" />
 </%def>
 
 

@@ -8,15 +8,9 @@ from formencode import validators, compound
 
 from pylons.i18n.translation import _
 
-from civicboom.lib.services.reCAPTCHA import CaptchaValidator
 
 
-# Database Objects
-from civicboom.model.meta              import Session
-from civicboom.model.member            import User, Member
 
-# Other
-from civicboom.lib.misc           import calculateAge
 from civicboom.lib.authentication import encode_plain_text_password
 
 # Misc Imports
@@ -30,17 +24,6 @@ class DefaultSchema(formencode.Schema):
     filter_extra_fields = True
 
 
-class MinimumAgeValidator(validators.FancyValidator):
-    """Checks that date is ok and doesn't allow under 16"""
-    age_min = 16
-    def _to_python(self, value, state):
-         try:
-             date = datetime.datetime.strptime(value, '%d/%m/%Y')
-         except exceptions.ValueError:
-              raise formencode.Invalid(_("Please enter your date of birth with the format DD/MM/YYYY"), value, state)
-         if calculateAge(date) < self.age_min:
-              raise formencode.Invalid(_("Sorry, you have to be over %d to use this site") % self.age_min, value, state)
-         return date
 
 class PasswordValidator(validators.FancyValidator):
     min          = 5
@@ -61,56 +44,3 @@ class PasswordValidator(validators.FancyValidator):
             raise formencode.Invalid(self.message("non_letter", state, non_letter=self.non_letter), value, state)
         return encode_plain_text_password(value)
 
-class UniqueUsernameValidator(validators.FancyValidator):
-    min =  4
-    max = 32
-    messages = {
-        'too_few'       : _('Your username must be longer than %(min)i characters'),
-        'too_long'      : _('Your username must be shorter than %(max)i characters'),
-        'username_taken': _('The username %(name)s is no longer available, please try a different one'),
-        }
-    def _to_python(self, value, state):
-        value = unicode(value.strip())
-        # TODO: Strip or alert any characters that make it non URL safe
-        if len(value) <= self.min:
-            raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
-        if len(value) >= self.max:
-            raise formencode.Invalid(self.message("too_long", state, max=self.max), value, state)
-        if Session.query(Member).filter(Member.username==value).count() > 0:
-            raise formencode.Invalid(self.message("username_taken", state, name=value), value, state)
-        return value
-
-class UniqueEmailValidator(validators.Email):
-    def _to_python(self, value, state):
-        value = unicode(value)
-        if Session.query(User).filter(User.email==value).count() > 0:
-            raise formencode.Invalid(_('This email address is already registered with us. Please use a different address, or retrieve your password using the password recovery link.'), value, state)
-        return value
-
-
-#-------------------------------------------------------------------------------
-# Schema Factory
-#-------------------------------------------------------------------------------
-
-class DynamicSchema(DefaultSchema):
-    pass
-
-def build_schema(*args, **kargs):
-    """
-    Given a list of strings will attach best match validator to them
-    Given a set of kargs win the form of string:validator will create a new dynamic validator
-    """
-    schema = DynamicSchema()
-    if kargs:
-        for key in kargs:
-            schema.fields[key] = kargs[key]
-    elif args:
-        for field in args:
-            if field=='username': schema.fields[field] = UniqueUsernameValidator()
-            if field=='email'   : schema.fields[field] = UniqueEmailValidator()
-            if field=='dob'     : schema.fields[field] = MinimumAgeValidator()
-            if field=='password':
-                schema.fields[field]                = PasswordValidator()
-                schema.fields['password_confirm']   = PasswordValidator()
-                #schema.fields['chained_validators'] = [validators.FieldsMatch('password', 'password_confirm'),]
-    return schema

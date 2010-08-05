@@ -3,17 +3,27 @@
 Consists of functions to typically be used within templates, but also
 available to Controllers. This module is available to templates as 'h'.
 """
-# Import helpers as desired, or define your own, ie:
+
 #from webhelpers.html.tags import checkbox, password
-from webhelpers.html import HTML, literal
-from webhelpers.pylonslib.secure_form import authentication_token
+#from webhelpers.pylonslib.secure_form import authentication_token
+
 from pylons import url, config
-import re
+from webhelpers.html import HTML, literal
 
 from civicboom.lib.text import scan_for_embedable_view_and_autolink
 
-from civicboom.lib.services.reCAPTCHA import get_captcha
+import recaptcha.client.captcha as librecaptcha
+import re
 
+
+def get_captcha(lang='en', theme='white'):
+    """
+    Generate reCAPTCHA html
+    (currently the python-recaptcha API does not support the lang or theme option, but these are fields in the html, maybe we need a modifyed version, see the django example for more info)
+    http://k0001.wordpress.com/2007/11/15/using-recaptcha-with-python-and-django/
+    """
+    return literal(librecaptcha.displayhtml(config['api_key.reCAPTCHA.public'])) #, lang="es", theme='white'
+    
 
 def shorten_url(url):
     return re.sub("http://[^/]+", "", url)
