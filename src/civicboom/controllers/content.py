@@ -14,7 +14,7 @@ from civicboom.lib.authentication      import authorize, is_valid_user
 from pylons import session
 
 # Datamodel and database session imports
-from civicboom.model                   import DraftContent, Media, Tag
+from civicboom.model                   import DraftContent, CommentContent, Media, Tag
 from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import get_content, get_tag, get_licenses
 from civicboom.lib.database.get_cached import update_content
@@ -94,7 +94,7 @@ class ContentController(BaseController):
             return_bool = False
             if form:
                 for field in ("title","content","media_file"):
-                    if form["form_"+field]:
+                    if "form_"+field in form and form["form_"+field]:
                         return_bool = True
             return return_bool
           
@@ -111,7 +111,12 @@ class ContentController(BaseController):
             """
             if not form   : return content #If there is no form data there is nothing to overlay or do
             if not content:
-                content = DraftContent()
+                if 'form_type' not in form:
+                    content     = DraftContent()
+                elif form['form_type'] == "comment":
+                    content     = CommentContent()
+                else:
+                    content     = DraftContent()
             
             # for key in form: print "%s:%s" % (key,form[key])
             
@@ -125,6 +130,9 @@ class ContentController(BaseController):
             if "form_owner" in form:
                 c.content.creator_id = form["form_owner"]
                 # Although the form limits the user to a selectable list, any id can be passed here, it is possible that with an API call a user can give content to anyone.
+                # FIXME: including people who don't want the content attributed to them...
+            else:
+                c.content.creator_id = c.logged_in_user.id
 
             # Tags
             if "form_tags" in form:
@@ -165,7 +173,7 @@ class ContentController(BaseController):
             if 'form_licence' in form:
                 content.license_id = form['form_licence']
                 
-            for field in ["title"]:
+            for field in ["title", "parent_id"]:
                 setattr(content,field,form["form_"+field])
 
             return content
@@ -180,7 +188,12 @@ class ContentController(BaseController):
         # If the content is None then create a blank content object
         #  This saves unnessisary null checking in template
         if c.content==None:
-            c.content         = DraftContent()
+            if 'form_type' not in request.POST:
+                c.content     = DraftContent()
+            elif request.POST['form_type'] == "comment":
+                c.content     = CommentContent()
+            else:
+                c.content     = DraftContent()
             c.content.creator = c.logged_in_user
 
         if 'submit_delete' in request.POST:
@@ -209,6 +222,8 @@ class ContentController(BaseController):
 
             if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
                 return redirect(url.current(action='view', id=c.content.id))
+            if 'submit_response' in request.POST:
+                return redirect(url.current(action='view', id=c.content.parent_id))
                 
         # If this is the frist time saving the content then redirect to new substatiated id
         if id==None and c.content.id:
