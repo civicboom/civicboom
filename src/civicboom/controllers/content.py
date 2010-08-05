@@ -94,7 +94,7 @@ class ContentController(BaseController):
             return_bool = False
             if form:
                 for field in ("title","content","media_file"):
-                    if form["form_"+field]:
+                    if "form_"+field in form and form["form_"+field]:
                         return_bool = True
             return return_bool
           
