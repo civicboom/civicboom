@@ -1,16 +1,15 @@
 #!/bin/bash
 if [ `whoami` != "postgres" ] ; then
-	exec sudo -u postgres $0 $* 2> /tmp/init_cbdb.log
+	exec sudo -u postgres $0 $*
 fi
 
-date >&2
+export PGOPTIONS='--client-min-messages=warning'
 
 
 ##############################################################################
 # clear
 
 echo "Removing old data"
-echo "Removing old data" >&2
 dropdb civicboom_log
 dropdb civicboom_gis
 dropdb civicboom
@@ -21,7 +20,6 @@ dropuser civicboom
 # user
 
 echo "Creating civicboom user"
-echo "Creating civicboom user" >&2
 export PGPASSWORD=civicboom
 echo "create user civicboom with password '$PGPASSWORD';" | psql -q
 
@@ -30,7 +28,6 @@ echo "create user civicboom with password '$PGPASSWORD';" | psql -q
 # civicboom
 
 echo "Creating civicboom database"
-echo "Creating civicboom database" >&2
 createdb -E utf8 -O civicboom civicboom
 createlang plpgsql civicboom
 
@@ -39,7 +36,6 @@ psql -q -d civicboom -f /usr/share/postgresql/8.4/contrib/postgis.sql
 psql -q -d civicboom -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
 
 echo "  Granting extra permissions"
-echo "  Granting extra permissions" >&2
 echo "grant all on spatial_ref_sys to civicboom;"  | psql -q -d civicboom
 echo "grant all on geometry_columns to civicboom;" | psql -q -d civicboom
 
@@ -48,7 +44,6 @@ echo "grant all on geometry_columns to civicboom;" | psql -q -d civicboom
 # civicboom_gis
 
 echo "Creating civicboom_gis database"
-echo "Creating civicboom_gis database" >&2
 createdb -E utf8 -O civicboom civicboom_gis
 createlang plpgsql civicboom_gis
 
@@ -57,18 +52,16 @@ psql -q -d civicboom_gis -f /usr/share/postgresql/8.4/contrib/postgis.sql
 psql -q -d civicboom_gis -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
 
 echo "  Granting extra permissions"
-echo "  Granting extra permissions" >&2
 echo "grant all on spatial_ref_sys to civicboom;"  | psql -q -d civicboom_gis
 echo "grant all on geometry_columns to civicboom;" | psql -q -d civicboom_gis
 
 echo "  Creating places table"
-echo "  Creating places table" >&2
 echo "
 CREATE TABLE places(
 	id SERIAL PRIMARY KEY NOT NULL,
 	location GEOMETRY NOT NULL,
 	name VARCHAR(250) NOT NULL,
-	type VARCHAR(32) NOT NULL
+	type VARCHAR(64) NOT NULL
 );
 " | psql -q -U civicboom -d civicboom_gis -h localhost # have to connect over TCP, unix sockets try ident auth
 PLACES=`dirname $0`/places.sql.bz2
@@ -85,6 +78,7 @@ fi
 echo "
 CREATE INDEX places__location ON places USING GIST (location); 
 CREATE INDEX places__name ON places(name); 
+CREATE INDEX places__type ON places(type);
 VACUUM ANALYZE places;
 " | psql -q -U civicboom -d civicboom_gis -h localhost
 
@@ -93,7 +87,6 @@ VACUUM ANALYZE places;
 # civicboom_log
 
 echo "Creating civicboom_log database"
-echo "Creating civicboom_log database" >&2
 createdb -E utf8 -O civicboom civicboom_log
 echo "
 CREATE TABLE events(
