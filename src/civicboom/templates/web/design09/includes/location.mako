@@ -1,5 +1,4 @@
 <%def name="autocomplete_location(field_name='location', map=True, size='250px')">
-<script src="/javascript/_openlayers.js"></script>
 <div style="width: ${size}; padding-bottom: 2em;">
 	<input id="${field_name}_name" name="${field_name}_name" type="text">
 	<div id="${field_name}_comp"></div>
@@ -12,6 +11,7 @@
 </%def>
 
 <%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13)">
+<script src="/javascript/_openlayers.js"></script>
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 <script>
 ${name} = new OpenLayers.Map("${name}_div", { controls: [] });
