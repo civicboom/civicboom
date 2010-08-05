@@ -14,7 +14,7 @@ from civicboom.lib.authentication      import authorize, is_valid_user
 from pylons import session
 
 # Datamodel and database session imports
-from civicboom.model                   import DraftContent, Media, Tag
+from civicboom.model                   import DraftContent, CommentContent, Media, Tag
 from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import get_content, get_tag, get_licenses
 from civicboom.lib.database.get_cached import update_content
@@ -111,7 +111,12 @@ class ContentController(BaseController):
             """
             if not form   : return content #If there is no form data there is nothing to overlay or do
             if not content:
-                content = DraftContent()
+                if 'form_type' not in form:
+                    content     = DraftContent()
+                elif form['form_type'] == "comment":
+                    content     = CommentContent()
+                else:
+                    content     = DraftContent()
             
             # for key in form: print "%s:%s" % (key,form[key])
             
@@ -180,7 +185,12 @@ class ContentController(BaseController):
         # If the content is None then create a blank content object
         #  This saves unnessisary null checking in template
         if c.content==None:
-            c.content         = DraftContent()
+            if 'form_type' not in request.POST:
+                c.content     = DraftContent()
+            elif request.POST['form_type'] == "comment":
+                c.content     = CommentContent()
+            else:
+                c.content     = DraftContent()
             c.content.creator = c.logged_in_user
 
         if 'submit_delete' in request.POST:
