@@ -77,7 +77,8 @@ class AccountController(BaseController):
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
             
-            existing_user = get_user(profile.get('displayName'))
+            try   : existing_user = get_user(c.auth_info['profile']['displayName'])
+            except: pass
             if existing_user:
                 # TODO
                 # If we have a user with the same username they may be the same user
