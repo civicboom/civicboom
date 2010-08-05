@@ -173,7 +173,7 @@ class ContentController(BaseController):
             if 'form_licence' in form:
                 content.license_id = form['form_licence']
                 
-            for field in ["title"]:
+            for field in ["title", "parent_id"]:
                 setattr(content,field,form["form_"+field])
 
             return content
@@ -222,6 +222,8 @@ class ContentController(BaseController):
 
             if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
                 return redirect(url.current(action='view', id=c.content.id))
+            if 'submit_response' in request.POST:
+                return redirect(url.current(action='view', id=c.content.parent_id))
                 
         # If this is the frist time saving the content then redirect to new substatiated id
         if id==None and c.content.id:
