@@ -35,7 +35,7 @@ class SearchController(BaseController):
                 FROM places
                 WHERE
                     name ILIKE %s
-                    AND ST_DWithin(location, 'POINT(54 -3)', 10)
+                    AND ST_DWithin(location, 'SRID=4326;POINT(-3 54)', 10)
                 LIMIT 20
             """;
             result = connection.execute(query, [q+"%", ])

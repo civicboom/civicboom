@@ -27,7 +27,10 @@
       <li class="last_list_item"><a href="${h.url(controller='misc', action='privacy'    )}" ${link_target}>${_("Privacy policy")}      </a></li>
     </ul>
 
-    <div class="copyright"><span class="copyright_symbol">&copy;</span> 2009-2010 Indiconews Ltd</div>
+    <div class="copyright">
+		<span class="copyright_symbol">&copy;</span> 2009-2010 Indiconews Ltd,
+		Map Data CC-By-SA by <a href="http://openstreetmap.org/">OpenStreetMap</a>
+	</div>
   </div>
   
 </div>

@@ -1,4 +1,5 @@
 <%inherit file="/web/layout_3cols.mako"/>
+<%namespace name="loc" file="../includes/location.mako"/>
 
 ##------------------------------------------------------------------------------
 ## Title - Override
@@ -15,7 +16,8 @@
 
   ##-------- By ----------
   <h2>${_("Content by")}</h2>
-    ${c.content.creator.username}
+    <img src="${c.content.creator.avatar_url}">
+	<br>${c.content.creator.name} (${c.content.creator.username})
   
   
   ##-------Actions-------
@@ -53,9 +55,20 @@
 ##------------------------------------------------------------------------------
 
 <%def name="col_right()">
-  parent content
-  sub content/reponses
-  accepted reporters
+<%
+# we need to pass the session to GeoAlchemy functions
+from civicboom.model.meta import Session
+%>
+  % if c.content.location:
+	<p>${loc.minimap(
+		width="100%", height="200px",
+		lon=c.content.location.coords(Session)[0],
+		lat=c.content.location.coords(Session)[1]
+	)}
+  % endif
+  <p>parent content
+  <p>sub content/reponses
+  <P>accepted reporters
 </%def>
 
 

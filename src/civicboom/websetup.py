@@ -711,6 +711,7 @@ CREATE TRIGGER update_content
         ca.status     = "show"
         ca.license_id = cc_by.id
         ca.tags       = [open_source, the_moon_loc]
+        ca.location   = "SRID=4326;POINT(-0.1278328 51.5072648)"
 
         m = Media()
         m.name        = u"hello.jpg"
