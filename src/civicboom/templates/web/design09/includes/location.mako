@@ -6,20 +6,20 @@
 	<input id="${field_name}" name="${field_name}" type="hidden">
 </div>
 % if map:
-	${minimap(name=field_name, width=size, height=size)}
+	${minimap(name=field_name+"_map", width=size, height=size)}
 % endif
-<script>autocomplete_location("${field_name}_name", "${field_name}_comp", "${field_name}");</script>
+<script>autocomplete_location("${field_name}_name", "${field_name}_comp", "${field_name}", ${field_name}_map);</script>
 </%def>
 
 <%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13)">
-<div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_mapdiv"></div>
+<div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 <script>
-${name}_map = new OpenLayers.Map("${name}_mapdiv", { controls: [] });
-${name}_map.addLayer(new OpenLayers.Layer.OSM());
+${name} = new OpenLayers.Map("${name}_div", { controls: [] });
+${name}.addLayer(new OpenLayers.Layer.OSM());
 lonlat = new OpenLayers.LonLat(${lon},${lat}).transform(
             new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
             new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
           );
-${name}_map.setCenter(lonlat, ${zoom});
+${name}.setCenter(lonlat, ${zoom});
 </script>
 </%def>
