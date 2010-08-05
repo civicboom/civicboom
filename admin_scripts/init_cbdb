@@ -66,14 +66,14 @@ CREATE TABLE places(
 " | psql -q -U civicboom -d civicboom_gis -h localhost # have to connect over TCP, unix sockets try ident auth
 PLACES=`dirname $0`/places.sql.bz2
 if [ -f $PLACES ] ; then
-	echo "Found $PLACES, populating locations table"
-	if [ which pv >/dev/null ] ; then
-		pv $PLACES | bunzip2 | psql -q -U civicboom -d civicboom_gis
+	echo "  Found $PLACES, populating locations table"
+	if which pv >/dev/null ; then
+		pv -c -N file $PLACES | bunzip2 | pv -c -N line -l | psql -q -U civicboom -d civicboom_gis
 	else
 		bzcat $PLACES | psql -q -U civicboom -d civicboom_gis
 	fi
 else
-	echo "Can't find $PLACES, not populating locations table"
+	echo "  Can't find $PLACES, not populating locations table"
 fi
 echo "
 CREATE INDEX places__location ON places USING GIST (location); 
