@@ -53,12 +53,12 @@ def get_user_from_openid_identifyer(identifyer):
     """
     try:
         q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
-        q = q.filter(User.status     == 'active'  )
+        #q = q.filter(User.status     == 'active'  ) # the base controler checks for pending status and redirects to login page accordingly
         q = q.filter(UserLogin.token == identifyer )
         q = q.one()
         return q
     except:
-        return None    
+        return None
 
 
 #-------------------------------------------------------------------------------

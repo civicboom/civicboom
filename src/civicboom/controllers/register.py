@@ -16,14 +16,16 @@ from   civicboom.lib.communication.email             import send_email
 
 # Form Validators
 from civicboom.lib.form_validators.validator_factory import build_schema
-from civicboom.lib.form_validators.registration      import RegisterSchemaEmailUsername
+from civicboom.lib.form_validators.registration      import RegisterSchemaEmailUsername, UniqueEmailValidator, UniqueUsernameValidator
 from formencode import validators, htmlfill
 
+from civicboom.lib.misc import random_string
 
 import logging
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
+new_user_prefix = "newuser"
 
 class RegisterController(BaseController):
     """
@@ -60,10 +62,10 @@ class RegisterController(BaseController):
         
         # Build required fields list from current user data - the template will then display these and a custom validator will be created for them
         c.required_fields = ['username','email','password','dob']
-        if c.logged_in_user.username           != u"": c.required_fields.remove('username')
-        if c.logged_in_user.email              != u"": c.required_fields.remove('email')
-        if len(c.logged_in_user.login_details) >   0 : c.required_fields.remove('password')
-        if c.logged_in_user.config["dob"]            : c.required_fields.remove('dob')
+        if not c.logged_in_user.username.startswith(new_user_prefix): c.required_fields.remove('username')
+        if c.logged_in_user.email != u""                            : c.required_fields.remove('email')
+        if len(c.logged_in_user.login_details) > 0                  : c.required_fields.remove('password')
+        if c.logged_in_user.config["dob"] != u""                    : c.required_fields.remove('dob')
         
         # If no post data, display the registration form with required fields
         if request.environ['REQUEST_METHOD'] == 'GET':
@@ -72,11 +74,14 @@ class RegisterController(BaseController):
         try: # Form validation
             # Build a dynamic validation scema based on these required fields and validate the form
             schema = build_schema(*c.required_fields)
-            schema.fields['terms'] = validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'})
+            schema.fields['terms'] = validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'}) # In addtion to required fields add the terms checkbox validator
             form = schema.to_python(dict(request.params))
         except formencode.Invalid, error:  # If the form has errors overlay those errors over the previously rendered form
             form_result = error.value
+            #try: del form_result['recaptcha_challenge_field']
+            #except: pass
             form_errors = error.error_dict or {}
+            print form_errors
             return formencode.htmlfill.render(render(registration_template), defaults=form_result, errors=form_errors, prefix_error=False)
         
         # If the validator has not forced a page render
@@ -92,9 +97,8 @@ class RegisterController(BaseController):
             Session.add(u_login)
         c.logged_in_user.status = "active"
         
-        #Session.add(c.logged_in_user) #Already in session?
-        #Session.commit()
-        print "COMMIT DISABLED FOR TESTING"
+        Session.add(c.logged_in_user) #Already in session?
+        Session.commit()
         
         flash_message(_("Congratulations, you have successfully signed up to _site_name."))
         redirect('/')
@@ -165,20 +169,23 @@ def register_new_janrain_user(profile):
     If additional information is required the account controler will redirect to the register action to ask for additional details
     """
     u = User()
-    u.status        = "pending"
-    u.username      = valid_username(profile.get('displayName'))
+    try   : u.username = UniqueUsernameValidator().to_python(profile.get('displayName'))
+    except: u.username = unicode(new_user_prefix+random_string)
+    try   : u.email    = UniqueEmailValidator().to_python(profile.get('verifiedEmail') or profile.get('email'))
+    except: pass
     u.name          = profile.get('name').get('formatted')
-    u.email         = valid_email(profile.get('verifiedEmail') or profile.get('email'))
     u.avatar        = profile.get('photo')
     u.webpage       = profile.get('url')
+    u.status        = "pending"
     #u.location      = get_location_from_json(profile.get('address'))
     
     u_login = UserLogin()
-    u_login.user   = u()
+    u_login.user   = u
     u_login.type   = profile['providerName']
     u_login.token  = profile['identifier']
-    
-    Session.addall([u,u_login])
+
+    Session.add(u)
+    Session.add(u_login)
     Session.commit()
     
     u.config['dob'] = profile.get('birthday') #Config vars? auto commiting?

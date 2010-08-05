@@ -11,7 +11,7 @@ from pylons.i18n.translation import _, ungettext, set_lang
 from civicboom.model                   import meta
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.web                 import flash_message, redirect_to_referer, action_redirector
-
+from civicboom.lib.civicboom_lib       import deny_pending_user
 
 import logging
 log = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ class BaseController(WSGIController):
         else                         :  self._set_lang(        config['lang']) # Default lang in config file
 
         # User pending regisration? - redirect to complete registration process
-        if c.logged_in_user and c.logged_in_user.status=='pending' and url.current().find(url(controller='register', action='new_user'))<0:
+        if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url.current()):
             flash_message(_('Please complete the regisration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 

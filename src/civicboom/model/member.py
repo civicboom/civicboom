@@ -102,7 +102,7 @@ class User(Member):
     location         = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
     location_updated = Column(DateTime(), nullable=False,   default=func.now())
     #dob              = Column(DateTime(), nullable=True) # Needs to be stored in user settings but not nesiserally in the main db record
-    email            = Column(Unicode(250), nullable=False  )
+    email            = Column(Unicode(250), nullable=False, default=u"")
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (User)"

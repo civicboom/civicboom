@@ -4,6 +4,15 @@ from datetime import date
 Low level miscilanious calls
 """
 
+import random
+
+random_symbols = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+def random_string(length=8):
+    r = ''
+    for i in range(length):
+        r += random_symbols[random.randint(0,len(random_symbols)-1)]
+    return r
+
 # AllanC - cant this be removed and replaced with filter()? see python docs for more info on filter
 def remove_where(list, check_for_removal_function):
     """

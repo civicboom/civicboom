@@ -10,9 +10,9 @@
     <link   type="text/css"        href="http://yui.yahooapis.com/2.8.1/build/calendar/assets/skins/sam/calendar.css" rel="stylesheet" />
     <script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/calendar/calendar-min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/button/assets/skins/sam/button.css" />
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js"></script>
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/button/button-min.js"></script>
+    ##<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/button/assets/skins/sam/button.css" />
+    ##<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js"></script>
+    ##<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/button/button-min.js"></script>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -30,6 +30,7 @@
 ## Style Overrides
 ##------------------------------------------------------------------------------
 <%def name="styleOverides()">
+    <%doc>
     /*
         Set the "zoom" property to "normal" since it is set to "1" by the 
         ".example-container .bd" rule in yui.css and this causes a Menu
@@ -54,6 +55,7 @@
         *padding: 0 3em;    /* For IE */
         white-space: nowrap;
     }
+    </%doc>
 </%def>
 
 
@@ -92,11 +94,11 @@
 ## Optional Required component defs
 ##------------------------------------------------------------------------------
 <%def name="username()">
-    Username<input type="text" name="username" value="${c.logged_in_reporter.username}" />
+    Username<input type="text" name="username" value="${c.logged_in_user.username}" />
 </%def>
 
 <%def name="email()">
-    email<input type="text" name="email" value="${c.logged_in_reporter.email}" />
+    email<input type="text" name="email" value="${c.logged_in_user.email}" />
 </%def>
 
 <%def name="dob()">
@@ -122,6 +124,7 @@
 
 <div class="yui-skin-sam">
 
+<%doc>
     ## Reference: http://developer.yahoo.com/yui/examples/button/btn_example09.html
     <script type="text/javascript">
 	(function () {
@@ -202,9 +205,9 @@
             <label for="year-field">Year: </label> <input id="year-field" type="text" name="year"/>
         </fieldset>
     ##</form>
-
+</%doc>
     
-<%doc>
+
     <script type="text/javascript">
         YAHOO.namespace("example.calendar");
         YAHOO.example.calendar.init = function() {
@@ -221,13 +224,22 @@
                   initialFocus: "year"
             };
             
-            YAHOO.example.calendar.cal1 = new YAHOO.widget.Calendar("cal1","cal1Container", {navigator:navConfig});
+            YAHOO.example.calendar.cal1 = new YAHOO.widget.Calendar("cal1","cal1Container", {navigator:navConfig, pagedate: "1/1980", selected: "1/1/1980"});
             YAHOO.example.calendar.cal1.render();
+            
+            YAHOO.example.calendar.cal1.selectEvent.subscribe(function (type, args, obj) {
+                var dates = args[0];
+                var date  = dates[0];
+                var year  = date[0], month = date[1], day = date[2];
+                YAHOO.log("year:"+year);
+                YAHOO.util.Dom.get("dob").value = day+'/'+month+'/'+year;
+            });
         }
         YAHOO.util.Event.onDOMReady(YAHOO.example.calendar.init);
     </script>
     <div id="cal1Container"></div>
-</%doc>
+
+    <input id="dob" type="text" name="dob"/>
 
 </div>    
 </%def>

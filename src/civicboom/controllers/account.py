@@ -1,8 +1,10 @@
 from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, _, session, flash_message, redirect_to_referer
 
-from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user
+from civicboom.lib.authentication      import get_user_from_openid_identifyer, get_user_and_check_password, signin_user
+from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.services.janrain import janrain
 from civicboom.lib.web              import session_remove, session_get
+
 
 from civicboom.controllers.register import register_new_janrain_user
 
@@ -62,7 +64,7 @@ class AccountController(BaseController):
         if 'token' in request.POST:
             c.auth_info = janrain('auth_info', token=request.POST.get('token'))
             if c.auth_info:
-                c.logged_in_user = get_user_from_openid_identifyer(auth_info['profile']['identifier']) #Janrain guarntees the identifyer to be set
+                c.logged_in_user = get_user_from_openid_identifyer(c.auth_info['profile']['identifier']) #Janrain guarntees the identifyer to be set
 
         # Authenticate with standard username
         if 'username' in request.POST and 'password' in request.POST:
@@ -74,8 +76,17 @@ class AccountController(BaseController):
         
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
-            u = register_new_janrain_user(auth_info['profile'])               # Create new user from Janrain profile data
-            janrain('map', identifier=profile['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
+            
+            existing_user = get_user(profile.get('displayName'))
+            if existing_user:
+                # TODO
+                # If we have a user with the same username they may be the same user
+                # prompt them to link accounts OR continue with new registration.
+                # Currently if a username conflict appears then a random new username is created and the user is prompted to enter a new one
+                pass
+            
+            u = register_new_janrain_user(c.auth_info['profile'])             # Create new user from Janrain profile data
+            janrain('map', identifier=c.auth_info['profile']['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
             signin_user(u)
             #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             

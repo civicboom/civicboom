@@ -16,6 +16,7 @@ from civicboom.lib.misc           import calculateAge
 
 # Other libs
 import recaptcha.client.captcha as librecaptcha
+import datetime
 
 import logging
 log      = logging.getLogger(__name__)
@@ -57,14 +58,14 @@ class MinimumAgeValidator(validators.FancyValidator):
     def _to_python(self, value, state):
          try:
              date = datetime.datetime.strptime(value, '%d/%m/%Y')
-         except exceptions.ValueError:
+         except ValueError:
               raise formencode.Invalid(_("Please enter your date of birth with the format DD/MM/YYYY"), value, state)
          if calculateAge(date) < self.age_min:
               raise formencode.Invalid(_("Sorry, you have to be over %d to use this site") % self.age_min, value, state)
          return date
 
 
-class ReCaptchaValidator(validators.FormValidator):
+class ReCaptchaValidator(validators.FancyValidator):
     """    
     References
         http://toscawidgets.org/hg/tw.recaptcha/file/f846368854fe/tw/recaptcha/validator.py
@@ -76,7 +77,7 @@ class ReCaptchaValidator(validators.FormValidator):
         'incorrect'       : _('reCAPTURE field is incorrect'),
         'missing'         : _("Missing reCAPTURE value."),
         'network_failure' : _("unable to contact reCAPTURE server to validate response"),
-        'recapture_error' : _("reCAPTURE server returned an error, the problem has been logged and reported to _site_name"),
+        'recapture_error' : _("reCAPTURE server returned an error %(error_code)s, the problem has been logged and reported to _site_name"),
     }
 
     __unpackargs__ = ('*', 'field_names')
@@ -97,7 +98,7 @@ class ReCaptchaValidator(validators.FormValidator):
         self.validate_python(field_dict, state)
 
     def validate_python(self, field_dict, state):
-        print "reCAPTCHA validator"
+        #print "reCAPTCHA validator"
         challenge = field_dict['recaptcha_challenge_field']
         response  = field_dict['recaptcha_response_field']
         if response == '' or challenge == '':
@@ -106,7 +107,7 @@ class ReCaptchaValidator(validators.FormValidator):
             raise error
 
         from pylons import config
-        print "captcha validator call"
+        #print "captcha validator call"
         print "IP:%s Chal:%s Resp:%s" % (self.remote_ip, challenge, response)
         recaptcha_response = librecaptcha.submit(challenge, response, config['api_key.reCAPTCHA.private'], self.remote_ip)
 
@@ -122,7 +123,7 @@ class ReCaptchaValidator(validators.FormValidator):
             error.error_dict = {'recaptcha_response_field':self.message('incorrect', state)}
             raise error
         else:
-            error = formencode.Invalid(self.message('recapture_error', state), field_dict, state)
+            error = formencode.Invalid(self.message('recapture_error', state, error_code=recaptcha_response.error_code), field_dict, state)
             log.error('reCAPTCHA error %s' % recaptcha_response.error_code)
             raise error
 
