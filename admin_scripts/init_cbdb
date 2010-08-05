@@ -59,7 +59,7 @@ echo "  Creating places table"
 echo "
 CREATE TABLE places(
 	id SERIAL PRIMARY KEY NOT NULL,
-	location GEOMETRY NOT NULL,
+	lon FLOAT NOT NULL, lat FLOAT NOT NULL,
 	name VARCHAR(250) NOT NULL,
 	type VARCHAR(64) NOT NULL
 );
@@ -67,15 +67,27 @@ CREATE TABLE places(
 PLACES=`dirname $0`/places.sql.bz2
 if [ -f $PLACES ] ; then
 	echo "  Found $PLACES, populating locations table"
+	(
 	if which pv >/dev/null ; then
-		pv -c -N file $PLACES | bunzip2 | pv -c -N line -l | psql -q -U civicboom -d civicboom_gis
+		pv $PLACES | bunzip2
 	else
-		bzcat $PLACES | psql -q -U civicboom -d civicboom_gis
+		bzcat $PLACES
 	fi
+	) | psql -q -U civicboom -d civicboom_gis
 else
 	echo "  Can't find $PLACES, not populating locations table"
 fi
+# SRIDs:
+# 4326   - lon/lat, used in planet.osm
+# 900913 - openstreetmap prefers this, inserted by osm2pgsql
 echo "
+DELETE FROM spatial_ref_sys WHERE srid = 900913;
+INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) VALUES (900913,'EPSG',900913,'PROJCS["WGS84 / Simple Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS_1984", 6378137.0, 298.257223563]],PRIMEM["Greenwich", 0.0],UNIT["degree", 0.017453292519943295],AXIS["Longitude", EAST],AXIS["Latitude", NORTH]],PROJECTION["Mercator_1SP_Google"],PARAMETER["latitude_of_origin", 0.0],PARAMETER["central_meridian", 0.0],PARAMETER["scale_factor", 1.0],PARAMETER["false_easting", 0.0],PARAMETER["false_northing", 0.0],UNIT["m", 1.0],AXIS["x", EAST],AXIS["y", NORTH],AUTHORITY["EPSG","900913"]]','+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs');
+
+SELECT AddGeometryColumn('public', 'places', 'location', 4326, 'POINT', 2);
+UPDATE places SET location = ST_SetSRID(ST_MakePoint(lon, lat), 4326);
+ALTER TABLE places DROP COLUMN lon;
+ALTER TABLE places DROP COLUMN lat;
 CREATE INDEX places__location ON places USING GIST (location); 
 CREATE INDEX places__name ON places(name); 
 CREATE INDEX places__type ON places(type);

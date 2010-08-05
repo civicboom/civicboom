@@ -25,8 +25,8 @@ function autocomplete_location(location_box, completions_box, gis_box, map) {
 		if(map) {
 			var typelonlat = oData.location.split(/[ ()]/);
 			lonlat = new OpenLayers.LonLat(typelonlat[1], typelonlat[2]).transform(
-				new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-				new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+				new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984 (lon/lat)
+				new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection (OSM uses this)
 			);
 			map.setCenter(lonlat, 13);
 		}
