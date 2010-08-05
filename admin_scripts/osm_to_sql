@@ -12,11 +12,7 @@ class Node(object):
         self.isin = None
 
     def __unicode__(self):
-        return (
-            u"INSERT INTO places(location, name, type) "+
-            u"VALUES(ST_Point(%s, %s), '%s', '%s');" %
-            (self.lon, self.lat, self.name.replace("'", "''"), self.type)
-        )
+        return "\t".join([str(self.lon), str(self.lat), self.name, self.type])
 
 class MapHandler(xml.sax.handler.ContentHandler):
     def __init__(self):
@@ -54,4 +50,6 @@ parser.setErrorHandler(ErrHandler())
 parser.setContentHandler(MapHandler())
 # BZ2 broken?
 #parser.parse(bz2.BZ2File("planet-latest.osm.bz2"))
+print "COPY places (lon, lat, name, type) FROM stdin;"
 parser.parse(sys.stdin)
+print "\."
