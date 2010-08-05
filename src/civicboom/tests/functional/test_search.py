@@ -15,7 +15,7 @@ class TestSearchController(TestController):
     def test_content_results(self):
         response = self.app.get(url(controller='search', action='content', id='text'))
         assert "Here is some text" in response
-        assert "Mr U. Test" in response
+        assert "Friend" in response
         assert "2 responses" in response
 
     def test_content_no_results(self):
