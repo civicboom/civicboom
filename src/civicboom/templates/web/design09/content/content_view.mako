@@ -16,7 +16,8 @@
 
   ##-------- By ----------
   <h2>${_("Content by")}</h2>
-    ${c.content.creator.username}
+    <img src="${c.content.creator.avatar_url}">
+	<br>${c.content.creator.name} (${c.content.creator.username})
   
   
   ##-------Actions-------
