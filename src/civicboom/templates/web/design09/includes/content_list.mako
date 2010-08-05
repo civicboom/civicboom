@@ -15,7 +15,6 @@
 			</b>
 			<b>
 				<a href="${url(controller='content', action='view', id=r.id)}">${r.title}</a>
-				<br>${r.location}
 			</b>
 			<br>${r.content[0:75]}... <!-- FIXME: truncate function -->
 			<p>&nbsp;<br><b style="float: right; text-align: right;">
