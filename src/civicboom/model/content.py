@@ -69,7 +69,7 @@ class Content(Base):
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
     # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
-    responses       = relationship("Content",            backref=backref('parent', remote_side=id)) #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content
+    responses       = relationship("Content",            backref=backref('parent', remote_side=id, order_by=creation_date)) #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content
     attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
