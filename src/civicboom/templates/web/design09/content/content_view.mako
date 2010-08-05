@@ -95,6 +95,67 @@
 ##------------------------------------------------------------------------------
 ## Comments
 ##------------------------------------------------------------------------------
+<%def name="relation(author, current, original, format='text')">
+	% if author == current:
+		% if format == "text":
+			(You!)
+		% elif format == "tr":
+			<tr class="self_comment" style="background: #FFA;">
+		% endif
+	% elif author == original:
+		% if format == "text":
+			(Article Author)
+		% elif format == "tr":
+			<tr class="author_comment" style="background: #AFA;">
+		% endif
+	% else:
+		% if format == "text":
+			<!-- just a comment -->
+		% elif format == "tr":
+			<tr class="comment" style="background: #FAF;">
+		% endif
+	% endif
+</%def>
 <%def name="comments()">
-  <p>comments to be implmented</p>
+	<table>
+<%
+from civicboom.model.meta import Session
+from civicboom.model import CommentContent
+%>
+## this approach doesn't sort :/
+	% for r in [co for co in c.content.responses if co.__type__ == "comment"]:
+##	% for r in Session.query(CommentContent).filter(CommentContent.parent_id==c.content.id).order_by(CommentContent.creation_date):
+	${relation(r.creator, c.logged_in_user, c.content.creator, 'tr')}
+		<td class="avatar">
+			<a href="${url(controller='user', action='view', id=r.creator.username)}">
+				<img class='avatar' src="${r.creator.avatar_url}">
+			</a>
+		</td>
+		<td>
+			${r.content}
+			<b style="float: right;">
+				${r.creator.name}
+				${relation(r.creator, c.logged_in_user, c.content.creator, 'text')} --
+				${str(r.creation_date)[0:19]}
+			</b>
+		</td>
+	</tr>
+	% endfor
+	% if c.logged_in_user:
+	<tr class="self_comment" style="background: #FFA;">
+		<td class="avatar">
+			<img class='avatar' src="${c.logged_in_user.avatar_url}"><br>
+		</td>
+		<td>
+			<form action="/content/edit" method="POST">
+				<input type="hidden" name="form_parent_id" value="${c.content.id}">
+				<input type="hidden" name="form_title" value="Re: ${c.content.title}">
+				<input type="hidden" name="form_type" value="comment">
+				<textarea name="form_content" style="width: 100%; height: 100px;"></textarea>
+				<br><input type="submit" name="submit_preview" value="Preview"><input type="submit" name="submit_response" value="Post">
+			</form>
+  		</td>
+  	</tr>
+	% endif
+	</table>
 </%def>
