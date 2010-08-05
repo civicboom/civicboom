@@ -130,6 +130,9 @@ class ContentController(BaseController):
             if "form_owner" in form:
                 c.content.creator_id = form["form_owner"]
                 # Although the form limits the user to a selectable list, any id can be passed here, it is possible that with an API call a user can give content to anyone.
+                # FIXME: including people who don't want the content attributed to them...
+            else:
+                c.content.creator_id = c.logged_in_user.id
 
             # Tags
             if "form_tags" in form:
