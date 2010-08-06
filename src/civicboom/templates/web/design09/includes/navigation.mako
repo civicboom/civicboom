@@ -15,7 +15,7 @@
       </li>
       <li>
         <a href="${h.url(controller='content'   ,action='edit'         )}">${_("Find _assignments")}</a>
-        <div class="tooltip tooltip_icon"><span>${_("")}</span></div>
+        <div class="tooltip tooltip_icon"><span>${_("FIXME")}</span></div>
       </li>
     </ul>
   </div>

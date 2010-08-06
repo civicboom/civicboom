@@ -2,7 +2,6 @@
 
   <div class="yui-u first">
     <a href="mailto:feedback@civicboom.com" class='feedback_link'>${_("Please send us your Feedback")} <span class="icon_large icon_comment footer_feedback_icon">&nbsp;</span></a>
-    <a href="${h.url(controller='misc', action='contact')}" class='more_contacts'>(${_("more contact details")})</a>    
   </div>
   
   <div class="yui-u unit_b">
@@ -22,10 +21,11 @@
       #  link_target = ' target="_black"'
     %>
     <ul class="legal_list">
-      <li                       ><a href="${h.url(controller='misc', action='about'      )}"               >${_("About")}</a></li>
-      <li                       ><a href="${h.url(controller='misc', action='press'      )}"               >${_("Press Coverage")}</a></li>
-      <li                       ><a href="${h.url(controller='misc', action='terms'      )}" ${link_target}>${_("Terms and Conditions")}</a></li>
-      <li class="last_list_item"><a href="${h.url(controller='misc', action='privacy'    )}" ${link_target}>${_("Privacy policy")}</a></li>
+      <li                       ><a href="${h.url(controller='misc', action='about'  )}"               >${_("About")}</a></li>
+      <li                       ><a href="${h.url(controller='misc', action='press'  )}"               >${_("Press Coverage")}</a></li>
+      <li                       ><a href="${h.url(controller='misc', action='terms'  )}" ${link_target}>${_("Terms and Conditions")}</a></li>
+      <li                       ><a href="${h.url(controller='misc', action='privacy')}" ${link_target}>${_("Privacy policy")}</a></li>
+      <li class="last_list_item"><a href="${h.url(controller='misc', action='contact')}"               >${_("Contact")}</a>
     </ul>
 
     <div class="copyright">
