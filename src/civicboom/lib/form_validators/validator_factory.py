@@ -28,5 +28,7 @@ def build_schema(*args, **kargs):
                 schema.fields[field]                = PasswordValidator()
                 schema.fields['password_confirm']   = PasswordValidator()
                 from pylons import request
-                setattr(schema, 'chained_validators', [FieldsMatch('password', 'password_confirm'), ReCaptchaValidator(request.environ['REMOTE_ADDR']) ])
+                setattr(schema, 'chained_validators', [FieldsMatch('password', 'password_confirm'),
+                                                       #ReCaptchaValidator(request.environ['REMOTE_ADDR']),
+                                                      ])
     return schema

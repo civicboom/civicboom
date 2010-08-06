@@ -8,6 +8,7 @@ from pylons.decorators.secure import https
 
 
 from civicboom.controllers.register import register_new_janrain_user
+from civicboom.lib.civicboom_lib    import verify_email
 
 import urllib
 
@@ -79,14 +80,14 @@ class AccountController(BaseController):
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
             
-            try   : existing_user = get_user(c.auth_info['profile']['displayName'])
-            except: pass
-            if existing_user:
+            #try   : existing_user = get_user(c.auth_info['profile']['displayName'])
+            #except: pass
+            #if existing_user:
                 # TODO
                 # If we have a user with the same username they may be the same user
                 # prompt them to link accounts OR continue with new registration.
                 # Currently if a username conflict appears then a random new username is created and the user is prompted to enter a new one
-                pass
+                #pass
             
             u = register_new_janrain_user(c.auth_info['profile'])             # Create new user from Janrain profile data
             janrain('map', identifier=c.auth_info['profile']['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
@@ -96,3 +97,28 @@ class AccountController(BaseController):
         # If not authenticated or any janrain info then error
         flash_message(_('Unable to authenticate user'))
         return redirect_to_referer()
+
+
+    #-----------------------------------------------------------------------------
+    # Verify Email
+    #-----------------------------------------------------------------------------
+    def verify_email(self, id):
+        """
+        An email is generated for a user and a hash created for them in the URL
+        see civicboom_lib for the send_verify_email that generates this if needed
+        """
+        if 'hash' in request.params :
+            if verify_email(id, request.params['hash'], commit=True):
+                flash_message(_('email address has been successfully validated'))
+            else:
+                flash_message(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again'))
+            redirect('/')
+            
+    #-----------------------------------------------------------------------------
+    # Forgotten Password
+    #-----------------------------------------------------------------------------
+    def forgotten_password(self):
+        """
+        Placeholder for forgotten password feature
+        """
+        pass

@@ -9,8 +9,8 @@ from pylons.templating       import render_mako as render
 from pylons.i18n.translation import _, ungettext, set_lang
 
 from civicboom.model                   import meta
-from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.web                 import flash_message, redirect_to_referer, action_redirector
+from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.civicboom_lib       import deny_pending_user
 
 import logging
@@ -49,11 +49,15 @@ class BaseController(WSGIController):
         # Setup site app_globals on first request
         # AllanC - I dont like this, is there a call we can maybe put in the tasks controler? or an init controler? that we can fire when the site is restarted?
         #          For development this is sufficent, but should not be used in a production env.
+        #
+        # TODO - yeah, we really need a STARTUP method that gets called to init these
         if not hasattr(app_globals,'site_url'):
             app_globals.site_host = request.environ['SERVER_NAME']
             if config['debug']:
                 app_globals.site_host = request.environ['HTTP_HOST']
             app_globals.site_url = "http://" + app_globals.site_host
+            import civicboom.lib.database.get_cached
+            app_globals.licenses = civicboom.lib.database.get_cached.get_licenses()
 
 
         #AllanC - For gadgets and emails links and static content need to be absolute
