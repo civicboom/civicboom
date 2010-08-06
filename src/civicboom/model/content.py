@@ -96,6 +96,7 @@ class Content(Base):
         Check to see if a member object has the rights to edit this content
         """
         if self.status  == "locked": return False
+        if self.creator == None    : return True # If nobody owns it then eveyone can edit it, this is used when first creating blank content
         if self.creator == member  : return True
         # TODO check groups of creator to see if member is in the owning group
         return False

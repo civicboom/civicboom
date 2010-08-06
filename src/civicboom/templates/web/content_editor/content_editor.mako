@@ -227,7 +227,7 @@
       <div class="hideable">
         ${instruction("What is licensing explanation")}
         
-        % for license in c.licenses:
+        % for license in app_globals.licenses:
           <%
             license_selected = ''
             if c.content.license and license.id == c.content.license_id:
