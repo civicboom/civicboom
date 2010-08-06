@@ -26,11 +26,6 @@ class UserProfileController(BaseController):
         return render("web/user_profile/edit.mako")
 
     @authorize(is_valid_user)
-    def edit_messages(self, id=None):
-        c.viewing_user = c.logged_in_user
-        return render("web/user_profile/edit_messages.mako")
-
-    @authorize(is_valid_user)
     @authenticate_form
     def save(self, id=None):
         c.viewing_user = c.logged_in_user
@@ -81,3 +76,27 @@ class UserProfileController(BaseController):
                 c.viewing_user.config[key] = request.POST[key]
 
         return "Settings saved "+", ".join(request.POST.keys())
+
+    @authorize(is_valid_user)
+    def edit_messages(self, id=None):
+        c.viewing_user = c.logged_in_user
+        return render("web/user_profile/edit_messages.mako")
+
+    @authorize(is_valid_user)
+    @authenticate_form
+    def save_messages(self, id=None):
+        c.viewing_user = c.logged_in_user
+        from civicboom.lib.communication.messages import generators
+        for gen in generators:
+            route_name = "route_"+gen[0]
+            setting = "".join([
+                request.POST.get(gen[0]+"_n", ""),
+                request.POST.get(gen[0]+"_e", ""),
+                request.POST.get(gen[0]+"_c", ""),
+            ])
+            if setting == gen[1]:
+                if route_name in c.viewing_user.config:
+                    del c.viewing_user.config[route_name]
+            else:
+                c.viewing_user.config[route_name] = setting
+        return "Settings saved"
