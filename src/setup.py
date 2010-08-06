@@ -23,7 +23,7 @@ setup(
         "GeoAlchemy",
         "GeoFormAlchemy",
         "gp.fileupload",
-        "SQLAlchemy>=0.6.4",
+        "SQLAlchemy>=0.6.3",
     ] + [
         "Pylons>=1.0.0",
         "FormAlchemy",
