@@ -35,13 +35,17 @@ def make_map(config):
     #map.redirect('/{controller}/'         , '/{controller}'         ) 
     #map.redirect('/{controller}/{action}/', '/{controller}/{action}')
 
-    map.connect('/{controller}/{action}.{format}')
-    map.connect('/{controller}/{action}/')
-    map.connect('/{controller}/{action}')
-    map.connect('/{controller}/{action}.{format}/{id}')
-    map.connect('/{controller}/{action}/{id}/')
-    map.connect('/{controller}/{action}/{id}')
-    map.connect('/{controller}/', action="index")
-    map.connect('/{controller}', action="index")
+    # the first route that matches url() args is the one that's generated,
+    # so put routes without slashes first
+    map.connect('/{controller}/{action}.{format}/{id}')  # CAFI
+    map.connect('/{controller}/{action}.{format}/{id}/') # CAFI/
+    map.connect('/{controller}/{action}/{id}')           # CAI
+    map.connect('/{controller}/{action}/{id}/')          # CAI/
+    map.connect('/{controller}/{action}.{format}')       # CAF
+    map.connect('/{controller}/{action}.{format}/')      # CAF/
+    map.connect('/{controller}/{action}')                # CA
+    map.connect('/{controller}/{action}/')               # CA/
+    map.connect('/{controller}/', action="index")        # A
+    map.connect('/{controller}', action="index")         # A/
 
     return map
