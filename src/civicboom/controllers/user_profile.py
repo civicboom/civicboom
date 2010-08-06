@@ -20,6 +20,10 @@ class UserProfileController(BaseController):
     def view(self, id=None):
         if id:
             c.viewing_user = get_user(id)
-        else:
+        else c.viewing_user:
             c.viewing_user = c.logged_in_user
+
+        if not c.viewing_user:
+            return "" # FIXME: die better
+
         return render("web/user_profile/view.mako")
