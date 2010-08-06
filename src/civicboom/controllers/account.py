@@ -52,7 +52,7 @@ class AccountController(BaseController):
     #-----------------------------------------------------------------------------
 
     # To degrade back to AuthKit rename this method
-    #@https # redirect to https for transfer of password
+    @https() # redirect to https for transfer of password
     def signin(self):
 
         # If no POST display signin template
