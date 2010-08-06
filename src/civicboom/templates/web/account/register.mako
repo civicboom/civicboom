@@ -94,6 +94,7 @@
 ## Optional Required component defs
 ##------------------------------------------------------------------------------
 <%def name="username()">
+    <p>could not allocate your prefered username as it has already been taken, if you are xxx then you can link accounts</p>
     Username<input type="text" name="username" value="${c.logged_in_user.username}" />
 </%def>
 
@@ -102,8 +103,8 @@
 </%def>
 
 <%def name="dob()">
-  dob
-  ${date_component()}
+    dob
+    ${date_component()}
 </%def>
 
 <%def name="password()">

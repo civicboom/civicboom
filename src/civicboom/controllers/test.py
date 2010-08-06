@@ -6,7 +6,7 @@ Locked down for use in development mode only
 
 from civicboom.lib.base   import BaseController, render, c, config, app_globals, abort, session, redirect, flash_message
 from civicboom.model.meta import Session
-from civicboom.model      import Member
+
 
 from civicboom.lib.authentication      import authorize, is_valid_user
 
@@ -78,6 +78,7 @@ class TestController(BaseController):
         return 'pong'
 
     def setting(self):
+        from civicboom.model.member import Member
         m = Session.query(Member).first()
         m.config["height"] = 41
         m.config["height"] = 42
@@ -94,3 +95,20 @@ class TestController(BaseController):
         c.email_content = literal("<h1>Email Test OK!</h1>")
         return render('email/base_email_from_plaintext.mako')
 
+    def new_random_user(self):
+        from civicboom.model.member import User, UserLogin
+        from civicboom.lib.authentication import encode_plain_text_password
+        from civicboom.lib.misc import random_string
+        
+        u = User()
+        u.username = unicode(random_string())
+        
+        u_login = UserLogin()
+        u_login.user   = u
+        u_login.type   = 'password'
+        u_login.token  = encode_plain_text_password('password')
+
+        Session.add(u)
+        Session.add(u_login)
+        
+        Session.commit()

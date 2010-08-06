@@ -11,7 +11,8 @@ from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.database.actions    import follow, accept_assignment
 
 # Communication & Messages
-from   civicboom.lib.communication.email             import send_email
+#from civicboom.lib.communication.email import send_email
+from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email
 #import civicboom.lib.communication.messages as messages
 
 # Form Validators
@@ -55,7 +56,7 @@ class RegisterController(BaseController):
         # Validate User
         if c.logged_in_user and c.logged_in_user == c.new_user: # from janrain login
             pass
-        elif 'hash' in request.params and c.new_user.hash() == request.params['hash']: # or from email hash
+        elif verify_email(c.new_user, request.params.get('hash')): # or from email hash
             c.logged_in_user = c.new_user
         else:
             abort(401)
@@ -63,7 +64,7 @@ class RegisterController(BaseController):
         # Build required fields list from current user data - the template will then display these and a custom validator will be created for them
         c.required_fields = ['username','email','password','dob']
         if not c.logged_in_user.username.startswith(new_user_prefix): c.required_fields.remove('username')
-        if c.logged_in_user.email != u""                            : c.required_fields.remove('email')
+        if c.logged_in_user.email                                   : c.required_fields.remove('email')
         if len(c.logged_in_user.login_details) > 0                  : c.required_fields.remove('password')
         if c.logged_in_user.config["dob"] != u""                    : c.required_fields.remove('dob')
         
@@ -86,9 +87,9 @@ class RegisterController(BaseController):
         
         # If the validator has not forced a page render
         # then the data is fine - save the new user data
-        if 'username' in form: c.logged_in_user.username      = form['username']
-        if 'email'    in form: c.logged_in_user.email         = form['email']
-        if 'dob'      in form: c.logged_in_user.config['dob'] = form['dob']
+        if 'username' in form: c.logged_in_user.username         = form['username']
+        if 'dob'      in form: c.logged_in_user.config['dob']    = form['dob']
+        if 'email'    in form: c.logged_in_user.email_unverifyed = form['email']
         if 'password' in form:
             u_login = UserLogin()
             u_login.user   = c.logged_in_user()
@@ -99,6 +100,10 @@ class RegisterController(BaseController):
         
         Session.add(c.logged_in_user) #Already in session?
         Session.commit()
+        
+        if c.logged_in_user.email_unverifyed:
+            send_verifiy_email(c.logged_in_user)
+            flash_message(_('Please check your email to validate your email address'))
         
         flash_message(_("Congratulations, you have successfully signed up to _site_name."))
         redirect('/')
@@ -124,8 +129,8 @@ class RegisterController(BaseController):
         
         # Create new user
         u = User()
-        u.username  = form['username']
-        u.email     = form['email']
+        u.username         = form['username']
+        u.email_unverifyed = form['email']
         Session.add(u)
         Session.commit()
         
@@ -151,10 +156,7 @@ class RegisterController(BaseController):
         Session.commit()
         
         # Send email verification link
-        Session.refresh(u) #Needed for make_hash below becaususe the object must be persistant
-        validation_link = url(controller='register', action='new_user', id=u.id, host=app_globals.site_host, hash=u.hash())
-        message         = _('Please complete the registration process by clicking on, or copying the following link into your browser: %s') % (validation_link)
-        send_email(u, subject='verify e-mail address', content_text=message)
+        send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
         
         return _("Thank you. Please check your email to complete the registration process")
         
@@ -167,12 +169,19 @@ def register_new_janrain_user(profile):
     """
     With a Janrain user dictonary create a new user with whatever data has been provided as best we can
     If additional information is required the account controler will redirect to the register action to ask for additional details
-    """
+    """    
+    Session.flush() # AllanC - for some mythical reason the commit below wont function because the database is in an odd state, this flush makes the commit below work, more investigation may be needed or maybe a newer version of SQL alchemy will fix this issue
+    
     u = User()
-    try   : u.username = UniqueUsernameValidator().to_python(profile.get('displayName'))
-    except: u.username = unicode(new_user_prefix+random_string())
-    try   : u.email    = UniqueEmailValidator().to_python(profile.get('verifiedEmail') or profile.get('email'))
+    try   : u.username         = UniqueUsernameValidator().to_python(profile.get('displayName'))
+    except: u.username         = unicode(new_user_prefix+random_string())
+    
+    try   : u.email            = UniqueEmailValidator().to_python(profile.get('verifiedEmail'))
     except: pass
+    
+    try   : u.email_unverifyed = UniqueEmailValidator().to_python(profile.get('email'))
+    except: pass
+    
     u.name          = profile.get('name').get('formatted')
     u.avatar        = profile.get('photo')
     u.webpage       = profile.get('url')
