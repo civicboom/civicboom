@@ -26,9 +26,8 @@
         
       % else:
         <li class="username">${c.logged_in_user.username}</li>
-        <li><a href="${h.url(controller='reporter', action='mynews')                               }">${_("Content grab")}</a></li>
-        <li><a href="${h.url(controller='reporter', action='profile', id=c.logged_in_user.username)}">${_("Public")}      </a></li>
-        <li><a href="${h.url(controller='reporter', action='myhome')                               }">${_("Private")}     </a>
+        <li><a href="${h.url(controller='user_profile', action='view', id=c.logged_in_user.username)}">${_("Profile")}</a></li>
+        <li><a href="${h.url(controller='user_profile', action='index')                             }">${_("Controls")}</a>
         <%
           num_notifications = 0 #c.logged_in_user.number_of_new_notifications
         %>
@@ -37,7 +36,6 @@
           ##${h.format_multiple_prefix(num_notifications, single="Notification")}
         % endif
         </li>
-        <li                       ><a href="${h.url(controller='reporter', action='settings')}">${_("Settings")}</a></li>
         <li class="last_list_item"><a href="${h.url(controller='account', action='signout')  }">${_("Sign out")}</a></li>
       % endif
     </ul>
