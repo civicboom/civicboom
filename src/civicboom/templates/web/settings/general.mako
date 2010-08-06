@@ -1,4 +1,18 @@
-<%inherit file="/web/html_base.mako"/>
+<%inherit file="/web/layout_2cols.mako"/>
+
+<%def name="col_side()">
+	<div class="avatar">
+		<img class="avatar" src="${c.viewing_user.avatar_url}">
+		<br>${c.viewing_user.name}
+		<br>(${c.viewing_user.username})
+	</div>
+
+	<h2>Tools</h2>
+	    <a href="${url(controller='user_profile', action='index')}">My Profile</a>
+	<br><a href="${url(controller='settings', action='general')}">Edit Settings</a>
+	<br><a href="${url(controller='settings', action='messages')}">Edit Notifications</a>
+	<br><a href="${url(controller='messages', action='index')}">My Messages</a>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -91,11 +105,6 @@
 <form action="${url.current(action='save_general', id=c.viewing_user.username)}" method="POST">
 	<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
 	<table id="user_settings"><tr>
-		<td class="avatar">
-			<img class="avatar" src="${c.viewing_user.avatar_url}">
-			<br>${c.viewing_user.name}
-			<br>(${c.viewing_user.username})
-		</td>
 		<td>
 			${settings_general()}
 			${settings_email()}
@@ -107,7 +116,6 @@
 		</td>
 	</tr>
 		<tr>
-			<td></td>
 			<td colspan="2"><input type="submit" value="Save" style="width: 100%"></td>
 		</tr>
 	</table>

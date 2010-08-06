@@ -2,7 +2,9 @@ import logging
 
 from pylons import request, response, session, tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
+from pylons.decorators.secure import authenticate_form
 
+from civicboom.lib.authentication import authorize, is_valid_user
 from civicboom.lib.base import BaseController, render
 
 log = logging.getLogger(__name__)

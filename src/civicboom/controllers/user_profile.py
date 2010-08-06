@@ -13,6 +13,10 @@ import hashlib
 log = logging.getLogger(__name__)
 
 class UserProfileController(BaseController):
+    def index(self):
+        c.viewing_user = c.logged_in_user
+        return render("web/user_profile/index.mako")
+
     def view(self, id=None):
         if id:
             c.viewing_user = get_user(id)

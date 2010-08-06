@@ -1,9 +1,6 @@
-<%inherit file="/web/html_base.mako"/>
+<%inherit file="/web/layout_3cols.mako"/>
 
-##------------------------------------------------------------------------------
-## Body
-##------------------------------------------------------------------------------
-<%def name="body()">
+<%def name="col_left()">
   <img src="${c.viewing_user.avatar_url}">
   ${c.viewing_user.name}
   (${c.viewing_user.username})
@@ -17,4 +14,10 @@
   % for f in c.viewing_user.followers:
     ${f.name}
   % endfor
+</%def>
+
+<%def name="col_right()">
+</%def>
+
+<%def name="body()">
 </%def>

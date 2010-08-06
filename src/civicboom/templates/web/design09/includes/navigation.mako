@@ -10,8 +10,12 @@
         <div class="tooltip tooltip_icon"><span>${_("Posting an _assignment allows you to ask questions and make call to actions")}</span></div>
       </li>
       <li>
-        <a href="${h.url(controller='content'   ,action='edit'         )}">${_("Upload _article")}</a>
+        <a href="${h.url(controller='content'   ,action='edit'         )}">${_("Write _article")}</a>
         <div class="tooltip tooltip_icon"><span>${_("Uploading an _article allows you express your ideas, opinions and news to a wider community")}</span></div>
+      </li>
+      <li>
+        <a href="${h.url(controller='content'   ,action='edit'         )}">${_("Find _assignments")}</a>
+        <div class="tooltip tooltip_icon"><span>${_("FIXME")}</span></div>
       </li>
     </ul>
   </div>
