@@ -231,7 +231,7 @@
           <%
             license_selected = ''
             if c.content.license and license.id == c.content.license_id:
-              license_selected = h.literal('checked="checked"')
+                license_selected = h.literal('checked="checked"')
           %>
           <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}" ${license_selected} />
           <label for="form_licence_${license.id}">
