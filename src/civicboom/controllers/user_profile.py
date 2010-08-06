@@ -26,6 +26,11 @@ class UserProfileController(BaseController):
         return render("web/user_profile/edit.mako")
 
     @authorize(is_valid_user)
+    def edit_messages(self, id=None):
+        c.viewing_user = c.logged_in_user
+        return render("web/user_profile/edit_messages.mako")
+
+    @authorize(is_valid_user)
     @authenticate_form
     def save(self, id=None):
         c.viewing_user = c.logged_in_user
