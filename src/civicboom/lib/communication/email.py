@@ -69,7 +69,7 @@ def send_email_log(email_to, subject, content_text, content_html):
 #-------------------------------------------------------------------------------
 # Send Email - SMTP
 #-------------------------------------------------------------------------------
-def send_email_smtp(email_to, subject, content_text, content_html, sender=config['email.autogen_from']):
+def send_email_smtp(email_to, subject, content_text, content_html, sender=None):
     """
     Takes a comma separated list (email_to) with a subject and message body
     and sends it out to all the recipients
@@ -79,6 +79,9 @@ def send_email_smtp(email_to, subject, content_text, content_html, sender=config
     from email.MIMEText import MIMEText
     from email.MIMEImage import MIMEImage
     import smtplib
+
+    if not sender:
+        sender = config['email.autogen_from']
     
     # Create the root message and fill in the from, to, and subject headers
     msgRoot = MIMEMultipart('related')
