@@ -95,6 +95,9 @@ class AccountController(BaseController):
         flash_message(_('Unable to authenticate user'))
         return redirect_to_referer()
 
+    #-----------------------------------------------------------------------------
+    # Verify Email
+    #-----------------------------------------------------------------------------
     def verify_email(id):
         if 'hash' in request.params : # or from email hash
             if verify_email(id, request.params['hash']):

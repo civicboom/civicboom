@@ -3,11 +3,12 @@ Set of helpers specificly to the Civicboom project
   (these are not part of misc because misc is more genereal functions that could be used in a range of projects)
 """
 
-from pylons import url
+from pylons import url, app_globals
 from pylons.i18n.translation import _
 
 
 from civicboom.model.meta import Session
+from civicboom.lib.database.get_cached import get_user
 
 from civicboom.lib.communication.email import send_email
 
