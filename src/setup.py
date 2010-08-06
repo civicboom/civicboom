@@ -23,9 +23,9 @@ setup(
         "GeoAlchemy",
         "GeoFormAlchemy",
         "gp.fileupload",
+        "SQLAlchemy>=0.6.4",
     ] + [
         "Pylons>=1.0.0",
-        "SQLAlchemy>=0.6.3",
         "FormAlchemy",
         "recaptcha-client",
         "pyDNS",

@@ -38,6 +38,7 @@ def verify_email(user, hash, commit=False):
     if user and user.hash() == hash:
         user.email            = user.email_unverifyed
         user.email_unverifyed = None
-        if commit: Session.commit()
+        if commit:
+            Session.commit()
         return True
     return False

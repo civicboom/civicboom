@@ -92,7 +92,7 @@ class RegisterController(BaseController):
         if 'email'    in form: c.logged_in_user.email_unverifyed = form['email']
         if 'password' in form:
             u_login = UserLogin()
-            u_login.user   = c.logged_in_user()
+            u_login.user   = c.logged_in_user
             u_login.type   = 'password'
             u_login.token  = form['password']
             Session.add(u_login)

@@ -108,7 +108,7 @@
 </%def>
 
 <%def name="password()">
-  ${h.get_captcha()}
+  ##${h.get_captcha()}
   
   password<input type="password" name="password"         value="" />
   password confirm<input type="password" name="password_confirm" value="" />

@@ -96,6 +96,7 @@ class AccountController(BaseController):
         flash_message(_('Unable to authenticate user'))
         return redirect_to_referer()
 
+
     #-----------------------------------------------------------------------------
     # Verify Email
     #-----------------------------------------------------------------------------
@@ -104,9 +105,18 @@ class AccountController(BaseController):
         An email is generated for a user and a hash created for them in the URL
         see civicboom_lib for the send_verify_email that generates this if needed
         """
-        if 'hash' in request.params : # or from email hash
+        if 'hash' in request.params :
             if verify_email(id, request.params['hash'], commit=True):
                 flash_message(_('email address has been successfully validated'))
             else:
                 flash_message(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again'))
             redirect('/')
+            
+    #-----------------------------------------------------------------------------
+    # Forgotten Password
+    #-----------------------------------------------------------------------------
+    def forgotten_password(self):
+        """
+        Placeholder for forgotten password feature
+        """
+        pass
