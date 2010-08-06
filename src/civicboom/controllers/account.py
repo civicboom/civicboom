@@ -7,6 +7,7 @@ from civicboom.lib.web              import session_remove, session_get
 
 
 from civicboom.controllers.register import register_new_janrain_user
+from civicboom.lib.civicboom_lib    import verify_email
 
 import urllib
 
@@ -98,9 +99,13 @@ class AccountController(BaseController):
     #-----------------------------------------------------------------------------
     # Verify Email
     #-----------------------------------------------------------------------------
-    def verify_email(id):
+    def verify_email(self, id):
+        """
+        An email is generated for a user and a hash created for them in the URL
+        see civicboom_lib for the send_verify_email that generates this if needed
+        """
         if 'hash' in request.params : # or from email hash
-            if verify_email(id, request.params['hash']):
+            if verify_email(id, request.params['hash'], commit=True):
                 flash_message(_('email address has been successfully validated'))
             else:
                 flash_message(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again'))

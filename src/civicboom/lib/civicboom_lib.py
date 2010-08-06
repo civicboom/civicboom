@@ -33,10 +33,11 @@ def send_verifiy_email(user, controller='account', action='verify_email', messag
     message         = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
     send_email(user.email_unverifyed, subject=_('verify e-mail address'), content_text=message)
 
-def verify_email(user, hash):
+def verify_email(user, hash, commit=False):
     user = get_user(user)
-    if user.hash() == hash:
+    if user and user.hash() == hash:
         user.email            = user.email_unverifyed
         user.email_unverifyed = None
+        if commit: Session.commit()
         return True
     return False
