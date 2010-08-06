@@ -88,7 +88,7 @@
 	padding-right: 4px;
 }
 </style>
-<form action="${url.current(action='save', id=c.viewing_user.username)}" method="POST">
+<form action="${url.current(action='save_general', id=c.viewing_user.username)}" method="POST">
 	<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
 	<table id="user_settings"><tr>
 		<td class="avatar">
