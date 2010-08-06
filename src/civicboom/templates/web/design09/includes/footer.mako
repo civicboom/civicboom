@@ -22,9 +22,10 @@
       #  link_target = ' target="_black"'
     %>
     <ul class="legal_list">
-      <li                       ><a href="${h.url(controller='misc', action='press'      )}"               >${_("Press Coverage")}      </a></li>
+      <li                       ><a href="${h.url(controller='misc', action='about'      )}"               >${_("About")}</a></li>
+      <li                       ><a href="${h.url(controller='misc', action='press'      )}"               >${_("Press Coverage")}</a></li>
       <li                       ><a href="${h.url(controller='misc', action='terms'      )}" ${link_target}>${_("Terms and Conditions")}</a></li>
-      <li class="last_list_item"><a href="${h.url(controller='misc', action='privacy'    )}" ${link_target}>${_("Privacy policy")}      </a></li>
+      <li class="last_list_item"><a href="${h.url(controller='misc', action='privacy'    )}" ${link_target}>${_("Privacy policy")}</a></li>
     </ul>
 
     <div class="copyright">

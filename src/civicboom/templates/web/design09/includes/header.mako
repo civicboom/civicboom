@@ -11,9 +11,6 @@
     
     <ul class="links_by_title">
       <li><a href='/' class="icon_large icon_home" style="padding: 0em; margin: 0em;"></a></li>
-      <li><a href="${h.url(controller='misc'      , action='about'               )}">${_("About")}</a></li>
-      <li><a href="${h.url(controller='search'    , action='reporter'            )}">${_("Search _reporters")}</a></li>
-      <li><a href="${h.url(controller='assignment', action='view_all_assignments')}">${_("_assignment").capitalize()}</a></li>
     </ul>
   </div>
     
@@ -25,8 +22,7 @@
         </li>
         
       % else:
-        <li class="username">${c.logged_in_user.username}</li>
-        <li><a href="${h.url(controller='user_profile', action='view', id=c.logged_in_user.username)}">${_("Profile")}</a></li>
+        <li><a href="${h.url(controller='user_profile', action='view', id=c.logged_in_user.username)}">${c.logged_in_user.name} (${c.logged_in_user.username})</a></li>
         <li><a href="${h.url(controller='user_profile', action='index')                             }">${_("Controls")}</a>
         <%
           num_notifications = 0 #c.logged_in_user.number_of_new_notifications
