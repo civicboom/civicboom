@@ -12,6 +12,7 @@ import authkit.authenticate
 from civicboom.config.environment import load_environment
 
 from civicboom.middleware.MobileDetectionMiddleware import MobileDetectionMiddleware
+from civicboom.middleware.HttpsDetectionMiddleware import HttpsDetectionMiddleware
 
 
 def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
@@ -52,6 +53,7 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
 
     # CUSTOM MIDDLEWARE HERE (filtered by error handling middlewares)
     app = MobileDetectionMiddleware(app)
+    app = HttpsDetectionMiddleware(app)
 
 
     if asbool(full_stack):

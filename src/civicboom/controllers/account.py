@@ -4,6 +4,7 @@ from civicboom.lib.authentication      import get_user_from_openid_identifyer, g
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.services.janrain import janrain
 from civicboom.lib.web              import session_remove, session_get
+from pylons.decorators.secure import https
 
 
 from civicboom.controllers.register import register_new_janrain_user
@@ -23,6 +24,7 @@ class AccountController(BaseController):
     # Reference - "Definitive Guide to Pylons" (pg 439)
     # and http://pylonsbook.com/en/1.1/simplesite-tutorial-part-3.html#signing-in-and-signing-out
 
+    @https()
     def signin(self):
         """
         AuthKit implementation of signin
@@ -50,7 +52,7 @@ class AccountController(BaseController):
     #-----------------------------------------------------------------------------
 
     # To degrade back to AuthKit rename this method
-    #@https # redirect to https for transfer of password
+    @https() # redirect to https for transfer of password
     def signin(self):
 
         # If no POST display signin template
