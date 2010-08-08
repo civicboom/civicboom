@@ -21,11 +21,10 @@
   </div>
 
   <div class="yui-u unit_b">
-    <form action="${h.url(controller='search', action='article')}" method='post'>
+    <form action="${h.url(controller='search', action='content')}" method='GET'>
       ${_("Find")}:
-      <input type="text"   class="search_input"  name="description" value="News, opinions" maxlength='50' onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" />
-      <input type="submit" class="search_submit" name="submit"      value=""   />
-      <input type="hidden"                       name="status"      value="up" />
+      <input type="text"   class="search_input"  name="query" value="News, opinions" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" />
+      <input type="submit" class="search_submit" value="" />
     </form>
   </div>
 </div>

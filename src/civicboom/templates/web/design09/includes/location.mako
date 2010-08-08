@@ -7,19 +7,30 @@
 % if map:
 	${minimap(name=field_name+"_map", width=size, height=size)}
 % endif
-<script>autocomplete_location("${field_name}_name", "${field_name}_comp", "${field_name}", ${field_name}_map);</script>
+<script>autocomplete_location("${field_name}", ${field_name}_map);</script>
 </%def>
 
-<%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13)">
-<script src="/javascript/_openlayers.js"></script>
+<%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13, overlay=None)">
+<!-- map div -->
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
-<script>
-${name} = new OpenLayers.Map("${name}_div", { controls: [] });
-${name}.addLayer(new OpenLayers.Layer.OSM());
-lonlat = new OpenLayers.LonLat(${lon},${lat}).transform(
-            new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-            new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
-          );
-${name}.setCenter(lonlat, ${zoom});
+
+<!-- link to APIs -->
+<script src="/javascript/_openlayers.js"></script>
+
+<!-- combine APIs -->
+<script type="text/javascript" charset="utf-8" src="/javascript/mxn/mxn.js?(openlayers)"></script>
+
+<!-- use the combined API -->
+<script type="text/javascript">
+	${name} = new mxn.Mapstraction('${name}_div','openlayers');
+	${name}.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
+	${name}.addControls({
+		pan: false,
+		zoom: false,
+		map_type: false
+	});
+	% if overlay:
+	${name}.addOverlay("${overlay}");
+	% endif
 </script>
 </%def>

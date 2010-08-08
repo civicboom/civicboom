@@ -15,16 +15,36 @@ tmpl_prefix = '/web/design09'
 
 class SearchController(BaseController):
     def index(self):
-        # Return a rendered template
-        #return render('/search.mako')
-        # or, return a string
-        return 'Hello World. Search for: [box]'
+        return render(tmpl_prefix+"/search/index.mako")
 
-    def content(self, id=None):
-        if not id:
-            return redirect(url(controller='search', action='index'))
-        results = Session.query(Content).filter(or_(Content.title.match(id), Content.content.match(id)))
-        return render(tmpl_prefix+"/search/content.mako", extra_vars={"term": id, "results":results})
+    def content(self, format="html"):
+        results = Session.query(Content)
+
+        if "query" in request.GET:
+            q = request.GET["query"]
+            results = results.filter(or_(Content.title.match(q), Content.content.match(q)))
+        else:
+            q = None
+
+        if "location" in request.GET:
+            location = request.GET["location"]
+            parts = location.split(",")
+            if len(parts) == 2:
+                (lon, lat) = parts
+                radius = 10
+            elif len(parts) == 3:
+                (lon, lat, radius) = parts
+            zoom = 10 # FIXME: inverse of radius?
+            location = (lon, lat, zoom)
+            results = results.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))[0:20]
+        else:
+            location = None
+
+        if format == "xml":
+            return render("/rss/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
+        else:
+            return render(tmpl_prefix+"/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
+
 
     def location(self, format="html"):
         if "query" in request.GET:
