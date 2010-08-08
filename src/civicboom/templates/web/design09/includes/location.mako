@@ -7,7 +7,7 @@
 % if map:
 	${minimap(name=field_name+"_map", width=size, height=size)}
 % endif
-<script>autocomplete_location("${field_name}_name", "${field_name}_comp", "${field_name}", ${field_name}_map);</script>
+<script>autocomplete_location("${field_name}", ${field_name}_map);</script>
 </%def>
 
 <%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13, overlay=None)">
