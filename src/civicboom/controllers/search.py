@@ -15,10 +15,7 @@ tmpl_prefix = '/web/design09'
 
 class SearchController(BaseController):
     def index(self):
-        # Return a rendered template
-        #return render('/search.mako')
-        # or, return a string
-        return 'Hello World. Search for: [box]'
+        return render(tmpl_prefix+"/search/index.mako")
 
     def content(self, format="html"):
         results = Session.query(Content)
@@ -39,7 +36,6 @@ class SearchController(BaseController):
                 (lon, lat, radius) = parts
             zoom = 10 # FIXME: inverse of radius?
             location = (lon, lat, zoom)
-            # FIXME: convert input (lonlat) to database (marcartor)
             results = results.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))[0:20]
         else:
             location = None

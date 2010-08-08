@@ -20,7 +20,8 @@ function autocomplete_location(location_box, completions_box, gis_box) {
 		var elListItem = aArgs[1]; // the <li> element selected in the suggestion container
 		var oData = aArgs[2]; // object literal of data for the result
 		if(gis_box) {
-			document.getElementById(gis_box).value = oData.location;
+			var typelonlat = oData.location.split(/[ ()]/);
+			document.getElementById(gis_box).value = typelonlat[1]+","+typelonlat[2];
 		}
 
 		var map = document.getElementById(gis_box+"_map");

@@ -8,11 +8,6 @@
 <%def name="title()">${_("Search")}</%def>
 
 ##------------------------------------------------------------------------------
-## Navigation override - remove it
-##------------------------------------------------------------------------------
-##<%def name="navigation()"></%def>
-
-##------------------------------------------------------------------------------
 ## Style Overrides
 ##------------------------------------------------------------------------------
 <%def name="styleOverides()">
@@ -39,32 +34,19 @@ IMG.avatar {
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	% if location:
-		<%
-		# we need to pass the session to GeoAlchemy functions
-		from civicboom.model.meta import Session
-		%>
-		<p>${loc.minimap(
-			width="100%", height="600px",
-			lon=location[0],
-			lat=location[1],
-			zoom=location[2]
-		)}
-
-		<!-- JS to add to map -->
-		<script>
-		% for r in results:
-		my_marker = new mxn.Marker(new mxn.LatLonPoint(${location[1]}, ${location[0]}));
-		my_marker.setIcon('http://mapstraction.com/icon.gif');
-		my_marker.setLabel("${r.title}");
-		my_marker.setInfoBubble("<b>${r.title}</b><p>${r.content}");
-		map.addMarker(my_marker);
-		% endfor
-		</script>
-	% endif
-
 	% if len(list(results)) > 0:
-		${cl.content_list(results)}
+		% if "location" in request.GET:
+		<a href="${url(
+			controller='misc',
+			action='georss',
+			feed=url.current(
+				format='xml',
+				query=request.GET['query'],
+				location=request.GET['location']
+			)
+		)}">View results on map</a>
+		% endif
+		<p>${cl.content_list(results)}
 	% else:
 		'${term}' did not match any articles
 	% endif
