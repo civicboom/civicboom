@@ -10,7 +10,7 @@
 <script>autocomplete_location("${field_name}_name", "${field_name}_comp", "${field_name}", ${field_name}_map);</script>
 </%def>
 
-<%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13, extrajs='')">
+<%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13, overlay=None)">
 <!-- map div -->
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 
@@ -29,6 +29,8 @@
 		zoom: false,
 		map_type: false
 	});
-	${extrajs|n}
+	% if overlay:
+	${name}.addOverlay("${overlay}");
+	% endif
 </script>
 </%def>

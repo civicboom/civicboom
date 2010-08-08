@@ -11,6 +11,6 @@ ${loc.minimap(
 	#lon=location[0],
 	#lat=location[1],
 	#zoom=location[2],
-	extrajs='map.addOverlay("http://api.flickr.com/services/feeds/groups_pool.gne?id=322338@N20&format=rss_200&georss=1");'
+	overlay=request.GET['feed']
 )}
 </%def>

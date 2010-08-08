@@ -44,7 +44,10 @@ class SearchController(BaseController):
         else:
             location = None
 
-        return render(tmpl_prefix+"/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
+        if format == "xml":
+            return render("/rss/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
+        else:
+            return render(tmpl_prefix+"/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
 
 
     def location(self, format="html"):
