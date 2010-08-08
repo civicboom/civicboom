@@ -16,18 +16,22 @@
 	</div>
 
 	<h2>Following</h2>
-	% for f in c.viewing_user.following:
-		<br>${f.name}
+	% if c.viewing_user.following:
+		% for f in c.viewing_user.following:
+			<br>${f.name}
+		% endfor
 	% else:
 		<span class="message_empty">Not following anyone</span>
-	% endfor
+	% endif
 
 	<h2>Followers</h2>
-	% for f in c.viewing_user.followers:
-		<br>${f.name}
+	% if c.viewing_user.followers:
+		% for f in c.viewing_user.followers:
+			<br>${f.name}
+		% endfor
 	% else:
 		<span class="message_empty">No followers</span>
-	% endfor
+	% endif
 
 	<h2>Tools</h2>
 	    <a href="${url(controller='user_profile', action='index')}">My Profile</a>
@@ -38,23 +42,27 @@
 
 <%def name="col_right()">
 	<h2>Notifications</h2>
-	% for msg in c.viewing_user.messages_notification:
-		<div class="notification">
-			${msg.subject}
-		</div>
+	% if c.viewing_user.messages_notification:
+		% for msg in c.viewing_user.messages_notification:
+			<div class="notification">
+				${msg.subject}
+			</div>
+		% endfor
 	% else:
 		<span class="message_empty">No notifications</span>
-	% endfor
+	% endif
 
 	<h2>Recent Messages</h2>
-	% for msg in c.viewing_user.messages_to[0:5]:
-		<div class="message_short">
-			<a class="subject" href="${url.current(action='read', id=msg.id)}">${msg.subject}</a>
-			<span class="source">${str(msg.source)}</span>
-		</div>
+	% if c.viewing_user.messages_to[0:5]:
+		% for msg in c.viewing_user.messages_to[0:5]:
+			<div class="message_short">
+				<a class="subject" href="${url.current(action='read', id=msg.id)}">${msg.subject}</a>
+				<span class="source">${str(msg.source)}</span>
+			</div>
+		% endfor
 	% else:
 		<span class="message_empty">No messages</span>
-	% endfor
+	% endif
 	<a class="read_more" href="${url(controller='messages', action='index')}">View All Messages &rarr;</a>
 
 	<h2>Where I Am Now</h2>
@@ -76,11 +84,13 @@ from civicboom.model.meta import Session
 
 <%def name="body()">
 	<h2>Articles I'm Working On</h2>
-	% for content in c.viewing_user.content:
-		<div class="content_summary">
-			${content.title}
-		</div>
+	% if c.viewing_user.content:
+		% for content in c.viewing_user.content:
+			<div class="content_summary">
+				${content.title}
+			</div>
+		% endfor
 	% else:
 		<span class="message_empty">No Drafts</span>
-	% endfor
+	% endif
 </%def>
