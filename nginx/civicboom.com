@@ -1,5 +1,5 @@
 server {
-	listen   80;
+	listen   80 default;
 	listen   443 default ssl;
 	server_name  .civicboom.com new-server;
 	access_log  /var/log/civicboom/nginx.log;
@@ -25,5 +25,22 @@ server {
 		if (!-e $request_filename) {
 			proxy_pass        http://127.0.0.1:5080;
 		}
+	}
+}
+
+server {
+	listen   80;
+	listen   443 ssl;
+	server_name  localhost;
+	access_log  /var/log/civicboom/nginx.log;
+	ssl_certificate      /opt/cb/etc/ssl/civicboom.com.crt;
+	ssl_certificate_key  /opt/cb/etc/ssl/civicboom.com.key;
+
+	location / {
+		rewrite ^/$ /misc/titlepage;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass       http://127.0.0.1:5000;
 	}
 }
