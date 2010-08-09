@@ -45,12 +45,15 @@ def get_user(user):
     return get_user_nocache(user)
 
 def get_content_nocache(content_id):
-    try   : return Session.query(Content).with_polymorphic([DraftContent, ArticleContent, AssignmentContent]).filter_by(id=content_id).one()
+    #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried
+    # could use .with_polymorphic([DraftContent, ArticleContent, AssignmentContent]), will see if this is needed
+    try   : return Session.query(Content).with_polymorphic('*').filter_by(id=content_id).one()
     except: return None
 
-def get_content(content_id):
-    if not content_id: return None
-    return get_content_nocache(content_id)
+def get_content(content):
+    if not content: return None
+    #if content is Content object or a subclass: return content
+    return get_content_nocache(content)
 
 
 def get_tag(tag):
