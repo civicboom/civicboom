@@ -222,12 +222,15 @@
 ## License
 ##------------------------------------------------------------------------------
 <%def name="license()">
+<%
+import civicboom.lib.database.get_cached.get_licenses as get_licenses
+%>
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
       <div class="hideable">
         ${instruction("What is licensing explanation")}
         
-        % for license in app_globals.licenses:
+        % for license in get_licenses():
           <%
             license_selected = ''
             if c.content.license and license.id == c.content.license_id:
