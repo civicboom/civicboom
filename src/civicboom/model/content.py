@@ -75,7 +75,7 @@ class Content(Base):
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
     license         = relationship("License")
 
-    comments        = relationship("CommentContent", cascade="all", primaryjoin="CommentContent.id == Content.parent_id") #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content    
+    comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id == Content.parent_id") #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content    
 
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"

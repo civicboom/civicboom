@@ -136,8 +136,12 @@ from civicboom.model.meta import Session
 from civicboom.model import CommentContent
 %>
 ## this approach doesn't sort :/
-	% for r in [co for co in c.content.responses if co.__type__ == "comment"]:
+##	% for r in [co for co in c.content.responses if co.__type__ == "comment"]:
 ##	% for r in Session.query(CommentContent).filter(CommentContent.parent_id==c.content.id).order_by(CommentContent.creation_date):
+
+## AllanC - don't worry Shish my man, helps at hand :)
+##          a sorted realtion doing the filtering at the database side 
+    % for r in c.content.comments:
 	${relation(r.creator, c.logged_in_user, c.content.creator, 'tr')}
 		<td class="avatar">
 			<a href="${url(controller='user', action='view', id=r.creator.username)}">

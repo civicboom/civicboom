@@ -3,7 +3,7 @@ Set of helpers specific to the Civicboom project
   (these are not part of misc because misc continas more genereal functions that could be used in a range of projects)
 """
 
-from pylons import url, app_globals
+from pylons import url, app_globals, tmpl_context as c
 from pylons.i18n.translation import _
 
 from civicboom.model.meta import Session
@@ -102,7 +102,7 @@ def form_to_content(form, content):
         content.creator_id = form["form_owner"]
         # Although the form limits the user to a selectable list, any id can be passed here, it is possible that with an API call a user can give content to anyone.
         # FIXME: including people who don't want the content attributed to them...
-    else:
+    elif content.creator == None:
         content.creator = c.logged_in_user
 
     

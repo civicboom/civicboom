@@ -75,6 +75,10 @@ def morph_content_to(content, after_type):
         
     return:
         the new mophed object from the database
+        
+    Notes:
+    This is a VERY expensive operation as it requires up to 3 calls to get_content,
+    each of these calls is joining potentialy over 3 tables
     """
     
     content = get_content(content)
