@@ -75,6 +75,8 @@ class Content(Base):
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
     license         = relationship("License")
 
+    comments        = relationship("CommentContent",     backref=backref('parent', remote_side=id, order_by=creation_date), cascade="all") #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content    
+
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"
 
@@ -102,16 +104,16 @@ class Content(Base):
         return False
 
 
+class DraftContent(Content):
+    __tablename__   = "content_draft"
+    __mapper_args__ = {'polymorphic_identity': 'draft'}
+    id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
+
 class CommentContent(Content):
     __tablename__   = "content_comment"
     __mapper_args__ = {'polymorphic_identity': 'comment'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
 
-
-class DraftContent(Content):
-    __tablename__   = "content_draft"
-    __mapper_args__ = {'polymorphic_identity': 'draft'}
-    id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
 
 
 class UserVisibleContent(Content):

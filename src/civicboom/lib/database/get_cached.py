@@ -45,7 +45,7 @@ def get_user(user):
     return get_user_nocache(user)
 
 def get_content_nocache(content_id):
-    try   : return Session.query(Content).filter_by(id=content_id).one()
+    try   : return Session.query(Content).with_polymorphic([DraftContent, ArticleContent, AssignmentContent]).filter_by(id=content_id).one()
     except: return None
 
 def get_content(content_id):
