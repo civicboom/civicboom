@@ -35,17 +35,23 @@ IMG.avatar {
 
 <%def name="body()">
 	% if len(list(results)) > 0:
-		% if "location" in request.GET:
-		<a href="${url(
+		<br><a href="${url.current(
+			format='xml',
+			query=request.params.get('query'),
+			location=request.params.get('location')
+		)}">RSS feed of results</a>
+
+		<br><a href="${url(
 			controller='misc',
 			action='georss',
+			location=request.params.get('location'),
 			feed=url.current(
 				format='xml',
-				query=request.GET['query'],
-				location=request.GET['location']
+				query=request.params.get('query'),
+				location=request.params.get('location')
 			)
 		)}">View results on map</a>
-		% endif
+
 		<p>${cl.content_list(results)}
 	% else:
 		'${term}' did not match any articles
