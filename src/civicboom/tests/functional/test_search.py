@@ -12,13 +12,13 @@ class TestSearchController(TestController):
     ##########################################################################
 
     def test_content_results(self):
-        response = self.app.get(url(controller='search', action='content', id='text'))
+        response = self.app.get(url(controller='search', action='content', query='text'))
         assert "Here is some text" in response
         assert "Friend" in response
         assert "5 responses" in response
 
     def test_content_no_results(self):
-        response = self.app.get(url(controller='search', action='content', id='cake'))
+        response = self.app.get(url(controller='search', action='content', query='cake'))
         assert "'cake' did not match any articles" in response
 
     def test_content_no_query(self):
