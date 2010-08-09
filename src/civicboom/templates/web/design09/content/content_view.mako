@@ -87,6 +87,10 @@ from civicboom.model.meta import Session
   ##----Title----
   <h1>${c.content.title}</h1>
 
+  ##----Type----
+  <b>${c.content.__type__}</b>
+
+
   ##----Content----
   <div class="content_text">
     ${h.literal(h.scan_for_embedable_view_and_autolink(c.content.content))}

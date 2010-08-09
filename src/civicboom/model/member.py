@@ -44,20 +44,24 @@ class Member(Base):
     avatar          = Column(Unicode(250),   nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
 
-    content         = relationship("Content", backref=backref('creator'))
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
-    messages_to           = relationship("Message", primaryjoin=and_(Message.source_id!=null(), Message.target_id==id), backref=backref('target', order_by=id))
-    messages_from         = relationship("Message", primaryjoin=and_(Message.source_id==id, Message.target_id!=null()), backref=backref('source', order_by=id))
-    messages_public       = relationship("Message", primaryjoin=and_(Message.source_id==id, Message.target_id==null())  )
-    messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id)  )
+    messages_to           = relationship("Message", primaryjoin=and_(Message.source_id!=null(), Message.target_id==id    ), backref=backref('target', order_by=id))
+    messages_from         = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id!=null()), backref=backref('source', order_by=id))
+    messages_public       = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id==null()) )
+    messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id    ) )
 
-    login_details   = relationship("UserLogin", backref=('user'), cascade="all,delete-orphan")
-    groups          = relationship("Group",     secondary=GroupMembership.__table__)
-    followers       = relationship("Member",    primaryjoin="Member.id==Follow.member_id", secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
-    following       = relationship("Member",    primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id", secondary=Follow.__table__)
-    assignments     = relationship("MemberAssignment",  backref=backref("member"), cascade="all,delete-orphan")
-    ratings         = relationship("Rating",    backref=backref('member'), cascade="all,delete-orphan")
+    login_details        = relationship("UserLogin"       , backref=('user'), cascade="all,delete-orphan")
+    groups               = relationship("Group"           , secondary=GroupMembership.__table__)
+    followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
+    following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
+    assignments_accepted = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
+    ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
+
+    # Content relation shortcuts
+    content             = relationship(          "Content", backref=backref('creator'))
+    content_assignments = relationship("AssignmentContent")
+    content_articles    = relationship(   "ArticleContent")
 
     _config         = None
 
