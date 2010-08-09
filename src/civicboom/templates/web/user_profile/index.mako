@@ -1,6 +1,10 @@
 <%inherit file="/web/layout_3cols.mako"/>
 <%namespace name="loc" file="/web/design09/includes/location.mako"/>
 
+##------------------------------------------------------------------------------
+## Left Col
+##------------------------------------------------------------------------------
+
 <%def name="col_left()">
 	<style>
 	DIV.avatar {width: 100%; text-align: center;}
@@ -36,6 +40,10 @@
 	<br><a href="${url(controller='messages', action='index')}">My Messages</a>
 </%def>
 
+
+##------------------------------------------------------------------------------
+## Right Col
+##------------------------------------------------------------------------------
 <%def name="col_right()">
 	<h2>Notifications</h2>
 	% for msg in c.viewing_user.messages_notification:
@@ -74,13 +82,19 @@ from civicboom.model.meta import Session
 	<a class="read_more" href="${url(controller='settings', action='location')}">Set Location &rarr;</a>
 </%def>
 
+##------------------------------------------------------------------------------
+## Body
+##------------------------------------------------------------------------------
+
 <%def name="body()">
 	<h2>Articles I'm Working On</h2>
+    <ul>
 	% for content in c.viewing_user.content:
-		<div class="content_summary">
-			${content.title}
-		</div>
+		<li class="content_summary">
+			<a href="${h.url(controller='content', action="view", id=content.id)}">${content.title}:${content.__type__}</a>
+		</li>
 	% else:
 		<span class="message_empty">No Drafts</span>
 	% endfor
+    <ul>
 </%def>

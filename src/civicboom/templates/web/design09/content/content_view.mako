@@ -88,7 +88,7 @@ from civicboom.model.meta import Session
   <h1>${c.content.title}</h1>
 
   ##----Type----
-  <b>${c.content.__type__}</b>
+  <p>Type: ${c.content.__type__}</p>
 
 
   ##----Content----
