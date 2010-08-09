@@ -160,6 +160,13 @@ def form_to_content(form, content):
         if form_field_name in form:
             setattr(content,field,form[form_field_name])
 
+
+    #------------------------------------------------------------------------
+    # Adition data for extended content types and morphing of content object
+    #------------------------------------------------------------------------
+    
+    # todo
+
     return content
 
 #---------------------------------------

@@ -88,7 +88,7 @@ class ContentController(BaseController):
             flash_message(_("your user does not have the permissions to edit this _content"))
             abort(401) #Unauthorised
         
-        # Overlay form data over the current content object or return a new instance of an object, will check edit permission of the object
+        # Overlay form data over the current content object or return a new instance of an object
         c.content = form_to_content(request.POST, c.content)
         
         # If form contains post data
@@ -104,7 +104,6 @@ class ContentController(BaseController):
             
             # if record type changed
             #  remove previous record?
-            #  redirect to new id
             
             if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
                 return redirect(url.current(action='view', id=c.content.id))
