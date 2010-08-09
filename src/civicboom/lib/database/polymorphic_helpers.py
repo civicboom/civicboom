@@ -31,16 +31,32 @@ morph_sql = {
             # SQL set object content type content.__type__ = "article"
             Content.__table__.update().where(Content.__table__.c.id==id).values(__type__="article"),
         ],
+        
     "draft:assignment": lambda id: [
-            # SQL to remove draft record but leave the main Content object still in tact
             DraftContent.__table__.delete().where(DraftContent.__table__.c.id == id),
             
-            # SQL to insert blank assignment record
             UserVisibleContent.__table__.insert().values(id=id),
             AssignmentContent.__table__.insert().values(id=id),
             
-            # SQL set object content type content.__type__ = "article"
             Content.__table__.update().where(Content.__table__.c.id==id).values(__type__="assignment"),
+        ],
+        
+    "assignment:draft": lambda id: [
+            AssignmentContent.__table__.delete().where(AssignmentContent.__table__.c.id == id),
+            UserVisibleContent.__table__.delete().where(UserVisibleContent.__table__.c.id == id),
+            
+            DraftContent.__table__.insert().values(id=id),
+            
+            Content.__table__.update().where(Content.__table__.c.id==id).values(__type__="draft"),
+        ],
+        
+    "article:draft": lambda id: [
+            AssignmentContent.__table__.delete().where(AssignmentContent.__table__.c.id == id),
+            UserVisibleContent.__table__.delete().where(UserVisibleContent.__table__.c.id == id),
+            
+            DraftContent.__table__.insert().values(id=id),
+            
+            Content.__table__.update().where(Content.__table__.c.id==id).values(__type__="draft"),
         ],
 }
 
