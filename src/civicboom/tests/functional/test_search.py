@@ -3,7 +3,7 @@ from civicboom.tests import *
 class TestSearchController(TestController):
 
     def test_index(self):
-        response = self.app.get(url(controller='search', action='index')) # this redirects to the next
+        response = self.app.get(url(controller='search', action='index'))
         assert "Search For:" in response
 
 
@@ -23,7 +23,13 @@ class TestSearchController(TestController):
 
     def test_content_no_query(self):
         response = self.app.get(url(controller='search', action='content'))
-        # FIXME: assert "Search for" in response after redirection
+
+    def test_content_rss(self):
+        response = self.app.get(url(controller='search', action='content', format='xml'))
+
+    def test_content_location(self):
+        response = self.app.get(url(controller='search', action='content', location='1,51'))
+        assert "Here is some text" in response
 
 
     ##########################################################################
