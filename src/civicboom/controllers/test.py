@@ -112,3 +112,8 @@ class TestController(BaseController):
         Session.add(u_login)
         
         Session.commit()
+        
+    def content_morph(self):
+        print "hello"
+        from civicboom.lib.database.polymorphic_helpers import morph_to_article
+        morph_to_article(2)

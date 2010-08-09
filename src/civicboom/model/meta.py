@@ -17,5 +17,6 @@ LegacySession = scoped_session(sessionmaker())
 metadata = MetaData()
 
 # Shish - 0.9.7 had this included, 1.0 doesn't?
+# Allan - dont think it is needed in this project? - http://www.sqlalchemy.org/docs/reference/ext/declarative.html#accessing-the-metadata
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
