@@ -12,7 +12,7 @@ from civicboom.model.meta              import Session
 from civicboom.model.member            import User, Member
 
 # Other utils
-from civicboom.lib.misc           import calculateAge
+from civicboom.lib.misc           import calculate_age
 
 # Other libs
 import recaptcha.client.captcha as librecaptcha
@@ -60,7 +60,7 @@ class MinimumAgeValidator(validators.FancyValidator):
              date = datetime.datetime.strptime(value, '%d/%m/%Y')
          except ValueError:
               raise formencode.Invalid(_("Please enter your date of birth with the format DD/MM/YYYY"), value, state)
-         if calculateAge(date) < self.age_min:
+         if calculate_age(date) < self.age_min:
               raise formencode.Invalid(_("Sorry, you have to be over %d to use this site") % self.age_min, value, state)
          return date
 

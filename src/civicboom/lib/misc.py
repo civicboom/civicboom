@@ -39,7 +39,7 @@ def dict_to_stringprint(d, indent=''):
     return s
 
 
-def calculateAge(born):
+def calculate_age(born):
     """
     Calculate the age of a user.
     http://www.fabent.co.uk/blog/2007/08/04/calculating-age-in-python/
