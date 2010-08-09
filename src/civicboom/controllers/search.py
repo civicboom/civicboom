@@ -29,14 +29,16 @@ class SearchController(BaseController):
         if "location" in request.GET:
             location = request.GET["location"]
             parts = location.split(",")
+            (lon, lat, radius) = (None, None, None)
             if len(parts) == 2:
                 (lon, lat) = parts
                 radius = 10
             elif len(parts) == 3:
                 (lon, lat, radius) = parts
             zoom = 10 # FIXME: inverse of radius?
-            location = (lon, lat, zoom)
-            results = results.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))[0:20]
+            if lon:
+                location = (lon, lat, zoom)
+                results = results.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))[0:20]
         else:
             location = None
 

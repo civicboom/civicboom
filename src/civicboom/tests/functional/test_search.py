@@ -4,8 +4,7 @@ class TestSearchController(TestController):
 
     def test_index(self):
         response = self.app.get(url(controller='search', action='index')) # this redirects to the next
-        response = self.app.get('/search/index')
-        assert "Search for" in response
+        assert "Search For:" in response
 
 
     ##########################################################################
@@ -23,11 +22,7 @@ class TestSearchController(TestController):
         assert "'cake' did not match any articles" in response
 
     def test_content_no_query(self):
-        response = self.app.get(url(controller='search', action='content'), status=302) # redirect to search/index
-        # FIXME: the above generates /search/content/ which redirects to /search/content...
-
-        response = self.app.get("/search/content", status=302)
-        # FIXME: redirect to search/index
+        response = self.app.get(url(controller='search', action='content'))
         # FIXME: assert "Search for" in response after redirection
 
 
