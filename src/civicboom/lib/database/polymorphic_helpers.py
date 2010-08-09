@@ -11,49 +11,69 @@ from civicboom.model.content import Content, DraftContent, ArticleContent, Assig
 from civicboom.model.meta import Session
 
 
-def morph_to_draft(content):
-    """
-    Downgrade content from a published article back to a basic draft
-    """
-    pass
+#inspired by http://old.nabble.com/How-to-get-current-module-object-td15532853.html
+def get_this_module_object():
+  import sys
+  modname = globals()['__name__']
+  module = sys.modules[modname]
+  return module
+this_module = get_this_module_object()
 
-def morph_to_article(content):
+
+#-------------------------------------------------------------------------------
+# Morph to - Morph content between content types
+#-------------------------------------------------------------------------------
+
+def morph_content_to(content, after_type, before_type_enforce=None):
     """
-    Publish an Article
-    by
-     - removing the draft record
-     - inserting a new blank article record with the same id as the draft
-     - get new modifyed object from database
+    params:
+        content can be a Content object or a string id
+        after_type is a string of the type the object is being transformed too
+        
+    return:
+        the new mophed object from the database
     """
+    
     content = get_content(content)
-    if not content or content.__type__ != "draft": raise Exception('unable to morph content that is not a draft')
+    if not content: raise Exception('no content to morph')
     
     id = content.id
     
-    sql_cmds = [
+    # If no before type specifyed, lookup the default before_type
+    type_conversion_lookup = {"article":"draft"} # "type_to":"enforce_type_from" e.g. "article":"draft" will check that an object IS a draft before it converts it to an article
+    if not before_type_enforce:
+        if after_type in type_conversion_lookup:
+            before_type_enforce = type_conversion_lookup[after_type]
+    
+    if content.__type__ != before_type_enforce:
+        raise Exception('unable to morph content to %s because it is not %s' % (after_type ,before_type_enforce) )
+    
+    sql_generator = getattr(this_module,'_generate_morph_to_%s_sql' % after_type)
+    
+    if not sql_generator:
+        raise Exception('Unable to find SQL generator to morph from %s to %s' % (after_type ,before_type_enforce) )
+    
+    for sql_cmd in sql_generator(id):
+        Session.execute(sql_cmd)
+    Session.commit()
+    
+    update_content(id) # Invalidate cache for this content and update etag
+    return get_content(id)
+
+    
+#-------------------------------------------------------------------------------
+# SQL Commands to manually perform the morphing between content types
+#-------------------------------------------------------------------------------
+
+def _generate_morph_to_article_sql(id):
+    return [
         # SQL to remove draft record but leave the main Content object still in tact
         DraftContent.__table__.delete().where(DraftContent.__table__.c.id == id),
         
         # SQL to insert blank article record
         UserVisibleContent.__table__.insert().values(id=id),
         ArticleContent.__table__.insert().values(id=id),
-    
+        
         # SQL set object content type content.__type__ = "article"
         Content.__table__.update().where(Content.__table__.c.id==id).values(__type__="article"),
     ]
-    
-    for sql_cmd in sql_cmds:
-        Session.execute(sql_cmd)
-    Session.commit()
-    
-    # SQL set type content.__type__ = "article"
-    #conn.execute(users.delete().where(users.c.name > 'm'))
-    update_content(id)
-    return get_content(id)
-
-
-def morph_to_assignment(content):
-    """
-    Publish and Assignment
-    """
-    pass

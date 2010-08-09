@@ -114,6 +114,5 @@ class TestController(BaseController):
         Session.commit()
         
     def content_morph(self):
-        print "hello"
-        from civicboom.lib.database.polymorphic_helpers import morph_to_article
-        morph_to_article(2)
+        from civicboom.lib.database.polymorphic_helpers import morph_content_to
+        morph_content_to(2, "article")
