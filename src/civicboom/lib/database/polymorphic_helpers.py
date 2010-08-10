@@ -51,7 +51,7 @@ morph_sql = {
         ],
         
     "article:draft": lambda id: [
-            AssignmentContent.__table__.delete().where(AssignmentContent.__table__.c.id == id),
+            ArticleContent.__table__.delete().where(ArticleContent.__table__.c.id == id),
             UserVisibleContent.__table__.delete().where(UserVisibleContent.__table__.c.id == id),
             
             DraftContent.__table__.insert().values(id=id),

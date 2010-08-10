@@ -16,8 +16,7 @@ from pylons import session
 # Datamodel and database session imports
 from civicboom.model.meta              import Session
 from civicboom.model                   import Media
-from civicboom.lib.database.get_cached import get_content
-from civicboom.lib.database.get_cached import update_content
+from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
 
 # Other imports
 from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key
@@ -131,6 +130,7 @@ class ContentController(BaseController):
         
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
+        c.licenses = get_licenses() #HACK - I cant use app_globals in the templates, it goes nuts about session not attached? doing this every time is annoying
         # Render content editor
         return render("/web/content_editor/content_editor.mako")
         
