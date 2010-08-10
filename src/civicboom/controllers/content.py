@@ -130,7 +130,7 @@ class ContentController(BaseController):
         
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
-        c.licenses = get_licenses() #HACK - I cant use app_globals in the templates, it goes nuts about session not attached? doing this every time is annoying
+        c.licenses = get_licenses() # WTF! without this line ... using app_globals.licences in the template does not work! why?
         # Render content editor
         return render("/web/content_editor/content_editor.mako")
         
