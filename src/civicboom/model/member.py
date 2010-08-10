@@ -87,9 +87,13 @@ class Member(Base):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
-    def send_message(self, m):
+    def send_message(self, m, delay_commit=False):
         import civicboom.lib.communication.messages as messages
-        messages.send_message(self, m)
+        messages.send_message(self, m, delay_commit)
+
+    def send_message_to_followers(self, m, delay_commit=False):
+        for follower in self.followers:
+            follower.send_message(m, delay_commit)
 
     @property
     def avatar_url(self, size=80):

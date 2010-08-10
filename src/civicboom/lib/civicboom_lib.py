@@ -97,6 +97,7 @@ def form_to_content(form, content):
         if   not form                          : content = DraftContent()
         elif form.get('form_type') == "comment": content = CommentContent()
         else                                   : content = DraftContent()
+        content.creator = c.logged_in_user
     if not form: return content #If there is no form data there is nothing to overlay or do
 
     #----------------------------------------------------

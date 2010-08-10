@@ -89,7 +89,7 @@ for _name, _default_route, _subject, _content in generators:
     globals()[_name] = gen
 
 
-def send_message(member, message_data):
+def send_message(member, message_data, delay_commit=False):
     """
     private guts to the message system, save and handles propogating the message to different technologies
     """
@@ -118,7 +118,8 @@ def send_message(member, message_data):
             m.subject = message_data.subject
             m.content = message_data.content
             member.messages_to.append(m)
-            Session.commit()
+            if not delay_commit:
+                Session.commit()
 
     log.info("%s was sent the message '%s', routing via %s" % (
         member.name, message_data.subject, message_tech_options

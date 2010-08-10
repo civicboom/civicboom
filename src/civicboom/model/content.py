@@ -58,8 +58,8 @@ class Content(Base):
     __mapper_args__ = {'polymorphic_on': __type__}
     _content_status = Enum("pending", "show", "locked", name="content_status")
     id              = Column(Integer(),        primary_key=True)
-    title           = Column(Unicode(250),     nullable=False  )
-    content         = Column(UnicodeText(),    nullable=False, doc="The body of text")
+    title           = Column(Unicode(250),     nullable=True)
+    content         = Column(UnicodeText(),    nullable=True, doc="The body of text")
     creator_id      = Column(Integer(),        ForeignKey('member.id'), nullable=False)
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True)
     location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)

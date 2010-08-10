@@ -21,7 +21,7 @@ from civicboom.lib.database.get_cached import update_content
 
 # Other imports
 from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key
-
+from civicboom.lib.communication import messages
 
 
 # Logging setup
@@ -93,13 +93,25 @@ class ContentController(BaseController):
         # Overlay form data over the current content object or return a new instance of an object
         c.content = form_to_content(request.POST, c.content)
         
+        # If this is the frist time viewing the content then redirect to new substatiated id
+        if id==None and c.content.id==None:
+            Session.add(c.content)
+            Session.commit()
+            return redirect(url.current(action='edit', id=c.content.id))
+        
         if 'submit_publish' in request.POST:
             if starting_content_type and starting_content_type != c.content.__type__:
                 # Send notifications about NEW published content
-                print "new published content"
+                if   c.content.__type__ == "article"   : m = messages.article_published_by_followed(reporter=c.content.creator, article   =c.content)
+                elif c.content.__type__ == "assignment": m = messages.assignment_created           (reporter=c.content.creator, assignment=c.content)
+                # TODO: Clear comments when upgraded from draft to published content?
+                user_log.info("published new Content #%d" % (c.content.id, ))
             else:
                 # Send notifications about previously published content has been UPDATED
-                print "updated published content"
+                if   c.content.__type__ == "assignment": m = messages.assignment_updated           (reporter=c.content.creator, assignment=c.content)
+                user_log.info("updated published Content #%d" % (c.content.id, ))
+            if m:
+                c.content.creator.send_message_to_followers(m, delay_commit=True)
         
         # If form contains post data
         if request.POST:
@@ -110,19 +122,12 @@ class ContentController(BaseController):
             Session.add(c.content)                            #   Save content to database
             Session.commit()                                  #
             update_content(c.content)                         #   Invalidate any cache associated with this content
-            user_log.info("edited Content #%d" % (c.content.id, )) # Update user log
-            
-            # if record type changed
-            #  remove previous record?
+            user_log.info("edited Content #%d" % (c.content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
             
             if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
                 return redirect(url.current(action='view', id=c.content.id))
             if 'submit_response' in request.POST:
                 return redirect(url.current(action='view', id=c.content.parent_id))
-                
-        # If this is the frist time saving the content then redirect to new substatiated id
-        if id==None and c.content.id:
-            return redirect(url.current(action='edit', id=c.content.id))
         
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
