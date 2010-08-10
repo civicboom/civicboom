@@ -177,7 +177,9 @@ function getElementByClass(theClass,containerId) {
       }
     }
     //classes.forEach(checkClass); //Not compatible it IE
-    for (var c in classes) {checkClass(classes[c],c,classes);}
+    for (var c in classes) {
+        checkClass(classes[c],c,classes);
+    }
   }
   return elements_found;
 }
@@ -227,7 +229,35 @@ function createCSS(selector, declaration) {
 		var last_style_node = document.styleSheets[document.styleSheets.length - 1];
 		if (typeof(last_style_node.addRule) == "object") last_style_node.addRule(selector, declaration);
 	}
-};
+}
+
+
+
+//http://snipplr.com/view/2181/addclass-function/
+function addClass(element, value) {
+    if(!element.className) {
+        element.className = value;
+    }
+    else {
+        newClassName = element.className;
+        newClassName+= " ";
+        newClassName+= value;
+        element.className = newClassName;
+    }
+}
+
+//http://wolfram.kriesing.de/blog/index.php/2008/javascript-remove-element-from-array
+function removeClass(element, value) {
+    if(!element.className) {return;}
+    var classes = element.className.split(" ");
+    var idx = classes.indexOf(value);   // Find the index of the class to remove
+    if(idx!=-1) classes.splice(idx, 1); // Remove it if really found!
+    element.className = ""
+    for (class_name_index in classes) {
+        element.className += classes[class_name_index]+" "
+    }
+    element.className = element.className.trim()
+}
 
 
 /* toggle mini - in planning */

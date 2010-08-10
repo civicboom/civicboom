@@ -23,13 +23,26 @@
 
 
 ##------------------------------------------------------------------------------
+## Style Overrides
+##------------------------------------------------------------------------------
+<%def name="styleOverides()">
+  .section_selectable {border: 1px solid transparent;}
+  .section_selected   {border: 1px solid black; background-color: #ccc;}
+</%def>
+
+
+
+
+
+##------------------------------------------------------------------------------
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
     <div class="content_form">
-        <form action="" method="post" enctype="multipart/form-data">
+        <form action="" method="post" enctype="multipart/form-data" name="content">
             ${base_content()}
             ${media()}
+            ${content_type()}
             ${license()}
             
             <div style="text-align: right;">
@@ -215,6 +228,80 @@
         
     </fieldset>
 
+</%def>
+
+##------------------------------------------------------------------------------
+## Content Type
+##------------------------------------------------------------------------------
+<%def name="content_type()">
+    <fieldset><legend>${_("Publish Type")}</legend>
+        ${instruction("What do you want to do with your content?")}
+        
+        <%
+        types = [
+            ("draft"     ,"description of draft content"   ),
+            ("article"   ,"description of _article"        ),
+            ("assignment","description of _assignemnt"     ),
+            ("syndicate" ,"description of syndicated stuff"),
+        ]
+        %>
+        
+        <%def name="type_option(type, description)">
+            <%
+                selected = ""
+                if c.content.__type__ == type:
+                    selected = 'checked="checked"'
+            %>
+            <td id="form_type_${type}" onClick="highlightType('${type}');" class="section_selectable">
+              <input class="hideable" type="radio" name="type" value="${type}" ${selected}/>
+              <label for="form_type_${type}">${type}</label>
+              <p class="type_description">${_(description)}</p>
+            </td>
+        </%def>
+        
+        <table id="type_selection"><tr>
+        % for type in types:
+            ${type_option(type[0],type[1])}
+        % endfor
+        <tr></table>
+
+        <script type="text/javascript">
+            // Reference: http://www.somacon.com/p143.php
+            // set the radio button with the given value as being checked
+            // do nothing if there are no radio buttons
+            // if the given value does not exist, all the radio buttons are reset to unchecked
+            function setCheckedValue(radioObj, newValue) {
+                if(!radioObj) return;
+                var radioLength = radioObj.length;
+                if(radioLength == undefined) {
+                    radioObj.checked = (radioObj.value == newValue.toString());
+                    return;
+                }
+                for(var i = 0; i < radioLength; i++) {
+                    radioObj[i].checked = false;
+                    if(radioObj[i].value == newValue.toString()) {
+                        radioObj[i].checked = true;
+                    }
+                }
+            }
+
+            function highlightType(type) {
+                // Select radio button
+                setCheckedValue(document.forms['content'].elements['type'], type);
+                // reset all radio buttons to unselected
+                var elements = getElementByClass("section_selectable","type_selection")
+                for (var element in elements) {
+                    removeClass(elements[element], "section_selected")
+                }
+                // select section by setting selected class
+                addClass(YAHOO.util.Dom.get('form_type_'+type), "section_selected");
+            }
+
+            highlightType('${c.content.__type__}'); //Set the default highlighted item to be the content type
+        </script>
+
+
+    </fieldset>
 </%def>
 
 

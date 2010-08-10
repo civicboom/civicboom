@@ -92,7 +92,7 @@ class ContentController(BaseController):
         c.content = form_to_content(request.POST, c.content)
         
         # If form contains post data
-        if form_post_contains_content(request.POST):
+        if request.POST:
             # AllanC - This was an idea that if the content has not changed then dont commit it, but for now it is simpler to always commit it
             #content_hash_before = c.content.hash() # Generate hash of content
             #content_hash_after  = "always trigger db commit on post" #c.content.hash()                # Generate hash of content again

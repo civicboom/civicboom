@@ -62,8 +62,9 @@ class Member(Base):
     content             = relationship(          "Content", backref=backref('creator'), primaryjoin="Member.id==Content.creator_id" ) #and_(   ,"Content.__type__!='comment'") # cant get this to work, we want to filter out comments
     content_assignments = relationship("AssignmentContent")
     content_articles    = relationship(   "ArticleContent")
+    content_drafts      = relationship(     "DraftContent")
 
-    _config         = None
+    _config = None
 
     @property
     def config(self):

@@ -97,6 +97,18 @@ def form_to_content(form, content):
         else                                   : content = DraftContent()
     if not form: return content #If there is no form data there is nothing to overlay or do
 
+    #----------------------------------------------------
+    # Morph content type before overlaying any form data
+    #----------------------------------------------------
+    
+    if 'submit_publish' in form:
+        pass
+    
+
+
+    #----------------------------
+    # Overlay Form over Content
+    #----------------------------
     # Owner
     if "form_owner" in form:
         content.creator_id = form["form_owner"]
@@ -159,13 +171,6 @@ def form_to_content(form, content):
         form_field_name = "form_"+field
         if form_field_name in form:
             setattr(content,field,form[form_field_name])
-
-
-    #------------------------------------------------------------------------
-    # Adition data for extended content types and morphing of content object
-    #------------------------------------------------------------------------
-    
-    # todo
 
     return content
 
