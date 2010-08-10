@@ -71,6 +71,7 @@ def morph_content_to(content, after_type):
     """
     params:
         content can be a Content object or a string id
+            - as this works at the database level, any content data not commited to the DB before this call will be lost
         after_type is a string of the type the object is being transformed too
         
     return:

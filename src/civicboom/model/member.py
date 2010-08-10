@@ -59,7 +59,7 @@ class Member(Base):
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
 
     # Content relation shortcuts
-    content             = relationship(          "Content", backref=backref('creator'))
+    content             = relationship(          "Content", backref=backref('creator'), primaryjoin="Member.id==Content.creator_id" ) #and_(   ,"Content.__type__!='comment'") # cant get this to work, we want to filter out comments
     content_assignments = relationship("AssignmentContent")
     content_articles    = relationship(   "ArticleContent")
 
