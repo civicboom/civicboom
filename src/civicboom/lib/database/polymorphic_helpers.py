@@ -85,6 +85,8 @@ def morph_content_to(content, after_type):
     content = get_content(content)
     if not content: raise Exception('no content to morph')
     
+    if content.__type__ == after_type: return content # If the before and after types are the same then return the content obj as no processing needs to take place
+    
     id                = content.id
     sql_generator_key = content.__type__+":"+after_type
     

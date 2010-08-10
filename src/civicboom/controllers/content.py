@@ -46,24 +46,24 @@ class ContentController(BaseController):
         Identify the object type and render with approriate renderer
         """
         c.content = get_content(id)
-
+        
         # Check content is visable
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
             if c.content.status != "show":
                 return render('/web/message/content_unavailable.mako')
-
+        
         # Increase content view count
         if hasattr(c.content,'views'):
             content_view_key = 'content_%s' % c.content.id
             if content_view_key not in session:
                 session[content_view_key] = True
                 #session.save()
-            c.content.views += 1
-            Session.commit()
-            # AllanC - invalidating the content on EVERY view does not make scence
-            #        - a cron should invalidate this OR the templates should expire after X time
-            #update_content(c.content)
-
+                c.content.views += 1
+                Session.commit()
+                # AllanC - invalidating the content on EVERY view does not make scence
+                #        - a cron should invalidate this OR the templates should expire after X time
+                #update_content(c.content)
+        
         return render('/web/design09/content/content_view.mako')
 
 
@@ -82,14 +82,24 @@ class ContentController(BaseController):
         # Get exisiting content from URL id
         c.content = get_content(id)
         
-        # If the content is not being edited by the creator then "Unauthorised"
-        # AllanC - todo: in future this will have to be a more involved process as the ower of the content could be a group the user is part of
-        if c.content and not c.content.editable_by(c.logged_in_user):
-            flash_message(_("your user does not have the permissions to edit this _content"))
-            abort(401) #Unauthorised
+        if c.content:
+            # If the content is not being edited by the creator then "Unauthorised"
+            # AllanC - todo: in future this will have to be a more involved process as the ower of the content could be a group the user is part of
+            if not c.content.editable_by(c.logged_in_user):
+                flash_message(_("your user does not have the permissions to edit this _content"))
+                abort(401) #Unauthorised
+            starting_content_type = c.content.__type__
         
         # Overlay form data over the current content object or return a new instance of an object
         c.content = form_to_content(request.POST, c.content)
+        
+        if 'submit_publish' in request.POST:
+            if starting_content_type and starting_content_type != c.content.__type__:
+                # Send notifications about NEW published content
+                print "new published content"
+            else:
+                # Send notifications about previously published content has been UPDATED
+                print "updated published content"
         
         # If form contains post data
         if request.POST:

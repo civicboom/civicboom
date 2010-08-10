@@ -253,7 +253,7 @@
                     selected = 'checked="checked"'
             %>
             <td id="form_type_${type}" onClick="highlightType('${type}');" class="section_selectable">
-              <input class="hideable" type="radio" name="type" value="${type}" ${selected}/>
+              <input class="hideable" type="radio" name="form_type" value="${type}" ${selected}/>
               <label for="form_type_${type}">${type}</label>
               <p class="type_description">${_(description)}</p>
             </td>
@@ -287,7 +287,7 @@
 
             function highlightType(type) {
                 // Select radio button
-                setCheckedValue(document.forms['content'].elements['type'], type);
+                setCheckedValue(document.forms['content'].elements['form_type'], type);
                 // reset all radio buttons to unselected
                 var elements = getElementByClass("section_selectable","type_selection")
                 for (var element in elements) {

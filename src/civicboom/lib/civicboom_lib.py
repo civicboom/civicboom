@@ -11,11 +11,13 @@ from civicboom.lib.database.get_cached import get_user
 
 from civicboom.lib.communication.email import send_email
 
-from civicboom.model                   import DraftContent, CommentContent, Media, Tag
-from civicboom.lib.database.get_cached import get_content, get_tag
+from civicboom.model                            import DraftContent, CommentContent, Media, Tag
+from civicboom.lib.database.get_cached          import get_content, get_tag
+from civicboom.lib.database.polymorphic_helpers import morph_content_to
 
 from civicboom.lib.text          import clean_html_markup
 from civicboom.lib.misc          import remove_where
+
 
 
 from sets import Set # may not be needed in Python 2.7+
@@ -100,15 +102,15 @@ def form_to_content(form, content):
     #----------------------------------------------------
     # Morph content type before overlaying any form data
     #----------------------------------------------------
-    
-    if 'submit_publish' in form:
-        pass
-    
+    # As mophing functions alter the data at the database level, we perform the morph before we ever chnage any of the contents data
+
+    if 'form_type' in form:
+        content = morph_content_to(content, form['form_type'])
 
 
-    #----------------------------
-    # Overlay Form over Content
-    #----------------------------
+    #-------------------------------
+    # Overlay Form over Base Content
+    #-------------------------------
     # Owner
     if "form_owner" in form:
         content.creator_id = form["form_owner"]
@@ -120,12 +122,11 @@ def form_to_content(form, content):
     
     # for key in form: print "%s:%s" % (key,form[key])
     
-    # from most form values we need to escape '"' and "'" characters as these are used in HTML alt tags and value tags
+    # TODO: from most form values we need to escape '"' and "'" characters as these are used in HTML alt tags and value tags
     
     # Content
     if "form_content" in form:
         content.content = clean_html_markup(form["form_content"])
-
 
     # Tags
     if "form_tags" in form:
@@ -171,6 +172,8 @@ def form_to_content(form, content):
         form_field_name = "form_"+field
         if form_field_name in form:
             setattr(content,field,form[form_field_name])
+
+    
 
     return content
 

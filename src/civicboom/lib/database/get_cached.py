@@ -53,6 +53,7 @@ def get_content_nocache(content_id):
 def get_content(content):
     if not content: return None
     #if content is Content object or a subclass: return content
+    if issubclass(content.__class__,Content): return content
     return get_content_nocache(content)
 
 
