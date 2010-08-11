@@ -2,6 +2,7 @@
 
 # cache_path needs to be set globally, it doesn't work per-server :(
 proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:10m;
+proxy_temp_path  /tmp/nginx-temp;
 
 server {
 	# server stuff
@@ -23,12 +24,11 @@ server {
 
 	# proxy settings
 	proxy_cache "cb";
-	proxy_cache_key  "$scheme://$host$request_uri cookie:$cookie_civicboom";
+	proxy_cache_key  "$scheme://$host$request_uri-cookie:$cookie_civicboom";
 	proxy_set_header Host $host;
 	proxy_set_header X-Real-IP $remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Url-Scheme $scheme;
-	proxy_temp_path  /tmp/nginx-temp;
 	if ($http_host ~  "(localhost|new-server)") {set $proxy_port 5000;}
 	if ($http_host !~ "(localhost|new-server)") {set $proxy_port 5080;}
 
