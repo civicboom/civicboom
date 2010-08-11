@@ -2,11 +2,6 @@ all: cb-website.deb python-cbmisc.deb
 
 VERSION := $(shell git describe)
 
-# try and read dependencies from setup.py
-# this is full of magic because grep sucks at handling newline characters
-# the aim is to input setup.py, and output eg --> "Mako>=0.3.4" "gp.fileupload" "GeoFormAlchemy"
-EASY_INSTALL_PACKAGES := $(shell python -c "import re;print re.sub('[ \n]','',re.match('.*install_requires=\[([^]]*)\].*',file('../src/setup.py').read(),re.DOTALL).group(1)).replace(',', ' ')")
-
 cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type f) _combined.js _combined.css
 	rm -rf fs-website
 	mkdir -p fs-website/DEBIAN/
@@ -31,17 +26,11 @@ cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type 
 	fakeroot dpkg -b fs-website cb-website_${VERSION}_all.deb 
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
-_combined.js: ../src/civicboom/public/javascript/[a-z]*.js ../src/civicboom/templates/web/html_header.mako
-	( \
-		cat ../src/civicboom/public/javascript/[a-z]*.js && \
-		curl `cat ../src/civicboom/templates/web/html_header.mako | grep -oE "http.*\.js"` \
-	) | yui-compressor --type js > _combined.js
+_combined.js: $(shell python helper.py list_local_js)
+	python helper.py list_all_js | yui-compressor --type js > _combined.js
 
-_combined.css: ../src/civicboom/public/styles/design09/design09_*.css ../src/civicboom/templates/web/html_header.mako
-	( \
-		cat ../src/civicboom/public/styles/design09/design09_*.css && \
-		curl `cat ../src/civicboom/templates/web/html_header.mako | grep -oE "http.*\.css"` \
-	) | yui-compressor --type css > _combined.css
+_combined.css: $(shell python helper.py list_local_css)
+	python helper.py list_all_css | yui-compressor --type css > _combined.css
 
 python-cbmisc.deb: ../src/setup.py
 	mkdir -p fs-env/DEBIAN/
@@ -54,7 +43,7 @@ python-cbmisc.deb: ../src/setup.py
 	echo ================================================ >/dev/null
 	mkdir -p fs-env/opt/cb
 	virtualenv fs-env/opt/cb
-	./fs-env/opt/cb/bin/easy_install ${EASY_INSTALL_PACKAGES}
+	./fs-env/opt/cb/bin/easy_install $(shell python helper.py find_packages)
 	mkdir -p ./fs-env/usr/lib/python2.6/dist-packages/
 	cat fs-env/opt/cb/lib/python2.6/site-packages/easy-install.pth | \
 		sed "s#./#/opt/cb/lib/python2.6/site-packages/#" \
