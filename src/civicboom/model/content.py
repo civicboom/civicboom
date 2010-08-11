@@ -58,8 +58,8 @@ class Content(Base):
     __mapper_args__ = {'polymorphic_on': __type__}
     _content_status = Enum("pending", "show", "locked", name="content_status")
     id              = Column(Integer(),        primary_key=True)
-    title           = Column(Unicode(250),     nullable=True)
-    content         = Column(UnicodeText(),    nullable=True, doc="The body of text")
+    title           = Column(Unicode(250),     nullable=False, default=u"Untitled")
+    content         = Column(UnicodeText(),    nullable=False, default=u"", doc="The body of text")
     creator_id      = Column(Integer(),        ForeignKey('member.id'), nullable=False)
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True)
     location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)
@@ -108,6 +108,17 @@ class DraftContent(Content):
     __tablename__   = "content_draft"
     __mapper_args__ = {'polymorphic_identity': 'draft'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
+    publish_id      = Column(Integer(), ForeignKey('content.id'), nullable=True, doc="if present will overwite the published content with this draft")
+
+    def clone(self, content):
+        """
+        Consturct draft content
+        if passed content then it creates a clone of that content object
+        """
+        if content and content.id:
+            for field in ["title","content","creator","parent_id","location","creation_date","private","license_id"]:
+                setattr(self,field,getattr(content,field))
+            self.publish_id = content.id
 
 class CommentContent(Content):
     __tablename__   = "content_comment"

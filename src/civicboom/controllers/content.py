@@ -9,7 +9,7 @@ For managing content:
 """
 
 # Base controller imports
-from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _, app_globals, flash_message
+from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _, app_globals, flash_message, redirect_to_referer
 from civicboom.lib.authentication      import authorize, is_valid_user
 from pylons import session
 
@@ -17,6 +17,7 @@ from pylons import session
 from civicboom.model.meta              import Session
 from civicboom.model                   import Media
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
+from civicboom.lib.database.actions    import del_content
 
 # Other imports
 from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key
@@ -165,15 +166,14 @@ class ContentController(BaseController):
     #-----------------------------------------------------------------------------
     # Delete
     #-----------------------------------------------------------------------------
-    @authorize(is_valid_user)
+    @action_redirector()
     def delete(self, id):
-        c.content = get_content(id)
-        if not c.content.editable_by(c.logged_in_user):
-            flash_message(_("your current user does not have the permissions to delete this _content"))
-            #AllanC: todo - this message never gets seen as the session is not
-            abort(401)
-        flash_message(_("_content deletion is not implemented yet"))
-        return redirect(request.environ.get('HTTP_REFERER'))
+        content = get_content(id)
+        if not content.editable_by(c.logged_in_user):
+            return _("your current user does not have the permissions to delete this _content")
+            #abort(401)
+        del_content(content)
+        return _('content deleted')
 
 
     #-----------------------------------------------------------------------------

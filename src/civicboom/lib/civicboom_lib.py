@@ -105,7 +105,24 @@ def form_to_content(form, content):
     #----------------------------------------------------
     # As mophing functions alter the data at the database level, we perform the morph before we ever chnage any of the contents data
 
-    if 'form_type' in form:
+    # If we are trying to save a draft over a published content object
+    if 'submit_draft' in form and content.__type__ != "draft":
+        # Rather than changing the published object, we create a draft clone of
+        # it that remebers the id of the orrignal content it was cloned from.
+        # Before we create this new clone, check the DB to see if there is an
+        # existing draft record associated with this published content
+        existing_content_clone = Session.query(DraftContent).filter_by(publish_id=content.id).one()
+        if existing_content_clone:
+            content = existing_content_clone
+        else:
+            content = DraftContent()
+            content.publish_id = content.id
+            # The content will be populated with the form data and commited by the controler
+    # If we are publishing from a draft and draft is linked to a publish id
+    elif 'submit_publish' in form and content.__type__ == "draft" and content.publish_id:
+        # Get the original published content object and overlay the cloned draft
+        content = get_content(content.publish_id)
+    elif 'form_type' in form:
         content = morph_content_to(content, form['form_type'])
 
 

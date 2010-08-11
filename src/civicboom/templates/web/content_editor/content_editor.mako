@@ -49,11 +49,12 @@
                 % if c.content.id:
                 <input type="submit" name="submit_delete"  value="${_("Delete")}"       />
                 % endif
+                
                 <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   />
                 <input type="submit" name="submit_preview" value="${_("Preview Draft")}"/>
-                <input type="submit" name="submit_publish" value="${_("Publish")}"      />
+                
             </div>
-
+        
         </form>
     </div>
     
@@ -239,7 +240,7 @@
         
         <%
         types = [
-            ("draft"     ,"description of draft content"   ),
+            #("draft"     ,"description of draft content"   ),
             ("article"   ,"description of _article"        ),
             ("assignment","description of _assignemnt"     ),
             ("syndicate" ,"description of syndicated stuff"),
@@ -299,6 +300,14 @@
 
             highlightType('${c.content.__type__}'); //Set the default highlighted item to be the content type
         </script>
+
+        <div style="float: right;">
+            % if c.content.__type__ == "draft":
+            <input type="submit" name="submit_publish" value="${_("Publish")}"      />
+            % else:
+            <input type="submit" name="submit_publish" value="${_("Publish Update")}"/>
+            % endif
+        </div>
 
 
     </fieldset>
