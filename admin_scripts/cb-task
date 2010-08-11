@@ -1,3 +1,7 @@
 #!/bin/sh
+if [ `whoami` != "www-data" ] ; then
+	exec sudo -u www-data $0 $*
+fi
+
 cd /opt/cb/share/website
 paster request production.ini /task/$1
