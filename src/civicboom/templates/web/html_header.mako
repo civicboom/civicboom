@@ -42,7 +42,19 @@
     % if config['development_mode']:
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css" />
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/autocomplete/assets/skins/sam/autocomplete.css">
-    <link rel="stylesheet" type="text/css" href="/styles/design09/design09.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_header_footer.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_includes.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_frontpage.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_article.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_additional.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_tipoff.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_interest.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_misc_pages.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_register.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_profile.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_forms.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_titlepage.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/design09/design09_document.css" />
     % else:
     <link rel="stylesheet" type="text/css" href="/styles/design09/_combined.css" />
     % endif
