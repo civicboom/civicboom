@@ -144,16 +144,15 @@ def form_to_content(form, content):
 
     # Add Media - if file present in form post
     if 'form_media_file' in form and form['form_media_file'] != "":
-        form_file     = form["form_media_file"]
+        form_file = form["form_media_file"]
         media = Media()
         media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=form["form_media_caption"], credit=form["form_media_credit"])
-        media.sync()
         content.attachments.append(media)
         #Session.add(media) # is this needed as it is appended to content and content is in the session?
-    
+
     if 'form_licence' in form:
         content.license_id = form['form_licence']
-    
+
     # Any left over fields that just need a simple set
     for field in ["title", "parent_id"]:
         form_field_name = "form_"+field
