@@ -24,11 +24,17 @@ def copy_cgi_file(cgi_fileobj, dest_filename):
     return dest_fileobj.name
 
 
-def copy_to_warehouse(config, src, warehouse, hash, filename=None):
+def copy_to_warehouse(src, warehouse, hash, filename=None, local_config=None, placeholder=False):
     """
     copy a local file (eg /tmp/pylons-upload-245145.dat) to the warehouse
     (eg S3:cb-wh:media/cade1361, ./civicboom/public/warehouse/media/ca/de/cade1361)
     """
+
+    # if called in a separate thread, the global config won't work
+    if local_config:
+        config = local_config
+    else:
+        from pylons import config
 
     # If src is a cgi.FieldStorage object with an open filestream
     temp_file = None
@@ -52,6 +58,10 @@ def copy_to_warehouse(config, src, warehouse, hash, filename=None):
         key.set_metadata('Content-Type', magic.from_file(src, mime=True))
         if filename:
             key.set_metadata('Content-Disposition', 'inline; filename='+__http_escape(filename))
+        if placeholder:
+            key.set_metadata('Cache-Control', 'no-cache')
+        else:
+            key.set_metadata('Cache-Control', 'public')
         key.set_contents_from_filename(src)
         key.set_acl('public-read')
 

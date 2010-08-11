@@ -9,11 +9,7 @@ import civicboom.lib.worker as worker
 from pylons import config # used in generation of URL's for media
 
 import magic
-import Image
-import tempfile
-import os
 import logging
-import subprocess
 
 log = logging.getLogger(__name__)
 
@@ -32,19 +28,6 @@ class Media(Base):
     credit        = Column(UnicodeText(),    nullable=False)
 
 
-
-    def _ffmpeg(self, args):
-        """
-        Convenience function to run ffmpeg and log the output
-        """
-        ffmpeg = "/usr/bin/ffmpeg" # FIXME: config variable?
-        cmd = [ffmpeg, ] + args
-        log.info(" ".join(cmd))
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output = proc.communicate()
-        log.debug("stdout: "+output[0])
-        log.debug("stderr: "+output[1])
-        log.debug("return: "+str(proc.returncode))
 
     def load_from_file(self, tmp_file=None, original_name=None, caption=None, credit=None):
         """
@@ -65,11 +48,21 @@ class Media(Base):
         self.credit             = credit  if credit  else u""
         self.type, self.subtype = magic.from_file(my_file, mime=True).split("/")
 
+        def copy_config():
+            d = {}
+            for key in config.keys():
+                d[key] = config[key]
+            return d
+
+        wh.copy_to_warehouse("./civicboom/public/images/media_placeholder.gif", "media-thumbnail", self.hash, placeholder=True)
+
         worker.media_queue.put({
             "task": "process_media",
+            "config": copy_config(),
             "tmp_file": my_file,
             "file_hash": self.hash,
-            "filename": self.name,
+            "file_type": self.type,
+            "file_name": self.name,
             "delete_tmp": True,
         })
 
