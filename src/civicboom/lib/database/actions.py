@@ -1,5 +1,7 @@
 from civicboom.model.meta   import Session
 
+from civicboom.lib.database.get_cached import get_content
+
 #-------------------------------------------------------------------------------
 # Database Actions - Database functions to get objects or perform simple data actions
 #-------------------------------------------------------------------------------
@@ -13,5 +15,7 @@ def accept_assignment(user, assignment):
 
 def del_content(content):
     content = get_content(content)
+    print "unimplmented del %s" % content.id
     # send messages
-    
+    #del content
+    #update_content(?)

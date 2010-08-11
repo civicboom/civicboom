@@ -11,6 +11,10 @@ from civicboom.model.content import Content, DraftContent, ArticleContent, Assig
 from civicboom.model.meta import Session
 
 
+#-------------------------------------------------------------------------------
+# Create new object types
+#-------------------------------------------------------------------------------
+
 
 #-------------------------------------------------------------------------------
 # SQL Commands to manually perform the morphing between content types
@@ -86,6 +90,10 @@ def morph_content_to(content, after_type):
     if not content: raise Exception('no content to morph')
     
     if content.__type__ == after_type: return content # If the before and after types are the same then return the content obj as no processing needs to take place
+    
+    if content.id == None: #If the content has not been commited to the DB, then return an object of the correct type
+        # todo?
+        pass
     
     id                = content.id
     sql_generator_key = content.__type__+":"+after_type

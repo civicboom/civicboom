@@ -13,7 +13,9 @@ from civicboom.lib.communication.email import send_email
 
 from civicboom.model                            import DraftContent, CommentContent, Media, Tag
 from civicboom.lib.database.get_cached          import get_content, get_tag
+from civicboom.lib.database.actions             import del_content
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
+
 
 from civicboom.lib.text          import clean_html_markup
 from civicboom.lib.misc          import remove_where
@@ -105,24 +107,37 @@ def form_to_content(form, content):
     #----------------------------------------------------
     # As mophing functions alter the data at the database level, we perform the morph before we ever chnage any of the contents data
 
+    """
+    # If we are publishing from a draft and draft is linked to a publish id
+    if 'submit_publish' in form and content.__type__ == "draft" and content.publish_id:
+        # Get the original published content object and overlay the cloned draft
+        old_draft_id = content.id
+        content = get_content(content.publish_id)
+        if content:
+            del_content(old_draft_id) # This is kind of risky because if there is a problem with the form post and it does not commit, the old draft is los
+        else:
+            content = DraftContent() # The existing article the publish_id is pointing too does not exisit any more, so the content should be saved as a draft, 
+        
+        #if not content.editable_by(c.logged_in_user): # AllanC - do we need to double double check this user has permissions on this content to do this?
+        #    raise exception
+
+
     # If we are trying to save a draft over a published content object
     if 'submit_draft' in form and content.__type__ != "draft":
         # Rather than changing the published object, we create a draft clone of
         # it that remebers the id of the orrignal content it was cloned from.
         # Before we create this new clone, check the DB to see if there is an
         # existing draft record associated with this published content
-        existing_content_clone = Session.query(DraftContent).filter_by(publish_id=content.id).one()
-        if existing_content_clone:
-            content = existing_content_clone
-        else:
-            content = DraftContent()
-            content.publish_id = content.id
+        try:
+            content = Session.query(DraftContent).filter_by(publish_id=content.id).one()
+        except:
+            content_clone = DraftContent()
+            content_clone.publish_id = content.id
+            content = content_clone
             # The content will be populated with the form data and commited by the controler
-    # If we are publishing from a draft and draft is linked to a publish id
-    elif 'submit_publish' in form and content.__type__ == "draft" and content.publish_id:
-        # Get the original published content object and overlay the cloned draft
-        content = get_content(content.publish_id)
-    elif 'form_type' in form:
+    """
+
+    if 'form_type' in form:
         content = morph_content_to(content, form['form_type'])
 
 

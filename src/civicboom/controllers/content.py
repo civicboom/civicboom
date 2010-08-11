@@ -9,7 +9,7 @@ For managing content:
 """
 
 # Base controller imports
-from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _, app_globals, flash_message, redirect_to_referer
+from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _, app_globals, flash_message, redirect_to_referer, action_redirector
 from civicboom.lib.authentication      import authorize, is_valid_user
 from pylons import session
 
@@ -77,7 +77,7 @@ class ContentController(BaseController):
         """    
         
         if 'submit_delete' in request.POST:
-            return redirect(url.current(action='delete', id=c.content.id))
+            return redirect(url.current(action='delete', id=id))
         
         # Get exisiting content from URL id
         c.content = get_content(id)
@@ -100,6 +100,7 @@ class ContentController(BaseController):
             return redirect(url.current(action='edit', id=c.content.id))
         
         if 'submit_publish' in request.POST:
+            m = None
             if starting_content_type and starting_content_type != c.content.__type__:
                 # Send notifications about NEW published content
                 if   c.content.__type__ == "article"   : m = messages.article_published_by_followed(reporter=c.content.creator, article   =c.content)
@@ -133,6 +134,9 @@ class ContentController(BaseController):
         
         c.licenses = get_licenses() # WTF! without this line ... using app_globals.licences in the template does not work! why?
         # Render content editor
+        
+        #if id and c.content.id and id != c.content.id: redirect(url.current(id=c.content.id))
+        
         return render("/web/content_editor/content_editor.mako")
         
 

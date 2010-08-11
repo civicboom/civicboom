@@ -46,12 +46,18 @@
             ${license()}
             
             <div style="text-align: right;">
+                
                 % if c.content.id:
                 <input type="submit" name="submit_delete"  value="${_("Delete")}"       />
                 % endif
                 
-                <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   />
+                % if c.content.__type__ == "draft":
                 <input type="submit" name="submit_preview" value="${_("Preview Draft")}"/>
+                <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   />
+                % else:
+                <a href="${h.url(controller='content', action='view', id=c.content.id)}">View Content</a>
+                % endif
+                
                 
             </div>
         
@@ -91,7 +97,9 @@
   
         ${richtext(c.content.content)}
   
-        <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
+        % if c.content.__type__ == "draft":
+            <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
+        % endif
 
         ## Owner
         <p><label for="form_owner">${_("By")}</label>
@@ -237,34 +245,6 @@
 <%def name="content_type()">
     <fieldset><legend>${_("Publish Type")}</legend>
         ${instruction("What do you want to do with your content?")}
-        
-        <%
-        types = [
-            #("draft"     ,"description of draft content"   ),
-            ("article"   ,"description of _article"        ),
-            ("assignment","description of _assignemnt"     ),
-            ("syndicate" ,"description of syndicated stuff"),
-        ]
-        %>
-        
-        <%def name="type_option(type, description)">
-            <%
-                selected = ""
-                if c.content.__type__ == type:
-                    selected = 'checked="checked"'
-            %>
-            <td id="form_type_${type}" onClick="highlightType('${type}');" class="section_selectable">
-              <input class="hideable" type="radio" name="form_type" value="${type}" ${selected}/>
-              <label for="form_type_${type}">${type}</label>
-              <p class="type_description">${_(description)}</p>
-            </td>
-        </%def>
-        
-        <table id="type_selection"><tr>
-        % for type in types:
-            ${type_option(type[0],type[1])}
-        % endfor
-        <tr></table>
 
         <script type="text/javascript">
             // Reference: http://www.somacon.com/p143.php
@@ -297,9 +277,42 @@
                 // select section by setting selected class
                 addClass(YAHOO.util.Dom.get('form_type_'+type), "section_selected");
             }
-
+            
             highlightType('${c.content.__type__}'); //Set the default highlighted item to be the content type
         </script>
+        
+        <%
+        types = [
+            #("draft"     ,"description of draft content"   ),
+            ("article"   ,"description of _article"        ),
+            ("assignment","description of _assignemnt"     ),
+            ("syndicate" ,"description of syndicated stuff"),
+        ]
+        %>
+        
+        <%def name="type_option(type, description)">
+            <%
+                selected = ""
+                if c.content.__type__ == type:
+                    selected = 'checked="checked"'
+            %>
+            <td id="form_type_${type}" onClick="highlightType('${type}');" class="section_selectable">
+              <input class="hideable" type="radio" name="form_type" value="${type}" ${selected}/>
+              <label for="form_type_${type}">${type}</label>
+              <p class="type_description">${_(description)}</p>
+            </td>
+        </%def>
+        
+        % if c.content.__type__ == "draft":
+            <table id="type_selection"><tr>
+            % for type in types:
+                ${type_option(type[0],type[1])}
+            % endfor
+            <tr></table>
+        % else:
+            ${c.content.__type__}
+        % endif
+
 
         <div style="float: right;">
             % if c.content.__type__ == "draft":
@@ -323,7 +336,7 @@
       <div class="hideable">
         ${instruction("What is licensing explanation")}
         
-        % for license in app_globals.licenses:
+        % for license in c.licenses:
           <%
             license_selected = ''
             if c.content.license and license.id == c.content.license_id:

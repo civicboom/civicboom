@@ -80,6 +80,11 @@ class Content(Base):
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"
 
+    def clone(self, content):
+        if content and content.id:
+            for field in ["title","content","creator","parent_id","location","creation_date","private","license_id"]:
+                setattr(self,field,getattr(content,field))
+
     def hash(self):
         h = hashlib.md5()
         # Problem? TODO?
@@ -108,17 +113,11 @@ class DraftContent(Content):
     __tablename__   = "content_draft"
     __mapper_args__ = {'polymorphic_identity': 'draft'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
-    publish_id      = Column(Integer(), ForeignKey('content.id'), nullable=True, doc="if present will overwite the published content with this draft")
+    publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
 
     def clone(self, content):
-        """
-        Consturct draft content
-        if passed content then it creates a clone of that content object
-        """
-        if content and content.id:
-            for field in ["title","content","creator","parent_id","location","creation_date","private","license_id"]:
-                setattr(self,field,getattr(content,field))
-            self.publish_id = content.id
+        Content.clone(self, content)
+        self.publish_id = content.id
 
 class CommentContent(Content):
     __tablename__   = "content_comment"
