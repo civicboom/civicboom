@@ -173,11 +173,12 @@ class ContentController(BaseController):
     @action_redirector()
     def delete(self, id):
         content = get_content(id)
+        if not content: return "content does not exisit"
         if not content.editable_by(c.logged_in_user):
-            return _("your current user does not have the permissions to delete this _content")
+            return "your current user does not have the permissions to delete this _content"
             #abort(401)
         del_content(content)
-        return _('content deleted')
+        return "content deleted"
 
 
     #-----------------------------------------------------------------------------
