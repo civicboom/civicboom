@@ -223,7 +223,7 @@
 ##------------------------------------------------------------------------------
 <%def name="license()">
 <%
-import civicboom.lib.database.get_cached.get_licenses as get_licenses
+from civicboom.lib.database.get_cached import  get_licenses
 %>
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
