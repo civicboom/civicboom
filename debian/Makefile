@@ -26,13 +26,13 @@ cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type 
 	fakeroot dpkg -b fs-website cb-website_${VERSION}_all.deb 
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
-_combined.js: $(shell python helper.py list_local_js)
+_combined.js: $(shell python helper.py list_local_js) Makefile
 	( \
 	cat `python helper.py list_local_js` && \
 	curl `python helper.py list_remote_js` \
 	) | yui-compressor --type js -o _combined.js
 
-_combined.css: $(shell python helper.py list_local_css)
+_combined.css: $(shell python helper.py list_local_css) Makefile
 	( \
 	cat `python helper.py list_local_css` && \
 	curl `python helper.py list_remote_css` \
