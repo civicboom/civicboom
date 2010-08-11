@@ -27,10 +27,16 @@ cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type 
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
 _combined.js: $(shell python helper.py list_local_js)
-	python helper.py list_all_js | yui-compressor --type js -o _combined.js
+	( \
+	cat `python helper.py list_local_js` && \
+	curl `python helper.py list_remote_js` \
+	) | yui-compressor --type js -o _combined.js
 
 _combined.css: $(shell python helper.py list_local_css)
-	python helper.py list_all_css | yui-compressor --type css -o _combined.css
+	( \
+	cat `python helper.py list_local_css` && \
+	curl `python helper.py list_remote_css` \
+	) | yui-compressor --type css -o _combined.css
 
 python-cbmisc.deb: ../src/setup.py
 	mkdir -p fs-env/DEBIAN/
