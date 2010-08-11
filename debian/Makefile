@@ -27,10 +27,10 @@ cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type 
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
 _combined.js: $(shell python helper.py list_local_js)
-	python helper.py list_all_js | yui-compressor --type js > _combined.js
+	python helper.py list_all_js | yui-compressor --type js -o _combined.js
 
 _combined.css: $(shell python helper.py list_local_css)
-	python helper.py list_all_css | yui-compressor --type css > _combined.css
+	python helper.py list_all_css | yui-compressor --type css -o _combined.css
 
 python-cbmisc.deb: ../src/setup.py
 	mkdir -p fs-env/DEBIAN/
