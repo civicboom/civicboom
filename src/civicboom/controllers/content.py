@@ -64,7 +64,7 @@ class ContentController(BaseController):
                 #        - a cron should invalidate this OR the templates should expire after X time
                 #update_content(c.content)
         
-        return render('/web/design09/content/content_view.mako')
+        return render('/web/design09/content/view.mako')
 
 
     #-----------------------------------------------------------------------------
