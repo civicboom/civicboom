@@ -64,11 +64,16 @@ from civicboom.model.meta import Session
 		width="100%", height="200px",
 		lon=c.content.location.coords(Session)[0],
 		lat=c.content.location.coords(Session)[1]
-	)}
+	)}</p>
   % endif
-  <p>parent content
-  <p>sub content/reponses
-  <P>accepted reporters
+  <p>parent content</p>
+  <p>sub content/reponses</p>
+  <ul>
+    ##% for response in c.content.response_test:
+    ##    <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a></li>
+    ##% endfor
+  </ul>
+  <P>accepted reporters</p>
 </%def>
 
 
