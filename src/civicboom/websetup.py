@@ -300,7 +300,7 @@ CREATE TRIGGER update_content
     Session.commit()
     # }}}
     ###################################################################
-    if meta.legacy_engine:
+    if meta.legacy_engine: # pragma: no cover -- legacy should be removed
         log.info("Converting from legacy database") # {{{
         leg_sess = LegacySession()
         leg_conn = leg_sess.connection()
