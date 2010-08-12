@@ -17,3 +17,6 @@ class MiscController(BaseController):
 
     def georss(self):
         return render(prefix+"georss.mako")
+
+    def credits(self):
+        return render(prefix+"credits.mako")

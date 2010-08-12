@@ -12,6 +12,7 @@ server {
 	access_log /var/log/civicboom/nginx.log;
 	root /opt/cb/share/website/civicboom/public/;
 	error_page 500 502 503 504 /errors/50x.html;
+	client_max_body_size 25m;
 
 	# ssl
 	ssl_certificate      /opt/cb/etc/ssl/civicboom.com.crt;
