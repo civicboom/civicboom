@@ -97,13 +97,13 @@ from civicboom.model.meta import Session
       <a href="${media.original_url}"><img src="${media.media_url}" alt="${media.caption}"/></a>
     % elif media.type == "audio":
 		<object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="30">
-			<param name="movie" value="http://flv-player.net/medias/player_flv_maxi.swf" />
+			<param name="movie" value="/flash/player_flv_maxi.swf" />
 			<param name="allowFullScreen" value="true" />
-			<param name="FlashVars" value="flv=${media.media_url}&amp;title=${media.caption}\n${media.credit}&amp;showvolume=1" />
+			<param name="FlashVars" value="flv=${media.media_url}&amp;title=${media.caption}\n${media.credit}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
 		</object>
     % elif media.type == "video":
 		<object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="240">
-			<param name="movie" value="http://flv-player.net/medias/player_flv_maxi.swf" />
+			<param name="movie" value="/flash/player_flv_maxi.swf" />
 			<param name="allowFullScreen" value="true" />
 			<param name="FlashVars" value="flv=${media.media_url}&amp;title=${media.caption}\n${media.credit}&amp;startimage=${media.thumbnail_url}&amp;showvolume=1&amp;showfullscreen=1" />
 		</object>
