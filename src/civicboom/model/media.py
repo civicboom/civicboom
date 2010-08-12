@@ -75,7 +75,7 @@ class Media(Base):
             wh.copy_to_local_warehouse(processed.name, "media", self.hash)
             processed.close()
         elif self.type == "audio":
-            processed = tempfile.NamedTemporaryFile(suffix=".ogg")
+            processed = tempfile.NamedTemporaryFile(suffix=".flv")
             self._ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
             wh.copy_to_local_warehouse(processed.name, "media", self.hash)
             processed.close()
