@@ -103,6 +103,9 @@ from civicboom.model.meta import Session
     ##% endif
   % endfor
   
+  ##----Temp Respond----
+  <a href="${h.url(controller="content",action="edit",parent_id=c.content.id)}">Respond to this</a>
+  
   ##----Comments----
   ${comments()}
   

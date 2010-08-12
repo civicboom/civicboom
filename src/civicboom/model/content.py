@@ -7,7 +7,7 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
-from sqlalchemy import func
+from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref
 
 import hashlib
@@ -68,8 +68,10 @@ class Content(Base):
     status          = Column(_content_status,  nullable=False, default="pending")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
+    
     # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
-    responses       = relationship("Content",            backref=backref('parent', remote_side=id, order_by=creation_date)) #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content
+    responses       = relationship("Content",            backref=backref('parent', remote_side=id, order_by=creation_date), primaryjoin=and_("Content.id == Content.parent_id") )  #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content
+                                   #,or_("Content.__type__!='comment'","Content.__type__!='draft'")    # foreign_keys=["Content.id"] 
     attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
@@ -103,7 +105,7 @@ class Content(Base):
         Check to see if a member object has the rights to edit this content
         """
         if self.status  == "locked": return False
-        if self.creator == None    : return True # If nobody owns it then eveyone can edit it, this is used when first creating blank content
+        if self.creator == None    : return True # If nobody owns it then eveyone can edit it (should this ever be called? ever?)
         if self.creator == member  : return True
         # TODO check groups of creator to see if member is in the owning group
         return False
@@ -113,7 +115,7 @@ class DraftContent(Content):
     __tablename__   = "content_draft"
     __mapper_args__ = {'polymorphic_identity': 'draft'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
-    publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
+    #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
 
     def clone(self, content):
         Content.clone(self, content)

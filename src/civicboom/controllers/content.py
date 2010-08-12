@@ -91,10 +91,10 @@ class ContentController(BaseController):
             starting_content_type = c.content.__type__
         
         # Overlay form data over the current content object or return a new instance of an object
-        c.content = form_to_content(request.POST, c.content)
+        c.content = form_to_content(request.params, c.content) #request.POST
         
         # If this is the frist time viewing the content then redirect to new substatiated id
-        if id==None and c.content.id==None:
+        if c.content.id==None:
             Session.add(c.content)
             Session.commit()
             return redirect(url.current(action='edit', id=c.content.id))

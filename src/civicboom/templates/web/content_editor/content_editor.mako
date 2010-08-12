@@ -38,6 +38,9 @@
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
+
+    ${parent_preview()}
+
     <div class="content_form">
         <form action="" method="post" enctype="multipart/form-data" name="content">
             ${base_content()}
@@ -81,6 +84,15 @@
 <p class="form_instuctions">${_(text)}</p>
 </%def>
 
+
+##------------------------------------------------------------------------------
+## Parent Preview
+##------------------------------------------------------------------------------
+<%def name="parent_preview()">
+    % if c.content.parent:
+        <p>Responding to: ${c.content.parent.title}</p>
+    % endif
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Base Form Text Content

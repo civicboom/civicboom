@@ -100,6 +100,10 @@ def form_to_content(form, content):
         elif form.get('form_type') == "comment": content = CommentContent()
         else                                   : content = DraftContent()
         content.creator = c.logged_in_user
+        
+    if not content.parent and "parent_id" in form:
+        content.parent_id = form["parent_id"]
+        
     if not form: return content #If there is no form data there is nothing to overlay or do
 
     #----------------------------------------------------
