@@ -25,12 +25,13 @@
       <li                       ><a href="${h.url(controller='misc', action='press'  )}"               >${_("Press Coverage")}</a></li>
       <li                       ><a href="${h.url(controller='misc', action='terms'  )}" ${link_target}>${_("Terms and Conditions")}</a></li>
       <li                       ><a href="${h.url(controller='misc', action='privacy')}" ${link_target}>${_("Privacy policy")}</a></li>
-      <li class="last_list_item"><a href="${h.url(controller='misc', action='contact')}"               >${_("Contact")}</a>
+      <li                       ><a href="${h.url(controller='misc', action='contact')}"               >${_("Contact")}</a>
+      <li class="last_list_item"><a href="${h.url(controller='misc', action='credits')}"               >${_("Credits")}</a>
     </ul>
 
     <div class="copyright">
-		<span class="copyright_symbol">&copy;</span> 2009-2010 Indiconews Ltd,
-		Map Data CC-By-SA by <a href="http://openstreetmap.org/">OpenStreetMap</a>
+		Website &copy; 2009-2010 Indiconews Ltd,
+		articles &copy; their respective authors
 	</div>
   </div>
   
