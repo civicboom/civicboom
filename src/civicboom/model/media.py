@@ -4,15 +4,12 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 
 from civicboom.model.meta import Base
 import civicboom.lib.services.warehouse as wh
+import civicboom.lib.worker as worker
 
 from pylons import config # used in generation of URL's for media
 
 import magic
-import Image
-import tempfile
-import os
 import logging
-import subprocess
 
 log = logging.getLogger(__name__)
 
@@ -32,19 +29,6 @@ class Media(Base):
 
 
 
-    def _ffmpeg(self, args):
-        """
-        Convenience function to run ffmpeg and log the output
-        """
-        ffmpeg = "/usr/bin/ffmpeg" # FIXME: config variable?
-        cmd = [ffmpeg, ] + args
-        log.info(" ".join(cmd))
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output = proc.communicate()
-        log.debug("stdout: "+output[0])
-        log.debug("stderr: "+output[1])
-        log.debug("return: "+str(proc.returncode))
-
     def load_from_file(self, tmp_file=None, original_name=None, caption=None, credit=None):
         """
         Create a Media object from a blob of data + upload form details
@@ -52,91 +36,35 @@ class Media(Base):
 
         # Generate Hash and move file locally
         self.hash               = wh.hash_file(tmp_file)
-        tmp_file                = wh.copy_to_local_warehouse(tmp_file, "media-original", self.hash)
+
+        # make a personal copy of the file; tmp_file may not be a real
+        # file, and it will disappear when the request is over
+        my_file = config["path.temp"]+"/media-"+self.hash
+        wh.copy_cgi_file(tmp_file, my_file)
 
         # Set up metadata
         self.name               = original_name
         self.caption            = caption if caption else u""
         self.credit             = credit  if credit  else u""
-        self.type, self.subtype = magic.from_file(tmp_file, mime=True).split("/")
-        
+        self.type, self.subtype = magic.from_file(my_file, mime=True).split("/")
 
-        # FIXME: turn tmp_file into something suitable for web viewing
-        # TODO: processing should he handled in a separte thead and not block
-        #       video thumbnails could have a placeholder thumb uploaded to warehouse first and then replaced once video transcoding complete
-        if self.type == "image":
-            processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-            size = 480, 360
-            im = Image.open(tmp_file)
-            if im.mode != "RGB":
-                im = im.convert("RGB")
-            im.thumbnail(size, Image.ANTIALIAS)
-            im.save(processed.name, "JPEG")
-            wh.copy_to_local_warehouse(processed.name, "media", self.hash)
-            processed.close()
-        elif self.type == "audio":
-            processed = tempfile.NamedTemporaryFile(suffix=".ogg")
-            self._ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
-            wh.copy_to_local_warehouse(processed.name, "media", self.hash)
-            processed.close()
-        elif self.type == "video":
-            processed = tempfile.NamedTemporaryFile(suffix=".flv")
-            size = 480, 360
-            self._ffmpeg([
-                "-y", "-i", tmp_file,
-                "-ab", "56k", "-ar", "22050",
-                "-qmin", "2", "-qmax", "16",
-                "-b", "320k", "-r", "15",
-                "-s", "%dx%d" % (size[0], size[1]),
-                processed.name
-            ])
-            wh.copy_to_local_warehouse(processed.name, "media", self.hash)
-            processed.close()
+        def copy_config():
+            d = {}
+            for key in config.keys():
+                d[key] = config[key]
+            return d
 
-        # create a thumbnail
-        if self.type == "image":
-            processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-            size = 128, 128 # FIXME: config value?
-            im = Image.open(tmp_file)
-            if im.mode != "RGB":
-                im = im.convert("RGB")
-            im.thumbnail(size, Image.ANTIALIAS)
-            im.save(processed.name, "JPEG")
-            wh.copy_to_local_warehouse(processed.name, "media-thumbnail", self.hash)
-            processed.close()
-        elif self.type == "audio":
-            # audio has no thumb; what is displayed to the user is
-            # a player plugin
-            pass
-        elif self.type == "video":
-            processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-            size = 128, 128 # FIXME: config value?
-            self._ffmpeg([
-                "-y", "-i", tmp_file,
-                "-an", "-vframes", "1", "-r", "1",
-                "-s", "%dx%d" % (size[0], size[1]),
-                "-f", "image2", processed.name
-            ])
-            wh.copy_to_local_warehouse(processed.name, "media-thumbnail", self.hash)
-            processed.close()
+        wh.copy_to_warehouse("./civicboom/public/images/media_placeholder.gif", "media-thumbnail", self.hash, placeholder=True)
 
-        #log.debug("Created Media from file %s -> %s" % (self.name, self.hash))
-        
-        return self
-
-    def sync(self):
-        """
-        copy localy processed files to warehouse
-        this will processed in a separte thead to allow this call to return quickly
-          the thumbnail should not be uploaded in a separte thread
-        """
-        # TODO - thread copy to warehouse
-        wh.copy_to_remote_warehouse("media-original", self.hash, self.name      )
-        wh.copy_to_remote_warehouse("media"         , self.hash, self.media_name)
-        if self.type != "audio":
-            wh.copy_to_remote_warehouse("media-thumbnail", self.hash, "thumb.jpg")
-            
-        # TODO: have the local file removed after all threads have finished processing the content
+        worker.media_queue.put({
+            "task": "process_media",
+            "config": copy_config(),
+            "tmp_file": my_file,
+            "file_hash": self.hash,
+            "file_type": self.type,
+            "file_name": self.name,
+            "delete_tmp": True,
+        })
 
         return self
 
@@ -159,12 +87,12 @@ class Media(Base):
     @property
     def original_url(self):
         "The URL of the original as-uploaded file"
-        return "%s/media-original/%s"         % (config['warehouse_url'], self.hash) #/%s , self.name
+        return "%s/media-original/%s"  % (config['warehouse_url'], self.hash) #/%s , self.name
 
     @property
     def media_url(self):
         "The URL of the processed media, eg .flv file for video"
-        return "%s/media/%s"                   % (config['warehouse_url'], self.hash) #/%s need to add filename to end for saving , self.name
+        return "%s/media/%s"           % (config['warehouse_url'], self.hash) #/%s need to add filename to end for saving , self.name
 
     @property
     def thumbnail_url(self):

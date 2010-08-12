@@ -13,6 +13,7 @@ import civicboom.lib.app_globals as app_globals
 import civicboom.lib.helpers
 from civicboom.config.routing import make_map
 from civicboom.model import init_model
+from civicboom.lib.worker import start_worker
 
 def load_environment(global_conf, app_conf):
     """
@@ -62,5 +63,7 @@ def load_environment(global_conf, app_conf):
     config['feature.aggregate.email']   = asbool(config['feature.aggregate.email'])
     config['feature.aggregate.twitter'] = asbool(config['feature.aggregate.twitter'])
     config['feature.profanity_filter']  = asbool(config['feature.profanity_filter'])
+
+    start_worker()
 
     return config

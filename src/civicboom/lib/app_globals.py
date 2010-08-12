@@ -8,9 +8,6 @@ from pylons import config
 
 from paste.deploy.converters import asbool
 
-from civicboom.model.content           import License
-from civicboom.model.meta              import Session
-
 import memcache
 from ConfigParser import SafeConfigParser
 
@@ -33,7 +30,7 @@ class Globals(object):
 
         self.cache         = CacheManager(**parse_cache_config_options(config))
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
-        
+
         self.memcache      = memcache.Client([config['service.memcache.server']], debug=0)
 
         self.user_defaults = SafeConfigParser()

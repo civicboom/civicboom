@@ -14,3 +14,6 @@ class MiscController(BaseController):
 
     def titlepage(self):
         return render(prefix+"titlepage.mako")
+
+    def georss(self):
+        return render(prefix+"georss.mako")

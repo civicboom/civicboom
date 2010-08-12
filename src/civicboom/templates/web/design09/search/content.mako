@@ -1,15 +1,11 @@
 <%inherit file="/web/html_base.mako"/>
 <%namespace name="cl" file="../includes/content_list.mako"/>
+<%namespace name="loc" file="../includes/location.mako"/>
 
 ##------------------------------------------------------------------------------
 ## Title - Override
 ##------------------------------------------------------------------------------
 <%def name="title()">${_("Search")}</%def>
-
-##------------------------------------------------------------------------------
-## Navigation override - remove it
-##------------------------------------------------------------------------------
-##<%def name="navigation()"></%def>
 
 ##------------------------------------------------------------------------------
 ## Style Overrides
@@ -39,7 +35,24 @@ IMG.avatar {
 
 <%def name="body()">
 	% if len(list(results)) > 0:
-		${cl.content_list(results)}
+		<br><a href="${url.current(
+			format='xml',
+			query=request.params.get('query'),
+			location=request.params.get('location')
+		)}">RSS feed of results</a>
+
+		<br><a href="${url(
+			controller='misc',
+			action='georss',
+			location=request.params.get('location'),
+			feed=url.current(
+				format='xml',
+				query=request.params.get('query'),
+				location=request.params.get('location')
+			)
+		)}">View results on map</a>
+
+		<p>${cl.content_list(results)}
 	% else:
 		'${term}' did not match any articles
 	% endif

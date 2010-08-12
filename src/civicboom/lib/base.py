@@ -56,8 +56,6 @@ class BaseController(WSGIController):
             if config['debug']:
                 app_globals.site_host = request.environ['HTTP_HOST']
             app_globals.site_url = "http://" + app_globals.site_host
-            import civicboom.lib.database.get_cached
-            app_globals.licenses = civicboom.lib.database.get_cached.get_licenses()
 
 
         #AllanC - For gadgets and emails links and static content need to be absolute

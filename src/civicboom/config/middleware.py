@@ -3,6 +3,7 @@ from beaker.middleware import SessionMiddleware
 from paste.cascade import Cascade
 from paste.registry import RegistryManager
 from paste.urlparser import StaticURLParser
+from paste.fileapp import FileApp
 from paste.deploy.converters import asbool
 from pylons.middleware import ErrorHandler, StatusCodeRedirect
 from pylons.wsgiapp import PylonsApp
@@ -14,6 +15,13 @@ from civicboom.config.environment import load_environment
 from civicboom.middleware.MobileDetectionMiddleware import MobileDetectionMiddleware
 from civicboom.middleware.HttpsDetectionMiddleware import HttpsDetectionMiddleware
 
+class HeaderURLParser(StaticURLParser):
+    def make_app(self, filename):
+        # set headers so that static content can be cached
+        headers = [
+            ("Cache-Control", "public,max-age=%d" % int(60 * 60 * 24 * 365)),
+        ]
+        return FileApp(filename, headers)#, content_type='application/octetstream')
 
 def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     """Create a Pylons WSGI application and return it
@@ -72,7 +80,7 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
 
     if asbool(static_files):
         # Serve static files
-        static_app = StaticURLParser(config['pylons.paths']['static_files'])
+        static_app = HeaderURLParser(config['pylons.paths']['static_files'])
         app = Cascade([static_app, app])
 
     app.config = config

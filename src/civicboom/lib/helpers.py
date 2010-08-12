@@ -23,18 +23,12 @@ def get_captcha(lang='en', theme='white'):
     http://k0001.wordpress.com/2007/11/15/using-recaptcha-with-python-and-django/
     """
     return literal(librecaptcha.displayhtml(config['api_key.reCAPTCHA.public'])) #, lang="es", theme='white'
-    
 
 def shorten_url(url):
     return re.sub("http://[^/]+", "", url)
 
 def shorten_module(mod):
     return re.sub("civicboom/(.*).py", "\\1", mod).replace("/", ".")
-
-def username_plus_ip(username, address):
-    if username == "None":
-        return address
-    return HTML.span(HTML.a(username, href=url(controller='user', action='view', id=username)), title=address)
 
 def link_to_objects(text):
     """
@@ -58,9 +52,6 @@ def link_to_objects(text):
     if prev_word:
         output = output + HTML.literal(prev_word)
     return output
-
-def raise_exception_test():
-    raise "broken"
 
 def wh_public(filename):
     if config["warehouse"] == "s3":

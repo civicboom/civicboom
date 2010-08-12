@@ -3,9 +3,8 @@ from civicboom.tests import *
 class TestSearchController(TestController):
 
     def test_index(self):
-        response = self.app.get(url(controller='search', action='index')) # this redirects to the next
-        response = self.app.get('/search/index')
-        assert "Search for" in response
+        response = self.app.get(url(controller='search', action='index'))
+        assert "Search For:" in response
 
 
     ##########################################################################
@@ -13,22 +12,24 @@ class TestSearchController(TestController):
     ##########################################################################
 
     def test_content_results(self):
-        response = self.app.get(url(controller='search', action='content', id='text'))
+        response = self.app.get(url(controller='search', action='content', query='text'))
         assert "Here is some text" in response
         assert "Friend" in response
         assert "5 responses" in response
 
     def test_content_no_results(self):
-        response = self.app.get(url(controller='search', action='content', id='cake'))
+        response = self.app.get(url(controller='search', action='content', query='cake'))
         assert "'cake' did not match any articles" in response
 
     def test_content_no_query(self):
-        response = self.app.get(url(controller='search', action='content'), status=302) # redirect to search/index
-        # FIXME: the above generates /search/content/ which redirects to /search/content...
+        response = self.app.get(url(controller='search', action='content'))
 
-        response = self.app.get("/search/content", status=302)
-        # FIXME: redirect to search/index
-        # FIXME: assert "Search for" in response after redirection
+    def test_content_rss(self):
+        response = self.app.get(url(controller='search', action='content', format='xml'))
+
+    def test_content_location(self):
+        response = self.app.get(url(controller='search', action='content', location='1,51'))
+        assert "Here is some text" in response
 
 
     ##########################################################################

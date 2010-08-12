@@ -19,7 +19,7 @@ def init_model(main_engine, legacy_engine=None):
     #orm.mapper(Reflected, reflected_table)
     #
     meta.Session.configure(bind=main_engine)
-    if legacy_engine:
+    if legacy_engine: # pragma: no cover -- legacy should be removed
         meta.LegacySession.configure(bind=legacy_engine)
 
     meta.engine = main_engine
