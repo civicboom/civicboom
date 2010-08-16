@@ -33,16 +33,16 @@
       </a>
     % endif
 
-    % if c.content.__type__ == "assignment" and c.content.can_accept(c.logged_in_user):
+    % if c.content.__type__ == "assignment" and c.content.acceptable_by(c.logged_in_user):
         <% status = c.content.previously_accepted_by(c.logged_in_user) %>
         %if not status:
-        <a class="button_small button_small_style_2" href="${h.url(controller='assignment',action='accept',  id=c.content.id)}">
-          Accept
-        </a>
-        % elif status == "accepted":
-        <a class="button_small button_small_style_2" href="${h.url(controller='assignment',action='withdraw',id=c.content.id)}">
-          Withdraw
-        </a>
+            <a class="button_small button_small_style_2" href="${h.url(controller='assignment',action='accept',  id=c.content.id)}">
+              Accept
+            </a>
+        % elif status != "withdrawn":
+            <a class="button_small button_small_style_2" href="${h.url(controller='assignment',action='withdraw',id=c.content.id)}">
+              Withdraw
+            </a>
         % endif
     % endif
 
@@ -90,7 +90,32 @@ from civicboom.model.meta import Session
         <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a>${response.__type__}</li>
     % endfor
   </ul>
-  <P>accepted reporters</p>
+  
+  % if hasattr(c.content, "assigned_to"):
+    <p>accepted by reporters</p>
+    <ul>
+    % for a in [a for a in c.content.assigned_to if a.status=="accepted"]:
+        <li>${a.member.username}</li>
+    % endfor
+    </ul>
+    
+    <p>awaiting reply</p>
+    <ul>
+    % for a in [a for a in c.content.assigned_to if a.status=="pending"]:
+        <li>${a.member.username}</li>
+    % endfor
+    </ul>
+
+    <p>withdrawn reporters</p>
+    <ul>
+    % for a in [a for a in c.content.assigned_to if a.status=="withdrawn"]:
+        <li>${a.member.username}</li>
+    % endfor
+    </ul>
+
+
+  % endif
+  
 </%def>
 
 

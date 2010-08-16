@@ -163,7 +163,7 @@ class AssignmentContent(UserVisibleContent):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
-    def can_accept(self, member):
+    def acceptable_by(self, member):
         if self.creator==member: return False
         if self.closed         : return False #TODO - finish - "closed and not in assinged_to list"
         return True
