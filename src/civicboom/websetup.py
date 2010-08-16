@@ -693,6 +693,16 @@ CREATE TRIGGER update_content
         m.subject = u"Re: Re: singing"
         m.content = u"It is totally not! And to explain, I will use a sentence that is over 50 characters long, to test the Message.__unicode__ truncation feature"
 
+        n = Message()
+        n.target = u1
+        n.subject = u"Notification! A test"
+        n.content = u"A test is happening now :O"
+
+        n = Message()
+        n.target = u1
+        n.subject = u"Another notification! A test"
+        n.content = u"A test part 2 is happening now :O"
+
         ca = ArticleContent()
         ca.title      = u"A test article"
         ca.content    = u"""
