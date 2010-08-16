@@ -6,6 +6,7 @@ from pylons.decorators.secure import authenticate_form
 
 from civicboom.lib.authentication import authorize, is_valid_user
 from civicboom.lib.base import BaseController, render
+from civicboom.model.meta import Session
 
 log = logging.getLogger(__name__)
 
@@ -116,6 +117,7 @@ class SettingsController(BaseController):
             die("no position specified")
         c.viewing_user = c.logged_in_user
         c.viewing_user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
+        Session.commit()
 
         return "Location saved: %s (%s)" % (
             request.params.get("location", "[pos]"),
