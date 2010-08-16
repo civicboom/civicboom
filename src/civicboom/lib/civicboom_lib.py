@@ -101,8 +101,8 @@ def form_to_content(form, content):
         else                                   : content = DraftContent()
         content.creator = c.logged_in_user
         
-    if not content.parent and "parent_id" in form:
-        content.parent_id = form["parent_id"]
+    if not content.parent and "form_parent_id" in form:
+        content.parent_id = form["form_parent_id"]
         
     if not form: return content #If there is no form data there is nothing to overlay or do
 
@@ -204,7 +204,7 @@ def form_to_content(form, content):
         content.license_id = form['form_licence']
 
     # Any left over fields that just need a simple set
-    for field in ["title", "parent_id"]:
+    for field in ["title", ]:
         form_field_name = "form_"+field
         if form_field_name in form:
             setattr(content,field,form[form_field_name])
