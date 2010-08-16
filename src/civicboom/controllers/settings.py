@@ -73,6 +73,7 @@ class SettingsController(BaseController):
             else:
                 c.viewing_user.config[key] = request.POST[key]
 
+        # FIXME: flash message + redirect
         return "Settings saved "+", ".join(request.POST.keys())
 
     @authorize(is_valid_user)
@@ -97,6 +98,8 @@ class SettingsController(BaseController):
                     del c.viewing_user.config[route_name]
             else:
                 c.viewing_user.config[route_name] = setting
+
+        # FIXME: flash message + redirect
         return "Settings saved"
 
     @authorize(is_valid_user)
@@ -119,6 +122,7 @@ class SettingsController(BaseController):
         c.viewing_user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
         Session.commit()
 
+        # FIXME: flash message + redirect
         return "Location saved: %s (%s)" % (
             request.params.get("location", "[pos]"),
             request.params.get("location_name", "[name]"),
