@@ -54,6 +54,12 @@
 		% for msg in c.viewing_user.messages_notification:
 			<div class="notification">
 				${msg.subject}
+			<form action="${url.current(controller='messages', action='delete')}" method="POST">
+				<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
+				<input type="hidden" name="msg_id" value="${msg.id}">
+				<input type="hidden" name="type" value="notification">
+				<input type="submit" value="X">
+			</form>
 			</div>
 		% endfor
 	% else:
