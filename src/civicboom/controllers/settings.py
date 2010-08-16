@@ -97,3 +97,16 @@ class SettingsController(BaseController):
             else:
                 c.viewing_user.config[route_name] = setting
         return "Settings saved"
+
+    @authorize(is_valid_user)
+    def location(self, id=None):
+        c.viewing_user = c.logged_in_user
+        return render("web/settings/location.mako")
+
+    @authorize(is_valid_user)
+    @authenticate_form
+    def save_location(self, id=None):
+        c.viewing_user = c.logged_in_user
+        u_config = c.viewing_user.config
+        current_keys = u_config.keys()
+        return "Location saved"
