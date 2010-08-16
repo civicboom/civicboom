@@ -64,7 +64,7 @@
 	% if c.viewing_user.messages_to[0:5]:
 		% for msg in c.viewing_user.messages_to[0:5]:
 			<div class="message_short">
-				<a class="subject" href="${url.current(action='read', id=msg.id)}">${msg.subject}</a>
+				<a class="subject" href="${url(controller='messages', action='read', id=msg.id)}">${msg.subject}</a>
 				<span class="source">${str(msg.source)}</span>
 			</div>
 		% endfor
