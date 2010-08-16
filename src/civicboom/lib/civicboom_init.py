@@ -8,7 +8,7 @@ def init():
     I'm unsure as to wether the problem was with the version of SQLAlchemy but with the string method it was not possible to specify multiple conditions under the primary join param even though the SQL created was correct
     In the future it may be possible to intigrate these with the main class defentions
     """
-    from civicboom.model.content import Content, AssignmentContent
+    from civicboom.model.content import Content, AssignmentContent, MemberAssignment
     from civicboom.model.member  import Member
     
     from sqlalchemy     import and_, or_, not_
@@ -20,4 +20,13 @@ def init():
                                     )
     Member.content = relationship(Content, primaryjoin=and_(Member.id==Content.creator_id, Content.__type__!='comment'))
 
-    #Member.accepted_assigments = 
+    #Member.accepted_assigments =
+    
+    AssignmentContent.accepted_by = dynamic_loader(Member,
+                                                primaryjoin=and_(AssignmentContent.id==MemberAssignment.content_id,
+                                                                 MemberAssignment.status=="accepted",
+                                                ),
+                                                secondary=MemberAssignment.__table__,
+                                                secondaryjoin=MemberAssignment.member_id==Member.id,
+                                                foreign_keys=[MemberAssignment.content_id,MemberAssignment.member_id]
+                                    )

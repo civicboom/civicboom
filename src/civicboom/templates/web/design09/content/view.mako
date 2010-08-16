@@ -91,6 +91,7 @@ from civicboom.model.meta import Session
     % endfor
   </ul>
   
+  <%doc>
   % if hasattr(c.content, "assigned_to"):
     <p>accepted by reporters</p>
     <ul>
@@ -112,10 +113,19 @@ from civicboom.model.meta import Session
         <li>${a.member.username}</li>
     % endfor
     </ul>
-
-
   % endif
+  </%doc>
   
+    % if hasattr(c.content, "accepted_by"):
+        <p>accepted by</p>
+        <ul>
+        % for member in c.content.accepted_by:
+            <li>${member.username}</li>
+        % endfor
+        </ul>
+    % endif
+
+
 </%def>
 
 
