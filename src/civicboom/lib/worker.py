@@ -37,6 +37,7 @@ class MediaThread(Thread):
 
 def start_worker():
     worker = MediaThread()
+    worker.daemon = True
     worker.start()
 
 

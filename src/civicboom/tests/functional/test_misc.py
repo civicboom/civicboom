@@ -11,6 +11,11 @@ class TestMiscController(TestController):
     def test_titlepage(self):
         response = self.app.get(url(controller='misc', action='titlepage'))
 
+    def test_static(self):
+        # test that static content is cachable
+        response = self.app.get("/robots.txt")
+        # FIXME: test that "Cache-Control: public" is set
+
     def test_georss(self):
         response = self.app.get(url(controller='misc', action='georss'))
         response = self.app.get(url(controller='misc', action='georss', feed='/search/content.xml'))

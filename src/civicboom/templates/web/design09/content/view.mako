@@ -88,7 +88,6 @@ from civicboom.model.meta import Session
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-
   ##----Details----
   % if hasattr(c.content,'views'):
   <p>views: ${c.content.views}</p>
@@ -108,9 +107,23 @@ from civicboom.model.meta import Session
 
   ##----Media-----
   % for media in c.content.attachments:
-    ##% if media.type == "image":
+    % if media.type == "image":
       <a href="${media.original_url}"><img src="${media.media_url}" alt="${media.caption}"/></a>
-    ##% endif
+    % elif media.type == "audio":
+		<object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="30">
+			<param name="movie" value="/flash/player_flv_maxi.swf" />
+			<param name="allowFullScreen" value="true" />
+			<param name="FlashVars" value="flv=${media.media_url}&amp;title=${media.caption}\n${media.credit}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
+		</object>
+    % elif media.type == "video":
+		<object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="240">
+			<param name="movie" value="/flash/player_flv_maxi.swf" />
+			<param name="allowFullScreen" value="true" />
+			<param name="FlashVars" value="flv=${media.media_url}&amp;title=${media.caption}\n${media.credit}&amp;startimage=${media.thumbnail_url}&amp;showvolume=1&amp;showfullscreen=1" />
+		</object>
+	% else:
+		unrecognised media type ${media.type}
+    % endif
   % endfor
   
   ##----Temp Respond----
@@ -118,7 +131,6 @@ from civicboom.model.meta import Session
   
   ##----Comments----
   ${comments()}
-  
 </%def>
 
 
@@ -147,11 +159,11 @@ from civicboom.model.meta import Session
 	% endif
 </%def>
 <%def name="comments()">
-	<table>
 <%
 from civicboom.model.meta import Session
 from civicboom.model import CommentContent
 %>
+	<table>
 ## this approach doesn't sort :/
 ##	% for r in [co for co in c.content.responses if co.__type__ == "comment"]:
 ##	% for r in Session.query(CommentContent).filter(CommentContent.parent_id==c.content.id).order_by(CommentContent.creation_date):

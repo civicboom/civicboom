@@ -10,6 +10,7 @@ from civicboom.model import Message
 from civicboom.lib.base import BaseController, render
 
 log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 
 class MessagesController(BaseController):
 
@@ -39,12 +40,22 @@ class MessagesController(BaseController):
     def delete(self):
         c.viewing_user = c.logged_in_user
         msg = Session.query(Message).filter(Message.id==request.POST["msg_id"]).one()
+        redir = None
         if msg.target == c.viewing_user: # FIXME messages to groups?
             # FIXME: test that delete-orphan works, and removes the
             # de-parented message
-            c.viewing_user.messages_to.remove(msg)
-            Session.commit()
+            if request.POST["type"] == "message":
+                user_log.debug("Deleting message")
+                c.viewing_user.messages_to.remove(msg)
+                Session.commit() # commit must come before the redirect is generated?
+                redir = redirect(url.current(controller='messages', action='index'))
+            if request.POST["type"] == "notification":
+                user_log.debug("Deleting notification")
+                c.viewing_user.messages_notification.remove(msg)
+                Session.commit() # commit must come before the redirect is generated?
+                redir = redirect(url.current(controller='user_profile', action='index'))
         else:
+            user_log.warning("User tried to delete somebody else's message") # FIXME: details
             die("You are not the target of this message")
-        return redirect(url.current(action='index'))
+        return redir
 

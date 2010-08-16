@@ -31,6 +31,10 @@ class TestSearchController(TestController):
         response = self.app.get(url(controller='search', action='content', location='1,51'))
         assert "Here is some text" in response
 
+    def test_content_location_radius(self):
+        response = self.app.get(url(controller='search', action='content', location='1,51,10'))
+        assert "Here is some text" in response
+
 
     ##########################################################################
     # Location search
