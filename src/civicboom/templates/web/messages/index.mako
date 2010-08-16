@@ -35,6 +35,7 @@
 			<form action="${url.current(action='delete')}" method="POST">
 				<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
 				<input type="hidden" name="msg_id" value="${msg.id}">
+				<input type="hidden" name="type" value="message">
 				<input type="submit" value="Delete">
 			</form>
 		</td>
