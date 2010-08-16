@@ -39,12 +39,18 @@ class MessagesController(BaseController):
     def delete(self):
         c.viewing_user = c.logged_in_user
         msg = Session.query(Message).filter(Message.id==request.POST["msg_id"]).one()
+        redir = None
         if msg.target == c.viewing_user: # FIXME messages to groups?
             # FIXME: test that delete-orphan works, and removes the
             # de-parented message
-            c.viewing_user.messages_to.remove(msg)
+            if request.POST["type"] == "message":
+                c.viewing_user.messages_to.remove(msg)
+                redir = redirect(url.current(controller='messages', action='index'))
+            if request.POST["type"] == "notification":
+                c.viewing_user.messages_notification.remove(msg)
+                redir = redirect(url.current(controller='user_profile', action='index'))
             Session.commit()
         else:
             die("You are not the target of this message")
-        return redirect(url.current(action='index'))
+        return redir
 
