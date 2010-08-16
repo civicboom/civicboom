@@ -33,6 +33,18 @@
       </a>
     % endif
 
+    % if c.content.__type__ == "assignment" and c.content.can_accept(c.logged_in_user):
+        <% status = c.content.previously_accepted_by(c.logged_in_user) %>
+        %if not status:
+        <a class="button_small button_small_style_2" href="${h.url(controller='assignment',action='accept',  id=c.content.id)}">
+          Accept
+        </a>
+        % elif status == "accepted":
+        <a class="button_small button_small_style_2" href="${h.url(controller='assignment',action='withdraw',id=c.content.id)}">
+          Withdraw
+        </a>
+        % endif
+    % endif
 
 
   ##-----Share Article Links--------

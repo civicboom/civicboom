@@ -663,6 +663,11 @@ CREATE TRIGGER update_content
         u2.status        = "active"
         u2.email         = u"spam@shishnet.org"
 
+        u2_login = UserLogin()
+        u2_login.user   = u2
+        u2_login.type   = "password"
+        u2_login.token  = hashlib.sha1("password").hexdigest()
+
         u3 = User()
         u3.username      = u"cookie"
         u3.name          = u"Amy M. Anderson"
@@ -788,7 +793,7 @@ CREATE TRIGGER update_content
         dc.license_id = cc_by.id
         u2.content.append(dc)
 
-        Session.add_all([u1, u2, u3, u1_login])
+        Session.add_all([u1, u2, u3, u1_login, u2_login])
         Session.commit()
 
 
