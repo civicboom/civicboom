@@ -47,6 +47,9 @@ class ContentController(BaseController):
         """
         c.content = get_content(id)
         
+        if not c.content:
+            return render('/web/message/content_unavailable.mako')
+        
         # Check content is visable
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
             if c.content.status != "show":
@@ -94,7 +97,7 @@ class ContentController(BaseController):
         c.content = form_to_content(request.params, c.content) #request.POST
         
         # If this is the frist time viewing the content then redirect to new substatiated id
-        if c.content.id==None:
+        if c.content.id==None and 'submit_response' not in request.POST:
             Session.add(c.content)
             Session.commit()
             return redirect(url.current(action='edit', id=c.content.id))

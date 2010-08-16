@@ -66,12 +66,17 @@ from civicboom.model.meta import Session
 		lat=c.content.location.coords(Session)[1]
 	)}</p>
   % endif
+  
+  % if c.content.parent:
   <p>parent content</p>
+  <p><a href="${h.url(controller="content", action="view", id=c.content.parent.id)}">${c.content.parent.title}</a></p>
+  % endif
+  
   <p>sub content/reponses</p>
   <ul>
-    ##% for response in c.content.response_test:
-    ##    <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a></li>
-    ##% endfor
+    % for response in c.content.responses:
+        <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a>${response.__type__}</li>
+    % endfor
   </ul>
   <P>accepted reporters</p>
 </%def>
@@ -109,7 +114,7 @@ from civicboom.model.meta import Session
   % endfor
   
   ##----Temp Respond----
-  <a href="${h.url(controller="content",action="edit",parent_id=c.content.id)}">Respond to this</a>
+  <a href="${h.url(controller="content",action="edit",form_parent_id=c.content.id)}">Respond to this</a>
   
   ##----Comments----
   ${comments()}
