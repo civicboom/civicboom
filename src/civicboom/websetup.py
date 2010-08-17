@@ -793,7 +793,7 @@ CREATE TRIGGER update_content
         dc.license_id = cc_by.id
         u2.content.append(dc)
 
-        Session.add_all([u1, u2, u3, u1_login, u2_login])
+        Session.add_all([ca, u1, u2, u3, u1_login, u2_login])
         Session.commit()
 
 
