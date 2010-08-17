@@ -26,7 +26,7 @@ class MessagesController(BaseController):
         if msg.target == c.viewing_user: # FIXME messages to groups?
             c.msg = msg
         else:
-            die("You are not the target of this message")
+            abort(403, "You are not the target of this message")
         return render("/web/messages/read.mako")
 
     @authorize(is_valid_user)
@@ -56,6 +56,6 @@ class MessagesController(BaseController):
                 redir = redirect(url.current(controller='profile', action='index'))
         else:
             user_log.warning("User tried to delete somebody else's message") # FIXME: details
-            die("You are not the target of this message")
+            abort(403, "You are not the target of this message")
         return redir
 
