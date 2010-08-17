@@ -13,7 +13,7 @@ class TestAdminController(TestController):
         response = self.app.get(url(controller='admin', action='event_log', module='civicboom/controllers/test.py'))
         response = self.app.get(url(controller='admin', action='event_log', line_num='20'))
         response = self.app.get(url(controller='admin', action='event_log', username='None'))
-        response = self.app.get(url(controller='admin', action='event_log', addresss='127.0.0.1'))
+        response = self.app.get(url(controller='admin', action='event_log', address='127.0.0.1'))
         response = self.app.get(url(controller='admin', action='event_log', url='http://waffle.com'))
 
     def test_user_list(self):

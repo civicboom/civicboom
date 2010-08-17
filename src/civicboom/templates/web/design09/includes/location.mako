@@ -15,7 +15,7 @@
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 
 <!-- link to APIs -->
-<script src="/javascript/_openlayers.js"></script>
+<script src="/javascript/OpenLayers.js"></script>
 
 <!-- combine APIs -->
 <script type="text/javascript" charset="utf-8" src="/javascript/mxn/mxn.js?(openlayers)"></script>

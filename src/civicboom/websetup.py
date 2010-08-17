@@ -29,7 +29,7 @@ log = logging.getLogger(__name__)
 
 def setup_app(command, conf, variables):
     """Place any commands to setup civicboom here"""
-    if not pylons.test.pylonsapp:
+    if not pylons.test.pylonsapp: # pragma: no cover -- "if not testing" will not be true for testing...
         load_environment(conf.global_conf, conf.local_conf)
 
     ###################################################################
@@ -793,7 +793,7 @@ CREATE TRIGGER update_content
         dc.license_id = cc_by.id
         u2.content.append(dc)
 
-        Session.add_all([u1, u2, u3, u1_login, u2_login])
+        Session.add_all([ca, u1, u2, u3, u1_login, u2_login])
         Session.commit()
 
 

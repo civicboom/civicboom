@@ -29,26 +29,26 @@ class Grid(tables.Grid):
     pass
 
 # custom renderers {{{
-class MemberFieldRenderer(FieldRenderer):
-    def render(self, options={}):
-        value= self.value and self.value or ''
-        cn = ""
-        for name, n in options:
-            if str(n) == self.value:
-                cn = name
-        vars = dict(field_name=self.name, value=value, value_name=cn)
-        return """
-<div style="padding-bottom: 2em;">
-	<input id="%(field_name)s_name" name="%(field_name)s_name" type="text" value="%(value_name)s">
-	<div id="%(field_name)s_comp"></div>
-	<input id="%(field_name)s" name="%(field_name)s" type="hidden" value="%(value)s">
-</div>
-<script>autocomplete_member("%(field_name)s_name", "%(field_name)s_comp", "%(field_name)s");</script>
-        """ % vars
+#class MemberFieldRenderer(FieldRenderer):
+#    def render(self, options={}):
+#        value= self.value and self.value or ''
+#        cn = ""
+#        for name, n in options:
+#            if str(n) == self.value:
+#                cn = name
+#        vars = dict(field_name=self.name, value=value, value_name=cn)
+#        return """
+#<div style="padding-bottom: 2em;">
+#	<input id="%(field_name)s_name" name="%(field_name)s_name" type="text" value="%(value_name)s">
+#	<div id="%(field_name)s_comp"></div>
+#	<input id="%(field_name)s" name="%(field_name)s" type="hidden" value="%(value)s">
+#</div>
+#<script>autocomplete_member("%(field_name)s_name", "%(field_name)s_comp", "%(field_name)s");</script>
+#        """ % vars
 
 FieldSet.default_renderers[geometry.Geometry] = GeometryFieldRenderer
 FieldSet.default_renderers[sqlalchemy.UnicodeText] = TextAreaFieldRenderer
-FieldSet.default_renderers[model.Member] = MemberFieldRenderer
+#FieldSet.default_renderers[model.Member] = MemberFieldRenderer
 
 # }}}
 # object editors {{{
