@@ -1,14 +1,14 @@
 """
 Tools for the generation, managment and invalidation of eTags
 """
-
-import civicboom.lib.app_globals
-
-from pylons import request, session, tmpl_context as c
+from pylons import request, session, tmpl_context as c, app_globals
 from pylons.controllers.util import etag_cache
 
 import hashlib
 
+
+import logging
+log = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 
 # List of dependencys to keep in memory
@@ -42,8 +42,11 @@ def gen_cache_key(**kargs):
     def getsafe_current_username():
         if c.logged_in_user: return c.logged_in_user.username
         return ""
+    def getsafe_flash_message():
+        if 'flash_message' in session: return session['flash_message']
+        return ""
 
-    cache_key = app_globals.version + request.environ.get('PATH_INFO') + request.environ.get('QUERY_STRING') + getsafe_current_username() + dictGetStringValue(session,'flash_message')
+    cache_key = app_globals.version + request.environ.get('PATH_INFO') + request.environ.get('QUERY_STRING') + getsafe_current_username() + getsafe_flash_message()
     #for arg in args:
     #  dependecys+=arg
     for key in kargs:
@@ -52,7 +55,7 @@ def gen_cache_key(**kargs):
         seek_value = str(kargs[key])
         if seek_value in etag_key: cache_key+=str(etag_key[seek_value])+"-"
         else                     : cache_key+=                         "X-"
-    if not app_globals.cache_enabled: log.debug('Cache disabled: eTag generated: %s' % cache_key)
+    if not app_globals.cache_enabled: log.debug('Cache disabled: eTag hash generated from: %s' % cache_key)
     cache_key = hashlib.md5(cache_key).hexdigest()
     if app_globals.cache_enabled: etag_cache(cache_key)
     return cache_key

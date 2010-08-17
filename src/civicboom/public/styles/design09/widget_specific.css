@@ -26,15 +26,15 @@ h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: smal
 	padding-left: 16px;
 }
 .icon span {display: none;}
-.icon_rss          {background: transparent url('/design09/icons.png') no-repeat scroll 0   -0px;}
-.icon_twitter      {background: transparent url('/design09/icons.png') no-repeat scroll 0 -150px;}
-.icon_mobile       {background: transparent url('/design09/icons.png') no-repeat scroll 0 -221px;}
+.icon_rss          {background: transparent url('icons.png') no-repeat scroll 0   -0px;}
+.icon_twitter      {background: transparent url('icons.png') no-repeat scroll 0 -150px;}
+.icon_mobile       {background: transparent url('icons.png') no-repeat scroll 0 -221px;}
 
 .tooltip_icon {
   display: inline-block;
   width: 16px;
   height: 16px;
-  background: transparent url('/design09/icons.png') no-repeat scroll 0 -270px;
+  background: transparent url('icons.png') no-repeat scroll 0 -270px;
   vertical-align: top;
 }
 
@@ -338,7 +338,7 @@ h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: smal
 /* these colours can be overriddern in another css file to provide a new colour theame */
 #CivicboomWidget .widget_border                           {
   color: white;
-  background: #3860a4 url('/design09/background_gradient_dark.png') repeat-x;
+  background: #3860a4 url('background_gradient_dark.png') repeat-x;
   border: 1px solid #04145a;
 }
 
@@ -347,7 +347,7 @@ h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: smal
 #CivicboomWidget .widget_main                             {border-color: #04145a;}
 #CivicboomWidget .widget_content_assignment_list          {color: white;}
 #CivicboomWidget .widget_content_assignment_list li       {color: white;}
-#CivicboomWidget .widget_content_assignment_list li:hover {color: #04145a; background: transparent url('/design09/background_transparent_light.png') repeat;}
+#CivicboomWidget .widget_content_assignment_list li:hover {color: #04145a; background: transparent url('background_transparent_light.png') repeat;}
 
 #CivicboomWidget .widget_content {
   /* border: 1px solid #555; */
@@ -359,7 +359,7 @@ h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: smal
 
 #CivicboomWidget .widget_content_assignment_list li {border-color: #34458e;}
 
-.icon_back         {background: transparent url('/design09/icons.png') no-repeat scroll 0 -253px;}
+.icon_back         {background: transparent url('icons.png') no-repeat scroll 0 -253px;}
 #CivicboomWidget .button_style_1 {background: #04145a; color: white; font-weight: bold;}
 #CivicboomWidget .inverted {background: white; color: #04145a;}
 

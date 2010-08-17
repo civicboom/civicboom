@@ -2,14 +2,14 @@
 /* these colours can be overriddern in another css file to provide a new colour theame */
 #CivicboomWidget .widget_border                           {
   color: #021179;
-  background: #d2dae9 url('/design09/background_gradient_light.png') repeat-x;
+  background: #d2dae9 url('background_gradient_light.png') repeat-x;
   border: 1px solid #929dbd;
 }
 #CivicboomWidget .action_bar                              {border-color: #929dbd;}
 #CivicboomWidget .widget_main                             {border-color: #929dbd;}
 #CivicboomWidget .widget_content_assignment_list          {color: #021179;}
 #CivicboomWidget .widget_content_assignment_list li       {color: #021179;}
-#CivicboomWidget .widget_content_assignment_list li:hover {color: white; background: transparent url('/design09/background_transparent_dark.png') repeat;}
+#CivicboomWidget .widget_content_assignment_list li:hover {color: white; background: transparent url('background_transparent_dark.png') repeat;}
 
 #CivicboomWidget .widget_content {
   /* border: 1px solid #555; */
@@ -22,6 +22,6 @@
 #CivicboomWidget .widget_content_assignment_list li {border-color: #d1d5e3;}
 
 #CivicboomWidget .button_style_1 {background: #04145a; color: white; font-weight: bold;}
-.icon_back {background: transparent url('/design09/icons.png') no-repeat scroll 0 -236px;}
+.icon_back {background: transparent url('icons.png') no-repeat scroll 0 -236px;}
 
 #CivicboomWidget .inverted {background: #021179; color: #white;}

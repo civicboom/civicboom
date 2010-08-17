@@ -12,8 +12,9 @@ from civicboom.model.meta    import Session
 from civicboom.lib.database.etag_manager import etag_key_incement, add_etag_dependency_key
 
 add_etag_dependency_key("content")
-add_etag_dependency_key("user_content")
-
+add_etag_dependency_key("member")
+add_etag_dependency_key("member_content")
+add_etag_dependency_key("member_assignments_active")
 
 #-------------------------------------------------------------------------------
 # Database Object Gets - Cached - Get data from database that is cached
@@ -75,21 +76,27 @@ def get_tag(tag):
 # Cache Management - Part 2 - Invalidating the Cache
 #-------------------------------------------------------------------------------
 
-def update_content(content):
-  if not issubclass(content.__class__,Content): content = get_content_nocache(content)
-  
-  etag_key_incement("content",content.id)
-  #cache_test.invalidate(get_content, '', content.id)
-  
-  etag_key_incement("user_content",content.creator.id)
-  #cache_test.invalidate(get_content_from, '', article.reporter.id)
-  
-  if content.parent:               # If content has parent
-    #update_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now
-    pass
+def update_member(member):
+    etag_key_incement("member",member.id)
 
-def update_user_messages(member):
+def update_content(content):
+    if not issubclass(content.__class__,Content): content = get_content_nocache(content)
+    
+    etag_key_incement("content",content.id)
+    #cache_test.invalidate(get_content, '', content.id)
+    
+    etag_key_incement("member_content",content.creator.id)
+    #cache_test.invalidate(get_content_from, '', article.reporter.id)
+    
+    if content.parent:               # If content has parent
+        #update_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now
+        pass
+
+def update_member_messages(member):
     pass
 
 def update_accepted_assignment(member):
+    pass
+
+def update_member_assignments_active(member):
     pass

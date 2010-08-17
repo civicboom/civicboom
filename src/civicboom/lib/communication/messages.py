@@ -11,6 +11,7 @@ m1.send_message(messages.tipoff(reporter=m2, tipoff="there is a bomb"))
 from civicboom.lib.communication.email import send_email
 from civicboom.model      import Message
 from civicboom.model.meta import Session
+from civicboom.lib.database.get_cached import update_member_messages
 from pylons.i18n          import lazy_ugettext as _
 from webhelpers.html      import HTML
 
@@ -118,6 +119,7 @@ def send_message(member, message_data, delay_commit=False):
             m.subject = message_data.subject
             m.content = message_data.content
             member.messages_to.append(m)
+            update_member_messages(member)
             if not delay_commit:
                 Session.commit()
 

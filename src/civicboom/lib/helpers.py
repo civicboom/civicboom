@@ -7,8 +7,9 @@ available to Controllers. This module is available to templates as 'h'.
 #from webhelpers.html.tags import checkbox, password
 from webhelpers.pylonslib.secure_form import authentication_token
 
-from pylons import url, config
+from pylons import url, config, app_globals, tmpl_context as c
 from webhelpers.html import HTML, literal
+from webhelpers.text import truncate
 
 from civicboom.lib.text import scan_for_embedable_view_and_autolink
 
@@ -58,3 +59,11 @@ def wh_public(filename):
         return "http://"+config["s3_bucket_name"]+".s3.amazonaws.com/public/"+filename
     else:
         return "/"+filename
+
+def url_from_widget(*args, **kargs):
+    for var in app_globals.widget_variables:
+        #if widget_variable in request.params:
+        #   kargs[widget_variable] = request.params[widget_variable]
+        if getattr(c,var) != None and var not in kargs:
+            kargs[var] = getattr(c,var)
+    return url(*args,**kargs)

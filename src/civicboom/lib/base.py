@@ -5,7 +5,7 @@ Provides the BaseController class for subclassing.
 from pylons.controllers      import WSGIController
 from pylons                  import request, app_globals, tmpl_context as c, url, config, session
 from pylons.controllers.util import abort, redirect
-from pylons.templating       import render_mako as render
+from pylons.templating       import render_mako
 from pylons.i18n.translation import _, ungettext, set_lang
 
 from civicboom.model                   import meta
@@ -16,7 +16,16 @@ from civicboom.lib.civicboom_lib       import deny_pending_user
 import logging
 log = logging.getLogger(__name__)
 
+#-------------------------------------------------------------------------------
+# Render
+#-------------------------------------------------------------------------------
+def render(*args, **kargs):
+    if app_globals.cache_enabled: return render_mako(*args, **kargs)
+    else                        : return render_mako(*args)
 
+#-------------------------------------------------------------------------------
+# Base Controller
+#-------------------------------------------------------------------------------
 class BaseController(WSGIController):
     
     def _set_lang(self, lang):

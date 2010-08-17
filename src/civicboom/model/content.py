@@ -112,6 +112,16 @@ class Content(Base):
         if self.creator == member  : return True
         # TODO check groups of creator to see if member is in the owning group
         return False
+    
+    @property
+    def thumbnail_url(self):
+        """
+        TODO
+        If there is media attached return the first image?
+        if no media, check content for youtube video and get thumbnail from that? (maybe process this before content commit?)
+        else return the default image url: (could vary depending on type?)
+        """
+        return ""
 
 
 class DraftContent(Content):

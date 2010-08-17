@@ -51,7 +51,7 @@
       <div class="examples">
         <div class="yui-g">
           <div class="yui-u first">
-            <a href="${h.url(controller='misc', action='widget_details')}">
+            <a href="${h.url(controller='misc', action='widget_preview')}">
             <p class="example_title">${_("Trial the widget now")}</p>
             <img class="example_image" src="/images/misc/widget_preview.png" alt="widget preview"/>
             <ul><li>${_("Widget skins available in 2 colours.")}</li><li>${_("Size customised to fit your website.")}</li></ul>
