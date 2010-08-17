@@ -33,6 +33,18 @@
       </a>
     % endif
 
+    % if c.content.__type__ == "assignment" and c.content.acceptable_by(c.logged_in_user):
+        <% status = c.content.previously_accepted_by(c.logged_in_user) %>
+        %if not status:
+            <a class="button_small button_small_style_2" href="${h.url(controller='assignment',action='accept',  id=c.content.id)}">
+              Accept
+            </a>
+        % elif status != "withdrawn":
+            <a class="button_small button_small_style_2" href="${h.url(controller='assignment',action='withdraw',id=c.content.id)}">
+              Withdraw
+            </a>
+        % endif
+    % endif
 
 
   ##-----Share Article Links--------
@@ -59,26 +71,63 @@
 # we need to pass the session to GeoAlchemy functions
 from civicboom.model.meta import Session
 %>
-  % if c.content.location:
-	<p>${loc.minimap(
-		width="100%", height="200px",
-		lon=c.content.location.coords(Session)[0],
-		lat=c.content.location.coords(Session)[1]
-	)}</p>
-  % endif
+    % if c.content.location:
+      <p>${loc.minimap(
+          width="100%", height="200px",
+          lon=c.content.location.coords(Session)[0],
+          lat=c.content.location.coords(Session)[1]
+      )}</p>
+    % endif
   
-  % if c.content.parent:
-  <p>parent content</p>
-  <p><a href="${h.url(controller="content", action="view", id=c.content.parent.id)}">${c.content.parent.title}</a></p>
-  % endif
+    % if c.content.parent:
+    <p>parent content</p>
+    <p><a href="${h.url(controller="content", action="view", id=c.content.parent.id)}">${c.content.parent.title}</a></p>
+    % endif
+    
+    <p>sub content/reponses</p>
+    <ul>
+      % for response in c.content.responses:
+          <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a>${response.__type__}</li>
+      % endfor
+    </ul>
+    
+    
+    % if hasattr(c.content, "assigned_to"):
+        <p>accepted by reporters</p>
+        <ul>
+        % for a in [a for a in c.content.assigned_to if a.status=="accepted"]:
+            <li>${a.member.username}</li>
+        % endfor
+        </ul>
+        
+        <p>awaiting reply</p>
+        <ul>
+        % for a in [a for a in c.content.assigned_to if a.status=="pending"]:
+            <li>${a.member.username}</li>
+        % endfor
+        </ul>
+    
+        <p>withdrawn reporters</p>
+        <ul>
+        % for a in [a for a in c.content.assigned_to if a.status=="withdrawn"]:
+            <li>${a.member.username}</li>
+        % endfor
+        </ul>
+    % endif
+    
   
-  <p>sub content/reponses</p>
-  <ul>
-    % for response in c.content.responses:
-        <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a>${response.__type__}</li>
-    % endfor
-  </ul>
-  <P>accepted reporters</p>
+    <%doc>
+    % if hasattr(c.content, "accepted_by"):
+        <p>accepted by</p>
+        <ul>
+        % for member in c.content.accepted_by:
+            <li>${member.username}</li>
+        % endfor
+        </ul>
+    % endif
+    </%doc>
+
+
 </%def>
 
 

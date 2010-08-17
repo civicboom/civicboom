@@ -59,12 +59,10 @@ class Member(Base):
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
 
     # Content relation shortcuts
-    content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
+    #content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
     content_assignments = relationship("AssignmentContent")
     content_articles    = relationship(   "ArticleContent")
     content_drafts      = relationship(     "DraftContent")
-
-    #content_exp         = dynamic_loader("Content" ,primaryjoin=and_("Member.id==Content.creator_id","Content.__type__!='comment'") )#,"Content.__type__!='comment'"   # cant get this to work, we want to filter out comments
 
     _config = None
 

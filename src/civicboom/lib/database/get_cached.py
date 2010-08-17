@@ -88,5 +88,8 @@ def update_content(content):
     #update_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now
     pass
 
-def update_user_messages(user):
+def update_user_messages(member):
+    pass
+
+def update_accepted_assignment(member):
     pass
