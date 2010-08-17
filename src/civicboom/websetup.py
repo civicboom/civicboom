@@ -818,6 +818,22 @@ CREATE TRIGGER update_content
         g.content.append(asc)
         Session.add_all([asc, ])
         Session.commit()
+        
+        asc.invite([u1,u2,u3,u4])
+
+        asc2 = AssignmentContent()
+        asc2.title      = u"Assignment for the world to see"
+        asc2.content    = u"There once was a ugly duckling. Damn it was ugly"
+        asc2.status     = "show"
+        asc2.license_id = cc_by.id
+        u1.content.append(asc2)
+        Session.add_all([asc2, ])
+
+        # Get test users to accept the assignment
+        asc2.accept(u2)
+        asc2.accept(u3)
+        asc2.accept(u4)
+        Session.commit()
 
         # }}}
     ###################################################################

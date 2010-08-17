@@ -166,6 +166,7 @@ class AssignmentContent(UserVisibleContent):
     def acceptable_by(self, member):
         if self.creator==member: return False
         if self.closed         : return False #TODO - finish - "closed and not in assinged_to list"
+        #if member has accepted before? (will this break templates?)
         return True
         
     def previously_accepted_by(self, member):
@@ -174,11 +175,30 @@ class AssignmentContent(UserVisibleContent):
 
     def accept(self, member):
         from civicboom.lib.database.actions import accept_assignment
+        #if self.acceptable_by(member):
         return accept_assignment(self, member)
+        #return False
     
     def withdraw(self, member):
         from civicboom.lib.database.actions import withdraw_assignemnt
         return withdraw_assignemnt(self, member)
+
+    def invite(self, members):
+        """
+        For closed assignments we need to invite specific members to participate
+        invite can be given a single member or a list of members (as username strings or member object list)
+        """
+        from civicboom.lib.database.actions import accept_assignment
+        from civicboom.model.meta import Session
+        def invite_member(member):
+            return accept_assignment(self, member, status="pending", delay_commit=True)
+        if isinstance(members, list):
+            for member in members:
+                invite_member(member)
+        else:
+            invite_member(members)
+        Session.commit()
+        
 
 
 class MemberAssignment(Base):

@@ -36,7 +36,7 @@ def assignment_previously_accepted_by(assignment,member):
     return False
 
 
-def accept_assignment(assignment, member):
+def accept_assignment(assignment, member, status="accepted", delay_commit=False):
     member     = get_user(member)
     assignment = get_content(assignment)
 
@@ -48,9 +48,10 @@ def accept_assignment(assignment, member):
     assignment_accepted        = MemberAssignment()
     assignment.assigned_to.append(assignment_accepted)
     assignment_accepted.member = member
-    assignment_accepted.status = "accepted"
+    assignment_accepted.status = status
     Session.add(assignment_accepted)
-    Session.commit()
+    if not delay_commit:
+        Session.commit()
     update_accepted_assignment(member)
     return True
 

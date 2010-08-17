@@ -71,51 +71,52 @@
 # we need to pass the session to GeoAlchemy functions
 from civicboom.model.meta import Session
 %>
-  % if c.content.location:
-	<p>${loc.minimap(
-		width="100%", height="200px",
-		lon=c.content.location.coords(Session)[0],
-		lat=c.content.location.coords(Session)[1]
-	)}</p>
-  % endif
+    % if c.content.location:
+      <p>${loc.minimap(
+          width="100%", height="200px",
+          lon=c.content.location.coords(Session)[0],
+          lat=c.content.location.coords(Session)[1]
+      )}</p>
+    % endif
   
-  % if c.content.parent:
-  <p>parent content</p>
-  <p><a href="${h.url(controller="content", action="view", id=c.content.parent.id)}">${c.content.parent.title}</a></p>
-  % endif
-  
-  <p>sub content/reponses</p>
-  <ul>
-    % for response in c.content.responses:
-        <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a>${response.__type__}</li>
-    % endfor
-  </ul>
-  
-  <%doc>
-  % if hasattr(c.content, "assigned_to"):
-    <p>accepted by reporters</p>
+    % if c.content.parent:
+    <p>parent content</p>
+    <p><a href="${h.url(controller="content", action="view", id=c.content.parent.id)}">${c.content.parent.title}</a></p>
+    % endif
+    
+    <p>sub content/reponses</p>
     <ul>
-    % for a in [a for a in c.content.assigned_to if a.status=="accepted"]:
-        <li>${a.member.username}</li>
-    % endfor
+      % for response in c.content.responses:
+          <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a>${response.__type__}</li>
+      % endfor
     </ul>
     
-    <p>awaiting reply</p>
-    <ul>
-    % for a in [a for a in c.content.assigned_to if a.status=="pending"]:
-        <li>${a.member.username}</li>
-    % endfor
-    </ul>
-
-    <p>withdrawn reporters</p>
-    <ul>
-    % for a in [a for a in c.content.assigned_to if a.status=="withdrawn"]:
-        <li>${a.member.username}</li>
-    % endfor
-    </ul>
-  % endif
-  </%doc>
+    
+    % if hasattr(c.content, "assigned_to"):
+        <p>accepted by reporters</p>
+        <ul>
+        % for a in [a for a in c.content.assigned_to if a.status=="accepted"]:
+            <li>${a.member.username}</li>
+        % endfor
+        </ul>
+        
+        <p>awaiting reply</p>
+        <ul>
+        % for a in [a for a in c.content.assigned_to if a.status=="pending"]:
+            <li>${a.member.username}</li>
+        % endfor
+        </ul>
+    
+        <p>withdrawn reporters</p>
+        <ul>
+        % for a in [a for a in c.content.assigned_to if a.status=="withdrawn"]:
+            <li>${a.member.username}</li>
+        % endfor
+        </ul>
+    % endif
+    
   
+    <%doc>
     % if hasattr(c.content, "accepted_by"):
         <p>accepted by</p>
         <ul>
@@ -124,6 +125,7 @@ from civicboom.model.meta import Session
         % endfor
         </ul>
     % endif
+    </%doc>
 
 
 </%def>
