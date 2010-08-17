@@ -12,7 +12,7 @@ import hashlib
 
 log = logging.getLogger(__name__)
 
-class UserProfileController(BaseController):
+class ProfileController(BaseController):
 
     @authorize(is_valid_user)
     def index(self):
