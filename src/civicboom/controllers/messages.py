@@ -53,7 +53,7 @@ class MessagesController(BaseController):
                 user_log.debug("Deleting notification")
                 c.viewing_user.messages_notification.remove(msg)
                 Session.commit() # commit must come before the redirect is generated?
-                redir = redirect(url.current(controller='user_profile', action='index'))
+                redir = redirect(url.current(controller='profile', action='index'))
         else:
             user_log.warning("User tried to delete somebody else's message") # FIXME: details
             die("You are not the target of this message")

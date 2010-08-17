@@ -22,8 +22,8 @@
         </li>
         
       % else:
-        <li><a href="${h.url(controller='user_profile', action='view', id=c.logged_in_user.username)}">${c.logged_in_user.name} (${c.logged_in_user.username})</a></li>
-        <li><a href="${h.url(controller='user_profile', action='index')                             }">${_("Controls")}</a>
+        <li><a href="${h.url(controller='profile', action='view', id=c.logged_in_user.username)}">${c.logged_in_user.name} (${c.logged_in_user.username})</a></li>
+        <li><a href="${h.url(controller='profile', action='index')                             }">${_("Controls")}</a>
         <%
           num_notifications = 0 #c.logged_in_user.number_of_new_notifications
         %>

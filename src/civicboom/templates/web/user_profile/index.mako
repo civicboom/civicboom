@@ -38,7 +38,7 @@
 	% endif
 
 	<h2>Tools</h2>
-	    <a href="${url(controller='user_profile', action='index')}">My Profile</a>
+	    <a href="${url(controller='profile', action='index')}">My Profile</a>
 	<br><a href="${url(controller='settings', action='general')}">Edit Settings</a>
 	<br><a href="${url(controller='settings', action='messages')}">Edit Notifications</a>
 	<br><a href="${url(controller='messages', action='index')}">My Messages</a>

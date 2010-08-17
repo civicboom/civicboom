@@ -17,7 +17,7 @@ class UserProfileController(BaseController):
     @authorize(is_valid_user)
     def index(self):
         c.viewing_user = c.logged_in_user
-        return render("web/user_profile/index.mako")
+        return render("web/profile/index.mako")
 
     def view(self, id=None):
         if id:
@@ -28,4 +28,4 @@ class UserProfileController(BaseController):
         if not c.viewing_user:
             return "" # FIXME: die better
 
-        return render("web/user_profile/view.mako")
+        return render("web/profile/view.mako")
