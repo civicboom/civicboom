@@ -29,6 +29,30 @@ class TestSettingsController(TestController):
             }
         )
 
+    def test_location(self):
+        # test that with no ID, we get our own user page
+        response = self.app.get(url(controller='settings', action='location'))
+        # FIXME: location page has no text to test for
+
+        response = self.app.post(
+            url(controller='settings', action='save_location', id='unittest'),
+            params={
+                '_authentication_token': response.session['_authentication_token']
+            }
+        )
+
+    def test_messages(self):
+        # test that with no ID, we get our own user page
+        response = self.app.get(url(controller='settings', action='messages'))
+        assert "a test message" in response
+
+        response = self.app.post(
+            url(controller='settings', action='save_messages', id='unittest'),
+            params={
+                '_authentication_token': response.session['_authentication_token']
+            }
+        )
+
     def test_csrf(self):
         # test that a setting without CSRF protection is rejected
         response = self.app.post(
