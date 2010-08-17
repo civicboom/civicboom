@@ -29,7 +29,7 @@ log = logging.getLogger(__name__)
 
 def setup_app(command, conf, variables):
     """Place any commands to setup civicboom here"""
-    if not pylons.test.pylonsapp:
+    if not pylons.test.pylonsapp: # pragma: no cover -- "if not testing" will not be true for testing...
         load_environment(conf.global_conf, conf.local_conf)
 
     ###################################################################

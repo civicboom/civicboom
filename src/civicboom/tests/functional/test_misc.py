@@ -42,12 +42,17 @@ class TestMiscController(TestController):
         )
         # FIXME: test environ['is_mobile']
 
-        # FIXME: test mobile type 2
+        # test mobile type 2
+        response = self.app.get(
+            url(controller='misc', action='index'),
+            extra_environ={'HTTP_USER_AGENT': 'w3c asdfasdf'} # tests first 4 characters
+        )
         # FIXME: test environ['is_mobile']
 
         # test http_accept
         response = self.app.get(
             url(controller='misc', action='index'),
+            extra_environ={'HTTP_USER_AGENT': 'asdfasdf'} # http_accept isn't tested without user_agent...
             extra_environ={'HTTP_ACCEPT': 'application/vnd.wap.xhtml+xml'}
         )
         # FIXME: test environ['is_mobile']
