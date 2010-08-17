@@ -981,23 +981,23 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: civicboom/templates/web/user_profile/edit.mako:8
+#: civicboom/templates/web/profile/edit.mako:8
 msgid "General Info"
 msgstr ""
 
-#: civicboom/templates/web/user_profile/edit.mako:20
+#: civicboom/templates/web/profile/edit.mako:20
 msgid "Email Address"
 msgstr ""
 
-#: civicboom/templates/web/user_profile/edit.mako:29
+#: civicboom/templates/web/profile/edit.mako:29
 msgid "Login Details"
 msgstr ""
 
-#: civicboom/templates/web/user_profile/edit.mako:41
+#: civicboom/templates/web/profile/edit.mako:41
 msgid "Aggregation"
 msgstr ""
 
-#: civicboom/templates/web/user_profile/edit.mako:53
+#: civicboom/templates/web/profile/edit.mako:53
 msgid "Avatar"
 msgstr ""
 

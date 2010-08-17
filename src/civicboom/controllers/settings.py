@@ -6,6 +6,7 @@ from pylons.decorators.secure import authenticate_form
 
 from civicboom.lib.authentication import authorize, is_valid_user
 from civicboom.lib.base import BaseController, render
+from civicboom.model.meta import Session
 
 log = logging.getLogger(__name__)
 
@@ -72,6 +73,7 @@ class SettingsController(BaseController):
             else:
                 c.viewing_user.config[key] = request.POST[key]
 
+        # FIXME: flash message + redirect
         return "Settings saved "+", ".join(request.POST.keys())
 
     @authorize(is_valid_user)
@@ -96,4 +98,32 @@ class SettingsController(BaseController):
                     del c.viewing_user.config[route_name]
             else:
                 c.viewing_user.config[route_name] = setting
+
+        # FIXME: flash message + redirect
         return "Settings saved"
+
+    @authorize(is_valid_user)
+    def location(self, id=None):
+        c.viewing_user = c.logged_in_user
+        return render("web/settings/location.mako")
+
+    @authorize(is_valid_user)
+    @authenticate_form
+    def save_location(self, id=None):
+        # FIXME: error handling
+        if "location" in request.POST:
+            (lon, lat) = [float(n) for n in request.POST["location"].split(",")]
+        elif "location_name" in request.POST:
+            (lon, lat) = (0, 0)
+            pass # FIXME: guess_lon_lat_from_name(request.POST["location_name"])
+        else:
+            die("no position specified")
+        c.viewing_user = c.logged_in_user
+        c.viewing_user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
+        Session.commit()
+
+        # FIXME: flash message + redirect
+        return "Location saved: %s (%s)" % (
+            request.params.get("location", "[pos]"),
+            request.params.get("location_name", "[name]"),
+        )

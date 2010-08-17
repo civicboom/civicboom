@@ -1068,26 +1068,26 @@ msgstr ""
 msgid "Search"
 msgstr "Recherche"
 
-#: civicboom/templates/web/user_profile/edit.mako:8
+#: civicboom/templates/web/profile/edit.mako:8
 #, fuzzy
 msgid "General Info"
 msgstr "Plus d'infos"
 
-#: civicboom/templates/web/user_profile/edit.mako:20
+#: civicboom/templates/web/profile/edit.mako:20
 msgid "Email Address"
 msgstr "Adresse e-mail"
 
-#: civicboom/templates/web/user_profile/edit.mako:29
+#: civicboom/templates/web/profile/edit.mako:29
 #, fuzzy
 msgid "Login Details"
 msgstr "coordonnées plus"
 
-#: civicboom/templates/web/user_profile/edit.mako:41
+#: civicboom/templates/web/profile/edit.mako:41
 #, fuzzy
 msgid "Aggregation"
 msgstr "Organisation"
 
-#: civicboom/templates/web/user_profile/edit.mako:53
+#: civicboom/templates/web/profile/edit.mako:53
 msgid "Avatar"
 msgstr "Avatar"
 
