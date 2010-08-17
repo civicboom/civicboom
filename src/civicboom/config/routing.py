@@ -45,7 +45,7 @@ def make_map(config):
     map.connect('/{controller}/{action}.{format}/')      # CAF/
     map.connect('/{controller}/{action}')                # CA
     map.connect('/{controller}/{action}/')               # CA/
-    map.connect('/{controller}/', action="index")        # A
-    map.connect('/{controller}', action="index")         # A/
+    map.connect('/{controller}/', action="index")        # C
+    map.connect('/{controller}', action="index")         # C/
 
     return map
