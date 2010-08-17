@@ -32,7 +32,36 @@ function autocomplete_location(name, map) {
 		}
 
 		if(map) {
-			map.setCenterAndZoom(new mxn.LatLonPoint(lon, lat), 10);
+			map.setCenterAndZoom(new mxn.LatLonPoint(Number(lat), Number(lon)), 13);
 		}
 	});
 };
+
+function make_map(div, provider, lat, lon, zoom, overlay, box) {
+	mapstraction = new mxn.Mapstraction(div, provider);
+	mapstraction.setCenterAndZoom(new mxn.LatLonPoint(lat, lon), zoom);
+	mapstraction.addControls({
+		pan: false,
+		zoom: false,
+		map_type: false
+	});
+
+	if(overlay) {
+		mapstraction.addOverlay(overlay);
+	}
+
+	if(box) {
+		mapstraction_marker = new mxn.Marker(new mxn.LatLonPoint(lat, lon));
+		mapstraction.addMarker(mapstraction_marker);
+		mapstraction.click.addHandler(function(event_name, event_source, event_args) {
+			var p = event_args.location;
+			mapstraction.removeMarker(mapstraction_marker); // no marker.setLocation()?
+			mapstraction_marker = new mxn.Marker(p);
+			mapstraction.addMarker(mapstraction_marker);
+			if(document.getElementById(box)) {
+				document.getElementById(box).value = p.lon+","+p.lat;
+			}
+		});
+	}
+	return mapstraction;
+}

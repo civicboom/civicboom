@@ -5,32 +5,27 @@
 	<input id="${field_name}" name="${field_name}" type="hidden">
 </div>
 % if map:
-	${minimap(name=field_name+"_map", width=size, height=size)}
+	${minimap(name=field_name+"_map", width=size, height=size, provider="google", box=field_name)}
 % endif
 <script>autocomplete_location("${field_name}", ${field_name}_map);</script>
 </%def>
 
-<%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13, overlay=None)">
+<%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13, overlay=None, marker=None, provider='openlayers', box=None)">
 <!-- map div -->
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 
 <!-- link to APIs -->
-<script src="/javascript/OpenLayers.js"></script>
+% if provider == "openlayers":
+<script src="http://openlayers.org/api/OpenLayers.js"></script>
+% elif provider == "google":
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=ABQIAAAAIi6se4J7Z6hKgcsUhgiErRQS76dJNGDaz2wU_zf_o-LlW8DpkhThfgwBtV5bzJz31JYsXf4OsNuZZw" type="text/javascript"></script>
+% endif
 
 <!-- combine APIs -->
-<script type="text/javascript" charset="utf-8" src="/javascript/mxn/mxn.js?(openlayers)"></script>
+<script type="text/javascript" charset="utf-8" src="/javascript/mxn/mxn.js?(${provider})"></script>
 
 <!-- use the combined API -->
 <script type="text/javascript">
-	${name} = new mxn.Mapstraction('${name}_div','openlayers');
-	${name}.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
-	${name}.addControls({
-		pan: false,
-		zoom: false,
-		map_type: false
-	});
-	% if overlay:
-	${name}.addOverlay("${overlay}");
-	% endif
+${name} = make_map('${name}_div', '${provider}', ${lat}, ${lon}, ${zoom}, '${overlay}', '${box}');
 </script>
 </%def>
