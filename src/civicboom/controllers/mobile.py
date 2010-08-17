@@ -15,8 +15,8 @@ then API users can have a call like
     civicboom_json_request(name):
         try:
             req = json.parse(http_get("http://civicboom.com/%s.json" % name))
-        except:
-            req = {"status": "error", "message": "error parsing json"}
+        except Exception, e:
+            req = {"status": "error", "message": "error fetching data from server: "+str(e)}
 
         if req["status"] == "error":
             if req["message"]:
@@ -31,16 +31,20 @@ then API users can have a call like
     if messages:
         <do stuff with messages>
     else:
-        <the error message has been displayed already>
+        <the error message has been displayed already, we don't
+        really need an else unless we think we can recover from
+        the error>
 """
 
 from pylons import request, response, session, tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
+from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.lib.base import BaseController, render
 from civicboom.lib.authentication import authorize, is_valid_user
 
 from decorator import decorator
+from datetime import datetime
 from glob import glob
 import json
 import hashlib
@@ -64,7 +68,7 @@ class MobileController(BaseController):
     # Check logged in - No need for authkit authentication as the mobile app is not a human
     @decorator
     def __logged_in_mobile(func, *args, **kargs):
-        if not c.logged_in_reporter:
+        if not c.logged_in_user:
             return 'mobile:not_authenticated'
             # return json.dumps({"status": "error", "message": "not authenticated"})
         return func(*args,**kargs)
@@ -76,7 +80,7 @@ class MobileController(BaseController):
     @authorize(is_valid_user)
     def signin(self):
         return "mobile:authentication_ok"
-        # return json.dumps({"status": "ok"})
+        # return json.dumps({"status": "ok", "message": "logged in ok", "data": {"auth_token": authentication_token()}})
 
 
     #-----------------------------------------------------------------------------
@@ -104,9 +108,9 @@ class MobileController(BaseController):
             "id":                assignment.id,
             "title":             assignment.title,
             "content":           h.truncate(assignment.content, length=max_content_length, indicator='...', whole_word=True),
-            "image":             h.append_static_contentURL(h.assignment_thumbnail_url(assignment)),
+            "image":             assignment.primary_media.thumbnail_url if assignment.primary_media else None,
             "assigned_by":       assignment.creator.name,
-            "assigned_by_image": h.append_static_contentURL(assignment.creator.avatar_url),
+            "assigned_by_image": assignment.creator.avatar_url,
             "expiry_date":       assignment.due_date,
         } for assignment in c.logged_in_user.accepted_assignments])
         # return json.dumps({"status": "ok", "data": ...})
@@ -117,17 +121,17 @@ class MobileController(BaseController):
     #-----------------------------------------------------------------------------
     @__logged_in_mobile
     def messages(self):
-        cache_key = gen_cache_key(reporter_messages=c.logged_in_reporter.id) # This will terminate the method call if the eTags match
-        c.logged_in_user.last_check = "now()" # FIXME datetime.now() or something?
+        #cache_key = gen_cache_key(reporter_messages=c.logged_in_user.id) # This will terminate the method call if the eTags match
+        c.logged_in_user.last_check = datetime.now()
         return json.dumps([{
             "id":            message.id,
             "sourceId":      message.source_id,
             "message":       message.content,
-            "timestamp":     message.timestamp,
+            "timestamp":     str(message.timestamp),
             "link":          "",
             "response_type": "",
             "more":          "", # FIXME: protocol -- no more = blank string, more = array of one assignment; should be no more = None, more = one assignment
-        } for message in c.logged_in_user.messages_to[:10]])
+        } for message in c.logged_in_user.messages_notification[:10]]) # FIXME: do we want notifications AND private messages?
         # return json.dumps({"status": "ok", "data": ...})
 
 
@@ -146,8 +150,8 @@ class MobileController(BaseController):
             return 'mobile:form_data_required'
             # return json.dumps({"status": "error", "message": "form data required"})
 
-        unique_d                    = hashlib.md5(request.POST['uniqueid']).hexdigest()
-        mobile_upload_unique_id_key = c.logged_in_user.username + "_" + uniqueid
+        unique_id                   = hashlib.md5(request.POST['uniqueid']).hexdigest()
+        mobile_upload_unique_id_key = c.logged_in_user.username + "_" + unique_id
 
         # check for duplicate upload
         if mobile_upload_reocorded(mobile_upload_unique_id_key):
