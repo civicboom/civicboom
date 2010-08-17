@@ -73,6 +73,8 @@ class Content(Base):
     #responses       = relationship("Content",            backref=backref('parent', remote_side=id, order_by=creation_date), primaryjoin=and_("Content.id == Content.parent_id") )  #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content
                                    #,or_("Content.__type__!='comment'","Content.__type__!='draft'")    # foreign_keys=["Content.id"]
     parent          = relationship("Content", primaryjoin=parent_id==id, remote_side=id)
+    creator         = relationship("Member" , primaryjoin="Content.creator_id==Member.id")
+    
     attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
@@ -152,6 +154,7 @@ class AssignmentContent(UserVisibleContent):
     event_date      = Column(DateTime(),       nullable=True)
     due_date        = Column(DateTime(),       nullable=True)
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
+    #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
     
     def hash(self):
@@ -159,6 +162,43 @@ class AssignmentContent(UserVisibleContent):
         for field in ("event_date","due_date","closed"): #TODO: includes assigned_to in list?
             h.update(str(getattr(self,field)))
         return h.hexdigest()
+
+    def acceptable_by(self, member):
+        if self.creator==member: return False
+        if self.closed         : return False #TODO - finish - "closed and not in assinged_to list"
+        #if member has accepted before? (will this break templates?)
+        return True
+        
+    def previously_accepted_by(self, member):
+        from civicboom.lib.database.actions import assignment_previously_accepted_by
+        return assignment_previously_accepted_by(self, member)
+
+    def accept(self, member):
+        from civicboom.lib.database.actions import accept_assignment
+        #if self.acceptable_by(member):
+        return accept_assignment(self, member)
+        #return False
+    
+    def withdraw(self, member):
+        from civicboom.lib.database.actions import withdraw_assignemnt
+        return withdraw_assignemnt(self, member)
+
+    def invite(self, members):
+        """
+        For closed assignments we need to invite specific members to participate
+        invite can be given a single member or a list of members (as username strings or member object list)
+        """
+        from civicboom.lib.database.actions import accept_assignment
+        from civicboom.model.meta import Session
+        def invite_member(member):
+            return accept_assignment(self, member, status="pending", delay_commit=True)
+        if isinstance(members, list):
+            for member in members:
+                invite_member(member)
+        else:
+            invite_member(members)
+        Session.commit()
+        
 
 
 class MemberAssignment(Base):
