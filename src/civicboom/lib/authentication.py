@@ -161,7 +161,8 @@ def authorize(authenticator):
             if c.logged_in_user:
                 result = target(*args, **kwargs)
             else:
-                redirect_url = request.environ.get('PATH_INFO')
+                # AllanC - is there a way of just getting the whole request URL? why do I have to peice it together myself!
+                redirect_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
                 if 'QUERY_STRING' in request.environ:
                     redirect_url += '?'+request.environ.get('QUERY_STRING')
                 session_set('login_redirect', redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
@@ -175,7 +176,8 @@ def authorize(authenticator):
 
 def signin_user(user):
     user_log.info("logged in")   # Log user login
-    session['user_id'] = user.id # Set server session variable to user.id
+    session['user_id' ] = user.id       # Set server session variable to user.id
+    session['username'] = user.username # Set server session username so in debug email can identify user
     
     # Redirect them back to where they were going if a redirect was set
     login_redirect = session_get('login_redirect')

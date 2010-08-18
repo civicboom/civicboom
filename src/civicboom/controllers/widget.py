@@ -36,7 +36,7 @@ def setup_widget_env():
             except:
                 return None
         for var in app_globals.widget_variables:
-            setattr(c, var, get_env_from_referer(var)) # Get varible from referer
+            #setattr(c, var, get_env_from_referer(var)) # Get varible from referer
             if var in request.params:
                 setattr(c, var, request.params[var].encode('utf-8')) #Get variable from current request (override refferer if exist)
     def construct_widget_query_string():
