@@ -60,7 +60,7 @@ def _ffmpeg(self, args):
     log.debug("stderr: "+output[1])
     log.debug("return: "+str(proc.returncode))
 
-def process_media(config, tmp_file, file_hash, file_type, file_name, delete_tmp):
+def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     # Get the thumbnail processed and uploaded ASAP
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
@@ -70,7 +70,7 @@ def process_media(config, tmp_file, file_hash, file_type, file_name, delete_tmp)
             im = im.convert("RGB")
         im.thumbnail(size, Image.ANTIALIAS)
         im.save(processed.name, "JPEG")
-        wh.copy_to_warehouse(processed.name, "media-thumbnail", file_hash, "thumb.jpg", config)
+        wh.copy_to_warehouse(processed.name, "media-thumbnail", file_hash, "thumb.jpg")
         processed.close()
     elif file_type == "audio":
         # audio has no thumb; what is displayed to the user is
@@ -85,11 +85,11 @@ def process_media(config, tmp_file, file_hash, file_type, file_name, delete_tmp)
             "-s", "%dx%d" % (size[0], size[1]),
             "-f", "image2", processed.name
         ])
-        wh.copy_to_warehouse(processed.name, "media-thumbnail", file_hash, "thumb.jpg", config)
+        wh.copy_to_warehouse(processed.name, "media-thumbnail", file_hash, "thumb.jpg")
         processed.close()
 
     # next most important, the original
-    wh.copy_to_warehouse(tmp_file, "media-original", file_hash, file_name, config)
+    wh.copy_to_warehouse(tmp_file, "media-original", file_hash, file_name)
 
     # FIXME: turn tmp_file into something suitable for web viewing
     if file_type == "image":
@@ -100,12 +100,12 @@ def process_media(config, tmp_file, file_hash, file_type, file_name, delete_tmp)
             im = im.convert("RGB")
         im.thumbnail(size, Image.ANTIALIAS)
         im.save(processed.name, "JPEG")
-        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name, config)
+        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
         processed.close()
     elif file_type == "audio":
         processed = tempfile.NamedTemporaryFile(suffix=".ogg")
         _ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
-        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name, config)
+        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
         processed.close()
     elif file_type == "video":
         processed = tempfile.NamedTemporaryFile(suffix=".flv")
@@ -118,7 +118,7 @@ def process_media(config, tmp_file, file_hash, file_type, file_name, delete_tmp)
             "-s", "%dx%d" % (size[0], size[1]),
             processed.name
         ])
-        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name, config)
+        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
         processed.close()
 
     if delete_tmp:
