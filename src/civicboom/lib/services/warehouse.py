@@ -9,6 +9,8 @@ import re
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
+from pylons import config
+
 log = logging.getLogger(__name__)
 
 
@@ -24,17 +26,11 @@ def copy_cgi_file(cgi_fileobj, dest_filename):
     return dest_fileobj.name
 
 
-def copy_to_warehouse(src, warehouse, hash, filename=None, local_config=None, placeholder=False):
+def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
     """
     copy a local file (eg /tmp/pylons-upload-245145.dat) to the warehouse
     (eg S3:cb-wh:media/cade1361, ./civicboom/public/warehouse/media/ca/de/cade1361)
     """
-
-    # if called in a separate thread, the global config won't work
-    if local_config:
-        config = local_config
-    else:
-        from pylons import config
 
     # If src is a cgi.FieldStorage object with an open filestream
     temp_file = None
