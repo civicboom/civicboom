@@ -48,12 +48,14 @@ class ContentController(BaseController):
         c.content = get_content(id)
         
         if not c.content:
-            return render('/web/message/content_unavailable.mako')
+            flash_message(_("_content not found"))
+            return render('/web/design09/content/unavailable.mako')
         
         # Check content is visable
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
             if c.content.status != "show":
-                return render('/web/message/content_unavailable.mako')
+                flash_message(_("your user does not have the permissions to view this _content"))
+                return render('/web/design09/content/unavailable.mako')
         
         # Increase content view count
         if hasattr(c.content,'views'):
