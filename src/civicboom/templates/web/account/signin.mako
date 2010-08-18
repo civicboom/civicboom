@@ -28,8 +28,8 @@
     authkit_form_action = "FORM_ACTION" # A string that is replaced by the authkit system
   %>
 
-  % if hasattr(c,'janrain_return_url'):
-    <iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=${c.janrain_return_url}&language_preference=${c.lang}"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>
+  % if hasattr(app_globals,'janrain_signin_url'):
+    ${h.get_janrain(lang=c.lang)}
     <% authkit_form_action = ""%>
   % endif
 

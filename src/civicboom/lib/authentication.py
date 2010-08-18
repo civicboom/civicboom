@@ -165,6 +165,7 @@ def authorize(authenticator):
                 redirect_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
                 if 'QUERY_STRING' in request.environ:
                     redirect_url += '?'+request.environ.get('QUERY_STRING')
+                    
                 session_set('login_redirect', redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
                 # TODO: This could also save the the session POST data and reinstate it after the redirect
                 return redirect(url_from_widget(controller='account', action='signin', protocol="https")) #This uses the from_widget url call to ensure that widget actions preserve the widget env
@@ -178,6 +179,10 @@ def signin_user(user):
     user_log.info("logged in")   # Log user login
     session['user_id' ] = user.id       # Set server session variable to user.id
     session['username'] = user.username # Set server session username so in debug email can identify user
+    
+    if 'popup_close' in request.params:
+        session_remove('login_redirect')
+        return redirect(url(controller='misc', action='close_popup'))
     
     # Redirect them back to where they were going if a redirect was set
     login_redirect = session_get('login_redirect')

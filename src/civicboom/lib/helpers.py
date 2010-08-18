@@ -15,7 +15,7 @@ from civicboom.lib.text import scan_for_embedable_view_and_autolink
 
 import recaptcha.client.captcha as librecaptcha
 import re
-
+import urllib
 
 def get_captcha(lang='en', theme='white'):
     """
@@ -24,6 +24,16 @@ def get_captcha(lang='en', theme='white'):
     http://k0001.wordpress.com/2007/11/15/using-recaptcha-with-python-and-django/
     """
     return literal(librecaptcha.displayhtml(config['api_key.reCAPTCHA.public'])) #, lang="es", theme='white'
+
+def get_janrain(lang='en', theme='', **kargs):
+    query_params = ""
+    for karg in kargs:
+        query_params += karg+"="+str(kargs[karg])
+    if query_params != "":
+        query_params = urllib.quote_plus("?"+query_params)
+    return literal(
+        """<iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (app_globals.janrain_signin_url+query_params,lang)
+    )
 
 def shorten_url(url):
     return re.sub("http://[^/]+", "", url)

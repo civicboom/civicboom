@@ -64,7 +64,9 @@ class BaseController(WSGIController):
             app_globals.site_host = request.environ['SERVER_NAME']
             if config['debug']:
                 app_globals.site_host = request.environ['HTTP_HOST']
-            app_globals.site_url = "http://" + app_globals.site_host
+            app_globals.site_url           = "http://" + app_globals.site_host
+            import urllib
+            app_globals.janrain_signin_url = urllib.quote_plus(url(controller='account', action='signin', host=app_globals.site_host, protocol='https'))
 
 
         #AllanC - For gadgets and emails links and static content need to be absolute

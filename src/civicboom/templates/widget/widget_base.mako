@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>${_("_site_name Widget")}</title>
-        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.0.0/build/cssreset/reset-min.css">
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.0.0/build/cssreset/reset-min.css"/>
         ##<link rel="stylesheet" type="text/css" href="${c.server_name}/design09/design09_includes.css" />
         ##    <link rel="stylesheet" type="text/css" href="${c.server_name}/design09/gadget_specific.css" />
         <link rel="stylesheet" type="text/css" href="/styles/design09/widget_specific.css" />

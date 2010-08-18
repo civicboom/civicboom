@@ -11,7 +11,6 @@ from pylons.decorators.secure import https
 from civicboom.controllers.register import register_new_janrain_user
 from civicboom.lib.civicboom_lib    import verify_email
 
-import urllib
 
 import logging
 log      = logging.getLogger(__name__)
@@ -62,7 +61,7 @@ class AccountController(BaseController):
             if 'widget_username' in request.params:
                 setup_widget_env()
                 return render("/widget/widget_signin.mako")
-            c.janrain_return_url = urllib.quote_plus(url.current(host=app_globals.site_host))
+            #c.janrain_return_url = urllib.quote_plus(url.current(host=app_globals.site_host)) # AllanC moved to app_globals
             return render("/web/account/signin.mako")
         
         c.auth_info = None

@@ -27,3 +27,6 @@ class MiscController(BaseController):
         if not id: id = "unittest"
         c.widget_user_preview = get_user(id)
         return render("/widget/get_widget_code.mako")
+        
+    def close_popup(self):
+        return '<script>self.close();</script>'
