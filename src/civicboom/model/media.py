@@ -14,7 +14,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-
 class Media(Base):
     __tablename__ = "media"
     _media_types  = Enum("application", "audio", "example", "image", "message", "model", "multipart", "text", "video", name="media_types")
