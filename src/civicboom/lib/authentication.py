@@ -9,7 +9,8 @@ from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, 
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
 
-from civicboom.lib.web import session_set, session_get, session_remove
+from civicboom.lib.web     import session_set, session_get, session_remove
+from civicboom.lib.helpers import url_from_widget
 
 # Other imports
 from sqlalchemy.orm import join
@@ -160,10 +161,12 @@ def authorize(authenticator):
             if c.logged_in_user:
                 result = target(*args, **kwargs)
             else:
-                session_set('login_redirect', request.environ.get('PATH_INFO'), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                redirect_url = request.environ.get('PATH_INFO')
+                if 'QUERY_STRING' in request.environ:
+                    redirect_url += '?'+request.environ.get('QUERY_STRING')
+                session_set('login_redirect', redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
                 # TODO: This could also save the the session POST data and reinstate it after the redirect
-                return redirect(url(controller='account', action='signin'))
-
+                return redirect(url_from_widget(controller='account', action='signin', protocol="https")) #This uses the from_widget url call to ensure that widget actions preserve the widget env
             return result
         
         return decorator(wrapper)(target)

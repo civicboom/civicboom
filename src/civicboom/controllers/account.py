@@ -4,6 +4,7 @@ from civicboom.lib.authentication      import get_user_from_openid_identifyer, g
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.services.janrain import janrain
 from civicboom.lib.web              import session_remove, session_get
+from civicboom.controllers.widget import setup_widget_env
 from pylons.decorators.secure import https
 
 
@@ -58,6 +59,9 @@ class AccountController(BaseController):
 
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':
+            if 'widget_username' in request.params:
+                setup_widget_env()
+                return render("/widget/widget_signin.mako")
             c.janrain_return_url = urllib.quote_plus(url.current(host=app_globals.site_host))
             return render("/web/account/signin.mako")
         
