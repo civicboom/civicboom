@@ -65,7 +65,6 @@ def load_environment(global_conf, app_conf):
     config['feature.aggregate.twitter'] = asbool(config['feature.aggregate.twitter'])
     config['feature.profanity_filter']  = asbool(config['feature.profanity_filter'])
 
-    start_worker()
     civicboom_init() # This will tirgger a set of additional initalizers
 
     return config

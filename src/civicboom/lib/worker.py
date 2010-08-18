@@ -16,7 +16,7 @@ import civicboom.lib.services.warehouse as wh
 import logging
 log = logging.getLogger(__name__)
 
-
+worker = None
 media_queue = Queue()
 
 class MediaThread(Thread):
@@ -36,9 +36,15 @@ class MediaThread(Thread):
             sleep(3)
 
 def start_worker():
+    global worker
     worker = MediaThread()
     worker.daemon = True
     worker.start()
+
+def add_job(job):
+    if not worker:
+        start_worker()
+    media_queue.put(job)
 
 
 def _ffmpeg(self, args):
