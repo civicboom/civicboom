@@ -443,8 +443,8 @@ CREATE TRIGGER update_content
             files = glob("../tmp/profilepics/"+str(uid)+".*")
             if len(files) == 1:
                 fn = files[0]
-                file_hash = wh.file_hash_file(fn)
-                wh.copy_to_local_warehouse(fn, "avatars-original", file_hash)
+                file_hash = wh.hash_file(fn)
+                wh.copy_to_warehouse(fn, "avatars-original", file_hash)
 
                 processed = tempfile.NamedTemporaryFile(suffix=".jpg")
                 im = Image.open(fn)
@@ -452,11 +452,10 @@ CREATE TRIGGER update_content
                     im = im.convert("RGB")
                 im.thumbnail([128, 128], Image.ANTIALIAS) #AllanC - FIXME size from config? default gravatar size
                 im.save(processed.name, "JPEG")
-                wh.copy_to_local_warehouse(processed.name, "avatars", file_hash)
+                wh.copy_to_warehouse(processed.name, "avatars", file_hash)
                 processed.close()
 
-                wh.copy_to_remote_warehouse("avatars-original", file_hash)
-                wh.copy_to_remote_warehouse("avatars", file_hash)
+                file_hash = "http://cb-wh-live.s3.amazonaws.com/avatars/" + file_hash
             return file_hash
         # }}}
 
@@ -472,14 +471,14 @@ CREATE TRIGGER update_content
             u.join_date     = row["Join_Date"]
             u.status        = convert_status(row["Status"])
             u.last_check    = row["notification_check"]
-            u.avatar        = "http://static.civicboom.com/avatars/"+get_avatar(row["id"])
+            u.avatar        = get_avatar(row["id"])
             u.config["location"]    = get_location(row)
             u.config["description"] = get_description(row)
             u.config["birthday"]    = str(row["Birth"])
             u.config["gender"]      = row["Gender"]
             u.config["twitter_username"]        = row["twitter_username"]
             u.config["broadcast_instant_news"]  = (row["twitter_instantnews"] == 1)
-            u.config["broadcast_content_posts"] = (row["broadcast_content_posts"] == 1)
+            #u.config["broadcast_content_posts"] = (row["broadcast_content_posts"] == 1)
 
             u_login = UserLogin()
             u_login.user   = u
