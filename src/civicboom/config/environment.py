@@ -65,6 +65,13 @@ def load_environment(global_conf, app_conf):
     config['feature.aggregate.twitter'] = asbool(config['feature.aggregate.twitter'])
     config['feature.profanity_filter']  = asbool(config['feature.profanity_filter'])
 
+    # worker and websetup.py both try to access pylons.config before it is
+    # officially ready -- so make it unofficially ready and pray (HACK)
+    from pylons import config as pylons_config
+    for k, v in config.items():
+        pylons_config[k] = v
+
     civicboom_init() # This will tirgger a set of additional initalizers
+    start_worker()
 
     return config
