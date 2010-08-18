@@ -434,7 +434,7 @@ CREATE TRIGGER update_content
             bases  = glob("../tmp/"+media_type+"_files/"+str(row["id"])+".*")
             extras = glob("../tmp/"+media_type+"_files/"+str(row["id"])+"_*.*")
             for fn in bases + extras:
-                #log.debug("Guessing that "+fn+" is associated with "+type+" "+str(row["id"]))
+                log.debug("Guessing that "+fn+" is associated with "+media_type+" "+str(row["id"]))
                 attachments.append(Media().load_from_file(fn, os.path.basename(fn).decode("ascii"), caption, credit))
             return attachments
 
@@ -452,7 +452,7 @@ CREATE TRIGGER update_content
                     im = im.convert("RGB")
                 im.thumbnail([128, 128], Image.ANTIALIAS) #AllanC - FIXME size from config? default gravatar size
                 im.save(processed.name, "JPEG")
-                wh.copy_to_warehouse(processed.name, "avatars", file_hash)
+                wh.copy_to_warehouse(processed.name, "avatars", file_hash, "avatar.jpg")
                 processed.close()
 
                 file_hash = "http://cb-wh-live.s3.amazonaws.com/avatars/" + file_hash
@@ -590,7 +590,7 @@ CREATE TRIGGER update_content
             m = MemberAssignment()
             m.content    = assignments_by_old_id[row["assignmentId"]]
             m.member     = reporters_by_old_id[row["reporterId"]]
-            m.withdrawn  = (row["withdrawn"] == 1)
+            m.status     = "accepted" if (row["withdrawn"] == 1) else "withdrawn" # FIXME: pending?
             # `timestamp_` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
             log.debug("   |- %s - %s" % (m.member.username, m.content.title))
             Session.add(m)
