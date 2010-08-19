@@ -124,6 +124,8 @@
 ## HTML Body
 ##------------------------------------------------------------------------------
 <body class="yui-skin-sam">
+  <div id="c-${request.environ['pylons.routes_dict']['controller']}">
+  <div id="a-${request.environ['pylons.routes_dict']['action']}">
 
   ## AllanC - IE6 Warning messge
   ##<!--[if lte IE 6]>
@@ -152,5 +154,7 @@
   </div>
  
   <%include file="scripts_end.mako"/>
+  </div>
+  </div>
 </body>
 </html>
