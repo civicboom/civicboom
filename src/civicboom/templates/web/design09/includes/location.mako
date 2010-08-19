@@ -1,31 +1,27 @@
-<%def name="autocomplete_location(field_name='location', map=True, size='250px')">
+<%def name="location_picker(field_name='location', size='250px', lon=1.08, lat=51.28, zoom=13)">
 <div style="width: ${size}; padding-bottom: 2em;">
 	<input id="${field_name}_name" name="${field_name}_name" type="text">
 	<div id="${field_name}_comp"></div>
 	<input id="${field_name}" name="${field_name}" type="hidden">
 </div>
-% if map:
-	${minimap(name=field_name+"_map", width=size, height=size, provider="google", box=field_name)}
-% endif
-<script>autocomplete_location("${field_name}", ${field_name}_map);</script>
+
+<div style="width: ${size}; height: ${size}; border: 1px solid black;" id="${field_name}_div">
+	<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=ABQIAAAAIi6se4J7Z6hKgcsUhgiErRQS76dJNGDaz2wU_zf_o-LlW8DpkhThfgwBtV5bzJz31JYsXf4OsNuZZw"></script>
+	<script type="text/javascript" src="/javascript/mxn/mxn.js?(google)"></script>
+	<script type="text/javascript">
+	${field_name}_map = make_map('${field_name}_div', 'google', ${lat}, ${lon}, ${zoom}, '${field_name}');
+	autocomplete_location("${field_name}", ${field_name}_map);
+	</script>
+</div>
 </%def>
 
-<%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13, overlay=None, marker=None, provider='openlayers', box=None)">
-<!-- map div -->
+<%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13)">
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
-
-<!-- link to APIs -->
-% if provider == "openlayers":
-<script src="http://openlayers.org/api/OpenLayers.js"></script>
-% elif provider == "google":
-<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=ABQIAAAAIi6se4J7Z6hKgcsUhgiErRQS76dJNGDaz2wU_zf_o-LlW8DpkhThfgwBtV5bzJz31JYsXf4OsNuZZw" type="text/javascript"></script>
-% endif
-
-<!-- combine APIs -->
-<script type="text/javascript" charset="utf-8" src="/javascript/mxn/mxn.js?(${provider})"></script>
-
-<!-- use the combined API -->
+<script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+<script type="text/javascript" src="/javascript/mxn/mxn.js?(openlayers)"></script>
 <script type="text/javascript">
-${name} = make_map('${name}_div', '${provider}', ${lat}, ${lon}, ${zoom}, '${overlay}', '${box}');
+	${name} = new mxn.Mapstraction("${name}_div", "openlayers");
+	${name}.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
+	${name}.addControls({pan: false, zoom: false, map_type: false});
 </script>
 </%def>
