@@ -22,6 +22,11 @@ ${field_name}_map.click.addHandler(function(event_name, event_source, event_args
 	${field_name}_map_marker = new mxn.Marker(p);
 	${field_name}_map.addMarker(${field_name}_map_marker);
 	document.getElementById("${field_name}").value = p.lon+","+p.lat;
+
+	namebox = document.getElementById("${field_name}_name")
+	if(namebox.value == "" || namebox.value.match(/^[\d\., ]+$/)) {
+		namebox.value = Math.round(p.lon*10000)/10000+", "+Math.round(p.lat*10000)/10000;
+	}
 });
 
 autocomplete_location("${field_name}", ${field_name}_map);
