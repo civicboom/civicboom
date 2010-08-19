@@ -36,7 +36,7 @@ then API users can have a call like
         the error>
 """
 
-from pylons import request, response, session, tmpl_context as c, url
+from pylons import request, response, session, tmpl_context as c, url, config
 from pylons.controllers.util import abort, redirect
 from webhelpers.pylonslib.secure_form import authentication_token
 
@@ -57,10 +57,6 @@ template_expire = 14400 # 14400 is 4 hours in seconds
 file_parts = {}
 
 class MobileController(BaseController):
-    def index(self):
-        return 'mobile controller'
-
-
     #-----------------------------------------------------------------------------
     # Decorators
     #-----------------------------------------------------------------------------
@@ -87,7 +83,7 @@ class MobileController(BaseController):
     # Sign up
     #-----------------------------------------------------------------------------
     def signup(self):
-        return render(prefix+'mobile_signup.mako')
+        return "mobile signup" # FIXME: render('web/design09/mobile_signup.mako')
 
 
     #-----------------------------------------------------------------------------
@@ -279,7 +275,7 @@ class MobileController(BaseController):
     def error(self):
         if not request.POST:
             if config['debug']:
-                return render(prefix+'mobile_error_test.mako')
+                return "mobile error test" # FIXME: render(prefix+'mobile_error_test.mako')
             return 'mobile:form_data_required'
             # return json.dumps({"status": "error", "message": "form data required"})
         if 'error_message' in request.POST:
