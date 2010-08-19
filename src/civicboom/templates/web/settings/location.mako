@@ -9,7 +9,7 @@
 <%def name="body()">
 <form action="${url.current(action='save_location', id=c.viewing_user.username)}" method="POST">
 	<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
-	${loc.autocomplete_location()}
+	${loc.location_picker()}
 	<input type="submit" value="Save">
 </form>
 </%def>
