@@ -13,7 +13,7 @@
 <%def name="body()">
 <form action='${url(controller="search", action="content")}' method='GET'>
 	Search For: <input type="text" name="query" value="">
-	<br>Near: ${loc.autocomplete_location()}
+	<br>Near: ${loc.location_picker()}
 	<input type="submit">
 </form>
 </%def>
