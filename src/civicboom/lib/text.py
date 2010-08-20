@@ -112,18 +112,6 @@ def clean_html(text):
 
 #-------------------------------------------------------------------------------
 
-def clean_for_JSON(text):
-    """
-    Any text that will sent out as part of a JSON string will need to be cleaned
-    """
-    #text = saxutils.unescape(text) #I am shocked that this does not catch &thing; WTF!!! Why do I have to botch somthing so simple myself! FFS!
-    text = text.replace("&nbsp;"," ")
-    text = text.replace("&amp;","&")
-    text = text.replace('"',"'") #no double quotes - replace them all with single quotes
-    return text
-
-#-------------------------------------------------------------------------------
-
 def scan_for_embedable_view_and_autolink(text, remove=False):
     """
     Scan trhough content text looking for video URL's
