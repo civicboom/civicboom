@@ -57,12 +57,12 @@ def calculate_age(born):
     else               : return today.year - born.year
 
 
-def cacheable(time=60*60*24*365, anonymous_only=True):
+def cacheable(time=60*60*24*365):
     def _cacheable(func, *args, **kwargs):
-        from pylons import response
-        #if anonymous_only: ...
-        response.headers["Cache-Control"] = "public,max-age=%d" % time
-        if "Pragma" in response.headers: del response.headers["Pragma"]
-        #log.info(pprint.pformat(response.headers))
+        from pylons import request, response
+        if 'civicboom_logged_in' not in request.cookies: # no cache for logged in users
+            response.headers["Cache-Control"] = "public,max-age=%d" % time
+            if "Pragma" in response.headers: del response.headers["Pragma"]
+            #log.info(pprint.pformat(response.headers))
         return func(*args, **kwargs)
     return decorator(_cacheable)
