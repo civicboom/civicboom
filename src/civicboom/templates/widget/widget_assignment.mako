@@ -10,7 +10,7 @@
 
 <%def name="widget_assignment(assignment)">
   
-    <a href="${h.url(controller='assignment',action='view_assignment',id=assignment.id)}" target="_blank">
+    <a href="${h.url(controller='content',action='view',id=assignment.id)}" target="_blank">
         <p class="content_title">${assignment.title}</p>
         <img src=${assignment.thumbnail_url} class="assignment_thumbnail"/>
         <p class="assignment_content">${h.truncate(assignment.content, length=180, indicator='...', whole_word=True)} <strong>more</strong></p>
@@ -20,13 +20,13 @@
         <tr>
             <td class="">
                 ##class="button button_large button_style_1"
-                <a class="action button_style_1" href="${h.url_from_widget(controller='assignment',action='accept_assignment',id=assignment.id)}">
+                <a class="action button_style_1" href="${h.url_from_widget(controller='assignment',action='accept',id=assignment.id)}">
                     ${_("Accept _assignment")}
                 </a>
             </td>
             <td class="">
                 ##class="button button_large button_style_1"
-                <a class="action button_style_1" href="${h.url(controller='article', action='upload_news', id=assignment.id)}" target="_blank">
+                <a class="action button_style_1" href="${h.url(controller='content', action='edit', parent_id=assignment.id)}" target="_blank">
                     ${_("Publish response")}
                 </a>
             </td>

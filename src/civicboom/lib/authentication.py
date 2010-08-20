@@ -3,13 +3,14 @@ Tools used for Authentication of users
 """
 
 # Pylons imports
-from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, flash_message, session
+from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, flash_message, session, response, config
 
 # Civicboom imports
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
 
-from civicboom.lib.web import session_set, session_get, session_remove
+from civicboom.lib.web     import session_set, session_get, session_remove
+from civicboom.lib.helpers import url_from_widget
 
 # Other imports
 from sqlalchemy.orm import join
@@ -160,25 +161,52 @@ def authorize(authenticator):
             if c.logged_in_user:
                 result = target(*args, **kwargs)
             else:
-                session_set('login_redirect', request.environ.get('PATH_INFO'), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                # AllanC - is there a way of just getting the whole request URL? why do I have to peice it together myself!
+                redirect_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
+                if 'QUERY_STRING' in request.environ:
+                    redirect_url += '?'+request.environ.get('QUERY_STRING')
+                    
+                session_set('login_redirect', redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
                 # TODO: This could also save the the session POST data and reinstate it after the redirect
-                return redirect(url(controller='account', action='signin'))
-
+                return redirect(url_from_widget(controller='account', action='signin', protocol="https")) #This uses the from_widget url call to ensure that widget actions preserve the widget env
             return result
         
         return decorator(wrapper)(target)
     return my_decorator
 
-
-def signin_user(user):
-    user_log.info("logged in")   # Log user login
-    session['user_id'] = user.id # Set server session variable to user.id
-    
-    # Redirect them back to where they were going if a redirect was set
+def login_redirector():
+    """
+    If this method returns (rather than aborting with a redirect) then there is no login_redirector
+    """
     login_redirect = session_get('login_redirect')
     if login_redirect:
         session_remove('login_redirect')
         return redirect(login_redirect)
+
+
+def signin_user(user):
+    """
+    Perform the sigin for a user
+    """
+    user_log.info("logged in")   # Log user login
+    session['user_id' ] = user.id       # Set server session variable to user.id
+    session['username'] = user.username # Set server session username so in debug email can identify user    
+    response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))
+    
+    if 'popup_close' in request.params:
+        # Redirect to close the login frame, but keep the login_redirector for a separte call later
+        return redirect(url(controller='misc', action='close_popup'))
+    
+    # Redirect them back to where they were going if a redirect was set
+    login_redirector()
     
     # If no redirect send them to the page root
     return redirect('/')
+    
+def signout_user(user):
+    user_log.info("logged out")
+    session.clear()
+    response.set_cookie("civicboom_logged_in", None)
+    request.cookies.pop("civicboom_logged_in", None) #AllanC This does not seem to remove the item - hence the "None" set in the line above, sigh :(
+    #session.save()
+    #flash_message("Successfully signed out!")

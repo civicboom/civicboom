@@ -7,7 +7,7 @@ available to Controllers. This module is available to templates as 'h'.
 #from webhelpers.html.tags import checkbox, password
 from webhelpers.pylonslib.secure_form import authentication_token
 
-from pylons import url, config, app_globals, tmpl_context as c
+from pylons import url, config, app_globals, tmpl_context as c, request
 from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
 
@@ -15,7 +15,7 @@ from civicboom.lib.text import scan_for_embedable_view_and_autolink
 
 import recaptcha.client.captcha as librecaptcha
 import re
-
+import urllib
 
 def get_captcha(lang='en', theme='white'):
     """
@@ -24,6 +24,16 @@ def get_captcha(lang='en', theme='white'):
     http://k0001.wordpress.com/2007/11/15/using-recaptcha-with-python-and-django/
     """
     return literal(librecaptcha.displayhtml(config['api_key.reCAPTCHA.public'])) #, lang="es", theme='white'
+
+def get_janrain(lang='en', theme='', **kargs):
+    query_params = ""
+    for karg in kargs:
+        query_params += karg+"="+str(kargs[karg])
+    if query_params != "":
+        query_params = urllib.quote_plus("?"+query_params)
+    return literal(
+        """<iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (app_globals.janrain_signin_url+query_params,lang)
+    )
 
 def shorten_url(url):
     return re.sub("http://[^/]+", "", url)
@@ -62,13 +72,13 @@ def wh_public(filename):
 
 def url_from_widget(*args, **kargs):
     for var in app_globals.widget_variables:
-        #if widget_variable in request.params:
-        #   kargs[widget_variable] = request.params[widget_variable]
-        if getattr(c,var) != None and var not in kargs:
-            kargs[var] = getattr(c,var)
+
+        if var in request.params:
+            kargs[var] = request.params[var]
+        #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
+        #    kargs[var] = getattr(c,var)
     return url(*args,**kargs)
 
 def truncate(text, length=100, indicator='...', whole_word=True):
     # FIXME: stub
     return text[0:length]
-

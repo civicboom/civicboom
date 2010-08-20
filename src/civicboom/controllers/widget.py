@@ -6,6 +6,7 @@ from civicboom.lib.authentication      import authorize, is_valid_user
 
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.database.get_cached   import get_user, get_content
+from civicboom.lib.helpers import url_from_widget
 
 import re
 from urllib import quote_plus
@@ -18,53 +19,54 @@ user_log = logging.getLogger("user")
 
 template_expire = 1800 # 30 min in seconds
 
-
 app_globals.widget_variables = ['widget_theame', 'widget_title', 'widget_username', 'widget_width', 'widget_height']
 widget_default_reporter_name = "widget demo"
 
 prefix = '/widget/'
 
-class WidgetController(BaseController):
-
-    def _setup_widget_env(self):
-        def get_widget_varibles_from_env():
-            def get_env_from_referer(var_name):
-                try:
-                    # AllanC - when the Authkit intercepts an action to authenticate the current URL does not have the widget details to display properly
-                    #          in this case we may need to get the widget details from the referer
-                    #          this regex seeks a variable in the http_referer
-                    #          as a botch the variables are delimted by '&' and I have appended one to the end [because /b was not working in the regex :( ]
-                    return re.search(var_name+r'=(.+?)&',unquote_plus(c.http_referer)+'&').group(1).encode('utf-8')
-                except:
-                    return None
-            for var in app_globals.widget_variables:
+def setup_widget_env():
+    def get_widget_varibles_from_env():
+        def get_env_from_referer(var_name):
+            try:
+                # AllanC - when the Authkit intercepts an action to authenticate the current URL does not have the widget details to display properly
+                #          in this case we may need to get the widget details from the referer
+                #          this regex seeks a variable in the http_referer
+                #          as a botch the variables are delimted by '&' and I have appended one to the end [because /b was not working in the regex :( ]
+                return re.search(var_name+r'=(.+?)&',unquote_plus(c.http_referer)+'&').group(1).encode('utf-8')
+            except:
+                return None
+        for var in app_globals.widget_variables:
+            if var in request.params:
+                setattr(c, var, request.params[var].encode('utf-8')) #Get variable from current request (override refferer if exist)
+            else:
                 setattr(c, var, get_env_from_referer(var)) # Get varible from referer
-                if var in request.params:
-                    setattr(c, var, request.params[var].encode('utf-8')) #Get variable from current request (override refferer if exist)
-        def construct_widget_query_string():
-            query_string = "?"
-            for var in app_globals.widget_variables:
-                if getattr(c,var) != None:
-                    query_string += var+'='+quote_plus(getattr(c,var))+'&'
-            return query_string
-        get_widget_varibles_from_env()
-        c.widget_query_string = construct_widget_query_string() #construct a new query string based on current widget global variables (this is needed for intercepted signin pages to pass the variables on see widget_signin.mako FORM_ACTION)
-        c.widget_owner        = get_user(c.widget_username)
+    def construct_widget_query_string():
+        query_string = "?"
+        for var in app_globals.widget_variables:
+            if getattr(c,var) != None:
+                query_string += var+'='+quote_plus(getattr(c,var))+'&'
+        return query_string
+    get_widget_varibles_from_env()
+    c.widget_query_string = construct_widget_query_string() #construct a new query string based on current widget global variables (this is needed for intercepted signin pages to pass the variables on see widget_signin.mako FORM_ACTION)
+    c.widget_owner        = get_user(c.widget_username)
 
+
+class WidgetController(BaseController):
 
     def __before__(self, action, **params):
         BaseController.__before__(self)
-        self._setup_widget_env() #this sets c.widget_owner and takes c.widget_ variables from url
+        setup_widget_env() #this sets c.widget_owner and takes c.widget_ variables from url
         if not c.widget_owner:
-            abort(400)  
+            abort(400)
     
     #-----------------------------------------------------------------------------
     # Widget Pages
     #-----------------------------------------------------------------------------
     
     # Signin or sign up
+    @authorize(is_valid_user)
     def signin(self):
-        redirect(url(controller='widget', action='main'))
+        return redirect(url_from_widget(controller='widget', action='main'))
   
     # Main assignments list
     def main(self):
