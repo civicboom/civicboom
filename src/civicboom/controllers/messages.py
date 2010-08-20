@@ -7,7 +7,7 @@ from pylons.decorators.secure import authenticate_form
 from civicboom.lib.authentication      import authorize, is_valid_user
 from civicboom.model.meta import Session
 from civicboom.model import Message
-from civicboom.lib.base import BaseController, render
+from civicboom.lib.base import BaseController, render, action_redirector
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -37,6 +37,7 @@ class MessagesController(BaseController):
 
     @authorize(is_valid_user)
     @authenticate_form
+    @action_redirector()
     def delete(self):
         c.viewing_user = c.logged_in_user
         msg = Session.query(Message).filter(Message.id==request.POST["msg_id"]).one()
@@ -48,13 +49,13 @@ class MessagesController(BaseController):
                 user_log.debug("Deleting message")
                 c.viewing_user.messages_to.remove(msg)
                 Session.commit() # commit must come before the redirect is generated?
-                redirect(url.current(controller='messages', action='index'))
             if request.POST["type"] == "notification":
                 user_log.debug("Deleting notification")
                 c.viewing_user.messages_notification.remove(msg)
                 Session.commit() # commit must come before the redirect is generated?
-                redirect(url.current(controller='profile', action='index'))
+            return "Message deleted"
         else:
             user_log.warning("User tried to delete somebody else's message") # FIXME: details
-            abort(403, "You are not the target of this message")
+            return "You are not the target of this message"
+            # FIXME: flash_message should be red? abort(403, "You are not the target of this message")
 

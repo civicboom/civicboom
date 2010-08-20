@@ -3,7 +3,7 @@ from pylons.controllers.util import abort, redirect
 from pylons.decorators.secure import authenticate_form
 
 from civicboom.lib.authentication import authorize, is_valid_user
-from civicboom.lib.base import BaseController, render, app_globals
+from civicboom.lib.base import BaseController, render, app_globals, action_redirector
 from civicboom.model.meta import Session
 
 import hashlib
@@ -13,12 +13,6 @@ log = logging.getLogger(__name__)
 
 class SettingsController(BaseController):
 
-    def index(self):
-        # Return a rendered template
-        #return render('/settings.mako')
-        # or, return a string
-        return 'Hello World'
-
     @authorize(is_valid_user)
     def general(self, id=None):
         c.viewing_user = c.logged_in_user
@@ -26,6 +20,7 @@ class SettingsController(BaseController):
 
     @authorize(is_valid_user)
     @authenticate_form
+    @action_redirector()
     def save_general(self, id=None):
         c.viewing_user = c.logged_in_user
         u_config = c.viewing_user.config
@@ -84,6 +79,7 @@ class SettingsController(BaseController):
 
     @authorize(is_valid_user)
     @authenticate_form
+    @action_redirector()
     def save_messages(self, id=None):
         c.viewing_user = c.logged_in_user
         from civicboom.lib.communication.messages import generators
@@ -110,6 +106,7 @@ class SettingsController(BaseController):
 
     @authorize(is_valid_user)
     @authenticate_form
+    @action_redirector()
     def save_location(self, id=None):
         # FIXME: error handling
         if "location" in request.POST:
