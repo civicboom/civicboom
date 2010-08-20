@@ -206,7 +206,6 @@ def signin_user(user):
 def signout_user(user):
     user_log.info("logged out")
     session.clear()
-    response.set_cookie("civicboom_logged_in", None)
-    request.cookies.pop("civicboom_logged_in", None) #AllanC This does not seem to remove the item - hence the "None" set in the line above, sigh :(
+    response.delete_cookie("civicboom_logged_in")
     #session.save()
     #flash_message("Successfully signed out!")
