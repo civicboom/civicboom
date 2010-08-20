@@ -86,6 +86,7 @@ class TestController(BaseController):
         return m.config["height"]
 
     def send_message(self):
+        from civicboom.model.member import Member
         import civicboom.lib.communication.messages as messages
         m = Session.query(Member).first()
         m.send_message(messages.msg_test(text="hello o/"))

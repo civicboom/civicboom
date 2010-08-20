@@ -12,6 +12,7 @@
 			<b style="float: right; text-align: right;">
 				${str(r.update_date)[0:16]}
 				<br>${ungettext("%d response", "%d responses", len(r.responses)) % len(r.responses)}
+				<br>${ungettext("%d comment", "%d comments", len(r.comments)) % len(r.comments)}
 			</b>
 			<b>
 				<a href="${url(controller='content', action='view', id=r.id)}">${r.title}</a>

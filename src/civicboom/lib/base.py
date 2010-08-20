@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 def render(*args, **kargs):
     if app_globals.cache_enabled: return render_mako(*args, **kargs)
-    else                        : return render_mako(*args)
+    else                        : return render_mako(*args, **kargs)
 
 #-------------------------------------------------------------------------------
 # Base Controller

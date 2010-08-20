@@ -14,7 +14,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-
 class Media(Base):
     __tablename__ = "media"
     _media_types  = Enum("application", "audio", "example", "image", "message", "model", "multipart", "text", "video", name="media_types")
@@ -56,9 +55,9 @@ class Media(Base):
 
         wh.copy_to_warehouse("./civicboom/public/images/media_placeholder.gif", "media-thumbnail", self.hash, placeholder=True)
 
-        worker.media_queue.put({
+        worker.add_job({
             "task": "process_media",
-            "config": copy_config(),
+            #"config": copy_config(),
             "tmp_file": my_file,
             "file_hash": self.hash,
             "file_type": self.type,

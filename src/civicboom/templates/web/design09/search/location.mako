@@ -13,7 +13,7 @@
 
 <%def name="body()">
 <form>
-	${loc.autocomplete_location()}
+	${loc.location_picker()}
     <input type="submit">
 </form>
 </%def>

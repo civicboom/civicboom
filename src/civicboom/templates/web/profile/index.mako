@@ -7,14 +7,16 @@
 
 <%def name="col_left()">
 	<style>
-	DIV.avatar {width: 100%; text-align: center;}
-	IMG.avatar {border: 1px solid gray;}
+	.avatar     {width: 100%; text-align: center;}
+	.avatar IMG {border: 1px solid gray;}
 	.message_empty {color: #AAA; display: block; width: 100%; text-align: center;}
 	.read_more {                 display: block; width: 100%; text-align: right; }
+	.notification {border-bottom: 1px solid gray; margin-bottom: 4px; padding-bottom: 4px;}
+	.notification FORM {float: right;}
 	</style>
 
 	<div class="avatar">
-		<img class="avatar" src="${c.viewing_user.avatar_url}">
+		<img src="${c.viewing_user.avatar_url}">
 		<br>${c.viewing_user.name}
 		<br>(${c.viewing_user.username})
 	</div>
@@ -22,7 +24,7 @@
 	<h2>Following</h2>
 	% if c.viewing_user.following:
 		% for f in c.viewing_user.following:
-			<br>${f.name}
+			<a href="${url(controller='profile', action='view', id=f.username)}">${f.name}</a><br>
 		% endfor
 	% else:
 		<span class="message_empty">Not following anyone</span>
@@ -31,7 +33,7 @@
 	<h2>Followers</h2>
 	% if c.viewing_user.followers:
 		% for f in c.viewing_user.followers:
-			<br>${f.name}
+			<a href="${url(controller='profile', action='view', id=f.username)}">${f.name}</a><br>
 		% endfor
 	% else:
 		<span class="message_empty">No followers</span>
@@ -53,13 +55,13 @@
 	% if c.viewing_user.messages_notification:
 		% for msg in c.viewing_user.messages_notification:
 			<div class="notification">
-				${msg.subject}
-			<form action="${url.current(controller='messages', action='delete')}" method="POST">
-				<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
-				<input type="hidden" name="msg_id" value="${msg.id}">
-				<input type="hidden" name="type" value="notification">
-				<input type="submit" value="X">
-			</form>
+				<form action="${url.current(controller='messages', action='delete')}" method="POST">
+					<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
+					<input type="hidden" name="msg_id" value="${msg.id}">
+					<input type="hidden" name="type" value="notification">
+					<input type="submit" value="X">
+				</form>
+				${msg.subject|n}
 			</div>
 		% endfor
 	% else:
@@ -74,10 +76,10 @@
 				<span class="source">${str(msg.source)}</span>
 			</div>
 		% endfor
+		<a class="read_more" href="${url(controller='messages', action='index')}">View All Messages &rarr;</a>
 	% else:
 		<span class="message_empty">No messages</span>
 	% endif
-	<a class="read_more" href="${url(controller='messages', action='index')}">View All Messages &rarr;</a>
 
 	<h2>Where I Am Now</h2>
 <%

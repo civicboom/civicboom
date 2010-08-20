@@ -43,6 +43,8 @@ def format_multiple_prefix(number, **kargs):
     if number > 0:
         text = "%s %s" % (number, text)
     return text
+
+
 def format_multiple(number,nothing="",single="",multiple=None,multiple_addition="s"):
     """
     Used to put 's at end of words if there is more than one of them
@@ -57,6 +59,7 @@ def format_multiple(number,nothing="",single="",multiple=None,multiple_addition=
         if multiple != None:
             return multiple
     return ""
+
 
 #-------------------------------------------------------------------------------
 
@@ -102,17 +105,10 @@ def clean_html_markup(text):
     text = re.sub("<br>","<br/>",text) #replace all line breaks with XHTML complient tags
     return text
 
-#-------------------------------------------------------------------------------
 
-def clean_for_JSON(text):
-    """
-    Any text that will sent out as part of a JSON string will need to be cleaned
-    """
-    #text = saxutils.unescape(text) #I am shocked that this does not catch &thing; WTF!!! Why do I have to botch somthing so simple myself! FFS!
-    text = text.replace("&nbsp;"," ")
-    text = text.replace("&amp;","&")
-    text = text.replace('"',"'") #no double quotes - replace them all with single quotes
-    return text
+from lxml.html.clean import Cleaner
+def clean_html(text):
+    return Cleaner(links=False, style=True).clean_html(text)
 
 #-------------------------------------------------------------------------------
 

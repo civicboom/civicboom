@@ -32,7 +32,8 @@ function autocomplete_location(name, map) {
 		}
 
 		if(map) {
-			map.setCenterAndZoom(new mxn.LatLonPoint(lon, lat), 10);
+			map.setCenterAndZoom(new mxn.LatLonPoint(Number(lat), Number(lon)), 13);
 		}
 	});
 };
+

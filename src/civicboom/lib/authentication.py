@@ -71,7 +71,7 @@ def get_user_from_openid_identifyer(identifyer):
 from authkit.permissions import RequestPermission
 from authkit.authorize   import PermissionError, NotAuthenticatedError
 from authkit.authorize   import NotAuthorizedError, middleware
-from authkit.authorize.pylons_adaptors import authorize
+#from authkit.authorize.pylons_adaptors import authorize
 
 
 class ValidCivicboomUser(RequestPermission):
@@ -131,7 +131,7 @@ def render_badcookie():
     (AllanC - could not get this to work WTF?)
     """
     flash_message(_("Your login has expired please log in again"))
-    return redirect_to('/')
+    return redirect('/')
     
     
 
@@ -208,7 +208,5 @@ def signout_user(user):
     session.clear()
     response.set_cookie("civicboom_logged_in", None)
     request.cookies.pop("civicboom_logged_in", None) #AllanC This does not seem to remove the item - hence the "None" set in the line above, sigh :(
-    
-    #print dir(request.cookies)
     #session.save()
     #flash_message("Successfully signed out!")

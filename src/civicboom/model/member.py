@@ -169,9 +169,9 @@ class UserLogin(Base):
 
 class MemberSetting(Base):
     __tablename__    = "member_setting"
-    member_id   = Column(Integer(),    ForeignKey('member.id'), primary_key=True)
-    name        = Column(String(250),  primary_key=True)
-    value       = Column(Unicode(250), nullable=False)
+    member_id   = Column(Integer(),     ForeignKey('member.id'), primary_key=True)
+    name        = Column(String(250),   primary_key=True)
+    value       = Column(UnicodeText(), nullable=False)
 
     member      = relationship("Member", backref=backref('settings', cascade="all,delete-orphan"))
 

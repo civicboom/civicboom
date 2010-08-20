@@ -1,10 +1,14 @@
-from datetime import date
-
 """
 Low level miscilanious calls
 """
 
 import random
+from datetime import date
+from decorator import decorator
+import pprint
+
+import logging
+log = logging.getLogger(__name__)
 
 random_symbols = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 def random_string(length=8):
@@ -51,3 +55,14 @@ def calculate_age(born):
     
     if birthday > today: return today.year - born.year - 1
     else               : return today.year - born.year
+
+
+def cacheable(time=60*60*24*365, anonymous_only=True):
+    def _cacheable(func, *args, **kwargs):
+        from pylons import response
+        #if anonymous_only: ...
+        response.headers["Cache-Control"] = "public,max-age=%d" % time
+        if "Pragma" in response.headers: del response.headers["Pragma"]
+        #log.info(pprint.pformat(response.headers))
+        return func(*args, **kwargs)
+    return decorator(_cacheable)

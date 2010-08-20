@@ -1,13 +1,14 @@
-import logging
-
 from pylons import request, response, session, tmpl_context as c, url
 from pylons.controllers.util import abort, redirect
 from pylons.decorators.secure import authenticate_form
 
 from civicboom.lib.authentication import authorize, is_valid_user
-from civicboom.lib.base import BaseController, render
+from civicboom.lib.base import BaseController, render, app_globals
 from civicboom.model.meta import Session
 
+import hashlib
+
+import logging
 log = logging.getLogger(__name__)
 
 class SettingsController(BaseController):

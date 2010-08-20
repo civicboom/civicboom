@@ -9,6 +9,8 @@ import re
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
+from pylons import config
+
 log = logging.getLogger(__name__)
 
 
@@ -17,31 +19,20 @@ def copy_cgi_file(cgi_fileobj, dest_filename):
     Relocate a file from temp upload (a cgi.FieldStorage object) to local file
     Reference: Definative Guide to Pylons - pg99
     """
-    dest_fileobj = open(dest_filename,'wb')
-    shutil.copyfileobj(cgi_fileobj.file, dest_fileobj)
-    cgi_fileobj.file.close()
-    dest_fileobj.close()
-    return dest_fileobj.name
+    if hasattr(cgi_fileobj,'file'):
+        dest_fileobj = open(dest_filename,'wb')
+        shutil.copyfileobj(cgi_fileobj.file, dest_fileobj)
+        cgi_fileobj.file.close()
+        dest_fileobj.close()
+    else:
+        shutil.copyfile(cgi_fileobj, dest_filename)
 
 
-def copy_to_warehouse(src, warehouse, hash, filename=None, local_config=None, placeholder=False):
+def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
     """
     copy a local file (eg /tmp/pylons-upload-245145.dat) to the warehouse
     (eg S3:cb-wh:media/cade1361, ./civicboom/public/warehouse/media/ca/de/cade1361)
     """
-
-    # if called in a separate thread, the global config won't work
-    if local_config:
-        config = local_config
-    else:
-        from pylons import config
-
-    # If src is a cgi.FieldStorage object with an open filestream
-    temp_file = None
-    if hasattr(src,'file'):
-        temp_file = tempfile.NamedTemporaryFile(suffix=".jpg")
-        copy_cgi_file(src, temp_file.name)
-        src = temp_file.name
 
     if config["warehouse"] == "local":
         dest = "./civicboom/public/warehouse/%s/%s/%s/%s" % (warehouse, hash[0:2], hash[2:4], hash)
@@ -67,15 +58,15 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, local_config=None, pl
 
     elif config["warehouse"] == "ssh":
         log.info("Copying %s/%s (%s) to SSH warehouse" % (warehouse, hash, filename))
-        scp = SCPClient(SSHTransport("static.civicboom.com"))
-        scp.put(self.name, "~/staticdata/%s/%s/%s/%s" % (warehouse, hash[0:1], hash[2:3], hash))
+        log.error("SSH warehouse not implemented")
+        #scp = SCPClient(SSHTransport("static.civicboom.com"))
+        #scp.put(src, "~/staticdata/%s/%s/%s/%s" % (warehouse, hash[0:1], hash[2:3], hash))
+
+    elif config["warehouse"] == "null":
+        log.info("Copying %s/%s (%s) to Null warehouse" % (warehouse, hash, filename))
 
     else:
         log.warning("Unknown warehouse type: "+config["warehouse"])
-        log.info("Copying %s/%s (%s) to Null warehouse" % (warehouse, hash, filename))
-
-    if temp_file:
-        temp_file.close()
 
 
 def hash_file(file, method="sha1"):

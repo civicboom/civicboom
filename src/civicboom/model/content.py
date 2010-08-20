@@ -134,11 +134,11 @@ class DraftContent(Content):
         Content.clone(self, content)
         self.publish_id = content.id
 
+
 class CommentContent(Content):
     __tablename__   = "content_comment"
     __mapper_args__ = {'polymorphic_identity': 'comment'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
-
 
 
 class UserVisibleContent(Content):
@@ -155,6 +155,13 @@ class ArticleContent(UserVisibleContent):
     id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
     rating          = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
     ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
+
+
+class SyndicatedContent(UserVisibleContent):
+    __tablename__   = "content_syndicate"
+    __mapper_args__ = {'polymorphic_identity': 'syndicate'}
+    id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
+    # FIXME: incomplete
 
 
 class AssignmentContent(UserVisibleContent):

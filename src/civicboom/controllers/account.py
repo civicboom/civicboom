@@ -26,7 +26,7 @@ class AccountController(BaseController):
     # and http://pylonsbook.com/en/1.1/simplesite-tutorial-part-3.html#signing-in-and-signing-out
 
     @https()
-    def signin(self):
+    def _old_signin(self):
         """
         AuthKit implementation of signin
         NOTE: this is OVERRIDDEN by the definition below and is here should we need to degrade back to AuthKit
@@ -139,6 +139,5 @@ class AccountController(BaseController):
         login_redirector()
         #If this method returns then there has been no login redirector
 
-        print "going main!!! %s" % url_from_widget(controller='widget', action='main')
         setup_widget_env() #This will get widget env's from the referer url
         redirect(url_from_widget(controller='widget', action='main'))
