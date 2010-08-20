@@ -174,21 +174,30 @@ def authorize(authenticator):
         return decorator(wrapper)(target)
     return my_decorator
 
+def login_redirector():
+    """
+    If this method returns (rather than aborting with a redirect) then there is no login_redirector
+    """
+    login_redirect = session_get('login_redirect')
+    if login_redirect:
+        session_remove('login_redirect')
+        return redirect(login_redirect)
+
 
 def signin_user(user):
+    """
+    Perform the sigin for a user
+    """
     user_log.info("logged in")   # Log user login
     session['user_id' ] = user.id       # Set server session variable to user.id
     session['username'] = user.username # Set server session username so in debug email can identify user
     
     if 'popup_close' in request.params:
-        session_remove('login_redirect')
+        # Redirect to close the login frame, but keep the login_redirector for a separte call later
         return redirect(url(controller='misc', action='close_popup'))
     
     # Redirect them back to where they were going if a redirect was set
-    login_redirect = session_get('login_redirect')
-    if login_redirect:
-        session_remove('login_redirect')
-        return redirect(login_redirect)
+    login_redirector()
     
     # If no redirect send them to the page root
     return redirect('/')

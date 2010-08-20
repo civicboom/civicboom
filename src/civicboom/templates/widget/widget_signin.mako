@@ -12,6 +12,7 @@
     authkit_form_action += c.widget_query_string
 %>
 
+
 ##------------------------------------------------------------------------------
 ## Janrain Login
 ##------------------------------------------------------------------------------
@@ -24,6 +25,24 @@
         ${popup(h.get_janrain(lang=c.lang, popup_close=True), javascript_function_name='janrain_signin', title=_('Sign in to _site_name'), height=260, width=420)}
     ##% endif
 % endif
+
+<%doc>
+<a href="" onclick="test(); return false;">Test</a>
+${popup(h.literal("hello"), javascript_function_name='test', title=_('Test'), height=260, width=420)}
+<a href="" onclick="t(); return false;">Test</a>
+<script>
+    window.status = "This message will display in the window status bar.";
+    civicboom_window = window;
+    function t() {
+        YAHOO.log("t click");
+        if (newwindow!=null) {
+            YAHOO.log(newwindow);
+            newwindow.focus();
+            newwindow.location.reload(true);
+        }
+    }
+</script>
+</%doc>
 
 
 ##------------------------------------------------------------------------------
@@ -78,14 +97,23 @@
 <%def name="popup(popup_content, javascript_function_name='popup', title='popup', height=200, width=150)">
     ## Reference inspriation: http://www.quirksmode.org/js/popup.html
     <script language="javascript" type="text/javascript">
+    
         function ${javascript_function_name}() {
             var newwindow=window.open('','${title}','height=${height}, width=${width}, left=400, top=200, status=False, location=False');
-            var tmp = newwindow.document;
-            tmp.write('<html><head><title>${title}</title>');
-            tmp.write('</head><body>');
-            tmp.write('${popup_content}');
-            tmp.write('</body></html>');
-            tmp.close();
+            var d = newwindow.document;
+            d.write('<html><head><title>${title}</title>');
+            d.write('</head><body>');
+            d.write('${popup_content}');
+            d.write('</body></html>');
+            d.close();
+            ## On close focus back on the parent frame and reload it
+            newwindow.onunload = function(){
+                ##focus();
+                ##location.reload(true);
+                ##history.go(0);
+                ##alert('perform refresh to ${url(controller='account', action='login_redirect')}');
+                window.location.href = "${url(controller='account', action='login_redirect')}";
+            };
         }
     </script>
 </%def>

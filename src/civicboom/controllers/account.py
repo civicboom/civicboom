@@ -1,13 +1,13 @@
 from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, _, session, flash_message, redirect_to_referer
-
-from civicboom.lib.authentication      import get_user_from_openid_identifyer, get_user_and_check_password, signin_user
-from civicboom.lib.database.get_cached import get_user
-from civicboom.lib.services.janrain import janrain
-from civicboom.lib.web              import session_remove, session_get
-from civicboom.controllers.widget import setup_widget_env
 from pylons.decorators.secure import https
 
+from civicboom.lib.authentication      import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, login_redirector
+from civicboom.lib.database.get_cached import get_user
+from civicboom.lib.services.janrain    import janrain
+from civicboom.controllers.widget      import setup_widget_env
+from civicboom.lib.helpers             import url_from_widget
 
+# Import other controller actions
 from civicboom.controllers.register import register_new_janrain_user
 from civicboom.lib.civicboom_lib    import verify_email
 
@@ -125,3 +125,23 @@ class AccountController(BaseController):
         Placeholder for forgotten password feature
         """
         pass
+
+    #-----------------------------------------------------------------------------
+    # Standalone Login Redirector action
+    #-----------------------------------------------------------------------------    
+    def login_redirect(self):
+        """
+        During the signin process the login redirector is followed automatically
+        However
+        With signing over the widget the signin process if fragmented and differnt popup windows need to be closed
+        The original frame that needs to perform the original action is separte from the login frame
+        When the login frame closes it fires a javascript event that causese the widget to refresh
+        When this widget refreshes it will follow this login redirector call to point it in the right direction
+        """
+
+        login_redirector()
+        #If this method returns then there has been no login redirector
+
+        print "going main!!! %s" % url_from_widget(controller='widget', action='main')
+        setup_widget_env() #This will get widget env's from the referer url
+        redirect(url_from_widget(controller='widget', action='main'))
