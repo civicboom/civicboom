@@ -64,7 +64,7 @@ class WidgetController(BaseController):
     
     # Signin or sign up
     def signin(self):
-        return redirect_to(url_for(controller='widget', action='main'))
+        redirect(url(controller='widget', action='main'))
   
     # Main assignments list
     def main(self):

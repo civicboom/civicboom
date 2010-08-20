@@ -67,3 +67,8 @@ def url_from_widget(*args, **kargs):
         if getattr(c,var) != None and var not in kargs:
             kargs[var] = getattr(c,var)
     return url(*args,**kargs)
+
+def truncate(text, length=100, indicator='...', whole_word=True):
+    # FIXME: stub
+    return text[0:length]
+

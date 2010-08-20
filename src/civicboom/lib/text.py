@@ -43,6 +43,8 @@ def format_multiple_prefix(number, **kargs):
     if number > 0:
         text = "%s %s" % (number, text)
     return text
+
+
 def format_multiple(number,nothing="",single="",multiple=None,multiple_addition="s"):
     """
     Used to put 's at end of words if there is more than one of them
@@ -57,6 +59,7 @@ def format_multiple(number,nothing="",single="",multiple=None,multiple_addition=
         if multiple != None:
             return multiple
     return ""
+
 
 #-------------------------------------------------------------------------------
 

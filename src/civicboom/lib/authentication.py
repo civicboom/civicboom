@@ -70,7 +70,7 @@ def get_user_from_openid_identifyer(identifyer):
 from authkit.permissions import RequestPermission
 from authkit.authorize   import PermissionError, NotAuthenticatedError
 from authkit.authorize   import NotAuthorizedError, middleware
-from authkit.authorize.pylons_adaptors import authorize
+#from authkit.authorize.pylons_adaptors import authorize
 
 
 class ValidCivicboomUser(RequestPermission):

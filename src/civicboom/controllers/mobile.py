@@ -40,10 +40,13 @@ from pylons import request, response, session, tmpl_context as c, url, config
 from pylons.controllers.util import abort, redirect
 from webhelpers.pylonslib.secure_form import authentication_token
 
-from civicboom.lib.base import BaseController, render, app_globals
+from civicboom.lib.base           import BaseController, render, app_globals
 from civicboom.lib.authentication import authorize, is_valid_user
 from civicboom.model.meta         import Session
-from civicboom.model              import Media, ArticleContent
+from civicboom.model              import Media, ArticleContent, SyndicatedContent
+from civicboom.lib                import helpers as h
+from civicboom.lib.communication  import messages
+from civicboom.lib.text           import clean_html_markup
 
 from decorator import decorator
 from datetime import datetime
@@ -102,11 +105,11 @@ class MobileController(BaseController):
     #-----------------------------------------------------------------------------
     @__logged_in_mobile
     def accepted_assignments(self):
-        cache_key = gen_cache_key(reporter_assignments_accepted=c.logged_in_reporter.id)
+        #cache_key = gen_cache_key(reporter_assignments_accepted=c.logged_in_reporter.id)
         return json.dumps([{
             "id":                assignment.id,
             "title":             assignment.title,
-            "content":           h.truncate(assignment.content, length=max_content_length, indicator='...', whole_word=True),
+            "content":           h.truncate(assignment.content, length=150),
             "image":             assignment.primary_media.thumbnail_url if assignment.primary_media else None,
             "assigned_by":       assignment.creator.name,
             "assigned_by_image": assignment.creator.avatar_url,
@@ -165,7 +168,7 @@ class MobileController(BaseController):
         article.creation_time = datetime.now()
         article.creator       = c.logged_in_user
         article.title         = request.POST['title'].encode('utf-8')
-        article.content       = clean_article_html(request.POST['content'].encode('utf-8'))
+        article.content       = clean_html_markup(request.POST['content'].encode('utf-8'))
         article.license       = None # CreaviveCommonsLicenceTypeId = 2 #self.form_result['licence']
 
         if "geolocation_longitude" in request.POST and "geolocation_latitude" in request.POST:
@@ -189,9 +192,9 @@ class MobileController(BaseController):
         user_log.info("upload mobile article '%s'" % article.title)
 
         # Generate Messages
-        if dictHasValue(request.POST,'assignment'):
+        if 'assignment' in request.POST:
             article.parent_id.creator.send_message(
-                message_generator.assignment_response_mobile(
+                messages.assignment_response_mobile(
                     reporter=article.reporter,
                     article=article,
                     assignment=article.assignment
@@ -200,15 +203,16 @@ class MobileController(BaseController):
         if article.reporter.NumFollowers > 0 and not article.syndicating:
             for follower in article.reporter.followed_by_reporters:
                 follower.send_message(
-                    message_generator.article_published_by_followed_mobile(
+                    messages.article_published_by_followed_mobile(
                         reporter=article.reporter,
                         article=article
                     )
                 )
 
-        if not article.syndicating:
-            profanity_check_article(article)
-            twitter_content(article)
+        # FIXME: reimplement these differently
+        #if not article.syndicating:
+        #    profanity_check_article(article)
+        #    twitter_content(article)
 
         Session.commit()
         app_globals.memcache.set("mobile-upload-complete:"+unique_id, True)
@@ -277,6 +281,7 @@ class MobileController(BaseController):
     # If the mobile app has an error that it is not expecting then it can notify the live server
     # This can then be logged and email sent etc
     def error(self):
+        from civicboom.lib.communication.email import send_email
         if not request.POST:
             if config['debug']:
                 return "mobile error test" # FIXME: render(prefix+'mobile_error_test.mako')
@@ -285,7 +290,7 @@ class MobileController(BaseController):
         if 'error_message' in request.POST:
             send_email(config['email_to'], subject='Mobile Error', content_text=request.POST['error_message'])
             #AllanC - Temp addition to get errors to the mobile developer
-            send_email("nert@poik.net"     , subject='Mobile Error', content_text=request.POST['error_message'])
+            send_email("nert@poik.net"   , subject='Mobile Error', content_text=request.POST['error_message'])
             return "mobile:logged_ok"
             # return json.dumps({"status": "ok", "message": "logged ok"})
 
