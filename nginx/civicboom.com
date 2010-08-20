@@ -25,7 +25,7 @@ server {
 
 	# proxy settings
 	proxy_cache "cb";
-	proxy_cache_key  "$scheme://$host$request_uri-cookie:$cookie_civicboom";
+	proxy_cache_key  "$scheme://$host$request_uri-cookie:$cookie_civicboom_logged_in";
 	proxy_pass_header Set-Cookie;
 	proxy_set_header Host $host;
 	proxy_set_header X-Real-IP $remote_addr;
