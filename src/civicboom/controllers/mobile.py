@@ -46,7 +46,7 @@ from civicboom.model.meta         import Session
 from civicboom.model              import Media, ArticleContent, SyndicatedContent
 from civicboom.lib                import helpers as h
 from civicboom.lib.communication  import messages
-from civicboom.lib.text           import clean_html_markup
+from civicboom.lib.text           import clean_html
 
 from decorator import decorator
 from datetime import datetime
@@ -168,7 +168,7 @@ class MobileController(BaseController):
         article.creation_time = datetime.now()
         article.creator       = c.logged_in_user
         article.title         = request.POST['title'].encode('utf-8')
-        article.content       = clean_html_markup(request.POST['content'].encode('utf-8'))
+        article.content       = clean_html(request.POST['content'].encode('utf-8'))
         article.license       = None # CreaviveCommonsLicenceTypeId = 2 #self.form_result['licence']
 
         if "geolocation_longitude" in request.POST and "geolocation_latitude" in request.POST:

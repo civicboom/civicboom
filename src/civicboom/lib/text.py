@@ -105,6 +105,11 @@ def clean_html_markup(text):
     text = re.sub("<br>","<br/>",text) #replace all line breaks with XHTML complient tags
     return text
 
+
+from lxml.html.clean import Cleaner
+def clean_html(text):
+    return Cleaner(links=False, style=True).clean_html(text)
+
 #-------------------------------------------------------------------------------
 
 def clean_for_JSON(text):
