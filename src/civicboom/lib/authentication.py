@@ -130,7 +130,7 @@ def render_badcookie():
     (AllanC - could not get this to work WTF?)
     """
     flash_message(_("Your login has expired please log in again"))
-    return redirect_to('/')
+    return redirect('/')
     
     
 

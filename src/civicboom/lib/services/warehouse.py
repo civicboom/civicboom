@@ -58,8 +58,9 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
 
     elif config["warehouse"] == "ssh":
         log.info("Copying %s/%s (%s) to SSH warehouse" % (warehouse, hash, filename))
-        scp = SCPClient(SSHTransport("static.civicboom.com"))
-        scp.put(self.name, "~/staticdata/%s/%s/%s/%s" % (warehouse, hash[0:1], hash[2:3], hash))
+        log.error("SSH warehouse not implemented")
+        #scp = SCPClient(SSHTransport("static.civicboom.com"))
+        #scp.put(src, "~/staticdata/%s/%s/%s/%s" % (warehouse, hash[0:1], hash[2:3], hash))
 
     elif config["warehouse"] == "null":
         log.info("Copying %s/%s (%s) to Null warehouse" % (warehouse, hash, filename))

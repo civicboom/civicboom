@@ -40,12 +40,15 @@ from pylons import request, response, session, tmpl_context as c, url, config
 from pylons.controllers.util import abort, redirect
 from webhelpers.pylonslib.secure_form import authentication_token
 
-from civicboom.lib.base import BaseController, render
+from civicboom.lib.base import BaseController, render, app_globals
 from civicboom.lib.authentication import authorize, is_valid_user
+from civicboom.model.meta         import Session
+from civicboom.model              import Media, ArticleContent
 
 from decorator import decorator
 from datetime import datetime
 from glob import glob
+import os
 import json
 import hashlib
 
@@ -56,20 +59,20 @@ user_log = logging.getLogger("user")
 template_expire = 14400 # 14400 is 4 hours in seconds
 file_parts = {}
 
+#-----------------------------------------------------------------------------
+# Decorators
+#-----------------------------------------------------------------------------
+
+# Check logged in - No need for authkit authentication as the mobile app is not a human
+@decorator
+def __logged_in_mobile(func, *args, **kargs):
+    if not c.logged_in_user:
+        return 'mobile:not_authenticated'
+        # return json.dumps({"status": "error", "message": "not authenticated"})
+    return func(*args, **kargs)
+
+
 class MobileController(BaseController):
-    #-----------------------------------------------------------------------------
-    # Decorators
-    #-----------------------------------------------------------------------------
-
-    # Check logged in - No need for authkit authentication as the mobile app is not a human
-    @decorator
-    def __logged_in_mobile(func, *args, **kargs):
-        if not c.logged_in_user:
-            return 'mobile:not_authenticated'
-            # return json.dumps({"status": "error", "message": "not authenticated"})
-        return func(*args,**kargs)
-
-
     #-----------------------------------------------------------------------------
     # Sign in
     #-----------------------------------------------------------------------------  
@@ -142,7 +145,7 @@ class MobileController(BaseController):
         # Check form data (if in dev mode show HTML test form else give no data error)
         if not request.POST:
             if config['debug']:
-                return render(prefix+'mobile_upload_test.mako')
+                return "mobile upload test" # FIXME: render(prefix+'mobile_upload_test.mako')
             return 'mobile:form_data_required'
             # return json.dumps({"status": "error", "message": "form data required"})
 
@@ -150,7 +153,7 @@ class MobileController(BaseController):
         mobile_upload_unique_id_key = c.logged_in_user.username + "_" + unique_id
 
         # check for duplicate upload
-        if mobile_upload_reocorded(mobile_upload_unique_id_key):
+        if app_globals.memcache.get("mobile-upload-complete:"+unique_id):
             return "mobile:upload_ok"
             # return json.dumps({"status": "ok", "message": "article already uploaded"})
 
@@ -208,6 +211,7 @@ class MobileController(BaseController):
             twitter_content(article)
 
         Session.commit()
+        app_globals.memcache.set("mobile-upload-complete:"+unique_id, True)
 
         return "mobile:upload_ok"
         # return json.dumps({"status": "ok", "message": "upload ok"})
@@ -237,7 +241,7 @@ class MobileController(BaseController):
     def upload_file(self):
         if not request.POST:
             if config['debug']:
-                return render(prefix+'mobile_upload_part_test.mako')
+                return "mobile upload part test" # FIXME: render(prefix+'mobile_upload_part_test.mako')
             return 'mobile:form_data_required'
             # return json.dumps({"status": "error", "message": "form data required"})
 

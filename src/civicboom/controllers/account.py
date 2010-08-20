@@ -26,7 +26,7 @@ class AccountController(BaseController):
     # and http://pylonsbook.com/en/1.1/simplesite-tutorial-part-3.html#signing-in-and-signing-out
 
     @https()
-    def signin(self):
+    def _old_signin(self):
         """
         AuthKit implementation of signin
         NOTE: this is OVERRIDDEN by the definition below and is here should we need to degrade back to AuthKit

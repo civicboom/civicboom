@@ -47,7 +47,7 @@ def add_job(job):
     media_queue.put(job)
 
 
-def _ffmpeg(self, args):
+def _ffmpeg(args):
     """
     Convenience function to run ffmpeg and log the output
     """
