@@ -1,7 +1,7 @@
 from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, _, session, flash_message, redirect_to_referer
 from pylons.decorators.secure import https
 
-from civicboom.lib.authentication      import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, login_redirector
+from civicboom.lib.authentication      import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signout_user, login_redirector
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.services.janrain    import janrain
 from civicboom.controllers.widget      import setup_widget_env
@@ -41,10 +41,7 @@ class AccountController(BaseController):
         """
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies
         """
-        user_log.info("logged out")
-        session.clear()
-        #session.save()
-        #flash_message("Successfully signed out!")
+        signout_user(c.logged_in_user)
         return redirect('/')
 
 

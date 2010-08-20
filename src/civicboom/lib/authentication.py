@@ -3,7 +3,7 @@ Tools used for Authentication of users
 """
 
 # Pylons imports
-from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, flash_message, session
+from civicboom.lib.base import redirect, _, ungettext, render, c, request, url, flash_message, session, response, config
 
 # Civicboom imports
 from civicboom.model      import User, UserLogin
@@ -190,7 +190,8 @@ def signin_user(user):
     """
     user_log.info("logged in")   # Log user login
     session['user_id' ] = user.id       # Set server session variable to user.id
-    session['username'] = user.username # Set server session username so in debug email can identify user
+    session['username'] = user.username # Set server session username so in debug email can identify user    
+    response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))
     
     if 'popup_close' in request.params:
         # Redirect to close the login frame, but keep the login_redirector for a separte call later
@@ -201,3 +202,13 @@ def signin_user(user):
     
     # If no redirect send them to the page root
     return redirect('/')
+    
+def signout_user(user):
+    user_log.info("logged out")
+    session.clear()
+    response.set_cookie("civicboom_logged_in", None)
+    request.cookies.pop("civicboom_logged_in", None) #AllanC This does not seem to remove the item - hence the "None" set in the line above, sigh :(
+    
+    #print dir(request.cookies)
+    #session.save()
+    #flash_message("Successfully signed out!")
