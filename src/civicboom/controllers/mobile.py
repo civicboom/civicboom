@@ -68,7 +68,7 @@ file_parts = {}
 
 # Check logged in - No need for authkit authentication as the mobile app is not a human
 @decorator
-def __logged_in_mobile(func, *args, **kargs):
+def _logged_in_mobile(func, *args, **kargs):
     if not c.logged_in_user:
         return 'mobile:not_authenticated'
         # return json.dumps({"status": "error", "message": "not authenticated"})
@@ -103,7 +103,7 @@ class MobileController(BaseController):
     #-----------------------------------------------------------------------------
     # Main App: Accepted Assignments JSON List
     #-----------------------------------------------------------------------------
-    @__logged_in_mobile
+    @_logged_in_mobile
     def accepted_assignments(self):
         #cache_key = gen_cache_key(reporter_assignments_accepted=c.logged_in_reporter.id)
         return json.dumps([{
@@ -121,7 +121,7 @@ class MobileController(BaseController):
     #-----------------------------------------------------------------------------
     # Main App: Messages
     #-----------------------------------------------------------------------------
-    @__logged_in_mobile
+    @_logged_in_mobile
     def messages(self):
         #cache_key = gen_cache_key(reporter_messages=c.logged_in_user.id) # This will terminate the method call if the eTags match
         c.logged_in_user.last_check = datetime.now()
@@ -143,7 +143,7 @@ class MobileController(BaseController):
     # We can make assumptions here that the mobile app will have done some validation of the input
     # it is not nessisarry to use formencode as the mobile app would have no idea how to interperit the data back
     # We return an OK message or the mobile app will assume an error
-    @__logged_in_mobile
+    @_logged_in_mobile
     def upload(self):
         # Check form data (if in dev mode show HTML test form else give no data error)
         if not request.POST:
@@ -241,7 +241,7 @@ class MobileController(BaseController):
     #
     # Note for future multiple files the client could just add a single didget to the end of the uniqueid i.e if uniqueid = 0000, client could send 00001 for file 1 and 00002 for file 2
     # because the upload code looks for all files containing the uniqueid then they should still trigger
-    @__logged_in_mobile
+    @_logged_in_mobile
     def upload_file(self):
         if not request.POST:
             if config['debug']:
