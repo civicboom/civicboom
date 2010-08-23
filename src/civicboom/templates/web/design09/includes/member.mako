@@ -8,7 +8,29 @@
 </%def>
 
 
-<%def name="avatar(member)">
+<%def name="avatar(member, show_avatar=True, show_name=False, show_follow_button=False, class_=None)">
     ## Todo: use size? or class?
-    <a href="${h.url(controller='profile', action='view', id=member.username)}"><img src="${member.avatar_url}" /></a>
+    <a href="${h.url(controller='profile', action='view', id=member.username)}" title="${member.username}">
+        % if show_avatar:
+            <img src="${member.avatar_url}" alt="${member.username}"/>
+        % endif
+        % if show_name:
+            ${member.name} (${member.username})
+        % endif
+    </a>
+    % if show_follow_button and c.logged_in_user != member:
+        % if c.logged_in_user in member.followers:
+        <a class="button_small button_small_style_2" href="${h.url(controller='member', action='unfollow', id=member.username)}">${_('Stop following')}</a>
+        % else:
+        <a class="button_small button_small_style_1" href="${h.url(controller='member', action=  'follow', id=member.username)}">${_('Follow')}</a>
+        % endif
+    % endif
+</%def>
+
+<%def name="member_list(members, show_avatar=False, show_name=False, class_=None)">
+    <ul class="${class_}">
+    % for member in members:
+        <li>${avatar(member, show_avatar=show_avatar, show_name=show_name, class_=class_)}</li>
+    % endfor
+    </ul>
 </%def>

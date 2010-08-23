@@ -83,7 +83,8 @@ class ContentController(BaseController):
         
         if 'submit_delete' in request.POST:
             return redirect(url.current(action='delete', id=id))
-        
+            
+
         # Get exisiting content from URL id
         c.content = get_content(id)
         

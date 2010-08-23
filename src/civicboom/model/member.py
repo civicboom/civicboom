@@ -95,6 +95,14 @@ class Member(Base):
         for follower in self.followers:
             follower.send_message(m, delay_commit)
 
+    def follow(self, member):
+        from civicboom.lib.database.actions import follow
+        return follow(self,member)
+        
+    def unfollow(self, member):
+        from civicboom.lib.database.actions import unfollow
+        return unfollow(self,member)
+
     @property
     def avatar_url(self, size=80):
         if self.avatar:

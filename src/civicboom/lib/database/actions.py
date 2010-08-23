@@ -3,13 +3,26 @@ from pylons.i18n.translation import _
 from civicboom.model.meta import Session
 from civicboom.model.content import MemberAssignment, AssignmentContent
 
-from civicboom.lib.database.get_cached import get_user, get_content, update_content, update_accepted_assignment
+from civicboom.lib.database.get_cached import get_user, get_content, update_content, update_accepted_assignment, update_member
+
+from civicboom.lib.communication import messages
+
 
 """
 Database Actions
 
 Typically these should not be imported by anything in the project.
 These power the object actions defined in the model
+
+Most actions follow the following structure:
+ - Get data from database
+ - check everything ok to proceed
+ - perform action
+ - send relevent messages
+ - commit
+ - invalidate cache with update methods
+ - return True
+ 
 """
 
 
@@ -17,8 +30,47 @@ These power the object actions defined in the model
 # Member Actions
 #-------------------------------------------------------------------------------
 
-def follow(followed, follower):
-    pass
+def follow(follower, followed, delay_commit=False):
+    followed = get_user(followed)
+    follower = get_user(follower)
+    
+    if not followed: return _('no followed')
+    if not follower: return _('no follower')
+    
+    if followed in follower.following: return _('already following')
+    
+    follower.following.append(followed)
+        
+    followed.send_message(messages.followed_by(reporter=follower), delay_commit=True)
+    
+    if not delay_commit:
+        Session.commit()
+    
+    update_member(follower)
+    update_member(followed)
+
+    return True
+
+def unfollow(follower,followed, delay_commit=False):
+    followed = get_user(followed)
+    follower = get_user(follower)
+    
+    if not followed: return _('no followed')
+    if not follower: return _('no follower')
+    
+    if followed not in follower.following: return _('not following')
+    
+    follower.following.remove(followed)
+        
+    followed.send_message(messages.follow_stop(reporter=follower), delay_commit=True)
+    
+    if not delay_commit:
+        Session.commit()
+    
+    update_member(follower)
+    update_member(followed)
+
+    return True
 
 
 #-------------------------------------------------------------------------------
@@ -50,12 +102,19 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     assignment_accepted.member = member
     assignment_accepted.status = status
     Session.add(assignment_accepted)
+    
+    #if status=="accepted":
+    #    assignment.creator.send_message(messages.assignment_accepted(member=member, assignment=assignment), delay_commit=True)
+    #if status=="pending":
+    #    assignment.creator.send_message(messages.assignment_invite  (member=member, assignment=assignment), delay_commit=True)
+    
     if not delay_commit:
         Session.commit()
+        
     update_accepted_assignment(member)
     return True
 
-def withdraw_assignemnt(assignment, member):
+def withdraw_assignemnt(assignment, member, delay_commit=False):
     member     = get_user(member)
     assignment = get_content(assignment)
     
@@ -66,6 +125,9 @@ def withdraw_assignemnt(assignment, member):
         assignment_accepted = Session.query(MemberAssignment).filter_by(member_id=member.id, content_id=assignment.id, status="accepted").one()
         assignment_accepted.status = "withdrawn"
         #Session.update(assignment_accepted)
+        
+        assignment.creator.send_message(messages.assignment_interest_withdrawn(member=member, assignment=assignment), delay_commit=True)
+        
         Session.commit()
         update_accepted_assignment(member)
         return True
