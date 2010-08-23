@@ -10,6 +10,10 @@ if [ ! -d /var/log/civicboom ] ; then
 	mkdir /var/log/civicboom
 	chown www-data:www-data /var/log/civicboom
 fi
+if [ ! -d /tmp/cb-website-temp ] ; then
+	mkdir /tmp/cb-website-temp
+	chown www-data:www-data /tmp/cb-website-temp
+fi
 
 update-rc.d cb-website defaults
 invoke-rc.d cb-website start
