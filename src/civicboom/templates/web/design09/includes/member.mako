@@ -22,9 +22,9 @@
     </a>
     % if show_follow_button and c.logged_in_user != member:
         % if c.logged_in_user in member.followers:
-		${sl.secure_link(url(controller='member', action='unfollow', id=member.username), _('Stop following'))}
+		${sl.secure_link(url(controller='member', action='unfollow', id=member.username), _('Stop following'), css_class="button_small button_small_style_2")}
         % else:
-		${sl.secure_link(url(controller='member', action='follow', id=member.username), _('Follow'))}
+		${sl.secure_link(url(controller='member', action='follow', id=member.username), _('Follow'), css_class="button_small button_small_style_1")}
         % endif
     % endif
 </%def>

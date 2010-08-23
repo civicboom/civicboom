@@ -1,5 +1,5 @@
 ## the lack of newlines here is because we don't want whitespace to appear in the output
-<%def name="secure_link(href, value='Submit', vals=[])"><%
+<%def name="secure_link(href, value='Submit', vals=[], css_class='')"><%
 import hashlib
 hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
 %><span class="secure_link"><!--
@@ -13,6 +13,7 @@ hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
 	id="link_${hhash}"
 	style="display: none;"
 	href="javascript:secure_submit_${hhash}()"
+	class="${class}"
 	onMouseover="window.status='${value}'; return true;"
 	onMouseout="window.status=''; return true;"
 >${value}</a><script>
