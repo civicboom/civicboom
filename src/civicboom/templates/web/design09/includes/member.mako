@@ -1,3 +1,5 @@
+<%namespace name="sl" file="/web/design09/includes/secure_link.mako"  />
+
 <%def name="autocomplete_member(field_name='member', size='250px')">
 <div style="width: ${size}; padding-bottom: 2em;">
 	<input id="${field_name}_name" name="${field_name}_name" type="text">
@@ -20,9 +22,9 @@
     </a>
     % if show_follow_button and c.logged_in_user != member:
         % if c.logged_in_user in member.followers:
-        <a class="button_small button_small_style_2" href="${h.url(controller='member', action='unfollow', id=member.username)}">${_('Stop following')}</a>
+		${sl.secure_link(url(controller='member', action='unfollow', id=member.username), _('Stop following'))}
         % else:
-        <a class="button_small button_small_style_1" href="${h.url(controller='member', action=  'follow', id=member.username)}">${_('Follow')}</a>
+		${sl.secure_link(url(controller='member', action='follow', id=member.username), _('Follow'))}
         % endif
     % endif
 </%def>
