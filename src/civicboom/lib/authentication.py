@@ -200,8 +200,8 @@ def signin_user(user):
     # Redirect them back to where they were going if a redirect was set
     login_redirector()
     
-    # If no redirect send them to the page root
-    return redirect('/')
+    # If no redirect send them to private profile and out of https and back to http
+    return redirect(url(controller="profile", action="index", protocol="http"))
     
 def signout_user(user):
     user_log.info("logged out")

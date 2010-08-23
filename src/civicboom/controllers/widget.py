@@ -1,4 +1,7 @@
 """
+Widget Controller
+
+The widget is an HTML iFrame that members can place on there own webpages reflecting Civicboom content
 """
 # Base controller imports
 from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _, app_globals, flash_message, redirect_to_referer, action_redirector
@@ -24,7 +27,14 @@ widget_default_reporter_name = "widget demo"
 
 prefix = '/widget/'
 
+#-------------------------------------------------------------------------------
+# Setup Widget Env - from query string
+#-------------------------------------------------------------------------------
+
 def setup_widget_env():
+    """
+    Take QUERY_STRING params and setup widget globals for widget templates
+    """
     def get_widget_varibles_from_env():
         def get_env_from_referer(var_name):
             try:
@@ -51,9 +61,18 @@ def setup_widget_env():
     c.widget_owner        = get_user(c.widget_username)
 
 
+#-------------------------------------------------------------------------------
+# Widget Controller
+#-------------------------------------------------------------------------------
+
 class WidgetController(BaseController):
 
     def __before__(self, action, **params):
+        """
+        Every widget action must have accompanying widget owner information
+        Take this additional information from the query string and init c. variables
+        If the required env has not been set send a bad request error
+        """
         BaseController.__before__(self)
         setup_widget_env() #this sets c.widget_owner and takes c.widget_ variables from url
         if not c.widget_owner:

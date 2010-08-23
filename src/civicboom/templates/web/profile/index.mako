@@ -1,5 +1,7 @@
 <%inherit file="/web/layout_3cols.mako"/>
-<%namespace name="loc" file="/web/design09/includes/location.mako"/>
+<%namespace name="loc"             file="/web/design09/includes/location.mako"/>
+<%namespace name="member_includes" file="/web/design09/includes/member.mako"  />
+
 
 ##------------------------------------------------------------------------------
 ## Left Col
@@ -16,30 +18,27 @@
 	</style>
 
 	<div class="avatar">
-		<img src="${c.viewing_user.avatar_url}">
-		<br>${c.viewing_user.name}
-		<br>(${c.viewing_user.username})
+		##<img src="${c.viewing_user.avatar_url}">
+		##<br>${c.viewing_user.name}
+		##<br>(${c.viewing_user.username})
+        ${member_includes.avatar(c.viewing_user, show_name=True)}
 	</div>
 
-	<h2>Following</h2>
+	<h2>${_("Following")}</h2>
 	% if c.viewing_user.following:
-		% for f in c.viewing_user.following:
-			<a href="${url(controller='profile', action='view', id=f.username)}">${f.name}</a><br>
-		% endfor
+        ${member_includes.member_list(c.viewing_user.following, show_avatar=True, class_="avatar_thumbnail_list")}
 	% else:
 		<span class="message_empty">Not following anyone</span>
 	% endif
 
-	<h2>Followers</h2>
+	<h2>${_("Followers")}</h2>
 	% if c.viewing_user.followers:
-		% for f in c.viewing_user.followers:
-			<a href="${url(controller='profile', action='view', id=f.username)}">${f.name}</a><br>
-		% endfor
+		${member_includes.member_list(c.viewing_user.followers, show_avatar=True, class_="avatar_thumbnail_list")}
 	% else:
 		<span class="message_empty">No followers</span>
 	% endif
 
-	<h2>Tools</h2>
+	<h2>${_("Tools")}</h2>
 	    <a href="${url(controller='profile', action='index')}">My Profile</a>
 	<br><a href="${url(controller='settings', action='general')}">Edit Settings</a>
 	<br><a href="${url(controller='settings', action='messages')}">Edit Notifications</a>
@@ -51,7 +50,7 @@
 ## Right Col
 ##------------------------------------------------------------------------------
 <%def name="col_right()">
-	<h2>Notifications</h2>
+	<h2>${_("Notifications")}</h2>
 	% if c.viewing_user.messages_notification:
 		% for msg in c.viewing_user.messages_notification:
 			<div class="notification">
@@ -68,7 +67,7 @@
 		<span class="message_empty">No notifications</span>
 	% endif
 
-	<h2>Recent Messages</h2>
+	<h2>${_("Recent Messages")}</h2>
 	% if c.viewing_user.messages_to[0:5]:
 		% for msg in c.viewing_user.messages_to[0:5]:
 			<div class="message_short">
@@ -81,7 +80,7 @@
 		<span class="message_empty">No messages</span>
 	% endif
 
-	<h2>Where I Am Now</h2>
+	<h2>${_("Where I Am Now")}</h2>
 <%
 # we need to pass the session to GeoAlchemy functions
 from civicboom.model.meta import Session
@@ -103,7 +102,7 @@ from civicboom.model.meta import Session
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	<h2>Articles I'm Working On</h2>
+	<h2>${_("Articles I'm Working On")}</h2>
 
 	% if c.viewing_user.content:
 		% for content in c.viewing_user.content:

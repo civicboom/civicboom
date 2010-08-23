@@ -1,19 +1,16 @@
 <%inherit file="/web/layout_3cols.mako"/>
 
+<%namespace name="member_includes" file="/web/design09/includes/member.mako"  />
+
 <%def name="col_left()">
-  <img src="${c.viewing_user.avatar_url}">
-  ${c.viewing_user.name}
-  (${c.viewing_user.username})
+    ${member_includes.avatar(c.viewing_user, show_name=True, show_follow_button=True)}
 
-  <p>Following:
-  % for f in c.viewing_user.following:
-    ${f.name}
-  % endfor
-
-  <p>Followers:
-  % for f in c.viewing_user.followers:
-    ${f.name}
-  % endfor
+    <h2>Following</h2>
+        ${member_includes.member_list(c.viewing_user.following, show_avatar=True, class_="avatar_thumbnail_list")}
+  
+  
+    <h2>Followers</h2>
+        ${member_includes.member_list(c.viewing_user.followers, show_avatar=True, class_="avatar_thumbnail_list")}
 </%def>
 
 <%def name="col_right()">

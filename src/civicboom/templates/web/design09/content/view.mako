@@ -1,5 +1,6 @@
 <%inherit file="/web/layout_3cols.mako"/>
-<%namespace name="loc" file="../includes/location.mako"/>
+<%namespace name="loc"             file="../includes/location.mako"/>
+<%namespace name="member_includes" file="../includes/member.mako"  />
 
 ##------------------------------------------------------------------------------
 ## Title - Override
@@ -16,8 +17,7 @@
 
   ##-------- By ----------
   <h2>${_("Content by")}</h2>
-    <img src="${c.content.creator.avatar_url}">
-	<br>${c.content.creator.name} (${c.content.creator.username})
+    ${member_includes.avatar(c.content.creator, show_name=True, show_follow_button=True)}
   
   
   ##-------Actions-------
