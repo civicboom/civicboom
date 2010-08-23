@@ -1,6 +1,7 @@
 <%inherit file="/web/layout_3cols.mako"/>
 <%namespace name="loc"             file="/web/design09/includes/location.mako"/>
 <%namespace name="member_includes" file="/web/design09/includes/member.mako"  />
+<%namespace name="sl"              file="/web/design09/includes/secure_link.mako"  />
 
 
 ##------------------------------------------------------------------------------
@@ -54,12 +55,7 @@
 	% if c.viewing_user.messages_notification:
 		% for msg in c.viewing_user.messages_notification:
 			<div class="notification">
-				<form action="${url.current(controller='messages', action='delete')}" method="POST">
-					<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
-					<input type="hidden" name="msg_id" value="${msg.id}">
-					<input type="hidden" name="type" value="notification">
-					<input type="submit" value="X">
-				</form>
+				${sl.secure_link(url.current(controller='messages', action='delete'), "X", [("msg_id", msg.id), ("type", "notification")])}
 				${msg.subject|n}
 			</div>
 		% endfor
