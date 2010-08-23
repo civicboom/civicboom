@@ -1,6 +1,10 @@
-"""The base Controller API
+"""
+The base Controller API
 
 Provides the BaseController class for subclassing.
+
+Lots of stuff is imported here (eg controller action decorators) so that other
+controllers can do "from civicboom.lib.base import *"
 """
 from pylons.controllers       import WSGIController
 from pylons                   import request, response, app_globals, tmpl_context as c, url, config, session
@@ -8,11 +12,15 @@ from pylons.controllers.util  import abort, redirect
 from pylons.templating        import render_mako
 from pylons.i18n.translation  import _, ungettext, set_lang
 from pylons.decorators.secure import https, authenticate_form
+from webhelpers.pylonslib.secure_form import authentication_token
 
+from civicboom.model.meta              import Session
 from civicboom.model                   import meta
 from civicboom.lib.web                 import flash_message, redirect_to_referer, action_redirector
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.civicboom_lib       import deny_pending_user
+from civicboom.lib.authentication      import authorize, is_valid_user
+from civicboom.lib.misc                import cacheable
 
 import logging
 log = logging.getLogger(__name__)

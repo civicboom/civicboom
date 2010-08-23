@@ -9,12 +9,9 @@ For managing content:
 """
 
 # Base controller imports
-from civicboom.lib.base                import BaseController, render, c, redirect, url, request, abort, _, app_globals, flash_message, redirect_to_referer, action_redirector
-from civicboom.lib.authentication      import authorize, is_valid_user
-from pylons import session
+from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model.meta              import Session
 from civicboom.model                   import Media
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
 from civicboom.lib.database.actions    import del_content
@@ -23,18 +20,12 @@ from civicboom.lib.database.actions    import del_content
 from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key
 from civicboom.lib.communication import messages
 
-
 # Logging setup
-import logging
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 
-
-
-
 class ContentController(BaseController):
-
 
     #-----------------------------------------------------------------------------
     # View
@@ -46,11 +37,11 @@ class ContentController(BaseController):
         Identify the object type and render with approriate renderer
         """
         c.content = get_content(id)
-        
+
         if not c.content:
             flash_message(_("_content not found"))
             return render('/web/design09/content/unavailable.mako')
-        
+
         # Check content is visable
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
             if c.content.status != "show":
@@ -177,6 +168,7 @@ class ContentController(BaseController):
     # Delete
     #-----------------------------------------------------------------------------
     @action_redirector()
+    @authenticate_form
     def delete(self, id):
         content = get_content(id)
         if not content: return "content does not exisit"

@@ -1,17 +1,15 @@
 from civicboom.lib.base import *
 
-from civicboom.lib.authentication      import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signout_user, login_redirector
-from civicboom.lib.database.get_cached import get_user
-from civicboom.lib.services.janrain    import janrain
-from civicboom.controllers.widget      import setup_widget_env
-from civicboom.lib.helpers             import url_from_widget
+from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signout_user, login_redirector
+from civicboom.lib.services.janrain import janrain
+from civicboom.controllers.widget   import setup_widget_env
+from civicboom.lib.helpers          import url_from_widget
 
 # Import other controller actions
 from civicboom.controllers.register import register_new_janrain_user
 from civicboom.lib.civicboom_lib    import verify_email
 
 
-import logging
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 

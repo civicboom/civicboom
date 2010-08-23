@@ -2,19 +2,17 @@
 Member
 """
 
-from civicboom.lib.base                import BaseController, _, action_redirector, c
-from civicboom.lib.authentication      import authorize, is_valid_user
+from civicboom.lib.base import *
 
-# Logging setup
-import logging
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 
 class MemberController(BaseController):
-    
+
     @authorize(is_valid_user)
     @action_redirector()
+    @authenticate_form
     def follow(self, id):
         status = c.logged_in_user.follow(id)
         if status == True:
@@ -24,6 +22,7 @@ class MemberController(BaseController):
 
     @authorize(is_valid_user)
     @action_redirector()
+    @authenticate_form
     def unfollow(self, id):
         status = c.logged_in_user.unfollow(id)
         if status == True:

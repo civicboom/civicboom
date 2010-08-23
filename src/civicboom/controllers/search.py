@@ -1,17 +1,13 @@
-import logging
-import json
 
-from pylons import request, response, session, tmpl_context as c, url
-from pylons.controllers.util import abort, redirect
-
-from civicboom.lib.base   import BaseController, render
+from civicboom.lib.base   import *
 from civicboom.lib.gis    import get_engine
 from civicboom.model      import Content, Member
-from civicboom.model.meta import Session
 from sqlalchemy           import or_
+import json
 
 log = logging.getLogger(__name__)
 tmpl_prefix = '/web/design09'
+
 
 class SearchController(BaseController):
     def index(self):
