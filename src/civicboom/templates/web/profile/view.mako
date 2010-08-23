@@ -1,6 +1,7 @@
 <%inherit file="/web/layout_3cols.mako"/>
 
-<%namespace name="member_includes" file="/web/design09/includes/member.mako"  />
+<%namespace name="member_includes"  file="/web/design09/includes/member.mako"  />
+<%namespace name="content_includes" file="/web/design09/includes/content_list.mako"/>
 
 <%def name="col_left()">
     ${member_includes.avatar(c.viewing_user, show_name=True, show_follow_button=True)}
@@ -17,4 +18,17 @@
 </%def>
 
 <%def name="body()">
+
+    % for content_type in ["article", "assignment"]:
+        <h2>${content_type}</h2>
+        <%
+            content_list = [content for content in c.viewing_user.content if content.__type__==content_type]
+        %>
+        % if len(content_list)>0:
+            ${content_includes.content_list(content_list)}
+        % else:
+            <span class="message_empty">No ${content_type}</span>
+        % endif
+    % endfor
+
 </%def>

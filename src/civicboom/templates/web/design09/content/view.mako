@@ -1,6 +1,7 @@
 <%inherit file="/web/layout_3cols.mako"/>
-<%namespace name="loc"             file="../includes/location.mako"/>
-<%namespace name="member_includes" file="../includes/member.mako"  />
+<%namespace name="loc"              file="../includes/location.mako"/>
+<%namespace name="member_includes"  file="../includes/member.mako"  />
+
 
 ##------------------------------------------------------------------------------
 ## Title - Override

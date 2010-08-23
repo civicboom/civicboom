@@ -47,7 +47,7 @@
             % endif
             ## Thumbnail image
             ##---------------------------
-            <img src="${content.thumbnail_url}" class="content_thumbnail"/>
+            <img src="${content.thumbnail_url}" alt="${content.title}" class="content_thumbnail"/>
           </a>
         </td>
         

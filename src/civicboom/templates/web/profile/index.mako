@@ -117,7 +117,7 @@ from civicboom.model.meta import Session
             content_list = [content for content in c.viewing_user.content if content.__type__==content_type]
         %>
         % if len(content_list)>0:
-            ${content_includes.content_list(content_list, action_buttons=True)}
+            ${content_includes.content_list(content_list, actions=True)}
         % else:
             <span class="message_empty">No ${content_type}</span>
         % endif

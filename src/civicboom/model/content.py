@@ -120,8 +120,15 @@ class Content(Base):
         If there is media attached return the first image?
         if no media, check content for youtube video and get thumbnail from that? (maybe process this before content commit?)
         else return the default image url: (could vary depending on type?)
+        
+        This should be saved in the DB as thumbnail_url as a shortcut!
         """
-        return ""
+        for media in self.attachments:
+            thumbnail_url = media.thumbnail_url
+            if thumbnail_url and thumbnail_url!="":
+                return thumbnail_url
+        
+        return "/images/default_thumbnail_%s.png" % self.__type__
 
 
 class DraftContent(Content):
