@@ -1,6 +1,7 @@
 <%inherit file="/web/layout_3cols.mako"/>
 <%namespace name="loc"              file="../includes/location.mako"/>
 <%namespace name="member_includes"  file="../includes/member.mako"  />
+<%namespace name="content_includes" file="../includes/content_list.mako" />
 
 
 ##------------------------------------------------------------------------------
@@ -85,12 +86,18 @@ from civicboom.model.meta import Session
     <p><a href="${h.url(controller="content", action="view", id=c.content.parent.id)}">${c.content.parent.title}</a></p>
     % endif
     
-    <p>sub content/reponses</p>
+    <h3>sub content/reponses</h3>
+    
+    ${content_includes.content_list(c.content.responses, mode="mini", class_="content_list_mini")}
+    
+    <%doc>
+        
     <ul>
       % for response in c.content.responses:
           <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a>${response.__type__}</li>
       % endfor
     </ul>
+    </%doc>
     
     
     % if hasattr(c.content, "assigned_to"):

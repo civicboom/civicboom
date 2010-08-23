@@ -5,11 +5,15 @@
 ## Content List (with thumbnails)
 ##------------------------------------------------------------------------------
 
-<%def name="content_list(results, mode='normal', actions=False, max_images=None)">
-    <table>
+<%def name="content_list(results, mode='normal', actions=False, max_images=None, class_='content_list')">
+    <table class="${class_}">
     % for content in results[:max_images]:
         ##% if not h.isCurrentContent(content):
-        ${content_item_row(content, mode=mode, actions=actions)}
+        % if mode=="normal":
+            ${content_item_row(content, actions=actions)}
+        % elif mode=="mini":
+            ${content_item_row_mini(content)}
+        % endif
         ##% endif
     % endfor
     </table>
@@ -20,34 +24,32 @@
 
 
 
-<%def name="content_item_row(content, mode='normal', actions=False)">
-    <tr class="content_item_row">
+<%def name="content_item_row(content, actions=False)">
+    <tr>
         ##---------------------------
         ## Thumbnail Col
         ##---------------------------
-        <td>
+        <td class="content_thumbnail">
             ## Content Link
             ##---------------------------
             <a href="${h.url(controller='content',action='view',id=content.id)}">
             
             ## Thumbnail Status Overlay
             ##---------------------------
-            % if mode=='normal':
-                <%
-                    overlay = None
-                    if content.__type__=='syndicate' or content.__type__=='pending':
-                        overlay = content.__type__
-                    if content.status == 'locked':
-                        overlay = 'approved'
-                %>
-                % if overlay:
-                  <span class="thumbnail_overlay thumbnail_overlay_${overlay}">&nbsp;</span>
-                % endif
-
+            <%
+                overlay = None
+                if content.__type__=='syndicate' or content.__type__=='pending':
+                    overlay = content.__type__
+                if content.status == 'locked':
+                    overlay = 'approved'
+            %>
+            % if overlay:
+              <span class="thumbnail_overlay thumbnail_overlay_${overlay}">&nbsp;</span>
             % endif
+            
             ## Thumbnail image
             ##---------------------------
-            <img src="${content.thumbnail_url}" alt="${content.title}" class="content_thumbnail"/>
+            <img src="${content.thumbnail_url}" alt="${content.title}"/>
           </a>
         </td>
         
@@ -102,6 +104,35 @@
     </tr>
 </%def>
 
+
+##------------------------------------------------------------------------------
+## Content List Mini (with thumbnails)
+##------------------------------------------------------------------------------
+<%def name="content_item_row_mini(content, location=False)">
+    <tr>
+        <td class="content_thumbnail">
+            <a href="${h.url(controller='content',action='view',id=content.id)}">
+                <img src="${content.thumbnail_url}" alt="${content.title}" />
+            </a>
+        </td>
+        <td>
+            <a href="${h.url(controller='content',action='view',id=content.id)}">
+                <p class="content_title">${content.title}</p>
+            </a>
+        </td>
+        % if location:
+        <td>
+            flag
+        </td>
+        % endif
+        <td>
+            rating <br/> comments
+        </td>
+        <td>
+            ${member_includes.avatar(content.creator, show_name=True, class_="content_creator_thumbnail")}
+        </td>
+    </tr>
+</%def>
 
 
 ##------------------------------------------------------------------------------
