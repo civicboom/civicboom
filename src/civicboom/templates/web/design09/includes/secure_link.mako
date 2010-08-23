@@ -12,10 +12,9 @@ hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
 --><a
 	id="link_${hhash}"
 	style="display: none;"
-	href="javascript:secure_submit_${hhash}()"
-	class="${class}"
-	onMouseover="window.status='${value}'; return true;"
-	onMouseout="window.status=''; return true;"
+	href="${href}"
+	class="${css_class}"
+	onClick="secure_submit_${hhash}(); return false;"
 >${value}</a><script>
 document.getElementById("span_${hhash}").style.display = "none";
 document.getElementById("link_${hhash}").style.display = "inline";
