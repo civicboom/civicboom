@@ -76,8 +76,8 @@
             
             ## WARNING!!!! This is performing a full query to get all responses and comments, these should be replaced with derived fields
             ## Ticket raised
-            <br>${ungettext("%d response", "%d responses", len(content.responses)) % len(content.responses)}
-            <br>${ungettext("%d comment" , "%d comments" , len(content.comments )) % len(content.comments )}
+            <br>${ungettext("%d response", "%d responses", content.num_responses) % content.num_responses}
+            <br>${ungettext("%d comment" , "%d comments" , content.num_comments ) % content.num_comments }
         </td>
         
         ##---------------------------

@@ -130,6 +130,23 @@ class Content(Base):
         
         return "/images/default_thumbnail_%s.png" % self.__type__
 
+    @property
+    def num_responses(self):
+        """
+        TODO
+        To be REMOVED! and replaced with a derived field in DB with trigger
+        """
+        return len(self.responses)
+    
+    @property
+    def num_comments(self):
+        """
+        TODO
+        To be REMOVED! and replaced with a derived field in DB with trigger
+        """
+        return len(self.comments)
+
+
 
 class DraftContent(Content):
     __tablename__   = "content_draft"
@@ -223,6 +240,14 @@ class AssignmentContent(UserVisibleContent):
             invite_member(members)
         Session.commit()
         
+    @property
+    def num_accepted(self):
+        """
+        TODO
+        To be replaced with derived field with DB trigger or update_assignment call
+        accepted_by is set after the db is setup in civicboom_init
+        """
+        return len(accepted_by)
 
 
 class MemberAssignment(Base):
