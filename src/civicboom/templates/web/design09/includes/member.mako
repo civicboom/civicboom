@@ -1,6 +1,7 @@
 ##------------------------------------------------------------------------------
 ## Member Autocomplete - used? where?
 ##------------------------------------------------------------------------------
+<%namespace name="sl" file="/web/design09/includes/secure_link.mako"  />
 
 <%def name="autocomplete_member(field_name='member', size='250px')">
 <div style="width: ${size}; padding-bottom: 2em;">
@@ -24,14 +25,14 @@
                 <img src="${member.avatar_url}" alt="${member.username}"/>
             % endif
             % if show_name:
-                ${member.name} (${member.username})
+                <br/>${member.name} (${member.username})
             % endif
         </a>
         % if show_follow_button and c.logged_in_user != member:
             % if c.logged_in_user in member.followers:
-            <a class="button_small button_small_style_2" href="${h.url(controller='member', action='unfollow', id=member.username)}">${_('Stop following')}</a>
+			${sl.secure_link(url(controller='member', action='unfollow', id=member.username), _('Stop following'), css_class="button_small button_small_style_2")}
             % else:
-            <a class="button_small button_small_style_1" href="${h.url(controller='member', action=  'follow', id=member.username)}">${_('Follow')}</a>
+			${sl.secure_link(url(controller='member', action='follow', id=member.username), _('Follow'), css_class="button_small button_small_style_1")}
             % endif
         % endif
     % if class_:

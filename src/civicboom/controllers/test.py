@@ -4,16 +4,10 @@ A conroller for miscilanious test functions
 Locked down for use in development mode only
 """
 
-from civicboom.lib.base   import BaseController, render, c, config, app_globals, abort, session, redirect, flash_message
-from civicboom.model.meta import Session
+from civicboom.lib.base import *
 
-
-from civicboom.lib.authentication      import authorize, is_valid_user
-
-
-
-import logging
 log = logging.getLogger(__name__)
+
 
 class TestController(BaseController):
     

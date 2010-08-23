@@ -1,18 +1,16 @@
-from civicboom.lib.base import BaseController, render, request, url, abort, redirect, c, app_globals, _, session, flash_message, redirect_to_referer
-from pylons.decorators.secure import https
+from civicboom.lib.base import *
+from pylons.i18n.translation  import _ # FIXME: not included by "*" above?
 
-from civicboom.lib.authentication      import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signout_user, login_redirector
-from civicboom.lib.database.get_cached import get_user
-from civicboom.lib.services.janrain    import janrain
-from civicboom.controllers.widget      import setup_widget_env
-from civicboom.lib.helpers             import url_from_widget
+from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signout_user, login_redirector
+from civicboom.lib.services.janrain import janrain
+from civicboom.controllers.widget   import setup_widget_env
+from civicboom.lib.helpers          import url_from_widget
 
 # Import other controller actions
 from civicboom.controllers.register import register_new_janrain_user
 from civicboom.lib.civicboom_lib    import verify_email
 
 
-import logging
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
@@ -37,6 +35,9 @@ class AccountController(BaseController):
             user_log.info("logged in")
             return redirect(url('/'))
 
+    # while not massively dangerous, posting an image with eg <img src="http://civicboom.com/account/signout">
+    # is a common prank
+    @authenticate_form
     def signout(self):
         """
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies

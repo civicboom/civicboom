@@ -1,7 +1,5 @@
-from civicboom.lib.base import BaseController, render, c
 
-from civicboom.lib.database.get_cached import get_user
-from civicboom.lib.misc import cacheable
+from civicboom.lib.base import *
 
 prefix = '/web/design09/misc/'
 
@@ -29,6 +27,7 @@ class MiscController(BaseController):
         if not id: id = "unittest"
         c.widget_user_preview = get_user(id)
         return render("/widget/get_widget_code.mako")
-        
+
+    @cacheable(time=600)
     def close_popup(self):
         return '<script>self.close();</script>'

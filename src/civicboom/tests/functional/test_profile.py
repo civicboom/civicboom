@@ -1,18 +1,9 @@
 from civicboom.tests import *
 
 class TestUserProfileController(TestController):
-    def setUp(self):
-        response = self.app.post(
-            url(controller='account', action='signin'),
-            extra_environ={'HTTP_X_URL_SCHEME': 'https'},
-            params={
-                'username': u'unittest',
-                'password': u'password'
-            }
-        )
 
     def test_index_not_logged_in(self):
-        response = self.app.get(url(controller='account', action='signout'))
+        self.log_out()
         response = self.app.get(url(controller='profile', action='index'), status=302)
         # FIXME: follow the redirect, then:
         # assert "Sign in" in response

@@ -33,4 +33,27 @@ class TestController(TestCase):
         url._push_object(URLGenerator(config['routes.map'], environ))
         TestCase.__init__(self, *args, **kwargs)
 
+    def log_in(self):
+        response = self.app.post(
+            url(controller='account', action='signin'),
+            extra_environ={'HTTP_X_URL_SCHEME': 'https'},
+            params={
+                'username': u'unittest',
+                'password': u'password'
+            }
+        )
+        response = self.app.get(url(controller='settings', action='general')) # get an auth token
+        self.auth_token = response.session['_authentication_token']
 
+    def log_out(self):
+        response = self.app.post(
+            url(controller='account', action='signout'),
+            extra_environ={'HTTP_X_URL_SCHEME': 'https'},
+            params={
+                '_authentication_token': self.auth_token
+            }
+        )
+
+    def setUp(self):
+        # log in by default
+        self.log_in()

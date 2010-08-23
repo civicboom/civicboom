@@ -36,13 +36,8 @@ then API users can have a call like
         the error>
 """
 
-from pylons import request, response, session, tmpl_context as c, url, config
-from pylons.controllers.util import abort, redirect
-from webhelpers.pylonslib.secure_form import authentication_token
+from civicboom.lib.base import *
 
-from civicboom.lib.base           import BaseController, render, app_globals
-from civicboom.lib.authentication import authorize, is_valid_user
-from civicboom.model.meta         import Session
 from civicboom.model              import Media, ArticleContent, SyndicatedContent
 from civicboom.lib                import helpers as h
 from civicboom.lib.communication  import messages
@@ -55,12 +50,9 @@ import os
 import json
 import hashlib
 
-import logging
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
-template_expire = 14400 # 14400 is 4 hours in seconds
-file_parts = {}
 
 #-----------------------------------------------------------------------------
 # Decorators

@@ -1,18 +1,9 @@
 from civicboom.tests import *
 
 class TestSettingsController(TestController):
-    def setUp(self):
-        response = self.app.post(
-            url(controller='account', action='signin'),
-            extra_environ={'HTTP_X_URL_SCHEME': 'https'},
-            params={
-                'username': u'unittest',
-                'password': u'password'
-            }
-        )
 
     def test_need_signin(self):
-        response = self.app.get(url(controller='account', action='signout'))
+        self.log_out()
         response = self.app.get(url(controller='settings', action='general', id='unittest'), status=302)
         # FIXME: follow the redirect, then:
         # assert "Sign in" in response
@@ -25,7 +16,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url(controller='settings', action='save_general', id='unittest'),
             params={
-                '_authentication_token': response.session['_authentication_token']
+                '_authentication_token': self.auth_token
             }
         )
 
@@ -37,7 +28,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url(controller='settings', action='save_location', id='unittest'),
             params={
-                '_authentication_token': response.session['_authentication_token']
+                '_authentication_token': self.auth_token
             }
         )
 
@@ -49,7 +40,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url(controller='settings', action='save_messages', id='unittest'),
             params={
-                '_authentication_token': response.session['_authentication_token']
+                '_authentication_token': self.auth_token
             }
         )
 
@@ -74,7 +65,7 @@ class TestSettingsController(TestController):
         # FIXME: for now, the 'id' paramater is ignored
         #response = self.app.post(
         #    url(controller='settings', action='save_general', id='unitfriend'),
-        #    params={'_authentication_token': response.session['_authentication_token']},
+        #    params={'_authentication_token': self.auth_token},
         #    status=403,
         #)
         # FIXME: test

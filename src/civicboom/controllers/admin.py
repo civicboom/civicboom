@@ -1,16 +1,12 @@
+from civicboom.lib.base import *
 
-from pylons import request, response, session, tmpl_context as c, url
-from pylons.controllers.util import abort, redirect
 from formalchemy.ext.pylons.controller import ModelsController
 from webhelpers.paginate import Page
 
-from civicboom.lib.base import BaseController, render
 from civicboom.lib.userlog import get_engine
 from civicboom import model
 from civicboom import forms
-from civicboom.model import meta
 
-import logging
 import re
 
 prefix = '/admin/'
