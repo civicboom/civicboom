@@ -2,11 +2,12 @@
 
 Provides the BaseController class for subclassing.
 """
-from pylons.controllers      import WSGIController
-from pylons                  import request, response, app_globals, tmpl_context as c, url, config, session
-from pylons.controllers.util import abort, redirect
-from pylons.templating       import render_mako
-from pylons.i18n.translation import _, ungettext, set_lang
+from pylons.controllers       import WSGIController
+from pylons                   import request, response, app_globals, tmpl_context as c, url, config, session
+from pylons.controllers.util  import abort, redirect
+from pylons.templating        import render_mako
+from pylons.i18n.translation  import _, ungettext, set_lang
+from pylons.decorators.secure import https, authenticate_form
 
 from civicboom.model                   import meta
 from civicboom.lib.web                 import flash_message, redirect_to_referer, action_redirector
