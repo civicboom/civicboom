@@ -17,11 +17,11 @@
   <div class="unit_b">
     <ul class="header_items">
       % if not c.logged_in_user:
-        <li><a href="${url(controller='account', action='signin')}">${_("Sign in or Sign up")}</a></li>
+        <li class='last_list_item'><a href="${url(controller='account', action='signin')}">${_("Sign in or Sign up")}</a></li>
       % else:
         <li><a href="${url(controller='profile', action='view', id=c.logged_in_user.username)}">${c.logged_in_user.name} (${c.logged_in_user.username})</a></li>
         <li><a href="${url(controller='profile', action='index')                             }">${_("Controls")}</a></li>
-        <li>${sl.secure_link(url(controller='account', action='signout'), _("Sign out"))}</li>
+        <li class='last_list_item'>${sl.secure_link(url(controller='account', action='signout'), _("Sign out"))}</li>
       % endif
     </ul>
   
