@@ -17,6 +17,6 @@ hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
 	onClick="secure_submit_${hhash}(); return false;"
 >${value}</a><script>
 document.getElementById("span_${hhash}").style.display = "none";
-document.getElementById("link_${hhash}").style.display = "inline";
+document.getElementById("link_${hhash}").style.display = "inline-block";
 function secure_submit_${hhash}() {document.getElementById("form_${hhash}").submit();}
 </script></span></%def>
