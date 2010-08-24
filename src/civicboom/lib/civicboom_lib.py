@@ -11,7 +11,7 @@ from civicboom.lib.database.get_cached import get_user
 
 from civicboom.lib.communication.email import send_email
 
-from civicboom.model                            import DraftContent, CommentContent, Media, Tag
+from civicboom.model                            import DraftContent, CommentContent, Media, Tag, FlaggedContent
 from civicboom.lib.database.get_cached          import get_content, get_tag
 from civicboom.lib.database.actions             import del_content
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
@@ -235,3 +235,5 @@ def get_content_media_upload_key(content):
         mc.set(content_id_key,             key, time=memcache_expire)
         mc.set(key           , str(content.id), time=memcache_expire)
     return key
+
+

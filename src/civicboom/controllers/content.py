@@ -14,7 +14,7 @@ from civicboom.lib.base import *
 # Datamodel and database session imports
 from civicboom.model                   import Media
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
-from civicboom.lib.database.actions    import del_content
+
 
 # Other imports
 from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key
@@ -167,6 +167,7 @@ class ContentController(BaseController):
     #-----------------------------------------------------------------------------
     # Delete
     #-----------------------------------------------------------------------------
+    @authorize(is_valid_user)
     @action_redirector()
     @authenticate_form
     def delete(self, id):
@@ -175,7 +176,7 @@ class ContentController(BaseController):
         if not content.editable_by(c.logged_in_user):
             return "your current user does not have the permissions to delete this _content"
             #abort(401)
-        del_content(content)
+        content.delete()
         return "content deleted"
 
 
@@ -183,8 +184,15 @@ class ContentController(BaseController):
     # Flag
     #-----------------------------------------------------------------------------
     @authorize(is_valid_user)
+    @action_redirector()
+    @authenticate_form
     def flag(self, id):
         """
         Flag this content as being inapproprate of copyright violoation
         """
-        pass
+        form = request.POST
+        try:
+            get_content(id).flag(c.logged_in_user, form['type'], form['comment'])
+            return "An administrator has been alerted to this content"
+        except:
+            return "Error flaging content, please email us"

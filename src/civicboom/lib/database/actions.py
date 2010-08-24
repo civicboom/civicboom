@@ -1,11 +1,15 @@
+from pylons import config, url
 from pylons.i18n.translation import _
 
 from civicboom.model.meta import Session
-from civicboom.model.content import MemberAssignment, AssignmentContent
+from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent
 
 from civicboom.lib.database.get_cached import get_user, get_content, update_content, update_accepted_assignment, update_member
 
-from civicboom.lib.communication import messages
+from civicboom.lib.communication       import messages
+from civicboom.lib.communication.email import send_email
+
+from civicboom.lib.text          import strip_html_tags
 
 
 """
@@ -142,7 +146,20 @@ def withdraw_assignemnt(assignment, member, delay_commit=False):
 #-------------------------------------------------------------------------------
 
 def del_content(content):
-    content = get_content(content)    
+    content = get_content(content)
     update_content(content) #invalidate the cache
     Session.delete(content)
     Session.commit()
+    
+def flag_content(content, member, type, comment):
+    flag = FlaggedContent()
+    flag.member  = member
+    flag.content = content
+    flag.comment = strip_html_tags(comment)
+    flag.type    = type
+    Session.add(flag)
+    Session.commit()
+    send_email(config['email.moderator'],
+               subject=_('flagged content'),
+               content_text="user flagged %s as %s" % (url(controller='content', action='view', id=content.id), type)
+               )

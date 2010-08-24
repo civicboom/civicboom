@@ -64,20 +64,20 @@
     <a href="" class="button_small button_small_style_1" onclick="swap('flag_content'); return false;">Inappropriate Content?</a>
   
     <div id="flag_content" class="hideable">
-        <p>${_('Flag this _content as inappropriate')}</p>
-        <form action="${url(controller='content', action='flag')}" method="post">
-            <input type="hidden" name="_authentication_token" value="${h.authentication_token()}">                
+        <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
+        <form action="${url(controller='content', action='flag', id=c.content.id)}" method="post">
+            <input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
             <select name="type">
                 <% from civicboom.model.content import FlaggedContent %>
                 % for type in FlaggedContent._flag_type.enums:
                 <option value="${type}">${_(type.capitalize())}</option>
                 % endfor
             </select>
+            <p class="form_instructions">${_('Comment (optional)')}</p>
+            <textarea name="comment" style="width:90%; height:3em;"></textarea>
             <input type="submit" name="flagit" value="Flag it" class="button_small button_small_style_tiny "/>
             <span class="button_small button_small_style_tiny " onclick="swap('flag_content'); return false;">Cancel</span>
         </form>
-        
-        
     </div>
 </%def>
 
