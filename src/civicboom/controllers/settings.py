@@ -1,4 +1,5 @@
 from civicboom.lib.base import *
+from pylons.i18n.translation  import _ # FIXME: not included by "*" above?
 import hashlib
 
 log = logging.getLogger(__name__)
