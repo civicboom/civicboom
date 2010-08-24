@@ -251,7 +251,8 @@ def profanity_filter(content, delay_commit=False):
     if not config['feature.profanity_filter']: return
     
     # TODO: this could fire off a thead to perform the profanity checking?
-    #       maybe we could profanity check drafts and tell users that the content has raised an issue before they publish it?
+    
+    # maybe we could profanity check drafts and tell users that the content has raised an issue before they publish it?
     
     profanity_response = profanity_check(content.content)
     if profanity_response:
