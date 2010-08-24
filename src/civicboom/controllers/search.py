@@ -34,9 +34,19 @@ class SearchController(BaseController):
             zoom = 10 # FIXME: inverse of radius?
             if lon:
                 location = (lon, lat, zoom)
-                results = results.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))[0:20]
+                results = results.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
         else:
             location = None
+
+        if "author" in request.GET:
+            u = get_user(request.GET["author"])
+            results = results.filter(Content.creator_id==u.id)
+
+        if "response_to" in request.GET:
+            cid = int(request.GET["response_to"])
+            results = results.filter(Content.parent_id==cid)
+
+        results = results[0:20]
 
         if format == "xml":
             return render("/rss/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
