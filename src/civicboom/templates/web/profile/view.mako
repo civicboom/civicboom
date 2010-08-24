@@ -3,6 +3,10 @@
 <%namespace name="member_includes"  file="/web/design09/includes/member.mako"  />
 <%namespace name="content_includes" file="/web/design09/includes/content_list.mako"/>
 
+<%def name="rss()">${self.rss_header_link()}</%def>
+<%def name="rss_url()">${url(controller='search', action='content', author=c.viewing_user.username, format='xml')}</%def>
+<%def name="rss_title()">Articles by ${c.viewing_user.name}</%def>
+
 <%def name="col_left()">
     ${member_includes.avatar(c.viewing_user, show_name=True, show_follow_button=True)}
 
