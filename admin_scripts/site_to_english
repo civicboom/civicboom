@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+
+import babel.messages.pofile as po
+import sys
+
+def trans(text):
+    text = text.replace("_site_name", "Civicboom")
+    text = text.replace("_assignment", "request")
+    text = text.replace("_article", "content")
+    text = text.replace("_reporter", "user")
+    text = text.replace("_content", "content")
+    text = text.replace("_tipoff", "tipoff")
+    text = text.replace("_report", "content")
+    text = text.replace("_tagline", "News. Don't just read it. Feed it.")
+    text = text.replace("_site_description", "Building the world's first true community and audience assignment system")
+    return text
+
+
+cat = po.read_po(file(sys.argv[1], "r"))
+
+for n, msg in enumerate(cat):
+    print "\rParsing message %d" % n,
+#    print msg.id
+#    print msg.string
+#    print
+    if type(msg.id) == tuple:
+        msg.string = tuple([trans(i) for i in msg.id])
+    else:
+        msg.string = trans(msg.id)
+print
+
+po.write_po(file(sys.argv[1], "w"), cat)
