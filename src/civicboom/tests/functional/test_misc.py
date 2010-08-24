@@ -11,6 +11,11 @@ class TestMiscController(TestController):
     def test_titlepage(self):
         response = self.app.get(url(controller='misc', action='titlepage'))
 
+    def test_titlepage_cache(self):
+        self.log_out()
+        response = self.app.get(url(controller='misc', action='titlepage'))
+        # FIXME: test that generated-but-static content has cache headers set
+
     def test_credits(self):
         response = self.app.get(url(controller='misc', action='credits'))
 
