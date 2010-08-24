@@ -4,6 +4,11 @@
 <%namespace name="content_includes" file="../includes/content_list.mako" />
 
 
+<%def name="rss()">${self.rss_header_link()}</%def>
+<%def name="rss_url()">${url(controller='search', action='content', response_to=c.content.id, format='xml')}</%def>
+<%def name="rss_title()">Responses to ${c.content.title}</%def>
+## FIXME: extra RSS for "more by this author"?
+
 ##------------------------------------------------------------------------------
 ## Title - Override
 ##------------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 from civicboom.lib.base import *
+from pylons.i18n.translation  import _ # FIXME: not included by "*" above?
 import hashlib
 
 log = logging.getLogger(__name__)
@@ -46,9 +47,9 @@ class SettingsController(BaseController):
                     if hex_new1 == hex_new2:
                         c.viewing_user.password = hex_new1
                     else:
-                        error = "New passwords don't match"
+                        error = _("New passwords don't match")
                 else:
-                    error = "Current password was wrong"
+                    error = _("Current password was wrong")
             del request.POST["current_password"]
             del request.POST["new_password_1"]
             del request.POST["new_password_2"]
@@ -61,8 +62,7 @@ class SettingsController(BaseController):
             else:
                 c.viewing_user.config[key] = request.POST[key]
 
-        # FIXME: flash message + redirect
-        return "Settings saved "+", ".join(request.POST.keys())
+        return _("Settings saved")#+", ".join(request.POST.keys())
 
     @authorize(is_valid_user)
     def messages(self, id=None):
@@ -88,8 +88,7 @@ class SettingsController(BaseController):
             else:
                 c.viewing_user.config[route_name] = setting
 
-        # FIXME: flash message + redirect
-        return "Settings saved"
+        return _("Settings saved")
 
     @authorize(is_valid_user)
     def location(self, id=None):
@@ -107,14 +106,13 @@ class SettingsController(BaseController):
             (lon, lat) = (0, 0)
             pass # FIXME: guess_lon_lat_from_name(request.POST["location_name"])
         else:
-            # FIXME: flash message / json thing
-            return "no position specified"
+            return _("No position specified")
         c.viewing_user = c.logged_in_user
         c.viewing_user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
         Session.commit()
 
-        # FIXME: flash message + redirect
-        return "Location saved: %s (%s)" % (
-            request.params.get("location", "[pos]"),
-            request.params.get("location_name", "[name]"),
-        )
+        return _("Settings saved")
+        #return "Location saved: %s (%s)" % (
+        #    request.params.get("location", "[pos]"),
+         #   request.params.get("location_name", "[name]"),
+        #)

@@ -23,6 +23,7 @@ cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type 
 	cp ../ssl/* fs-website/opt/cb/etc/ssl/
 	cp _combined.js fs-website/opt/cb/share/website/civicboom/public/javascript/
 	cp _combined.css fs-website/opt/cb/share/website/civicboom/public/styles/design09/
+	../admin_scripts/site_to_english ../src/civicboom/i18n/en/LC_MESSAGES/civicboom.po
 	fakeroot dpkg -b fs-website cb-website_${VERSION}_all.deb 
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 

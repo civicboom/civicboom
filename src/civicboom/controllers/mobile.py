@@ -99,14 +99,14 @@ class MobileController(BaseController):
     def accepted_assignments(self):
         #cache_key = gen_cache_key(reporter_assignments_accepted=c.logged_in_reporter.id)
         return json.dumps([{
-            "id":                assignment.id,
-            "title":             assignment.title,
-            "content":           h.truncate(assignment.content, length=150),
-            "image":             assignment.primary_media.thumbnail_url if assignment.primary_media else None,
-            "assigned_by":       assignment.creator.name,
-            "assigned_by_image": assignment.creator.avatar_url,
-            "expiry_date":       assignment.due_date,
-        } for assignment in c.logged_in_user.accepted_assignments])
+            "id":                assignment.content.id,
+            "title":             assignment.content.title,
+            "content":           h.truncate(assignment.content.content, length=150),
+            # FIXME: "image":             assignment.content.primary_media.thumbnail_url if assignment.content.primary_media else None,
+            "assigned_by":       assignment.content.creator.name,
+            "assigned_by_image": assignment.content.creator.avatar_url,
+            "expiry_date":       assignment.content.due_date,
+        } for assignment in c.logged_in_user.assignments_accepted])
         # return json.dumps({"status": "ok", "data": ...})
 
 
