@@ -6,7 +6,10 @@ from civicboom.model.meta import Session
 		xmlns:media="http://search.yahoo.com/mrss/"
 		xmlns:dc="http://purl.org/dc/elements/1.1/"
 		xmlns:creativeCommons="http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html"
-		xmlns:georss="http://www.georss.org/georss">
+		xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+		xmlns:georss="http://www.georss.org/georss"
+		xmlns:woe="http://where.yahooapis.com/v1/schema.rng"
+		>
 	<channel> 
 		<title>${term} [Civicboom Search Results]</title> 
 		<link>${url.current()}</link> 
@@ -24,6 +27,7 @@ from civicboom.model.meta import Session
 			<guid isPermaLink="false">Civicboom Content #${r.id}</guid> 
 			% if r.location:
 			<georss:point>${r.location.coords(Session)[1]} ${r.location.coords(Session)[0]}</georss:point> 
+			<geo:lat>${r.location.coords(Session)[1]}</geo:lat><geo:long>${r.location.coords(Session)[0]}</geo:long>
 			% endif
 		</item>
 		% endfor
