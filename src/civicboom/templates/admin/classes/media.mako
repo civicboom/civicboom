@@ -22,10 +22,10 @@ ${common.errors(fieldset)}
 	<tr><td style="text-align: center">
 		## FIXME: hack because we don't have access to Media.media_url or the like
 		<% base = "http://" + config['s3_bucket_name'] + ".s3.amazonaws.com" %>
-		<p><img src="${base}/media-thumbnails/${fieldset.hash.value}">
-		<p><a href="${base}/media-originals/${fieldset.hash.value}">Original</a>,
+		<p><img src="${base}/media-thumbnail/${fieldset.hash.value}">
+		<p><a href="${base}/media-original/${fieldset.hash.value}">Original</a>,
 		<a href="${base}/media/${fieldset.hash.value}">Processed</a>,
-		<a href="${base}/media-thumbnails/${fieldset.hash.value}">Thumbnail</a>
+		<a href="${base}/media-thumbnail/${fieldset.hash.value}">Thumbnail</a>
 	</td></tr>
 </table>
 		</td>
