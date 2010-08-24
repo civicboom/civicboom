@@ -324,5 +324,17 @@ class ContentEditHistory(Base):
     source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
     text_change   = Column(UnicodeText(), nullable=False)
 
+class FlaggedContent(Base):
+    __tablename__ = "flagged_content"
+    _flag_type = Enum("offensive", "spam", "other", name="flag_type")
+    id            = Column(Integer(),     primary_key=True)
+    content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False)
+    member_id     = Column(Integer(),     ForeignKey('member.id') , nullable=False)
+    timestamp     = Column(DateTime(),    nullable=False, default=func.now())
+    type          = Column(_flag_type,    nullable=False)
+    comment       = Column(UnicodeText(), nullable=True, doc="optional should the user want to add additional details")
+
+    content       = relationship("Content", backref=backref('flags'))
+    member        = relationship("Member" , backref=backref('flags'))
 
 GeometryDDL(Content.__table__)
