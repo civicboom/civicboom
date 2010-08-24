@@ -151,15 +151,20 @@ def del_content(content):
     Session.delete(content)
     Session.commit()
     
-def flag_content(content, member, type, comment):
+def flag_content(content, member=None, type="automated", comment=None):
     flag = FlaggedContent()
-    flag.member  = member
-    flag.content = content
+    flag.member  = get_user(member)
+    flag.content = get_content(content)
     flag.comment = strip_html_tags(comment)
     flag.type    = type
     Session.add(flag)
     Session.commit()
+    
+    # Send email to alert moderator
+    member_username = 'profanity_filter'
+    try   : member_username = flag.member.username
+    except: pass
     send_email(config['email.moderator'],
                subject=_('flagged content'),
-               content_text="user flagged %s as %s" % (url(controller='content', action='view', id=content.id), type)
+               content_text="%s flagged %s as %s" % (member_username, url(controller='content', action='view', id=content.id), type)
                )

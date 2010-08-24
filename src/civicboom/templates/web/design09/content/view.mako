@@ -69,7 +69,7 @@
             <input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
             <select name="type">
                 <% from civicboom.model.content import FlaggedContent %>
-                % for type in FlaggedContent._flag_type.enums:
+                % for type in [type for type in FlaggedContent._flag_type.enums if type!="automated"]:
                 <option value="${type}">${_(type.capitalize())}</option>
                 % endfor
             </select>

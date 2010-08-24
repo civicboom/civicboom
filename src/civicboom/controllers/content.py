@@ -17,7 +17,7 @@ from civicboom.lib.database.get_cached import get_content, update_content, get_l
 
 
 # Other imports
-from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key
+from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key, profanity_filter
 from civicboom.lib.communication import messages
 
 # Logging setup
@@ -96,7 +96,10 @@ class ContentController(BaseController):
             Session.commit()
             return redirect(url.current(action='edit', id=c.content.id))
         
-        if 'submit_publish' in request.POST:
+        # If publishing perform profanity check and send notifications
+        if 'submit_publish' in request.POST:            
+            profanity_filter(c.content) # Filter any naughty words and alert moderator
+
             m = None
             if starting_content_type and starting_content_type != c.content.__type__:
                 # Send notifications about NEW published content
@@ -110,6 +113,7 @@ class ContentController(BaseController):
                 user_log.info("updated published Content #%d" % (c.content.id, ))
             if m:
                 c.content.creator.send_message_to_followers(m, delay_commit=True)
+
         
         # If form contains post data
         if request.POST:
@@ -192,7 +196,7 @@ class ContentController(BaseController):
         """
         form = request.POST
         try:
-            get_content(id).flag(c.logged_in_user, form['type'], form['comment'])
+            get_content(id).flag(member=c.logged_in_user, type=form['type'], comment=form['comment'])
             return "An administrator has been alerted to this content"
         except:
             return "Error flaging content, please email us"

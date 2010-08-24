@@ -113,12 +113,12 @@ class Content(Base):
         # TODO check groups of creator to see if member is in the owning group
         return False
 
-    def flag(self, member, type, comment):
+    def flag(self, **kargs):
         """
         Flag content as offensive or spam (can throw exception if fails)
         """
         from civicboom.lib.database.actions import flag_content
-        flag_content(self, member, type, comment)
+        flag_content(self, **kargs)
     
     def delete(self):
         """
@@ -341,10 +341,10 @@ class ContentEditHistory(Base):
 
 class FlaggedContent(Base):
     __tablename__ = "flagged_content"
-    _flag_type = Enum("offensive", "spam", "copyright", "other", name="flag_type")
+    _flag_type = Enum("offensive", "spam", "copyright", "automated", "other", name="flag_type")
     id            = Column(Integer(),     primary_key=True)
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False)
-    member_id     = Column(Integer(),     ForeignKey('member.id') , nullable=False)
+    member_id     = Column(Integer(),     ForeignKey('member.id') , nullable=True )
     timestamp     = Column(DateTime(),    nullable=False, default=func.now())
     type          = Column(_flag_type,    nullable=False)
     comment       = Column(UnicodeText(), nullable=True, doc="optional should the user want to add additional details")

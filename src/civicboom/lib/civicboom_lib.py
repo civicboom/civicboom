@@ -3,7 +3,7 @@ Set of helpers specific to the Civicboom project
   (these are not part of misc because misc continas more genereal functions that could be used in a range of projects)
 """
 
-from pylons import url, app_globals, tmpl_context as c
+from pylons import url, app_globals, tmpl_context as c, config
 from pylons.i18n.translation import _
 
 from civicboom.model.meta import Session
@@ -16,6 +16,7 @@ from civicboom.lib.database.get_cached          import get_content, get_tag
 from civicboom.lib.database.actions             import del_content
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
 
+from civicboom.lib.services.cdyne_profanity import profanity_check
 
 from civicboom.lib.text          import clean_html_markup
 from civicboom.lib.misc          import remove_where
@@ -236,4 +237,34 @@ def get_content_media_upload_key(content):
         mc.set(key           , str(content.id), time=memcache_expire)
     return key
 
+
+#------------------------------
+# Profanity Check
+#------------------------------
+def profanity_filter(content, delay_commit=False):
+    """
+    Checks content for profanity using the CDYNE web service
+    If there is a profanity, replace the content with the cleaned version
+    """
+    content = get_content(content)
+    if not content                           : return
+    if not config['feature.profanity_filter']: return
+    
+    # TODO: this could fire off a thead to perform the profanity checking?
+    #       maybe we could profanity check drafts and tell users that the content has raised an issue before they publish it?
+    
+    profanity_response = profanity_check(content.content)
+    if profanity_response:
+        content.content = profanity_response['CleanText']
+        content.flag(comment=u"found %s" % profanity_response['ProfanityCount'])
+        #send_email(config['email.moderator'],
+        #    subject=_('profanity detected'),
+        #    content_text="%s" % (url(controller='content', action='view', id=content.id))
+        #    )
+        #content.status = "pending"
+        #if not delay_commit:
+        #    Session.commit()
+        #update_content(content)
+        #return False
+    #return True
 

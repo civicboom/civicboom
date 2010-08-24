@@ -1,0 +1,57 @@
+"""
+CDYNE Profanity Web Service
+http://wiki.cdyne.com/wiki/index.php?title=Profanity_Filter
+http://www.webserviceshare.com/reference/language/tools/service/CDYNE-Profanity-Filter-FREE.htm
+"""
+
+import urllib, urllib2, logging
+from paste.deploy.converters import asbool
+
+from civicboom.lib.xml_utils import readXMLStringtoDic
+
+log = logging.getLogger(__name__)
+
+filter_operation_address = "http://ws.cdyne.com/ProfanityWS/Profanity.asmx/SimpleProfanityFilter"
+
+
+def profanity_check(content):
+    """
+    Try to check if there is profanity
+    if the server is not available return None and log error
+    
+    SimpleProfanityFilter - Basic profanity filter that will replace profanity with "[Explicit]"
+        Input:
+        Parameter Name: Text: String of text to have filtered.
+        
+        Output:
+        FoundProfanity: Returns Boolean
+        ProfanityCount: Returns Integer
+        CleanText     : Returns the clean text. profanitys replaced with [Explicit]
+    """
+    
+    try                : content = content.encode('utf-8')
+    except UnicodeError: pass
+
+    data    = urllib.urlencode({'Text':content})
+    request = urllib2.Request(filter_operation_address, data)
+    def do_request(request):
+        try:
+            response = urllib2.urlopen(request)
+        except (urllib2.HTTPError, urllib2.URLError), e:
+            log.error("The CDYNE server couldn't fulfill the request: Error code: %s", e)
+            return None
+        return response
+        
+    response = do_request(request)
+    if not response: response = do_request(request)
+    if not response: return None
+
+    profanity_response = readXMLStringtoDic(response.read())
+    profanity_response = profanity_response['FilterReturn']
+    profanity_response['FoundProfanity'] =              asbool(profanity_response['FoundProfanity'])
+    profanity_response['ProfanityCount'] =                 int(profanity_response['ProfanityCount'])
+    #profanity_response['CleanText']      = urllib.unquote_plus(profanity_response['CleanText']     )
+
+    if profanity_response['FoundProfanity']:
+        return profanity_response
+    return None
