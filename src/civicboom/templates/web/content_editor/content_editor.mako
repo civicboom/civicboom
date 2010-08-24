@@ -43,6 +43,8 @@
 
     <div class="content_form">
         <form action="" method="post" enctype="multipart/form-data" name="content">
+			<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
+
             ${base_content()}
             ${media()}
             ${content_type()}

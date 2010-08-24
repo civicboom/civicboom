@@ -1,6 +1,9 @@
 from civicboom.tests import *
 
 class TestAccountController(TestController):
+    def setUp(self):
+        pass # don't log in
+
     def test_https_required(self):
         response = self.app.get(
             url(controller='account', action='signin'),

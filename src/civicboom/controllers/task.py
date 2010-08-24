@@ -7,10 +7,7 @@ See the companion script "tasks.py" in the project root for details on how to
 setup a cron job to run these tasks
 """
 
-from pylons                  import request, url, config
-from pylons.controllers.util import abort, redirect
-
-from civicboom.lib.base import BaseController, render
+from civicboom.lib.base import *
 
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key

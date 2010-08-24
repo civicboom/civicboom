@@ -1,13 +1,11 @@
-from civicboom.lib.base import BaseController, c, render, request, url, app_globals, _, flash_message, config, abort, action_redirector, redirect
+from civicboom.lib.base import *
 
 import formencode
 
 # Database Objects
 from civicboom.model.member            import User, UserLogin
-from civicboom.model.meta              import Session
 
 # Database Actions
-from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.database.actions    import follow, accept_assignment
 
 # Communication & Messages
@@ -22,11 +20,11 @@ from formencode import validators, htmlfill
 
 from civicboom.lib.misc import random_string
 
-import logging
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 new_user_prefix = "newuser"
+
 
 class RegisterController(BaseController):
     """
