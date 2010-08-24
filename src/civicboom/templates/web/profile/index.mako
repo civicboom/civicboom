@@ -1,7 +1,9 @@
 <%inherit file="/web/layout_3cols.mako"/>
-<%namespace name="loc"             file="/web/design09/includes/location.mako"/>
-<%namespace name="member_includes" file="/web/design09/includes/member.mako"  />
-<%namespace name="sl"              file="/web/design09/includes/secure_link.mako"  />
+
+<%namespace name="loc"              file="/web/design09/includes/location.mako"     />
+<%namespace name="member_includes"  file="/web/design09/includes/member.mako"       />
+<%namespace name="content_includes" file="/web/design09/includes/content_list.mako" />
+<%namespace name="sl"               file="/web/design09/includes/secure_link.mako"  />
 
 
 ##------------------------------------------------------------------------------
@@ -98,16 +100,25 @@ from civicboom.model.meta import Session
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	<h2>${_("Articles I'm Working On")}</h2>
 
-	% if c.viewing_user.content:
-		% for content in c.viewing_user.content:
-			<div class="content_summary">
-    			<a href="${h.url(controller='content', action="view", id=content.id)}">${content.title}:${content.__type__}</a>
-			</div>
-		% endfor
-	% else:
-		<span class="message_empty">No Drafts</span>
-	% endif
 
+<%doc>
+    % for content in c.viewing_user.content:
+        <div class="content_summary">
+            <a href="${h.url(controller='content', action="view", id=content.id)}">${content.title}:${content.__type__}</a>
+        </div>
+</%doc>
+
+    % for content_type in ["draft", "article", "assignment", "syndicate"]:
+        <h2>${content_type}</h2>
+        <%
+            content_list = [content for content in c.viewing_user.content if content.__type__==content_type]
+        %>
+        % if len(content_list)>0:
+            ${content_includes.content_list(content_list, actions=True)}
+        % else:
+            <span class="message_empty">No ${content_type}</span>
+        % endif
+    % endfor
+        
 </%def>

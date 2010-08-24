@@ -120,8 +120,32 @@ class Content(Base):
         If there is media attached return the first image?
         if no media, check content for youtube video and get thumbnail from that? (maybe process this before content commit?)
         else return the default image url: (could vary depending on type?)
+        
+        This should be saved in the DB as thumbnail_url as a shortcut!
         """
-        return ""
+        for media in self.attachments:
+            thumbnail_url = media.thumbnail_url
+            if thumbnail_url and thumbnail_url!="":
+                return thumbnail_url
+        
+        return "/images/default_thumbnail_%s.png" % self.__type__
+
+    @property
+    def num_responses(self):
+        """
+        TODO
+        To be REMOVED! and replaced with a derived field in DB with trigger
+        """
+        return len(self.responses)
+    
+    @property
+    def num_comments(self):
+        """
+        TODO
+        To be REMOVED! and replaced with a derived field in DB with trigger
+        """
+        return len(self.comments)
+
 
 
 class DraftContent(Content):
@@ -216,6 +240,14 @@ class AssignmentContent(UserVisibleContent):
             invite_member(members)
         Session.commit()
         
+    @property
+    def num_accepted(self):
+        """
+        TODO
+        To be replaced with derived field with DB trigger or update_assignment call
+        accepted_by is set after the db is setup in civicboom_init
+        """
+        return len(accepted_by)
 
 
 class MemberAssignment(Base):

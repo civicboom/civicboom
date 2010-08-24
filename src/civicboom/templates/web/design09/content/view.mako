@@ -1,6 +1,8 @@
 <%inherit file="/web/layout_3cols.mako"/>
-<%namespace name="loc"             file="../includes/location.mako"/>
-<%namespace name="member_includes" file="../includes/member.mako"  />
+<%namespace name="loc"              file="../includes/location.mako"/>
+<%namespace name="member_includes"  file="../includes/member.mako"  />
+<%namespace name="content_includes" file="../includes/content_list.mako" />
+
 
 ##------------------------------------------------------------------------------
 ## Title - Override
@@ -80,39 +82,33 @@ from civicboom.model.meta import Session
     % endif
   
     % if c.content.parent:
-    <p>parent content</p>
-    <p><a href="${h.url(controller="content", action="view", id=c.content.parent.id)}">${c.content.parent.title}</a></p>
+    <h2>Parent content</h2>
+    ${content_includes.content_list([c.content.parent], mode="mini", class_="content_list_mini")}
+    ##<p><a href="${h.url(controller="content", action="view", id=c.content.parent.id)}">${c.content.parent.title}</a></p>
     % endif
     
-    <p>sub content/reponses</p>
-    <ul>
-      % for response in c.content.responses:
-          <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a>${response.__type__}</li>
-      % endfor
-    </ul>
+    <h2>Reponses</h2>
+    
+    ${content_includes.content_list(c.content.responses, mode="mini", class_="content_list_mini")}
+    
     
     
     % if hasattr(c.content, "assigned_to"):
-        <p>accepted by reporters</p>
-        <ul>
-        % for a in [a for a in c.content.assigned_to if a.status=="accepted"]:
-            <li>${a.member.username}</li>
-        % endfor
-        </ul>
-        
-        <p>awaiting reply</p>
-        <ul>
-        % for a in [a for a in c.content.assigned_to if a.status=="pending"]:
-            <li>${a.member.username}</li>
-        % endfor
-        </ul>
+    <h2>Assignment</h2>
+        <%
+            accepted  = [a.member for a in c.content.assigned_to if a.status=="accepted" ]
+            invited   = [a.member for a in c.content.assigned_to if a.status=="pending"  ]
+            withdrawn = [a.member for a in c.content.assigned_to if a.status=="withdrawn"]
+        %>
     
-        <p>withdrawn reporters</p>
-        <ul>
-        % for a in [a for a in c.content.assigned_to if a.status=="withdrawn"]:
-            <li>${a.member.username}</li>
-        % endfor
-        </ul>
+        <h3>accepted by: ${len(accepted)}</h3>
+        ${member_includes.member_list(accepted , show_avatar=True, class_="avatar_thumbnail_list")}
+        
+        <h3>awaiting reply: ${len(invited)}</h3>
+        ${member_includes.member_list(invited  , show_avatar=True, class_="avatar_thumbnail_list")}
+        
+        <h3>withdrawn members: ${len(withdrawn)}</h3>
+        ${member_includes.member_list(withdrawn, show_avatar=True, class_="avatar_thumbnail_list")}
     % endif
     
   

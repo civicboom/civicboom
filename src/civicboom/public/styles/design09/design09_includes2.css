@@ -1,3 +1,10 @@
 
 .avatar_thumbnail_list li  {display: inline;}
 .avatar_thumbnail_list img {max-width: 1.5em;}
+
+
+.content_list      .content_creator_thumbnail img {width:3em;}
+
+.content_list_mini                                {font-size: 78%;}
+.content_list_mini .content_thumbnail         img {width:4em;}
+.content_list_mini .content_creator_thumbnail img {width:1.5em;}
