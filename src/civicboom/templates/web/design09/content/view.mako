@@ -82,22 +82,15 @@ from civicboom.model.meta import Session
     % endif
   
     % if c.content.parent:
-    <p>parent content</p>
-    <p><a href="${h.url(controller="content", action="view", id=c.content.parent.id)}">${c.content.parent.title}</a></p>
+    <h2>Parent content</h2>
+    ${content_includes.content_list([c.content.parent], mode="mini", class_="content_list_mini")}
+    ##<p><a href="${h.url(controller="content", action="view", id=c.content.parent.id)}">${c.content.parent.title}</a></p>
     % endif
     
-    <h3>sub content/reponses</h3>
+    <h2>Reponses</h2>
     
     ${content_includes.content_list(c.content.responses, mode="mini", class_="content_list_mini")}
     
-    <%doc>
-        
-    <ul>
-      % for response in c.content.responses:
-          <li><a href="${h.url(controller="content", action="view", id=response.id)}">${response.title}</a>${response.__type__}</li>
-      % endfor
-    </ul>
-    </%doc>
     
     
     % if hasattr(c.content, "assigned_to"):
