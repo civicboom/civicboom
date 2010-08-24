@@ -30,6 +30,8 @@ class MediaThread(Thread):
                 log.info('Starting task: %s' % (task_type, ))
                 if task_type == "process_media":
                     process_media(**task)
+                if task_type == "die":
+                    return
             except Exception, e:
                 log.exception('Error in media processor thread:')
             media_queue.task_done()
@@ -40,6 +42,12 @@ def start_worker():
     worker = MediaThread()
     worker.daemon = True
     worker.start()
+
+def stop_worker():
+    add_job({"task": "die"})
+    global worker
+    worker.join()
+    worker = None
 
 def add_job(job):
     if not worker:

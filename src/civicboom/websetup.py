@@ -11,6 +11,7 @@ from civicboom.model import ArticleContent, CommentContent, DraftContent, Assign
 from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
 from civicboom.lib.services import warehouse as wh
+from civicboom.lib import worker
 
 import logging
 import datetime
@@ -728,12 +729,7 @@ CREATE TRIGGER update_content
         ca.location   = "SRID=4326;POINT(-0.1278328 51.5072648)"
 
         m = Media()
-        m.name        = u"hello.jpg"
-        m.type        = "image"
-        m.subtype     = "jpeg"
-        m.hash        = "00000000000000000000000000000000"
-        m.caption     = u"A photo of people saying hello"
-        m.credit      = u"Shish"
+        m.load_from_file("civicboom/public/images/star.png", "star.jpg", "A photo of people saying hello", "Shish")
         ca.attachments.append(m)
 
         cc1 = CommentContent()
@@ -777,12 +773,7 @@ CREATE TRIGGER update_content
         ca.responses.append(cc5)
 
         m = Media()
-        m.name        = u"hello2.3gp"
-        m.type        = "video"
-        m.subtype     = "3gpp"
-        m.hash        = "00000000000000000000000000000000"
-        m.caption     = u"A video of people saying hi"
-        m.credit      = u"Shish"
+        m.load_from_file("civicboom/public/images/rss_large.png", "rss_large.jpg", "An RSS Icon", "Shish")
         cc2.attachments.append(m)
 
         dc = DraftContent()
@@ -838,5 +829,10 @@ CREATE TRIGGER update_content
     ###################################################################
     log.info("Successfully set up tables")
 
+    log.info("Stopping worker")
+    worker.stop_worker()
+    log.info("The End")
+
+    # FIXME: is this necessary?
     # Create the tables if they don't already exist
     meta.metadata.create_all(bind=meta.engine)
