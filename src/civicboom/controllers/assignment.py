@@ -43,4 +43,4 @@ class AssignmentController(BaseController):
             return _("_assignment interest withdrawn")
         #elif isinstance(status,str):
         #return status
-        return 'Error withdrawing _assignment interest'
+        return _('Error withdrawing _assignment interest')
