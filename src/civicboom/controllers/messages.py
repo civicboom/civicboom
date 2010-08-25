@@ -52,7 +52,7 @@ class MessagesController(BaseController):
             target = get_user(request.POST["target"])
             if not target:
                 # FIXME: form validator to refresh with the same values?
-                return "Can't find user '%s'" % request.POST["target"]
+                return action_error(_("Can't find user '%s'") % request.POST["target"])
             m = Message()
             m.source_id = c.logged_in_user.id # FIXME: or from any group they are admin of?
             m.target_id = target.id
