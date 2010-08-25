@@ -66,11 +66,21 @@
                 <a href="${h.url(controller='content', action='view', id=c.content.id)}">View Content</a>
                 % endif
                 
-                
             </div>
         
         </form>
     </div>
+    
+    % if c.content.__type__ == "draft":
+        <script type="text/javascript">
+            function autoSaveDraft() {
+                YAHOO.log("autosave placeholder");
+                // Build POST with just content
+                // ${url(controller='content', action='autosave', id=c.content_media_upload_key)}
+            }
+            var autoSaveDraftTimer = setInterval('autoSaveDraft()', 60000);
+        </script>
+    % endif
     
 </%def>
 
