@@ -16,15 +16,15 @@ import civicboom.lib.services.warehouse as wh
 import logging
 log = logging.getLogger(__name__)
 
-worker = None
-media_queue = Queue()
+_worker = None
+_media_queue = Queue()
 
 class MediaThread(Thread):
     def run(self):
         log.info('Media processing thread is running.')
 
         while True:
-            task = media_queue.get()
+            task = _media_queue.get()
             try:
                 task_type = task.pop("task")
                 log.info('Starting task: %s' % (task_type, ))
@@ -34,25 +34,29 @@ class MediaThread(Thread):
                     return
             except Exception, e:
                 log.exception('Error in media processor thread:')
-            media_queue.task_done()
+            _media_queue.task_done()
             sleep(3)
 
 def start_worker():
-    global worker
-    worker = MediaThread()
-    worker.daemon = True
-    worker.start()
+    log.info('Starting worker thread.')
+    global _worker
+    _worker = MediaThread()
+    _worker.daemon = True
+    _worker.start()
 
 def stop_worker():
-    add_job({"task": "die"})
-    global worker
-    worker.join()
-    worker = None
+    log.info('Stopping worker thread.')
+    global _worker
+    if _worker:
+        add_job({"task": "die"})
+        _worker.join()
+        _worker = None
 
 def add_job(job):
-    if not worker:
+    log.info('Adding job to worker queue: %s' % job["task"])
+    if not _worker:
         start_worker()
-    media_queue.put(job)
+    _media_queue.put(job)
 
 
 def _ffmpeg(args):
