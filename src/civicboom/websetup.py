@@ -829,10 +829,9 @@ CREATE TRIGGER update_content
     ###################################################################
     log.info("Successfully set up tables")
 
-    log.info("Stopping worker")
     worker.stop_worker()
-    log.info("The End")
 
     # FIXME: is this necessary?
     # Create the tables if they don't already exist
     meta.metadata.create_all(bind=meta.engine)
+    log.info("Setup complete")
