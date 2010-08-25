@@ -6,12 +6,14 @@ from civicboom.model.meta import Base
 import civicboom.lib.services.warehouse as wh
 import civicboom.lib.worker as worker
 
-from pylons import config # used in generation of URL's for media
+from pylons import config, app_globals # used in generation of URL's for media
 
 import magic
 import logging
 
 log = logging.getLogger(__name__)
+
+memcache_expire = 10*60 # 10 * 60 Seconds = 10 Minuets
 
 
 class Media(Base):
@@ -47,11 +49,13 @@ class Media(Base):
         self.credit             = credit  if credit  else u""
         self.type, self.subtype = magic.from_file(my_file, mime=True).split("/")
 
-        def copy_config():
-            d = {}
-            for key in config.keys():
-                d[key] = config[key]
-            return d
+        #def copy_config():
+        #    d = {}
+        #    for key in config.keys():
+        #        d[key] = config[key]
+        #    return d
+        
+        app_globals.memcache.set(str("media_processing_"+self.hash), "temp", time=memcache_expire) # Flag memcache to indicate this media is being processed
 
         wh.copy_to_warehouse("./civicboom/public/images/media_placeholder.gif", "media-thumbnail", self.hash, placeholder=True)
 

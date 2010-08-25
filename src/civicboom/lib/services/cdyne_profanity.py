@@ -52,6 +52,6 @@ def profanity_check(content):
     profanity_response['ProfanityCount'] =                 int(profanity_response['ProfanityCount'])
     #profanity_response['CleanText']      = urllib.unquote_plus(profanity_response['CleanText']     )
 
-    if profanity_response['FoundProfanity']:
-        return profanity_response
-    return None
+    #if profanity_response['FoundProfanity']:
+    return profanity_response
+    #return None

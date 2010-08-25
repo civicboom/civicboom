@@ -255,7 +255,9 @@ def profanity_filter(content, delay_commit=False):
     # maybe we could profanity check drafts and tell users that the content has raised an issue before they publish it?
     
     profanity_response = profanity_check(content.content)
-    if profanity_response:
+    if not profanity_response:
+        content.flag(comment=u"automatic profanity check failed, please manually inspect")
+    elif profanity_response['FoundProfanity']:
         content.content = profanity_response['CleanText']
         content.flag(comment=u"found %s" % profanity_response['ProfanityCount'])
         #send_email(config['email.moderator'],

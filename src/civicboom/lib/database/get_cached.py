@@ -1,5 +1,6 @@
 from civicboom.model.member  import User
 from civicboom.model.content import Content, Tag, License
+from civicboom.model.media   import Media
 from civicboom.model.meta    import Session
 
 
@@ -66,6 +67,12 @@ def get_tag(tag):
     """
     try   : return Session.query(Tag).filter_by(name=tag).one()
     except: return Tag(tag)
+
+
+def get_media_nocache(media_id):
+    try   : return Session.query(Media).filter_by(id=media_id).one()
+    except: return None
+
 
 #-------------------------------------------------------------------------------
 # Database List Gets - Cached - Get data lists from database that is cached

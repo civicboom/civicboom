@@ -19,6 +19,7 @@ log = logging.getLogger(__name__)
 worker = None
 media_queue = Queue()
 
+
 class MediaThread(Thread):
     def run(self):
         log.info('Media processing thread is running.')
@@ -123,5 +124,10 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
 
     if delete_tmp:
         os.unlink(tmp_file)
+
+    from pylons import config
+    import memcache
+    m = memcache.Client([config['service.memcache.server']], debug=0)
+    m.delete(str("media_processing_"+file_hash))
 
 

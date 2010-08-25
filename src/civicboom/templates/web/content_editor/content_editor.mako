@@ -176,7 +176,39 @@
             <li>
                 <div class="file_type_overlay icon_${media.type}"></div>
                 <a href="${media.original_url}">
-                    <img class="media_preview" src="${media.thumbnail_url}" alt="${media.caption}"/>
+                    <img id="media_thumbnail_${media.id}" class="media_preview" src="${media.thumbnail_url}" alt="${media.caption}"/>
+                    
+                    ## If media is still processing - have javascript poll to see if data is complete
+                    % if app_globals.memcache.get(str("media_processing_"+media.hash)):
+                    <script type="text/javascript">
+                        function processingStatus${media.id}(data) {
+                            YAHOO.log("Status got = "+data);
+                            if (data!="processing") {
+                                clearInterval(media_thumbnail_timer_${media.id});
+                                YAHOO.log("processing complete reload the image!!!");
+                            }
+                        }
+                        var media_thumbnail_timer_${media.id} = setInterval('getHTML("${url(controller='content', action='get_media_processing_staus', id=media.hash)}", processingStatus${media.id})', 10000);
+                        
+                        <%doc>
+                        /**
+                        function isMediaThumbnailPending${media.id}() {
+                            return document.getElementById("media_thumbnail_${media.id}").src == "";
+                        }
+                        function setMediaThumbnail${media.id}(data) {
+                            //YAHOO.log("Thumbnail: " + data);
+                            document.getElementById("media_thumbnail_${media.id}").src = data;
+                            if (!isMediaThumbnailPending${media.id}()) {
+                                clearInterval(media_thumbnail_timer_${media.id});
+                            }
+                        }
+                        if (isMediaThumbnailPending${media.id}()) {
+                            var media_thumbnail_timer_${media.id} = setInterval("getHTML(\"${url(controller='content', action='get_media_thumbnail', id=media.id)}\", setMediaThumbnail${media.id})",10000);
+                        }
+                        */
+                        </%doc>
+                    </script>
+                    % endif
                 </a>
                 
                 <div class="media_fields">

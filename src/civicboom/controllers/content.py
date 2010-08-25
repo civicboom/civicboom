@@ -151,22 +151,30 @@ class ContentController(BaseController):
         With javascript/flash additional media can be uploaded individually
         There is no need to enforce session or cookie for identification because the media upload key should be provided in the URL to identify the user/content
         """
-        if request.environ['REQUEST_METHOD']!='POST': return 
+        
+        if request.environ['REQUEST_METHOD']!='POST': return
         id = app_globals.memcache.get(str(id))
         if not id: return
         
         form = request.POST
         if 'Filedata' in form and form['Filedata'] != "":
-            form_file     = form["Filedata"]
+            form_file = form["Filedata"]
             media = Media()
             media.load_from_file(tmp_file=form_file, original_name=form_file.filename)
-            media.sync()
             #media.content_id = id # This does not work because the database complains about orphan records :(, it feels unnessisary to 
             get_content(id).attachments.append(media)
-            Session.add(media)
+            #Session.add(media) # unneeded with attachments.append(media)
             Session.commit()
             update_content(id)
             #user_log.info("media appended to content #%d" % (id, )) # Update user log # err no user identifyable here
+
+    def get_media_processing_staus(self,id):
+        """
+        """
+        print "controler looking for key %s" % id
+        if app_globals.memcache.get(str("media_processing_"+id)):
+            return "processing"
+        return ""
 
 
     #-----------------------------------------------------------------------------
