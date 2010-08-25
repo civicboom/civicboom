@@ -45,9 +45,26 @@ class MessagesController(BaseController):
 
     @authorize(is_valid_user)
     @authenticate_form
+    @action_redirector()
     def send(self):
-        # FIXME implement this, see feature #22
-        pass
+        try:
+            target = get_user(request.POST["target"])
+            if not target:
+                # FIXME: form validator to refresh with the same values?
+                return "Can't find user '%s'" % request.POST["target"]
+            m = Message()
+            m.source_id = c.logged_in_user.id # FIXME: or from any group they are admin of?
+            m.target_id = target.id
+            m.subject = request.POST["subject"]
+            m.content = request.POST["content"]
+            # FIXME: send a notification too?
+            user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
+            Session.add(m)
+            Session.commit()
+            return "Message sent"
+        except Exception, e:
+            log.exception("Error sending message:")
+            return "Error sending message"
 
     @authorize(is_valid_user)
     @authenticate_form

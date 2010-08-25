@@ -17,9 +17,24 @@ class TestMessagesController(TestController):
         response = self.app.post(
             url(controller='messages', action='send'),
             params={
-                '_authentication_token': self.auth_token
+                '_authentication_token': self.auth_token,
+                'target': 'unittest',
+                'subject': 'arrr, a subject',
+                'content': 'I am content',
             }
         )
+
+    def test_send_bad_target(self):
+        response = self.app.post(
+            url(controller='messages', action='send'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'MrNotExists',
+                'subject': 'arrr, a subject',
+                'content': 'I am content',
+            }
+        )
+        assert "Can't find user" in response
 
     # FIXME: we need to create some more test data -- since tests are run in random
     # order, these can sometimes delete messages and then other tests look for them
