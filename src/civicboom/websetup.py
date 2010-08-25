@@ -409,16 +409,14 @@ CREATE TRIGGER update_content
             row = list(leg_conn.execute("SELECT * FROM categories WHERE id=%s", c_id))[0]
             return get_tag(row["Name"])
 
-        # FIXME: make this work, see bug #53
         def get_location(row):
             if "geolocation_latitude" in row and "geolocation_longitude" in row:
                 return "SRID=4326;POINT(%d %d)" % (row["geolocation_longitude"], row["geolocation_latitude"])
 
-            #  `CityId` int(10) unsigned default NULL,       # standardish
-            #  `CountyId` int(10) unsigned default NULL,
-            #  `StateId` int(10) unsigned default NULL,
-            #  `CountryId` int(10) unsigned default NULL,
-            #  `ZipId` int(10) unsigned default NULL,
+            if "CityId" in row:
+                row = list(leg_conn.execute("SELECT latitude,longitude FROM cities WHERE id=%s", row["CityId"]))[0]
+                return "SRID=4326;POINT(%d %d)" % (row["longitude"], row["latitude"])
+                # see also CountyId, StateId, CountryId, ZipId -- are these needed when we have city?
 
             if "Address" in row and "Address2" in row:
                 addr = ", ".join([a for a in [row["Address"], row["Address2"]] if a])
