@@ -12,6 +12,7 @@ from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
 from civicboom.lib.services import warehouse as wh
 from civicboom.lib.database.get_cached import get_tag
+from civicboom.lib.gis import get_location_by_name
 from civicboom.lib import worker
 
 import logging
@@ -412,13 +413,18 @@ CREATE TRIGGER update_content
         def get_location(row):
             if "geolocation_latitude" in row and "geolocation_longitude" in row:
                 return "SRID=4326;POINT(%d %d)" % (row["geolocation_longitude"], row["geolocation_latitude"])
+
             #  `CityId` int(10) unsigned default NULL,       # standardish
             #  `CountyId` int(10) unsigned default NULL,
             #  `StateId` int(10) unsigned default NULL,
             #  `CountryId` int(10) unsigned default NULL,
             #  `ZipId` int(10) unsigned default NULL,
-            #  `Address` varchar(255) default NULL,          # reporters
-            #  `Address2` varchar(255) default NULL,
+
+            if "Address" in row and "Address2" in row:
+                addr = ", ".join([a for a in [row["Address"], row["Address2"]] if a])
+                lonlat = get_location_by_name(addr)
+                return "SRID=4326;POINT(%d %d)" % lonlat
+
             return None
 
         def get_media(row, media_type):
