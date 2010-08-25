@@ -63,7 +63,7 @@ class SettingsController(BaseController):
             else:
                 c.viewing_user.config[key] = request.POST[key]
 
-        return _("Settings saved")#+", ".join(request.POST.keys())
+        return action_ok(_("Settings saved"))#+", ".join(request.POST.keys())
 
     @authorize(is_valid_user)
     def messages(self, id=None):
@@ -89,7 +89,7 @@ class SettingsController(BaseController):
             else:
                 c.viewing_user.config[route_name] = setting
 
-        return _("Settings saved")
+        return action_ok(_("Settings saved"))
 
     @authorize(is_valid_user)
     def location(self, id=None):
@@ -114,7 +114,7 @@ class SettingsController(BaseController):
         c.viewing_user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
         Session.commit()
 
-        return _("Settings saved")
+        return action_ok(_("Settings saved"))
         #return "Location saved: %s (%s)" % (
         #    request.params.get("location", "[pos]"),
          #   request.params.get("location_name", "[name]"),

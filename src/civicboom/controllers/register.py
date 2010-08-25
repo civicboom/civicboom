@@ -123,7 +123,7 @@ class RegisterController(BaseController):
         try:
             form = RegisterSchemaEmailUsername().to_python(dict(request.params))
         except formencode.Invalid, error:
-            return unicode(error)
+            return action_error(unicode(error))
         
         # Create new user
         u = User()
@@ -156,7 +156,7 @@ class RegisterController(BaseController):
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
         
-        return _("Thank you. Please check your email to complete the registration process")
+        return action_ok(_("Thank you. Please check your email to complete the registration process"))
         
         
 #-------------------------------------------------------------------------------

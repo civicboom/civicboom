@@ -61,10 +61,10 @@ class MessagesController(BaseController):
             user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
             Session.add(m)
             Session.commit()
-            return "Message sent"
+            return action_ok(_("Message sent"))
         except Exception, e:
             log.exception("Error sending message:")
-            return "Error sending message"
+            return action_error(_("Error sending message"))
 
     @authorize(is_valid_user)
     @authenticate_form
@@ -84,9 +84,9 @@ class MessagesController(BaseController):
                 user_log.debug("Deleting notification")
                 c.viewing_user.messages_notification.remove(msg)
                 Session.commit() # commit must come before the redirect is generated?
-            return _("Message deleted")
+            return action_ok(_("Message deleted"))
         else:
             user_log.warning("User tried to delete somebody else's message") # FIXME: details
-            return _("You are not the target of this message")
+            return action_error(_("You are not the target of this message"))
             # FIXME: flash_message should be red? abort(403, "You are not the target of this message")
 
