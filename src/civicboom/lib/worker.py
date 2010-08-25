@@ -22,8 +22,9 @@ _media_queue = Queue()
 class MediaThread(Thread):
     def run(self):
         log.info('Media processing thread is running.')
+        live = True
 
-        while True:
+        while live:
             task = _media_queue.get()
             try:
                 task_type = task.pop("task")
@@ -31,7 +32,7 @@ class MediaThread(Thread):
                 if task_type == "process_media":
                     process_media(**task)
                 if task_type == "die":
-                    return
+                    live = False
             except Exception, e:
                 log.exception('Error in media processor thread:')
             _media_queue.task_done()
