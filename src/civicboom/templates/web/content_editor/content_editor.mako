@@ -50,6 +50,7 @@
             ${base_content()}
             ${media()}
             ${content_type()}
+            ${location()}
             ${license()}
             
             <div style="text-align: right;">
@@ -71,9 +72,6 @@
         </form>
     </div>
     
-    % if c.content.id:
-      ${YUI.file_uploader()}
-    % endif
 </%def>
 
 
@@ -178,37 +176,25 @@
                 <a href="${media.original_url}">
                     <img id="media_thumbnail_${media.id}" class="media_preview" src="${media.thumbnail_url}" alt="${media.caption}"/>
                     
-                    ## If media is still processing - have javascript poll to see if data is complete
                     % if app_globals.memcache.get(str("media_processing_"+media.hash)):
-                    <script type="text/javascript">
-                        function processingStatus${media.id}(data) {
-                            YAHOO.log("Status got = "+data);
-                            if (data!="processing") {
-                                clearInterval(media_thumbnail_timer_${media.id});
-                                YAHOO.log("processing complete reload the image!!!");
-                            }
-                        }
-                        var media_thumbnail_timer_${media.id} = setInterval('getHTML("${url(controller='content', action='get_media_processing_staus', id=media.hash)}", processingStatus${media.id})', 10000);
+                        <!-- Media still undergoing proceccesing -->
+                        ## Clients without javascript could have the current status hard in the HTML text
+                        ## TODO
                         
-                        <%doc>
-                        /**
-                        function isMediaThumbnailPending${media.id}() {
-                            return document.getElementById("media_thumbnail_${media.id}").src == "";
-                        }
-                        function setMediaThumbnail${media.id}(data) {
-                            //YAHOO.log("Thumbnail: " + data);
-                            document.getElementById("media_thumbnail_${media.id}").src = data;
-                            if (!isMediaThumbnailPending${media.id}()) {
-                                clearInterval(media_thumbnail_timer_${media.id});
+                        ## Clients with    javascript can have live updates from "get_media_processing_staus"
+                        <script type="text/javascript">
+                            function processingStatus${media.id}(data) {
+                                YAHOO.log("Status got = "+data);
+                                if (data!="processing") {
+                                    clearInterval(media_thumbnail_timer_${media.id});
+                                    YAHOO.log("processing complete reload the image!!!");
+                                }
                             }
-                        }
-                        if (isMediaThumbnailPending${media.id}()) {
-                            var media_thumbnail_timer_${media.id} = setInterval("getHTML(\"${url(controller='content', action='get_media_thumbnail', id=media.id)}\", setMediaThumbnail${media.id})",10000);
-                        }
-                        */
-                        </%doc>
-                    </script>
+                            var media_thumbnail_timer_${media.id} = setInterval('getHTML("${url(controller='content', action='get_media_processing_staus', id=media.hash)}", processingStatus${media.id})', 10000);
+                        </script>
+                        <!-- End media still undergoing proceccesing -->
                     % endif
+                    
                 </a>
                 
                 <div class="media_fields">
@@ -221,6 +207,15 @@
             <!-- End list existing media -->
 
             <!-- Add media -->
+            
+            <!-- Add media javascript-->
+            % if c.content.id:
+            <li>
+                ${YUI.file_uploader()}
+            </li>
+            % endif
+
+            <!-- Add media non javascript -->
             <li>
                 <div class="media_preview">
                     <div class="media_preview_none">${_("Select a file to upload")}</div>
@@ -328,31 +323,42 @@
 
 
 ##------------------------------------------------------------------------------
+## Location
+##------------------------------------------------------------------------------
+<%def name="location()">
+    <!-- Licence -->
+    <fieldset><legend><span onclick="toggle(this);">${_("Location (optional)")}</span></legend>
+        <div class="hideable">
+            ${instruction("why give us this...")}
+            stuff!!
+      </div>
+    </fieldset>
+</%def>
+
+
+##------------------------------------------------------------------------------
 ## License
 ##------------------------------------------------------------------------------
 <%def name="license()">
-<%
-from civicboom.lib.database.get_cached import get_licenses
-%>
+    <% from civicboom.lib.database.get_cached import get_licenses %>
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
-      <div class="hideable">
-        ${instruction("What is licensing explanation")}
-        
-        % for license in get_licenses():
-          <%
-            license_selected = ''
-            if c.content.license and license.id == c.content.license_id:
-                license_selected = h.literal('checked="checked"')
-          %>
-          <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}" ${license_selected} />
-          <label for="form_licence_${license.id}">
-            <a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a>
-          </label>
-          ##${popup(license.description)}
-        % endfor
-        
-      </div>
+        <div class="hideable">
+            ${instruction("What is licensing explanation")}
+            
+            % for license in get_licenses():
+                <%
+                  license_selected = ''
+                  if c.content.license and license.id == c.content.license_id:
+                      license_selected = h.literal('checked="checked"')
+                %>
+                <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}" ${license_selected} />
+                <label for="form_licence_${license.id}">
+                    <a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a>
+                </label>
+                ##${popup(license.description)}
+            % endfor          
+        </div>
     </fieldset>
 </%def>
 

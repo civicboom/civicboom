@@ -2,10 +2,11 @@
 Content Controller
 
 For managing content:
--creating/editing
--attaching media
--deleting
--flagging
+ - creating/editing
+ - attaching media
+ - deleting
+ - flagging
+ - AJAX calls to get media processing status
 """
 
 # Base controller imports
@@ -168,10 +169,15 @@ class ContentController(BaseController):
             update_content(id)
             #user_log.info("media appended to content #%d" % (id, )) # Update user log # err no user identifyable here
 
+
+    #-----------------------------------------------------------------------------
+    # Media Processing Status
+    #-----------------------------------------------------------------------------
     def get_media_processing_staus(self,id):
         """
+        Javascript can poll this method to get progress updates on the media processing
+        Currently only return a flag to state if processing it taking place, but could be improved to return aditional info
         """
-        print "controler looking for key %s" % id
         if app_globals.memcache.get(str("media_processing_"+id)):
             return "processing"
         return ""

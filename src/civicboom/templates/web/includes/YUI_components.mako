@@ -1,3 +1,10 @@
+<%doc>
+Each of these YUI components require aditional Javascript and CSS includes
+
+TODO: these should be documented for each component
+      in an ideal world it would be nice if these imports could be done automatically, but this is not possible because we have no way of keeping track which ones have been added in previous templates without implemeanting a crazy dependency system
+</%doc>
+
 
 ##------------------------------------------------------------------------------
 ## YUI Rich Text Component
