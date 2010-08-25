@@ -78,7 +78,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
         size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
-        #log.info('Opening image.') # FIXME: image.open() blocks while running setup-app from nosetests, but not from paster. wtf.
+        #log.info('Opening image.') # FIXME: image.open() blocks while running setup-app from nosetests, but not from paster. wtf. See bug #45
         im = Image.open(tmp_file)
         #log.info('Checking mode.')
         if im.mode != "RGB":

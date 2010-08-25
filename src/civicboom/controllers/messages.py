@@ -25,7 +25,7 @@ class MessagesController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def send(self):
-        # FIXME implement this
+        # FIXME implement this, see feature #22
         pass
 
     @authorize(is_valid_user)

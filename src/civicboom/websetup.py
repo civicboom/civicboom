@@ -365,7 +365,7 @@ CREATE TRIGGER update_content
             }
             return m[old_status]
 
-        # FIXME: put this in helpers, and make it work
+        # FIXME: see bug #52, put this in helpers, and make it work
         # find a tag if it exisits already or create a new one
         def get_tag(name):
             return uncategorised
@@ -412,7 +412,7 @@ CREATE TRIGGER update_content
             row = list(leg_conn.execute("SELECT * FROM categories WHERE id=%s", c_id))[0]
             return get_tag(row["Name"])
 
-        # FIXME: make this work
+        # FIXME: make this work, see bug #53
         def get_location(row):
             #  `CityId` int(10) unsigned default NULL,       # standardish
             #  `CountyId` int(10) unsigned default NULL,
@@ -729,7 +729,7 @@ CREATE TRIGGER update_content
         ca.location   = "SRID=4326;POINT(-0.1278328 51.5072648)"
 
         m = Media()
-        # FIXME: Image.open() locks up under nosetests
+        # FIXME: Image.open() locks up under nosetests, see Bug #45
         #m.load_from_file("civicboom/public/images/star.png", "star.jpg", "A photo of people saying hello", "Shish")
         m.name        = u"hello.jpg"
         m.type        = "image"
@@ -780,7 +780,7 @@ CREATE TRIGGER update_content
         ca.responses.append(cc5)
 
         m = Media()
-        # FIXME: Image.open() locks up under nosetests
+        # FIXME: Image.open() locks up under nosetests, see Bug #45
         #m.load_from_file("civicboom/public/images/rss_large.png", "rss_large.jpg", "An RSS Icon", "Shish")
         m.name        = u"hello2.3gp"
         m.type        = "video"

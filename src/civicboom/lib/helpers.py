@@ -80,5 +80,5 @@ def url_from_widget(*args, **kargs):
     return url(*args,**kargs)
 
 def truncate(text, length=100, indicator='...', whole_word=True):
-    # FIXME: stub
+    # FIXME: stub, see bug #49
     return text[0:length]

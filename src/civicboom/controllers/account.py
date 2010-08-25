@@ -1,5 +1,5 @@
 from civicboom.lib.base import *
-from pylons.i18n.translation  import _ # FIXME: not included by "*" above?
+from pylons.i18n.translation  import _ # FIXME: not included by "*" above? see bug #51
 
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signout_user, login_redirector
 from civicboom.lib.services.janrain import janrain

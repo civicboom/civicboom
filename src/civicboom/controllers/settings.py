@@ -1,8 +1,9 @@
 from civicboom.lib.base import *
-from pylons.i18n.translation  import _ # FIXME: not included by "*" above?
+from pylons.i18n.translation  import _ # FIXME: not included by "*" above? see bug #51
 import hashlib
 
 log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 
 class SettingsController(BaseController):
 
@@ -25,7 +26,7 @@ class SettingsController(BaseController):
                 c.viewing_user.avatar = None
             del request.POST["move_to_gravatar"]
 
-        # FIXME: helper function for "is valid display name"
+        # FIXME: helper function for "is valid display name", see feature #54
         if "name" in request.POST.keys():
             if len(request.POST["name"]) > 0:
                 c.viewing_user.name = request.POST["name"]
@@ -99,12 +100,14 @@ class SettingsController(BaseController):
     @authenticate_form
     @action_redirector()
     def save_location(self, id=None):
-        # FIXME: error handling
         if "location" in request.POST:
-            (lon, lat) = [float(n) for n in request.POST["location"].split(",")]
+            try:
+                (lon, lat) = [float(n) for n in request.POST["location"].split(",")]
+            except Exception, e:
+                user_log.exception("Unable to understand location '%s'" % str(request.POST["location"]))
+                return _("Unable to understand location '%s'" % str(request.POST["location"]))
         elif "location_name" in request.POST:
-            (lon, lat) = (0, 0)
-            pass # FIXME: guess_lon_lat_from_name(request.POST["location_name"])
+            (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_name"]), see Feature #47
         else:
             return _("No position specified")
         c.viewing_user = c.logged_in_user

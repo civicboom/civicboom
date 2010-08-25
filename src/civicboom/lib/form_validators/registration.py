@@ -35,7 +35,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
         }
     def _to_python(self, value, state):
         value = unicode(value.strip())
-        # TODO: Strip or alert any characters that make it non URL safe
+        # TODO: Strip or alert any characters that make it non URL safe, see feature #54
         if len(value) <= self.min:
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
         if len(value) >= self.max:
