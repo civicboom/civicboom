@@ -11,6 +11,7 @@ from civicboom.model import ArticleContent, CommentContent, DraftContent, Assign
 from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
 from civicboom.lib.services import warehouse as wh
+from civicboom.lib.database.get_cached import get_tag
 from civicboom.lib import worker
 
 import logging
@@ -364,11 +365,6 @@ CREATE TRIGGER update_content
                 "failed":  "removed",
             }
             return m[old_status]
-
-        # FIXME: see bug #52, put this in helpers, and make it work
-        # find a tag if it exisits already or create a new one
-        def get_tag(name):
-            return uncategorised
 
         def get_tags(row):
             """
