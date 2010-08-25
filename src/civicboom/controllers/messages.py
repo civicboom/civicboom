@@ -1,6 +1,7 @@
 
 from civicboom.lib.base import *
 from civicboom.model import Message
+import json
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -8,19 +9,39 @@ user_log = logging.getLogger("user")
 class MessagesController(BaseController):
 
     @authorize(is_valid_user)
-    def index(self):
+    def index(self, format="html"):
         c.viewing_user = c.logged_in_user
-        return render("/web/messages/index.mako")
+        if format == "json":
+            return json.dumps({
+                "status": "ok",
+                "data": [{
+                    "id": m.id,
+                    "subject": m.subject,
+                } for m in c.viewing_user.messages_to]
+            })
+        else:
+            return render("/web/messages/index.mako")
 
     @authorize(is_valid_user)
-    def read(self, id):
+    def read(self, id, format="html"):
         c.viewing_user = c.logged_in_user
         msg = Session.query(Message).filter(Message.id==id).one()
         if msg.target == c.viewing_user: # FIXME messages to groups?
             c.msg = msg
         else:
             abort(403, "You are not the target of this message")
-        return render("/web/messages/read.mako")
+
+        if format == "json":
+            return json.dumps({
+                "status": "ok",
+                "data": {
+                    "id": c.msg.id,
+                    "subject": c.msg.subject,
+                    "content": c.msg.content,
+                }
+            })
+        else:
+            return render("/web/messages/read.mako")
 
     @authorize(is_valid_user)
     @authenticate_form
