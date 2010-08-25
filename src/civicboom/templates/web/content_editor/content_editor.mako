@@ -75,10 +75,12 @@
         <script type="text/javascript">
             function autoSaveDraft() {
                 YAHOO.log("autosave placeholder");
-                // Build POST with just content
+                YAHOO.log(document.getElementById("form_content").value)
+                
+                // Build POST with just content string
                 // ${url(controller='content', action='autosave', id=c.content_media_upload_key)}
             }
-            var autoSaveDraftTimer = setInterval('autoSaveDraft()', 60000);
+            var autoSaveDraftTimer = setInterval('autoSaveDraft()', 50000);
         </script>
     % endif
     
