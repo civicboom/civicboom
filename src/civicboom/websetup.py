@@ -410,6 +410,8 @@ CREATE TRIGGER update_content
 
         # FIXME: make this work, see bug #53
         def get_location(row):
+            if "geolocation_latitude" in row and "geolocation_longitude" in row:
+                return "SRID=4326;POINT(%d %d)" % (row["geolocation_longitude"], row["geolocation_latitude"])
             #  `CityId` int(10) unsigned default NULL,       # standardish
             #  `CountyId` int(10) unsigned default NULL,
             #  `StateId` int(10) unsigned default NULL,
@@ -417,8 +419,6 @@ CREATE TRIGGER update_content
             #  `ZipId` int(10) unsigned default NULL,
             #  `Address` varchar(255) default NULL,          # reporters
             #  `Address2` varchar(255) default NULL,
-            #  `geolocation_latitude` double default NULL,   # newsarticles AllanC - These are only used by mobile uploads currently
-            #  `geolocation_longitude` double default NULL,
             return None
 
         def get_media(row, media_type):
