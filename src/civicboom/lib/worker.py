@@ -64,7 +64,7 @@ def _ffmpeg(args):
     """
     Convenience function to run ffmpeg and log the output
     """
-    ffmpeg = "/usr/bin/ffmpeg" # FIXME: config variable?
+    ffmpeg = config["media.ffmpeg"]
     cmd = [ffmpeg, ] + args
     log.info(" ".join(cmd))
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -77,7 +77,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     # Get the thumbnail processed and uploaded ASAP
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-        size = 128, 128 # FIXME: config value?
+        size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
         #log.info('Opening image.') # FIXME: image.open() blocks while running setup-app from nosetests, but not from paster. wtf.
         im = Image.open(tmp_file)
         #log.info('Checking mode.')
@@ -93,7 +93,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         pass
     elif file_type == "video":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-        size = 128, 128 # FIXME: config value?
+        size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
         _ffmpeg([
             "-y", "-i", tmp_file,
             "-an", "-vframes", "1", "-r", "1",
@@ -106,10 +106,9 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     # next most important, the original
     wh.copy_to_warehouse(tmp_file, "media-original", file_hash, file_name)
 
-    # FIXME: turn tmp_file into something suitable for web viewing
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-        size = 480, 360
+        size = (int(config["media.media.width"]), int(config["media.media.height"]))
         im = Image.open(tmp_file)
         if im.mode != "RGB":
             im = im.convert("RGB")
@@ -124,7 +123,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         processed.close()
     elif file_type == "video":
         processed = tempfile.NamedTemporaryFile(suffix=".flv")
-        size = 480, 360
+        size = (int(config["media.media.width"]), int(config["media.media.height"]))
         _ffmpeg([
             "-y", "-i", tmp_file,
             "-ab", "56k", "-ar", "22050",
