@@ -10,7 +10,6 @@ For managing content:
 
 # Base controller imports
 from civicboom.lib.base import *
-from pylons.i18n.translation  import _ # FIXME: not included by "*" above? see bug #51
 
 # Datamodel and database session imports
 from civicboom.model                   import Media

@@ -3,7 +3,6 @@ Member
 """
 
 from civicboom.lib.base import *
-from pylons.i18n.translation import _ # see bug #51
 
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
