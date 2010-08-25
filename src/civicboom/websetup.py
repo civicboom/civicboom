@@ -729,7 +729,14 @@ CREATE TRIGGER update_content
         ca.location   = "SRID=4326;POINT(-0.1278328 51.5072648)"
 
         m = Media()
-        m.load_from_file("civicboom/public/images/star.png", "star.jpg", "A photo of people saying hello", "Shish")
+        # FIXME: Image.open() locks up under nosetests
+        #m.load_from_file("civicboom/public/images/star.png", "star.jpg", "A photo of people saying hello", "Shish")
+        m.name        = u"hello.jpg"
+        m.type        = "image"
+        m.subtype     = "jpeg"
+        m.hash        = "00000000000000000000000000000000"
+        m.caption     = u"A photo of people saying hello"
+        m.credit      = u"Shish"
         ca.attachments.append(m)
 
         cc1 = CommentContent()
@@ -773,7 +780,14 @@ CREATE TRIGGER update_content
         ca.responses.append(cc5)
 
         m = Media()
-        m.load_from_file("civicboom/public/images/rss_large.png", "rss_large.jpg", "An RSS Icon", "Shish")
+        # FIXME: Image.open() locks up under nosetests
+        #m.load_from_file("civicboom/public/images/rss_large.png", "rss_large.jpg", "An RSS Icon", "Shish")
+        m.name        = u"hello2.3gp"
+        m.type        = "video"
+        m.subtype     = "3gpp"
+        m.hash        = "00000000000000000000000000000000"
+        m.caption     = u"A video of people saying hi"
+        m.credit      = u"Shish"
         cc2.attachments.append(m)
 
         dc = DraftContent()
