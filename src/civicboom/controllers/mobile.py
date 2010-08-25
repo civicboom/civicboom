@@ -102,7 +102,7 @@ class MobileController(BaseController):
             "id":                assignment.content.id,
             "title":             assignment.content.title,
             "content":           h.truncate(assignment.content.content, length=150),
-            "image":             assignment.thumbnail_url,
+            "image":             assignment.content.thumbnail_url,
             "assigned_by":       assignment.content.creator.name,
             "assigned_by_image": assignment.content.creator.avatar_url,
             "expiry_date":       assignment.content.due_date,
