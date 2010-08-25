@@ -57,8 +57,15 @@
 ## This displays the message and then removes it from the session once it is displayed the first time
 ## See "Definitive Guide to Pylons" pg 191 for details
 <%def name="flash_message()">
+<%
+import json
+if session.has_key('flash_message'):
+	msg = json.loads(session.get('flash_message'))
+	msg_status = msg["status"]
+	msg_msg = msg["message"]
+%>
   % if session.has_key('flash_message'):
-    <div id="flash_message">${session.get('flash_message')}</div>
+    <div id="flash_message" class="status_${msg_status}">${msg_msg}</div>
     
     <!-- YUI animation for flash message -->
     <script type="text/javascript">

@@ -297,10 +297,15 @@ h2 {
 /*----------------------------Flash Message-----------------------------------*/
 
 #flash_message {
-	background: #ffc;
 	padding: 0.5em;
 	border: 1px solid #cfc;
 	overflow: hidden;
+}
+.status_ok {
+	background: #ffc;
+}
+.status_error {
+	background: #fcc;
 }
 
 /*----------------------Popup (fixed transparent background)------------------*/
