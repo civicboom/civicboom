@@ -28,7 +28,7 @@ class MediaThread(Thread):
             task = _media_queue.get()
             try:
                 task_type = task.pop("task")
-                log.info('Starting task: %s' % (task_type, ))
+                log.info('Starting task: %s (%s)' % (task_type, str(task)))
                 if task_type == "process_media":
                     process_media(**task)
                 if task_type == "die":
@@ -78,7 +78,9 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
         size = 128, 128 # FIXME: config value?
+        #log.info('Opening image.') # FIXME: image.open() blocks while running setup-app from nosetests, but not from paster. wtf.
         im = Image.open(tmp_file)
+        #log.info('Checking mode.')
         if im.mode != "RGB":
             im = im.convert("RGB")
         im.thumbnail(size, Image.ANTIALIAS)
