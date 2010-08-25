@@ -74,10 +74,10 @@ class ReCaptchaValidator(validators.FancyValidator):
     """
     
     messages = {
-        'incorrect'       : _('reCAPTURE field is incorrect'),
-        'missing'         : _("Missing reCAPTURE value."),
-        'network_failure' : _("unable to contact reCAPTURE server to validate response"),
-        'recapture_error' : _("reCAPTURE server returned an error %(error_code)s, the problem has been logged and reported to _site_name"),
+        'incorrect'       : _('reCAPTCHA field is incorrect'),
+        'missing'         : _("Missing reCAPTCHA value."),
+        'network_failure' : _("unable to contact reCAPTCHA server to validate response"),
+        'recapture_error' : _("reCAPTCHA server returned an error %(error_code)s, the problem has been logged and reported to _site_name"),
     }
 
     __unpackargs__ = ('*', 'field_names')
