@@ -1,5 +1,7 @@
 <%inherit file="/web/html_base.mako"/>
 
+<%namespace name="YUI" file="/web/includes/YUI_components.mako" />
+
 ##------------------------------------------------------------------------------
 ## Title - Override
 ##------------------------------------------------------------------------------
@@ -70,7 +72,7 @@
     </div>
     
     % if c.content.id:
-      ${file_uploader()}
+      ${YUI.file_uploader()}
     % endif
 </%def>
 
@@ -109,7 +111,7 @@
             ${popup("extra info")}
         </p>
   
-        ${richtext(c.content.content)}
+        ${YUI.richtext(c.content.content, width='100%', height='300px')}
   
         % if c.content.__type__ == "draft":
             <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
@@ -156,54 +158,6 @@
 </%def>
 
 
-##------------------------------------------------------------------------------
-## YUI Rich Text Component
-##------------------------------------------------------------------------------
-<%def name="richtext(content, width='100%', height='300px')">
-
-  <!-- Rich Text Component -->
-  <div class="yui-skin-sam">
-    <textarea id="form_content" name="form_content" style="width:${width}; height:${height};">${content}</textarea>  
-    <script type="text/javascript">
-      var myEditor = new YAHOO.widget.SimpleEditor('form_content', {
-          height: '${height}',
-          width: '${width}',
-          //dompath: true //Turns on the bar at the bottom
-          toolbar: {
-            collapse: true,
-            titlebar: 'Editing Tools',
-            draggable: false,
-            buttons: [
-              { group: 'text', label: 'Text Effects',
-                  buttons: [
-                    { type: 'push', label: 'Bold CTRL + SHIFT + B', value: 'bold' },
-                    { type: 'push', label: 'Italic CTRL + SHIFT + I', value: 'italic' }
-                  ]
-              },
-              { type: 'separator' },
-              { group: 'indentlist', label: 'Lists',
-                  buttons: [
-                      { type: 'push', label: 'Create an Unordered List', value: 'insertunorderedlist' },
-                      { type: 'push', label: 'Create an Ordered List', value: 'insertorderedlist' }
-                  ]
-              },
-              { type: 'separator' },
-              { group: 'insertitem', label: 'Insert Link',
-                  buttons: [
-                      { type: 'push', label: 'HTML Link CTRL + SHIFT + L', value: 'createlink', disabled: true }
-                  ]
-              }
-            ]
-          }
-      });
-      myEditor.set("handleSubmit", true); 
-      myEditor.render();										
-    </script>
-
-  </div>
-  <!-- End Rich Text Component -->
-
-</%def>
 
 
 ##------------------------------------------------------------------------------
@@ -346,7 +300,7 @@
 ##------------------------------------------------------------------------------
 <%def name="license()">
 <%
-from civicboom.lib.database.get_cached import  get_licenses
+from civicboom.lib.database.get_cached import get_licenses
 %>
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
@@ -370,108 +324,3 @@ from civicboom.lib.database.get_cached import  get_licenses
     </fieldset>
 </%def>
 
-
-##------------------------------------------------------------------------------
-## File Uploader
-##------------------------------------------------------------------------------
-<%def name="file_uploader(progressbar_size=(300,5))">
-    
-    ## YUI 2.8.1 - File Uploader Component
-    ## Reference - http://developer.yahoo.com/yui/uploader/
-    
-    ## Overlay a transparent SWF object over the button by using CSS absolute positioning
-    <div id="uploaderContainer" style="width:80px; height:30px; position: absolute"></div>
-    <button type="button"                                            >Select file</button>
-    <button type="button" onClick="upload();           return false;">Upload     </button>
-    <button type="button" onClick="handleClearFiles(); return false;">Clear      </button>
-    
-    <div style="border: black 1px solid; width:${progressbar_size[0]}px; height:40px;">
-        <div id="upload_file"     style="text-align:center; margin:5px; font-size:15px; width:${progressbar_size[0]-10}px; height:25px; overflow:hidden"></div>
-        <div id="upload_progress" style="width:${progressbar_size[0]}px;height:${progressbar_size[1]}px;background-color:#CCCCCC"></div>
-    </div>
-
-    <script type="text/javascript">
-        YAHOO.widget.Uploader.SWFURL = "http://yui.yahooapis.com/2.8.1/build/uploader/assets/uploader.swf";
-        ## Flash has a security model to stop uploaded to unauthorised domains
-        ## If the .swf file is not served fromt the local server
-        ## the file crossdomain.xml MUST be present in the root public dir for the flash component to upload to the server
-        ## Example crossdomain.xml
-        ##  <?xml version="1.0"?>
-        ##  <!DOCTYPE cross-domain-policy SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">
-        ##  <cross-domain-policy>
-        ##    <allow-access-from domain="*"/>
-        ##    <site-control permitted-cross-domain-policies="master-only"/>
-        ##  </cross-domain-policy>
-
-        
-        var uploader = new YAHOO.widget.Uploader( "uploaderContainer" ); //, "assets/buttonSprite.jpg"
-        var fileID;
-    
-        uploader.addListener('contentReady'      , handleContentReady);
-        uploader.addListener('fileSelect'        , onFileSelect      );
-        uploader.addListener('uploadStart'       , onUploadStart     );
-        uploader.addListener('uploadProgress'    , onUploadProgress  );
-        uploader.addListener('uploadCancel'      , onUploadCancel    );
-        uploader.addListener('uploadComplete'    , onUploadComplete  );
-        uploader.addListener('uploadCompleteData', onUploadResponse  );
-        uploader.addListener('uploadError'       , onUploadError     );
-    
-        function handleContentReady () {
-            uploader.setAllowLogging(true);  	   // Allows the uploader to send log messages to trace, as well as to YAHOO.log
-            uploader.setAllowMultipleFiles(false); // Restrict selection to a single file (that's what it is by default).
-            var ff = new Array({description:"Images", extensions:"*.jpg;*.png;*.gif;*.jpeg"}, // New set of file filters.
-                               {description:"Videos", extensions:"*.avi;*.mov;*.mpg;*.3gp;*.3gpp;*.flv;*.mp4"});
-            uploader.setFileFilters(ff);           // Apply new set of file filters to the uploader.
-        }
-
-        function handleClearFiles() {
-            uploader.clearFileList();
-            uploader.enable();
-            fileID = null;
-            document.getElementById("upload_file"    ).innerHTML = "";
-            document.getElementById("upload_progress").innerHTML = "";
-        }
-
-        function onFileSelect(event) {
-            for (var item in event.fileList) {
-                if(YAHOO.lang.hasOwnProperty(event.fileList, item)) {
-                    YAHOO.log(event.fileList[item].id);
-                    fileID = event.fileList[item].id;
-                }
-            }
-            uploader.disable();
-            document.getElementById("upload_file"    ).innerHTML = event.fileList[fileID].name;
-            document.getElementById("upload_progress").innerHTML = "";
-        }
-    
-        function upload() {
-            if (fileID != null) {
-                ##uploader.upload(fileID, "${app_globals.site_url}/content/upload_media/${c.content_media_upload_key}", "POST");
-                uploader.upload(fileID, "${url(host=app_globals.site_host, controller='content', action='upload_media', id=c.content_media_upload_key)}", "POST");
-                fileID = null;
-            }
-        }
-
-        function onUploadProgress(event) {
-            setProgressBar(event["bytesLoaded"]/event["bytesTotal"]);
-        }
-        
-        function onUploadComplete(event) {
-            uploader.clearFileList();
-            uploader.enable();
-            setProgressBar(1);
-            ## submit save draft (to reload page with preview thumbnail)
-        }
-
-        function onUploadStart   (event) {YAHOO.log("Upload Start");    YAHOO.log(event);}
-        function onUploadError   (event) {YAHOO.log("Upload Error");    YAHOO.log(event);}
-        function onUploadCancel  (event) {YAHOO.log("Upload Cancel");   YAHOO.log(event);}
-        function onUploadResponse(event) {YAHOO.log("Upload Response"); YAHOO.log(event);}
-
-        function setProgressBar(percent) {
-            document.getElementById("upload_progress").innerHTML = "<div style='background-color: #0f0; height: ${progressbar_size[1]}px; width: "+ Math.round(percent*${progressbar_size[0]}) + "px'/>";
-        }
-
-    </script>
-
-</%def>
