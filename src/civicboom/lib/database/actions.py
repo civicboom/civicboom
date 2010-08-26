@@ -110,7 +110,7 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     #if status=="accepted":
     #    assignment.creator.send_message(messages.assignment_accepted(member=member, assignment=assignment), delay_commit=True)
     #if status=="pending":
-    #    assignment.creator.send_message(messages.assignment_invite  (member=member, assignment=assignment), delay_commit=True)
+    #    member.send_message(messages.assignment_invite  (member=assignment.creator, assignment=assignment), delay_commit=True)
     
     if not delay_commit:
         Session.commit()
