@@ -35,7 +35,7 @@ class Member(Base):
     __mapper_args__ = {'polymorphic_on': __type__}
     _member_status  = Enum("pending", "active", "suspended", name="member_status")
     id              = Column(Integer(),      primary_key=True)
-    username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars
+    username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
     name            = Column(Unicode(250),   nullable=False, default=u"")
     join_date       = Column(Date(),         nullable=False, default=func.now())
     num_followers   = Column(Integer(),      nullable=False, default=0, doc="Controlled by postgres trigger")

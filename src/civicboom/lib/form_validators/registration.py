@@ -35,7 +35,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
         }
     def _to_python(self, value, state):
         value = unicode(value.strip())
-        # TODO: Strip or alert any characters that make it non URL safe
+        # TODO: Strip or alert any characters that make it non URL safe, see feature #54
         if len(value) <= self.min:
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
         if len(value) >= self.max:
@@ -74,10 +74,10 @@ class ReCaptchaValidator(validators.FancyValidator):
     """
     
     messages = {
-        'incorrect'       : _('reCAPTURE field is incorrect'),
-        'missing'         : _("Missing reCAPTURE value."),
-        'network_failure' : _("unable to contact reCAPTURE server to validate response"),
-        'recapture_error' : _("reCAPTURE server returned an error %(error_code)s, the problem has been logged and reported to _site_name"),
+        'incorrect'       : _('reCAPTCHA field is incorrect'),
+        'missing'         : _("Missing reCAPTCHA value."),
+        'network_failure' : _("unable to contact reCAPTCHA server to validate response"),
+        'recapture_error' : _("reCAPTCHA server returned an error %(error_code)s, the problem has been logged and reported to _site_name"),
     }
 
     __unpackargs__ = ('*', 'field_names')

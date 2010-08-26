@@ -11,7 +11,6 @@ For managing content:
 
 # Base controller imports
 from civicboom.lib.base import *
-from pylons.i18n.translation  import _ # FIXME: not included by "*" above?
 
 # Datamodel and database session imports
 from civicboom.model                   import Media
@@ -191,12 +190,13 @@ class ContentController(BaseController):
     @authenticate_form
     def delete(self, id):
         content = get_content(id)
-        if not content: return "content does not exisit"
+        if not content:
+            return action_error(_("_content does not exist"))
         if not content.editable_by(c.logged_in_user):
-            return "your current user does not have the permissions to delete this _content"
+            return action_error(_("your current user does not have the permissions to delete this _content"))
             #abort(401)
         content.delete()
-        return "content deleted"
+        return action_ok(_("_content deleted"))
 
 
     #-----------------------------------------------------------------------------
@@ -212,6 +212,6 @@ class ContentController(BaseController):
         form = request.POST
         try:
             get_content(id).flag(member=c.logged_in_user, type=form['type'], comment=form['comment'])
-            return "An administrator has been alerted to this content"
+            return action_ok(_("An administrator has been alerted to this content"))
         except:
-            return "Error flaging content, please email us"
+            return action_error(_("Error flaging content, please email us"))

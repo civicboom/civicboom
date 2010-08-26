@@ -16,43 +16,56 @@ import civicboom.lib.services.warehouse as wh
 import logging
 log = logging.getLogger(__name__)
 
-worker = None
-media_queue = Queue()
+_worker = None
+_media_queue = Queue()
 
 
 class MediaThread(Thread):
     def run(self):
         log.info('Media processing thread is running.')
+        live = True
 
-        while True:
-            task = media_queue.get()
+        while live:
+            task = _media_queue.get()
             try:
                 task_type = task.pop("task")
-                log.info('Starting task: %s' % (task_type, ))
+                log.info('Starting task: %s (%s)' % (task_type, str(task)))
                 if task_type == "process_media":
                     process_media(**task)
+                if task_type == "die":
+                    live = False
             except Exception, e:
                 log.exception('Error in media processor thread:')
-            media_queue.task_done()
+            _media_queue.task_done()
             sleep(3)
 
 def start_worker():
-    global worker
-    worker = MediaThread()
-    worker.daemon = True
-    worker.start()
+    log.info('Starting worker thread.')
+    global _worker
+    _worker = MediaThread()
+    _worker.daemon = True
+    _worker.start()
+
+def stop_worker():
+    log.info('Stopping worker thread.')
+    global _worker
+    if _worker:
+        add_job({"task": "die"})
+        _worker.join()
+        _worker = None
 
 def add_job(job):
-    if not worker:
+    log.info('Adding job to worker queue: %s' % job["task"])
+    if not _worker:
         start_worker()
-    media_queue.put(job)
+    _media_queue.put(job)
 
 
 def _ffmpeg(args):
     """
     Convenience function to run ffmpeg and log the output
     """
-    ffmpeg = "/usr/bin/ffmpeg" # FIXME: config variable?
+    ffmpeg = config["media.ffmpeg"]
     cmd = [ffmpeg, ] + args
     log.info(" ".join(cmd))
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -65,8 +78,10 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     # Get the thumbnail processed and uploaded ASAP
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-        size = 128, 128 # FIXME: config value?
+        size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
+        #log.info('Opening image.') # FIXME: image.open() blocks while running setup-app from nosetests, but not from paster. wtf. See bug #45
         im = Image.open(tmp_file)
+        #log.info('Checking mode.')
         if im.mode != "RGB":
             im = im.convert("RGB")
         im.thumbnail(size, Image.ANTIALIAS)
@@ -79,7 +94,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         pass
     elif file_type == "video":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-        size = 128, 128 # FIXME: config value?
+        size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
         _ffmpeg([
             "-y", "-i", tmp_file,
             "-an", "-vframes", "1", "-r", "1",
@@ -92,10 +107,9 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     # next most important, the original
     wh.copy_to_warehouse(tmp_file, "media-original", file_hash, file_name)
 
-    # FIXME: turn tmp_file into something suitable for web viewing
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-        size = 480, 360
+        size = (int(config["media.media.width"]), int(config["media.media.height"]))
         im = Image.open(tmp_file)
         if im.mode != "RGB":
             im = im.convert("RGB")
@@ -110,7 +124,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         processed.close()
     elif file_type == "video":
         processed = tempfile.NamedTemporaryFile(suffix=".flv")
-        size = 480, 360
+        size = (int(config["media.media.width"]), int(config["media.media.height"]))
         _ffmpeg([
             "-y", "-i", tmp_file,
             "-ab", "56k", "-ar", "22050",

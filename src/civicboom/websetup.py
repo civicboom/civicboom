@@ -11,6 +11,9 @@ from civicboom.model import ArticleContent, CommentContent, DraftContent, Assign
 from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
 from civicboom.lib.services import warehouse as wh
+from civicboom.lib.database.get_cached import get_tag
+from civicboom.lib.gis import get_location_by_name
+from civicboom.lib import worker
 
 import logging
 import datetime
@@ -364,11 +367,6 @@ CREATE TRIGGER update_content
             }
             return m[old_status]
 
-        # FIXME: put this in helpers, and make it work
-        # find a tag if it exisits already or create a new one
-        def get_tag(name):
-            return uncategorised
-
         def get_tags(row):
             """
             Several tables share very similar structure, but the
@@ -411,17 +409,20 @@ CREATE TRIGGER update_content
             row = list(leg_conn.execute("SELECT * FROM categories WHERE id=%s", c_id))[0]
             return get_tag(row["Name"])
 
-        # FIXME: make this work
         def get_location(row):
-            #  `CityId` int(10) unsigned default NULL,       # standardish
-            #  `CountyId` int(10) unsigned default NULL,
-            #  `StateId` int(10) unsigned default NULL,
-            #  `CountryId` int(10) unsigned default NULL,
-            #  `ZipId` int(10) unsigned default NULL,
-            #  `Address` varchar(255) default NULL,          # reporters
-            #  `Address2` varchar(255) default NULL,
-            #  `geolocation_latitude` double default NULL,   # newsarticles AllanC - These are only used by mobile uploads currently
-            #  `geolocation_longitude` double default NULL,
+            if "geolocation_latitude" in row and "geolocation_longitude" in row:
+                return "SRID=4326;POINT(%d %d)" % (row["geolocation_longitude"], row["geolocation_latitude"])
+
+            if "CityId" in row:
+                row = list(leg_conn.execute("SELECT latitude,longitude FROM cities WHERE id=%s", row["CityId"]))[0]
+                return "SRID=4326;POINT(%d %d)" % (row["longitude"], row["latitude"])
+                # see also CountyId, StateId, CountryId, ZipId -- are these needed when we have city?
+
+            if "Address" in row and "Address2" in row:
+                addr = ", ".join([a for a in [row["Address"], row["Address2"]] if a])
+                lonlat = get_location_by_name(addr)
+                return "SRID=4326;POINT(%d %d)" % lonlat
+
             return None
 
         def get_media(row, media_type):
@@ -728,6 +729,8 @@ CREATE TRIGGER update_content
         ca.location   = "SRID=4326;POINT(-0.1278328 51.5072648)"
 
         m = Media()
+        # FIXME: Image.open() locks up under nosetests, see Bug #45
+        #m.load_from_file("civicboom/public/images/star.png", "star.jpg", "A photo of people saying hello", "Shish")
         m.name        = u"hello.jpg"
         m.type        = "image"
         m.subtype     = "jpeg"
@@ -777,6 +780,8 @@ CREATE TRIGGER update_content
         ca.responses.append(cc5)
 
         m = Media()
+        # FIXME: Image.open() locks up under nosetests, see Bug #45
+        #m.load_from_file("civicboom/public/images/rss_large.png", "rss_large.jpg", "An RSS Icon", "Shish")
         m.name        = u"hello2.3gp"
         m.type        = "video"
         m.subtype     = "3gpp"
@@ -838,5 +843,9 @@ CREATE TRIGGER update_content
     ###################################################################
     log.info("Successfully set up tables")
 
+    worker.stop_worker()
+
+    # FIXME: is this necessary?
     # Create the tables if they don't already exist
     meta.metadata.create_all(bind=meta.engine)
+    log.info("Setup complete")

@@ -4,6 +4,7 @@ from pylons.controllers.util import redirect
 from webhelpers.html import literal
 
 import time
+import json
 from decorator import decorator
 
 
@@ -94,5 +95,17 @@ def action_redirector():
         return decorator(wrapper)(target) # Fix the wrappers call signiture
     return my_decorator
 
+def action_ok(msg, data=None):
+    return json.dumps({
+        "status": "ok",
+        "message": msg,
+        "data": data,
+    })
 
+def action_error(msg, data=None):
+    return json.dumps({
+        "status": "error",
+        "message": msg,
+        "data": data,
+    })
 

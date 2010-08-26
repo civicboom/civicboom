@@ -23,10 +23,9 @@ class AssignmentController(BaseController):
         status     = assignment.accept(c.logged_in_user)
         if status == True:
             assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_user, assignment=assignment))
-            return _("_assignment accepted")
+            return action_ok(_("_assignment accepted"))
         #elif isinstance(status,str):
-        return status
-        #return 'Error accepting _assignment'
+        return action_error(_('Error accepting _assignment'))
 
 
     #-----------------------------------------------------------------------------
@@ -40,7 +39,7 @@ class AssignmentController(BaseController):
         status     = assignment.withdraw(c.logged_in_user)
         if status == True:
             assignment.creator.send_message(messages.assignment_interest_withdrawn(member=c.logged_in_user, assignment=assignment))
-            return _("_assignment interest withdrawn")
+            return action_ok(_("_assignment interest withdrawn"))
         #elif isinstance(status,str):
         #return status
-        return _('Error withdrawing _assignment interest')
+        return action_error(_('Error withdrawing _assignment interest'))

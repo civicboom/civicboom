@@ -3,6 +3,8 @@
 <%namespace name="member" file="/web/design09/includes/member.mako"/>
 
 <%
+	import json
+
     # Height calculations
     size_header        = 70
     size_footer        = 60
@@ -10,8 +12,13 @@
     size_flash_message = 0
     size_content       = 0
     
-    if session.has_key('flash_message'): size_flash_message = 30;
-    if c.widget_height:                  size_content       = int(c.widget_height) - (size_header + size_footer + size_action_bar + size_flash_message) - 5 #borders mount up the 13 is the number of pixels of all the borders combined
+    if session.has_key('flash_message'):
+		size_flash_message = 30;
+		msg = json.loads(session.get('flash_message'))
+		msg_status = msg["status"]
+		msg_msg = msg["message"]
+    if c.widget_height:
+		size_content       = int(c.widget_height) - (size_header + size_footer + size_action_bar + size_flash_message) - 5 #borders mount up the 13 is the number of pixels of all the borders combined
     
     c.widget_height_content = size_content - 8 #Used for the QR Code to ensure correct size (the -8 is a hack because the padding is gets in the way)
 %>
@@ -85,7 +92,7 @@
     ## Session messages
     ##----------------------------------------
     % if session.has_key('flash_message'):
-        <div class="flash_message" style="height: ${size_flash_message}px"><div style="padding: 0.25em;">${session.get('flash_message')}</div></div>
+        <div class="flash_message" style="height: ${size_flash_message}px" class="status_${msg_status}"><div style="padding: 0.25em;">${msg_msg}</div></div>
         <%
           del session['flash_message']
           session.save()

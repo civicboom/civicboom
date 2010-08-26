@@ -31,7 +31,7 @@ class SearchController(BaseController):
                 radius = 10
             elif len(parts) == 3:
                 (lon, lat, radius) = parts
-            zoom = 10 # FIXME: inverse of radius?
+            zoom = 10 # FIXME: inverse of radius? see bug #50
             if lon:
                 location = (lon, lat, zoom)
                 results = results.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))

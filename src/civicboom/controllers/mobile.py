@@ -102,7 +102,7 @@ class MobileController(BaseController):
             "id":                assignment.content.id,
             "title":             assignment.content.title,
             "content":           h.truncate(assignment.content.content, length=150),
-            # FIXME: "image":             assignment.content.primary_media.thumbnail_url if assignment.content.primary_media else None,
+            "image":             assignment.content.thumbnail_url,
             "assigned_by":       assignment.content.creator.name,
             "assigned_by_image": assignment.content.creator.avatar_url,
             "expiry_date":       assignment.content.due_date,
@@ -124,7 +124,7 @@ class MobileController(BaseController):
             "timestamp":     str(message.timestamp),
             "link":          "",
             "response_type": "",
-            "more":          "", # FIXME: protocol -- no more = blank string, more = array of one assignment; should be no more = None, more = one assignment
+            "more":          "", # FIXME: protocol -- no more = blank string, more = array of one assignment; should be no more = None, more = one assignment, see Feature #29
         } for message in c.logged_in_user.messages_notification[:10]]) # FIXME: do we want notifications AND private messages?
         # return json.dumps({"status": "ok", "data": ...})
 
@@ -147,7 +147,7 @@ class MobileController(BaseController):
         unique_id                   = hashlib.md5(request.POST['uniqueid']).hexdigest()
         mobile_upload_unique_id_key = c.logged_in_user.username + "_" + unique_id
 
-        # check for duplicate upload
+        # check for duplicate upload, see feature #29
         if app_globals.memcache.get("mobile-upload-complete:"+unique_id):
             return "mobile:upload_ok"
             # return json.dumps({"status": "ok", "message": "article already uploaded"})
@@ -161,7 +161,7 @@ class MobileController(BaseController):
         article.creator       = c.logged_in_user
         article.title         = request.POST['title'].encode('utf-8')
         article.content       = clean_html(request.POST['content'].encode('utf-8'))
-        article.license       = None # CreaviveCommonsLicenceTypeId = 2 #self.form_result['licence']
+        article.license       = None # FIXME: CreaviveCommonsLicenceTypeId = 2 #self.form_result['licence'] # see bug #48
 
         if "geolocation_longitude" in request.POST and "geolocation_latitude" in request.POST:
             article.location = "SRID=4326;POINT(%d %d)" % (
@@ -250,15 +250,15 @@ class MobileController(BaseController):
         file(file_base+"_"+str(part_num), "wb").write(data)
 
         # check to see if any parts are missing, ask for them if needed
-        for n in range(0, parts_count): # FIXME: off-by-one at each end?
-            if not os.path.exists(file_base+"_"+str(n)): # FIXME: check file content? (compare hash / filesize with client?)
+        for n in range(0, parts_count):
+            if not os.path.exists(file_base+"_"+str(n)): # FIXME: check file content? (compare hash / filesize with client?), see feature #29
                 return 'mobile:next_part_%d' % n
                 # return json.dumps({"status": "ok", "message": "part %d/%d uploaded" % (part_num, parts_count), "data": {"next": n}})
 
         # no parts needed; join the parts into one
         else:
             fp = file(file_base, "wb")
-            for n in range(0, parts_count): # FIXME: off-by-one at each end?
+            for n in range(0, parts_count):
                 part_file = file_base+"_"+str(n)
                 fp.write(file(part_file).read())
                 os.unlink(part_file)
