@@ -1,5 +1,6 @@
 
 from civicboom.lib.base   import *
+from civicboom.lib.search import *
 from civicboom.lib.gis    import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_
@@ -50,6 +51,32 @@ class SearchController(BaseController):
         if "response_to" in request.GET:
             cid = int(request.GET["response_to"])
             results = results.filter(Content.parent_id==cid)
+
+        results = results[0:20]
+
+        if format == "xml":
+            return render("/rss/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
+        else:
+            return render(tmpl_prefix+"/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
+
+    def content2(self, format="html"):
+        results = Session.query(Content)
+
+        query = AndFilter([
+            OrFilter([
+                TextFilter("terrorists"),
+                AndFilter([
+                    LocationFilter("canterbury"),
+                    TagFilter("Science & Nature")
+                ]),
+                AuthorFilter("unittest")
+            ]),
+            NotFilter(OrFilter([
+                TextFilter("waffles"),
+                TagFilter("Business")
+            ]))
+        ])
+        results = results.filter(unicode(query))
 
         results = results[0:20]
 
