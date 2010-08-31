@@ -75,7 +75,6 @@ class SearchController(BaseController):
         elif format == "json":
             #json_rows = [{"name":row.name,"location":row.location,"type":row.type} for row in result]
             json_rows = [{"value":row.name,"id":row.location,"info":row.type} for row in result]
-            log.info("Query %s Res %s" % (request.GET.get("query", "<>"), str(json_rows)))
             return json.dumps({"results": json_rows})
 
     def member(self, format="html"):
