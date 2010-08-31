@@ -14,7 +14,10 @@
     
     if session.has_key('flash_message'):
 		size_flash_message = 30;
-		msg = json.loads(session.get('flash_message'))
+		try:
+			msg = json.loads(session.get('flash_message'))
+		except ValueError:
+			msg = {"status": "error", "message:": msg}
 		msg_status = msg["status"]
 		msg_msg = msg["message"]
     if c.widget_height:
