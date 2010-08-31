@@ -21,6 +21,11 @@ response_completed_ok = "task:ok" #If this is changed please update tasks.py to 
 
 
 class TaskController(BaseController):
+    
+    #---------------------------------------------------------------------------
+    # Security: Restict Calls to Localhost
+    #---------------------------------------------------------------------------
+    
     def __before__(self, action, **params):
         ##  Only accept requests from 127.0.0.1 as we never want these being
         ##  run by anyone other than the server at set times the server cron
@@ -36,11 +41,21 @@ class TaskController(BaseController):
             return abort(403)
         BaseController.__before__(self)
 
+
+    #---------------------------------------------------------------------------
+    # Expire Syndication Content
+    #---------------------------------------------------------------------------
+
     def expire_syndication_articles(self):
         """
         Description to follow
         """
         pass
+
+
+    #---------------------------------------------------------------------------
+    # Remove Ghost Reporters
+    #---------------------------------------------------------------------------
 
     def remove_ghost_reporters(self):
         """
@@ -58,13 +73,47 @@ class TaskController(BaseController):
         return response_completed_ok
 
 
+    #---------------------------------------------------------------------------
+    # Assignment Reminder Notifications
+    #---------------------------------------------------------------------------
+
     def assignment_near_expire(self):
         """
         Users who have accepted assigments but have not posted response
         question should be reminded via a notification that the assingment
         has not long left
         """
-        pass
+        from sqlalchemy import and_
+        
+        def get_assignments_by_date(date_start, date_end):
+            return Session.query(AssignmentContent).filter(and_(AssignmentContent.due_date >= date_start, AssignmentContent.due_date <= date_end)).all()
+
+        def get_responded(assignment):
+            return [response.creator_id for response in assignment.responses]
+            
+        date_7days_time = datetime.datetime.now() + datetime.timedelta(days=6)
+        date_1days_time = datetime.datetime.now() # + datetime.timedelta(days=1)
+        date_1day       =                           datetime.timedelta(days=1)
+        
+        for assignment in get_assignments_by_date(date_start=date_7days_time, date_end=date_7days_time + date_1day): # Get all assignments due in 7 days
+            responded_member_ids = get_responded(assignment)                                                         #   Get a list of all the reporters that have responded to this assignment
+            for member in assignment.accepted_by:                                                                    #   For all reporters accepted this assignment
+                if member.id not in responded_member_ids:                                                            #     Check if they have responded with an article
+                    member.send_message( messages.assignment_due_7days(member, assignment=assignment) )              #     if not send a reminder notification
+                    
+        for assignment in get_assignments_by_date(date_start=date_1days_time, date_end=date_1days_time + date_1day): #Same as above but on day before
+            responded_member_ids = get_responded(assignment) 
+            for member in assignment.accepted_by:
+                if member.id not in responded_member_ids:
+                    member.send_message( messages.assignment_due_1day(member, assignment=assignment) )
+                    
+        Session.commit()
+        return response_completed_ok
+
+
+    #---------------------------------------------------------------------------
+    # Message Clean
+    #---------------------------------------------------------------------------
 
     def message_clean(self):
         """
@@ -72,6 +121,11 @@ class TaskController(BaseController):
         need to be removed automatically from the db
         """
         pass
+
+
+    #---------------------------------------------------------------------------
+    # Sync Warehouse Media
+    #---------------------------------------------------------------------------
 
     def sync_public_to_warehouse(self):
         """
@@ -106,6 +160,7 @@ class TaskController(BaseController):
                     k.set_acl('public-read')
                     done.append("Synced: "+kname)
         return "\n".join(done)
+
 
     def purdge_unneeded_warehouse_media(self):
         """
