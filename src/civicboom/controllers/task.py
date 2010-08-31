@@ -84,6 +84,7 @@ class TaskController(BaseController):
         has not long left
         """
         from sqlalchemy import and_
+        from civicboom.model.content import AssignmentContent
         
         def get_assignments_by_date(date_start, date_end):
             return Session.query(AssignmentContent).filter(and_(AssignmentContent.due_date >= date_start, AssignmentContent.due_date <= date_end)).all()
