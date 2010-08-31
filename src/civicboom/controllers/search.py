@@ -61,12 +61,11 @@ class SearchController(BaseController):
 
     def content2(self, format="html"):
         results = Session.query(Content)
-
         query = AndFilter([
             OrFilter([
                 TextFilter("terrorists"),
                 AndFilter([
-                    LocationFilter("canterbury"),
+                    LocationFilter([1, 51], 10),
                     TagFilter("Science & Nature")
                 ]),
                 AuthorFilter("unittest")
@@ -76,14 +75,13 @@ class SearchController(BaseController):
                 TagFilter("Business")
             ]))
         ])
-        results = results.filter(unicode(query))
-
+        results = results.filter(sql(query))
         results = results[0:20]
 
         if format == "xml":
-            return render("/rss/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
+            return render("/rss/search/content.mako", extra_vars={"term":"moo", "location":"location", "results":results})
         else:
-            return render(tmpl_prefix+"/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
+            return render(tmpl_prefix+"/search/content.mako", extra_vars={"term":"moo", "location":"location", "results":results})
 
 
     @auto_format_output()
