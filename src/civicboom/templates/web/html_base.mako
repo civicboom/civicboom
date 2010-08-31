@@ -73,10 +73,7 @@ if session.has_key('flash_message'):
     <!-- YUI animation for flash message -->
     <script type="text/javascript">
 		$(function() {
-			$("#flash_message").show("slow");
-			setTimeout(function() {
-				$("#flash_message").hide("slow");
-			}, 5000);
+			$("#flash_message").hide().slideDown("slow").delay(5000).slideUp("slow");
 		});
     </script>
     
