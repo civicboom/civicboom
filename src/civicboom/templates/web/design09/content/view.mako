@@ -58,7 +58,7 @@
         % endif
     % endif
 
-    ## Parent Content Owner
+    ## Parent Content Owner Actions
     % if c.content.parent and c.content.is_parent_owner(c.logged_in_user):
         ## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
         % if c.content.status == "locked":

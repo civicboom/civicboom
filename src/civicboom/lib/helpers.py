@@ -71,12 +71,12 @@ def wh_public(filename):
         return "/"+filename
 
 def url_from_widget(*args, **kargs):
-    for var in app_globals.widget_variables:
-
-        if var in request.params:
-            kargs[var] = request.params[var]
-        #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
-        #    kargs[var] = getattr(c,var)
+    if hasattr(app_globals,'widget_variables'):
+        for var in app_globals.widget_variables:    
+            if var in request.params:
+                kargs[var] = request.params[var]
+            #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
+            #    kargs[var] = getattr(c,var)
     return url(*args,**kargs)
 
 def truncate(text, length=100, indicator='...', whole_word=True):

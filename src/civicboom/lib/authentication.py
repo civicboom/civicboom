@@ -9,7 +9,7 @@ from civicboom.lib.base import *
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
 
-from civicboom.lib.web     import session_set, session_get, session_remove
+from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict
 from civicboom.lib.helpers import url_from_widget
 
 # Other imports
@@ -18,6 +18,7 @@ from sqlalchemy.orm import join
 # Pyhton package imports
 import hashlib
 from decorator import decorator
+import json
 
 # Logging
 import logging
@@ -159,6 +160,18 @@ def authorize(authenticator):
         def wrapper(target, *args, **kwargs):
 
             if c.logged_in_user:
+
+                # Reinstate any session encoded POST data if this is the first page since the login_redirect
+                if not session_get('login_redirect'):
+                    json_post = session_get('login_redirect_post')
+                    session_remove('login_redirect_post')
+                    if json_post:
+                        post_overlay = json.loads(json_post)
+                        #for key in post_overlay.keys():
+                        #    request.POST[key] = post_overlay[key]
+                        #request.POST = post_overlay
+                        
+                # Make original method call
                 result = target(*args, **kwargs)
             else:
                 # AllanC - is there a way of just getting the whole request URL? why do I have to peice it together myself!
@@ -166,8 +179,12 @@ def authorize(authenticator):
                 if 'QUERY_STRING' in request.environ:
                     redirect_url += '?'+request.environ.get('QUERY_STRING')
                     
-                session_set('login_redirect', redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
-                # TODO: This could also save the the session POST data and reinstate it after the redirect
+                session_set('login_redirect'     , redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                
+                # save the the session POST data to be reinstated after the redirect
+                if request.POST:
+                    session_set('login_redirect_post', json.dumps(multidict_to_dict(request.POST)), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                
                 return redirect(url_from_widget(controller='account', action='signin', protocol="https")) #This uses the from_widget url call to ensure that widget actions preserve the widget env
             return result
         
