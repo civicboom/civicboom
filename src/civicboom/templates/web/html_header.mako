@@ -77,6 +77,8 @@
     <script type="text/javascript" src="/javascript/toggle_div.js"    ></script>
     <script type="text/javascript" src="/javascript/location.js"      ></script>
     <script type="text/javascript" src="/javascript/member.js"      ></script>
+	<!-- jQuery -->
+	<script src="/javascript/jquery-1.4.2.js"></script>
     % else:
     <script type="text/javascript" src="/javascript/_combined.js"></script>
     % endif
