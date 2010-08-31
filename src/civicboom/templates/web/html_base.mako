@@ -63,7 +63,7 @@ if session.has_key('flash_message'):
 	try:
 		msg = json.loads(session.get('flash_message'))
 	except ValueError:
-		msg = {"status": "error", "message:": session.get('flash_message')}
+		msg = {"status": "error", "message": session.get('flash_message')}
 	msg_status = msg["status"]
 	msg_msg = msg["message"]
 %>
