@@ -55,8 +55,8 @@ class SearchController(BaseController):
 
 
     def location(self, format="html"):
-        if "query" in request.GET:
-            q = request.GET["query"]
+        if "term" in request.GET:
+            q = request.GET["term"]
             connection = get_engine().connect()
             query = """
                 SELECT name, ST_AsText(location) AS location, type
@@ -73,9 +73,8 @@ class SearchController(BaseController):
         if format == "html":
             return render(tmpl_prefix+"/search/location.mako")
         elif format == "json":
-            #json_rows = [{"name":row.name,"location":row.location,"type":row.type} for row in result]
-            json_rows = [{"value":row.name,"id":row.location,"info":row.type} for row in result]
-            return json.dumps({"results": json_rows})
+            json_rows = [{"label":row.name,"location":row.location,"type":row.type} for row in result]
+            return json.dumps(json_rows)
 
     def member(self, format="html"):
         if "query" in request.GET:

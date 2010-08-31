@@ -40,15 +40,10 @@ ${field_name}_map.click.addHandler(function(event_name, event_source, event_args
 });
 
 $(function() {
-	$('#${field_name}_name').autoComplete({
-		script: '/search/location.json?',
-		varName: 'query',
-		valueSep: null,
-		json: true,
-		shownoresults: true,
-		maxresults: 16,
-		callback: function (obj) {
-			var typelonlat = obj.id.split(/[ ()]/);
+	$('#${field_name}_name').autocomplete({
+		source: '/search/location.json?term=',
+		select: function(event, ui) {
+			var typelonlat = ui.item.location.split(/[ ()]/);
 			var lon = typelonlat[1];
 			var lat = typelonlat[2];
 
