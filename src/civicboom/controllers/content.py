@@ -100,7 +100,7 @@ class ContentController(BaseController):
         # If publishing perform profanity check and send notifications
         if 'submit_publish' in request.POST:            
             profanity_filter(c.content) # Filter any naughty words and alert moderator
-
+            
             m = None
             if starting_content_type and starting_content_type != c.content.__type__:
                 # Send notifications about NEW published content
@@ -114,7 +114,7 @@ class ContentController(BaseController):
                 user_log.info("updated published Content #%d" % (c.content.id, ))
             if m:
                 c.content.creator.send_message_to_followers(m, delay_commit=True)
-
+            
         
         # If form contains post data
         if request.POST:
@@ -141,6 +141,7 @@ class ContentController(BaseController):
         
         return render("/web/content_editor/content_editor.mako")
         
+
 
     #-----------------------------------------------------------------------------
     # Add Media
@@ -180,6 +181,26 @@ class ContentController(BaseController):
         if app_globals.memcache.get(str("media_processing_"+id)):
             return "processing"
         return ""
+
+
+    #-----------------------------------------------------------------------------
+    # Autosave
+    #-----------------------------------------------------------------------------
+    def autosave(self, id):
+        """
+        Javascript can send just the content to be autosaved at 1 min intervals
+        There is no need to check login deatils as the memcache unique key will be used
+        """
+        if request.environ['REQUEST_METHOD']!='POST': return
+        id = app_globals.memcache.get(str(id))
+        if not id: return
+        
+        if 'content' in request.POST:
+            content = get_content(id)
+            content.content = request.POST['content']
+            Session.commit()
+            update_content(id)
+
 
 
     #-----------------------------------------------------------------------------
