@@ -68,12 +68,12 @@ if session.has_key('flash_message'):
 	msg_msg = msg["message"]
 %>
   % if session.has_key('flash_message'):
-    <div id="flash_message" class="status_${msg_status}">${msg_msg}</div>
+    <div id="flash_message" class="hidden_by_default status_${msg_status}">${msg_msg}</div>
     
-    <!-- YUI animation for flash message -->
+    <!-- animation for flash message -->
     <script type="text/javascript">
 		$(function() {
-			$("#flash_message").hide().slideDown("slow").delay(5000).slideUp("slow");
+			$("#flash_message").slideDown("slow").delay(5000).slideUp("slow");
 		});
     </script>
     

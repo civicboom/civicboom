@@ -67,9 +67,6 @@
     <!-- YUI 2.x global imports -->
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script><!-- Utility Dependencies -->
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/element/element-min.js"            ></script>
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/animation/animation-min.js"        ></script>
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/connection/connection-min.js"      ></script>
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/datasource/datasource-min.js"      ></script>
     <!-- Civicboom global imports -->
     <script type="text/javascript" src="/javascript/misc.js"          ></script>
     <script type="text/javascript" src="/javascript/url_encode.js"    ></script>
