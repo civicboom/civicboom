@@ -9,13 +9,11 @@ setup a cron job to run these tasks
 
 from civicboom.lib.base import *
 
-from boto.s3.connection import S3Connection
-from boto.s3.key import Key
-import magic
-import os
+
+
 import logging
 import datetime
-import hashlib
+
 
 
 log = logging.getLogger(__name__)
@@ -38,9 +36,6 @@ class TaskController(BaseController):
             return abort(403)
         BaseController.__before__(self)
 
-    def index(self):
-        return "timed task controller"
-
     def expire_syndication_articles(self):
         """
         Description to follow
@@ -51,9 +46,17 @@ class TaskController(BaseController):
         """
         Users who do not complete the signup process by entering an email
         address that is incorrect or a bots or cant use email should be
-        removed if they have still not signed up after 1 week
+        removed if they have still not signed up after 4 Days
         """
-        pass
+        from civicboom.model.member import User
+        ghost_expire = datetime.datetime.now() - datetime.timedelta(days=4)
+        for u in Session.query(User).filter(~User.login_details.any()).filter(User.join_date < ghost_expire).all():
+            Session.delete(u)
+            # It may be nice to log numbers here to aid future business desctions
+        Session.commit()
+        # AllanC - the method above could be inefficent. could just do it at the DB side?
+        return response_completed_ok
+
 
     def assignment_near_expire(self):
         """
@@ -76,6 +79,12 @@ class TaskController(BaseController):
         to whatever warehouse we're using (eg Amazon S3). Should be called whenever
         the server software package is upgraded.
         """
+        from boto.s3.connection import S3Connection
+        from boto.s3.key import Key
+        import magic
+        import os
+        import hashlib
+
         done = []
         if config["warehouse"] == "s3":
             log.info("Syncing /public to s3")
