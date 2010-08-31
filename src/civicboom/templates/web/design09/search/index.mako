@@ -14,6 +14,14 @@
 <form action='${url(controller="search", action="content")}' method='GET'>
 	Search For: <input type="text" name="query" value="">
 	<br>Near: ${loc.location_picker()}
+	<br>During:
+	<input type="text" class="datepicker" name="from"> -
+	<input type="text" class="datepicker" name="to">
+	<script type="text/javascript">
+	$(function() {
+		$(".datepicker").datepicker();
+	});
+	</script>
 	<input type="submit">
 </form>
 </%def>
