@@ -6,7 +6,6 @@ from pylons import url
 	<head>
 		<title>${self.title()}</title>
 		<link rel="stylesheet" type="text/css" href="${url('fa_static', path_info='/admin.css')}" />
-		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/autocomplete/assets/skins/sam/autocomplete.css">
 		<script type="text/javascript" src="/javascript/_combined.js"></script>
 		<style>
 TABLE.outer {
@@ -54,7 +53,7 @@ ${self.styleOverides()}
 		</style>
 		% endif
 	</head>
-	<body class="yui-skin-sam">
+	<body>
 		<div id="content" class="ui-admin ui-widget">
 ${self.body()}
 		</div>

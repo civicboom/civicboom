@@ -13,13 +13,7 @@
 ##------------------------------------------------------------------------------
 <%def name="head_links()">
   ${parent.head_links()}
-  
-  <!-- Additional YUI imports-->
-  <link   type="text/css"        href="http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/skin.css"       rel="stylesheet" />
-  <script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js" ></script><!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
-  <script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/editor/simpleeditor-min.js"      ></script><!-- Source file for Rich Text Editor-->
-  <script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/uploader/uploader-min.js"        ></script>
-
+  <script type="text/javascript" src ="/javascript/tiny_mce/tiny_mce.js"></script>
   <link   type="text/css"        href="/styles/content_editor/content_editor.css" rel="stylesheet" />
 </%def>
 
@@ -121,7 +115,19 @@
             ${popup("extra info")}
         </p>
   
-        ${YUI.richtext(c.content.content, width='100%', height='300px')}
+        ##${YUI.richtext(c.content.content, width='100%', height='300px')}
+		<textarea name="form_content" id="form_content" style="width:100%; height:300px;">${c.content.content}</textarea>
+		<script type="text/javascript">
+		tinyMCE.init({
+			mode : "textareas",
+			theme : "advanced",
+			theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
+			theme_advanced_buttons2 : "",
+			theme_advanced_buttons3 : "",
+			theme_advanced_toolbar_location : "top",
+			theme_advanced_toolbar_align : "left",
+		});
+		</script>
   
         % if c.content.__type__ == "draft":
             <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>

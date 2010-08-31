@@ -7,58 +7,6 @@ TODO: these should be documented for each component
 
 
 ##------------------------------------------------------------------------------
-## YUI Rich Text Component
-##------------------------------------------------------------------------------
-<%def name="richtext(content, form_name='form_content', width='100%', height='300px')">
-
-  <!-- Rich Text Component -->
-  <div class="yui-skin-sam">
-    <textarea id="${form_name}" name="${form_name}" style="width:${width}; height:${height};">${content}</textarea>  
-    <script type="text/javascript">
-      var ${form_name}Editor = new YAHOO.widget.SimpleEditor('${form_name}', {
-          height: '${height}',
-          width: '${width}',
-          //dompath: true //Turns on the bar at the bottom
-          toolbar: {
-            collapse: true,
-            titlebar: 'Editing Tools',
-            draggable: false,
-            buttons: [
-              { group: 'text', label: 'Text Effects',
-                  buttons: [
-                    { type: 'push', label: 'Bold CTRL + SHIFT + B', value: 'bold' },
-                    { type: 'push', label: 'Italic CTRL + SHIFT + I', value: 'italic' }
-                  ]
-              },
-              { type: 'separator' },
-              { group: 'indentlist', label: 'Lists',
-                  buttons: [
-                      { type: 'push', label: 'Create an Unordered List', value: 'insertunorderedlist' },
-                      { type: 'push', label: 'Create an Ordered List', value: 'insertorderedlist' }
-                  ]
-              },
-              { type: 'separator' },
-              { group: 'insertitem', label: 'Insert Link',
-                  buttons: [
-                      { type: 'push', label: 'HTML Link CTRL + SHIFT + L', value: 'createlink', disabled: true }
-                  ]
-              }
-            ]
-          }
-      });
-      ${form_name}Editor.set("handleSubmit", true);
-      ${form_name}Editor.render();
-    </script>
-
-  </div>
-  <!-- End Rich Text Component -->
-
-</%def>
-
-
-
-
-##------------------------------------------------------------------------------
 ## File Uploader
 ##------------------------------------------------------------------------------
 <%def name="file_uploader(progressbar_size=(300,5))">

@@ -5,6 +5,8 @@ Assignemnt Actions
 from civicboom.lib.base import *
 from civicboom.lib.database.get_cached import get_content
 from civicboom.lib.communication       import messages
+from civicboom.model                   import Rating
+from sqlalchemy.orm.exc import NoResultFound
 
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -19,8 +21,28 @@ class ContentActionsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def rate(self, id):
-        # Implement me
-        pass
+        # remove any existing ratings
+        try:
+            q = Session.query(Rating)
+            q = q.filter(Rating.content_id==int(id))
+            q = q.filter(Rating.member==c.logged_in_user)
+            existing = q.one()
+            Session.delete(existing)
+            Session.commit()
+        except NoResultFound:
+            pass
+
+        # add a new one
+        if "rating" in request.POST:
+            r = Rating()
+            r.content_id = int(id)
+            r.member     = c.logged_in_user
+            r.rating     = int(request.POST["rating"])
+            Session.add(r)
+            Session.commit()
+        user_log.info("Rated Content #%d as %d" % (int(id), int(request.POST["rating"])))
+
+        return action_ok("Vote counted")
 
 
     #---------------------------------------------------------------------------
