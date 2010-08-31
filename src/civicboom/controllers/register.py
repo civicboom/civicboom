@@ -9,9 +9,8 @@ from civicboom.model.member            import User, UserLogin
 from civicboom.lib.database.actions    import follow, accept_assignment
 
 # Communication & Messages
-#from civicboom.lib.communication.email import send_email
 from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email
-#import civicboom.lib.communication.messages as messages
+
 
 # Form Validators
 from civicboom.lib.form_validators.validator_factory import build_schema
@@ -102,6 +101,8 @@ class RegisterController(BaseController):
         if c.logged_in_user.email_unverifyed:
             send_verifiy_email(c.logged_in_user)
             flash_message(_('Please check your email to validate your email address'))
+        
+        c.logged_in_user.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako'))
         
         flash_message(_("Congratulations, you have successfully signed up to _site_name."))
         redirect('/')

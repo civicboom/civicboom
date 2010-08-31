@@ -170,6 +170,7 @@ def authorize(authenticator):
                         #for key in post_overlay.keys():
                         #    request.POST[key] = post_overlay[key]
                         #request.POST = post_overlay
+                        # TODO - want to re-instate post_overlay over request.POST but the security model wont let me :(
                         
                 # Make original method call
                 result = target(*args, **kwargs)
