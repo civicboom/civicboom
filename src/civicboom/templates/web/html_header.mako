@@ -56,6 +56,7 @@
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09_titlepage.css" />
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09_document.css" />
     <link rel="stylesheet" type="text/css" href="/styles/jquery.autocomplete.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/jquery.ui.stars.css" />
     % else:
     <link rel="stylesheet" type="text/css" href="/styles/design09/_combined.css" />
     % endif
@@ -73,7 +74,9 @@
     <script type="text/javascript" src="/javascript/toggle_div.js"    ></script>
 	<!-- jQuery -->
 	<script type="text/javascript" src="/javascript/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="/javascript/jquery.autocomplete.js"></script>
+	<script type="text/javascript" src="/javascript/jquery.ui.stars.js"></script>
     % else:
     <script type="text/javascript" src="/javascript/_combined.js"></script>
     % endif

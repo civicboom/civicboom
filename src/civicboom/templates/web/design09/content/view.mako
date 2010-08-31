@@ -53,6 +53,32 @@
         % endif
     % endif
 
+## FIXME: conditional rating (only if the article is user visible)
+<form id="rating" action="${url(controller='content_actions', action='rate', id=c.content.id)}" method="POST">
+	<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
+	<select name="rating" style="width: 120px">
+## FIXME: select the right value
+		<option value="1">Very poor</option>
+		<option value="2" selected="selected">Not that bad</option>
+		<option value="3">Average</option>
+		<option value="4">Good</option>
+		<option value="5">Perfect</option>
+	</select>
+	<input type="submit" value="Rate!">
+</form>
+<script>
+$(function() {
+	$("#rating").children().not("select").hide();
+	$("#rating").stars({
+		inputType: "select",
+		callback: function(ui, type, value) {
+## FIXME: AJAX
+			$("#rating").submit();
+		}
+	});
+});
+</script>
+
 
   ##-----Share Article Links--------
   <%include file="/web/design09/includes/share_links.mako"/>
