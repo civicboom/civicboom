@@ -1,17 +1,15 @@
 <%def name="location_picker(field_name='location', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13, always_show_map=False)">
-<div style="width: ${width}; padding-bottom: 2em;">
-	<input id="${field_name}_name" name="${field_name}_name" type="text">
-	<div id="${field_name}_comp"></div>
-	<input id="${field_name}" name="${field_name}" type="hidden">
-	% if not always_show_map:
-	<script>
-	$(function() {
-		$("#${field_name}_name").focus(function() {$("#${field_name}_div").slideDown();});
-		$("#${field_name}_name").blur( function() {$("#${field_name}_div").slideUp();  });
-	});
-	</script>
-	% endif
-</div>
+<input id="${field_name}_name" name="${field_name}_name" type="text">
+<div id="${field_name}_comp"></div>
+<input id="${field_name}" name="${field_name}" type="hidden">
+% if not always_show_map:
+<script>
+$(function() {
+	$("#${field_name}_name").focus(function() {$("#${field_name}_div").slideDown();});
+	$("#${field_name}_name").blur( function() {$("#${field_name}_div").slideUp();  });
+});
+</script>
+% endif
 
 <%
 style = ""
@@ -41,7 +39,24 @@ ${field_name}_map.click.addHandler(function(event_name, event_source, event_args
 	}
 });
 
-autocomplete_location("${field_name}", ${field_name}_map);
+$(function() {
+	$('#${field_name}_name').autoComplete({
+		script: '/search/location.json?',
+		varName: 'query',
+		valueSep: null,
+		json: true,
+		shownoresults: true,
+		maxresults: 16,
+		callback: function (obj) {
+			var typelonlat = obj.id.split(/[ ()]/);
+			var lon = typelonlat[1];
+			var lat = typelonlat[2];
+
+			document.getElementById("${field_name}").value = lon+","+lat;
+			${field_name}_map.setCenterAndZoom(new mxn.LatLonPoint(Number(lat), Number(lon)), 13);
+		}
+	});
+});
 	</script>
 </div>
 </%def>

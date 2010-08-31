@@ -41,7 +41,6 @@
     ##-------------------
     % if config['development_mode']:
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css" />
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/autocomplete/assets/skins/sam/autocomplete.css">
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09_header_footer.css" />
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09_includes.css" />
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09_includes2.css" />
@@ -56,6 +55,7 @@
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09_forms.css" />
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09_titlepage.css" />
     <link rel="stylesheet" type="text/css" href="/styles/design09/design09_document.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/jquery.autocomplete.css" />
     % else:
     <link rel="stylesheet" type="text/css" href="/styles/design09/_combined.css" />
     % endif
@@ -70,7 +70,6 @@
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/animation/animation-min.js"        ></script>
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/connection/connection-min.js"      ></script>
     <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/datasource/datasource-min.js"      ></script>
-    <script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/autocomplete/autocomplete-min.js"  ></script>
     <!-- Civicboom global imports -->
     <script type="text/javascript" src="/javascript/misc.js"          ></script>
     <script type="text/javascript" src="/javascript/url_encode.js"    ></script>
@@ -79,6 +78,7 @@
     <script type="text/javascript" src="/javascript/member.js"        ></script>
 	<!-- jQuery -->
 	<script type="text/javascript" src="/javascript/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="/javascript/jquery.autocomplete.js"></script>
     % else:
     <script type="text/javascript" src="/javascript/_combined.js"></script>
     % endif
