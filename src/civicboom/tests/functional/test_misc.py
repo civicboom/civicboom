@@ -19,6 +19,15 @@ class TestMiscController(TestController):
     def test_credits(self):
         response = self.app.get(url(controller='misc', action='credits'))
 
+    def test_terms(self):
+        response = self.app.get(url(controller='misc', action='terms'))
+
+    def test_press(self):
+        response = self.app.get(url(controller='misc', action='press'))
+
+    def test_privacy(self):
+        response = self.app.get(url(controller='misc', action='privacy'))
+
     def test_static(self):
         # test that static content is cachable
         response = self.app.get("/robots.txt")
