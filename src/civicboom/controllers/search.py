@@ -38,6 +38,10 @@ class SearchController(BaseController):
         else:
             location = None
 
+        if "type" in request.GET:
+            t = request.GET["type"]
+            results = results.filter(Content.__type__==t)
+
         if "author" in request.GET:
             u = get_user(request.GET["author"])
             results = results.filter(Content.creator_id==u.id)

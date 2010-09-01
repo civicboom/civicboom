@@ -6,16 +6,16 @@
   <div class="yui-u first navigation_items">
     <ul>
       <li>
-        <a href="${h.url(controller='content',action='edit'      )}">${_("Create _assignment")}</a>
+        <a href="${h.url(controller='content', action='edit')}">${_("Create _assignment")}</a>
         <div class="tooltip tooltip_icon"><span>${_("Posting an _assignment allows you to ask questions and make call to actions")}</span></div>
       </li>
       <li>
-        <a href="${h.url(controller='content'   ,action='edit'         )}">${_("Write _article")}</a>
+        <a href="${h.url(controller='content', action='edit')}">${_("Write _article")}</a>
         <div class="tooltip tooltip_icon"><span>${_("Uploading an _article allows you express your ideas, opinions and news to a wider community")}</span></div>
       </li>
       <li>
-        <a href="${h.url(controller='content'   ,action='edit'         )}">${_("Find _assignments")}</a>
-        <div class="tooltip tooltip_icon"><span>${_("FIXME")}</span></div>
+        <a href="${h.url(controller='search', action='content', type='assignment')}">${_("Find _assignments")}</a>
+        <div class="tooltip tooltip_icon"><span>${_("Find open _assignments to respond to")}</span></div>
       </li>
     </ul>
   </div>
