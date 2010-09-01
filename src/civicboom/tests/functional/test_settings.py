@@ -25,12 +25,43 @@ class TestSettingsController(TestController):
         response = self.app.get(url(controller='settings', action='location'))
         # FIXME: location page has no text to test for
 
+        # test for error
         response = self.app.post(
             url(controller='settings', action='save_location', id='unittest'),
             params={
                 '_authentication_token': self.auth_token
             }
         )
+
+        # test guess-coordinates-by-name
+        response = self.app.post(
+            url(controller='settings', action='save_location', id='unittest'),
+            params={
+                '_authenticatin_token': self.auth_token,
+                'location_name': "Canterbury"
+            }
+        )
+
+        # test specified coordinates
+        response = self.app.post(
+            url(controller='settings', action='save_location', id='unittest'),
+            params={
+                '_authenticatin_token': self.auth_token,
+                'location_name': "Canterbury",
+                'location': '1.28,51.28'
+            }
+        )
+
+        # test specified coordinates with json output
+        response = self.app.post(
+            url(controller='settings', action='save_location', id='unittest', format='json'),
+            params={
+                '_authenticatin_token': self.auth_token,
+                'location_name': "Canterbury",
+                'location': '1.28,51.28'
+            }
+        )
+        # FIXME: test response["status"] == "ok"
 
     def test_messages(self):
         # test that with no ID, we get our own user page

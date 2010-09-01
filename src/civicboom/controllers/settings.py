@@ -108,7 +108,7 @@ class SettingsController(BaseController):
         elif "location_name" in request.POST:
             (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_name"]), see Feature #47
         else:
-            return _("No position specified")
+            return action_error(_("No position specified"))
         c.viewing_user = c.logged_in_user
         c.viewing_user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
         Session.commit()
