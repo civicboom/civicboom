@@ -17,7 +17,11 @@
 		try:
 			msg = json.loads(session.get('flash_message'))
 		except ValueError:
+<<<<<<< HEAD
 			msg = {"status": "error", "message:": msg}
+=======
+			msg = {"status": "error", "message": session.get('flash_message')}
+>>>>>>> 3138094... too much colon
 		msg_status = msg["status"]
 		msg_msg = msg["message"]
     if c.widget_height:
