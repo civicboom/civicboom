@@ -176,6 +176,7 @@ def boom_to_all_followers(content, member):
         member.send_message_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
     Session.commit()
 
+
 def lock_content(content):
     if content.status == "locked": return False
     
