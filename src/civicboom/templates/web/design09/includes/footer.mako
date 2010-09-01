@@ -25,7 +25,6 @@
       <li                       ><a href="${h.url(controller='misc', action='press'  )}"               >${_("Press Coverage")}</a></li>
       <li                       ><a href="${h.url(controller='misc', action='terms'  )}" ${link_target}>${_("Terms and Conditions")}</a></li>
       <li                       ><a href="${h.url(controller='misc', action='privacy')}" ${link_target}>${_("Privacy policy")}</a></li>
-      <li                       ><a href="${h.url(controller='misc', action='contact')}"               >${_("Contact")}</a>
       <li class="last_list_item"><a href="${h.url(controller='misc', action='credits')}"               >${_("Credits")}</a>
     </ul>
 

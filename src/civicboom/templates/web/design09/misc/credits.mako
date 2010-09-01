@@ -30,3 +30,7 @@ All rights reserved.
 <hr>
 
 Media Player: <a href="http://flv-player.net/players/maxi/">FLV Player Maxi</a> (CC-By-SA Neolao)
+
+<hr>
+
+Javascript niceness: <a href="http://jquery.com/">jQuery</a> (MIT)

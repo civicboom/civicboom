@@ -2,6 +2,9 @@ from civicboom.tests import *
 
 class TestWidgetController(TestController):
 
+    def test_no_widget_user(self):
+        response = self.app.get(url(controller='widget', action='signin'), status=400)
+
     def test_signin(self):
         response = self.app.get(url(controller='widget', action='signin', widget_username="unittest"))
 

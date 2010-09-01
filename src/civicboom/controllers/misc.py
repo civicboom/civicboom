@@ -11,6 +11,18 @@ class MiscController(BaseController):
     def about(self):
         return render(prefix+"about.mako")
 
+    @cacheable(time=600)
+    def press(self):
+        return render(prefix+"press.mako")
+
+    @cacheable(time=600)
+    def terms(self):
+        return render(prefix+"terms.mako")
+
+    @cacheable(time=600)
+    def privacy(self):
+        return render(prefix+"privacy.mako")
+
     @cacheable(time=60)
     def titlepage(self):
         return render(prefix+"titlepage.mako")
