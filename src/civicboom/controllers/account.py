@@ -7,7 +7,7 @@ from civicboom.lib.helpers          import url_from_widget
 
 # Import other controller actions
 from civicboom.controllers.register import register_new_janrain_user
-from civicboom.lib.civicboom_lib    import verify_email
+from civicboom.lib.civicboom_lib    import verify_email, associate_janrain_account
 
 
 log      = logging.getLogger(__name__)
@@ -16,9 +16,9 @@ user_log = logging.getLogger("user")
 
 class AccountController(BaseController):
     
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Signin and Signout
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Reference - "Definitive Guide to Pylons" (pg 439)
     # and http://pylonsbook.com/en/1.1/simplesite-tutorial-part-3.html#signing-in-and-signing-out
 
@@ -45,9 +45,9 @@ class AccountController(BaseController):
         return redirect('/')
 
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Janrain Engage - http://www.janrain.com/products/engage
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
 
     # To degrade back to AuthKit rename this method
     @https() # redirect to https for transfer of password
@@ -58,7 +58,6 @@ class AccountController(BaseController):
             if 'widget_username' in request.params:
                 setup_widget_env()
                 return render("/widget/widget_signin.mako")
-            #c.janrain_return_url = urllib.quote_plus(url.current(host=app_globals.site_host)) # AllanC moved to app_globals
             return render("/web/account/signin.mako")
         
         c.auth_info = None
@@ -90,7 +89,7 @@ class AccountController(BaseController):
                 #pass
             
             u = register_new_janrain_user(c.auth_info['profile'])             # Create new user from Janrain profile data
-            janrain('map', identifier=c.auth_info['profile']['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
+            # added to assiciate_janrain civicboomlib call #janrain('map', identifier=c.auth_info['profile']['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
             signin_user(u)
             #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             
@@ -98,10 +97,39 @@ class AccountController(BaseController):
         flash_message(_('Unable to authenticate user'))
         return redirect_to_referer()
 
+    #---------------------------------------------------------------------------
+    # Link Janrain Account
+    #---------------------------------------------------------------------------
+    @authorize(is_valid_user)
+    def link_janrain(self):
+        """
+        A user can have there account linked to multiple external accounts
+        The benefit of this is that all external accounts registered with us will
+        allow a user to aggregate over those external services.
+        
+        Only currently logged in users can add additional janrain accounts
+        """
+        if request.environ['REQUEST_METHOD'] == 'GET':
+            return render("/web/account/link_janrain.mako")
+        
+        c.auth_info = None
+        
+        # Authenticate with Janrain
+        if 'token' in request.POST:
+            c.auth_info = janrain('auth_info', token=request.POST.get('token'))
+            
+        if c.auth_info:
+            associate_janrain_account(c.logged_in_user, c.auth_info['profile']['providerName'], c.auth_info['profile']['identifier'])
+            flash_message(action_ok("Account successfully linked to _site_name"))
+        else:
+            flash_message(action_error("Error linking accounts"))
+            
+        redirect(url.current())
 
-    #-----------------------------------------------------------------------------
+
+    #---------------------------------------------------------------------------
     # Verify Email
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     def verify_email(self, id):
         """
         An email is generated for a user and a hash created for them in the URL

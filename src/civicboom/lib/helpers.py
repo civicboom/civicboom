@@ -25,14 +25,19 @@ def get_captcha(lang='en', theme='white'):
     """
     return literal(librecaptcha.displayhtml(config['api_key.reCAPTCHA.public'])) #, lang="es", theme='white'
 
-def get_janrain(lang='en', theme='', **kargs):
+
+def get_janrain(lang='en', theme='', return_url=None, **kargs):
+    """
+    Generate Janrain IFRAME component
+    """
+    if not return_url: return_url = urllib.quote_plus(url.current(host=app_globals.site_host, protocol='https')) #controller='account', action='signin',
     query_params = ""
     for karg in kargs:
         query_params += karg+"="+str(kargs[karg])
     if query_params != "":
         query_params = urllib.quote_plus("?"+query_params)
     return literal(
-        """<iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (app_globals.janrain_signin_url+query_params,lang)
+        """<iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (return_url+query_params,lang)
     )
 
 def shorten_url(url):
