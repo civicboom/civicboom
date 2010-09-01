@@ -13,14 +13,17 @@ def init():
     
     from sqlalchemy     import and_, or_, not_
     from sqlalchemy.orm import mapper, dynamic_loader, relationship
+
+    import datetime
         
     Content.responses = relationship(Content, primaryjoin=and_(Content.id==Content.parent_id,
                                                                 not_(or_(Content.__type__=='comment',Content.__type__=='draft'))
                                                             )
                                     )
     Member.content = relationship(Content, primaryjoin=and_(Member.id==Content.creator_id, Content.__type__!='comment'))
-
-    #Member.accepted_assigments =
+    
+    Member.content_assignments_active   = relationship(AssignmentContent, primaryjoin=and_(Member.id==AssignmentContent.creator_id, AssignmentContent.due_date>=datetime.datetime.now()))    
+    Member.content_assignments_previous = relationship(AssignmentContent, primaryjoin=and_(Member.id==AssignmentContent.creator_id, AssignmentContent.due_date< datetime.datetime.now()))
     
     AssignmentContent.accepted_by = dynamic_loader(Member,
                                                 primaryjoin=and_(AssignmentContent.id==MemberAssignment.content_id,

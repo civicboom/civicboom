@@ -9,13 +9,11 @@ setup a cron job to run these tasks
 
 from civicboom.lib.base import *
 
-from boto.s3.connection import S3Connection
-from boto.s3.key import Key
-import magic
-import os
+
+
 import logging
 import datetime
-import hashlib
+
 
 
 log = logging.getLogger(__name__)
@@ -23,6 +21,11 @@ response_completed_ok = "task:ok" #If this is changed please update tasks.py to 
 
 
 class TaskController(BaseController):
+    
+    #---------------------------------------------------------------------------
+    # Security: Restict Calls to Localhost
+    #---------------------------------------------------------------------------
+    
     def __before__(self, action, **params):
         ##  Only accept requests from 127.0.0.1 as we never want these being
         ##  run by anyone other than the server at set times the server cron
@@ -38,8 +41,10 @@ class TaskController(BaseController):
             return abort(403)
         BaseController.__before__(self)
 
-    def index(self):
-        return "timed task controller"
+
+    #---------------------------------------------------------------------------
+    # Expire Syndication Content
+    #---------------------------------------------------------------------------
 
     def expire_syndication_articles(self):
         """
@@ -47,13 +52,30 @@ class TaskController(BaseController):
         """
         pass
 
+
+    #---------------------------------------------------------------------------
+    # Remove Ghost Reporters
+    #---------------------------------------------------------------------------
+
     def remove_ghost_reporters(self):
         """
         Users who do not complete the signup process by entering an email
         address that is incorrect or a bots or cant use email should be
-        removed if they have still not signed up after 1 week
+        removed if they have still not signed up after 4 Days
         """
-        pass
+        from civicboom.model.member import User
+        ghost_expire = datetime.datetime.now() - datetime.timedelta(days=4)
+        for u in Session.query(User).filter(~User.login_details.any()).filter(User.join_date < ghost_expire).all():
+            Session.delete(u)
+            # It may be nice to log numbers here to aid future business desctions
+        Session.commit()
+        # AllanC - the method above could be inefficent. could just do it at the DB side?
+        return response_completed_ok
+
+
+    #---------------------------------------------------------------------------
+    # Assignment Reminder Notifications
+    #---------------------------------------------------------------------------
 
     def assignment_near_expire(self):
         """
@@ -61,7 +83,38 @@ class TaskController(BaseController):
         question should be reminded via a notification that the assingment
         has not long left
         """
-        pass
+        from sqlalchemy import and_
+        from civicboom.model.content import AssignmentContent
+        
+        def get_assignments_by_date(date_start, date_end):
+            return Session.query(AssignmentContent).filter(and_(AssignmentContent.due_date >= date_start, AssignmentContent.due_date <= date_end)).all()
+
+        def get_responded(assignment):
+            return [response.creator_id for response in assignment.responses]
+            
+        date_7days_time = datetime.datetime.now() + datetime.timedelta(days=6)
+        date_1days_time = datetime.datetime.now() # + datetime.timedelta(days=1)
+        date_1day       =                           datetime.timedelta(days=1)
+        
+        for assignment in get_assignments_by_date(date_start=date_7days_time, date_end=date_7days_time + date_1day): # Get all assignments due in 7 days
+            responded_member_ids = get_responded(assignment)                                                         #   Get a list of all the reporters that have responded to this assignment
+            for member in assignment.accepted_by:                                                                    #   For all reporters accepted this assignment
+                if member.id not in responded_member_ids:                                                            #     Check if they have responded with an article
+                    member.send_message( messages.assignment_due_7days(member, assignment=assignment) )              #     if not send a reminder notification
+                    
+        for assignment in get_assignments_by_date(date_start=date_1days_time, date_end=date_1days_time + date_1day): #Same as above but on day before
+            responded_member_ids = get_responded(assignment) 
+            for member in assignment.accepted_by:
+                if member.id not in responded_member_ids:
+                    member.send_message( messages.assignment_due_1day(member, assignment=assignment) )
+                    
+        Session.commit()
+        return response_completed_ok
+
+
+    #---------------------------------------------------------------------------
+    # Message Clean
+    #---------------------------------------------------------------------------
 
     def message_clean(self):
         """
@@ -70,12 +123,23 @@ class TaskController(BaseController):
         """
         pass
 
+
+    #---------------------------------------------------------------------------
+    # Sync Warehouse Media
+    #---------------------------------------------------------------------------
+
     def sync_public_to_warehouse(self):
         """
         Copies files in the public data folder (should just be CSS / small images)
         to whatever warehouse we're using (eg Amazon S3). Should be called whenever
         the server software package is upgraded.
         """
+        from boto.s3.connection import S3Connection
+        from boto.s3.key import Key
+        import magic
+        import os
+        import hashlib
+
         done = []
         if config["warehouse"] == "s3":
             log.info("Syncing /public to s3")
@@ -97,6 +161,7 @@ class TaskController(BaseController):
                     k.set_acl('public-read')
                     done.append("Synced: "+kname)
         return "\n".join(done)
+
 
     def purdge_unneeded_warehouse_media(self):
         """

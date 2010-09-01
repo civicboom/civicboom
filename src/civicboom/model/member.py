@@ -91,6 +91,10 @@ class Member(Base):
         import civicboom.lib.communication.messages as messages
         messages.send_message(self, m, delay_commit)
 
+    def send_email(self, **kargs):
+        from civicboom.lib.communication.email import send_email
+        send_email(self, **kargs)
+
     def send_message_to_followers(self, m, delay_commit=False):
         for follower in self.followers:
             follower.send_message(m, delay_commit)

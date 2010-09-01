@@ -1,5 +1,5 @@
 ## the lack of newlines here is because we don't want whitespace to appear in the output
-<%def name="secure_link(href, value='Submit', vals=[], css_class='')"><%
+<%def name="secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None)"><%
 import hashlib
 hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
 %><span class="secure_link"><!--
@@ -12,9 +12,17 @@ hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
 --><a
 	id="link_${hhash}"
 	style="display: none;"
-	href="${href}"
+	href="${href}" 
 	class="${css_class}"
-	onClick="secure_submit_${hhash}(); return false;"
+    title="${title}"
+    <%
+        ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
+        if confirm_text:
+            confirm_text = "confirm('%s')" % confirm_text
+        else:
+            confirm_text = "True"
+    %>
+	onClick="if (${confirm_text}) {secure_submit_${hhash}();} return false;"
 >${value}</a><script>
 document.getElementById("span_${hhash}").style.display = "none";
 document.getElementById("link_${hhash}").style.display = "inline-block";

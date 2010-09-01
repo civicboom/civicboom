@@ -13,6 +13,8 @@ log = logging.getLogger(__name__)
 
 # List of dependencys to keep in memory
 etag_keys = {} #"assignment":{}, "article":{}, "reporter_articles":{}, "reporter":{}, "reporter_assignments_active":{}, "reporter_messages":{}, "reporter_assignments_accepted":{},"syndication_list":{}
+# AllanC: TODO this should be in memcache and not a python array, 1.) memcache expires (useful under heavy load) 2.) memcahce state remains after a python restart if needed
+
 
 def add_etag_dependency_key(dependecy_key):
     etag_keys[dependecy_key] = {}

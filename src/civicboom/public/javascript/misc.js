@@ -1,12 +1,5 @@
 // Misc Functions
 
-function confirm_before_follow_link(link_element, message) {
-  var confirmation = confirm(message);
-  if (confirmation) {
-    window.location = link_element;
-  }
-}
-
 
 // References - http://stackoverflow.com/questions/247483/http-get-request-in-javascript
 //              http://www.jibbering.com/2002/4/httprequest.html

@@ -1,4 +1,5 @@
 from pylons import config, url
+from pylons.templating  import render_mako as render #for rendering emails
 from pylons.i18n.translation import _
 
 from civicboom.model.meta import Session
@@ -168,3 +169,43 @@ def flag_content(content, member=None, type="automated", comment=None):
                subject=_('flagged content'),
                content_text="%s flagged %s as %s" % (member_username, url(controller='content', action='view', id=content.id), type)
                )
+
+def boom_to_all_followers(content, member):
+    if   content.__type__ == 'article':
+        member.send_message_to_followers(messages.boom_article(   member=member, article   =content), delay_commit=True)
+    elif content.__type__ == 'assignment':
+        member.send_message_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
+    Session.commit()
+
+
+def lock_content(content):
+    if content.status == "locked": return False
+    
+    # Lock content
+    content.status = "locked"
+
+    from pylons import tmpl_context as c # Needed for passing varibles to templates
+    c.content = content
+
+    # Email content parent
+    content.parent.creator.send_email(subject=_('content request'), content_html=render('/email/corporate/lock_article_to_organisation.mako'))
+
+    # Email content creator
+    content.creator.send_email(subject=_('content approved'), content_html=render('/email/corporate/lock_article_to_member.mako'))
+    content.creator.send_message(messages.article_approved(member=content.parent.creator, parent=content.parent, content=content), delay_commit=True)
+
+    Session.commit()
+    update_content(content)
+    return True
+    
+    
+def disasociate_content_from_parent(content):
+    if not content.parent: return False
+    # Update has to be done before the commit in this case bcause the parent is needed
+    update_content(content.parent) # Could update responses in the future, but for now we just invalidate the whole content
+    update_content(content)        # this currently has code to update parents reponses, is the line above needed?
+    
+    content.creator.send_message(messages.article_disasociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent), delay_commit=True)
+    content.parent = None
+    Session.commit()
+    return True

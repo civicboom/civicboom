@@ -109,6 +109,9 @@ from civicboom.model.meta import Session
         </div>
 </%doc>
 
+    ## reminder that new relationships have been setup as -
+    ##   content_assignments_active and content_assignments_previous
+
     % for content_type in ["draft", "article", "assignment", "syndicate"]:
         <h2>${content_type}</h2>
         <%

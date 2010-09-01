@@ -187,6 +187,25 @@ class UserVisibleContent(Content):
     views         = Column(Integer(), nullable=False, default=0)
     boom_count    = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
 
+    def is_parent_owner(self, member):
+        # TODO
+        # Currently just check editable_by, but needs aditional checks to see if member is part of organisation
+        if self.parent:
+            return self.parent.editable_by(member)
+        return False
+        
+    def lock(self):
+        from civicboom.lib.database.actions import lock_content
+        return lock_content(self)
+    
+    def dissasociate_from_parent(self):
+        from civicboom.lib.database.actions import disasociate_content_from_parent
+        return disasociate_content_from_parent(self)
+        
+    def boom_to_all_followers(self, member):
+        from civicboom.lib.database.actions import boom_to_all_followers
+        return boom_to_all_followers(self, member)
+
 
 class ArticleContent(UserVisibleContent):
     __tablename__   = "content_article"

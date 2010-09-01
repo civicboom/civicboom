@@ -57,9 +57,16 @@ class ContentActionsController(BaseController):
     @action_redirector()
     @authorize(is_valid_user)
     @authenticate_form
+
     def boom(self, id, format="html"):
-        # Implement me
-        pass
+        boomkey = 'boom%s' % id
+        if boomkey in session: return action_error(_('already boomed this'))
+        session[boomkey] = True
+        
+        content = get_content(id)
+        if content.creator == c.logged_in_user: return action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
+        content.boom_to_all_followers(c.logged_in_user)
+        return action_ok(_("All your followers have been informed about this content"))
 
 
     #---------------------------------------------------------------------------
@@ -68,9 +75,16 @@ class ContentActionsController(BaseController):
     @action_redirector()
     @authorize(is_valid_user)
     @authenticate_form
+
     def approve(self, id, format="html"):
-        # Implement me
-        pass
+        content = get_content(id)
+        if content.is_parent_owner(c.logged_in_user):
+            if content.lock():
+                return action_ok(_("content has been approved and locked"))
+        return action_error(_('Error locking content'))
+
+
+
 
     #---------------------------------------------------------------------------
     # Disassociate: User Visable Content (organistaion only)
@@ -78,9 +92,14 @@ class ContentActionsController(BaseController):
     @action_redirector()
     @authorize(is_valid_user)
     @authenticate_form
+
     def disasociate(self, format="html"):
-        # Implement me
-        pass
+        content = get_content(id)
+        if content.is_parent_owner(c.logged_in_user):
+            if content.dissasociate_from_parent():
+                return action_ok(_("content has dissasociated from your content"))
+        return action_error(_('Error dissasociating content'))
+
 
 
     #---------------------------------------------------------------------------

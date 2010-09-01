@@ -31,6 +31,19 @@ def redirect_to_referer():
         url_to = url.current()
     return redirect(url_to)
 
+#-------------------------------------------------------------------------------
+# UnicodeMultiDict Convertion
+#-------------------------------------------------------------------------------
+
+def multidict_to_dict(multidict):
+    from webob.multidict import UnicodeMultiDict
+    dict = {}
+    if isinstance(multidict, UnicodeMultiDict):
+        for key in multidict.keys():
+            dict[key] = multidict[key]
+    return dict
+    
+
 
 #-------------------------------------------------------------------------------
 # Session Timed Keys Management

@@ -73,14 +73,35 @@ def wh_public(filename):
     #    return "/"+filename
 
 def url_from_widget(*args, **kargs):
-    for var in app_globals.widget_variables:
-
-        if var in request.params:
-            kargs[var] = request.params[var]
-        #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
-        #    kargs[var] = getattr(c,var)
+    if hasattr(app_globals,'widget_variables'):
+        for var in app_globals.widget_variables:    
+            if var in request.params:
+                kargs[var] = request.params[var]
+            #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
+            #    kargs[var] = getattr(c,var)
     return url(*args,**kargs)
 
 def truncate(text, length=100, indicator='...', whole_word=True):
     # FIXME: stub, see bug #49
     return text[0:length]
+
+def objs_to_linked_formatted_dict(**kargs):
+    """
+    Takes a dict of string:string that correspond to python tmpl_context global e.g:
+      'member':'creator_reporter' would refer to c.creator_reporter
+      'member': member_obj_ref 
+    Then, See's if the object has a '__link___' attribute to generate a HTML <a> tag for this object
+    """
+    def gen_link(o):
+        # AllanC - code inspired from Shish's Message link framework in lib/communication/messages.py
+        if hasattr(o, "__link__"):
+            return HTML.a(unicode(o), href=o.__link__())
+        else:
+            return HTML.span(unicode(o)) # the span here is for security, it does HTML escaping
+    links = {}
+    for key in kargs:
+        val = kargs[key]
+        if isinstance(val, basestring) and hasattr(c, val): # if val is text then check to see if it is a key in teml_context
+            val = c[val]
+        links[key] = gen_link(val)
+    return links

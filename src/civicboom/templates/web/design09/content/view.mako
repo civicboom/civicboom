@@ -1,13 +1,20 @@
 <%inherit file="/web/layout_3cols.mako"/>
-<%namespace name="loc"              file="../includes/location.mako"/>
-<%namespace name="member_includes"  file="../includes/member.mako"  />
-<%namespace name="content_includes" file="../includes/content_list.mako" />
 
+<%namespace name="loc"              file="/web/design09/includes/location.mako"     />
+<%namespace name="sl"               file="/web/design09/includes/secure_link.mako"  />
+<%namespace name="member_includes"  file="/web/design09/includes/member.mako"       />
+<%namespace name="content_includes" file="/web/design09/includes/content_list.mako" />
+
+
+##------------------------------------------------------------------------------
+## RSS
+##------------------------------------------------------------------------------
 
 <%def name="rss()">${self.rss_header_link()}</%def>
 <%def name="rss_url()">${url(controller='search', action='content', response_to=c.content.id, format='xml')}</%def>
 <%def name="rss_title()">Responses to ${c.content.title}</%def>
 ## FIXME: extra RSS for "more by this author"?
+
 
 ##------------------------------------------------------------------------------
 ## Title - Override
@@ -30,28 +37,43 @@
   ##-------Actions-------
   <h2>${_("Actions")}</h2>
   
+    ## Content Owner Actions
     % if c.content.editable_by(c.logged_in_user):
       <a class="button_small button_small_style_2" href="${h.url(controller='content',action='edit',id=c.content.id)}">
         Edit
       </a>
-      <a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=c.content.id)}"
-         onclick="confirm_before_follow_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
-        Delete
-      </a>
+      ##<a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=c.content.id)}"
+      ##   onclick="confirm_before_follow_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
+      ##  Delete
+      ##</a>
+      ${sl.secure_link(h.url(controller='content', action='delete', id=c.content.id), _('Delete')  , css_class="button_small button_small_style_2", title="Delete this content", confirm_text=_('Are your sure you want to delete this content?'))}
+      
     % endif
 
+    ## Assignment Accept and Withdraw
     % if c.content.__type__ == "assignment" and c.content.acceptable_by(c.logged_in_user):
         <% status = c.content.previously_accepted_by(c.logged_in_user) %>
         %if not status:
-            <a class="button_small button_small_style_2" href="${h.url(controller='content_actions',action='accept',  id=c.content.id)}">
-              Accept
-            </a>
+            ${sl.secure_link(h.url(controller='content_actions',action='accept'  , id=c.content.id), _('Accept')  , css_class="button_small button_small_style_2")}
         % elif status != "withdrawn":
-            <a class="button_small button_small_style_2" href="${h.url(controller='content_actions',action='withdraw',id=c.content.id)}">
-              Withdraw
-            </a>
+            ${sl.secure_link(h.url(controller='content_actions',action='withdraw', id=c.content.id), _('Withdraw'), css_class="button_small button_small_style_2")}
         % endif
     % endif
+
+    ## Parent Content Owner Actions
+    % if c.content.parent and c.content.is_parent_owner(c.logged_in_user):
+        ## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
+        % if c.content.status == "locked":
+            <a href="" class="button_small button_small_style_2">
+                Email Resorces
+            </a>
+        % else:
+            ${sl.secure_link(h.url(controller='content_actions',action='approve'    , id=c.content.id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
+            ${sl.secure_link(h.url(controller='content_actions',action='disasociate', id=c.content.id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+        % endif
+        
+    % endif
+    
 
     % if hasattr(c.content, "rating"):
 <%
