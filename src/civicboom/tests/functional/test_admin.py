@@ -34,3 +34,6 @@ class TestAdminController(TestController):
     def test_license_edit(self):
         response = self.app.get("/admin/License/models/1/edit?")
 
+    def test_group_new(self):
+        response = self.app.get("/admin/Group/models/new")
+
