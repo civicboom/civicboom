@@ -42,10 +42,12 @@
       <a class="button_small button_small_style_2" href="${h.url(controller='content',action='edit',id=c.content.id)}">
         Edit
       </a>
-      <a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=c.content.id)}"
-         onclick="confirm_before_follow_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
-        Delete
-      </a>
+      ##<a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=c.content.id)}"
+      ##   onclick="confirm_before_follow_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
+      ##  Delete
+      ##</a>
+      ${sl.secure_link(h.url(controller='content', action='delete', id=c.content.id), _('Delete')  , css_class="button_small button_small_style_2", title="Delete this content", confirm_text=_('Are your sure you want to delete this content?'))}
+      
     % endif
 
     ## Assignment Accept and Withdraw

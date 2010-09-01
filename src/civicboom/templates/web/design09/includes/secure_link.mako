@@ -12,17 +12,18 @@ hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
 --><a
 	id="link_${hhash}"
 	style="display: none;"
-	href="${href}"
+	href="${href}" 
 	class="${css_class}"
     title="${title}"
     <%
         ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
         if confirm_text:
-            confirm_text = "confirm_before_link(this,'%s');" % confirm_text
+            #confirm_text = "confirm_before_link(this,'%s');" % confirm_text
+            confirm_text = "confirm('%s')" % confirm_text
         else:
-            confirm_text = ""
+            confirm_text = "True"
     %>
-	onClick="${confirm_text} secure_submit_${hhash}(); return false;"
+	onClick="if (${confirm_text}) {secure_submit_${hhash}();} return false;"
 >${value}</a><script>
 document.getElementById("span_${hhash}").style.display = "none";
 document.getElementById("link_${hhash}").style.display = "inline-block";

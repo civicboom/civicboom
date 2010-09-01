@@ -190,8 +190,8 @@ class UserVisibleContent(Content):
     def is_parent_owner(self, member):
         # TODO
         # Currently just check editable_by, but needs aditional checks to see if member is part of organisation
-        if parent:
-            return parent.editable_by(member)
+        if self.parent:
+            return self.parent.editable_by(member)
         return False
         
     def lock(self):

@@ -1,4 +1,5 @@
 from pylons import config, url
+from pylons.templating  import render_mako as render #for rendering emails
 from pylons.i18n.translation import _
 
 from civicboom.model.meta import Session

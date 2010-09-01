@@ -201,6 +201,7 @@ class ContentController(BaseController):
             content.content = request.POST['content']
             Session.commit()
             update_content(id)
+        # TODO: json status return? action ok? error?
 
 
 
