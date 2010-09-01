@@ -176,7 +176,8 @@ class ContentController(BaseController):
     def get_media_processing_staus(self,id):
         """
         Javascript can poll this method to get progress updates on the media processing
-        Currently only return a flag to state if processing it taking place, but could be improved to return aditional info
+        Currently only return a flag to state if processing it taking place,
+        but could be improved to return aditional progress info.
         """
         if app_globals.memcache.get(str("media_processing_"+id)):
             return "processing"
@@ -188,8 +189,8 @@ class ContentController(BaseController):
     #-----------------------------------------------------------------------------
     def autosave(self, id):
         """
-        Javascript can send just the content to be autosaved at 1 min intervals
-        There is no need to check login deatils as the memcache unique key will be used
+        Javascript can send just the content text to be autosaved at 1 min intervals.
+        There is no need to check login deatils as the memcache unique key will be used.
         """
         if request.environ['REQUEST_METHOD']!='POST': return
         id = app_globals.memcache.get(str(id))

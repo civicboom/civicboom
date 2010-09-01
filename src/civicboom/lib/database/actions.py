@@ -182,6 +182,9 @@ def lock_content(content):
     # Lock content
     content.status = "locked"
 
+    from pylons import tmpl_context as c # Needed for passing varibles to templates
+    c.content = content
+
     # Email content parent
     content.parent.creator.send_email(subject=_('content request'), content_html=render('/email/corporate/lock_article_to_organisation.mako'))
 

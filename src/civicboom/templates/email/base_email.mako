@@ -14,17 +14,20 @@
     </head>
 
     <body>
-      ##<div style="margin-left:auto;margin-right:auto;text-align:center;">
-        <a href="${app_globals.site_url}"><img src="${app_globals.site_url}/styles/design09/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/></a>
-      ##</div>
-      ${next.body()}
+        
+        <a href="${app_globals.site_url}">
+            <img src="${app_globals.site_url}/styles/design09/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
+        </a>
+        <br/>
+      
+        ${next.body()}
     </body>
 </html>
-    
-<%def name="subject()">${_("_site_name: _tagline")}</%def>
+
+##<%def name="subject()">${_("_site_name: _tagline")}</%def>
 
 <%def name="footer()">
-  <br/>
-  <p>${_("Thanks!")}</p>
-  <p>${_("_site_name team.")}</p>
+    <br/>
+    <p>${_("Thanks!")}</p>
+    <p>${_("_site_name team.")}</p>
 </%def>
