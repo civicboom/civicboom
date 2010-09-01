@@ -25,7 +25,7 @@ def flash_message(message):
 def redirect_to_referer():
     url_to = request.environ.get('HTTP_REFERER')
     if url_to == url.current(): # Detect if we are in a redirection loop and abort
-        log.warning("Redirect loop detected for "+url_to)
+        log.warning("Redirect loop detected for "+str(url_to))
         redirect('/')
     if not url_to:
         url_to = url.current()
@@ -97,7 +97,7 @@ def action_redirector():
                     flash_message(str(result))
                     return redirect(action_redirect)
                 else:
-                    log.warning("Redirect loop detected for "+action_redirect)
+                    log.warning("Redirect loop detected for "+str(action_redirect))
                     return redirect("/")
 
         return decorator(wrapper)(target) # Fix the wrappers call signiture
