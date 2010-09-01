@@ -22,6 +22,9 @@ class ContentActionsController(BaseController):
     @authenticate_form
     def rate(self, id):
         # remove any existing ratings
+        # we need to commit after removal, otherwise SQLAlchemy
+        # will optimise remove->add as modify-existing, and the
+        # SQL trigger will break
         try:
             q = Session.query(Rating)
             q = q.filter(Rating.content_id==int(id))
@@ -34,12 +37,15 @@ class ContentActionsController(BaseController):
 
         # add a new one
         if "rating" in request.POST:
-            r = Rating()
-            r.content_id = int(id)
-            r.member     = c.logged_in_user
-            r.rating     = int(request.POST["rating"])
-            Session.add(r)
-            Session.commit()
+            rating = int(request.POST["rating"])
+            # rating = 0 = remove vote
+            if rating > 0:
+                r = Rating()
+                r.content_id = int(id)
+                r.member     = c.logged_in_user
+                r.rating     = rating
+                Session.add(r)
+                Session.commit()
         user_log.info("Rated Content #%d as %d" % (int(id), int(request.POST["rating"])))
 
         return action_ok("Vote counted")

@@ -54,15 +54,23 @@
     % endif
 
     % if hasattr(c.content, "rating"):
+<%
+def selif(r, n):
+	if round(r) == n:
+		return " selected"
+	else:
+		return ""
+r = (c.content.rating * 5)
+%>
 		<form id="rating" action="${url(controller='content_actions', action='rate', id=c.content.id)}" method="POST">
 			<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
 			<select name="rating" style="width: 120px">
-				## FIXME: select the right value
-				<option value="1">Very poor</option>
-				<option value="2" selected="selected">Not that bad</option>
-				<option value="3">Average</option>
-				<option value="4">Good</option>
-				<option value="5">Perfect</option>
+				<option value="0">Unrated</option>
+				<option value="1"${selif(r, 1)}>Very poor</option>
+				<option value="2"${selif(r, 2)}>Not that bad</option>
+				<option value="3"${selif(r, 3)}>Average</option>
+				<option value="4"${selif(r, 4)}>Good</option>
+				<option value="5"${selif(r, 5)}>Perfect</option>
 			</select>
 			<input type="submit" value="Rate!">
 		</form>
