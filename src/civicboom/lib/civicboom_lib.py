@@ -11,11 +11,12 @@ from civicboom.lib.database.get_cached import get_user
 
 from civicboom.lib.communication.email import send_email
 
-from civicboom.model                            import DraftContent, CommentContent, Media, Tag, FlaggedContent
+from civicboom.model                            import DraftContent, CommentContent, Media, Tag, FlaggedContent, UserLogin
 from civicboom.lib.database.get_cached          import get_content, get_tag
 from civicboom.lib.database.actions             import del_content
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
 
+from civicboom.lib.services.janrain         import janrain
 from civicboom.lib.services.cdyne_profanity import profanity_check
 
 from civicboom.lib.text          import clean_html_markup
@@ -62,6 +63,33 @@ def verify_email(user, hash, commit=False):
             Session.commit()
         return True
     return False
+
+#-------------------------------------------------------------------------------
+# Accounts
+#-------------------------------------------------------------------------------
+
+def associate_janrain_account(user, type, token):
+    login = None
+    try:
+        login = Session.query(UserLogin).filter(UserLogin.token == token).filter(UserLogin.type == type).one()
+    except:
+        pass
+    if login:
+        if login.user == user: return # If login already belongs to this user then abort
+        if login.user: # Warn existing user that account is being reallocated
+            login.user.send_email(subject=_('login account reallocated'), content_text=_('your %s account has been allocated to the user %s') % (type, user.username))
+        janrain('unmap', identifier=login.token, primaryKey=login.member_id)
+        login.user   = user
+    else:
+        login = UserLogin()
+        login.user   = user
+        login.type   = type
+        login.token  = token
+        Session.add(login)
+    Session.commit()
+    janrain('map', identifier=login.token, primaryKey=login.member_id) # Let janrain know this users primary key id, this is needed for agrigation posts
+
+
 
 
 #-------------------------------------------------------------------------------

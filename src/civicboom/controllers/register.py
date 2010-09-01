@@ -9,7 +9,7 @@ from civicboom.model.member            import User, UserLogin
 from civicboom.lib.database.actions    import follow, accept_assignment
 
 # Communication & Messages
-from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email
+from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email, associate_janrain_account
 
 
 # Form Validators
@@ -187,14 +187,16 @@ def register_new_janrain_user(profile):
     u.status        = "pending"
     #u.location      = get_location_from_json(profile.get('address'))
     
-    u_login = UserLogin()
-    u_login.user   = u
-    u_login.type   = profile['providerName']
-    u_login.token  = profile['identifier']
-
     Session.add(u)
-    Session.add(u_login)
-    Session.commit()
+    
+    #u_login = UserLogin()
+    #u_login.user   = u
+    #u_login.type   = profile['providerName']
+    #u_login.token  = profile['identifier']
+    #Session.add(u_login)
+    associate_janrain_account(u, profile['providerName'], profile['identifier'])
+    
+    #Session.commit() # unneeded as associate_janrain_account has a commit in to map accounts
     
     u.config['dob'] = profile.get('birthday') #Config vars? auto commiting?
     #u.config['url']  = profile.get('url')
