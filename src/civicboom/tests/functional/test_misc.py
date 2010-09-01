@@ -24,6 +24,13 @@ class TestMiscController(TestController):
         response = self.app.get("/robots.txt")
         # FIXME: test that "Cache-Control: public" is set
 
+    def test_semi_static(self):
+        response = self.app.get("/misc/about")
+        # FIXME: test that "Cache-Control: public" is NOT set (for logged in user)
+        self.log_out()
+        response = self.app.get("/misc/about")
+        # FIXME: test that "Cache-Control: public" IS set for anonymous
+
     def test_georss(self):
         response = self.app.get(url(controller='misc', action='georss'))
         response = self.app.get(url(controller='misc', action='georss', feed='/search/content.xml'))

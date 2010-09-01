@@ -625,23 +625,25 @@ CREATE TRIGGER update_content
     else:
         log.info("Populating tables with test data") # {{{
 
+        ###############################################################
+        log.debug("Tags")
+
         open_source   = Tag(u"Open Source", sci_tech)
         the_moon_sci  = Tag(u"The Moon", sci_tech)
         the_moon_loc  = Tag(u"The Moon", travel)
-        Session.add_all([
-            open_source, the_moon_loc, the_moon_sci
-            ])
-        Session.commit()
 
         artist       = Tag(u"Artists", arts)
         mic1         = Tag(u"Michelangelo", artist)
         characters   = Tag(u"Characters", entertainment)
         ninja        = Tag(u"Ninja Turtles", characters)
         mic2         = Tag(u"Michelangelo", ninja)
-        Session.add_all([
-            mic1, mic2
-            ])
+
+        Session.add_all([open_source, the_moon_loc, the_moon_sci])
+        Session.add_all([mic1, mic2])
         Session.commit()
+
+        ###############################################################
+        log.debug("Users")
 
         u1 = User()
         u1.username      = u"unittest"
@@ -673,18 +675,26 @@ CREATE TRIGGER update_content
         u3.name          = u"Amy M. Anderson"
         u3.status        = "active"
         u3.email         = u"AmyMAnderson@example.com"
+        u3.avatar        = u"http://rav.shishnet.org/Sylph.png"
 
         u4 = User()
         u4.username      = u"jammy"
         u4.name          = u"Jamie L. Riley"
         u4.status        = "active"
         u4.email         = u"waffleking@example.com"
+        u4.avatar        = u"http://rav.shishnet.org/Arrnea.png"
 
         u5 = User()
         u5.username      = u"Davy_H"
         u5.name          = u"David O. Hughes"
         u5.status        = "active"
         u5.email         = u""
+
+        Session.add_all([u1, u2, u3, u4, u5, u1_login, u2_login])
+        Session.commit()
+
+        ###############################################################
+        log.debug("Messages")
 
         m = Message()
         m.source = u1
@@ -707,6 +717,10 @@ CREATE TRIGGER update_content
         n.target = u1
         n.subject = u"Another notification! A test"
         n.content = u"A test part 2 is happening now :O"
+        Session.commit()
+
+        ###############################################################
+        log.debug("Content")
 
         ca = ArticleContent()
         ca.title      = u"A test article"
@@ -797,9 +811,11 @@ CREATE TRIGGER update_content
         dc.license_id = cc_by.id
         u2.content.append(dc)
 
-        Session.add_all([ca, u1, u2, u3, u1_login, u2_login])
+        Session.add_all([ca])
         Session.commit()
 
+        ###############################################################
+        log.debug("Groups")
 
         g = Group()
         g.username      = u"p.a.t.t.y."
@@ -812,6 +828,9 @@ CREATE TRIGGER update_content
         Session.add_all([g, ])
         Session.commit()
 
+        ###############################################################
+        log.debug("Assignments")
+
         asc = AssignmentContent()
         asc.title      = u"Silence Mr U. Test"
         asc.content    = u"Get Mr Test to stop singing, write an article about how you did it"
@@ -822,7 +841,7 @@ CREATE TRIGGER update_content
         g.content.append(asc)
         Session.add_all([asc, ])
         Session.commit()
-        
+
         asc.invite([u1,u2,u3,u4])
 
         asc2 = AssignmentContent()
@@ -838,7 +857,6 @@ CREATE TRIGGER update_content
         asc2.accept(u3)
         asc2.accept(u4)
         Session.commit()
-
         # }}}
     ###################################################################
     log.info("Successfully set up tables")

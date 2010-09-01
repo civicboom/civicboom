@@ -15,11 +15,3 @@ class Message(Base):
     timestamp   = Column(DateTime(),    nullable=False, default=func.now())
     subject     = Column(Unicode(),     nullable=False)
     content     = Column(UnicodeText(), nullable=False)
-
-    def __unicode__(self):
-        if len(self.content) > 50:
-            return self.content[0:50]+"..."
-        else:
-            return self.content
-
-
