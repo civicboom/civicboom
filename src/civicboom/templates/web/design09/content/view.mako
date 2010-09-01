@@ -80,8 +80,18 @@ r = (c.content.rating * 5)
 			$("#rating").stars({
 				inputType: "select",
 				callback: function(ui, type, value) {
-					## FIXME: AJAX
-					$("#rating").submit();
+					## $("#rating").submit();
+					$.ajax({
+						url: "${url(controller='content_actions', action='rate', id=c.content.id, format='json')}",
+						type: "POST",
+						data: {
+							"_authentication_token": "${h.authentication_token()}",
+							"rating": value
+						},
+						dataType: "json",
+						success: function(data) {flash_message(data);},
+						error: function(XMLHttpRequest, textStatus, errorThrown) {flash_message(textStatus);}
+					});
 				}
 			});
 		});

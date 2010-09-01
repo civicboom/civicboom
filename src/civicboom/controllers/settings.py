@@ -14,7 +14,7 @@ class SettingsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
-    def save_general(self, id=None):
+    def save_general(self, id=None, format="html"):
         c.viewing_user = c.logged_in_user
         u_config = c.viewing_user.config
         current_keys = u_config.keys()
@@ -72,7 +72,7 @@ class SettingsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
-    def save_messages(self, id=None):
+    def save_messages(self, id=None, format="html"):
         c.viewing_user = c.logged_in_user
         from civicboom.lib.communication.messages import generators
         for gen in generators:
@@ -98,7 +98,7 @@ class SettingsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
-    def save_location(self, id=None):
+    def save_location(self, id=None, format="html"):
         if "location" in request.POST:
             try:
                 (lon, lat) = [float(n) for n in request.POST["location"].split(",")]

@@ -188,7 +188,7 @@ class ContentController(BaseController):
     @authorize(is_valid_user)
     @action_redirector()
     @authenticate_form
-    def delete(self, id):
+    def delete(self, id, format="html"):
         content = get_content(id)
         if not content:
             return action_error(_("_content does not exist"))
@@ -205,7 +205,7 @@ class ContentController(BaseController):
     @authorize(is_valid_user)
     @action_redirector()
     @authenticate_form
-    def flag(self, id):
+    def flag(self, id, format="html"):
         """
         Flag this content as being inapproprate of copyright violoation
         """

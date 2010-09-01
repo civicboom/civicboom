@@ -46,7 +46,7 @@ class MessagesController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
-    def send(self):
+    def send(self, format="html"):
         try:
             target = get_user(request.POST["target"])
             if not target:
@@ -69,7 +69,7 @@ class MessagesController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
-    def delete(self):
+    def delete(self, format="html"):
         c.viewing_user = c.logged_in_user
         msg = Session.query(Message).filter(Message.id==request.POST["msg_id"]).one()
         redir = None

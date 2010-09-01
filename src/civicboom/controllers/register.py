@@ -111,7 +111,7 @@ class RegisterController(BaseController):
     # Register - via email (no janrain)
     #---------------------------------------------------------------------------
     @action_redirector()
-    def email(self):
+    def email(self, format="html"):
         """
         Register - via email (no janrain)
         User submits a proposed username and email to this action

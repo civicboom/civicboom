@@ -59,6 +59,8 @@
 <%def name="flash_message()">
 <%
 import json
+msg_status = "ok"
+msg_msg    = ""
 if session.has_key('flash_message'):
 	try:
 		msg = json.loads(session.get('flash_message'))
@@ -67,21 +69,23 @@ if session.has_key('flash_message'):
 	msg_status = msg["status"]
 	msg_msg = msg["message"]
 %>
-  % if session.has_key('flash_message'):
+
     <div id="flash_message" class="hidden_by_default status_${msg_status}">${msg_msg}</div>
     
     <!-- animation for flash message -->
     <script type="text/javascript">
-		$(function() {
-			$("#flash_message").slideDown("slow").delay(5000).slideUp("slow");
-		});
+		function flash_message(msg) {
+			$("#flash_message").removeClass("status_error").removeClass("status_ok").addClass("status_"+msg.status);
+			$("#flash_message").text(msg.message).slideDown("slow").delay(5000).slideUp("slow");
+		}
+% if session.has_key('flash_message'):
+		$(function() {flash_message(${session.get('flash_message')|n});});
+<%
+del session['flash_message']
+%>
+% endif
     </script>
     
-    <%
-      del session['flash_message']
-      #session.save()
-    %>
-  %endif
 </%def>
 
 

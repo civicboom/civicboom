@@ -20,7 +20,7 @@ class ContentActionsController(BaseController):
     @action_redirector()
     @authorize(is_valid_user)
     @authenticate_form
-    def rate(self, id):
+    def rate(self, id, format="html"):
         # remove any existing ratings
         # we need to commit after removal, otherwise SQLAlchemy
         # will optimise remove->add as modify-existing, and the
@@ -57,7 +57,7 @@ class ContentActionsController(BaseController):
     @action_redirector()
     @authorize(is_valid_user)
     @authenticate_form
-    def boom(self, id):
+    def boom(self, id, format="html"):
         # Implement me
         pass
 
@@ -68,7 +68,7 @@ class ContentActionsController(BaseController):
     @action_redirector()
     @authorize(is_valid_user)
     @authenticate_form
-    def approve(self, id):
+    def approve(self, id, format="html"):
         # Implement me
         pass
 
@@ -78,7 +78,7 @@ class ContentActionsController(BaseController):
     @action_redirector()
     @authorize(is_valid_user)
     @authenticate_form
-    def disasociate(self):
+    def disasociate(self, format="html"):
         # Implement me
         pass
 
@@ -89,7 +89,7 @@ class ContentActionsController(BaseController):
     @action_redirector()
     @authorize(is_valid_user)
     @authenticate_form
-    def accept(self, id=None):
+    def accept(self, id=None, format="html"):
         assignment = get_content(id)
         status     = assignment.accept(c.logged_in_user)
         if status == True:
@@ -105,7 +105,7 @@ class ContentActionsController(BaseController):
     @action_redirector()
     @authorize(is_valid_user)
     @authenticate_form
-    def withdraw(self, id=None):
+    def withdraw(self, id=None, format="html"):
         assignment = get_content(id)
         status     = assignment.withdraw(c.logged_in_user)
         if status == True:
