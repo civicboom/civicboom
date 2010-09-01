@@ -35,6 +35,19 @@ class TestSearchController(TestController):
         response = self.app.get(url(controller='search', action='content', location='1,51,10'))
         assert "Here is some text" in response
 
+    def test_content_type(self):
+        response = self.app.get(url(controller='search', action='content', type='assignment'))
+        assert "Silence Mr U. Test" in response
+
+    def test_content_author(self):
+        response = self.app.get(url(controller='search', action='content', author='unittest'))
+        assert "Assignment for the world to see" in response
+
+    def test_content_response_to(self):
+        response = self.app.get(url(controller='search', action='content', response_to=2))
+        # FIXME: create a response as test data
+        #assert "something" in response
+
 
     ##########################################################################
     # Location search
