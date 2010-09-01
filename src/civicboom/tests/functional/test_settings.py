@@ -37,7 +37,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url(controller='settings', action='save_location', id='unittest'),
             params={
-                '_authenticatin_token': self.auth_token,
+                '_authentication_token': self.auth_token,
                 'location_name': "Canterbury"
             }
         )
@@ -46,7 +46,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url(controller='settings', action='save_location', id='unittest'),
             params={
-                '_authenticatin_token': self.auth_token,
+                '_authentication_token': self.auth_token,
                 'location_name': "Canterbury",
                 'location': '1.28,51.28'
             }
@@ -56,7 +56,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url(controller='settings', action='save_location', id='unittest', format='json'),
             params={
-                '_authenticatin_token': self.auth_token,
+                '_authentication_token': self.auth_token,
                 'location_name': "Canterbury",
                 'location': '1.28,51.28'
             }
