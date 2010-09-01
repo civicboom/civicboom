@@ -69,7 +69,7 @@ generators = [
     ["assignment_invite",                    "ne", _("closed _assignment invitation") , _("%(member)s has invited you to participate in the _assignment %(assignment)s")],
     ["article_disasociated_from_assignment", "n",  _("_article dissasociated from _assignment"), _("%(member)s dissasociated your _article %(article)s from the _assignment %(assignment)s")],
     ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been canceled"), _("%(reporter)s canceled the _assignment %(assignment)s")],
-    ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved your _article %(article)s in the response to their _assignment %(parent)s. Check your email for more details")],
+    ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved your _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
     ["boom_article",                         "ne", _("_article boom"),               _("%(member)s thinks you might find this _article interesting %(article)s")],
     ["boom_assignment",                      "ne", _("_assignment boom"),            _("%(member)s thinks you might want to add your opinion to this _assignment %(assignment)s")],
     ["syndicate_accept",                     "n",  _("_article was syndicated"),     _("%(reporter)s has accepted your syndication request for _article %(article)s. Check your email for the details")],

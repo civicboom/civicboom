@@ -18,7 +18,6 @@ hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
     <%
         ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
         if confirm_text:
-            #confirm_text = "confirm_before_link(this,'%s');" % confirm_text
             confirm_text = "confirm('%s')" % confirm_text
         else:
             confirm_text = "True"

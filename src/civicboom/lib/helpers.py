@@ -99,7 +99,7 @@ def objs_to_linked_formatted_dict(**kargs):
     links = {}
     for key in kargs:
         val = kargs[key]
-        if hasattr(c, val): # if val is text then check to see if it is a key in teml_context
+        if isinstance(val, basestring) and hasattr(c, val): # if val is text then check to see if it is a key in teml_context
             val = c[val]
         links[key] = gen_link(val)
     return links
