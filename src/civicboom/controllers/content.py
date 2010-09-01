@@ -45,7 +45,7 @@ class ContentController(BaseController):
 
         # Check content is visable
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
-            if c.content.status != "show":
+            if c.content.status == "pending":
                 flash_message(_("your user does not have the permissions to view this _content"))
                 return render('/web/design09/content/unavailable.mako')
         

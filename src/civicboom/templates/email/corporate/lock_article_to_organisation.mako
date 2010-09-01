@@ -38,7 +38,7 @@
   <li>${_('Link to assignees article on _site_name (using above link).')}</li>
   <li>${_('If multiple sources, link to your assignment page (with all responses listed - including ones you have approved).')}</li>
 </ol>
-<p>${_('Note: You can still disassociate your organisation from this _article (should you at a later date need to do so, so long as it is prior to using it in any further way for your own needs eg: publish). If you to fully disassociate - ie: you revoke your decision to use the content and also wish to disassociate your brand from that content, it is on the understanding that your organisation or associated will not use any part of the content according to Creative Commons License. You can do this by clicking the "disassociate" button on the actual _assignment response.')}</p>)
+##<p>${_('Note: You can still disassociate your organisation from this _article (should you at a later date need to do so, so long as it is prior to using it in any further way for your own needs eg: publish). If you to fully disassociate - ie: you revoke your decision to use the content and also wish to disassociate your brand from that content, it is on the understanding that your organisation or associated will not use any part of the content according to Creative Commons License. You can do this by clicking the "disassociate" button on the actual _assignment response.')}</p>)
 
 
 ${self.footer()}

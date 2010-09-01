@@ -201,12 +201,11 @@ def lock_content(content):
     
 def disasociate_content_from_parent(content):
     if not content.parent: return False
+    # Update has to be done before the commit in this case bcause the parent is needed
+    update_content(content.parent) # Could update responses in the future, but for now we just invalidate the whole content
+    update_content(content)        # this currently has code to update parents reponses, is the line above needed?
     
     content.creator.send_message(messages.article_disasociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent), delay_commit=True)
-    
     content.parent = None
-    
     Session.commit()
-    update_content(content.parent)
-    update_content(content)
     return True
