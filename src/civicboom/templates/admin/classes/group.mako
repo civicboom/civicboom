@@ -23,9 +23,6 @@ ${common.errors(fieldset)}
 	${common.render_short_field(fieldset.name)|n}
 	${common.render_short_field(fieldset.join_date)|n}
 	${common.render_short_field(fieldset.avatar)|n}
-	${common.render_short_field(fieldset.home_location)|n}
-	${common.render_short_field(fieldset.webpage)|n}
-	${common.render_short_field(fieldset.description)|n}
 </table>
 		</td>
 	</tr>
