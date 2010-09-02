@@ -20,7 +20,7 @@ hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
         if confirm_text:
             confirm_text = "confirm('%s')" % confirm_text
         else:
-            confirm_text = "True"
+            confirm_text = "true"
     %>
 	onClick="if (${confirm_text}) {secure_submit_${hhash}();} return false;"
 >${value}</a><script>
