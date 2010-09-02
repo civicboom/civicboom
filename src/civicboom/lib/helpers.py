@@ -41,7 +41,7 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
     )
 
 def shorten_url(url):
-    return re.sub("http://[^/]+", "", url)
+    return re.sub("https?://[^/]+", "", url)
 
 def shorten_module(mod):
     return re.sub("civicboom/(.*).py", "\\1", mod).replace("/", ".")
