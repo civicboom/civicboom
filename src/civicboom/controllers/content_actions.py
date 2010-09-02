@@ -46,8 +46,8 @@ class ContentActionsController(BaseController):
                 r.rating     = rating
                 Session.add(r)
                 Session.commit()
-        user_log.debug("Rated Content #%d as %d" % (int(id), int(request.POST["rating"])))
 
+        user_log.debug("Rated Content #%d as %d" % (int(id), int(request.POST["rating"])))
         return action_ok(_("Vote counted"))
 
 
@@ -59,13 +59,16 @@ class ContentActionsController(BaseController):
     @authenticate_form
 
     def boom(self, id, format="html"):
+        # FIXME: add entry to booms table, and look that up rather than the session variable
         boomkey = 'boom%s' % id
         if boomkey in session: return action_error(_('already boomed this'))
         session[boomkey] = True
-        
+
         content = get_content(id)
         if content.creator == c.logged_in_user: return action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
         content.boom_to_all_followers(c.logged_in_user)
+
+        user_log.debug("Boomed Content #%d" % int(id))
         return action_ok(_("All your followers have been informed about this content"))
 
 
@@ -80,6 +83,7 @@ class ContentActionsController(BaseController):
         content = get_content(id)
         if content.is_parent_owner(c.logged_in_user):
             if content.lock():
+                user_log.debug("Locked Content #%d" % int(id))
                 return action_ok(_("content has been approved and locked"))
         return action_error(_('Error locking content'))
 
@@ -97,6 +101,7 @@ class ContentActionsController(BaseController):
         content = get_content(id)
         if content.is_parent_owner(c.logged_in_user):
             if content.dissasociate_from_parent():
+                user_log.debug("Disassociated Content #%d" % int(id))
                 return action_ok(_("content has dissasociated from your content"))
         return action_error(_('Error dissasociating content'))
 
@@ -113,6 +118,7 @@ class ContentActionsController(BaseController):
         status     = assignment.accept(c.logged_in_user)
         if status == True:
             assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_user, assignment=assignment))
+            user_log.debug("Accepted Content #%d" % int(id))
             return action_ok(_("_assignment accepted"))
         #elif isinstance(status,str):
         return action_error(_('Error accepting _assignment'))
@@ -129,6 +135,7 @@ class ContentActionsController(BaseController):
         status     = assignment.withdraw(c.logged_in_user)
         if status == True:
             assignment.creator.send_message(messages.assignment_interest_withdrawn(member=c.logged_in_user, assignment=assignment))
+            user_log.debug("Withdrew from Content #%d" % int(id))
             return action_ok(_("_assignment interest withdrawn"))
         #elif isinstance(status,str):
         #return status
