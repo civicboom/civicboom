@@ -46,9 +46,9 @@ class ContentActionsController(BaseController):
                 r.rating     = rating
                 Session.add(r)
                 Session.commit()
-        user_log.info("Rated Content #%d as %d" % (int(id), int(request.POST["rating"])))
+        user_log.debug("Rated Content #%d as %d" % (int(id), int(request.POST["rating"])))
 
-        return action_ok("Vote counted")
+        return action_ok(_("Vote counted"))
 
 
     #---------------------------------------------------------------------------
