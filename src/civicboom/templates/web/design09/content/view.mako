@@ -222,17 +222,16 @@ from civicboom.model.meta import Session
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-  ##----Details----
-  % if hasattr(c.content,'views'):
-  <p>views: ${c.content.views}</p>
-  % endif
-
   ##----Title----
   <h1>${c.content.title}</h1>
 
   ##----Type----
   <p>Type: ${c.content.__type__}</p>
 
+  ##----Details----
+  % if hasattr(c.content,'views'):
+  <p>views: ${c.content.views}</p>
+  % endif
 
   ##----Content----
   <div class="content_text">
@@ -276,27 +275,44 @@ from civicboom.model.meta import Session
 		% if format == "text":
 			(You!)
 		% elif format == "tr":
-			<tr class="self_comment" style="background: #FFA;">
+			<tr class="comment self_comment">
 		% endif
 	% elif author == original:
 		% if format == "text":
 			(Article Author)
 		% elif format == "tr":
-			<tr class="author_comment" style="background: #AFA;">
+			<tr class="comment author_comment">
 		% endif
 	% else:
 		% if format == "text":
 			<!-- just a comment -->
 		% elif format == "tr":
-			<tr class="comment" style="background: #FAF;">
+			<tr class="comment other_comment">
 		% endif
 	% endif
 </%def>
 <%def name="comments()">
+<h1>${_("Comments")}</h1>
 <%
 from civicboom.model.meta import Session
 from civicboom.model import CommentContent
 %>
+<style>
+.comment TD {
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	padding: 8px;
+}
+.other_comment TD {
+	background: #FDF;
+}
+.self_comment TD {
+	background: #FFD;
+}
+.author_comment TD {
+	background: #DFD;
+}
+</style>
 	<table>
 ## this approach doesn't sort :/
 ##	% for r in [co for co in c.content.responses if co.__type__ == "comment"]:
@@ -307,11 +323,9 @@ from civicboom.model import CommentContent
     % for r in c.content.comments:
 	${relation(r.creator, c.logged_in_user, c.content.creator, 'tr')}
 		<td class="avatar">
-			<a href="${url(controller='user', action='view', id=r.creator.username)}">
-				<img class='avatar' src="${r.creator.avatar_url}">
-			</a>
+			${member_includes.avatar(r.creator)}
 		</td>
-		<td>
+		<td class="comment">
 			${r.content}
 			<b style="float: right;">
 				${r.creator.name}
@@ -326,7 +340,7 @@ from civicboom.model import CommentContent
 		<td class="avatar">
 			<img class='avatar' src="${c.logged_in_user.avatar_url}"><br>
 		</td>
-		<td>
+		<td class="comment">
 			<form action="/content/edit" method="POST">
 				<input type="hidden" name="form_parent_id" value="${c.content.id}">
 				<input type="hidden" name="form_title" value="Re: ${c.content.title}">
