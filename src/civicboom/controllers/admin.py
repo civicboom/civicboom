@@ -74,7 +74,8 @@ class AdminControllerBase(BaseController):
         query = "SELECT * FROM events WHERE "
         where = " AND ".join(wheres)
         order = " ORDER BY date_sent DESC"
-        result = connection.execute(query + where + order, args)
+        limit = " LIMIT 50"
+        result = connection.execute(query + where + order + limit, args)
         return render(prefix + "eventlog.mako", extra_vars={"events": list(result)})
 
 AdminController = ModelsController(AdminControllerBase,
