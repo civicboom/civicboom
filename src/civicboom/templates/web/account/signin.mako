@@ -10,13 +10,6 @@
 ##------------------------------------------------------------------------------
 <%def name="navigation()"></%def>
 
-##------------------------------------------------------------------------------
-## Style Overrides
-##------------------------------------------------------------------------------
-##<%def name="styleOverides()">
-##fieldset{height: 12em;}
-##</%def>
-
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -24,19 +17,14 @@
 
 <%def name="body()">
 
-  <%
-    authkit_form_action = "FORM_ACTION" # A string that is replaced by the authkit system
-  %>
-
-  % if hasattr(app_globals,'janrain_signin_url'):
-    ${h.get_janrain(lang=c.lang)}
-    <% authkit_form_action = ""%>
+  % if 'api_key.janrain' in config:
+        ${h.get_janrain(lang=c.lang)}
   % endif
 
   <div class="form_signin yui-gb">
   
     <div class="yui-u first">
-      <form action="${authkit_form_action}" method="post">
+      <form action="" method="post">
         <fieldset><legend>${_("Sign in")}</legend>
           <p><label for="username">${_("Username")}</label><input type="text"     id="username" name="username"/></p>
           <p><label for="password">${_("Password")}</label><input type="password" id="password" name="password"/></p>

@@ -1,23 +1,12 @@
 <%inherit file="./widget_content.mako"/>
 
-##------------------------------------------------------------------------------
-## Init
-##------------------------------------------------------------------------------
-
-<%
-  # AuthKit Degration (if should it be needed in the future)
-  authkit_form_action = ""
-  if not hasattr(app_globals,'janrain_signin_url'):
-    authkit_form_action  = "FORM_ACTION" # A string that is replaced by the authkit system
-    authkit_form_action += c.widget_query_string
-%>
 
 
 ##------------------------------------------------------------------------------
 ## Janrain Login
 ##------------------------------------------------------------------------------
 
-% if hasattr(app_globals,'janrain_signin_url'):
+% if 'api_key.janrain' in config:
     ##% if int(c.widget_width) >= 420:
     ##    ${h.get_janrain(lang=c.lang)}
     ##% else:
@@ -49,7 +38,7 @@ ${popup(h.literal("hello"), javascript_function_name='test', title=_('Test'), he
 ## Standard Login
 ##------------------------------------------------------------------------------
 
-<form action="${authkit_form_action}" method="post">
+<form action="" method="post">
   <fieldset><legend>Sign in</legend>
     <label for="username">Username</label><input type="text"     id="username" name="username" size="15" />
     <br/>

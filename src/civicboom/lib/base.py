@@ -73,12 +73,6 @@ class BaseController(WSGIController):
         # Login - Fetch logged in user from session id (if present)
         c.logged_in_user = get_user(session.get('user_id'))
 
-        # AuthKit Login Fallback - if AuthKit is enabled this will set the logged_in_user
-        #   AuthKit would have already authenticated any cookies & sessions by this point, so lookup the reporter of the remote user
-        #   (someone who is slightly more security savy may want to double check the implications of this)
-        if not c.logged_in_user and 'authkit.setup.method' in config and 'REMOTE_USER' in request.environ:
-            c.logged_in_user = get_user(request.environ['REMOTE_USER'])
-
         # Setup Langauge
         #  - there is a way of setting fallback langauges, investigate?
         if   'lang' in request.params:  self._set_lang(request.params['lang']) # If lang set in URL

@@ -114,7 +114,6 @@ class AccountController(BaseController):
         
         c.auth_info = None
         
-        # Authenticate with Janrain
         if 'token' in request.POST:
             c.auth_info = janrain('auth_info', token=request.POST.get('token'))
             
