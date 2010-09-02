@@ -58,7 +58,7 @@ user_log = logging.getLogger("user")
 # Decorators
 #-----------------------------------------------------------------------------
 
-# Check logged in - No need for authkit authentication as the mobile app is not a human
+# Check logged in - No need for redirect to HTML signin form as the mobile app is not a human
 @decorator
 def _logged_in_mobile(func, *args, **kargs):
     if not c.logged_in_user:

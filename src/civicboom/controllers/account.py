@@ -15,27 +15,13 @@ user_log = logging.getLogger("user")
 
 
 class AccountController(BaseController):
-    
+
     #---------------------------------------------------------------------------
     # Signin and Signout
     #---------------------------------------------------------------------------
-    # Reference - "Definitive Guide to Pylons" (pg 439)
-    # and http://pylonsbook.com/en/1.1/simplesite-tutorial-part-3.html#signing-in-and-signing-out
-
-    @https()
-    def _old_signin(self):
-        """
-        AuthKit implementation of signin
-        NOTE: this is OVERRIDDEN by the definition below and is here should we need to degrade back to AuthKit
-        """
-        if not request.environ.get('REMOTE_USER'): #AuthKit stores the current username in the REMOTE_USER env
-            abort(401) #This triggers the AuthKit middleware into displaying the sign-in form
-        else:
-            user_log.info("logged in")
-            return redirect(url('/'))
 
     # while not massively dangerous, posting an image with eg <img src="http://civicboom.com/account/signout">
-    # is a common prank
+    # is a common prank, so this needs authenticating
     @authenticate_form
     def signout(self):
         """
@@ -49,7 +35,6 @@ class AccountController(BaseController):
     # Janrain Engage - http://www.janrain.com/products/engage
     #---------------------------------------------------------------------------
 
-    # To degrade back to AuthKit rename this method
     @https() # redirect to https for transfer of password
     def signin(self):
 
