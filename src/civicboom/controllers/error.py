@@ -8,7 +8,7 @@ from webhelpers.html.builder import literal
 
 from civicboom.lib.base import BaseController
 
-class ErrorController(BaseController):
+class ErrorController(BaseController): # pragma: no cover -- if this is covered, then something has gone wrong...
 
     """Generates error documents as and when they are required.
 
