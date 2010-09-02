@@ -22,7 +22,7 @@
     % endif
         <a href="${h.url(controller='profile', action='view', id=member.username)}" title="${member.username}">
             % if show_avatar:
-                <img src="${member.avatar_url}" alt="${member.username}"/>
+                <img src="${member.avatar_url}" alt="${member.username}" width="80"/>
             % endif
             % if show_name:
                 <br/>${member.name} (${member.username})
