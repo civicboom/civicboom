@@ -81,6 +81,7 @@ class Content(Base):
     license         = relationship("License")
 
     comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id == Content.parent_id") #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content    
+    flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
 
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"
@@ -358,6 +359,7 @@ class ContentEditHistory(Base):
     source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
     text_change   = Column(UnicodeText(), nullable=False)
 
+
 class FlaggedContent(Base):
     __tablename__ = "flagged_content"
     _flag_type = Enum("offensive", "spam", "copyright", "automated", "other", name="flag_type")
@@ -368,7 +370,5 @@ class FlaggedContent(Base):
     type          = Column(_flag_type,    nullable=False)
     comment       = Column(UnicodeText(), nullable=True, doc="optional should the user want to add additional details")
 
-    content       = relationship("Content", backref=backref('flags'))
-    member        = relationship("Member" , backref=backref('flags'))
 
 GeometryDDL(Content.__table__)
