@@ -1,6 +1,8 @@
 <%inherit file="/web/html_base.mako"/>
 
 <div>
-  <p>Content unavalable</p>
-  <p>need suitaible message as to why</p>
+  <h1>Content Unavalable</h1>
+  % if c.error_message:
+  <p>${c.error_message}</p>
+  % endif
 </div>

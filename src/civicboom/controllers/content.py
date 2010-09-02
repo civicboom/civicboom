@@ -40,13 +40,13 @@ class ContentController(BaseController):
         c.content = get_content(id)
 
         if not c.content:
-            flash_message(_("_content not found"))
+            c.error_message = _("_content not found")
             return render('/web/design09/content/unavailable.mako')
 
         # Check content is visable
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
             if c.content.status == "pending":
-                flash_message(_("your user does not have the permissions to view this _content"))
+                c.error_message = _("your user does not have the permissions to view this _content")
                 return render('/web/design09/content/unavailable.mako')
         
         # Increase content view count
@@ -71,7 +71,7 @@ class ContentController(BaseController):
     def edit(self, id=None):
         """
         Create or Edit new content with an editable HTML form
-        """    
+        """
         
         if 'submit_delete' in request.POST:
             return redirect(url.current(action='delete', id=id))
