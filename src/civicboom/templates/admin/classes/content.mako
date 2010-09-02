@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-<!--
-vim:ft=html
--->
 <%namespace name="common" file="/admin/classes/common.mako" />
 
 ${common.style()}

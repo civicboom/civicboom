@@ -148,6 +148,17 @@ CommentContent.configure(include=[
         CommentContent.creation_date,
         ])
 
+FlaggedContent = FieldSet(model.FlaggedContent)
+FlaggedContent.engine = CustomTemplateEngine("flagged")
+FlaggedContent.configure(include=[
+        FlaggedContent.content.readonly(),
+        FlaggedContent.content_id.readonly(),
+        FlaggedContent.member.readonly(),
+        FlaggedContent.timestamp.readonly(),
+        FlaggedContent.type.readonly(),
+        FlaggedContent.comment.readonly(),
+        ])
+
 User = FieldSet(model.User)
 User.engine = CustomTemplateEngine("user")
 User.configure(include=[
@@ -245,6 +256,14 @@ DraftContentGrid.configure(include=[
         DraftContentGrid.tags.readonly(),
         ])
 
+
+FlaggedContentGrid = Grid(model.FlaggedContent)
+FlaggedContentGrid.configure(include=[
+        FlaggedContentGrid.content,
+        FlaggedContentGrid.type.readonly(),
+        FlaggedContentGrid.member,
+        FlaggedContentGrid.comment.readonly(),
+        ])
 
 UserGrid = Grid(model.User)
 UserGrid.configure(include=[
