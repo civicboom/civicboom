@@ -47,9 +47,9 @@ class SettingsController(BaseController):
                     if hex_new1 == hex_new2:
                         c.viewing_user.password = hex_new1
                     else:
-                        error = _("New passwords don't match")
+                        error = action_error(_("New passwords don't match"))
                 else:
-                    error = _("Current password was wrong")
+                    error = action_error(_("Current password was wrong"))
             del request.POST["current_password"]
             del request.POST["new_password_1"]
             del request.POST["new_password_2"]
@@ -104,7 +104,7 @@ class SettingsController(BaseController):
                 (lon, lat) = [float(n) for n in request.POST["location"].split(",")]
             except Exception, e:
                 user_log.exception("Unable to understand location '%s'" % str(request.POST["location"]))
-                return _("Unable to understand location '%s'" % str(request.POST["location"]))
+                return action_error(_("Unable to understand location '%s'" % str(request.POST["location"])))
         elif "location_name" in request.POST:
             (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_name"]), see Feature #47
         else:

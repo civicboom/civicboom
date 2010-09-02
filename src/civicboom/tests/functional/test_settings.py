@@ -63,6 +63,17 @@ class TestSettingsController(TestController):
         )
         # FIXME: test response["status"] == "ok"
 
+        # test bad location
+        response = self.app.post(
+            url(controller='settings', action='save_location', id='unittest', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'location_name': "Canterbury",
+                'location': 'arf arf I am a waffle'
+            }
+        )
+        # FIXME: test response["status"] == "error"
+
     def test_messages(self):
         # test that with no ID, we get our own user page
         response = self.app.get(url(controller='settings', action='messages'))
