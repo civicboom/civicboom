@@ -128,6 +128,7 @@ class ContentController(BaseController):
             user_log.info("edited Content #%d" % (c.content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
             
             if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
+                content.aggregate_via_creator() # Agrigate content over creators known providers
                 return redirect(url.current(action='view', id=c.content.id))
             if 'submit_response' in request.POST:
                 return redirect(url.current(action='view', id=c.content.parent_id))

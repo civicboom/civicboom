@@ -110,13 +110,12 @@ def aggregate_via_user(content, user):
     location = ''
     if content.location:
         location = '%s %s' % (content.location.coords(Session)[1], content.location.coords(Session)[0])
-    
-    for login in [login for login in user.login_details if login.type!='password']:
-        janrain('activity',
-                identifier = login.token,
-                activity   = content_json,
-                location   = location
-                )
+        
+    if config['feature.aggregate.janrain']:
+        for login in [login for login in user.login_details if login.type!='password']:
+            janrain('activity', identifier=login.token, activity=content_json, location=location)
+    else:
+        log.debug('janrain aggregation disabled: \n%s' % content_json)
 
 def aggregation_json(content):
     """
@@ -155,7 +154,7 @@ def aggregation_json(content):
     content_preview['url']                    = url
     content_preview['title']                  = content.title
     content_preview['description']            = u""
-    content_preview['action']                 = u"wrote an atricle"
+    content_preview['action']                 = u"" #wrote an atricle
     content_preview['user_generated_content'] = truncate(strip_html_tags(content.content))
     content_preview['action_links']           = action_links(content)
     content_preview['media']                  = media(content)

@@ -127,13 +127,14 @@ class Content(Base):
         """
         from civicboom.lib.database.actions import del_content
         del_content(self)
-        
+
     def aggregate_via_creator(self):
         """
         Aggregate a summary of this content to Twitter, Facebook, LinkedIn, etc via the content creators user account
         """
         from civicboom.lib.civicboom_lib import aggregate_via_user
-        return aggregate_via_user(self, self.creator)
+        if __type__ == 'article' or __type__ == 'assignment':
+            return aggregate_via_user(self, self.creator)
     
     @property
     def thumbnail_url(self):
