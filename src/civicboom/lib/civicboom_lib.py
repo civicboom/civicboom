@@ -19,14 +19,16 @@ from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.services.janrain         import janrain
 from civicboom.lib.services.cdyne_profanity import profanity_check
 
-from civicboom.lib.text          import clean_html_markup
+from civicboom.lib.text          import clean_html_markup, strip_html_tags
 from civicboom.lib.misc          import remove_where
+from civicboom.lib.helpers       import truncate
 
 
 
 from sets import Set # may not be needed in Python 2.7+
 import hashlib
 import random
+import json
 
 
 #-------------------------------------------------------------------------------
@@ -90,6 +92,76 @@ def associate_janrain_account(user, type, token):
     janrain('map', identifier=login.token, primaryKey=login.member_id) # Let janrain know this users primary key id, this is needed for agrigation posts
 
 
+
+#-------------------------------------------------------------------------------
+# Content Aggrigation
+#-------------------------------------------------------------------------------
+
+def aggregate_via_user(content, user):
+    """
+    Call janrain 'activity' for all known accounts for this user
+    https://rpxnow.com/docs#api_activity
+    """
+    #content = get_content(content)
+    #user    = get_user(user)
+    #if not content: return
+    #if not user   : return
+    content_json = aggregation_json(content)
+    location = ''
+    if content.location:
+        location = '%s %s' % (content.location.coords(Session)[1], content.location.coords(Session)[0])
+    
+    for login in [login for login in user.login_details if login.type!='password']:
+        janrain('activity',
+                identifier = login.token,
+                activity   = content_json,
+                location   = location
+                )
+
+def aggregation_json(content):
+    """
+    Gets a JSON summary version of this content for aggregation via Janrain
+    https://rpxnow.com/docs#api_activity
+    """
+    
+    content_preview = {}
+    
+    url = url(controller='content', action='view', id=content.id)
+
+    def actions_links(content):
+        action_links = []
+        action_links.append({'href':url(controller='content_actions', action='edit'  , form_parent_id=content.id), 'text':_('Write a response')  })
+        if content.__type__ == "assignment":
+            action_links.append({'href':url(controller='content_actions', action='accept', id            =content.id), 'text':_('Accept _assignment')})
+        return action_links
+    
+    def media(content):
+        media = []
+        for media in content.attachments:
+            if   media.type    == "image": media.append({'href':url, 'type':"image", 'src':media.thumbnail_url})
+            elif media.subtype == "mp3"  : media.append({'href':url, 'type':"mp3"  , 'src':media.media_url    })
+        return media
+    
+    def properties(content):
+        properties = {}
+        if content.__type__ == "article":
+            properties['Rating'] = content.rating
+        #"Location": {
+        #  "href": "http:\/\/bit.ly\/3fkBwe",
+        #  "text": "North Portland"
+        #},
+        return properties
+
+    content_preview['url']                    = url
+    content_preview['title']                  = content.title
+    content_preview['description']            = u""
+    content_preview['action']                 = u"wrote an atricle"
+    content_preview['user_generated_content'] = truncate(strip_html_tags(content.content))
+    content_preview['action_links']           = action_links(content)
+    content_preview['media']                  = media(content)
+    content_preview['properties']             = properties(content)
+    
+    return json.dumps(content_preview)
 
 
 #-------------------------------------------------------------------------------

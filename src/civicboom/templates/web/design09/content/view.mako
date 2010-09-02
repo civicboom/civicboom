@@ -37,6 +37,35 @@
   ##-------Actions-------
   <h2>${_("Actions")}</h2>
   
+    <%doc>
+    % if c.content.editable_by(c.logged_in_user):
+        <script type="text/javascript">
+          var rpxJsHost = (("https:" == document.location.protocol) ? "https://" : "http://static.");
+          document.write(unescape("%3Cscript src='" + rpxJsHost + "rpxnow.com/js/lib/rpx.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+          RPXNOW.init({appId: 'lkdhoahegjhjpemgmfif',
+            xdReceiver: '/rpx_xdcomm.html'});
+        </script>
+        
+        
+        <a class="button_small button_small_style_2" href="" onclick="janrain_activity(); return false;">Aggregate</a>
+        
+        <script type="text/javascript">
+            function janrain_activity() {
+                RPXNOW.loadAndRun(['Social'], function () {
+                  var activity = new RPXNOW.Social.Activity(
+                     "Share your comment",
+                     "commented on 'Like My New Perfume?' on cuteoverload.com",
+                     "http://cuteoverload.com/2009/10/26/like-my-new-perfume/");
+                  RPXNOW.Social.publishActivity(activity);
+                });
+            }
+        </script>
+    % endif
+    </%doc>
+  
+  
     ## Content Owner Actions
     % if c.content.editable_by(c.logged_in_user):
       <a class="button_small button_small_style_2" href="${h.url(controller='content',action='edit',id=c.content.id)}">
