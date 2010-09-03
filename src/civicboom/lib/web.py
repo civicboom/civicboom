@@ -116,14 +116,14 @@ def action_redirector():
         return decorator(wrapper)(target) # Fix the wrappers call signiture
     return my_decorator
 
-def action_ok(msg, data=None):
+def action_ok(msg=None, data=None):
     return json.dumps({
         "status": "ok",
         "message": msg,
         "data": data,
     })
 
-def action_error(msg, data=None):
+def action_error(msg=None, data=None):
     return json.dumps({
         "status": "error",
         "message": msg,
