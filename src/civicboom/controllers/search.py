@@ -77,14 +77,15 @@ class SearchController(BaseController):
         if format == "html":
             return render(tmpl_prefix+"/search/location.mako")
         elif format == "json":
-            json_rows = [{"label":row.name,"location":row.location,"type":row.type} for row in result]
-            return json.dumps(json_rows)
+            json_rows = [{"name":row.name, "location":row.location, "type":row.type} for row in result]
+            return action_ok(data=json_rows)
+
 
     def member(self, format="html"):
-        if "query" in request.GET:
-            s = request.GET["query"]
+        if "term" in request.GET:
+            s = request.GET["term"]
             q = Session.query(Member)
-            q = q.filter(or_(Member.name.ilike(s+"%"), Member.username.ilike(s+"%")))
+            q = q.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
             result = q[0:20]
         else:
             result = []
@@ -92,5 +93,5 @@ class SearchController(BaseController):
         if format == "html":
             return render(tmpl_prefix+"/search/member.mako")
         elif format == "json":
-            json_rows = [{"username":row.username,"name":row.name,"type":row.__type__} for row in result]
-            return json.dumps({"results": json_rows})
+            json_rows = [{"id":row.id, "name":row.name, "username":row.username, "avatar":row.avatar, "description":str(row)} for row in result]
+            return action_ok(data=json_rows)

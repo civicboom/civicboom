@@ -41,14 +41,26 @@ ${field_name}_map.click.addHandler(function(event_name, event_source, event_args
 
 $(function() {
 	$('#${field_name}_name').autocomplete({
-		source: '/search/location.json?term=',
+		source: function(req, respond) {
+			$.getJSON("/search/location.json?", req, function(response) {
+				// translate from CB-API formatted data ('response')
+				// to jQueryUI formatted ('suggestions')
+				var suggestions = [];
+				$.each(response.data, function(i, val) {
+					suggestions.push({"label": val.name, "value": val.location});
+				});
+				respond(suggestions);
+			});
+		},
 		select: function(event, ui) {
-			var typelonlat = ui.item.location.split(/[ ()]/);
+			var typelonlat = ui.item.value.split(/[ ()]/);
 			var lon = typelonlat[1];
 			var lat = typelonlat[2];
 
-			document.getElementById("${field_name}").value = lon+","+lat;
+			$('#${field_name}').val(lon+","+lat);
+			$('#${field_name}_name').val(ui.item.label);
 			${field_name}_map.setCenterAndZoom(new mxn.LatLonPoint(Number(lat), Number(lon)), 13);
+			return false;
 		}
 	});
 });

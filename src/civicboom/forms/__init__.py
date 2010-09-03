@@ -29,26 +29,59 @@ class Grid(tables.Grid):
     pass
 
 # custom renderers {{{
-#class MemberFieldRenderer(FieldRenderer):
-#    def render(self, options={}):
-#        value= self.value and self.value or ''
-#        cn = ""
-#        for name, n in options:
-#            if str(n) == self.value:
-#                cn = name
-#        vars = dict(field_name=self.name, value=value, value_name=cn)
-#        return """
-#<div style="padding-bottom: 2em;">
-#	<input id="%(field_name)s_name" name="%(field_name)s_name" type="text" value="%(value_name)s">
-#	<div id="%(field_name)s_comp"></div>
-#	<input id="%(field_name)s" name="%(field_name)s" type="hidden" value="%(value)s">
-#</div>
-#<script>autocomplete_member("%(field_name)s_name", "%(field_name)s_comp", "%(field_name)s");</script>
-#        """ % vars
+def create_autocompleter(url):
+    class AutoCompleteRenderer(FieldRenderer):
+        def render(self, options={}):
+            cn = ""
+            for name, val in options:
+                if str(val) == self.value:
+                    cn = name
+            vars = dict(
+                url=url,
+                name=self.name,
+                value=self.value,
+                value_name=cn,
+            )
+            return """
+<input id="%(name)s_name" name="%(name)s_name" type="text" value="%(value_name)s">
+<input id="%(name)s" name="%(name)s" type="hidden" value="%(value)s">
+<script>
+$('#%(name)s_name').autocomplete({
+    source: function(req, respond) {
+        // translate from CB-API formatted data ('response')
+        // to jQueryUI formatted ('suggestions')
+        $.getJSON("%(url)s?", req, function(response) {
+            var suggestions = [];
+            $.each(response.data, function(i, val) {
+                suggestions.push({"label": val.description, "value": val.id});
+            });
+            respond(suggestions);
+        });
+    },
+    select: function(event, ui) {
+        $('#%(name)s_name').val(ui.item.label);
+        $('#%(name)s').val(ui.item.value);
+        return false;
+    }
+});
+</script>
+            """ % vars
+    return AutoCompleteRenderer
+
+class DatePickerFieldRenderer(FieldRenderer):
+    def render(self):
+        value= self.value and self.value or ''
+        vars = dict(name=self.name, value=value)
+        return """
+<input id="%(name)s" name="%(name)s" type="text" value="%(value)s">
+<script type="text/javascript">
+$('#%(name)s').datepicker({dateFormat: 'yy-mm-dd'})
+</script>
+        """ % vars
 
 FieldSet.default_renderers[geometry.Geometry] = GeometryFieldRenderer
 FieldSet.default_renderers[sqlalchemy.UnicodeText] = TextAreaFieldRenderer
-#FieldSet.default_renderers[model.Member] = MemberFieldRenderer
+FieldSet.default_renderers[sqlalchemy.DateTime] = DatePickerFieldRenderer
 
 # }}}
 # object editors {{{
@@ -67,7 +100,7 @@ class CustomTemplateEngine(TemplateEngine):
 Content = FieldSet(model.Content)
 Content.engine = CustomTemplateEngine("content")
 Content.configure(include=[
-        Content.creator,
+        Content.creator.with_renderer(create_autocompleter("/search/member.json")),
         Content.title,
         Content.status,
         Content.private,
@@ -80,12 +113,13 @@ Content.configure(include=[
         Content.update_date,
         Content.edits,
         Content.location,
+        Content.flags,
         ])
 
 ArticleContent = FieldSet(model.ArticleContent)
 ArticleContent.engine = CustomTemplateEngine("content")
 ArticleContent.configure(include=[
-        ArticleContent.creator,
+        ArticleContent.creator.with_renderer(create_autocompleter("/search/member.json")),
         ArticleContent.title,
         ArticleContent.status,
         ArticleContent.private,
@@ -103,7 +137,7 @@ ArticleContent.configure(include=[
 AssignmentContent = FieldSet(model.AssignmentContent)
 AssignmentContent.engine = CustomTemplateEngine("content")
 AssignmentContent.configure(include=[
-        AssignmentContent.creator,
+        AssignmentContent.creator.with_renderer(create_autocompleter("/search/member.json")),
         AssignmentContent.title,
         AssignmentContent.status,
         AssignmentContent.private,
@@ -121,7 +155,7 @@ AssignmentContent.configure(include=[
 DraftContent = FieldSet(model.DraftContent)
 DraftContent.engine = CustomTemplateEngine("content")
 DraftContent.configure(include=[
-        DraftContent.creator,
+        DraftContent.creator.with_renderer(create_autocompleter("/search/member.json")),
         DraftContent.title,
         DraftContent.status,
         DraftContent.private,
@@ -139,7 +173,7 @@ DraftContent.configure(include=[
 CommentContent = FieldSet(model.CommentContent)
 CommentContent.engine = CustomTemplateEngine("comment")
 CommentContent.configure(include=[
-        CommentContent.creator,
+        CommentContent.creator.with_renderer(create_autocompleter("/search/member.json")),
         CommentContent.title,
         CommentContent.parent,
         CommentContent.content,
