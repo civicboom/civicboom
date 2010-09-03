@@ -74,6 +74,43 @@ CREATE TRIGGER update_follower_count
     FOR EACH ROW EXECUTE PROCEDURE update_follower_count();
     """)
     conn.execute("""
+CREATE OR REPLACE FUNCTION update_response_count() RETURNS TRIGGER AS $$
+    DECLARE
+        tmp_parent_id integer;
+    BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            tmp_parent_id := NEW.parent_id;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            -- use old because sometimes content will be updated to set parent to
+            -- null (disassociating), but there is no use case where the parent is
+            -- changed from null to a new value (yet...)
+            tmp_parent_id := OLD.parent_id;
+        ELSIF (TG_OP = 'DELETE') THEN
+            tmp_parent_id := OLD.parent_id;
+        END IF;
+
+        IF tmp_parent_id IS NOT NULL THEN
+            UPDATE content SET num_responses = (
+                SELECT count(*)
+                FROM content
+                WHERE __type__='article' AND parent_id=tmp_parent_id
+            ) WHERE id=tmp_parent_id;
+
+            UPDATE content SET num_comments = (
+                SELECT count(*)
+                FROM content
+                WHERE __type__='comment' AND parent_id=tmp_parent_id
+            ) WHERE id=tmp_parent_id;
+        END IF;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_response_count
+    AFTER INSERT OR UPDATE OR DELETE ON content
+    FOR EACH ROW EXECUTE PROCEDURE update_response_count();
+    """)
+    conn.execute("""
 CREATE OR REPLACE FUNCTION update_group_size() RETURNS TRIGGER AS $$
     DECLARE
         tmp_group_id integer;

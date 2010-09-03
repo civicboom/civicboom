@@ -68,6 +68,9 @@ class Content(Base):
     status          = Column(_content_status,  nullable=False, default="show")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
+
+    num_responses   = Column(Integer(),        nullable=False, default=0)
+    num_comments    = Column(Integer(),        nullable=False, default=0)
     
     # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
     #responses       = relationship("Content",            backref=backref('parent', remote_side=id, order_by=creation_date), primaryjoin=and_("Content.id == Content.parent_id") )  #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content
@@ -145,23 +148,6 @@ class Content(Base):
                 return thumbnail_url
         
         return "/images/default_thumbnail_%s.png" % self.__type__
-
-    @property
-    def num_responses(self):
-        """
-        TODO
-        To be REMOVED! and replaced with a derived field in DB with trigger
-        """
-        return len(self.responses)
-    
-    @property
-    def num_comments(self):
-        """
-        TODO
-        To be REMOVED! and replaced with a derived field in DB with trigger
-        """
-        return len(self.comments)
-
 
 
 class DraftContent(Content):
