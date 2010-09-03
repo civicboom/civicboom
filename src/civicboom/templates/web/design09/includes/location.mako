@@ -1,5 +1,5 @@
 <%def name="location_picker(field_name='location', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13, always_show_map=False)">
-<input id="${field_name}_name" name="${field_name}_name" type="text">
+<input id="${field_name}_name" name="${field_name}_name" type="text" style="width: ${width}">
 <div id="${field_name}_comp"></div>
 <input id="${field_name}" name="${field_name}" type="hidden">
 % if not always_show_map:

@@ -1,6 +1,7 @@
 <%inherit file="/web/html_base.mako"/>
 
 <%namespace name="YUI" file="/web/includes/YUI_components.mako" />
+<%namespace name="loc" file="/web/design09/includes/location.mako" />
 
 ##------------------------------------------------------------------------------
 ## Title - Override
@@ -350,6 +351,7 @@
             ${instruction("why give us this...")}
             stuff!!
       </div>
+	  ${loc.location_picker(field_name='form_location', always_show_map=True, width="100%")}
     </fieldset>
 </%def>
 
