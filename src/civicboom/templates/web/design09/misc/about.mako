@@ -13,7 +13,7 @@
   
   <div class="link_float"><a href="${h.url(controller='account', action='signin')}">${_("Start Now!")}</a></div>
   
-  <h1>${_("About _site_name &amp; FAQ")}</h1>
+  <h1>${_("About _site_name & FAQ")}</h1>
   
   
   <h2>What is it?</h2>
@@ -145,7 +145,7 @@
       You can use Creative Commons on Flikr to help you find an image to support your upload (the link is on the upload page)
       - but make sure you credit the creator.</p>
   
-      <p><br/>* &amp; ** rolling out May 2010.</p>
+      <p><br/>${_("* & ** rolling out May 2010.")}</p>
   
     </div>
   

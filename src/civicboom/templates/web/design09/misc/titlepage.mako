@@ -20,7 +20,7 @@
     
     <div class="learn_more">
       <p style="font-size: larger;">${_("Try us now")}</p>
-      <p>${_("Organisations &amp; Media:")} <a class="learn_more_link" href="${h.url(controller='misc', action='get_started_organisations')}">${_("Learn more")}</a></p>
+      <p>${_("Organisations & Media:")} <a class="learn_more_link" href="${h.url(controller='misc', action='get_started_organisations')}">${_("Learn more")}</a></p>
       <p>${_("Individuals:")}               <a class="learn_more_link" href="${h.url(controller='misc', action='get_started')}">${_("Learn more")}</a></p>
     </div>
     
