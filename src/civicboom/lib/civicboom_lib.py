@@ -19,7 +19,7 @@ from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.services.janrain         import janrain
 from civicboom.lib.services.cdyne_profanity import profanity_check
 
-from civicboom.lib.text          import clean_html_markup, strip_html_tags
+from civicboom.lib.text          import clean_html_markup, strip_html_tags, escape_python_dict
 from civicboom.lib.misc          import remove_where
 from civicboom.lib.helpers       import truncate
 
@@ -141,8 +141,8 @@ def aggregation_dict(content, escape_chars=False):
     def media(content):
         media_list = []
         for media in content.attachments:
-            if   media.type    == "image": media_list.append({'href':url, 'type':"image", 'src':media.thumbnail_url})
-            elif media.subtype == "mp3"  : media_list.append({'href':url, 'type':"mp3"  , 'src':media.media_url    })
+            if   media.type    == "image": media_list.append({'href':content_url, 'type':"image", 'src':media.thumbnail_url})
+            elif media.subtype == "mp3"  : media_list.append({'href':content_url, 'type':"mp3"  , 'src':media.media_url    })
         return media_list
     
     def properties(content):
@@ -166,8 +166,7 @@ def aggregation_dict(content, escape_chars=False):
     content_preview['properties']             = properties(content)
     
     if escape_chars:
-        #content_preview = escape(content_preview)
-        log.warn('aggregation python dict char escaping needs implementing')
+        content_preview = escape_python_dict(content_preview)
     
     return content_preview
 

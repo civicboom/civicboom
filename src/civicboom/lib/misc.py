@@ -38,8 +38,10 @@ def dict_to_stringprint(d, indent=''):
       keylist.sort()
       for key in keylist:
         s += key +"\n"+ dict_to_stringprint(d.get(key), indent=indent+'  ')
-    else:
-        s += indent + str(d) + "\n"
+    #elif isinstance(d, list):
+    #    pass
+    elif isinstance(d, basestring):
+        s += indent + d.encode("utf-8") + "\n"
     return s
 
 

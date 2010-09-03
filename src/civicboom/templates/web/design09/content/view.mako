@@ -425,9 +425,9 @@ from civicboom.model import CommentContent
                   content_dict = aggregation_dict(c.content, escape_chars=True)
                 %>
                 
-                var activity = new RPXNOW.Social.Activity("${content_dict['title']}",
-                                                          "${content_dict['action']}",
-                                                          "${content_dict['url']}"
+                var activity = new RPXNOW.Social.Activity('${content_dict['title']}',
+                                                          '${content_dict['action']}',
+                                                          '${content_dict['url']}'
                                                           );
                 
                 activity.setTitle               ('${content_dict['title']}');
@@ -484,7 +484,7 @@ from civicboom.model import CommentContent
     <!-- End - Janrain Social Publish Widget -->
 
 
-    <a class="button_small button_small_style_2" href="" onclick="publish_janrain_activity(); return false;">Aggregate</a>
+    <span class="button_small button_small_style_2" href="" onclick="publish_janrain_activity(); return false;">Aggregate</span>
 </%def>
 
 

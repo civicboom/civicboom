@@ -198,3 +198,15 @@ def convert_html_to_plain_text(content_html, ommit_links=False):
 
 def get_html_links(text):
     return re.findall(r'<a href=(.*?)>', text)
+
+#-------------------------------------------------------------------------------
+
+def escape_python_dict(dict):
+    for key in dict.keys():
+        if isinstance(dict[key], basestring):
+            dict[key] = re.sub("'", "`", dict[key])
+            dict[key] = re.sub("\n", " ", dict[key])
+            dict[key] = re.sub(r"\s+", " ", dict[key])
+        elif hasattr(dict[key], 'keys'):
+            escape_python_dict(dict[key])
+    return dict
