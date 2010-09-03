@@ -16,15 +16,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: civicboom/controllers/account.py:99
+#: civicboom/controllers/account.py:82
 msgid "Unable to authenticate user"
 msgstr "Unable to authenticate user"
 
-#: civicboom/controllers/account.py:113
+#: civicboom/controllers/account.py:124
 msgid "email address has been successfully validated"
 msgstr "email address has been successfully validated"
 
-#: civicboom/controllers/account.py:115
+#: civicboom/controllers/account.py:126
 msgid ""
 "email validation failed, if you have changed any user settings since "
 "sending the validation email, please validate again"
@@ -32,81 +32,202 @@ msgstr ""
 "email validation failed, if you have changed any user settings since "
 "sending the validation email, please validate again"
 
-#: civicboom/controllers/assignment.py:26
+#: civicboom/controllers/content.py:43
+msgid "_content not found"
+msgstr "content not found"
+
+#: civicboom/controllers/content.py:49
+msgid "your user does not have the permissions to view this _content"
+msgstr "your user does not have the permissions to view this content"
+
+#: civicboom/controllers/content.py:87
+msgid "your user does not have the permissions to edit this _content"
+msgstr "your user does not have the permissions to edit this content"
+
+# | msgid "_content not found"
+#: civicboom/controllers/content.py:217
+#, fuzzy
+msgid "_content does not exist"
+msgstr "content does not exist"
+
+# | msgid "your user does not have the permissions to edit this _content"
+#: civicboom/controllers/content.py:219
+#, fuzzy
+msgid "your current user does not have the permissions to delete this _content"
+msgstr "your current user does not have the permissions to delete this content"
+
+# | msgid "_content not found"
+#: civicboom/controllers/content.py:222
+#, fuzzy
+msgid "_content deleted"
+msgstr "content deleted"
+
+#: civicboom/controllers/content.py:238
+msgid "An administrator has been alerted to this content"
+msgstr "An administrator has been alerted to this content"
+
+#: civicboom/controllers/content.py:240
+msgid "Error flaging content, please email us"
+msgstr "Error flaging content, please email us"
+
+#: civicboom/controllers/content_actions.py:51
+msgid "Vote counted"
+msgstr "Vote counted"
+
+# | msgid "already following"
+#: civicboom/controllers/content_actions.py:64
+#, fuzzy
+msgid "already boomed this"
+msgstr "already boomed this"
+
+#: civicboom/controllers/content_actions.py:68
+msgid ""
+"You can not boom your own content, all your followers were already "
+"notified when you uploaded this content"
+msgstr ""
+"You can not boom your own content, all your followers were already "
+"notified when you uploaded this content"
+
+#: civicboom/controllers/content_actions.py:72
+msgid "All your followers have been informed about this content"
+msgstr "All your followers have been informed about this content"
+
+#: civicboom/controllers/content_actions.py:87
+msgid "content has been approved and locked"
+msgstr "content has been approved and locked"
+
+#: civicboom/controllers/content_actions.py:88
+msgid "Error locking content"
+msgstr "Error locking content"
+
+# | msgid "_article dissasociated from _assignment"
+#: civicboom/controllers/content_actions.py:105
+#, fuzzy
+msgid "content has dissasociated from your content"
+msgstr "content has dissasociated from your content"
+
+#: civicboom/controllers/content_actions.py:106
+msgid "Error dissasociating content"
+msgstr "Error dissasociating content"
+
+#: civicboom/controllers/content_actions.py:122
 #: civicboom/lib/communication/messages.py:67
 msgid "_assignment accepted"
 msgstr "request accepted"
 
-#: civicboom/controllers/assignment.py:43
+# | msgid "Accept _assignment"
+#: civicboom/controllers/content_actions.py:124
+#, fuzzy
+msgid "Error accepting _assignment"
+msgstr "Error accepting request"
+
+#: civicboom/controllers/content_actions.py:139
 #: civicboom/lib/communication/messages.py:68
 msgid "_assignment interest withdrawn"
 msgstr "request interest withdrawn"
 
-#: civicboom/controllers/content.py:42
-msgid "_content not found"
-msgstr "content not found"
+#: civicboom/controllers/content_actions.py:142
+msgid "Error withdrawing _assignment interest"
+msgstr "Error withdrawing request interest"
 
-#: civicboom/controllers/content.py:48
-msgid "your user does not have the permissions to view this _content"
-msgstr "your user does not have the permissions to view this content"
-
-#: civicboom/controllers/content.py:86
-msgid "your user does not have the permissions to edit this _content"
-msgstr "your user does not have the permissions to edit this content"
-
-#: civicboom/controllers/member.py:20
+#: civicboom/controllers/member.py:19
 #, python-format
 msgid "You are now following %s"
 msgstr "You are now following %s"
 
-#: civicboom/controllers/member.py:21
+#: civicboom/controllers/member.py:20
 #, python-format
 msgid "Unable to follow member: %s"
 msgstr "Unable to follow member: %s"
 
-#: civicboom/controllers/member.py:30
+#: civicboom/controllers/member.py:29
 #, python-format
 msgid "You have stopped following %s"
 msgstr "You have stopped following %s"
 
-#: civicboom/controllers/member.py:31
+#: civicboom/controllers/member.py:30
 #, python-format
 msgid "Unable to stop following member: %s"
 msgstr "Unable to stop following member: %s"
 
-#: civicboom/controllers/register.py:104
+# | msgid "cant find user"
+#: civicboom/controllers/messages.py:54
+#, fuzzy, python-format
+msgid "Can't find user '%s'"
+msgstr "Can't find user '%s'"
+
+# | msgid "Message"
+#: civicboom/controllers/messages.py:64
+#, fuzzy
+msgid "Message sent"
+msgstr "Message sent"
+
+#: civicboom/controllers/messages.py:67
+msgid "Error sending message"
+msgstr "Error sending message"
+
+#: civicboom/controllers/messages.py:87
+msgid "Message deleted"
+msgstr "Message deleted"
+
+#: civicboom/controllers/messages.py:90
+msgid "You are not the target of this message"
+msgstr "You are not the target of this message"
+
+#: civicboom/controllers/register.py:103
 msgid "Please check your email to validate your email address"
 msgstr "Please check your email to validate your email address"
 
-#: civicboom/controllers/register.py:106
+# | msgid "Sign in to _site_name"
+#: civicboom/controllers/register.py:105
+#: civicboom/templates/email/welcome.mako:3
+#, fuzzy
+msgid "Welcome to _site_name"
+msgstr "Welcome to Civicboom"
+
+#: civicboom/controllers/register.py:107
 msgid "Congratulations, you have successfully signed up to _site_name."
 msgstr "Congratulations, you have successfully signed up to Civicboom."
 
-#: civicboom/controllers/register.py:157
+#: civicboom/controllers/register.py:158
 msgid "complete the registration process"
 msgstr "complete the registration process"
 
-#: civicboom/controllers/register.py:159
+#: civicboom/controllers/register.py:160
 msgid "Thank you. Please check your email to complete the registration process"
 msgstr "Thank you. Please check your email to complete the registration process"
 
-#: civicboom/lib/authentication.py:102
-msgid "Incorrect username and password"
-msgstr "Incorrect username and password"
+#: civicboom/controllers/settings.py:50
+msgid "New passwords don't match"
+msgstr "New passwords don't match"
 
-#: civicboom/lib/authentication.py:133
-msgid "Your login has expired please log in again"
-msgstr "Your login has expired please log in again"
+#: civicboom/controllers/settings.py:52
+msgid "Current password was wrong"
+msgstr "Current password was wrong"
 
-#: civicboom/lib/base.py:64
+#: civicboom/controllers/settings.py:65 civicboom/controllers/settings.py:91
+#: civicboom/controllers/settings.py:116
+msgid "Settings saved"
+msgstr "Settings saved"
+
+#: civicboom/controllers/settings.py:107
+#, python-format
+msgid "Unable to understand location '%s'"
+msgstr "Unable to understand location '%s'"
+
+#: civicboom/controllers/settings.py:111
+msgid "No position specified"
+msgstr "No position specified"
+
+#: civicboom/lib/base.py:85
 msgid "Please complete the regisration process"
 msgstr "Please complete the regisration process"
 
-#: civicboom/lib/civicboom_lib.py:49
+#: civicboom/lib/civicboom_lib.py:51
 msgid "verify this email address"
 msgstr "verify this email address"
 
-#: civicboom/lib/civicboom_lib.py:52
+#: civicboom/lib/civicboom_lib.py:54
 #, python-format
 msgid ""
 "Please %s by clicking on, or copying the following link into your "
@@ -115,15 +236,25 @@ msgstr ""
 "Please %s by clicking on, or copying the following link into your "
 "browser: %s"
 
-#: civicboom/lib/civicboom_lib.py:53
+#: civicboom/lib/civicboom_lib.py:55
 msgid "verify e-mail address"
 msgstr "verify e-mail address"
 
+#: civicboom/lib/civicboom_lib.py:80
+msgid "login account reallocated"
+msgstr "login account reallocated"
+
+#: civicboom/lib/civicboom_lib.py:80
+#, python-format
+msgid "your %s account has been allocated to the user %s"
+msgstr "your %s account has been allocated to the user %s"
+
 #: civicboom/lib/communication/email.py:52
 #: civicboom/lib/communication/email.py:53
+#: civicboom/templates/email/base_email.mako:1
 #: civicboom/templates/web/html_header.mako:25
-#: civicboom/templates/web/design09/includes/header.mako:7
 #: civicboom/templates/web/design09/includes/header.mako:8
+#: civicboom/templates/web/design09/includes/header.mako:9
 #: civicboom/templates/web/design09/misc/about.mako:98
 #: civicboom/templates/web/design09/misc/about.mako:112
 #: civicboom/templates/web/design09/misc/about.mako:121
@@ -132,8 +263,8 @@ msgstr "verify e-mail address"
 #: civicboom/templates/web/design09/misc/about.mako:141
 #: civicboom/templates/widget/get_widget_code.mako:34
 #: civicboom/templates/widget/get_widget_code.mako:119
-#: civicboom/templates/widget/widget_border.mako:78
-#: civicboom/templates/widget/widget_border.mako:112
+#: civicboom/templates/widget/widget_border.mako:88
+#: civicboom/templates/widget/widget_border.mako:122
 msgid "_site_name"
 msgstr "Civicboom"
 
@@ -358,13 +489,15 @@ msgstr "%(member)s has invited you to participate in the request %(assignment)s"
 msgid "_article dissasociated from _assignment"
 msgstr "content dissasociated from request"
 
+# | msgid "" "%(reporter)s dissasociated your _article %(article)s from the
+# | _assignment" " %(assignment)s"
 #: civicboom/lib/communication/messages.py:70
-#, python-format
+#, fuzzy, python-format
 msgid ""
-"%(reporter)s dissasociated your _article %(article)s from the _assignment"
-" %(assignment)s"
+"%(member)s dissasociated your _article %(article)s from the _assignment "
+"%(assignment)s"
 msgstr ""
-"%(reporter)s dissasociated your content %(article)s from the request "
+"%(member)s dissasociated your content %(article)s from the request "
 "%(assignment)s"
 
 #: civicboom/lib/communication/messages.py:71
@@ -380,35 +513,42 @@ msgstr "%(reporter)s canceled the request %(assignment)s"
 msgid "_article approved by organisation"
 msgstr "content approved by organisation"
 
+# | msgid "" "%(reporter)s has approved your _article %(article)s in the
+# | response to " "their _assignment %(assignment)s. Check your email for more
+# | details"
 #: civicboom/lib/communication/messages.py:72
-#, python-format
+#, fuzzy, python-format
 msgid ""
-"%(reporter)s has approved your _article %(article)s in the response to "
-"their _assignment %(assignment)s. Check your email for more details"
+"%(member)s has approved your _article %(content)s in the response to "
+"their _assignment %(parent)s. Check your email for more details"
 msgstr ""
-"%(reporter)s has approved your content %(article)s in the response to "
-"their request %(assignment)s. Check your email for more details"
+"%(member)s has approved your content %(content)s in the response to their"
+" request %(parent)s. Check your email for more details"
 
 #: civicboom/lib/communication/messages.py:73
 msgid "_article boom"
 msgstr "content boom"
 
+# | msgid "%(reporter)s thinks you might find this _article interesting
+# | %(article)s"
 #: civicboom/lib/communication/messages.py:73
-#, python-format
-msgid "%(reporter)s thinks you might find this _article interesting %(article)s"
-msgstr "%(reporter)s thinks you might find this content interesting %(article)s"
+#, fuzzy, python-format
+msgid "%(member)s thinks you might find this _article interesting %(article)s"
+msgstr "%(member)s thinks you might find this content interesting %(article)s"
 
 #: civicboom/lib/communication/messages.py:74
 msgid "_assignment boom"
 msgstr "request boom"
 
+# | msgid "" "%(reporter)s thinks you might want to add your opinion to this "
+# | "_assignment %(assignment)s"
 #: civicboom/lib/communication/messages.py:74
-#, python-format
+#, fuzzy, python-format
 msgid ""
-"%(reporter)s thinks you might want to add your opinion to this "
-"_assignment %(assignment)s"
+"%(member)s thinks you might want to add your opinion to this _assignment "
+"%(assignment)s"
 msgstr ""
-"%(reporter)s thinks you might want to add your opinion to this request "
+"%(member)s thinks you might want to add your opinion to this request "
 "%(assignment)s"
 
 #: civicboom/lib/communication/messages.py:75
@@ -468,37 +608,55 @@ msgstr "request due tomorrow"
 msgid "The _assignment you accepted %(assignment)s is due tomorrow"
 msgstr "The request you accepted %(assignment)s is due tomorrow"
 
-#: civicboom/lib/database/actions.py:37 civicboom/lib/database/actions.py:58
+#: civicboom/lib/database/actions.py:42 civicboom/lib/database/actions.py:63
 msgid "no followed"
 msgstr "no followed"
 
-#: civicboom/lib/database/actions.py:38 civicboom/lib/database/actions.py:59
+#: civicboom/lib/database/actions.py:43 civicboom/lib/database/actions.py:64
 msgid "no follower"
 msgstr "no follower"
 
-#: civicboom/lib/database/actions.py:40
+#: civicboom/lib/database/actions.py:45
 msgid "already following"
 msgstr "already following"
 
-#: civicboom/lib/database/actions.py:61
+#: civicboom/lib/database/actions.py:66
 msgid "not following"
 msgstr "not following"
 
-#: civicboom/lib/database/actions.py:95 civicboom/lib/database/actions.py:121
+#: civicboom/lib/database/actions.py:100 civicboom/lib/database/actions.py:126
 msgid "cant find user"
 msgstr "cant find user"
 
-#: civicboom/lib/database/actions.py:96 civicboom/lib/database/actions.py:122
+#: civicboom/lib/database/actions.py:101 civicboom/lib/database/actions.py:127
 msgid "cant find assignment"
 msgstr "cant find assignment"
 
-#: civicboom/lib/database/actions.py:97
+#: civicboom/lib/database/actions.py:102
 msgid "only _assignments can be accepted"
 msgstr "only requests can be accepted"
 
-#: civicboom/lib/database/actions.py:98
+#: civicboom/lib/database/actions.py:103
 msgid "_assignment has been previously accepted and cannot be accepted again"
 msgstr "request has been previously accepted and cannot be accepted again"
+
+# | msgid "bits of content"
+#: civicboom/lib/database/actions.py:169
+#, fuzzy
+msgid "flagged content"
+msgstr "flagged content"
+
+# | msgid "Content issues?"
+#: civicboom/lib/database/actions.py:191
+#, fuzzy
+msgid "content request"
+msgstr "content request"
+
+# | msgid "_article approved"
+#: civicboom/lib/database/actions.py:194
+#, fuzzy
+msgid "content approved"
+msgstr "content approved"
 
 #: civicboom/lib/form_validators/base.py:34
 msgid "You must enter a password"
@@ -546,29 +704,38 @@ msgstr "Please enter your date of birth with the format DD/MM/YYYY"
 msgid "Sorry, you have to be over %d to use this site"
 msgstr "Sorry, you have to be over %d to use this site"
 
+# | msgid "reCAPTURE field is incorrect"
 #: civicboom/lib/form_validators/registration.py:77
-msgid "reCAPTURE field is incorrect"
-msgstr "reCAPTURE field is incorrect"
+#, fuzzy
+msgid "reCAPTCHA field is incorrect"
+msgstr "reCAPTCHA field is incorrect"
 
+# | msgid "Missing reCAPTURE value."
 #: civicboom/lib/form_validators/registration.py:78
-msgid "Missing reCAPTURE value."
-msgstr "Missing reCAPTURE value."
+#, fuzzy
+msgid "Missing reCAPTCHA value."
+msgstr "Missing reCAPTCHA value."
 
+# | msgid "unable to contact reCAPTURE server to validate response"
 #: civicboom/lib/form_validators/registration.py:79
-msgid "unable to contact reCAPTURE server to validate response"
-msgstr "unable to contact reCAPTURE server to validate response"
+#, fuzzy
+msgid "unable to contact reCAPTCHA server to validate response"
+msgstr "unable to contact reCAPTCHA server to validate response"
 
+# | msgid "" "reCAPTURE server returned an error %(error_code)s, the problem
+# has
+# | been " "logged and reported to _site_name"
 #: civicboom/lib/form_validators/registration.py:80
-#, python-format
+#, fuzzy, python-format
 msgid ""
-"reCAPTURE server returned an error %(error_code)s, the problem has been "
+"reCAPTCHA server returned an error %(error_code)s, the problem has been "
 "logged and reported to _site_name"
 msgstr ""
-"reCAPTURE server returned an error %(error_code)s, the problem has been "
+"reCAPTCHA server returned an error %(error_code)s, the problem has been "
 "logged and reported to Civicboom"
 
 #: civicboom/templates/admin/eventlog.mako:6
-#: civicboom/templates/admin/restfieldset.mako:70
+#: civicboom/templates/admin/restfieldset.mako:71
 msgid "Event Log"
 msgstr "Event Log"
 
@@ -585,9 +752,9 @@ msgid "URL"
 msgstr "URL"
 
 #: civicboom/templates/admin/eventlog.mako:97
-#: civicboom/templates/web/account/signin.mako:41
-#: civicboom/templates/web/account/signin.mako:51
-#: civicboom/templates/web/account/signin.mako:64
+#: civicboom/templates/web/account/signin.mako:29
+#: civicboom/templates/web/account/signin.mako:39
+#: civicboom/templates/web/account/signin.mako:52
 #: civicboom/templates/web/design09/misc/titlepage.mako:33
 msgid "Username"
 msgstr "Username"
@@ -604,73 +771,89 @@ msgstr "Civicboom Control Panel"
 msgid "Database Editor"
 msgstr "Database Editor"
 
-#: civicboom/templates/admin/restfieldset.mako:66
+#: civicboom/templates/admin/restfieldset.mako:67
 msgid "Misc Tools"
 msgstr "Misc Tools"
 
-#: civicboom/templates/admin/restfieldset.mako:76
+#: civicboom/templates/admin/restfieldset.mako:77
 msgid "Statistics"
 msgstr "Statistics"
 
-#: civicboom/templates/admin/restfieldset.mako:85
+#: civicboom/templates/admin/restfieldset.mako:86
 msgid "bits of content"
 msgstr "bits of content"
 
-#: civicboom/templates/admin/restfieldset.mako:86
-#: civicboom/templates/admin/restfieldset.mako:90
+#: civicboom/templates/admin/restfieldset.mako:87
+#: civicboom/templates/admin/restfieldset.mako:92
 msgid "pending"
 msgstr "pending"
 
-#: civicboom/templates/admin/restfieldset.mako:89
+#: civicboom/templates/admin/restfieldset.mako:88
+msgid "flagged"
+msgstr "flagged"
+
+#: civicboom/templates/admin/restfieldset.mako:91
 msgid "users"
 msgstr "users"
 
-#: civicboom/templates/admin/restfieldset.mako:91
+#: civicboom/templates/admin/restfieldset.mako:93
 msgid "suspended"
 msgstr "suspended"
 
-#: civicboom/templates/admin/restfieldset.mako:93
+#: civicboom/templates/admin/restfieldset.mako:95
 msgid "groups"
 msgstr "groups"
 
-#: civicboom/templates/admin/restfieldset.mako:94
+#: civicboom/templates/admin/restfieldset.mako:96
 msgid "uploads"
 msgstr "uploads"
 
-#: civicboom/templates/admin/restfieldset.mako:100
+#: civicboom/templates/admin/restfieldset.mako:102
 msgid "Full List"
 msgstr "Full List"
 
-#: civicboom/templates/admin/classes/comment.mako:14
-#: civicboom/templates/admin/classes/content.mako:14
+#: civicboom/templates/admin/classes/comment.mako:10
+#: civicboom/templates/admin/classes/content.mako:10
 msgid "General"
 msgstr "General"
 
-#: civicboom/templates/admin/classes/comment.mako:23
-#: civicboom/templates/admin/classes/content.mako:21
+#: civicboom/templates/admin/classes/comment.mako:19
+#: civicboom/templates/admin/classes/content.mako:17
 #: civicboom/templates/admin/classes/license.mako:7
 #: civicboom/templates/admin/classes/media.mako:10
 #: civicboom/templates/admin/classes/message.mako:7
 #: civicboom/templates/admin/classes/tag.mako:7
-#: civicboom/templates/web/content_editor/content_editor.mako:103
+#: civicboom/templates/web/content_editor/content_editor.mako:109
 msgid "Content"
 msgstr "Content"
 
-#: civicboom/templates/admin/classes/content.mako:30
+#: civicboom/templates/admin/classes/content.mako:26
 msgid "Timeline"
 msgstr "Timeline"
 
-#: civicboom/templates/admin/classes/content.mako:36
+#: civicboom/templates/admin/classes/content.mako:32
 msgid "Other"
 msgstr "Other"
 
-#: civicboom/templates/admin/classes/group.mako:14
-#: civicboom/templates/admin/classes/user.mako:14
+# | msgid "new _article"
+#: civicboom/templates/admin/classes/flagged.mako:10
+#, fuzzy
+msgid "Article"
+msgstr "Article"
+
+# | msgid "_reporter"
+#: civicboom/templates/admin/classes/flagged.mako:17
+#, fuzzy
+msgid "Report"
+msgstr "Report"
+
+#: civicboom/templates/admin/classes/group.mako:10
+#: civicboom/templates/admin/classes/user.mako:10
 msgid "Information"
 msgstr "Information"
 
-#: civicboom/templates/admin/classes/group.mako:22
-#: civicboom/templates/admin/classes/user.mako:24
+#: civicboom/templates/admin/classes/group.mako:18
+#: civicboom/templates/admin/classes/user.mako:20
 msgid "Description"
 msgstr "Description"
 
@@ -678,37 +861,211 @@ msgstr "Description"
 msgid "Media"
 msgstr "Media"
 
-#: civicboom/templates/email/base_email.mako:18
-#: civicboom/templates/email/base_email.mako:24
+#: civicboom/templates/email/base_email.mako:20
 msgid "_site_name: _tagline"
 msgstr "Civicboom: News. Don't just read it. Feed it."
 
-#: civicboom/templates/email/base_email.mako:28
+#: civicboom/templates/email/base_email.mako:32
 msgid "Thanks!"
 msgstr "Thanks!"
 
-#: civicboom/templates/email/base_email.mako:29
+#: civicboom/templates/email/base_email.mako:33
 msgid "_site_name team."
 msgstr "Civicboom team."
 
-#: civicboom/templates/web/html_base.mako:107
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:9
+msgid "Congratulations!"
+msgstr "Congratulations!"
+
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:10
+#, python-format
+msgid ""
+"Your _article %(article)s in response to %(parent)s has been requested "
+"for potential use by %(member)s"
+msgstr ""
+"Your content %(article)s in response to %(parent)s has been requested for"
+" potential use by %(member)s"
+
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:12
+msgid "What next?"
+msgstr "What next?"
+
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:13
+msgid ""
+"The content you created in response to the _assignment is now locked and "
+"no further edits can be made."
+msgstr ""
+"The content you created in response to the request is now locked and no "
+"further edits can be made."
+
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:14
+msgid ""
+"The assigner will be able to use this content under the <a "
+"href=\"http://creativecommons.org/licenses/by/3.0/\"> Creative Commons "
+"Attribution 3.0 Unported </a>"
+msgstr ""
+"The assigner will be able to use this content under the <a "
+"href=\"http://creativecommons.org/licenses/by/3.0/\"> Creative Commons "
+"Attribution 3.0 Unported </a>"
+
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:16
+msgid "How you will be credited:"
+msgstr "How you will be credited:"
+
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:17
+msgid ""
+"If the assignee chooses to use part of or all content, they will "
+"attribute your work in one of the following ways:"
+msgstr ""
+"If the assignee chooses to use part of or all content, they will "
+"attribute your work in one of the following ways:"
+
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:19
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:37
+msgid ""
+"Name of creator as \"Source: creators name/_site_name\" (on your final "
+"content - image, video or text)."
+msgstr ""
+"Name of creator as \"Source: creators name/Civicboom\" (on your final "
+"content - image, video or text)."
+
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:20
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:38
+msgid "Link to assignees article on _site_name (using above link)."
+msgstr "Link to assignees article on Civicboom (using above link)."
+
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:21
+msgid ""
+"If multiple sources, link to the _assignment page (with all responses "
+"listed - including your approved content)."
+msgstr ""
+"If multiple sources, link to the request page (with all responses listed "
+"- including your approved content)."
+
+#: civicboom/templates/email/corporate/lock_article_to_member.mako:23
+msgid ""
+"You will also have \"approved\" tick against your associated published "
+"_assignment, meaning you are a credible source of information for others "
+"and improving your profile on _site_name."
+msgstr ""
+"You will also have \"approved\" tick against your associated published "
+"request, meaning you are a credible source of information for others and "
+"improving your profile on Civicboom."
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:8
+msgid "Your content request"
+msgstr "Your content request"
+
+# | msgid "_article rated"
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:10
+#, fuzzy
+msgid "Your _article request"
+msgstr "Your content request"
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:11
+msgid "You have locked and approved the following _article."
+msgstr "You have locked and approved the following content."
+
+# | msgid "Write _article"
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:13
+#, fuzzy
+msgid "Requested _article"
+msgstr "Requested content"
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:16
+msgid "Download images/videos:"
+msgstr "Download images/videos:"
+
+# | msgid "_reporter"
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:22
+#, fuzzy, python-format
+msgid "_reporter: %(member)s"
+msgstr "user: %(member)s"
+
+# | msgid "bits of content"
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:26
+#, fuzzy
+msgid "Use of this content"
+msgstr "Use of this content"
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:27
+msgid ""
+"This content is now locked and no further edits can be made by the "
+"original creator on _site_name."
+msgstr ""
+"This content is now locked and no further edits can be made by the "
+"original creator on Civicboom."
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:28
+msgid ""
+"The creator has been notified that you have requested this content for "
+"potential use - commercial or non-commercial."
+msgstr ""
+"The creator has been notified that you have requested this content for "
+"potential use - commercial or non-commercial."
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:29
+msgid "You may now use this content for your needs under the following license:"
+msgstr "You may now use this content for your needs under the following license:"
+
+# | msgid "Licence"
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:31
+#, fuzzy
+msgid "License"
+msgstr "License"
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:32
+msgid ""
+"This content has been created under <a "
+"href=\"http://creativecommons.org/licenses/by/3.0/\">Creative Commons "
+"Attribution 3.0 Unported </a>. This means you are free to copy, "
+"distribute and transmit the work. You are also free to adapt the work "
+"according to your needs."
+msgstr ""
+"This content has been created under <a "
+"href=\"http://creativecommons.org/licenses/by/3.0/\">Creative Commons "
+"Attribution 3.0 Unported </a>. This means you are free to copy, "
+"distribute and transmit the work. You are also free to adapt the work "
+"according to your needs."
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:33
+msgid "The above is permissible under the following conditions:"
+msgstr "The above is permissible under the following conditions:"
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:34
+msgid "You must attribute the work in one of the following manner:"
+msgstr "You must attribute the work in one of the following manner:"
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:35
+msgid "Content credit: Three different ways:"
+msgstr "Content credit: Three different ways:"
+
+#: civicboom/templates/email/corporate/lock_article_to_organisation.mako:39
+msgid ""
+"If multiple sources, link to your assignment page (with all responses "
+"listed - including ones you have approved)."
+msgstr ""
+"If multiple sources, link to your assignment page (with all responses "
+"listed - including ones you have approved)."
+
+#: civicboom/templates/web/html_base.mako:100
 msgid "_site_name is undergoing exciting changes!"
 msgstr "Civicboom is undergoing exciting changes!"
 
-#: civicboom/templates/web/html_base.mako:108
+#: civicboom/templates/web/html_base.mako:101
 msgid "We want your feedback! Tell us what you think:"
 msgstr "We want your feedback! Tell us what you think:"
 
-#: civicboom/templates/web/html_base.mako:110
+#: civicboom/templates/web/html_base.mako:103
 msgid "Thanks, from the _site_name Team."
 msgstr "Thanks, from the Civicboom Team."
 
-#: civicboom/templates/web/html_base.mako:111
+#: civicboom/templates/web/html_base.mako:104
 msgid "close"
 msgstr "close"
 
-#: civicboom/templates/web/html_base.mako:128
-#: civicboom/templates/web/html_base.mako:129
+#: civicboom/templates/web/html_base.mako:121
+#: civicboom/templates/web/html_base.mako:122
 #: civicboom/templates/web/html_header.mako:22
 msgid "_tagline"
 msgstr "News. Don't just read it. Feed it."
@@ -718,163 +1075,208 @@ msgstr "News. Don't just read it. Feed it."
 msgid "_site_description"
 msgstr "Building the world's first true community and audience assignment system"
 
-#: civicboom/templates/web/account/register.mako:21
-#: civicboom/templates/web/account/register.mako:88
+#: civicboom/templates/web/account/link_janrain.mako:6
+msgid "Link other accounts"
+msgstr "Link other accounts"
+
+#: civicboom/templates/web/account/register.mako:23
+#: civicboom/templates/web/account/register.mako:64
 msgid "Register"
 msgstr "Register"
 
-#: civicboom/templates/web/account/register.mako:87
+#: civicboom/templates/web/account/register.mako:63
 msgid "Agree to terms"
 msgstr "Agree to terms"
 
-#: civicboom/templates/web/account/register.mako:218
-msgid "Choose Month"
-msgstr "Choose Month"
-
-#: civicboom/templates/web/account/register.mako:219
-msgid "Enter Year"
-msgstr "Enter Year"
-
-#: civicboom/templates/web/account/register.mako:220
-msgid "OK"
-msgstr "OK"
-
-#: civicboom/templates/web/account/register.mako:221
-msgid "Cancel"
-msgstr "Cancel"
-
-#: civicboom/templates/web/account/register.mako:222
-msgid "Please enter a valid year"
-msgstr "Please enter a valid year"
-
 #: civicboom/templates/web/account/signin.mako:6
-#: civicboom/templates/web/account/signin.mako:40
-#: civicboom/templates/web/account/signin.mako:43
+#: civicboom/templates/web/account/signin.mako:28
+#: civicboom/templates/web/account/signin.mako:31
 msgid "Sign in"
 msgstr "Sign in"
 
-#: civicboom/templates/web/account/signin.mako:42
+#: civicboom/templates/web/account/signin.mako:30
 msgid "Password"
 msgstr "Password"
 
-#: civicboom/templates/web/account/signin.mako:50
-#: civicboom/templates/web/account/signin.mako:56
+#: civicboom/templates/web/account/signin.mako:38
+#: civicboom/templates/web/account/signin.mako:44
 #: civicboom/templates/web/design09/misc/titlepage.mako:34
 msgid "Sign up"
 msgstr "Sign up"
 
-#: civicboom/templates/web/account/signin.mako:52
-#: civicboom/templates/web/account/signin.mako:66
+#: civicboom/templates/web/account/signin.mako:40
+#: civicboom/templates/web/account/signin.mako:54
 #: civicboom/templates/web/design09/misc/titlepage.mako:32
 msgid "Email"
 msgstr "Email"
 
-#: civicboom/templates/web/account/signin.mako:53
+#: civicboom/templates/web/account/signin.mako:41
 msgid "Individual"
 msgstr "Individual"
 
-#: civicboom/templates/web/account/signin.mako:54
+#: civicboom/templates/web/account/signin.mako:42
 msgid "Organisation"
 msgstr "Organisation"
 
-#: civicboom/templates/web/account/signin.mako:63
+#: civicboom/templates/web/account/signin.mako:51
 msgid "Forgotten Password?"
 msgstr "Forgotten Password?"
 
-#: civicboom/templates/web/account/signin.mako:67
+#: civicboom/templates/web/account/signin.mako:55
 msgid "Send password reminder"
 msgstr "Send password reminder"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:6
+#: civicboom/templates/web/content_editor/content_editor.mako:8
 msgid "Edit _article"
 msgstr "Edit content"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:56
+#: civicboom/templates/web/content_editor/content_editor.mako:53
+#: civicboom/templates/web/design09/content/view.mako:49
 msgid "Delete"
 msgstr "Delete"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:60
+#: civicboom/templates/web/content_editor/content_editor.mako:57
 msgid "Preview Draft"
 msgstr "Preview Draft"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:61
+#: civicboom/templates/web/content_editor/content_editor.mako:58
 msgid "Save Draft"
 msgstr "Save Draft"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:107
+#: civicboom/templates/web/content_editor/content_editor.mako:113
 msgid "Title"
 msgstr "Title"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:119
+#: civicboom/templates/web/content_editor/content_editor.mako:137
 msgid "By"
 msgstr "By"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:145
+#: civicboom/templates/web/content_editor/content_editor.mako:163
 msgid "Tags"
 msgstr "Tags"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:215
+#: civicboom/templates/web/content_editor/content_editor.mako:185
 msgid "Attach Media (optional)"
 msgstr "Attach Media (optional)"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:229
-#: civicboom/templates/web/content_editor/content_editor.mako:243
+#: civicboom/templates/web/content_editor/content_editor.mako:219
+#: civicboom/templates/web/content_editor/content_editor.mako:242
 msgid "File"
 msgstr "File"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:230
-#: civicboom/templates/web/content_editor/content_editor.mako:244
+#: civicboom/templates/web/content_editor/content_editor.mako:220
+#: civicboom/templates/web/content_editor/content_editor.mako:243
 msgid "Caption"
 msgstr "Caption"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:231
-#: civicboom/templates/web/content_editor/content_editor.mako:245
+#: civicboom/templates/web/content_editor/content_editor.mako:221
+#: civicboom/templates/web/content_editor/content_editor.mako:244
 msgid "Credited to"
 msgstr "Credited to"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:240
+#: civicboom/templates/web/content_editor/content_editor.mako:239
 msgid "Select a file to upload"
 msgstr "Select a file to upload"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:243
+#: civicboom/templates/web/content_editor/content_editor.mako:242
 msgid "Upload"
 msgstr "Upload"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:260
+#: civicboom/templates/web/content_editor/content_editor.mako:259
 msgid "Publish Type"
 msgstr "Publish Type"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:333
+#: civicboom/templates/web/content_editor/content_editor.mako:332
 msgid "Publish"
 msgstr "Publish"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:335
+#: civicboom/templates/web/content_editor/content_editor.mako:334
 msgid "Publish Update"
 msgstr "Publish Update"
 
-#: civicboom/templates/web/content_editor/content_editor.mako:352
+# | msgid "Licence (optional)"
+#: civicboom/templates/web/content_editor/content_editor.mako:348
+#, fuzzy
+msgid "Location (optional)"
+msgstr "Location (optional)"
+
+#: civicboom/templates/web/content_editor/content_editor.mako:363
 msgid "Licence (optional)"
 msgstr "Licence (optional)"
 
-#: civicboom/templates/web/design09/content/view.mako:21
+#: civicboom/templates/web/design09/content/view.mako:33
 msgid "Content by"
 msgstr "Content by"
 
-#: civicboom/templates/web/design09/content/view.mako:26
+#: civicboom/templates/web/design09/content/view.mako:38
 msgid "Actions"
 msgstr "Actions"
 
-#: civicboom/templates/web/design09/content/view.mako:33
-msgid "Are your sure you want to delete this _article?"
+#: civicboom/templates/web/design09/content/view.mako:49
+#: civicboom/templates/web/design09/includes/content_list.mako:97
+msgid "Are your sure you want to delete this content?"
 msgstr "Are your sure you want to delete this content?"
 
 #: civicboom/templates/web/design09/content/view.mako:57
+msgid "Accept"
+msgstr "Accept"
+
+#: civicboom/templates/web/design09/content/view.mako:59
+msgid "Withdraw"
+msgstr "Withdraw"
+
+#: civicboom/templates/web/design09/content/view.mako:71
+msgid "Approve & Lock"
+msgstr "Approve & Lock"
+
+#: civicboom/templates/web/design09/content/view.mako:71
+msgid "Approve and lock this content so no further editing is possible"
+msgstr "Approve and lock this content so no further editing is possible"
+
+#: civicboom/templates/web/design09/content/view.mako:71
+msgid ""
+"Once approved this article will be locked and no further changes can be "
+"made"
+msgstr ""
+"Once approved this article will be locked and no further changes can be "
+"made"
+
+#: civicboom/templates/web/design09/content/view.mako:72
+msgid "Disasociate"
+msgstr "Disasociate"
+
+#: civicboom/templates/web/design09/content/view.mako:72
+msgid "Dissacociate your content from this response"
+msgstr "Dissacociate your content from this response"
+
+#: civicboom/templates/web/design09/content/view.mako:72
+msgid "This content with no longer be associated with your content, are you sure?"
+msgstr "This content with no longer be associated with your content, are you sure?"
+
+#: civicboom/templates/web/design09/content/view.mako:129
 msgid "Licence"
 msgstr "Licence"
 
-#: civicboom/templates/web/design09/content/view.mako:63
+#: civicboom/templates/web/design09/content/view.mako:135
 msgid "Content issues?"
 msgstr "Content issues?"
+
+#: civicboom/templates/web/design09/content/view.mako:139
+msgid "Flag this _content as inappropriate"
+msgstr "Flag this content as inappropriate"
+
+# | msgid "Licence (optional)"
+#: civicboom/templates/web/design09/content/view.mako:148
+#, fuzzy
+msgid "Comment (optional)"
+msgstr "Comment (optional)"
+
+# | msgid "%d comment"
+# | msgid_plural "%d comments"
+#: civicboom/templates/web/design09/content/view.mako:295
+#, fuzzy
+msgid "Comments"
+msgstr "Comments"
 
 #: civicboom/templates/web/design09/includes/content_list.mako:81
 #, python-format
@@ -889,10 +1291,6 @@ msgid "%d comment"
 msgid_plural "%d comments"
 msgstr[0] "%d comment"
 msgstr[1] "%d comments"
-
-#: civicboom/templates/web/design09/includes/content_list.mako:97
-msgid "Are your sure you want to delete this content?"
-msgstr "Are your sure you want to delete this content?"
 
 #: civicboom/templates/web/design09/includes/footer.mako:4
 msgid "Please send us your Feedback"
@@ -916,23 +1314,19 @@ msgid "Privacy policy"
 msgstr "Privacy policy"
 
 #: civicboom/templates/web/design09/includes/footer.mako:28
-msgid "Contact"
-msgstr "Contact"
-
-#: civicboom/templates/web/design09/includes/footer.mako:29
 #: civicboom/templates/web/design09/misc/credits.mako:6
 msgid "Credits"
 msgstr "Credits"
 
-#: civicboom/templates/web/design09/includes/header.mako:20
+#: civicboom/templates/web/design09/includes/header.mako:21
 msgid "Sign in or Sign up"
 msgstr "Sign in or Sign up"
 
-#: civicboom/templates/web/design09/includes/header.mako:23
+#: civicboom/templates/web/design09/includes/header.mako:24
 msgid "Controls"
 msgstr "Controls"
 
-#: civicboom/templates/web/design09/includes/header.mako:24
+#: civicboom/templates/web/design09/includes/header.mako:25
 msgid "Sign out"
 msgstr "Sign out"
 
@@ -970,9 +1364,11 @@ msgstr ""
 msgid "Find _assignments"
 msgstr "Find requests"
 
+# | msgid "_assignment response"
 #: civicboom/templates/web/design09/includes/navigation.mako:18
-msgid "FIXME"
-msgstr "FIXME"
+#, fuzzy
+msgid "Find open _assignments to respond to"
+msgstr "Find open requests to respond to"
 
 #: civicboom/templates/web/design09/includes/navigation.mako:25
 msgid "Find"
@@ -994,9 +1390,11 @@ msgstr "Boom this"
 msgid "Start Now!"
 msgstr "Start Now!"
 
+# | msgid "About _site_name &amp; FAQ"
 #: civicboom/templates/web/design09/misc/about.mako:16
-msgid "About _site_name &amp; FAQ"
-msgstr "About Civicboom &amp; FAQ"
+#, fuzzy
+msgid "About _site_name & FAQ"
+msgstr "About Civicboom & FAQ"
 
 #: civicboom/templates/web/design09/misc/about.mako:21
 msgid "_site_name is a tool that makes building a story easier."
@@ -1164,6 +1562,10 @@ msgstr "How can I protect my content?"
 msgid "What about copyright?"
 msgstr "What about copyright?"
 
+#: civicboom/templates/web/design09/misc/about.mako:148
+msgid "* & ** rolling out May 2010."
+msgstr "* & ** rolling out May 2010."
+
 #: civicboom/templates/web/design09/misc/titlepage.mako:6
 msgid "Welcome"
 msgstr "Welcome"
@@ -1172,9 +1574,11 @@ msgstr "Welcome"
 msgid "Try us now"
 msgstr "Try us now"
 
+# | msgid "Organisations &amp; Media:"
 #: civicboom/templates/web/design09/misc/titlepage.mako:23
-msgid "Organisations &amp; Media:"
-msgstr "Organisations &amp; Media:"
+#, fuzzy
+msgid "Organisations & Media:"
+msgstr "Organisations & Media:"
 
 #: civicboom/templates/web/design09/misc/titlepage.mako:23
 #: civicboom/templates/web/design09/misc/titlepage.mako:24
@@ -1236,6 +1640,26 @@ msgstr ""
 #: civicboom/templates/web/design09/search/member.mako:7
 msgid "Search"
 msgstr "Search"
+
+#: civicboom/templates/web/includes/YUI_components.mako:244
+msgid "Choose Month"
+msgstr "Choose Month"
+
+#: civicboom/templates/web/includes/YUI_components.mako:245
+msgid "Enter Year"
+msgstr "Enter Year"
+
+#: civicboom/templates/web/includes/YUI_components.mako:246
+msgid "OK"
+msgstr "OK"
+
+#: civicboom/templates/web/includes/YUI_components.mako:247
+msgid "Cancel"
+msgstr "Cancel"
+
+#: civicboom/templates/web/includes/YUI_components.mako:248
+msgid "Please enter a valid year"
+msgstr "Please enter a valid year"
 
 #: civicboom/templates/web/profile/index.mako:30
 msgid "Following"
@@ -1380,19 +1804,19 @@ msgstr "Set an request to have it appear here on your widget"
 msgid "Watch this space!"
 msgstr "Watch this space!"
 
-#: civicboom/templates/widget/widget_border.mako:73
+#: civicboom/templates/widget/widget_border.mako:83
 msgid "Logged in"
 msgstr "Logged in"
 
-#: civicboom/templates/widget/widget_border.mako:112
+#: civicboom/templates/widget/widget_border.mako:122
 msgid "Powered by"
 msgstr "Powered by"
 
-#: civicboom/templates/widget/widget_border.mako:119
+#: civicboom/templates/widget/widget_border.mako:129
 msgid "Mobile reporting"
 msgstr "Mobile reporting"
 
-#: civicboom/templates/widget/widget_border.mako:125
+#: civicboom/templates/widget/widget_border.mako:135
 msgid "Embed this widget"
 msgstr "Embed this widget"
 
@@ -1433,7 +1857,22 @@ msgstr "Want to get a widget for your community?"
 msgid "Click here and get started"
 msgstr "Click here and get started"
 
-#: civicboom/templates/widget/widget_signin.mako:25
+#: civicboom/templates/widget/widget_signin.mako:14
 msgid "Sign in to _site_name"
 msgstr "Sign in to Civicboom"
+
+#~ msgid "Incorrect username and password"
+#~ msgstr "Incorrect username and password"
+
+#~ msgid "Your login has expired please log in again"
+#~ msgstr "Your login has expired please log in again"
+
+#~ msgid "Are your sure you want to delete this _article?"
+#~ msgstr "Are your sure you want to delete this content?"
+
+#~ msgid "Contact"
+#~ msgstr "Contact"
+
+#~ msgid "FIXME"
+#~ msgstr "FIXME"
 
