@@ -356,5 +356,8 @@ class FlaggedContent(Base):
     type          = Column(_flag_type,    nullable=False)
     comment       = Column(UnicodeText(), nullable=True, doc="optional should the user want to add additional details")
 
+    def __str__(self):
+        return "%s - %s (%s)" % (self.member.username, self.comment, self.type)
+
 
 GeometryDDL(Content.__table__)
