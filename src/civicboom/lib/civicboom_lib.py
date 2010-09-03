@@ -30,6 +30,8 @@ import hashlib
 import random
 import json
 
+import logging
+log      = logging.getLogger(__name__)
 
 #-------------------------------------------------------------------------------
 # Pending Users Allowed URL
@@ -106,7 +108,7 @@ def aggregate_via_user(content, user):
     #user    = get_user(user)
     #if not content: return
     #if not user   : return
-    content_json = aggregation_json(content)
+    content_json = json.dumps(aggregation_dict(content))
     location = ''
     if content.location:
         location = '%s %s' % (content.location.coords(Session)[1], content.location.coords(Session)[0])
@@ -117,21 +119,23 @@ def aggregate_via_user(content, user):
     else:
         log.debug('janrain aggregation disabled: \n%s' % content_json)
 
-def aggregation_json(content):
+def aggregation_dict(content, escape_chars=False):
     """
-    Gets a JSON summary version of this content for aggregation via Janrain
+    Gets a Python dict summary version of this content for aggregation via Janrain
     https://rpxnow.com/docs#api_activity
+    
+    escape_chars will escape all harful characters. This is used for constructing a javascript representaion for the Janrain Widget in javascript code
     """
     
     content_preview = {}
     
-    url = url(controller='content', action='view', id=content.id)
+    content_url = url(host=app_globals.site_host, controller='content', action='view', id=content.id)
 
-    def actions_links(content):
+    def action_links(content):
         action_links = []
-        action_links.append({'href':url(controller='content_actions', action='edit'  , form_parent_id=content.id), 'text':_('Write a response')  })
+        action_links.append({'href':url(host=app_globals.site_host, controller='content_actions', action='edit'  , form_parent_id=content.id), 'text':_('Write a response')  })
         if content.__type__ == "assignment":
-            action_links.append({'href':url(controller='content_actions', action='accept', id            =content.id), 'text':_('Accept _assignment')})
+            action_links.append({'href':url(host=app_globals.site_host, controller='content_actions', action='accept', id            =content.id), 'text':_('Accept _assignment')})
         return action_links
     
     def media(content):
@@ -145,22 +149,27 @@ def aggregation_json(content):
         properties = {}
         if content.__type__ == "article":
             properties['Rating'] = content.rating
+        # TODO: Additional properties
         #"Location": {
         #  "href": "http:\/\/bit.ly\/3fkBwe",
         #  "text": "North Portland"
         #},
         return properties
 
-    content_preview['url']                    = url
+    content_preview['url']                    = content_url
     content_preview['title']                  = content.title
-    content_preview['description']            = u""
-    content_preview['action']                 = u"" #wrote an atricle
+    content_preview['action']                 = u"" #TODO - "wrote an atricle"?
+    content_preview['description']            = u"" #TODO
     content_preview['user_generated_content'] = truncate(strip_html_tags(content.content))
     content_preview['action_links']           = action_links(content)
     content_preview['media']                  = media(content)
     content_preview['properties']             = properties(content)
     
-    return json.dumps(content_preview)
+    if escape_chars:
+        #content_preview = escape(content_preview)
+        log.warn('aggregation python dict char escaping needs implementing')
+    
+    return content_preview
 
 
 #-------------------------------------------------------------------------------
