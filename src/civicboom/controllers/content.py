@@ -44,10 +44,13 @@ class ContentController(BaseController):
             return render('/web/design09/content/unavailable.mako')
 
         # Check content is visable
+        if c.content.__type__ == "comment":
+            abort(404)
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
             if c.content.status == "pending":
-                flash_message(_("your user does not have the permissions to view this _content"))
-                return render('/web/design09/content/unavailable.mako')
+                abort(404)
+                #flash_message(_("your user does not have the permissions to view this _content"))
+                #return render('/web/design09/content/unavailable.mako')
         
         # Increase content view count
         if hasattr(c.content,'views'):
@@ -127,9 +130,11 @@ class ContentController(BaseController):
             update_content(c.content)                         #   Invalidate any cache associated with this content
             user_log.info("edited Content #%d" % (c.content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
             
-            if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
+            if 'submit_publish' in request.POST:
                 c.content.aggregate_via_creator() # Agrigate content over creators known providers
                 return redirect(url.current(action='view', id=c.content.id, prompt_aggregate=True))
+            if 'submit_preview' in request.POST:
+                return redirect(url.current(action='view', id=c.content.id))
             if 'submit_response' in request.POST:
                 return redirect(url.current(action='view', id=c.content.parent_id))
         

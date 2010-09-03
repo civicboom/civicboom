@@ -28,7 +28,8 @@ def redirect_to_referer():
         log.warning("Redirect loop detected for "+str(url_to))
         redirect('/')
     if not url_to:
-        url_to = url.current()
+        #url_to = url.current()
+        redirect('/')
     return redirect(url_to)
 
 #-------------------------------------------------------------------------------
