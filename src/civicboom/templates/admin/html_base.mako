@@ -6,18 +6,22 @@ from pylons import url
 	<head>
 		<title>${self.title()}</title>
 		<link rel="stylesheet" type="text/css" href="${url('fa_static', path_info='/admin.css')}" />
-		<script type="text/javascript" src="/javascript/_combined.js"></script>
+		<link rel="stylesheet" type="text/css" href="/styles/jquery.ui-1.8.4.css" />
+		<script type="text/javascript" src="/javascript/jquery-1.4.2.js"></script>
+		<script type="text/javascript" src="/javascript/jquery.ui-1.8.4.js"></script>
 		<style>
-TABLE.outer {
-	width: 90%;
-	margin: auto;
-}
-TABLE.outer > TBODY > TR > TD {
-	border: none;
-	width: 50%;
-}
-TABLE.outer TABLE {
-	width: 95%;
+TABLE.outer {width: 90%; margin: auto;}
+TABLE.outer > TBODY > TR > TD {border: none; width: 50%;}
+TABLE.outer TABLE {width: 95%;}
+
+TD A {display: inline;}
+TD > INPUT[type="text"],
+TD > TEXTAREA,
+TD > SELECT {width: 100%;}
+TD > TEXTAREA {height: 150px;}
+.input_row TD:first-child {
+	vertical-align: middle;
+	text-align: right;
 }
 
 #content, #header {
@@ -42,9 +46,6 @@ TEXTAREA {
 	border:1px solid #F5F5F5;
 	border-left-color:#DDD;
 	border-top-color:#DDD;
-}
-TD A {
-    display: inline;
 }
 		</style>
 		% if hasattr(self,'styleOverides'):

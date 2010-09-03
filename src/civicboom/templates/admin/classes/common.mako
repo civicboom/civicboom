@@ -19,34 +19,6 @@
 % endif
 </%def>
 
-<%def name="style()">
-<style>
-TD > INPUT[type="text"],
-TD > TEXTAREA,
-TD > SELECT {
-	width: 100%;
-}
-TD > TEXTAREA {
-	height: 150px;
-}
-.input_row TD:first-child {
-	vertical-align: middle;
-	text-align: right;
-}
-TABLE.outer {
-	width: 90%;
-	margin: auto;
-}
-TABLE.outer > TBODY > TR > TD {
-	border: none;
-	width: 50%;
-}
-TABLE.outer TABLE {
-	width: 95%;
-}
-</style>
-</%def>
-
 <%def name="errors(fieldset)">
 	% for error in fieldset.errors.get(None, []):
 		<div class="fieldset_error">

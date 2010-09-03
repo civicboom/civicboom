@@ -1,6 +1,5 @@
 <%namespace name="common" file="/admin/classes/common.mako" />
 
-${common.style()}
 ${common.errors(fieldset)}
 
 <table class="outer">
@@ -8,7 +7,7 @@ ${common.errors(fieldset)}
 		<td>
 <table>
 	<tr><th colspan="2">${_("Article")}</th></tr>
-	<tr class="input_row"><td>Content</td><td><a href="/admin/Content/models/${fieldset.content_id.render()}">${(fieldset.content.render())|n}</a></td></tr>
+	<tr class="input_row"><td>Content</td><td><a href="/admin/Content/models/${fieldset.content_id.render()}/edit">${(fieldset.content.render())|n}</a></td></tr>
 	${common.render_short_field(fieldset.timestamp)|n}
 </table>
 		</td>

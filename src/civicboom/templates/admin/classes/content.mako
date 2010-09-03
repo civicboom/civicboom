@@ -1,6 +1,5 @@
 <%namespace name="common" file="/admin/classes/common.mako" />
 
-${common.style()}
 ${common.errors(fieldset)}
 
 <table class="outer">
@@ -32,6 +31,7 @@ ${common.errors(fieldset)}
 	<tr><th colspan="2">${_("Other")}</th></tr>
 	${common.render_short_field(fieldset.responses)|n}
 	${common.render_short_field(fieldset.location)|n}
+	${common.render_short_field(fieldset.flags)|n}
 </table>
 		</td>
 	</tr>

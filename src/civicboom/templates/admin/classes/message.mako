@@ -1,6 +1,5 @@
 <%namespace name="common" file="/admin/classes/common.mako" />
 
-${common.style()}
 ${common.errors(fieldset)}
 
 <table>

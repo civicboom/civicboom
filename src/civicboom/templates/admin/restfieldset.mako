@@ -126,9 +126,7 @@ from civicboom.model import Content, User, Group, Media, FlaggedContent
   %else:
     ${h1(model_name, href=model_url(collection_name))}
     %if action == 'show':
-      <table>
-        ${fs.render()|n}
-      </table>
+	  ${fs.render()|n}
       <p class="fa_field">
         <a class="ui-widget-header ui-widget-link ui-corner-all" href="${model_url('edit_%s' % member_name, id=id)}">
           <span class="ui-icon ui-icon-pencil"></span>
