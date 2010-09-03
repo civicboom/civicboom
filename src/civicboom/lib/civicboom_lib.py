@@ -139,11 +139,11 @@ def aggregation_dict(content, escape_chars=False):
         return action_links
     
     def media(content):
-        media = []
+        media_list = []
         for media in content.attachments:
-            if   media.type    == "image": media.append({'href':url, 'type':"image", 'src':media.thumbnail_url})
-            elif media.subtype == "mp3"  : media.append({'href':url, 'type':"mp3"  , 'src':media.media_url    })
-        return media
+            if   media.type    == "image": media_list.append({'href':url, 'type':"image", 'src':media.thumbnail_url})
+            elif media.subtype == "mp3"  : media_list.append({'href':url, 'type':"mp3"  , 'src':media.media_url    })
+        return media_list
     
     def properties(content):
         properties = {}
