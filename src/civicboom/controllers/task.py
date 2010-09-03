@@ -170,3 +170,11 @@ class TaskController(BaseController):
         """
         #        it also may be worth looking for media records without an associated content record and removeing them as well
         pass
+
+
+    #---------------------------------------------------------------------------
+    # Test Task
+    #---------------------------------------------------------------------------
+
+    def test(self):
+        return "<task happened>"
