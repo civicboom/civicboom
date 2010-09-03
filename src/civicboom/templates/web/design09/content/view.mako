@@ -122,8 +122,11 @@ r = (c.content.rating * 5)
 
     ##-----Share Article Links--------
 
+    <% from civicboom.model.content import UserVisibleContent %>
+    % if issubclass(c.content.__class__, UserVisibleContent):
     <h2>${_("Share this")}</h2>
         ${share_links()}
+    % endif
   
 
     ##-------- Licence----------
@@ -464,13 +467,25 @@ from civicboom.model import CommentContent
                   // Process results of publishing.
                 }
                 
+                <%
+                    # Generate signiture
+                    # Reference - https://rpxnow.com/docs/social_publish_activity#OptionsParameter
+                    #           - http://stackoverflow.com/questions/1306550/calculating-a-sha-hash-with-a-string-secret-key-in-python
+                    import hashlib, hmac, base64, time
+                    apiKey     = config['api_key.janrain']
+                    timestamp  = int(time.time())
+                    primaryKey = c.logged_in_user.id
+                    message    = "%s|%s" % (timestamp,primaryKey)
+                    signature  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
+                %>
+                
                 var options = {
                                 finishCallback: finished,
                                 ##exclusionList: ["facebook", "yahoo"],
                                 urlShortening: true,
-                                primaryKey: '1029384756',
-                                timestamp: 1275987204,
-                                signature: 'I5kckgc3v4JaxavG5QQ8+FTbBKgPrmu+2+zXZZ93124='
+                                primaryKey: '${primaryKey}',
+                                timestamp :  ${timestamp}  ,
+                                signature : '${signature}'
                                }
                 
                 RPXNOW.Social.publishActivity(activity, options);
