@@ -428,14 +428,14 @@ from civicboom.model import CommentContent
                   content_dict = aggregation_dict(c.content, escape_chars=True)
                 %>
                 
-                var activity = new RPXNOW.Social.Activity('${content_dict['title']}',
-                                                          '${content_dict['action']}',
+                var activity = new RPXNOW.Social.Activity('${content_dict['action']}',
+                                                          '${content_dict['description']}',
                                                           '${content_dict['url']}'
                                                           );
                 
                 activity.setTitle               ('${content_dict['title']}');
                 activity.setDescription         ('${content_dict['description']}');
-                activity.setUserGeneratedContent('${content_dict['user_generated_content']}');
+                ##activity.setUserGeneratedContent('${content_dict['user_generated_content']}');
                 
                 % for action_link in content_dict['action_links']:
                     activity.addActionLink('${action_link['text']}', '${action_link['href']}');

@@ -131,6 +131,14 @@ def aggregation_dict(content, escape_chars=False):
     
     content_url = url(host=app_globals.site_host, controller='content', action='view', id=content.id)
 
+    def action(content):
+        if   content.__type__ == "assignment": return _("Set an _assignment")
+        elif content.parent                  : return _("Wrote a response")
+        elif content.__type__ == "article"   : return _("Wrote an _article")
+    
+    def description(content):
+        return "%s: %s" % (action(content), content.title)
+
     def action_links(content):
         action_links = []
         action_links.append({'href':url(host=app_globals.site_host, controller='content_actions', action='edit'  , form_parent_id=content.id), 'text':_('Write a response')  })
@@ -158,8 +166,8 @@ def aggregation_dict(content, escape_chars=False):
 
     content_preview['url']                    = content_url
     content_preview['title']                  = content.title
-    content_preview['action']                 = u"" #TODO - "wrote an atricle"?
-    content_preview['description']            = u"" #TODO
+    content_preview['action']                 = action(content)
+    content_preview['description']            = description(content)
     content_preview['user_generated_content'] = truncate(strip_html_tags(content.content))
     content_preview['action_links']           = action_links(content)
     content_preview['media']                  = media(content)
