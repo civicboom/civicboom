@@ -11,7 +11,7 @@ from pylons                   import request, response, app_globals, tmpl_contex
 from pylons.controllers.util  import abort, redirect
 from pylons.templating        import render_mako
 from pylons.i18n.translation  import _, ungettext, set_lang
-from pylons.decorators.secure import https, authenticate_form
+from pylons.decorators.secure import https
 from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
@@ -118,3 +118,34 @@ class BaseController(WSGIController):
             return WSGIController.__call__(self, environ, start_response)
         finally:
             meta.Session.remove()
+
+
+#-------------------------------------------------------------------------------
+# Decorators
+#-------------------------------------------------------------------------------
+from decorator import decorator
+from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
+
+@decorator
+def authenticate_form(func, *args, **kwargs):
+    """
+    slightly hacked version of pylons.decorators.secure.authenticated_form to
+    support authenticated PUT and DELETE requests
+    """
+    request = get_pylons(args).request
+
+    # XXX: Shish - the body is not parsed for PUT or DELETE, so parse it ourselves
+    # request.body ->  foo=bar&baz=quz
+    param_list = request.body.split("&") # ["foo=bar", "baz=qux"]
+    param_pair = [part.split("=", 2) for part in param_list] # [("foo", "bar"), ("baz", "qux")]
+    param_dict = dict(param_pair) # {"foo": "bar", "baz": "qux"}
+
+    if authenticated_form(request.POST):
+        del request.POST[secure_form.token_key]
+        return func(*args, **kwargs)
+    elif authenticated_form(param_dict): # check params for PUT and DELETE cases
+        return func(*args, **kwargs)
+    else:
+        log.warn('Cross-site request forgery detected, request denied: %r '
+                 'REMOTE_ADDR: %s' % (request, request.remote_addr))
+        abort(403, detail=csrf_detected_message)
