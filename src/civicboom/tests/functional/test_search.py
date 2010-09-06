@@ -74,14 +74,14 @@ class TestSearchController(TestController):
         response = self.app.get(url(controller='search', action='member'))
 
     def test_member_name_results(self):
-        response = self.app.get(url(controller='search', action='member', format="json", query="mr"))
+        response = self.app.get(url(controller='search', action='member', format="json", term="mr"))
         assert "Mr U. Test" in response
 
     def test_member_username_results(self):
-        response = self.app.get(url(controller='search', action='member', format="json", query="unit"))
+        response = self.app.get(url(controller='search', action='member', format="json", term="unit"))
         assert "Mr U. Test" in response
 
     def test_member_no_results(self):
-        response = self.app.get(url(controller='search', action='member', format="json", query="waffleville"))
+        response = self.app.get(url(controller='search', action='member', format="json", term="waffleville"))
         assert "Mr" not in response
 
