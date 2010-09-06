@@ -195,13 +195,13 @@ class ContentController(BaseController):
         if request.environ['REQUEST_METHOD']!='POST': return
         id = app_globals.memcache.get(str(id))
         if not id: return
-        
+
         if 'content' in request.POST:
             content = get_content(id)
             content.content = request.POST['content']
             Session.commit()
             update_content(id)
-        # TODO: json status return? action ok? error?
+            return action_ok("Autosaved OK")
 
 
 

@@ -66,19 +66,6 @@
         </form>
     </div>
     
-    % if c.content.__type__ == "draft":
-        <script type="text/javascript">
-            function autoSaveDraft() {
-                YAHOO.log("autosave placeholder");
-                YAHOO.log(document.getElementById("form_content").value)
-                
-                // Build POST with just content string
-                // ${url(controller='content', action='autosave', id=c.content_media_upload_key)}
-            }
-            var autoSaveDraftTimer = setInterval('autoSaveDraft()', 50000);
-        </script>
-    % endif
-    
 </%def>
 
 
@@ -128,8 +115,28 @@
 			theme_advanced_toolbar_location : "top",
 			theme_advanced_toolbar_align : "left",
 		});
+		function ajaxSave() {
+			var ed = tinyMCE.get('form_content');
+			ed.setProgressState(1); // Show progress spinner
+			$.ajax({
+				type: 'POST',
+				dataType: 'json',
+				url: "${url(controller='content', action='autosave', id=c.content_media_upload_key)}",
+				data: {
+					"content": ed.getContent(),
+					"mode": 'autosave',
+				},
+				success: function(data) {
+					ed.setProgressState(0);
+					flash_message(data);
+				},
+			});
+		}
+% if c.content.__type__ == "draft":
+		var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
+% endif
 		</script>
-  
+
         % if c.content.__type__ == "draft":
             <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
         % endif
