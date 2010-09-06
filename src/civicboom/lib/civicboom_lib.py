@@ -19,6 +19,7 @@ from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.services.janrain         import janrain
 from civicboom.lib.services.cdyne_profanity import profanity_check
 from civicboom.lib.services.twitter_global  import status as twitter_global_status
+from civicboom.lib.services.tiny_url        import tiny_url
 
 from civicboom.lib.text          import clean_html_markup, strip_html_tags, safe_python_strings
 from civicboom.lib.misc          import remove_where
@@ -185,12 +186,20 @@ def aggregate_via_user(content, user):
 
 
 
-def twitter_content(content):
+def twitter_global(content):
+
     content_dict = aggregation_dict(content, safe_strings=True)
+
+    if len(content_dict['title']) > 70:
+        title           = truncate(content_dict['title'], length=70)
+        content_preview = truncate(content_dict['user_generated_content'], length=30)
+    else:
+        title           = content_dict['title']
+        content_preview = truncate(content_dict['user_generated_content'], length=100-len(content_dict['title']))
     
     twitter_post = {}
-    twitter_post['status'] = content_dict['user_generated_content']
-    # TODO: Add TinyURL and tidy message
+    twitter_post['status'] = "%s: %s (%s)" % (title, content_preview, tiny_url(content_dict['url']))
+
     if content.location:
         twitter_post['lat']                 = content.location.coords(Session)[1]
         twitter_post['long']                = content.location.coords(Session)[0]
@@ -201,8 +210,10 @@ def twitter_content(content):
     # t['trim_user'] = False? default?
     # t['place_id']  = "" #need reverse Geocode using the twitter api call geo/reverse_geocode
     # t['include_entities'] = True
-    
-    twitter_global_status(twitter_post)
+    if config['feature.aggregate.twitter_global']:
+        twitter_global_status(twitter_post)
+    else:
+        log.debug('twitter_global aggregation disabled: \n%s' % twitter_post)
 
 #-------------------------------------------------------------------------------
 # Content Management

@@ -18,7 +18,7 @@ from civicboom.lib.database.get_cached import get_content, update_content, get_l
 
 
 # Other imports
-from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key, profanity_filter
+from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key, profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 
 # Logging setup
@@ -111,6 +111,11 @@ class ContentController(BaseController):
                 elif c.content.__type__ == "assignment": m = messages.assignment_created           (reporter=c.content.creator, assignment=c.content)
                 # TODO: Clear comments when upgraded from draft to published content?
                 user_log.info("published new Content #%d" % (c.content.id, ))
+                
+                # Aggregate new content
+                c.content.aggregate_via_creator() # Agrigate content over creators known providers
+                twitter_global(c.content) # TODO? diseminate new or updated content?
+                
             else:
                 # Send notifications about previously published content has been UPDATED
                 if   c.content.__type__ == "assignment": m = messages.assignment_updated           (reporter=c.content.creator, assignment=c.content)
@@ -131,7 +136,6 @@ class ContentController(BaseController):
             user_log.info("edited Content #%d" % (c.content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
             
             if 'submit_publish' in request.POST:
-                c.content.aggregate_via_creator() # Agrigate content over creators known providers
                 return redirect(url.current(action='view', id=c.content.id, prompt_aggregate=True))
             if 'submit_preview' in request.POST:
                 return redirect(url.current(action='view', id=c.content.id))
