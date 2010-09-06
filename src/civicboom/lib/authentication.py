@@ -69,7 +69,8 @@ def get_user_from_openid_identifyer(identifyer):
 #-------------------------------------------------------------------------------
 # This section could be block remmed or removed and the rest of the site will still function as authorise is overwritten in the Custom Login Section
 
-is_valid_user = None
+def is_valid_user(u):
+    return u
 
 
 #-------------------------------------------------------------------------------
@@ -93,7 +94,7 @@ def authorize(authenticator):
     @decorator
     def wrapper(target, *args, **kwargs):
 
-        if c.logged_in_user:
+        if authenticator(c.logged_in_user):
             # Reinstate any session encoded POST data if this is the first page since the login_redirect
             if not session_get('login_redirect'):
                 json_post = session_get('login_redirect_post')
