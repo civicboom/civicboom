@@ -7,9 +7,16 @@ log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 class MessagesController(BaseController):
+    """REST Controller styled on the Atom Publishing Protocol"""
+    # To properly map this controller, ensure your config/routing.py file has
+    # a resource setup:
+    #     map.resource('message', 'messages')
+
 
     @authorize(is_valid_user)
-    def index(self, format="html"):
+    def index(self, format='html'):
+        """GET /: All items in the collection."""
+        # url('messages')
         c.viewing_user = c.logged_in_user
         if format == "json":
             return action_ok(
@@ -21,30 +28,13 @@ class MessagesController(BaseController):
         else:
             return render("/web/messages/index.mako")
 
-    @authorize(is_valid_user)
-    def read(self, id, format="html"):
-        c.viewing_user = c.logged_in_user
-        msg = Session.query(Message).filter(Message.id==id).one()
-        if msg.target == c.viewing_user: # FIXME messages to groups?
-            c.msg = msg
-        else:
-            abort(403, "You are not the target of this message")
-
-        if format == "json":
-            return action_ok(
-                data = {
-                    "id": c.msg.id,
-                    "subject": c.msg.subject,
-                    "content": c.msg.content,
-                }
-            )
-        else:
-            return render("/web/messages/read.mako")
 
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
-    def send(self, format="html"):
+    def create(self):
+        """POST /: Create a new item."""
+        # url('messages')
         try:
             target = get_user(request.POST["target"])
             if not target:
@@ -64,12 +54,35 @@ class MessagesController(BaseController):
             log.exception("Error sending message:")
             return action_error(_("Error sending message"))
 
+
+    def new(self, format='html'):
+        """GET /new: Form to create a new item."""
+        # url('new_message')
+        pass
+
+
+    def update(self, id):
+        """PUT /id: Update an existing item."""
+        # Forms posted to this method should contain a hidden field:
+        #    <input type="hidden" name="_method" value="PUT" />
+        # Or using helpers:
+        #    h.form(h.url('message', id=ID), method='put')
+        # url('message', id=ID)
+        pass
+
+
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
-    def delete(self, format="html"):
+    def delete(self, id):
+        """DELETE /id: Delete an existing item."""
+        # Forms posted to this method should contain a hidden field:
+        #    <input type="hidden" name="_method" value="DELETE" />
+        # Or using helpers:
+        #    h.form(h.url('message', id=ID), method='delete')
+        # url('message', id=ID)
         c.viewing_user = c.logged_in_user
-        msg = Session.query(Message).filter(Message.id==request.POST["msg_id"]).one()
+        msg = Session.query(Message).filter(Message.id==int(id)).one()
         redir = None
         if msg.target == c.viewing_user: # FIXME messages to groups?
             # FIXME: test that delete-orphan works, and removes the
@@ -88,3 +101,31 @@ class MessagesController(BaseController):
             return action_error(_("You are not the target of this message"))
             # FIXME: flash_message should be red? abort(403, "You are not the target of this message")
 
+
+    @authorize(is_valid_user)
+    def show(self, id, format='html'):
+        """GET /id: Show a specific item."""
+        # url('message', id=ID)
+        c.viewing_user = c.logged_in_user
+        msg = Session.query(Message).filter(Message.id==id).one()
+        if msg.target == c.viewing_user: # FIXME messages to groups?
+            c.msg = msg
+        else:
+            abort(403, "You are not the target of this message")
+
+        if format == "json":
+            return action_ok(
+                data = {
+                    "id": c.msg.id,
+                    "subject": c.msg.subject,
+                    "content": c.msg.content,
+                }
+            )
+        else:
+            return render("/web/messages/read.mako")
+
+
+    def edit(self, id, format='html'):
+        """GET /id;edit: Form to edit an existing item."""
+        # url('edit_message', id=ID)
+        pass
