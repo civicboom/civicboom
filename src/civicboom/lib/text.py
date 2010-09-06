@@ -201,12 +201,17 @@ def get_html_links(text):
 
 #-------------------------------------------------------------------------------
 
-def escape_python_dict(dict):
-    for key in dict.keys():
-        if isinstance(dict[key], basestring):
-            dict[key] = re.sub("'", "`", dict[key])
-            dict[key] = re.sub("\n", " ", dict[key])
-            dict[key] = re.sub(r"\s+", " ", dict[key])
-        elif hasattr(dict[key], 'keys'):
-            escape_python_dict(dict[key])
-    return dict
+def safe_python_strings(d):
+    """
+    Recursivly steps though a python dictionary
+    Identifys strings and removes/replaces harmful/unwanted characters + collapses white space
+    """
+    if isinstance(d, basestring):
+        d = re.sub("'"   , "`", d)
+        d = re.sub("\n"  , " ", d)
+        d = re.sub(r"\s+", " ", d)
+        d = d.strip()
+    elif hasattr(d, 'keys'):
+        for key in d.keys():
+            d[key] = safe_python_strings(d[key])
+    return d

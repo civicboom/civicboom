@@ -425,7 +425,7 @@ from civicboom.model import CommentContent
                 ## This uses the same JSON generation as the Janrain API but contructs the data for the Jainrain social widget
                 <%
                   from civicboom.lib.civicboom_lib import aggregation_dict
-                  content_dict = aggregation_dict(c.content, escape_chars=True)
+                  content_dict = aggregation_dict(c.content, safe_strings=True)
                 %>
                 
                 var activity = new RPXNOW.Social.Activity('${content_dict['action']}',
@@ -435,7 +435,7 @@ from civicboom.model import CommentContent
                 
                 activity.setTitle               ('${content_dict['title']}');
                 activity.setDescription         ('${content_dict['description']}');
-                ##activity.setUserGeneratedContent('${content_dict['user_generated_content']}');
+                activity.setUserGeneratedContent('${content_dict['user_generated_content']}');
                 
                 % for action_link in content_dict['action_links']:
                     activity.addActionLink('${action_link['text']}', '${action_link['href']}');

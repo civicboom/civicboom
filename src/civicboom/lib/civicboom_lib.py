@@ -18,8 +18,9 @@ from civicboom.lib.database.polymorphic_helpers import morph_content_to
 
 from civicboom.lib.services.janrain         import janrain
 from civicboom.lib.services.cdyne_profanity import profanity_check
+from civicboom.lib.services.twitter_global  import status as twitter_global_status
 
-from civicboom.lib.text          import clean_html_markup, strip_html_tags, escape_python_dict
+from civicboom.lib.text          import clean_html_markup, strip_html_tags, safe_python_strings
 from civicboom.lib.misc          import remove_where
 from civicboom.lib.helpers       import truncate
 
@@ -82,7 +83,8 @@ def associate_janrain_account(user, type, token):
         if login.user == user: return # If login already belongs to this user then abort
         if login.user: # Warn existing user that account is being reallocated
             login.user.send_email(subject=_('login account reallocated'), content_text=_('your %s account has been allocated to the user %s') % (type, user.username))
-        janrain('unmap', identifier=login.token, primaryKey=login.member_id)
+        if not config['development_mode']:
+            janrain('unmap', identifier=login.token, primaryKey=login.member_id)
         login.user   = user
     else:
         login = UserLogin()
@@ -91,7 +93,8 @@ def associate_janrain_account(user, type, token):
         login.token  = token
         Session.add(login)
     Session.commit()
-    janrain('map', identifier=login.token, primaryKey=login.member_id) # Let janrain know this users primary key id, this is needed for agrigation posts
+    if not config['development_mode']:
+        janrain('map', identifier=login.token, primaryKey=login.member_id) # Let janrain know this users primary key id, this is needed for agrigation posts
 
 
 
@@ -99,32 +102,13 @@ def associate_janrain_account(user, type, token):
 # Content Aggrigation
 #-------------------------------------------------------------------------------
 
-def aggregate_via_user(content, user):
-    """
-    Call janrain 'activity' for all known accounts for this user
-    https://rpxnow.com/docs#api_activity
-    """
-    #content = get_content(content)
-    #user    = get_user(user)
-    #if not content: return
-    #if not user   : return
-    content_json = json.dumps(aggregation_dict(content))
-    location = ''
-    if content.location:
-        location = '%s %s' % (content.location.coords(Session)[1], content.location.coords(Session)[0])
-        
-    if config['feature.aggregate.janrain']:
-        for login in [login for login in user.login_details if login.type!='password']:
-            janrain('activity', identifier=login.token, activity=content_json, location=location)
-    else:
-        log.debug('janrain aggregation disabled: \n%s' % content_json)
 
-def aggregation_dict(content, escape_chars=False):
+def aggregation_dict(content, safe_strings=True):
     """
     Gets a Python dict summary version of this content for aggregation via Janrain
     https://rpxnow.com/docs#api_activity
     
-    escape_chars will escape all harful characters. This is used for constructing a javascript representaion for the Janrain Widget in javascript code
+    safe_strings will escape all harful characters. This is used for constructing a javascript representaion for the Janrain Widget in javascript code
     """
     
     content_preview = {}
@@ -168,16 +152,57 @@ def aggregation_dict(content, escape_chars=False):
     content_preview['title']                  = content.title
     content_preview['action']                 = action(content)
     content_preview['description']            = description(content)
-    content_preview['user_generated_content'] = truncate(strip_html_tags(content.content))
+    content_preview['user_generated_content'] = truncate(safe_python_strings(strip_html_tags(content.content)))
     content_preview['action_links']           = action_links(content)
     content_preview['media']                  = media(content)
     content_preview['properties']             = properties(content)
     
-    if escape_chars:
-        content_preview = escape_python_dict(content_preview)
+    if safe_strings:
+        content_preview = safe_python_strings(content_preview)
     
     return content_preview
 
+
+def aggregate_via_user(content, user):
+    """
+    Call janrain 'activity' for all known accounts for this user
+    https://rpxnow.com/docs#api_activity
+    """
+    #content = get_content(content)
+    #user    = get_user(user)
+    #if not content: return
+    #if not user   : return
+    content_json = json.dumps(aggregation_dict(content))
+    location = ''
+    if content.location:
+        location = '%s %s' % (content.location.coords(Session)[1], content.location.coords(Session)[0])
+        
+    if config['feature.aggregate.janrain']:
+        for login in [login for login in user.login_details if login.type!='password']:
+            janrain('activity', identifier=login.token, activity=content_json, location=location)
+    else:
+        log.debug('janrain aggregation disabled: \n%s' % content_json)
+
+
+
+def twitter_content(content):
+    content_dict = aggregation_dict(content, safe_strings=True)
+    
+    twitter_post = {}
+    twitter_post['status'] = content_dict['user_generated_content']
+    # TODO: Add TinyURL and tidy message
+    if content.location:
+        twitter_post['lat']                 = content.location.coords(Session)[1]
+        twitter_post['long']                = content.location.coords(Session)[0]
+        twitter_post['display_coordinates'] = True
+    
+    # Optional ideas
+    # t['in_reply_to_status_id '] # If this is a reply to another tweet (could be good in the future if we can store master tweets)
+    # t['trim_user'] = False? default?
+    # t['place_id']  = "" #need reverse Geocode using the twitter api call geo/reverse_geocode
+    # t['include_entities'] = True
+    
+    twitter_global_status(twitter_post)
 
 #-------------------------------------------------------------------------------
 # Content Management

@@ -12,13 +12,15 @@ import json
 import logging
 log = logging.getLogger(__name__)
 
+service_url = 'https://rpxnow.com/api/v2/'
+
 def janrain(method, **kargs):
     """
     Make Janrain API calls from python - more info for each call at https://rpxnow.com/docs
     """
     kargs['apiKey'] = config['api_key.janrain']
     kargs['format'] = 'json'
-    http_response  = urllib2.urlopen('https://rpxnow.com/api/v2/'+method, urllib.urlencode(kargs))
+    http_response  = urllib2.urlopen(service_url+method, urllib.urlencode(kargs))
     janrain_python = json.loads(http_response.read())
     if janrain_python['stat'] != 'ok':
         log.error(janrain_python['err']['msg'])
