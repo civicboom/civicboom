@@ -335,10 +335,11 @@ from civicboom.model import CommentContent
 		</td>
 	</tr>
 	% endfor
-	% if c.logged_in_user:
 	<tr class="self_comment" style="background: #FFA;">
 		<td class="avatar">
+			% if c.logged_in_user:
 			<img class='avatar' src="${c.logged_in_user.avatar_url}"><br>
+			% endif
 		</td>
 		<td class="comment">
 			<form action="/content/edit" method="POST">
@@ -350,6 +351,5 @@ from civicboom.model import CommentContent
 			</form>
   		</td>
   	</tr>
-	% endif
 	</table>
 </%def>
