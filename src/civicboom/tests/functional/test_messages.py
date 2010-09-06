@@ -80,12 +80,14 @@ class TestMessagesController(TestController):
         )
 
     def test_delete_someone_elses(self):
+        # FIXME: failure is indicated by "302 redirect to failure message" -- how to test that this
+        # is different from "302 redirect to success message"?
         response = self.app.delete(
             url('message', id=1),
             params={
                 '_authentication_token': self.auth_token
             },
-            status=403
+            status=302
         )
 
     ## edit -> update ########################################################
