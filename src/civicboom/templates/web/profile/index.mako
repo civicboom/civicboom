@@ -57,7 +57,7 @@
 	% if c.viewing_user.messages_notification:
 		% for msg in c.viewing_user.messages_notification:
 			<div class="notification">
-				${sl.secure_link(url('message', id=msg.id), "X", [("_method", "DELETE"), ("type", "notification")])}
+				${sl.secure_link(url('message', id=msg.id), "X", [("_method", "DELETE"), ])}
 				${msg.subject|n}
 			</div>
 		% endfor
