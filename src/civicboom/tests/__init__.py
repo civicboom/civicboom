@@ -13,7 +13,10 @@ from paste.deploy import loadapp
 from paste.script.appinstall import SetupCommand
 from pylons import url
 from routes.util import URLGenerator
-from webtest import TestApp
+
+# XXX: Paste's TestApp supports app.delete() with params
+#from webtest import TestApp
+from paste.fixture import TestApp
 
 import pylons.test
 

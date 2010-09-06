@@ -24,7 +24,7 @@
 <%def name="body()">
 
 	<h2>Write to ${c.viewing_user.name}</h2>
-	<form action="${url(controller='messages', action='send')}" method="POST">
+	<form action="${url('messages')}" method="POST">
 		<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
 		<input type="hidden" name="target" value="${c.viewing_user.username}">
 		<input type="text" name="subject">

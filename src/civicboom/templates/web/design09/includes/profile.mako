@@ -10,5 +10,5 @@
 	<br><a href="${url(controller='settings', action='general')}">Edit Settings</a>
 	<br><a href="${url(controller='settings', action='messages')}">Edit Notifications</a>
 	<br><a href="${url(controller='settings', action='location')}">Edit Location</a>
-	<br><a href="${url(controller='messages', action='index')}">My Messages</a>
+	<br><a href="${url('messages')}">My Messages</a>
 </%def>

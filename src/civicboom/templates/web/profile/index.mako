@@ -45,7 +45,7 @@
 	    <a href="${url(controller='profile', action='index')}">My Profile</a>
 	<br><a href="${url(controller='settings', action='general')}">Edit Settings</a>
 	<br><a href="${url(controller='settings', action='messages')}">Edit Notifications</a>
-	<br><a href="${url(controller='messages', action='index')}">My Messages</a>
+	<br><a href="${url('messages')}">My Messages</a>
 </%def>
 
 
@@ -57,7 +57,7 @@
 	% if c.viewing_user.messages_notification:
 		% for msg in c.viewing_user.messages_notification:
 			<div class="notification">
-				${sl.secure_link(url.current(controller='messages', action='delete'), "X", [("msg_id", msg.id), ("type", "notification")])}
+				${sl.secure_link(url('message', id=msg.id), "X", [("_method", "DELETE"), ])}
 				${msg.subject|n}
 			</div>
 		% endfor
@@ -69,11 +69,11 @@
 	% if c.viewing_user.messages_to[0:5]:
 		% for msg in c.viewing_user.messages_to[0:5]:
 			<div class="message_short">
-				<a class="subject" href="${url(controller='messages', action='read', id=msg.id)}">${msg.subject}</a>
+				<a class="subject" href="${url('message', id=msg.id)}">${msg.subject}</a>
 				<span class="source">${str(msg.source)}</span>
 			</div>
 		% endfor
-		<a class="read_more" href="${url(controller='messages', action='index')}">View All Messages &rarr;</a>
+		<a class="read_more" href="${url('messages')}">View All Messages &rarr;</a>
 	% else:
 		<span class="message_empty">No messages</span>
 	% endif
