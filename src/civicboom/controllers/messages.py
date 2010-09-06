@@ -12,13 +12,12 @@ class MessagesController(BaseController):
     def index(self, format="html"):
         c.viewing_user = c.logged_in_user
         if format == "json":
-            return json.dumps({
-                "status": "ok",
-                "data": [{
+            return action_ok(
+                data = [{
                     "id": m.id,
                     "subject": m.subject,
                 } for m in c.viewing_user.messages_to]
-            })
+            )
         else:
             return render("/web/messages/index.mako")
 
@@ -32,14 +31,13 @@ class MessagesController(BaseController):
             abort(403, "You are not the target of this message")
 
         if format == "json":
-            return json.dumps({
-                "status": "ok",
-                "data": {
+            return action_ok(
+                data = {
                     "id": c.msg.id,
                     "subject": c.msg.subject,
                     "content": c.msg.content,
                 }
-            })
+            )
         else:
             return render("/web/messages/read.mako")
 
