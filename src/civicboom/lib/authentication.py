@@ -71,7 +71,7 @@ def get_user_from_openid_identifyer(identifyer):
 
 is_valid_user = None
 
-   
+
 #-------------------------------------------------------------------------------
 # Custom Authentication
 #-------------------------------------------------------------------------------
@@ -90,12 +90,10 @@ def authorize(authenticator):
     If not sends you to a login page
     Once you log in, it sends you back to the original url call.
     """
-    # do something with authenticator here if needed
     @decorator
     def wrapper(target, *args, **kwargs):
 
         if c.logged_in_user:
-
             # Reinstate any session encoded POST data if this is the first page since the login_redirect
             if not session_get('login_redirect'):
                 json_post = session_get('login_redirect_post')
@@ -109,6 +107,7 @@ def authorize(authenticator):
 
             # Make original method call
             result = target(*args, **kwargs)
+
         else:
             # AllanC - is there a way of just getting the whole request URL? why do I have to peice it together myself!
             redirect_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
@@ -122,6 +121,7 @@ def authorize(authenticator):
                 session_set('login_redirect_post', json.dumps(multidict_to_dict(request.POST)), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
 
             return redirect(url_from_widget(controller='account', action='signin', protocol="https")) #This uses the from_widget url call to ensure that widget actions preserve the widget env
+
         return result
 
     return wrapper
