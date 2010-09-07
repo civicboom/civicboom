@@ -98,9 +98,13 @@ def authorize(authenticator):
             # Reinstate any session encoded POST data if this is the first page since the login_redirect
             if not session_get('login_redirect'):
                 json_post = session_get('login_redirect_post')
-                session_remove('login_redirect_post')
                 if json_post:
+                    session_remove('login_redirect_post')
                     post_overlay = json.loads(json_post)
+                    c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
+                    c.post_values = post_overlay
+                    from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
+                    return render("web/design09/misc/confirmpost.mako")
                     #for key in post_overlay.keys():
                     #    request.POST[key] = post_overlay[key]
                     #request.POST = post_overlay

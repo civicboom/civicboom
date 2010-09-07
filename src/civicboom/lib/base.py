@@ -148,4 +148,10 @@ def authenticate_form(func, *args, **kwargs):
     else:
         log.warn('Cross-site request forgery detected, request denied: %r '
                  'REMOTE_ADDR: %s' % (request, request.remote_addr))
-        abort(403, detail=csrf_detected_message)
+        #abort(403, detail=csrf_detected_message)
+
+        c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
+        if 'QUERY_STRING' in request.environ:
+            c.target_url += '?'+request.environ.get('QUERY_STRING')
+        c.post_values = param_dict
+        return render("web/design09/misc/confirmpost.mako")
