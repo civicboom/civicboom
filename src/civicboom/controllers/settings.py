@@ -12,7 +12,7 @@ class SettingsController(BaseController):
     
     http://wiki.pylonshq.com/display/pylonscookbook/How+map.resource+enables+controllers+as+services
     
-    config/routing.py -> map.resource('setting', 'settings')
+    needs in config/routing.py -> map.resource('setting', 'settings')
     """
     
     def index(self, format='html'):
@@ -54,9 +54,10 @@ class SettingsController(BaseController):
         
         # Populate settings dictionary
         user = c.logged_in_user
+        extra_kwargs = {}
         
         
-        return {data:settings, template:"settings/settings"}
+        return {data:settings, template:"settings/settings"} + extra_kwargs
 
     def edit(self, id, format='html'):
         """GET /id;edit: Form to edit an existing item."""

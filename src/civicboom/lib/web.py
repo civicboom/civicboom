@@ -164,16 +164,17 @@ def auto_format_output():
             
     Should be passed a dictonary containing
         {
+            data   : the python dict to render (required) if not present will just pass though this decorator
+            
             status : 'ok' or 'error' (optional defaults to ok)
             message: the flash message or error message (optional: default '')
-            data   : the python dict to render (required)
             
             htmlfill: (optional) kwargs for the htmlfill system (html rendering only)
             template: (required for html rendering) the template name, will default to XML if format==html and template not specifyed
         }
     """
     
-    default_format = "json"
+    default_format = config['default_format']
     
     def my_decorator(target):
         def wrapper(target, *args, **kwargs):
