@@ -29,25 +29,24 @@
 
 <%def name="col_left()">
 
-  ##-------- By ----------
-  <h2>${_("Content by")}</h2>
+    ##-------- By ----------
+    <h2>${_("Content by")}</h2>
     ${member_includes.avatar(c.content.creator, show_name=True, show_follow_button=True)}
   
   
-  ##-------Actions-------
-  <h2>${_("Actions")}</h2>
+    ##-------Actions-------
+    <h2>${_("Actions")}</h2>
+  
+  
   
     ## Content Owner Actions
     % if c.content.editable_by(c.logged_in_user):
-      <a class="button_small button_small_style_2" href="${h.url(controller='content',action='edit',id=c.content.id)}">
-        Edit
-      </a>
-      ##<a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=c.content.id)}"
-      ##   onclick="confirm_before_follow_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
-      ##  Delete
-      ##</a>
-      ${sl.secure_link(h.url(controller='content', action='delete', id=c.content.id), _('Delete')  , css_class="button_small button_small_style_2", title="Delete this content", confirm_text=_('Are your sure you want to delete this content?'))}
-      
+        
+        <a class="button_small button_small_style_2" href="${h.url(controller='content',action='edit',id=c.content.id)}">
+          Edit
+        </a>
+
+        ${sl.secure_link(h.url(controller='content', action='delete', id=c.content.id), _('Delete')  , css_class="button_small button_small_style_2", title="Delete this content", confirm_text=_('Are your sure you want to delete this content?'))}      
     % endif
 
     ## Assignment Accept and Withdraw
@@ -121,36 +120,41 @@ r = (c.content.rating * 5)
     % endif
 
 
-  ##-----Share Article Links--------
-  <%include file="/web/design09/includes/share_links.mako"/>
+    ##-----Share Article Links--------
+
+    <% from civicboom.model.content import UserVisibleContent %>
+    % if issubclass(c.content.__class__, UserVisibleContent):
+    <h2>${_("Share this")}</h2>
+        ${share_links()}
+    % endif
   
 
-  ##-------- Licence----------
-  <h2>${_("Licence")}</h2>
-    <a href="${c.content.license.url}" target="_blank" title="${_(c.content.license.name)}">
-      <img src="/images/licenses/${c.content.license.code}.png" alt="${_(c.content.license.name)}" />
-    </a>
-
-  ##-----Copyright/Inapropriate?-------
-  <h2>${_("Content issues?")}</h2>
-    <a href="" class="button_small button_small_style_1" onclick="swap('flag_content'); return false;">Inappropriate Content?</a>
+    ##-------- Licence----------
+    <h2>${_("Licence")}</h2>
+      <a href="${c.content.license.url}" target="_blank" title="${_(c.content.license.name)}">
+        <img src="/images/licenses/${c.content.license.code}.png" alt="${_(c.content.license.name)}" />
+      </a>
   
-    <div id="flag_content" class="hideable">
-        <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
-        <form action="${url(controller='content', action='flag', id=c.content.id)}" method="post">
-            <input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
-            <select name="type">
-                <% from civicboom.model.content import FlaggedContent %>
-                % for type in [type for type in FlaggedContent._flag_type.enums if type!="automated"]:
-                <option value="${type}">${_(type.capitalize())}</option>
-                % endfor
-            </select>
-            <p class="form_instructions">${_('Comment (optional)')}</p>
-            <textarea name="comment" style="width:90%; height:3em;"></textarea>
-            <input type="submit" name="flagit" value="Flag it" class="button_small button_small_style_tiny "/>
-            <span class="button_small button_small_style_tiny " onclick="swap('flag_content'); return false;">Cancel</span>
-        </form>
-    </div>
+    ##-----Copyright/Inapropriate?-------
+    <h2>${_("Content issues?")}</h2>
+      <a href="" class="button_small button_small_style_1" onclick="swap('flag_content'); return false;">Inappropriate Content?</a>
+    
+      <div id="flag_content" class="hideable">
+          <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
+          <form action="${url(controller='content', action='flag', id=c.content.id)}" method="post">
+              <input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
+              <select name="type">
+                  <% from civicboom.model.content import FlaggedContent %>
+                  % for type in [type for type in FlaggedContent._flag_type.enums if type!="automated"]:
+                  <option value="${type}">${_(type.capitalize())}</option>
+                  % endfor
+              </select>
+              <p class="form_instructions">${_('Comment (optional)')}</p>
+              <textarea name="comment" style="width:90%; height:3em;"></textarea>
+              <input type="submit" name="flagit" value="Flag it" class="button_small button_small_style_tiny "/>
+              <span class="button_small button_small_style_tiny " onclick="swap('flag_content'); return false;">Cancel</span>
+          </form>
+      </div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -353,3 +357,164 @@ from civicboom.model import CommentContent
   	</tr>
 	</table>
 </%def>
+
+
+
+##------------------------------------------------------------------------------
+## Share This Links
+##------------------------------------------------------------------------------
+
+<%def name="share_links()">
+
+    % if c.content.editable_by(c.logged_in_user):
+        ${janrain_aggregate_button()}
+    %endif
+    
+    
+    <%doc>
+    <ul class="bulleted_list">
+      <li><a class="icon icon_diggit"       href="http://digg.com/submit?phase=2?url=${c.current_URL}"              >Diggit      </a></li>
+      <li><a class="icon icon_delicious"    href="http://del.icio.us/post?url=${c.current_URL}"                     >Delicious   </a></li>
+      <li><a class="icon icon_reddit"       href="http://reddit.com/submit?url=${c.current_URL}"                    >Reddit      </a></li>
+      <li><a class="icon icon_stumble_upon" href="http://www.stumbleupon.com/submit?url=${c.current_URL}"           >Stumble Upon</a></li>
+      <li><a class="icon icon_facebook"     href="http://www.facebook.com/share.php?u=${c.current_URL}"             >Facebook    </a></li>
+      ##<li><a class="icon icon_twitter"      href="http://twitter.com/home?status=Currently reading ${c.current_URL}">Twitter     </a></li>
+    </ul>
+    </%doc>  
+    <!-- AddThis Button BEGIN http://addthis.com/ -->
+    <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4b7acd5429c82acd"><img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4b7acd5429c82acd"></script>
+    <!-- AddThis Button END -->
+    
+    
+    <div class="yui-g">
+        
+        <!-- Retweet button -->
+        <div class="yui-u first">
+            <script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
+        </div>
+        
+        <!-- Boom button -->
+        <div class="yui-u">
+            <% boom_count = 0 %>
+            % if hasattr(c.content,"boom_count"):
+                <% boom_count = c.content.boom_count %>
+            % endif
+            <a href="${h.url(controller='content' ,action='boom',id=c.content.id)}" title="${_("Boom this! Share this with all your Followers")}">
+            <div class="boom_this">
+                <span class="boom_count">${boom_count}</span>
+                <p>${_("Boom this")}</p>
+            </div>
+            </a>
+        </div>
+    </div>
+
+</%def>
+
+
+
+##------------------------------------------------------------------------------
+## Janrain Social Widget - User prompt to aggregate this content
+##------------------------------------------------------------------------------
+
+## https://rpxnow.com/docs/social_publish_activity
+## https://rpxnow.com/relying_parties/civicboom/social_publishing_1
+
+<%def name="janrain_aggregate_button()">
+
+    <!-- Janrain Social Publish Widget -->
+    <script type="text/javascript">
+      var rpxJsHost = (("https:" == document.location.protocol) ? "https://" : "http://static.");
+      document.write(unescape("%3Cscript src='" + rpxJsHost + "rpxnow.com/js/lib/rpx.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      RPXNOW.init({appId: '${config['app_id.janrain']}',
+        xdReceiver: '/rpx_xdcomm.html'});
+    </script>
+    
+    <script type="text/javascript">
+        function publish_janrain_activity() {
+            RPXNOW.loadAndRun(['Social'], function () {
+                
+                ## Get a summary python dictionary of this content
+                ## This uses the same JSON generation as the Janrain API but contructs the data for the Jainrain social widget
+                <%
+                  from civicboom.lib.civicboom_lib import aggregation_dict
+                  content_dict = aggregation_dict(c.content, safe_strings=True)
+                %>
+                
+                var activity = new RPXNOW.Social.Activity('${content_dict['action']}',
+                                                          '${content_dict['description']}',
+                                                          '${content_dict['url']}'
+                                                          );
+                
+                activity.setTitle               ('${content_dict['title']}');
+                activity.setDescription         ('${content_dict['description']}');
+                activity.setUserGeneratedContent('${content_dict['user_generated_content']}');
+                
+                % for action_link in content_dict['action_links']:
+                    activity.addActionLink('${action_link['text']}', '${action_link['href']}');
+                % endfor
+                
+                % for property in content_dict['properties'].keys():
+                    activity.addTextProperty('${property}', '${content_dict['properties'][property]}');
+                % endfor
+                
+                var images = new RPXNOW.Social.ImageMediaCollection();
+                % for image in [image for image in content_dict['media'] if image['type']=="image"]:
+                    images.addImage('${image['src']}', '${image['href']}');
+                % endfor
+                activity.setMediaItem(images);
+                
+                % for media in content_dict['media']:
+                    % if media['type'] == "mp3":
+                        activity.setMediaItem(new RPXNOW.Social.Mp3MediaItem('${media['src']}')); //title, artist, album
+                    % endif
+                    % if media['type'] == "video":
+                        ## ?? the auto aggregate JSON does not have support for video? but the widget does? hu?
+                        activity.setMediaItem(new RPXNOW.Social.VideoMediaItem('${media['src']}', preview_img, video_link, video_title));
+                    % endif
+                % endfor
+                ##addLinkProperty(name, text, url)
+                ##addProviderUrl('${_('_site_name')}', '${content_dict['url']}');
+                
+                var finished = function(results) {
+                  // Process results of publishing.
+                }
+                
+                <%
+                    # Generate signiture
+                    # Reference - https://rpxnow.com/docs/social_publish_activity#OptionsParameter
+                    #           - http://stackoverflow.com/questions/1306550/calculating-a-sha-hash-with-a-string-secret-key-in-python
+                    import hashlib, hmac, base64, time
+                    apiKey     = config['api_key.janrain']
+                    timestamp  = int(time.time())
+                    primaryKey = c.logged_in_user.id
+                    message    = "%s|%s" % (timestamp,primaryKey)
+                    signature  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
+                %>
+                
+                var options = {
+                                finishCallback: finished,
+                                ##exclusionList: ["facebook", "yahoo"],
+                                urlShortening: true,
+                                primaryKey: '${primaryKey}',
+                                timestamp :  ${timestamp}  ,
+                                signature : '${signature}'
+                               }
+                
+                RPXNOW.Social.publishActivity(activity, options);
+            });
+        }
+        
+        % if request.params.get('prompt_aggregate')=='True':
+            publish_janrain_activity();
+        % endif
+    </script>
+    <!-- End - Janrain Social Publish Widget -->
+
+
+    <span class="button_small button_small_style_2" href="" onclick="publish_janrain_activity(); return false;">Aggregate</span>
+</%def>
+
+
+

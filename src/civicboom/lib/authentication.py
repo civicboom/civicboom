@@ -141,11 +141,11 @@ def login_redirector():
         return redirect(login_redirect)
 
 
-def signin_user(user):
+def signin_user(user, login_provider=None):
     """
     Perform the sigin for a user
     """
-    user_log.info("logged in")   # Log user login
+    user_log.info("logged in with %s" % login_provider)   # Log user login
     session['user_id' ] = user.id       # Set server session variable to user.id
     session['username'] = user.username # Set server session username so in debug email can identify user    
     response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))

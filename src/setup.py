@@ -23,6 +23,7 @@ setup(
         "GeoAlchemy",
         "GeoFormAlchemy",
         "SQLAlchemy>=0.6.3",
+        "twitter>=1.4.2",
     ] + [
         "Pylons>=1.0.0",
         "FormAlchemy",
