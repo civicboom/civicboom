@@ -4,7 +4,64 @@ import hashlib
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
+settings = {}
+
 class SettingsController(BaseController):
+    """
+    REST controller for Settings
+    
+    http://wiki.pylonshq.com/display/pylonscookbook/How+map.resource+enables+controllers+as+services
+    
+    config/routing.py -> map.resource('setting', 'settings')
+    """
+    
+    def index(self, format='html'):
+        """GET /: All items in the collection."""
+        # url_for('messages')
+        pass
+    
+    def create(self):
+        """POST /: Create a new item."""
+        # url_for('messages')
+        pass
+    
+    def new(self, format='html'):
+        """GET /new: Form to create a new item."""
+        # url_for('new_message')
+        pass
+    
+    def update(self, id):
+        """PUT /id: Update an existing item."""
+        # Forms posted to this method should contain a hidden field:
+        #    <input type="hidden" name="_method" value="PUT" />
+        # Or using helpers:
+        #    h.form(h.url_for('message', id=ID), method='put')
+        # url_for('message', id=ID)
+        pass
+    
+    def delete(self, id):
+        """DELETE /id: Delete an existing item."""
+        # Forms posted to this method should contain a hidden field:
+        #    <input type="hidden" name="_method" value="DELETE" />
+        # Or using helpers:
+        #    h.form(h.url_for('message', id=ID), method='delete')
+        # url_for('message', id=ID)
+        pass
+    
+    def show(self, id, format='html'):
+        """GET /id: Show a specific item."""
+        # url_for('message', id=ID)
+        pass
+    
+    def edit(self, id, format='html'):
+        """GET /id;edit: Form to edit an existing item."""
+        # url_for('edit_message', id=ID)
+        pass
+
+
+    #---------------------------------------------------------------------------
+    # Old Settings Reference
+    #---------------------------------------------------------------------------
 
     @authorize(is_valid_user)
     def general(self, id=None):
