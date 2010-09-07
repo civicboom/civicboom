@@ -1,6 +1,5 @@
 
 <%namespace name="member_includes" file="member.mako"  />
-<%namespace name="sl" file="secure_link.mako"  />
 
 ##------------------------------------------------------------------------------
 ## Content List (with thumbnails)
@@ -94,7 +93,7 @@
               <a class="button_small button_small_style_2" href="${h.url('edit_content', id=content.id)}">
                 ${_("Edit")}
               </a>
-			  ${sl.secure_link(
+			  ${h.secure_link(
 				href=url('content', id=content.id), method="DELETE",
 				value=_("Delete"),
 				css_class="button_small button_small_style_2",
