@@ -39,31 +39,14 @@
     ${parent_preview()}
 
     <div class="content_form">
-        <form action="" method="post" enctype="multipart/form-data" name="content">
-			<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
-
+        ${h.form(url('content', id=c.content.id), method='PUT', multipart=True, name="content")}
             ${base_content()}
             ${media()}
             ${content_type()}
             ${location()}
             ${license()}
-            
-            <div style="text-align: right;">
-                
-                % if c.content.id:
-                <input type="submit" name="submit_delete"  value="${_("Delete")}"       />
-                % endif
-                
-                % if c.content.__type__ == "draft":
-                <input type="submit" name="submit_preview" value="${_("Preview Draft")}"/>
-                <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   />
-                % else:
-                <a href="${h.url(controller='content', action='view', id=c.content.id)}">View Content</a>
-                % endif
-                
-            </div>
-        
-        </form>
+			${submit_buttons()}
+        ${h.end_form()}
     </div>
     
 </%def>
@@ -384,8 +367,28 @@
                     <a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a>
                 </label>
                 ##${popup(license.description)}
-            % endfor          
+            % endfor
         </div>
     </fieldset>
 </%def>
 
+
+##------------------------------------------------------------------------------
+## Submit buttons
+##------------------------------------------------------------------------------
+<%def name="submit_buttons()">
+<div style="text-align: right;">
+
+	% if c.content.id:
+	<input type="submit" name="submit_delete"  value="${_("Delete")}"       />
+	% endif
+
+	% if c.content.__type__ == "draft":
+	<input type="submit" name="submit_preview" value="${_("Preview Draft")}"/>
+	<input type="submit" name="submit_draft"   value="${_("Save Draft")}"   />
+	% else:
+	<a href="${h.url('content', id=c.content.id)}">View Content</a>
+	% endif
+
+</div>
+</%def>
