@@ -133,6 +133,7 @@ def authenticate_form(func, *args, **kwargs):
     support authenticated PUT and DELETE requests
     """
     request = get_pylons(args).request
+    response = get_pylons(args).response
 
     # XXX: Shish - the body is not parsed for PUT or DELETE, so parse it ourselves
     # request.body ->  foo=bar&baz=quz
@@ -149,6 +150,7 @@ def authenticate_form(func, *args, **kwargs):
         log.warn('Cross-site request forgery detected, request denied: %r '
                  'REMOTE_ADDR: %s' % (request, request.remote_addr))
         #abort(403, detail=csrf_detected_message)
+        response.status_int = 403
 
         c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
         if 'QUERY_STRING' in request.environ:

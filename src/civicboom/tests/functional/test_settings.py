@@ -95,6 +95,7 @@ class TestSettingsController(TestController):
             },
             status = 403
         )
+        assert "Hold it!" in response
         # FIXME: test with CSRF protection passed
         # FIXME: check for session['flash'] = "Settings changed: email"
         # FIXME: check that we're redirected back to the settings page
