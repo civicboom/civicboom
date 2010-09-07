@@ -260,7 +260,7 @@ from civicboom.model.meta import Session
   % endfor
   
   ##----Temp Respond----
-  <a href="${h.url(controller="content",action="edit",form_parent_id=c.content.id)}">Respond to this</a>
+  <a href="${h.url('new_content', form_parent_id=c.content.id)}">Respond to this</a>
   
   ##----Comments----
   ${comments()}
@@ -342,13 +342,13 @@ from civicboom.model import CommentContent
 			% endif
 		</td>
 		<td class="comment">
-			<form action="/content/edit" method="POST">
+			${h.form(url('contents'))}
 				<input type="hidden" name="form_parent_id" value="${c.content.id}">
 				<input type="hidden" name="form_title" value="Re: ${c.content.title}">
 				<input type="hidden" name="form_type" value="comment">
 				<textarea name="form_content" style="width: 100%; height: 100px;"></textarea>
-				<br><input type="submit" name="submit_preview" value="Preview"><input type="submit" name="submit_response" value="Post">
-			</form>
+				<br><!--<input type="submit" name="submit_preview" value="Preview">--><input type="submit" name="submit_response" value="Post">
+			${h.end_form()}
   		</td>
   	</tr>
 	</table>
