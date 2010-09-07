@@ -136,10 +136,17 @@ def authenticate_form(func, *args, **kwargs):
     response = get_pylons(args).response
 
     # XXX: Shish - the body is not parsed for PUT or DELETE, so parse it ourselves
-    # request.body ->  foo=bar&baz=quz
-    param_list = request.body.split("&") # ["foo=bar", "baz=qux"]
-    param_pair = [part.split("=", 2) for part in param_list] # [("foo", "bar"), ("baz", "qux")]
-    param_dict = dict(param_pair) # {"foo": "bar", "baz": "qux"}
+    try:
+        # request.body = "foo=bar&baz=quz"
+        if request.body:
+            param_list = request.body.split("&") # ["foo=bar", "baz=qux"]
+            param_pair = [part.split("=", 2) for part in param_list] # [("foo", "bar"), ("baz", "qux")]
+            param_dict = dict(param_pair) # {"foo": "bar", "baz": "qux"}
+        else:
+            param_dict = {}
+    except ValueError, e:
+        log.error("Failed to parse body: "+request.body)
+        abort(500)
 
     if authenticated_form(request.POST):
         del request.POST[secure_form.token_key]
