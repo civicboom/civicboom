@@ -111,6 +111,3 @@ class TestController(BaseController):
     def content_morph(self):
         from civicboom.lib.database.polymorphic_helpers import morph_content_to
         morph_content_to(2, "article")
-
-    def gen_locked_emails(self):
-        pass

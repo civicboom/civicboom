@@ -18,7 +18,7 @@ from civicboom.lib.database.get_cached import get_content, update_content, get_l
 
 
 # Other imports
-from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key, profanity_filter
+from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key, profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 
 # Logging setup
@@ -44,10 +44,13 @@ class ContentController(BaseController):
             return render('/web/design09/content/unavailable.mako')
 
         # Check content is visable
+        if c.content.__type__ == "comment":
+            abort(404)
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
             if c.content.status == "pending":
-                c.error_message = _("your user does not have the permissions to view this _content")
-                return render('/web/design09/content/unavailable.mako')
+                abort(404)
+                #flash_message(_("your user does not have the permissions to view this _content"))
+                #return render('/web/design09/content/unavailable.mako')
         
         # Increase content view count
         if hasattr(c.content,'views'):
@@ -108,6 +111,11 @@ class ContentController(BaseController):
                 elif c.content.__type__ == "assignment": m = messages.assignment_created           (reporter=c.content.creator, assignment=c.content)
                 # TODO: Clear comments when upgraded from draft to published content?
                 user_log.info("published new Content #%d" % (c.content.id, ))
+                
+                # Aggregate new content
+                c.content.aggregate_via_creator() # Agrigate content over creators known providers
+                twitter_global(c.content) # TODO? diseminate new or updated content?
+                
             else:
                 # Send notifications about previously published content has been UPDATED
                 if   c.content.__type__ == "assignment": m = messages.assignment_updated           (reporter=c.content.creator, assignment=c.content)
@@ -127,7 +135,9 @@ class ContentController(BaseController):
             update_content(c.content)                         #   Invalidate any cache associated with this content
             user_log.info("edited Content #%d" % (c.content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
             
-            if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
+            if 'submit_publish' in request.POST:
+                return redirect(url.current(action='view', id=c.content.id, prompt_aggregate=True))
+            if 'submit_preview' in request.POST:
                 return redirect(url.current(action='view', id=c.content.id))
             if 'submit_response' in request.POST:
                 return redirect(url.current(action='view', id=c.content.parent_id))

@@ -61,9 +61,13 @@ def load_environment(global_conf, app_conf):
     config['development_mode'] = asbool(config['debug'])
 
     # Booleans in config file
-    config['feature.aggregate.email']   = asbool(config['feature.aggregate.email'])
-    config['feature.aggregate.twitter'] = asbool(config['feature.aggregate.twitter'])
-    config['feature.profanity_filter']  = asbool(config['feature.profanity_filter'])
+    boolean_varnames = ['feature.aggregate.email',
+                        'feature.aggregate.janrain',
+                        'feature.profanity_filter'
+                        ]
+    for varname in boolean_varnames:
+        config[varname] = asbool(config[varname])
+
 
     # worker and websetup.py both try to access pylons.config before it is
     # officially ready -- so make it unofficially ready and pray (HACK)

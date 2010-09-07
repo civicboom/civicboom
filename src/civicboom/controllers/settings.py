@@ -11,6 +11,7 @@ class SettingsController(BaseController):
         c.viewing_user = c.logged_in_user
         return render("web/settings/general.mako")
 
+    @https()
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()

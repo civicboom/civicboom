@@ -17,9 +17,9 @@ user_log = logging.getLogger("user")
 class AccountController(BaseController):
 
     #---------------------------------------------------------------------------
-    # Signin and Signout
+    # Signout
     #---------------------------------------------------------------------------
-
+    
     # while not massively dangerous, posting an image with eg <img src="http://civicboom.com/account/signout">
     # is a common prank, so this needs authenticating
     @authenticate_form
@@ -45,21 +45,24 @@ class AccountController(BaseController):
                 return render("/widget/widget_signin.mako")
             return render("/web/account/signin.mako")
         
-        c.auth_info = None
+        c.auth_info    = None
+        login_provider = None
 
         # Authenticate with Janrain
         if 'token' in request.POST:
             c.auth_info = janrain('auth_info', token=request.POST.get('token'))
             if c.auth_info:
                 c.logged_in_user = get_user_from_openid_identifyer(c.auth_info['profile']['identifier']) #Janrain guarntees the identifyer to be set
+                login_provider = c.auth_info['profile']['providerName']
 
         # Authenticate with standard username
         if 'username' in request.POST and 'password' in request.POST:
             c.logged_in_user = get_user_and_check_password(request.POST['username'], request.POST['password'])
+            login_provider = "password"
 
         # If user has existing account: Login
         if c.logged_in_user:
-            signin_user(c.logged_in_user)
+            signin_user(c.logged_in_user, login_provider=login_provider)
         
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
@@ -75,11 +78,11 @@ class AccountController(BaseController):
             
             u = register_new_janrain_user(c.auth_info['profile'])             # Create new user from Janrain profile data
             # added to assiciate_janrain civicboomlib call #janrain('map', identifier=c.auth_info['profile']['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
-            signin_user(u)
+            signin_user(u, login_provider=c.auth_info['profile']['identifier'])
             #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             
         # If not authenticated or any janrain info then error
-        flash_message(_('Unable to authenticate user'))
+        action_error(_('Unable to authenticate user'))
         return redirect_to_referer()
 
     #---------------------------------------------------------------------------
@@ -125,15 +128,19 @@ class AccountController(BaseController):
             else:
                 flash_message(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again'))
             redirect('/')
-            
-    #-----------------------------------------------------------------------------
+
+
+    #---------------------------------------------------------------------------
     # Forgotten Password
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     def forgotten_password(self):
         """
         Placeholder for forgotten password feature
         """
         pass
+    
+
+
 
     #-----------------------------------------------------------------------------
     # Standalone Login Redirector action
