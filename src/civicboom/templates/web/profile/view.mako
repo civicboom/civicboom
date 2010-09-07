@@ -24,13 +24,13 @@
 <%def name="body()">
 
 	<h2>Write to ${c.viewing_user.name}</h2>
-	<form action="${url('messages')}" method="POST">
-		<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
+	${h.form(url('messages'))}
 		<input type="hidden" name="target" value="${c.viewing_user.username}">
 		<input type="text" name="subject">
 		<textarea name="content"></textarea>
 		<input type="submit" value="Send">
-	</form>
+	${h.end_form()}
+
     % for content_type in ["article", "assignment"]:
         <h2>${content_type}</h2>
         <%
