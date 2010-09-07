@@ -32,11 +32,9 @@
 		<td><a href="${url('message', id=msg.id)}">${msg.subject}</a></td>
 		<td>${msg.timestamp}</td>
 		<td>
-			<form action="${url('message', id=msg.id)}" method="POST">
-				<input type="hidden" name="_method" value="DELETE" />
-				<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
+			${h.form(url('message', id=msg.id), method="DELETE")}
 				<input type="submit" value="Delete">
-			</form>
+			${h.end_form()}
 		</td>
 	</tr>
 % endfor
