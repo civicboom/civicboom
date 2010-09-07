@@ -40,7 +40,6 @@ class ContentsController(BaseController):
 
 
     @authorize(is_valid_user)
-    @action_redirector()
     @authenticate_form
     def create(self):
         """POST /contents: Create a new item"""
@@ -52,6 +51,7 @@ class ContentsController(BaseController):
         return redirect(url('content', id=content.parent_id)) # redirect to comment parent
 
 
+    @authorize(is_valid_user)
     def new(self, format='html'):
         """GET /contents/new: Form to create a new item
 
@@ -68,7 +68,6 @@ class ContentsController(BaseController):
 
 
     @authorize(is_valid_user)
-    @action_redirector()
     @authenticate_form
     def update(self, id):
         """PUT /contents/id: Update an existing item"""
@@ -117,9 +116,10 @@ class ContentsController(BaseController):
         user_log.info("edited Content #%d" % (c.content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
 
         if 'submit_publish' in request.POST or 'submit_preview' in request.POST:
-            return redirect(url.current(action='view', id=c.content.id))
+            return redirect(url('content', id=c.content.id))
         if 'submit_response' in request.POST:
-            return redirect(url.current(action='view', id=c.content.parent_id))
+            return redirect(url('content', id=c.content.parent_id))
+        return redirect(url('edit_content', id=c.content.id))
 
 
     @authorize(is_valid_user)
@@ -178,6 +178,7 @@ class ContentsController(BaseController):
         return render('/web/design09/content/view.mako')
 
 
+    @authorize(is_valid_user)
     def edit(self, id, format='html'):
         """GET /contents/id/edit: Form to edit an existing item"""
         # url('edit_content', id=ID)

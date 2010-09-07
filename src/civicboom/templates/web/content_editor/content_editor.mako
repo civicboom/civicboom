@@ -380,7 +380,9 @@
 <div style="text-align: right;">
 
 	% if c.content.id:
-	<input type="submit" name="submit_delete"  value="${_("Delete")}"       />
+	  ${h.form(url('content', id=c.content.id), method="DELETE")}
+		<input type="submit" name="submit_delete"  value="${_("Delete")}"       />
+	  ${h.end_form()}
 	% endif
 
 	% if c.content.__type__ == "draft":
