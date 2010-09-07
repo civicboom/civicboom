@@ -1,4 +1,3 @@
-<%namespace name="sl" file="/web/design09/includes/secure_link.mako" />
 
 <div id="header">
   <div class="unit_a">
@@ -22,7 +21,7 @@
       % else:
         <li><a href="${url(controller='profile', action='view', id=c.logged_in_user.username)}">${c.logged_in_user.name} (${c.logged_in_user.username})</a></li>
         <li><a href="${url(controller='profile', action='index')                             }">${_("Controls")}</a></li>
-        <li class='last_list_item'>${sl.secure_link(url(controller='account', action='signout'), _("Sign out"))}</li>
+        <li class='last_list_item'>${h.secure_link(url(controller='account', action='signout'), _("Sign out"))}</li>
       % endif
     </ul>
   

@@ -3,7 +3,6 @@
 <%namespace name="loc"              file="/web/design09/includes/location.mako"     />
 <%namespace name="member_includes"  file="/web/design09/includes/member.mako"       />
 <%namespace name="content_includes" file="/web/design09/includes/content_list.mako" />
-<%namespace name="sl"               file="/web/design09/includes/secure_link.mako"  />
 
 
 ##------------------------------------------------------------------------------
@@ -57,7 +56,7 @@
 	% if c.viewing_user.messages_notification:
 		% for msg in c.viewing_user.messages_notification:
 			<div class="notification">
-				${sl.secure_link(url('message', id=msg.id), "X", [("_method", "DELETE"), ])}
+				${h.secure_link(url('message', id=msg.id), "X", [("_method", "DELETE"), ])}
 				${msg.subject|n}
 			</div>
 		% endfor
