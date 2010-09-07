@@ -5,11 +5,12 @@ available to Controllers. This module is available to templates as 'h'.
 """
 
 #from webhelpers.html.tags import checkbox, password
-from webhelpers.pylonslib.secure_form import authentication_token
+from webhelpers.pylonslib.secure_form import authentication_token, secure_form as form
 
 from pylons import url, config, app_globals, tmpl_context as c, request
 from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
+from webhelpers.html.tags import end_form
 
 from civicboom.lib.text import scan_for_embedable_view_and_autolink
 
