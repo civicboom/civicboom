@@ -70,7 +70,7 @@ if session.has_key('flash_message'):
 	msg_msg = msg["message"]
 %>
 
-    <div id="flash_message" class="hidden_by_default status_${msg_status}">${msg_msg}</div>
+    <div id="flash_message" style="position: absolute; top: 0px; left: 0px; right: 0px;" class="hidden_by_default status_${msg_status}">${msg_msg}</div>
     
     <!-- animation for flash message -->
     <script type="text/javascript">
