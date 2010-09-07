@@ -1,10 +1,9 @@
 ## the lack of newlines here is because we don't want whitespace to appear in the output
-<%def name="secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None)"><%
+<%def name="secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST')"><%
 import hashlib
 hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
 %><span class="secure_link"><!--
---><span id="span_${hhash}"><form id="form_${hhash}" action="${href}" method="POST">
-<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
+--><span id="span_${hhash}">${h.form(href, id="form_"+hhash, method=method)}
 % for k, v in vals:
 <input type="hidden" name="${k}" value="${v}">
 % endfor
