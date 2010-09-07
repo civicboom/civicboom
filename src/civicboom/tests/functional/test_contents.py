@@ -33,6 +33,13 @@ class TestContentsController(TestController):
     def test_show(self):
         response = self.app.get(url('content', id=1))
 
+    def test_show_article(self):
+        response = self.app.get(url('content', id=2))
+        # 2 just happens to be the ID of an Article, so we can test the view counter
+
+    def test_show_non_exist(self):
+        response = self.app.get(url('content', id=0))
+
     def test_show_as_xml(self):
         response = self.app.get(url('formatted_content', id=1, format='xml'))
 
@@ -41,3 +48,4 @@ class TestContentsController(TestController):
 
     def test_edit_as_xml(self):
         response = self.app.get(url('formatted_edit_content', id=1, format='xml'))
+
