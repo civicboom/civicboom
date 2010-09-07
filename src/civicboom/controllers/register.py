@@ -79,7 +79,7 @@ class RegisterController(BaseController):
             #try: del form_result['recaptcha_challenge_field']
             #except: pass
             form_errors = error.error_dict or {}
-            print form_errors
+            #print form_errors
             return formencode.htmlfill.render(render(registration_template), defaults=form_result, errors=form_errors, prefix_error=False)
         
         # If the validator has not forced a page render

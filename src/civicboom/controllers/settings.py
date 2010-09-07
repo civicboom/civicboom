@@ -4,7 +4,7 @@ import hashlib
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
-settings = {}
+settings_units = {general:'', email:'', password:'', aggregation:'', avatar:'', location:''}
 
 class SettingsController(BaseController):
     """
@@ -17,18 +17,15 @@ class SettingsController(BaseController):
     
     def index(self, format='html'):
         """GET /: All items in the collection."""
-        # url_for('messages')
-        pass
+        self.show(None, format)
     
     def create(self):
         """POST /: Create a new item."""
-        # url_for('messages')
-        pass
+        return action_error(msg='operation not supported')
     
     def new(self, format='html'):
         """GET /new: Form to create a new item."""
-        # url_for('new_message')
-        pass
+        return action_error(msg='operation not supported')
     
     def update(self, id):
         """PUT /id: Update an existing item."""
@@ -40,23 +37,30 @@ class SettingsController(BaseController):
         pass
     
     def delete(self, id):
-        """DELETE /id: Delete an existing item."""
-        # Forms posted to this method should contain a hidden field:
-        #    <input type="hidden" name="_method" value="DELETE" />
-        # Or using helpers:
-        #    h.form(h.url_for('message', id=ID), method='delete')
+        """
+        DELETE /id: Delete an existing item.
+        """
+        # h.form(h.url_for('message', id=ID), method='delete')
         # url_for('message', id=ID)
-        pass
+        return action_error(msg='implement')
+        # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
     
+    @auto_format_output()
     def show(self, id, format='html'):
         """GET /id: Show a specific item."""
-        # url_for('message', id=ID)
-        pass
-    
+        # Generate base settings dictonary for ALL settings or SINGLE ID provided
+        if not id: settings = copy.deepcopy(settings_units)
+        else     : settings = {id:copy.deepcopy(settings_units[id])}
+        
+        # Populate settings dictionary
+        user = c.logged_in_user
+        
+        
+        return {data:settings, template:"settings/settings"}
+
     def edit(self, id, format='html'):
         """GET /id;edit: Form to edit an existing item."""
-        # url_for('edit_message', id=ID)
-        pass
+        return self.show(id,format)
 
 
     #---------------------------------------------------------------------------

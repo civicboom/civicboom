@@ -16,6 +16,8 @@ log = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 
 def flash_message(message):
+    if hasattr(message, 'keys'):
+        message = json.dumps(message)
     #message.replace('\n','<br/>\n')
     if 'flash_message' in session:
         session['flash_message'] = session['flash_message'] + literal("<br/>") + message
@@ -108,7 +110,7 @@ def action_redirector():
                 action_redirect = session_get('action_redirect')
                 session_remove('action_redirect')
                 if action_redirect and action_redirect.find(url.current())<0: #If the redirector contains the current URL path we are in an infinate loop and need to return just the text rather than a redirect
-                    flash_message(str(result))
+                    flash_message(result)
                     return redirect(action_redirect)
                 else:
                     log.warning("Redirect loop detected for "+str(action_redirect))
@@ -117,17 +119,111 @@ def action_redirector():
         return decorator(wrapper)(target) # Fix the wrappers call signiture
     return my_decorator
 
+#-------------------------------------------------------------------------------
+# Actions
+#-------------------------------------------------------------------------------
+
 def action_ok(msg=None, data=None):
-    return json.dumps({
-        "status": "ok",
+    return {
+        "status" : "ok",
         "message": msg,
-        "data": data,
-    })
+        "data"   : data,
+    }
 
 def action_error(msg=None, data=None):
-    return json.dumps({
-        "status": "error",
+    return {
+        "status" : "error",
         "message": msg,
-        "data": data,
-    })
+        "data"   : data,
+    }
 
+def action_msg(dict):
+    """
+    Takes a large python dictonary and just returns a dict with status and msg and a blank data
+    This is used in auto formatting when we want status to be flashed through
+    """
+    a = {status:'ok', msg:'', data:''}
+    if 'status'  in dict: a['status']  = dict['status']
+    if 'message' in dict: a['message'] = dict['message']
+    return a
+
+#-------------------------------------------------------------------------------
+# Auto Format Output
+#-------------------------------------------------------------------------------
+
+def auto_format_output():
+    """
+    Once a controler aciton has finished processing it will return a python dict
+    This decorator inspects the python dict and converts the dict into one of the following:
+        - JSON
+        - XML
+        - RSS
+        - HTML (with htmlfill overlay if nessisary) [auto selecting mobile template if needed]
+            + Web 
+            + Mobile
+            
+    Should be passed a dictonary containing
+        {
+            status : 'ok' or 'error' (optional defaults to ok)
+            message: the flash message or error message (optional: default '')
+            data   : the python dict to render (required)
+            
+            htmlfill: (optional) kwargs for the htmlfill system (html rendering only)
+            template: (required for html rendering) the template name, will default to XML if format==html and template not specifyed
+        }
+    """
+    
+    default_format = "json"
+    
+    def my_decorator(target):
+        def wrapper(target, *args, **kwargs):
+            # Before
+            #  do nothing
+            
+            # Origninal method call
+            result = target(*args, **kwargs) # Execute the wrapped function
+            
+            # After
+            
+            # Is return is a dict?
+            if hasattr(result, "keys") and 'data' in result:
+                
+                # Set default FORMAT (if nessisary)
+                if 'format' not in kwargs: kwargs['format'] = default_format
+                format = kwargs['format']
+                if format=='html' and template not in result: format='xml' #If format HTML and no template supplied fall back to XML
+                
+                # Set default STATUS and MSG (if nessisary)
+                if 'status'  not in result: result['status']  = 'ok'
+                if 'message' not in result: result['message'] = ''
+                
+                
+                # Render to format
+                if   format=='json':
+                    return json.dumps(result)
+                    
+                elif format=='xml' :
+                    return 'implement XML' # TODO: Add XML output to lib/xml_utils.py
+                
+                elif format=='rss' :
+                    return 'implement RSS' # TODO: ???
+                
+                elif format=='html':
+                    c.data = result['data']                                            # Set standard template data dict for template to use
+                    if 'message' in result: flash_message(action_msg(result))          # Set flash message
+                    template_filename = "web/%s.mako" % result['template']             # Find template filename
+                    if environ['is_mobile']:                                           # If mobile rendering
+                        # TODO: detect mobile template
+                        #   - (middleware needs to be upgraded  to look for subdomain m. in url)
+                        mobile_template_filename = "mobile/%s.mako" % result['template']
+                        # if exists(mobile_template_filename)
+                        #   template_filename = mobile_template_filename
+                    html = render(template_filename)
+                    if 'htmlfill' in result: return formencode.htmlfill.render(html, **result['htmlfill'])
+                    else                   : return html
+                
+            # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
+            return result
+        
+        return decorator(wrapper)(target) # Fix the wrappers call signiture
+    return my_decorator
