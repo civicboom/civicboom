@@ -32,7 +32,7 @@
         <td class="content_thumbnail">
             ## Content Link
             ##---------------------------
-            <a href="${h.url(controller='content',action='view',id=content.id)}">
+            <a href="${h.url('content', id=content.id)}">
             
             ## Thumbnail Status Overlay
             ##---------------------------
@@ -57,7 +57,7 @@
         ## Title and Content preview + details
         ##---------------------------        
         <td>
-            <a href="${h.url(controller='content',action='view',id=content.id)}">
+            <a href="${h.url('content', id=content.id)}">
                 <p class="content_title">${content.title}</p>
                 <p class="content_details">
                     ${content.creation_date.strftime('%b %d, %Y %H:%M %Z')}
@@ -113,12 +113,12 @@
 <%def name="content_item_row_mini(content, location=False)">
     <tr>
         <td class="content_thumbnail">
-            <a href="${h.url(controller='content',action='view',id=content.id)}">
+            <a href="${h.url('content', id=content.id)}">
                 <img src="${content.thumbnail_url}" alt="${content.title}" />
             </a>
         </td>
         <td>
-            <a href="${h.url(controller='content',action='view',id=content.id)}">
+            <a href="${h.url('content', id=content.id)}">
                 <p class="content_title">${content.title}</p>
             </a>
         </td>
@@ -149,5 +149,5 @@
     </ul>
 </%def>
 <%def name="content_item_li(content)">
-<a href="${url(controller='content', action='view', id=content.id)}">${content.title}</a>
+<a href="${url('content', id=content.id)}">${content.title}</a>
 </%def>

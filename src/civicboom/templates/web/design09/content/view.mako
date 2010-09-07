@@ -38,14 +38,19 @@
   
     ## Content Owner Actions
     % if c.content.editable_by(c.logged_in_user):
-      <a class="button_small button_small_style_2" href="${h.url(controller='content',action='edit',id=c.content.id)}">
+      <a class="button_small button_small_style_2" href="${h.url('edit_content', id=c.content.id)}">
         Edit
       </a>
       ##<a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=c.content.id)}"
       ##   onclick="confirm_before_follow_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
       ##  Delete
       ##</a>
-      ${h.secure_link(h.url(controller='content', action='delete', id=c.content.id), _('Delete')  , css_class="button_small button_small_style_2", title="Delete this content", confirm_text=_('Are your sure you want to delete this content?'))}
+	  ${h.secure_link(
+		href=url('content', id=c.content.id), method="DELETE",
+		value=_("Delete"),
+		css_class="button_small button_small_style_2",
+		confirm_text=_("Are your sure you want to delete this content?")
+      )}
       
     % endif
 
