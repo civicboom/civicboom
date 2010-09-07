@@ -168,6 +168,8 @@ def aggregate_via_user(content, user):
     """
     Call janrain 'activity' for all known accounts for this user
     https://rpxnow.com/docs#api_activity
+    
+    Requires Janrain Pro
     """
     #content = get_content(content)
     #user    = get_user(user)
@@ -187,11 +189,17 @@ def aggregate_via_user(content, user):
 
 
 def twitter_global(content):
+    """
+    Twitter content via Civicbooms global feed
+    
+    In the future should maybe be linked to the Civicboom user, and all users could have twitter keys stored
+    """
 
     content_dict = aggregation_dict(content, safe_strings=True)
 
+    # Create Twitter message with tiny URL
     if len(content_dict['title']) > 70:
-        title           = truncate(content_dict['title'], length=70)
+        title           = truncate(content_dict['title']                 , length=70)
         content_preview = truncate(content_dict['user_generated_content'], length=30)
     else:
         title           = content_dict['title']
@@ -200,6 +208,7 @@ def twitter_global(content):
     twitter_post = {}
     twitter_post['status'] = "%s: %s (%s)" % (title, content_preview, tiny_url(content_dict['url']))
 
+    # Add location if avalable
     if content.location:
         twitter_post['lat']                 = content.location.coords(Session)[1]
         twitter_post['long']                = content.location.coords(Session)[0]
