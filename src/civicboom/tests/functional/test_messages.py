@@ -59,6 +59,18 @@ class TestMessagesController(TestController):
         # FIXME: follow redirect, then
         #assert "Can't find user" in response
 
+    def test_create_no_content(self):
+        response = self.app.post(
+            url('messages'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'MrNotExists',
+                'subject': 'arrr, a subject',
+            },
+            status=302
+        )
+        # test that this hits the error handler
+
 
     ## delete ################################################################
 
