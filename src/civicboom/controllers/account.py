@@ -77,11 +77,11 @@ class AccountController(BaseController):
             
             u = register_new_janrain_user(c.auth_info['profile'])             # Create new user from Janrain profile data
             # added to assiciate_janrain civicboomlib call #janrain('map', identifier=c.auth_info['profile']['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
-            signin_user(u)
+            signin_user(u, login_provider=c.auth_info['profile']['identifier'])
             #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             
         # If not authenticated or any janrain info then error
-        flash_message(_('Unable to authenticate user'))
+        action_error(_('Unable to authenticate user'))
         return redirect_to_referer()
 
     #---------------------------------------------------------------------------
@@ -127,15 +127,19 @@ class AccountController(BaseController):
             else:
                 flash_message(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again'))
             redirect('/')
-            
-    #-----------------------------------------------------------------------------
+
+
+    #---------------------------------------------------------------------------
     # Forgotten Password
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     def forgotten_password(self):
         """
         Placeholder for forgotten password feature
         """
         pass
+    
+
+
 
     #-----------------------------------------------------------------------------
     # Standalone Login Redirector action

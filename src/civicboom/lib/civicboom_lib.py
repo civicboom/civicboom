@@ -75,6 +75,12 @@ def verify_email(user, hash, commit=False):
 #-------------------------------------------------------------------------------
 
 def associate_janrain_account(user, type, token):
+    """
+    Associate a login record for a Janrain account
+    This is called at:
+        1.) Registration
+        2.) Linking multiple login accounts to a single Civicboom account
+    """
     login = None
     try:
         login = Session.query(UserLogin).filter(UserLogin.token == token).filter(UserLogin.type == type).one()
