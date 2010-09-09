@@ -74,9 +74,17 @@ class TestMessagesController(TestController):
 
     ## delete ################################################################
 
-    def test_delete(self):
+    def test_delete_message(self):
         response = self.app.delete(
             url('message', id=3),
+            params={
+                '_authentication_token': self.auth_token
+            }
+        )
+
+    def test_delete_notification(self):
+        response = self.app.delete(
+            url('message', id=6),
             params={
                 '_authentication_token': self.auth_token
             }
