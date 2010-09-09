@@ -38,8 +38,9 @@ def dict_to_stringprint(d, indent=''):
       keylist.sort()
       for key in keylist:
         s += key +"\n"+ dict_to_stringprint(d.get(key), indent=indent+'  ')
-    #elif isinstance(d, list):
-    #    pass
+    elif hasattr(d, '__iter__'):
+        for i in d:
+            s += dict_to_stringprint(i, indent=indent+'  ')
     elif isinstance(d, basestring):
         s += indent + d.encode("utf-8") + "\n"
     return s

@@ -113,6 +113,7 @@ class Member(Base):
         if self.avatar:
             return self.avatar
         return "/images/default_avatar.png"
+    
 
 
 class User(Member):

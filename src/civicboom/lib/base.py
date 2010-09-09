@@ -107,6 +107,7 @@ class BaseController(WSGIController):
         current_request = request.environ.get("pylons.routes_dict")
         c.action    = current_request.get("action")
         c.action_id = current_request.get("id")
+        c.format    = current_request.get("format")
 
 
 

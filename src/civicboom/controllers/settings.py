@@ -1,10 +1,41 @@
 from civicboom.lib.base import *
 import hashlib
+import copy
+
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
-settings_units = {general:'', email:'', password:'', aggregation:'', avatar:'', location:''}
+
+
+settings_units = dict(
+    general=[
+        dict(name='name'       , description=_('Display name' ), value=''),
+        #{name:'location'   , description:_('Home location'), value:''},
+        dict(name='description', description=_('Description'  ), value=''),
+        dict(name='home_page'  , description=_('Home page'    ), value=''),
+    ],
+    email=[
+        dict(name='email'      , description=_('Email Address'), value=''),
+    ],
+    password=[
+        #dict(name='password'   , description=_('Password'), value=''),
+    ],
+    aggregation=[
+        dict(name='twitter_username', description=_('Twitter username'), value=''),
+        dict(name='twitter_auth_key', description=_('Twitter authkey' ), value=''),
+        dict(name='broadcast_instant_news' , description=_('Twitter instant news' ), value=''),
+        dict(name='broadcast_content_posts', description=_('Twitter content' ), value=''),
+    ],
+    avatar=[
+        dict(name='avatar'       , description=_('Avatar' ), value='', info='leave blank to use a gravatar'),
+    ],
+    location=[
+        dict(name='location'     , description=_('Home Location' ), value='', info='type in your town name or select a locaiton from the map'),
+    ],
+    message_routes=[
+    ],
+)
 
 class SettingsController(BaseController):
     """
@@ -17,7 +48,8 @@ class SettingsController(BaseController):
     
     def index(self, format='html'):
         """GET /: All items in the collection."""
-        self.show(None, format)
+        log.debug("index")
+        return self.show(id=None, format=format)
     
     def create(self):
         """POST /: Create a new item."""
@@ -27,14 +59,25 @@ class SettingsController(BaseController):
         """GET /new: Form to create a new item."""
         return action_error(msg='operation not supported')
     
+    @auto_format_output()
     def update(self, id):
         """PUT /id: Update an existing item."""
+        log.debug("update")
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="PUT" />
         # Or using helpers:
         #    h.form(h.url_for('message', id=ID), method='put')
         # url_for('message', id=ID)
-        pass
+        
+        settings_current = self.edit(id, format='python')
+        extra_kwargs = {}
+        
+        #take post
+        # overlay data over settings python dict
+        # save back to user obj
+        # return html overlayed errors if failed
+        
+        return settings_current + extra_kwargs
     
     def delete(self, id):
         """
@@ -45,23 +88,34 @@ class SettingsController(BaseController):
         return action_error(msg='implement')
         # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
     
-    @auto_format_output()
+    
     def show(self, id, format='html'):
         """GET /id: Show a specific item."""
+        log.debug("show")
+        return self.edit(id=id,format=format)
+
+    @authorize(is_valid_user)
+    @auto_format_output()
+    def edit(self, id, format='html'):
+        """GET /id;edit: Form to edit an existing item."""
+        log.debug("edit")
         # Generate base settings dictonary for ALL settings or SINGLE ID provided
         if not id: settings =     copy.deepcopy(settings_units)
         else     : settings = {id:copy.deepcopy(settings_units[id])}
         
-        # Populate settings dictionary
         user = c.logged_in_user
-        extra_kwargs = {}
+        c.viewing_user = c.logged_in_user # HACK - please remove when templates are refactored
         
+        # Populate settings dictionary for this user
+        for setting in settings.keys():
+            for field in settings[setting]:
+                field['value'] = user.config[field['name']]
         
-        return {data:settings, template:"settings/settings"} + extra_kwargs
+        return dict(data=settings, template="settings/settings")
 
-    def edit(self, id, format='html'):
-        """GET /id;edit: Form to edit an existing item."""
-        return self.show(id,format)
+
+
+
 
 
     #---------------------------------------------------------------------------

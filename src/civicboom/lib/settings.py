@@ -13,6 +13,7 @@ class MemberSettingsManager(UserDict.DictMixin):
         self.member = member
 
     def __getitem__(self, name):
+        if hasattr(self.member, name): return getattr(self.member, name)
         try:
             q = Session.query(MemberSetting)
             q = q.filter(MemberSetting.member_id==self.member.id)
@@ -26,12 +27,15 @@ class MemberSettingsManager(UserDict.DictMixin):
                 raise KeyError(name)
 
     def get(self, name, default):
-        if name in self:
-            return self[name]
-        else:
-            return default
+        if hasattr(self.member, name): return getattr(self.member, name)
+        if name in self              : return self[name]
+        else                         : return default
 
     def __setitem__(self, name, value):
+        if hasattr(self.member, name):
+            setattr(self.member,name,value)
+            # remeber this will need to be commited if it's a local property and not a config var
+            return
         if type(value) == type(True):
             if value:
                 value = "True"
@@ -54,6 +58,10 @@ class MemberSettingsManager(UserDict.DictMixin):
 
     def __delitem__(self, name):
         log.debug(self.member.username+":"+name+" deleted")
+        if hasattr(self.member, name):
+            setattr(self.member,name,None)
+            # remember this will need to be commited
+            return
         try:
             q = Session.query(MemberSetting)
             q = q.filter(MemberSetting.member_id==self.member.id)
@@ -69,5 +77,4 @@ class MemberSettingsManager(UserDict.DictMixin):
         q = q.filter(MemberSetting.member_id==self.member.id)
         r = q.all()
         return [row.name for row in r]
-
 

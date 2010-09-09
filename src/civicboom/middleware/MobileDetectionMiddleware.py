@@ -56,8 +56,8 @@ class MobileDetectionMiddleware(object):
                 if test in user_agents_test:
                     is_mobile = True
 
-        if is_mobile: #AllanC - if it is not a mobile device, ommit the key from the envrion, check with
-                      #         if 'is_mobile' in environ: print "it is a mobile device"
-            environ['is_mobile'] = str(is_mobile)
+        if is_mobile: environ['is_mobile'] = str(is_mobile)
+        else        : environ['is_mobile'] = None
+            
 
         return self.app(environ, start_response)

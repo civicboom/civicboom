@@ -1,7 +1,11 @@
-from pylons import session, url, request, response
+from pylons import session, url, request, response, config, tmpl_context as c
 from pylons.controllers.util import redirect
+from pylons.templating        import render_mako
+#from civicboom.lib.base import *
 
 from webhelpers.html import literal
+
+from civicboom.lib.xml_utils import ConvertDictToXMLString
 
 import time
 import json
@@ -142,7 +146,7 @@ def action_msg(dict):
     Takes a large python dictonary and just returns a dict with status and msg and a blank data
     This is used in auto formatting when we want status to be flashed through
     """
-    a = {status:'ok', msg:'', data:''}
+    a = {'status':'ok', 'msg':'', 'data':''}
     if 'status'  in dict: a['status']  = dict['status']
     if 'message' in dict: a['message'] = dict['message']
     return a
@@ -181,6 +185,7 @@ def auto_format_output():
         def wrapper(target, *args, **kwargs):
             # Before
             #  do nothing
+            log.debug("calling: %s with args %s and kwargs %s" % (target.__name__, args, kwargs))
             
             # Origninal method call
             result = target(*args, **kwargs) # Execute the wrapped function
@@ -191,24 +196,32 @@ def auto_format_output():
             if hasattr(result, "keys") and 'data' in result:
                 
                 # Set default FORMAT (if nessisary)
-                if 'format' not in kwargs: kwargs['format'] = default_format
-                format = kwargs['format']
-                if format=='html' and template not in result: format='xml' #If format HTML and no template supplied fall back to XML
+                format = default_format
+                if c.format          : format = c.format
+                if 'format' in kwargs: format = kwargs['format']
+                if format=='html' and 'template' not in result: format='xml' #If format HTML and no template supplied fall back to XML
                 
                 # Set default STATUS and MSG (if nessisary)
                 if 'status'  not in result: result['status']  = 'ok'
                 if 'message' not in result: result['message'] = ''
                 
+                log.debug("format: %s" % format)
+                #from civicboom.lib.misc import dict_to_stringprint
+                #print dict_to_stringprint(result)
                 
                 # Render to format
                 if   format=='python':
                     return result
                 
                 elif format=='json':
-                    return json.dumps(result)
+                    j = json.dumps(result)
+                    log.debug("json: %s" % j)
+                    response.headers['Content-type'] = "application/json"
+                    return j
                     
                 elif format=='xml' :
-                    return 'implement XML' # TODO: Add XML output to lib/xml_utils.py
+                    response.headers['Content-type'] = "text/xml"
+                    return ConvertDictToXMLString(result)
                 
                 elif format=='rss' :
                     return 'implement RSS' # TODO: ???
@@ -217,13 +230,13 @@ def auto_format_output():
                     c.data = result['data']                                            # Set standard template data dict for template to use
                     if 'message' in result: flash_message(action_msg(result))          # Set flash message
                     template_filename = "web/%s.mako" % result['template']             # Find template filename
-                    if environ['is_mobile']:                                           # If mobile rendering
+                    if request.environ['is_mobile']:                                   # If mobile rendering
                         # TODO: detect mobile template
                         #   - (middleware needs to be upgraded  to look for subdomain m. in url)
                         mobile_template_filename = "mobile/%s.mako" % result['template']
                         # if exists(mobile_template_filename)
                         #   template_filename = mobile_template_filename
-                    html = render(template_filename)
+                    html = render_mako(template_filename)
                     if 'htmlfill' in result: return formencode.htmlfill.render(html, **result['htmlfill'])
                     else                   : return html
                 
