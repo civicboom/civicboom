@@ -18,10 +18,10 @@ def getTextFromNode(node):
     """
     t = ""
     for n in node.childNodes:
-	if n.nodeType == n.TEXT_NODE:
-	    t += n.nodeValue
-	else:
-	    raise NotTextNodeError
+        if n.nodeType == n.TEXT_NODE:
+            t += n.nodeValue
+        else:
+            raise NotTextNodeError
     return t
 
 
@@ -72,3 +72,20 @@ def readXMLStringtoDic(xml_string):
 # Python Dictionary to XML
 #-------------------------------------------------------------------------------
 
+from xml.etree.ElementTree import Element, tostring
+
+def dictToXMLString(d):
+
+    def dictToElement(d, tag):
+        e = Element(tag)
+        if isinstance(d, basestring): # is String
+            e.text = d
+        elif hasattr(d,'keys'): # is Dict
+            for key in d.keys():
+                e.append(dictToElement(d[key], key))
+        elif hasattr(d, '__iter__'): # is List
+            for i in d:
+                e.append(dictToElement(i, tag))
+        return e
+        
+    return tostring(dictToElement(d, u'root'), encoding="utf-8")
