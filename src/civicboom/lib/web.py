@@ -161,8 +161,9 @@ def auto_format_output():
         - HTML (with htmlfill overlay if nessisary) [auto selecting mobile template if needed]
             + Web 
             + Mobile
+        - PYTHON (just the plain python dict for internal calls)
             
-    Should be passed a dictonary containing
+    Should be passed a python dictonary containing
         {
             data   : the python dict to render (required) if not present will just pass though this decorator
             
@@ -200,7 +201,10 @@ def auto_format_output():
                 
                 
                 # Render to format
-                if   format=='json':
+                if   format=='python':
+                    return result
+                
+                elif format=='json':
                     return json.dumps(result)
                     
                 elif format=='xml' :

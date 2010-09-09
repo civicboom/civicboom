@@ -49,7 +49,7 @@ class SettingsController(BaseController):
     def show(self, id, format='html'):
         """GET /id: Show a specific item."""
         # Generate base settings dictonary for ALL settings or SINGLE ID provided
-        if not id: settings = copy.deepcopy(settings_units)
+        if not id: settings =     copy.deepcopy(settings_units)
         else     : settings = {id:copy.deepcopy(settings_units[id])}
         
         # Populate settings dictionary
