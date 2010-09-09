@@ -790,6 +790,19 @@ CREATE TRIGGER update_content
         ca.license_id = cc_by.id
         ca.tags       = [open_source, the_moon_loc]
         ca.location   = "SRID=4326;POINT(-0.1278328 51.5072648)"
+        Session.add(ca); Session.commit(); # Ensure that this is Content #1
+
+
+        ca2 = ArticleContent()
+        ca2.title      = u"A test article by unittest"
+        ca2.content    = u"""
+        Content #2 should be owned by unittest for testing purposes
+        """
+        ca2.creator    = u1
+        ca2.status     = "show"
+        ca2.license_id = cc_by.id
+        ca2.tags       = [open_source, the_moon_loc]
+        Session.add(ca2); Session.commit(); # Ensure that this is Content #2
 
         m = Media()
         # FIXME: Image.open() locks up under nosetests, see Bug #45
@@ -860,7 +873,7 @@ CREATE TRIGGER update_content
         dc.license_id = cc_by.id
         u2.content.append(dc)
 
-        Session.add_all([ca])
+        Session.add_all([ca, ca2])
         Session.commit()
 
         ###############################################################
