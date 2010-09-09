@@ -5,8 +5,6 @@ from pylons.templating        import render_mako
 
 from webhelpers.html import literal
 
-from civicboom.lib.xml_utils import ConvertDictToXMLString
-
 import time
 import json
 from decorator import decorator
@@ -221,7 +219,9 @@ def auto_format_output():
                     
                 elif format=='xml' :
                     response.headers['Content-type'] = "text/xml"
-                    return ConvertDictToXMLString(result)
+                    from civicboom.lib.xml_utils import XMLMarshal
+                    return XMLMarshal.dumps(result)
+
                 
                 elif format=='rss' :
                     return 'implement RSS' # TODO: ???
