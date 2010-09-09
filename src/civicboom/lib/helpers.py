@@ -17,6 +17,7 @@ from civicboom.lib.text import scan_for_embedable_view_and_autolink
 import recaptcha.client.captcha as librecaptcha
 import re
 import urllib
+import hashlib
 
 def get_captcha(lang='en', theme='white'):
     """
@@ -111,3 +112,45 @@ def objs_to_linked_formatted_dict(**kargs):
             val = c[val]
         links[key] = gen_link(val)
     return links
+
+def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST'):
+    """
+    Create two things:
+      - A visible HTML form which POSTs some data along with an auth token
+      - An invisible pretty-looking plain-text link which calls form.submit()
+
+    Then use javascript to hide the form and show the pretty link
+    """
+    hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
+
+    # form version
+    values = ''
+    for k, v in vals:
+        values = values + HTML.input(type="hidden", name=k, value=v)
+    hf = HTML.span(
+        form(href, id="form_"+hhash, method=method) +
+            values +
+            HTML.input(type="submit", value=value) +
+        end_form(),
+        id='span_'+hhash)
+
+    # link version
+    ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
+    if confirm_text:
+        confirm_text = "confirm('%s')" % confirm_text
+    else:
+        confirm_text = "true"
+    hl = HTML.a(
+        value,
+        id="link_"+hhash,
+        style="display: none;",
+        href=href,
+        class_=css_class,
+        title=title,
+        onClick="if("+confirm_text+") {$('#form_"+hhash+"').submit();} return false;"
+    )
+
+    # form vs link switcher
+    hs = HTML.script(literal('$("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))
+
+    return HTML.span(hf+hl+hs, class_="secure_link")

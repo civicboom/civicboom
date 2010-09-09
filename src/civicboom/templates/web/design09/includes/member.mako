@@ -1,7 +1,6 @@
 ##------------------------------------------------------------------------------
 ## Member Autocomplete - used? where?
 ##------------------------------------------------------------------------------
-<%namespace name="sl" file="/web/design09/includes/secure_link.mako"  />
 
 <%def name="autocomplete_member(field_name='member', size='250px')">
 <div style="width: ${size}; padding-bottom: 2em;">
@@ -30,9 +29,9 @@
         </a>
         % if show_follow_button and c.logged_in_user != member:
             % if c.logged_in_user in member.followers:
-			${sl.secure_link(url(controller='member', action='unfollow', id=member.username), _('Stop following'), css_class="button_small button_small_style_2")}
+			${h.secure_link(url(controller='member', action='unfollow', id=member.username), _('Stop following'), css_class="button_small button_small_style_2")}
             % else:
-			${sl.secure_link(url(controller='member', action='follow', id=member.username), _('Follow'), css_class="button_small button_small_style_1")}
+			${h.secure_link(url(controller='member', action='follow', id=member.username), _('Follow'), css_class="button_small button_small_style_1")}
             % endif
         % endif
     % if class_:
