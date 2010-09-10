@@ -95,13 +95,18 @@ class SettingsController(BaseController):
                 if setting_fieldname in error.value:                           #   If in form 
                     setting['value'] = error.value[setting_fieldname]          #     populate value with form data
                 if setting_fieldname in error.error_dict:                      #   If error
-                    setting['error'] = error.error_dict[setting_fieldname].msg #     append error
+                    e = error.error_dict[setting_fieldname]                    #     
                     del error.error_dict[setting_fieldname]                    #     delete error object (so we can see if any are outstanding/missing at the end)
+                    if hasattr(e,'msg'): e = e.msg                             #     append error
+                    setting['error'] = e                                       #
+                    
             # Report any missing fields (anything that is left in error.error_dict)
             if len(error.error_dict) > 0:
                 settings['missing'] = []
                 for missing_fieldname in error.error_dict.keys():
-                    settings['missing'].append({'name':missing_fieldname, 'description':missing_fieldname, 'error':error.error_dict[missing_fieldname].msg, 'value':''})
+                    e = error.error_dict[missing_fieldname]
+                    if hasattr(e,'msg') : e = e.msg
+                    settings['missing'].append({'name':missing_fieldname, 'description':missing_fieldname, 'error':e, 'value':''})
             
             # Set error status
             edit_action['status']  = 'error'
