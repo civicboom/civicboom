@@ -164,9 +164,11 @@ class ContentsController(BaseController):
 
         # Check content is visable
         if c.content.__type__ == "comment":
+            user_log.debug("Attempted to view a comment as an article")
             abort(404)
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
             if c.content.status == "pending":
+                user_log.debug("Attempted to view someone else's pending content")
                 abort(404)
                 #c.error_message = _("your user does not have the permissions to view this _content")
                 #return render('/web/design09/content/unavailable.mako')
@@ -193,6 +195,9 @@ class ContentsController(BaseController):
 
         # Get exisiting content from URL id
         c.content = get_content(id)
+        if not c.content:
+            abort(404)
+
         c.content = form_to_content(request.params, c.content)
 
         if c.content:
