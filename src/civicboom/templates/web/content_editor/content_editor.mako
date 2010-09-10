@@ -377,6 +377,7 @@
 				</tr>
                 ##${popup(license.description)}
             % endfor
+			</table>
         </div>
     </fieldset>
 </%def>
