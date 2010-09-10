@@ -44,6 +44,7 @@ def start_worker():
     global _worker
     _worker = MediaThread()
     _worker.daemon = True
+    _worker.name = "Worker"
     _worker.start()
 
 def stop_worker():
