@@ -303,13 +303,13 @@ CREATE TRIGGER update_content
     log.info("Populating tables with base data") # {{{
 
     unspecified = License(u"Unspecified", u"Unspecified", u"", u"")
-    cc_by       = License(u"CC-BY",       u"Creative Commons Attribution", u"", u"http://www.creativecommons.org")
-    cc_by_nc    = License(u"CC-BY-NC",    u"Creative Commons Attribution Non-Commercial", u"", u"http://www.creativecommons.org")
-    cc_by_nc_nd = License(u"CC-BY-NC-ND", u"Creative Commons Attribution Non-Commercial No-Derivs", u"", u"http://www.creativecommons.org")
-    cc_by_nc_sa = License(u"CC-BY-NC-SA", u"Creative Commons Attribution Non-Commercial Share-Alike", u"", u"http://www.creativecommons.org")
-    cc_by_nd    = License(u"CC-BY-ND",    u"Creative Commons Attribution No-Derivs", u"", u"http://www.creativecommons.org")
-    cc_by_sa    = License(u"CC-BY-SA",    u"Creative Commons Attribution Share-Alike", u"", u"http://www.creativecommons.org")
-    cc_pd       = License(u"CC-PD",       u"Creative Commons Public Domain", u"", u"http://www.creativecommons.org")
+    cc_by       = License(u"CC-BY",       u"Creative Commons Attribution", u"Alteration allowed with credit to the source", u"http://www.creativecommons.org")
+    cc_by_nd    = License(u"CC-BY-ND",    u"Creative Commons Attribution No-Derivs", u"Reprinting allowed with credit to the source", u"http://www.creativecommons.org")
+    cc_by_sa    = License(u"CC-BY-SA",    u"Creative Commons Attribution Share-Alike", u"Alteration allowed with credit to the source, and derivatives must also be CC-BY-SA", u"http://www.creativecommons.org")
+    cc_by_nc    = License(u"CC-BY-NC",    u"Creative Commons Attribution Non-Commercial", u"Non-commercial derivatives allowed with credit to the source", u"http://www.creativecommons.org")
+    cc_by_nc_nd = License(u"CC-BY-NC-ND", u"Creative Commons Attribution Non-Commercial No-Derivs", u"Non-commercial reprinting allowed with credit to the source", u"http://www.creativecommons.org")
+    cc_by_nc_sa = License(u"CC-BY-NC-SA", u"Creative Commons Attribution Non-Commercial Share-Alike", u"Non-commercial alteration allowed with credit to the source, and derivatives must also be CC-BY-NC-SA", u"http://www.creativecommons.org")
+    cc_pd       = License(u"CC-PD",       u"Creative Commons Public Domain", u"Public domain", u"http://www.creativecommons.org")
     Session.add_all([
         unspecified,
         cc_by, cc_by_nc, cc_by_nc_nd, cc_by_nc_sa,
