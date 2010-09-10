@@ -155,6 +155,41 @@ def action_msg(dict):
 # Auto Format Output
 #-------------------------------------------------------------------------------
 
+def get_format_processors():
+    def format_json(result):
+        #response.headers['Content-type'] = "application/json"
+        return json.dumps(result)
+        
+    def format_xml(result):
+        response.headers['Content-type'] = "text/xml"
+        return dictToXMLString(result)
+        
+    def format_rss(result):
+        return 'implement RSS' # TODO: ???
+    
+    def format_html(result):
+        c.data = result['data']                                            # Set standard template data dict for template to use
+        if 'message' in result: flash_message(action_msg(result))          # Set flash message
+        template_filename = "web/%s.mako" % result['template']             # Find template filename
+        if request.environ['is_mobile']:                                   # If mobile rendering
+            # TODO: detect mobile template
+            #   - (middleware needs to be upgraded  to look for subdomain m. in url)
+            mobile_template_filename = "mobile/%s.mako" % result['template']
+            # if exists(mobile_template_filename)
+            #   template_filename = mobile_template_filename
+        html = render_mako(template_filename)
+        if 'htmlfill' in result: return formencode.htmlfill.render(html, **result['htmlfill'])
+        else                   : return html
+    
+    return dict(
+        python = lambda result:result,
+        json   = format_json,
+        xml    = format_xml,
+        rss    = format_rss,
+        html   = format_html,
+    )
+
+
 def auto_format_output():
     """
     Once a controler aciton has finished processing it will return a python dict
@@ -179,13 +214,14 @@ def auto_format_output():
         }
     """
     
-    default_format = config['default_format']
+    default_format    = config['default_format']
+    format_processors = get_format_processors()
     
     def my_decorator(target):
         def wrapper(target, *args, **kwargs):
             # Before
             #  do nothing
-            log.debug("calling: %s with args %s and kwargs %s" % (target.__name__, args, kwargs))
+            log.debug('calling %s with args: %s kwargs: %s' % (target.__name__, args, kwargs))
             
             # Origninal method call
             result = target(*args, **kwargs) # Execute the wrapped function
@@ -198,45 +234,17 @@ def auto_format_output():
                 # Set default FORMAT (if nessisary)
                 format = default_format
                 if c.format          : format = c.format
-                if 'format' in kwargs: format = kwargs['format']
+                if len(args)==3 and args[2] in format_processors: format = args[2] # The 3rd arg should be a format, if it is a valid format set it
+                if 'format' in kwargs: format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
                 if format=='html' and 'template' not in result: format='xml' #If format HTML and no template supplied fall back to XML
                 
                 # Set default STATUS and MSG (if nessisary)
                 if 'status'  not in result: result['status']  = 'ok'
                 if 'message' not in result: result['message'] = ''
                 
-                log.debug("format: %s" % format)
-                #from civicboom.lib.misc import dict_to_stringprint
-                #print dict_to_stringprint(result)
-                
                 # Render to format
-                if   format=='python':
-                    return result
-                
-                elif format=='json':
-                    response.headers['Content-type'] = "application/json"
-                    return json.dumps(result)
-                    
-                elif format=='xml' :
-                    response.headers['Content-type'] = "text/xml"
-                    return dictToXMLString(result)
-                
-                elif format=='rss' :
-                    return 'implement RSS' # TODO: ???
-                
-                elif format=='html':
-                    c.data = result['data']                                            # Set standard template data dict for template to use
-                    if 'message' in result: flash_message(action_msg(result))          # Set flash message
-                    template_filename = "web/%s.mako" % result['template']             # Find template filename
-                    if request.environ['is_mobile']:                                   # If mobile rendering
-                        # TODO: detect mobile template
-                        #   - (middleware needs to be upgraded  to look for subdomain m. in url)
-                        mobile_template_filename = "mobile/%s.mako" % result['template']
-                        # if exists(mobile_template_filename)
-                        #   template_filename = mobile_template_filename
-                    html = render_mako(template_filename)
-                    if 'htmlfill' in result: return formencode.htmlfill.render(html, **result['htmlfill'])
-                    else                   : return html
+                if format in format_processors:
+                    return format_processors[format](result)
                 
             # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
             return result

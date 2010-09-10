@@ -48,7 +48,6 @@ class SettingsController(BaseController):
     
     def index(self, format='html'):
         """GET /: All items in the collection."""
-        log.debug("index")
         return self.show(id=None, format=format)
     
     def create(self):
@@ -60,24 +59,25 @@ class SettingsController(BaseController):
         return action_error(msg='operation not supported')
     
     @auto_format_output()
-    def update(self, id):
+    def update(self, id, format='html'):
         """PUT /id: Update an existing item."""
-        log.debug("update")
-        # Forms posted to this method should contain a hidden field:
-        #    <input type="hidden" name="_method" value="PUT" />
-        # Or using helpers:
-        #    h.form(h.url_for('message', id=ID), method='put')
-        # url_for('message', id=ID)
+        edit_action = self.edit(id, format='python')
         
-        settings_current = self.edit(id, format='python')
-        extra_kwargs = {}
+        #edit_action.update(dict)
+        
+        # Overlay validated results over data (needed?)
+        settings = edit_action['data']
+        for group in settings.keys():
+            for setting in settings[group]:
+                if setting['name'] in request.params:
+                    setting['value'] = request.params[setting['name']]
         
         #take post
         # overlay data over settings python dict
         # save back to user obj
         # return html overlayed errors if failed
         
-        return settings_current + extra_kwargs
+        return edit_action
     
     def delete(self, id):
         """
@@ -91,15 +91,14 @@ class SettingsController(BaseController):
     
     def show(self, id, format='html'):
         """GET /id: Show a specific item."""
-        log.debug("show")
-        return self.edit(id=id,format=format)
+        return self.edit(id=id, format=format)
 
     @authorize(is_valid_user)
     @auto_format_output()
     def edit(self, id, format='html'):
         """GET /id;edit: Form to edit an existing item."""
-        log.debug("edit")
         # Generate base settings dictonary for ALL settings or SINGLE ID provided
+        if id=="index" or id=="None": id=None
         if not id: settings =     copy.deepcopy(settings_units)
         else     : settings = {id:copy.deepcopy(settings_units[id])}
         
@@ -107,9 +106,9 @@ class SettingsController(BaseController):
         c.viewing_user = c.logged_in_user # HACK - please remove when templates are refactored
         
         # Populate settings dictionary for this user
-        for setting in settings.keys():
-            for field in settings[setting]:
-                field['value'] = user.config[field['name']]
+        for setting_group in settings.keys():
+            for setting in settings[setting_group]:
+                setting['value'] = user.config[setting['name']]
         
         return dict(data=settings, template="settings/settings")
 

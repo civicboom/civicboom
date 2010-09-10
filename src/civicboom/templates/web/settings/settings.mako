@@ -9,6 +9,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
+    ${h.form(h.url('setting', id='None'), method='put')}
     % for group_name in c.data.keys():
         <fieldset><legend>${group_name.capitalize()}</legend>
             % for field in c.data[group_name]:
@@ -16,6 +17,8 @@
             % endfor
         </fieldset>
     % endfor
+    <input type="submit" name="submit" value="${_('Save settings')}"/>
+    ${h.end_form()}
 </%def>
 
 
