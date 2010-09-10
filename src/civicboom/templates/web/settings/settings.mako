@@ -13,7 +13,15 @@
     % for group_name in c.data.keys():
         <fieldset><legend>${group_name.capitalize()}</legend>
             % for field in c.data[group_name]:
-                <p>${field['description']} :<input name="${field['name']}" value="${field['value']}"></p>
+                <p>
+                    ${field['description']} :<input name="${field['name']}" value="${field['value']}">
+                ##% for key in field.keys():
+                ##    <p>${key}</p>
+                ##% endfor
+                % if field.get('error'):
+                    <span class="error-message">${field['error']}</span>
+                % endif
+                </p>
             % endfor
         </fieldset>
     % endfor

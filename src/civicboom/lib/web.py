@@ -7,6 +7,8 @@ from webhelpers.html import literal
 
 from civicboom.lib.xml_utils import dictToXMLString
 
+import formencode
+
 import time
 import json
 from decorator import decorator
@@ -177,9 +179,13 @@ def get_format_processors():
             mobile_template_filename = "mobile/%s.mako" % result['template']
             # if exists(mobile_template_filename)
             #   template_filename = mobile_template_filename
-        html = render_mako(template_filename)
-        if 'htmlfill' in result: return formencode.htmlfill.render(html, **result['htmlfill'])
-        else                   : return html
+        return render_mako(template_filename)
+        # Used to use HTMLFILL, but this was incompatable with JSON and XML as formencode.Invalid were objects
+        # Now the python dict has an ['error'] attribute that templates render themselfs
+        # it may even be possible for us to create our own poor mans htmlfill that overlays the html with our own validation data
+        #if 'htmlfill' in result: return formencode.htmlfill.render(html, **result['htmlfill'])
+        #else                   : return html
+
     
     return dict(
         python = lambda result:result,

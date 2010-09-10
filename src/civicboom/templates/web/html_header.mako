@@ -124,8 +124,8 @@
 ## HTML Body
 ##------------------------------------------------------------------------------
 <body class="yui-skin-sam">
-  <div id="c-${request.environ['pylons.routes_dict']['controller']}">
-  <div id="a-${request.environ['pylons.routes_dict']['action']}">
+  <div id="c-${c.controller}">
+  <div id="a-${c.action    }">
 
   ## AllanC - IE6 Warning messge
   ##<!--[if lte IE 6]>

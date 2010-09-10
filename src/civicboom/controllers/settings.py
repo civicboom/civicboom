@@ -2,6 +2,10 @@ from civicboom.lib.base import *
 import hashlib
 import copy
 
+import formencode
+from civicboom.lib.form_validators.validator_factory import build_schema
+from civicboom.lib.form_validators.registration      import UniqueEmailValidator
+from formencode import validators
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -37,6 +41,9 @@ settings_units = dict(
     ],
 )
 
+    
+    
+
 class SettingsController(BaseController):
     """
     REST controller for Settings
@@ -46,57 +53,92 @@ class SettingsController(BaseController):
     needs in config/routing.py -> map.resource('setting', 'settings')
     """
     
-    def index(self, format='html'):
+    def index(self):
         """GET /: All items in the collection."""
-        return self.show(id=None, format=format)
+        return self.show(None)
     
     def create(self):
         """POST /: Create a new item."""
+        response.status = 201 # 201 = Success Created
         return action_error(msg='operation not supported')
     
-    def new(self, format='html'):
+    def new(self):
         """GET /new: Form to create a new item."""
+        response.status = 201 # 201 = Success Created
         return action_error(msg='operation not supported')
     
+    @authorize(is_valid_user)
     @auto_format_output()
-    def update(self, id, format='html'):
+    def update(self, id):
         """PUT /id: Update an existing item."""
         edit_action = self.edit(id, format='python')
-        
-        #edit_action.update(dict)
-        
-        # Overlay validated results over data (needed?)
         settings = edit_action['data']
-        for group in settings.keys():
-            for setting in settings[group]:
-                if setting['name'] in request.params:
-                    setting['value'] = request.params[setting['name']]
         
-        #take post
-        # overlay data over settings python dict
-        # save back to user obj
-        # return html overlayed errors if failed
+        def settings_list():
+            """a function to allow iterating over all settings as if they were a single list"""
+            for group in settings.keys():
+                for setting in settings[group]:
+                    yield setting        
+        
+        settings_field_list = ['username','email','password','dob']
+        
+        try: # Form validation
+            # Build a dynamic validation scema based on these required fields and validate the form
+            schema = build_schema(*settings_field_list)
+            form   = schema.to_python(dict(request.params))
+        except formencode.Invalid, error:
+            # Form has failed validation
+            
+            # Set error property for each failed property
+            for setting in settings_list():
+                setting_fieldname = setting['name']                            # For each setting
+                if setting_fieldname in error.value:                           #   If in form 
+                    setting['value'] = error.value[setting_fieldname]          #     populate value with form data
+                if setting_fieldname in error.error_dict:                      #   If error
+                    setting['error'] = error.error_dict[setting_fieldname].msg #     append error
+                    del error.error_dict[setting_fieldname]                    #     delete error object (so we can see if any are outstanding/missing at the end)
+            # Report any missing fields (anything that is left in error.error_dict)
+            if len(error.error_dict) > 0:
+                settings['missing'] = []
+                for missing_fieldname in error.error_dict.keys():
+                    settings['missing'].append({'name':missing_fieldname, 'description':missing_fieldname, 'error':error.error_dict[missing_fieldname].msg, 'value':''})
+            
+            # Set error status
+            edit_action['status']  = 'error'
+            edit_action['message'] = _('failed validation') #error.msg
+            #response.status = 400 # 400 = Bad request # is this the correct HTTP code for this event? # This BREAKS html layout bigtime!
+            return edit_action
+        
+        # Form has passed validation - continue to save/commit changes
+        for setting in settings_list():
+            setting_fieldname = setting['name']
+            if setting_fieldname in form:                                    # For each setting
+                if setting['value'] != form[setting_fieldname]:              #   If value has changed
+                    user.config[setting_fieldname] = form[setting_fieldname] #     change the actual user object
+                    setting['value'] = form[setting_fieldname]               #     update the return dict
+        Session.commit()                                                     # save changes to database
         
         return edit_action
+
     
     def delete(self, id):
         """
         DELETE /id: Delete an existing item.
         """
         # h.form(h.url_for('message', id=ID), method='delete')
-        # url_for('message', id=ID)
-        return action_error(msg='implement')
         # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
-    
-    
-    def show(self, id, format='html'):
+        response.status = 204 # 204 = Success No Content
+        return action_error(msg='implement')
+
+    def show(self, id):
         """GET /id: Show a specific item."""
-        return self.edit(id=id, format=format)
+        return self.edit(id)
 
     @authorize(is_valid_user)
     @auto_format_output()
     def edit(self, id, format='html'):
         """GET /id;edit: Form to edit an existing item."""
+        
         # Generate base settings dictonary for ALL settings or SINGLE ID provided
         if id=="index" or id=="None": id=None
         if not id: settings =     copy.deepcopy(settings_units)

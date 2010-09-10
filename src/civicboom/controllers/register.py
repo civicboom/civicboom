@@ -1,6 +1,6 @@
 from civicboom.lib.base import *
 
-import formencode
+
 
 # Database Objects
 from civicboom.model.member            import User, UserLogin
@@ -13,6 +13,7 @@ from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email, 
 
 
 # Form Validators
+import formencode
 from civicboom.lib.form_validators.validator_factory import build_schema
 from civicboom.lib.form_validators.registration      import RegisterSchemaEmailUsername, UniqueEmailValidator, UniqueUsernameValidator
 from formencode import validators, htmlfill
