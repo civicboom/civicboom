@@ -5,6 +5,7 @@ Locked down for use in development mode only
 """
 
 from civicboom.lib.base import *
+from time import sleep
 
 log = logging.getLogger(__name__)
 
