@@ -355,17 +355,18 @@
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
         <div class="hideable">
             ${instruction("What is licensing explanation")}
-            
+			<table>
             % for license in get_licenses():
+				<tr>
                 <%
                   license_selected = ''
                   if c.content.license and license.id == c.content.license_id:
                       license_selected = h.literal('checked="checked"')
                 %>
-                <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}" ${license_selected} />
-                <label for="form_licence_${license.id}">
-                    <a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a>
-                </label>
+                <td><input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}" ${license_selected} /></td>
+				<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a></td>
+                <td><label for="form_licence_${license.id}">${license.description}</label></td>
+				</tr>
                 ##${popup(license.description)}
             % endfor
         </div>
