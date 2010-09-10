@@ -192,14 +192,22 @@
                         
                         ## Clients with    javascript can have live updates from "get_media_processing_staus"
                         <script type="text/javascript">
+							function updateMedia${media.id}() {
+                            	$.getJSON(
+									"${url(controller='content', action='get_media_processing_staus', id=media.hash)}",
+									processingStatus${media.id}
+								);
+							}
                             function processingStatus${media.id}(data) {
-                                YAHOO.log("Status got = "+data);
-                                if (data!="processing") {
+                                YAHOO.log("Status got = "+data.data);
+                                if(!data.data) {
                                     clearInterval(media_thumbnail_timer_${media.id});
                                     YAHOO.log("processing complete reload the image!!!");
+									var mt = $("#media_thumbnail_${media.id}");
+									mt.src = mt.src + "?" + (new Date().getTime());
                                 }
                             }
-                            var media_thumbnail_timer_${media.id} = setInterval('getHTML("${url(controller='content', action='get_media_processing_staus', id=media.hash)}", processingStatus${media.id})', 10000);
+                            var media_thumbnail_timer_${media.id} = setInterval('updateMedia${media.id}()', 10000);
                         </script>
                         <!-- End media still undergoing proceccesing -->
                     % endif
