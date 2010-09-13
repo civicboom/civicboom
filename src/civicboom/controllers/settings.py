@@ -62,8 +62,8 @@ settings_validators = dict(
     
     twitter_username        = formencode.validators.UnicodeString(),
     twitter_auth_key        = formencode.validators.UnicodeString(),
-    broadcast_instant_news  = formencode.validators.StringBool(),
-    broadcast_content_posts = formencode.validators.StringBool(),
+    broadcast_instant_news  = formencode.validators.StringBool(if_missing=False),
+    broadcast_content_posts = formencode.validators.StringBool(if_missing=False),
     
     avatar = formencode.validators.URL(),
     
