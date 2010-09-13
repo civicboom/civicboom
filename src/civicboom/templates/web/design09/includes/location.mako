@@ -18,28 +18,30 @@ if not always_show_map:
 %>
 <div style="width: ${width}; height: ${height}; border: 1px solid black; ${style}" id="${field_name}_div">
 	<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=ABQIAAAAIi6se4J7Z6hKgcsUhgiErRQS76dJNGDaz2wU_zf_o-LlW8DpkhThfgwBtV5bzJz31JYsXf4OsNuZZw"></script>
-	<script type="text/javascript" src="/javascript/mxn/mxn.js?(google)"></script>
+	<script type="text/javascript" src="/javascript/mxn/mxn.js"></script>
+	<script type="text/javascript" src="/javascript/mxn/mxn.core.js"></script>
+	<script type="text/javascript" src="/javascript/mxn/mxn.google.core.js"></script>
 	<script type="text/javascript">
-${field_name}_map = new mxn.Mapstraction("${field_name}_div", "google");
-${field_name}_map.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
-${field_name}_map.addLargeControls();
-
-${field_name}_map_marker = new mxn.Marker(new mxn.LatLonPoint(${lat}, ${lon}));
-${field_name}_map.addMarker(${field_name}_map_marker);
-${field_name}_map.click.addHandler(function(event_name, event_source, event_args) {
-	var p = event_args.location;
-	${field_name}_map.removeMarker(${field_name}_map_marker); // no marker.setLocation()?
-	${field_name}_map_marker = new mxn.Marker(p);
-	${field_name}_map.addMarker(${field_name}_map_marker);
-	document.getElementById("${field_name}").value = p.lon+","+p.lat;
-
-	namebox = document.getElementById("${field_name}_name")
-	if(namebox.value == "" || namebox.value.match(/^[\d\., ]+$/)) {
-		namebox.value = Math.round(p.lon*10000)/10000+", "+Math.round(p.lat*10000)/10000;
-	}
-});
-
 $(function() {
+	${field_name}_map = new mxn.Mapstraction("${field_name}_div", "google");
+	${field_name}_map.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
+	${field_name}_map.addLargeControls();
+
+	${field_name}_map_marker = new mxn.Marker(new mxn.LatLonPoint(${lat}, ${lon}));
+	${field_name}_map.addMarker(${field_name}_map_marker);
+	${field_name}_map.click.addHandler(function(event_name, event_source, event_args) {
+		var p = event_args.location;
+		${field_name}_map.removeMarker(${field_name}_map_marker); // no marker.setLocation()?
+		${field_name}_map_marker = new mxn.Marker(p);
+		${field_name}_map.addMarker(${field_name}_map_marker);
+		document.getElementById("${field_name}").value = p.lon+","+p.lat;
+
+		namebox = document.getElementById("${field_name}_name")
+		if(namebox.value == "" || namebox.value.match(/^[\d\., ]+$/)) {
+			namebox.value = Math.round(p.lon*10000)/10000+", "+Math.round(p.lat*10000)/10000;
+		}
+	});
+
 	$('#${field_name}_name').autocomplete({
 		source: function(req, respond) {
 			$.getJSON("/search/location.json?", req, function(response) {
@@ -71,10 +73,14 @@ $(function() {
 <%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13)">
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
-<script type="text/javascript" src="/javascript/mxn/mxn.js?(openlayers)"></script>
+<script type="text/javascript" src="/javascript/mxn/mxn.js"></script>
+<script type="text/javascript" src="/javascript/mxn/mxn.core.js"></script>
+<script type="text/javascript" src="/javascript/mxn/mxn.openlayers.core.js"></script>
 <script type="text/javascript">
+$(function() {
 	${name} = new mxn.Mapstraction("${name}_div", "openlayers");
 	${name}.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
 	${name}.addControls({pan: false, zoom: false, map_type: false});
+});
 </script>
 </%def>

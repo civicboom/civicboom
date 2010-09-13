@@ -28,6 +28,13 @@ class TestMiscController(TestController):
     def test_privacy(self):
         response = self.app.get(url(controller='misc', action='privacy'))
 
+    def test_widget_preview(self):
+        response = self.app.get(url(controller='misc', action='widget_preview'))
+
+    def test_close_popup(self):
+        response = self.app.get(url(controller='misc', action='close_popup'))
+        assert "self.close()" in response
+
     def test_static(self):
         # test that static content is cachable
         response = self.app.get("/robots.txt")

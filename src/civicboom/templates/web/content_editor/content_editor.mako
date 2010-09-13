@@ -39,31 +39,14 @@
     ${parent_preview()}
 
     <div class="content_form">
-        <form action="" method="post" enctype="multipart/form-data" name="content">
-			<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
-
+        ${h.form(url('content', id=c.content.id), method='PUT', multipart=True, name="content")}
             ${base_content()}
             ${media()}
             ${content_type()}
             ${location()}
             ${license()}
-            
-            <div style="text-align: right;">
-                
-                % if c.content.id:
-                <input type="submit" name="submit_delete"  value="${_("Delete")}"       />
-                % endif
-                
-                % if c.content.__type__ == "draft":
-                <input type="submit" name="submit_preview" value="${_("Preview Draft")}"/>
-                <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   />
-                % else:
-                <a href="${h.url(controller='content', action='view', id=c.content.id)}">View Content</a>
-                % endif
-                
-            </div>
-        
-        </form>
+			${submit_buttons()}
+        ${h.end_form()}
     </div>
     
 </%def>
@@ -209,14 +192,22 @@
                         
                         ## Clients with    javascript can have live updates from "get_media_processing_staus"
                         <script type="text/javascript">
+							function updateMedia${media.id}() {
+                            	$.getJSON(
+									"${url(controller='content', action='get_media_processing_staus', id=media.hash)}",
+									processingStatus${media.id}
+								);
+							}
                             function processingStatus${media.id}(data) {
-                                YAHOO.log("Status got = "+data);
-                                if (data!="processing") {
+                                YAHOO.log("Status got = "+data.data);
+                                if(!data.data) {
                                     clearInterval(media_thumbnail_timer_${media.id});
                                     YAHOO.log("processing complete reload the image!!!");
+									var mt = $("#media_thumbnail_${media.id}");
+									mt.src = mt.src + "?" + (new Date().getTime());
                                 }
                             }
-                            var media_thumbnail_timer_${media.id} = setInterval('getHTML("${url(controller='content', action='get_media_processing_staus', id=media.hash)}", processingStatus${media.id})', 10000);
+                            var media_thumbnail_timer_${media.id} = setInterval('updateMedia${media.id}()', 10000);
                         </script>
                         <!-- End media still undergoing proceccesing -->
                     % endif
@@ -372,20 +363,44 @@
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
         <div class="hideable">
             ${instruction("What is licensing explanation")}
-            
+			<table>
             % for license in get_licenses():
+				<tr>
                 <%
                   license_selected = ''
                   if c.content.license and license.id == c.content.license_id:
                       license_selected = h.literal('checked="checked"')
                 %>
-                <input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}" ${license_selected} />
-                <label for="form_licence_${license.id}">
-                    <a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a>
-                </label>
+                <td><input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}" ${license_selected} /></td>
+				<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a></td>
+                <td><label for="form_licence_${license.id}">${license.description}</label></td>
+				</tr>
                 ##${popup(license.description)}
-            % endfor          
+            % endfor
+			</table>
         </div>
     </fieldset>
 </%def>
 
+
+##------------------------------------------------------------------------------
+## Submit buttons
+##------------------------------------------------------------------------------
+<%def name="submit_buttons()">
+<div style="text-align: right;">
+
+	% if c.content.id:
+	  ${h.form(url('content', id=c.content.id), method="DELETE")}
+		<input type="submit" name="submit_delete"  value="${_("Delete")}"       />
+	  ${h.end_form()}
+	% endif
+
+	% if c.content.__type__ == "draft":
+	<input type="submit" name="submit_preview" value="${_("Preview Draft")}"/>
+	<input type="submit" name="submit_draft"   value="${_("Save Draft")}"   />
+	% else:
+	<a href="${h.url('content', id=c.content.id)}">View Content</a>
+	% endif
+
+</div>
+</%def>

@@ -15,6 +15,7 @@ class TestSettingsController(TestController):
 
         response = self.app.post(
             url(controller='settings', action='save_general', id='unittest'),
+            extra_environ={'HTTP_X_URL_SCHEME': 'https'},
             params={
                 '_authentication_token': self.auth_token
             }
@@ -90,11 +91,13 @@ class TestSettingsController(TestController):
         # test that a setting without CSRF protection is rejected
         response = self.app.post(
             url(controller='settings', action='save_general'),
+            extra_environ={'HTTP_X_URL_SCHEME': 'https'},
             params={
                 'email': u'waffle@iamtesting.com',
             },
             status = 403
         )
+        assert "Hold it!" in response
         # FIXME: test with CSRF protection passed
         # FIXME: check for session['flash'] = "Settings changed: email"
         # FIXME: check that we're redirected back to the settings page

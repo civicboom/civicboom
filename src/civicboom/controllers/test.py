@@ -5,6 +5,7 @@ Locked down for use in development mode only
 """
 
 from civicboom.lib.base import *
+from time import sleep
 
 log = logging.getLogger(__name__)
 
@@ -111,3 +112,24 @@ class TestController(BaseController):
     def content_morph(self):
         from civicboom.lib.database.polymorphic_helpers import morph_content_to
         morph_content_to(2, "article")
+
+    def ssi(self):
+        return '[Start] <!--#include virtual="/test/include1"--> <!--#include virtual="/test/include2"--> [End]'
+
+    def psi(self):
+        return "[Start] "+self.include1()+" "+self.include2()+" [End]"
+
+    @cacheable(time=10)
+    def include1(self):
+        sleep(3)
+        return "hello"
+
+    @cacheable(time=10)
+    def include2(self):
+        sleep(3)
+        return "world"
+
+    #@cacheable(time=10)
+    def include3(self):
+        return "speed"
+

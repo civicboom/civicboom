@@ -1,7 +1,6 @@
 <%inherit file="/web/layout_3cols.mako"/>
 
 <%namespace name="loc"              file="/web/design09/includes/location.mako"     />
-<%namespace name="sl"               file="/web/design09/includes/secure_link.mako"  />
 <%namespace name="member_includes"  file="/web/design09/includes/member.mako"       />
 <%namespace name="content_includes" file="/web/design09/includes/content_list.mako" />
 
@@ -41,21 +40,28 @@
   
     ## Content Owner Actions
     % if c.content.editable_by(c.logged_in_user):
-        
-        <a class="button_small button_small_style_2" href="${h.url(controller='content',action='edit',id=c.content.id)}">
-          Edit
-        </a>
-
-        ${sl.secure_link(h.url(controller='content', action='delete', id=c.content.id), _('Delete')  , css_class="button_small button_small_style_2", title="Delete this content", confirm_text=_('Are your sure you want to delete this content?'))}      
+      <a class="button_small button_small_style_2" href="${h.url('edit_content', id=c.content.id)}">
+        Edit
+      </a>
+      ##<a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=c.content.id)}"
+      ##   onclick="confirm_before_follow_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
+      ##  Delete
+      ##</a>
+	  ${h.secure_link(
+		href=url('content', id=c.content.id), method="DELETE",
+		value=_("Delete"),
+		css_class="button_small button_small_style_2",
+		confirm_text=_("Are your sure you want to delete this content?")
+      )}
     % endif
 
     ## Assignment Accept and Withdraw
     % if c.content.__type__ == "assignment" and c.content.acceptable_by(c.logged_in_user):
         <% status = c.content.previously_accepted_by(c.logged_in_user) %>
         %if not status:
-            ${sl.secure_link(h.url(controller='content_actions',action='accept'  , id=c.content.id), _('Accept')  , css_class="button_small button_small_style_2")}
+            ${h.secure_link(h.url(controller='content_actions',action='accept'  , id=c.content.id), _('Accept')  , css_class="button_small button_small_style_2")}
         % elif status != "withdrawn":
-            ${sl.secure_link(h.url(controller='content_actions',action='withdraw', id=c.content.id), _('Withdraw'), css_class="button_small button_small_style_2")}
+            ${h.secure_link(h.url(controller='content_actions',action='withdraw', id=c.content.id), _('Withdraw'), css_class="button_small button_small_style_2")}
         % endif
     % endif
 
@@ -67,8 +73,8 @@
                 Email Resorces
             </a>
         % else:
-            ${sl.secure_link(h.url(controller='content_actions',action='approve'    , id=c.content.id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
-            ${sl.secure_link(h.url(controller='content_actions',action='disasociate', id=c.content.id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+            ${h.secure_link(h.url(controller='content_actions',action='approve'    , id=c.content.id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
+            ${h.secure_link(h.url(controller='content_actions',action='disasociate', id=c.content.id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
         % endif
         
     % endif
@@ -264,7 +270,7 @@ from civicboom.model.meta import Session
   % endfor
   
   ##----Temp Respond----
-  <a href="${h.url(controller="content",action="edit",form_parent_id=c.content.id)}">Respond to this</a>
+  <a href="${h.url('new_content', form_parent_id=c.content.id)}">Respond to this</a>
   
   ##----Comments----
   ${comments()}
@@ -346,13 +352,13 @@ from civicboom.model import CommentContent
 			% endif
 		</td>
 		<td class="comment">
-			<form action="/content/edit" method="POST">
+			${h.form(url('contents'))}
 				<input type="hidden" name="form_parent_id" value="${c.content.id}">
 				<input type="hidden" name="form_title" value="Re: ${c.content.title}">
 				<input type="hidden" name="form_type" value="comment">
 				<textarea name="form_content" style="width: 100%; height: 100px;"></textarea>
-				<br><input type="submit" name="submit_preview" value="Preview"><input type="submit" name="submit_response" value="Post">
-			</form>
+				<br><!--<input type="submit" name="submit_preview" value="Preview">--><input type="submit" name="submit_response" value="Post">
+			${h.end_form()}
   		</td>
   	</tr>
 	</table>

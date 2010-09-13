@@ -22,6 +22,8 @@ def make_map(config):
     map.connect('/', controller='misc', action='titlepage')
     map.resource('message', 'messages')
     map.resource('setting', 'settings')
+    map.resource('content', 'contents')
+
 
     # Map the /admin url to FA's AdminController
     # Map static files  

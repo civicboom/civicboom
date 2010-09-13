@@ -13,6 +13,7 @@ server {
 	root /opt/cb/share/website/civicboom/public/;
 	error_page 500 502 503 504 /errors/50x.html;
 	client_max_body_size 25m;
+	ssi on;
 
 	# ssl
 	ssl_certificate      /opt/cb/etc/ssl/civicboom.com.crt;
@@ -35,5 +36,5 @@ server {
 	if ($http_host !~ "(localhost|new-server)") {set $proxy_port 5080;}
 
 	# for all requests that start with / (ie, all requests), proxy to pylons
-	location / {proxy_pass http://127.0.0.1:$proxy_port;}
+	location / {proxy_pass http://127.0.0.1:$proxy_port$uri$is_args$args;}
 }

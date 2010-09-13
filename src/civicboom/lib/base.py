@@ -136,22 +136,35 @@ def authenticate_form(func, *args, **kwargs):
     support authenticated PUT and DELETE requests
     """
     request = get_pylons(args).request
+    response = get_pylons(args).response
 
     # XXX: Shish - the body is not parsed for PUT or DELETE, so parse it ourselves
-    # request.body ->  foo=bar&baz=quz
-    param_list = request.body.split("&") # ["foo=bar", "baz=qux"]
-    param_pair = [part.split("=", 2) for part in param_list] # [("foo", "bar"), ("baz", "qux")]
-    param_dict = dict(param_pair) # {"foo": "bar", "baz": "qux"}
+    # FIXME: breaks with multipart uploads
+    try:
+        # request.body = "foo=bar&baz=quz"
+        if request.body and request.method in ["PUT", "DELETE"]:
+            param_list = request.body.split("&") # ["foo=bar", "baz=qux"]
+            param_pair = [part.split("=", 2) for part in param_list] # [("foo", "bar"), ("baz", "qux")]
+            param_dict = dict(param_pair) # {"foo": "bar", "baz": "qux"}
+        else:
+            param_dict = {}
+    except ValueError, e:
+        log.error("Failed to parse body: "+request.body)
+        abort(500)
 
+    # check for auth token in POST or other
     if authenticated_form(request.POST):
         del request.POST[secure_form.token_key]
         return func(*args, **kwargs)
     elif authenticated_form(param_dict): # check params for PUT and DELETE cases
         return func(*args, **kwargs)
+
+    # no token = can't be sure the user really intended to post this, ask them
     else:
         log.warn('Cross-site request forgery detected, request denied: %r '
                  'REMOTE_ADDR: %s' % (request, request.remote_addr))
         #abort(403, detail=csrf_detected_message)
+        response.status_int = 403
 
         c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
         if 'QUERY_STRING' in request.environ:

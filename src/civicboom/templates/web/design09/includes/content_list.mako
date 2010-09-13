@@ -32,7 +32,7 @@
         <td class="content_thumbnail">
             ## Content Link
             ##---------------------------
-            <a href="${h.url(controller='content',action='view',id=content.id)}">
+            <a href="${h.url('content', id=content.id)}">
             
             ## Thumbnail Status Overlay
             ##---------------------------
@@ -57,7 +57,7 @@
         ## Title and Content preview + details
         ##---------------------------        
         <td>
-            <a href="${h.url(controller='content',action='view',id=content.id)}">
+            <a href="${h.url('content', id=content.id)}">
                 <p class="content_title">${content.title}</p>
                 <p class="content_details">
                     ${content.creation_date.strftime('%b %d, %Y %H:%M %Z')}
@@ -90,13 +90,15 @@
             % if content.status == "locked":
               <span class="icon_large icon_locked">Approved and locked</span>
             % else:
-              <a class="button_small button_small_style_2" href="${h.url(controller='content',action='edit',id=content.id)}">
-                Edit
+              <a class="button_small button_small_style_2" href="${h.url('edit_content', id=content.id)}">
+                ${_("Edit")}
               </a>
-              <a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=content.id)}"
-                 onclick="confirm_before_link(this,'${_("Are your sure you want to delete this content?")}'); return false;">
-                Delete
-              </a>
+			  ${h.secure_link(
+				href=url('content', id=content.id), method="DELETE",
+				value=_("Delete"),
+				css_class="button_small button_small_style_2",
+				confirm_text=_("Are your sure you want to delete this content?")
+              )}
             %endif
         </td>
         % endif
@@ -111,12 +113,12 @@
 <%def name="content_item_row_mini(content, location=False)">
     <tr>
         <td class="content_thumbnail">
-            <a href="${h.url(controller='content',action='view',id=content.id)}">
+            <a href="${h.url('content', id=content.id)}">
                 <img src="${content.thumbnail_url}" alt="${content.title}" />
             </a>
         </td>
         <td>
-            <a href="${h.url(controller='content',action='view',id=content.id)}">
+            <a href="${h.url('content', id=content.id)}">
                 <p class="content_title">${content.title}</p>
             </a>
         </td>
@@ -147,5 +149,5 @@
     </ul>
 </%def>
 <%def name="content_item_li(content)">
-<a href="${url(controller='content', action='view', id=content.id)}">${content.title}</a>
+<a href="${url('content', id=content.id)}">${content.title}</a>
 </%def>

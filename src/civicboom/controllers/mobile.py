@@ -1,41 +1,3 @@
-"""
-json protocol suggestion:
-
-    {
-        "status": "ok" / "error",                              (required)
-        "message": "string to show in app status bar / popup", (optional, should be there if status = error)
-        "data": {                                              (optional)
-            "foo": "bar", # function-specific data
-            "baz": "qux"
-        }
-    }
-
-then API users can have a call like
-
-    civicboom_json_request(name):
-        try:
-            req = json.parse(http_get("http://civicboom.com/%s.json" % name))
-        except Exception, e:
-            req = {"status": "error", "message": "error fetching data from server: "+str(e)}
-
-        if req["status"] == "error":
-            if req["message"]:
-                error_alert(req["message"])
-            return None
-        else:
-            if req["message"]:
-                status_alert(req["message"])
-            return req["data"]
-
-    messages = civicboom_json_request("messages/index")
-    if messages:
-        <do stuff with messages>
-    else:
-        <the error message has been displayed already, we don't
-        really need an else unless we think we can recover from
-        the error>
-"""
-
 from civicboom.lib.base import *
 
 from civicboom.model              import Media, ArticleContent, SyndicatedContent
@@ -63,7 +25,7 @@ user_log = logging.getLogger("user")
 def _logged_in_mobile(func, *args, **kargs):
     if not c.logged_in_user:
         return 'mobile:not_authenticated'
-        # return json.dumps({"status": "error", "message": "not authenticated"})
+        # return action_error("not authenticated")
     return func(*args, **kargs)
 
 
@@ -74,7 +36,7 @@ class MobileController(BaseController):
     @authorize(is_valid_user)
     def signin(self):
         return "mobile:authentication_ok"
-        # return json.dumps({"status": "ok", "message": "logged in ok", "data": {"auth_token": authentication_token()}})
+        # return action_ok("logged in ok", {"auth_token": authentication_token()})
 
 
     #-----------------------------------------------------------------------------
@@ -89,7 +51,7 @@ class MobileController(BaseController):
     #-----------------------------------------------------------------------------  
     def latest_version(self):
         return "1.13"
-        # return json.dumps({"status": "ok", "data": {"version": "1.13"}})
+        # return action_ok(data={"version": "1.13"})
 
 
     #-----------------------------------------------------------------------------
@@ -107,7 +69,7 @@ class MobileController(BaseController):
             "assigned_by_image": assignment.content.creator.avatar_url,
             "expiry_date":       assignment.content.due_date,
         } for assignment in c.logged_in_user.assignments_accepted])
-        # return json.dumps({"status": "ok", "data": ...})
+        # return action_ok(data=...)
 
 
     #-----------------------------------------------------------------------------
@@ -126,7 +88,7 @@ class MobileController(BaseController):
             "response_type": "",
             "more":          "", # FIXME: protocol -- no more = blank string, more = array of one assignment; should be no more = None, more = one assignment, see Feature #29
         } for message in c.logged_in_user.messages_notification[:10]]) # FIXME: do we want notifications AND private messages?
-        # return json.dumps({"status": "ok", "data": ...})
+        # return action_ok(data=...)
 
 
     #-----------------------------------------------------------------------------
@@ -142,7 +104,7 @@ class MobileController(BaseController):
             if config['debug']:
                 return "mobile upload test" # FIXME: render(prefix+'mobile_upload_test.mako')
             return 'mobile:form_data_required'
-            # return json.dumps({"status": "error", "message": "form data required"})
+            # return action_error("form data required")
 
         unique_id                   = hashlib.md5(request.POST['uniqueid']).hexdigest()
         mobile_upload_unique_id_key = c.logged_in_user.username + "_" + unique_id
@@ -150,7 +112,7 @@ class MobileController(BaseController):
         # check for duplicate upload, see feature #29
         if app_globals.memcache.get("mobile-upload-complete:"+unique_id):
             return "mobile:upload_ok"
-            # return json.dumps({"status": "ok", "message": "article already uploaded"})
+            # return action_error("article already uploaded")
 
 
         if "syndicate" in request.POST:
@@ -210,7 +172,7 @@ class MobileController(BaseController):
         app_globals.memcache.set("mobile-upload-complete:"+unique_id, True)
 
         return "mobile:upload_ok"
-        # return json.dumps({"status": "ok", "message": "upload ok"})
+        # return action_ok("upload ok")
 
     #-----------------------------------------------------------------------------
     # Upload File Part
@@ -239,7 +201,7 @@ class MobileController(BaseController):
             if config['debug']:
                 return "mobile upload part test" # FIXME: render(prefix+'mobile_upload_part_test.mako')
             return 'mobile:form_data_required'
-            # return json.dumps({"status": "error", "message": "form data required"})
+            # return action_error("form data required")
 
         part_num    = int(request.POST['part'] )
         parts_count = int(request.POST['parts'])
@@ -253,7 +215,7 @@ class MobileController(BaseController):
         for n in range(0, parts_count):
             if not os.path.exists(file_base+"_"+str(n)): # FIXME: check file content? (compare hash / filesize with client?), see feature #29
                 return 'mobile:next_part_%d' % n
-                # return json.dumps({"status": "ok", "message": "part %d/%d uploaded" % (part_num, parts_count), "data": {"next": n}})
+                # return action_ok("part %d/%d uploaded" % (part_num, parts_count), data={"next": n})
 
         # no parts needed; join the parts into one
         else:
@@ -264,7 +226,7 @@ class MobileController(BaseController):
                 os.unlink(part_file)
             fp.close()
             return 'mobile:upload_ok'
-            # return json.dumps({"status": "ok", "message": "upload complete", "data": {"next": None}})
+            # return action_ok("upload complete", data={"next": None})
 
 
     #-----------------------------------------------------------------------------
@@ -278,11 +240,11 @@ class MobileController(BaseController):
             if config['debug']:
                 return "mobile error test" # FIXME: render(prefix+'mobile_error_test.mako')
             return 'mobile:form_data_required'
-            # return json.dumps({"status": "error", "message": "form data required"})
+            # return action_error("form data required")
         if 'error_message' in request.POST:
             send_email(config['email_to'], subject='Mobile Error', content_text=request.POST['error_message'])
             #AllanC - Temp addition to get errors to the mobile developer
             send_email("nert@poik.net"   , subject='Mobile Error', content_text=request.POST['error_message'])
             return "mobile:logged_ok"
-            # return json.dumps({"status": "ok", "message": "logged ok"})
+            # return action_ok("logged ok")
 
