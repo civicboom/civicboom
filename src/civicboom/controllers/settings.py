@@ -9,9 +9,9 @@ import hashlib
 import copy
 
 import formencode
-from civicboom.lib.form_validators.validator_factory import build_schema
-from civicboom.lib.form_validators.registration      import UniqueEmailValidator
-from formencode import validators
+import civicboom.lib.form_validators
+import civicboom.lib.form_validators.registration
+from   civicboom.lib.form_validators.validator_factory import build_schema
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -51,7 +51,6 @@ settings_units = dict(
 
 #Settings validators (for dynamic scema construction)
 #  these are kept separte from the group definitions because the group defenitions dict is sent to clients, we do not want to contaminate that dict
-import civicboom.lib.form_validators
 settings_validators = dict(
     name        = formencode.validators.UnicodeString(),
     description = formencode.validators.UnicodeString(),
@@ -62,6 +61,7 @@ settings_validators = dict(
     #password
     
     twitter_username        = formencode.validators.UnicodeString(),
+    twitter_auth_key        = formencode.validators.UnicodeString(),
     broadcast_instant_news  = formencode.validators.StringBool(),
     broadcast_content_posts = formencode.validators.StringBool(),
     
@@ -118,13 +118,13 @@ class SettingsController(BaseController):
         
         # Setup custom schema for this update
         validators = {}
-        for validate_fieldname in [setting['name'] for setting in settings_list() if setting['name'] in settings_validators and setting['value'] != request.params[setting['name']]]:
+        for validate_fieldname in [setting['name'] for setting in settings_list() if setting['name'] in settings_validators and setting['value'] != request.params.get(setting['name']) ]:
             print "adding validator for: %s" % validate_fieldname
             validators[validate_fieldname] = settings_validators[validate_fieldname]
         
         # Form validation
         try: 
-            schema = build_schema(**validators)             # Build a dynamic validation scema based on these required fields and validate the form
+            schema = build_schema(**validators) # Build a dynamic validation scema based on these required fields and validate the form
             form   = schema.to_python(dict(request.params)) # Validate
         except formencode.Invalid, error:
             # Form has failed validation
