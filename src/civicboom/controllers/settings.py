@@ -41,6 +41,11 @@ settings_units = dict(
     ],
 )
 
+settings_validators = dict(
+    name   = formencode.validators.UnicodeString(),
+    email  = formencode.validators.Email(),
+    avatar = formencode.validators.URL(),
+)
     
     
 
