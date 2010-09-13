@@ -23,6 +23,8 @@
                             if field['value']: checked="checked='%s'" % field['value']
                         %>
                         <input name="${field['name']}" value="True" type='checkbox' ${checked}>
+                    % elif field['type'] == 'password':
+                        <input name="${field['name']}" type="password" />
                     % endif
                 ##% for key in field.keys():
                 ##    <p>${key}</p>

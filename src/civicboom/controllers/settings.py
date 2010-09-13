@@ -10,6 +10,7 @@ import copy
 
 import formencode
 import civicboom.lib.form_validators
+import civicboom.lib.form_validators.base
 import civicboom.lib.form_validators.registration
 from   civicboom.lib.form_validators.validator_factory import build_schema
 
@@ -30,7 +31,9 @@ settings_units = dict(
         dict(name='email'      , description=_('Email Address'), value=''),
     ],
     password=[
-        #dict(name='password'   , description=_('Password'), value=''),
+        dict(name='password_new'        , description=_('New password')        , value='', type='password'),
+        dict(name='password_new_confirm', description=_('New password again')  , value='', type='password'),
+        dict(name='password_current'    , description=_('Current password')    , value='', type='password'),
     ],
     aggregation=[
         dict(name='twitter_username'       , value='', description=_('Twitter username')    ),
@@ -58,7 +61,9 @@ settings_validators = dict(
     
     email       = civicboom.lib.form_validators.registration.UniqueEmailValidator(),
     
-    #password
+    password_new         = civicboom.lib.form_validators.base.PasswordValidator(),
+    password_new_confirm = formencode.validators.UnicodeString(),
+    password_current     = civicboom.lib.form_validators.base.CurrentUserPasswordValidator(),
     
     twitter_username        = formencode.validators.UnicodeString(),
     twitter_auth_key        = formencode.validators.UnicodeString(),
@@ -69,7 +74,7 @@ settings_validators = dict(
     
     #location =
 )
-    
+
     
 
 class SettingsController(BaseController):
@@ -119,12 +124,14 @@ class SettingsController(BaseController):
         # Setup custom schema for this update
         validators = {}
         for validate_fieldname in [setting['name'] for setting in settings_list() if setting['name'] in settings_validators and setting['value'] != request.params.get(setting['name']) ]:
-            print "adding validator for: %s" % validate_fieldname
+            print "adding validator: %s" % validate_fieldname
             validators[validate_fieldname] = settings_validators[validate_fieldname]
         
         # Form validation
-        try: 
+        try:
             schema = build_schema(**validators) # Build a dynamic validation scema based on these required fields and validate the form
+            if 'password_new' in validators:
+                schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
             form   = schema.to_python(dict(request.params)) # Validate
         except formencode.Invalid, error:
             # Form has failed validation
@@ -152,7 +159,7 @@ class SettingsController(BaseController):
             
             # Set error status
             edit_action['status']  = 'error'
-            edit_action['message'] = error.msg #_('failed validation') #
+            edit_action['message'] = error.msg #_('failed validation') # This is frustrating, if this a a decriptive error, then error.msg is fine, but normally this returns the whole dict with values and stuff, we need to tell users why the validation has failed
             #response.status = 400 # 400 = Bad request # is this the correct HTTP code for this event? # This BREAKS html layout bigtime!
             return edit_action
         
@@ -161,6 +168,7 @@ class SettingsController(BaseController):
             setting_fieldname = setting['name']
             if setting_fieldname in form:                                    # For each setting
                 #if setting['value'] != form[setting_fieldname]:              #   If value has changed # Unneeded as the form vaidators are built of feilds that have changed
+                    print "saving setting %s" % setting_fieldname
                     user.config[setting_fieldname] = form[setting_fieldname] #     change the actual user object
                     setting['value'] = form[setting_fieldname]               #     update the return dict
         Session.commit()                                                     # save changes to database
@@ -197,7 +205,7 @@ class SettingsController(BaseController):
         # Populate settings dictionary for this user
         for setting_group in settings.keys():
             for setting in settings[setting_group]:
-                setting['value'] = user.config[setting['name']]
+                setting['value'] = user.config.get(setting['name'])
         
         return dict(data=settings, template="settings/settings")
 
