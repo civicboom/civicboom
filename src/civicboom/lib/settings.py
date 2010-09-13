@@ -77,4 +77,3 @@ class MemberSettingsManager(UserDict.DictMixin):
         q = q.filter(MemberSetting.member_id==self.member.id)
         r = q.all()
         return [row.name for row in r]
-

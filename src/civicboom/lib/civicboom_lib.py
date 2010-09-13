@@ -103,6 +103,22 @@ def associate_janrain_account(user, type, token):
     if not config['development_mode']:
         janrain('map', identifier=login.token, primaryKey=login.member_id) # Let janrain know this users primary key id, this is needed for agrigation posts
 
+#-------------------------------------------------------------------------------
+# Password Setter
+#-------------------------------------------------------------------------------
+# don't know if this is right place, but related account stuff was the closest I could think of
+
+def set_password(user, token):
+    # search for existing record and remove it
+    try:    Session.delete(Session.query(UserLogin).filter(user=user).filter(token=token).one())
+    #try: Session.execute(UserLogin.__table__.delete().where(and_(UserLogin.__table__.c.member_id == user.id, UserLogin.__table__.c.token == token)))
+    except: pass
+    # Set new password
+    u_login = UserLogin()
+    u_login.user   = user
+    u_login.type   = 'password'
+    u_login.token  = token
+    Session.add(u_login)
 
 
 #-------------------------------------------------------------------------------

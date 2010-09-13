@@ -14,6 +14,8 @@ import civicboom.lib.form_validators.base
 import civicboom.lib.form_validators.registration
 from   civicboom.lib.form_validators.validator_factory import build_schema
 
+from civicboom.lib.civicboom_lib import set_password
+
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
@@ -62,7 +64,7 @@ settings_validators = dict(
     email       = civicboom.lib.form_validators.registration.UniqueEmailValidator(),
     
     password_new         = civicboom.lib.form_validators.base.PasswordValidator(),
-    password_new_confirm = formencode.validators.UnicodeString(),
+    password_new_confirm = civicboom.lib.form_validators.base.PasswordValidator(),
     password_current     = civicboom.lib.form_validators.base.CurrentUserPasswordValidator(),
     
     twitter_username        = formencode.validators.UnicodeString(),
@@ -164,6 +166,16 @@ class SettingsController(BaseController):
             return edit_action
         
         # Form has passed validation - continue to save/commit changes
+        
+        # Save special properties that need special processing
+        if 'password_new' in form:
+            # We could put this in settings.py manager, have a dictionarys with special cases and functions to process/save them, therefor the code is transparent in the background. an idea?
+            set_password(user,form['password_new'])
+            del form['password_confirm'] # We dont want these saved
+            del form['password_current']
+            del form['password_new'    ]
+        
+        # Save all remaining properties
         for setting in settings_list():
             setting_fieldname = setting['name']
             if setting_fieldname in form:                                    # For each setting
