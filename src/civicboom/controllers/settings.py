@@ -1,3 +1,9 @@
+"""
+REST Settings controler
+
+Settings are broken into named groups
+These groups of settings can be view/editied using standard REST calls
+"""
 from civicboom.lib.base import *
 import hashlib
 import copy
@@ -12,6 +18,7 @@ user_log = logging.getLogger("user")
 
 
 
+#Define settings groups, default values and display text
 settings_units = dict(
     general=[
         dict(name='name'       , description=_('Display name' ), value=''),
@@ -26,10 +33,10 @@ settings_units = dict(
         #dict(name='password'   , description=_('Password'), value=''),
     ],
     aggregation=[
-        dict(name='twitter_username', description=_('Twitter username'), value=''),
-        dict(name='twitter_auth_key', description=_('Twitter authkey' ), value=''),
-        dict(name='broadcast_instant_news' , description=_('Twitter instant news' ), value=''),
-        dict(name='broadcast_content_posts', description=_('Twitter content' ), value=''),
+        dict(name='twitter_username'       , value='', description=_('Twitter username')    ),
+        dict(name='twitter_auth_key'       , value='', description=_('Twitter authkey' )    ),
+        dict(name='broadcast_instant_news' , value='', description=_('Twitter instant news'), type='boolean'),
+        dict(name='broadcast_content_posts', value='', description=_('Twitter content' )    , type='boolean'),
     ],
     avatar=[
         dict(name='avatar'       , description=_('Avatar' ), value='', info='leave blank to use a gravatar'),
@@ -41,10 +48,26 @@ settings_units = dict(
     ],
 )
 
+
+#Settings validators (for dynamic scema construction)
+#  these are kept separte from the group definitions because the group defenitions dict is sent to clients, we do not want to contaminate that dict
+import civicboom.lib.form_validators
 settings_validators = dict(
-    name   = formencode.validators.UnicodeString(),
-    email  = formencode.validators.Email(),
+    name        = formencode.validators.UnicodeString(),
+    description = formencode.validators.UnicodeString(),
+    home_page   = formencode.validators.URL(),
+    
+    email       = civicboom.lib.form_validators.registration.UniqueEmailValidator(),
+    
+    #password
+    
+    twitter_username        = formencode.validators.UnicodeString(),
+    broadcast_instant_news  = formencode.validators.StringBool(),
+    broadcast_content_posts = formencode.validators.StringBool(),
+    
     avatar = formencode.validators.URL(),
+    
+    #location =
 )
     
     
@@ -75,9 +98,17 @@ class SettingsController(BaseController):
     @authorize(is_valid_user)
     @auto_format_output()
     def update(self, id):
-        """PUT /id: Update an existing item."""
+        """
+        PUT /id: Update an existing item.
+        
+        - Creates a custom validator schema for the inputed data that has changed from the db
+        - Validates the request overlaying errors if generated
+        - Saves update
+        - Returns written object
+        """
         edit_action = self.edit(id, format='python')
-        settings = edit_action['data']
+        settings    = edit_action['data']
+        user        = c.logged_in_user
         
         def settings_list():
             """a function to allow iterating over all settings as if they were a single list"""
@@ -85,37 +116,43 @@ class SettingsController(BaseController):
                 for setting in settings[group]:
                     yield setting        
         
-        settings_field_list = ['username','email','password','dob']
+        # Setup custom schema for this update
+        validators = {}
+        for validate_fieldname in [setting['name'] for setting in settings_list() if setting['name'] in settings_validators and setting['value'] != request.params[setting['name']]]:
+            print "adding validator for: %s" % validate_fieldname
+            validators[validate_fieldname] = settings_validators[validate_fieldname]
         
-        try: # Form validation
-            # Build a dynamic validation scema based on these required fields and validate the form
-            schema = build_schema(*settings_field_list)
-            form   = schema.to_python(dict(request.params))
+        # Form validation
+        try: 
+            schema = build_schema(**validators)             # Build a dynamic validation scema based on these required fields and validate the form
+            form   = schema.to_python(dict(request.params)) # Validate
         except formencode.Invalid, error:
             # Form has failed validation
+            form        = error.value
+            form_errors = error.error_dict or {}
             
             # Set error property for each failed property
             for setting in settings_list():
                 setting_fieldname = setting['name']                            # For each setting
-                if setting_fieldname in error.value:                           #   If in form 
-                    setting['value'] = error.value[setting_fieldname]          #     populate value with form data
-                if setting_fieldname in error.error_dict:                      #   If error
-                    e = error.error_dict[setting_fieldname]                    #     
-                    del error.error_dict[setting_fieldname]                    #     delete error object (so we can see if any are outstanding/missing at the end)
+                if setting_fieldname in form:                                  #   If in form 
+                    setting['value'] = form[setting_fieldname]                 #     populate value with form data
+                if setting_fieldname in form_errors:                           #   If error
+                    e = form_errors[setting_fieldname]                         #     
+                    del form_errors[setting_fieldname]                         #     delete error object (so we can see if any are outstanding/missing at the end)
                     if hasattr(e,'msg'): e = e.msg                             #     append error
                     setting['error'] = e                                       #
-                    
+            
             # Report any missing fields (anything that is left in error.error_dict)
-            if len(error.error_dict) > 0:
+            if len(form_errors) > 0:
                 settings['missing'] = []
-                for missing_fieldname in error.error_dict.keys():
-                    e = error.error_dict[missing_fieldname]
+                for missing_fieldname in form_errors.keys():
+                    e = form_errors[missing_fieldname]
                     if hasattr(e,'msg') : e = e.msg
                     settings['missing'].append({'name':missing_fieldname, 'description':missing_fieldname, 'error':e, 'value':''})
             
             # Set error status
             edit_action['status']  = 'error'
-            edit_action['message'] = _('failed validation') #error.msg
+            edit_action['message'] = error.msg #_('failed validation') #
             #response.status = 400 # 400 = Bad request # is this the correct HTTP code for this event? # This BREAKS html layout bigtime!
             return edit_action
         
@@ -123,7 +160,7 @@ class SettingsController(BaseController):
         for setting in settings_list():
             setting_fieldname = setting['name']
             if setting_fieldname in form:                                    # For each setting
-                if setting['value'] != form[setting_fieldname]:              #   If value has changed
+                #if setting['value'] != form[setting_fieldname]:              #   If value has changed # Unneeded as the form vaidators are built of feilds that have changed
                     user.config[setting_fieldname] = form[setting_fieldname] #     change the actual user object
                     setting['value'] = form[setting_fieldname]               #     update the return dict
         Session.commit()                                                     # save changes to database

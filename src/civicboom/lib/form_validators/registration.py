@@ -45,6 +45,9 @@ class UniqueUsernameValidator(validators.FancyValidator):
         return value
 
 class UniqueEmailValidator(validators.Email):
+    def __init__(self, resolve_domain=True, *args, **kwargs):
+        kwargs.update(resolve_domain=True)
+        validators.Email.__init__(self, *args, **kwargs)
     def _to_python(self, value, state):
         value = unicode(value)
         if Session.query(User).filter(User.email==value).count() > 0:
@@ -134,4 +137,4 @@ class ReCaptchaValidator(validators.FancyValidator):
     
 class RegisterSchemaEmailUsername(DefaultSchema):
   username  = UniqueUsernameValidator(not_empty=True)
-  email     = UniqueEmailValidator   (not_empty=True, resolve_domain=True)
+  email     = UniqueEmailValidator   (not_empty=True)

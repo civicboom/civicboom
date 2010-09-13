@@ -7,8 +7,9 @@ from formencode.validators import FieldsMatch
 #-------------------------------------------------------------------------------
 
 class DynamicSchema(DefaultSchema):
-    filter_extra_fields=False
-    pass
+    filter_extra_fields = True
+    allow_extra_fields  = True
+
 
 def build_schema(*args, **kargs):
     """
