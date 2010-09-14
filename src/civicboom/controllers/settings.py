@@ -139,7 +139,7 @@ class SettingsController(BaseController):
     #---------------------------------------------------------------------------
     @authorize(is_valid_user)
     @auto_format_output()
-    def edit(self, id, format='html'):
+    def edit(self, id, format=None):
         """GET /id;edit: Form to edit an existing item."""
         
         # Generate base settings dictonary for ALL settings or SINGLE ID provided
