@@ -101,6 +101,7 @@ class MessagesController(BaseController):
 
 
     @authorize(is_valid_user)
+    @auto_format_output()
     def show(self, id, format='html'):
         """GET /id: Show a specific item."""
         # url('message', id=ID)

@@ -253,7 +253,7 @@ def auto_format_output():
                 # set the HTTP status code
                 if 'code' in result:
                     response.status = int(result['code'])
-                    del response['code']
+                    del result['code']
                 
                 # Render to format
                 if format in format_processors:
