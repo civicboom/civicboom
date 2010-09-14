@@ -79,7 +79,17 @@ class TestContentsController(TestController):
             }
         )
 
+    def test_update_non_exist(self):
+        response = self.app.put(
+            url('content', id=9999),
+            params={
+                '_authentication_token': self.auth_token
+            },
+            status=404
+        )
+
     ## delete ################################################################
+
     def test_delete(self):
         response = self.app.delete(
             url('content', id=1),
@@ -96,3 +106,13 @@ class TestContentsController(TestController):
                 '_authentication_token': self.auth_token
             }
         )
+
+    def test_delete_non_exist(self):
+        response = self.app.delete(
+            url('content', id=9999),
+            params={
+                '_authentication_token': self.auth_token
+            },
+            status=404
+        )
+

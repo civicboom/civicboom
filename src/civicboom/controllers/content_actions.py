@@ -61,11 +61,13 @@ class ContentActionsController(BaseController):
     def boom(self, id, format="html"):
         # FIXME: add entry to booms table, and look that up rather than the session variable
         boomkey = 'boom%s' % id
-        if boomkey in session: return action_error(_('already boomed this'))
+        if boomkey in session:
+            return action_error(_('already boomed this'))
         session[boomkey] = True
 
         content = get_content(id)
-        if content.creator == c.logged_in_user: return action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
+        if content.creator == c.logged_in_user:
+            return action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
         content.boom_to_all_followers(c.logged_in_user)
 
         user_log.debug("Boomed Content #%d" % int(id))

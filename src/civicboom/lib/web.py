@@ -129,18 +129,20 @@ def action_redirector():
 # Actions
 #-------------------------------------------------------------------------------
 
-def action_ok(msg=None, data=None):
+def action_ok(msg=None, data=None, code=200):
     return {
         "status" : "ok",
         "message": msg,
         "data"   : data,
+        "code"   : code,
     }
 
-def action_error(msg=None, data=None):
+def action_error(msg=None, data=None, code=400):
     return {
         "status" : "error",
         "message": msg,
         "data"   : data,
+        "code"   : code,
     }
 
 def action_msg(dict):
@@ -247,6 +249,11 @@ def auto_format_output():
                 # Set default STATUS and MSG (if nessisary)
                 if 'status'  not in result: result['status']  = 'ok'
                 if 'message' not in result: result['message'] = ''
+
+                # set the HTTP status code
+                if 'code' in result:
+                    response.status = int(result['code'])
+                    del response['code']
                 
                 # Render to format
                 if format in format_processors:

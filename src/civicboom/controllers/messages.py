@@ -39,7 +39,7 @@ class MessagesController(BaseController):
             target = get_user(request.POST["target"])
             if not target:
                 # FIXME: form validator to refresh with the same values?
-                return action_error(_("Can't find user '%s'") % request.POST["target"])
+                return action_error(_("Can't find user '%s'") % request.POST["target"], code=404)
             m = Message()
             m.source_id = c.logged_in_user.id # FIXME: or from any group they are admin of?
             m.target_id = target.id
@@ -97,7 +97,7 @@ class MessagesController(BaseController):
             return action_ok(_("Message deleted"))
         else:
             user_log.warning("User tried to delete somebody else's message") # FIXME: details
-            return action_error(_("You are not the target of this message"))
+            return action_error(_("You are not the target of this message"), code=403)
 
 
     @authorize(is_valid_user)
@@ -109,7 +109,7 @@ class MessagesController(BaseController):
         if msg.target == c.viewing_user: # FIXME messages to groups?
             c.msg = msg
         else:
-            abort(403, "You are not the target of this message")
+            return action_error(_("You are not the target of this message"), code=403)
 
         if format == "json":
             return action_ok(
