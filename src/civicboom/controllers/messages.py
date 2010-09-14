@@ -14,6 +14,7 @@ class MessagesController(BaseController):
 
 
     @authorize(is_valid_user)
+    @auto_format_output()
     def index(self, format='html'):
         """GET /: All items in the collection."""
         # url('messages')

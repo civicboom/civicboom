@@ -69,6 +69,7 @@ class ContentsController(BaseController):
 
     @authorize(is_valid_user)
     @authenticate_form
+    @auto_format_output()
     def update(self, id):
         """PUT /contents/id: Update an existing item"""
         # Forms posted to this method should contain a hidden field:

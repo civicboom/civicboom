@@ -13,6 +13,7 @@ class SearchController(BaseController):
     def index(self):
         return render(tmpl_prefix+"/search/index.mako")
 
+    @auto_format_output()
     def content(self, format="html"):
         results = Session.query(Content)
 
@@ -58,6 +59,7 @@ class SearchController(BaseController):
             return render(tmpl_prefix+"/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
 
 
+    @auto_format_output()
     def location(self, format="html"):
         if "term" in request.GET:
             q = request.GET["term"]
@@ -81,6 +83,7 @@ class SearchController(BaseController):
             return action_ok(data=json_rows)
 
 
+    @auto_format_output()
     def member(self, format="html"):
         if "term" in request.GET:
             s = request.GET["term"]
