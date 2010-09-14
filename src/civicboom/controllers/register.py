@@ -9,7 +9,7 @@ from civicboom.model.member            import User, UserLogin
 from civicboom.lib.database.actions    import follow, accept_assignment
 
 # Communication & Messages
-from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email, associate_janrain_account
+from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email, associate_janrain_account, set_password
 
 
 # Form Validators
@@ -89,11 +89,7 @@ class RegisterController(BaseController):
         if 'dob'      in form: c.logged_in_user.config['dob']    = form['dob']
         if 'email'    in form: c.logged_in_user.email_unverifyed = form['email']
         if 'password' in form:
-            u_login = UserLogin()
-            u_login.user   = c.logged_in_user
-            u_login.type   = 'password'
-            u_login.token  = form['password']
-            Session.add(u_login)
+            set_password(c.logged_in_user, form['password'])
         c.logged_in_user.status = "active"
         
         Session.add(c.logged_in_user) #Already in session?

@@ -9,9 +9,9 @@ from formencode import validators, compound
 from pylons.i18n.translation import _
 
 
+from pylons import tmpl_context as c #for current user password validator
 
-
-from civicboom.lib.authentication import encode_plain_text_password
+from civicboom.lib.authentication import encode_plain_text_password, get_user_and_check_password
 
 # Misc Imports
 import datetime
@@ -23,6 +23,19 @@ class DefaultSchema(formencode.Schema):
     allow_extra_fields  = True
     filter_extra_fields = True
 
+
+
+class CurrentUserPasswordValidator(validators.FancyValidator):
+    not_empty    = True
+    messages = {
+        'empty'     : _('You must enter your current password'),
+        'invalid'   : _('Invalid password'),
+    }
+    def _to_python(self, value, state):
+        if get_user_and_check_password(c.logged_in_user.username, value):
+            return value
+        raise formencode.Invalid(self.message("invalid", state), value, state)
+        
 
 
 class PasswordValidator(validators.FancyValidator):

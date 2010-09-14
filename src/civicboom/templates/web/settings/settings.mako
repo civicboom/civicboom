@@ -14,7 +14,18 @@
         <fieldset><legend>${group_name.capitalize()}</legend>
             % for field in c.data[group_name]:
                 <p>
-                    ${field['description']} :<input name="${field['name']}" value="${field['value']}">
+                    ${field['description']} :
+                    % if 'type' not in field:
+                        <input name="${field['name']}" value="${field['value']}">
+                    % elif field['type'] == 'boolean':
+                        <%
+                            checked = None
+                            if field['value']: checked="checked='%s'" % field['value']
+                        %>
+                        <input name="${field['name']}" value="True" type='checkbox' ${checked}>
+                    % elif field['type'] == 'password':
+                        <input name="${field['name']}" type="password" />
+                    % endif
                 ##% for key in field.keys():
                 ##    <p>${key}</p>
                 ##% endfor
