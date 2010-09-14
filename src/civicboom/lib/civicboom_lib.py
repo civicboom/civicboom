@@ -108,17 +108,30 @@ def associate_janrain_account(user, type, token):
 #-------------------------------------------------------------------------------
 # don't know if this is right place, but related account stuff was the closest I could think of
 
-def set_password(user, token):
+def set_password(user, new_token):
+    """
+    Set password
+    WARNING! We assume the user has already been authenticated
+    - remove old password (if found)
+    - create new password record
+    """
     # search for existing record and remove it
-    try:    Session.delete(Session.query(UserLogin).filter(user=user).filter(token=token).one())
+    #
+    try:
+        print "searching for password for %s" % user.username
+        existing_login = Session.query(UserLogin).filter(UserLogin.user==user, UserLogin.type=='password').one()
+        if existing_login:
+            #if existing_login.token == old_token: raise Exception('old password token does not match - aborting password change')
+            Session.delete(existing_login)
     #try: Session.execute(UserLogin.__table__.delete().where(and_(UserLogin.__table__.c.member_id == user.id, UserLogin.__table__.c.token == token)))
     except: pass
     # Set new password
     u_login = UserLogin()
     u_login.user   = user
     u_login.type   = 'password'
-    u_login.token  = token
+    u_login.token  = new_token
     Session.add(u_login)
+
 
 
 #-------------------------------------------------------------------------------

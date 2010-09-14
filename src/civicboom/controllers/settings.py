@@ -3,7 +3,12 @@ REST Settings controler
 
 Settings are broken into named groups
 These groups of settings can be view/editied using standard REST calls
+
+The principle is that each settings has a validator associated with it
+Only the form fields that are sent are validated and saved
+(this is an issue for realted fields such as password, that creates a bit of a mess, see code below)
 """
+
 from civicboom.lib.base import *
 import hashlib
 import copy
@@ -20,8 +25,11 @@ log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 
+#---------------------------------------------------------------------------
+# Setting Units
+#---------------------------------------------------------------------------
+# Define settings groups, default values and display text
 
-#Define settings groups, default values and display text
 settings_units = dict(
     general=[
         dict(name='name'       , description=_('Display name' ), value=''),
@@ -54,8 +62,11 @@ settings_units = dict(
 )
 
 
-#Settings validators (for dynamic scema construction)
+#---------------------------------------------------------------------------
+# Setting Validators (for dynamic scema construction)
+#---------------------------------------------------------------------------
 #  these are kept separte from the group definitions because the group defenitions dict is sent to clients, we do not want to contaminate that dict
+
 settings_validators = dict(
     name        = formencode.validators.UnicodeString(),
     description = formencode.validators.UnicodeString(),
@@ -78,6 +89,9 @@ settings_validators = dict(
 )
 
     
+#---------------------------------------------------------------------------
+# REST Controller
+#---------------------------------------------------------------------------
 
 class SettingsController(BaseController):
     """
@@ -87,6 +101,10 @@ class SettingsController(BaseController):
     
     needs in config/routing.py -> map.resource('setting', 'settings')
     """
+    
+    #---------------------------------------------------------------------------
+    # REST Actions - simple passthrough actions
+    #---------------------------------------------------------------------------
     
     def index(self):
         """GET /: All items in the collection."""
@@ -101,6 +119,48 @@ class SettingsController(BaseController):
         """GET /new: Form to create a new item."""
         response.status = 201 # 201 = Success Created
         return action_error(msg='operation not supported')
+    
+    def delete(self, id):
+        """
+        DELETE /id: Delete an existing item.
+        """
+        # h.form(h.url_for('message', id=ID), method='delete')
+        # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
+        response.status = 204 # 204 = Success No Content
+        return action_error(msg='implement')
+
+    def show(self, id):
+        """GET /id: Show a specific item."""
+        return self.edit(id)
+
+
+    #---------------------------------------------------------------------------
+    # REST Action - EDIT/SHOW
+    #---------------------------------------------------------------------------
+    @authorize(is_valid_user)
+    @auto_format_output()
+    def edit(self, id, format='html'):
+        """GET /id;edit: Form to edit an existing item."""
+        
+        # Generate base settings dictonary for ALL settings or SINGLE ID provided
+        if id=="index" or id=="None": id=None
+        if not id: settings =     copy.deepcopy(settings_units)
+        else     : settings = {id:copy.deepcopy(settings_units[id])}
+        
+        user = c.logged_in_user
+        c.viewing_user = c.logged_in_user # HACK - please remove when templates are refactored
+        
+        # Populate settings dictionary for this user
+        for setting_group in settings.keys():
+            for setting in settings[setting_group]:
+                setting['value'] = user.config.get(setting['name'])
+        
+        return dict(data=settings, template="settings/settings")
+
+
+    #---------------------------------------------------------------------------
+    # REST Action - UPDATE
+    #---------------------------------------------------------------------------
     
     @authorize(is_valid_user)
     @auto_format_output()
@@ -125,14 +185,15 @@ class SettingsController(BaseController):
         
         # Setup custom schema for this update
         validators = {}
-        for validate_fieldname in [setting['name'] for setting in settings_list() if setting['name'] in settings_validators and setting['value'] != request.params.get(setting['name']) ]:
-            print "adding validator: %s" % validate_fieldname
+        for validate_fieldname in [setting['name'] for setting in settings_list() if setting['name'] in settings_validators and setting['name'] in request.params and setting['value'] != request.params[setting['name']] ]:
+            #print "adding validator: %s" % validate_fieldname
             validators[validate_fieldname] = settings_validators[validate_fieldname]
         
         # Form validation
         try:
             schema = build_schema(**validators) # Build a dynamic validation scema based on these required fields and validate the form
             if 'password_new' in validators:
+                schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the 
                 schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
             form   = schema.to_python(dict(request.params)) # Validate
         except formencode.Invalid, error:
@@ -168,12 +229,14 @@ class SettingsController(BaseController):
         # Form has passed validation - continue to save/commit changes
         
         # Save special properties that need special processing
+        # (counld have a dictionary of special processors here rather than having this code cludge this controller action up)
         if 'password_new' in form:
             # We could put this in settings.py manager, have a dictionarys with special cases and functions to process/save them, therefor the code is transparent in the background. an idea?
             set_password(user,form['password_new'])
-            del form['password_confirm'] # We dont want these saved
-            del form['password_current']
-            del form['password_new'    ]
+            del form['password_new'        ] # We dont want these saved
+            del form['password_new_confirm']
+            del form['password_current'    ]
+            
         
         # Save all remaining properties
         for setting in settings_list():
@@ -187,48 +250,16 @@ class SettingsController(BaseController):
         
         return edit_action
 
-    
-    def delete(self, id):
-        """
-        DELETE /id: Delete an existing item.
-        """
-        # h.form(h.url_for('message', id=ID), method='delete')
-        # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
-        response.status = 204 # 204 = Success No Content
-        return action_error(msg='implement')
-
-    def show(self, id):
-        """GET /id: Show a specific item."""
-        return self.edit(id)
-
-    @authorize(is_valid_user)
-    @auto_format_output()
-    def edit(self, id, format='html'):
-        """GET /id;edit: Form to edit an existing item."""
-        
-        # Generate base settings dictonary for ALL settings or SINGLE ID provided
-        if id=="index" or id=="None": id=None
-        if not id: settings =     copy.deepcopy(settings_units)
-        else     : settings = {id:copy.deepcopy(settings_units[id])}
-        
-        user = c.logged_in_user
-        c.viewing_user = c.logged_in_user # HACK - please remove when templates are refactored
-        
-        # Populate settings dictionary for this user
-        for setting_group in settings.keys():
-            for setting in settings[setting_group]:
-                setting['value'] = user.config.get(setting['name'])
-        
-        return dict(data=settings, template="settings/settings")
 
 
 
 
 
 
-    #---------------------------------------------------------------------------
-    # Old Settings Reference
-    #---------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------
+# Old Settings Reference
+#---------------------------------------------------------------------------
 
     @authorize(is_valid_user)
     def general(self, id=None):
