@@ -88,10 +88,6 @@ def url_from_widget(*args, **kargs):
             #    kargs[var] = getattr(c,var)
     return url(*args,**kargs)
 
-def truncate(text, length=100, indicator='...', whole_word=True):
-    # FIXME: stub, see bug #49
-    return text[0:length]
-
 def objs_to_linked_formatted_dict(**kargs):
     """
     Takes a dict of string:string that correspond to python tmpl_context global e.g:
