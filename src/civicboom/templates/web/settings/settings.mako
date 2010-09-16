@@ -10,9 +10,9 @@
 
 <%def name="body()">
     ${h.form(h.url('setting', id='None'), method='put')}
-    % for group_name in c.data.keys():
+    % for group_name in c.result['data'].keys():
         <fieldset><legend>${group_name.capitalize()}</legend>
-            % for field in c.data[group_name]:
+            % for field in c.result['data'][group_name]:
                 <p>
                     ${field['description']} :
                     % if 'type' not in field:

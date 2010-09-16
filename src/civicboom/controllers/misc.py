@@ -1,4 +1,3 @@
-
 from civicboom.lib.base import *
 
 prefix = '/web/design09/misc/'

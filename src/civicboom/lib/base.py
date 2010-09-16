@@ -16,18 +16,20 @@ from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta
-from civicboom.lib.web                 import flash_message, redirect_to_referer, action_redirector, action_ok, action_error, auto_format_output
+from civicboom.lib.web                 import flash_message, redirect_to_referer, action_redirector, action_ok, action_error, auto_format_output, session_get, session_remove, session_set
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, is_valid_user
 from civicboom.lib.misc                import cacheable
+
+import json
 
 import logging
 log = logging.getLogger(__name__)
 
 __all__ = [
     # pylons environment
-    "request", "response", "app_globals", "c", "url", "config", "session",
+    "request", "response", "app_globals", "c", "url", "config",
 
     # sqlalchemy environment
     "Session", "meta",
@@ -44,6 +46,9 @@ __all__ = [
 
     # i18n
     "_", "ungettext", "set_lang",
+
+    # session managemnet - is is prefered that all access to the session is via accessors
+    "session_get", "session_remove", "session_set"
 
     # misc
     "BaseController",
@@ -72,7 +77,7 @@ class BaseController(WSGIController):
     def __before__(self):
 
         # Login - Fetch logged in user from session id (if present)
-        c.logged_in_user = get_user(session.get('user_id'))
+        c.logged_in_user = get_user(session_get('user_id'))
 
         # Setup Langauge
         #  - there is a way of setting fallback langauges, investigate?
@@ -104,12 +109,20 @@ class BaseController(WSGIController):
         #         A gadget controler could set this True, any image or URL created with helpers.py would have host appended to them
         c.absolute_links = False
 
+        # Request globabal - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
         c.controller = current_request.get("controller")
         c.action     = current_request.get("action")
-        c.action_id  = current_request.get("id")
+        c.id         = current_request.get("id")
         c.format     = current_request.get("format")
-
+        
+        c.result = {'status':'ok', 'message':None, 'data':None}
+        
+        # Session Flash Message
+        flash_message_session = session_remove('flash_message')
+        if flash_message_session:
+            try:               overlay_status_message(c.result, json.loads(flash_message_session))
+            except ValueError: overlay_status_message(c.result,            flash_message_session )
 
 
     def __call__(self, environ, start_response):

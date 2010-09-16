@@ -45,7 +45,7 @@ def gen_cache_key(**kargs):
         if c.logged_in_user: return c.logged_in_user.username
         return ""
     def getsafe_flash_message():
-        if 'flash_message' in session: return session['flash_message']
+        #if 'flash_message' in session: return session['flash_message']
         return ""
 
     cache_key = app_globals.version + request.environ.get('PATH_INFO') + request.environ.get('QUERY_STRING') + getsafe_current_username() + getsafe_flash_message()

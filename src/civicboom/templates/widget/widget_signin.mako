@@ -69,7 +69,7 @@ ${popup(h.literal("hello"), javascript_function_name='test', title=_('Test'), he
     
     ## Auto accept - accept_assignment
     % if c.action == 'accept':
-    <input type="hidden" name="${c.action}" value="${c.action_id}"/>
+    <input type="hidden" name="${c.action}" value="${c.id}"/>
     % endif
     
     

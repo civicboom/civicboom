@@ -57,38 +57,21 @@
 ## This displays the message and then removes it from the session once it is displayed the first time
 ## See "Definitive Guide to Pylons" pg 191 for details
 <%def name="flash_message()">
-    <%
-    import json
-    msg_status = "ok"
-    msg_msg    = ""
-    if session.has_key('flash_message'):
-        try:
-            msg = json.loads(session.get('flash_message'))
-        except ValueError:
-            msg = {"status": "error", "message": session.get('flash_message')}
-        msg_status = msg["status"]
-        msg_msg    = msg["message"]
-    %>
 
-    % if msg_msg != "":
-        <div id="flash_message" style="position: absolute; top: 0px; left: 0px; right: 0px;" class="hidden_by_default status_${msg_status}">${msg_msg}</div>
+    % if c.result['message'] != "":
+        <div id="flash_message" style="position: absolute; top: 0px; left: 0px; right: 0px;" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
         
         <!-- animation for flash message -->
         <script type="text/javascript">
-            function flash_message(msg) {
+            ##function flash_message(msg) {
                 ##if (msg.message != "") {
-                    $("#flash_message").removeClass("status_error").removeClass("status_ok").addClass("status_"+msg.status);
-                    $("#flash_message").text(msg.message).slideDown("slow").delay(5000).slideUp("slow");
+                    $("#flash_message").removeClass("status_error").removeClass("status_ok").addClass("status_${c.result['status']}");
+                    $("#flash_message").text(${c.result['message']}).slideDown("slow").delay(5000).slideUp("slow");
                 ##}
-            }
-            $(function() {flash_message(${session.get('flash_message')|n});});
+            ##}
+            ##$(function() {flash_message(${session.get('flash_message')|n});});
         </script>
     % endif
-
-    <%
-    if session.has_key('flash_message'):
-        del session['flash_message']
-    %>
     
 </%def>
 
@@ -97,7 +80,7 @@
 ## First view popup
 ##------------------------------------------------------------------------------
 <%def name="first_view_message()">
-  % if not session.has_key('first_view_message'):
+  % if not session_get('first_view_message'):
     <div id="first_view_message" class="popup hidden_by_default">
       ##${session.get('first_view_message')}
       <a class="popup_close_button" href="#" onclick="swap('first_view_message'); return false;"></a>
@@ -109,7 +92,7 @@
     </div>
     <script type="text/javascript">swap('first_view_message');</script>
     <%
-      session['first_view_message'] = '1'
+      session_set('first_view_message','1')
       #session.save()
     %>
   % endif
