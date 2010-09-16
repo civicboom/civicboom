@@ -59,6 +59,9 @@ class TestContentsController(TestController):
     def test_edit_no_perm(self):
         response = self.app.get(url('edit_content', id=1), status=403)
 
+    def test_edit_no_exist(self):
+        response = self.app.get(url('edit_content', id=9999), status=404)
+
     def test_edit_as_xml(self):
         response = self.app.get(url('formatted_edit_content', id=2, format='xml'))
 
