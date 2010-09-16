@@ -19,15 +19,15 @@ class MessagesController(BaseController):
         """GET /: All items in the collection."""
         # url('messages')
         c.viewing_user = c.logged_in_user
-        if format == "json":
-            return action_ok(
-                data = [{
-                    "id": m.id,
-                    "subject": m.subject,
-                } for m in c.viewing_user.messages_to]
-            )
-        else:
-            return render("/web/messages/index.mako")
+        return action_ok(
+            template="messages/index",
+            data = [{
+                "id": m.id,
+                "source": str(m.source),
+                "timestamp": str(m.timestamp),
+                "subject": m.subject,
+            } for m in c.viewing_user.messages_to]
+        )
 
 
     @authorize(is_valid_user)
@@ -75,6 +75,7 @@ class MessagesController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
+    @auto_format_output()
     def delete(self, id):
         """DELETE /id: Delete an existing item."""
         # Forms posted to this method should contain a hidden field:
@@ -113,16 +114,16 @@ class MessagesController(BaseController):
         else:
             return action_error(_("You are not the target of this message"), code=403)
 
-        if format == "json":
-            return action_ok(
-                data = {
-                    "id": c.msg.id,
-                    "subject": c.msg.subject,
-                    "content": c.msg.content,
-                }
-            )
-        else:
-            return render("/web/messages/read.mako")
+        return action_ok(
+            template = 'messages/show',
+            data = {
+                "id": c.msg.id,
+                "source": str(c.msg.source),
+                "subject": c.msg.subject,
+                "timestamp": str(c.msg.timestamp),
+                "content": c.msg.content,
+            }
+        )
 
 
     def edit(self, id, format='html'):

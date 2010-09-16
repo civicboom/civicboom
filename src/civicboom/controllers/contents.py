@@ -184,11 +184,13 @@ class ContentsController(BaseController):
                 #        - a cron should invalidate this OR the templates should expire after X time
                 #update_content(c.content)
 
-        return action_ok(data={
-            "content": c.content,
-            "author": c.content.creator
-        })
-        #return render('/web/design09/content/view.mako')
+        return action_ok(
+            template='design09/content/view',
+            data={
+                "content": c.content,
+                "author": c.content.creator
+            }
+        )
 
 
     @authorize(is_valid_user)
