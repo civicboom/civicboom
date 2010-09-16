@@ -137,7 +137,7 @@ def action_ok(msg=None, data=None, code=200):
         "code"   : code,
     }
 
-def action_error(msg=None, data=None, code=400):
+def action_error(msg=None, data=None, code=500):
     return {
         "status" : "error",
         "message": msg,
