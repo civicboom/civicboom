@@ -26,13 +26,13 @@
 		<th>Date</th>
 		<th>Action</th>
 	</tr>
-% for msg in c.viewing_user.messages_to:
+% for msg in c.data:
 	<tr>
-		<td>${str(msg.source)}</td>
-		<td><a href="${url('message', id=msg.id)}">${msg.subject}</a></td>
-		<td>${msg.timestamp}</td>
+		<td>${str(msg["source"])}</td>
+		<td><a href="${url('message', id=msg['id'])}">${msg['subject']}</a></td>
+		<td>${msg["timestamp"][0:16]}</td>
 		<td>
-			${h.form(url('message', id=msg.id), method="DELETE")}
+			${h.form(url('message', id=msg['id']), method="DELETE")}
 				<input type="submit" value="Delete">
 			${h.end_form()}
 		</td>

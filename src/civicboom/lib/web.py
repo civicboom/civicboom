@@ -82,18 +82,21 @@ def set_flash_message(new_message):
 
 
 
-def action_ok(msg=None, data=None):
+def action_ok(msg=None, data=None, code=200, template=None):
     return {
         "status" : "ok",
         "message": msg,
         "data"   : data,
+        "code"   : code,
+        "template": template,
     }
 
-def action_error(msg=None, data=None):
+def action_error(msg=None, data=None, code=500):
     return {
         "status" : "error",
         "message": msg,
         "data"   : data,
+        "code"   : code,
     }
 
 def overlay_status_message(master_message, new_message):
@@ -150,6 +153,7 @@ def get_format_processors_end():
         return dictToXMLString(result)
         
     def format_rss(result):
+        response.headers['Content-type'] = "application/rss+xml"
         return 'implement RSS' # TODO: ???
     
     def format_html(result):
@@ -242,8 +246,10 @@ def auto_format_output():
             # Set default FORMAT (if nessisary)
             format = default_format
             if c.format          : format = c.format
-            if len(args)==3 and args[2] in format_processors and args[2]: format = args[2] # The 3rd arg should be a format, if it is a valid format set it
-            if 'format' in kwargs: format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
+            if len(args)==3 and args[2] in format_processors and args[2]:
+                format = args[2] # The 3rd arg should be a format, if it is a valid format set it
+            if 'format' in kwargs:
+                format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
             
             #if format in format_processors_pre:
             #    format_processors[format]()
@@ -255,11 +261,20 @@ def auto_format_output():
             # Is result a dict with data?
             if hasattr(result, "keys") and 'data' in result:
                 
-                if format=='html' and 'template' not in result: format='xml' #If format HTML and no template supplied fall back to XML
+                if format=='html' and 'template' not in result:
+                    log.warning("Format HTML with no template")
+                    format='xml' #If format HTML and no template supplied fall back to XML
                 
                 # Set default STATUS and MSG (if nessisary)
-                if 'status'  not in result: result['status']  = 'ok'
-                if 'message' not in result: result['message'] = ''
+                if 'status'  not in result:
+                    result['status']  = 'ok'
+                if 'message' not in result:
+                    result['message'] = ''
+                
+                # set the HTTP status code
+                if 'code' in result:
+                    response.status = int(result['code'])
+                    del result['code']
                 
                 # Render to format
                 if format in format_processors_end:

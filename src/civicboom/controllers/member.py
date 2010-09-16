@@ -10,9 +10,10 @@ user_log = logging.getLogger("user")
 
 class MemberController(BaseController):
 
+    @auto_format_output()
     @authorize(is_valid_user)
-    @action_redirector()
     @authenticate_form
+    @action_redirector()
     def follow(self, id, format="html"):
         status = c.logged_in_user.follow(id)
         if status == True:
@@ -20,9 +21,10 @@ class MemberController(BaseController):
         return action_error(_('Unable to follow member: %s') % status)
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
-    @action_redirector()
     @authenticate_form
+    @action_redirector()
     def unfollow(self, id, format="html"):
         status = c.logged_in_user.unfollow(id)
         if status == True:

@@ -13,22 +13,24 @@ class MessagesController(BaseController):
     #     map.resource('message', 'messages')
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     def index(self, format='html'):
         """GET /: All items in the collection."""
         # url('messages')
         c.viewing_user = c.logged_in_user
-        if format == "json":
-            return action_ok(
-                data = [{
-                    "id": m.id,
-                    "subject": m.subject,
-                } for m in c.viewing_user.messages_to]
-            )
-        else:
-            return render("/web/messages/index.mako")
+        return action_ok(
+            template="messages/index",
+            data = [{
+                "id": m.id,
+                "source": str(m.source),
+                "timestamp": str(m.timestamp),
+                "subject": m.subject,
+            } for m in c.viewing_user.messages_to]
+        )
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
@@ -39,7 +41,7 @@ class MessagesController(BaseController):
             target = get_user(request.POST["target"])
             if not target:
                 # FIXME: form validator to refresh with the same values?
-                return action_error(_("Can't find user '%s'") % request.POST["target"])
+                return action_error(_("Can't find user '%s'") % request.POST["target"], code=404)
             m = Message()
             m.source_id = c.logged_in_user.id # FIXME: or from any group they are admin of?
             m.target_id = target.id
@@ -49,16 +51,16 @@ class MessagesController(BaseController):
             user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
             Session.add(m)
             Session.commit()
-            return action_ok(_("Message sent"))
+            return action_ok(_("Message sent"), code=201)
         except Exception, e:
             log.exception("Error sending message:")
-            return action_error(_("Error sending message"))
+            return action_error(_("Error sending message"), code=400)
 
 
     def new(self, format='html'):
         """GET /new: Form to create a new item."""
         # url('new_message')
-        pass
+        return action_error(_("'New Message' page not implemented - go to somebody's profile page to message them"), code=501)
 
 
     def update(self, id):
@@ -68,9 +70,10 @@ class MessagesController(BaseController):
         # Or using helpers:
         #    h.form(h.url('message', id=ID), method='put')
         # url('message', id=ID)
-        pass
+        return action_error(_("Messages cannot be edited"), code=501)
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
@@ -97,9 +100,10 @@ class MessagesController(BaseController):
             return action_ok(_("Message deleted"))
         else:
             user_log.warning("User tried to delete somebody else's message") # FIXME: details
-            return action_error(_("You are not the target of this message"))
+            return action_error(_("You are not the target of this message"), code=403)
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     def show(self, id, format='html'):
         """GET /id: Show a specific item."""
@@ -109,21 +113,21 @@ class MessagesController(BaseController):
         if msg.target == c.viewing_user: # FIXME messages to groups?
             c.msg = msg
         else:
-            abort(403, "You are not the target of this message")
+            return action_error(_("You are not the target of this message"), code=403)
 
-        if format == "json":
-            return action_ok(
-                data = {
-                    "id": c.msg.id,
-                    "subject": c.msg.subject,
-                    "content": c.msg.content,
-                }
-            )
-        else:
-            return render("/web/messages/read.mako")
+        return action_ok(
+            template = 'messages/show',
+            data = {
+                "id": c.msg.id,
+                "source": str(c.msg.source),
+                "subject": c.msg.subject,
+                "timestamp": str(c.msg.timestamp),
+                "content": c.msg.content,
+            }
+        )
 
 
     def edit(self, id, format='html'):
         """GET /id;edit: Form to edit an existing item."""
         # url('edit_message', id=ID)
-        pass
+        return action_error(_("Messages cannot be edited"), code=501)

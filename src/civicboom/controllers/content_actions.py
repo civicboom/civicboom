@@ -17,9 +17,10 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Rate: User Visable Content
     #---------------------------------------------------------------------------
-    @action_redirector()
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
+    @action_redirector()
     def rate(self, id, format="html"):
         # remove any existing ratings
         # we need to commit after removal, otherwise SQLAlchemy
@@ -54,18 +55,21 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Boom: User Visable Content (to all followers)
     #---------------------------------------------------------------------------
-    @action_redirector()
+
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-
+    @action_redirector()
     def boom(self, id, format="html"):
         # FIXME: add entry to booms table, and look that up rather than the session variable
         boomkey = 'boom%s' % id
-        if boomkey in session: return action_error(_('already boomed this'))
+        if boomkey in session:
+            return action_error(_('already boomed this'))
         session[boomkey] = True
 
         content = get_content(id)
-        if content.creator == c.logged_in_user: return action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
+        if content.creator == c.logged_in_user:
+            return action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
         content.boom_to_all_followers(c.logged_in_user)
 
         user_log.debug("Boomed Content #%d" % int(id))
@@ -75,10 +79,11 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Approve: User Visable Content (organistaion only)
     #---------------------------------------------------------------------------
-    @action_redirector()
+
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-
+    @action_redirector()
     def approve(self, id, format="html"):
         content = get_content(id)
         if content.is_parent_owner(c.logged_in_user):
@@ -93,10 +98,11 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Disassociate: User Visable Content (organistaion only)
     #---------------------------------------------------------------------------
-    @action_redirector()
+
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-
+    @action_redirector()
     def disasociate(self, format="html"):
         content = get_content(id)
         if content.is_parent_owner(c.logged_in_user):
@@ -110,9 +116,11 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Accept: Assignment
     #---------------------------------------------------------------------------
-    @action_redirector()
+
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
+    @action_redirector()
     def accept(self, id=None, format="html"):
         assignment = get_content(id)
         status     = assignment.accept(c.logged_in_user)
@@ -127,9 +135,11 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Withdraw: from Assignment
     #---------------------------------------------------------------------------
-    @action_redirector()
+
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
+    @action_redirector()
     def withdraw(self, id=None, format="html"):
         assignment = get_content(id)
         status     = assignment.withdraw(c.logged_in_user)

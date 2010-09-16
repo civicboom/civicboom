@@ -82,7 +82,7 @@ class AccountController(BaseController):
             #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             
         # If not authenticated or any janrain info then error
-        action_error(_('Unable to authenticate user'))
+        action_error(_('Unable to authenticate user'), code=403)
         return redirect_to_referer()
 
     #---------------------------------------------------------------------------

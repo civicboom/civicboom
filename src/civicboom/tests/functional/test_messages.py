@@ -42,7 +42,7 @@ class TestMessagesController(TestController):
                 'subject': 'arrr, a subject',
                 'content': 'I am content',
             },
-            status=302
+            status=201
         )
 
     def test_create_bad_target(self):
@@ -54,7 +54,7 @@ class TestMessagesController(TestController):
                 'subject': 'arrr, a subject',
                 'content': 'I am content',
             },
-            status=302
+            status=404
         )
         # FIXME: follow redirect, then
         #assert "Can't find user" in response
@@ -64,10 +64,10 @@ class TestMessagesController(TestController):
             url('messages'),
             params={
                 '_authentication_token': self.auth_token,
-                'target': 'MrNotExists',
+                'target': 'unittest',
                 'subject': 'arrr, a subject',
             },
-            status=302
+            status=400
         )
         # test that this hits the error handler
 
@@ -76,7 +76,7 @@ class TestMessagesController(TestController):
 
     def test_delete_message(self):
         response = self.app.delete(
-            url('message', id=3),
+            url('message', id=3, format="json"),
             params={
                 '_authentication_token': self.auth_token
             }
@@ -84,7 +84,7 @@ class TestMessagesController(TestController):
 
     def test_delete_notification(self):
         response = self.app.delete(
-            url('message', id=6),
+            url('message', id=6, format="json"),
             params={
                 '_authentication_token': self.auth_token
             }
@@ -92,7 +92,7 @@ class TestMessagesController(TestController):
 
     def test_delete_browser_fakeout(self):
         response = self.app.post(
-            url('message', id=4),
+            url('message', id=4, format="json"),
             params={
                 "_method": 'delete',
                 '_authentication_token': self.auth_token
@@ -100,14 +100,12 @@ class TestMessagesController(TestController):
         )
 
     def test_delete_someone_elses(self):
-        # FIXME: failure is indicated by "302 redirect to failure message" -- how to test that this
-        # is different from "302 redirect to success message"?
         response = self.app.delete(
-            url('message', id=1),
+            url('message', id=1, format="json"),
             params={
                 '_authentication_token': self.auth_token
             },
-            status=302
+            status=403
         )
 
     ## edit -> update ########################################################

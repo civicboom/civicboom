@@ -112,13 +112,11 @@ class SettingsController(BaseController):
     
     def create(self):
         """POST /: Create a new item."""
-        response.status = 201 # 201 = Success Created
-        return action_error(msg='operation not supported')
+        return action_error(_('operation not supported'), code=501)
     
     def new(self):
         """GET /new: Form to create a new item."""
-        response.status = 201 # 201 = Success Created
-        return action_error(msg='operation not supported')
+        return action_error(_('operation not supported'), code=501)
     
     def delete(self, id):
         """
@@ -126,8 +124,7 @@ class SettingsController(BaseController):
         """
         # h.form(h.url_for('message', id=ID), method='delete')
         # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
-        response.status = 204 # 204 = Success No Content
-        return action_error(msg='implement')
+        return action_error(_('operation not supported (yet)'), code=501)
 
     def show(self, id):
         """GET /id: Show a specific item."""
@@ -137,8 +134,8 @@ class SettingsController(BaseController):
     #---------------------------------------------------------------------------
     # REST Action - EDIT/SHOW
     #---------------------------------------------------------------------------
-    @authorize(is_valid_user)
     @auto_format_output()
+    @authorize(is_valid_user)
     def edit(self, id, format=None):
         """GET /id;edit: Form to edit an existing item."""
         
@@ -162,8 +159,8 @@ class SettingsController(BaseController):
     # REST Action - UPDATE
     #---------------------------------------------------------------------------
     
-    @authorize(is_valid_user)
     @auto_format_output()
+    @authorize(is_valid_user)
     def update(self, id):
         """
         PUT /id: Update an existing item.

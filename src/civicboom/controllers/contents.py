@@ -67,8 +67,10 @@ class ContentsController(BaseController):
         return redirect(url('edit_content', id=content.id))
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
+    @action_redirector()
     def update(self, id):
         """PUT /contents/id: Update an existing item"""
         # Forms posted to this method should contain a hidden field:
@@ -81,8 +83,7 @@ class ContentsController(BaseController):
         c.content = get_content(id)
 
         if not c.content:
-            c.error_message = _("_content not found")
-            return render('/web/design09/content/unavailable.mako')
+            return action_error(_("_content not found"), code=404)
 
         # Overlay form data over the current content object or return a new instance of an object
         c.content = form_to_content(request.params, c.content) #request.POST
@@ -124,13 +125,14 @@ class ContentsController(BaseController):
             return redirect(url('content', id=c.content.id, prompt_aggregate=True))
         if 'submit_response' in request.POST:
             return redirect(url('content', id=c.content.parent_id))
-        return redirect(url('edit_content', id=c.content.id))
+        return action_ok(_("_content saved"))
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
-    @action_redirector()
     @authenticate_form
-    def delete(self, id):
+    @action_redirector()
+    def delete(self, id, format="html"):
         """DELETE /contents/id: Delete an existing item"""
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="DELETE" />
@@ -140,14 +142,14 @@ class ContentsController(BaseController):
         # url('content', id=ID)
         content = get_content(id)
         if not content:
-            return action_error(_("_content does not exist"))
+            return action_error(_("_content not found"), code=404)
         if not content.editable_by(c.logged_in_user):
-            return action_error(_("your current user does not have the permissions to delete this _content"))
-            #abort(401)
+            return action_error(_("your current user does not have the permissions to delete this _content"), code=403)
         content.delete()
-        return action_ok(_("_content deleted"))
+        return action_ok(_("_content deleted"), code=200)
 
 
+    @auto_format_output()
     def show(self, id, format='html'):
         """GET /contents/id: Show a specific item"""
         # url('content', id=ID)
@@ -159,17 +161,16 @@ class ContentsController(BaseController):
         c.content = get_content(id)
 
         if not c.content:
-            c.error_message = _("_content not found")
-            return render('/web/design09/content/unavailable.mako')
+            return action_error(_("_content not found"), code=404)
 
         # Check content is visable
         if c.content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
-            abort(404)
+            return action_error(_("_content not found"), code=404)
         if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
             if c.content.status == "pending":
                 user_log.debug("Attempted to view someone else's pending content")
-                abort(404)
+                return action_error(_("_content not found"), code=404)
                 #c.error_message = _("your user does not have the permissions to view this _content")
                 #return render('/web/design09/content/unavailable.mako')
 
@@ -185,9 +186,16 @@ class ContentsController(BaseController):
                 #        - a cron should invalidate this OR the templates should expire after X time
                 #update_content(c.content)
 
-        return render('/web/design09/content/view.mako')
+        return action_ok(
+            template='design09/content/view',
+            data={
+                "content": c.content,
+                "author": c.content.creator
+            }
+        )
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     def edit(self, id, format='html'):
         """GET /contents/id/edit: Form to edit an existing item"""
@@ -196,7 +204,7 @@ class ContentsController(BaseController):
         # Get exisiting content from URL id
         c.content = get_content(id)
         if not c.content:
-            abort(404)
+            return action_error(_("_content not found"), code=404)
 
         c.content = form_to_content(request.params, c.content)
 
@@ -204,8 +212,7 @@ class ContentsController(BaseController):
             # If the content is not being edited by the creator then "Unauthorised"
             # AllanC - todo: in future this will have to be a more involved process as the ower of the content could be a group the user is part of
             if not c.content.editable_by(c.logged_in_user):
-                flash_message(_("your user does not have the permissions to edit this _content"))
-                abort(401) #Unauthorised
+                return action_error(_("your user does not have the permissions to edit this _content"), code=403)
             starting_content_type = c.content.__type__
 
         c.content_media_upload_key = get_content_media_upload_key(c.content)
@@ -218,7 +225,7 @@ class ContentsController(BaseController):
         return render("/web/content_editor/content_editor.mako")
 
 
-    def get_media_processing_staus(self,id):
+    def get_media_processing_staus(self, id):
         """
         Javascript can poll this method to get progress updates on the media processing
         Currently only return a flag to state if processing it taking place,
