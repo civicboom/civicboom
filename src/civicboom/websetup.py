@@ -866,14 +866,21 @@ CREATE TRIGGER update_content
         m.credit      = u"Shish"
         cc2.attachments.append(m)
 
-        dc = DraftContent()
-        dc.title      = u"Response!"
-        dc.content    = u"I am writing a longer response, worthy of being published separately"
-        dc.status     = "show"
-        dc.license_id = cc_by.id
-        u2.content.append(dc)
+        dc1 = DraftContent()
+        dc1.title      = u"Delete me with DELETE"
+        dc1.content    = u"I am writing a longer response, worthy of being published separately"
+        dc1.status     = "show"
+        dc1.license_id = cc_by.id
+        u1.content.append(dc1)
 
-        Session.add_all([ca, ca2])
+        dc2 = DraftContent()
+        dc2.title      = u"Delete me with fakeout"
+        dc2.content    = u"I am writing a longer response, worthy of being published separately"
+        dc2.status     = "show"
+        dc2.license_id = cc_by.id
+        u1.content.append(dc2)
+
+        Session.add_all([ca, ca2, dc1, dc2])
         Session.commit()
 
         ###############################################################

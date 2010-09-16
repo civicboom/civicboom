@@ -92,7 +92,7 @@ class TestContentsController(TestController):
 
     def test_delete(self):
         response = self.app.delete(
-            url('content', id=1),
+            url('content', id=8),
             params={
                 '_authentication_token': self.auth_token
             }
@@ -100,7 +100,7 @@ class TestContentsController(TestController):
 
     def test_delete_browser_fakeout(self):
         response = self.app.post(
-            url('content', id=1),
+            url('content', id=9),
             params={
                 "_method": 'delete',
                 '_authentication_token': self.auth_token

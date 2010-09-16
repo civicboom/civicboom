@@ -54,7 +54,7 @@ class MessagesController(BaseController):
             return action_ok(_("Message sent"), code=201)
         except Exception, e:
             log.exception("Error sending message:")
-            return action_error(_("Error sending message"), code=500)
+            return action_error(_("Error sending message"), code=400)
 
 
     def new(self, format='html'):
