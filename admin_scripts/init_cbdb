@@ -12,6 +12,7 @@ export PGOPTIONS='--client-min-messages=warning'
 echo "Removing old data"
 dropdb civicboom_log
 dropdb civicboom_gis
+dropdb civicboom_ses
 dropdb civicboom
 dropuser civicboom
 
@@ -117,5 +118,11 @@ CREATE INDEX events__module ON events(module);
 CREATE INDEX events__username ON events(username);
 CREATE INDEX events__priority ON events(priority);
 " | psql -U civicboom -d civicboom_log -h localhost
+
+##############################################################################
+# civicboom_ses
+
+echo "Creating civicboom_ses database"
+createdb -E utf8 -O civicboom civicboom_ses
 
 exit 0
