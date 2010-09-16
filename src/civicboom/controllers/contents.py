@@ -147,6 +147,7 @@ class ContentsController(BaseController):
         return action_ok(_("_content deleted"))
 
 
+    @auto_format_output()
     def show(self, id, format='html'):
         """GET /contents/id: Show a specific item"""
         # url('content', id=ID)
@@ -183,7 +184,11 @@ class ContentsController(BaseController):
                 #        - a cron should invalidate this OR the templates should expire after X time
                 #update_content(c.content)
 
-        return render('/web/design09/content/view.mako')
+        return action_ok(data={
+            "content": c.content,
+            "author": c.content.creator
+        })
+        #return render('/web/design09/content/view.mako')
 
 
     @authorize(is_valid_user)
