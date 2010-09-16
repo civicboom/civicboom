@@ -67,9 +67,10 @@ class ContentsController(BaseController):
         return redirect(url('edit_content', id=content.id))
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    @auto_format_output()
+    @action_redirector()
     def update(self, id):
         """PUT /contents/id: Update an existing item"""
         # Forms posted to this method should contain a hidden field:
@@ -124,13 +125,14 @@ class ContentsController(BaseController):
             return redirect(url('content', id=c.content.id, prompt_aggregate=True))
         if 'submit_response' in request.POST:
             return redirect(url('content', id=c.content.parent_id))
-        return redirect(url('edit_content', id=c.content.id))
+        return action_ok(_("_content saved"))
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
-    @action_redirector()
     @authenticate_form
-    def delete(self, id):
+    @action_redirector()
+    def delete(self, id, format="html"):
         """DELETE /contents/id: Delete an existing item"""
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="DELETE" />
@@ -193,6 +195,7 @@ class ContentsController(BaseController):
         )
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     def edit(self, id, format='html'):
         """GET /contents/id/edit: Form to edit an existing item"""
@@ -222,7 +225,7 @@ class ContentsController(BaseController):
         return render("/web/content_editor/content_editor.mako")
 
 
-    def get_media_processing_staus(self,id):
+    def get_media_processing_staus(self, id):
         """
         Javascript can poll this method to get progress updates on the media processing
         Currently only return a flag to state if processing it taking place,

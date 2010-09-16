@@ -109,10 +109,7 @@ def action_redirector():
 
             result = target(*args, **kwargs) # Execute the wrapped function
 
-            if len(args) > 1 and args[-1] == "json": # assumes action(self, format) or action(self, id, format)
-                response.headers['Content-type'] = "application/json"
-                return result
-            else:
+            if c.format == "html":
                 action_redirect = session_get('action_redirect')
                 session_remove('action_redirect')
                 if action_redirect and action_redirect.find(url.current())<0: #If the redirector contains the current URL path we are in an infinate loop and need to return just the text rather than a redirect
@@ -121,6 +118,8 @@ def action_redirector():
                 else:
                     log.warning("Redirect loop detected for "+str(action_redirect))
                     return redirect("/")
+            else:
+                return result
 
         return decorator(wrapper)(target) # Fix the wrappers call signiture
     return my_decorator

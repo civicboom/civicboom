@@ -13,8 +13,8 @@ class MessagesController(BaseController):
     #     map.resource('message', 'messages')
 
 
-    @authorize(is_valid_user)
     @auto_format_output()
+    @authorize(is_valid_user)
     def index(self, format='html'):
         """GET /: All items in the collection."""
         # url('messages')
@@ -30,6 +30,7 @@ class MessagesController(BaseController):
         )
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
@@ -72,10 +73,10 @@ class MessagesController(BaseController):
         return action_error(_("Messages cannot be edited"), code=501)
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
     @action_redirector()
-    @auto_format_output()
     def delete(self, id):
         """DELETE /id: Delete an existing item."""
         # Forms posted to this method should contain a hidden field:
@@ -102,8 +103,8 @@ class MessagesController(BaseController):
             return action_error(_("You are not the target of this message"), code=403)
 
 
-    @authorize(is_valid_user)
     @auto_format_output()
+    @authorize(is_valid_user)
     def show(self, id, format='html'):
         """GET /id: Show a specific item."""
         # url('message', id=ID)
