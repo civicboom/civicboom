@@ -129,12 +129,13 @@ def action_redirector():
 # Actions
 #-------------------------------------------------------------------------------
 
-def action_ok(msg=None, data=None, code=200):
+def action_ok(msg=None, data=None, code=200, template=None):
     return {
         "status" : "ok",
         "message": msg,
         "data"   : data,
         "code"   : code,
+        "template": template,
     }
 
 def action_error(msg=None, data=None, code=500):
@@ -169,11 +170,13 @@ def get_format_processors():
         return dictToXMLString(result)
         
     def format_rss(result):
+        response.headers['Content-type'] = "application/rss+xml"
         return 'implement RSS' # TODO: ???
     
     def format_html(result):
         c.data = result['data']                                            # Set standard template data dict for template to use
-        if 'message' in result: flash_message(action_msg(result))          # Set flash message
+        if 'message' in result:
+            flash_message(action_msg(result))                              # Set flash message
         template_filename = "web/%s.mako" % result['template']             # Find template filename
         if request.environ['is_mobile']:                                   # If mobile rendering
             # TODO: detect mobile template
@@ -241,14 +244,21 @@ def auto_format_output():
                 
                 # Set default FORMAT (if nessisary)
                 format = default_format
-                if c.format          : format = c.format
-                if len(args)==3 and args[2] in format_processors and args[2]: format = args[2] # The 3rd arg should be a format, if it is a valid format set it
-                if 'format' in kwargs: format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
-                if format=='html' and 'template' not in result: format='xml' #If format HTML and no template supplied fall back to XML
+                if c.format:
+                    format = c.format
+                elif len(args)==3 and args[2] in format_processors and args[2]:
+                    format = args[2] # The 3rd arg should be a format, if it is a valid format set it
+                elif 'format' in kwargs:
+                    format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
+                if format=='html' and not result.get('template'):
+                    log.warning("Format HTML with no template")
+                    format='xml' #If format HTML and no template supplied fall back to XML
                 
                 # Set default STATUS and MSG (if nessisary)
-                if 'status'  not in result: result['status']  = 'ok'
-                if 'message' not in result: result['message'] = ''
+                if 'status'  not in result:
+                    result['status']  = 'ok'
+                if 'message' not in result:
+                    result['message'] = ''
 
                 # set the HTTP status code
                 if 'code' in result:
