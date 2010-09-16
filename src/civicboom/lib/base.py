@@ -16,7 +16,7 @@ from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta
-from civicboom.lib.web                 import redirect_to_referer, action_redirector, action_ok, action_error, auto_format_output, session_get, session_remove, session_set
+from civicboom.lib.web                 import redirect_to_referer, action_ok, action_error, auto_format_output, session_get, session_remove, session_set
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, is_valid_user
@@ -39,7 +39,6 @@ __all__ = [
 
     # decorators
     "https", "authenticate_form",
-    "action_redirector",
     "auto_format_output",
     "authorize", "is_valid_user",
     "cacheable",
