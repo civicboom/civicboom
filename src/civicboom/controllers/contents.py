@@ -144,7 +144,7 @@ class ContentsController(BaseController):
         if not content.editable_by(c.logged_in_user):
             return action_error(_("your current user does not have the permissions to delete this _content"), code=403)
         content.delete()
-        return action_ok(_("_content deleted"))
+        return action_ok(_("_content deleted"), code=200)
 
 
     @auto_format_output()

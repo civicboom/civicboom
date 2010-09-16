@@ -50,16 +50,16 @@ class MessagesController(BaseController):
             user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
             Session.add(m)
             Session.commit()
-            return action_ok(_("Message sent"))
+            return action_ok(_("Message sent"), code=201)
         except Exception, e:
             log.exception("Error sending message:")
-            return action_error(_("Error sending message"))
+            return action_error(_("Error sending message"), code=500)
 
 
     def new(self, format='html'):
         """GET /new: Form to create a new item."""
         # url('new_message')
-        pass
+        return action_error(_("'New Message' page not implemented - go to somebody's profile page to message them"), code=501)
 
 
     def update(self, id):
@@ -69,7 +69,7 @@ class MessagesController(BaseController):
         # Or using helpers:
         #    h.form(h.url('message', id=ID), method='put')
         # url('message', id=ID)
-        pass
+        return action_error(_("Messages cannot be edited"), code=501)
 
 
     @authorize(is_valid_user)
@@ -129,4 +129,4 @@ class MessagesController(BaseController):
     def edit(self, id, format='html'):
         """GET /id;edit: Form to edit an existing item."""
         # url('edit_message', id=ID)
-        pass
+        return action_error(_("Messages cannot be edited"), code=501)
