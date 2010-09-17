@@ -753,34 +753,46 @@ CREATE TRIGGER update_content
         m.target = u2
         m.subject = u"Re: singing"
         m.content = u"My singing is fine!"
+        Session.add(m); Session.commit(); assert m.id == 1
 
         m = Message()
         m.source = u2
         m.target = u1
         m.subject = u"Re: Re: singing"
         m.content = u"It is totally not! And to explain, I will use a sentence that is over 50 characters long, to test the Message.__unicode__ truncation feature"
+        Session.add(m); Session.commit(); assert m.id == 2
 
         n = Message()
         n.target = u1
         n.subject = u"Notification! A test"
         n.content = u"A test is happening now :O"
+        Session.add(n); Session.commit(); assert n.id == 3
 
         n = Message()
         n.target = u2
         n.subject = u"Another notification! A test"
         n.content = u"A test part 2 is happening now :O"
+        Session.add(n); Session.commit(); assert n.id == 4
 
         m = Message()
         m.source = u2
         m.target = u1
         m.subject = u"deleteme"
         m.content = u"This is a message to test deletion with"
+        Session.add(m); Session.commit(); assert m.id == 5
 
         m = Message()
         m.source = u2
         m.target = u1
         m.subject = u"deleteme"
         m.content = u"This is a message to test deletion with, using browser fakeouts"
+        Session.add(m); Session.commit(); assert m.id == 6
+
+        n = Message()
+        n.target = u1
+        n.subject = u"deleteme"
+        n.content = u"This is a notification to test deletion with"
+        Session.add(n); Session.commit(); assert n.id == 7
 
         Session.commit()
 
