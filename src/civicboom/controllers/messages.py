@@ -33,7 +33,6 @@ class MessagesController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    @action_redirector()
     def create(self):
         """POST /: Create a new item."""
         # url('messages')
@@ -76,7 +75,6 @@ class MessagesController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    @action_redirector()
     def delete(self, id):
         """DELETE /id: Delete an existing item."""
         # Forms posted to this method should contain a hidden field:

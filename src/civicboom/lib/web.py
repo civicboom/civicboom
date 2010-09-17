@@ -82,19 +82,19 @@ def set_flash_message(new_message):
 
 
 
-def action_ok(msg=None, data=None, code=200, template=None):
+def action_ok(message=None, data=None, code=200, template=None):
     return {
         "status" : "ok",
-        "message": msg,
+        "message": message,
         "data"   : data,
         "code"   : code,
         "template": template,
     }
 
-def action_error(msg=None, data=None, code=500):
+def action_error(message=None, data=None, code=500):
     return {
         "status" : "error",
-        "message": msg,
+        "message": message,
         "data"   : data,
         "code"   : code,
     }
@@ -145,7 +145,7 @@ def get_format_processors_pre():
 
 def get_format_processors_end():
     def format_json(result):
-        #response.headers['Content-type'] = "application/json"
+        response.headers['Content-type'] = "application/json"
         return json.dumps(result)
         
     def format_xml(result):
@@ -236,7 +236,7 @@ def auto_format_output():
         }
     """
     
-    default_format         = config['default_format']
+    default_format        = config['default_format']
     format_processors_end = get_format_processors_end()
     #format_processors_pre = get_format_processors_pre()
     
@@ -245,11 +245,9 @@ def auto_format_output():
             
             # Set default FORMAT (if nessisary)
             format = default_format
-            if c.format          : format = c.format
-            if len(args)==3 and args[2] in format_processors and args[2]:
-                format = args[2] # The 3rd arg should be a format, if it is a valid format set it
-            if 'format' in kwargs:
-                format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
+            if c.format                                                 : format = c.format
+            if len(args)==3 and args[2] in format_processors and args[2]: format = args[2] # The 3rd arg should be a format, if it is a valid format set it
+            if 'format' in kwargs                                       : format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
             
             #if format in format_processors_pre:
             #    format_processors[format]()
@@ -259,17 +257,15 @@ def auto_format_output():
             
             # After
             # Is result a dict with data?
-            if hasattr(result, "keys") and 'data' in result:
+            if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
                 
                 if format=='html' and 'template' not in result:
                     log.warning("Format HTML with no template")
                     format='xml' #If format HTML and no template supplied fall back to XML
                 
                 # Set default STATUS and MSG (if nessisary)
-                if 'status'  not in result:
-                    result['status']  = 'ok'
-                if 'message' not in result:
-                    result['message'] = ''
+                if 'status'  not in result: result['status']  = 'ok'
+                if 'message' not in result: result['message'] = ''
                 
                 # set the HTTP status code
                 if 'code' in result:

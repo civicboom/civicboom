@@ -16,7 +16,7 @@ from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta
-from civicboom.lib.web                 import flash_message, redirect_to_referer, action_redirector, action_ok, action_error, auto_format_output, session_get, session_remove, session_set
+from civicboom.lib.web                 import redirect_to_referer, action_redirector, action_ok, action_error, auto_format_output, session_get, session_remove, session_set
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, is_valid_user
@@ -53,7 +53,7 @@ __all__ = [
     # misc
     "BaseController",
     "authentication_token",
-    "flash_message", "redirect_to_referer",
+    "redirect_to_referer", #TODO? potential for removal?
     "get_user",
     "logging",
 ]

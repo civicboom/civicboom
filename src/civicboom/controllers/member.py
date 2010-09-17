@@ -13,7 +13,6 @@ class MemberController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    @action_redirector()
     def follow(self, id, format="html"):
         status = c.logged_in_user.follow(id)
         if status == True:
@@ -24,7 +23,6 @@ class MemberController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    @action_redirector()
     def unfollow(self, id, format="html"):
         status = c.logged_in_user.unfollow(id)
         if status == True:

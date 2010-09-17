@@ -70,7 +70,6 @@ class ContentsController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    @action_redirector()
     def update(self, id):
         """PUT /contents/id: Update an existing item"""
         # Forms posted to this method should contain a hidden field:
@@ -131,7 +130,6 @@ class ContentsController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    @action_redirector()
     def delete(self, id, format="html"):
         """DELETE /contents/id: Delete an existing item"""
         # Forms posted to this method should contain a hidden field:
