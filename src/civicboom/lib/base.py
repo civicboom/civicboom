@@ -111,7 +111,7 @@ class BaseController(WSGIController):
         c.absolute_links = False
 
 
-        # Request globabal - have the system able to easly view request details as globals
+        # Request global - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
         c.controller = current_request.get("controller")
         c.action     = current_request.get("action")

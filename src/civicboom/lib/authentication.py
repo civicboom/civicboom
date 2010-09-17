@@ -22,6 +22,7 @@ import json
 
 # Logging
 import logging
+log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 
@@ -105,13 +106,10 @@ def authorize(authenticator):
                     c.post_values = post_overlay
                     from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
                     return render("web/design09/misc/confirmpost.mako")
-                    #for key in post_overlay.keys():
-                    #    request.POST[key] = post_overlay[key]
-                    #request.POST = post_overlay
-                    # TODO - want to re-instate post_overlay over request.POST but the security model wont let me :(
-            
+
             # Make original method call
             result = target(*args, **kwargs)
+            return result
 
         # ELSE Unauthorised
         else:
@@ -127,12 +125,10 @@ def authorize(authenticator):
                 if request.POST:
                     session_set('login_redirect_post', json.dumps(multidict_to_dict(request.POST)), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
                 return redirect(url_from_widget(controller='account', action='signin', protocol="https")) #This uses the from_widget url call to ensure that widget actions preserve the widget env
-                
+
             # If API request - error unauthorised
             else:
                 return action_error(message="unauthorised", code=403) #Error to be formared by auto_formatter
-        
-        #return result # Technicaly this should NEVER be hit
 
     return wrapper
 

@@ -106,17 +106,18 @@ def overlay_status_message(master_message, new_message):
 
     """
     # Setup master message
-    if not master_message: master_message = {}
+    if not master_message:
+        master_message = {}
     master_message['status']  = master_message.get('status', 'ok')
     master_message['message'] = master_message.get('message', u'')
 
     # Overlay new message (if dict)
-    if 'status' in master_message and 'status' in new_message:
+    if 'status' in new_message:
         if master_message['status'] == 'ok':
             master_message['status'] = new_message['status']
-    if 'message' in master_message and 'message' in new_message:
+    if 'message' in new_message and new_message['message']:
         master_message['message'] += '\n' + new_message['message']
-    
+
     # Overlay new message (if string)
     if isinstance(new_message, basestring):
         master_message['message'] += '\n' + new_message
@@ -277,8 +278,11 @@ def auto_format_output():
                 # Render to format
                 if format in format_processors_end:
                     return format_processors_end[format](result)
+                else:
+                    log.warning("Unknown format: "+str(format))
                 
             # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
+            log.debug("returning pre-rendered stuff")
             return result
         
         return decorator(wrapper)(target) # Fix the wrappers call signiture
