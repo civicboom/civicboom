@@ -112,11 +112,11 @@ def overlay_status_message(master_message, new_message):
     master_message['message'] = master_message.get('message', u'')
 
     # Overlay new message (if dict)
-    if 'status' in new_message:
+    if isinstance(new_message, dict):
         if master_message['status'] == 'ok':
             master_message['status'] = new_message['status']
-    if 'message' in new_message and new_message['message']:
-        master_message['message'] += '\n' + new_message['message']
+        if new_message['message']:
+            master_message['message'] += '\n' + new_message['message']
 
     # Overlay new message (if string)
     if isinstance(new_message, basestring):
@@ -124,6 +124,8 @@ def overlay_status_message(master_message, new_message):
 
     # Tidy message whitespace
     master_message['message'] = master_message['message'].strip()
+
+    master_message['data'] = new_message['data']
 
     return master_message
 
