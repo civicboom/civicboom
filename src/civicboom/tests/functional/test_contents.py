@@ -54,8 +54,7 @@ class TestContentsController(TestController):
             status=201
         )
 
-    def test_create_invalid(self):
-        # comment without parent is one type of invalid; there are others
+    def test_cant_create_comment_without_parent(self):
         response = self.app.post(
             url('contents', format="json"),
             params={
@@ -67,7 +66,7 @@ class TestContentsController(TestController):
             status=400
         )
 
-    def test_create_response_to_no_exist(self):
+    def test_cant_comment_on_something_that_doesnt_exist(self):
         response = self.app.post(
             url('contents', format="json"),
             params={
@@ -80,8 +79,7 @@ class TestContentsController(TestController):
             status=404
         )
 
-    def test_create_response_to_no_perm(self):
-        # users shouldn't be able to comment on things they can't see
+    def test_cant_comment_on_what_cant_be_seen(self):
         response = self.app.post(
             url('contents', format="json"),
             params={
@@ -109,7 +107,8 @@ class TestContentsController(TestController):
     def test_edit_no_exist(self):
         response = self.app.get(url('edit_content', id=0), status=404)
 
-    def test_update(self):
+
+    def test_can_update_own_article(self):
         response = self.app.put(
             url('content', id=1),
             params={
@@ -126,7 +125,7 @@ class TestContentsController(TestController):
             }
         )
 
-    def test_update_no_perm(self):
+    def test_cant_update_someone_elses_article(self):
         response = self.app.put(
             url('content', id=2),
             params={
@@ -135,7 +134,7 @@ class TestContentsController(TestController):
             status=403
         )
 
-    def test_update_no_exist(self):
+    def test_cant_update_article_that_doesnt_exist(self):
         response = self.app.put(
             url('content', id=0),
             params={
@@ -147,7 +146,7 @@ class TestContentsController(TestController):
 
     ## delete ################################################################
 
-    def test_delete(self):
+    def test_can_delete_own_article(self):
         response = self.app.delete(
             url('content', id=8, format="json"),
             params={
@@ -166,7 +165,7 @@ class TestContentsController(TestController):
             status=200
         )
 
-    def test_delete_no_perm(self):
+    def test_cant_delete_someone_elses_article(self):
         # FACT: a user should not be able to delete another user's article
         response = self.app.delete(
             url('content', id=2, format="json"),
@@ -176,8 +175,7 @@ class TestContentsController(TestController):
             status=403
         )
 
-    def test_delete_no_exist(self):
-        # FACT: a user should not be able to delete an article that does not exist
+    def test_cant_delete_article_that_doesnt_exist(self):
         response = self.app.delete(
             url('content', id=0, format="json"),
             params={
@@ -186,4 +184,5 @@ class TestContentsController(TestController):
             status=404
         )
 
-    # TODO: a group admin should be able to delete articles owned by the group?
+    def test_can_delete_article_owned_by_group_i_am_admin_of(self)
+        pass
