@@ -89,7 +89,7 @@ def selif(r, n):
 		return ""
 r = (c.content.rating * 5)
 %>
-		<form id="rating" action="${url(controller='content_actions', action='rate', id=c.content.id), format='redirect'}" method="POST">
+		<form id="rating" action="${url(controller='content_actions', action='rate', id=c.content.id, format='redirect')}" method="POST">
 			<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
 			<select name="rating" style="width: 120px">
 				<option value="0">Unrated</option>
