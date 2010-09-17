@@ -109,8 +109,12 @@ def overlay_status_message(master_message, new_message):
     # Setup master message
     if not master_message:
         master_message = {}
-    master_message['status']  = master_message.get('status', 'ok')
-    master_message['message'] = master_message.get('message', u'')
+    master_message['status']  = master_message.get('status' ) or 'ok'
+    master_message['message'] = master_message.get('message') or u'' 
+    master_message['data']    = master_message.get('data'   ) or {}
+
+    if isinstance(new_message, basestring):
+        new_message = {'status':'ok', 'message':new_message}
 
     # Overlay new message (if dict)
     if isinstance(new_message, dict):
@@ -126,7 +130,8 @@ def overlay_status_message(master_message, new_message):
     # Tidy message whitespace
     master_message['message'] = master_message['message'].strip()
 
-    master_message['data'] = new_message['data']
+    
+    master_message['data'].update(new_message.get('data') or {})
 
     return master_message
 
@@ -165,7 +170,7 @@ def get_format_processors_end():
     
     def format_html(result):
         overlay_status_message(c.result, result)                             # Set standard template data dict for template to use
-        web_template = "web/%s.mako" % result['template']                    # Find template filename
+        web_template    = "web/%s.mako"    % result['template']              # Find template filename
         mobile_template = "mobile/%s.mako" % result['template']
         if request.environ['is_mobile'] and os.path.exists(mobile_template): # If mobile rendering
             template = mobile_template

@@ -97,17 +97,18 @@ class RegisterController(BaseController):
         
         if c.logged_in_user.email_unverifyed:
             send_verifiy_email(c.logged_in_user)
-            flash_message(_('Please check your email to validate your email address'))
+            set_flash_message(_('Please check your email to validate your email address'))
         
         c.logged_in_user.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako'))
         
-        flash_message(_("Congratulations, you have successfully signed up to _site_name."))
+        set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))
         redirect('/')
 
 
     #---------------------------------------------------------------------------
     # Register - via email (no janrain)
     #---------------------------------------------------------------------------
+    @auto_format_output()
     def email(self, format="redirect"):
         """
         Register - via email (no janrain)

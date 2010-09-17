@@ -77,6 +77,17 @@ class BaseController(WSGIController):
     
     def __before__(self):
 
+        # Setup globals c
+        # Request global - have the system able to easly view request details as globals
+        current_request = request.environ.get("pylons.routes_dict")
+        c.controller = current_request.get("controller")
+        c.action     = current_request.get("action")
+        c.id         = current_request.get("id")
+        c.format     = current_request.get("format", config['default_format'])
+        
+        c.result = {'status':'ok', 'message':None, 'data':None}
+
+
         # Login - Fetch logged in user from session id (if present)
         c.logged_in_user = get_user(session_get('user_id'))
 
@@ -89,7 +100,7 @@ class BaseController(WSGIController):
 
         # User pending regisration? - redirect to complete registration process
         if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url.current()):
-            flash_message(_('Please complete the regisration process'))
+            set_flash_message(_('Please complete the regisration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 
         # Setup site app_globals on first request
@@ -109,16 +120,6 @@ class BaseController(WSGIController):
         #AllanC - For gadgets and emails links and static content need to be absolute
         #         A gadget controler could set this True, any image or URL created with helpers.py would have host appended to them
         c.absolute_links = False
-
-
-        # Request global - have the system able to easly view request details as globals
-        current_request = request.environ.get("pylons.routes_dict")
-        c.controller = current_request.get("controller")
-        c.action     = current_request.get("action")
-        c.id         = current_request.get("id")
-        c.format     = current_request.get("format", config['default_format'])
-        
-        c.result = {'status':'ok', 'message':'', 'data':None}
         
         # Session Flash Message
         flash_message_session = session_remove('flash_message')
@@ -127,7 +128,6 @@ class BaseController(WSGIController):
             except ValueError: overlay_status_message(c.result,            flash_message_session )
 
 
-    @auto_format_output()
     def __call__(self, environ, start_response):
         """Invoke the Controller"""
         # WSGIController.__call__ dispatches to the Controller method
