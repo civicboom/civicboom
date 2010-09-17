@@ -7,20 +7,30 @@ log = logging.getLogger(__name__)
 
 
 def _post_to_query(params):
-    query = AndFilter([
-        OrFilter([
-            TextFilter("terrorists"),
-            AndFilter([
-                LocationFilter([1, 51], 10),
-                TagFilter("Science & Nature")
+    if 'query' in params:
+        query = AndFilter([
+            OrFilter([
+                TextFilter("terrorists"),
+                AndFilter([
+                    LocationFilter([1, 51], 10),
+                    TagFilter("Science & Nature")
+                ]),
+                AuthorFilter("unittest")
             ]),
-            AuthorFilter("unittest")
-        ]),
-        NotFilter(OrFilter([
-            TextFilter("waffles"),
-            TagFilter("Business")
-        ]))
-    ])
+            NotFilter(OrFilter([
+                TextFilter("waffles"),
+                TagFilter("Business")
+            ]))
+        ])
+    else: # default query to be edited
+        query = AndFilter([
+            OrFilter([
+                LabelFilter("List the things you want to see here"),
+            ]),
+            NotFilter(OrFilter([
+                LabelFilter("Filter out what you don't want to see here"),
+            ]))
+        ])
     return query
 
 
@@ -132,4 +142,4 @@ class FeedsController(BaseController):
             return action_error(_("Not your feed"), code=403)
 
         # ...
-        return action_ok(_("Feed editor here"), code=200)
+        return action_ok(template="feeds/edit", data={"feed": f})
