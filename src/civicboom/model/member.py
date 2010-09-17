@@ -58,6 +58,7 @@ class Member(Base):
     assignments_accepted = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
     flags                = relationship("FlaggedContent"  , backref=backref('member'), cascade="all,delete-orphan")
+    feeds                = relationship("Feed"            , backref=backref('member'), cascade="all,delete-orphan")
 
     # Content relation shortcuts
     #content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
