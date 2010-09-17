@@ -45,7 +45,7 @@ class TestController(TestCase):
                 'password': u'password'
             }
         )
-        response = self.app.get(url(controller='settings', action='general')) # get an auth token
+        response = self.app.get(url(controller='profile', action='index')) # get an auth token
         self.auth_token = response.session['_authentication_token']
 
     def log_out(self):
