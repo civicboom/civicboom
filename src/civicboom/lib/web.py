@@ -113,11 +113,11 @@ def overlay_status_message(master_message, new_message):
     master_message['message'] = master_message.get('message', u'')
 
     # Overlay new message (if dict)
-    if 'status' in new_message:
+    if isinstance(new_message, dict):
         if master_message['status'] == 'ok':
             master_message['status'] = new_message['status']
-    if 'message' in new_message and new_message['message']:
-        master_message['message'] += '\n' + new_message['message']
+        if new_message['message']:
+            master_message['message'] += '\n' + new_message['message']
 
     # Overlay new message (if string)
     if isinstance(new_message, basestring):
@@ -125,6 +125,8 @@ def overlay_status_message(master_message, new_message):
 
     # Tidy message whitespace
     master_message['message'] = master_message['message'].strip()
+
+    master_message['data'] = new_message['data']
 
     return master_message
 
@@ -162,15 +164,14 @@ def get_format_processors_end():
         return 'implement RSS' # TODO: ???
     
     def format_html(result):
-        overlay_status_message(c.result, result)                           # Set standard template data dict for template to use
-        template_filename = "web/%s.mako" % result['template']             # Find template filename
-        if request.environ['is_mobile']:                                   # If mobile rendering
-            # TODO: detect mobile template
-            #   - (middleware needs to be upgraded  to look for subdomain m. in url)
-            mobile_template_filename = "mobile/%s.mako" % result['template']
-            # if exists(mobile_template_filename)
-            #   template_filename = mobile_template_filename
-        return render_mako(template_filename)
+        overlay_status_message(c.result, result)                             # Set standard template data dict for template to use
+        web_template = "web/%s.mako" % result['template']                    # Find template filename
+        mobile_template = "mobile/%s.mako" % result['template']
+        if request.environ['is_mobile'] and os.path.exists(mobile_template): # If mobile rendering
+            template = mobile_template
+        else:
+            template = web_template
+        return render_mako(template)
         # Used to use HTMLFILL, but this was incompatable with JSON and XML as formencode.Invalid were objects
         # Now the python dict has an ['error'] attribute that templates render themselfs
         # it may even be possible for us to create our own poor mans htmlfill that overlays the html with our own validation data
@@ -196,7 +197,8 @@ def get_format_processors_end():
           5.) upon reloading the page the [base controler] will extract the flash message form the session
           6.) display message in a cool scrolling pop up box
         """
-        if 'message' in result: set_flash_message(result) # Set flash message
+        if 'message' in result:
+            set_flash_message(result) # Set flash message
         redirect_to_referer()
         
         #action_redirect = session_remove('action_redirect')
@@ -260,9 +262,12 @@ def auto_format_output():
 
                 # Set default FORMAT (if nessisary)
                 format = c.format
-                if len(args)==3 and args[2] in format_processors_end and args[2]: format = args[2] # The 3rd arg should be a format, if it is a valid format set it
-                if 'format' in kwargs                                       : format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
-                
+                if len(args)==3 and args[2] in format_processors_end and args[2]:
+                    format = args[2] # The 3rd arg should be a format, if it is a valid format set it
+                    log.debug("Got format from args; was %s, now %s" % (c.format, format))
+                if 'format' in kwargs:
+                    format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
+
                 if format=='html' and 'template' not in result:
                     log.warning("Format HTML with no template")
                     format='xml' #If format HTML and no template supplied fall back to XML

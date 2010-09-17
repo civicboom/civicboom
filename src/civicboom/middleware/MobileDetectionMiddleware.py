@@ -8,6 +8,7 @@ class MobileDetectionMiddleware(object):
         self.app = app
 
     def __call__(self, environ, start_response):
+        # TODO: middleware needs to be upgraded to look for subdomain m. in url
         is_mobile = False;
 
         if environ.has_key('HTTP_USER_AGENT'):
