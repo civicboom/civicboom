@@ -42,7 +42,7 @@
 
 	<h2>${_("Tools")}</h2>
 	    <a href="${url(controller='profile', action='index')}">My Profile</a>
-	<br><a href="${url(controller='settings', action='general')}">Edit Settings</a>
+	<br><a href="${url('settings')}">Edit Settings</a>
 	<br><a href="${url(controller='settings', action='messages')}">Edit Notifications</a>
 	<br><a href="${url('messages')}">My Messages</a>
     <br><a href="${url(controller='account', action='link_janrain')}">Manage Login Accounts</a>
