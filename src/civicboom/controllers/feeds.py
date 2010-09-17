@@ -1,6 +1,7 @@
 
 from civicboom.lib.base   import *
 from civicboom.lib.search import *
+from civicboom.model      import Feed
 
 log = logging.getLogger(__name__)
 
@@ -10,18 +11,46 @@ class FeedsController(BaseController):
     # file has a resource setup:
     #     map.resource('feed', 'feeds')
 
+    @auto_format_output()
+    @authorize(is_valid_user)
     def index(self, format='html'):
         """GET /feeds: All items in the collection"""
         # url('feeds')
+        c.viewing_user = c.logged_in_user
+        return action_ok(data={"feeds": [str(f) for f in c.viewing_user.feeds]})
 
+    @auto_format_output()
+    @authorize(is_valid_user)
     def create(self):
         """POST /feeds: Create a new item"""
         # url('feeds')
+        query = AndFilter([
+            OrFilter([
+                TextFilter("terrorists"),
+                AndFilter([
+                    LocationFilter([1, 51], 10),
+                    TagFilter("Science & Nature")
+                ]),
+                AuthorFilter("unittest")
+            ]),
+            NotFilter(OrFilter([
+                TextFilter("waffles"),
+                TagFilter("Business")
+            ]))
+        ])
+        f = Feed()
+        f.query = query
+        c.logged_in_user.feeds.append(f)
+        Session.commit()
 
+    @auto_format_output()
+    @authorize(is_valid_user)
     def new(self, format='html'):
         """GET /feeds/new: Form to create a new item"""
         # url('new_feed')
 
+    @auto_format_output()
+    @authorize(is_valid_user)
     def update(self, id):
         """PUT /feeds/id: Update an existing item"""
         # Forms posted to this method should contain a hidden field:
@@ -30,7 +59,16 @@ class FeedsController(BaseController):
         #    h.form(url('feed', id=ID),
         #           method='put')
         # url('feed', id=ID)
+        f = Session.query(Feed).filter(id=id).first()
+        if not f:
+            return action_error(_("No such feed"), code=404)
+        if f.member != c.logged_in_user:
+            return action_error(_("Not your feed"), code=403)
+        # ...
+        return action_ok(_("Feed updated"), code=200)
 
+    @auto_format_output()
+    @authorize(is_valid_user)
     def delete(self, id):
         """DELETE /feeds/id: Delete an existing item"""
         # Forms posted to this method should contain a hidden field:
@@ -39,11 +77,38 @@ class FeedsController(BaseController):
         #    h.form(url('feed', id=ID),
         #           method='delete')
         # url('feed', id=ID)
+        f = Session.query(Feed).filter(id=id).first()
+        if not f:
+            return action_error(_("No such feed"), code=404)
+        if f.member != c.logged_in_user:
+            return action_error(_("Not your feed"), code=403)
+        Session.delete(f)
+        Session.commit()
+        return action_ok(_("Feed deleted"), code=200)
 
+    @auto_format_output()
     def show(self, id, format='html'):
         """GET /feeds/id: Show a specific item"""
         # url('feed', id=ID)
+        f = Session.query(Feed).filter(id=id).first()
+        if not f:
+            return action_error(_("No such feed"), code=404)
+        # ...
+        results = Session.query(Content)
+        results = results.filter(sql(f.query))
+        results = results[0:20]
+        results = filter(lambda content: content.viewable_by(c.logged_in_user), results)
+        return action_ok(data={"results": results})
 
+    @auto_format_output()
+    @authorize(is_valid_user)
     def edit(self, id, format='html'):
         """GET /feeds/id/edit: Form to edit an existing item"""
         # url('edit_feed', id=ID)
+        f = Session.query(Feed).filter(id=id).first()
+        if not f:
+            return action_error(_("No such feed"), code=404)
+        if f.member != c.logged_in_user:
+            return action_error(_("Not your feed"), code=403)
+        # ...
+        return action_ok(_("Feed editor here"), code=200)
