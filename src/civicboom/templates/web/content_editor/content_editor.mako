@@ -47,6 +47,13 @@
             ${license()}
 			${submit_buttons()}
         ${h.end_form()}
+        
+        % if c.content.id:
+          ${h.form(url('content', id=c.content.id), method="DELETE")}
+            <input type="submit" name="submit_delete"  value="${_("Delete")}"/>
+          ${h.end_form()}
+        % endif
+
     </div>
     
 </%def>
@@ -391,12 +398,6 @@
 ##------------------------------------------------------------------------------
 <%def name="submit_buttons()">
 <div style="text-align: right;">
-
-	% if c.content.id:
-	  ${h.form(url('content', id=c.content.id), method="DELETE")}
-		<input type="submit" name="submit_delete"  value="${_("Delete")}"/>
-	  ${h.end_form()}
-	% endif
 
 	% if c.content.__type__ == "draft":
 	<input type="submit" name="submit_preview" value="${_("Preview Draft")}"/>

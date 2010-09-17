@@ -91,7 +91,7 @@ class ContentsController(BaseController):
             return action_error(_("_content not found"), code=404)
         
         # Overlay form data over the current content object or return a new instance of an object
-        content = form_to_content(request.params, c.content) #request.POST
+        content = form_to_content(request.params, content) #request.POST
         starting_content_type = content.__type__
         
         # If publishing perform profanity check and send notifications
