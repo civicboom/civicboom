@@ -16,7 +16,7 @@ class MessagesController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     def index(self, format='html'):
-        """GET /: All items in the collection."""
+        """GET /messages: All items in the collection."""
         # url('messages')
         c.viewing_user = c.logged_in_user
         return action_ok(
@@ -34,7 +34,7 @@ class MessagesController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def create(self):
-        """POST /: Create a new item."""
+        """POST /messages: Create a new item."""
         # url('messages')
         try:
             target = get_user(request.POST["target"])
@@ -56,14 +56,16 @@ class MessagesController(BaseController):
             return action_error(_("Error sending message"), code=400)
 
 
+    @auto_format_output()
     def new(self, format='html'):
-        """GET /new: Form to create a new item."""
+        """GET /messages/new: Form to create a new item."""
         # url('new_message')
         return action_error(_("'New Message' page not implemented - go to somebody's profile page to message them"), code=501)
 
 
+    @auto_format_output()
     def update(self, id):
-        """PUT /id: Update an existing item."""
+        """PUT /messsages/id: Update an existing item."""
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="PUT" />
         # Or using helpers:
@@ -76,14 +78,17 @@ class MessagesController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def delete(self, id):
-        """DELETE /id: Delete an existing item."""
+        """DELETE /messages/id: Delete an existing item."""
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="DELETE" />
         # Or using helpers:
         #    h.form(h.url('message', id=ID), method='delete')
         # url('message', id=ID)
         c.viewing_user = c.logged_in_user
-        msg = Session.query(Message).filter(Message.id==int(id)).one()
+        msg = Session.query(Message).filter(Message.id==int(id)).first()
+        if not msg:
+            return action_error(_("Message does not exist"), code=404)
+
         redir = None
         if msg.target == c.viewing_user: # FIXME messages to groups?
             # FIXME: test that delete-orphan works, and removes the
@@ -104,10 +109,14 @@ class MessagesController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     def show(self, id, format='html'):
-        """GET /id: Show a specific item."""
+        """GET /messages/id: Show a specific item."""
         # url('message', id=ID)
         c.viewing_user = c.logged_in_user
-        msg = Session.query(Message).filter(Message.id==id).one()
+
+        msg = Session.query(Message).filter(Message.id==id).first()
+        if not msg:
+            return action_error(_("Message does not exist"), code=404)
+
         if msg.target == c.viewing_user: # FIXME messages to groups?
             c.msg = msg
         else:
@@ -125,7 +134,8 @@ class MessagesController(BaseController):
         )
 
 
+    @auto_format_output()
     def edit(self, id, format='html'):
-        """GET /id;edit: Form to edit an existing item."""
+        """GET /messages/id/edit: Form to edit an existing item."""
         # url('edit_message', id=ID)
         return action_error(_("Messages cannot be edited"), code=501)
