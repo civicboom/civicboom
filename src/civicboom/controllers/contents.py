@@ -39,32 +39,36 @@ class ContentsController(BaseController):
         return redirect(url(controller='search', action='content'))
 
 
+    @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    def create(self):
+    def create(self, format=None):
         """POST /contents: Create a new item"""
-        # url('contents')
-        content = CommentContent()
-        content = form_to_content(request.params, content)
+        print "helloooooooooooo"
+        #content = DraftContent()
+        content = form_to_content(request.params, None)
+        #content.creator = c.logged_in_user # this is handled in form_to_content
         Session.add(content)
         Session.commit()
-        return redirect(url('content', id=content.parent_id)) # redirect to comment parent
+        return action_ok(message=_('draft _content created ok'), data={'id':content.id})
+        
+        # url('contents')
+        #content = CommentContent()
+        #content = form_to_content(request.params, content)
+        #Session.add(content)
+        #Session.commit()
+        #return redirect(url('content', id=content.parent_id)) # redirect to comment parent
 
-
+    @auto_format_output()
     @authorize(is_valid_user)
     def new(self, format='html'):
         """GET /contents/new: Form to create a new item
-
+        
         As file-upload and such require an existing object to add to, we create a
         blank object and redirect to "edit-existing" mode
         """
-        # url('new_content')
-        content = DraftContent()
-        content = form_to_content(request.params, content)
-        content.creator = c.logged_in_user
-        Session.add(content)
-        Session.commit()
-        return redirect(url('edit_content', id=content.id))
+        content_id = self.create(format='python')['data']['id']
+        return redirect(url('edit_content', id=content_id))
 
 
     @auto_format_output()
@@ -78,52 +82,59 @@ class ContentsController(BaseController):
         #    h.form(url('content', id=ID),
         #           method='put')
         # url('content', id=ID)
-
-        c.content = get_content(id)
-
-        if not c.content:
+        
+        content = get_content(id)
+        
+        if not content:
             return action_error(_("_content not found"), code=404)
-
+        
         # Overlay form data over the current content object or return a new instance of an object
-        c.content = form_to_content(request.params, c.content) #request.POST
-
+        content = form_to_content(request.params, c.content) #request.POST
+        starting_content_type = content.__type__
+        
         # If publishing perform profanity check and send notifications
         if 'submit_publish' in request.POST:
-            profanity_filter(c.content) # Filter any naughty words and alert moderator
-
+            profanity_filter(content) # Filter any naughty words and alert moderator
+            
             m = None
-            if starting_content_type and starting_content_type != c.content.__type__:
+            if starting_content_type and starting_content_type != content.__type__:
                 # Send notifications about NEW published content
-                if   c.content.__type__ == "article"   : m = messages.article_published_by_followed(reporter=c.content.creator, article   =c.content)
-                elif c.content.__type__ == "assignment": m = messages.assignment_created           (reporter=c.content.creator, assignment=c.content)
+                if   content.__type__ == "article"   : m = messages.article_published_by_followed(reporter=content.creator, article   =content)
+                elif content.__type__ == "assignment": m = messages.assignment_created           (reporter=content.creator, assignment=content)
                 # TODO: Clear comments when upgraded from draft to published content?
-                user_log.info("published new Content #%d" % (c.content.id, ))
+                user_log.info("published new Content #%d" % (content.id, ))
                 # Aggregate new content
-                c.content.aggregate_via_creator() # Agrigate content over creators known providers
-                twitter_global(c.content) # TODO? diseminate new or updated content?
+                content.aggregate_via_creator() # Agrigate content over creators known providers
+                twitter_global(content) # TODO? diseminate new or updated content?
             else:
                 # Send notifications about previously published content has been UPDATED
-                if   c.content.__type__ == "assignment": m = messages.assignment_updated           (reporter=c.content.creator, assignment=c.content)
-                user_log.info("updated published Content #%d" % (c.content.id, ))
+                if   content.__type__ == "assignment": m = messages.assignment_updated           (reporter=content.creator, assignment=content)
+                user_log.info("updated published Content #%d" % (content.id, ))
             if m:
-                c.content.creator.send_message_to_followers(m, delay_commit=True)
-
-
+                content.creator.send_message_to_followers(m, delay_commit=True)
+        
         # AllanC - This was an idea that if the content has not changed then dont commit it, but for now it is simpler to always commit it
         #content_hash_before = c.content.hash() # Generate hash of content
         #content_hash_after  = "always trigger db commit on post" #c.content.hash()                # Generate hash of content again
         #if content_hash_before != content_hash_after:         # If content has changed
-        Session.add(c.content)                            #   Save content to database
+        Session.add(content)                            #   Save content to database
         Session.commit()                                  #
-        update_content(c.content)                         #   Invalidate any cache associated with this content
-        user_log.info("edited Content #%d" % (c.content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
-
+        update_content(content)                         #   Invalidate any cache associated with this content
+        user_log.info("edited Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
+        
+        content_message  = None
+        content_redirect = url('edit_content', id=content.id)
+        
         if 'submit_preview' in request.POST:
-            return redirect(url('content', id=c.content.id))
+            content_redirect = url('content', id=content.id)
         if 'submit_publish' in request.POST:
-            return redirect(url('content', id=c.content.id, prompt_aggregate=True))
+            content_redirect = url('content', id=content.id, prompt_aggregate=True)
         if 'submit_response' in request.POST:
-            return redirect(url('content', id=c.content.parent_id))
+            content_redirect = url('content', id=content.parent_id)
+        
+        if c.format == 'redirect':
+            return redirect(content_redirect)
+            
         return action_ok(_("_content saved"))
 
 
@@ -206,12 +217,12 @@ class ContentsController(BaseController):
 
         c.content = form_to_content(request.params, c.content)
 
-        if c.content:
-            # If the content is not being edited by the creator then "Unauthorised"
-            # AllanC - todo: in future this will have to be a more involved process as the ower of the content could be a group the user is part of
-            if not c.content.editable_by(c.logged_in_user):
-                return action_error(_("your user does not have the permissions to edit this _content"), code=403)
-            starting_content_type = c.content.__type__
+        #if c.content:
+        # If the content is not being edited by the creator then "Unauthorised"
+        # AllanC - todo: in future this will have to be a more involved process as the ower of the content could be a group the user is part of
+        if not c.content.editable_by(c.logged_in_user):
+            return action_error(_("your user does not have the permissions to edit this _content"), code=403)
+        
 
         c.content_media_upload_key = get_content_media_upload_key(c.content)
 

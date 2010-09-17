@@ -155,7 +155,7 @@ def get_format_processors_pre():
     )
 """
 
-def get_format_processors_end():
+def setup_format_processors():
     def format_json(result):
         response.headers['Content-type'] = "application/json"
         return json.dumps(result)
@@ -223,6 +223,8 @@ def get_format_processors_end():
     )
 
 
+format_processors = setup_format_processors()
+
 def auto_format_output():
     """
     Once a controler aciton has finished processing it will return a python dict
@@ -248,8 +250,8 @@ def auto_format_output():
         }
     """
     
-    format_processors_end = get_format_processors_end()
-    #format_processors_pre = get_format_processors_pre()
+    #format_processors_end = format_processors 
+
     
     def my_decorator(target):
         def wrapper(target, *args, **kwargs):
@@ -264,15 +266,15 @@ def auto_format_output():
             # After
             # Is result a dict with data?
             if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
-
+                
                 # Set default FORMAT (if nessisary)
                 format = c.format
-                if len(args)==3 and args[2] in format_processors_end and args[2]:
-                    format = args[2] # The 3rd arg should be a format, if it is a valid format set it
+                if args[-1] in format_processors:
+                    format = args[-1] # The last arg should be a format, if it is a valid format set it
                     log.debug("Got format from args; was %s, now %s" % (c.format, format))
                 if 'format' in kwargs:
                     format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
-
+                
                 if format=='html' and ('template' not in result or result['template'] == None):
                     log.warning("Format HTML with no template")
                     format='xml' #If format HTML and no template supplied fall back to XML
@@ -287,8 +289,8 @@ def auto_format_output():
                     del result['code']
                 
                 # Render to format
-                if format in format_processors_end:
-                    return format_processors_end[format](result)
+                if format in format_processors:
+                    return format_processors[format](result)
                 else:
                     log.warning("Unknown format: "+str(format))
                 

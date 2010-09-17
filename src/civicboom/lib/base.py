@@ -144,6 +144,7 @@ class BaseController(WSGIController):
 #-------------------------------------------------------------------------------
 from decorator import decorator
 from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
+from civicboom.lib.web import format_processors
 
 @decorator
 def authenticate_form(func, *args, **kwargs):
@@ -181,9 +182,16 @@ def authenticate_form(func, *args, **kwargs):
                  'REMOTE_ADDR: %s' % (request, request.remote_addr))
         #abort(403, detail=csrf_detected_message)
         response.status_int = 403
-
-        c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
-        if 'QUERY_STRING' in request.environ:
-            c.target_url += '?'+request.environ.get('QUERY_STRING')
-        c.post_values = param_dict
-        return render("web/design09/misc/confirmpost.mako")
+        
+        format = c.format
+        if args[-1] in format_processors:
+            format = args[-1]
+        
+        if format in ['html','redirect']:
+            c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
+            if 'QUERY_STRING' in request.environ:
+                c.target_url += '?'+request.environ.get('QUERY_STRING')
+            c.post_values = param_dict
+            return render("web/design09/misc/confirmpost.mako")
+        else:
+            return action_error(message="Cross-site request forgery detected, request denied: include a valid authentication_token in your form POST")

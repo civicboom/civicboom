@@ -39,7 +39,7 @@
     ${parent_preview()}
 
     <div class="content_form">
-        ${h.form(url('content', id=c.content.id), method='PUT', multipart=True, name="content")}
+        ${h.form(url('content', id=c.content.id, format="redirect"), method='PUT', multipart=True, name="content")}
             ${base_content()}
             ${media()}
             ${content_type()}
@@ -391,7 +391,7 @@
 
 	% if c.content.id:
 	  ${h.form(url('content', id=c.content.id), method="DELETE")}
-		<input type="submit" name="submit_delete"  value="${_("Delete")}"       />
+		<input type="submit" name="submit_delete"  value="${_("Delete")}"/>
 	  ${h.end_form()}
 	% endif
 
