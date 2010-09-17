@@ -48,7 +48,7 @@
       ##  Delete
       ##</a>
 	  ${h.secure_link(
-		href=url('content', id=c.content.id), method="DELETE",
+		href=url('content', id=c.content.id, format='redirect'), method="DELETE",
 		value=_("Delete"),
 		css_class="button_small button_small_style_2",
 		confirm_text=_("Are your sure you want to delete this content?")
@@ -59,9 +59,9 @@
     % if c.content.__type__ == "assignment" and c.content.acceptable_by(c.logged_in_user):
         <% status = c.content.previously_accepted_by(c.logged_in_user) %>
         %if not status:
-            ${h.secure_link(h.url(controller='content_actions',action='accept'  , id=c.content.id), _('Accept')  , css_class="button_small button_small_style_2")}
+            ${h.secure_link(h.url(controller='content_actions',action='accept'  , id=c.content.id, format='redirect'), _('Accept')  , css_class="button_small button_small_style_2")}
         % elif status != "withdrawn":
-            ${h.secure_link(h.url(controller='content_actions',action='withdraw', id=c.content.id), _('Withdraw'), css_class="button_small button_small_style_2")}
+            ${h.secure_link(h.url(controller='content_actions',action='withdraw', id=c.content.id, format='redirect'), _('Withdraw'), css_class="button_small button_small_style_2")}
         % endif
     % endif
 
@@ -73,8 +73,8 @@
                 Email Resorces
             </a>
         % else:
-            ${h.secure_link(h.url(controller='content_actions',action='approve'    , id=c.content.id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
-            ${h.secure_link(h.url(controller='content_actions',action='disasociate', id=c.content.id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+            ${h.secure_link(h.url(controller='content_actions',action='approve'    , id=c.content.id, format='redirect'), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
+            ${h.secure_link(h.url(controller='content_actions',action='disasociate', id=c.content.id, format='redirect'), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
         % endif
         
     % endif
@@ -89,7 +89,7 @@ def selif(r, n):
 		return ""
 r = (c.content.rating * 5)
 %>
-		<form id="rating" action="${url(controller='content_actions', action='rate', id=c.content.id)}" method="POST">
+		<form id="rating" action="${url(controller='content_actions', action='rate', id=c.content.id), format='redirect'}" method="POST">
 			<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
 			<select name="rating" style="width: 120px">
 				<option value="0">Unrated</option>
@@ -405,7 +405,7 @@ from civicboom.model import CommentContent
             % if hasattr(c.content,"boom_count"):
                 <% boom_count = c.content.boom_count %>
             % endif
-            <a href="${h.url(controller='content' ,action='boom',id=c.content.id)}" title="${_("Boom this! Share this with all your Followers")}">
+            <a href="${h.url(controller='content' ,action='boom', id=c.content.id, format='redirect')}" title="${_("Boom this! Share this with all your Followers")}">
             <div class="boom_this">
                 <span class="boom_count">${boom_count}</span>
                 <p>${_("Boom this")}</p>
