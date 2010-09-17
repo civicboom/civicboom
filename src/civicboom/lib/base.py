@@ -127,7 +127,6 @@ class BaseController(WSGIController):
             except ValueError: overlay_status_message(c.result,            flash_message_session )
 
 
-    @auto_format_output()
     def __call__(self, environ, start_response):
         """Invoke the Controller"""
         # WSGIController.__call__ dispatches to the Controller method
