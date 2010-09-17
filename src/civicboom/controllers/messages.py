@@ -21,12 +21,12 @@ class MessagesController(BaseController):
         c.viewing_user = c.logged_in_user
         return action_ok(
             template="messages/index",
-            data = [{
+            data = {"messages":[{
                 "id": m.id,
                 "source": str(m.source),
                 "timestamp": str(m.timestamp),
                 "subject": m.subject,
-            } for m in c.viewing_user.messages_to]
+            } for m in c.viewing_user.messages_to]}
         )
 
 
