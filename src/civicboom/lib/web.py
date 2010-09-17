@@ -195,7 +195,8 @@ def get_format_processors_end():
           5.) upon reloading the page the [base controler] will extract the flash message form the session
           6.) display message in a cool scrolling pop up box
         """
-        if 'message' in result: set_flash_message(result) # Set flash message
+        if 'message' in result:
+            set_flash_message(result) # Set flash message
         redirect_to_referer()
         
         #action_redirect = session_remove('action_redirect')
@@ -258,8 +259,11 @@ def auto_format_output():
 
                 # Set default FORMAT (if nessisary)
                 format = c.format
-                if len(args)==3 and args[2] in format_processors_end and args[2]: format = args[2] # The 3rd arg should be a format, if it is a valid format set it
-                if 'format' in kwargs                                       : format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
+                if len(args)==3 and args[2] in format_processors_end and args[2]:
+                    format = args[2] # The 3rd arg should be a format, if it is a valid format set it
+                    log.debug("Got format from args; was %s, now %s" % (c.format, format))
+                if 'format' in kwargs:
+                    format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
 
                 
                 if format=='html' and 'template' not in result:
