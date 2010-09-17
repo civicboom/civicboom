@@ -117,6 +117,12 @@ class TestContentsController(TestController):
             status=403
         )
 
+    def test_can_update_article_owned_by_group_i_am_admin_of(self):
+        pass
+
+    def test_can_update_article_owned_by_group_i_am_member_of(self):
+        pass
+
 
     ## edit -> update ########################################################
 
@@ -209,5 +215,5 @@ class TestContentsController(TestController):
             status=404
         )
 
-    def test_can_delete_article_owned_by_group_i_am_admin_of(self)
+    def test_can_delete_article_owned_by_group_i_am_admin_of(self):
         pass
