@@ -110,14 +110,12 @@ class BaseController(WSGIController):
         #         A gadget controler could set this True, any image or URL created with helpers.py would have host appended to them
         c.absolute_links = False
 
-        c.format = config['default_format']
-
-        # Request globabal - have the system able to easly view request details as globals
+        # Request global - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
         c.controller = current_request.get("controller")
         c.action     = current_request.get("action")
         c.id         = current_request.get("id")
-        c.format     = current_request.get("format")
+        c.format     = current_request.get("format", config["default_format"])
         
         c.result = {'status':'ok', 'message':'', 'data':None}
         
