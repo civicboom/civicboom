@@ -104,10 +104,13 @@
 			$.ajax({
 				type: 'POST',
 				dataType: 'json',
-				url: "${url(controller='content', action='autosave', id=c.content_media_upload_key)}",
+				url: "${url('content', id=c.content.id)}",
 				data: {
-					"content": ed.getContent(),
-					"mode": 'autosave',
+                    "_method"   : 'PUT',
+                    "_authentication_token": '${h.authentication_token()}'
+					"content"   : ed.getContent(),
+					"mode"      : 'autosave',
+                    ##"upload_key": '${c.content_media_upload_key}',
 				},
 				success: function(data) {
 					ed.setProgressState(0);

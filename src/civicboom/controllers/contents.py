@@ -44,6 +44,8 @@ class ContentsController(BaseController):
     @authenticate_form
     def create(self, format=None):
         """POST /contents: Create a new item"""
+        #url_for('contents') + POST
+        
         #content = DraftContent()
         content = form_to_content(request.params, None)
         #content.creator = c.logged_in_user # this is handled in form_to_content
@@ -65,6 +67,7 @@ class ContentsController(BaseController):
         """GET /contents/new: Form to create a new item
         As file-upload and such require an existing object to add to, we create a blank object and redirect to "edit-existing" mode
         """
+        #url_for('new_content')
         content_id = self.create(format='python')['data']['id']
         return redirect(url('edit_content', id=content_id))
 
@@ -134,7 +137,7 @@ class ContentsController(BaseController):
         if c.format == 'redirect':
             return redirect(content_redirect)
             
-        return action_ok(_("_content saved"))
+        return action_ok(_("_content updated"))
 
 
     @auto_format_output()
@@ -203,7 +206,6 @@ class ContentsController(BaseController):
         )
 
 
-    @auto_format_output()
     @authorize(is_valid_user)
     def edit(self, id, format='html'):
         """GET /contents/id/edit: Form to edit an existing item"""
@@ -222,14 +224,12 @@ class ContentsController(BaseController):
         if not c.content.editable_by(c.logged_in_user):
             return action_error(_("your user does not have the permissions to edit this _content"), code=403)
         
-
         c.content_media_upload_key = get_content_media_upload_key(c.content)
 
-        c.licenses = get_licenses() # WTF! without this line ... using app_globals.licences in the template does not work! why?
+        #c.licenses = get_licenses() # WTF! without this line ... using app_globals.licences in the template does not work! why?
         # Render content editor
-
         #if id and c.content.id and id != c.content.id: redirect(url.current(id=c.content.id))
-
+        
         return render("/web/content_editor/content_editor.mako")
 
 
