@@ -47,7 +47,7 @@ __all__ = [
     "_", "ungettext", "set_lang",
 
     # session managemnet - is is prefered that all access to the session is via accessors
-    "session_get", "session_remove", "session_set"
+    "session_get", "session_remove", "session_set",
 
     # misc
     "BaseController",
