@@ -4,7 +4,7 @@ class TestUserProfileController(TestController):
 
     def test_index_not_logged_in(self):
         self.log_out()
-        response = self.app.get(url(controller='profile', action='index'), status=403) # should be 302, redirect to login?
+        response = self.app.get(url(controller='profile', action='index'), status=302)
         response = self.app.get(url(controller='profile', action='index', format="json"), status=403)
         # FIXME: follow the redirect, then:
         # assert "Sign in" in response
