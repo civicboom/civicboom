@@ -659,7 +659,7 @@ CREATE TRIGGER update_content
 
         # }}}
     ###################################################################
-    else:
+    else: # elif pylons.test.pylonsapp: # only populate when in test mode?
         log.info("Populating tables with test data") # {{{
 
         ###############################################################
@@ -686,15 +686,22 @@ CREATE TRIGGER update_content
         u1.username      = u"unittest"
         u1.name          = u"Mr U. Test"
         u1.join_date     = datetime.datetime.now()
-        u1.home_location = u"The Moon"
-        u1.description   = u"A user for automated tests to log in as"
         u1.status        = "active"
         u1.email         = u"bob@bobcorp.com"
+        u1.config['home_location'] = u"The Moon"
+        u1.config['description']   = u"A user for automated tests to log in as"
 
         u1_login = UserLogin()
         u1_login.user   = u1
         u1_login.type   = "password"
         u1_login.token  = hashlib.sha1("password").hexdigest()
+
+        Session.add_all([u1, u1_login]); Session.commit();
+        assert u1.id == 1
+        assert u1.login_details[0].type == "password"
+        assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
+        assert u1.login_details[0].token != hashlib.sha1("asdfasdf").hexdigest()
+
 
         u2 = User()
         u2.username      = u"unitfriend"
@@ -706,6 +713,10 @@ CREATE TRIGGER update_content
         u2_login.user   = u2
         u2_login.type   = "password"
         u2_login.token  = hashlib.sha1("password").hexdigest()
+
+        Session.add_all([u2, u2_login]); Session.commit();
+        assert u2.id == 2
+
 
         u3 = User()
         u3.username      = u"cookie"
@@ -727,8 +738,12 @@ CREATE TRIGGER update_content
         u5.status        = "active"
         u5.email         = u""
 
-        Session.add_all([u1, u2, u3, u4, u5, u1_login, u2_login])
-        Session.commit()
+        Session.add_all([u3, u4, u5]); Session.commit()
+
+
+        assert list(Session.query(User).filter(User.id==0)) == []
+        assert list(Session.query(User).filter(User.username=="MrNotExists")) == []
+
 
         ###############################################################
         log.debug("Messages")
@@ -738,41 +753,54 @@ CREATE TRIGGER update_content
         m.target = u2
         m.subject = u"Re: singing"
         m.content = u"My singing is fine!"
+        Session.add(m); Session.commit(); assert m.id == 1
 
         m = Message()
         m.source = u2
         m.target = u1
         m.subject = u"Re: Re: singing"
         m.content = u"It is totally not! And to explain, I will use a sentence that is over 50 characters long, to test the Message.__unicode__ truncation feature"
-
-        m = Message()
-        m.source = u2
-        m.target = u1
-        m.subject = u"Message #3"
-        m.content = u"This is a message to test deletion with"
-
-        m = Message()
-        m.source = u2
-        m.target = u1
-        m.subject = u"Message #4"
-        m.content = u"This is a message to test deletion with, using browser fakeouts"
+        Session.add(m); Session.commit(); assert m.id == 2
 
         n = Message()
         n.target = u1
         n.subject = u"Notification! A test"
         n.content = u"A test is happening now :O"
+        Session.add(n); Session.commit(); assert n.id == 3
+
+        n = Message()
+        n.target = u2
+        n.subject = u"Another notification! A test"
+        n.content = u"A test part 2 is happening now :O"
+        Session.add(n); Session.commit(); assert n.id == 4
+
+        m = Message()
+        m.source = u2
+        m.target = u1
+        m.subject = u"deleteme"
+        m.content = u"This is a message to test deletion with"
+        Session.add(m); Session.commit(); assert m.id == 5
+
+        m = Message()
+        m.source = u2
+        m.target = u1
+        m.subject = u"deleteme"
+        m.content = u"This is a message to test deletion with, using browser fakeouts"
+        Session.add(m); Session.commit(); assert m.id == 6
 
         n = Message()
         n.target = u1
-        n.subject = u"Another notification! A test"
-        n.content = u"A test part 2 is happening now :O"
+        n.subject = u"deleteme"
+        n.content = u"This is a notification to test deletion with"
+        Session.add(n); Session.commit(); assert n.id == 7
+
         Session.commit()
 
         ###############################################################
         log.debug("Content")
 
         ca = ArticleContent()
-        ca.title      = u"A test article"
+        ca.title      = u"A test article by the test user"
         ca.content    = u"""
         Here is some text.
         ここにいくつかのテキストです。
@@ -785,24 +813,11 @@ CREATE TRIGGER update_content
         여기에 일부 텍스트입니다.
         דאָ איז עטלעכע טעקסט.
         """
-        ca.creator    = u2
+        ca.creator    = u1
         ca.status     = "show"
         ca.license_id = cc_by.id
         ca.tags       = [open_source, the_moon_loc]
         ca.location   = "SRID=4326;POINT(-0.1278328 51.5072648)"
-        Session.add(ca); Session.commit(); # Ensure that this is Content #1
-
-
-        ca2 = ArticleContent()
-        ca2.title      = u"A test article by unittest"
-        ca2.content    = u"""
-        Content #2 should be owned by unittest for testing purposes
-        """
-        ca2.creator    = u1
-        ca2.status     = "show"
-        ca2.license_id = cc_by.id
-        ca2.tags       = [open_source, the_moon_loc]
-        Session.add(ca2); Session.commit(); # Ensure that this is Content #2
 
         m = Media()
         # FIXME: Image.open() locks up under nosetests, see Bug #45
@@ -815,18 +830,128 @@ CREATE TRIGGER update_content
         m.credit      = u"Shish"
         ca.attachments.append(m)
 
-        cc1 = CommentContent()
-        cc1.title      = u"A test response"
-        cc1.content    = u"Here is a response"
-        cc1.creator    = u3
-        cc1.status     = "show"
-        cc1.license_id = cc_by.id
-        ca.responses.append(cc1)
+        Session.add(ca); Session.commit();
+        assert ca.id == 1
+        assert ca.__type__ == "article"
+        assert ca.creator.username == "unittest"
+
+
+        ca2 = ArticleContent()
+        ca2.title      = u"A test article by someone else"
+        ca2.content    = u"Content #2 should be owned by unitfriend for testing purposes"
+        ca2.creator    = u2
+        ca2.status     = "show"
+        ca2.license_id = cc_by.id
+        ca2.tags       = [open_source, the_moon_loc]
+
+        Session.add(ca2); Session.commit();
+        assert ca2.id == 2
+        assert ca2.__type__ == "article"
+        assert ca2.creator.username == "unitfriend"
+
+
+        c = DraftContent()
+        c.title      = u"A test draft by the test user"
+        c.content    = u"Content #3 should be owned by unittest for testing purposes"
+        c.creator    = u1
+        c.status     = "show"
+        c.license_id = cc_by.id
+        c.tags       = [open_source, the_moon_loc]
+
+        Session.add(c); Session.commit();
+        assert c.id == 3
+        assert c.__type__ == "draft"
+        assert c.creator.username == "unittest"
+
+
+        c = DraftContent()
+        c.title      = u"A test draft by someone else"
+        c.content    = u"Content #4 should be owned by unitfriend for testing purposes"
+        c.creator    = u2
+        c.status     = "show"
+        c.license_id = cc_by.id
+        c.tags       = [open_source, the_moon_loc]
+
+        Session.add(c); Session.commit();
+        assert c.id == 4
+        assert c.__type__ == "draft"
+        assert c.creator.username == "unitfriend"
+
+
+        c = CommentContent()
+        c.title      = u"A test response"
+        c.content    = u"Here is a response by the test user"
+        c.creator    = u1
+        c.status     = "show"
+        c.license_id = cc_by.id
+        ca2.responses.append(c)
+
+        Session.add(c); Session.commit();
+        assert c.id == 5
+        assert c.__type__ == "comment"
+        assert c.creator.username == "unittest"
+        assert c.parent.creator.username == "unitfriend"
+
+
+        c = CommentContent()
+        c.title      = u"A test response"
+        c.content    = u"Here is a response by the article writer"
+        c.creator    = u2
+        c.status     = "show"
+        c.license_id = cc_by.id
+        ca2.responses.append(c)
+
+        Session.add(c); Session.commit();
+        assert c.id == 6
+        assert c.__type__ == "comment"
+        assert c.creator.username == "unitfriend"
+        assert c.parent.creator.username == "unitfriend"
+
+
+        c = CommentContent()
+        c.title      = u"A test response"
+        c.content    = u"Here is a response by someone who is neither the current user nor the article author"
+        c.creator    = u3
+        c.status     = "show"
+        c.license_id = cc_by.id
+        ca2.responses.append(c)
+
+        Session.add(c); Session.commit();
+        assert c.id == 7
+        assert c.__type__ == "comment"
+        assert c.parent.creator.username == "unitfriend"
+
+
+        c = ArticleContent()
+        c.title      = u"deleteme"
+        c.content    = u"this is here to test that the logged in user can delete their own articles with DELETE"
+        c.creator    = u1
+        c.status     = "show"
+        c.license_id = cc_by.id
+
+        Session.add(c); Session.commit();
+        assert c.id == 8
+        assert c.__type__ == "article"
+        assert c.creator.username == "unittest"
+
+
+        c = ArticleContent()
+        c.title      = u"deleteme"
+        c.content    = u"this is here to test that the logged in user can delete their own articles with _method=DELETE"
+        c.creator    = u1
+        c.status     = "show"
+        c.license_id = cc_by.id
+
+        Session.add(c); Session.commit();
+        assert c.id == 9
+        assert c.__type__ == "article"
+        assert c.creator.username == "unittest"
+
 
         cc2 = CommentContent()
-        cc2.title      = u"A test response with media"
+        cc2.title      = u"A comment"
         cc2.content    = u"Here is a response by the article author"
-        cc2.creator    = u2
+        cc2.creator    = u1
         cc2.status     = "show"
         cc2.license_id = cc_by.id
         ca.responses.append(cc2)

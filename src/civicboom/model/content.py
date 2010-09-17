@@ -117,6 +117,13 @@ class Content(Base):
         # TODO check groups of creator to see if member is in the owning group
         return False
 
+    def viewable_by(self, member):
+        """
+        Check to see if a member object has the rights to view this content
+        """
+        # TODO check groups of creator to see if member is in the owning group
+        return True
+
     def flag(self, **kargs):
         """
         Flag content as offensive or spam (can throw exception if fails)
