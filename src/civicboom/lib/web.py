@@ -36,6 +36,7 @@ def redirect_to_referer():
     if url_to == url.current(): # Detect if we are in a redirection loop and abort
         log.warning("Redirect loop detected for "+str(url_to))
         #redirect('/')
+    print "yay redirecting to %s" % url_to
     return redirect(url_to)
 
 
