@@ -266,7 +266,6 @@ class SettingsController(BaseController):
     @https()
     @authorize(is_valid_user)
     @authenticate_form
-    @action_redirector()
     def save_general(self, id=None, format="html"):
         c.viewing_user = c.logged_in_user
         u_config = c.viewing_user.config
@@ -324,7 +323,6 @@ class SettingsController(BaseController):
 
     @authorize(is_valid_user)
     @authenticate_form
-    @action_redirector()
     def save_messages(self, id=None, format="html"):
         c.viewing_user = c.logged_in_user
         from civicboom.lib.communication.messages import generators
@@ -350,7 +348,6 @@ class SettingsController(BaseController):
 
     @authorize(is_valid_user)
     @authenticate_form
-    @action_redirector()
     def save_location(self, id=None, format="html"):
         if "location" in request.POST:
             try:

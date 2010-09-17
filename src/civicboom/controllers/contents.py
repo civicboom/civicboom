@@ -175,8 +175,8 @@ class ContentsController(BaseController):
         # Increase content view count
         if hasattr(c.content,'views'):
             content_view_key = 'content_%s' % c.content.id
-            if content_view_key not in session:
-                session[content_view_key] = True
+            if session_get(content_view_key):
+                session_set(content_view_key, True)
                 #session.save()
                 c.content.views += 1
                 Session.commit()

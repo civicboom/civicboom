@@ -130,7 +130,7 @@ def authorize(authenticator):
                 
             # If API request - error unauthorised
             else:
-                return action_error(message="unauthorised", code="401") #Error to be formared by auto_formatter
+                return action_error(message="unauthorised", code=403) #Error to be formared by auto_formatter
         
         #return result # Technicaly this should NEVER be hit
 
