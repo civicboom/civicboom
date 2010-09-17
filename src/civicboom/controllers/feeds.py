@@ -1,9 +1,28 @@
 
 from civicboom.lib.base   import *
 from civicboom.lib.search import *
-from civicboom.model      import Feed
+from civicboom.model      import Feed, Content
 
 log = logging.getLogger(__name__)
+
+
+def _post_to_query(params):
+    query = AndFilter([
+        OrFilter([
+            TextFilter("terrorists"),
+            AndFilter([
+                LocationFilter([1, 51], 10),
+                TagFilter("Science & Nature")
+            ]),
+            AuthorFilter("unittest")
+        ]),
+        NotFilter(OrFilter([
+            TextFilter("waffles"),
+            TagFilter("Business")
+        ]))
+    ])
+    return query
+
 
 class FeedsController(BaseController):
     """REST Controller styled on the Atom Publishing Protocol"""
@@ -17,37 +36,32 @@ class FeedsController(BaseController):
         """GET /feeds: All items in the collection"""
         # url('feeds')
         c.viewing_user = c.logged_in_user
-        return action_ok(data={"feeds": [str(f) for f in c.viewing_user.feeds]})
+        return action_ok(
+            template="feeds/index",
+            data={"feeds": [
+                {"id": f.id, "name": f.name, "query": str(f.query)}
+                for f in c.viewing_user.feeds
+            ]}
+        )
 
     @auto_format_output()
     @authorize(is_valid_user)
     def create(self):
         """POST /feeds: Create a new item"""
         # url('feeds')
-        query = AndFilter([
-            OrFilter([
-                TextFilter("terrorists"),
-                AndFilter([
-                    LocationFilter([1, 51], 10),
-                    TagFilter("Science & Nature")
-                ]),
-                AuthorFilter("unittest")
-            ]),
-            NotFilter(OrFilter([
-                TextFilter("waffles"),
-                TagFilter("Business")
-            ]))
-        ])
         f = Feed()
-        f.query = query
+        f.name = request.POST['name']
+        f.query = _post_to_query(request.POST)
         c.logged_in_user.feeds.append(f)
         Session.commit()
+        return action_ok(_("Feed created"), code=201)
 
     @auto_format_output()
     @authorize(is_valid_user)
     def new(self, format='html'):
         """GET /feeds/new: Form to create a new item"""
         # url('new_feed')
+        return action_ok(template="feeds/new")
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -59,12 +73,14 @@ class FeedsController(BaseController):
         #    h.form(url('feed', id=ID),
         #           method='put')
         # url('feed', id=ID)
-        f = Session.query(Feed).filter(id=id).first()
+        f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
             return action_error(_("No such feed"), code=404)
         if f.member != c.logged_in_user:
             return action_error(_("Not your feed"), code=403)
-        # ...
+
+        f.name = request.POST['name']
+        f.query = _post_to_query(request.POST)
         return action_ok(_("Feed updated"), code=200)
 
     @auto_format_output()
@@ -77,11 +93,12 @@ class FeedsController(BaseController):
         #    h.form(url('feed', id=ID),
         #           method='delete')
         # url('feed', id=ID)
-        f = Session.query(Feed).filter(id=id).first()
+        f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
             return action_error(_("No such feed"), code=404)
         if f.member != c.logged_in_user:
             return action_error(_("Not your feed"), code=403)
+
         Session.delete(f)
         Session.commit()
         return action_ok(_("Feed deleted"), code=200)
@@ -90,25 +107,29 @@ class FeedsController(BaseController):
     def show(self, id, format='html'):
         """GET /feeds/id: Show a specific item"""
         # url('feed', id=ID)
-        f = Session.query(Feed).filter(id=id).first()
+        f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
             return action_error(_("No such feed"), code=404)
-        # ...
+
         results = Session.query(Content)
         results = results.filter(sql(f.query))
-        results = results[0:20]
         results = filter(lambda content: content.viewable_by(c.logged_in_user), results)
-        return action_ok(data={"results": results})
+        results = results[0:20]
+        return action_ok(
+            template="feeds/show",
+            data={"name": f.name, "results": results}
+        )
 
     @auto_format_output()
     @authorize(is_valid_user)
     def edit(self, id, format='html'):
         """GET /feeds/id/edit: Form to edit an existing item"""
         # url('edit_feed', id=ID)
-        f = Session.query(Feed).filter(id=id).first()
+        f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
             return action_error(_("No such feed"), code=404)
         if f.member != c.logged_in_user:
             return action_error(_("Not your feed"), code=403)
+
         # ...
         return action_ok(_("Feed editor here"), code=200)
