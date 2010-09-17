@@ -95,7 +95,7 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
     ## Session messages
     ##----------------------------------------
     % if c.result['message'] != "":
-        <div class="flash_message" style="height: ${size_flash_message}px" class="status_${c.status}"><div style="padding: 0.25em;">${c.result['message']}</div></div>
+        <div class="flash_message" style="height: ${size_flash_message}px" class="status_${c.result['status']}"><div style="padding: 0.25em;">${c.result['message']}</div></div>
     % endif
     
     ##----------------------------------------
