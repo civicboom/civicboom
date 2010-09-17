@@ -62,16 +62,17 @@
         
         <!-- animation for flash message -->
         <script type="text/javascript">
-            function flash_message(msg) {
-                ## TODO, display string object with default status ok if passed
-                if (msg.message != "") {
-                    $("#flash_message").removeClass("status_error").removeClass("status_ok").addClass("status_"+msg.status);
-                    $("#flash_message").text(msg.message).slideDown("slow").delay(5000).slideUp("slow");
+            function flash_message(json_message) {
+                if (typeof(json_message) == "string") {json_message = {status:'ok', message:json_message};}
+                if (json_message.message != "") {
+                    $("#flash_message").removeClass("status_error").removeClass("status_ok").addClass("status_"+json_message.status);
+                    $("#flash_message").text(json_message.message).slideDown("slow").delay(5000).slideUp("slow");
                 }
             }
-    % if c.result['message'] != "":            
-            $(function() {flash_message(${c.result['message']|n});});
-    % endif
+            % if c.result['message'] != "":
+            <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
+            $(function() {flash_message(${json_message|n});});
+            % endif
     </script>
     
 </%def>
