@@ -93,7 +93,7 @@ class ContentsController(BaseController):
         if not content:
             return action_error(_("_content not found"), code=404)
 
-        if not c.content.editable_by(c.logged_in_user):
+        if not content.editable_by(c.logged_in_user):
             return action_error(_("You do not have permission to edit this _content"), code=403)
 
         # Overlay form data over the current content object or return a new instance of an object
@@ -122,8 +122,8 @@ class ContentsController(BaseController):
                 content.creator.send_message_to_followers(m, delay_commit=True)
         
         # AllanC - This was an idea that if the content has not changed then dont commit it, but for now it is simpler to always commit it
-        #content_hash_before = c.content.hash() # Generate hash of content
-        #content_hash_after  = "always trigger db commit on post" #c.content.hash()                # Generate hash of content again
+        #content_hash_before = content.hash() # Generate hash of content
+        #content_hash_after  = "always trigger db commit on post" #content.hash()                # Generate hash of content again
         #if content_hash_before != content_hash_after:         # If content has changed
         Session.add(content)                            #   Save content to database
         Session.commit()                                  #
@@ -175,39 +175,39 @@ class ContentsController(BaseController):
         Differnt content object types require a different view template
         Identify the object type and render with approriate renderer
         """
-        c.content = get_content(id)
+        content = get_content(id)
 
-        if not c.content:
+        if not content:
             return action_error(_("_content not found"), code=404)
 
         # Check content is visable
-        if c.content.__type__ == "comment":
+        if content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
             return action_error(_("_content not found"), code=404)
-        if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
-            if c.content.status == "pending":
+        if not content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
+            if content.status == "pending":
                 user_log.debug("Attempted to view someone else's pending content")
                 return action_error(_("_content not found"), code=404)
                 #c.error_message = _("your user does not have the permissions to view this _content")
                 #return render('/web/design09/content/unavailable.mako')
 
         # Increase content view count
-        if hasattr(c.content,'views'):
-            content_view_key = 'content_%s' % c.content.id
+        if hasattr(content,'views'):
+            content_view_key = 'content_%s' % content.id
             if session_get(content_view_key):
                 session_set(content_view_key, True)
                 #session.save()
-                c.content.views += 1
+                content.views += 1
                 Session.commit()
                 # AllanC - invalidating the content on EVERY view does not make scence
                 #        - a cron should invalidate this OR the templates should expire after X time
-                #update_content(c.content)
+                #update_content(content)
 
         return action_ok(
             template='design09/content/view',
             data={
-                "content": c.content,
-                "author": c.content.creator
+                "content": content,
+                "author": content.creator
             }
         )
 
@@ -218,23 +218,23 @@ class ContentsController(BaseController):
         # url('edit_content', id=ID)
 
         # Get exisiting content from URL id
-        c.content = get_content(id)
-        if not c.content:
+        content = get_content(id)
+        if not content:
             return action_error(_("_content not found"), code=404)
 
-        c.content = form_to_content(request.params, c.content)
+        content = form_to_content(request.params, content)
 
-        #if c.content:
+        #if content:
         # If the content is not being edited by the creator then "Unauthorised"
         # AllanC - todo: in future this will have to be a more involved process as the ower of the content could be a group the user is part of
-        if not c.content.editable_by(c.logged_in_user):
+        if not content.editable_by(c.logged_in_user):
             return action_error(_("your user does not have the permissions to edit this _content"), code=403)
         
-        c.content_media_upload_key = get_content_media_upload_key(c.content)
+        content_media_upload_key = get_content_media_upload_key(content)
 
         #c.licenses = get_licenses() # WTF! without this line ... using app_globals.licences in the template does not work! why?
         # Render content editor
-        #if id and c.content.id and id != c.content.id: redirect(url.current(id=c.content.id))
+        #if id and content.id and id != content.id: redirect(url.current(id=content.id))
         
         return render("/web/content_editor/content_editor.mako")
 
