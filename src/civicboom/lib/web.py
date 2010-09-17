@@ -75,8 +75,11 @@ def session_get(key):
 # Action Message System
 #-------------------------------------------------------------------------------
 def set_flash_message(new_message):
-    flash_message = json.loads(session_get('flash_message'))        
-    flash_message = overlay_message(new_message)
+    flash_message = None
+    flash_message_string = session_get('flash_message')
+    if flash_message_string:
+        flash_message = json.loads(flash_message_string)
+    flash_message = overlay_status_message(flash_message, new_message)
     session_set('flash_message', json.dumps(flash_message), 60 * 5)
     overlay_status_message(c.result, flash_message)
 
@@ -104,8 +107,9 @@ def overlay_status_message(master_message, new_message):
 
     """
     # Setup master message
-    if not master_message:
-        master_message = {'status':'ok', 'message':''}
+    if not master_message: master_message = {}
+    if 'status'  not in master_message: master_message['status']  = 'ok'
+    master_message['message'] = master_message.get('message', u'')
         
     # Overlay new message (if dict)
     if 'status' in master_message and 'status' in new_message:
@@ -191,7 +195,7 @@ def get_format_processors_end():
           5.) upon reloading the page the [base controler] will extract the flash message form the session
           6.) display message in a cool scrolling pop up box
         """
-        if 'message' in result: set_flash_message(result) # Set flash message        
+        if 'message' in result: set_flash_message(result) # Set flash message
         redirect_to_referer()
         
         #action_redirect = session_remove('action_redirect')
@@ -236,18 +240,11 @@ def auto_format_output():
         }
     """
     
-    default_format        = config['default_format']
     format_processors_end = get_format_processors_end()
     #format_processors_pre = get_format_processors_pre()
     
     def my_decorator(target):
         def wrapper(target, *args, **kwargs):
-            
-            # Set default FORMAT (if nessisary)
-            format = default_format
-            if c.format                                                 : format = c.format
-            if len(args)==3 and args[2] in format_processors and args[2]: format = args[2] # The 3rd arg should be a format, if it is a valid format set it
-            if 'format' in kwargs                                       : format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
             
             #if format in format_processors_pre:
             #    format_processors[format]()
@@ -258,6 +255,12 @@ def auto_format_output():
             # After
             # Is result a dict with data?
             if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
+
+                # Set default FORMAT (if nessisary)
+                format = c.format
+                if len(args)==3 and args[2] in format_processors and args[2]: format = args[2] # The 3rd arg should be a format, if it is a valid format set it
+                if 'format' in kwargs                                       : format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
+
                 
                 if format=='html' and 'template' not in result:
                     log.warning("Format HTML with no template")

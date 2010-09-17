@@ -16,7 +16,7 @@ from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta
-from civicboom.lib.web                 import redirect_to_referer, action_ok, action_error, auto_format_output, session_get, session_remove, session_set
+from civicboom.lib.web                 import redirect_to_referer, set_flash_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, is_valid_user
@@ -48,6 +48,8 @@ __all__ = [
 
     # session managemnet - is is prefered that all access to the session is via accessors
     "session_get", "session_remove", "session_set",
+
+    "set_flash_message",
 
     # misc
     "BaseController",
@@ -108,6 +110,8 @@ class BaseController(WSGIController):
         #         A gadget controler could set this True, any image or URL created with helpers.py would have host appended to them
         c.absolute_links = False
 
+        c.format = config['default_format']
+
         # Request globabal - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
         c.controller = current_request.get("controller")
@@ -123,7 +127,7 @@ class BaseController(WSGIController):
             try:               overlay_status_message(c.result, json.loads(flash_message_session))
             except ValueError: overlay_status_message(c.result,            flash_message_session )
 
-
+    @auto_format_output()
     def __call__(self, environ, start_response):
         """Invoke the Controller"""
         # WSGIController.__call__ dispatches to the Controller method
