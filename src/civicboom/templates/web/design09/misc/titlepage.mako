@@ -21,13 +21,13 @@
     <div class="learn_more">
       <p style="font-size: larger;">${_("Try us now")}</p>
       <p>${_("Organisations & Media:")} <a class="learn_more_link" href="${h.url(controller='misc', action='get_started_organisations')}">${_("Learn more")}</a></p>
-      <p>${_("Individuals:")}               <a class="learn_more_link" href="${h.url(controller='misc', action='get_started')}">${_("Learn more")}</a></p>
+      <p>${_("Individuals:")}           <a class="learn_more_link" href="${h.url(controller='misc', action='get_started')}">${_("Learn more")}</a></p>
     </div>
     
     <div class="clearboth_hack"></div>
     
     <div class="signup">
-      <form action="${h.url(controller='register', action='email')}" method="post">
+      <form action="${h.url(controller='register', action='email', format='redirect')}" method="post">
         ##<fieldset><legend>${_("Sign up today")}</legend>
           <p><label for="email"   >${_("Email")}   </label><input type="text" id="email"    name="email"   /></p>
           <p><label for="username">${_("Username")}</label><input type="text" id="username" name="username"/></p>

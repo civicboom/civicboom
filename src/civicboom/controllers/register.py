@@ -108,19 +108,22 @@ class RegisterController(BaseController):
     #---------------------------------------------------------------------------
     # Register - via email (no janrain)
     #---------------------------------------------------------------------------
-    def email(self, format="html"):
+    def email(self, format="redirect"):
         """
         Register - via email (no janrain)
         User submits a proposed username and email to this action
         A new skeleton user is created for the user to complete the registration
         An email with a verification hash is sent
         """
-        
+
         # Check the username and email and raise any problems via the flash message session system
         try:
             form = RegisterSchemaEmailUsername().to_python(dict(request.params))
         except formencode.Invalid, error:
-            return action_error(unicode(error))
+            print "return error thing"
+            return action_error(message=error.msg)
+        print "hello2"
+        
         
         # Create new user
         u = User()

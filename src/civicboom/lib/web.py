@@ -250,9 +250,10 @@ def auto_format_output():
             
             #if format in format_processors_pre:
             #    format_processors[format]()
-            
+
             # Origninal method call
             result = target(*args, **kwargs) # Execute the wrapped function
+
             
             # After
             # Is result a dict with data?
@@ -266,7 +267,6 @@ def auto_format_output():
                 if 'format' in kwargs:
                     format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
 
-                
                 if format=='html' and 'template' not in result:
                     log.warning("Format HTML with no template")
                     format='xml' #If format HTML and no template supplied fall back to XML
