@@ -47,7 +47,6 @@ class FeedsController(BaseController):
         # url('feeds')
         c.viewing_user = c.logged_in_user
         return action_ok(
-            template="feeds/index",
             data={"feeds": [
                 {"id": f.id, "name": f.name, "query": str(f.query)}
                 for f in c.viewing_user.feeds
@@ -71,7 +70,7 @@ class FeedsController(BaseController):
     def new(self, format='html'):
         """GET /feeds/new: Form to create a new item"""
         # url('new_feed')
-        return action_ok(template="feeds/new")
+        return action_ok()
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -126,7 +125,6 @@ class FeedsController(BaseController):
         results = filter(lambda content: content.viewable_by(c.logged_in_user), results)
         results = results[0:20]
         return action_ok(
-            template="feeds/show",
             data={"name": f.name, "results": results}
         )
 
@@ -142,4 +140,4 @@ class FeedsController(BaseController):
             return action_error(_("Not your feed"), code=403)
 
         # ...
-        return action_ok(template="feeds/edit", data={"feed": f})
+        return action_ok(data={"feed": f})
