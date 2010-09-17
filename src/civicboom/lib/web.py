@@ -161,6 +161,26 @@ def get_format_processors_pre():
     )
 """
 
+
+def _find_template(result):
+    if result.get('template'):
+        template_part = result.get('template')
+    else:
+        template_part = "%s/%s" % (c.controller, c.action)
+
+    web_template    = "web/%s.mako"    % template_part                   # Find template filename
+    mobile_template = "mobile/%s.mako" % template_part
+
+    if request.environ['is_mobile'] and os.path.exists(mobile_template): # If mobile rendering
+        template = mobile_template
+    elif os.path.exists(web_template):
+        template = web_template
+    else:
+        template = None
+
+    return template
+
+
 def setup_format_processors():
     def format_json(result):
         response.headers['Content-type'] = "application/json"
@@ -176,13 +196,7 @@ def setup_format_processors():
     
     def format_html(result):
         overlay_status_message(c.result, result)                             # Set standard template data dict for template to use
-        web_template    = "web/%s.mako"    % result['template']              # Find template filename
-        mobile_template = "mobile/%s.mako" % result['template']
-        if request.environ['is_mobile'] and os.path.exists(mobile_template): # If mobile rendering
-            template = mobile_template
-        else:
-            template = web_template
-        return render_mako(template)
+        return render_mako(_find_template(result))
         # Used to use HTMLFILL, but this was incompatable with JSON and XML as formencode.Invalid were objects
         # Now the python dict has an ['error'] attribute that templates render themselfs
         # it may even be possible for us to create our own poor mans htmlfill that overlays the html with our own validation data
@@ -281,7 +295,7 @@ def auto_format_output():
                 if 'format' in kwargs:
                     format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
                 
-                if format=='html' and ('template' not in result or result['template'] == None):
+                if format=='html' and not _find_template(result):
                     log.warning("Format HTML with no template")
                     format='xml' #If format HTML and no template supplied fall back to XML
                 
