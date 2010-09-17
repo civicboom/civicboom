@@ -278,8 +278,11 @@ def auto_format_output():
                 # Render to format
                 if format in format_processors_end:
                     return format_processors_end[format](result)
+                else:
+                    log.warning("Unknown format: "+str(format))
                 
             # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
+            log.debug("returning pre-rendered stuff")
             return result
         
         return decorator(wrapper)(target) # Fix the wrappers call signiture
