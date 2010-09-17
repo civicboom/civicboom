@@ -44,21 +44,25 @@ class ContentsController(BaseController):
     @authenticate_form
     def create(self, format=None):
         """POST /contents: Create a new item"""
-        #url_for('contents') + POST
-        
-        #content = DraftContent()
+        # url('contents') + POST
+
+        # if parent is specified, make sure it is valid
+        if 'form_parent_id' in request.params:
+            parent = get_content(request.params['form_parent_id'])
+            if not parent:
+                return action_error(code=404)
+            if not parent.viewable_by(c.logged_in_user):
+                return action_error(code=403)
+
+        # if type is comment, it must have a parent
+        if request.params.get('form_type', "comment") == "comment" and 'form_parent_id' not in request.params:
+            return action_error(code=400)
+
         content = form_to_content(request.params, None)
-        #content.creator = c.logged_in_user # this is handled in form_to_content
         Session.add(content)
         Session.commit()
-        return action_ok(message=_(' _content created ok'), data={'id':content.id})
-        
-        # url('contents')
-        #content = CommentContent()
-        #content = form_to_content(request.params, content)
-        #Session.add(content)
-        #Session.commit()
-        #return redirect(url('content', id=content.parent_id)) # redirect to comment parent
+        return action_ok(message=_(' _content created ok'), data={'id':content.id}, code=201)
+
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -70,7 +74,6 @@ class ContentsController(BaseController):
         #url_for('new_content')
         content_id = self.create(format='python')['data']['id']
         return redirect(url('edit_content', id=content_id))
-
 
 
     @auto_format_output()
@@ -89,7 +92,10 @@ class ContentsController(BaseController):
         
         if not content:
             return action_error(_("_content not found"), code=404)
-        
+
+        if not c.content.editable_by(c.logged_in_user):
+            return action_error(_("You do not have permission to edit this _content"), code=403)
+
         # Overlay form data over the current content object or return a new instance of an object
         content = form_to_content(request.params, c.content) #request.POST
         starting_content_type = content.__type__
