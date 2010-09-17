@@ -9,6 +9,7 @@ from civicboom.model.content import MemberAssignment, Rating
 from civicboom.model.member  import Member, User, UserLogin, Group, GroupMembership, Follow, MemberSetting
 from civicboom.model.message import Message
 from civicboom.model.media   import Media
+from civicboom.model.feed    import Feed
 
 def init_model(main_engine, legacy_engine=None):
     """Call me before using any of the tables or classes in the model"""
