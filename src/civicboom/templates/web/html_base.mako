@@ -58,20 +58,21 @@
 ## See "Definitive Guide to Pylons" pg 191 for details
 <%def name="flash_message()">
 
-    % if c.result['message'] != "":
-        <div id="flash_message" style="position: absolute; top: 0px; left: 0px; right: 0px;" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
+    <div id="flash_message" style="position: absolute; top: 0px; left: 0px; right: 0px;" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
         
         <!-- animation for flash message -->
         <script type="text/javascript">
-            ##function flash_message(msg) {
-                ##if (msg.message != "") {
-                    $("#flash_message").removeClass("status_error").removeClass("status_ok").addClass("status_${c.result['status']}");
-                    $("#flash_message").text(${c.result['message']}).slideDown("slow").delay(5000).slideUp("slow");
-                ##}
-            ##}
-            ##$(function() {flash_message(${session.get('flash_message')|n});});
-        </script>
+            function flash_message(msg) {
+                ## TODO, display string object with default status ok if passed
+                if (msg.message != "") {
+                    $("#flash_message").removeClass("status_error").removeClass("status_ok").addClass("status_"+msg.status);
+                    $("#flash_message").text(msg.message).slideDown("slow").delay(5000).slideUp("slow");
+                }
+            }
+    % if c.result['message'] != "":            
+            $(function() {flash_message(${c.result['message']|n});});
     % endif
+    </script>
     
 </%def>
 
