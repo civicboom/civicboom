@@ -52,7 +52,7 @@ $('#%(name)s_name').autocomplete({
         // to jQueryUI formatted ('suggestions')
         $.getJSON("%(url)s?", req, function(response) {
             var suggestions = [];
-            $.each(response.data, function(i, val) {
+            $.each(response.data.members, function(i, val) {
                 suggestions.push({"label": val.description, "value": val.id});
             });
             respond(suggestions);

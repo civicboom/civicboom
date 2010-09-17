@@ -85,7 +85,10 @@ def set_flash_message(new_message):
     overlay_status_message(c.result, flash_message)
 
 
-def action_ok(message=None, data=None, code=200, template=None):
+def action_ok(message=None, data={}, code=200, template=None):
+    if message: assert isinstance(message, basestring)
+    assert isinstance(data, dict)
+    assert isinstance(code, int)
     return {
         "status" : "ok",
         "message": message,
@@ -94,7 +97,10 @@ def action_ok(message=None, data=None, code=200, template=None):
         "template": template,
     }
 
-def action_error(message=None, data=None, code=500):
+def action_error(message=None, data={}, code=500):
+    if message: assert isinstance(message, basestring)
+    assert isinstance(data, dict)
+    assert isinstance(code, int)
     return {
         "status" : "error",
         "message": message,

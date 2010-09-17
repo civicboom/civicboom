@@ -80,7 +80,7 @@ class SearchController(BaseController):
             return render(tmpl_prefix+"/search/location.mako")
         elif format == "json":
             json_rows = [{"name":row.name, "location":row.location, "type":row.type} for row in result]
-            return action_ok(data=json_rows)
+            return action_ok(data={"locations":json_rows})
 
 
     @auto_format_output()
@@ -97,4 +97,4 @@ class SearchController(BaseController):
             return render(tmpl_prefix+"/search/member.mako")
         elif format == "json":
             json_rows = [{"id":row.id, "name":row.name, "username":row.username, "avatar":row.avatar, "description":str(row)} for row in result]
-            return action_ok(data=json_rows)
+            return action_ok(data={"members":json_rows})
