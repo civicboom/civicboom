@@ -6,11 +6,7 @@
   <div class="yui-u first navigation_items">
     <ul>
       <li>
-        <a href="${h.url('new_content')}">${_("Create _assignment")}</a>
-        <div class="tooltip tooltip_icon"><span>${_("Posting an _assignment allows you to ask questions and make call to actions")}</span></div>
-      </li>
-      <li>
-        <a href="${h.url('new_content')}">${_("Write _article")}</a>
+        ${h.secure_link(url('new_content'), _("Create _content"))}
         <div class="tooltip tooltip_icon"><span>${_("Uploading an _article allows you express your ideas, opinions and news to a wider community")}</span></div>
       </li>
       <li>

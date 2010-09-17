@@ -86,6 +86,8 @@ class BaseController(WSGIController):
         c.format     = current_request.get("format", config['default_format'])
         
         c.result = {'status':'ok', 'message':'', 'data':{}}
+        
+        c.authenticated_form = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
 
 
         # Login - Fetch logged in user from session id (if present)
@@ -152,6 +154,8 @@ def authenticate_form(func, *args, **kwargs):
     slightly hacked version of pylons.decorators.secure.authenticated_form to
     support authenticated PUT and DELETE requests
     """
+    if c.authenticated_form: return func(*args, **kwargs) # If already authenticated, pass through
+    
     request = get_pylons(args).request
     response = get_pylons(args).response
 
@@ -169,11 +173,11 @@ def authenticate_form(func, *args, **kwargs):
         log.error("Failed to parse body: "+request.body)
         abort(500)
 
-    # check for auth token in POST or other
-    if authenticated_form(request.POST):
-        del request.POST[secure_form.token_key]
-        return func(*args, **kwargs)
-    elif authenticated_form(param_dict): # check params for PUT and DELETE cases
+    # check for auth token in POST or other  # check params for PUT and DELETE cases
+    if authenticated_form(request.POST) or authenticated_form(param_dict):
+        if authenticated_form(request.POST):
+            del request.POST[secure_form.token_key]
+        c.authenticated_form = True
         return func(*args, **kwargs)
 
     # no token = can't be sure the user really intended to post this, ask them

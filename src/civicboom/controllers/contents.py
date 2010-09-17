@@ -44,13 +44,12 @@ class ContentsController(BaseController):
     @authenticate_form
     def create(self, format=None):
         """POST /contents: Create a new item"""
-        print "helloooooooooooo"
         #content = DraftContent()
         content = form_to_content(request.params, None)
         #content.creator = c.logged_in_user # this is handled in form_to_content
         Session.add(content)
         Session.commit()
-        return action_ok(message=_('draft _content created ok'), data={'id':content.id})
+        return action_ok(message=_(' _content created ok'), data={'id':content.id})
         
         # url('contents')
         #content = CommentContent()
@@ -61,14 +60,14 @@ class ContentsController(BaseController):
 
     @auto_format_output()
     @authorize(is_valid_user)
+    @authenticate_form
     def new(self, format='html'):
         """GET /contents/new: Form to create a new item
-        
-        As file-upload and such require an existing object to add to, we create a
-        blank object and redirect to "edit-existing" mode
+        As file-upload and such require an existing object to add to, we create a blank object and redirect to "edit-existing" mode
         """
         content_id = self.create(format='python')['data']['id']
         return redirect(url('edit_content', id=content_id))
+
 
 
     @auto_format_output()
