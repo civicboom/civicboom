@@ -161,15 +161,14 @@ def get_format_processors_end():
         return 'implement RSS' # TODO: ???
     
     def format_html(result):
-        overlay_status_message(c.result, result)                           # Set standard template data dict for template to use
-        template_filename = "web/%s.mako" % result['template']             # Find template filename
-        if request.environ['is_mobile']:                                   # If mobile rendering
-            # TODO: detect mobile template
-            #   - (middleware needs to be upgraded  to look for subdomain m. in url)
-            mobile_template_filename = "mobile/%s.mako" % result['template']
-            # if exists(mobile_template_filename)
-            #   template_filename = mobile_template_filename
-        return render_mako(template_filename)
+        overlay_status_message(c.result, result)                             # Set standard template data dict for template to use
+        web_template = "web/%s.mako" % result['template']                    # Find template filename
+        mobile_template = "mobile/%s.mako" % result['template']
+        if request.environ['is_mobile'] and os.path.exists(mobile_template): # If mobile rendering
+            template = mobile_template
+        else:
+            template = web_template
+        return render_mako(template)
         # Used to use HTMLFILL, but this was incompatable with JSON and XML as formencode.Invalid were objects
         # Now the python dict has an ['error'] attribute that templates render themselfs
         # it may even be possible for us to create our own poor mans htmlfill that overlays the html with our own validation data
