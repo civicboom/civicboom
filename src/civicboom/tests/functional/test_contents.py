@@ -11,19 +11,22 @@ class TestContentsController(TestController):
     def test_index_as_xml(self):
         response = self.app.get(url('formatted_contents', format='xml'))
 
-    def test_show_article(self):
+    def test_can_show_own_article(self):
         response = self.app.get(url('content', id=1))
 
-    def test_show_draft(self):
+    def test_can_show_someone_elses_article(self):
+        response = self.app.get(url('content', id=1))
+
+    def test_can_show_own_draft(self):
         response = self.app.get(url('content', id=3))
 
-    def test_show_no_perm(self):
+    def test_cant_show_someone_elses_draft(self):
         response = self.app.get(url('content', id=4))
 
-    def test_show_no_exist(self):
+    def test_cant_show_comment_that_doesnt_exist(self):
         response = self.app.get(url('content', id=0), status=404)
 
-    def test_show_comment(self):
+    def test_cant_show_individual_comment(self):
         # comments should not be shown individually -- or should they? With threaded comments,
         # linking to a subthread may be useful
         response = self.app.get(url('content', id=5), status=404)
@@ -35,13 +38,10 @@ class TestContentsController(TestController):
 
     ## new -> create #########################################################
 
-    def test_new(self):
-        response = self.app.get(url('new_content'))
+    def test_new_redirects_to_edit(self):
+        response = self.app.get(url('new_content'), status=302)
 
-    def test_new_as_xml(self):
-        response = self.app.get(url('formatted_new_content', format='xml'))
-
-    def test_create_ok(self):
+    def test_create_comment(self):
         response = self.app.post(
             url('contents', format="json"),
             params={
@@ -50,6 +50,31 @@ class TestContentsController(TestController):
                 'form_parent_id': "1",
                 'form_type': "comment",
                 'form_content': 'content of a test comment',
+            },
+            status=201
+        )
+
+    def test_direct_create_draft(self):
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'form_title': "a response",
+                'form_parent_id': "1",
+                'form_type': "draft",
+                'form_content': 'content of a test draft',
+            },
+            status=201
+        )
+
+    def test_direct_create_article(self):
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'form_title': "a response",
+                'form_type': "article",
+                'form_content': 'content of a directly-created article',
             },
             status=201
         )

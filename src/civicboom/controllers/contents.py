@@ -55,7 +55,7 @@ class ContentsController(BaseController):
                 return action_error(code=403)
 
         # if type is comment, it must have a parent
-        if request.params.get('form_type', "comment") == "comment" and 'form_parent_id' not in request.params:
+        if request.params.get('form_type') == "comment" and 'form_parent_id' not in request.params:
             return action_error(code=400)
 
         content = form_to_content(request.params, None)
