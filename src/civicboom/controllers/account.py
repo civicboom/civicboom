@@ -107,9 +107,9 @@ class AccountController(BaseController):
             
         if c.auth_info:
             associate_janrain_account(c.logged_in_user, c.auth_info['profile']['providerName'], c.auth_info['profile']['identifier'])
-            flash_message(action_ok("Account successfully linked to _site_name"))
+            set_flash_message(action_ok("Account successfully linked to _site_name"))
         else:
-            flash_message(action_error("Error linking accounts"))
+            set_flash_message(action_error("Error linking accounts"))
             
         redirect(url.current())
 
@@ -124,9 +124,9 @@ class AccountController(BaseController):
         """
         if 'hash' in request.params :
             if verify_email(id, request.params['hash'], commit=True):
-                flash_message(_('email address has been successfully validated'))
+                set_flash_message(action_ok(_('email address has been successfully validated')))
             else:
-                flash_message(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again'))
+                set_flash_message(action_error(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again')))
             redirect('/')
 
 

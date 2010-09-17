@@ -45,6 +45,8 @@
 	<br><a href="${url(controller='settings', action='general')}">Edit Settings</a>
 	<br><a href="${url(controller='settings', action='messages')}">Edit Notifications</a>
 	<br><a href="${url('messages')}">My Messages</a>
+    <br><a href="${url(controller='account', action='link_janrain')}">Manage Login Accounts</a>
+        
 </%def>
 
 

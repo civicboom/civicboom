@@ -85,7 +85,7 @@ class BaseController(WSGIController):
         c.id         = current_request.get("id")
         c.format     = current_request.get("format", config['default_format'])
         
-        c.result = {'status':'ok', 'message':None, 'data':None}
+        c.result = {'status':'ok', 'message':'', 'data':{}}
 
 
         # Login - Fetch logged in user from session id (if present)
