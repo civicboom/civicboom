@@ -84,7 +84,6 @@ def set_flash_message(new_message):
     overlay_status_message(c.result, flash_message)
 
 
-
 def action_ok(message=None, data=None, code=200, template=None):
     return {
         "status" : "ok",

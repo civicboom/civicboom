@@ -18,6 +18,7 @@ import recaptcha.client.captcha as librecaptcha
 import re
 import urllib
 import hashlib
+import json
 
 def get_captcha(lang='en', theme='white'):
     """
