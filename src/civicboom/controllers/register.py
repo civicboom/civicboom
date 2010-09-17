@@ -57,7 +57,7 @@ class RegisterController(BaseController):
         elif verify_email(c.new_user, request.params.get('hash')): # or from email hash
             c.logged_in_user = c.new_user
         else:
-            abort(401)
+            abort(403)
         
         # Build required fields list from current user data - the template will then display these and a custom validator will be created for them
         c.required_fields = ['username','email','password','dob']
