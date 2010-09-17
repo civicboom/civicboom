@@ -49,6 +49,23 @@ class Filter(object):
         return str(self)
 
 
+class LabelFilter(Filter):
+    def __init__(self, label):
+        self.label = label
+
+    def __unicode__(self):
+        return "(1=1)"
+
+    def __repr__(self):
+        return "LabelFilter("+repr(self.label)+")"
+
+    def __html__(self):
+        return "<div class='label'>"+self.label+"</div>"
+
+    def __sql__(self):
+        return "(1=1)"
+
+
 class OrFilter(Filter):
     def __init__(self, subs):
         self.subs = subs
