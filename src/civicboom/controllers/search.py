@@ -4,7 +4,6 @@ from civicboom.lib.search import *
 from civicboom.lib.gis    import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_
-import json
 
 log = logging.getLogger(__name__)
 tmpl_prefix = '/web/design09'
