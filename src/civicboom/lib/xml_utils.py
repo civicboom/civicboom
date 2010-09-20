@@ -85,7 +85,7 @@ def dictToXMLString(d):
                 e.append(dictToElement(d[key], key))
         elif hasattr(d, '__iter__'): # is List
             for i in d:
-                e.append(dictToElement(i, tag))
+                e.append(dictToElement(i, u'item'))
         return e
         
     return tostring(dictToElement(d, u'root'), encoding="utf-8")
