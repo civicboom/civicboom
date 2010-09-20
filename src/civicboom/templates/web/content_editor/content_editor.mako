@@ -109,14 +109,14 @@
 			var ed = tinyMCE.get('form_content');
 			ed.setProgressState(1); // Show progress spinner
 			$.ajax({
-				type: 'POST',
+				type    : 'POST',
 				dataType: 'json',
-				url: "${url('content', id=c.content.id)}",
-				data: {
-                    "_method"   : 'PUT',
+				url     : "${url('content', id=c.content.id, format='json')}",
+				data    : {
+                    "_method"     : 'PUT',
+					"form_content": ed.getContent(),
+					"mode"        : 'autosave',
                     "_authentication_token": '${h.authentication_token()}'
-					"content"   : ed.getContent(),
-					"mode"      : 'autosave',
                     ##"upload_key": '${c.content_media_upload_key}',
 				},
 				success: function(data) {
@@ -125,9 +125,9 @@
 				},
 			});
 		}
-% if c.content.__type__ == "draft":
+        % if c.content.__type__ == "draft":
 		var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
-% endif
+        % endif
 		</script>
 
         % if c.content.__type__ == "draft":

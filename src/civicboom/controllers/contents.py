@@ -117,9 +117,16 @@ class ContentsController(BaseController):
         if not content:
             return action_error(_("_content not found"), code=404)
         
+        print ""
+        print "we got the content - we got the power"
+        print request.params
+        
         # Overlay form data over the current content object or return a new instance of an object
         content = form_to_content(request.params, content) #request.POST
         starting_content_type = content.__type__
+        
+        print "yay content"
+        print content.content
         
         # If publishing perform profanity check and send notifications
         if 'submit_publish' in request.POST:
@@ -198,16 +205,15 @@ class ContentsController(BaseController):
         """
         c.content = get_content(id)
 
+        # Check content is visable
         if not c.content:
             return action_error(_("_content not found"), code=404)
-
-        # Check content is visable
         if c.content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
             return action_error(_("_content not found"), code=404)
         if not c.content.visable_by(c.logged_in_user): 
             return action_error(_("_content not visable"), code=401)
-
+        
         # Increase content view count
         if hasattr(c.content,'views'):
             content_view_key = 'content_%s' % c.content.id
@@ -219,7 +225,7 @@ class ContentsController(BaseController):
                 # AllanC - invalidating the content on EVERY view does not make scence
                 #        - a cron should invalidate this OR the templates should expire after X time
                 #update_content(c.content)
-
+            
         return action_ok(
             template='design09/content/view',
             data={
@@ -233,25 +239,16 @@ class ContentsController(BaseController):
     def edit(self, id, format='html'):
         """GET /contents/id/edit: Form to edit an existing item"""
         # url('edit_content', id=ID)
-
-        # Get exisiting content from URL id
+        
         c.content = get_content(id)
         if not c.content:
             return action_error(_("_content not found"), code=404)
-
-        c.content = form_to_content(request.params, c.content)
-
-        #if c.content:
-        # If the content is not being edited by the creator then "Unauthorised"
-        # AllanC - todo: in future this will have to be a more involved process as the ower of the content could be a group the user is part of
+        
+        c.content                  = form_to_content(request.params, c.content)
+        c.content_media_upload_key = get_content_media_upload_key(c.content)
+        
         if not c.content.editable_by(c.logged_in_user):
             return action_error(_("your user does not have the permissions to edit this _content"), code=403)
-        
-        c.content_media_upload_key = get_content_media_upload_key(c.content)
-
-        #c.licenses = get_licenses() # WTF! without this line ... using app_globals.licences in the template does not work! why?
-        # Render content editor
-        #if id and c.content.id and id != c.content.id: redirect(url.current(id=c.content.id))
         
         return render("/web/content_editor/content_editor.mako")
 
@@ -262,5 +259,4 @@ class ContentsController(BaseController):
         Currently only return a flag to state if processing it taking place,
         but could be improved to return aditional progress info.
         """
-        stat = app_globals.memcache.get(str("media_processing_"+id))
-        return action_ok(data=stat)
+        return action_ok(data=app_globals.memcache.get(str("media_processing_"+id)))
