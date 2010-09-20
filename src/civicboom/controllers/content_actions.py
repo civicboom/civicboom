@@ -144,3 +144,21 @@ class ContentActionsController(BaseController):
         #elif isinstance(status,str):
         #return status
         return action_error(_('Error withdrawing _assignment interest'))
+
+
+    #-----------------------------------------------------------------------------
+    # Flag
+    #-----------------------------------------------------------------------------
+    @auto_format_output()
+    @authorize(is_valid_user)
+    @authenticate_form
+    def flag(self, id):
+        """
+        Flag this content as being inapproprate of copyright violoation
+        """
+        form = request.POST
+        try:
+            get_content(id).flag(member=c.logged_in_user, type=form['type'], comment=form['comment'])
+            return action_ok(_("An administrator has been alerted to this content"))
+        except:
+            return action_error(_("Error flaging content, please email us"))

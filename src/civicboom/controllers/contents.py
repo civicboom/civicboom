@@ -178,12 +178,8 @@ class ContentsController(BaseController):
         if c.content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
             return action_error(_("_content not found"), code=404)
-        if not c.content.editable_by(c.logged_in_user): #Always allow content to be viewed by owners/editors
-            if c.content.status == "pending":
-                user_log.debug("Attempted to view someone else's pending content")
-                return action_error(_("_content not found"), code=404)
-                #c.error_message = _("your user does not have the permissions to view this _content")
-                #return render('/web/design09/content/unavailable.mako')
+        if not c.content.visbale_by(c.logged_in_user): 
+            return action_error(_("_content not visable"), code=401)
 
         # Increase content view count
         if hasattr(c.content,'views'):

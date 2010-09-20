@@ -117,6 +117,11 @@ class Content(Base):
         # TODO check groups of creator to see if member is in the owning group
         return False
 
+    def visable_by(self, member):
+        if self.editable_by(c.logged_in_user): return True #Always allow content to be viewed by owners/editors
+        if self.status == "pending"          : return False
+        return True
+
     def flag(self, **kargs):
         """
         Flag content as offensive or spam (can throw exception if fails)
