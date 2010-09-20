@@ -178,7 +178,7 @@ class ContentsController(BaseController):
         if c.content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
             return action_error(_("_content not found"), code=404)
-        if not c.content.visbale_by(c.logged_in_user): 
+        if not c.content.visable_by(c.logged_in_user): 
             return action_error(_("_content not visable"), code=401)
 
         # Increase content view count

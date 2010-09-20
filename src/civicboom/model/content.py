@@ -118,8 +118,8 @@ class Content(Base):
         return False
 
     def visable_by(self, member):
-        if self.editable_by(c.logged_in_user): return True #Always allow content to be viewed by owners/editors
-        if self.status == "pending"          : return False
+        if self.editable_by(member): return True #Always allow content to be viewed by owners/editors
+        if self.status == "pending": return False
         return True
 
     def flag(self, **kargs):
