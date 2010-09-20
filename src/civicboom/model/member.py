@@ -64,6 +64,11 @@ class Member(Base):
     content_assignments = relationship("AssignmentContent")
     content_articles    = relationship(   "ArticleContent")
     content_drafts      = relationship(     "DraftContent")
+    
+    #See civicboom_init.py
+    # content
+    # content_assignments_active
+    # content_assignments_previous
 
     _config = None
 

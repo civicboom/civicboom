@@ -21,9 +21,23 @@ from civicboom.lib.database.get_cached import get_content, update_content, get_l
 from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key, profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 
+
 # Logging setup
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
+
+
+
+index_lists = {
+    'content'             : lambda member: member.content ,
+    'assignments_active'  : lambda member: member.content_assignments_active ,
+    'assignments_previous': lambda member: member.content_assignments_previous,
+    'assignments'         : lambda member: member.content_assignments ,
+    'articles'            : lambda member: member.content_articles ,
+    'drafts'              : lambda member: member.content_drafts ,
+    'assignments_accepted': lambda member: member.assignments_accepted ,
+}
+index_default_fields = ['id', '__type__', 'title', 'content_short', 'parent_id', 'creation_date']
 
 
 class ContentsController(BaseController):
@@ -32,11 +46,24 @@ class ContentsController(BaseController):
     # file has a resource setup:
     #     map.resource('content', 'contents')
 
-
+    @auto_format_output()
+    @authorize(is_valid_user)
     def index(self, format='html'):
         """GET /contents: All items in the collection"""
         # url('contents')
-        return redirect(url(controller='search', action='content'))
+        
+        def object_to_dict(o, fields):
+            d = {}
+            for field in fields:
+                d[field] = unicode(getattr(o, field, ''))
+            return d
+        
+        content_list_name = request.params.get('list','content')
+        if content_list_name not in index_lists: return action_error(_('list type %s not supported') % content_list_name)
+        content_list      = index_lists[content_list_name](c.logged_in_user)
+        content_list      = [object_to_dict(content,index_default_fields) for content in content_list]
+        
+        return {'data': {'list': content_list} }
 
 
     @auto_format_output()

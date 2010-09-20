@@ -11,6 +11,7 @@ from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref
 
 import hashlib
+from webhelpers.text import truncate
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -19,17 +20,17 @@ import hashlib
 class ContentTagMapping(Base):
     __tablename__ = "map_content_to_tag"
     content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
-    tag_id        = Column(Integer(),    ForeignKey('tag.id'), nullable=False, primary_key=True)
+    tag_id        = Column(Integer(),    ForeignKey('tag.id')    , nullable=False, primary_key=True)
 
 class Boom(Base):
     __tablename__ = "map_booms"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
 
 class Rating(Base):
     __tablename__ = "map_ratings"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
     rating        = Column(Integer(),    nullable=False, default=0)
 
 
@@ -161,6 +162,10 @@ class Content(Base):
                 return thumbnail_url
         
         return "/images/default_thumbnail_%s.png" % self.__type__
+    
+    @property
+    def content_short(self):
+        return truncate(self.content, length=100)
 
 
 class DraftContent(Content):
