@@ -71,21 +71,25 @@ class ContentsController(BaseController):
     @authenticate_form
     def create(self, format=None):
         """POST /contents: Create a new item"""
-        #url_for('contents') + POST
+        # url('contents') + POST
         
-        #content = DraftContent()
+        # if parent is specified, make sure it is valid
+        if 'form_parent_id' in request.params:
+            parent = get_content(request.params['form_parent_id'])
+            if not parent:
+                return action_error(code=404)
+            if not parent.viewable_by(c.logged_in_user):
+                return action_error(code=403)
+        
+        # if type is comment, it must have a parent
+        if request.params.get('form_type') == "comment" and 'form_parent_id' not in request.params:
+            return action_error(code=400)
+        
         content = form_to_content(request.params, None)
-        #content.creator = c.logged_in_user # this is handled in form_to_content
         Session.add(content)
         Session.commit()
-        return action_ok(message=_(' _content created ok'), data={'id':content.id})
-        
-        # url('contents')
-        #content = CommentContent()
-        #content = form_to_content(request.params, content)
-        #Session.add(content)
-        #Session.commit()
-        #return redirect(url('content', id=content.parent_id)) # redirect to comment parent
+        return action_ok(message=_(' _content created ok'), data={'id':content.id}, code=201)
+
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -97,7 +101,6 @@ class ContentsController(BaseController):
         #url_for('new_content')
         content_id = self.create(format='python')['data']['id']
         return redirect(url('edit_content', id=content_id))
-
 
 
     @auto_format_output()
@@ -116,6 +119,9 @@ class ContentsController(BaseController):
         
         if not content:
             return action_error(_("_content not found"), code=404)
+        
+        if not content.editable_by(c.logged_in_user):
+            return action_error(_("You do not have permission to edit this _content"), code=403)
         
         # Overlay form data over the current content object or return a new instance of an object
         content = form_to_content(request.params, content) #request.POST
@@ -143,8 +149,8 @@ class ContentsController(BaseController):
                 content.creator.send_message_to_followers(m, delay_commit=True)
         
         # AllanC - This was an idea that if the content has not changed then dont commit it, but for now it is simpler to always commit it
-        #content_hash_before = c.content.hash() # Generate hash of content
-        #content_hash_after  = "always trigger db commit on post" #c.content.hash()                # Generate hash of content again
+        #content_hash_before = content.hash() # Generate hash of content
+        #content_hash_after  = "always trigger db commit on post" #content.hash()                # Generate hash of content again
         #if content_hash_before != content_hash_after:         # If content has changed
         Session.add(content)                            #   Save content to database
         Session.commit()                                  #
@@ -196,34 +202,34 @@ class ContentsController(BaseController):
         Differnt content object types require a different view template
         Identify the object type and render with approriate renderer
         """
-        c.content = get_content(id)
-
+        content = get_content(id)
+        
         # Check content is visable
-        if not c.content:
+        if not content:
             return action_error(_("_content not found"), code=404)
-        if c.content.__type__ == "comment":
+        if content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
             return action_error(_("_content not found"), code=404)
-        if not c.content.visable_by(c.logged_in_user): 
-            return action_error(_("_content not visable"), code=401)
+        if not content.viewable_by(c.logged_in_user): 
+            return action_error(_("_content not viewable"), code=401)
         
         # Increase content view count
-        if hasattr(c.content,'views'):
-            content_view_key = 'content_%s' % c.content.id
+        if hasattr(content,'views'):
+            content_view_key = 'content_%s' % content.id
             if session_get(content_view_key):
                 session_set(content_view_key, True)
                 #session.save()
-                c.content.views += 1
+                content.views += 1
                 Session.commit()
                 # AllanC - invalidating the content on EVERY view does not make scence
                 #        - a cron should invalidate this OR the templates should expire after X time
-                #update_content(c.content)
+                #update_content(content)
             
         return action_ok(
             template='design09/content/view',
             data={
-                "content": c.content,
-                "author": c.content.creator
+                "content": content,
+                "author": content.creator
             }
         )
 

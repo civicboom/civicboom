@@ -12,8 +12,8 @@ class TestSearchController(TestController):
     ##########################################################################
 
     def test_content_results(self):
-        response = self.app.get(url(controller='search', action='content', query='text'))
-        assert "Here is some text" in response
+        response = self.app.get(url(controller='search', action='content', query='someone'))
+        assert "A test article by someone else" in response
         assert "Friend" in response
         assert "0 responses" in response
 

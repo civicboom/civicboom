@@ -48,7 +48,7 @@ $(function() {
 				// translate from CB-API formatted data ('response')
 				// to jQueryUI formatted ('suggestions')
 				var suggestions = [];
-				$.each(response.data, function(i, val) {
+				$.each(response.data.locations, function(i, val) {
 					suggestions.push({"label": val.name, "value": val.location});
 				});
 				respond(suggestions);
