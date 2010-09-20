@@ -8,7 +8,6 @@ For managing content:
  - flagging
  - AJAX calls to get media processing status
 """
-
 # Base controller imports
 from civicboom.lib.base import *
 
@@ -26,6 +25,8 @@ from civicboom.lib.communication import messages
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
+error_not_found = action_error(_("_content not found"), code=404)
+
 
 
 index_lists = {
@@ -37,7 +38,7 @@ index_lists = {
     'drafts'              : lambda member: member.content_drafts ,
     'assignments_accepted': lambda member: member.assignments_accepted ,
 }
-index_default_fields = ['id', '__type__', 'title', 'content_short', 'parent_id', 'creation_date']
+
 
 
 class ContentsController(BaseController):
@@ -52,16 +53,10 @@ class ContentsController(BaseController):
         """GET /contents: All items in the collection"""
         # url('contents')
         
-        def object_to_dict(o, fields):
-            d = {}
-            for field in fields:
-                d[field] = unicode(getattr(o, field, ''))
-            return d
-        
         content_list_name = request.params.get('list','content')
         if content_list_name not in index_lists: return action_error(_('list type %s not supported') % content_list_name)
         content_list      = index_lists[content_list_name](c.logged_in_user)
-        content_list      = [object_to_dict(content,index_default_fields) for content in content_list]
+        content_list      = [content.to_dict('default_list') for content in content_list]
         
         return {'data': {'list': content_list} }
 
@@ -77,7 +72,7 @@ class ContentsController(BaseController):
         if 'form_parent_id' in request.params:
             parent = get_content(request.params['form_parent_id'])
             if not parent:
-                return action_error(code=404)
+                return action_error(message='parent not found', code=404)
             if not parent.viewable_by(c.logged_in_user):
                 return action_error(code=403)
         
@@ -118,7 +113,7 @@ class ContentsController(BaseController):
         content = get_content(id)
         
         if not content:
-            return action_error(_("_content not found"), code=404)
+            return error_not_found
         
         if not content.editable_by(c.logged_in_user):
             return action_error(_("You do not have permission to edit this _content"), code=403)
@@ -186,7 +181,7 @@ class ContentsController(BaseController):
         # url('content', id=ID)
         content = get_content(id)
         if not content:
-            return action_error(_("_content not found"), code=404)
+            return error_not_found
         if not content.editable_by(c.logged_in_user):
             return action_error(_("your current user does not have the permissions to delete this _content"), code=403)
         content.delete()
@@ -206,10 +201,10 @@ class ContentsController(BaseController):
         
         # Check content is visable
         if not content:
-            return action_error(_("_content not found"), code=404)
+            return error_not_found
         if content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
-            return action_error(_("_content not found"), code=404)
+            return error_not_found
         if not content.viewable_by(c.logged_in_user): 
             return action_error(_("_content not viewable"), code=401)
         
@@ -218,7 +213,6 @@ class ContentsController(BaseController):
             content_view_key = 'content_%s' % content.id
             if session_get(content_view_key):
                 session_set(content_view_key, True)
-                #session.save()
                 content.views += 1
                 Session.commit()
                 # AllanC - invalidating the content on EVERY view does not make scence
@@ -226,11 +220,8 @@ class ContentsController(BaseController):
                 #update_content(content)
             
         return action_ok(
-            template='design09/content/view',
-            data={
-                "content": content,
-                "author": content.creator
-            }
+            template = 'design09/content/view',
+            data     = content.to_dict()
         )
 
 
@@ -241,7 +232,7 @@ class ContentsController(BaseController):
         
         c.content = get_content(id)
         if not c.content:
-            return action_error(_("_content not found"), code=404)
+            return error_not_found
         
         c.content                  = form_to_content(request.params, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)

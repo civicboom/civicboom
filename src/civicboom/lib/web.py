@@ -9,6 +9,7 @@ from civicboom.lib.xml_utils import dictToXMLString
 
 import formencode
 
+import os
 import time
 import json
 from decorator import decorator
@@ -166,14 +167,17 @@ def _find_template(result):
     if result.get('template'):
         template_part = result.get('template')
     else:
-        template_part = "%s/%s" % (c.controller, c.action)
+        template_part = '%s/%s' % (c.controller, c.action)
 
-    web_template    = "web/%s.mako"    % template_part                   # Find template filename
+    web_template    = "web/%s.mako"    % template_part
     mobile_template = "mobile/%s.mako" % template_part
 
-    if request.environ['is_mobile'] and os.path.exists(mobile_template): # If mobile rendering
+    def template_exisits(template):
+        return os.path.exists(os.path.join(config['path.templates'], template))
+
+    if request.environ['is_mobile'] and template_exisits(mobile_template):
         template = mobile_template
-    elif os.path.exists(web_template):
+    elif template_exisits(web_template):
         template = web_template
     else:
         template = None

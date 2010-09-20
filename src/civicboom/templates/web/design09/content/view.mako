@@ -4,14 +4,20 @@
 <%namespace name="member_includes"  file="/web/design09/includes/member.mako"       />
 <%namespace name="content_includes" file="/web/design09/includes/content_list.mako" />
 
+<%
+    content     = c.result['data']['content']
+    
+    from civicboom.lib.database.get_cached import get_content
+    content_obj = get_content(content.id)
+%>
 
 ##------------------------------------------------------------------------------
 ## RSS
 ##------------------------------------------------------------------------------
 
 <%def name="rss()">${self.rss_header_link()}</%def>
-<%def name="rss_url()">${url(controller='search', action='content', response_to=c.result['data']['content'].id, format='xml')}</%def>
-<%def name="rss_title()">Responses to ${c.result['data']['content'].title}</%def>
+<%def name="rss_url()">${url(controller='search', action='content', response_to=content.id, format='xml')}</%def>
+<%def name="rss_title()">Responses to ${content.title}</%def>
 ## FIXME: extra RSS for "more by this author"?
 
 
@@ -19,7 +25,7 @@
 ## Title - Override
 ##------------------------------------------------------------------------------
 
-<%def name="title()">${c.result['data']['content'].title}</%def>
+<%def name="title()">${content.title}</%def>
 
 
 ##------------------------------------------------------------------------------
@@ -30,7 +36,7 @@
 
     ##-------- By ----------
     <h2>${_("Content by")}</h2>
-    ${member_includes.avatar(c.result['data']['content'].creator, show_name=True, show_follow_button=True)}
+    ${member_includes.avatar(content.creator, show_name=True, show_follow_button=True)}
   
   
     ##-------Actions-------
@@ -39,57 +45,57 @@
   
   
     ## Content Owner Actions
-    % if c.result['data']['content'].editable_by(c.logged_in_user):
-      <a class="button_small button_small_style_2" href="${h.url('edit_content', id=c.result['data']['content'].id)}">
-        Edit
-      </a>
-      ##<a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=c.result['data']['content'].id)}"
-      ##   onclick="confirm_before_follow_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
-      ##  Delete
-      ##</a>
-	  ${h.secure_link(
-		href=url('content', id=c.result['data']['content'].id, format='redirect'), method="DELETE",
-		value=_("Delete"),
-		css_class="button_small button_small_style_2",
-		confirm_text=_("Are your sure you want to delete this content?")
-      )}
+    % if content_obj.editable_by(c.logged_in_user):
+        <a class="button_small button_small_style_2" href="${h.url('edit_content', id=content.id)}">
+          Edit
+        </a>
+        ##<a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=content.id)}"
+        ##   onclick="confirm_before_follow_link(this,'${_("Are your sure you want to delete this _article?")}'); return false;">
+        ##  Delete
+        ##</a>
+        ${h.secure_link(
+          href=url('content', id=content.id, format='redirect'), method="DELETE",
+          value=_("Delete"),
+          css_class="button_small button_small_style_2",
+          confirm_text=_("Are your sure you want to delete this content?")
+        )}
     % endif
 
     ## Assignment Accept and Withdraw
-    % if c.result['data']['content'].__type__ == "assignment" and c.result['data']['content'].acceptable_by(c.logged_in_user):
-        <% status = c.result['data']['content'].previously_accepted_by(c.logged_in_user) %>
+    % if content.__type__ == "assignment" and content_obj.acceptable_by(c.logged_in_user):
+        <% status = content_obj.previously_accepted_by(c.logged_in_user) %>
         %if not status:
-            ${h.secure_link(h.url(controller='content_actions',action='accept'  , id=c.result['data']['content'].id, format='redirect'), _('Accept')  , css_class="button_small button_small_style_2")}
+            ${h.secure_link(h.url(controller='content_actions',action='accept'  , id=content.id, format='redirect'), _('Accept')  , css_class="button_small button_small_style_2")}
         % elif status != "withdrawn":
-            ${h.secure_link(h.url(controller='content_actions',action='withdraw', id=c.result['data']['content'].id, format='redirect'), _('Withdraw'), css_class="button_small button_small_style_2")}
+            ${h.secure_link(h.url(controller='content_actions',action='withdraw', id=content.id, format='redirect'), _('Withdraw'), css_class="button_small button_small_style_2")}
         % endif
     % endif
 
     ## Parent Content Owner Actions
-    % if c.result['data']['content'].parent and c.result['data']['content'].is_parent_owner(c.logged_in_user):
+    % if content.parent_id and content_obj.is_parent_owner(c.logged_in_user):
         ## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
-        % if c.result['data']['content'].status == "locked":
+        % if content.status == "locked":
             <a href="" class="button_small button_small_style_2">
                 Email Resorces
             </a>
         % else:
-            ${h.secure_link(h.url(controller='content_actions',action='approve'    , id=c.result['data']['content'].id, format='redirect'), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
-            ${h.secure_link(h.url(controller='content_actions',action='disasociate', id=c.result['data']['content'].id, format='redirect'), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+            ${h.secure_link(h.url(controller='content_actions',action='approve'    , id=content.id, format='redirect'), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
+            ${h.secure_link(h.url(controller='content_actions',action='disasociate', id=content.id, format='redirect'), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
         % endif
         
     % endif
     
 
-    % if hasattr(c.result['data']['content'], "rating"):
+    % if hasattr(content, "rating"):
 <%
 def selif(r, n):
 	if round(r) == n:
 		return " selected"
 	else:
 		return ""
-r = (c.result['data']['content'].rating * 5)
+r = (content.rating * 5)
 %>
-		<form id="rating" action="${url(controller='content_actions', action='rate', id=c.result['data']['content'].id, format='redirect')}" method="POST">
+		<form id="rating" action="${url(controller='content_actions', action='rate', id=content.id, format='redirect')}" method="POST">
 			<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
 			<select name="rating" style="width: 120px">
 				<option value="0">Unrated</option>
@@ -109,7 +115,7 @@ r = (c.result['data']['content'].rating * 5)
 				callback: function(ui, type, value) {
 					## $("#rating").submit();
 					$.ajax({
-						url: "${url(controller='content_actions', action='rate', id=c.result['data']['content'].id, format='json')}",
+						url: "${url(controller='content_actions', action='rate', id=content.id, format='json')}",
 						type: "POST",
 						data: {
 							"_authentication_token": "${h.authentication_token()}",
@@ -128,8 +134,9 @@ r = (c.result['data']['content'].rating * 5)
 
     ##-----Share Article Links--------
 
-    <% from civicboom.model.content import UserVisibleContent %>
-    % if issubclass(c.result['data']['content'].__class__, UserVisibleContent):
+    ##<% from civicboom.model.content import UserVisibleContent %>
+    ##% if issubclass(content_obj.__class__, UserVisibleContent):
+    % if content.type == 'article' or content.type == 'assignment':
     <h2>${_("Share this")}</h2>
         ${share_links()}
     % endif
@@ -137,9 +144,10 @@ r = (c.result['data']['content'].rating * 5)
 
     ##-------- Licence----------
     <h2>${_("Licence")}</h2>
-      <a href="${c.result['data']['content'].license.url}" target="_blank" title="${_(c.result['data']['content'].license.name)}">
-        <img src="/images/licenses/${c.result['data']['content'].license.code}.png" alt="${_(c.result['data']['content'].license.name)}" />
-      </a>
+        dont use obj ref
+        ##<a href="${content.license.url}" target="_blank" title="${_(content.license.name)}">
+        ##  <img src="/images/licenses/${content.license.code}.png" alt="${_(content.license.name)}" />
+        ##</a>
   
     ##-----Copyright/Inapropriate?-------
     <h2>${_("Content issues?")}</h2>
@@ -171,32 +179,32 @@ r = (c.result['data']['content'].rating * 5)
 # we need to pass the session to GeoAlchemy functions
 from civicboom.model.meta import Session
 %>
-    % if c.result['data']['content'].location:
+    % if content.location:
       <p>${loc.minimap(
           width="100%", height="200px",
-          lon=c.result['data']['content'].location.coords(Session)[0],
-          lat=c.result['data']['content'].location.coords(Session)[1]
+          lon=content.location.coords(Session)[0],
+          lat=content.location.coords(Session)[1]
       )}</p>
     % endif
   
-    % if c.result['data']['content'].parent:
+    % if content.parent_id:
     <h2>Parent content</h2>
-    ${content_includes.content_list([c.result['data']['content'].parent], mode="mini", class_="content_list_mini")}
-    ##<p><a href="${h.url(controller="content", action="view", id=c.result['data']['content'].parent.id)}">${c.result['data']['content'].parent.title}</a></p>
+    ${content_includes.content_list([content_obj.parent], mode="mini", class_="content_list_mini")}
+    ##<p><a href="${h.url(controller="content", action="view", id=content.parent.id)}">${content.parent.title}</a></p>
     % endif
     
     <h2>Reponses</h2>
     
-    ${content_includes.content_list(c.result['data']['content'].responses, mode="mini", class_="content_list_mini")}
+    ${content_includes.content_list(content_obj.responses, mode="mini", class_="content_list_mini")}
     
     
     
-    % if hasattr(c.result['data']['content'], "assigned_to"):
+    % if hasattr(content_obj, "assigned_to"):
     <h2>Assignment</h2>
         <%
-            accepted  = [a.member for a in c.result['data']['content'].assigned_to if a.status=="accepted" ]
-            invited   = [a.member for a in c.result['data']['content'].assigned_to if a.status=="pending"  ]
-            withdrawn = [a.member for a in c.result['data']['content'].assigned_to if a.status=="withdrawn"]
+            accepted  = [a.member for a in content_obj.assigned_to if a.status=="accepted" ]
+            invited   = [a.member for a in content_obj.assigned_to if a.status=="pending"  ]
+            withdrawn = [a.member for a in content_obj.assigned_to if a.status=="withdrawn"]
         %>
     
         <h3>accepted by: ${len(accepted)}</h3>
@@ -211,10 +219,10 @@ from civicboom.model.meta import Session
     
   
     <%doc>
-    % if hasattr(c.result['data']['content'], "accepted_by"):
+    % if hasattr(content, "accepted_by"):
         <p>accepted by</p>
         <ul>
-        % for member in c.result['data']['content'].accepted_by:
+        % for member in content.accepted_by:
             <li>${member.username}</li>
         % endfor
         </ul>
@@ -232,23 +240,23 @@ from civicboom.model.meta import Session
 
 <%def name="body()">
   ##----Title----
-  <h1>${c.result['data']['content'].title}</h1>
+  <h1>${content.title}</h1>
 
   ##----Type----
-  <p>Type: ${c.result['data']['content'].__type__}</p>
+  <p>Type: ${content.type}</p>
 
   ##----Details----
-  % if hasattr(c.result['data']['content'],'views'):
-  <p>views: ${c.result['data']['content'].views}</p>
+  % if hasattr(content,'views'):
+  <p>views: ${content.views}</p>
   % endif
 
   ##----Content----
   <div class="content_text">
-    ${h.literal(h.scan_for_embedable_view_and_autolink(c.result['data']['content'].content))}
+    ${h.literal(h.scan_for_embedable_view_and_autolink(content.content))}
   </div>
 
   ##----Media-----
-  % for media in c.result['data']['content'].attachments:
+  % for media in content_obj.attachments:
     % if media.type == "image":
       <a href="${media.original_url}"><img src="${media.media_url}" alt="${media.caption}"/></a>
     % elif media.type == "audio":
@@ -269,7 +277,7 @@ from civicboom.model.meta import Session
   % endfor
   
   ##----Temp Respond----
-  <a href="${h.url('new_content', form_parent_id=c.result['data']['content'].id)}">Respond to this</a>
+  <a href="${h.url('new_content', form_parent_id=content.id)}">Respond to this</a>
   
   ##----Comments----
   ${comments()}
@@ -324,13 +332,13 @@ from civicboom.model import CommentContent
 </style>
 	<table>
 ## this approach doesn't sort :/
-##	% for r in [co for co in c.result['data']['content'].responses if co.__type__ == "comment"]:
-##	% for r in Session.query(CommentContent).filter(CommentContent.parent_id==c.result['data']['content'].id).order_by(CommentContent.creation_date):
+##	% for r in [co for co in content.responses if co.__type__ == "comment"]:
+##	% for r in Session.query(CommentContent).filter(CommentContent.parent_id==content.id).order_by(CommentContent.creation_date):
 
 ## AllanC - don't worry Shish my man, helps at hand :)
 ##          a sorted realtion doing the filtering at the database side 
-    % for r in c.result['data']['content'].comments:
-	${relation(r.creator, c.logged_in_user, c.result['data']['content'].creator, 'tr')}
+    % for r in content_obj.comments:
+	${relation(r.creator, c.logged_in_user, content.creator, 'tr')}
 		<td class="avatar">
 			${member_includes.avatar(r.creator)}
 		</td>
@@ -338,7 +346,7 @@ from civicboom.model import CommentContent
 			${r.content}
 			<b style="float: right;">
 				${r.creator.name}
-				${relation(r.creator, c.logged_in_user, c.result['data']['content'].creator, 'text')} --
+				${relation(r.creator, c.logged_in_user, content.creator, 'text')} --
 				${str(r.creation_date)[0:19]}
 			</b>
 		</td>
@@ -352,8 +360,8 @@ from civicboom.model import CommentContent
 		</td>
 		<td class="comment">
 			${h.form(url('contents'))}
-				<input type="hidden" name="form_parent_id" value="${c.result['data']['content'].id}">
-				<input type="hidden" name="form_title" value="Re: ${c.result['data']['content'].title}">
+				<input type="hidden" name="form_parent_id" value="${content.id}">
+				<input type="hidden" name="form_title" value="Re: ${content.title}">
 				<input type="hidden" name="form_type" value="comment">
 				<textarea name="form_content" style="width: 100%; height: 100px;"></textarea>
 				<br><!--<input type="submit" name="submit_preview" value="Preview">--><input type="submit" name="submit_response" value="Post">
@@ -371,7 +379,7 @@ from civicboom.model import CommentContent
 
 <%def name="share_links()">
 
-    % if c.result['data']['content'].editable_by(c.logged_in_user):
+    % if content_obj.editable_by(c.logged_in_user):
         ${janrain_aggregate_button()}
     %endif
     
@@ -401,10 +409,10 @@ from civicboom.model import CommentContent
         <!-- Boom button -->
         <div class="yui-u">
             <% boom_count = 0 %>
-            % if hasattr(c.result['data']['content'],"boom_count"):
-                <% boom_count = c.result['data']['content'].boom_count %>
+            % if hasattr(content,"boom_count"):
+                <% boom_count = content.boom_count %>
             % endif
-            <a href="${h.url(controller='content' ,action='boom', id=c.result['data']['content'].id, format='redirect')}" title="${_("Boom this! Share this with all your Followers")}">
+            <a href="${h.url(controller='content' ,action='boom', id=content.id, format='redirect')}" title="${_("Boom this! Share this with all your Followers")}">
             <div class="boom_this">
                 <span class="boom_count">${boom_count}</span>
                 <p>${_("Boom this")}</p>
@@ -444,7 +452,7 @@ from civicboom.model import CommentContent
                 ## This uses the same JSON generation as the Janrain API but contructs the data for the Jainrain social widget
                 <%
                   from civicboom.lib.civicboom_lib import aggregation_dict
-                  content_dict = aggregation_dict(c.result['data']['content'], safe_strings=True)
+                  content_dict = aggregation_dict(content_obj, safe_strings=True)
                 %>
                 
                 var activity = new RPXNOW.Social.Activity('${content_dict['action']}',

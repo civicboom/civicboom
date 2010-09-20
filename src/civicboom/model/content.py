@@ -14,6 +14,15 @@ import hashlib
 from webhelpers.text import truncate
 
 
+#-------------------------------------------------------------------------------
+# Object to Dict Conversion
+#-------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
+# Objects
+#-------------------------------------------------------------------------------
+
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 
@@ -87,6 +96,32 @@ class Content(Base):
     comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id == Content.parent_id") #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content    
     flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
 
+    # used by obj_to_dict to create a string dictonary representation of this object
+    __to_dict__ = {
+        'default': {
+            'id'           : None ,
+            'type'         : lambda content: content.__type__ ,
+            'parent_id'    : None ,
+            'content'      : None ,
+            'creator'      : lambda content: content.creator.username ,
+            'creator_id'   : None ,
+            'location'     : None ,
+            'status'       : None ,
+            
+            #'views'        : None ,
+            #'boom_count'   : None ,
+            #'rating'       : None ,
+        },
+        'default_list': {
+            'id'           : None ,
+            'type'         : lambda content: content.__type__ ,
+            'title'        : None ,
+            'content_short': None ,
+            'parent_id'    : None ,
+            'creation_date': None ,
+        },
+    }
+    
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"
 
@@ -149,6 +184,14 @@ class Content(Base):
         from civicboom.lib.civicboom_lib import aggregate_via_user
         if self.__type__ == 'article' or self.__type__ == 'assignment':
             return aggregate_via_user(self, self.creator)
+    
+    
+    def to_dict(self, method='default'):
+        """
+        describe
+        """
+        from civicboom.lib.misc import obj_to_dict
+        return obj_to_dict(self,self.__to_dict__[method])
     
     @property
     def thumbnail_url(self):

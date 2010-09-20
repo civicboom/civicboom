@@ -70,3 +70,18 @@ def cacheable(time=60*60*24*365, anon_only=True):
             #log.info(pprint.pformat(response.headers))
         return func(*args, **kwargs)
     return decorator(_cacheable)
+
+
+def obj_to_dict(obj, dict_fields):
+    """
+    Used to convert a python object to a python dict of strings, but only including requested fields
+    TODO: currenly dose not follow lists or dict, just string dumps .. could be useful in future to recusivly call obj_to_dict
+    """
+    d = {}
+    for field_name in dict_fields.keys():
+        field_processor = dict_fields[field_name]
+        if field_processor == None:
+            d[field_name] = unicode(getattr(obj,field_name,''))
+        elif type(field_processor)=='function':
+            d[field_name] = unicode(field_processor(obj))
+    return d
