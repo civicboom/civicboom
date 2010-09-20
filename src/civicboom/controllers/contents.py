@@ -117,16 +117,9 @@ class ContentsController(BaseController):
         if not content:
             return action_error(_("_content not found"), code=404)
         
-        print ""
-        print "we got the content - we got the power"
-        print request.params
-        
         # Overlay form data over the current content object or return a new instance of an object
         content = form_to_content(request.params, content) #request.POST
         starting_content_type = content.__type__
-        
-        print "yay content"
-        print content.content
         
         # If publishing perform profanity check and send notifications
         if 'submit_publish' in request.POST:
