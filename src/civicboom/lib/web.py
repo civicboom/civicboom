@@ -194,6 +194,11 @@ def setup_format_processors():
         response.headers['Content-type'] = "application/rss+xml"
         return 'implement RSS' # TODO: ???
     
+    def format_frag(result):
+        overlay_status_message(c.result, result)                        # Set standard template data dict for template to use
+        web_template = "frag/%s.mako" % result['template']              # Find template filename
+        return render_mako(web_template)
+
     def format_html(result):
         overlay_status_message(c.result, result)                             # Set standard template data dict for template to use
         return render_mako(_find_template(result))
@@ -239,6 +244,7 @@ def setup_format_processors():
         xml      = format_xml,
         rss      = format_rss,
         html     = format_html,
+        frag     = format_frag,
         redirect = format_redirect,
     )
 
