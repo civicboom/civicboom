@@ -5,11 +5,13 @@
 <%namespace name="content_includes" file="/web/design09/includes/content_list.mako" />
 
 <%
-    content     = c.result['data']['content']
+    from civicboom.lib.misc import DictAsObj
+    content  = DictAsObj(c.result['data']['content'])
     
     from civicboom.lib.database.get_cached import get_content
     content_obj = get_content(content.id)
 %>
+
 
 ##------------------------------------------------------------------------------
 ## RSS

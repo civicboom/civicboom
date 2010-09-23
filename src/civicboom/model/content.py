@@ -102,15 +102,19 @@ class Content(Base):
             'id'           : None ,
             'type'         : lambda content: content.__type__ ,
             'parent_id'    : None ,
+            'title'        : None ,
             'content'      : None ,
             'creator'      : lambda content: content.creator.username ,
             'creator_id'   : None ,
-            'location'     : None ,
+            'location'     : lambda content: '%s %s' % (content.location.coords()[1], content.location.coords()[0]),
             'status'       : None ,
             
             #'views'        : None ,
             #'boom_count'   : None ,
             #'rating'       : None ,
+            #'can_accept'   :
+            #'can_withdraw' :
+            #''
         },
         'default_list': {
             'id'           : None ,

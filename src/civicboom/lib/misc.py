@@ -85,3 +85,7 @@ def obj_to_dict(obj, dict_fields):
         elif type(field_processor)=='function':
             d[field_name] = unicode(field_processor(obj))
     return d
+
+class DictAsObj:
+    def __init__(self, d):
+        self.__dict__.update(d)
