@@ -86,7 +86,7 @@ def obj_to_dict(obj, dict_fields):
         if field_processor == None:
             d[field_name] = unicode(getattr(obj,field_name,''))
         elif type(field_processor)==types.FunctionType:
-            print "processing field %s" % field_name
+            log.debug("processing field %s" % field_name)
             d[field_name] = unicode(field_processor(obj))
     return d
 
