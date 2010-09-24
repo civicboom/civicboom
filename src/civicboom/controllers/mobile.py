@@ -57,48 +57,6 @@ class MobileController(BaseController):
 
 
     #-----------------------------------------------------------------------------
-    # Main App: Accepted Assignments JSON List
-    #-----------------------------------------------------------------------------
-    @_logged_in_mobile
-    @auto_format_output()
-    def accepted_assignments(self):
-        #cache_key = gen_cache_key(reporter_assignments_accepted=c.logged_in_reporter.id)
-        return action_ok(data={"assignments":
-            [{
-                "id":                assignment.content.id,
-                "title":             assignment.content.title,
-                "content":           h.truncate(assignment.content.content, length=150),
-                "image":             assignment.content.thumbnail_url,
-                "assigned_by":       assignment.content.creator.name,
-                "assigned_by_image": assignment.content.creator.avatar_url,
-                "expiry_date":       assignment.content.due_date,
-            } for assignment in c.logged_in_user.assignments_accepted]
-        })
-
-
-    #-----------------------------------------------------------------------------
-    # Main App: Messages
-    #-----------------------------------------------------------------------------
-    @_logged_in_mobile
-    @auto_format_output()
-    def messages(self):
-        #cache_key = gen_cache_key(reporter_messages=c.logged_in_user.id) # This will terminate the method call if the eTags match
-        c.logged_in_user.last_check = datetime.now()
-        return action_ok(data={"messages":
-            [{
-                "id":            message.id,
-                "sourceId":      message.source_id,
-                "message":       message.content,
-                "timestamp":     str(message.timestamp),
-                "link":          "",
-                "response_type": "",
-                "more":          "", # FIXME: protocol -- no more = blank string, more = array of one assignment; should be no more = None, more = one assignment, see Feature #29
-            } for message in c.logged_in_user.messages_notification[:10]]
-        }) # FIXME: do we want notifications AND private messages?
-        # return action_ok(data=...)
-
-
-    #-----------------------------------------------------------------------------
     # Upload Article
     #-----------------------------------------------------------------------------
     # We can make assumptions here that the mobile app will have done some validation of the input
