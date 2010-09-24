@@ -208,7 +208,7 @@ class Content(Base):
     def location_string(self):
         if self.location:
             return '%s %s' % (self.location.coords()[1], self.location.coords()[0])
-        return ""
+        return None
         
 
 

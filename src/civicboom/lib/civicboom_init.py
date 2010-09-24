@@ -31,5 +31,6 @@ def init():
                                                 ),
                                                 secondary=MemberAssignment.__table__,
                                                 secondaryjoin=MemberAssignment.member_id==Member.id,
-                                                foreign_keys=[MemberAssignment.content_id,MemberAssignment.member_id]
+                                                foreign_keys=[MemberAssignment.content_id,MemberAssignment.member_id],
+                                                backref='assignments_accepted'
                                     )

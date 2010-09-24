@@ -83,11 +83,14 @@ def obj_to_dict(obj, dict_fields):
     d = {}
     for field_name in dict_fields.keys():
         field_processor = dict_fields[field_name]
+        field_value     = None
         if field_processor == None:
-            d[field_name] = unicode(getattr(obj,field_name,''))
+            field_value = getattr(obj,field_name,'')    
         elif type(field_processor)==types.FunctionType:
-            print "processing field %s" % field_name
-            d[field_name] = unicode(field_processor(obj))
+            field_value = field_processor(obj)
+        if field_value:
+            field_value = unicode(field_value)
+        d[field_name] = field_value
     return d
 
 
