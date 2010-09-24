@@ -104,7 +104,7 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     
     assignment_accepted        = MemberAssignment()
     assignment.assigned_to.append(assignment_accepted)
-    assignment_accepted.member = member
+    assignment_accepted.member_id = member.id
     assignment_accepted.status = status
     Session.add(assignment_accepted)
     
