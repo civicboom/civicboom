@@ -276,21 +276,9 @@ def auto_format_output():
             # Is result a dict with data?
             if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
                 
-                # Set default FORMAT (if nessisary)
-                format = c.format
-                if args[-1] in format_processors:
-                    format = args[-1] # The last arg should be a format, if it is a valid format set it
-                    log.debug("Got format from args; was %s, now %s" % (c.format, format))
-                if 'format' in kwargs:
-                    format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
-                
-                if format=='html' and not _find_template(result):
+                if c.format=='html' and not _find_template(result):
                     log.warning("Format HTML with no template")
-                    format='xml' #If format HTML and no template supplied fall back to XML
-                
-                # Set default STATUS and MSG (if nessisary)
-                if 'status'  not in result: result['status']  = 'ok'
-                if 'message' not in result: result['message'] = ''
+                    c.format='xml' #If format HTML and no template supplied fall back to XML
                 
                 # set the HTTP status code
                 if 'code' in result:
@@ -298,10 +286,10 @@ def auto_format_output():
                     del result['code']
                 
                 # Render to format
-                if format in format_processors:
-                    return format_processors[format](result)
+                if c.format in format_processors:
+                    return format_processors[c.format](result)
                 else:
-                    log.warning("Unknown format: "+str(format))
+                    log.warning("Unknown format: "+str(c.format))
                 
             # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
             log.debug("returning pre-rendered stuff")
