@@ -183,14 +183,15 @@ def setup_format_processors():
         response.headers['Content-type'] = "application/rss+xml"
         return 'implement RSS' # TODO: ???
     
+    def format_frag(result):
+        overlay_status_message(c.result, result)                        # Set standard template data dict for template to use
+        web_template = "frag/%s.mako" % result['template']              # Find template filename
+        return render_mako(web_template)
+
     def format_html(result):
         overlay_status_message(c.result, result)
         return render_mako(_find_template(result), extra_vars=DictAsObj(c.result))
-    
-    def format_html_fragment(result):
-        # Stub for new HTML fragment format
-        pass
-    
+        
     def format_redirect(result):
         """
         A special case for compatable browsers making REST calls
@@ -222,13 +223,13 @@ def setup_format_processors():
         #return redirect("/")
 
     return dict(
-        python        = lambda result:result,
-        json          = format_json,
-        xml           = format_xml,
-        rss           = format_rss,
-        html          = format_html,
-        html_fragment = format_html_fragment,
-        redirect      = format_redirect,
+        python   = lambda result:result,
+        json     = format_json,
+        xml      = format_xml,
+        rss      = format_rss,
+        html     = format_html,
+        frag     = format_frag,
+        redirect = format_redirect,
     )
 
 

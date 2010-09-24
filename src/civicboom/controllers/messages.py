@@ -19,6 +19,10 @@ class MessagesController(BaseController):
         """GET /messages: All items in the collection."""
         # url('messages')
         c.viewing_user = c.logged_in_user
+        if request.GET.get("type") == "notifications":
+            source = c.viewing_user.messages_notification
+        else:
+            source = c.viewing_user.messages_to
         return action_ok(
             template="messages/index",
             data = {"messages":[{
