@@ -111,7 +111,7 @@ class DictAsObj(UserDict.DictMixin):
             elif hasattr(d[key], '__iter__'): # Iterate though any lists converting dicts to Dict as Obj
                 for item in [item for item in d[key] if hasattr(item,'keys')]:
                     item = DictAsObj(item)
-        self.d = d
+        self.d.update(d) # "self.d = d" = setattr, which breaks things
     def __getitem__(self, name):
         return self.d[name]
     def __setitem__(self, name, value):
@@ -122,6 +122,5 @@ class DictAsObj(UserDict.DictMixin):
         return self.d.keys()
     def __getattr__(self, name):
         return self.d[name]
-    # setattr means that "self.d = d" in __init__ becomes self.d["d"] = d
-    #def __setattr__(self, name, value):
-    #    self.d[name] = value
+    def __setattr__(self, name, value):
+        self.d[name] = value
