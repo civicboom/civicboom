@@ -35,6 +35,7 @@ class AccountController(BaseController):
     # Janrain Engage - http://www.janrain.com/products/engage
     #---------------------------------------------------------------------------
 
+    @auto_format_output()
     @https() # redirect to https for transfer of password
     def signin(self):
 
@@ -82,8 +83,12 @@ class AccountController(BaseController):
             #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             
         # If not authenticated or any janrain info then error
-        set_flash_message(action_error(_('Unable to authenticate user'), code=403))
-        return redirect_to_referer()
+        err = action_error(_('Unable to authenticate user'), code=403)
+        if format == "html":
+            set_flash_message(err)
+            return redirect_to_referer()
+        else:
+            return err
 
     #---------------------------------------------------------------------------
     # Link Janrain Account

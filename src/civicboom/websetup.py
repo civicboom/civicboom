@@ -10,6 +10,7 @@ from civicboom.model import User, Group, UserLogin
 from civicboom.model import ArticleContent, CommentContent, DraftContent, AssignmentContent, Media
 from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
+from civicboom.model import Feed
 from civicboom.lib.services import warehouse as wh
 from civicboom.lib.database.get_cached import get_tag
 from civicboom.lib.gis import get_location_by_name
@@ -1051,6 +1052,28 @@ CREATE TRIGGER update_content
         asc2.accept(u3)
         asc2.accept(u4)
         Session.commit()
+
+        ###############################################################
+        log.debug("Feeds")
+
+        f1 = Feed()
+        f1.name = u"test feed #1"
+        f1.member = u1
+        f1.query = ""
+
+        f2 = Feed()
+        f2.name = u"test feed #2 to be deleted"
+        f2.member = u1
+        f2.query = ""
+
+        f3 = Feed()
+        f3.name = u"test feed #3 to be deleted with fakeout"
+        f3.member = u1
+        f3.query = ""
+
+        Session.add_all([f1, f2, f3])
+        Session.commit()
+
         # }}}
     ###################################################################
     log.info("Successfully set up tables")
