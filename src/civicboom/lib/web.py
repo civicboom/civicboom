@@ -15,6 +15,7 @@ import time
 import json
 from decorator import decorator
 import logging
+import os
 
 log = logging.getLogger(__name__)
 
@@ -165,6 +166,7 @@ def _find_template(result):
     elif template_exisits(web_template):
         template = web_template
     else:
+        log.warn("Can't find template for part "+template_part+" - "+"templates/"+web_template)
         template = None
 
     return template
@@ -186,7 +188,7 @@ def setup_format_processors():
     def format_frag(result):
         overlay_status_message(c.result, result)                        # Set standard template data dict for template to use
         web_template = "frag/%s.mako" % result['template']              # Find template filename
-        return render_mako(web_template)
+        return render_mako(web_template, extra_vars=c.result)
 
     def format_html(result):
         overlay_status_message(c.result, result)

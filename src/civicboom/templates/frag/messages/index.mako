@@ -5,7 +5,7 @@
 		<th>Date</th>
 		<th>Action</th>
 	</tr>
-% for msg in c.result['data']:
+% for msg in data['messages']:
 	<tr>
 		<td>${str(msg["source"])}</td>
 		<td><a href="${url('message', id=msg['id'])}">${msg['subject']}</a></td>
