@@ -199,7 +199,7 @@ def setup_format_processors():
     def format_frag(result):
         overlay_status_message(c.result, result)                        # Set standard template data dict for template to use
         web_template = "frag/%s.mako" % result['template']              # Find template filename
-        return render_mako(web_template)
+        return render_mako(web_template, extra_vars=c.result)
 
     def format_html(result):
         overlay_status_message(c.result, result)                             # Set standard template data dict for template to use
