@@ -20,3 +20,15 @@ metadata = MetaData()
 # Allan - dont think it is needed in this project? - http://www.sqlalchemy.org/docs/reference/ext/declarative.html#accessing-the-metadata
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
+
+def to_dict(self, method=None, default_method='default'):
+    """
+    describe
+    """
+    from civicboom.lib.misc import obj_to_dict
+    if method not in self.__to_dict__:
+        method = default_method
+    return obj_to_dict(self,self.__to_dict__[method])
+
+Base.__to_dict__ =  {}
+Base.to_dict = to_dict

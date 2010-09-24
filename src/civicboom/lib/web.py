@@ -6,6 +6,7 @@ from pylons.templating        import render_mako
 from webhelpers.html import literal
 
 from civicboom.lib.xml_utils import dictToXMLString
+from civicboom.lib.misc import DictAsObj
 
 import formencode
 
@@ -147,22 +148,6 @@ def overlay_status_message(master_message, new_message):
 # Auto Format Output
 #-------------------------------------------------------------------------------
 
-#To be depricated?
-"""
-def get_format_processors_pre():
-    def format_redirect():
-        #if session_get('action_redirect') == None and 'HTTP_REFERER' in request.environ:
-        #    session_set('action_redirect', request.environ.get('HTTP_REFERER'), 60 * 5)
-        
-        # WHAT? I just looked at this ... why are we using a session? we have our own state after the action is performed so why bother with a session?
-        pass
-    
-    return dict(
-        redirect = format_redirect,
-    )
-"""
-
-
 def _find_template(result):
     if result.get('template'):
         template_part = result.get('template')
@@ -199,13 +184,12 @@ def setup_format_processors():
         return 'implement RSS' # TODO: ???
     
     def format_html(result):
-        overlay_status_message(c.result, result)                             # Set standard template data dict for template to use
-        return render_mako(_find_template(result))
-        # Used to use HTMLFILL, but this was incompatable with JSON and XML as formencode.Invalid were objects
-        # Now the python dict has an ['error'] attribute that templates render themselfs
-        # it may even be possible for us to create our own poor mans htmlfill that overlays the html with our own validation data
-        #if 'htmlfill' in result: return formencode.htmlfill.render(html, **result['htmlfill'])
-        #else                   : return html
+        overlay_status_message(c.result, result)
+        return render_mako(_find_template(result), extra_vars=DictAsObj(c.result))
+    
+    def format_html_fragment(result):
+        # Stub for new HTML fragment format
+        pass
     
     def format_redirect(result):
         """
@@ -238,12 +222,13 @@ def setup_format_processors():
         #return redirect("/")
 
     return dict(
-        python   = lambda result:result,
-        json     = format_json,
-        xml      = format_xml,
-        rss      = format_rss,
-        html     = format_html,
-        redirect = format_redirect,
+        python        = lambda result:result,
+        json          = format_json,
+        xml           = format_xml,
+        rss           = format_rss,
+        html          = format_html,
+        html_fragment = format_html_fragment,
+        redirect      = format_redirect,
     )
 
 
@@ -259,33 +244,29 @@ def auto_format_output():
         - HTML (with htmlfill overlay if nessisary) [auto selecting mobile template if needed]
             + Web 
             + Mobile
+        - HTML_FRAGMENT
+            Used to generate fragments of pages for use with AJAX calls or as a component of a static page
         - PYTHON (just the plain python dict for internal calls)
         - REDIRECT (compatable old borswer action to have session message set and redirected to referer)
             
     Should be passed a python dictonary containing
         {
-            data   : the python dict to render (required) if not present will just pass though this decorator
+            data   : the python dict to render (default {})
             
             status : 'ok' or 'error' (optional defaults to ok)
             message: the flash message or error message (optional: default '')
             
-            htmlfill: (optional) kwargs for the htmlfill system (html rendering only)
             template: (required for html rendering) the template name, will default to XML if format==html and template not specifyed
         }
     """
-    
-    #format_processors_end = format_processors 
-
-    
     def my_decorator(target):
         def wrapper(target, *args, **kwargs):
             
             #if format in format_processors_pre:
             #    format_processors[format]()
-
+            
             # Origninal method call
             result = target(*args, **kwargs) # Execute the wrapped function
-
             
             # After
             # Is result a dict with data?

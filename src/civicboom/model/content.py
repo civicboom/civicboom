@@ -97,7 +97,8 @@ class Content(Base):
     flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
 
     # used by obj_to_dict to create a string dictonary representation of this object
-    __to_dict__ = {
+    __to_dict__ = Base.__to_dict__.copy()
+    __to_dict__.update({
         'default': {
             'id'           : None ,
             'type'         : lambda content: content.__type__ ,
@@ -124,7 +125,7 @@ class Content(Base):
             'parent_id'    : None ,
             'creation_date': None ,
         },
-    }
+    })
     
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"
@@ -189,13 +190,6 @@ class Content(Base):
         if self.__type__ == 'article' or self.__type__ == 'assignment':
             return aggregate_via_user(self, self.creator)
     
-    
-    def to_dict(self, method='default'):
-        """
-        describe
-        """
-        from civicboom.lib.misc import obj_to_dict
-        return obj_to_dict(self,self.__to_dict__[method])
     
     @property
     def thumbnail_url(self):
@@ -287,6 +281,17 @@ class AssignmentContent(UserVisibleContent):
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
+    
+    # Setup __to_dict__fields
+    __to_dict__ = UserVisibleContent.__to_dict__.copy()
+    __to_dict__.update({
+        'assignments': __to_dict__['default'].copy()
+    })
+    __to_dict__['assignments'].update({
+            'due_date'           : None ,
+            'event_date'         : None ,
+            'closed'             : None ,
+    })
     
     def hash(self):
         h = hashlib.md5(UserVisibleContent.hash(self))

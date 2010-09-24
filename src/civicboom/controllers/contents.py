@@ -53,10 +53,10 @@ class ContentsController(BaseController):
         """GET /contents: All items in the collection"""
         # url('contents')
         
-        content_list_name = request.params.get('list','content')
+        content_list_name = request.params.get('list','content') # Get form-list from request or default to 'content'
         if content_list_name not in index_lists: return action_error(_('list type %s not supported') % content_list_name)
         content_list      = index_lists[content_list_name](c.logged_in_user)
-        content_list      = [content.to_dict('default_list') for content in content_list]
+        content_list      = [content.to_dict(content_list_name) for content in content_list] #'default_list'
         
         return {'data': {'list': content_list} }
 

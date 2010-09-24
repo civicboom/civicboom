@@ -5,11 +5,12 @@
 <%namespace name="content_includes" file="/web/design09/includes/content_list.mako" />
 
 <%
-    from civicboom.lib.misc import DictAsObj
-    content  = DictAsObj(c.result['data']['content'])
+    #from civicboom.lib.misc import DictAsObj
+    #content  = DictAsObj(c.result['data']['content'])
     
     from civicboom.lib.database.get_cached import get_content
-    content_obj = get_content(content.id)
+    content_obj = get_content(data.content.id)
+
 %>
 
 
@@ -18,8 +19,8 @@
 ##------------------------------------------------------------------------------
 
 <%def name="rss()">${self.rss_header_link()}</%def>
-<%def name="rss_url()">${url(controller='search', action='content', response_to=content.id, format='xml')}</%def>
-<%def name="rss_title()">Responses to ${content.title}</%def>
+<%def name="rss_url()">${url(controller='search', action='content', response_to=c.result['data']['content']['id'], format='xml')}</%def>
+<%def name="rss_title()">Responses to ${c.result['data']['content']['title']}</%def>
 ## FIXME: extra RSS for "more by this author"?
 
 
@@ -27,7 +28,7 @@
 ## Title - Override
 ##------------------------------------------------------------------------------
 
-<%def name="title()">${content.title}</%def>
+<%def name="title()">${c.result['data']['content']['title']}</%def>
 
 
 ##------------------------------------------------------------------------------
@@ -35,10 +36,10 @@
 ##------------------------------------------------------------------------------
 
 <%def name="col_left()">
-
+    
     ##-------- By ----------
     <h2>${_("Content by")}</h2>
-    ${member_includes.avatar(content.creator, show_name=True, show_follow_button=True)}
+    ${member_includes.avatar(content_obj.creator, show_name=True, show_follow_button=True)}
   
   
     ##-------Actions-------

@@ -2,6 +2,8 @@
 Low level miscilanious calls
 """
 
+import UserDict
+
 import random
 from datetime import date
 from decorator import decorator
@@ -86,6 +88,32 @@ def obj_to_dict(obj, dict_fields):
             d[field_name] = unicode(field_processor(obj))
     return d
 
-class DictAsObj:
+
+class DictAsObj(UserDict.DictMixin):
+    """
+    Concept was to return a dictonary that also had it's elements accesiable as object fields
+    This will recursivly do this to any sub dicts and lists
+    """
+    d = {}
     def __init__(self, d):
-        self.__dict__.update(d)
+        d = d.copy()
+        for key in d.keys():           # Recursivly Convert Dict's to DictAsObj
+            if hasattr(d[key],'keys'): #
+                d[key] = DictAsObj(d[key])
+            elif hasattr(d[key], '__iter__'): # Iterate though any lists converting dicts to Dict as Obj
+                for item in [item for item in d[key] if hasattr(item,'keys')]:
+                    item = DictAsObj(item)
+        self.d = d
+    def __getitem__(self, name):
+        return self.d[name]
+    def __setitem__(self, name, value):
+        self.d[name] = value
+    def __delitem__(self, name):
+        del self.d[name]
+    def keys(self):
+        return self.d.keys()
+    def __getattr__(self, name):
+        if name in self.d: return self.d[name]
+        else             : return UserDict.DictMixin.__getattr__(self, name)
+    def __setattr__(self, name, value):
+        self.d[name] = value
