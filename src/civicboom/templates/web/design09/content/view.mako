@@ -49,7 +49,7 @@
   
   
     ## Content Owner Actions
-    % if content_obj.editable_by(c.logged_in_user):
+    % if 'editable' in content.actions:
         <a class="button_small button_small_style_2" href="${h.url('edit_content', id=content.id)}">
           Edit
         </a>
@@ -66,28 +66,26 @@
     % endif
 
     ## Assignment Accept and Withdraw
-    % if content.__type__ == "assignment" and content_obj.acceptable_by(c.logged_in_user):
-        <% status = content_obj.previously_accepted_by(c.logged_in_user) %>
-        %if not status:
-            ${h.secure_link(h.url(controller='content_actions',action='accept'  , id=content.id, format='redirect'), _('Accept')  , css_class="button_small button_small_style_2")}
-        % elif status != "withdrawn":
-            ${h.secure_link(h.url(controller='content_actions',action='withdraw', id=content.id, format='redirect'), _('Withdraw'), css_class="button_small button_small_style_2")}
-        % endif
+    % if 'accept' in content.actions:
+        ${h.secure_link(h.url(controller='content_actions',action='accept'  , id=content.id, format='redirect'), _('Accept')  , css_class="button_small button_small_style_2")}
+    % if 'withdraw' in content.actions:
+        ${h.secure_link(h.url(controller='content_actions',action='withdraw', id=content.id, format='redirect'), _('Withdraw'), css_class="button_small button_small_style_2")}
     % endif
 
     ## Parent Content Owner Actions
-    % if content.parent_id and content_obj.is_parent_owner(c.logged_in_user):
-        ## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
-        % if content.status == "locked":
-            <a href="" class="button_small button_small_style_2">
-                Email Resorces
-            </a>
-        % else:
-            ${h.secure_link(h.url(controller='content_actions',action='approve'    , id=content.id, format='redirect'), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
-            ${h.secure_link(h.url(controller='content_actions',action='disasociate', id=content.id, format='redirect'), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
-        % endif
-        
+    ## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
+    ##% if content.actions:
+    ##    <a href="" class="button_small button_small_style_2">
+    ##        Email Resorces
+    ##    </a>
+    % if 'approve' in content.actions:
+        ${h.secure_link(h.url(controller='content_actions',action='approve'    , id=content.id, format='redirect'), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
     % endif
+    % if 'disasociate' in content.actions:
+        ${h.secure_link(h.url(controller='content_actions',action='disasociate', id=content.id, format='redirect'), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+    % endif
+    
+    
     
 
     % if hasattr(content, "rating"):

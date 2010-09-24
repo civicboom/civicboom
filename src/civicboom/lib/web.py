@@ -280,7 +280,7 @@ def auto_format_output():
                 format = c.format
                 if args[-1] in format_processors:
                     format = args[-1] # The last arg should be a format, if it is a valid format set it
-                    log.debug("Got format from args; was %s, now %s" % (c.format, format))
+                    #log.debug("Got format from args; was %s, now %s" % (c.format, format))
                 if 'format' in kwargs:
                     format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
                 
