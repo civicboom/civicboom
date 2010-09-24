@@ -100,15 +100,17 @@ class Content(Base):
     __to_dict__ = Base.__to_dict__.copy()
     __to_dict__.update({
         'default': {
-            'id'           : None ,
-            'type'         : lambda content: content.__type__ ,
-            'parent_id'    : None ,
-            'title'        : None ,
-            'content'      : None ,
-            'creator'      : lambda content: content.creator.username ,
-            'creator_id'   : None ,
-            'location'     : lambda content: content.location_string ,
-            'status'       : None ,
+            'id'                : None ,
+            'type'              : lambda content: content.__type__ ,
+            'status'            : None ,
+            'parent_id'         : None ,
+            'title'             : None ,
+            'content'           : None ,
+            'creator_id'        : None ,
+            'creator'           : lambda content: content.creator.username ,
+            'creator_avatar_url': lambda content: content.creator.avatar_url ,
+            'location'          : lambda content: content.location_string ,
+            'thumbnail_url'     : None ,
         },
         'default_list': {
             'id'           : None ,
@@ -307,12 +309,14 @@ class AssignmentContent(UserVisibleContent):
         'default': __to_dict__['default'].copy()
     })
     __to_dict__['default'].update({
-            'due_date'           : None ,
-            'event_date'         : None ,
-            'closed'             : None ,
+            'due_date'              : None ,
+            'event_date'            : None ,
+            'closed'                : None ,
             #'can_accept'   :
             #'can_withdraw' :
-    })    
+    })
+
+
 
     
     def hash(self):
