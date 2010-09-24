@@ -11,12 +11,6 @@ class TestMobileController(TestController):
     def test_latest_version(self):
         response = self.app.get(url(controller='mobile', action='latest_version'))
 
-    def test_accepted_assignments(self):
-        response = self.app.get(url(controller='mobile', action='accepted_assignments'))
-
-    def test_messages(self):
-        response = self.app.get(url(controller='mobile', action='messages'))
-
     def test_upload(self):
         #response = self.app.get(url(controller='mobile', action='upload'))
         #response = self.app.get(url(controller='mobile', action='upload_file'))
