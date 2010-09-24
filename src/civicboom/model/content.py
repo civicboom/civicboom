@@ -204,10 +204,12 @@ class Content(Base):
     @property
     def content_short(self):
         return truncate(self.content, length=100)
+
     @property
     def location_string(self):
         if self.location:
-            return '%s %s' % (self.location.coords()[1], self.location.coords()[0])
+            from civicboom.model.meta import Session
+            return '%s %s' % (self.location.coords(Session)[1], self.location.coords(Session)[0])
         return ""
         
 

@@ -58,12 +58,15 @@ class FeedsController(BaseController):
     def create(self):
         """POST /feeds: Create a new item"""
         # url('feeds')
-        f = Feed()
-        f.name = request.POST['name']
-        f.query = _post_to_query(request.POST)
-        c.logged_in_user.feeds.append(f)
-        Session.commit()
-        return action_ok(_("Feed created"), code=201)
+        try:
+            f = Feed()
+            f.name = request.POST['name']
+            f.query = _post_to_query(request.POST)
+            c.logged_in_user.feeds.append(f)
+            Session.commit()
+            return action_ok(_("Feed created"), code=201)
+        except Exception, e:
+            return action_error(_("Error creating feed"), code=500)
 
     @auto_format_output()
     @authorize(is_valid_user)
