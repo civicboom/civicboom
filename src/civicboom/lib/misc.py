@@ -100,8 +100,8 @@ class DictAsObj(UserDict.DictMixin):
     This will recursivly do this to any sub dicts and lists
     """
     d = {}
-    def __init__(self, d):
-        d = d.copy()
+    def __init__(self, src):
+        d = src.copy()
         for key in d.keys():           # Recursivly Convert Dict's to DictAsObj
             if hasattr(d[key],'keys'): #
                 d[key] = DictAsObj(d[key])
@@ -118,7 +118,7 @@ class DictAsObj(UserDict.DictMixin):
     def keys(self):
         return self.d.keys()
     def __getattr__(self, name):
-        if name in self.d: return self.d[name]
-        else             : return UserDict.DictMixin.__getattr__(self, name)
-    def __setattr__(self, name, value):
-        self.d[name] = value
+        return self.d[name]
+    # setattr means that "self.d = d" in __init__ becomes self.d["d"] = d
+    #def __setattr__(self, name, value):
+    #    self.d[name] = value
