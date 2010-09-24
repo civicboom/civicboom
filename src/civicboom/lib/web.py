@@ -13,6 +13,7 @@ import time
 import json
 from decorator import decorator
 import logging
+import os
 
 log = logging.getLogger(__name__)
 
@@ -171,11 +172,12 @@ def _find_template(result):
     web_template    = "web/%s.mako"    % template_part                   # Find template filename
     mobile_template = "mobile/%s.mako" % template_part
 
-    if request.environ['is_mobile'] and os.path.exists(mobile_template): # If mobile rendering
+    if request.environ['is_mobile'] and os.path.exists("civicboom/templates/"+mobile_template): # If mobile rendering
         template = mobile_template
-    elif os.path.exists(web_template):
+    elif os.path.exists("civicboom/templates/"+web_template):
         template = web_template
     else:
+        log.warn("Can't find template for part "+template_part+" - "+"templates/"+web_template)
         template = None
 
     return template
