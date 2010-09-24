@@ -22,5 +22,15 @@
 <%
 from civicboom.controllers.messages import MessagesController
 %>
+<div id="message_table">
 ${MessagesController().index(format='frag')}
+</div>
+<script>
+function refresh_messages() {
+	//$("#message_table").load("${url('messages', format='frag')}");
+	$("#message_table").load("/messages.frag");
+	flash_message('messages updated');
+}
+</script>
+<a href="#" onclick="refresh_messages(); return false;">refresh</a>
 </%def>
