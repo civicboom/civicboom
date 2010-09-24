@@ -55,7 +55,6 @@ class Member(Base):
     groups               = relationship("Group"           , secondary=GroupMembership.__table__)
     followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
     following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
-    assignments_accepted = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
     flags                = relationship("FlaggedContent"  , backref=backref('member'), cascade="all,delete-orphan")
     feeds                = relationship("Feed"            , backref=backref('member'), cascade="all,delete-orphan")
@@ -70,6 +69,7 @@ class Member(Base):
     # content
     # content_assignments_active
     # content_assignments_previous
+    # assignments_accepted = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
 
     _config = None
 
