@@ -24,8 +24,7 @@ user_log = logging.getLogger("user")
 @decorator
 def _logged_in_mobile(func, *args, **kargs):
     if not c.logged_in_user:
-        return 'mobile:not_authenticated'
-        # return action_error("not authenticated")
+        return action_error("not authenticated", code=403)
     return func(*args, **kargs)
 
 
@@ -33,10 +32,10 @@ class MobileController(BaseController):
     #-----------------------------------------------------------------------------
     # Sign in
     #-----------------------------------------------------------------------------  
+    @auto_format_output()
     @authorize(is_valid_user)
     def signin(self):
-        return "mobile:authentication_ok"
-        # return action_ok("logged in ok", {"auth_token": authentication_token()})
+        return action_ok("logged in ok", {"auth_token": authentication_token()})
 
 
     #-----------------------------------------------------------------------------
@@ -49,46 +48,12 @@ class MobileController(BaseController):
     #-----------------------------------------------------------------------------
     # Latest Version
     #-----------------------------------------------------------------------------  
-    def latest_version(self):
-        return "1.13"
-        # return action_ok(data={"version": "1.13"})
-
-
-    #-----------------------------------------------------------------------------
-    # Main App: Accepted Assignments JSON List
-    #-----------------------------------------------------------------------------
-    @_logged_in_mobile
-    def accepted_assignments(self):
-        #cache_key = gen_cache_key(reporter_assignments_accepted=c.logged_in_reporter.id)
-        return json.dumps([{
-            "id":                assignment.content.id,
-            "title":             assignment.content.title,
-            "content":           h.truncate(assignment.content.content, length=150),
-            "image":             assignment.content.thumbnail_url,
-            "assigned_by":       assignment.content.creator.name,
-            "assigned_by_image": assignment.content.creator.avatar_url,
-            "expiry_date":       assignment.content.due_date,
-        } for assignment in c.logged_in_user.assignments_accepted])
-        # return action_ok(data=...)
-
-
-    #-----------------------------------------------------------------------------
-    # Main App: Messages
-    #-----------------------------------------------------------------------------
-    @_logged_in_mobile
-    def messages(self):
-        #cache_key = gen_cache_key(reporter_messages=c.logged_in_user.id) # This will terminate the method call if the eTags match
-        c.logged_in_user.last_check = datetime.now()
-        return json.dumps([{
-            "id":            message.id,
-            "sourceId":      message.source_id,
-            "message":       message.content,
-            "timestamp":     str(message.timestamp),
-            "link":          "",
-            "response_type": "",
-            "more":          "", # FIXME: protocol -- no more = blank string, more = array of one assignment; should be no more = None, more = one assignment, see Feature #29
-        } for message in c.logged_in_user.messages_notification[:10]]) # FIXME: do we want notifications AND private messages?
-        # return action_ok(data=...)
+    @auto_format_output()
+    def latest_version(self, id=None):
+        if not id:
+            return "1.14" # give 1.13 a response it can understand first
+        else:
+            return action_ok(data={"version": "1.14"})
 
 
     #-----------------------------------------------------------------------------
@@ -98,13 +63,13 @@ class MobileController(BaseController):
     # it is not nessisarry to use formencode as the mobile app would have no idea how to interperit the data back
     # We return an OK message or the mobile app will assume an error
     @_logged_in_mobile
+    @auto_format_output()
     def upload(self):
         # Check form data (if in dev mode show HTML test form else give no data error)
         if not request.POST:
             if config['debug']:
                 return "mobile upload test" # FIXME: render(prefix+'mobile_upload_test.mako')
-            return 'mobile:form_data_required'
-            # return action_error("form data required")
+            return action_error("form data required", code=400)
 
         unique_id                   = hashlib.md5(request.POST['uniqueid']).hexdigest()
         mobile_upload_unique_id_key = c.logged_in_user.username + "_" + unique_id
@@ -112,7 +77,7 @@ class MobileController(BaseController):
         # check for duplicate upload, see feature #29
         if app_globals.memcache.get("mobile-upload-complete:"+unique_id):
             return "mobile:upload_ok"
-            # return action_error("article already uploaded")
+            return action_error("article already uploaded", code=409)
 
 
         if "syndicate" in request.POST:
@@ -171,8 +136,7 @@ class MobileController(BaseController):
         Session.commit()
         app_globals.memcache.set("mobile-upload-complete:"+unique_id, True)
 
-        return "mobile:upload_ok"
-        # return action_ok("upload ok")
+        return action_ok("upload ok", code=201)
 
     #-----------------------------------------------------------------------------
     # Upload File Part
@@ -196,12 +160,12 @@ class MobileController(BaseController):
     # Note for future multiple files the client could just add a single didget to the end of the uniqueid i.e if uniqueid = 0000, client could send 00001 for file 1 and 00002 for file 2
     # because the upload code looks for all files containing the uniqueid then they should still trigger
     @_logged_in_mobile
+    @auto_format_output()
     def upload_file(self):
         if not request.POST:
             if config['debug']:
                 return "mobile upload part test" # FIXME: render(prefix+'mobile_upload_part_test.mako')
-            return 'mobile:form_data_required'
-            # return action_error("form data required")
+            return action_error("form data required", code=400)
 
         part_num    = int(request.POST['part'] )
         parts_count = int(request.POST['parts'])
@@ -214,8 +178,7 @@ class MobileController(BaseController):
         # check to see if any parts are missing, ask for them if needed
         for n in range(0, parts_count):
             if not os.path.exists(file_base+"_"+str(n)): # FIXME: check file content? (compare hash / filesize with client?), see feature #29
-                return 'mobile:next_part_%d' % n
-                # return action_ok("part %d/%d uploaded" % (part_num, parts_count), data={"next": n})
+                return action_ok("part %d/%d uploaded" % (part_num, parts_count), data={"next": n}, code=202)
 
         # no parts needed; join the parts into one
         else:
@@ -225,8 +188,7 @@ class MobileController(BaseController):
                 fp.write(file(part_file).read())
                 os.unlink(part_file)
             fp.close()
-            return 'mobile:upload_ok'
-            # return action_ok("upload complete", data={"next": None})
+            return action_ok("upload complete", data={"next": None}, code=201)
 
 
     #-----------------------------------------------------------------------------
@@ -239,12 +201,10 @@ class MobileController(BaseController):
         if not request.POST:
             if config['debug']:
                 return "mobile error test" # FIXME: render(prefix+'mobile_error_test.mako')
-            return 'mobile:form_data_required'
-            # return action_error("form data required")
+            return action_error("form data required", code=401)
         if 'error_message' in request.POST:
             send_email(config['email_to'], subject='Mobile Error', content_text=request.POST['error_message'])
             #AllanC - Temp addition to get errors to the mobile developer
             send_email("nert@poik.net"   , subject='Mobile Error', content_text=request.POST['error_message'])
-            return "mobile:logged_ok"
-            # return action_ok("logged ok")
+            return action_ok("logged ok", code=201)
 
