@@ -189,11 +189,11 @@ def setup_format_processors():
     def format_frag(result):
         overlay_status_message(c.result, result)                        # Set standard template data dict for template to use
         web_template = "frag/%s.mako" % result['template']              # Find template filename
-        return render_mako(web_template, extra_vars=DictAsObj(c.result))
+        return render_mako(web_template, extra_vars={"d": DictAsObj(c.result['data'])})
 
     def format_html(result):
         overlay_status_message(c.result, result)
-        return render_mako(_find_template(result), extra_vars=DictAsObj(c.result))
+        return render_mako(_find_template(result), extra_vars={"d": DictAsObj(c.result['data'])})
 
     def format_redirect(result):
         """
