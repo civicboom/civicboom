@@ -1,9 +1,9 @@
 
 from civicboom.lib.base   import *
+from civicboom.lib.search import *
 from civicboom.lib.gis    import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_
-import json
 
 log = logging.getLogger(__name__)
 tmpl_prefix = '/web/design09'
@@ -57,6 +57,30 @@ class SearchController(BaseController):
             return render("/rss/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
         else:
             return render(tmpl_prefix+"/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
+
+    def content2(self, format="html"):
+        results = Session.query(Content)
+        query = AndFilter([
+            OrFilter([
+                TextFilter("terrorists"),
+                AndFilter([
+                    LocationFilter([1, 51], 10),
+                    TagFilter("Science & Nature")
+                ]),
+                AuthorFilter("unittest")
+            ]),
+            NotFilter(OrFilter([
+                TextFilter("waffles"),
+                TagFilter("Business")
+            ]))
+        ])
+        results = results.filter(sql(query))
+        results = results[0:20]
+
+        if format == "xml":
+            return render("/rss/search/content.mako", extra_vars={"term":"moo", "location":"location", "results":results})
+        else:
+            return render(tmpl_prefix+"/search/content.mako", extra_vars={"term":"moo", "location":"location", "results":results})
 
 
     @auto_format_output()

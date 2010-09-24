@@ -23,6 +23,7 @@ def make_map(config):
     map.resource('message', 'messages')
     map.resource('setting', 'settings')
     map.resource('content', 'contents')
+    map.resource('feed',    'feeds')
 
 
     # Map the /admin url to FA's AdminController

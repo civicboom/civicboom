@@ -172,6 +172,26 @@ def _find_template(result):
     return template
 
 
+
+def _find_template(result):
+    if result.get('template'):
+        template_part = result.get('template')
+    else:
+        template_part = "%s/%s" % (c.controller, c.action)
+
+    web_template    = "web/%s.mako"    % template_part                   # Find template filename
+    mobile_template = "mobile/%s.mako" % template_part
+
+    if request.environ['is_mobile'] and os.path.exists(mobile_template): # If mobile rendering
+        template = mobile_template
+    elif os.path.exists(web_template):
+        template = web_template
+    else:
+        template = None
+
+    return template
+
+
 def setup_format_processors():
     def format_json(result):
         response.headers['Content-type'] = "application/json"
@@ -188,12 +208,12 @@ def setup_format_processors():
     def format_frag(result):
         overlay_status_message(c.result, result)                        # Set standard template data dict for template to use
         web_template = "frag/%s.mako" % result['template']              # Find template filename
-        return render_mako(web_template, extra_vars=c.result)
+        return render_mako(web_template, extra_vars=DictAsObj(c.result))
 
     def format_html(result):
         overlay_status_message(c.result, result)
         return render_mako(_find_template(result), extra_vars=DictAsObj(c.result))
-        
+
     def format_redirect(result):
         """
         A special case for compatable browsers making REST calls
