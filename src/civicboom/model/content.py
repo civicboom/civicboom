@@ -209,7 +209,9 @@ class Content(Base):
     @property
     def location_string(self):
         if self.location:
-            return '%s %s' % (self.location.coords()[1], self.location.coords()[0])
+            # Fixme
+            #return '%s %s' % (self.location.coords()[1], self.location.coords()[0])
+            return None
         return None
         
 
