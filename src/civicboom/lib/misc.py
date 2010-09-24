@@ -3,6 +3,7 @@ Low level miscilanious calls
 """
 
 import UserDict
+import types
 
 import random
 from datetime import date
@@ -84,7 +85,8 @@ def obj_to_dict(obj, dict_fields):
         field_processor = dict_fields[field_name]
         if field_processor == None:
             d[field_name] = unicode(getattr(obj,field_name,''))
-        elif type(field_processor)=='function':
+        elif type(field_processor)==types.FunctionType:
+            print "processing field %s" % field_name
             d[field_name] = unicode(field_processor(obj))
     return d
 

@@ -107,15 +107,8 @@ class Content(Base):
             'content'      : None ,
             'creator'      : lambda content: content.creator.username ,
             'creator_id'   : None ,
-            'location'     : lambda content: '%s %s' % (content.location.coords()[1], content.location.coords()[0]),
+            'location'     : lambda content: content.location_string ,
             'status'       : None ,
-            
-            #'views'        : None ,
-            #'boom_count'   : None ,
-            #'rating'       : None ,
-            #'can_accept'   :
-            #'can_withdraw' :
-            #''
         },
         'default_list': {
             'id'           : None ,
@@ -211,6 +204,12 @@ class Content(Base):
     @property
     def content_short(self):
         return truncate(self.content, length=100)
+    @property
+    def location_string(self):
+        if self.location:
+            return '%s %s' % (self.location.coords()[1], self.location.coords()[0])
+        return ""
+        
 
 
 class DraftContent(Content):
@@ -236,6 +235,17 @@ class UserVisibleContent(Content):
     id            = Column(Integer(), ForeignKey('content.id'), primary_key=True)
     views         = Column(Integer(), nullable=False, default=0)
     boom_count    = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+
+    # Setup __to_dict__fields
+    __to_dict__ = Content.__to_dict__.copy()
+    __to_dict__.update({
+        'default': __to_dict__['default'].copy()
+    })
+    __to_dict__['default'].update({
+            'views'        : None ,
+            'boom_count'   : None ,
+    })
+
 
     def is_parent_owner(self, member):
         # TODO
@@ -264,6 +274,15 @@ class ArticleContent(UserVisibleContent):
     rating          = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
     ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
 
+    # Setup __to_dict__fields
+    __to_dict__ = UserVisibleContent.__to_dict__.copy()
+    __to_dict__.update({
+        'default': __to_dict__['default'].copy()
+    })
+    __to_dict__['default'].update({
+            'rating'        : None ,
+    })
+
 
 class SyndicatedContent(UserVisibleContent):
     __tablename__   = "content_syndicate"
@@ -285,13 +304,16 @@ class AssignmentContent(UserVisibleContent):
     # Setup __to_dict__fields
     __to_dict__ = UserVisibleContent.__to_dict__.copy()
     __to_dict__.update({
-        'assignments': __to_dict__['default'].copy()
+        'default': __to_dict__['default'].copy()
     })
-    __to_dict__['assignments'].update({
+    __to_dict__['default'].update({
             'due_date'           : None ,
             'event_date'         : None ,
             'closed'             : None ,
-    })
+            #'can_accept'   :
+            #'can_withdraw' :
+    })    
+
     
     def hash(self):
         h = hashlib.md5(UserVisibleContent.hash(self))
