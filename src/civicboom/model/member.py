@@ -73,6 +73,20 @@ class Member(Base):
 
     _config = None
 
+
+    __to_dict__ = Base.__to_dict__.copy()
+    __to_dict__.update({
+        'default': {
+            'id'                : None ,
+            'username'          : None ,
+            'avatar_url'        : None ,
+            'num_followers'     : None ,
+            'webpage'           : None ,
+            'utc_offset'        : None ,
+            'join_date'         : None ,
+        }
+    })
+
     @property
     def config(self):
         if not self._config:
