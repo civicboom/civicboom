@@ -7,7 +7,6 @@ import types
 
 import random
 from datetime import date
-from decorator import decorator
 import pprint
 
 import logging
@@ -61,18 +60,6 @@ def calculate_age(born):
     
     if birthday > today: return today.year - born.year - 1
     else               : return today.year - born.year
-
-
-def cacheable(time=60*60*24*365, anon_only=True):
-    def _cacheable(func, *args, **kwargs):
-        from pylons import request, response
-        if not anon_only or 'civicboom_logged_in' not in request.cookies: # no cache for logged in users
-            response.headers["Cache-Control"] = "public,max-age=%d" % time
-            response.headers["Vary"] = "cookie"
-            if "Pragma" in response.headers: del response.headers["Pragma"]
-            #log.info(pprint.pformat(response.headers))
-        return func(*args, **kwargs)
-    return decorator(_cacheable)
 
 
 def obj_to_dict(obj, dict_fields):
