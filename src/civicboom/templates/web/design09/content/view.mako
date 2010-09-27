@@ -4,15 +4,6 @@
 <%namespace name="member_includes"  file="/web/design09/includes/member.mako"       />
 <%namespace name="content_includes" file="/web/design09/includes/content_list.mako" />
 
-<%
-    #from civicboom.lib.misc import DictAsObj
-    #content  = DictAsObj(c.result['data']['content'])
-    
-    #from civicboom.lib.database.get_cached import get_content
-    #content_obj = get_content(data.content.id)
-
-    #content = d.content
-%>
 
 
 ##------------------------------------------------------------------------------
@@ -29,23 +20,20 @@
 ## Title - Override
 ##------------------------------------------------------------------------------
 
-<%def name="title()">${c.result['data']['content']['title']}</%def>
+<%def name="title()">${d['content']['title']}</%def>
 
 
 ##------------------------------------------------------------------------------
 ## Left Col - Actions
 ##------------------------------------------------------------------------------
 
-<%def name="col_left()">
-disbaled
-</%def>
 
-<%def name="col_left2()">
+<%def name="col_left()">
   
     
     ##-------- By ----------
     <h2>${_("Content by")}</h2>
-    ${member_includes.avatar(content.creator, show_name=True, show_follow_button=True)}
+    ${member_includes.avatar(d['content']['creator'], show_name=True, show_follow_button=True)}
   
   
     ##-------Actions-------
@@ -54,8 +42,8 @@ disbaled
   
   
     ## Content Owner Actions
-    % if 'editable' in content.actions:
-        <a class="button_small button_small_style_2" href="${h.url('edit_content', id=content.id)}">
+    % if 'editable' in d['content']['actions']:
+        <a class="button_small button_small_style_2" href="${h.url('edit_content', id=d['content']['id'])}">
           Edit
         </a>
         ##<a class="button_small button_small_style_2" href="${h.url(controller='content',action='delete',id=content.id)}"
@@ -63,7 +51,7 @@ disbaled
         ##  Delete
         ##</a>
         ${h.secure_link(
-          href=url('content', id=content.id, format='redirect'), method="DELETE",
+          href=url('content', id=d['content']['id'], format='redirect'), method="DELETE",
           value=_("Delete"),
           css_class="button_small button_small_style_2",
           confirm_text=_("Are your sure you want to delete this content?")
@@ -71,11 +59,11 @@ disbaled
     % endif
 
     ## Assignment Accept and Withdraw
-    % if 'accept' in content.actions:
-        ${h.secure_link(h.url(controller='content_actions',action='accept'  , id=content.id, format='redirect'), _('Accept')  , css_class="button_small button_small_style_2")}
+    % if 'accept' in d['content']['actions']:
+        ${h.secure_link(h.url(controller='content_actions',action='accept'  , id=d['content']['id'], format='redirect'), _('Accept')  , css_class="button_small button_small_style_2")}
     % endif
-    % if 'withdraw' in content.actions:
-        ${h.secure_link(h.url(controller='content_actions',action='withdraw', id=content.id, format='redirect'), _('Withdraw'), css_class="button_small button_small_style_2")}
+    % if 'withdraw' in d['content']['actions']:
+        ${h.secure_link(h.url(controller='content_actions',action='withdraw', id=d['content']['id'], format='redirect'), _('Withdraw'), css_class="button_small button_small_style_2")}
     % endif
 
     ## Parent Content Owner Actions
@@ -84,26 +72,26 @@ disbaled
     ##    <a href="" class="button_small button_small_style_2">
     ##        Email Resorces
     ##    </a>
-    % if 'approve' in content.actions:
-        ${h.secure_link(h.url(controller='content_actions',action='approve'    , id=content.id, format='redirect'), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
+    % if 'approve' in d['content']['actions']:
+        ${h.secure_link(h.url(controller='content_actions',action='approve'    , id=d['content']['id'], format='redirect'), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
     % endif
-    % if 'disasociate' in content.actions:
-        ${h.secure_link(h.url(controller='content_actions',action='disasociate', id=content.id, format='redirect'), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+    % if 'disasociate' in d['content']['actions']:
+        ${h.secure_link(h.url(controller='content_actions',action='disasociate', id=d['content']['id'], format='redirect'), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
     % endif
     
     
     
 
-    % if hasattr(content, "rating"):
+    % if 'rating' in d['content']:
 <%
 def selif(r, n):
 	if round(r) == n:
 		return " selected"
 	else:
 		return ""
-r = (content.rating * 5)
+r = (d['content']['rating'] * 5)
 %>
-		<form id="rating" action="${url(controller='content_actions', action='rate', id=content.id, format='redirect')}" method="POST">
+		<form id="rating" action="${url(controller='content_actions', action='rate', id=d['content']['id'], format='redirect')}" method="POST">
 			<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
 			<select name="rating" style="width: 120px">
 				<option value="0">Unrated</option>
@@ -123,7 +111,7 @@ r = (content.rating * 5)
 				callback: function(ui, type, value) {
 					## $("#rating").submit();
 					$.ajax({
-						url: "${url(controller='content_actions', action='rate', id=content.id, format='json')}",
+						url: "${url(controller='content_actions', action='rate', id=d['content']['id'], format='json')}",
 						type: "POST",
 						data: {
 							"_authentication_token": "${h.authentication_token()}",
@@ -144,7 +132,7 @@ r = (content.rating * 5)
 
     ##<% from civicboom.model.content import UserVisibleContent %>
     ##% if issubclass(content_obj.__class__, UserVisibleContent):
-    % if content.type == 'article' or content.type == 'assignment':
+    % if d['content']['type'] == 'article' or d['content']['type'] == 'assignment':
     <h2>${_("Share this")}</h2>
         ${share_links()}
     % endif
@@ -163,7 +151,7 @@ r = (content.rating * 5)
     
       <div id="flag_content" class="hideable">
         <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
-        ${h.form(url(controller='content_actions', action='flag', id=c.content.id, format='redirect'))}
+        ${h.form(url(controller='content_actions', action='flag', id=d['content']['id'], format='redirect'))}
             <select name="type">
                 <% from civicboom.model.content import FlaggedContent %>
                 % for type in [type for type in FlaggedContent._flag_type.enums if type!="automated"]:
@@ -182,58 +170,57 @@ r = (content.rating * 5)
 ## Right Col - Related Content
 ##------------------------------------------------------------------------------
 
-<%def name="col_right()">
-disabled
-</%def>
 
-<%def name="col_right2()">
+<%def name="col_right()">
 <%
 # we need to pass the session to GeoAlchemy functions
 from civicboom.model.meta import Session
 %>
-    % if content.location:
+    % if 'location' in d['content']:
       <p>${loc.minimap(
           width="100%", height="200px",
-          lon=content.location.coords(Session)[0],
-          lat=content.location.coords(Session)[1]
+          lat = d['content']['location'].split(' ')[0],
+          lon = d['content']['location'].split(' ')[1],
+          #lon=content.location.coords(Session)[0],
+          #lat=content.location.coords(Session)[1]
       )}</p>
     % endif
   
-    % if content.parent_id:
+    % if d['content']['parent_id']:
     <h2>Parent content</h2>
-    ${content_includes.content_list([content_obj.parent], mode="mini", class_="content_list_mini")}
+    ${content_includes.content_list([d['content']['parent']], mode="mini", class_="content_list_mini")}
     ##<p><a href="${h.url(controller="content", action="view", id=content.parent.id)}">${content.parent.title}</a></p>
     % endif
     
     <h2>Reponses</h2>
     
-    ${content_includes.content_list(content_obj.responses, mode="mini", class_="content_list_mini")}
+    ${content_includes.content_list(d['content']['responses'], mode="mini", class_="content_list_mini")}
     
     
     
-    % if content.type == 'assignment':
-    <h2>Assignment</h2>
-    % endif
-        ##<%
-        ##    accepted  = [a.member for a in content_obj.assigned_to if a.status=="accepted" ]
-        ##    invited   = [a.member for a in content_obj.assigned_to if a.status=="pending"  ]
-        ##    withdrawn = [a.member for a in content_obj.assigned_to if a.status=="withdrawn"]
-        ##%>
-    % if content.accepted:
-        <h3>accepted by: ${len(accepted)}</h3>
-        ${member_includes.member_list(content.accepted , show_avatar=True, class_="avatar_thumbnail_list")}
-    % endif
+    % if d['content']['type'] == 'assignment':
+        <h2>Assignment</h2>
     
-    % if content.invited:
-        <h3>awaiting reply: ${len(invited)}</h3>
-        ${member_includes.member_list(content.invited  , show_avatar=True, class_="avatar_thumbnail_list")}
-    % endif
-    
-    % if content.withdrawn:
-        <h3>withdrawn members: ${len(content.withdrawn)}</h3>
-        ${member_includes.member_list(content.withdrawn, show_avatar=True, class_="avatar_thumbnail_list")}
-    % endif
-    
+            ##<%
+            ##    accepted  = [a.member for a in content_obj.assigned_to if a.status=="accepted" ]
+            ##    invited   = [a.member for a in content_obj.assigned_to if a.status=="pending"  ]
+            ##    withdrawn = [a.member for a in content_obj.assigned_to if a.status=="withdrawn"]
+            ##%>
+        % if 'accepted' in d['content']:
+            <h3>accepted by: ${len(d['content']['accepted'])}</h3>
+            ${member_includes.member_list(d['content']['accepted'] , show_avatar=True, class_="avatar_thumbnail_list")}
+        % endif
+        
+        % if 'invited' in d['content']:
+            <h3>awaiting reply: ${len(d['content']['invited'])}</h3>
+            ${member_includes.member_list(d['content']['invited']  , show_avatar=True, class_="avatar_thumbnail_list")}
+        % endif
+        
+        % if 'withdrawn' in d['content']:
+            <h3>withdrawn members: ${len(d['content']['withdrawn'])}</h3>
+            ${member_includes.member_list(d['content']['withdrawn'], show_avatar=True, class_="avatar_thumbnail_list")}
+        % endif
+    % endif    
   
     <%doc>
     % if hasattr(content, "accepted_by"):
@@ -256,53 +243,50 @@ from civicboom.model.meta import Session
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-Hello
-${d.content.title}
-</%def>
 
-<%def name="body2()">
+
   ##----Title----
-  <h1>${content.title}</h1>
+  <h1>${d['content']['title']}</h1>
 
   ##----Type----
-  <p>Type: ${content.type}</p>
+  <p>Type: ${d['content']['type']}</p>
 
   ##----Details----
-  % if hasattr(content,'views'):
-  <p>views: ${content.views}</p>
+  % if hasattr(d['content'],'views'):
+  <p>views: ${d['content']['views']}</p>
   % endif
 
   ##----Content----
   <div class="content_text">
-    ${h.literal(h.scan_for_embedable_view_and_autolink(content.content))}
+    ${h.literal(h.scan_for_embedable_view_and_autolink(d['content']['content']))}
   </div>
 
   ##----Media-----
-  % for media in content.attachments:
-    % if media.type == "image":
-      <a href="${media.original_url}"><img src="${media.media_url}" alt="${media.caption}"/></a>
-    % elif media.type == "audio":
+  % for media in d['content']['attachments']:
+    % if media['type'] == "image":
+      <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}"/></a>
+    % elif media['type'] == "audio":
 		<object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="30">
 			<param name="movie" value="/flash/player_flv_maxi.swf" />
 			<param name="allowFullScreen" value="true" />
-			<param name="FlashVars" value="flv=${media.media_url}&amp;title=${media.caption}\n${media.credit}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
+			<param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
 		</object>
-    % elif media.type == "video":
+    % elif media['type'] == "video":
 		<object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="240">
 			<param name="movie" value="/flash/player_flv_maxi.swf" />
 			<param name="allowFullScreen" value="true" />
-			<param name="FlashVars" value="flv=${media.media_url}&amp;title=${media.caption}\n${media.credit}&amp;startimage=${media.thumbnail_url}&amp;showvolume=1&amp;showfullscreen=1" />
+			<param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;startimage=${media['thumbnail_url']}&amp;showvolume=1&amp;showfullscreen=1" />
 		</object>
 	% else:
-		unrecognised media type ${media.type}
+		unrecognised media type ${media['type']}
     % endif
   % endfor
   
   ##----Temp Respond----
-  <a href="${h.url('new_content', form_parent_id=content.id)}">Respond to this</a>
+  <a href="${h.url('new_content', form_parent_id=d['content']['id'])}">Respond to this</a>
   
   ##----Comments----
-  ##${comments()}
+  ${comments()}
 </%def>
 
 
@@ -354,17 +338,18 @@ from civicboom.model import CommentContent
 </style>
 	<table>
 
-    % for comment in content.comments:
-	${relation(comment.creator, c.logged_in_user, content.creator, 'tr')}
+    % for comment in d['content']['comments']:
+	##${relation(comment['creator']['username'], c.logged_in_user.username, content['creator']['username'], 'tr')}
+    <tr>
 		<td class="avatar">
-			${member_includes.avatar(comment.creator)}
+			${member_includes.avatar(comment['creator'])}
 		</td>
 		<td class="comment">
-			${comment.content}
+			${comment['content']}
 			<b style="float: right;">
-				${comment.creator.name}
-				${relation(comment.creator, c.logged_in_user, content.creator, 'text')} --
-				${str(comment.creation_date)[0:19]}
+				${comment['creator']['name']}
+				${relation(comment['creator'], c.logged_in_user, d['content']['creator'], 'text')} --
+				${str(comment['creation_date'])[0:19]}
 			</b>
 		</td>
 	</tr>
@@ -377,8 +362,8 @@ from civicboom.model import CommentContent
 		</td>
 		<td class="comment">
 			${h.form(url('contents'))}
-				<input type="hidden" name="form_parent_id" value="${content.id}">
-				<input type="hidden" name="form_title" value="Re: ${content.title}">
+				<input type="hidden" name="form_parent_id" value="${d['content']['id']}">
+				<input type="hidden" name="form_title" value="Re: ${d['content']['title']}">
 				<input type="hidden" name="form_type" value="comment">
 				<textarea name="form_content" style="width: 100%; height: 100px;"></textarea>
 				<br><!--<input type="submit" name="submit_preview" value="Preview">--><input type="submit" name="submit_response" value="Post">
@@ -396,7 +381,7 @@ from civicboom.model import CommentContent
 
 <%def name="share_links()">
 
-    % if content_obj.editable_by(c.logged_in_user):
+    % if 'editable' in d['content']['actions']:
         ${janrain_aggregate_button()}
     %endif
     
@@ -426,10 +411,10 @@ from civicboom.model import CommentContent
         <!-- Boom button -->
         <div class="yui-u">
             <% boom_count = 0 %>
-            % if hasattr(content,"boom_count"):
-                <% boom_count = content.boom_count %>
+            % if hasattr(d['content'],'boom_count'):
+                <% boom_count = d['content']['boom_count'] %>
             % endif
-            <a href="${h.url(controller='content' ,action='boom', id=content.id, format='redirect')}" title="${_("Boom this! Share this with all your Followers")}">
+            <a href="${h.url(controller='content' ,action='boom', id=d['content']['id'], format='redirect')}" title="${_("Boom this! Share this with all your Followers")}">
             <div class="boom_this">
                 <span class="boom_count">${boom_count}</span>
                 <p>${_("Boom this")}</p>
@@ -469,7 +454,7 @@ from civicboom.model import CommentContent
                 ## This uses the same JSON generation as the Janrain API but contructs the data for the Jainrain social widget
                 <%
                   from civicboom.lib.civicboom_lib import aggregation_dict
-                  content_dict = aggregation_dict(content, safe_strings=True)
+                  content_dict = aggregation_dict(d['content'], safe_strings=True)
                 %>
                 
                 var activity = new RPXNOW.Social.Activity('${content_dict['action']}',

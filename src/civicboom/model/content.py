@@ -271,12 +271,13 @@ class UserVisibleContent(Content):
 
     # Setup __to_dict__fields
     __to_dict__ = Content.__to_dict__.copy()
-    __to_dict__['list'].update({
+    _extra_user_visible_fields = {
             'views'        : None ,
             'boom_count'   : None ,
-    })
-    __to_dict__['single'].update(__to_dict__['list'])
-
+    }
+    __to_dict__['list'   ].update(_extra_user_visible_fields)
+    __to_dict__['single' ].update(_extra_user_visible_fields)
+    __to_dict__['actions'].update(_extra_user_visible_fields)
 
     def action_list_for(self, member):
         action_list = Content.action_list_for(self, member)
@@ -315,9 +316,12 @@ class ArticleContent(UserVisibleContent):
 
     # Setup __to_dict__fields
     __to_dict__ = UserVisibleContent.__to_dict__.copy()
-    __to_dict__['list'].update({
-            'rating'        : None ,
-    })
+    _extra_article_fields = {
+        'rating'        : None ,
+    }
+    __to_dict__['list'   ].update(_extra_article_fields)
+    __to_dict__['single' ].update(_extra_article_fields)
+    __to_dict__['actions'].update(_extra_article_fields)
 
 
 class SyndicatedContent(UserVisibleContent):
@@ -339,15 +343,13 @@ class AssignmentContent(UserVisibleContent):
     
     # Setup __to_dict__fields
     __to_dict__ = UserVisibleContent.__to_dict__.copy()
-    #__to_dict__.update({
-    #    'default': __to_dict__['default'].copy()
-    #})
-    __to_dict__['list'].update({
+    _extra_assignment_fields = {
             'due_date'              : None ,
             'event_date'            : None ,
             'closed'                : None ,
-    })
-    __to_dict__['single'].update(__to_dict__['list'])
+    }
+    __to_dict__['list'  ].update(_extra_assignment_fields)
+    __to_dict__['single'].update(_extra_assignment_fields)
     __to_dict__['single'].update({
             'accepted' : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="accepted" ] ,
             'pending'  : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="pending"  ] ,
