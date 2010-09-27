@@ -257,7 +257,7 @@ from civicboom.model.meta import Session
 
 <%def name="body()">
 Hello
-${d}
+${d.content.title}
 </%def>
 
 <%def name="body2()">

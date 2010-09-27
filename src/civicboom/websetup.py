@@ -13,7 +13,7 @@ from civicboom.model import Message
 from civicboom.model import Feed
 from civicboom.lib.services import warehouse as wh
 from civicboom.lib.database.get_cached import get_tag
-from civicboom.lib.gis import get_location_by_name
+from civicboom.lib.database.gis import get_location_by_name
 from civicboom.lib import worker
 
 import logging

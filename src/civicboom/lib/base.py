@@ -16,11 +16,10 @@ from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta
-from civicboom.lib.web                 import redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set
+from civicboom.lib.web                 import redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable
 from civicboom.lib.database.get_cached import get_user
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, is_valid_user
-from civicboom.lib.misc                import cacheable
 
 import json
 
@@ -139,63 +138,3 @@ class BaseController(WSGIController):
             return WSGIController.__call__(self, environ, start_response)
         finally:
             meta.Session.remove()
-
-
-#-------------------------------------------------------------------------------
-# Decorators
-#-------------------------------------------------------------------------------
-from decorator import decorator
-from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
-from civicboom.lib.web import format_processors
-
-@decorator
-def authenticate_form(func, *args, **kwargs):
-    """
-    slightly hacked version of pylons.decorators.secure.authenticated_form to
-    support authenticated PUT and DELETE requests
-    """
-    if c.authenticated_form: return func(*args, **kwargs) # If already authenticated, pass through
-    
-    request = get_pylons(args).request
-    response = get_pylons(args).response
-
-    # XXX: Shish - the body is not parsed for PUT or DELETE, so parse it ourselves
-    # FIXME: breaks with multipart uploads
-    try:
-        # request.body = "foo=bar&baz=quz"
-        if request.body and request.method in ["PUT", "DELETE"]:
-            param_list = request.body.split("&") # ["foo=bar", "baz=qux"]
-            param_pair = [part.split("=", 2) for part in param_list] # [("foo", "bar"), ("baz", "qux")]
-            param_dict = dict(param_pair) # {"foo": "bar", "baz": "qux"}
-        else:
-            param_dict = {}
-    except ValueError, e:
-        log.error("Failed to parse body: "+request.body)
-        abort(500)
-
-    # check for auth token in POST or other  # check params for PUT and DELETE cases
-    if authenticated_form(request.POST) or authenticated_form(param_dict):
-        if authenticated_form(request.POST):
-            del request.POST[secure_form.token_key]
-        c.authenticated_form = True
-        return func(*args, **kwargs)
-
-    # no token = can't be sure the user really intended to post this, ask them
-    else:
-        log.warn('Cross-site request forgery detected, request denied: %r '
-                 'REMOTE_ADDR: %s' % (request, request.remote_addr))
-        #abort(403, detail=csrf_detected_message)
-        response.status_int = 403
-        
-        format = c.format
-        if args[-1] in format_processors:
-            format = args[-1]
-        
-        if format in ['html','redirect']:
-            c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
-            if 'QUERY_STRING' in request.environ:
-                c.target_url += '?'+request.environ.get('QUERY_STRING')
-            c.post_values = param_dict
-            return render("web/design09/misc/confirmpost.mako")
-        else:
-            return action_error(message="Cross-site request forgery detected, request denied: include a valid authentication_token in your form POST")

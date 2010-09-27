@@ -24,7 +24,7 @@
 <%def name="body()">
 
 	<h2>Write to ${c.viewing_user.name}</h2>
-	${h.form(url('messages'))}
+	${h.form(url('messages', format='redirect'))}
 		<input type="hidden" name="target" value="${c.viewing_user.username}">
 		<input type="text" name="subject">
 		<textarea name="content"></textarea>

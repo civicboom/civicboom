@@ -3,7 +3,7 @@ from civicboom.lib.base import *
 from formalchemy.ext.pylons.controller import ModelsController
 from webhelpers.paginate import Page
 
-from civicboom.lib.userlog import get_engine
+from civicboom.lib.database.userlog import get_engine
 from civicboom import model
 from civicboom import forms
 

@@ -1,6 +1,7 @@
 from pylons import session, url, request, response, config, tmpl_context as c
 from pylons.controllers.util import redirect
 from pylons.templating        import render_mako
+from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
 #from civicboom.lib.base import *
 
 from webhelpers.html import literal
@@ -189,11 +190,12 @@ def setup_format_processors():
     def format_frag(result):
         overlay_status_message(c.result, result)                        # Set standard template data dict for template to use
         web_template = "frag/%s.mako" % result['template']              # Find template filename
-        return render_mako(web_template, extra_vars=DictAsObj(c.result))
+        return render_mako(web_template, extra_vars={"d": DictAsObj(c.result['data'])})
 
     def format_html(result):
         overlay_status_message(c.result, result)
-        return render_mako(_find_template(result), extra_vars=DictAsObj(c.result)) #extra_vars={'d':DictAsObj(c.result['data'])}
+        return render_mako(_find_template(result), extra_vars={"d": DictAsObj(c.result['data'])})
+
 
     def format_redirect(result):
         """
@@ -276,21 +278,9 @@ def auto_format_output():
             # Is result a dict with data?
             if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
                 
-                # Set default FORMAT (if nessisary)
-                format = c.format
-                if args[-1] in format_processors:
-                    format = args[-1] # The last arg should be a format, if it is a valid format set it
-                    #log.debug("Got format from args; was %s, now %s" % (c.format, format))
-                if 'format' in kwargs:
-                    format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
-                
-                if format=='html' and not _find_template(result):
+                if c.format=='html' and not _find_template(result):
                     log.warning("Format HTML with no template")
-                    format='xml' #If format HTML and no template supplied fall back to XML
-                
-                # Set default STATUS and MSG (if nessisary)
-                if 'status'  not in result: result['status']  = 'ok'
-                if 'message' not in result: result['message'] = ''
+                    c.format='xml' #If format HTML and no template supplied fall back to XML
                 
                 # set the HTTP status code
                 if 'code' in result:
@@ -298,10 +288,10 @@ def auto_format_output():
                     del result['code']
                 
                 # Render to format
-                if format in format_processors:
-                    return format_processors[format](result)
+                if c.format in format_processors:
+                    return format_processors[c.format](result)
                 else:
-                    log.warning("Unknown format: "+str(format))
+                    log.warning("Unknown format: "+str(c.format))
                 
             # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
             log.debug("returning pre-rendered stuff")
@@ -309,3 +299,72 @@ def auto_format_output():
         
         return decorator(wrapper)(target) # Fix the wrappers call signiture
     return my_decorator
+
+
+#-------------------------------------------------------------------------------
+# Decorators
+#-------------------------------------------------------------------------------
+
+@decorator
+def authenticate_form(func, *args, **kwargs):
+    """
+    slightly hacked version of pylons.decorators.secure.authenticated_form to
+    support authenticated PUT and DELETE requests
+    """
+    if c.authenticated_form: return func(*args, **kwargs) # If already authenticated, pass through
+    
+    request = get_pylons(args).request
+    response = get_pylons(args).response
+
+    # XXX: Shish - the body is not parsed for PUT or DELETE, so parse it ourselves
+    # FIXME: breaks with multipart uploads
+    try:
+        # request.body = "foo=bar&baz=quz"
+        if request.body and request.method in ["PUT", "DELETE"]:
+            param_list = request.body.split("&") # ["foo=bar", "baz=qux"]
+            param_pair = [part.split("=", 2) for part in param_list] # [("foo", "bar"), ("baz", "qux")]
+            param_dict = dict(param_pair) # {"foo": "bar", "baz": "qux"}
+        else:
+            param_dict = {}
+    except ValueError, e:
+        log.error("Failed to parse body: "+request.body)
+        abort(500)
+
+    # check for auth token in POST or other  # check params for PUT and DELETE cases
+    if authenticated_form(request.POST) or authenticated_form(param_dict):
+        if authenticated_form(request.POST):
+            del request.POST[secure_form.token_key]
+        c.authenticated_form = True
+        return func(*args, **kwargs)
+
+    # no token = can't be sure the user really intended to post this, ask them
+    else:
+        log.warn('Cross-site request forgery detected, request denied: %r '
+                 'REMOTE_ADDR: %s' % (request, request.remote_addr))
+        #abort(403, detail=csrf_detected_message)
+        response.status_int = 403
+        
+        format = c.format
+        if args[-1] in format_processors:
+            format = args[-1]
+        
+        if format in ['html','redirect']:
+            c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
+            if 'QUERY_STRING' in request.environ:
+                c.target_url += '?'+request.environ.get('QUERY_STRING')
+            c.post_values = param_dict
+            return render("web/design09/misc/confirmpost.mako")
+        else:
+            return action_error(message="Cross-site request forgery detected, request denied: include a valid authentication_token in your form POST")
+
+
+def cacheable(time=60*60*24*365, anon_only=True):
+    def _cacheable(func, *args, **kwargs):
+        from pylons import request, response
+        if not anon_only or 'civicboom_logged_in' not in request.cookies: # no cache for logged in users
+            response.headers["Cache-Control"] = "public,max-age=%d" % time
+            response.headers["Vary"] = "cookie"
+            if "Pragma" in response.headers: del response.headers["Pragma"]
+            #log.info(pprint.pformat(response.headers))
+        return func(*args, **kwargs)
+    return decorator(_cacheable)

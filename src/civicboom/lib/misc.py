@@ -7,7 +7,6 @@ import types
 
 import random
 from datetime import date
-from decorator import decorator
 import pprint
 
 import logging
@@ -63,18 +62,6 @@ def calculate_age(born):
     else               : return today.year - born.year
 
 
-def cacheable(time=60*60*24*365, anon_only=True):
-    def _cacheable(func, *args, **kwargs):
-        from pylons import request, response
-        if not anon_only or 'civicboom_logged_in' not in request.cookies: # no cache for logged in users
-            response.headers["Cache-Control"] = "public,max-age=%d" % time
-            response.headers["Vary"] = "cookie"
-            if "Pragma" in response.headers: del response.headers["Pragma"]
-            #log.info(pprint.pformat(response.headers))
-        return func(*args, **kwargs)
-    return decorator(_cacheable)
-
-
 def obj_to_dict(obj, dict_fields):
     """
     Used to convert a python object to a python dict of strings, but only including requested fields
@@ -103,15 +90,15 @@ class DictAsObj(UserDict.DictMixin):
     This will recursivly do this to any sub dicts and lists
     """
     d = {}
-    def __init__(self, d):
-        d = d.copy()
+    def __init__(self, src):
+        d = src.copy()
         for key in d.keys():           # Recursivly Convert Dict's to DictAsObj
             if hasattr(d[key],'keys'): #
                 d[key] = DictAsObj(d[key])
             elif hasattr(d[key], '__iter__'): # Iterate though any lists converting dicts to Dict as Obj
                 for item in [item for item in d[key] if hasattr(item,'keys')]:
                     item = DictAsObj(item)
-        self.d = d
+        self.d.update(d) # "self.d = d" = setattr, which breaks things
     def __getitem__(self, name):
         return self.d[name]
     def __setitem__(self, name, value):
@@ -121,7 +108,6 @@ class DictAsObj(UserDict.DictMixin):
     def keys(self):
         return self.d.keys()
     def __getattr__(self, name):
-        if name in self.d: return self.d[name]
-        else             : return UserDict.DictMixin.__getattr__(self, name)
+        return self.d[name]
     def __setattr__(self, name, value):
         self.d[name] = value
