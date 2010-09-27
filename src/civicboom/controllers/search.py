@@ -1,7 +1,7 @@
 
 from civicboom.lib.base   import *
 from civicboom.lib.search import *
-from civicboom.lib.gis    import get_engine
+from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_
 
