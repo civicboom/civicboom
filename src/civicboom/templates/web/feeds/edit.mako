@@ -1,7 +1,7 @@
-<html>
-    <head>
-        <title>Search Page</title>
-        <style>
+<%inherit file="/web/html_base.mako"/>
+<%def name="title()">${_("Feed: ")+d['feed']['name']}</%def>
+
+<style>
 .and, .or, .not, .fil {
     padding: 16px;
     border: 1px solid black;
@@ -10,14 +10,9 @@
 .or  {background: #AAF;}
 .not {background: #FAA;}
 .fil {background: #FFF;}
-        </style>
-    </head>
-    <body>
+</style>
+
 <%
 from civicboom.lib.search import html
-f = c.result['data']['feed']
 %>
-<h1>${f.name}</h1>
-${html(f.query)|n}
-	</body>
-</html>
+${html(d['feed']['query'])|n}

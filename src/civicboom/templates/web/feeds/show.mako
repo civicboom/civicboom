@@ -1,5 +1,6 @@
-<h1>${c.result['data']['name']}</h1>
-<hr>
-% for r in c.result['data']['results']:
-	<p><a href="${url('content', id=r.id)}">${r.title}</a>
+<%inherit file="/web/html_base.mako"/>
+<%def name="title()">${_("Feeds: ")+d['name']}</%def>
+
+% for r in d['results']:
+	<p><a href="${url('content', id=r['id'])}">${r['title']}</a>
 % endfor
