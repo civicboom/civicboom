@@ -1,7 +1,6 @@
 <%inherit file="/web/html_base.mako"/>
-<%namespace name="loc" file="../includes/location.mako"/>
+<%def name="title()">${_("GeoRSS Viewer")}</%def>
 
-<%def name="body()">
 % try:
 	<% location = request.params.get("location", "0,20,2").split(",") %>
 	<div style="width: 100%; height: 600px; border: 1px solid black;" id="map_div">
@@ -17,4 +16,3 @@
 % except:
 	<span class="error">Error decoding location "${request.params.get("location", "")}"</span>
 % endtry
-</%def>
