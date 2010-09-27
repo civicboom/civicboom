@@ -49,9 +49,12 @@ class MobileController(BaseController):
     # Latest Version
     #-----------------------------------------------------------------------------  
     @auto_format_output()
-    def latest_version(self, id=None):
-        if not id:
-            return "1.14" # give 1.13 a response it can understand first
+    def latest_version(self, format="html"):
+        if format == "html":
+            # HTML format = really old; the only HTML output we want to support
+            # is the "you need to upgrade" bit; everything else in the controller
+            # can break compatability
+            return "1.14"
         else:
             return action_ok(data={"version": "1.14"})
 
