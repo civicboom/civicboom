@@ -73,6 +73,29 @@ class Member(Base):
 
     _config = None
 
+
+    __to_dict__ = Base.__to_dict__.copy()
+    __to_dict__.update({
+        'default': {
+            'id'                : None ,
+            'username'          : None ,
+            'avatar_url'        : None ,
+            'num_followers'     : None ,
+            'webpage'           : None ,
+            'utc_offset'        : None ,
+            'join_date'         : None ,
+        },
+    })
+    __to_dict__.update({
+        'actions': __to_dict__['default'].copy()
+    })
+    __to_dict__['actions'].update({
+            'following'        : lambda member: member.is_following(c.logged_in_user),
+            'follower'         : lambda member: member.is_follower(c.logged_in_user),
+            #'join'
+    })
+
+
     @property
     def config(self):
         if not self._config:
@@ -113,6 +136,12 @@ class Member(Base):
     def unfollow(self, member):
         from civicboom.lib.database.actions import unfollow
         return unfollow(self,member)
+
+    def is_follower(self, member):
+        return member in self.followers
+    
+    def is_following(self, member):
+        return member in self.following
 
     @property
     def avatar_url(self, size=80):

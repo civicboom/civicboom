@@ -106,9 +106,7 @@ class Content(Base):
             'parent_id'         : None ,
             'title'             : None ,
             'content'           : None ,
-            'creator_id'        : None ,
-            'creator'           : lambda content: content.creator.username ,
-            'creator_avatar_url': lambda content: content.creator.avatar_url ,
+            'creator'           : lambda content: content.creator.to_dict() ,
             'location'          : lambda content: content.location_string ,
             'thumbnail_url'     : None ,
         },
@@ -121,6 +119,13 @@ class Content(Base):
             'creation_date': None ,
         },
     })
+    __to_dict__.update({
+        'actions': __to_dict__['default'].copy()
+    })
+    __to_dict__['actions'].update({
+            'actions': lambda content: content.action_list_for(c.logged_in_user) ,
+    })
+
     
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"
@@ -142,6 +147,14 @@ class Content(Base):
         for field in ("id","title","content","creator","parent","update_date","status","private","license","attachments"): # AllanC: unfinished field list? include relations?
             h.update(str(getattr(self,field)))
         return h.hexdigest()
+
+    def action_list_for(self, member):
+        action_list = []
+        if self.editable_by(member):
+            action_list.append('editable')
+        if self.viewable_by(member):
+            action_list.append('viewable')
+        return action_list
 
     def editable_by(self, member):
         """
@@ -241,14 +254,25 @@ class UserVisibleContent(Content):
 
     # Setup __to_dict__fields
     __to_dict__ = Content.__to_dict__.copy()
-    __to_dict__.update({
-        'default': __to_dict__['default'].copy()
-    })
+    #to_dict_update('default', field_list={
+    #        'views'        : None ,
+    #        'boom_count'   : None ,
+    #})
+    #__to_dict__.update({
+    #    'default': __to_dict__['default'].copy()
+    #})
     __to_dict__['default'].update({
             'views'        : None ,
             'boom_count'   : None ,
     })
 
+    def action_list_for(self, member):
+        action_list = Content.action_list_for(self, member)
+        if self.is_parent_owner(member):
+            if self.status != 'locked':
+                action_list.append('approve')
+            action_list.append('dissasociate')
+        return action_list
 
     def is_parent_owner(self, member):
         # TODO
@@ -279,9 +303,9 @@ class ArticleContent(UserVisibleContent):
 
     # Setup __to_dict__fields
     __to_dict__ = UserVisibleContent.__to_dict__.copy()
-    __to_dict__.update({
-        'default': __to_dict__['default'].copy()
-    })
+    #__to_dict__.update({
+    #    'default': __to_dict__['default'].copy()
+    #})
     __to_dict__['default'].update({
             'rating'        : None ,
     })
@@ -306,19 +330,27 @@ class AssignmentContent(UserVisibleContent):
     
     # Setup __to_dict__fields
     __to_dict__ = UserVisibleContent.__to_dict__.copy()
-    __to_dict__.update({
-        'default': __to_dict__['default'].copy()
-    })
+    #__to_dict__.update({
+    #    'default': __to_dict__['default'].copy()
+    #})
     __to_dict__['default'].update({
             'due_date'              : None ,
             'event_date'            : None ,
             'closed'                : None ,
-            #'can_accept'   :
-            #'can_withdraw' :
     })
+    
+        # Sub lists for accpeted, invited, withdrawn
 
 
-
+    def action_list_for(self, member):
+        action_list = UserVisibleContent.action_list_for(self, member)
+        if self.acceptable_by(member):
+            status = self.previously_accepted_by(member)
+            if not status:
+                action_list.append('accept')
+            elif status != 'withdrawn':
+                action_list.append('withdraw')
+        return action_list
     
     def hash(self):
         h = hashlib.md5(UserVisibleContent.hash(self))

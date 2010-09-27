@@ -167,30 +167,11 @@ def _find_template(result):
     elif template_exisits(web_template):
         template = web_template
     else:
-        log.warn("Can't find template for part "+template_part+" - "+"templates/"+web_template)
+        log.warn("Can't find template for part "+template_part)
         template = None
 
     return template
 
-
-
-def _find_template(result):
-    if result.get('template'):
-        template_part = result.get('template')
-    else:
-        template_part = "%s/%s" % (c.controller, c.action)
-
-    web_template    = "web/%s.mako"    % template_part                   # Find template filename
-    mobile_template = "mobile/%s.mako" % template_part
-
-    if request.environ['is_mobile'] and os.path.exists(mobile_template): # If mobile rendering
-        template = mobile_template
-    elif os.path.exists(web_template):
-        template = web_template
-    else:
-        template = None
-
-    return template
 
 
 def setup_format_processors():
@@ -300,7 +281,7 @@ def auto_format_output():
                 format = c.format
                 if args[-1] in format_processors:
                     format = args[-1] # The last arg should be a format, if it is a valid format set it
-                    log.debug("Got format from args; was %s, now %s" % (c.format, format))
+                    #log.debug("Got format from args; was %s, now %s" % (c.format, format))
                 if 'format' in kwargs:
                     format = kwargs['format'] #FIXME? the kwarg format is NEVER passed :( this is why we reply on c.format (set by the base controler)
                 
