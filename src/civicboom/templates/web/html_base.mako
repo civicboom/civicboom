@@ -15,10 +15,6 @@
   <%include file="design09/includes/footer.mako"/>
 </%def>
 
-## Depricated in redesign Jan10, could be re-implemented as the popup was useful
-## AllanC: this is so some specail pages can add controls to the header banner, e.g the frontpage my have extra bits, the body has a margin so this cant be put in the normal body include
-##<%def name="header_additions()"></%def>
-
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -36,7 +32,6 @@
     
     <!-- main body --> 
     <div id="bd">
-      ##${first_view_message()}
       ${next.body()}
     </div>
     <!-- end of main body -->
@@ -79,30 +74,6 @@
 
 
 ##------------------------------------------------------------------------------
-## First view popup
-##------------------------------------------------------------------------------
-<%def name="first_view_message()">
-  % if not session_get('first_view_message'):
-    <div id="first_view_message" class="popup hidden_by_default">
-      ##${session.get('first_view_message')}
-      <a class="popup_close_button" href="#" onclick="swap('first_view_message'); return false;"></a>
-      <p><strong>${_("_site_name is undergoing exciting changes!")}</strong></p>
-      <p>${_("We want your feedback! Tell us what you think:")} <a href="mailto:feedback@indiconews.com">feedback@indiconews.com</a></p>
-      <br/>
-      <p>${_("Thanks, from the _site_name Team.")}</p>
-      <a class="first_view_message_close" href="#" onclick="swap('first_view_message'); return false;">${_("close")}</a>
-    </div>
-    <script type="text/javascript">swap('first_view_message');</script>
-    <%
-      session_set('first_view_message','1')
-      #session.save()
-    %>
-  % endif
-</%def>
-
-
-
-##------------------------------------------------------------------------------
 ## Logo & Tagline def (to be used in any sub pages)
 ##------------------------------------------------------------------------------
 
@@ -111,7 +82,3 @@
 <span class="tagline">${_("_tagline")}<sup>TM</sup></span>
 %endif
 </%def>
-
-##<%def name="logo_small()">
-##<a href="/"><img src="/design09/logo.png" class="logo_small"></a>
-##</%def>
