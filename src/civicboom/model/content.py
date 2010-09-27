@@ -14,10 +14,6 @@ import hashlib
 from webhelpers.text import truncate
 
 
-#-------------------------------------------------------------------------------
-# Object to Dict Conversion
-#-------------------------------------------------------------------------------
-
 
 #-------------------------------------------------------------------------------
 # Objects
@@ -83,8 +79,10 @@ class Content(Base):
     num_comments    = Column(Integer(),        nullable=False, default=0)
     
     # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
+    # AllanC - see civicboom_init.py for 'responsese'
     #responses       = relationship("Content",            backref=backref('parent', remote_side=id, order_by=creation_date), primaryjoin=and_("Content.id == Content.parent_id") )  #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content
                                    #,or_("Content.__type__!='comment'","Content.__type__!='draft'")    # foreign_keys=["Content.id"]
+    
     parent          = relationship("Content", primaryjoin=parent_id==id, remote_side=id)
     creator         = relationship("Member" , primaryjoin="Content.creator_id==Member.id")
     
@@ -110,6 +108,8 @@ class Content(Base):
             'thumbnail_url': None ,
             'creation_date': None ,
             'location'     : lambda content: content.location_string ,
+            'num_responses': None ,
+            'num_comments' : None ,
         },
     })
     
@@ -120,6 +120,10 @@ class Content(Base):
             'content'           : None ,
             'attachments'       : lambda content: [media.to_dict() for media in content.attachments] ,
             'creator'           : lambda content: content.creator.to_dict('single') ,
+            'responses'         : lambda content: [response.to_dict('list') for response in content.responses] ,
+            'comments'          : lambda content: [comment.to_dict('list') for comment in content.comments] ,
+            #'licence'
+            #'tags'
     })
     del __to_dict__['single']['content_short']
     
@@ -248,6 +252,13 @@ class CommentContent(Content):
     __tablename__   = "content_comment"
     __mapper_args__ = {'polymorphic_identity': 'comment'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
+
+    __to_dict__ = {} #Content.__to_dict__.copy()
+    __to_dict__['list'] = {
+        'creator': lambda content: content.creator.to_dict('list') ,
+        'content': None ,
+    }
+    __to_dict__['single'] = __to_dict__['list'].copy()
 
 
 class UserVisibleContent(Content):

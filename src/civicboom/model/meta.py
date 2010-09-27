@@ -21,6 +21,14 @@ metadata = MetaData()
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
+
+
+#-------------------------------------------------------------------------------
+# Object to Dict Conversion
+#-------------------------------------------------------------------------------
+#
+# Enchancements to Base object
+
 def to_dict(self, method=None, default_method='list'):
     """
     describe
