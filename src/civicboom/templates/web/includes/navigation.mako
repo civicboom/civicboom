@@ -11,6 +11,6 @@
 
 <form action="${h.url(controller='search', action='content')}" method='GET'>
 	${_("Find")}:
-	<input type="text" class="search_input" name="query" placeholder="News, opinions" />
+	<input type="search" class="search_input" name="query" placeholder="News, opinions" />
 	<input type="submit" class="search_submit" value="" />
 </form>
