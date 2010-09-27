@@ -76,23 +76,31 @@ class Member(Base):
 
     __to_dict__ = Base.__to_dict__.copy()
     __to_dict__.update({
-        'default': {
+        'list': {
             'id'                : None ,
+            'name'              : None ,
             'username'          : None ,
             'avatar_url'        : None ,
+        },
+    })
+    
+    __to_dict__.update({
+        'single': __to_dict__['list'].copy()
+    })
+    __to_dict__['single'].update({
             'num_followers'     : None ,
             'webpage'           : None ,
             'utc_offset'        : None ,
             'join_date'         : None ,
-        },
     })
+    
     __to_dict__.update({
-        'actions': __to_dict__['default'].copy()
+        'actions': __to_dict__['single'].copy()
     })
     __to_dict__['actions'].update({
-            'following'        : lambda member: member.is_following(c.logged_in_user),
-            'follower'         : lambda member: member.is_follower(c.logged_in_user),
-            #'join'
+            'following'        : lambda member: member.is_following(None), #c.logged_in_user
+            'follower'         : lambda member: member.is_follower(None), #c.logged_in_user
+            #'join' # join group?
     })
 
 
@@ -138,10 +146,18 @@ class Member(Base):
         return unfollow(self,member)
 
     def is_follower(self, member):
-        return member in self.followers
+        if isinstance(member, basestring):
+            follower_list = [m.username for m in self.followers]
+        else:
+            follower_list = self.followers
+        return member in follower_list
     
     def is_following(self, member):
-        return member in self.following
+        if isinstance(member, basestring):
+            following_list = [m.username for m in self.following]
+        else:
+            following_list = self.following
+        return member in following_list
 
     @property
     def avatar_url(self, size=80):

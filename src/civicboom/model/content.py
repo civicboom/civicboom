@@ -99,32 +99,37 @@ class Content(Base):
     # used by obj_to_dict to create a string dictonary representation of this object
     __to_dict__ = Base.__to_dict__.copy()
     __to_dict__.update({
-        'default': {
-            'id'                : None ,
-            'type'              : lambda content: content.__type__ ,
-            'status'            : None ,
-            'parent_id'         : None ,
-            'title'             : None ,
-            'content'           : None ,
-            'creator'           : lambda content: content.creator.to_dict() ,
-            'location'          : lambda content: content.location_string ,
-            'thumbnail_url'     : None ,
-        },
-        'default_list': {
+        'list': {
             'id'           : None ,
             'type'         : lambda content: content.__type__ ,
+            'status'       : None ,
+            'parent_id'    : None ,
             'title'        : None ,
             'content_short': None ,
-            'parent_id'    : None ,
+            'creator'      : lambda content: content.creator.to_dict('list') ,
+            'thumbnail_url': None ,
             'creation_date': None ,
+            'location'     : lambda content: content.location_string ,
         },
     })
+    
     __to_dict__.update({
-        'actions': __to_dict__['default'].copy()
+        'single': __to_dict__['list'].copy()
+    })
+    __to_dict__['single'].update({
+            'content'           : None ,
+            'attachments'       : lambda content: [media.to_dict() for media in content.attachments] ,
+            'creator'           : lambda content: content.creator.to_dict('single') ,
+    })
+    del __to_dict__['single']['content_short']
+    
+    __to_dict__.update({
+        'actions': __to_dict__['single'].copy()
     })
     __to_dict__['actions'].update({
-            'actions': lambda content: content.action_list_for(c.logged_in_user) ,
+            'actions': lambda content: content.action_list_for(None) , #c.logged_in_user
     })
+
 
     
     def __unicode__(self):
@@ -254,17 +259,12 @@ class UserVisibleContent(Content):
 
     # Setup __to_dict__fields
     __to_dict__ = Content.__to_dict__.copy()
-    #to_dict_update('default', field_list={
-    #        'views'        : None ,
-    #        'boom_count'   : None ,
-    #})
-    #__to_dict__.update({
-    #    'default': __to_dict__['default'].copy()
-    #})
-    __to_dict__['default'].update({
+    __to_dict__['list'].update({
             'views'        : None ,
             'boom_count'   : None ,
     })
+    __to_dict__['single'].update(__to_dict__['list'])
+
 
     def action_list_for(self, member):
         action_list = Content.action_list_for(self, member)
@@ -303,10 +303,7 @@ class ArticleContent(UserVisibleContent):
 
     # Setup __to_dict__fields
     __to_dict__ = UserVisibleContent.__to_dict__.copy()
-    #__to_dict__.update({
-    #    'default': __to_dict__['default'].copy()
-    #})
-    __to_dict__['default'].update({
+    __to_dict__['list'].update({
             'rating'        : None ,
     })
 
@@ -333,13 +330,17 @@ class AssignmentContent(UserVisibleContent):
     #__to_dict__.update({
     #    'default': __to_dict__['default'].copy()
     #})
-    __to_dict__['default'].update({
+    __to_dict__['list'].update({
             'due_date'              : None ,
             'event_date'            : None ,
             'closed'                : None ,
     })
-    
-        # Sub lists for accpeted, invited, withdrawn
+    __to_dict__['single'].update(__to_dict__['list'])
+    __to_dict__['single'].update({
+            'accepted' : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="accepted" ] ,
+            'pending'  : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="pending"  ] ,
+            'withdrawn': lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"] ,
+    })
 
 
     def action_list_for(self, member):

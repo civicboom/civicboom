@@ -201,22 +201,27 @@ from civicboom.model.meta import Session
     
     
     
-    % if hasattr(content_obj, "assigned_to"):
+    % if content.type == 'assignment':
     <h2>Assignment</h2>
-        <%
-            accepted  = [a.member for a in content_obj.assigned_to if a.status=="accepted" ]
-            invited   = [a.member for a in content_obj.assigned_to if a.status=="pending"  ]
-            withdrawn = [a.member for a in content_obj.assigned_to if a.status=="withdrawn"]
-        %>
-    
+    % endif
+        ##<%
+        ##    accepted  = [a.member for a in content_obj.assigned_to if a.status=="accepted" ]
+        ##    invited   = [a.member for a in content_obj.assigned_to if a.status=="pending"  ]
+        ##    withdrawn = [a.member for a in content_obj.assigned_to if a.status=="withdrawn"]
+        ##%>
+    % if content.accepted:
         <h3>accepted by: ${len(accepted)}</h3>
-        ${member_includes.member_list(accepted , show_avatar=True, class_="avatar_thumbnail_list")}
-        
+        ${member_includes.member_list(content.accepted , show_avatar=True, class_="avatar_thumbnail_list")}
+    % endif
+    
+    % if content.invited:
         <h3>awaiting reply: ${len(invited)}</h3>
-        ${member_includes.member_list(invited  , show_avatar=True, class_="avatar_thumbnail_list")}
-        
-        <h3>withdrawn members: ${len(withdrawn)}</h3>
-        ${member_includes.member_list(withdrawn, show_avatar=True, class_="avatar_thumbnail_list")}
+        ${member_includes.member_list(content.invited  , show_avatar=True, class_="avatar_thumbnail_list")}
+    % endif
+    
+    % if content.withdrawn:
+        <h3>withdrawn members: ${len(content.withdrawn)}</h3>
+        ${member_includes.member_list(content.withdrawn, show_avatar=True, class_="avatar_thumbnail_list")}
     % endif
     
   

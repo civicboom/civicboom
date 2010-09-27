@@ -89,7 +89,7 @@ def obj_to_dict(obj, dict_fields):
         elif type(field_processor)==types.FunctionType:
             field_value = field_processor(obj)
         if field_value:
-            if hasattr(field_value,'keys'):
+            if hasattr(field_value,'keys') or hasattr(d, '__iter__'):
                 pass
             else:
                 field_value = unicode(field_value)

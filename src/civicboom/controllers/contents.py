@@ -221,7 +221,7 @@ class ContentsController(BaseController):
             
         return action_ok(
             template = 'design09/content/view',
-            data     = {'content':content.to_dict()}
+            data     = {'content':content.to_dict('actions')}
         )
 
 

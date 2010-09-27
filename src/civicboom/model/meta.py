@@ -21,7 +21,7 @@ metadata = MetaData()
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
-def to_dict(self, method=None, default_method='default'):
+def to_dict(self, method=None, default_method='list'):
     """
     describe
     """

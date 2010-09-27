@@ -27,6 +27,21 @@ class Media(Base):
     hash          = Column(String(40),       nullable=False, index=True)
     caption       = Column(UnicodeText(),    nullable=False)
     credit        = Column(UnicodeText(),    nullable=False)
+    
+    __to_dict__ = Base.__to_dict__.copy()
+    __to_dict__.update({
+        'list': {
+            'id'           : None ,
+            'name'         : None ,
+            'type'         : None ,
+            'subtype'      : None ,
+            'caption'      : None ,
+            'credit'       : None ,
+            'media_url'    : None ,
+            'original_url' : None ,
+            'thumbnail_url': None ,
+        },
+    })
 
 
 
