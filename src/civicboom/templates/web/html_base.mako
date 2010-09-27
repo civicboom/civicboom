@@ -99,6 +99,6 @@
 	<nav><%include file="includes/navigation.mako"/></nav>
 	${next.body()}
 	<footer><%include file="includes/footer.mako"/></footer>
-	<%include file="scripts_end.mako"/>
+	<%include file="includes/scripts_end.mako"/>
 </body>
 </html>
