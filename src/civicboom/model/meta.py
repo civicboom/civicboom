@@ -30,5 +30,15 @@ def to_dict(self, method=None, default_method='default'):
         method = default_method
     return obj_to_dict(self,self.__to_dict__[method])
 
-Base.__to_dict__ =  {}
-Base.to_dict = to_dict
+#def to_dict_update(self, name, field_list, clone_name=None):
+#    __to_dict__ =  self.__to_dict__
+#    if clone_name:
+#        __to_dict__[name] = __to_dict__[clone_name].copy()
+#    if name not in __to_dict__:
+#        __to_dict__[name] = {}
+#    __to_dict__[name].update(field_list)
+    
+Base.__to_dict__    =  {}
+Base.to_dict        = to_dict
+#Base.to_dict_update = to_dict_update
+
