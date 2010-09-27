@@ -73,7 +73,6 @@ class Member(Base):
 
     _config = None
 
-
     __to_dict__ = Base.__to_dict__.copy()
     __to_dict__.update({
         'list': {

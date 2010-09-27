@@ -193,7 +193,7 @@ def setup_format_processors():
 
     def format_html(result):
         overlay_status_message(c.result, result)
-        return render_mako(_find_template(result), extra_vars=DictAsObj(c.result))
+        return render_mako(_find_template(result), extra_vars=DictAsObj(c.result)) #extra_vars={'d':DictAsObj(c.result['data'])}
 
     def format_redirect(result):
         """

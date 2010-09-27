@@ -118,10 +118,10 @@ class Content(Base):
     })
     __to_dict__['single'].update({
             'content'           : None ,
-            'attachments'       : lambda content: [media.to_dict() for media in content.attachments] ,
-            'creator'           : lambda content: content.creator.to_dict('single') ,
-            'responses'         : lambda content: [response.to_dict('list') for response in content.responses] ,
-            'comments'          : lambda content: [comment.to_dict('list') for comment in content.comments] ,
+            'creator'           : lambda content: content.creator.to_dict('actions') ,
+            'attachments'       : lambda content: [   media.to_dict('list') for media    in content.attachments] ,
+            'responses'         : lambda content: [response.to_dict('list') for response in content.responses  ] ,
+            'comments'          : lambda content: [ comment.to_dict('list') for comment  in content.comments   ] ,
             #'licence'
             #'tags'
     })
@@ -255,8 +255,9 @@ class CommentContent(Content):
 
     __to_dict__ = {} #Content.__to_dict__.copy()
     __to_dict__['list'] = {
-        'creator': lambda content: content.creator.to_dict('list') ,
-        'content': None ,
+        'creator'      : lambda content: content.creator.to_dict('list') ,
+        'content'      : None ,
+        'creation_date': None ,
     }
     __to_dict__['single'] = __to_dict__['list'].copy()
 

@@ -8,9 +8,10 @@
     #from civicboom.lib.misc import DictAsObj
     #content  = DictAsObj(c.result['data']['content'])
     
-    from civicboom.lib.database.get_cached import get_content
-    content_obj = get_content(data.content.id)
+    #from civicboom.lib.database.get_cached import get_content
+    #content_obj = get_content(data.content.id)
 
+    #content = d.content
 %>
 
 
@@ -36,11 +37,15 @@
 ##------------------------------------------------------------------------------
 
 <%def name="col_left()">
+disbaled
+</%def>
+
+<%def name="col_left2()">
   
     
     ##-------- By ----------
     <h2>${_("Content by")}</h2>
-    ${member_includes.avatar(content_obj.creator, show_name=True, show_follow_button=True)}
+    ${member_includes.avatar(content.creator, show_name=True, show_follow_button=True)}
   
   
     ##-------Actions-------
@@ -68,6 +73,7 @@
     ## Assignment Accept and Withdraw
     % if 'accept' in content.actions:
         ${h.secure_link(h.url(controller='content_actions',action='accept'  , id=content.id, format='redirect'), _('Accept')  , css_class="button_small button_small_style_2")}
+    % endif
     % if 'withdraw' in content.actions:
         ${h.secure_link(h.url(controller='content_actions',action='withdraw', id=content.id, format='redirect'), _('Withdraw'), css_class="button_small button_small_style_2")}
     % endif
@@ -177,6 +183,10 @@ r = (content.rating * 5)
 ##------------------------------------------------------------------------------
 
 <%def name="col_right()">
+disabled
+</%def>
+
+<%def name="col_right2()">
 <%
 # we need to pass the session to GeoAlchemy functions
 from civicboom.model.meta import Session
@@ -246,6 +256,11 @@ from civicboom.model.meta import Session
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
+Hello
+${d}
+</%def>
+
+<%def name="body2()">
   ##----Title----
   <h1>${content.title}</h1>
 
@@ -263,7 +278,7 @@ from civicboom.model.meta import Session
   </div>
 
   ##----Media-----
-  % for media in content_obj.attachments:
+  % for media in content.attachments:
     % if media.type == "image":
       <a href="${media.original_url}"><img src="${media.media_url}" alt="${media.caption}"/></a>
     % elif media.type == "audio":
@@ -287,7 +302,7 @@ from civicboom.model.meta import Session
   <a href="${h.url('new_content', form_parent_id=content.id)}">Respond to this</a>
   
   ##----Comments----
-  ${comments()}
+  ##${comments()}
 </%def>
 
 
@@ -338,23 +353,18 @@ from civicboom.model import CommentContent
 }
 </style>
 	<table>
-## this approach doesn't sort :/
-##	% for r in [co for co in content.responses if co.__type__ == "comment"]:
-##	% for r in Session.query(CommentContent).filter(CommentContent.parent_id==content.id).order_by(CommentContent.creation_date):
 
-## AllanC - don't worry Shish my man, helps at hand :)
-##          a sorted realtion doing the filtering at the database side 
-    % for r in content_obj.comments:
-	${relation(r.creator, c.logged_in_user, content.creator, 'tr')}
+    % for comment in content.comments:
+	${relation(comment.creator, c.logged_in_user, content.creator, 'tr')}
 		<td class="avatar">
-			${member_includes.avatar(r.creator)}
+			${member_includes.avatar(comment.creator)}
 		</td>
 		<td class="comment">
-			${r.content}
+			${comment.content}
 			<b style="float: right;">
-				${r.creator.name}
-				${relation(r.creator, c.logged_in_user, content.creator, 'text')} --
-				${str(r.creation_date)[0:19]}
+				${comment.creator.name}
+				${relation(comment.creator, c.logged_in_user, content.creator, 'text')} --
+				${str(comment.creation_date)[0:19]}
 			</b>
 		</td>
 	</tr>
@@ -459,7 +469,7 @@ from civicboom.model import CommentContent
                 ## This uses the same JSON generation as the Janrain API but contructs the data for the Jainrain social widget
                 <%
                   from civicboom.lib.civicboom_lib import aggregation_dict
-                  content_dict = aggregation_dict(content_obj, safe_strings=True)
+                  content_dict = aggregation_dict(content, safe_strings=True)
                 %>
                 
                 var activity = new RPXNOW.Social.Activity('${content_dict['action']}',
