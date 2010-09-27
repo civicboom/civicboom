@@ -11,6 +11,7 @@ from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref
 
 import hashlib
+import copy
 from webhelpers.text import truncate
 
 
@@ -95,7 +96,7 @@ class Content(Base):
     flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
 
     # used by obj_to_dict to create a string dictonary representation of this object
-    __to_dict__ = Base.__to_dict__.copy()
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'list': {
             'id'           : None ,
@@ -114,7 +115,7 @@ class Content(Base):
     })
     
     __to_dict__.update({
-        'single': __to_dict__['list'].copy()
+        'single': copy.deepcopy(__to_dict__['list'])
     })
     __to_dict__['single'].update({
             'content'           : None ,
@@ -128,7 +129,7 @@ class Content(Base):
     del __to_dict__['single']['content_short']
     
     __to_dict__.update({
-        'actions': __to_dict__['single'].copy()
+        'actions': copy.deepcopy(__to_dict__['single'])
     })
     __to_dict__['actions'].update({
             'actions': lambda content: content.action_list_for(None) , #c.logged_in_user
@@ -259,7 +260,7 @@ class CommentContent(Content):
         'content'      : None ,
         'creation_date': None ,
     }
-    __to_dict__['single'] = __to_dict__['list'].copy()
+    __to_dict__['single'] = copy.deepcopy(__to_dict__['list'])
 
 
 class UserVisibleContent(Content):
@@ -270,7 +271,7 @@ class UserVisibleContent(Content):
     boom_count    = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
 
     # Setup __to_dict__fields
-    __to_dict__ = Content.__to_dict__.copy()
+    __to_dict__ = copy.deepcopy(Content.__to_dict__)
     _extra_user_visible_fields = {
             'views'        : None ,
             'boom_count'   : None ,
@@ -315,7 +316,7 @@ class ArticleContent(UserVisibleContent):
     ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
 
     # Setup __to_dict__fields
-    __to_dict__ = UserVisibleContent.__to_dict__.copy()
+    __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_article_fields = {
         'rating'        : None ,
     }
@@ -342,7 +343,7 @@ class AssignmentContent(UserVisibleContent):
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
     
     # Setup __to_dict__fields
-    __to_dict__ = UserVisibleContent.__to_dict__.copy()
+    __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_assignment_fields = {
             'due_date'              : None ,
             'event_date'            : None ,
@@ -355,6 +356,7 @@ class AssignmentContent(UserVisibleContent):
             'pending'  : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="pending"  ] ,
             'withdrawn': lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"] ,
     })
+    __to_dict__['actions'].update(__to_dict__['single'])
 
 
     def action_list_for(self, member):
@@ -426,6 +428,7 @@ class MemberAssignment(Base):
     member_id     = Column(Integer(),    ForeignKey('member.id')            , nullable=False, primary_key=True)
     status        = Column(_assignment_status,  nullable=False)
 
+    member       = relationship("Member")
 
 class License(Base):
     __tablename__ = "license"

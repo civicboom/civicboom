@@ -1006,7 +1006,16 @@ CREATE TRIGGER update_content
         dc2.license_id = cc_by.id
         u1.content.append(dc2)
 
-        Session.add_all([ca, ca2, dc1, dc2])
+        res1 = ArticleContent()
+        res1.title      = u"A response article"
+        res1.content    = u"oh me oh my"
+        res1.creator    = u2
+        res1.status     = "show"
+        res1.license_id = cc_by.id
+        res1.parent     = ca
+
+
+        Session.add_all([ca, ca2, dc1, dc2, res1])
         Session.commit()
 
         ###############################################################

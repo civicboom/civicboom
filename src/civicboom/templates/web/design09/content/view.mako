@@ -172,11 +172,11 @@ r = (d['content']['rating'] * 5)
 
 
 <%def name="col_right()">
-<%
-# we need to pass the session to GeoAlchemy functions
-from civicboom.model.meta import Session
-%>
-    % if 'location' in d['content']:
+    <%
+    # we need to pass the session to GeoAlchemy functions
+    from civicboom.model.meta import Session
+    %>
+    % if d['content'].get('location'):
       <p>${loc.minimap(
           width="100%", height="200px",
           lat = d['content']['location'].split(' ')[0],
@@ -196,16 +196,8 @@ from civicboom.model.meta import Session
     
     ${content_includes.content_list(d['content']['responses'], mode="mini", class_="content_list_mini")}
     
-    
-    
     % if d['content']['type'] == 'assignment':
         <h2>Assignment</h2>
-    
-            ##<%
-            ##    accepted  = [a.member for a in content_obj.assigned_to if a.status=="accepted" ]
-            ##    invited   = [a.member for a in content_obj.assigned_to if a.status=="pending"  ]
-            ##    withdrawn = [a.member for a in content_obj.assigned_to if a.status=="withdrawn"]
-            ##%>
         % if 'accepted' in d['content']:
             <h3>accepted by: ${len(d['content']['accepted'])}</h3>
             ${member_includes.member_list(d['content']['accepted'] , show_avatar=True, class_="avatar_thumbnail_list")}
