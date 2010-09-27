@@ -119,6 +119,7 @@ class Content(Base):
     })
     __to_dict__['single'].update({
             'content'           : None ,
+            'parent'            : lambda content: content.parent.to_dict('list') ,
             'creator'           : lambda content: content.creator.to_dict('actions') ,
             'attachments'       : lambda content: [   media.to_dict('list') for media    in content.attachments] ,
             'responses'         : lambda content: [response.to_dict('list') for response in content.responses  ] ,
@@ -127,6 +128,7 @@ class Content(Base):
             #'tags'
     })
     del __to_dict__['single']['content_short']
+    del __to_dict__['single']['parent_id']
     
     __to_dict__.update({
         'actions': copy.deepcopy(__to_dict__['single'])

@@ -186,7 +186,7 @@ r = (d['content']['rating'] * 5)
       )}</p>
     % endif
   
-    % if d['content']['parent_id']:
+    % if d['content']['parent']:
     <h2>Parent content</h2>
     ${content_includes.content_list([d['content']['parent']], mode="mini", class_="content_list_mini")}
     ##<p><a href="${h.url(controller="content", action="view", id=content.parent.id)}">${content.parent.title}</a></p>
