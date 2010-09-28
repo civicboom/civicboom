@@ -94,6 +94,7 @@
 ##------------------------------------------------------------------------------
 <body class="c-${c.controller} a-${c.action}">
 	${flash_message()}
+	<nav><%include file="includes/navigation.mako"/></nav>
 	<header><%include file="includes/header.mako"/></header>
 	${next.body()}
 	<footer><%include file="includes/footer.mako"/></footer>
