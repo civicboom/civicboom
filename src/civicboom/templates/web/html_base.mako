@@ -29,7 +29,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui.stars.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/civicboom.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/web_specific.css" />
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif
