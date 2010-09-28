@@ -1,3 +1,6 @@
+/*
+ * about page, lots of text with a couple of custom bits
+ */
 BODY.c-misc.a-about .cols {
 	-moz-column-count: 2;
 	-moz-column-gap: 1em;
@@ -7,6 +10,9 @@ BODY.c-misc.a-about .cols {
 	-webkit-column-rule: 1px solid black;
 }
 
+/*
+ * front page, a blurb and a signup box
+ */
 BODY.c-misc.a-titlepage SECTION.blurb {
 	float: left;
 	width: 500px;
@@ -20,6 +26,9 @@ BODY.c-misc.a-titlepage SECTION.signup {
 	margin-right: 100px;
 }
 
+/*
+ * signin page, 3 forms for "log in", "forgotten password" and "register"
+ */
 BODY.c-account.a-signin .cols {
 	-moz-column-count: 3;
 	-moz-column-gap: 1em;

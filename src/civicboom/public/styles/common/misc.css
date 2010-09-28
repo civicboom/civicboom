@@ -1,3 +1,6 @@
+/*
+ * If we have javascript, hide the things that are shown using javascript
+ */
 HTML.js .hideable {
 	display: none;
 }
@@ -6,4 +9,13 @@ HTML.js .popup {
 	position: fixed;
 	left: 200px;
 	top: 50px;
+}
+
+/*
+ * make the body fill the page, so the background colour / image
+ * doesn't stop half way down the screen, leaving the bottom of the
+ * page white for short pages
+ */
+HTML, BODY {
+	height: 100%;
 }

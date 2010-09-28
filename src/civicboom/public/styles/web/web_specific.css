@@ -1,7 +1,13 @@
+/*
+ * layout for the web page, starting with the body to cover everything
+ */
 BODY {
 	background: #DDD;
 }
 
+/*
+ * the body is then broken down into the navigation bar at the top
+ */
 NAV {
 	background: url("/styles/web/userbarbk.png");
 	height: 17px;
@@ -29,6 +35,9 @@ NAV A {
 	text-decoration: none;
 }
 
+/*
+ * the header, with logo and search box
+ */
 HEADER {clear: both;}
 HEADER IMG {padding: 32px;}
 HEADER FORM {padding: 32px;}
@@ -47,10 +56,16 @@ HEADER UL LI {
 }
 HEADER DIV#search {float: right; clear: right;}
 
+/*
+ * the bulk of the page in the middle
+ */
 BODY>DIV#app {
 	clear: both;
 }
 
+/*
+ * and a footer (not actually in the new design -- do we need one?)
+ */
 FOOTER {
 	clear: both;
 }
