@@ -1,0 +1,9 @@
+HTML.js .hideable {
+	display: none;
+}
+HTML.js .popup {
+	display: none;
+	position: fixed;
+	left: 200px;
+	top: 50px;
+}

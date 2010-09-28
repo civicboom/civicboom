@@ -1,0 +1,30 @@
+BODY.c-misc.a-about .cols {
+	-moz-column-count: 2;
+	-moz-column-gap: 1em;
+	-moz-column-rule: 1px solid black;
+	-webkit-column-count: 2;
+	-webkit-column-gap: 1em;
+	-webkit-column-rule: 1px solid black;
+}
+
+BODY.c-misc.a-titlepage SECTION.blurb {
+	float: left;
+	width: 500px;
+	margin: 100px;
+}
+BODY.c-misc.a-titlepage SECTION.signup {
+	float: right;
+	width: 300px;
+	padding: 16px;
+	background: white;
+	margin-right: 100px;
+}
+
+BODY.c-account.a-signin .cols {
+	-moz-column-count: 3;
+	-moz-column-gap: 1em;
+	-moz-column-rule: 1px solid black;
+	-webkit-column-count: 3;
+	-webkit-column-gap: 1em;
+	-webkit-column-rule: 1px solid black;
+}

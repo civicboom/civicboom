@@ -29,7 +29,9 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui.stars.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/web_specific.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif
@@ -96,7 +98,7 @@
 	${flash_message()}
 	<nav><%include file="includes/navigation.mako"/></nav>
 	<header><%include file="includes/header.mako"/></header>
-	${next.body()}
+	<div id="app">${next.body()}</div>
 	<footer><%include file="includes/footer.mako"/></footer>
 	<%include file="includes/scripts_end.mako"/>
 </body>
