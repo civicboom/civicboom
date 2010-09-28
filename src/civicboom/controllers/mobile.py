@@ -4,6 +4,7 @@ from civicboom.model              import Media, ArticleContent, SyndicatedConten
 from civicboom.lib                import helpers as h
 from civicboom.lib.communication  import messages
 from civicboom.lib.text           import clean_html
+from civicboom.lib.authentication import get_user_and_check_password
 
 from decorator import decorator
 from datetime import datetime
@@ -33,9 +34,14 @@ class MobileController(BaseController):
     # Sign in
     #-----------------------------------------------------------------------------  
     @auto_format_output()
-    @authorize(is_valid_user)
     def signin(self):
-        return action_ok("logged in ok", {"auth_token": authentication_token()})
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = get_user_and_check_password(username, password)
+        if c.logged_in_user or user:
+            return action_ok("logged in ok", {"auth_token": authentication_token()})
+        else:
+            return action_error("unauthorised", code=403)
 
 
     #-----------------------------------------------------------------------------
