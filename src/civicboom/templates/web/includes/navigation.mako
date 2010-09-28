@@ -4,8 +4,8 @@
 
 <ul>
 	<li class="name"><a href="${url(controller='profile', action='view', id=c.logged_in_user.username)}">${c.logged_in_user.name}</a></li>
-	<li class="time">[Clock]</li>
-	<li class="role">[Role]</li>
+	<li class="time"><a>[Clock]</a></li>
+	<li class="role"><a>[Role]</a></li>
 </ul>
 
 <ul>

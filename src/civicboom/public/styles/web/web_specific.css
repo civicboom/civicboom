@@ -21,12 +21,15 @@ NAV UL.right {
 	float: right;
 }
 NAV UL LI {
+	float: left;
+}
+NAV UL LI A {
+	display: block;
 	background: url("/styles/web/userbartab.png");
 	width: 71px;
 	text-align: center;
-	float: left;
 }
-NAV UL LI.settings {
+NAV UL LI.settings A {
 	background: url("/styles/web/userbarlogout.png");
 	width: 68px;
 }
@@ -54,7 +57,10 @@ HEADER UL LI {
 	text-align: center;
 	float: left;
 }
-HEADER DIV#search {float: right; clear: right;}
+HEADER DIV#search {
+	float: right;
+	clear: right;
+}
 
 /*
  * the bulk of the page in the middle
