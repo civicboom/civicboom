@@ -119,7 +119,7 @@ class Content(Base):
     })
     __to_dict__['single'].update({
             'content'           : None ,
-            'parent'            : lambda content: content.parent.to_dict('list') ,
+            'parent'            : lambda content: content.parent.to_dict('list') if content.parent else None ,
             'creator'           : lambda content: content.creator.to_dict('actions') ,
             'attachments'       : lambda content: [   media.to_dict('list') for media    in content.attachments] ,
             'responses'         : lambda content: [response.to_dict('list') for response in content.responses  ] ,

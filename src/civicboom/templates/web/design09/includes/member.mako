@@ -28,7 +28,7 @@
             % endif
         </a>
         ## AllanC - TODO - FIXME - this is cheating! how are API users ment to have access to this!
-        % if show_follow_button and c.logged_in_user.username != member['username']:
+        % if show_follow_button and c.logged_in_user and c.logged_in_user.username != member['username']:
             % if 'following' in member and member['following']:
             ${h.secure_link(url(controller='member', action='unfollow', id=member['username'], format='redirect'), _('Stop following'), css_class="button_small button_small_style_2")}
             % else:
