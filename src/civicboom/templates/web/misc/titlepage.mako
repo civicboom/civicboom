@@ -31,6 +31,9 @@
 </section>
 
 <section class="blurb">
-Civicboom is waffle waffle waffle
+<br>"We work across wide-ranging communication
+<br>channels with clients who are visionaries in
+<br>their fields. By actively building close working
+<br>relationships we connect people."
 </section>
 
