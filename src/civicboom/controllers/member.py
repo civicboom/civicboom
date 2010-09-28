@@ -23,7 +23,18 @@ class MemberController(BaseController):
         members = index_lists[member_list_name](c.logged_in_user)
         members = [member.to_dict('default_list') for member in members]
         
-        return {'data': {'list': members} }
+        return {'data': {'list': members}}
+
+    @auto_format_output()
+    def show(self, id=None):
+        """
+        Get single user, (temp inclution)
+        """
+        if id:
+            member = get_user(id)
+        else:
+            member = c.logged_in_user
+        return {'data': member.to_dict('single')}
 
     @auto_format_output()
     @authorize(is_valid_user)

@@ -19,26 +19,41 @@
 	.notification FORM {float: right;}
 	</style>
 
+    <%
+    from civicboom.controllers.member import MemberController
+    %>
+
 	<div class="avatar">
 		##<img src="${c.viewing_user.avatar_url}">
 		##<br>${c.viewing_user.name}
 		##<br>(${c.viewing_user.username})
-        ${member_includes.avatar(c.viewing_user, show_name=True)}
+        ${member_includes.avatar( , show_name=True)}
 	</div>
 
+
 	<h2>${_("Following")}</h2>
-	% if c.viewing_user.following:
-        ${member_includes.member_list(c.viewing_user.following, show_avatar=True, class_="avatar_thumbnail_list")}
-	% else:
-		<span class="message_empty">Not following anyone</span>
-	% endif
+
+        <div id="following">
+        ${h.get_frag(MemberController().index, list='following')}
+        </div>
+        
+        ##% if c.viewing_user.following:
+        ##    ${member_includes.member_list(c.viewing_user.following, show_avatar=True, class_="avatar_thumbnail_list")}
+        ##% else:
+        ##    <span class="message_empty">Not following anyone</span>
+        ##% endif
 
 	<h2>${_("Followers")}</h2>
-	% if c.viewing_user.followers:
-		${member_includes.member_list(c.viewing_user.followers, show_avatar=True, class_="avatar_thumbnail_list")}
-	% else:
-		<span class="message_empty">No followers</span>
-	% endif
+    
+        <div id="followers">
+        ${h.get_frag(MemberController().index, list='followers')}
+        </div>
+        
+        ##% if c.viewing_user.followers:
+        ##    ${member_includes.member_list(c.viewing_user.followers, show_avatar=True, class_="avatar_thumbnail_list")}
+        ##% else:
+        ##    <span class="message_empty">No followers</span>
+        ##% endif
 
 	<h2>${_("Tools")}</h2>
 	    <a href="${url(controller='profile', action='index')}">My Profile</a>

@@ -91,14 +91,16 @@ class Member(Base):
             'webpage'           : None ,
             'utc_offset'        : None ,
             'join_date'         : None ,
+            'followers'         : lambda member: member.followers ,
+            'following'         : lambda member: member.following ,
     })
     
     __to_dict__.update({
         'actions': __to_dict__['single'].copy()
     })
     __to_dict__['actions'].update({
-            'following'        : lambda member: member.is_following(None), #c.logged_in_user
-            'follower'         : lambda member: member.is_follower(None), #c.logged_in_user
+            'is_following'        : lambda member: member.is_following(None), #c.logged_in_user
+            'is_follower'         : lambda member: member.is_follower(None), #c.logged_in_user
             #'join' # join group?
     })
 

@@ -128,9 +128,9 @@ def overlay_status_message(master_message, new_message):
 
     # Overlay new message (if dict)
     if isinstance(new_message, dict):
-        if master_message['status'] == 'ok':
+        if master_message['status'] == 'ok' and 'status' in new_message:
             master_message['status'] = new_message['status']
-        if new_message['message']:
+        if 'message' in new_message and new_message['message']:
             master_message['message'] += '\n' + new_message['message']
 
     # Overlay new message (if string)
@@ -189,7 +189,9 @@ def setup_format_processors():
     
     def format_frag(result):
         overlay_status_message(c.result, result)                        # Set standard template data dict for template to use
-        web_template = "frag/%s.mako" % result['template']              # Find template filename
+        if 'template' not in result:
+            result['template'] = "%s/%s" % (c.controller, c.action)
+        web_template = "frag/%s.mako" % result['template']              # Find template filename        
         return render_mako(web_template, extra_vars={"d": c.result['data']} )
 
     def format_html(result):
