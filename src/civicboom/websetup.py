@@ -741,6 +741,7 @@ CREATE TRIGGER update_content
 
         Session.add_all([u3, u4, u5]); Session.commit()
 
+
         # test data for kent messenger demo
         u6 = User()
         u6.username      = u"kentmessenger"
@@ -753,8 +754,6 @@ CREATE TRIGGER update_content
         u6_login.type   = "password"
         u6_login.token  = hashlib.sha1("password").hexdigest()
 
-        Session.add_all([u6, u6_login]); Session.commit();
-
         u7 = User()
         u7.username      = u"mobiletest"
         u7.name          = u"Mr. Mobile User"
@@ -766,7 +765,9 @@ CREATE TRIGGER update_content
         u7_login.type   = "password"
         u7_login.token  = hashlib.sha1("password").hexdigest()
 
-        Session.add_all([u7, u7_login]); Session.commit();
+        Session.add_all([u6, u6_login, u7, u7_login]);
+        u6.followers.append(u7)
+        Session.commit();
 
 
         assert list(Session.query(User).filter(User.id==0)) == []
