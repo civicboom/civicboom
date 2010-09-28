@@ -15,24 +15,23 @@
 ##----------------------------------------------------------------------------
 ## Title
 ##----------------------------------------------------------------------------  
-	<%def name="title()">${_("_tagline")}</%def>
-	<% title_dev_prefix = "" %>
-	<% if config['development_mode']: title_dev_prefix = "Dev-" %>
+<%def name="title()">${_("_tagline")}</%def>
+<% title_dev_prefix = "Dev-" if config['development_mode'] else "" %>
 	<title>${title_dev_prefix}${_("_site_name")}: ${self.title()}</title>
 
 ##----------------------------------------------------------------------------
 ## Base CSS and Javascript imports
 ##----------------------------------------------------------------------------
-
 ##-------------------
 ## CSS Style Sheets
 ##-------------------
 % if config['development_mode']:
-	<link rel="stylesheet" type="text/css" href="/styles/jquery.ui-1.8.4.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/jquery.ui.stars.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/civicboom.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui.stars.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/civicboom.css" />
 % else:
-	<link rel="stylesheet" type="text/css" href="/styles/_combined.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif
 
 ##-------------------
