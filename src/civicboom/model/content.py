@@ -238,6 +238,7 @@ class Content(Base):
             from civicboom.model.meta import Session
             return '%s %s' % (self.location.coords(Session)[1], self.location.coords(Session)[0])
         return None
+        # AllanC Note: duplicated for Member location ... could we have location_string in a common place?
 
 
 class DraftContent(Content):

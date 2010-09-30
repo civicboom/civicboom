@@ -38,9 +38,9 @@
             ##---------------------------
             <%
                 overlay = None
-                if content.__type__=='syndicate' or content.__type__=='pending':
-                    overlay = content.__type__
-                if content.status == 'locked':
+                if content['type']=='syndicate' or content['type']=='pending':
+                    overlay = content['type']
+                if content['status'] == 'locked':
                     overlay = 'approved'
             %>
             % if overlay:
@@ -60,9 +60,10 @@
             <a href="${h.url('content', id=content['id'])}">
                 <p class="content_title">${content['title']}</p>
                 <p class="content_details">
-                    ${content['creation_date'].strftime('%b %d, %Y %H:%M %Z')}
+                    ${content['creation_date']}
+                    ##.strftime('%b %d, %Y %H:%M %Z')}
                 </p>
-                <p class="content_preview">content['content_short']</p>
+                <p class="content_preview">${content['content_short']}</p>
                 ##${h.truncate(  , length=120, indicator='...', whole_word=True)}
             </a>
         </td>
@@ -79,8 +80,8 @@
             
             ## WARNING!!!! This is performing a full query to get all responses and comments, these should be replaced with derived fields
             ## Ticket raised
-            <br>${ungettext("%d response", "%d responses", content['num_responses']) % content['num_responses']}
-            <br>${ungettext("%d comment" , "%d comments" , content['num_comments' ]) % content['num_comments' ]}
+            <br>${ungettext("%s response", "%s responses", content['num_responses']) % content['num_responses']}
+            <br>${ungettext("%s comment" , "%s comments" , content['num_comments' ]) % content['num_comments' ]}
         </td>
         
         ##---------------------------

@@ -80,6 +80,7 @@ class Member(Base):
             'name'              : None ,
             'username'          : None ,
             'avatar_url'        : None ,
+            'type'              : lambda member: member.__type__ ,
         },
     })
     
@@ -91,8 +92,9 @@ class Member(Base):
             'webpage'           : None ,
             'utc_offset'        : None ,
             'join_date'         : None ,
-            'followers'         : lambda member: member.followers ,
-            'following'         : lambda member: member.following ,
+            'followers'         : lambda member: [m.to_dict('list') for m in member.followers] ,
+            'following'         : lambda member: [m.to_dict('list') for m in member.following] ,
+            'messages_public'   : lambda member: [m.to_dict('list') for m in member.messages_public[:5]] ,
     })
     
     __to_dict__.update({
@@ -180,6 +182,16 @@ class User(Member):
     email            = Column(Unicode(250), nullable=True)
     email_unverifyed = Column(Unicode(250), nullable=True)
 
+    __to_dict__ = Member.__to_dict__.copy()
+    _extra_user_fields = {
+        'location'         : lambda content: content.location_string ,
+        'location_updated' : None ,
+    }
+    __to_dict__['list'   ].update(_extra_user_fields)
+    __to_dict__['single' ].update(_extra_user_fields)
+    __to_dict__['actions'].update(_extra_user_fields)
+
+
     def __unicode__(self):
         return self.name + " ("+self.username+") (User)"
 
@@ -207,6 +219,14 @@ class User(Member):
         hash = hashlib.md5(self.email.lower()).hexdigest()
         args = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
         return "http://www.gravatar.com/avatar/%s?%s" % (hash, args)
+
+    @property
+    def location_string(self):
+        if self.location:
+            from civicboom.model.meta import Session
+            return '%s %s' % (self.location.coords(Session)[1], self.location.coords(Session)[0])
+        return None
+        # AllanC Note: duplicated for Content location ... could we have location_string in a common place?
 
 
 class Group(Member):

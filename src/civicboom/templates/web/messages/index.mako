@@ -23,7 +23,7 @@
 from civicboom.controllers.messages import MessagesController
 %>
 <div id="message_table">
-${h.get_frag(MessagesController().index)}
+${h.call_action(MessagesController().index)}
 </div>
 <script>
 function refresh_messages() {

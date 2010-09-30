@@ -798,6 +798,11 @@ CREATE TRIGGER update_content
         Session.commit()
 
         ###############################################################
+        
+        u1.follow(u2)
+        u2.follow(u1)
+
+        ###############################################################
         log.debug("Content")
 
         ca = ArticleContent()

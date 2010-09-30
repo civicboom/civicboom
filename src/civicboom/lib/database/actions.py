@@ -46,7 +46,7 @@ def follow(follower, followed, delay_commit=False):
     
     follower.following.append(followed)
         
-    followed.send_message(messages.followed_by(reporter=follower), delay_commit=True)
+    #followed.send_message(messages.followed_by(reporter=follower), delay_commit=True)
     
     if not delay_commit:
         Session.commit()

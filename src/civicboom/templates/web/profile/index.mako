@@ -9,6 +9,7 @@
 ## Left Col
 ##------------------------------------------------------------------------------
 
+
 <%def name="col_left()">
 	<style>
 	.avatar     {width: 100%; text-align: center;}
@@ -27,33 +28,31 @@
 		##<img src="${c.viewing_user.avatar_url}">
 		##<br>${c.viewing_user.name}
 		##<br>(${c.viewing_user.username})
-        ${member_includes.avatar( , show_name=True)}
+        ${member_includes.avatar(d['member'] , show_name=True)}
 	</div>
 
 
 	<h2>${_("Following")}</h2>
-
         <div id="following">
-        ${h.get_frag(MemberController().index, list='following')}
-        </div>
+        ##${h.get_frag(MemberController().index, list='following')}
         
-        ##% if c.viewing_user.following:
-        ##    ${member_includes.member_list(c.viewing_user.following, show_avatar=True, class_="avatar_thumbnail_list")}
-        ##% else:
-        ##    <span class="message_empty">Not following anyone</span>
-        ##% endif
+        % if d['member']['following']:
+            ${member_includes.member_list(d['member']['following'], show_avatar=True, class_="avatar_thumbnail_list")}
+        % else:
+            <span class="message_empty">Not following anyone</span>
+        % endif
+        </div>
 
 	<h2>${_("Followers")}</h2>
-    
         <div id="followers">
-        ${h.get_frag(MemberController().index, list='followers')}
-        </div>
+        ##${h.get_frag(MemberController().index, list='followers')}
         
-        ##% if c.viewing_user.followers:
-        ##    ${member_includes.member_list(c.viewing_user.followers, show_avatar=True, class_="avatar_thumbnail_list")}
-        ##% else:
-        ##    <span class="message_empty">No followers</span>
-        ##% endif
+        % if d['member']['followers']:
+            ${member_includes.member_list(d['member']['followers'], show_avatar=True, class_="avatar_thumbnail_list")}
+        % else:
+            <span class="message_empty">No followers</span>
+        % endif
+        </div>
 
 	<h2>${_("Tools")}</h2>
 	    <a href="${url(controller='profile', action='index')}">My Profile</a>
@@ -68,13 +67,14 @@
 ##------------------------------------------------------------------------------
 ## Right Col
 ##------------------------------------------------------------------------------
+
 <%def name="col_right()">
 	<h2>${_("Notifications")}</h2>
-	% if c.viewing_user.messages_notification:
-		% for msg in c.viewing_user.messages_notification:
+	% if 'notifications' in d['messages']:
+		% for message in d['messages']['notifications']:
 			<div class="notification">
-				${h.secure_link(url('message', id=msg.id), "X", [("_method", "DELETE"), ])}
-				${msg.subject|n}
+				${h.secure_link(url('message', id=message['id']), "X", [("_method", "DELETE"), ])}
+				${message['subject']|n}
 			</div>
 		% endfor
 	% else:
@@ -82,11 +82,11 @@
 	% endif
 
 	<h2>${_("Recent Messages")}</h2>
-	% if c.viewing_user.messages_to[0:5]:
-		% for msg in c.viewing_user.messages_to[0:5]:
+	% if 'messages_to' in d['messages']:
+		% for message in d['messages']['to']:
 			<div class="message_short">
-				<a class="subject" href="${url('message', id=msg.id)}">${msg.subject}</a>
-				<span class="source">${str(msg.source)}</span>
+				<a class="subject" href="${url('message', id=messgae['id'])}">${message['subject']}</a>
+				<span class="source">${str(message['source'])}</span>
 			</div>
 		% endfor
 		<a class="read_more" href="${url('messages')}">View All Messages &rarr;</a>
@@ -99,11 +99,12 @@
 # we need to pass the session to GeoAlchemy functions
 from civicboom.model.meta import Session
 %>
-	% if c.viewing_user.location:
-	<p>${loc.minimap(
+	% if d['member']['location']:
+    <p>
+	${loc.minimap(
 		width="100%", height="200px",
-		lon=c.viewing_user.location.coords(Session)[0],
-		lat=c.viewing_user.location.coords(Session)[1]
+		lon=d['member']['location'].split[0],
+		lat=d['member']['location'].split[1]
 	)}
 	% else:
 		<span class="message_empty">No location specified</span>
@@ -116,6 +117,7 @@ from civicboom.model.meta import Session
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
+
 
 
 <%doc>
@@ -131,7 +133,7 @@ from civicboom.model.meta import Session
     % for content_type in ["draft", "article", "assignment", "syndicate"]:
         <h2>${content_type}</h2>
         <%
-            content_list = [content for content in c.viewing_user.content if content.__type__==content_type]
+            content_list = [content for content in d['content'] if content['type']==content_type]
         %>
         % if len(content_list)>0:
             ${content_includes.content_list(content_list, actions=True)}
@@ -139,5 +141,5 @@ from civicboom.model.meta import Session
             <span class="message_empty">No ${content_type}</span>
         % endif
     % endfor
-        
+    
 </%def>

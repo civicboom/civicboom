@@ -6,6 +6,15 @@ import json
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
+
+index_lists = {
+    'to'          : lambda member: member.messages_to ,
+    'from'        : lambda member: member.messages_from ,
+    'public'      : lambda member: member.messages_public ,    
+    'notification': lambda member: member.messages_notification ,
+}
+
+
 class MessagesController(BaseController):
     """REST Controller styled on the Atom Publishing Protocol"""
     # To properly map this controller, ensure your config/routing.py file has
@@ -15,23 +24,30 @@ class MessagesController(BaseController):
 
     @auto_format_output()
     @authorize(is_valid_user)
-    def index(self, format='html'):
+    def index(self, list=None):
         """GET /messages: All items in the collection."""
         # url('messages')
-        c.viewing_user = c.logged_in_user
-        if request.GET.get("type") == "notifications":
-            source = c.viewing_user.messages_notification
-        else:
-            source = c.viewing_user.messages_to
-        return action_ok(
-            template="messages/index",
-            data = {"messages":[{
-                "id": m.id,
-                "source": str(m.source),
-                "timestamp": str(m.timestamp),
-                "subject": m.subject,
-            } for m in c.viewing_user.messages_to]}
-        )
+        
+        # AllanC - this feels duplicated from the member controler - humm ... need to think about a sensible stucture
+        message_list_name = request.params.get('list', list)
+        if message_list_name not in index_lists: return action_error(_('list type %s not supported') % message_list_name)
+        messages = index_lists[message_list_name](c.logged_in_user)
+        messages = [message.to_dict('default_list') for message in messages]
+        
+        return {'data': {'list': messages}, 'template':"messages/index"}
+        
+        #c.viewing_user = c.logged_in_user
+        #if request.GET.get("type") == "notifications":
+        #    source = c.viewing_user.messages_notification
+        #else:
+        #    source = c.viewing_user.messages_to
+        #[{
+        #        "id": m.id,
+        #        "source": str(m.source),
+        #        "timestamp": str(m.timestamp),
+        #        "subject": m.subject,
+        #    } for m in c.viewing_user.messages_to]
+            
 
 
     @auto_format_output()
