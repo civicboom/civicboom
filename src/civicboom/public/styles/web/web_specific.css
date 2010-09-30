@@ -57,8 +57,13 @@ HEADER #login {
 	*/
 }
 
-HEADER #search {float: right; clear: right;}
-HEADER #search FORM {padding: 32px;}
+HEADER #search {
+	float: right;
+	clear: right;
+}
+HEADER #search FORM {
+	padding: 32px;
+}
 
 /*
  * the bulk of the page in the middle
