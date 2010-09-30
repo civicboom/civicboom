@@ -39,9 +39,12 @@ class MobileController(BaseController):
         password = request.POST.get("password")
         user = get_user_and_check_password(username, password)
         if c.logged_in_user or user:
+            session_set('user_id' , user.id      ) # Set server session variable to user.id
+            session_set('username', user.username) # Set server session username so in debug email can identify user
+            response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))
             return action_ok("logged in ok", {"auth_token": authentication_token()})
         else:
-            return action_error("unauthorised", code=403)
+            return action_error(_("not logged in"), code=403)
 
 
     #-----------------------------------------------------------------------------
