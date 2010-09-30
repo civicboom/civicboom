@@ -60,9 +60,9 @@ class MobileController(BaseController):
             # HTML format = really old; the only HTML output we want to support
             # is the "you need to upgrade" bit; everything else in the controller
             # can break compatability
-            return "1.14"
+            return "1.13"
         else:
-            return action_ok(data={"version": "1.14"})
+            return action_ok(data={"version": "1.13"})
 
 
     #-----------------------------------------------------------------------------
