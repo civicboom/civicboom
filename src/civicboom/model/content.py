@@ -107,7 +107,7 @@ class Content(Base):
             'content_short': None ,
             'creator'      : lambda content: content.creator.to_dict('list') ,
             'thumbnail_url': None ,
-            'creation_date': None ,
+            'creation_date': lambda content: str(content.creation_date),
             'location'     : lambda content: content.location_string ,
             'num_responses': None ,
             'num_comments' : None ,
@@ -348,8 +348,8 @@ class AssignmentContent(UserVisibleContent):
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_assignment_fields = {
-            'due_date'              : None ,
-            'event_date'            : None ,
+            'due_date'              : lambda content: str(content.due_date),
+            'event_date'            : lambda content: str(content.event_date),
             'closed'                : None ,
     }
     __to_dict__['list'  ].update(_extra_assignment_fields)
