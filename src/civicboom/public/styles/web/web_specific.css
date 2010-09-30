@@ -42,25 +42,23 @@ NAV A {
  * the header, with logo and search box
  */
 HEADER {clear: both;}
-HEADER IMG {padding: 32px;}
-HEADER FORM {padding: 32px;}
-HEADER H1 SPAN {display: none;}
-HEADER UL {
+
+HEADER #logo IMG {padding: 32px;}
+HEADER #logo SPAN {display: none;}
+
+HEADER #login {
 	float: right;
-	padding-left: 32px;
-	padding-right: 32px;
-}
-HEADER UL LI {
+	margin-right: 32px;
+	width: 68px;
+	/*
 	background: url("/styles/web/userbarlogout.png");
 	background-position: 100% 100%;
-	width: 68px;
 	text-align: center;
-	float: left;
+	*/
 }
-HEADER DIV#search {
-	float: right;
-	clear: right;
-}
+
+HEADER #search {float: right; clear: right;}
+HEADER #search FORM {padding: 32px;}
 
 /*
  * the bulk of the page in the middle

@@ -1,10 +1,10 @@
-<ul class="right">
+<div id="login">
 % if not c.logged_in_user:
-	<li><a href="${url(controller='account', action='signin')}"><img src="/styles/web/login.png" alt="${_("Log in")}"></a></li>
+	<a href="${url(controller='account', action='signin')}"><img src="/styles/web/login.png" alt="${_("Log in")}"></a>
 % else:
-	<li>${h.secure_link(url(controller='account', action='signout'), _("-"))}</li>
+	${h.secure_link(url(controller='account', action='signout'), h.literal('<img src="/styles/web/login.png" alt="${_("Log in")}">'))}
 % endif
-</ul>
+</div>
 
 <div id="search">
 	<form action="${h.url(controller='search', action='content')}" method='GET'>
@@ -13,7 +13,7 @@
 	</form>
 </div>
 
-<h1>
+<h1 id="logo">
 	<a href='/'>
 		<img src='/styles/web/logo.png' alt='${_("_site_name")}'/>
 		<span>${_("_site_name")}</span>
