@@ -227,7 +227,7 @@ class Content(Base):
                 return thumbnail_url
 
         from civicboom.lib.helpers import wh_public
-        return wh_public("/images/default_thumbnail_%s.png" % self.__type__)
+        return wh_public("images/default_thumbnail_%s.png" % self.__type__)
     
     @property
     def content_short(self):
