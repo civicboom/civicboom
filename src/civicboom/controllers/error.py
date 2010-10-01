@@ -47,9 +47,9 @@ class ErrorController(BaseController): # pragma: no cover -- if this is covered,
         #    page = content
         #return page
         return action_error(
-            code     = code    ,
-            message  = content ,
-            template = 'error' ,
+            code     = int(code),
+            message  = content,
+            template = 'error',
         )
 
     def img(self, id):
