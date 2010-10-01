@@ -27,7 +27,12 @@ class ErrorController(BaseController): # pragma: no cover -- if this is covered,
     def document(self):
         """Render the error document"""
         resp    = request.environ.get('pylons.original_response')
-        content = literal(resp.body) or cgi.escape(request.GET.get('message', ''))
+        code    = cgi.escape(request.GET.get('code'   ,''))
+        content = cgi.escape(request.GET.get('message', ''))
+        if resp:
+            content = literal(resp.status)
+            code    = code or cgi.escape(str(resp.status_int))
+        #content = literal(resp.body) or cgi.escape(request.GET.get('message', ''))
         #page    = error_document_template % \
         #    dict(prefix  = request.environ.get('SCRIPT_NAME', ''),
         #         code    = cgi.escape(request.GET.get('code', str(resp.status_int))),
@@ -42,10 +47,10 @@ class ErrorController(BaseController): # pragma: no cover -- if this is covered,
         #    page = content
         #return page
         return {
-            'status'  :'error' ,
-            'code'    : cgi.escape(request.GET.get('code', str(resp.status_int))) ,
+            'status'  :'error'  ,
+            'code'    : code    ,
             'message' : content ,
-            'template': 'error'
+            'template': 'error' ,
         }
 
     def img(self, id):

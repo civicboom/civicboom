@@ -142,6 +142,10 @@ def overlay_status_message(master_message, new_message):
 
     
     master_message['data'].update(new_message.get('data') or {})
+    
+    # Pass though all keys that are not already in master
+    for key in [key for key in new_message.keys() if key not in master_message]:
+        master_message[key] = new_message[key]
 
     return master_message
 
@@ -176,7 +180,7 @@ def _find_template(result):
 
 def setup_format_processors():
     def format_json(result):
-        response.headers['Content-type'] = "application/json"
+        #response.headers['Content-type'] = "application/json" #AllanC - this breaks the error middleware when returning error codes like 403, long term this needs to be fixed
         return json.dumps(result)
         
     def format_xml(result):
@@ -196,6 +200,8 @@ def setup_format_processors():
 
     def format_html(result):
         overlay_status_message(c.result, result)
+        print "result"
+        print c.result
         return render_mako(_find_template(result), extra_vars={"d": c.result['data']} )
 
 
