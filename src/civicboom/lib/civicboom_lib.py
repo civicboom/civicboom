@@ -11,7 +11,7 @@ from civicboom.lib.database.get_cached import get_user
 
 from civicboom.lib.communication.email import send_email
 
-from civicboom.model                            import DraftContent, CommentContent, Media, Tag, FlaggedContent, UserLogin
+from civicboom.model                            import DraftContent, ArticleContent, CommentContent, Media, Tag, FlaggedContent, UserLogin
 from civicboom.lib.database.get_cached          import get_content, get_tag
 from civicboom.lib.database.actions             import del_content
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
@@ -294,6 +294,7 @@ def form_to_content(form, content):
     if not content:
         if   not form                          : content = DraftContent()
         elif form.get('form_type') == "comment": content = CommentContent()
+        elif form.get('form_type') == "article": content = ArticleContent()
         else                                   : content = DraftContent()
         content.creator = c.logged_in_user
         

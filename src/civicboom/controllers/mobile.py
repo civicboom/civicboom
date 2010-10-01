@@ -202,6 +202,24 @@ class MobileController(BaseController):
             fp.close()
             return action_ok("upload complete", data={"next": None}, code=201)
 
+    @_logged_in_mobile
+    @auto_format_output()
+    def media(self):
+        content = get_content(int(request.POST['content_id']))
+        if not content:
+            return action_error(_("The content does not exist"), code=404)
+        if content.editable_by(c.logged_in_user):
+            return action_error(_("You are not the owner of that content"), code=403)
+
+        m = Media()
+        m.load_from_file(
+            tmp_file=request.POST["file_data"].value,
+            original_name=reqest.POST["file_name"].value,
+            caption=None,
+            credit=c.logged_in_user.name
+        )
+        content.attachments.append(m)
+        Session.commit()
 
     #-----------------------------------------------------------------------------
     # Log mobile error

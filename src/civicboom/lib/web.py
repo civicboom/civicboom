@@ -201,8 +201,6 @@ def setup_format_processors():
 
     def format_html(result):
         overlay_status_message(c.result, result)
-        print "result"
-        print c.result
         return render_mako(_find_template(result), extra_vars={"d": c.result['data']} )
 
 
