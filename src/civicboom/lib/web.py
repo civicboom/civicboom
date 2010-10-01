@@ -90,7 +90,7 @@ def set_flash_message(new_message):
 
 
 def action_ok(message=None, data={}, code=200, template=None):
-    if message: assert isinstance(message, basestring)
+    assert not message or isinstance(message, basestring)
     assert isinstance(data, dict)
     assert isinstance(code, int)
     return {
@@ -101,8 +101,8 @@ def action_ok(message=None, data={}, code=200, template=None):
         "template": template,
     }
 
-def action_error(message=None, data={}, code=500):
-    if message: assert isinstance(message, basestring)
+def action_error(message=None, data={}, code=500, template=None):
+    assert not message or isinstance(message, basestring)
     assert isinstance(data, dict)
     assert isinstance(code, int)
     return {
@@ -110,6 +110,7 @@ def action_error(message=None, data={}, code=500):
         "message": message,
         "data"   : data,
         "code"   : code,
+        "template": template,
     }
 
 def overlay_status_message(master_message, new_message):
