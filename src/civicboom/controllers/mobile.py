@@ -208,15 +208,16 @@ class MobileController(BaseController):
     #-----------------------------------------------------------------------------
     # If the mobile app has an error that it is not expecting then it can notify the live server
     # This can then be logged and email sent etc
+    @auto_format_output()
     def error(self):
-        from civicboom.lib.communication.email import send_email
+        #from civicboom.lib.communication.email import send_email
         if not request.POST:
             if config['debug']:
-                return "mobile error test" # FIXME: render(prefix+'mobile_error_test.mako')
+                return action_ok("mobile error test") # FIXME: render(prefix+'mobile_error_test.mako')
             return action_error("form data required", code=401)
         if 'error_message' in request.POST:
-            send_email(config['email_to'], subject='Mobile Error', content_text=request.POST['error_message'])
+            #send_email(config['email_to'], subject='Mobile Error', content_text=request.POST['error_message'])
             #AllanC - Temp addition to get errors to the mobile developer
-            send_email("nert@poik.net"   , subject='Mobile Error', content_text=request.POST['error_message'])
+            #send_email("nert@poik.net"   , subject='Mobile Error', content_text=request.POST['error_message'])
             return action_ok("logged ok", code=201)
 
