@@ -142,18 +142,18 @@ class LocationFilter(Filter):
     def __sql__(self):
         return "ST_DWithin(content.location, 'SRID=4326;POINT(%d %d)', %d)" % (self.loc[0], self.loc[1], self.rad)
 
-class AuthorFilter(Filter):
-    def __init__(self, author):
-        self.author = author
+class AuthorIDFilter(Filter):
+    def __init__(self, author_id):
+        self.author_id = author_id
 
     def __unicode__(self):
-        return "Content.creator_id = "+self.author
+        return "Content.creator_id = "+self.author_id
 
     def __repr__(self):
-        return "AuthorFilter(" + repr(self.author) + ")"
+        return "AuthorFilter(" + repr(self.author_id) + ")"
 
     def __sql__(self):
-        return "content.creator_id = "+str(1)
+        return "content.creator_id = "+str(self.author_id)
 
 class TagFilter(Filter):
     def __init__(self, tag):

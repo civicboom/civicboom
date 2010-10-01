@@ -30,4 +30,15 @@ class ProfileController(BaseController):
         if not c.viewing_user:
             return action_error(_("User does not exist"), code=404)
             
-        return render("web/profile/view.mako")
+        results = {'data': {}}
+        results['data'].update({'member'  : call_action(MemberController().show   , format='python', id=c.viewing_user.id  )['data']})
+        results['data'].update({'content' : call_action(ContentsController().index, format='python'                        )['data']['list']})
+        results['data'].update({'messages': {
+            'notifications': call_action(MessagesController().index, format='python', list='notification')['data']['list'] ,
+            'to'           : call_action(MessagesController().index, format='python', list='to'          )['data']['list'] ,
+        }})
+        
+        
+        return results
+            
+        #return render("web/profile/view.mako")

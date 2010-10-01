@@ -99,12 +99,12 @@
 # we need to pass the session to GeoAlchemy functions
 from civicboom.model.meta import Session
 %>
-	% if d['member']['location']:
+	% if d['member']['location_home']:
     <p>
 	${loc.minimap(
 		width="100%", height="200px",
-		lon=d['member']['location'].split[0],
-		lat=d['member']['location'].split[1]
+		lon=d['member']['location_home'].split[0],
+		lat=d['member']['location_home'].split[1]
 	)}
 	% else:
 		<span class="message_empty">No location specified</span>

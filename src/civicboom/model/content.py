@@ -120,7 +120,7 @@ class Content(Base):
     __to_dict__['single'].update({
             'content'           : None ,
             'parent'            : lambda content: content.parent.to_dict('list') if content.parent else None ,
-            'creator'           : lambda content: content.creator.to_dict('actions') ,
+            'creator'           : lambda content: content.creator.to_dict('list') ,
             'attachments'       : lambda content: [   media.to_dict('list') for media    in content.attachments] ,
             'responses'         : lambda content: [response.to_dict('list') for response in content.responses  ] ,
             'comments'          : lambda content: [ comment.to_dict('list') for comment  in content.comments   ] ,
@@ -133,8 +133,11 @@ class Content(Base):
     __to_dict__.update({
         'actions': copy.deepcopy(__to_dict__['single'])
     })
+    def __to_dict_function_action_list__(content):
+        from pylons import tmpl_context as c
+        return content.action_list_for(c.logged_in_user)
     __to_dict__['actions'].update({
-            'actions': lambda content: content.action_list_for(None) , #c.logged_in_user
+            'actions': __to_dict_function_action_list__
     })
 
 

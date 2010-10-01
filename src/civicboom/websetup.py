@@ -261,9 +261,9 @@ CREATE TRIGGER update_rating
 CREATE OR REPLACE FUNCTION update_location_time() RETURNS TRIGGER AS $$
     BEGIN
         IF (
-                (NEW.location IS NULL     AND OLD.location IS NOT NULL) OR
-                (NEW.location IS NOT NULL AND OLD.location IS NULL    ) OR
-                (NOT (NEW.location ~= OLD.location))
+                (NEW.location_current IS NULL     AND OLD.location_current IS NOT NULL) OR
+                (NEW.location_current IS NOT NULL AND OLD.location_current IS NULL    ) OR
+                (NOT (NEW.location_current ~= OLD.location_current))
         ) THEN
             UPDATE member_user SET location_updated = now() WHERE id=NEW.id;
         END IF;

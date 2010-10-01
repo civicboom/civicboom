@@ -27,9 +27,11 @@
                 <br/>${member['name']} (${member['username']})
             % endif
         </a>
-        ## AllanC - TODO - FIXME - this is cheating! how are API users ment to have access to this!
+        ## AllanC -FIXME? - this is cheating! how are API users ment to have access to this!
+        ## AllanC - No need to fix API users can get a list of follower and perform this comparison themselfs
+        ##          If we did the checking for them that would take lots of querys and time and reducde the ability to cache generated member lists
         % if show_follow_button and c.logged_in_user and c.logged_in_user.username != member['username']:
-            % if 'following' in member and member['following']:
+            % if c.logged_in_user.is_following(member['username']):
             ${h.secure_link(url(controller='member', action='unfollow', id=member['username'], format='redirect'), _('Stop following'), css_class="button_small button_small_style_2")}
             % else:
             ${h.secure_link(url(controller='member', action='follow'  , id=member['username'], format='redirect'), _('Follow')        , css_class="button_small button_small_style_1")}			

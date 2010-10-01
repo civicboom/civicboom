@@ -8,6 +8,48 @@ from sqlalchemy           import or_
 log = logging.getLogger(__name__)
 tmpl_prefix = '/web/design09'
 
+def _get_search_filters():
+    def append_search_text(query, text):
+        query = query.filter(or_(Content.title.match(text), Content.content.match(text)))
+    
+    def append_search_location(query, location_text):
+        parts = location_text.split(",")
+        (lon, lat, radius) = (None, None, None)
+        if len(parts) == 2:
+            (lon, lat) = parts
+            radius = 10
+        elif len(parts) == 3:
+            (lon, lat, radius) = parts
+        zoom = 10 # FIXME: inverse of radius? see bug #50
+        if lon:
+            location = (lon, lat, zoom)
+            query = query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
+    
+    def append_search_type(query, type_text):
+        query = query.filter(Content.__type__==type_text)
+    
+    def append_search_author(query, author_text):
+        query = query.filter(or_(Content.creator_id==author_text, Content.creator.username==author_text))
+    
+    def append_search_response_to(query, article_id):
+        query = query.filter(Content.parent_id==int(article_id))
+        
+    def append_search_limit(query, limit):
+        query = query.limit(limit)
+    
+    search_filters = {
+        'query'      : append_search_text ,
+        'location'   : append_search_location ,
+        'type'       : append_search_type ,
+        'author'     : append_search_author ,
+        'response_to': append_search_response_to ,
+        'limit'      : append_search_limit ,
+    }
+    
+    return search_filters
+
+search_filters = _get_search_filters()
+
 
 class SearchController(BaseController):
     def index(self):
@@ -15,14 +57,21 @@ class SearchController(BaseController):
 
     @auto_format_output()
     def content(self, format="html"):
-        results = Session.query(Content)
-
+        results  = Session.query(Content)
+        #location = None
+        
+        for key in [key for key in search_filters.keys() if key in request.GET]:
+            search_filters[key](results, request.GET[key])
+        
+        return {'list': [content.to_dict('list') for content in results.all()]}
+        
+        """
         if "query" in request.GET:
             q = request.GET["query"]
             results = results.filter(or_(Content.title.match(q), Content.content.match(q)))
         else:
             q = None
-
+        
         if "location" in request.GET:
             location = request.GET["location"]
             parts = location.split(",")
@@ -38,25 +87,28 @@ class SearchController(BaseController):
                 results = results.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
         else:
             location = None
-
+        
         if "type" in request.GET:
             t = request.GET["type"]
             results = results.filter(Content.__type__==t)
-
+        
         if "author" in request.GET:
             u = get_user(request.GET["author"])
             results = results.filter(Content.creator_id==u.id)
-
+        
         if "response_to" in request.GET:
             cid = int(request.GET["response_to"])
             results = results.filter(Content.parent_id==cid)
-
+        
         results = results[0:20]
-
+        
+        
         if format == "xml":
             return render("/rss/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
         else:
             return render(tmpl_prefix+"/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
+        """
+        
 
     def content2(self, format="html"):
         results = Session.query(Content)
@@ -85,6 +137,9 @@ class SearchController(BaseController):
 
     @auto_format_output()
     def location(self, format="html"):
+        """
+        Used in location autocomplete
+        """
         if "term" in request.GET:
             q = request.GET["term"]
             connection = get_engine().connect()

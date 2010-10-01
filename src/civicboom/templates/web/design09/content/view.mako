@@ -374,7 +374,8 @@ from civicboom.model import CommentContent
 <%def name="share_links()">
 
     % if 'editable' in d['content']['actions']:
-        ${janrain_aggregate_button()}
+        ##AllanC - temp dissabled until we can create a janrain object based on API output rather than python SQLAlchemy objects
+        ##${janrain_aggregate_button()}
     %endif
     
     

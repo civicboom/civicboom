@@ -43,6 +43,7 @@ class Member(Base):
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(Unicode(250),   nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
+    location_home   = Golumn(Point(2),       nullable=True,  doc="Current location, for geo-targeted assignments. Nullable for privacy")
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
@@ -81,6 +82,7 @@ class Member(Base):
             'username'          : None ,
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
+            'location_home'     : lambda content: content.location_home_string ,
         },
     })
     
@@ -167,6 +169,14 @@ class Member(Base):
         if self.avatar:
             return self.avatar
         return "/images/default_avatar.png"
+
+    @property
+    def location_home_string(self):
+        if self.location_home:
+            from civicboom.model.meta import Session
+            return '%s %s' % (self.location_home.coords(Session)[1], self.location_home.coords(Session)[0])
+        return None
+        # AllanC Note: duplicated for Content location ... could we have location_string in a common place?
     
 
 
@@ -176,7 +186,7 @@ class User(Member):
     id               = Column(Integer(),  ForeignKey('member.id'), primary_key=True)
     last_check       = Column(DateTime(), nullable=False,   default=func.now(), doc="The last time the user checked their messages. You probably want to use the new_messages derived boolean instead.")
     new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
-    location         = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
+    location_current = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
     location_updated = Column(DateTime(), nullable=False,   default=func.now())
     #dob              = Column(DateTime(), nullable=True) # Needs to be stored in user settings but not nesiserally in the main db record
     email            = Column(Unicode(250), nullable=True)
@@ -184,7 +194,7 @@ class User(Member):
 
     __to_dict__ = Member.__to_dict__.copy()
     _extra_user_fields = {
-        'location'         : lambda content: content.location_string ,
+        'location_current' : lambda member: 'not implemented yet' ,
         'location_updated' : None ,
     }
     __to_dict__['list'   ].update(_extra_user_fields)
@@ -220,13 +230,6 @@ class User(Member):
         args = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
         return "http://www.gravatar.com/avatar/%s?%s" % (hash, args)
 
-    @property
-    def location_string(self):
-        if self.location:
-            from civicboom.model.meta import Session
-            return '%s %s' % (self.location.coords(Session)[1], self.location.coords(Session)[0])
-        return None
-        # AllanC Note: duplicated for Content location ... could we have location_string in a common place?
 
 
 class Group(Member):
@@ -282,3 +285,4 @@ class MemberSetting(Base):
 #    OAuth token?
 
 GeometryDDL(User.__table__)
+GeometryDDL(Member.__table__)
