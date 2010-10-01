@@ -107,7 +107,7 @@ class Content(Base):
             'content_short': None ,
             'creator'      : lambda content: content.creator.to_dict('list') ,
             'thumbnail_url': None ,
-            'creation_date': lambda content: str(content.creation_date),
+            'creation_date': None ,
             'location'     : lambda content: content.location_string ,
             'num_responses': None ,
             'num_comments' : None ,
@@ -225,8 +225,9 @@ class Content(Base):
             thumbnail_url = media.thumbnail_url
             if thumbnail_url and thumbnail_url!="":
                 return thumbnail_url
-        
-        return "/images/default_thumbnail_%s.png" % self.__type__
+
+        from civicboom.lib.helpers import wh_public
+        return wh_public("/images/default_thumbnail_%s.png" % self.__type__)
     
     @property
     def content_short(self):
@@ -348,8 +349,8 @@ class AssignmentContent(UserVisibleContent):
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_assignment_fields = {
-            'due_date'              : lambda content: str(content.due_date),
-            'event_date'            : lambda content: str(content.event_date),
+            'due_date'              : None ,
+            'event_date'            : None ,
             'closed'                : None ,
     }
     __to_dict__['list'  ].update(_extra_assignment_fields)
