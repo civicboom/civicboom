@@ -4,13 +4,17 @@ from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_
+from sqlalchemy.orm       import join
 
 log = logging.getLogger(__name__)
 tmpl_prefix = '/web/design09'
 
+#-------------------------------------------------------------------------------
+# Search Filters
+#-------------------------------------------------------------------------------
 def _get_search_filters():
     def append_search_text(query, text):
-        query = query.filter(or_(Content.title.match(text), Content.content.match(text)))
+        return query.filter(or_(Content.title.match(text), Content.content.match(text)))
     
     def append_search_location(query, location_text):
         parts = location_text.split(",")
@@ -23,19 +27,23 @@ def _get_search_filters():
         zoom = 10 # FIXME: inverse of radius? see bug #50
         if lon:
             location = (lon, lat, zoom)
-            query = query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
+            return query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
     
     def append_search_type(query, type_text):
-        query = query.filter(Content.__type__==type_text)
+        return query.filter(Content.__type__==type_text)
     
     def append_search_author(query, author_text):
-        query = query.filter(or_(Content.creator_id==author_text, Content.creator.username==author_text))
+        try:
+            return query.filter(Content.creator_id==int(author_text))
+        except:
+            return query.select_from(join(Content, Member, Content.creator)).filter(Member.username==author_text)
     
     def append_search_response_to(query, article_id):
         query = query.filter(Content.parent_id==int(article_id))
         
-    def append_search_limit(query, limit):
-        query = query.limit(limit)
+    #def append_search_limit(query, limit):
+    #    print "limit"
+    #    return query.limit(limit)
     
     search_filters = {
         'query'      : append_search_text ,
@@ -43,7 +51,7 @@ def _get_search_filters():
         'type'       : append_search_type ,
         'author'     : append_search_author ,
         'response_to': append_search_response_to ,
-        'limit'      : append_search_limit ,
+    #    'limit'      : append_search_limit ,
     }
     
     return search_filters
@@ -51,17 +59,27 @@ def _get_search_filters():
 search_filters = _get_search_filters()
 
 
+#-------------------------------------------------------------------------------
+# Search Controller
+#-------------------------------------------------------------------------------
+
 class SearchController(BaseController):
+    
     def index(self):
         return render(tmpl_prefix+"/search/index.mako")
 
     @auto_format_output()
-    def content(self, format="html"):
+    def content(self, **kwargs):
         results  = Session.query(Content)
         #location = None
         
-        for key in [key for key in search_filters.keys() if key in request.GET]:
-            search_filters[key](results, request.GET[key])
+        kwargs.update(request.GET)
+        if 'limit' not in kwargs:
+            kwargs['limit'] = 20
+        
+        for key in [key for key in search_filters.keys() if key in kwargs]:
+            results = search_filters[key](results, kwargs[key])
+        results = results.limit(kwargs['limit'])
         
         return {'list': [content.to_dict('list') for content in results.all()]}
         
