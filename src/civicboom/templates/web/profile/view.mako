@@ -79,12 +79,13 @@
 ## Other Components
 ##------------------------------------------------------------------------------
 
-<%def name="content_list(content_list, content_types)">
+<%def name="content_list(contents, content_types)">
     % for content_type in content_types:
-        <h2>${content_type}</h2>
         <%
-            content_list = [content for content in content_list if content['type']==content_type]
+            content_list = [content for content in contents if content['type']==content_type]
         %>
+        <h2>${content_type} ${len(content_list)}</h2>
+
         % if len(content_list)>0:
             ${content_includes.content_list(content_list, actions=True)}
         % else:
