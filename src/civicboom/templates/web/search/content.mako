@@ -1,6 +1,6 @@
 <%inherit file="/web/html_base.mako"/>
-<%namespace name="cl" file="../includes/content_list.mako"/>
-<%namespace name="loc" file="../includes/location.mako"/>
+<%namespace name="cl" file="/web/design09/includes/content_list.mako"/>
+##<%namespace name="loc" file="../includes/location.mako"/>
 
 ##------------------------------------------------------------------------------
 ## Title - Override
@@ -34,7 +34,8 @@ IMG.avatar {
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	% if len(list(results)) > 0:
+	% if len(d['list']) > 0:
+    <%doc>
 		<br><a href="${url.current(
 			format='xml',
 			query=request.params.get('query'),
@@ -51,8 +52,8 @@ IMG.avatar {
 				location=request.params.get('location')
 			)
 		)}">View results on map</a>
-
-		<p>${cl.content_list(results)}
+    </%doc>
+		<p>${cl.content_list(d['list'])}
 	% else:
 		'${term}' did not match any articles
 	% endif

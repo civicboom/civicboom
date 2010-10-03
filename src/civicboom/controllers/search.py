@@ -1,4 +1,3 @@
-
 from civicboom.lib.base   import *
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
@@ -72,7 +71,7 @@ class SearchController(BaseController):
     def content(self, **kwargs):
         kwargs.update(request.GET) # Update the kwargs with request params from query string
         
-        results  = Session.query(Content).select_from(join(Content, Member, Content.creator)).filter(and_(Content.__type__!='comment', Content.__type__!='draft')).order_by(Content.id.desc()) # Setup base content search query
+        results  = Session.query(Content).select_from(join(Content, Member, Content.creator)).filter(and_(Content.__type__!='comment', Content.__type__!='draft')).filter(Content.status=='show').order_by(Content.id.desc()) # Setup base content search query
         
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20

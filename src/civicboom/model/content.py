@@ -106,6 +106,7 @@ class Content(Base):
             'title'        : None ,
             'content_short': None ,
             'creator'      : lambda content: content.creator.to_dict('list') ,
+            'url'          : None ,
             'thumbnail_url': None ,
             'creation_date': None ,
             'location'     : lambda content: content.location_string ,
@@ -230,6 +231,11 @@ class Content(Base):
                 return thumbnail_url
         
         return "/images/default_thumbnail_%s.png" % self.__type__
+
+    @property
+    def url(self):
+        from pylons import url, app_globals
+        return url('content', host=app_globals.site_host, id=self.id)
     
     @property
     def content_short(self):

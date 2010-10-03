@@ -154,7 +154,7 @@ def overlay_status_message(master_message, new_message):
 # Auto Format Output
 #-------------------------------------------------------------------------------
 
-def _find_template(result):
+def _find_template(result, type='html'):
     if result.get('status', 'ok') != 'ok':       #If the result status is not OK then use the template for that status
         result['template'] = result['status']
     
@@ -163,18 +163,20 @@ def _find_template(result):
     else:
         template_part = '%s/%s' % (c.controller, c.action)
 
-    web_template    = "web/%s.mako"    % template_part
-    mobile_template = "mobile/%s.mako" % template_part
-
     def template_exisits(template):
         return os.path.exists(os.path.join(config['path.templates'], template))
 
-    if request.environ['is_mobile'] and template_exisits(mobile_template):
-        template = mobile_template
-    elif template_exisits(web_template):
-        template = web_template
+    if type=='html':
+        template = "web/%s.mako"    % template_part
+        
+        mobile_template = "mobile/%s.mako" % template_part    
+        if request.environ['is_mobile'] and template_exisits(mobile_template):
+            template = mobile_template
     else:
-        log.warn("Can't find template for part "+template_part)
+        template    = "%s/%s.mako"    % (type, template_part)
+
+    if not template_exisits(template):
+        log.warn("Can't find template "+template)
         template = None
 
     return template
@@ -182,6 +184,11 @@ def _find_template(result):
 
 
 def setup_format_processors():
+    
+    def render_template(result, type):
+        overlay_status_message(c.result, result)
+        return render_mako(_find_template(result, type), extra_vars={"d": c.result['data']} )
+        
     def format_json(result):
         #response.headers['Content-type'] = "application/json" #AllanC - this breaks the error middleware when returning error codes like 403, long term this needs to be fixed
         return json.dumps(result)
@@ -191,19 +198,15 @@ def setup_format_processors():
         return dictToXMLString(result)
         
     def format_rss(result):
-        response.headers['Content-type'] = "application/rss+xml"
-        return 'implement RSS' # TODO: ???
+        #response.headers['Content-type'] = "application/rss+xml"
+        response.headers['Content-type'] = "text/xml"
+        return render_template(result, 'rss')
     
     def format_frag(result):
-        overlay_status_message(c.result, result)                        # Set standard template data dict for template to use
-        if 'template' not in result:
-            result['template'] = "%s/%s" % (c.controller, c.action)
-        web_template = "frag/%s.mako" % result['template']              # Find template filename        
-        return render_mako(web_template, extra_vars={"d": c.result['data']} )
-
+        return render_template(result, 'frag')
+        
     def format_html(result):
-        overlay_status_message(c.result, result)
-        return render_mako(_find_template(result), extra_vars={"d": c.result['data']} )
+        return render_template(result, 'html')
 
     def format_redirect(result):
         """
