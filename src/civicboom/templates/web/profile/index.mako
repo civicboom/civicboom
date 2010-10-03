@@ -1,5 +1,6 @@
 <%inherit file="/web/layout_3cols.mako"/>
 
+<%namespace name="public_profile"   file="view.mako"     />
 <%namespace name="loc"              file="/web/design09/includes/location.mako"     />
 <%namespace name="member_includes"  file="/web/design09/includes/member.mako"       />
 <%namespace name="content_includes" file="/web/design09/includes/content_list.mako" />
@@ -20,39 +21,7 @@
 	.notification FORM {float: right;}
 	</style>
 
-    <%
-    from civicboom.controllers.member import MemberController
-    %>
-
-	<div class="avatar">
-		##<img src="${c.viewing_user.avatar_url}">
-		##<br>${c.viewing_user.name}
-		##<br>(${c.viewing_user.username})
-        ${member_includes.avatar(d['member'] , show_name=True)}
-	</div>
-
-
-	<h2>${_("Following")}</h2>
-        <div id="following">
-        ##${h.get_frag(MemberController().index, list='following')}
-        
-        % if d['member']['following']:
-            ${member_includes.member_list(d['member']['following'], show_avatar=True, class_="avatar_thumbnail_list")}
-        % else:
-            <span class="message_empty">Not following anyone</span>
-        % endif
-        </div>
-
-	<h2>${_("Followers")}</h2>
-        <div id="followers">
-        ##${h.get_frag(MemberController().index, list='followers')}
-        
-        % if d['member']['followers']:
-            ${member_includes.member_list(d['member']['followers'], show_avatar=True, class_="avatar_thumbnail_list")}
-        % else:
-            <span class="message_empty">No followers</span>
-        % endif
-        </div>
+    ${public_profile.col_left()}
 
 	<h2>${_("Tools")}</h2>
 	    <a href="${url(controller='profile', action='index')}">My Profile</a>
@@ -130,16 +99,7 @@ from civicboom.model.meta import Session
     ## reminder that new relationships have been setup as -
     ##   content_assignments_active and content_assignments_previous
 
-    % for content_type in ["draft", "article", "assignment", "syndicate"]:
-        <h2>${content_type}</h2>
-        <%
-            content_list = [content for content in d['content'] if content['type']==content_type]
-        %>
-        % if len(content_list)>0:
-            ${content_includes.content_list(content_list, actions=True)}
-        % else:
-            <span class="message_empty">No ${content_type}</span>
-        % endif
-    % endfor
+    ${public_profile.content_list(d['content'], ["draft", "article", "assignment", "syndicate"])}
+
     
 </%def>

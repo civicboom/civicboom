@@ -3,23 +3,55 @@
 <%namespace name="member_includes"  file="/web/design09/includes/member.mako"  />
 <%namespace name="content_includes" file="/web/design09/includes/content_list.mako"/>
 
+##------------------------------------------------------------------------------
+## RSS
+##------------------------------------------------------------------------------
+
 <%def name="rss()">${self.rss_header_link()}</%def>
-<%def name="rss_url()">${url(controller='search', action='content', author=c.viewing_user.username, format='xml')}</%def>
-<%def name="rss_title()">Articles by ${c.viewing_user.name}</%def>
+<%def name="rss_url()">${url(controller='search', action='content', creator=d['member']['username'], format='rss')}</%def>
+<%def name="rss_title()">Articles by ${d['member']['username']}</%def>
+
+
+##------------------------------------------------------------------------------
+## Left Col
+##------------------------------------------------------------------------------
 
 <%def name="col_left()">
-    ${member_includes.avatar(c.viewing_user, show_name=True, show_follow_button=True)}
+	<div class="avatar">
+        ${member_includes.avatar(d['member'] , show_name=True, show_follow_button=True)}
+	</div>
 
-    <h2>Following</h2>
-        ${member_includes.member_list(c.viewing_user.following, show_avatar=True, class_="avatar_thumbnail_list")}
-  
-  
-    <h2>Followers</h2>
-        ${member_includes.member_list(c.viewing_user.followers, show_avatar=True, class_="avatar_thumbnail_list")}
+	<h2>${_("Following")}</h2>
+        <div id="following">
+        % if d['member']['following']:
+            ${member_includes.member_list(d['member']['following'], show_avatar=True, class_="avatar_thumbnail_list")}
+        % else:
+            <span class="message_empty">Not following anyone</span>
+        % endif
+        </div>
+
+	<h2>${_("Followers")}</h2>
+        <div id="followers">
+        % if d['member']['followers']:
+            ${member_includes.member_list(d['member']['followers'], show_avatar=True, class_="avatar_thumbnail_list")}
+        % else:
+            <span class="message_empty">No followers</span>
+        % endif
+        </div>
+
 </%def>
+
+##------------------------------------------------------------------------------
+## Right Col
+##------------------------------------------------------------------------------
+
 
 <%def name="col_right()">
 </%def>
+
+##------------------------------------------------------------------------------
+## Body
+##------------------------------------------------------------------------------
 
 <%def name="body()">
 
@@ -31,16 +63,26 @@
 		<input type="submit" value="Send">
 	${h.end_form()}
 
-    % for content_type in ["article", "assignment"]:
+
+    ${content_list(d['content'], ["article", "assignment"])}
+    
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Other Components
+##------------------------------------------------------------------------------
+
+<%def name="content_list(content_list, content_types)">
+    % for content_type in content_types:
         <h2>${content_type}</h2>
         <%
-            content_list = [content for content in c.viewing_user.content if content.__type__==content_type]
+            content_list = [content for content in content_list if content['type']==content_type]
         %>
         % if len(content_list)>0:
-            ${content_includes.content_list(content_list)}
+            ${content_includes.content_list(content_list, actions=True)}
         % else:
             <span class="message_empty">No ${content_type}</span>
         % endif
     % endfor
-
 </%def>

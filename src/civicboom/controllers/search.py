@@ -32,11 +32,11 @@ def _get_search_filters():
     def append_search_type(query, type_text):
         return query.filter(Content.__type__==type_text)
     
-    def append_search_author(query, author_text):
+    def append_search_creator(query, creator_text):
         try:
-            return query.filter(Content.creator_id==int(author_text))
+            return query.filter(Content.creator_id==int(creator_text))
         except:
-            return query.select_from(join(Content, Member, Content.creator)).filter(Member.username==author_text)
+            return query.select_from(join(Content, Member, Content.creator)).filter(Member.username==creator_text)
     
     def append_search_response_to(query, article_id):
         query = query.filter(Content.parent_id==int(article_id))
@@ -49,7 +49,7 @@ def _get_search_filters():
         'query'      : append_search_text ,
         'location'   : append_search_location ,
         'type'       : append_search_type ,
-        'author'     : append_search_author ,
+        'creator'    : append_search_creator ,
         'response_to': append_search_response_to ,
     #    'limit'      : append_search_limit ,
     }
@@ -70,18 +70,20 @@ class SearchController(BaseController):
 
     @auto_format_output()
     def content(self, **kwargs):
-        results  = Session.query(Content)
-        #location = None
+        kwargs.update(request.GET) # Update the kwargs with request params from query string
         
-        kwargs.update(request.GET)
-        if 'limit' not in kwargs:
+        results  = Session.query(Content).filter(Content.__type__!='comment').order_by(Content.id.desc()) # Setup base content search query
+        
+        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20
+        if 'offset' not in kwargs:
+            kwargs['offset'] = 0
         
-        for key in [key for key in search_filters.keys() if key in kwargs]:
+        for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
-        results = results.limit(kwargs['limit'])
+        results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
-        return {'list': [content.to_dict('list') for content in results.all()]}
+        return {'data': {'list': [content.to_dict('list') for content in results.all()]}} # return dictionaty of content to be formatted
         
         """
         if "query" in request.GET:
