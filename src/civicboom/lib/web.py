@@ -155,6 +155,9 @@ def overlay_status_message(master_message, new_message):
 #-------------------------------------------------------------------------------
 
 def _find_template(result):
+    if result.get('status', 'ok') != 'ok':       #If the result status is not OK then use the template for that status
+        result['template'] = result['status']
+    
     if result.get('template'):
         template_part = result.get('template')
     else:
@@ -200,10 +203,7 @@ def setup_format_processors():
 
     def format_html(result):
         overlay_status_message(c.result, result)
-        print "result"
-        print c.result
         return render_mako(_find_template(result), extra_vars={"d": c.result['data']} )
-
 
     def format_redirect(result):
         """
@@ -281,7 +281,7 @@ def auto_format_output():
             
             # Origninal method call
             result = target(*args, **kwargs) # Execute the wrapped function
-            
+
             # After
             # Is result a dict with data?
             if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
@@ -292,8 +292,12 @@ def auto_format_output():
                 
                 # set the HTTP status code
                 if 'code' in result:
-                    response.status = int(result['code'])
+                    #response.status = int(result['code']) #This will trigger the error document action in the error controler after this action is returned
+                    # problem with the error document intercepting is that we loose the {'message':''}
+                    # a new call to error/document is made from scratch, this sets the default format to html again! if the format is in the query string this overrides it, but in the url path it gets lost
+                    # Verifyed as calling error/document.html/None
                     #del result['code']
+                    pass
                 
                 # Render to format
                 if c.format in format_processors:

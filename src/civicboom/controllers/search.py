@@ -3,7 +3,7 @@ from civicboom.lib.base   import *
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
-from sqlalchemy           import or_
+from sqlalchemy           import or_, and_
 from sqlalchemy.orm       import join
 
 log = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ def _get_search_filters():
         try:
             return query.filter(Content.creator_id==int(creator_text))
         except:
-            return query.select_from(join(Content, Member, Content.creator)).filter(Member.username==creator_text)
+            return query.filter(Member.username==creator_text)
     
     def append_search_response_to(query, article_id):
         query = query.filter(Content.parent_id==int(article_id))
@@ -46,10 +46,10 @@ def _get_search_filters():
     #    return query.limit(limit)
     
     search_filters = {
+        'creator'    : append_search_creator ,
         'query'      : append_search_text ,
         'location'   : append_search_location ,
         'type'       : append_search_type ,
-        'creator'    : append_search_creator ,
         'response_to': append_search_response_to ,
     #    'limit'      : append_search_limit ,
     }
@@ -72,7 +72,7 @@ class SearchController(BaseController):
     def content(self, **kwargs):
         kwargs.update(request.GET) # Update the kwargs with request params from query string
         
-        results  = Session.query(Content).filter(Content.__type__!='comment').order_by(Content.id.desc()) # Setup base content search query
+        results  = Session.query(Content).select_from(join(Content, Member, Content.creator)).filter(and_(Content.__type__!='comment', Content.__type__!='draft')).order_by(Content.id.desc()) # Setup base content search query
         
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20

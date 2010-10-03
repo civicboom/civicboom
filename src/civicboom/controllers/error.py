@@ -27,11 +27,16 @@ class ErrorController(BaseController): # pragma: no cover -- if this is covered,
     def document(self):
         """Render the error document"""
         resp    = request.environ.get('pylons.original_response')
+        
+        #print resp # AllanC -> Shish, you can see the response fully formed here, but the 404 triggers this error document over the top of it. Suggestions?
+        #print "error format = %s" % c.format
+        
         code    = cgi.escape(request.GET.get('code'   ,''))
         content = cgi.escape(request.GET.get('message', ''))
         if resp:
             content = literal(resp.status)
             code    = code or cgi.escape(str(resp.status_int))
+            
         #content = literal(resp.body) or cgi.escape(request.GET.get('message', ''))
         #page    = error_document_template % \
         #    dict(prefix  = request.environ.get('SCRIPT_NAME', ''),

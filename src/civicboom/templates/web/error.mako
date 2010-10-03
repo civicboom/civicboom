@@ -12,8 +12,13 @@
 ##<p>Code:    ${c.error_code}</p>
 ##<p>Prefix:  ${c.error_prefix}</p>
 ##<p>Message: ${c.error_message}</p>
-<p>${c.result['code']}</p>
-<p>${c.result['message']}</p>
+% if 'code' in c.result:
+    code: <p>${c.result['code']}</p>
+% endif
+
+% if 'message' in c.result:
+    message: <p>${c.result['message']}</p>
+% endif
 
 </body>
 

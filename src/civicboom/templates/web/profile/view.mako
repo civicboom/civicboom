@@ -47,6 +47,12 @@
 
 
 <%def name="col_right()">
+    <h2>Public Messages</h2>
+	% if d['member']['messages_public']:
+        % for message in d['member']['messages_public']:
+            ${message}
+        % endfor
+    % endif
 </%def>
 
 ##------------------------------------------------------------------------------
