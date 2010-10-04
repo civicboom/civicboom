@@ -27,6 +27,7 @@ class Media(Base):
     hash          = Column(String(40),       nullable=False, index=True)
     caption       = Column(UnicodeText(),    nullable=False)
     credit        = Column(UnicodeText(),    nullable=False)
+    filesize      = Column(Integer(),        nullable=True, doc="the length of the processed media file in bytes")
     
     __to_dict__ = Base.__to_dict__.copy()
     __to_dict__.update({
@@ -35,11 +36,13 @@ class Media(Base):
             'name'         : None ,
             'type'         : None ,
             'subtype'      : None ,
+            #'mime_type'    : None ,
             'caption'      : None ,
             'credit'       : None ,
             'media_url'    : None ,
             'original_url' : None ,
             'thumbnail_url': None ,
+            'filesize'     : None ,
         },
     })
 

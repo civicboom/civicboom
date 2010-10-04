@@ -77,12 +77,18 @@ class SearchController(BaseController):
             kwargs['limit'] = 20
         if 'offset' not in kwargs:
             kwargs['offset'] = 0
+        if 'list_type' not in kwargs:
+            kwargs['list_type'] = 'list'
+            if c.format == 'rss':                       # Default RSS to list_with_media
+                kwargs['list_type'] = 'list_with_media'
         
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
-        return {'data': {'list': [content.to_dict('list') for content in results.all()]}} # return dictionaty of content to be formatted
+        
+        
+        return {'data': {'list': [content.to_dict(kwargs['list_type']) for content in results.all()]}} # return dictionaty of content to be formatted
         
         """
         if "query" in request.GET:

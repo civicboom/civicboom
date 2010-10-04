@@ -112,9 +112,12 @@ class Content(Base):
             'location'     : lambda content: content.location_string ,
             'num_responses': None ,
             'num_comments' : None ,
+            #'licence'
+            'tags'         : lambda content: "implement tags" ,
         },
     })
     
+    # Single Content Item
     __to_dict__.update({
         'single': copy.deepcopy(__to_dict__['list'])
     })
@@ -125,12 +128,12 @@ class Content(Base):
             'attachments'       : lambda content: [   media.to_dict('list') for media    in content.attachments] ,
             'responses'         : lambda content: [response.to_dict('list') for response in content.responses  ] ,
             'comments'          : lambda content: [ comment.to_dict('list') for comment  in content.comments   ] ,
-            #'licence'
-            #'tags'
+
     })
     del __to_dict__['single']['content_short']
     del __to_dict__['single']['parent_id']
     
+    # Actions
     __to_dict__.update({
         'actions': copy.deepcopy(__to_dict__['single'])
     })
@@ -141,6 +144,19 @@ class Content(Base):
             'actions': __to_dict_function_action_list__
     })
 
+    # List with media
+    __to_dict__.update({
+        'list_with_media': copy.deepcopy(__to_dict__['list'])
+    })
+    __to_dict__['list_with_media'].update({
+            'attachments'       : __to_dict__['single']['attachments']
+    })
+
+    # List with media
+    __to_dict__.update({
+        'list_no_creator': copy.deepcopy(__to_dict__['list'])
+    })
+    del __to_dict__['list_no_creator']['creator']
 
     
     def __unicode__(self):
@@ -288,9 +304,11 @@ class UserVisibleContent(Content):
             'views'        : None ,
             'boom_count'   : None ,
     }
-    __to_dict__['list'   ].update(_extra_user_visible_fields)
-    __to_dict__['single' ].update(_extra_user_visible_fields)
-    __to_dict__['actions'].update(_extra_user_visible_fields)
+    __to_dict__['list'           ].update(_extra_user_visible_fields)
+    __to_dict__['single'         ].update(_extra_user_visible_fields)
+    __to_dict__['actions'        ].update(_extra_user_visible_fields)
+    __to_dict__['list_with_media'].update(_extra_user_visible_fields)
+    __to_dict__['list_no_creator'].update(_extra_user_visible_fields)
 
     def action_list_for(self, member):
         action_list = Content.action_list_for(self, member)
@@ -327,6 +345,11 @@ class ArticleContent(UserVisibleContent):
     rating          = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
     ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
 
+    # AllanC TODO:
+    # Could have derived fields for count="20" min="1" max="10"
+    # This is used by Yahoos RSS guide and could be very usefull for statistical processing in future
+    # http://video.search.yahoo.com/mrss - see <media:community>
+
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_article_fields = {
@@ -335,6 +358,9 @@ class ArticleContent(UserVisibleContent):
     __to_dict__['list'   ].update(_extra_article_fields)
     __to_dict__['single' ].update(_extra_article_fields)
     __to_dict__['actions'].update(_extra_article_fields)
+    __to_dict__['list_with_media'].update(_extra_article_fields)
+    __to_dict__['list_no_creator'].update(_extra_article_fields)
+
 
 
 class SyndicatedContent(UserVisibleContent):
@@ -369,6 +395,8 @@ class AssignmentContent(UserVisibleContent):
             'withdrawn': lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"] ,
     })
     __to_dict__['actions'].update(__to_dict__['single'])
+    __to_dict__['list_with_media'].update(_extra_assignment_fields)
+    __to_dict__['list_no_creator'].update(_extra_assignment_fields)
 
 
     def action_list_for(self, member):

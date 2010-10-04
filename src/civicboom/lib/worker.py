@@ -75,6 +75,14 @@ def _ffmpeg(args):
     log.debug("stderr: "+output[1])
     log.debug("return: "+str(proc.returncode))
 
+
+def _update_media_length(hash, length):
+    """
+    Placeholder to update media file length in DB
+    """
+    #import database actions
+    # update the record in db
+
 def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     # Get the thumbnail processed and uploaded ASAP
     if file_type == "image":
@@ -139,6 +147,11 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
 
     if delete_tmp:
         os.unlink(tmp_file)
+
+    # TODO:
+    # for RSS 2.0 'enclosure' we need to know the length of the processed file in bytes
+    # We should include here a call to database to update the length field
+    #_update_media_length(file_hash, os.path.getsize(processed.name))
 
     from pylons import config
     import memcache
