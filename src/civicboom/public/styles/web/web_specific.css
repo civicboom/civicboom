@@ -9,47 +9,82 @@ BODY {
  * the body is then broken down into the navigation bar at the top
  */
 NAV {
-	background: url("/styles/web/userbarbk.png");
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
 	height: 17px;
-}
-NAV UL {
-	float: left;
-	padding-left: 32px;
-	padding-right: 32px;
-}
-NAV UL.right {
-	float: right;
-}
-NAV UL LI {
-	float: left;
-}
-NAV UL LI A {
-	display: block;
-	background: url("/styles/web/userbartab.png");
-	width: 71px;
-	text-align: center;
-}
-NAV UL LI.settings A {
-	background: url("/styles/web/userbarlogout.png");
-	width: 68px;
+	background: url("/styles/web/userbarbk.png");
+	border: 1px solid magenta;
 }
 NAV A {
+	background: url("/styles/web/userbartab.png");
+	text-align: center;
 	color: black;
 	text-decoration: none;
+
+	position: absolute;
+	top: 0px;
+
+	display: block;
+	width: 71px;
+	height: 17px;
+	font-size: 0.75em;
+}
+NAV A SPAN {
+	display: none;
+}
+
+NAV .name {left: 32px;}
+NAV .clock {left: 103px;}
+NAV .role {left: 174px;}
+
+NAV .profile {left: 277px;}
+NAV .groups {left: 348px;}
+NAV .assignments {left: 419px;}
+
+NAV .messages {left: 552px;}
+
+NAV .settings {
+	right: 32px;
+
+	width: 68px;
+	background: url("/styles/web/userbarlogout.png");
 }
 
 /*
  * the header, with logo and search box
  */
-HEADER {clear: both;}
+HEADER {
+	border: 1px solid red;
+	clear: both;
+	background: url("/styles/web/headerbk.png");
+	margin-top: 64px;
+}
 
 HEADER #logo IMG {padding: 32px;}
 HEADER #logo SPAN {display: none;}
 
 HEADER #login {
-	float: right;
-	margin-right: 32px;
+	position: absolute;
+	top: 0px;
+	right: 32px;
+
 	width: 68px;
+	height: 17px;
+	/*
+	background: url("/styles/web/userbarlogout.png");
+	background-position: 100% 100%;
+	text-align: center;
+	*/
+}
+HEADER #logout {
+	position: absolute;
+	top: 17px;
+	right: 32px;
+
+	width: 68px;
+	height: 17px;
 	/*
 	background: url("/styles/web/userbarlogout.png");
 	background-position: 100% 100%;
@@ -60,9 +95,13 @@ HEADER #login {
 HEADER #search {
 	float: right;
 	clear: right;
+	background: url("/styles/web/searchbk.png");
+	width: 165px;
+	height: 58px;
+	border: 1px solid green;
 }
-HEADER #search FORM {
-	padding: 32px;
+HEADER #search .search_button {
+	position:
 }
 
 /*
@@ -70,6 +109,7 @@ HEADER #search FORM {
  */
 BODY>DIV#app {
 	clear: both;
+	border: 1px solid cyan;
 }
 
 /*
@@ -77,4 +117,5 @@ BODY>DIV#app {
  */
 FOOTER {
 	clear: both;
+	border: 1px solid green;
 }
