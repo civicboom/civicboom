@@ -402,7 +402,7 @@ def form_to_content(form, content):
 
     if 'form_location' in form:
         try:
-            (lon, lat) = form['form_location').split(" ")
+            (lon, lat) = form['form_location'].split(" ")
             content.location = "SRID=4326;POINT(%d %d)" % (float(lon), float(lat))
         except:
             pass
