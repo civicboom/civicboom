@@ -68,12 +68,13 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
         # Handle Python exceptions
         app = ErrorHandler(app, global_conf, **config['pylons.errorware'])
 
-        # Display error documents for 401, 403, 404 status codes (and
-        # 500 when debug is disabled)
-        if asbool(config['debug']):
-            app = StatusCodeRedirect(app)
-        else: # pragma: no cover -- hopefully this won't break anything, so safe to not test? -- Shish
-            app = StatusCodeRedirect(app, [400, 401, 403, 404, 500])
+        # AllanC - This is unneeded as the auto_formatter is more or less doing what this does
+        #
+        # Display error documents for 401, 403, 404 status codes (and 500 when debug is disabled)
+        #if asbool(config['debug']):
+        #    app = StatusCodeRedirect(app)
+        #else: # pragma: no cover -- hopefully this won't break anything, so safe to not test? -- Shish
+        #    app = StatusCodeRedirect(app, [400, 401, 403, 404, 500])
 
     # Establish the Registry for this application
     app = RegistryManager(app)

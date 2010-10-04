@@ -155,29 +155,42 @@ def overlay_status_message(master_message, new_message):
 #-------------------------------------------------------------------------------
 
 def _find_template(result, type='html'):
-    if result.get('status', 'ok') != 'ok':       #If the result status is not OK then use the template for that status
-        result['template'] = result['status']
     
-    if result.get('template'):
-        template_part = result.get('template')
-    else:
-        template_part = '%s/%s' % (c.controller, c.action)
-
-    def template_exisits(template):
-        return os.path.exists(os.path.join(config['path.templates'], template))
-
+    type_fallback = {
+        'web'   : None  ,
+        'mobile': 'web' ,
+        'rss'   : None  ,
+        'frag'  : 'web' ,
+    }
+    
+    # Convert the type into the base folder structure
     if type=='html':
-        template = "web/%s.mako"    % template_part
-        
-        mobile_template = "mobile/%s.mako" % template_part    
-        if request.environ['is_mobile'] and template_exisits(mobile_template):
-            template = mobile_template
-    else:
-        template    = "%s/%s.mako"    % (type, template_part)
+        type = 'web'
+        if request.environ['is_mobile']:
+            type = 'mobile'
 
-    if not template_exisits(template):
-        log.warn("Can't find template "+template)
-        template = None
+    #If the result status is not OK then use the template for that status
+    if result.get('status', 'ok') != 'ok':
+        result['template'] = "%s" % result['status']
+
+    if result.get('template'):
+        template_part = result.get('template')               # Attempt to get template named in result
+    else:
+        template_part = '%s/%s' % (c.controller, c.action)   # Else fallback to controller/action
+    
+    def template_file_exisits(template_file):
+        return os.path.exists(os.path.join(config['path.templates'], template_file))
+
+    # Iterate through all possible templates using differnt fallback types
+    template = None
+    while template==None and type!=None:
+        template = "%s/%s.mako" % (type, template_part)
+        if not template_file_exisits(template):
+            template = None
+            type     = fallback_type[type]
+
+    if not template:
+        log.warn("Can't find template")
 
     return template
 
@@ -190,7 +203,7 @@ def setup_format_processors():
         return render_mako(_find_template(result, type), extra_vars={"d": c.result['data']} )
         
     def format_json(result):
-        #response.headers['Content-type'] = "application/json" #AllanC - this breaks the error middleware when returning error codes like 403, long term this needs to be fixed
+        #response.headers['Content-type'] = "application/json" #AllanC - Is this fixed now? - this used to break the error middleware when returning error codes like 403, long term this needs to be fixed
         return json.dumps(result)
         
     def format_xml(result):
@@ -199,7 +212,7 @@ def setup_format_processors():
         
     def format_rss(result):
         #response.headers['Content-type'] = "application/rss+xml"
-        response.headers['Content-type'] = "text/xml"
+        #response.headers['Content-type'] = "text/xml"
         return render_template(result, 'rss')
     
     def format_frag(result):
@@ -295,12 +308,12 @@ def auto_format_output():
                 
                 # set the HTTP status code
                 if 'code' in result:
-                    #response.status = int(result['code']) #This will trigger the error document action in the error controler after this action is returned
+                    response.status = int(result['code'])
+                    # This will trigger the error document action in the error controler after this action is returned
                     # problem with the error document intercepting is that we loose the {'message':''}
                     # a new call to error/document is made from scratch, this sets the default format to html again! if the format is in the query string this overrides it, but in the url path it gets lost
                     # Verifyed as calling error/document.html/None
                     #del result['code']
-                    pass
                 
                 # Render to format
                 if c.format in format_processors:
