@@ -5,6 +5,7 @@ from civicboom.lib                import helpers as h
 from civicboom.lib.communication  import messages
 from civicboom.lib.text           import clean_html
 from civicboom.lib.authentication import get_user_and_check_password
+from civicboom.lib.database.get_cached import get_content
 
 from decorator import decorator
 from datetime import datetime
@@ -202,23 +203,35 @@ class MobileController(BaseController):
             fp.close()
             return action_ok("upload complete", data={"next": None}, code=201)
 
-    @_logged_in_mobile
+    #@_logged_in_mobile
     @auto_format_output()
     def media(self):
+        log.debug("Uploading media from mobile")
         content = get_content(int(request.POST['content_id']))
         if not content:
             return action_error(_("The content does not exist"), code=404)
-        if content.editable_by(c.logged_in_user):
-            return action_error(_("You are not the owner of that content"), code=403)
+        #if content.editable_by(c.logged_in_user):
+        #    return action_error(_("You are not the owner of that content"), code=403)
+
+        log.debug("Attaching media to "+content.title)
 
         m = Media()
+        log.debug("Dumping to file")
+        import base64
+        tmp = file("/tmp/upload", "w")
+        tmp.write(base64.b64decode(request.POST["file_data"]))
+        tmp.close()
+        log.debug("Loading")
         m.load_from_file(
-            tmp_file=request.POST["file_data"].value,
-            original_name=reqest.POST["file_name"].value,
+            tmp_file="/tmp/upload",
+            original_name=request.POST["file_name"],
             caption=None,
             credit=c.logged_in_user.name
         )
+        log.debug("Attaching")
         content.attachments.append(m)
+
+        log.debug("Committing")
         Session.commit()
 
     #-----------------------------------------------------------------------------
