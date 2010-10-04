@@ -12,14 +12,6 @@
 
 
 <%def name="col_left()">
-	<style>
-	.avatar     {width: 100%; text-align: center;}
-	.avatar IMG {border: 1px solid gray;}
-	.message_empty {color: #AAA; display: block; width: 100%; text-align: center;}
-	.read_more {                 display: block; width: 100%; text-align: right; }
-	.notification {border-bottom: 1px solid gray; margin-bottom: 4px; padding-bottom: 4px;}
-	.notification FORM {float: right;}
-	</style>
 
     ${public_profile.col_left()}
 
@@ -29,8 +21,9 @@
 	<br><a href="${url(controller='settings', action='messages')}">Edit Notifications</a>
 	<br><a href="${url('messages')}">My Messages</a>
     <br><a href="${url(controller='account', action='link_janrain')}">Manage Login Accounts</a>
-        
+
 </%def>
+
 
 
 ##------------------------------------------------------------------------------

@@ -1,8 +1,13 @@
 <%inherit file="/web/layout_2cols.mako"/>
 
-<%namespace name="prof" file="/web/design09/includes/profile.mako"/>
+<%namespace name="private_profile" file="/web/profile/index.mako"/>
 
-<%def name="col_side()">${prof.sidebar()}</%def>
+##------------------------------------------------------------------------------
+## Side Col
+##------------------------------------------------------------------------------
+
+<%def name="col_side()">${private_profile.col_left()}</%def>
+
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -10,9 +15,9 @@
 
 <%def name="body()">
     ${h.form(h.url('setting', id='None'), method='put')}
-    % for group_name in c.result['data'].keys():
+    % for group_name in d.keys():
         <fieldset><legend>${group_name.capitalize()}</legend>
-            % for field in c.result['data'][group_name]:
+            % for field in d[group_name]:
                 <p>
                     ${field['description']} :
                     % if 'type' not in field:
@@ -42,8 +47,10 @@
 
 
 ##------------------------------------------------------------------------------
-## Setting Sections and renderers
+## Setting Sections and renderers - OLD DEPRICATED
 ##------------------------------------------------------------------------------
+
+<%doc>
 
 <%def name="settings_general()">
 <fieldset>
@@ -105,7 +112,7 @@
 </%def>
 
 
-<%doc>
+
 <style>
 #user_settings TD {
 	padding: 8px;

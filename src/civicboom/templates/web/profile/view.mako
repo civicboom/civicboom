@@ -17,27 +17,30 @@
 ##------------------------------------------------------------------------------
 
 <%def name="col_left()">
-	<div class="avatar">
-        ${member_includes.avatar(d['member'] , show_name=True, show_follow_button=True)}
-	</div>
 
-	<h2>${_("Following")}</h2>
-        <div id="following">
-        % if d['member']['following']:
-            ${member_includes.member_list(d['member']['following'], show_avatar=True, class_="avatar_thumbnail_list")}
-        % else:
-            <span class="message_empty">Not following anyone</span>
-        % endif
+    % if 'member' in d:
+        <div class="avatar">
+            ${member_includes.avatar(d['member'] , show_name=True, show_follow_button=True)}
         </div>
-
-	<h2>${_("Followers")}</h2>
-        <div id="followers">
-        % if d['member']['followers']:
-            ${member_includes.member_list(d['member']['followers'], show_avatar=True, class_="avatar_thumbnail_list")}
-        % else:
-            <span class="message_empty">No followers</span>
-        % endif
-        </div>
+    
+        <h2>${_("Following")}</h2>
+            <div id="following">
+            % if d['member']['following']:
+                ${member_includes.member_list(d['member']['following'], show_avatar=True, class_="avatar_thumbnail_list")}
+            % else:
+                <span class="message_empty">Not following anyone</span>
+            % endif
+            </div>
+    
+        <h2>${_("Followers")}</h2>
+            <div id="followers">
+            % if d['member']['followers']:
+                ${member_includes.member_list(d['member']['followers'], show_avatar=True, class_="avatar_thumbnail_list")}
+            % else:
+                <span class="message_empty">No followers</span>
+            % endif
+            </div>
+    % endif
 
 </%def>
 
