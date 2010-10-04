@@ -188,7 +188,7 @@ def _find_template(result, type='html'):
         template = "%s/%s.mako" % (type, template_part)
         if not template_file_exisits(template):
             template = None
-            type     = fallback_type[type]
+            type     = type_fallback[type]
 
     if not template:
         log.warn("Can't find template")
