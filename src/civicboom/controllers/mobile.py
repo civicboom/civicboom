@@ -234,6 +234,8 @@ class MobileController(BaseController):
         log.debug("Committing")
         Session.commit()
 
+        return action_ok(_("Media attached"), code=201)
+
     #-----------------------------------------------------------------------------
     # Log mobile error
     #-----------------------------------------------------------------------------
