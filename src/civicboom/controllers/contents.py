@@ -58,7 +58,7 @@ class ContentsController(BaseController):
         content_list      = index_lists[content_list_name](c.logged_in_user)
         content_list      = [content.to_dict(content_list_name) for content in content_list] #'default_list'
         
-        return {'data': {'list': content_list} }
+        return action_ok(data={'list': content_list})
 
 
     @auto_format_output()

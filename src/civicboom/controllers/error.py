@@ -9,7 +9,7 @@ from webhelpers.html.builder import literal
 
 from civicboom.lib.base import BaseController
 
-from civicboom.lib.web import auto_format_output
+from civicboom.lib.web import auto_format_output, action_error
 
 class ErrorController(BaseController): # pragma: no cover -- if this is covered, then something has gone wrong...
 
@@ -51,12 +51,11 @@ class ErrorController(BaseController): # pragma: no cover -- if this is covered,
         #else:
         #    page = content
         #return page
-        return {
-            'status'  :'error'  ,
-            'code'    : code    ,
-            'message' : content ,
-            'template': 'error' ,
-        }
+        return action_error(
+            code     = int(code),
+            message  = content,
+            template = 'error',
+        )
 
     def img(self, id):
         """Serve Pylons' stock images"""

@@ -4,6 +4,8 @@ from civicboom.model              import Media, ArticleContent, SyndicatedConten
 from civicboom.lib                import helpers as h
 from civicboom.lib.communication  import messages
 from civicboom.lib.text           import clean_html
+from civicboom.lib.authentication import get_user_and_check_password
+from civicboom.lib.database.get_cached import get_content
 
 from decorator import decorator
 from datetime import datetime
@@ -33,9 +35,17 @@ class MobileController(BaseController):
     # Sign in
     #-----------------------------------------------------------------------------  
     @auto_format_output()
-    @authorize(is_valid_user)
     def signin(self):
-        return action_ok("logged in ok", {"auth_token": authentication_token()})
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = get_user_and_check_password(username, password)
+        if c.logged_in_user or user:
+            session_set('user_id' , user.id      ) # Set server session variable to user.id
+            session_set('username', user.username) # Set server session username so in debug email can identify user
+            response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))
+            return action_ok("logged in ok", {"auth_token": authentication_token()})
+        else:
+            return action_error(_("not logged in"), code=403)
 
 
     #-----------------------------------------------------------------------------
@@ -49,11 +59,14 @@ class MobileController(BaseController):
     # Latest Version
     #-----------------------------------------------------------------------------  
     @auto_format_output()
-    def latest_version(self, id=None):
-        if not id:
-            return "1.14" # give 1.13 a response it can understand first
+    def latest_version(self, format="html"):
+        if format == "html":
+            # HTML format = really old; the only HTML output we want to support
+            # is the "you need to upgrade" bit; everything else in the controller
+            # can break compatability
+            return "1.13"
         else:
-            return action_ok(data={"version": "1.14"})
+            return action_ok(data={"version": "1.13"})
 
 
     #-----------------------------------------------------------------------------
@@ -190,21 +203,54 @@ class MobileController(BaseController):
             fp.close()
             return action_ok("upload complete", data={"next": None}, code=201)
 
+    #@_logged_in_mobile
+    @auto_format_output()
+    def media(self):
+        log.debug("Uploading media from mobile")
+        content = get_content(int(request.POST['content_id']))
+        if not content:
+            return action_error(_("The content does not exist"), code=404)
+        #if content.editable_by(c.logged_in_user):
+        #    return action_error(_("You are not the owner of that content"), code=403)
+
+        log.debug("Attaching media to "+content.title)
+
+        m = Media()
+        log.debug("Dumping to file")
+        import base64
+        tmp = file("/tmp/upload", "w")
+        tmp.write(base64.b64decode(request.POST["file_data"]))
+        tmp.close()
+        log.debug("Loading")
+        m.load_from_file(
+            tmp_file="/tmp/upload",
+            original_name=request.POST["file_name"],
+            caption=None,
+            credit=c.logged_in_user.name
+        )
+        log.debug("Attaching")
+        content.attachments.append(m)
+
+        log.debug("Committing")
+        Session.commit()
+
+        return action_ok(_("Media attached"), code=201)
 
     #-----------------------------------------------------------------------------
     # Log mobile error
     #-----------------------------------------------------------------------------
     # If the mobile app has an error that it is not expecting then it can notify the live server
     # This can then be logged and email sent etc
+    @auto_format_output()
     def error(self):
-        from civicboom.lib.communication.email import send_email
+        #from civicboom.lib.communication.email import send_email
         if not request.POST:
             if config['debug']:
-                return "mobile error test" # FIXME: render(prefix+'mobile_error_test.mako')
+                return action_ok("mobile error test") # FIXME: render(prefix+'mobile_error_test.mako')
             return action_error("form data required", code=401)
         if 'error_message' in request.POST:
-            send_email(config['email_to'], subject='Mobile Error', content_text=request.POST['error_message'])
+            #send_email(config['email_to'], subject='Mobile Error', content_text=request.POST['error_message'])
             #AllanC - Temp addition to get errors to the mobile developer
-            send_email("nert@poik.net"   , subject='Mobile Error', content_text=request.POST['error_message'])
+            #send_email("nert@poik.net"   , subject='Mobile Error', content_text=request.POST['error_message'])
             return action_ok("logged ok", code=201)
 

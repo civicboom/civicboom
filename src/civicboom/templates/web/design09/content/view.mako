@@ -172,17 +172,11 @@ r = (d['content']['rating'] * 5)
 
 
 <%def name="col_right()">
-    <%
-    # we need to pass the session to GeoAlchemy functions
-    from civicboom.model.meta import Session
-    %>
     % if d['content'].get('location'):
       <p>${loc.minimap(
           width="100%", height="200px",
           lat = d['content']['location'].split(' ')[0],
           lon = d['content']['location'].split(' ')[1],
-          #lon=content.location.coords(Session)[0],
-          #lat=content.location.coords(Session)[1]
       )}</p>
     % endif
   

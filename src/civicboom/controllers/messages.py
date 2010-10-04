@@ -27,27 +27,13 @@ class MessagesController(BaseController):
     def index(self, list=None):
         """GET /messages: All items in the collection."""
         # url('messages')
-        
         # AllanC - this feels duplicated from the member controler - humm ... need to think about a sensible stucture
         message_list_name = request.params.get('list', list)
         if message_list_name not in index_lists: return action_error(_('list type %s not supported') % message_list_name)
         messages = index_lists[message_list_name](c.logged_in_user)
         messages = [message.to_dict('default_list') for message in messages]
-        
-        return {'data': {'list': messages}, 'template':"messages/index"}
-        
-        #c.viewing_user = c.logged_in_user
-        #if request.GET.get("type") == "notifications":
-        #    source = c.viewing_user.messages_notification
-        #else:
-        #    source = c.viewing_user.messages_to
-        #[{
-        #        "id": m.id,
-        #        "source": str(m.source),
-        #        "timestamp": str(m.timestamp),
-        #        "subject": m.subject,
-        #    } for m in c.viewing_user.messages_to]
-            
+
+        return action_ok(data={'list': messages})
 
 
     @auto_format_output()

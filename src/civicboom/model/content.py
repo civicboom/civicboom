@@ -245,14 +245,15 @@ class Content(Base):
             thumbnail_url = media.thumbnail_url
             if thumbnail_url and thumbnail_url!="":
                 return thumbnail_url
-        
-        return "/images/default_thumbnail_%s.png" % self.__type__
+
+        from civicboom.lib.helpers import wh_public
+        return wh_public("images/default_thumbnail_%s.png" % self.__type__)
 
     @property
     def url(self):
         from pylons import url, app_globals
         return url('content', host=app_globals.site_host, id=self.id)
-    
+
     @property
     def content_short(self):
         return truncate(self.content, length=100)
