@@ -1,54 +1,70 @@
-<%inherit file="html_header.mako"/>
+<!DOCTYPE html>
+<html class='no-js'>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="shortcut icon" href="${h.wh_public("images/civicboom.ico")}" />
 
-##------------------------------------------------------------------------------
-## Default Base Components
-##------------------------------------------------------------------------------
-## Components such as Navigation, Header, Footer can be overridden by subclass's to add there own or remove it
+##----------------------------------------------------------------------------
+## Meta Text
+##----------------------------------------------------------------------------
+	<meta name="description" content="${_("_site_description")}"/>
+	<meta name="keywords"    content="" />
+	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
+	<meta name="robots"      content="all" />
 
-<%def name="navigation()">
-  <%include file="design09/includes/navigation.mako"/>
-</%def>
-<%def name="header()">
-  <%include file="design09/includes/header.mako"/>
-</%def>
-<%def name="footer()">
-  <%include file="design09/includes/footer.mako"/>
-</%def>
+##----------------------------------------------------------------------------
+## Title
+##----------------------------------------------------------------------------  
+<%def name="title()">${_("_tagline")}</%def>
+<% title_dev_prefix = "Dev-" if config['development_mode'] else "" %>
+	<title>${title_dev_prefix}${_("_site_name")}: ${self.title()}</title>
 
-## Depricated in redesign Jan10, could be re-implemented as the popup was useful
-## AllanC: this is so some specail pages can add controls to the header banner, e.g the frontpage my have extra bits, the body has a margin so this cant be put in the normal body include
-##<%def name="header_additions()"></%def>
+##----------------------------------------------------------------------------
+## Base CSS and Javascript imports
+##----------------------------------------------------------------------------
+##-------------------
+## CSS Style Sheets
+##-------------------
+% if config['development_mode']:
+	<link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui.stars.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/misc.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/web_specific.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
+% else:
+	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
+% endif
 
+##-------------------
+## Javascripts
+##-------------------
+% if config['development_mode']:
+	<!-- HTML5 -->
+	<script type="text/javascript" src="/javascript/Modernizr.js"></script>
+	<script type="text/javascript" src="/javascript/html5.js"></script>
+	<!-- jQuery -->
+	<script type="text/javascript" src="/javascript/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="/javascript/jquery.ui-1.8.4.js"></script>
+	<script type="text/javascript" src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+	<!-- Civicboom -->
+	<script type="text/javascript" src="/javascript/misc.js"></script>
+	<script type="text/javascript" src="/javascript/url_encode.js"></script>
+	<script type="text/javascript" src="/javascript/toggle_div.js"></script>
+% else:
+	<script type="text/javascript" src="/javascript/_combined.js"></script>
+% endif
 
-##------------------------------------------------------------------------------
-## Body
-##------------------------------------------------------------------------------
-<%def name="body()">
-    <!-- header/banner -->
-    ##role="banner" role landmarks are used for screen readers but it makes the XHTML invalid, commented out for now
-    <div id="hd">
-      ${self.header()}
-      ${self.navigation()}
-      ${flash_message()}
-      ##${self.header_additions()}
-    </div>
-    <!-- end of header/banner -->
-    
-    <!-- main body --> 
-    <div id="bd">
-      ##${first_view_message()}
-      ${next.body()}
-    </div>
-    <!-- end of main body -->
-    
-    <!-- footer -->
-    <div id="ft">
-      ${self.footer()}
-    </div>
-    <!-- end of footer-->
-</%def>
-
-
+##----------------------------------------------------------------------------
+## Development Javascript Debug Console Output
+##----------------------------------------------------------------------------
+% if config['development_mode']:
+	<!-- Development Mode - Enabale Console Logging in client browser (recomend firebug) but could instate YUI log console here -->
+	<!-- Use console output with: YAHOO.log("Loggy log log"); -->
+	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/logger/logger-min.js"></script>
+	<script type="text/javascript">YAHOO.widget.Logger.enableBrowserConsole();</script>
+% endif
+</head>
 
 ##------------------------------------------------------------------------------
 ## Flash Message Area
@@ -57,61 +73,35 @@
 ## This displays the message and then removes it from the session once it is displayed the first time
 ## See "Definitive Guide to Pylons" pg 191 for details
 <%def name="flash_message()">
-
     <div id="flash_message" style="position: absolute; top: 0px; left: 0px; right: 0px;" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
         
-        <!-- animation for flash message -->
-        <script type="text/javascript">
-            function flash_message(json_message) {
-                if (typeof(json_message) == "string") {json_message = {status:'ok', message:json_message};}
-                if (json_message.message != "") {
-                    $("#flash_message").removeClass("status_error").removeClass("status_ok").addClass("status_"+json_message.status);
-                    $("#flash_message").text(json_message.message).slideDown("slow").delay(5000).slideUp("slow");
-                }
-            }
-            % if c.result['message'] != "":
-            <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
-            $(function() {flash_message(${json_message|n});});
-            % endif
+	<!-- animation for flash message -->
+	<script type="text/javascript">
+		function flash_message(json_message) {
+			if (typeof(json_message) == "string") {json_message = {status:'ok', message:json_message};}
+			if (json_message.message != "") {
+				$("#flash_message").removeClass("status_error").removeClass("status_ok").addClass("status_"+json_message.status);
+				$("#flash_message").text(json_message.message).slideDown("slow").delay(5000).slideUp("slow");
+			}
+		}
+	% if c.result['message'] != "":
+		<% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
+		$(function() {flash_message(${json_message|n});});
+	% endif
     </script>
-    
 </%def>
 
-
 ##------------------------------------------------------------------------------
-## First view popup
+## HTML Body
 ##------------------------------------------------------------------------------
-<%def name="first_view_message()">
-  % if not session_get('first_view_message'):
-    <div id="first_view_message" class="popup hidden_by_default">
-      ##${session.get('first_view_message')}
-      <a class="popup_close_button" href="#" onclick="swap('first_view_message'); return false;"></a>
-      <p><strong>${_("_site_name is undergoing exciting changes!")}</strong></p>
-      <p>${_("We want your feedback! Tell us what you think:")} <a href="mailto:feedback@indiconews.com">feedback@indiconews.com</a></p>
-      <br/>
-      <p>${_("Thanks, from the _site_name Team.")}</p>
-      <a class="first_view_message_close" href="#" onclick="swap('first_view_message'); return false;">${_("close")}</a>
-    </div>
-    <script type="text/javascript">swap('first_view_message');</script>
-    <%
-      session_set('first_view_message','1')
-      #session.save()
-    %>
-  % endif
-</%def>
-
-
-
-##------------------------------------------------------------------------------
-## Logo & Tagline def (to be used in any sub pages)
-##------------------------------------------------------------------------------
-
-<%def name="tagline_markup()">
-%if _("_tagline"):
-<span class="tagline">${_("_tagline")}<sup>TM</sup></span>
-%endif
-</%def>
-
-##<%def name="logo_small()">
-##<a href="/"><img src="/design09/logo.png" class="logo_small"></a>
-##</%def>
+<body class="c-${c.controller} a-${c.action}">
+	${flash_message()}
+% if c.logged_in_user:
+	<nav><%include file="includes/navigation.mako"/></nav>
+% endif
+	<header><%include file="includes/header.mako"/></header>
+	<div id="app">${next.body()}</div>
+	<footer><%include file="includes/footer.mako"/></footer>
+	<%include file="includes/scripts_end.mako"/>
+</body>
+</html>

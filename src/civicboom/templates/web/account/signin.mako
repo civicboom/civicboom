@@ -1,62 +1,46 @@
 <%inherit file="/web/html_base.mako"/>
-
-##------------------------------------------------------------------------------
-## Title - Override
-##------------------------------------------------------------------------------
 <%def name="title()">${_("Sign in")}</%def>
 
-##------------------------------------------------------------------------------
-## Navigation override - remove it
-##------------------------------------------------------------------------------
-<%def name="navigation()"></%def>
+% if 'api_key.janrain' in config:
+<section>
+	${h.get_janrain(lang=c.lang)}
+</section>
+% endif
 
+<div class="cols">
+<section>
+	<form action="" method="post">
+		<fieldset><legend>${_("Sign in")}</legend>
+			<p><label for="username">${_("Username")}</label><input type="text"     id="username" name="username" placeholder="e.g. dave43"/></p>
+			<p><label for="password">${_("Password")}</label><input type="password" id="password" name="password"                          /></p>
+			<input type="submit" name="submit" value="${_("Sign in")}"/>
+		</fieldset>
+	</form>
+</section>
 
-##------------------------------------------------------------------------------
-## Body
-##------------------------------------------------------------------------------
+<section>
+	<form action="${h.url(controller='register', action='email')}" method="post">
+		<fieldset><legend>${_("Sign up")}</legend>
+			<p><label for="username_register"     >${_("Username")}    </label><input type="text"  id="username_register"      name="username" placeholder="e.g. dave43"/></p>
+			<p><label for="email_signup"          >${_("Email")}       </label><input type="email" id="email_signup"           name="email"    placeholder="e.g. dave@coolnews.net"/></p>
+			<p>
+				<label for="user_type_individual"  >${_("Individual")}  </label><input type="radio" id="user_type_individual"   name="user_type" value="individual"   checked='checked'/>
+				<label for="user_type_organisation">${_("Organisation")}</label><input type="radio" id="user_type_organisation" name="user_type" value="organisation"                  />
+			</p>
+			##<input type="hidden" name="user_type" value="organisation"/>
+			<input type="submit" name="submit" value="${_("Sign up")}"/>
+		</fieldset>
+	</form>
+</section>
 
-<%def name="body()">
-
-  % if 'api_key.janrain' in config:
-        ${h.get_janrain(lang=c.lang)}
-  % endif
-
-  <div class="form_signin yui-gb">
-  
-    <div class="yui-u first">
-      <form action="" method="post">
-        <fieldset><legend>${_("Sign in")}</legend>
-          <p><label for="username">${_("Username")}</label><input type="text"     id="username" name="username"/></p>
-          <p><label for="password">${_("Password")}</label><input type="password" id="password" name="password"/></p>
-          <input type="submit" name="submit" value="${_("Sign in")}"/>
-        </fieldset>
-      </form>
-    </div>
-
-    <div class="yui-u inverted">
-      <form action="${h.url(controller='register', action='email')}" method="post">
-        <fieldset><legend>${_("Sign up")}</legend>
-          <p><label for="username_register"     >${_("Username")}        </label><input type="text"  id="username_register"      name="username"/></p>
-          <p><label for="email_signup"          >${_("Email")}           </label><input type="text"  id="email_signup"           name="email"   /></p>
-          <p><label for="user_type_individual"  >${_("Individual")}      </label><input type="radio" id="user_type_individual"   name="user_type" value="individual"   checked='checked'/></p>
-          <p><label for="user_type_organisation">${_("Organisation")}    </label><input type="radio" id="user_type_organisation" name="user_type" value="organisation"                  /></p>
-          ##<input type="hidden" name="user_type" value="organisation"/>
-          <input type="submit" name="submit" value="${_("Sign up")}"/>
-        </fieldset>
-      </form>
-    </div>
-
-    <div class="yui-u">
-      <form action="${h.url(controller='account', action='forgot_password_reminder')}" method="post">
-        <fieldset><legend>${_("Forgotten Password?")}</legend>
-          <p><label for="username_forgoten">${_("Username")}</label><input type="text" id="username_forgoten" name="username"/></p>
-          <p><label>or</label></p>
-          <p><label for="email_forgoten"   >${_("Email")}   </label><input type="text" id="email_forgotten"   name="email"   /></p>
-          <input type="submit" name="submit" value="${_("Send password reminder")}"/>
-        </fieldset>
-      </form>
-    </div>
-
-  </div>
-
-</%def>
+<section>
+	<form action="${h.url(controller='account', action='forgot_password_reminder')}" method="post">
+		<fieldset><legend>${_("Forgotten Password?")}</legend>
+			<p><label for="username_forgotten">${_("Username")}</label><input type="text"  id="username_forgotten" name="username" placeholder="e.g. dave43"/></p>
+			<p><label>or</label></p>
+			<p><label for="email_forgotten"   >${_("Email")}   </label><input type="email" id="email_forgotten"    name="email"    placeholder="e.g. dave@coolnews.net"/></p>
+			<input type="submit" name="submit" value="${_("Send password reminder")}"/>
+		</fieldset>
+	</form>
+</section>
+</div>

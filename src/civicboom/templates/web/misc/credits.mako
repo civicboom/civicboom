@@ -1,13 +1,7 @@
 <%inherit file="/web/html_base.mako"/>
-
-##------------------------------------------------------------------------------
-## Title - Override
-##------------------------------------------------------------------------------
 <%def name="title()">${_("Credits")}</%def>
 
-##------------------------------------------------------------------------------
-## Body
-##------------------------------------------------------------------------------
+<article>
 
 Map data: <a href="http://www.openstreetmap.org/">OpenStreetMap</a> (CC-By-SA OSM Contributors)
 
@@ -34,3 +28,7 @@ Media Player: <a href="http://flv-player.net/players/maxi/">FLV Player Maxi</a> 
 <hr>
 
 Javascript niceness: <a href="http://jquery.com/">jQuery</a> (MIT)
+
+<p>Feature detection: <a href="http://www.modernizr.com//">Modernizr</a> (MIT)
+
+</article>

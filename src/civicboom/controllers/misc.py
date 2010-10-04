@@ -1,6 +1,6 @@
 from civicboom.lib.base import *
 
-prefix = '/web/design09/misc/'
+prefix = '/web/misc/'
 
 class MiscController(BaseController):
     def index(self):
