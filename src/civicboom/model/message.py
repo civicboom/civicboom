@@ -23,7 +23,9 @@ class Message(Base):
         'list': {
             'id'           : None ,
             'source_id'    : None ,
+            'source'       : lambda m: str(m.source) ,
             'target_id'    : None ,
+            'target'       : lambda m: str(m.target) ,
             'timestamp'    : None ,
             'subject'      : None ,
             'content'      : None ,

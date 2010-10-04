@@ -1,4 +1,4 @@
-${show_messages(d['messages'])}
+${show_messages(d['list'])}
 
 <%def name="show_messages(messages)">
     <table>
