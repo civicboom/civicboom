@@ -400,6 +400,13 @@ def form_to_content(form, content):
     if 'form_licence' in form:
         content.license_id = form['form_licence']
 
+    if 'form_location' in form:
+        try:
+            (lon, lat) = form['form_location').split(" ")
+            content.location = "SRID=4326;POINT(%d %d)" % (float(lon), float(lat))
+        except:
+            pass
+
     # Any left over fields that just need a simple set
     for field in ["title", ]:
         form_field_name = "form_"+field
