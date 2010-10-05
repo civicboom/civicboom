@@ -1,5 +1,5 @@
 <%inherit file="/web/common/html_base.mako"/>
-<%namespace name="loc" file="../includes/member.mako"/>
+<%namespace name="loc" file="../common/member.mako"/>
 
 ##------------------------------------------------------------------------------
 ## Title - Override

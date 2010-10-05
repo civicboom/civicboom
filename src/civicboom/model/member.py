@@ -43,7 +43,7 @@ class Member(Base):
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(Unicode(250),   nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
-    location_home   = Golumn(Point(2),       nullable=True,  doc="Current location, for geo-targeted assignments. Nullable for privacy")
+    location_home   = Golumn(Point(2),       nullable=True)
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
