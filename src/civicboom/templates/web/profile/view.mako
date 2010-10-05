@@ -1,7 +1,7 @@
 <%inherit file="/web/common/layout_3cols.mako"/>
 
-<%namespace name="member_includes"  file="/web/design09/includes/member.mako"  />
-<%namespace name="content_includes" file="/web/design09/includes/content_list.mako"/>
+<%namespace name="member_includes"  file="/web/common/member.mako"  />
+<%namespace name="content_includes" file="/web/common/content_list.mako"/>
 
 ##------------------------------------------------------------------------------
 ## RSS

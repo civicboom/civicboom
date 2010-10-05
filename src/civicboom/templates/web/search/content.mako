@@ -1,6 +1,6 @@
 <%inherit file="/web/common/html_base.mako"/>
-<%namespace name="cl" file="/web/design09/includes/content_list.mako"/>
-##<%namespace name="loc" file="../includes/location.mako"/>
+<%namespace name="cl" file="/web/common/content_list.mako"/>
+##<%namespace name="loc" file="../common/location.mako"/>
 
 ##------------------------------------------------------------------------------
 ## Title - Override

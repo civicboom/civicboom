@@ -1,8 +1,8 @@
 <%inherit file="/web/common/layout_3cols.mako"/>
 
-<%namespace name="loc"              file="/web/design09/includes/location.mako"     />
-<%namespace name="member_includes"  file="/web/design09/includes/member.mako"       />
-<%namespace name="content_includes" file="/web/design09/includes/content_list.mako" />
+<%namespace name="loc"              file="/web/common/location.mako"     />
+<%namespace name="member_includes"  file="/web/common/member.mako"       />
+<%namespace name="content_includes" file="/web/common/content_list.mako" />
 
 
 

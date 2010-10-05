@@ -1,7 +1,7 @@
 <%inherit file="/web/common/html_base.mako"/>
 
 <%namespace name="YUI" file="/web/common/YUI_components.mako" />
-<%namespace name="loc" file="/web/design09/includes/location.mako" />
+<%namespace name="loc" file="/web/common/location.mako" />
 
 ##------------------------------------------------------------------------------
 ## Title - Override

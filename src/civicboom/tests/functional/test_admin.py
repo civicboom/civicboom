@@ -38,7 +38,7 @@ class TestAdminController(TestController):
         response = self.app.get("/admin/Group/models/new")
 
     def test_group_edit(self):
-        response = self.app.get("/admin/Group/models/6/edit?")
+        response = self.app.get("/admin/Group/models/8/edit?")
 
     # FIXME: these error out when the pages are empty ._.?
 

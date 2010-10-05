@@ -10,7 +10,6 @@ ${common.errors(fieldset)}
 	${common.render_short_field(fieldset.username)|n}
 	${common.render_short_field(fieldset.email)|n}
 	${common.render_short_field(fieldset.status.dropdown(options=["pending", "active", "removed"]))|n}
-	${common.render_short_field(fieldset.location)|n}
 	<tr class="input_row"><td>Updated</td><td>${fieldset.location_updated.render_readonly()|n}</td></tr>
 </table>
 		</td>
