@@ -1,6 +1,6 @@
 <%inherit file="./widget_base.mako"/>
 
-<%namespace name="member" file="/web/design09/includes/member.mako"/>
+<%namespace name="member" file="/web/common/member.mako"/>
 
 <%
 import json
