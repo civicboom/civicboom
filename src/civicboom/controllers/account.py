@@ -1,6 +1,6 @@
 from civicboom.lib.base import *
 
-from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signout_user, login_redirector
+from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector
 from civicboom.lib.services.janrain import janrain
 from civicboom.controllers.widget   import setup_widget_env
 from civicboom.lib.helpers          import url_from_widget
@@ -63,7 +63,11 @@ class AccountController(BaseController):
 
         # If user has existing account: Login
         if c.logged_in_user:
-            signin_user(c.logged_in_user, login_provider=login_provider)
+            if format in ["html", "redirect"]:
+                signin_user_and_redirect(c.logged_in_user, login_provider=login_provider)
+            else:
+                signin_user(c.logged_in_user, "api-password")
+                return action_ok("logged in ok", {"auth_token": authentication_token()})
         
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
@@ -79,7 +83,7 @@ class AccountController(BaseController):
             
             u = register_new_janrain_user(c.auth_info['profile'])             # Create new user from Janrain profile data
             # added to assiciate_janrain civicboomlib call #janrain('map', identifier=c.auth_info['profile']['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
-            signin_user(u, login_provider=c.auth_info['profile']['identifier'])
+            signin_user_and_redirect(u, login_provider=c.auth_info['profile']['identifier'])
             #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             
         # If not authenticated or any janrain info then error

@@ -1,4 +1,4 @@
-<%inherit file="/web/html_base.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 
 <div>
   <h1>Content Unavalable</h1>

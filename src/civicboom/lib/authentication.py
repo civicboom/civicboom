@@ -149,6 +149,12 @@ def signin_user(user, login_provider=None):
     session_set('user_id' , user.id      ) # Set server session variable to user.id
     session_set('username', user.username) # Set server session username so in debug email can identify user    
     response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))
+
+def signin_user_and_redirect(user, login_provider=None):
+    """
+    Perform the sigin for a user
+    """
+    signin_user(user, login_provider)
     
     if 'popup_close' in request.params:
         # Redirect to close the login frame, but keep the login_redirector for a separte call later

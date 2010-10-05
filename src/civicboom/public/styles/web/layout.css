@@ -1,0 +1,136 @@
+/*
+ * the body is then broken down into the navigation bar at the top
+ */
+NAV {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	background: url("/styles/web/userbarbk.png");
+	z-index: 1;
+}
+.u-anon NAV {height: 0px;}
+.u-user NAV {height: 17px;}
+
+NAV A {
+	background: url("/styles/web/userbartab.png");
+	text-align: center;
+	color: black;
+	text-decoration: none;
+
+	position: absolute;
+	top: 0px;
+
+	display: block;
+	width: 71px;
+	height: 17px;
+	font-size: 0.75em;
+}
+NAV A SPAN {
+	display: none;
+}
+
+NAV .name {left: 32px;}
+NAV .clock {left: 103px;}
+NAV .role {left: 174px;}
+
+NAV .profile {left: 277px;}
+NAV .groups {left: 348px;}
+NAV .assignments {left: 419px;}
+
+NAV .messages {left: 552px;}
+
+NAV .settings {
+	right: 32px;
+
+	width: 68px;
+	background: url("/styles/web/userbarsettings.png");
+}
+
+NAV .login, NAV .logout {
+	position: absolute;
+	right: 32px;
+	width: 68px;
+	height: 15px;
+}
+NAV .logout {top: 17px;}
+
+
+/*
+ * the header, with logo and search box
+ */
+HEADER {
+	clear: both;
+	background: url("/styles/web/headerbk.png");
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	height: 122px;
+	z-index: 0;
+}
+.u-anon HEADER {top: 0px;}
+.u-user HEADER {top: 17px;}
+
+HEADER #logo IMG {padding: 32px;}
+HEADER #logo SPAN {display: none;}
+
+HEADER #search {
+	position: absolute;
+	top: 32px;
+	right: 32px;
+	background: url("/styles/web/searchbk.png");
+	width: 165px;
+	height: 58px;
+}
+HEADER #search .search_input {
+	position: absolute;
+	top: 23px;
+	left: 5px;
+	width: 103px;
+	height: 13px;
+	border: none;
+	font-size: 12px;
+}
+HEADER #search .search_button {
+	position: absolute;
+	top: 6px;
+	left: 111px;
+}
+
+/*
+ * the bulk of the page in the middle
+ */
+BODY>DIV#app {
+	clear: both;
+}
+.u-anon #app {margin-top: 122px;}
+.u-user #app {margin-top: 139px;}
+
+/*
+ * sometimes the main page is columned
+ */
+#col_left {
+	float: left;
+	width: 120px;
+	border: 1px solid black;
+}
+#col_right {
+	float: right;
+	width: 120px;
+	border: 1px solid black;
+}
+#col_main {
+	border: 1px solid black;
+}
+#col_left  ~ #col_main { margin-left:  128px; }
+#col_right ~ #col_main { margin-right: 128px; }
+
+/*
+ * and a footer (not actually in the new design -- do we need one?)
+ */
+FOOTER {
+	clear: both;
+}
+FOOTER LI {
+	float: left;
+}
