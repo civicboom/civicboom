@@ -1,25 +1,41 @@
 <html>
+	<head>
+		<title>Error</title>
+		<style>
+H1 {
+	text-align: center;
+}
+		</style>
+	</head>
+	<body>
 
-<head>
-</head>
-
-<body>
-
-<h1>Temp Error template</h1>
-
-<p>This can be replaced with an inherited template to use the Civicboom header and footer</p>
+<h1>Civicboom Internal Error</h1>
 
 ##<p>Code:    ${c.error_code}</p>
 ##<p>Prefix:  ${c.error_prefix}</p>
 ##<p>Message: ${c.error_message}</p>
+% if c.result:
 % if 'code' in c.result:
-    code: <p>${c.result['code']}</p>
+    <p>code: <b>${c.result['code']}</b>
 % endif
 
 % if 'message' in c.result:
-    message: <p>${c.result['message']}</p>
+    <br>message: <b>${c.result['message']}</b>
+% endif
 % endif
 
-</body>
+<!--
+here is some padding to bring the page over 512 bytes
+here is some padding to bring the page over 512 bytes
+here is some padding to bring the page over 512 bytes
+here is some padding to bring the page over 512 bytes
+here is some padding to bring the page over 512 bytes
+here is some padding to bring the page over 512 bytes
+here is some padding to bring the page over 512 bytes
+here is some padding to bring the page over 512 bytes
+here is some padding to bring the page over 512 bytes
+here is some padding to bring the page over 512 bytes
+-->
 
+	</body>
 </html>

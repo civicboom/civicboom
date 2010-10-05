@@ -1,5 +1,5 @@
 <%inherit file="/web/common/html_base.mako"/>
-<%def name="title()">${_("Feed: ")+d['feed']['name']}</%def>
+<%def name="title()">${_("Feed: ")+d['feed'].name}</%def>
 
 <style>
 .and, .or, .not, .fil {
@@ -15,4 +15,4 @@
 <%
 from civicboom.lib.search import html
 %>
-${html(d['feed']['query'])|n}
+${html(d['feed'].query)|n}
