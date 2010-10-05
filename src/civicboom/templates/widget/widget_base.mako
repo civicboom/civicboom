@@ -25,6 +25,6 @@
             ${next.body()}
         </div>
         ## For Google analytics
-        <%include file="/web/scripts_end.mako"/>
+        <%include file="/web/common/scripts_end.mako"/>
     </body>
 </html>

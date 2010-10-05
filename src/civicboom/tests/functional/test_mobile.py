@@ -2,12 +2,6 @@ from civicboom.tests import *
 
 class TestMobileController(TestController):
 
-    #def setUp(self):
-    #    response = self.app.get(url(controller='mobile', action='signin'))
-
-    def test_signup(self):
-        response = self.app.get(url(controller='mobile', action='signup'))
-
     def test_latest_version(self):
         response = self.app.get(url(controller='mobile', action='latest_version'))
 
