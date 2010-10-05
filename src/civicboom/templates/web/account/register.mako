@@ -1,6 +1,6 @@
-<%inherit file="/web/html_base.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 
-<%namespace name="YUI" file="/web/includes/YUI_components.mako" />
+<%namespace name="YUI" file="/web/common/YUI_components.mako" />
 
 ##------------------------------------------------------------------------------
 ## Additional CSS and Javascripts

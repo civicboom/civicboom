@@ -51,10 +51,13 @@ def redirect_to_referer():
 # a fetch with session_get will get the session value, but will return None if it's _exipre pair has expired
     
 
-def session_remove(key):
-    value = session_get(key)
+def session_delete(key):
     if key           in session: del session[key]
     if key+'_expire' in session: del session[key+'_expire']
+
+def session_remove(key):
+    value = session_get(key)
+    session_delete(key)
     return value
 
 def session_set(key, value, duration=None):
@@ -69,7 +72,7 @@ def session_get(key):
     key_expire = key+'_expire'
     if key_expire in session:  
         if time.time() > float(session[key_expire]):
-            session_remove(key)
+            session_delete(key)
     if key in session:
         return session[key]
     return None

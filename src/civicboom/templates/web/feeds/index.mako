@@ -1,4 +1,4 @@
-<%inherit file="/web/html_base.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Feeds")}</%def>
 
 <p><a href="${url('new_feed')}">new</a>

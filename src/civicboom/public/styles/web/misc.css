@@ -14,9 +14,9 @@ BODY.c-misc.a-about .cols {
  * front page, a blurb and a signup box
  */
 BODY.c-misc.a-titlepage SECTION.blurb {
-	float: left;
+	display: block;
 	width: 500px;
-	margin: 75px;
+	padding: 100px;
 	font-style: italic;
 	font-size: 1.5em;
 	text-align: center;
@@ -26,6 +26,7 @@ BODY.c-misc.a-titlepage SECTION.signup {
 	width: 300px;
 	padding: 16px;
 	background: white;
+	margin: 50px;
 	margin-right: 100px;
 	border-radius: 8px;
 	-moz-border-radius: 8px;

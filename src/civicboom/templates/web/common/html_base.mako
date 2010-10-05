@@ -40,13 +40,14 @@
 ## Javascripts
 ##-------------------
 % if config['development_mode']:
-	<!-- HTML5 -->
+	<!-- Browser bug fixes -->
 	<script type="text/javascript" src="/javascript/Modernizr.js"></script>
-	<script type="text/javascript" src="/javascript/html5.js"></script>
+	<script type="text/javascript" src="/javascript/IE9.js"></script>
 	<!-- jQuery -->
 	<script type="text/javascript" src="/javascript/jquery-1.4.2.js"></script>
 	<script type="text/javascript" src="/javascript/jquery.ui-1.8.4.js"></script>
 	<script type="text/javascript" src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+	<script type="text/javascript" src="/javascript/jquery.html5-0.0.1.js"></script>
 	<!-- Civicboom -->
 	<script type="text/javascript" src="/javascript/misc.js"></script>
 	<script type="text/javascript" src="/javascript/url_encode.js"></script>
@@ -73,7 +74,7 @@
 ## This displays the message and then removes it from the session once it is displayed the first time
 ## See "Definitive Guide to Pylons" pg 191 for details
 <%def name="flash_message()">
-    <div id="flash_message" style="position: absolute; top: 0px; left: 0px; right: 0px;" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
+    <div id="flash_message" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
         
 	<!-- animation for flash message -->
 	<script type="text/javascript">
@@ -94,14 +95,18 @@
 ##------------------------------------------------------------------------------
 ## HTML Body
 ##------------------------------------------------------------------------------
-<body class="c-${c.controller} a-${c.action}">
+<%
+if c.logged_in_user:
+	u = "user"
+else:
+	u = "anon"
+%>
+<body class="c-${c.controller} a-${c.action} u-${u}">
 	${flash_message()}
-% if c.logged_in_user:
-	<nav><%include file="includes/navigation.mako"/></nav>
-% endif
-	<header><%include file="includes/header.mako"/></header>
+	<nav><%include file="navigation.mako"/></nav>
+	<header><%include file="header.mako"/></header>
 	<div id="app">${next.body()}</div>
-	<footer><%include file="includes/footer.mako"/></footer>
-	<%include file="includes/scripts_end.mako"/>
+	<footer><%include file="footer.mako"/></footer>
+	<%include file="scripts_end.mako"/>
 </body>
 </html>

@@ -1,4 +1,4 @@
-<%inherit file="/web/html_base.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 <%namespace name="cl" file="/web/design09/includes/content_list.mako"/>
 ##<%namespace name="loc" file="../includes/location.mako"/>
 

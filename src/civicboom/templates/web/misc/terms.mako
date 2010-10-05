@@ -1,4 +1,4 @@
-<%inherit file="/web/html_base.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Terms and conditions")}</%def>
 
 <div class="legaltext">Welcome to Civicboom. Any access to or use of this Website is governed by the terms and conditions of use set out below ("Terms and Conditions"), our Privacy Policy and Rules. Access to or use of this Website implies your agreement and acceptance of these Terms and Conditions, our Privacy Policy and Rules. If you do not accept these Terms and Conditions, our Privacy Policy and/or Rules, <span class="bolder">please do not proceed any further and leave this Website immediately.</span></div>

@@ -13,10 +13,12 @@ NAV {
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	height: 17px;
 	background: url("/styles/web/userbarbk.png");
-	border: 1px solid magenta;
+	z-index: 1;
 }
+.u-anon NAV {height: 0px;}
+.u-user NAV {height: 17px;}
+
 NAV A {
 	background: url("/styles/web/userbartab.png");
 	text-align: center;
@@ -49,42 +51,29 @@ NAV .settings {
 	right: 32px;
 
 	width: 68px;
-	background: url("/styles/web/userbarlogout.png");
+	background: url("/styles/web/userbarsettings.png");
 }
 
-/*
- * the header, with logo and search box
- */
-HEADER {
-	border: 1px solid red;
-	clear: both;
-	background: url("/styles/web/headerbk.png");
-	margin-top: 64px;
-}
-
-HEADER #logo IMG {padding: 32px;}
-HEADER #logo SPAN {display: none;}
-
-HEADER #login {
+NAV .login {
 	position: absolute;
 	top: 0px;
 	right: 32px;
 
 	width: 68px;
-	height: 17px;
+	height: 15px;
 	/*
 	background: url("/styles/web/userbarlogout.png");
 	background-position: 100% 100%;
 	text-align: center;
 	*/
 }
-HEADER #logout {
+NAV .logout {
 	position: absolute;
 	top: 17px;
 	right: 32px;
 
 	width: 68px;
-	height: 17px;
+	height: 15px;
 	/*
 	background: url("/styles/web/userbarlogout.png");
 	background-position: 100% 100%;
@@ -92,16 +81,46 @@ HEADER #logout {
 	*/
 }
 
+
+/*
+ * the header, with logo and search box
+ */
+HEADER {
+	clear: both;
+	background: url("/styles/web/headerbk.png");
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	height: 122px;
+	z-index: 0;
+}
+.u-anon HEADER {top: 0px;}
+.u-user HEADER {top: 17px;}
+
+HEADER #logo IMG {padding: 32px;}
+HEADER #logo SPAN {display: none;}
+
 HEADER #search {
-	float: right;
-	clear: right;
+	position: absolute;
+	top: 32px;
+	right: 32px;
 	background: url("/styles/web/searchbk.png");
 	width: 165px;
 	height: 58px;
-	border: 1px solid green;
+}
+HEADER #search .search_input {
+	position: absolute;
+	top: 23px;
+	left: 5px;
+	width: 103px;
+	height: 13px;
+	border: none;
+	font-size: 12px;
 }
 HEADER #search .search_button {
-	position:
+	position: absolute;
+	top: 6px;
+	left: 111px;
 }
 
 /*
@@ -109,13 +128,49 @@ HEADER #search .search_button {
  */
 BODY>DIV#app {
 	clear: both;
-	border: 1px solid cyan;
 }
+.u-anon #app {margin-top: 122px;}
+.u-user #app {margin-top: 139px;}
+
+/*
+ * sometimes the main page is columned
+ */
+#col_left {
+	float: left;
+	width: 120px;
+	border: 1px solid black;
+}
+#col_right {
+	float: right;
+	width: 120px;
+	border: 1px solid black;
+}
+#col_main {
+	border: 1px solid black;
+}
+#col_left  ~ #col_main { margin-left:  128px; }
+#col_right ~ #col_main { margin-right: 128px; }
+
+/*
+ * flash message
+ */ 
+#flash_message {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	z-index: 2;
+	padding: 8px;
+}
+#flash_message.status_ok {background: yellow;}
+#flash_message.status_error {background: red;}
 
 /*
  * and a footer (not actually in the new design -- do we need one?)
  */
 FOOTER {
 	clear: both;
-	border: 1px solid green;
+}
+FOOTER LI {
+	float: left;
 }
