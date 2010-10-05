@@ -133,6 +133,39 @@ BODY>DIV#app {
 .u-user #app {margin-top: 139px;}
 
 /*
+ * sometimes the main page is columned
+ */
+#col_left {
+	float: left;
+	width: 120px;
+	border: 1px solid black;
+}
+#col_right {
+	float: right;
+	width: 120px;
+	border: 1px solid black;
+}
+#col_main {
+	border: 1px solid black;
+}
+#col_left  ~ #col_main { margin-left:  128px; }
+#col_right ~ #col_main { margin-right: 128px; }
+
+/*
+ * flash message
+ */ 
+#flash_message {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	z-index: 2;
+	padding: 8px;
+}
+#flash_message.status_ok {background: yellow;}
+#flash_message.status_error {background: red;}
+
+/*
  * and a footer (not actually in the new design -- do we need one?)
  */
 FOOTER {

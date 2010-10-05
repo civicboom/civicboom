@@ -74,7 +74,7 @@
 ## This displays the message and then removes it from the session once it is displayed the first time
 ## See "Definitive Guide to Pylons" pg 191 for details
 <%def name="flash_message()">
-    <div id="flash_message" style="position: absolute; top: 0px; left: 0px; right: 0px;" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
+    <div id="flash_message" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
         
 	<!-- animation for flash message -->
 	<script type="text/javascript">
