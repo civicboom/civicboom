@@ -125,11 +125,11 @@ class Content(Base):
     })
     __to_dict__['single'].update({
             'content'           : None ,
-            'parent'            : lambda content: content.parent.to_dict() if content.parent else None ,
+            'parent'            : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
             'creator'           : lambda content: content.creator.to_dict() ,
-            'attachments'       : lambda content: [   media.to_dict(                                ) for media    in content.attachments] ,
-            'responses'         : lambda content: [response.to_dict('list', include_fields='creator') for response in content.responses  ] ,
-            'comments'          : lambda content: [ comment.to_dict(                                ) for comment  in content.comments   ] ,
+            'attachments'       : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
+            'responses'         : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
+            'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
 
     })
     del __to_dict__['single']['content_short']
