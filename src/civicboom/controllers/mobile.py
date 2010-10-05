@@ -4,7 +4,7 @@ from civicboom.model              import Media, ArticleContent, SyndicatedConten
 from civicboom.lib                import helpers as h
 from civicboom.lib.communication  import messages
 from civicboom.lib.text           import clean_html
-from civicboom.lib.authentication import get_user_and_check_password
+from civicboom.lib.authentication import get_user_and_check_password, signin_user
 from civicboom.lib.database.get_cached import get_content
 
 from decorator import decorator
@@ -39,10 +39,11 @@ class MobileController(BaseController):
         username = request.POST.get("username")
         password = request.POST.get("password")
         user = get_user_and_check_password(username, password)
-        if c.logged_in_user or user:
-            session_set('user_id' , user.id      ) # Set server session variable to user.id
-            session_set('username', user.username) # Set server session username so in debug email can identify user
-            response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))
+        if user:
+            signin_user(user, "mobile")
+            c.logged_in_user = user
+
+        if c.logged_in_user:
             return action_ok("logged in ok", {"auth_token": authentication_token()})
         else:
             return action_error(_("not logged in"), code=403)
