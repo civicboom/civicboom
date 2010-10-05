@@ -13,10 +13,12 @@ NAV {
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	height: 17px;
 	background: url("/styles/web/userbarbk.png");
 	border: 1px solid magenta;
 }
+.u-anon NAV {height: 0px;}
+.u-user NAV {height: 17px;}
+
 NAV A {
 	background: url("/styles/web/userbartab.png");
 	text-align: center;
@@ -52,20 +54,7 @@ NAV .settings {
 	background: url("/styles/web/userbarlogout.png");
 }
 
-/*
- * the header, with logo and search box
- */
-HEADER {
-	border: 1px solid red;
-	clear: both;
-	background: url("/styles/web/headerbk.png");
-	margin-top: 64px;
-}
-
-HEADER #logo IMG {padding: 32px;}
-HEADER #logo SPAN {display: none;}
-
-HEADER #login {
+NAV .login {
 	position: absolute;
 	top: 0px;
 	right: 32px;
@@ -78,7 +67,7 @@ HEADER #login {
 	text-align: center;
 	*/
 }
-HEADER #logout {
+NAV .logout {
 	position: absolute;
 	top: 17px;
 	right: 32px;
@@ -92,16 +81,40 @@ HEADER #logout {
 	*/
 }
 
+
+/*
+ * the header, with logo and search box
+ */
+HEADER {
+	border: 1px solid red;
+	clear: both;
+	background: url("/styles/web/headerbk.png");
+	position: relative;
+}
+.u-anon {margin-top: 0px;}
+.u-user {margin-top: 17px;}
+
+HEADER #logo IMG {padding: 32px;}
+HEADER #logo SPAN {display: none;}
+
 HEADER #search {
-	float: right;
-	clear: right;
+	position: absolute;
+	top: 32px;
+	right: 32px;
 	background: url("/styles/web/searchbk.png");
 	width: 165px;
 	height: 58px;
 	border: 1px solid green;
 }
+HEADER #search .search_input {
+	position: absolute;
+	top: 20px;
+	left: 0px;
+}
 HEADER #search .search_button {
-	position:
+	position: absolute;
+	top: 6px;
+	left: 111px;
 }
 
 /*

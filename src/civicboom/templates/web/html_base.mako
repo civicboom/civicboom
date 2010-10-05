@@ -94,11 +94,15 @@
 ##------------------------------------------------------------------------------
 ## HTML Body
 ##------------------------------------------------------------------------------
-<body class="c-${c.controller} a-${c.action}">
+<%
+if c.logged_in_user:
+	u = "user"
+else:
+	u = "anon"
+%>
+<body class="c-${c.controller} a-${c.action} u-${u}">
 	${flash_message()}
-% if c.logged_in_user:
 	<nav><%include file="includes/navigation.mako"/></nav>
-% endif
 	<header><%include file="includes/header.mako"/></header>
 	<div id="app">${next.body()}</div>
 	<footer><%include file="includes/footer.mako"/></footer>
