@@ -1,0 +1,47 @@
+/*
+ * If we have javascript, hide the things that are shown using javascript
+ */
+HTML.js .hideable {
+	display: none;
+}
+HTML.js .popup {
+	display: none;
+	position: fixed;
+	left: 200px;
+	top: 50px;
+}
+
+/*
+ * layout for the web page, starting with the body to cover everything
+ *
+ * In most browsers body=the whole screen, but in chrome HTML=whole screen
+ * and body can be smaller with white borders?
+ */
+HTML, BODY {
+	background: #DDD;
+}
+
+/*
+ * common styles
+ */
+.gradscroll {
+	overflow: scroll;
+	background: url("/styles/web/grad-top.png") repeat-x top left, url("/styles/web/grad-bottom.png") repeat-x bottom left;
+}
+
+/*
+ * flash message
+ */ 
+#flash_message {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	z-index: 2;
+	padding: 8px;
+	display: none;
+	border-bottom: 1px solid black;
+}
+#flash_message.status_ok {background: yellow;}
+#flash_message.status_error {background: red;}
+

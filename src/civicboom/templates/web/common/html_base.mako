@@ -29,9 +29,10 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui.stars.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/misc.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/web_specific.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/content_editor.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif
@@ -41,19 +42,19 @@
 ##-------------------
 % if config['development_mode']:
 	<!-- Browser bug fixes -->
-	<script type="text/javascript" src="/javascript/Modernizr.js"></script>
-	<script type="text/javascript" src="/javascript/IE9.js"></script>
+	<script src="/javascript/Modernizr.js"></script>
+	<script src="/javascript/IE9.js"></script>
 	<!-- jQuery -->
-	<script type="text/javascript" src="/javascript/jquery-1.4.2.js"></script>
-	<script type="text/javascript" src="/javascript/jquery.ui-1.8.4.js"></script>
-	<script type="text/javascript" src="/javascript/jquery.ui.stars-3.0.1.js"></script>
-	<script type="text/javascript" src="/javascript/jquery.html5-0.0.1.js"></script>
+	<script src="/javascript/jquery-1.4.2.js"></script>
+	<script src="/javascript/jquery.ui-1.8.4.js"></script>
+	<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+	<script src="/javascript/jquery.html5-0.0.1.js"></script>
 	<!-- Civicboom -->
-	<script type="text/javascript" src="/javascript/misc.js"></script>
-	<script type="text/javascript" src="/javascript/url_encode.js"></script>
-	<script type="text/javascript" src="/javascript/toggle_div.js"></script>
+	<script src="/javascript/misc.js"></script>
+	<script src="/javascript/url_encode.js"></script>
+	<script src="/javascript/toggle_div.js"></script>
 % else:
-	<script type="text/javascript" src="/javascript/_combined.js"></script>
+	<script src="/javascript/_combined.js"></script>
 % endif
 
 ##----------------------------------------------------------------------------

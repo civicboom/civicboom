@@ -1,14 +1,4 @@
 /*
- * layout for the web page, starting with the body to cover everything
- *
- * In most browsers body=the whole screen, but in chrome HTML=whole screen
- * and body can be smaller with white borders?
- */
-HTML, BODY {
-	background: #DDD;
-}
-
-/*
  * the body is then broken down into the navigation bar at the top
  */
 NAV {
@@ -134,22 +124,6 @@ BODY>DIV#app {
 }
 #col_left  ~ #col_main { margin-left:  128px; }
 #col_right ~ #col_main { margin-right: 128px; }
-
-/*
- * flash message
- */ 
-#flash_message {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	z-index: 2;
-	padding: 8px;
-	display: none;
-	border-bottom: 1px solid black;
-}
-#flash_message.status_ok {background: yellow;}
-#flash_message.status_error {background: red;}
 
 /*
  * and a footer (not actually in the new design -- do we need one?)

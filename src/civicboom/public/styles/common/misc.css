@@ -1,23 +1,127 @@
 /*
- * If we have javascript, hide the things that are shown using javascript
+ * about page, lots of text with a couple of custom bits
  */
-HTML.js .hideable {
-	display: none;
-}
-HTML.js .popup {
-	display: none;
-	position: fixed;
-	left: 200px;
-	top: 50px;
+BODY.c-misc.a-about .cols {
+	-moz-column-count: 2;
+	-moz-column-gap: 1em;
+	-moz-column-rule: 1px solid black;
+	-webkit-column-count: 2;
+	-webkit-column-gap: 1em;
+	-webkit-column-rule: 1px solid black;
 }
 
 /*
- * make the body fill the page, so the background colour / image
- * doesn't stop half way down the screen, leaving the bottom of the
- * page white for short pages
+ * front page, a blurb and a signup box
  */
-/*
-HTML, BODY {
-	min-height: 100%;
+BODY.c-misc.a-titlepage SECTION.blurb {
+	display: block;
+	width: 500px;
+	padding: 100px;
+	font-style: italic;
+	font-size: 1.5em;
+	text-align: center;
 }
-*/
+BODY.c-misc.a-titlepage SECTION.signup {
+	float: right;
+	width: 300px;
+	padding: 16px;
+	background: white;
+	margin: 50px;
+	margin-right: 100px;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	border: 1px solid #AAA;
+}
+BODY.c-misc.a-titlepage SECTION.signup P {
+	margin: 8px;
+	font-size: 1.5em;
+}
+BODY.c-misc.a-titlepage SECTION.signup INPUT[type="text"],
+BODY.c-misc.a-titlepage SECTION.signup INPUT[type="email"],
+BODY.c-misc.a-titlepage SECTION.signup INPUT[type="password"] {
+	width: 100%;
+}
+
+/*
+ * press page, a list of articles each containing TIME, A, BLOCKQUOTE
+ */
+BODY.c-misc.a-press #app {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1000px;
+	padding: 16px;
+	-moz-column-width: 450px;
+	-moz-column-gap: 1em;
+	-moz-column-rule: 1px solid black;
+	-webkit-column-width: 450px;
+	-webkit-column-gap: 1em;
+	-webkit-column-rule: 1px solid black;
+}
+BODY.c-misc.a-press ARTICLE {
+	margin: 32px;
+}
+BODY.c-misc.a-press ARTICLE TIME {
+	display: block;
+	border-bottom: 1px solid black;
+	font-size: 1.5em;
+	margin-bottom: 0.5em;
+}
+BODY.c-misc.a-press ARTICLE IMG {
+	display: block;
+	margin: auto;
+	max-width: 100%;
+}
+
+/*
+ * terms & conditions / privacy policy are both WALL OF TEXT
+ */
+BODY.c-misc.a-terms #app, BODY.c-misc.a-privacy #app {
+	margin-left: auto;
+	font-size: 0.75em;
+	margin-right: auto;
+	max-width: 1000px;
+	padding: 16px;
+	-moz-column-width: 450px;
+	-moz-column-gap: 1em;
+	-moz-column-rule: 1px solid black;
+	-webkit-column-width: 450px;
+	-webkit-column-gap: 1em;
+	-webkit-column-rule: 1px solid black;
+}
+
+/*
+ * credits, a list of Ps with HRs between them
+ */
+BODY.c-misc.a-credits #app {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1000px;
+	padding: 16px;
+	-moz-column-width: 300px;
+	-moz-column-gap: 1em;
+	-moz-column-rule: 1px solid black;
+	-webkit-column-width: 300px;
+	-webkit-column-gap: 1em;
+	-webkit-column-rule: 1px solid black;
+}
+BODY.c-misc.a-credits ARTICLE DIV {
+	margin-bottom: 2em;
+}
+BODY.c-misc.a-credits ARTICLE DIV SPAN {
+	display: block;
+	border-bottom: 1px solid black;
+	font-size: 1.5em;
+	margin-bottom: 0.5em;
+}
+
+/*
+ * signin page, 3 forms for "log in", "forgotten password" and "register"
+ */
+BODY.c-account.a-signin .cols {
+	-moz-column-count: 3;
+	-moz-column-gap: 1em;
+	-moz-column-rule: 1px solid black;
+	-webkit-column-count: 3;
+	-webkit-column-gap: 1em;
+	-webkit-column-rule: 1px solid black;
+}
