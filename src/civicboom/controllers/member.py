@@ -27,15 +27,17 @@ class MemberController(BaseController):
     #    return {'data': {'list': members}}
 
     @auto_format_output()
-    def show(self, id=None):
+    def show(self, id=None, **kwargs):
         """
         Get single user
         """
+        if 'list_type' not in kwargs:
+            kwargs['list_type'] = 'single'
         if id:
             member = get_user(id)
         else:
             member = c.logged_in_user
-        return {'data': member.to_dict('single')}
+        return {'data': member.to_dict(**kwargs)}
 
     @auto_format_output()
     @authorize(is_valid_user)

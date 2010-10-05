@@ -97,7 +97,8 @@ class Member(Base):
             'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
             'following'           : lambda member: [m.to_dict() for m in member.following            ] ,
             'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
-            'assignments_accepted': lambda member: [m.to_dict() for m in member.assignments_accepted ] , #if m.private==False
+            'assignments_accepted': lambda member: [m.to_dict() for m in member.assignments_accepted if m.private==False] ,
+            'content_public'      : lambda member: [m.to_dict() for m in member.content_public       ] ,
     })
     
     __to_dict__.update({
