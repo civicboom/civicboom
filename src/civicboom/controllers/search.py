@@ -23,9 +23,11 @@ def _get_search_filters():
         elif len(parts) == 3:
             (lon, lat, radius) = parts
         zoom = 10 # FIXME: inverse of radius? see bug #50
-        if lon:
+        if lon and lat and radius:
             location = (lon, lat, zoom)
             return query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
+        else:
+            return query
     
     def append_search_type(query, type_text):
         return query.filter(Content.__type__==type_text)
