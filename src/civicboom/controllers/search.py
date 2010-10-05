@@ -68,27 +68,30 @@ class SearchController(BaseController):
         return render(tmpl_prefix+"/search/index.mako")
 
     @auto_format_output()
+    @web_params_to_kwargs()
     def content(self, **kwargs):
-        kwargs.update(request.GET) # Update the kwargs with request params from query string
         
         results  = Session.query(Content).select_from(join(Content, Member, Content.creator)).filter(and_(Content.__type__!='comment', Content.__type__!='draft')).filter(Content.status=='show').order_by(Content.id.desc()) # Setup base content search query
+        
         
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20
         if 'offset' not in kwargs:
             kwargs['offset'] = 0
+        if 'include_fields' not in kwargs:
+            kwargs['include_fields'] = ",creator"
+        if 'exclude_fields' not in kwargs:
+            kwargs['exclude_fields'] = ",creator_id"
         if 'list_type' not in kwargs:
             kwargs['list_type'] = 'list'
             if c.format == 'rss':                       # Default RSS to list_with_media
-                kwargs['list_type'] = 'list_with_media'
+                kwargs['include_fields'] += ',attachments'
         
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
-        
-        
-        return {'data': {'list': [content.to_dict(kwargs['list_type']) for content in results.all()]}} # return dictionaty of content to be formatted
+        return {'data': {'list': [content.to_dict(kwargs['list_type'], include_fields=kwargs['include_fields'], exclude_fields=kwargs['exclude_fields']) for content in results.all()]}} # return dictionaty of content to be formatted
         
         """
         if "query" in request.GET:

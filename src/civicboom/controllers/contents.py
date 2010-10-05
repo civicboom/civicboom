@@ -36,7 +36,7 @@ index_lists = {
     'assignments'         : lambda member: member.content_assignments ,
     'articles'            : lambda member: member.content_articles ,
     'drafts'              : lambda member: member.content_drafts ,
-    'assignments_accepted': lambda member: member.assignments_accepted ,
+    #'assignments_accepted': lambda member: member.assignments_accepted , # AllanC - This should not be in this controller as the user has not created this content! Where to move it to?
 }
 
 
@@ -48,15 +48,15 @@ class ContentsController(BaseController):
     #     map.resource('content', 'contents')
 
     @auto_format_output()
+    @web_params_to_kwargs()
     @authorize(is_valid_user)
-    def index(self, list='content', format='html'):
+    def index(self, list='content'):
         """GET /contents: All items in the collection"""
         # url('contents')
         
-        content_list_name = request.params.get('list',list) # Get form-list from request or default to 'content'
-        if content_list_name not in index_lists: return action_error(_('list type %s not supported') % content_list_name)
-        content_list      = index_lists[content_list_name](c.logged_in_user)
-        content_list      = [content.to_dict(content_list_name) for content in content_list] #'default_list'
+        if list not in index_lists: return action_error(_('list type %s not supported') % list)
+        content_list      = index_lists[list](c.logged_in_user)
+        content_list      = [content.to_dict(exclude_fields="creator") for content in content_list]
         
         return action_ok(data={'list': content_list})
 
