@@ -103,10 +103,10 @@ else:
 %>
 <body class="c-${c.controller} a-${c.action} u-${u}">
 	${flash_message()}
-	<nav><%include file="includes/navigation.mako"/></nav>
-	<header><%include file="includes/header.mako"/></header>
+	<nav><%include file="navigation.mako"/></nav>
+	<header><%include file="header.mako"/></header>
 	<div id="app">${next.body()}</div>
-	<footer><%include file="includes/footer.mako"/></footer>
-	<%include file="includes/scripts_end.mako"/>
+	<footer><%include file="footer.mako"/></footer>
+	<%include file="scripts_end.mako"/>
 </body>
 </html>

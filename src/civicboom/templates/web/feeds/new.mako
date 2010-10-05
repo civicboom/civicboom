@@ -1,4 +1,4 @@
-<%inherit file="/web/html_base.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("New Feed")}</%def>
 
 ${h.form(url('feeds'), method="POST")}

@@ -1,4 +1,4 @@
-<%inherit file="/web/layout_2cols.mako"/>
+<%inherit file="/web/common/layout_2cols.mako"/>
 
 <%namespace name="private_profile" file="/web/profile/index.mako"/>
 

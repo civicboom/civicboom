@@ -1,4 +1,4 @@
-<%inherit file="/web/layout_2cols.mako"/>
+<%inherit file="/web/common/layout_2cols.mako"/>
 
 <%def name="col_side()">
 	<div class="avatar">

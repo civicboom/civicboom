@@ -1,4 +1,4 @@
-<%inherit file="/web/html_base.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Privacy and cookies policy")}</%def>
 
 <div class="legaltext">Indiconews Limited (“the Company”, “Indiconews”, Civicboom) is committed to ensuring that Members’ and Users’

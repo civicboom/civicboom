@@ -1,4 +1,4 @@
-<%inherit file="/web/layout_2cols.mako"/>
+<%inherit file="/web/common/layout_2cols.mako"/>
 <%namespace name="loc" file="/web/design09/includes/location.mako"/>
 <%namespace name="prof" file="/web/design09/includes/profile.mako"/>
 <%def name="col_side()">${prof.sidebar()}</%def>
