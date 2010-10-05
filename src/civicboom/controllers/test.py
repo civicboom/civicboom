@@ -133,5 +133,5 @@ class TestController(BaseController):
     def include3(self):
         return "speed"
 
-    def abort_test(self, id):
+    def abort(self, id):
         return abort(int(id))
