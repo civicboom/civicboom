@@ -130,7 +130,6 @@ class Content(Base):
             'attachments'       : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
             'responses'         : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
             'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
-
     })
     del __to_dict__['single']['content_short']
     del __to_dict__['single']['parent_id']
