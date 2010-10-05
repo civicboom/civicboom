@@ -1,6 +1,6 @@
 from civicboom.lib.base import *
 
-from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user_and_redirect, signout_user, login_redirector
+from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector
 from civicboom.lib.services.janrain import janrain
 from civicboom.controllers.widget   import setup_widget_env
 from civicboom.lib.helpers          import url_from_widget
