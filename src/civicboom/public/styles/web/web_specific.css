@@ -51,7 +51,7 @@ NAV .settings {
 	right: 32px;
 
 	width: 68px;
-	background: url("/styles/web/userbarlogout.png");
+	background: url("/styles/web/userbarsettings.png");
 }
 
 NAV .login {
@@ -60,7 +60,7 @@ NAV .login {
 	right: 32px;
 
 	width: 68px;
-	height: 17px;
+	height: 15px;
 	/*
 	background: url("/styles/web/userbarlogout.png");
 	background-position: 100% 100%;
@@ -73,7 +73,7 @@ NAV .logout {
 	right: 32px;
 
 	width: 68px;
-	height: 17px;
+	height: 15px;
 	/*
 	background: url("/styles/web/userbarlogout.png");
 	background-position: 100% 100%;
