@@ -90,13 +90,14 @@ class Member(Base):
         'single': __to_dict__['list'].copy()
     })
     __to_dict__['single'].update({
-            'num_followers'     : None ,
-            'webpage'           : None ,
-            'utc_offset'        : None ,
-            'join_date'         : None ,
-            'followers'         : lambda member: [m.to_dict('list') for m in member.followers] ,
-            'following'         : lambda member: [m.to_dict('list') for m in member.following] ,
-            'messages_public'   : lambda member: [m.to_dict('list') for m in member.messages_public[:5]] ,
+            'num_followers'       : None ,
+            'webpage'             : None ,
+            'utc_offset'          : None ,
+            'join_date'           : None ,
+            'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
+            'following'           : lambda member: [m.to_dict() for m in member.following            ] ,
+            'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
+            'assignments_accepted': lambda member: [m.to_dict() for m in member.assignments_accepted ] , #if m.private==False
     })
     
     __to_dict__.update({

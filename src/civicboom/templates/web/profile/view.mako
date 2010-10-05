@@ -73,7 +73,9 @@
 	${h.end_form()}
 
 
-    ${content_list(d['content'], ["article", "assignment"])}
+    ${content_list(d['content'], type_filters=["article", "assignment"])}
+    
+    ${content_list_group(d['member']['assignments_accepted'], "assignments accepted")}
     
 </%def>
 
@@ -82,17 +84,19 @@
 ## Other Components
 ##------------------------------------------------------------------------------
 
-<%def name="content_list(contents, content_types)">
-    % for content_type in content_types:
+<%def name="content_list(contents, type_filters, show_actions=False)">
+    % for type_filter in type_filters:
         <%
-            content_list = [content for content in contents if content['type']==content_type]
+            content_list = [content for content in contents if content['type']==type_filter]
         %>
-        <h2>${content_type} ${len(content_list)}</h2>
-
-        % if len(content_list)>0:
-            ${content_includes.content_list(content_list, actions=True)}
-        % else:
-            <span class="message_empty">No ${content_type}</span>
-        % endif
+        ${content_list_group(content_list, type_filter, show_actions=show_actions)}
     % endfor
+</%def>
+<%def name="content_list_group(contents, title, show_actions=False)">
+        <h2>${title.capitalize()} ${len(contents)}</h2>
+        % if len(contents)>0:
+            ${content_includes.content_list(contents, show_actions=show_actions)}
+        % else:
+            <span class="message_empty">No ${title}</span>
+        % endif
 </%def>

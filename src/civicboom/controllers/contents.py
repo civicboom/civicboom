@@ -36,7 +36,6 @@ index_lists = {
     'assignments'         : lambda member: member.content_assignments ,
     'articles'            : lambda member: member.content_articles ,
     'drafts'              : lambda member: member.content_drafts ,
-    #'assignments_accepted': lambda member: member.assignments_accepted , # AllanC - This should not be in this controller as the user has not created this content! Where to move it to?
 }
 
 
