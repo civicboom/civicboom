@@ -33,10 +33,14 @@ class MemberController(BaseController):
         """
         if 'list_type' not in kwargs:
             kwargs['list_type'] = 'single'
+            
         if id:
             member = get_user(id)
         else:
             member = c.logged_in_user
+        if not member:
+            return action_error(_("User does not exist"), code=404)
+        
         return {'data': member.to_dict(**kwargs)}
 
     @auto_format_output()
