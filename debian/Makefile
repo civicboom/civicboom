@@ -2,7 +2,7 @@ all: cb-website.deb python-cbmisc.deb
 
 VERSION := $(shell git describe)
 
-cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type f) _combined.js _combined.css
+cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type f) _combined.js web.css widget.css mobile.css
 	rm -rf fs-website
 	mkdir -p fs-website/DEBIAN/
 	cp control fs-website/DEBIAN/control
@@ -22,7 +22,7 @@ cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type 
 	mkdir -p fs-website/opt/cb/etc/ssl
 	cp ../ssl/* fs-website/opt/cb/etc/ssl/
 	cp _combined.js fs-website/opt/cb/share/website/civicboom/public/javascript/
-	cp _combined.css fs-website/opt/cb/share/website/civicboom/public/styles/design09/
+	cp web.css widget.css mobile.css fs-website/opt/cb/share/website/civicboom/public/styles/
 	../admin_scripts/site_to_english ../src/civicboom/i18n/en/LC_MESSAGES/civicboom.po
 	fakeroot dpkg -b fs-website cb-website_${VERSION}_all.deb 
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
@@ -33,11 +33,14 @@ _combined.js: $(shell python helper.py list_local_js) Makefile
 	curl `python helper.py list_remote_js` \
 	) | yui-compressor --type js -o _combined.js
 
-_combined.css: $(shell python helper.py list_local_css) Makefile
-	( \
-	cat `python helper.py list_local_css` && \
-	curl `python helper.py list_remote_css` \
-	) | yui-compressor --type css -o _combined.css
+web.css: ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/web/*.css Makefile
+	cat ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/web/*.css | yui-compressor --type css -o web.css
+
+widget.css: ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/widget/*.css Makefile
+	cat ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/widget/*.css | yui-compressor --type css -o widget.css
+
+mobile.css: ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/mobile/*.css Makefile
+	cat ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/mobile/*.css | yui-compressor --type css -o mobile.css
 
 python-cbmisc.deb: ../src/setup.py
 	mkdir -p fs-env/DEBIAN/
@@ -60,5 +63,5 @@ python-cbmisc.deb: ../src/setup.py
 	ln -sf python-cbmisc_${VERSION}.deb python-cbmisc.deb
 
 clean:
-	rm -rf fs-* *.deb _combined.* distribute*
+	rm -rf fs-* *.deb *.css *.js distribute*
 

@@ -54,32 +54,13 @@ NAV .settings {
 	background: url("/styles/web/userbarsettings.png");
 }
 
-NAV .login {
+NAV .login, NAV .logout {
 	position: absolute;
-	top: 0px;
 	right: 32px;
-
 	width: 68px;
 	height: 15px;
-	/*
-	background: url("/styles/web/userbarlogout.png");
-	background-position: 100% 100%;
-	text-align: center;
-	*/
 }
-NAV .logout {
-	position: absolute;
-	top: 17px;
-	right: 32px;
-
-	width: 68px;
-	height: 15px;
-	/*
-	background: url("/styles/web/userbarlogout.png");
-	background-position: 100% 100%;
-	text-align: center;
-	*/
-}
+NAV .logout {top: 17px;}
 
 
 /*
@@ -161,6 +142,8 @@ BODY>DIV#app {
 	right: 0px;
 	z-index: 2;
 	padding: 8px;
+	display: none;
+	border-bottom: 1px solid black;
 }
 #flash_message.status_ok {background: yellow;}
 #flash_message.status_error {background: red;}
