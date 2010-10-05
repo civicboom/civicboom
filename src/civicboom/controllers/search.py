@@ -93,7 +93,7 @@ class SearchController(BaseController):
             results = search_filters[key](results, kwargs[key])
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
-        return {'data': {'list': [content.to_dict(kwargs['list_type'], include_fields=kwargs['include_fields'], exclude_fields=kwargs['exclude_fields']) for content in results.all()]}} # return dictionaty of content to be formatted
+        return action_ok(data={'list': [content.to_dict(kwargs['list_type'], include_fields=kwargs['include_fields'], exclude_fields=kwargs['exclude_fields']) for content in results.all()]}) # return dictionaty of content to be formatted
         
         """
         if "query" in request.GET:
