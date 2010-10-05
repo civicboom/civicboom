@@ -1,4 +1,4 @@
-<%inherit file="/web/design09/misc/base_misc.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 
 
 ##------------------------------------------------------------------------------
