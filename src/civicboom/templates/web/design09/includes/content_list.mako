@@ -72,7 +72,9 @@
             ##---------------------------
             ## Creator
             ##---------------------------
+            % if 'creator' in content:
             ${member_includes.avatar(content['creator'], show_name=True, class_="content_creator_thumbnail")}
+            % endif
             
             ##---------------------------
             ## Other details
