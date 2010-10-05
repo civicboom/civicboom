@@ -55,6 +55,6 @@ IMG.avatar {
     </%doc>
 		<p>${cl.content_list(d['list'])}
 	% else:
-		'${term}' did not match any articles
+		'${d['term']}' did not match any articles
 	% endif
 </%def>
