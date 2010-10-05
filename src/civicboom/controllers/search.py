@@ -39,7 +39,7 @@ def _get_search_filters():
             return query.filter(Member.username==creator_text)
     
     def append_search_response_to(query, article_id):
-        query = query.filter(Content.parent_id==int(article_id))
+        return query.filter(Content.parent_id==int(article_id))
         
     #def append_search_limit(query, limit):
     #    print "limit"
