@@ -40,13 +40,14 @@
 ## Javascripts
 ##-------------------
 % if config['development_mode']:
-	<!-- HTML5 -->
+	<!-- Browser bug fixes -->
 	<script type="text/javascript" src="/javascript/Modernizr.js"></script>
-	<script type="text/javascript" src="/javascript/html5.js"></script>
+	<script type="text/javascript" src="/javascript/IE9.js"></script>
 	<!-- jQuery -->
 	<script type="text/javascript" src="/javascript/jquery-1.4.2.js"></script>
 	<script type="text/javascript" src="/javascript/jquery.ui-1.8.4.js"></script>
 	<script type="text/javascript" src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+	<script type="text/javascript" src="/javascript/jquery.html5-0.0.1.js"></script>
 	<!-- Civicboom -->
 	<script type="text/javascript" src="/javascript/misc.js"></script>
 	<script type="text/javascript" src="/javascript/url_encode.js"></script>

@@ -14,7 +14,7 @@ NAV {
 	left: 0px;
 	right: 0px;
 	background: url("/styles/web/userbarbk.png");
-	border: 1px solid magenta;
+	z-index: 1;
 }
 .u-anon NAV {height: 0px;}
 .u-user NAV {height: 17px;}
@@ -86,13 +86,16 @@ NAV .logout {
  * the header, with logo and search box
  */
 HEADER {
-	border: 1px solid red;
 	clear: both;
 	background: url("/styles/web/headerbk.png");
-	position: relative;
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	height: 122px;
+	z-index: 0;
 }
-.u-anon {margin-top: 0px;}
-.u-user {margin-top: 17px;}
+.u-anon HEADER {top: 0px;}
+.u-user HEADER {top: 17px;}
 
 HEADER #logo IMG {padding: 32px;}
 HEADER #logo SPAN {display: none;}
@@ -104,12 +107,15 @@ HEADER #search {
 	background: url("/styles/web/searchbk.png");
 	width: 165px;
 	height: 58px;
-	border: 1px solid green;
 }
 HEADER #search .search_input {
 	position: absolute;
-	top: 20px;
-	left: 0px;
+	top: 23px;
+	left: 5px;
+	width: 103px;
+	height: 13px;
+	border: none;
+	font-size: 12px;
 }
 HEADER #search .search_button {
 	position: absolute;
@@ -122,13 +128,16 @@ HEADER #search .search_button {
  */
 BODY>DIV#app {
 	clear: both;
-	border: 1px solid cyan;
 }
+.u-anon #app {margin-top: 122px;}
+.u-user #app {margin-top: 139px;}
 
 /*
  * and a footer (not actually in the new design -- do we need one?)
  */
 FOOTER {
 	clear: both;
-	border: 1px solid green;
+}
+FOOTER LI {
+	float: left;
 }
