@@ -16,6 +16,8 @@ HTML.js .popup {
  * doesn't stop half way down the screen, leaving the bottom of the
  * page white for short pages
  */
+/*
 HTML, BODY {
-	height: 100%;
+	min-height: 100%;
 }
+*/

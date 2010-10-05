@@ -1,7 +1,10 @@
 /*
  * layout for the web page, starting with the body to cover everything
+ *
+ * In most browsers body=the whole screen, but in chrome HTML=whole screen
+ * and body can be smaller with white borders?
  */
-BODY {
+HTML, BODY {
 	background: #DDD;
 }
 
