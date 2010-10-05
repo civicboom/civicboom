@@ -31,6 +31,9 @@ import pylons.test
 log = logging.getLogger(__name__)
 
 
+
+
+
 def setup_app(command, conf, variables):
     """Place any commands to setup civicboom here"""
     if not pylons.test.pylonsapp: # pragma: no cover -- "if not testing" will not be true for testing...
@@ -827,8 +830,8 @@ CREATE TRIGGER update_content
 
         ###############################################################
         
-        u1.follow(u2)
-        u2.follow(u1)
+        #u1.follow(u2) # Broken ... follow genertes a notification that requires translation - cannot be done here
+        #u2.follow(u1)
 
         ###############################################################
         log.debug("Content")
@@ -1079,7 +1082,7 @@ CREATE TRIGGER update_content
         Session.add_all([asc, ])
         Session.commit()
 
-        asc.invite([u1,u2,u3,u4])
+        #asc.invite([u1,u2,u3,u4])
 
         asc2 = AssignmentContent()
         asc2.title      = u"Assignment for the world to see"
@@ -1089,10 +1092,10 @@ CREATE TRIGGER update_content
         u1.content.append(asc2)
         Session.add_all([asc2, ])
 
-        # Get test users to accept the assignment
-        asc2.accept(u2)
-        asc2.accept(u3)
-        asc2.accept(u4)
+        # Get test users to accept the assignment - cant be done in setup :(
+        #asc2.accept(u2)
+        #asc2.accept(u3)
+        #asc2.accept(u4)
         Session.commit()
 
         ###############################################################

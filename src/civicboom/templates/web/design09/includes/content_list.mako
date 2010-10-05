@@ -5,12 +5,12 @@
 ## Content List (with thumbnails)
 ##------------------------------------------------------------------------------
 
-<%def name="content_list(results, mode='normal', actions=False, max_images=None, class_='content_list')">
+<%def name="content_list(results, mode='normal', show_actions=False, max_images=None, class_='content_list')">
     <table class="${class_}">
     % for content in results[:max_images]:
         ##% if not h.isCurrentContent(content):
         % if mode=="normal":
-            ${content_item_row(content, actions=actions)}
+            ${content_item_row(content, show_actions=show_actions)}
         % elif mode=="mini":
             ${content_item_row_mini(content)}
         % endif
@@ -24,7 +24,7 @@
 
 
 
-<%def name="content_item_row(content, actions=False)">
+<%def name="content_item_row(content, show_actions=False)">
     <tr>
         ##---------------------------
         ## Thumbnail Col
@@ -72,7 +72,9 @@
             ##---------------------------
             ## Creator
             ##---------------------------
+            % if 'creator' in content:
             ${member_includes.avatar(content['creator'], show_name=True, class_="content_creator_thumbnail")}
+            % endif
             
             ##---------------------------
             ## Other details
@@ -87,7 +89,7 @@
         ##---------------------------
         ## Action Buttons
         ##---------------------------
-        % if actions:
+        % if show_actions:
         <td>
             % if content['status'] == "locked":
               <span class="icon_large icon_locked">Approved and locked</span>

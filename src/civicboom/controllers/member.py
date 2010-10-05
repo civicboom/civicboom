@@ -11,6 +11,7 @@ user_log = logging.getLogger("user")
 #index_lists = {
 #    'following'             : lambda member: member.following ,
 #    'followers'             : lambda member: member.followers ,
+#     'assignments_accepted': lambda member: member.assignments_accepted , 
 #}
 
 class MemberController(BaseController):

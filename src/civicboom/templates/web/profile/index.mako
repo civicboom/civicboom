@@ -92,7 +92,11 @@ from civicboom.model.meta import Session
     ## reminder that new relationships have been setup as -
     ##   content_assignments_active and content_assignments_previous
 
-    ${public_profile.content_list(d['content'], ["draft", "article", "assignment", "syndicate"])}
+    ${public_profile.content_list(d['content'], type_filters=["draft", "article", "assignment", "syndicate"], show_actions=True)}
+    
+    ${public_profile.content_list_group(d['member']['assignments_accepted'], "assignments accepted")}
+        
+
 
     
 </%def>

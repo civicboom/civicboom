@@ -46,7 +46,7 @@ def follow(follower, followed, delay_commit=False):
     
     follower.following.append(followed)
         
-    #followed.send_message(messages.followed_by(reporter=follower), delay_commit=True)
+    followed.send_message(messages.followed_by(reporter=follower), delay_commit=True)
     
     if not delay_commit:
         Session.commit()
@@ -108,10 +108,10 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     assignment_accepted.status = status
     Session.add(assignment_accepted)
     
-    #if status=="accepted":
-    #    assignment.creator.send_message(messages.assignment_accepted(member=member, assignment=assignment), delay_commit=True)
-    #if status=="pending":
-    #    member.send_message(messages.assignment_invite  (member=assignment.creator, assignment=assignment), delay_commit=True)
+    if status=="accepted":
+        assignment.creator.send_message(messages.assignment_accepted(member=member, assignment=assignment), delay_commit=True)
+    if status=="pending":
+        member.send_message(messages.assignment_invite  (member=assignment.creator, assignment=assignment), delay_commit=True)
     
     if not delay_commit:
         Session.commit()

@@ -23,17 +23,18 @@ class MessagesController(BaseController):
 
 
     @auto_format_output()
+    @web_params_to_kwargs()
     @authorize(is_valid_user)
     def index(self, list='to'):
         """GET /messages: All items in the collection."""
         # url('messages')
         # AllanC - this feels duplicated from the member controler - humm ... need to think about a sensible stucture
         c.viewing_user = c.logged_in_user
-        message_list_name = request.params.get('list', list)
-        if message_list_name not in index_lists: return action_error(_('list type %s not supported') % message_list_name)
-        messages = index_lists[message_list_name](c.logged_in_user)
-        messages = [message.to_dict('default_list') for message in messages]
-
+        
+        if list not in index_lists: return action_error(_('list type %s not supported') % list)
+        messages = index_lists[list](c.logged_in_user)
+        messages = [message.to_dict() for message in messages]
+        
         return action_ok(data={'list': messages})
 
 

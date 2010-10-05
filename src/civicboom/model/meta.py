@@ -1,6 +1,7 @@
 """SQLAlchemy Metadata and Session object"""
 from sqlalchemy import MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
+import copy
 
 __all__ = ['Session', 'LegacySession', 'engine', 'metadata', 'Base']
 
@@ -29,14 +30,32 @@ Base = declarative_base()
 #
 # Enchancements to Base object
 
-def to_dict(self, method=None, default_method='list'):
+def to_dict(self, list_type=None, include_fields=None, exclude_fields=None, default_list_type='list'):
     """
     describe
     """
     from civicboom.lib.misc import obj_to_dict
-    if method not in self.__to_dict__:
-        method = default_method
-    return obj_to_dict(self,self.__to_dict__[method])
+    
+    # Copy list for field_list_name
+    if list_type not in self.__to_dict__:
+        list_type = default_list_type
+    fields = copy.deepcopy(self.__to_dict__[list_type])
+    
+    # Include fields from ['single'] is specifyed in include_fields (can be list of strings or single string separated by ',' )
+    if isinstance(include_fields, basestring):
+        include_fields = include_fields.split(',')
+    if isinstance(include_fields, list):
+        for field in [field for field in include_fields if field in self.__to_dict__['single']]:
+            fields[field] = self.__to_dict__['single'][field]
+
+    # Exclude fields
+    if isinstance(exclude_fields, basestring):
+        exclude_fields = exclude_fields.split(',')
+    if isinstance(exclude_fields, list):
+        for field in [field for field in exclude_fields if field in fields]:
+            del fields[field]
+
+    return obj_to_dict(self,fields)
 
 #def to_dict_update(self, name, field_list, clone_name=None):
 #    __to_dict__ =  self.__to_dict__

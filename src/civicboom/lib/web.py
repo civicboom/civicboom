@@ -313,6 +313,7 @@ def auto_format_output():
                 # set the HTTP status code
                 if 'code' in result:
                     response.status = int(result['code'])
+                    # Status code redirector has been disabled - old notes:
                     # This will trigger the error document action in the error controler after this action is returned
                     # problem with the error document intercepting is that we loose the {'message':''}
                     # a new call to error/document is made from scratch, this sets the default format to html again! if the format is in the query string this overrides it, but in the url path it gets lost
@@ -400,3 +401,16 @@ def cacheable(time=60*60*24*365, anon_only=True):
             #log.info(pprint.pformat(response.headers))
         return func(*args, **kwargs)
     return decorator(_cacheable)
+
+
+def web_params_to_kwargs():
+    """
+    converts any params from a form submission or query string into kwargs
+    """
+    def my_decorator(target):
+        def wrapper(target, *args, **kwargs):
+            kwargs.update(request.params) # Update the kwargs
+            result = target(*args, **kwargs) # Execute the wrapped function
+            return result
+        return decorator(wrapper)(target) # Fix the wrappers call signiture
+    return my_decorator

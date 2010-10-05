@@ -105,7 +105,8 @@ class Content(Base):
             'parent_id'    : None ,
             'title'        : None ,
             'content_short': None ,
-            'creator'      : lambda content: content.creator.to_dict('list') ,
+            #'creator'      : lambda content: content.creator.to_dict('list') ,
+            'creator_id'   : None , 
             'url'          : None ,
             'thumbnail_url': None ,
             'creation_date': None ,
@@ -114,6 +115,7 @@ class Content(Base):
             'num_comments' : None ,
             #'licence'
             'tags'         : lambda content: "implement tags" ,
+            'license_id'   : None ,
         },
     })
     
@@ -123,12 +125,11 @@ class Content(Base):
     })
     __to_dict__['single'].update({
             'content'           : None ,
-            'parent'            : lambda content: content.parent.to_dict('list') if content.parent else None ,
-            'creator'           : lambda content: content.creator.to_dict('list') ,
-            'attachments'       : lambda content: [   media.to_dict('list') for media    in content.attachments] ,
-            'responses'         : lambda content: [response.to_dict('list') for response in content.responses  ] ,
-            'comments'          : lambda content: [ comment.to_dict('list') for comment  in content.comments   ] ,
-
+            'parent'            : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
+            'creator'           : lambda content: content.creator.to_dict() ,
+            'attachments'       : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
+            'responses'         : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
+            'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
     })
     del __to_dict__['single']['content_short']
     del __to_dict__['single']['parent_id']
@@ -145,18 +146,18 @@ class Content(Base):
     })
 
     # List with media
-    __to_dict__.update({
-        'list_with_media': copy.deepcopy(__to_dict__['list'])
-    })
-    __to_dict__['list_with_media'].update({
-            'attachments'       : __to_dict__['single']['attachments']
-    })
+    #__to_dict__.update({
+    #    'list_with_media': copy.deepcopy(__to_dict__['list'])
+    #})
+    #__to_dict__['list_with_media'].update({
+    #        'attachments'       : __to_dict__['single']['attachments']
+    #})
 
-    # List with media
-    __to_dict__.update({
-        'list_no_creator': copy.deepcopy(__to_dict__['list'])
-    })
-    del __to_dict__['list_no_creator']['creator']
+    # List with no creator
+    #__to_dict__.update({
+    #    'list_no_creator': copy.deepcopy(__to_dict__['list'])
+    #})
+    #del __to_dict__['list_no_creator']['creator']
 
     
     def __unicode__(self):
@@ -308,8 +309,8 @@ class UserVisibleContent(Content):
     __to_dict__['list'           ].update(_extra_user_visible_fields)
     __to_dict__['single'         ].update(_extra_user_visible_fields)
     __to_dict__['actions'        ].update(_extra_user_visible_fields)
-    __to_dict__['list_with_media'].update(_extra_user_visible_fields)
-    __to_dict__['list_no_creator'].update(_extra_user_visible_fields)
+    #__to_dict__['list_with_media'].update(_extra_user_visible_fields)
+    #__to_dict__['list_no_creator'].update(_extra_user_visible_fields)
 
     def action_list_for(self, member):
         action_list = Content.action_list_for(self, member)
@@ -359,8 +360,8 @@ class ArticleContent(UserVisibleContent):
     __to_dict__['list'   ].update(_extra_article_fields)
     __to_dict__['single' ].update(_extra_article_fields)
     __to_dict__['actions'].update(_extra_article_fields)
-    __to_dict__['list_with_media'].update(_extra_article_fields)
-    __to_dict__['list_no_creator'].update(_extra_article_fields)
+    #__to_dict__['list_with_media'].update(_extra_article_fields)
+    #__to_dict__['list_no_creator'].update(_extra_article_fields)
 
 
 
@@ -396,8 +397,8 @@ class AssignmentContent(UserVisibleContent):
             'withdrawn': lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"] ,
     })
     __to_dict__['actions'].update(__to_dict__['single'])
-    __to_dict__['list_with_media'].update(_extra_assignment_fields)
-    __to_dict__['list_no_creator'].update(_extra_assignment_fields)
+    #__to_dict__['list_with_media'].update(_extra_assignment_fields)
+    #__to_dict__['list_no_creator'].update(_extra_assignment_fields)
 
 
     def action_list_for(self, member):
