@@ -30,7 +30,7 @@ Base = declarative_base()
 #
 # Enchancements to Base object
 
-def to_dict(self, list_type=None, include_fields=None, exclude_fields=None, default_list_type='list'):
+def to_dict(self, list_type=None, include_fields=None, exclude_fields=None, default_list_type='list', **kwargs):
     """
     describe
     """

@@ -23,16 +23,6 @@ class ProfileController(BaseController):
 
     @auto_format_output()
     def view(self, id=None):
-        if id:
-            c.viewing_user = get_user(id)
-        else:
-            c.viewing_user = c.logged_in_user
-        
-        if not c.viewing_user:
-            return action_error(_("User does not exist"), code=404)
-        
         results = {'data': {}}
-        results['data'].update({'member'  : call_action(MemberController().show   , format='python', id     =c.viewing_user.id  )['data']})
-        #results['data'].update({'content' : call_action(SearchController().content, format='python', creator=c.viewing_user.id  )['data']['list']})
-        
+        results['data'].update({'member'  : call_action(MemberController().show   , format='python', id=id  )['data']})
         return results
