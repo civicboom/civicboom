@@ -31,30 +31,6 @@ def _logged_in_mobile(func, *args, **kargs):
 
 
 class MobileController(BaseController):
-    #-----------------------------------------------------------------------------
-    # Sign in
-    #-----------------------------------------------------------------------------  
-    @auto_format_output()
-    def signin(self):
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        user = get_user_and_check_password(username, password)
-        if user:
-            signin_user(user, "mobile")
-            c.logged_in_user = user
-
-        if c.logged_in_user:
-            return action_ok("logged in ok", {"auth_token": authentication_token()})
-        else:
-            return action_error(_("not logged in"), code=403)
-
-
-    #-----------------------------------------------------------------------------
-    # Sign up
-    #-----------------------------------------------------------------------------
-    def signup(self):
-        return "mobile signup" # FIXME: render('web/design09/mobile_signup.mako')
-
 
     #-----------------------------------------------------------------------------
     # Latest Version

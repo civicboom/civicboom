@@ -63,7 +63,11 @@ class AccountController(BaseController):
 
         # If user has existing account: Login
         if c.logged_in_user:
-            signin_user_and_redirect(c.logged_in_user, login_provider=login_provider)
+            if format in ["html", "redirect"]:
+                signin_user_and_redirect(c.logged_in_user, login_provider=login_provider)
+            else:
+                signin_user(c.logged_in_user, "api-password")
+                return action_ok("logged in ok", {"auth_token": authentication_token()})
         
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
