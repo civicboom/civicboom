@@ -115,7 +115,7 @@ def authorize(authenticator):
         else:
             # If request was a browser - prompt for login
             if c.format == "redirect":
-                return action_error(message="implement me, redirect authentication needs session handling of http_referer")
+                raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
             if c.format == "html":
                 redirect_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO') # AllanC - is there a way of just getting the whole request URL? why do I have to peice it together myself!
                 if 'QUERY_STRING' in request.environ:
@@ -128,7 +128,7 @@ def authorize(authenticator):
 
             # If API request - error unauthorised
             else:
-                return action_error(message="unauthorised", code=403) #Error to be formared by auto_formatter
+                raise action_error(message="unauthorised", code=403) #Error to be formared by auto_formatter
 
     return wrapper
 

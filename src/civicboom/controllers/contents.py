@@ -53,7 +53,7 @@ class ContentsController(BaseController):
         """GET /contents: All items in the collection"""
         # url('contents')
         
-        if list not in index_lists: return action_error(_('list type %s not supported') % list)
+        if list not in index_lists: raise action_error(_('list type %s not supported') % list)
         content_list      = index_lists[list](c.logged_in_user)
         content_list      = [content.to_dict(exclude_fields="creator") for content in content_list]
         
@@ -71,13 +71,13 @@ class ContentsController(BaseController):
         if 'form_parent_id' in request.params:
             parent = get_content(request.params['form_parent_id'])
             if not parent:
-                return action_error(message='parent not found', code=404)
+                raise action_error(message='parent not found', code=404)
             if not parent.viewable_by(c.logged_in_user):
-                return action_error(code=403)
+                raise action_error(code=403)
         
         # if type is comment, it must have a parent
         if request.params.get('form_type') == "comment" and 'form_parent_id' not in request.params:
-            return action_error(code=400)
+            raise action_error(code=400)
         
         content = form_to_content(request.params, None)
         Session.add(content)
@@ -115,7 +115,7 @@ class ContentsController(BaseController):
             return error_not_found
         
         if not content.editable_by(c.logged_in_user):
-            return action_error(_("You do not have permission to edit this _content"), code=403)
+            raise action_error(_("You do not have permission to edit this _content"), code=403)
         
         # Overlay form data over the current content object or return a new instance of an object
         content = form_to_content(request.params, content) #request.POST
@@ -182,7 +182,7 @@ class ContentsController(BaseController):
         if not content:
             return error_not_found
         if not content.editable_by(c.logged_in_user):
-            return action_error(_("your current user does not have the permissions to delete this _content"), code=403)
+            raise action_error(_("your current user does not have the permissions to delete this _content"), code=403)
         content.delete()
         return action_ok(_("_content deleted"), code=200)
 
@@ -205,7 +205,7 @@ class ContentsController(BaseController):
             user_log.debug("Attempted to view a comment as an article")
             return error_not_found
         if not content.viewable_by(c.logged_in_user): 
-            return action_error(_("_content not viewable"), code=401)
+            raise action_error(_("_content not viewable"), code=401)
         
         # Increase content view count
         if hasattr(content,'views'):
@@ -237,7 +237,7 @@ class ContentsController(BaseController):
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
         if not c.content.editable_by(c.logged_in_user):
-            return action_error(_("your user does not have the permissions to edit this _content"), code=403)
+            raise action_error(_("your user does not have the permissions to edit this _content"), code=403)
         
         return render("/web/content_editor/content_editor.mako")
 

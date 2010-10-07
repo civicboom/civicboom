@@ -26,7 +26,7 @@ user_log = logging.getLogger("user")
 @decorator
 def _logged_in_mobile(func, *args, **kargs):
     if not c.logged_in_user:
-        return action_error("not authenticated", code=403)
+        raise action_error("not authenticated", code=403)
     return func(*args, **kargs)
 
 
@@ -59,7 +59,7 @@ class MobileController(BaseController):
         if not request.POST:
             if config['debug']:
                 return "mobile upload test" # FIXME: render(prefix+'mobile_upload_test.mako')
-            return action_error("form data required", code=400)
+            raise action_error("form data required", code=400)
 
         unique_id                   = hashlib.md5(request.POST['uniqueid']).hexdigest()
         mobile_upload_unique_id_key = c.logged_in_user.username + "_" + unique_id
@@ -67,7 +67,7 @@ class MobileController(BaseController):
         # check for duplicate upload, see feature #29
         if app_globals.memcache.get("mobile-upload-complete:"+unique_id):
             return "mobile:upload_ok"
-            return action_error("article already uploaded", code=409)
+            raise action_error("article already uploaded", code=409)
 
 
         if "syndicate" in request.POST:
@@ -155,7 +155,7 @@ class MobileController(BaseController):
         if not request.POST:
             if config['debug']:
                 return "mobile upload part test" # FIXME: render(prefix+'mobile_upload_part_test.mako')
-            return action_error("form data required", code=400)
+            raise action_error("form data required", code=400)
 
         part_num    = int(request.POST['part'] )
         parts_count = int(request.POST['parts'])
@@ -186,9 +186,9 @@ class MobileController(BaseController):
         log.debug("Uploading media from mobile")
         content = get_content(int(request.POST['content_id']))
         if not content:
-            return action_error(_("The content does not exist"), code=404)
+            raise action_error(_("The content does not exist"), code=404)
         #if content.editable_by(c.logged_in_user):
-        #    return action_error(_("You are not the owner of that content"), code=403)
+        #    raise action_error(_("You are not the owner of that content"), code=403)
 
         log.debug("Attaching media to "+content.title)
 
@@ -224,7 +224,7 @@ class MobileController(BaseController):
         if not request.POST:
             if config['debug']:
                 return action_ok("mobile error test") # FIXME: render(prefix+'mobile_error_test.mako')
-            return action_error("form data required", code=401)
+            raise action_error("form data required", code=401)
         if 'error_message' in request.POST:
             #send_email(config['email_to'], subject='Mobile Error', content_text=request.POST['error_message'])
             #AllanC - Temp addition to get errors to the mobile developer

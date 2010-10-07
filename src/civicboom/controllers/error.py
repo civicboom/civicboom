@@ -51,7 +51,7 @@ class ErrorController(BaseController): # pragma: no cover -- if this is covered,
         #else:
         #    page = content
         #return page
-        return action_error(
+        raise action_error(
             code     = int(code),
             message  = content,
             template = 'error',

@@ -121,7 +121,7 @@ class RegisterController(BaseController):
         try:
             form = RegisterSchemaEmailUsername().to_python(dict(request.params))
         except formencode.Invalid, error:
-            return action_error(message=error.msg)        
+            raise action_error(message=error.msg)        
         
         # Create new user
         u = User()

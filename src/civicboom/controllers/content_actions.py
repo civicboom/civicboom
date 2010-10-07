@@ -62,12 +62,12 @@ class ContentActionsController(BaseController):
         # FIXME: add entry to booms table, and look that up rather than the session variable
         boomkey = 'boom%s' % id
         if boomkey in session:
-            return action_error(_('already boomed this'))
+            raise action_error(_('already boomed this'))
         session[boomkey] = True
 
         content = get_content(id)
         if content.creator == c.logged_in_user:
-            return action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
+            raise action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
         content.boom_to_all_followers(c.logged_in_user)
 
         user_log.debug("Boomed Content #%d" % int(id))
@@ -87,7 +87,7 @@ class ContentActionsController(BaseController):
             if content.lock():
                 user_log.debug("Locked Content #%d" % int(id))
                 return action_ok(_("content has been approved and locked"))
-        return action_error(_('Error locking content'))
+        raise action_error(_('Error locking content'))
 
 
 
@@ -105,7 +105,7 @@ class ContentActionsController(BaseController):
             if content.dissasociate_from_parent():
                 user_log.debug("Disassociated Content #%d" % int(id))
                 return action_ok(_("content has dissasociated from your content"))
-        return action_error(_('Error dissasociating content'))
+        raise action_error(_('Error dissasociating content'))
 
 
 
@@ -124,7 +124,7 @@ class ContentActionsController(BaseController):
             user_log.debug("Accepted Content #%d" % int(id))
             return action_ok(_("_assignment accepted"))
         #elif isinstance(status,str):
-        return action_error(_('Error accepting _assignment'))
+        raise action_error(_('Error accepting _assignment'))
 
 
     #---------------------------------------------------------------------------
@@ -143,7 +143,7 @@ class ContentActionsController(BaseController):
             return action_ok(_("_assignment interest withdrawn"))
         #elif isinstance(status,str):
         #return status
-        return action_error(_('Error withdrawing _assignment interest'))
+        raise action_error(_('Error withdrawing _assignment interest'))
 
 
     #-----------------------------------------------------------------------------
@@ -161,4 +161,4 @@ class ContentActionsController(BaseController):
             get_content(id).flag(member=c.logged_in_user, type=form['type'], comment=form['comment'])
             return action_ok(_("An administrator has been alerted to this content"))
         except:
-            return action_error(_("Error flaging content, please email us"))
+            raise action_error(_("Error flaging content, please email us"))
