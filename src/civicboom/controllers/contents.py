@@ -205,7 +205,7 @@ class ContentsController(BaseController):
             user_log.debug("Attempted to view a comment as an article")
             return error_not_found
         if not content.viewable_by(c.logged_in_user): 
-            raise action_error(_("_content not viewable"), code=401)
+            raise action_error(_("_content not viewable"), code=403)
         
         # Increase content view count
         if hasattr(content,'views'):
