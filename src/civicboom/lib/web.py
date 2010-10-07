@@ -393,7 +393,7 @@ def authenticate_form(func, *args, **kwargs):
             if 'QUERY_STRING' in request.environ:
                 c.target_url += '?'+request.environ.get('QUERY_STRING')
             c.post_values = param_dict
-            return render("web/design09/misc/confirmpost.mako")
+            return render_mako("web/misc/confirmpost.mako")
         else:
             raise action_error(message="Cross-site request forgery detected, request denied: include a valid authentication_token in your form POST")
 
