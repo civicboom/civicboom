@@ -13,11 +13,6 @@ def make_map(config):
                  always_scan=config['debug'])
     map.minimization = False
 
-    # The ErrorController route (handles 404/500 error pages); it should
-    # likely stay at the top, ensuring it can always be resolved
-    map.connect('/error/{action}', controller='error')
-    map.connect('/error/{action}/{id}', controller='error')
-
     # CUSTOM ROUTES HERE
     map.connect('/', controller='misc', action='titlepage')
     map.resource('message', 'messages')
