@@ -23,8 +23,4 @@ class ProfileController(BaseController):
 
     @auto_format_output()
     def view(self, id=None):
-        member_result = call_action(MemberController().show, format='python', id=id)
-        if member_result.status == "error":
-            return member_result
-
-        return action_ok(data={'member': member_result['data']})
+        return action_ok(data={'member': call_action(MemberController().show, format='python', id=id)['data']})

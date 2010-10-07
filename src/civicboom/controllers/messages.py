@@ -59,6 +59,8 @@ class MessagesController(BaseController):
             Session.add(m)
             Session.commit()
             return action_ok(_("Message sent"), code=201)
+        except action_error as ae:
+            raise
         except Exception, e:
             log.exception("Error sending message:")
             raise action_error(_("Error sending message"), code=400)
