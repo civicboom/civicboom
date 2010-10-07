@@ -193,9 +193,10 @@ class Content(Base):
         """
         Check to see if a member object has the rights to edit this content
         """
-        if self.status  == "locked": return False
-        if self.creator == None    : return True # If nobody owns it then eveyone can edit it (should this ever be called? ever?)
-        if self.creator == member  : return True
+        if self.status  == "locked":
+            return False
+        if self.creator == member  :
+            return True
         # TODO check groups of creator to see if member is in the owning group
         return False
 
@@ -204,9 +205,17 @@ class Content(Base):
         Check to see if a member object has the rights to view this content
         """
         # TODO check groups of creator to see if member is in the owning group
-        if self.editable_by(member): return True #Always allow content to be viewed by owners/editors
-        if self.status == "pending": return False
-        return True
+        if self.editable_by(member):
+            return True # Always allow content to be viewed by owners/editors
+        if self.__type__ == "draft":
+            return False # if draft, only editors (above) can see
+        if self.__type__ == "comment":
+            return self.parent.viewable_by(member) # if comment, show if we can see the parent article
+        if self.status == "show":
+            return True
+        if self.status == "locked":
+            return True
+        return False
 
     def flag(self, **kargs):
         """

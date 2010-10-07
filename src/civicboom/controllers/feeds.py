@@ -66,7 +66,7 @@ class FeedsController(BaseController):
             Session.commit()
             return action_ok(_("Feed created"), code=201)
         except Exception, e:
-            return action_error(_("Error creating feed"), code=500)
+            raise action_error(_("Error creating feed"), code=500)
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -87,9 +87,9 @@ class FeedsController(BaseController):
         # url('feed', id=ID)
         f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
-            return action_error(_("No such feed"), code=404)
+            raise action_error(_("No such feed"), code=404)
         if f.member != c.logged_in_user:
-            return action_error(_("Not your feed"), code=403)
+            raise action_error(_("Not your feed"), code=403)
 
         f.name = request.POST['name']
         f.query = _post_to_query(request.POST)
@@ -107,9 +107,9 @@ class FeedsController(BaseController):
         # url('feed', id=ID)
         f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
-            return action_error(_("No such feed"), code=404)
+            raise action_error(_("No such feed"), code=404)
         if f.member != c.logged_in_user:
-            return action_error(_("Not your feed"), code=403)
+            raise action_error(_("Not your feed"), code=403)
 
         Session.delete(f)
         Session.commit()
@@ -121,7 +121,7 @@ class FeedsController(BaseController):
         # url('feed', id=ID)
         f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
-            return action_error(_("No such feed"), code=404)
+            raise action_error(_("No such feed"), code=404)
 
         results = Session.query(Content)
         results = results.filter(sql(f.query))
@@ -138,9 +138,9 @@ class FeedsController(BaseController):
         # url('edit_feed', id=ID)
         f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
-            return action_error(_("No such feed"), code=404)
+            raise action_error(_("No such feed"), code=404)
         if f.member != c.logged_in_user:
-            return action_error(_("Not your feed"), code=403)
+            raise action_error(_("Not your feed"), code=403)
 
         # ...
         return action_ok(data={"feed": f})

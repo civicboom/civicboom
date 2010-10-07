@@ -112,11 +112,11 @@ class SettingsController(BaseController):
     
     def create(self):
         """POST /: Create a new item."""
-        return action_error(_('operation not supported'), code=501)
+        raise action_error(_('operation not supported'), code=501)
     
     def new(self):
         """GET /new: Form to create a new item."""
-        return action_error(_('operation not supported'), code=501)
+        raise action_error(_('operation not supported'), code=501)
     
     def delete(self, id):
         """
@@ -124,7 +124,7 @@ class SettingsController(BaseController):
         """
         # h.form(h.url_for('message', id=ID), method='delete')
         # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
-        return action_error(_('operation not supported (yet)'), code=501)
+        raise action_error(_('operation not supported (yet)'), code=501)
 
     def show(self, id):
         """GET /id: Show a specific item."""
@@ -354,11 +354,11 @@ class SettingsController(BaseController):
                 (lon, lat) = [float(n) for n in request.POST["location"].split(",")]
             except Exception, e:
                 user_log.exception("Unable to understand location '%s'" % str(request.POST["location"]))
-                return action_error(_("Unable to understand location '%s'" % str(request.POST["location"])))
+                raise action_error(_("Unable to understand location '%s'" % str(request.POST["location"])))
         elif "location_name" in request.POST:
             (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_name"]), see Feature #47
         else:
-            return action_error(_("No position specified"))
+            raise action_error(_("No position specified"))
         c.viewing_user = c.logged_in_user
         c.viewing_user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
         Session.commit()

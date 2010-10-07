@@ -104,17 +104,18 @@ def action_ok(message=None, data={}, code=200, template=None):
         "template": template,
     }
 
-def action_error(message=None, data={}, code=500, template=None):
-    assert not message or isinstance(message, basestring)
-    assert isinstance(data, dict)
-    assert isinstance(code, int)
-    return {
-        "status" : "error",
-        "message": message,
-        "data"   : data,
-        "code"   : code,
-        "template": template,
-    }
+class action_error(Exception):
+    def __init__(self, message=None, data={}, code=500, template=None):
+        assert not message or isinstance(message, basestring)
+        assert isinstance(data, dict)
+        assert isinstance(code, int)
+        self.original_dict = {
+            "status" : "error",
+            "message": message,
+            "data"   : data,
+            "code"   : code,
+            "template": template,
+        }
 
 def overlay_status_message(master_message, new_message):
     """
@@ -300,7 +301,13 @@ def auto_format_output():
             #    format_processors[format]()
             
             # Origninal method call
-            result = target(*args, **kwargs) # Execute the wrapped function
+            try:
+                result = target(*args, **kwargs) # Execute the wrapped function
+            except action_error as ae:
+                if c.format == "python":
+                    raise
+                else:
+                    result = ae.original_dict
 
             # After
             # Is result a dict with data?
@@ -388,7 +395,7 @@ def authenticate_form(func, *args, **kwargs):
             c.post_values = param_dict
             return render("web/design09/misc/confirmpost.mako")
         else:
-            return action_error(message="Cross-site request forgery detected, request denied: include a valid authentication_token in your form POST")
+            raise action_error(message="Cross-site request forgery detected, request denied: include a valid authentication_token in your form POST")
 
 
 def cacheable(time=60*60*24*365, anon_only=True):

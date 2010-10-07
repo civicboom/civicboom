@@ -20,7 +20,7 @@ class MemberController(BaseController):
     #@authorize(is_valid_user)
     #def index(self, list=None):
     #    member_list_name = request.params.get('list', list)
-    #    if member_list_name not in index_lists: return action_error(_('list type %s not supported') % member_list_name)
+    #    if member_list_name not in index_lists: raise action_error(_('list type %s not supported') % member_list_name)
     #    members = index_lists[member_list_name](c.logged_in_user)
     #    members = [member.to_dict('default_list') for member in members]
     #    
@@ -40,7 +40,7 @@ class MemberController(BaseController):
         else:
             member = c.logged_in_user
         if not member:
-            return action_error(_("User does not exist"), code=404)
+            raise action_error(_("User does not exist"), code=404)
         
         return {'data': member.to_dict(**kwargs)}
 
@@ -51,7 +51,7 @@ class MemberController(BaseController):
         status = c.logged_in_user.follow(id)
         if status == True:
             return action_ok(_('You are now following %s') % id)
-        return action_error(_('Unable to follow member: %s') % status)
+        raise action_error(_('Unable to follow member: %s') % status)
 
 
     @auto_format_output()
@@ -61,4 +61,4 @@ class MemberController(BaseController):
         status = c.logged_in_user.unfollow(id)
         if status == True:
             return action_ok(_('You have stopped following %s') % id)
-        return action_error(_('Unable to stop following member: %s') % status)
+        raise action_error(_('Unable to stop following member: %s') % status)

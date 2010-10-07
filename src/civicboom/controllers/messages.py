@@ -31,7 +31,7 @@ class MessagesController(BaseController):
         # AllanC - this feels duplicated from the member controler - humm ... need to think about a sensible stucture
         c.viewing_user = c.logged_in_user
         
-        if list not in index_lists: return action_error(_('list type %s not supported') % list)
+        if list not in index_lists: raise action_error(_('list type %s not supported') % list)
         messages = index_lists[list](c.logged_in_user)
         messages = [message.to_dict() for message in messages]
         
@@ -48,7 +48,7 @@ class MessagesController(BaseController):
             target = get_user(request.POST["target"])
             if not target:
                 # FIXME: form validator to refresh with the same values?
-                return action_error(_("Can't find user '%s'") % request.POST["target"], code=404)
+                raise action_error(_("Can't find user '%s'") % request.POST["target"], code=404)
             m = Message()
             m.source_id = c.logged_in_user.id # FIXME: or from any group they are admin of?
             m.target_id = target.id
@@ -59,16 +59,18 @@ class MessagesController(BaseController):
             Session.add(m)
             Session.commit()
             return action_ok(_("Message sent"), code=201)
+        except action_error as ae:
+            raise
         except Exception, e:
             log.exception("Error sending message:")
-            return action_error(_("Error sending message"), code=400)
+            raise action_error(_("Error sending message"), code=400)
 
 
     @auto_format_output()
     def new(self, format='html'):
         """GET /messages/new: Form to create a new item."""
         # url('new_message')
-        return action_error(_("'New Message' page not implemented - go to somebody's profile page to message them"), code=501)
+        raise action_error(_("'New Message' page not implemented - go to somebody's profile page to message them"), code=501)
 
 
     @auto_format_output()
@@ -79,7 +81,7 @@ class MessagesController(BaseController):
         # Or using helpers:
         #    h.form(h.url('message', id=ID), method='put')
         # url('message', id=ID)
-        return action_error(_("Messages cannot be edited"), code=501)
+        raise action_error(_("Messages cannot be edited"), code=501)
 
 
     @auto_format_output()
@@ -95,7 +97,7 @@ class MessagesController(BaseController):
         c.viewing_user = c.logged_in_user
         msg = Session.query(Message).filter(Message.id==int(id)).first()
         if not msg:
-            return action_error(_("Message does not exist"), code=404)
+            raise action_error(_("Message does not exist"), code=404)
 
         redir = None
         if msg.target == c.viewing_user: # FIXME messages to groups?
@@ -111,7 +113,7 @@ class MessagesController(BaseController):
             return action_ok(_("Message deleted"))
         else:
             user_log.warning("User tried to delete somebody else's message") # FIXME: details
-            return action_error(_("You are not the target of this message"), code=403)
+            raise action_error(_("You are not the target of this message"), code=403)
 
 
     @auto_format_output()
@@ -123,12 +125,12 @@ class MessagesController(BaseController):
 
         msg = Session.query(Message).filter(Message.id==id).first()
         if not msg:
-            return action_error(_("Message does not exist"), code=404)
+            raise action_error(_("Message does not exist"), code=404)
 
         if msg.target == c.viewing_user: # FIXME messages to groups?
             c.msg = msg
         else:
-            return action_error(_("You are not the target of this message"), code=403)
+            raise action_error(_("You are not the target of this message"), code=403)
 
         return action_ok(
             template = 'messages/show',
@@ -146,4 +148,4 @@ class MessagesController(BaseController):
     def edit(self, id, format='html'):
         """GET /messages/id/edit: Form to edit an existing item."""
         # url('edit_message', id=ID)
-        return action_error(_("Messages cannot be edited"), code=501)
+        raise action_error(_("Messages cannot be edited"), code=501)
