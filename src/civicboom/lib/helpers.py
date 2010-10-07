@@ -51,8 +51,10 @@ def call_action(func, format="frag", *args, **kwargs):
     """
     old_format = c.format
     c.format = format
-    data = func(*args, **kwargs)
-    c.format = old_format
+    try:
+        data = func(*args, **kwargs)
+    finally:
+        c.format = old_format
     return data
 
 def shorten_url(url):
