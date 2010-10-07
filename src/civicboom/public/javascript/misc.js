@@ -17,3 +17,15 @@ function getHTML(url, get_complete_function) {
     xmlHttp.open("GET", url, true);
     xmlHttp.send(null);
 }
+
+// Requires toggle_div.js functions
+function setSingleCSSClass(element_to_style, class_to_set, parent_id) {
+    // Find all occurances of this class
+    var elements = getElementByClass(class_to_set, parent_id);
+    for (var element in elements) {
+        // Remove the class
+        removeClass(elements[element], class_to_set);
+    }
+    // Add the class to the specifyed element
+    addClass(element_to_style, class_to_set);
+}

@@ -25,7 +25,7 @@ class MessagesController(BaseController):
     @auto_format_output()
     @web_params_to_kwargs()
     @authorize(is_valid_user)
-    def index(self, list='to'):
+    def index(self, list='to', **kwargs):
         """GET /messages: All items in the collection."""
         # url('messages')
         # AllanC - this feels duplicated from the member controler - humm ... need to think about a sensible stucture

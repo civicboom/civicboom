@@ -30,7 +30,7 @@ Base = declarative_base()
 #
 # Enchancements to Base object
 
-def to_dict(self, list_type=None, include_fields=None, exclude_fields=None, default_list_type='list', **kwargs):
+def to_dict(self, list_type=None, include_fields=None, exclude_fields=None, default_list_type='list', include_exclusive=False, **kwargs):
     """
     describe
     """
@@ -39,7 +39,11 @@ def to_dict(self, list_type=None, include_fields=None, exclude_fields=None, defa
     # Copy list for field_list_name
     if list_type not in self.__to_dict__:
         list_type = default_list_type
-    fields = copy.deepcopy(self.__to_dict__[list_type])
+    
+    if include_exclusive: # Don't copt a base list if include_exclusive is set
+        fields = {}
+    else:
+        fields = copy.deepcopy(self.__to_dict__[list_type])
     
     # Include fields from ['single'] is specifyed in include_fields (can be list of strings or single string separated by ',' )
     if isinstance(include_fields, basestring):

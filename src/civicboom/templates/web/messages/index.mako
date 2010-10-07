@@ -19,17 +19,9 @@
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
-<%
-from civicboom.controllers.messages import MessagesController
-%>
-<div id="message_table">
-${h.call_action(MessagesController().index)}
-</div>
-<script>
-function refresh_messages() {
-	$("#message_table").load("${url('messages', format='frag')}");
-	flash_message('messages updated');
-}
-</script>
-<a href="#" onclick="refresh_messages(); return false;">refresh</a>
+
+    <% frag_url_messages = url('messages', format='frag') %>
+    ${h.frag_div( "messages", frag_url_messages)}
+    ${h.frag_link("messages", frag_url_messages, "refresh messages")}
+
 </%def>

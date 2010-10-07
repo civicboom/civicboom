@@ -122,6 +122,10 @@ def objs_to_linked_formatted_dict(**kargs):
         links[key] = gen_link(val)
     return links
 
+#-------------------------------------------------------------------------------
+# Secure Link - Form Submit or Styled link (for JS browsers)
+#-------------------------------------------------------------------------------
+
 def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST'):
     """
     Create two things:
@@ -149,6 +153,7 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         confirm_text = "confirm('%s')" % confirm_text
     else:
         confirm_text = "true"
+    
     hl = HTML.a(
         value,
         id="link_"+hhash,
@@ -163,3 +168,52 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     hs = HTML.script(literal('$("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))
 
     return HTML.span(hf+hl+hs, class_="secure_link")
+
+
+#-------------------------------------------------------------------------------
+# Frag DIV's and Links - for Static and AJAX compatability
+#-------------------------------------------------------------------------------
+
+def frag_link(id, frag_url, value, title='', css_class=''):
+    """
+    Populate an id destination with a fragments source using AJAX
+    If AJAX not avalable then provide a static URL that will populate the fragments
+    """
+    
+    # Re-create query sting dictionary with the new frag_url set
+    # This is used in static URL's to view the existing page with the new fragment
+    url_kwargs = {}
+    url_kwargs.update(request.GET)
+    url_kwargs[id]                  = frag_url
+    url_kwargs['selected_fragment_link'] = id
+
+    # Add selected class if this element is selected
+    if request.GET.get('selected_fragment_link')==id:
+        css_class += " selected_fragment_link"
+    
+    # As the link has an onClick event the link is never followed if javascript is enabled
+    # If javascript is disabled the link functionas as normal
+    static_link = HTML.a(
+        value ,
+        href    = url.current(**url_kwargs) ,
+        class_  = css_class ,
+        title   = title ,
+        onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); document.getElementById('%(id)s').innerHTML='<img src=\\\'/images/media_placeholder.gif\\\'>'; $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,
+    )
+    
+    return static_link #HTML.span(static_link, class_="frag_link")
+
+def frag_div(id, default_frag_url=None):
+    """
+    Create an HTML div linked to a fragment
+    Look in request query sting to populate the div with a fragment (if viewed staticly)
+    optional the div's content can automatically be populated with a default fragment source - the default is always overridden with query sting version
+    NOTE: SSI must be setup on the server (im unsure if paster supports it? it seems to work though nginx on my currentl setup - AllanC)
+    """
+    frag_url      = default_frag_url
+    frag_contents = ""
+    if id in request.GET:
+        frag_url = request.GET[id]
+    if frag_url:
+        frag_contents = literal('<!--#include file="%s"-->' % frag_url)
+    return HTML.div(frag_contents, id=id)

@@ -27,6 +27,7 @@ class MemberController(BaseController):
     #    return {'data': {'list': members}}
 
     @auto_format_output()
+    @web_params_to_kwargs()
     def show(self, id=None, **kwargs):
         """
         Get single user

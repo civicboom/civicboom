@@ -406,6 +406,9 @@ def cacheable(time=60*60*24*365, anon_only=True):
 def web_params_to_kwargs():
     """
     converts any params from a form submission or query string into kwargs
+    NOTE: Any method decorated by this SHOULD have the inclusion ", **kwargs):" without this a user could pass a kwarg that is unknown to the method and cause an exception to be thrown
+    Security notice - Developers should be aware that kwargs could be passed by the user and override kwargs set in the orrigninal method call
+                      If this behaviure is incorrect then rather than using dict.update() method, it should be made to SKIP existing kwargs and not overwreit them
     """
     def my_decorator(target):
         def wrapper(target, *args, **kwargs):
