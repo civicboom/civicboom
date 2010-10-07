@@ -5,7 +5,7 @@ class TestMessagesController(TestController):
     ## index -> show #########################################################
 
     def test_index(self):
-        response = self.app.get(url('messages'))
+        response = self.app.get(url('messages'), format="frag")
         assert "Re: Re: singing" in response
 
     def test_index_as_json(self):
