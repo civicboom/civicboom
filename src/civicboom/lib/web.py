@@ -106,9 +106,9 @@ def action_ok(message=None, data={}, code=200, template=None):
 
 class action_error(Exception):
     def __init__(message=None, data={}, code=500, template=None):
-        assert not message or isinstance(message, basestring)
-        assert isinstance(data, dict)
-        assert isinstance(code, int)
+        #assert not message or isinstance(message, basestring)
+        #assert isinstance(data, dict)
+        #assert isinstance(code, int)
         self.original_dict = {
             "status" : "error",
             "message": message,
