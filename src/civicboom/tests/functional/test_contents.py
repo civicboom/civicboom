@@ -21,7 +21,7 @@ class TestContentsController(TestController):
         response = self.app.get(url('content', id=3))
 
     def test_cant_show_someone_elses_draft(self):
-        response = self.app.get(url('content', id=4))
+        response = self.app.get(url('content', id=4), status=403)
 
     def test_cant_show_comment_that_doesnt_exist(self):
         response = self.app.get(url('content', id=0), status=404)
