@@ -4,7 +4,7 @@ from civicboom.lib.form_validators.registration import CreateGroupSchema
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
-
+error_not_found = action_error(_("group not found"), code=404)
 
 class GroupsController(BaseController):
     
@@ -109,12 +109,22 @@ class GroupsController(BaseController):
         pass
 
     @auto_format_output()
-    def show(self, id, format='html'):
+    def show(self, id):
         """
         GET /group/{id}: Show a specific item
         
-        @return 200 - data.content = content object
+        @return 200 - data.content = group object (with list of members [if public])
         """
+        
+        group = get_member(id)
+        
+        if not group or group.__type__!="group":
+            raise error_not_found
+        
+        return action_ok(
+            data     = {'group':group.to_dict('actions')}
+        )
+
 
 
     @auto_format_output()

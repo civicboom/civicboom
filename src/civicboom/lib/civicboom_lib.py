@@ -61,7 +61,7 @@ def send_verifiy_email(user, controller='account', action='verify_email', messag
     send_email(user.email_unverifyed, subject=_('verify e-mail address'), content_text=message)
 
 def verify_email(user, hash, commit=False):
-    user = get_user(user)
+    user = get_member(user)
     if user and user.hash() == hash:
         user.email            = user.email_unverifyed
         user.email_unverifyed = None
@@ -207,7 +207,7 @@ def aggregate_via_user(content, user):
     Requires Janrain Pro
     """
     #content = get_content(content)
-    #user    = get_user(user)
+    #user    = get_member(user)
     #if not content: return
     #if not user   : return
     content_json = json.dumps(aggregation_dict(content))

@@ -36,8 +36,8 @@ Most actions follow the following structure:
 #-------------------------------------------------------------------------------
 
 def follow(follower, followed, delay_commit=False):
-    followed = get_user(followed)
-    follower = get_user(follower)
+    followed = get_member(followed)
+    follower = get_member(follower)
     
     if not followed: return _('no followed')
     if not follower: return _('no follower')
@@ -57,8 +57,8 @@ def follow(follower, followed, delay_commit=False):
     return True
 
 def unfollow(follower,followed, delay_commit=False):
-    followed = get_user(followed)
-    follower = get_user(follower)
+    followed = get_member(followed)
+    follower = get_member(follower)
     
     if not followed: return _('no followed')
     if not follower: return _('no follower')
@@ -94,7 +94,7 @@ def assignment_previously_accepted_by(assignment,member):
 
 
 def accept_assignment(assignment, member, status="accepted", delay_commit=False):
-    member     = get_user(member)
+    member     = get_member(member)
     assignment = get_content(assignment)
 
     if not member                                            : return _("cant find user")
@@ -120,7 +120,7 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     return True
 
 def withdraw_assignemnt(assignment, member, delay_commit=False):
-    member     = get_user(member)
+    member     = get_member(member)
     assignment = get_content(assignment)
     
     if not member                                            : return _("cant find user")
@@ -154,7 +154,7 @@ def del_content(content):
     
 def flag_content(content, member=None, type="automated", comment=None):
     flag = FlaggedContent()
-    flag.member  = get_user(member)
+    flag.member  = get_member(member)
     flag.content = get_content(content)
     flag.comment = strip_html_tags(comment)
     flag.type    = type

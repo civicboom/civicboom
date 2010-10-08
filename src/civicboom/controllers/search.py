@@ -123,7 +123,7 @@ class SearchController(BaseController):
             results = results.filter(Content.__type__==t)
         
         if "author" in request.GET:
-            u = get_user(request.GET["author"])
+            u = get_member(request.GET["author"])
             results = results.filter(Content.creator_id==u.id)
         
         if "response_to" in request.GET:

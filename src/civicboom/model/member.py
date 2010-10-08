@@ -9,7 +9,7 @@ from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref, dynamic_loader
 
-import urllib, hashlib
+import urllib, hashlib, copy
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -78,7 +78,7 @@ class Member(Base):
 
     _config = None
 
-    __to_dict__ = Base.__to_dict__.copy()
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'list': {
             'id'                : None ,
@@ -198,7 +198,7 @@ class User(Member):
     email            = Column(Unicode(250), nullable=True)
     email_unverifyed = Column(Unicode(250), nullable=True)
 
-    __to_dict__ = Member.__to_dict__.copy()
+    __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_user_fields = {
         'location_current' : lambda member: 'not implemented yet' ,
         'location_updated' : None ,
@@ -240,34 +240,35 @@ class User(Member):
 class Group(Member):
     __tablename__      = "member_group"
     __mapper_args__    = {'polymorphic_identity': 'group'}
-    id                 = Column(Integer(), ForeignKey('member.id'), primary_key=True)
-    join_mode          = Column(Enum("public", "invite" , "invite_and_request", name="group_join_mode"         ), nullable=False, default="invite")
-    member_visability  = Column(Enum("public", "private",                       name="group_member_visability" ), nullable=False, default="public")
-    content_visability = Column(Enum("public", "private",                       name="group_content_visability"), nullable=False, default="public")
-    #behaviour          = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
-    default_role       = Column(group_member_roles, nullable=False, default="contributor")
-    num_members        = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
-    #members            = relationship("Member", secondary=GroupMembership.__table__)
-    members_roles      = relationship("GroupMembership")
+    id                         = Column(Integer(), ForeignKey('member.id'), primary_key=True)
+    join_mode                  = Column(Enum("public", "invite" , "invite_and_request", name="group_join_mode"         ), nullable=False, default="invite")
+    member_visability          = Column(Enum("public", "private",                       name="group_member_visability" ), nullable=False, default="public")
+    default_content_visability = Column(Enum("public", "private",                       name="group_content_visability"), nullable=False, default="public")
+    #behaviour                  = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
+    default_role               = Column(group_member_roles, nullable=False, default="contributor")
+    num_members                = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    #members                    = relationship("Member", secondary=GroupMembership.__table__)
+    members_roles              = relationship("GroupMembership")
     
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (Group)"
 
-    __to_dict__ = Member.__to_dict__.copy()
+    __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_group_fields = {
         'join_mode'         : None ,
         'member_visability' : None ,
         'content_visability': None ,
         'default_role'      : None ,
-        'num_members'       : None ,
+        'num_members'       : lambda group: group.num_members if group.member_visability=="public" else None ,
     }
     __to_dict__['list'   ].update(_extra_user_fields)
     __to_dict__['single' ].update(_extra_user_fields)
-    __to_dict__['actions'].update(_extra_user_fields)
     __to_dict__['single' ].update({
         'members'           : lambda group: [m.member.to_dict().update({'role':m.role}) for m in group.members_roles] if group.member_visability=="public" else None ,
+        # AllanC - I dont know if .update() returns the dict, I hope it does or this is going to get awkward
     })
+    __to_dict__['actions'].update(__to_dict__['single'])
     
 
 

@@ -36,7 +36,7 @@ class MiscController(BaseController):
 
     def widget_preview(self, id=None):
         if not id: id = "unittest"
-        c.widget_user_preview = get_user(id)
+        c.widget_user_preview = get_member(id)
         return render("/widget/get_widget_code.mako")
 
     @cacheable(time=600)

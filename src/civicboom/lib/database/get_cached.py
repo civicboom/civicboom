@@ -1,4 +1,4 @@
-from civicboom.model.member  import User
+from civicboom.model.member  import Member, User
 from civicboom.model.content import Content, Tag, License
 from civicboom.model.media   import Media
 from civicboom.model.meta    import Session
@@ -26,22 +26,22 @@ add_etag_dependency_key("member_assignments_active")
 def get_licenses():
     return Session.query(License).all()
 
-def get_user_nocache(user):
+def get_member_nocache(user):
     user = unicode(user) # AllanC - shish suspects that passing an integer may make the DB go mental
     try:
-        return Session.query(User).filter_by(username=user).one()
+        return Session.query(Member).with_polymorphic('*').filter_by(username=user).one()
     except:
         try:
-            return Session.query(User).filter_by(email=user).one()
+            return Session.query(Member).with_polymorphic('*').filter_by(id=user).one()
         except:
             try:
-                return Session.query(User).filter_by(id=user).one()
+                return Session.query(User).filter_by(email=user).one()
             except:
                 pass
     return None
 
 #@cache_test.cache() #Cache decorator to go here
-def get_user(user):
+def get_member(user):
     if not user              : return None
     if isinstance(user, User): return user
     return get_user_nocache(user)
