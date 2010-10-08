@@ -17,6 +17,7 @@ from civicboom.lib.misc           import calculate_age
 # Other libs
 import recaptcha.client.captcha as librecaptcha
 import datetime
+import re
 
 import logging
 log      = logging.getLogger(__name__)
@@ -32,10 +33,13 @@ class UniqueUsernameValidator(validators.FancyValidator):
         'too_few'       : _('Your username must be longer than %(min)i characters'),
         'too_long'      : _('Your username must be shorter than %(max)i characters'),
         'username_taken': _('The username %(name)s is no longer available, please try a different one'),
+        'illegal_chars' : _('Username\'s may only contain alphanumeric characters or underscores'),
         }
     def _to_python(self, value, state):
         value = unicode(value.strip())
         # TODO: Strip or alert any characters that make it non URL safe, see feature #54
+        if not re.search("^\w*$", value):
+            raise formencode.Invalid(self.message("illegal_chars", state,), value, state)
         if len(value) <= self.min:
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
         if len(value) >= self.max:
