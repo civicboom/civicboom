@@ -33,7 +33,7 @@ class MessagesController(BaseController):
         """
         GET /messages: All items in the collection.
         
-        @api messages 1.0 (Draft)
+        @api messages 1.0 (WIP)
         
         @param list  which list to get
                to            ?
@@ -68,7 +68,7 @@ class MessagesController(BaseController):
         """
         POST /messages: Create a new item.
         
-        @api messages 1.0 (Draft)
+        @api messages 1.0 (WIP)
         
         @param target   the username of the target user
         @param subject  message subject
@@ -128,7 +128,7 @@ class MessagesController(BaseController):
         """
         DELETE /messages/{id}: Delete an existing item.
 
-        @api messages 1.0 (Draft)
+        @api messages 1.0 (WIP)
 
         @return 200  deleted
         @return 403  message belongs to somebody else
@@ -167,7 +167,7 @@ class MessagesController(BaseController):
         """
         GET /messages/{id}: Show a specific item.
 
-        @api messages 1.0 (Draft)
+        @api messages 1.0 (WIP)
 
         @return  200       show the message
                  id        message id
