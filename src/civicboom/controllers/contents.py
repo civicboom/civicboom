@@ -12,7 +12,7 @@ For managing content:
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, CommentContent, DraftContent
+from civicboom.model                   import Media, CommentContent, WIPContent
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
 
 
@@ -57,7 +57,7 @@ class ContentsController(BaseController):
         """
         GET /contents: All items in the collection
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @param list what type of contents to return, possible values:
           content
@@ -86,7 +86,7 @@ class ContentsController(BaseController):
         """
         POST /contents: Create a new item
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @param form_title
         @param form_contents
@@ -144,7 +144,7 @@ class ContentsController(BaseController):
         """
         PUT /contents/{id}: Update an existing item
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @param *  see "POST /contents"
 
@@ -223,7 +223,7 @@ class ContentsController(BaseController):
         """
         DELETE /contents/{id}: Delete an existing item
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @return 200   content deleted successfully
         @return 403   lacking permission
@@ -248,7 +248,7 @@ class ContentsController(BaseController):
         """
         GET /contents/{id}: Show a specific item
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @return 200      page ok
                 content  content object

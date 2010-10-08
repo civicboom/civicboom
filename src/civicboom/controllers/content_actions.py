@@ -24,7 +24,7 @@ class ContentActionsController(BaseController):
         """
         POST /contents/{id}/rate: rate an article
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @param rating  optional int, default 0
                0       remove rating
@@ -77,7 +77,7 @@ class ContentActionsController(BaseController):
         """
         POST /contents/{id}/boom: alert your followers to an article
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @return 200   boomed successfully
         """
@@ -107,7 +107,7 @@ class ContentActionsController(BaseController):
         """
         POST /contents/{id}/approve: claim an article for publishing
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @return 200   locked ok
         @return 500   error locking
@@ -136,7 +136,7 @@ class ContentActionsController(BaseController):
         Useful if eg. a response is so offensive that one doesn't want it
         in the "responses" list of the request
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @return 200   disassociated ok
         @return 500   error disassociating
@@ -161,7 +161,7 @@ class ContentActionsController(BaseController):
         """
         POST /contents/{id}/accept: accept an assignment
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @return 200   accepted ok
         @return 500   error accepting
@@ -187,7 +187,7 @@ class ContentActionsController(BaseController):
         """
         POST /contents/{id}/witdraw: withdraw from an assignment
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @return 200   withdrawn ok
         @return 500   error withdrawing
@@ -213,7 +213,7 @@ class ContentActionsController(BaseController):
         """
         POST /contents/{id}/flag: Flag this content as being inapproprate of copyright violoation
 
-        @api contents 1.0 (Draft)
+        @api contents 1.0 (WIP)
 
         @param type      ?
         @param comment   ?
