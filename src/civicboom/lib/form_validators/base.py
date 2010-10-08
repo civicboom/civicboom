@@ -13,6 +13,8 @@ from pylons import tmpl_context as c #for current user password validator
 
 from civicboom.lib.authentication import encode_plain_text_password, get_user_and_check_password
 
+from civicboom.lib.form_validators.registration import UniqueUsernameValidator
+
 # Misc Imports
 import datetime
 import hashlib

@@ -1,8 +1,8 @@
 from civicboom.lib.base import *
+from civicboom.lib.form_validators.registration import CreateGroupSchema
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
-
 
 
 
@@ -31,7 +31,7 @@ class GroupsController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    def create(self, format=None):
+    def create(self):
         """
         POST /groups: Create a new group
         
@@ -40,13 +40,32 @@ class GroupsController(BaseController):
         @param form_type
         @param ...
         
-        @return 404 - parent not found
-        @return 403 - can't reply to parent
         @return 400 - missing data (ie, a type=comment with no parent_id)
         @return 201 - content created, data.id = new content id
         """
         # url('contents') + POST
-        pass
+        
+        try:                                                # Try validation
+            schema = CreateGroupSchema()                    #   Build schema
+            form   = schema.to_python(dict(request.params)) #   Validate
+        except formencode.Invalid, error:                   # Form has failed validation
+            form        = error.value                       #   Setup error vars
+            form_errors = error.error_dict or {}            #   
+            return action_error(message="unable to create group")
+        
+        group              = Group()
+        group.name         = form['name']
+        group.status       = 'show'
+        group_admin        = GroupMembership()
+        group_admin.group  = group
+        group_admin.member = c.logged_in_user
+        group_admin.role   = "admin"
+        group.members.append(group_admin)
+        
+        Session.add(group)
+        Session.commit()
+        return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)
+
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -57,7 +76,7 @@ class GroupsController(BaseController):
         
         @return 301 - redirect to /contents/{id}/edit
         """
-        #url_for('new_content')
+        #url_for('new_group')
         group_id = self.create(format='python')['data']['id']
         return redirect(url('edit_group', id=group_id))
 

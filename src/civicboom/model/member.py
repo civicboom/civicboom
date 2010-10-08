@@ -23,6 +23,8 @@ class GroupMembership(Base):
     group_id      = Column(Integer(), ForeignKey('member_group.id'), primary_key=True)
     member_id     = Column(Integer(), ForeignKey('member.id'), primary_key=True)
     role          = Column(group_member_roles, nullable=False, default="contributor")
+    group         = relationship("Group")
+    member        = relationship("Member")
 
 class Follow(Base):
     __tablename__ = "map_member_to_follower"
@@ -239,9 +241,9 @@ class Group(Member):
     __tablename__      = "member_group"
     __mapper_args__    = {'polymorphic_identity': 'group'}
     id                 = Column(Integer(), ForeignKey('member.id'), primary_key=True)
-    join_mode          = Column(Enum("public", "invite"      , "invite_and_request", name="group_join_mode"         ), nullable=False, default="public")
-    member_visability  = Column(Enum("public", "private",                            name="group_member_visability" ), nullable=False, default="public")
-    content_visability = Column(Enum("public", "private",                            name="group_content_visability"), nullable=False, default="public")
+    join_mode          = Column(Enum("public", "invite" , "invite_and_request", name="group_join_mode"         ), nullable=False, default="invite")
+    member_visability  = Column(Enum("public", "private",                       name="group_member_visability" ), nullable=False, default="public")
+    content_visability = Column(Enum("public", "private",                       name="group_content_visability"), nullable=False, default="public")
     #behaviour          = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
     default_role       = Column(group_member_roles, nullable=False, default="contributor")
     num_members        = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
