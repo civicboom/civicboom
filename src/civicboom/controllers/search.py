@@ -40,10 +40,7 @@ def _get_search_filters():
     
     def append_search_response_to(query, article_id):
         return query.filter(Content.parent_id==int(article_id))
-        
-    #def append_search_limit(query, limit):
-    #    print "limit"
-    #    return query.limit(limit)
+
     
     search_filters = {
         'creator'    : append_search_creator ,
@@ -51,7 +48,6 @@ def _get_search_filters():
         'location'   : append_search_location ,
         'type'       : append_search_type ,
         'response_to': append_search_response_to ,
-    #    'limit'      : append_search_limit ,
     }
     
     return search_filters

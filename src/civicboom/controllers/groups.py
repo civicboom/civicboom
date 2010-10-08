@@ -115,7 +115,6 @@ class GroupsController(BaseController):
         
         @return 200 - data.content = group object (with list of members [if public])
         """
-        
         group = get_member(id)
         
         if not group or group.__type__!="group":
