@@ -20,7 +20,7 @@ def make_map(config):
     map.resource('content', 'contents')
     map.connect('content_action', '/contents/{id}/{action}.{format}', controller='content_actions')
     map.connect('content_action', '/contents/{id}/{action}', controller='content_actions', format="redirect")
-    map.resource('feed',    'feeds')
+    map.resource('feed',    'feeds'   )
 
 
     # Map the /admin url to FA's AdminController
@@ -40,14 +40,14 @@ def make_map(config):
     # the first route that matches url() args is the one that's generated,
     # so put routes without slashes first
     map.connect('/{controller}/{action}.{format}/{id}')  # CAFI
-    map.connect('/{controller}/{action}.{format}/{id}/') # CAFI/
+    #map.connect('/{controller}/{action}.{format}/{id}/') # CAFI/
     map.connect('/{controller}/{action}/{id}')           # CAI
-    map.connect('/{controller}/{action}/{id}/')          # CAI/
+    #map.connect('/{controller}/{action}/{id}/')          # CAI/
     map.connect('/{controller}/{action}.{format}')       # CAF
-    map.connect('/{controller}/{action}.{format}/')      # CAF/
+    #map.connect('/{controller}/{action}.{format}/')      # CAF/
     map.connect('/{controller}/{action}')                # CA
-    map.connect('/{controller}/{action}/')               # CA/
-    map.connect('/{controller}/', action="index")        # C
-    map.connect('/{controller}' , action="index")        # C/
+    #map.connect('/{controller}/{action}/')               # CA/
+    map.connect('/{controller}' , action="index")        # C
+    #map.connect('/{controller}/', action="index")        # C/
 
     return map
