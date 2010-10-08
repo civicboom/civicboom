@@ -16,7 +16,11 @@ index_lists = {
 
 
 class MessagesController(BaseController):
-    """REST Controller styled on the Atom Publishing Protocol"""
+    """
+    @doc messages
+    @title Messages
+    @desc REST Controller styled on the Atom Publishing Protocol
+    """
     # To properly map this controller, ensure your config/routing.py file has
     # a resource setup:
     #     map.resource('message', 'messages')
@@ -26,7 +30,20 @@ class MessagesController(BaseController):
     @web_params_to_kwargs()
     @authorize(is_valid_user)
     def index(self, list='to', **kwargs):
-        """GET /messages: All items in the collection."""
+        """
+        GET /messages: All items in the collection.
+        
+        @api messages 1.0 (Draft)
+        
+        @param list  which list to get
+               to            ?
+               from          ?
+               public        ?
+               notification  ?
+
+        @return 200   a list of messages
+                list  the list
+        """
         # url('messages')
         # AllanC - this feels duplicated from the member controler - humm ... need to think about a sensible stucture
         c.viewing_user = c.logged_in_user
@@ -42,7 +59,19 @@ class MessagesController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def create(self):
-        """POST /messages: Create a new item."""
+        """
+        POST /messages: Create a new item.
+        
+        @api messages 1.0 (Draft)
+        
+        @param target
+        @param subject
+        @param content
+
+        @return 201   message sent
+        @return 400   missing required field
+        @return 404   target user doesn't exist
+        """
         # url('messages')
         try:
             target = get_user(request.POST["target"])
@@ -68,7 +97,9 @@ class MessagesController(BaseController):
 
     @auto_format_output()
     def new(self, format='html'):
-        """GET /messages/new: Form to create a new item."""
+        """
+        GET /messages/new: Form to create a new item.
+        """
         # url('new_message')
         raise action_error(_("'New Message' page not implemented - go to somebody's profile page to message them"), code=501)
 
@@ -88,7 +119,15 @@ class MessagesController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def delete(self, id):
-        """DELETE /messages/id: Delete an existing item."""
+        """
+        DELETE /messages/{id}: Delete an existing item.
+
+        @api messages 1.0 (Draft)
+
+        @return 200  deleted
+        @return 404  message belongs to somebody else
+        @return 404  message does not exist
+        """
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="DELETE" />
         # Or using helpers:
@@ -119,7 +158,18 @@ class MessagesController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     def show(self, id, format='html'):
-        """GET /messages/id: Show a specific item."""
+        """
+        GET /messages/{id}: Show a specific item.
+
+        @api messages 1.0 (Draft)
+
+        @return  200       show the message
+                 id        message id
+                 source    username (None if system notification)
+                 subject   ?
+                 timestamp ?
+                 content   ?
+        """
         # url('message', id=ID)
         c.viewing_user = c.logged_in_user
 
