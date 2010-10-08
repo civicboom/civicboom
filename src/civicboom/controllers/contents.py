@@ -50,7 +50,19 @@ class ContentsController(BaseController):
     @web_params_to_kwargs()
     @authorize(is_valid_user)
     def index(self, list='content'):
-        """GET /contents: All items in the collection"""
+        """
+        GET /contents: All items in the collection
+
+        @param list - what type of contents to return, possible values:
+          content
+          assignments_active
+          assignments_previous
+          assignments
+          articles
+          drafts
+
+        @return 200 - data.list = array of content objects
+        """
         # url('contents')
         
         if list not in index_lists: raise action_error(_('list type %s not supported') % list)
@@ -64,7 +76,19 @@ class ContentsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def create(self, format=None):
-        """POST /contents: Create a new item"""
+        """
+        POST /contents: Create a new item
+
+        @param form_title
+        @param form_contents
+        @param form_type
+        @param ...
+
+        @return 404 - parent not found
+        @return 403 - can't reply to parent
+        @return 400 - missing data (ie, a type=comment with no parent_id)
+        @return 201 - content created, data.id = new content id
+        """
         # url('contents') + POST
         
         # if parent is specified, make sure it is valid
@@ -89,8 +113,13 @@ class ContentsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def new(self, format='html'):
-        """GET /contents/new: Form to create a new item
-        As file-upload and such require an existing object to add to, we create a blank object and redirect to "edit-existing" mode
+        """
+        GET /contents/new - Form to create a new item
+
+        As file-upload and such require an existing object to add to,
+        we create a blank object and redirect to "edit-existing" mode
+
+        @return 301 - redirect to /contents/{id}/edit
         """
         #url_for('new_content')
         content_id = self.create(format='python')['data']['id']
@@ -101,7 +130,15 @@ class ContentsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def update(self, id):
-        """PUT /contents/id: Update an existing item"""
+        """
+        PUT /contents/{id} - Update an existing item
+        (aka POST /contents/{id} with POST[_method] = "PUT")
+
+        @param * - see "POST contents"
+
+        @return 403 - lacking permission to edit
+        @return 200 - success
+        """
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="PUT" />
         # Or using helpers:
@@ -171,7 +208,13 @@ class ContentsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def delete(self, id, format="html"):
-        """DELETE /contents/id: Delete an existing item"""
+        """
+        DELETE /contents/{id}: Delete an existing item
+        (aka POST /contents/{id} with POST[_method] = "DELETE")
+
+        @return 403 - lacking permission
+        @return 200 - content deleted successfully
+        """
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="DELETE" />
         # Or using helpers:
@@ -189,11 +232,15 @@ class ContentsController(BaseController):
 
     @auto_format_output()
     def show(self, id, format='html'):
-        """GET /contents/id: Show a specific item"""
+        """
+        GET /contents/{id}: Show a specific item
+
+        @return 200 - data.content = content object
+        """
         # url('content', id=ID)
         """
         View content
-        Differnt content object types require a different view template
+        Different content object types require a different view template
         Identify the object type and render with approriate renderer
         """
         content = get_content(id)
@@ -227,7 +274,9 @@ class ContentsController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     def edit(self, id, format='html'):
-        """GET /contents/id/edit: Form to edit an existing item"""
+        """
+        GET /contents/{id}/edit: Form to edit an existing item
+        """
         # url('edit_content', id=ID)
         
         c.content = get_content(id)
