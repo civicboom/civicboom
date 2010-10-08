@@ -41,7 +41,11 @@ index_lists = {
 
 
 class ContentsController(BaseController):
-    """REST Controller styled on the Atom Publishing Protocol"""
+    """
+    @title Contents
+    @doc contents
+    @desc REST Controller styled on the Atom Publishing Protocol
+    """
     # To properly map this controller, ensure your config/routing.py
     # file has a resource setup:
     #     map.resource('content', 'contents')
@@ -53,7 +57,9 @@ class ContentsController(BaseController):
         """
         GET /contents: All items in the collection
 
-        @param list - what type of contents to return, possible values:
+        @api contents 1.0 (Draft)
+
+        @param list what type of contents to return, possible values:
           content
           assignments_active
           assignments_previous
@@ -61,7 +67,8 @@ class ContentsController(BaseController):
           articles
           drafts
 
-        @return 200 - data.list = array of content objects
+        @return 200    list generated ok
+                list   array of content objects
         """
         # url('contents')
         
@@ -79,15 +86,21 @@ class ContentsController(BaseController):
         """
         POST /contents: Create a new item
 
+        @api contents 1.0 (Draft)
+
         @param form_title
         @param form_contents
         @param form_type
         @param ...
 
-        @return 404 - parent not found
-        @return 403 - can't reply to parent
-        @return 400 - missing data (ie, a type=comment with no parent_id)
-        @return 201 - content created, data.id = new content id
+        @return 404   parent not found
+        @return 403   can't reply to parent
+        @return 400   missing data (ie, a type=comment with no parent_id)
+        @return 201   content created
+                id    new content id
+
+        @comment Shish paramaters need filling out
+        @comment Shish do all the paramaters need to start with "form_"?
         """
         # url('contents') + POST
         
@@ -114,12 +127,14 @@ class ContentsController(BaseController):
     @authenticate_form
     def new(self, format='html'):
         """
-        GET /contents/new - Form to create a new item
+        GET /contents/new: Form to create a new item
+
+        @api contents 1.0 (Draft)
 
         As file-upload and such require an existing object to add to,
         we create a blank object and redirect to "edit-existing" mode
 
-        @return 301 - redirect to /contents/{id}/edit
+        @return 301   redirect to /contents/{id}/edit
         """
         #url_for('new_content')
         content_id = self.create(format='python')['data']['id']
@@ -131,13 +146,15 @@ class ContentsController(BaseController):
     @authenticate_form
     def update(self, id):
         """
-        PUT /contents/{id} - Update an existing item
+        PUT /contents/{id}: Update an existing item
         (aka POST /contents/{id} with POST[_method] = "PUT")
 
-        @param * - see "POST contents"
+        @api contents 1.0 (Draft)
 
-        @return 403 - lacking permission to edit
-        @return 200 - success
+        @param *  see "POST /contents"
+
+        @return 403   lacking permission to edit
+        @return 200   success
         """
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="PUT" />
@@ -212,8 +229,10 @@ class ContentsController(BaseController):
         DELETE /contents/{id}: Delete an existing item
         (aka POST /contents/{id} with POST[_method] = "DELETE")
 
-        @return 403 - lacking permission
-        @return 200 - content deleted successfully
+        @api contents 1.0 (Draft)
+
+        @return 200   content deleted successfully
+        @return 403   lacking permission
         """
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="DELETE" />
@@ -235,7 +254,10 @@ class ContentsController(BaseController):
         """
         GET /contents/{id}: Show a specific item
 
-        @return 200 - data.content = content object
+        @api contents 1.0 (Draft)
+
+        @return 200      page ok
+                content  content object
         """
         # url('content', id=ID)
         """
@@ -276,6 +298,8 @@ class ContentsController(BaseController):
     def edit(self, id, format='html'):
         """
         GET /contents/{id}/edit: Form to edit an existing item
+
+        @api contents 1.0 (Draft)
         """
         # url('edit_content', id=ID)
         

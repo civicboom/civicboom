@@ -22,14 +22,16 @@ class ContentActionsController(BaseController):
     @authenticate_form
     def rate(self, id, format="html"):
         """
-        POST /contents/{id}/rate - rate an article
+        POST /contents/{id}/rate: rate an article
 
-        @param rating (optional int, default 0)
-          0   - remove rating
-          1-5 - set rating
+        @api contents 1.0 (Draft)
 
-        @return 200 - rated ok
-        @return 400 - invalid rating
+        @param rating  optional int, default 0
+               0       remove rating
+               1-5     set rating
+
+        @return 200   rated ok
+        @return 400   invalid rating
         """
         # remove any existing ratings
         # we need to commit after removal, otherwise SQLAlchemy
@@ -73,9 +75,11 @@ class ContentActionsController(BaseController):
     @authenticate_form
     def boom(self, id, format="html"):
         """
-        POST /contents/{id}/boom - alert your followers to an article
+        POST /contents/{id}/boom: alert your followers to an article
 
-        @return 200 - boomed successfully
+        @api contents 1.0 (Draft)
+
+        @return 200   boomed successfully
         """
         # FIXME: add entry to booms table, and look that up rather than the session variable
         boomkey = 'boom%s' % id
@@ -101,10 +105,12 @@ class ContentActionsController(BaseController):
     @authenticate_form
     def approve(self, id, format="html"):
         """
-        POST /contents/{id}/approve - claim an article for publishing
+        POST /contents/{id}/approve: claim an article for publishing
 
-        @return 200 - locked ok
-        @return 500 - error locking
+        @api contents 1.0 (Draft)
+
+        @return 200   locked ok
+        @return 500   error locking
         """
         content = get_content(id)
         if content.is_parent_owner(c.logged_in_user):
@@ -125,13 +131,15 @@ class ContentActionsController(BaseController):
     @authenticate_form
     def disasociate(self, format="html"):
         """
-        POST /contents/{id}/disassociate - unlink an article from its parent
+        POST /contents/{id}/disassociate: unlink an article from its parent
+
+        @api contents 1.0 (Draft)
 
         Useful if eg. a response is so offensive that one doesn't want it
         in the "responses" list of the request
 
-        @return 200 - disassociated ok
-        @return 500 - error disassociating
+        @return 200   disassociated ok
+        @return 500   error disassociating
         """
         content = get_content(id)
         if content.is_parent_owner(c.logged_in_user):
@@ -151,10 +159,12 @@ class ContentActionsController(BaseController):
     @authenticate_form
     def accept(self, id=None, format="html"):
         """
-        POST /contents/{id}/accept - accept an assignment
+        POST /contents/{id}/accept: accept an assignment
 
-        @return 200 - accepted ok
-        @return 500 - error accepting
+        @api contents 1.0 (Draft)
+
+        @return 200   accepted ok
+        @return 500   error accepting
         """
         assignment = get_content(id)
         status     = assignment.accept(c.logged_in_user)
@@ -175,10 +185,12 @@ class ContentActionsController(BaseController):
     @authenticate_form
     def withdraw(self, id=None, format="html"):
         """
-        POST /contents/{id}/witdraw - withdraw from an assignment
+        POST /contents/{id}/witdraw: withdraw from an assignment
 
-        @return 200 - withdrawn ok
-        @return 500 - error withdrawing
+        @api contents 1.0 (Draft)
+
+        @return 200   withdrawn ok
+        @return 500   error withdrawing
         """
         assignment = get_content(id)
         status     = assignment.withdraw(c.logged_in_user)
@@ -199,10 +211,12 @@ class ContentActionsController(BaseController):
     @authenticate_form
     def flag(self, id):
         """
-        POST /contents/{id}/flag - Flag this content as being inapproprate of copyright violoation
+        POST /contents/{id}/flag: Flag this content as being inapproprate of copyright violoation
 
-        @param type - ?
-        @param comment - ?
+        @api contents 1.0 (Draft)
+
+        @param type      ?
+        @param comment   ?
         """
         form = request.POST
         try:
