@@ -133,10 +133,10 @@ class ContentActionsController(BaseController):
         """
         POST /contents/{id}/disassociate: unlink an article from its parent
 
-        @api contents 1.0 (Draft)
-
         Useful if eg. a response is so offensive that one doesn't want it
         in the "responses" list of the request
+
+        @api contents 1.0 (Draft)
 
         @return 200   disassociated ok
         @return 500   error disassociating

@@ -129,12 +129,8 @@ class ContentsController(BaseController):
         """
         GET /contents/new: Form to create a new item
 
-        @api contents 1.0 (Draft)
-
         As file-upload and such require an existing object to add to,
         we create a blank object and redirect to "edit-existing" mode
-
-        @return 301   redirect to /contents/{id}/edit
         """
         #url_for('new_content')
         content_id = self.create(format='python')['data']['id']
@@ -298,8 +294,6 @@ class ContentsController(BaseController):
     def edit(self, id, format='html'):
         """
         GET /contents/{id}/edit: Form to edit an existing item
-
-        @api contents 1.0 (Draft)
         """
         # url('edit_content', id=ID)
         
