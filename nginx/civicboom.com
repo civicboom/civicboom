@@ -32,8 +32,8 @@ server {
 	proxy_set_header X-Real-IP $remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Url-Scheme $scheme;
-	if ($http_host ~  "(localhost|new-server)") {set $proxy_port 5000;}
-	if ($http_host !~ "(localhost|new-server)") {set $proxy_port 5080;}
+	if ($http_host ~  "civicboom.com") {set $proxy_port 5080;}
+	if ($http_host !~ "civicboom.com") {set $proxy_port 5000;}
 
 	# for all requests that start with / (ie, all requests), proxy to pylons
 	location / {proxy_pass http://127.0.0.1:$proxy_port$uri$is_args$args;}
