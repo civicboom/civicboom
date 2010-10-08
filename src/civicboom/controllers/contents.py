@@ -12,7 +12,7 @@ For managing content:
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, CommentContent, WIPContent
+from civicboom.model                   import Media, CommentContent, DraftContent
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
 
 
