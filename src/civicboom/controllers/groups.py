@@ -23,7 +23,7 @@ class GroupsController(BaseController):
           articles
           drafts
         
-        @return 200 - data.list = array of content objects
+        @return 200 - data.list = array of group objects
         """
         # url('groups')
         pass

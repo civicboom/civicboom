@@ -247,10 +247,28 @@ class Group(Member):
     #behaviour          = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
     default_role       = Column(group_member_roles, nullable=False, default="contributor")
     num_members        = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
-    members            = relationship("Member", secondary=GroupMembership.__table__)
+    #members            = relationship("Member", secondary=GroupMembership.__table__)
+    members_roles      = relationship("GroupMembership")
+    
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (Group)"
+
+    __to_dict__ = Member.__to_dict__.copy()
+    _extra_group_fields = {
+        'join_mode'         : None ,
+        'member_visability' : None ,
+        'content_visability': None ,
+        'default_role'      : None ,
+        'num_members'       : None ,
+    }
+    __to_dict__['list'   ].update(_extra_user_fields)
+    __to_dict__['single' ].update(_extra_user_fields)
+    __to_dict__['actions'].update(_extra_user_fields)
+    __to_dict__['single' ].update({
+        'members'           : lambda group: [m.member.to_dict().update({'role':m.role}) for m in group.members_roles] if group.member_visability=="public" else None ,
+    })
+    
 
 
 class UserLogin(Base):
