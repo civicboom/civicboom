@@ -104,7 +104,7 @@ class VerbDoc(Doc):
         self.desc = self.find("desc")
 
     def __str__(self):
-        return "<h2 id='"+self.section+"'>"+self.title+"</h2>\n<p>"+self.desc+"</p>"
+        return "<h2 id='"+self.section+"'>"+self.title+"</h2>\n<div>"+self.desc+"</div>"
 
 
 #
@@ -141,13 +141,21 @@ H1 { /* document title */
     margin: 0px;
     padding: 16px;
 }
+ARTICLE {
+    border: 1px solid grey;
+    margin: 32px;
+}
 H2 { /* module title */
+    margin: 0px;
+    padding: 4px;
+    border-bottom: 1px solid grey;
+    background: #AAF;
 }
 SECTION {
     border: 1px solid grey;
     margin: 32px;
 }
-SECTION > DIV {
+SECTION > DIV, ARTICLE > DIV {
     padding: 16px;
 }
 H3 { /* function title */
@@ -177,6 +185,7 @@ for section in sections.values():
 fp.write("</ul>")
 
 fp.write("""
+<article>
 <h2>Things common to all requests:</h2>
 
 <section>
@@ -213,9 +222,11 @@ fp.write("""
 }
 </pre>
 </section>
+</article>
 """)
 
 for section in sections.values():
+    fp.write("<article>")
     for doc in section['head']:
         fp.write(str(doc))
 
@@ -226,6 +237,7 @@ for section in sections.values():
 
     for doc in section['items']:
         fp.write(str(doc))
+    fp.write("</article>")
 
 fp.write("""
     </body>
