@@ -138,7 +138,6 @@ fp.write("""<!DOCTYPE html>
         <style>
 H1 { /* document title */
     text-align: center;
-    border-bottom: 1px solid black;
     margin: 0px;
     padding: 16px;
 }
@@ -171,15 +170,60 @@ H4:first-child {
         <h1>Civicboom API docs</h1>
 """)
 
+fp.write("<ul>")
 for section in sections.values():
     for doc in section['head']:
-        fp.write("<a href='#%s'>%s</a><br>\n" % (doc.section, doc.title))
+        fp.write("<li><a href='#%s'>%s</a>\n" % (doc.section, doc.title))
+fp.write("</ul>")
+
+fp.write("""
+<h2>Things common to all requests:</h2>
+
+<section>
+<h3>Transport</h3>
+<ul>
+<li>All content-modifying actions (POST, PUT, DELETE) require an auth_token argument;
+    since this is universal, it isn't mentioned in the docs for each action separately
+<li>PUT and DELETE can be emulated with POST, having the form variable "_method" set
+    to PUT or DELETE respectively
+<li>HTTP status codes are used:
+    <ul>
+      <li>200 - generic success
+      <li>201 - content created
+      <li>400 - generic user error (commonly missing required data when submitting a form)
+      <li>403 - permission denied
+      <li>404 - content not found
+      <li>500 - generic server error
+      <li>501 - not implemented
+      <li>502 - back-end server is down for maintenance
+    </ul>
+</ul>
+</section>
+
+<section>
+<h3>Packet</h3>
+<pre>
+{
+    "status": "ok" / "error",                              (required)
+    "message": "string to show in app status bar / popup", (string or None, should be there if status = error)
+    "data": {                                              (required; blank dictionary if there is no data)
+        "foo": "bar", # function-specific data
+        "baz": "qux"
+    }
+}
+</pre>
+</section>
+""")
 
 for section in sections.values():
     for doc in section['head']:
         fp.write(str(doc))
+
+    fp.write("<ul>")
     for doc in section['items']:
-        fp.write("<a href='#%s'>%s</a><br>\n" % (doc.method, doc.method+" - "+doc.desc))
+        fp.write("<li><a href='#%s'>%s</a>\n" % (doc.method, doc.method+" - "+doc.desc))
+    fp.write("</ul>")
+
     for doc in section['items']:
         fp.write(str(doc))
 

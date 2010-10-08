@@ -143,7 +143,6 @@ class ContentsController(BaseController):
     def update(self, id):
         """
         PUT /contents/{id}: Update an existing item
-        (aka POST /contents/{id} with POST[_method] = "PUT")
 
         @api contents 1.0 (Draft)
 
@@ -223,7 +222,6 @@ class ContentsController(BaseController):
     def delete(self, id, format="html"):
         """
         DELETE /contents/{id}: Delete an existing item
-        (aka POST /contents/{id} with POST[_method] = "DELETE")
 
         @api contents 1.0 (Draft)
 
