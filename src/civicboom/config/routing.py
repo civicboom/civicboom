@@ -20,7 +20,8 @@ def make_map(config):
     map.resource('content', 'contents')
     map.connect('content_action', '/contents/{id}/{action}.{format}', controller='content_actions')
     map.connect('content_action', '/contents/{id}/{action}', controller='content_actions', format="redirect")
-    map.resource('feed',    'feeds'   )
+    map.resource('feed'   , 'feeds'   )
+    map.resource('group'  , 'groups'  )
 
 
     # Map the /admin url to FA's AdminController

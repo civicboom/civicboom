@@ -233,7 +233,7 @@ class ContentsController(BaseController):
     @auto_format_output()
     def show(self, id, format='html'):
         """
-        GET /contents/{id}: Show a specific item
+        GET /content/{id}: Show a specific item
 
         @return 200 - data.content = content object
         """
