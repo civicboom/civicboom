@@ -1,0 +1,180 @@
+#!/usr/bin/python
+
+from glob import glob
+import re
+
+class Param(object):
+    def __init__(self, text):
+        lines = text.split("\n")
+        if " " in lines[0]:
+            (self.name, self.desc) = lines[0].split(" ", 1)
+        else:
+            self.name = lines[0]
+            self.desc = ""
+        self.values = filter(lambda x: len(x) > 0, [l.strip() for l in lines[1:]])
+
+    def __str__(self):
+        r = ""
+        r = r + self.name+" - "+self.desc+"\n"
+        if self.values:
+            r = r + "<ul>\n"+"\n".join(["<li>"+v for v in self.values])+"\n</ul>"
+        return r
+
+class Return(object):
+    def __init__(self, text):
+        lines = text.split("\n")
+        (self.code, self.desc) = lines[0].split(" ", 1)
+        datalines = filter(lambda x: " " in x, [l.strip() for l in lines[1:]])
+        self.datas = [dl.split(" ", 1) for dl in datalines]
+
+    def __str__(self):
+        r = ""
+        r = r + self.code + " - " + self.desc + "\n"
+        if self.datas:
+            r = r + (
+                "<ul>\n"+
+                    "\n".join([("<li>%s - %s" % tuple(d)) for d in self.datas])+
+                "\n</ul>"
+            )
+        return r
+
+
+class Doc(object):
+    def find(self, tag):
+        m = re.search("@"+tag+" ([^@]*)", self.text, re.DOTALL)
+        if m:
+            return m.group(1).strip()
+        else:
+            return None
+
+    def findall(self, tag):
+        return re.findall("@"+tag+" ([^@]*)", self.text, re.DOTALL)
+
+    def __cmp__(self, b):
+        cmp_sect = cmp(self.section, b.section)
+        if cmp_sect != 0:
+            return cmp_sect
+        elif hasattr(self, 'title'):
+            return -1
+        else:
+            return 1
+
+
+class FuncDoc(Doc):
+    def __init__(self, text):
+        lines = filter(lambda x: " " in x, [l.strip() for l in text.split("\n")])
+        self.text = text
+        (self.method, self.desc) = lines[0].split(":", 2)
+        (self.section, self.api_version) = self.find("api").split(" ", 1)
+        self.params = [Param(p) for p in self.findall("param")]
+        self.returns = [Return(r) for r in self.findall("return")]
+        self.comments = [cl.split(" ", 1) for cl in self.findall("comment")]
+
+    def __str__(self):
+        params = "\n".join(["<li>"+str(p) for p in self.params])
+        returns = "\n".join(["<li>"+str(r) for r in self.returns])
+        dt = ""
+        if self.comments:
+            dt = (
+                "\n".join([("<p><em>%s</em> - %s" % tuple(d)) for d in self.comments])+"\n"
+            )
+        return (
+            "<section>\n"+
+            "<h3 id='"+self.method+"'>"+self.method+" - "+self.desc+"</h3>\n"+
+            "<div>"+
+            ("<h4>Paramaters</h4>\n<ul>"+params+"</ul>" if params else "")+
+            ("<h4>Return Data</h4>\n<ul>"+returns+"</ul>" if returns else "")+
+            dt+
+            "</div>"+
+            "</section>\n\n"
+        )
+
+
+class VerbDoc(Doc):
+    def __init__(self, text):
+        self.text = text
+        self.title = self.find("title")
+        self.section = self.find("doc")
+
+    def __str__(self):
+        return "<h2 id='"+self.section+"'>"+self.title+"</h2>"
+
+
+#
+# Read the @doc and @api sections out of the files, store them
+# in the right section
+#
+
+sections = {}
+for controller in glob("../src/civicboom/controllers/*.py"):
+    print "Scanning "+controller
+
+    data = file(controller).read()
+    for doc in data.split('"""'):
+        if "@doc" in doc:
+            d = VerbDoc(doc)
+            if d.section not in sections:
+                sections[d.section] = {'head': [], 'items': []}
+            sections[d.section]['head'].append(d)
+        if "@api" in doc:
+            d = FuncDoc(doc)
+            if d.section not in sections:
+                sections[d.section] = {'head': [], 'items': []}
+            sections[d.section]['items'].append(d)
+
+
+fp = file("doc.html", "w")
+fp.write("""<!DOCTYPE html>
+<html>
+    <head>
+        <title>Civicboom API docs</title>
+        <style>
+H1 { /* document title */
+    text-align: center;
+    border-bottom: 1px solid black;
+    margin: 0px;
+    padding: 16px;
+}
+H2 { /* module title */
+}
+SECTION {
+    border: 1px solid grey;
+    margin: 32px;
+}
+SECTION > DIV {
+    padding: 16px;
+}
+H3 { /* function title */
+    margin: 0px;
+    padding: 4px;
+    border-bottom: 1px solid grey;
+    background: #AAF;
+}
+H4 { /* function part */
+    margin: 0px;
+}
+H4:first-child {
+}
+        </style>
+    </head>
+    <body>
+        <h1>Civicboom API docs</h1>
+""")
+
+for section in sections.values():
+    for doc in section['head']:
+        fp.write("<br><a href='#%s'>%s</a>\n" % (doc.section, doc.title))
+
+for section in sections.values():
+    for doc in section['head']:
+        fp.write(str(doc))
+    for doc in section['items']:
+        fp.write("<br><a href='#%s'>%s</a>\n" % (doc.method, doc.method+" - "+doc.desc))
+    for doc in section['items']:
+        fp.write(str(doc))
+
+fp.write("""
+    </body>
+</html>
+""")
+fp.close()
