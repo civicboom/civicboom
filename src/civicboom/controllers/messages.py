@@ -43,6 +43,12 @@ class MessagesController(BaseController):
 
         @return 200   a list of messages
                 list  the list
+
+        @comment Shish   do we want people to see their sent messages? Messages
+                         will disappear from this list as the target deletes them,
+                         the target may not want their activity known
+        @comment Shish   are public messages used yet? if they aren't used, IMHO
+                         they should be left undocumented
         """
         # url('messages')
         # AllanC - this feels duplicated from the member controler - humm ... need to think about a sensible stucture
@@ -64,9 +70,9 @@ class MessagesController(BaseController):
         
         @api messages 1.0 (Draft)
         
-        @param target
-        @param subject
-        @param content
+        @param target   the username of the target user
+        @param subject  message subject
+        @param content  message body
 
         @return 201   message sent
         @return 400   missing required field
@@ -125,7 +131,7 @@ class MessagesController(BaseController):
         @api messages 1.0 (Draft)
 
         @return 200  deleted
-        @return 404  message belongs to somebody else
+        @return 403  message belongs to somebody else
         @return 404  message does not exist
         """
         # Forms posted to this method should contain a hidden field:
@@ -166,9 +172,15 @@ class MessagesController(BaseController):
         @return  200       show the message
                  id        message id
                  source    username (None if system notification)
-                 subject   ?
-                 timestamp ?
-                 content   ?
+                 timestamp time that the message was sent
+                 subject   message subject
+                 content   message body
+        @return  403       current user is not the message target
+        @return  404       the message does not exist
+
+        @comment Shish  do we want to return permission denied, or
+                        should we pretend the message doesn't exist
+                        at all?
         """
         # url('message', id=ID)
         c.viewing_user = c.logged_in_user
@@ -183,7 +195,6 @@ class MessagesController(BaseController):
             raise action_error(_("You are not the target of this message"), code=403)
 
         return action_ok(
-            template = 'messages/show',
             data = {
                 "id": c.msg.id,
                 "source": str(c.msg.source),
