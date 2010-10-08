@@ -73,7 +73,7 @@ class SearchController(BaseController):
     @web_params_to_kwargs()
     def content(self, **kwargs):
         
-        results  = Session.query(Content).select_from(join(Content, Member, Content.creator)).filter(and_(Content.__type__!='comment', Content.__type__!='draft')).filter(Content.status=='show').order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
+        results  = Session.query(Content).select_from(join(Content, Member, Content.creator)).filter(and_(Content.__type__!='comment', Content.__type__!='draft', Content.status=='show', Content.private==False)).order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
         
         
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
