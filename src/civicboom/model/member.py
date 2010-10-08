@@ -15,12 +15,14 @@ import urllib, hashlib
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 
+group_member_roles = Enum("admin", "editor", "contributor", "observer" ,name="group_member_roles")
+
 class GroupMembership(Base):
     __tablename__ = "map_user_to_group"
-    _gmp          = Enum("admin", "normal", "view_only", name="group_membership_permission")
+    #_gmp          = Enum("admin", "normal", "view_only", name="group_membership_permission")
     group_id      = Column(Integer(), ForeignKey('member_group.id'), primary_key=True)
     member_id     = Column(Integer(), ForeignKey('member.id'), primary_key=True)
-    premissions   = Column(_gmp,      nullable=False, default="normal")
+    role          = Column(group_member_roles, nullable=False, default="contributor")
 
 class Follow(Base):
     __tablename__ = "map_member_to_follower"
@@ -233,16 +235,17 @@ class User(Member):
         return "http://www.gravatar.com/avatar/%s?%s" % (hash, args)
 
 
-
 class Group(Member):
-    __tablename__    = "member_group"
-    __mapper_args__  = {'polymorphic_identity': 'group'}
-    id               = Column(Integer(), ForeignKey('member.id'), primary_key=True)
-    permissions_join = Column(Enum("open", "invite_only", name="group_permissions_join"), nullable=False, default="open")
-    permissions_view = Column(Enum("open", "members_only", name="group_permissions_view"), nullable=False, default="open")
-    behaviour        = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
-    num_members      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
-    members          = relationship("Member", secondary=GroupMembership.__table__)
+    __tablename__      = "member_group"
+    __mapper_args__    = {'polymorphic_identity': 'group'}
+    id                 = Column(Integer(), ForeignKey('member.id'), primary_key=True)
+    join_mode          = Column(Enum("public", "invite"      , "invite_and_request", name="group_join_mode"         ), nullable=False, default="public")
+    member_visability  = Column(Enum("public", "private",                            name="group_member_visability" ), nullable=False, default="public")
+    content_visability = Column(Enum("public", "private",                            name="group_content_visability"), nullable=False, default="public")
+    #behaviour          = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
+    default_role       = Column(group_member_roles, nullable=False, default="contributor")
+    num_members        = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    members            = relationship("Member", secondary=GroupMembership.__table__)
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (Group)"
