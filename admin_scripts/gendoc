@@ -69,6 +69,11 @@ class FuncDoc(Doc):
         self.params = [Param(p) for p in self.findall("param")]
         self.returns = [Return(r) for r in self.findall("return")]
         self.comments = [cl.split(" ", 1) for cl in self.findall("comment")]
+        self.full = ""
+        for line in lines[1:]:
+            if line[0] == "@":
+                break
+            self.full = self.full + "\n" + line
 
     def __str__(self):
         params = "\n".join(["<li>"+str(p) for p in self.params])
@@ -80,8 +85,9 @@ class FuncDoc(Doc):
             )
         return (
             "<section>\n"+
-            "<h3 id='"+self.method+"'>"+self.method+" - "+self.desc+"</h3>\n"+
+            "<h3 id='"+self.method+"'><span>"+self.api_version+"</span>"+self.method+" - "+self.desc+"</h3>\n"+
             "<div>"+
+            "<p>"+self.full+"</p>" +
             ("<h4>Paramaters</h4>\n<ul>"+params+"</ul>" if params else "")+
             ("<h4>Return Data</h4>\n<ul>"+returns+"</ul>" if returns else "")+
             dt+
@@ -95,9 +101,10 @@ class VerbDoc(Doc):
         self.text = text
         self.title = self.find("title")
         self.section = self.find("doc")
+        self.desc = self.find("desc")
 
     def __str__(self):
-        return "<h2 id='"+self.section+"'>"+self.title+"</h2>"
+        return "<h2 id='"+self.section+"'>"+self.title+"</h2>\n<p>"+self.desc+"</p>"
 
 
 #
@@ -150,6 +157,9 @@ H3 { /* function title */
     border-bottom: 1px solid grey;
     background: #AAF;
 }
+H3 SPAN {
+    float: right;
+}
 H4 { /* function part */
     margin: 0px;
 }
@@ -163,13 +173,13 @@ H4:first-child {
 
 for section in sections.values():
     for doc in section['head']:
-        fp.write("<br><a href='#%s'>%s</a>\n" % (doc.section, doc.title))
+        fp.write("<a href='#%s'>%s</a><br>\n" % (doc.section, doc.title))
 
 for section in sections.values():
     for doc in section['head']:
         fp.write(str(doc))
     for doc in section['items']:
-        fp.write("<br><a href='#%s'>%s</a>\n" % (doc.method, doc.method+" - "+doc.desc))
+        fp.write("<a href='#%s'>%s</a><br>\n" % (doc.method, doc.method+" - "+doc.desc))
     for doc in section['items']:
         fp.write(str(doc))
 
