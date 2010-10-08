@@ -113,7 +113,7 @@ class VerbDoc(Doc):
 #
 
 sections = {}
-for controller in glob("../src/civicboom/controllers/*.py"):
+for controller in glob(sys.argv[2:]+"/*.py"):
     print "Scanning "+controller
 
     data = file(controller).read()
@@ -130,7 +130,7 @@ for controller in glob("../src/civicboom/controllers/*.py"):
             sections[d.section]['items'].append(d)
 
 
-fp = file("doc.html", "w")
+fp = file(sys.argv[1], "w")
 fp.write("""<!DOCTYPE html>
 <html>
     <head>
