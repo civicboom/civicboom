@@ -128,6 +128,8 @@ class GroupsController(BaseController):
         @return 403 - lacking permission
         @return 200 - content deleted successfully
         """
+        # Iterate through all members giving notification
+        # Removing group should cascade to all GroupMembership records (double check)
         pass
 
     @auto_format_output()

@@ -96,7 +96,7 @@ class Member(Base):
     })
     
     __to_dict__.update({
-        'single': __to_dict__['list'].copy()
+        'single': copy.deepcopy(__to_dict__['list'])
     })
     __to_dict__['single'].update({
             'num_followers'       : None ,
@@ -111,12 +111,19 @@ class Member(Base):
     })
     
     __to_dict__.update({
-        'actions': __to_dict__['single'].copy()
+        'actions': copy.deepcopy(__to_dict__['single'])
     })
-    __to_dict__['actions'].update({
-            'is_following'        : lambda member: member.is_following(None), #c.logged_in_user
-            'is_follower'         : lambda member: member.is_follower(None), #c.logged_in_user
+    
+    #__to_dict__['actions'].update({
+    #        'is_following'        : lambda member: member.is_following(None), #c.logged_in_user
+    #        'is_follower'         : lambda member: member.is_follower(None), #c.logged_in_user
             #'join' # join group?
+    #})
+    def __to_dict_function_action_list__(member):
+        from pylons import tmpl_context as c
+        return member.action_list_for(c.logged_in_user)
+    __to_dict__['actions'].update({
+            'actions': __to_dict_function_action_list__
     })
 
 
@@ -140,6 +147,16 @@ class Member(Base):
         for field in ("id","username","name","join_date","status","avatar","utc_offset"): #TODO: includes relationship fields in list?
             h.update(str(getattr(self,field)))
         return h.hexdigest()
+
+    def action_list_for(self, member):
+        action_list = []
+        #if self.can_message(member):
+        #    action_list.append('editable')
+        if is_following(member):
+            action_list.append('unfollow')
+        else:
+            action_list.append('follow')
+        return action_list
 
     def send_message(self, m, delay_commit=False):
         import civicboom.lib.communication.messages as messages
@@ -253,6 +270,7 @@ class Group(Member):
     default_content_visability = Column(group_content_visability, nullable=False, default="public")
     #behaviour                  = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
     default_role               = Column(group_member_roles, nullable=False, default="contributor")
+    # AllanC: TODO - num_mumbers postgress trigger needs updating, we only want to show GroupMembership.status=="active" in the count
     num_members                = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     #members                    = relationship("Member", secondary=GroupMembership.__table__)
     members_roles              = relationship("GroupMembership", backref="group")
@@ -277,6 +295,42 @@ class Group(Member):
     })
     __to_dict__['actions'].update(__to_dict__['single'])
     
+    def action_list_for(self, member):
+        action_list = Member.action_list_for(self, member)
+        member_membership = get_membership(member)
+        if can_join(member, member_membership):
+            action_list.append('join')
+        if not member_membership:
+            if join_mode=="invite_and_request":
+                action_list.append('join_request')
+        else:
+            if member_membership.status=="active" and member_membership.role=="admin":
+                action_list.append('invite')
+                action_list.append('remove')
+                action_list.append('set_role')
+                if admin_count>1:
+                    action_list.append('remove_self')
+                    action_list.append('set_role_self')
+            else:
+                action_list.append('remove_self')
+        return action_list
+
+    @property
+    def admin_count(self):
+        return len([m for m in members_roles if m.role=="admin"]) #Count be optimised with Session.query....limit(2).count()?
+
+    def can_join(self, member, membership=None):
+        if join_mode=="open":
+            return True
+        if not membership:
+            membership = get_membership(member)
+        if membership.member_id==member.id and membership.status=="invite":
+                return True
+        return False
+
+    def get_membership(self, member):
+        from civicboom.lib.database.get_cached import get_membership
+        return get_membership(self, member)
 
 
 class UserLogin(Base):

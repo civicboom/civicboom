@@ -3,6 +3,7 @@ from civicboom.model.content import Content, Tag, License
 from civicboom.model.media   import Media
 from civicboom.model.meta    import Session
 
+from sqlalchemy     import and_, or_, not_
 
 #-------------------------------------------------------------------------------
 # Cashe Management - Part 1
@@ -45,6 +46,12 @@ def get_member(member):
     if not member                : return None
     if isinstance(member, Member): return member
     return get_member_nocache(member)
+
+def get_membership(group, member):
+    try:
+        return Session.query(GroupMembership).filter(and_(GroupMembership.group_id==group.id, GroupMembership.member_id==member.id))
+    except:
+        return None
 
 def get_content_nocache(content_id):
     #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried

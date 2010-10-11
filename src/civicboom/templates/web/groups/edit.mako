@@ -46,20 +46,13 @@
 
 
 <%doc>
-					  %if c.edit_report:
-					  	${h.select('category',str(c.article.CatId), c.select_categories)}
-					  %else:
-					  	${h.select('category', None, c.select_categories)}
-					  %endif
-
-								<%
-								if (hasattr(c.article, "newsarticle_type") and newsarticle_type == c.article.newsarticle_type) \
-									 or \
-									 ((not hasattr(c.article, "newsarticle_type")) and newsarticle_type == c.newsarticle_types[0]):
-									type_selected = "checked='checked' "
-								else:
-									type_selected = ""
-								%>
-								##<option value="${newsarticle_type.id}" ${type_selected}>${newsarticle_type.type}</option>
-								<input type="radio" name="newsarticle_type" value="${newsarticle_type.id}" ${type_selected}/>${newsarticle_type.type}</a>
+    Radio button temp example
+    <%
+    if ():
+        type_selected = "checked='checked' "
+    else:
+        type_selected = ""
+    %>
+    ##<option value="${newsarticle_type.id}" ${type_selected}>${newsarticle_type.type}</option>
+    <input type="radio" name="newsarticle_type" value="${newsarticle_type.id}" ${type_selected}/>${newsarticle_type.type}</a>
 </%doc>

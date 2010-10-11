@@ -30,6 +30,7 @@ class GroupActionsController(BaseController):
     @authenticate_form
     def invite(self, id):
         # if admin
+        # (invite role needed otherwise default to group default role)
         #create an invitaiton and notify user
         pass
     
@@ -40,7 +41,9 @@ class GroupActionsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def remove(self, id):
-        # if admin
+        # if removing self:
+        #   ok
+        # elif admin
         # if removing self and other admins NOT exisit: error
         #create an invitaiton and notify user
         pass
