@@ -107,7 +107,15 @@ else:
 	${flash_message()}
 	<nav><%include file="navigation.mako"/></nav>
 	<header><%include file="header.mako"/></header>
-	<div id="app">${next.body()}</div>
+	<div id="app">
+% if hasattr(next, 'col_left'):
+		<div id="col_left">${next.col_left()}</div>
+% endif
+% if hasattr(next, 'col_right'):
+		<div id="col_right">${next.col_right()}</div>
+% endif
+		<div id="col_main">${next.body()}</div>
+	</div>
 	<footer><%include file="footer.mako"/></footer>
 	<%include file="scripts_end.mako"/>
 </body>

@@ -1,6 +1,6 @@
-<%inherit file="/web/common/layout_2cols.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 <%namespace name="prof" file="/web/common/profile.mako"/>
-<%def name="col_side()">${prof.sidebar()}</%def>
+<%def name="col_left()">${prof.sidebar()}</%def>
 
 ##------------------------------------------------------------------------------
 ## Body

@@ -1,6 +1,6 @@
-<%inherit file="/web/common/layout_2cols.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 
-<%def name="col_side()">
+<%def name="col_left()">
 	<div class="avatar">
 		<img class="avatar" src="${c.viewing_user.avatar_url}">
 		<br>${c.viewing_user.name}

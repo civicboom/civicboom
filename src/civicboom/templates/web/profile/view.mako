@@ -1,4 +1,4 @@
-<%inherit file="/web/common/layout_3cols.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 
 <%namespace name="member_includes"  file="/web/common/member.mako"  />
 <%namespace name="content_includes" file="/web/common/content_list.mako"/>

@@ -1,4 +1,4 @@
-<%inherit file="/web/common/layout_3cols.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 
 <%namespace name="public_profile"   file="view.mako"     />
 <%namespace name="loc"              file="/web/common/location.mako"     />

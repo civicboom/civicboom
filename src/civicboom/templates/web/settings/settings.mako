@@ -1,4 +1,4 @@
-<%inherit file="/web/common/layout_2cols.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 
 <%namespace name="private_profile" file="/web/profile/index.mako"/>
 
@@ -6,7 +6,7 @@
 ## Side Col
 ##------------------------------------------------------------------------------
 
-<%def name="col_side()">${private_profile.col_left()}</%def>
+<%def name="col_left()">${private_profile.col_left()}</%def>
 
 
 ##------------------------------------------------------------------------------
