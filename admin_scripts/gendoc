@@ -196,8 +196,10 @@ fp.write("""
 <section>
 <h3>Transport</h3>
 <ul>
-<li>All content-modifying actions (POST, PUT, DELETE) require an auth_token argument;
-    since this is universal, it isn't mentioned in the docs for each action separately
+<li>All content-modifying actions (POST, PUT, DELETE) require an _authentication_token
+    argument; since this is universal, it isn't mentioned in the docs for each action
+    separately. The token can be found by calling /account/signin.json / xml
+<li>Cookies are used to keep track of sessions
 <li>PUT and DELETE can be emulated with POST, having the form variable "_method" set
     to PUT or DELETE respectively
 <li>HTTP status codes are used:
@@ -215,7 +217,12 @@ fp.write("""
 </section>
 
 <section>
-<h3>Packet</h3>
+<h3>Data formats</h3>
+<p>Formats can be added to the end of the URL; for instance while /messages/42
+will show you message #42 in a browser-friendly way (HTML), a standalone app
+may prefer /messages/42.json or /messages/42.xml
+
+<p>JSON data format:
 <pre>
 {
     "status": "ok" / "error",                              (required)
@@ -226,6 +233,8 @@ fp.write("""
     }
 }
 </pre>
+
+<p>XML is pretty much the same, just in XML
 </section>
 
 <section>
