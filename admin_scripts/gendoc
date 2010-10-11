@@ -57,6 +57,18 @@ class Doc(object):
             return cmp_sect
         elif hasattr(self, 'title'):
             return -1
+        elif hasattr(self, 'method') and hasattr(b, 'method'):
+            slashes = cmp(len(self.method.split("/")), len(b.method.split("/")))
+            if slashes != 0:
+                return slashes
+            else:
+                gppd = {
+                    "GET": 0,
+                    "POST": 1,
+                    "PUT": 2,
+                    "DELETE": 3
+                }
+                return cmp(gppd[self.method.split()[0]], gppd[b.method.split()[0]])
         else:
             return 1
 
@@ -255,6 +267,7 @@ for section in sections.values():
         fp.write(str(doc))
 
     fp.write("<ul>")
+    section['items'].sort()
     for doc in section['items']:
         fp.write("<li><a href='#%s'>%s</a>\n" % (doc.method, doc.method+" - "+doc.desc))
     fp.write("</ul>")
