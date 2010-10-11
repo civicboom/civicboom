@@ -17,13 +17,13 @@
 			<br><input type="email" name="email" placeholder="e.g. dave@coolnews.com"/>
 		</p>
 		<p>
+			<input class="signup_submit" type="image" name="submit" src="/styles/web/signup.png" value="${_("Sign up")}"/>
+		</p>
+		<p>
 			<label for="user_type_individual">${_("Author")}</label>
 			<input type="radio" id="user_type_individual" name="user_type" value="individual" checked='checked'/>
 			<label for="user_type_organisation">${_("Mediator")}</label>
 			<input type="radio" id="user_type_organisation" name="user_type" value="organisation"/>
-		</p>
-		<p>
-			<input class="signup_submit" type="submit" name="submit" value="${_("Sign up")}"/>
 		</p>
 
 		##</fieldset>
