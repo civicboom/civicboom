@@ -80,6 +80,8 @@ class MessagesController(BaseController):
         @return 201   message sent
         @return 400   missing required field
         @return 404   target user doesn't exist
+
+        @comment Shish  do we want some sort of "too many messages, stop spamming" response?
         """
         # url('messages')
 
@@ -169,14 +171,14 @@ class MessagesController(BaseController):
 
         @api messages 1.0 (WIP)
 
-        @return  200       show the message
-                 id        message id
-                 source    username (None if system notification)
-                 timestamp time that the message was sent
-                 subject   message subject
-                 content   message body
-        @return  403       current user is not the message target
-        @return  404       the message does not exist
+        @return 200       show the message
+                id        message id
+                source    username (None if system notification)
+                timestamp time that the message was sent
+                subject   message subject
+                content   message body
+        @return 403       current user is not the message target
+        @return 404       the message does not exist
 
         @comment Shish  do we want to return permission denied, or
                         should we pretend the message doesn't exist
