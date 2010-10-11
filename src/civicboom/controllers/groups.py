@@ -1,10 +1,27 @@
 from civicboom.lib.base import *
-from civicboom.lib.form_validators.registration import CreateGroupSchema
+from civicboom.lib.form_validators.base import DefaultSchema
+from civicboom.lib.form_validators.registration import UniqueUsernameValidator
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
+#-------------------------------------------------------------------------------
+# Constants
+#-------------------------------------------------------------------------------
+
+
 error_not_found = action_error(_("group not found"), code=404)
+
+#-------------------------------------------------------------------------------
+# Form Schema
+#-------------------------------------------------------------------------------
+
+class CreateGroupSchema(DefaultSchema):
+    name = UniqueUsernameValidator()
+
+#-------------------------------------------------------------------------------
+# Group Controler
+#-------------------------------------------------------------------------------
 
 class GroupsController(BaseController):
     
@@ -69,7 +86,6 @@ class GroupsController(BaseController):
 
     @auto_format_output()
     @authorize(is_valid_user)
-    @authenticate_form
     def new(self, format='html'):
         """
         GET /groups/new - Form to create a new item
@@ -79,6 +95,11 @@ class GroupsController(BaseController):
         #url_for('new_group')
         #group_id = self.create(format='python')['data']['id']
         #return redirect(url('edit_group', id=group_id))
+        
+        from civicboom.model.member import group_member_roles
+        for role in group_member_roles.enums:
+            print role
+        
         return render('/web/groups/edit.mako')
 
     @auto_format_output()

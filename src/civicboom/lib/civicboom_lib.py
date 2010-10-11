@@ -7,7 +7,7 @@ from pylons import url, app_globals, tmpl_context as c, config
 from pylons.i18n.translation import _
 
 from civicboom.model.meta import Session
-from civicboom.lib.database.get_cached import get_user
+from civicboom.lib.database.get_cached import get_member
 
 from civicboom.lib.communication.email import send_email
 

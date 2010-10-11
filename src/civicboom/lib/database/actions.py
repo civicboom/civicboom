@@ -5,7 +5,7 @@ from pylons.i18n.translation import _
 from civicboom.model.meta import Session
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent
 
-from civicboom.lib.database.get_cached import get_user, get_content, update_content, update_accepted_assignment, update_member
+from civicboom.lib.database.get_cached import get_member, get_content, update_content, update_accepted_assignment, update_member
 
 from civicboom.lib.communication       import messages
 from civicboom.lib.communication.email import send_email

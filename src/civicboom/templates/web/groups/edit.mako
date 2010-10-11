@@ -1,6 +1,5 @@
 <%inherit file="/web/common/layout_3cols.mako"/>
 
-<% from civicboom.model.member import group_member_roles, group_join_mode, group_member_visability, group_content_visability %>
 
 
 <%def name="col_left()">
@@ -10,6 +9,9 @@
 </%def>
 
 <%def name="body()">
+
+    <% from civicboom.model.member import group_member_roles, group_join_mode, group_member_visability, group_content_visability %>
+
     ${h.form(h.url('setting', id='None'), method='put')}
     
     <fieldset><legend>Group</legend>
@@ -18,22 +20,22 @@
         <br/>
         
         ${_("default member role")}
-        ${h.select('default_member_role', None, group_member_roles)}
+        ${h.html.select('default_member_role', None, group_member_roles.enums)}
         
         <br/>
         
         ${_("join mode")}
-        ${h.select('join_mode', None, group_join_mode)}
+        ${h.html.select('join_mode', None, group_join_mode.enums)}
         
         <br/>
         
         ${_("member visability")}
-        ${h.select('member_visability', None, group_member_visability)}
+        ${h.html.select('member_visability', None, group_member_visability.enums)}
         
         <br/>
         
         ${_("content visability")}
-        ${h.select('content_visability', None, group_content_visability)}
+        ${h.html.select('content_visability', None, group_content_visability.enums)}
         
         
     </fieldset>
@@ -42,11 +44,8 @@
     ${h.end_form()}
 </%def>
 
-<%def name="select(list, selected)">
 
-</%def>
-
-
+<%doc>
 					  %if c.edit_report:
 					  	${h.select('category',str(c.article.CatId), c.select_categories)}
 					  %else:
@@ -63,3 +62,4 @@
 								%>
 								##<option value="${newsarticle_type.id}" ${type_selected}>${newsarticle_type.type}</option>
 								<input type="radio" name="newsarticle_type" value="${newsarticle_type.id}" ${type_selected}/>${newsarticle_type.type}</a>
+</%doc>

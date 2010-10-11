@@ -22,12 +22,6 @@ import re
 import logging
 log      = logging.getLogger(__name__)
 
-#-------------------------------------------------------------------------------
-# Group Creation
-#-------------------------------------------------------------------------------
-
-class CreateGroupSchema(DefaultSchema):
-    name = UniqueUsernameValidator()
 
 
 #-------------------------------------------------------------------------------

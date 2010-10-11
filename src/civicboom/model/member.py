@@ -15,19 +15,21 @@ import urllib, hashlib, copy
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 
-group_member_roles       = Enum("admin", "editor", "contributor", "observer" ,name="group_member_roles")
-group_join_mode          = Enum("public", "invite" , "invite_and_request", name="group_join_mode")
-group_member_visability  = Enum("public", "private",                       name="group_member_visability" )
-group_content_visability = Enum("public", "private",                       name="group_content_visability")
+group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
+group_member_status      = Enum("active", "invite", "request",                name="group_member_status")
+
+group_join_mode          = Enum("public", "invite" , "invite_and_request",    name="group_join_mode")
+group_member_visability  = Enum("public", "private",                          name="group_member_visability" )
+group_content_visability = Enum("public", "private",                          name="group_content_visability")
+
 
 
 class GroupMembership(Base):
     __tablename__ = "map_user_to_group"
     group_id      = Column(Integer(), ForeignKey('member_group.id'), primary_key=True)
     member_id     = Column(Integer(), ForeignKey('member.id')      , primary_key=True)
-    role          = Column(group_member_roles, nullable=False, default="contributor")
-    #group         = relationship("Group")  #, primaryjoin="GroupMembership.group_id==Group.id", foreign_keys=["GroupMembership.group_id","Group.id"]
-    #member        = relationship("Member")
+    role          = Column(group_member_roles , nullable=False, default="contributor")
+    status        = Column(group_member_status, nullable=False, default="active")
 
 class Follow(Base):
     __tablename__ = "map_member_to_follower"
@@ -59,8 +61,7 @@ class Member(Base):
     messages_public       = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id==null()) )
     messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id    ) )
 
-    login_details        = relationship("UserLogin"       , backref=('user'), cascade="all,delete-orphan")
-    #groups               = relationship("Group"           , secondary=GroupMembership.__table__)
+    #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
     groups_roles         = relationship("GroupMembership" , backref="member")
     followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
     following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
@@ -201,6 +202,8 @@ class User(Member):
     #dob              = Column(DateTime(), nullable=True) # Needs to be stored in user settings but not nesiserally in the main db record
     email            = Column(Unicode(250), nullable=True)
     email_unverifyed = Column(Unicode(250), nullable=True)
+
+    login_details    = relationship("UserLogin"       , backref=('user'), cascade="all,delete-orphan")
 
     __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_user_fields = {

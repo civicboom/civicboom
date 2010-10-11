@@ -14,6 +14,8 @@ from webhelpers.html.tags import end_form
 
 from civicboom.lib.text import scan_for_embedable_view_and_autolink
 
+import webhelpers.html.tags as html
+
 import recaptcha.client.captcha as librecaptcha
 import re
 import urllib
