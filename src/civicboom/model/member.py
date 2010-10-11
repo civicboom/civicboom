@@ -304,7 +304,7 @@ class Group(Member):
             if join_mode=="invite_and_request":
                 action_list.append('join_request')
         else:
-            if member_membership.status=="active" and member_membership.role=="admin":
+            if is_admin(member, membership):
                 action_list.append('invite')
                 action_list.append('remove')
                 action_list.append('set_role')
@@ -319,20 +319,31 @@ class Group(Member):
     def admin_count(self):
         return len([m for m in members_roles if m.role=="admin"]) #Count be optimised with Session.query....limit(2).count()?
 
-    def can_join(self, member, membership=None):
-        if join_mode=="open":
-            return True
+    def is_admin(self, member, membership=None):
         if not membership:
             membership = get_membership(member)
+        if membership.member_id==member.id and member_membership.status=="active" and member_membership.role=="admin":
+            return True
+        return False
+
+    def can_join(self, member, membership=None):
+        if not membership:
+            membership = get_membership(member)
+        if join_mode=="open" and not membership:
+            return True
         if membership.member_id==member.id and membership.status=="invite":
-                return True
+            return True
         return False
 
     def get_membership(self, member):
         from civicboom.lib.database.get_cached import get_membership
         return get_membership(self, member)
 
-
+    def join(self, member):
+        from civicboom.lib.database.actions import join_group
+        return join_group(self,member)
+        
+        
 class UserLogin(Base):
     __tablename__    = "member_user_login"
     id          = Column(Integer(),    primary_key=True)

@@ -78,6 +78,34 @@ def unfollow(follower,followed, delay_commit=False):
     return True
 
 
+def join_group(group, member, dealy_commit=False):
+    group      = get_group(group)
+    member     = get_member(member)
+    membership = get_membership(group, member)
+    
+    if group.can_join(member, membership):
+        if membership.status=="invite":
+            membership.status = "active"
+        else:
+            membership = GroupMembership()
+            membership.member = member
+            membership.role   = group.default_role
+            group.members_roles.append(membership)
+            
+        # AllanC - TODO send notification on new member
+        #group.send_message(messages.new_member(reporter=follower), delay_commit=True)
+            
+        if not delay_commit:
+            Session.commit()
+        
+        update_member(group)
+        update_member(member)
+        
+        return True
+    
+    return False
+
+
 #-------------------------------------------------------------------------------
 # Assignment Actions
 #-------------------------------------------------------------------------------

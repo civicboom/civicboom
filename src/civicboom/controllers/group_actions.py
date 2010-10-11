@@ -17,10 +17,13 @@ class GroupActionsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def join(self, id, format="html"):
-        # check if inviation exisit
-        # join an open group or create a request if
-        # send notify group
-        pass
+        group = get_group(id)
+        if not group:
+            raise action_error(_('group does not exist'), 404)
+        if group.join(c.logged_in_user):
+            return action_ok(_('joined %s' % group.username))
+        else:
+            raise action_error(_('unable to join %s' % group.username), 403)
 
     #---------------------------------------------------------------------------
     # Invite Member : (Admin Action)

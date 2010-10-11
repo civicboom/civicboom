@@ -47,6 +47,12 @@ def get_member(member):
     if isinstance(member, Member): return member
     return get_member_nocache(member)
 
+def get_group(group):
+    if isinstance(group, Group): return group
+    group = get_member(group)
+    if isinstance(group, Group): return group
+    return None
+
 def get_membership(group, member):
     try:
         return Session.query(GroupMembership).filter(and_(GroupMembership.group_id==group.id, GroupMembership.member_id==member.id))
