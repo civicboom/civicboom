@@ -12,7 +12,9 @@ from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
 from webhelpers.html.tags import end_form
 
-from civicboom.lib.text import scan_for_embedable_view_and_autolink
+# use relative import so that "import helpers" works
+#from civicboom.lib.text import scan_for_embedable_view_and_autolink
+from text import scan_for_embedable_view_and_autolink
 
 import recaptcha.client.captcha as librecaptcha
 import re
