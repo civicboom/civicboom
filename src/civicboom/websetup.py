@@ -6,7 +6,7 @@ from civicboom.model import meta
 
 from civicboom.model.meta import Base, Session, LegacySession
 from civicboom.model import License, Tag, Rating
-from civicboom.model import User, Group, UserLogin
+from civicboom.model import User, Group, UserLogin, GroupMembership
 from civicboom.model import ArticleContent, CommentContent, DraftContent, AssignmentContent, Media
 from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
@@ -1064,7 +1064,10 @@ CREATE TRIGGER update_content
         g.home_location = u"The Moon"
         g.description   = u"Mr U. Test's awful singing has gone on long enough!"
         g.status        = "active"
-        g.members.append(u2)
+        gm = GroupMembership()
+        gm.member = u2
+        gm.role   = "admin"
+        g.members_roles.append(gm)
         Session.add_all([g, ])
         Session.commit()
 

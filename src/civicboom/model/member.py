@@ -15,16 +15,19 @@ import urllib, hashlib, copy
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 
-group_member_roles = Enum("admin", "editor", "contributor", "observer" ,name="group_member_roles")
+group_member_roles       = Enum("admin", "editor", "contributor", "observer" ,name="group_member_roles")
+group_join_mode          = Enum("public", "invite" , "invite_and_request", name="group_join_mode")
+group_member_visability  = Enum("public", "private",                       name="group_member_visability" )
+group_content_visability = Enum("public", "private",                       name="group_content_visability")
+
 
 class GroupMembership(Base):
     __tablename__ = "map_user_to_group"
-    #_gmp          = Enum("admin", "normal", "view_only", name="group_membership_permission")
     group_id      = Column(Integer(), ForeignKey('member_group.id'), primary_key=True)
-    member_id     = Column(Integer(), ForeignKey('member.id'), primary_key=True)
+    member_id     = Column(Integer(), ForeignKey('member.id')      , primary_key=True)
     role          = Column(group_member_roles, nullable=False, default="contributor")
-    group         = relationship("Group")
-    member        = relationship("Member")
+    #group         = relationship("Group")  #, primaryjoin="GroupMembership.group_id==Group.id", foreign_keys=["GroupMembership.group_id","Group.id"]
+    #member        = relationship("Member")
 
 class Follow(Base):
     __tablename__ = "map_member_to_follower"
@@ -57,7 +60,8 @@ class Member(Base):
     messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id    ) )
 
     login_details        = relationship("UserLogin"       , backref=('user'), cascade="all,delete-orphan")
-    groups               = relationship("Group"           , secondary=GroupMembership.__table__)
+    #groups               = relationship("Group"           , secondary=GroupMembership.__table__)
+    groups_roles         = relationship("GroupMembership" , backref="member")
     followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
     following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
@@ -240,15 +244,15 @@ class User(Member):
 class Group(Member):
     __tablename__      = "member_group"
     __mapper_args__    = {'polymorphic_identity': 'group'}
-    id                         = Column(Integer(), ForeignKey('member.id'), primary_key=True)
-    join_mode                  = Column(Enum("public", "invite" , "invite_and_request", name="group_join_mode"         ), nullable=False, default="invite")
-    member_visability          = Column(Enum("public", "private",                       name="group_member_visability" ), nullable=False, default="public")
-    default_content_visability = Column(Enum("public", "private",                       name="group_content_visability"), nullable=False, default="public")
+    id                         = Column(Integer(), ForeignKey('member.id'), primary_key=True)    
+    join_mode                  = Column(group_join_mode         , nullable=False, default="invite")
+    member_visability          = Column(group_member_visability , nullable=False, default="public")
+    default_content_visability = Column(group_content_visability, nullable=False, default="public")
     #behaviour                  = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
     default_role               = Column(group_member_roles, nullable=False, default="contributor")
     num_members                = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     #members                    = relationship("Member", secondary=GroupMembership.__table__)
-    members_roles              = relationship("GroupMembership")
+    members_roles              = relationship("GroupMembership", backref="group")
     
 
     def __unicode__(self):
@@ -262,8 +266,8 @@ class Group(Member):
         'default_role'      : None ,
         'num_members'       : lambda group: group.num_members if group.member_visability=="public" else None ,
     }
-    __to_dict__['list'   ].update(_extra_user_fields)
-    __to_dict__['single' ].update(_extra_user_fields)
+    __to_dict__['list'   ].update(_extra_group_fields)
+    __to_dict__['single' ].update(_extra_group_fields)
     __to_dict__['single' ].update({
         'members'           : lambda group: [m.member.to_dict().update({'role':m.role}) for m in group.members_roles] if group.member_visability=="public" else None ,
         # AllanC - I dont know if .update() returns the dict, I hope it does or this is going to get awkward

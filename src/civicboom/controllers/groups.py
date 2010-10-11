@@ -57,10 +57,10 @@ class GroupsController(BaseController):
         group.name         = form['name']
         group.status       = 'show'
         group_admin        = GroupMembership()
-        group_admin.group  = group
+        #group_admin.group  = group
         group_admin.member = c.logged_in_user
         group_admin.role   = "admin"
-        group.members.append(group_admin)
+        group.members_roles.append(group_admin)
         
         Session.add(group)
         Session.commit()
@@ -72,13 +72,14 @@ class GroupsController(BaseController):
     @authenticate_form
     def new(self, format='html'):
         """
-        GET /contents/new - Form to create a new item
+        GET /groups/new - Form to create a new item
         
         @return 301 - redirect to /contents/{id}/edit
         """
         #url_for('new_group')
-        group_id = self.create(format='python')['data']['id']
-        return redirect(url('edit_group', id=group_id))
+        #group_id = self.create(format='python')['data']['id']
+        #return redirect(url('edit_group', id=group_id))
+        return render('/web/groups/edit.mako')
 
     @auto_format_output()
     @authorize(is_valid_user)
