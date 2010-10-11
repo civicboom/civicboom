@@ -1,5 +1,5 @@
 """
-Assignemnt Actions
+Actions
 """
 
 from civicboom.lib.base import *
