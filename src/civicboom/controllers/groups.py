@@ -53,6 +53,7 @@ class GroupsController(BaseController):
         groups = [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role}) for group_role in c.logged_in_user.groups_roles]
         return action_ok(data={'list': groups})
 
+
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
@@ -85,9 +86,11 @@ class GroupsController(BaseController):
         group_admin.member = c.logged_in_user
         group_admin.role   = "admin"
         group.members_roles.append(group_admin)
-        
         Session.add(group)
         Session.commit()
+        
+        self.update(group.id) # Overlay any additional form fields over the new group object using the update method
+        
         return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)
 
 
@@ -101,7 +104,7 @@ class GroupsController(BaseController):
         """
         #url_for('new_group')
         return action_ok(template='groups/edit')
-        #return render('/web/groups/edit.mako')
+
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -116,13 +119,16 @@ class GroupsController(BaseController):
         @return 403 - lacking permission to edit
         @return 200 - success
         """
+        
         group = _get_group(id, check_admin=True)
         
+
+
 
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    def delete(self, id, format="html"):
+    def delete(self, id):
         """
         DELETE /contents/{id}: Delete an existing group
         (aka POST /contents/{id} with POST[_method] = "DELETE")
@@ -130,9 +136,10 @@ class GroupsController(BaseController):
         @return 403 - lacking permission
         @return 200 - content deleted successfully
         """
-        # Iterate through all members giving notification
-        # Removing group should cascade to all GroupMembership records (double check)
-        pass
+        group = _get_group(id, check_admin=True)
+        group.delete()
+        return action_ok(_("group deleted"), code=200)
+
 
     @auto_format_output()
     def show(self, id):
@@ -142,9 +149,8 @@ class GroupsController(BaseController):
         @return 200 - data.content = group object (with list of members [if public])
         """
         group = _get_group(id)
-        return action_ok(
-            data     = {'group':group.to_dict('actions')}
-        )
+        return action_ok(data={'group':group.to_dict('actions')})
+
 
     @auto_format_output()
     @authorize(is_valid_user)

@@ -358,6 +358,9 @@ class Group(Member):
         from civicboom.lib.database.actions import set_role
         return set_role(self, member, role)
     
+    def delete(self):
+        from civicboom.lib.database.actions import del_group
+        return del_group(self)
     
 class UserLogin(Base):
     __tablename__    = "member_user_login"

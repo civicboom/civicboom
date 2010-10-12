@@ -241,6 +241,13 @@ def set_role(group, member, role, delay_commit=False):
     return True
 
 
+def del_group(group):    
+    for member in group.members:
+        member.send_message(messages.group_deleted(group=group), delay_commit=True)
+    Session.delete(group)
+    Session.commit()
+    update_member(group)
+
 #-------------------------------------------------------------------------------
 # Assignment Actions
 #-------------------------------------------------------------------------------
