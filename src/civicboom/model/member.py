@@ -110,7 +110,7 @@ class Member(Base):
             'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
             'assignments_accepted': lambda member: [a.to_dict() for a in member.assignments_accepted if a.private==False] ,
             'content_public'      : lambda member: [c.to_dict() for c in member.content_public       ] ,
-            'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.group.member_visability=="public"] ,
+            'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] ,
     })
 
     __to_dict__.update({
@@ -175,11 +175,11 @@ class Member(Base):
 
     def follow(self, member):
         from civicboom.lib.database.actions import follow
-        return follow(self,member)
+        return follow(self, member)
         
     def unfollow(self, member):
         from civicboom.lib.database.actions import unfollow
-        return unfollow(self,member)
+        return unfollow(self, member)
 
     def is_follower(self, member):
         if isinstance(member, basestring):
@@ -293,18 +293,16 @@ class Group(Member):
     __to_dict__['list'   ].update(_extra_group_fields)
     __to_dict__['single' ].update(_extra_group_fields)
     __to_dict__['single' ].update({
-        'members'           : lambda group: [update_dict(m.member.to_dict(),{'role':m.role}) for m in group.members_roles] if group.member_visability=="public" else None ,
+        'members'           : lambda group: [update_dict(m.member.to_dict(),{'role':m.role, 'status':m.status}) for m in group.members_roles] if group.member_visability=="public" else None ,
     })
     __to_dict__['actions'].update(__to_dict__['single'])
     
     def action_list_for(self, member):
         action_list = Member.action_list_for(self, member)
         member_membership = get_membership(member)
-        if can_join(member, member_membership):
-            action_list.append('join')
-        if not member_membership:
-            if join_mode=="invite_and_request":
-                action_list.append('join_request')
+        join = can_join(member, member_membership)
+        if join=="join" or join=="request":
+            action_list.append(join)
         else:
             if is_admin(member, membership):
                 action_list.append('invite')
@@ -331,10 +329,13 @@ class Group(Member):
     def can_join(self, member, membership=None):
         if not membership:
             membership = get_membership(member)
-        if join_mode=="open" and not membership:
-            return True
+        if not membership:
+            if self.join_mode=="open":
+                return "join"
+            if self.join_mode=="invite_and_request":
+                return "request"
         if membership.member_id==member.id and membership.status=="invite":
-            return True
+            return "join"
         return False
 
     def get_membership(self, member):
@@ -343,19 +344,19 @@ class Group(Member):
 
     def join(self, member):
         from civicboom.lib.database.actions import join_group
-        return join_group(self,member)
+        return join_group(self, member)
     
     def remove_member(self, member):
         from civicboom.lib.database.actions import remove_member
-        return remove_member(self,member)
+        return remove_member(self, member)
     
-    def invite(self, member, role):
+    def invite(self, member, role=None):
         from civicboom.lib.database.actions import invite
-        return invite(self,member,role)
+        return invite(self, member, role)
         
     def set_role(self, member, role):
         from civicboom.lib.database.actions import set_role
-        return set_role(self,member,role)
+        return set_role(self, member, role)
     
     
 class UserLogin(Base):

@@ -25,8 +25,11 @@ class GroupActionsController(BaseController):
         @return 200 - joined ok
         """
         group = _get_group(id)
-        if group.join(c.logged_in_user):
+        join_status = group.join(c.logged_in_user)
+        if join_status == True:
             return action_ok(_('joined %s' % group.username))
+        elif join_status == "request":
+            return action_ok(_('join request sent'))
         raise action_error(_('unable to join %s' % group.username), 500)
 
 
@@ -37,11 +40,11 @@ class GroupActionsController(BaseController):
     @web_params_to_kwargs()
     @authorize(is_valid_user)
     @authenticate_form
-    def remove_member(self, id, remove_member=None, **kwargs):
+    def remove_member(self, id, member=None, **kwargs):
         """
         """
         group = _get_group()
-        if group.remove_member(remove_member):
+        if group.remove_member(member):
             return action_ok(message='member removed sucessfully')
         raise action_error('unable to remove member', 500)
 
@@ -82,6 +85,8 @@ class GroupActionsController(BaseController):
     def set_role(self, id, member=None, role=None, **kwargs):
         """
         (only if current user has admin role in group)
+        
+        used to approve join requests (role=None=default group join role)
         
         return 200 - role set ok
         """

@@ -89,6 +89,8 @@ def unfollow(follower,followed, delay_commit=False):
 #-------------------------------------------------------------------------------
 
 def join_group(group, member, dealy_commit=False):
+    return_value = True
+    
     group      = get_group(group)
     member     = get_member(member)
     membership = get_membership(group, member)
@@ -97,11 +99,10 @@ def join_group(group, member, dealy_commit=False):
         raise action_error(_('unable to find group'), 404)
     if not member:
         raise action_error(_('unable to find member to add'), 404)
-    
     if not group.can_join(member, membership):
         raise action_error(_('current user cannot join this group'), 403)
         
-    if membership.status=="invite":
+    if membership and membership.status=="invite":
         membership.status = "active"
     else:
         membership = GroupMembership()
@@ -109,8 +110,16 @@ def join_group(group, member, dealy_commit=False):
         membership.role   = group.default_role
         group.members_roles.append(membership)
         
-    # AllanC - TODO send notification on new member
-    #group.send_message(messages.new_member(reporter=follower), delay_commit=True)
+        # If a join request
+        if group.join_mode == "invite_and_request":
+            membership.status = "request"
+            return_value = "request"
+            #group.send_message(messages.join_request(member=member), delay_commit=True)
+            
+    # If user has actually become a member (open or reply to invite) then notify group
+    if return_value == True:
+        pass
+        #group.send_message(messages.joined_group(member=member), delay_commit=True)
         
     if not delay_commit:
         Session.commit()
@@ -118,7 +127,7 @@ def join_group(group, member, dealy_commit=False):
     update_member(group)
     update_member(member)
     
-    return True
+    return return_value
     
 
 
@@ -139,7 +148,16 @@ def remove_member(group, member, delay_commit=False):
         raise action_error('cannot remove last admin', 400)
     
     # AllanC - TODO send notification to removed member
-    #membership.member.send_message(messages.?????(group=group), delay_commit=True)
+    if membership.status == "active":
+        # you were removed from group by (current actual user?)
+        #membership.member.send_message(messages.?????(group=group), delay_commit=True)
+        pass
+    elif membership.status == "invite":
+        # invitation withdrawn
+        pass
+    elif membership.status == "request":
+        # request declined
+        pass
     
     Session.delete(membership)
     
@@ -156,6 +174,7 @@ def invite(group, member, role, delay_commit=False):
     group      = get_group(group)
     member     = get_member(member)
     membership = get_membership(group, member)
+    role       = role or group.default_role
     
     if not group:
         raise action_error(_('unable to find group'), 404)
@@ -165,12 +184,13 @@ def invite(group, member, role, delay_commit=False):
         raise action_error(_('already a member of group'), 400)
     if not group.is_admin(c.logged_in_user):
         raise action_error(_('no permissions for this group'), 403)
-    if role and role not in group_member_roles.enums:
+    if role not in group_member_roles.enums:
         raise action_error('not a valid role', 400)
 
     membership = GroupMembership()
     membership.member = member
-    membership.role   = role or group.default_role
+    membership.role   = role
+    membership.status = "invite"
     group.members_roles.append(membership)
     
     # TODO - send notification of invitation
@@ -189,6 +209,7 @@ def set_role(group, member, role, delay_commit=False):
     group      = get_group(group)
     member     = get_member(member)
     membership = get_membership(group, member)
+    role       = role or group.default_role
     
     if not group:
         raise action_error(_('unable to find group'), 404)
@@ -204,9 +225,12 @@ def set_role(group, member, role, delay_commit=False):
         raise action_error('not a valid role', 400)
 
     membership.role = role
-
-    # TODO - send notification of invitation
-    #member.send_message(messages.set_role(reporter=follower), delay_commit=True)
+    if membership.status=="request":
+        membership.status = "active"
+        # send "joined_group"
+    else:
+        pass
+        #member.send_message(messages.role_changed(reporter=follower), delay_commit=True)
 
     if not dealy_commit:
         Session.commit()
