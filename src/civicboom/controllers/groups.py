@@ -1,6 +1,7 @@
 from civicboom.lib.base import *
 from civicboom.lib.form_validators.base import DefaultSchema
 from civicboom.lib.form_validators.registration import UniqueUsernameValidator
+from civicboom.lib.misc import update_dict
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -10,7 +11,8 @@ user_log = logging.getLogger("user")
 #-------------------------------------------------------------------------------
 
 
-error_not_found = action_error(_("group not found"), code=404)
+error_not_found    = action_error(_("group not found"), code=404)
+error_unauthorised = action_error(_("you do not have permission access this group"), code=403)
 
 #-------------------------------------------------------------------------------
 # Form Schema
@@ -18,6 +20,15 @@ error_not_found = action_error(_("group not found"), code=404)
 
 class CreateGroupSchema(DefaultSchema):
     name = UniqueUsernameValidator()
+
+def _get_group(id, check_admin=False):
+    group = get_group(id)
+    if not group:
+        raise error_not_found
+    if check_admin and not group.is_admin(c.logged_in_user):
+        raise error_unauthorised
+    return group
+
 
 #-------------------------------------------------------------------------------
 # Group Controler
@@ -28,22 +39,18 @@ class GroupsController(BaseController):
     @auto_format_output()
     @web_params_to_kwargs()
     @authorize(is_valid_user)
-    def index(self, list='content'):
+    def index(self, **kwargs):
         """
         GET /groups: All groups the current user belongs to
         
         @param list - what type of contents to return, possible values:
           content
-          assignments_active
-          assignments_previous
-          assignments
-          articles
-          drafts
         
-        @return 200 - data.list = array of group objects
+        @return 200 - data.list = array of group objects that logged in user is a member of and there member role
         """
         # url('groups')
-        pass
+        groups = [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role}) for group_role in c.logged_in_user.groups_roles]
+        return action_ok(data={'list': groups})
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -86,21 +93,15 @@ class GroupsController(BaseController):
 
     @auto_format_output()
     @authorize(is_valid_user)
-    def new(self, format='html'):
+    def new(self):
         """
         GET /groups/new - Form to create a new item
         
         @return 301 - redirect to /contents/{id}/edit
         """
         #url_for('new_group')
-        #group_id = self.create(format='python')['data']['id']
-        #return redirect(url('edit_group', id=group_id))
-        
-        from civicboom.model.member import group_member_roles
-        for role in group_member_roles.enums:
-            print role
-        
-        return render('/web/groups/edit.mako')
+        return action_ok(template='groups/edit')
+        #return render('/web/groups/edit.mako')
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -115,7 +116,8 @@ class GroupsController(BaseController):
         @return 403 - lacking permission to edit
         @return 200 - success
         """
-        pass
+        group = _get_group(id, check_admin=True)
+        
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -139,22 +141,17 @@ class GroupsController(BaseController):
         
         @return 200 - data.content = group object (with list of members [if public])
         """
-        group = get_member(id)
-        
-        if not group or group.__type__!="group":
-            raise error_not_found
-        
+        group = _get_group(id)
         return action_ok(
             data     = {'group':group.to_dict('actions')}
         )
 
-
-
     @auto_format_output()
     @authorize(is_valid_user)
-    def edit(self, id, format='html'):
+    def edit(self, id):
         """
         GET /contents/{id}/edit: Form to edit an existing item
         """
         # url('edit_content', id=ID)
-        pass
+        group = _get_group(id, check_admin=True)
+        return action_ok(data=group.to_dict())

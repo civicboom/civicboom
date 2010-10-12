@@ -170,7 +170,7 @@ class SettingsController(BaseController):
         - Saves update
         - Returns written object
         """
-        edit_action = self.edit(id, format='python')
+        edit_action = call_action(self.edit, id, format='python') #self.edit(id, format='python')
         settings    = edit_action['data']
         user        = c.logged_in_user
         

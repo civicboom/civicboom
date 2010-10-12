@@ -1,6 +1,7 @@
 
 from civicboom.model.meta import Base
 from civicboom.model.message import Message
+from civicboom.lib.misc import update_dict
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
@@ -92,6 +93,7 @@ class Member(Base):
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
             'location_home'     : lambda content: content.location_home_string ,
+            'num_followers'     : None ,
         },
     })
     
@@ -106,10 +108,11 @@ class Member(Base):
             'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
             'following'           : lambda member: [m.to_dict() for m in member.following            ] ,
             'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
-            'assignments_accepted': lambda member: [m.to_dict() for m in member.assignments_accepted if m.private==False] ,
-            'content_public'      : lambda member: [m.to_dict() for m in member.content_public       ] ,
+            'assignments_accepted': lambda member: [a.to_dict() for a in member.assignments_accepted if a.private==False] ,
+            'content_public'      : lambda member: [c.to_dict() for c in member.content_public       ] ,
+            'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.group.member_visability=="public"] ,
     })
-    
+
     __to_dict__.update({
         'actions': copy.deepcopy(__to_dict__['single'])
     })
@@ -290,8 +293,7 @@ class Group(Member):
     __to_dict__['list'   ].update(_extra_group_fields)
     __to_dict__['single' ].update(_extra_group_fields)
     __to_dict__['single' ].update({
-        'members'           : lambda group: [m.member.to_dict().update({'role':m.role}) for m in group.members_roles] if group.member_visability=="public" else None ,
-        # AllanC - I dont know if .update() returns the dict, I hope it does or this is going to get awkward
+        'members'           : lambda group: [update_dict(m.member.to_dict(),{'role':m.role}) for m in group.members_roles] if group.member_visability=="public" else None ,
     })
     __to_dict__['actions'].update(__to_dict__['single'])
     

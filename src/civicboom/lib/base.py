@@ -20,6 +20,7 @@ from civicboom.lib.web                 import redirect_to_referer, set_flash_mes
 from civicboom.lib.database.get_cached import get_member
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, is_valid_user
+from civicboom.lib.helpers             import call_action
 
 import json
 
@@ -57,6 +58,7 @@ __all__ = [
     "redirect_to_referer", #TODO? potential for removal?
     "get_member",
     "logging",
+    "call_action",
 ]
 
 #-------------------------------------------------------------------------------
