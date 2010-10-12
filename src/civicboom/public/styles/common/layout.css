@@ -42,6 +42,6 @@ HTML, BODY {
 	display: none;
 	border-bottom: 1px solid black;
 }
-#flash_message.status_ok {background: yellow;}
-#flash_message.status_error {background: red;}
+#flash_message.status_ok {background: #FFA;}
+#flash_message.status_error {background: #FAA;}
 
