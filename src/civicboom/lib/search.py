@@ -1,23 +1,51 @@
 #!/usr/bin/env python
 
-def html_base(h):
-    return """
-<html>
-    <head>
-        <title>Search Page</title>
-        <style>
-.and, .or, .not, .fil {
-    padding: 16px;
-    border: 1px solid black;
-}
-.and {background: #AFA;}
-.or  {background: #AAF;}
-.not {background: #FAA;}
-.fil {background: #FFF;}
-        </style>
-    </head>
-    <body>"""+h+"""</body>
-</html>"""
+"""
+A generic-ish library for creating search programs, which can be turned into
+SQLAlchemy python fragments, SQL fragments, HTML, or string representations
+of themselves
+
+>>> query = AndFilter([
+...     OrFilter([
+...         TextFilter("terrorists"),
+...         AndFilter([
+...             LocationFilter([1, 51], 10),
+...             TagFilter("Science & Nature")
+...         ]),
+...         AuthorIDFilter(1)
+...     ]),
+...     NotFilter(OrFilter([
+...         TextFilter("waffles"),
+...         TagFilter("Business")
+...     ]))
+... ])
+
+>>> print unicode(query) # doctest: +NORMALIZE_WHITESPACE
+and_(or_(
+    Content.content.matches('terrorists'),
+    and_(Content.location.near('[1, 51]', 10), Content.tags.contains('Science & Nature')),
+    Content.creator_id = 1
+), not_(or_(
+    Content.content.matches('waffles'),
+    Content.tags.contains('Business')
+)))
+
+>>> print repr(query) # doctest: +NORMALIZE_WHITESPACE
+AndFilter([OrFilter([
+    TextFilter('terrorists'),
+    AndFilter([LocationFilter([1, 51]), TagFilter('Science & Nature')]),
+    AuthorFilter(1)
+]), NotFilter(OrFilter([
+    TextFilter('waffles'),
+    TagFilter('Business')
+]))])
+
+>>> print html(query)
+<div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter([1, 51])</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>AuthorFilter(1)</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
+
+>>> print sql(query)
+((to_tsvector(content.content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1 51)', 10)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 1)) AND (NOT ((to_tsvector(content.content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
+"""
 
 def html(o):
     if hasattr(o, "__html__"):
@@ -134,7 +162,7 @@ class LocationFilter(Filter):
         self.rad = rad
 
     def __unicode__(self):
-        return "Content.location.near('"+self.loc+"', "+str(self.rad)+")"
+        return "Content.location.near('"+str(self.loc)+"', "+str(self.rad)+")"
 
     def __repr__(self):
         return "LocationFilter(" + repr(self.loc) + ")"
@@ -147,7 +175,7 @@ class AuthorIDFilter(Filter):
         self.author_id = author_id
 
     def __unicode__(self):
-        return "Content.creator_id = "+self.author_id
+        return "Content.creator_id = "+str(self.author_id)
 
     def __repr__(self):
         return "AuthorFilter(" + repr(self.author_id) + ")"
@@ -169,45 +197,3 @@ class TagFilter(Filter):
         return "content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = '"+self.tag+"')"
 
 
-if __name__ == "__main__":
-    query = AndFilter([
-        OrFilter([
-            TextFilter("terrorists"),
-            AndFilter([
-                LocationFilter([1, 51], 10),
-                TagFilter("Science & Nature")
-            ]),
-            AuthorFilter("unittest")
-        ]),
-        NotFilter(OrFilter([
-            TextFilter("waffles"),
-            TagFilter("Business")
-        ]))
-    ])
-
-
-    import cPickle as pickle
-    import zlib
-
-    a = pickle.dumps(query)
-    b = pickle.loads(a)
-
-    #print unicode(query)
-    print repr(query)
-    print sql(query)
-    #print html_base(html(query))
-
-    if False:
-        print "Query  ", len(unicode(query))
-        print "ZQuery ", len(zlib.compress(unicode(query)))
-
-        print "Pickle ", len(a)
-        print "ZPickle", len(zlib.compress(a))
-
-        print "Repr   ", len(repr(query))
-        print "ZRepr  ", len(zlib.compress(repr(query)))
-
-        print "HTML   ", len(html(query))
-        print "ZHTML  ", len(zlib.compress(html(query)))
-
-        file("moo.html", "w").write(html_base(html(query)))
