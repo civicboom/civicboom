@@ -1,4 +1,4 @@
-from civicboom.model.member  import Member, User, Group
+from civicboom.model.member  import Member, User, Group, GroupMembership
 from civicboom.model.content import Content, Tag, License
 from civicboom.model.media   import Media
 from civicboom.model.meta    import Session
@@ -55,7 +55,7 @@ def get_group(group):
 
 def get_membership(group, member):
     try:
-        return Session.query(GroupMembership).filter(and_(GroupMembership.group_id==group.id, GroupMembership.member_id==member.id))
+        return Session.query(GroupMembership).filter(and_(GroupMembership.group_id==group.id, GroupMembership.member_id==member.id)).one()
     except:
         return None
 

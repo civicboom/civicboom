@@ -308,7 +308,7 @@ class Group(Member):
                 action_list.append('invite')
                 action_list.append('remove')
                 action_list.append('set_role')
-                if num_admins>1:
+                if self.num_admins>1:
                     action_list.append('remove_self')
                     action_list.append('set_role_self')
             else:
@@ -317,12 +317,12 @@ class Group(Member):
 
     @property
     def num_admins(self):
-        return len([m for m in members_roles if m.role=="admin"]) #Count be optimised with Session.query....limit(2).count()?
+        return len([m for m in self.members_roles if m.role=="admin"]) #Count be optimised with Session.query....limit(2).count()?
 
     def is_admin(self, member, membership=None):
         if not membership:
             membership = self.get_membership(member)
-        elif membership.member_id==member.id and member_membership.status=="active" and member_membership.role=="admin":
+        if membership and membership.member_id==member.id and membership.status=="active" and membership.role=="admin":
             return True
         return False
 

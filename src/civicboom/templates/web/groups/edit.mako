@@ -33,7 +33,7 @@
         <br/>
         
         ${_("default member role")}
-        ${h.html.select('default_member_role', get_param('default_member_role'), group_member_roles.enums)}
+        ${h.html.select('default_member_role', get_param('default_role'), group_member_roles.enums)}
         
         <br/>
         
