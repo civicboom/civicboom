@@ -7,6 +7,41 @@ refer to the routes manual at http://routes.groovie.org/docs/
 from pylons import config
 from routes import Mapper
 
+def cb_resource(mapper, single, plural, **kwargs):
+    if kwargs:
+        return mapper.resource(single, plural, **kwargs)
+
+    # list actions
+    mapper.connect('formatted_'+plural, '/'+plural+'.{format}',                controller=plural, action='index',  conditions=dict(method=['GET']))
+    mapper.connect(plural, '/'+plural,                                         controller=plural, action='index',  conditions=dict(method=['GET']))
+
+    mapper.connect('formatted_'+plural, '/'+plural+'.{format}',                controller=plural, action='create', conditions=dict(method=['POST']))
+    mapper.connect('/'+plural,                                                 controller=plural, action='create', conditions=dict(method=['POST']))
+
+    # item actions
+    # /foo/new needs to be before /foo/{id}
+    mapper.connect('formatted_new_'+single, '/'+plural+'/new.{format}',        controller=plural, action='new',    conditions=dict(method=['GET']))
+    mapper.connect('new_'+single, '/'+plural+'/new',                           controller=plural, action='new',    conditions=dict(method=['GET']))
+
+    mapper.connect('formatted_'+single, '/'+plural+'/{id}.{format}',           controller=plural, action='show',   conditions=dict(method=['GET']))
+    mapper.connect(single, '/'+plural+'/{id}',                                 controller=plural, action='show',   conditions=dict(method=['GET']))
+
+    mapper.connect('/'+plural+'/{id}.{format}',                                controller=plural, action='update', conditions=dict(method=['PUT']))
+    mapper.connect('/'+plural+'/{id}',                                         controller=plural, action='update', conditions=dict(method=['PUT']))
+
+    mapper.connect('/'+plural+'/{id}.{format}',                                controller=plural, action='delete', conditions=dict(method=['DELETE']))
+    mapper.connect('/'+plural+'/{id}',                                         controller=plural, action='delete', conditions=dict(method=['DELETE']))
+
+    # item extra actions
+    # /foo/{id}/edit is the only GET action
+    mapper.connect('formatted_edit_'+single, '/'+plural+'/{id}.{format}/edit', controller=plural, action='edit',   conditions=dict(method=['GET']))
+    mapper.connect('edit_'+single, '/'+plural+'/{id}/edit',                    controller=plural, action='edit',   conditions=dict(method=['GET']))
+
+    # civicboom extra: foo_actions controller for separate /foo/42/activate methods
+    mapper.connect('formatted_'+single+'_action', '/'+plural+'/{id}/{action}.{format}',  controller=single+'_actions', conditions=dict(method=['POST']))
+    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}',              controller=single+'_actions', format="redirect", conditions=dict(method=['POST']))
+
+
 def make_map(config):
     """Create, configure and return the routes Mapper"""
     map = Mapper(directory=config['pylons.paths']['controllers'],
@@ -15,12 +50,10 @@ def make_map(config):
 
     # CUSTOM ROUTES HERE
     map.connect('/', controller='misc', action='titlepage')
-    map.resource('message', 'messages')
-    map.resource('setting', 'settings')
-    map.resource('content', 'contents')
-    map.connect('content_action', '/contents/{id}/{action}.{format}', controller='content_actions')
-    map.connect('content_action', '/contents/{id}/{action}', controller='content_actions', format="redirect")
-    map.resource('feed',    'feeds'   )
+    cb_resource(map, 'message', 'messages')
+    cb_resource(map, 'setting', 'settings')
+    cb_resource(map, 'content', 'contents')
+    cb_resource(map, 'feed',    'feeds'   )
 
 
     # Map the /admin url to FA's AdminController
@@ -40,14 +73,16 @@ def make_map(config):
     # the first route that matches url() args is the one that's generated,
     # so put routes without slashes first
     map.connect('/{controller}/{action}.{format}/{id}')  # CAFI
-    #map.connect('/{controller}/{action}.{format}/{id}/') # CAFI/
     map.connect('/{controller}/{action}/{id}')           # CAI
-    #map.connect('/{controller}/{action}/{id}/')          # CAI/
     map.connect('/{controller}/{action}.{format}')       # CAF
-    #map.connect('/{controller}/{action}.{format}/')      # CAF/
     map.connect('/{controller}/{action}')                # CA
-    #map.connect('/{controller}/{action}/')               # CA/
     map.connect('/{controller}' , action="index")        # C
+
+    # actually, routes with slashes aren't used at all...
+    #map.connect('/{controller}/{action}.{format}/{id}/') # CAFI/
+    #map.connect('/{controller}/{action}/{id}/')          # CAI/
+    #map.connect('/{controller}/{action}.{format}/')      # CAF/
+    #map.connect('/{controller}/{action}/')               # CA/
     #map.connect('/{controller}/', action="index")        # C/
 
     return map
