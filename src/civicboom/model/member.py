@@ -310,7 +310,7 @@ class Group(Member):
                 action_list.append('invite')
                 action_list.append('remove')
                 action_list.append('set_role')
-                if admin_count>1:
+                if num_admins>1:
                     action_list.append('remove_self')
                     action_list.append('set_role_self')
             else:
@@ -318,7 +318,7 @@ class Group(Member):
         return action_list
 
     @property
-    def admin_count(self):
+    def num_admins(self):
         return len([m for m in members_roles if m.role=="admin"]) #Count be optimised with Session.query....limit(2).count()?
 
     def is_admin(self, member, membership=None):
@@ -344,7 +344,10 @@ class Group(Member):
     def join(self, member):
         from civicboom.lib.database.actions import join_group
         return join_group(self,member)
-        
+    
+    def remove_member(self, member):
+        from civicboom.lib.database.actions import remove_member
+        return remove_member
         
 class UserLogin(Base):
     __tablename__    = "member_user_login"

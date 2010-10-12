@@ -10,7 +10,8 @@ from civicboom.lib.database.get_cached import get_member, get_content, update_co
 from civicboom.lib.communication       import messages
 from civicboom.lib.communication.email import send_email
 
-from civicboom.lib.text          import strip_html_tags
+from civicboom.lib.text import strip_html_tags
+from civicboom.lib.web  import action_error
 
 
 """
@@ -39,10 +40,12 @@ def follow(follower, followed, delay_commit=False):
     followed = get_member(followed)
     follower = get_member(follower)
     
-    if not followed: return _('no followed')
-    if not follower: return _('no follower')
-    
-    if followed in follower.following: return _('already following')
+    if not followed:
+        raise action_error(_('unable to find followed'), 404)
+    if not follower:
+        raise action_error(_('unable to find follower'), 404)    
+    if followed in follower.following:
+        raise action_error(_('already following'), 400)
     
     follower.following.append(followed)
         
@@ -60,10 +63,12 @@ def unfollow(follower,followed, delay_commit=False):
     followed = get_member(followed)
     follower = get_member(follower)
     
-    if not followed: return _('no followed')
-    if not follower: return _('no follower')
-    
-    if followed not in follower.following: return _('not following')
+    if not followed:
+        raise action_error(_('unable to find followed'), 404)
+    if not follower:
+        raise action_error(_('unable to find follower'), 404)    
+    if followed not in follower.following:
+        raise action_error(_('not currently following'), 400)
     
     follower.following.remove(followed)
         
@@ -78,32 +83,71 @@ def unfollow(follower,followed, delay_commit=False):
     return True
 
 
+#-------------------------------------------------------------------------------
+# Group Actions
+#-------------------------------------------------------------------------------
+
 def join_group(group, member, dealy_commit=False):
     group      = get_group(group)
     member     = get_member(member)
     membership = get_membership(group, member)
     
-    if group.can_join(member, membership):
-        if membership.status=="invite":
-            membership.status = "active"
-        else:
-            membership = GroupMembership()
-            membership.member = member
-            membership.role   = group.default_role
-            group.members_roles.append(membership)
-            
-        # AllanC - TODO send notification on new member
-        #group.send_message(messages.new_member(reporter=follower), delay_commit=True)
-            
-        if not delay_commit:
-            Session.commit()
-        
-        update_member(group)
-        update_member(member)
-        
-        return True
+    if not group:
+        raise action_error(_('unable to find group'), 404)
+    if not member:
+        raise action_error(_('unable to find member to add'), 404)
     
-    return False
+    if not group.can_join(member, membership):
+        raise action_error(_('current user cannot join this group'), 403)
+        
+    if membership.status=="invite":
+        membership.status = "active"
+    else:
+        membership = GroupMembership()
+        membership.member = member
+        membership.role   = group.default_role
+        group.members_roles.append(membership)
+        
+    # AllanC - TODO send notification on new member
+    #group.send_message(messages.new_member(reporter=follower), delay_commit=True)
+        
+    if not delay_commit:
+        Session.commit()
+    
+    update_member(group)
+    update_member(member)
+    
+    return True
+    
+
+
+def remove_member(group, member, delay_commit=False):
+    group      = get_group(group)
+    member     = get_member(member)
+    membership = get_membership(group, member)
+    
+    if not group:
+        raise action_error(_('unable to find group'), 404)
+    if not member:
+        raise action_error(_('unable to find member to add'), 404)
+    if not membership:
+        raise action_error(_('not a member of group'), 400)
+    if member!=c.logged_in_member and not group.is_admin(member):
+        raise action_error('current user has no permissions for this group', 403)
+    if membership.role=="admin" and num_admins<=1:
+        raise action_error('cannot remove last admin', 400)
+    
+    Session.delete(membership)
+    
+    if not dealy_commit:
+        Session.commit()
+    
+    update_member(group)
+    update_member(member)
+    
+    return True
+    
+    
 
 
 #-------------------------------------------------------------------------------
@@ -125,10 +169,14 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     member     = get_member(member)
     assignment = get_content(assignment)
 
-    if not member                                            : return _("cant find user")
-    if not assignment                                        : return _("cant find assignment")
-    if not issubclass(assignment.__class__,AssignmentContent): return _("only _assignments can be accepted")
-    if assignment_previously_accepted_by(assignment, member) : return _('_assignment has been previously accepted and cannot be accepted again')
+    if not member:
+        raise action_error(_("cant find user"), 404)
+    if not assignment:
+        raise action_error(_("cant find assignment"), 404)
+    if not issubclass(assignment.__class__,AssignmentContent):
+        raise action_error(_("only _assignments can be accepted"), 400)
+    if assignment_previously_accepted_by(assignment, member):
+        raise action_error(_('_assignment has been previously accepted and cannot be accepted again'), 400)
     
     assignment_accepted        = MemberAssignment()
     assignment.assigned_to.append(assignment_accepted)
@@ -151,8 +199,10 @@ def withdraw_assignemnt(assignment, member, delay_commit=False):
     member     = get_member(member)
     assignment = get_content(assignment)
     
-    if not member                                            : return _("cant find user")
-    if not assignment                                        : return _("cant find assignment")
+    if not member:
+        raise action_error(_("cant find user"), 404)
+    if not assignment:
+        raise action_error(_("cant find assignment"), 404)
     
     try:
         assignment_accepted = Session.query(MemberAssignment).filter_by(member_id=member.id, content_id=assignment.id, status="accepted").one()

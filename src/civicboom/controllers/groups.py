@@ -43,10 +43,9 @@ class GroupsController(BaseController):
         """
         GET /groups: All groups the current user belongs to
         
-        @param list - what type of contents to return, possible values:
-          content
+        @param exclude_fields - 
         
-        @return 200 - data.list = array of group objects that logged in user is a member of and there member role
+        @return 200 - data.list = array of group objects that logged in user is a member including the members role in the group
         """
         # url('groups')
         groups = [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role}) for group_role in c.logged_in_user.groups_roles]
@@ -75,13 +74,12 @@ class GroupsController(BaseController):
         except formencode.Invalid, error:                   # Form has failed validation
             form        = error.value                       #   Setup error vars
             form_errors = error.error_dict or {}            #   
-            return action_error(message="unable to create group")
+            raise action_error(message="unable to create group")
         
         group              = Group()
         group.name         = form['name']
         group.status       = 'show'
         group_admin        = GroupMembership()
-        #group_admin.group  = group
         group_admin.member = c.logged_in_user
         group_admin.role   = "admin"
         group.members_roles.append(group_admin)

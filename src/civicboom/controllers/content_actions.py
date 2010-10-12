@@ -18,9 +18,10 @@ class ContentActionsController(BaseController):
     # Rate: User Visable Content
     #---------------------------------------------------------------------------
     @auto_format_output()
+    @web_params_to_kwargs()
     @authorize(is_valid_user)
     @authenticate_form
-    def rate(self, id, format="html"):
+    def rate(self, id, rating=None, **kwargs):
         """
         POST /contents/{id}/rate - rate an article
 
@@ -46,8 +47,8 @@ class ContentActionsController(BaseController):
             pass
 
         # add a new one
-        if "rating" in request.POST:
-            rating = int(request.POST["rating"])
+        if rating:
+            rating = int(rating)
             if rating < 0 or rating > 5:
                 raise action_error(_("Ratings can only be in the range 0 to 5"), code=400)
 
