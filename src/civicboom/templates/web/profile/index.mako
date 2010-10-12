@@ -47,7 +47,7 @@
 	% if 'to' in d['messages'] and len(d['messages']['to']) > 0:
 		% for message in d['messages']['to']:
 			<div class="message_short">
-				<a class="subject" href="${url('message', id=messgae['id'])}">${message['subject']}</a>
+				<a class="subject" href="${url('message', id=message['id'])}">${message['subject']}</a>
 				<span class="source">${str(message['source'])}</span>
 			</div>
 		% endfor
