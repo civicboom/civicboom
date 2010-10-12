@@ -32,10 +32,10 @@
 
 <%def name="col_right()">
 	<h2>${_("Notifications")}</h2>
-	% if 'notifications' in d['messages']:
+	% if 'notifications' in d['messages'] and len(d['messages']['notifications']) > 0:
 		% for message in d['messages']['notifications']:
 			<div class="notification">
-				${h.secure_link(url('message', id=message['id']), "X", [("_method", "DELETE"), ])}
+				${h.secure_link(url('message', id=message['id'], format='redirect'), "X", [("_method", "DELETE"), ])}
 				${message['subject']|n}
 			</div>
 		% endfor
@@ -44,7 +44,7 @@
 	% endif
 
 	<h2>${_("Recent Messages")}</h2>
-	% if 'messages_to' in d['messages']:
+	% if 'to' in d['messages'] and len(d['messages']['to']) > 0:
 		% for message in d['messages']['to']:
 			<div class="message_short">
 				<a class="subject" href="${url('message', id=messgae['id'])}">${message['subject']}</a>
