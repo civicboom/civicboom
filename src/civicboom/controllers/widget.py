@@ -19,7 +19,6 @@ user_log = logging.getLogger("user")
 
 template_expire = 1800 # 30 min in seconds
 
-app_globals.widget_variables = ['widget_theame', 'widget_title', 'widget_username', 'widget_width', 'widget_height']
 widget_default_reporter_name = "widget demo"
 
 prefix = '/widget/'
