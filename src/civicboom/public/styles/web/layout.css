@@ -109,28 +109,41 @@ BODY>DIV#app {
 /*
  * sometimes the main page is columned
  */
+#col_left, #col_main, #col_right {
+	padding: 8px;
+}
 #col_left {
 	float: left;
-	width: 120px;
+	width: 272px;
 	border: 1px solid black;
 }
 #col_right {
 	float: right;
-	width: 120px;
+	width: 272px;
 	border: 1px solid black;
 }
 #col_main {
 	border: 1px solid black;
 }
-#col_left  ~ #col_main { margin-left:  128px; }
-#col_right ~ #col_main { margin-right: 128px; }
+#col_left  ~ #col_main { margin-left:  296px; }
+#col_right ~ #col_main { margin-right: 296px; }
 
 /*
  * and a footer (not actually in the new design -- do we need one?)
  */
 FOOTER {
 	clear: both;
+	background: url("/styles/web/userbarbk.png");
 }
 FOOTER LI {
 	float: left;
+}
+
+/*
+ * individual elements
+ */
+H2 {
+	font-size: 2em;
+	border-bottom: 1px solid black;
+	margin-top: 1em;
 }
