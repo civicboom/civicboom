@@ -16,11 +16,11 @@
     ${public_profile.col_left()}
 
 	<h2>${_("Tools")}</h2>
-	    <a href="${url(controller='profile', action='index')}">My Profile</a>
-	<br><a href="${url('settings')}">Edit Settings</a>
-	<br><a href="${url(controller='settings', action='messages')}">Edit Notifications</a>
-	<br><a href="${url('messages')}">My Messages</a>
-    <br><a href="${url(controller='account', action='link_janrain')}">Manage Login Accounts</a>
+	    <a href="${url(controller='profile', action='index')}">${_("My Profile")}</a>
+	<br><a href="${url('settings')}">${_("Edit Settings")}</a>
+	<br><a href="${url(controller='settings', action='messages')}">${_("Edit Notifications")}</a>
+	<br><a href="${url('messages')}">${_("My Messages")}</a>
+    <br><a href="${url(controller='account', action='link_janrain')}">${_("Manage Login Accounts")}</a>
 
 </%def>
 
@@ -40,7 +40,7 @@
 			</div>
 		% endfor
 	% else:
-		<span class="message_empty">No notifications</span>
+		<span class="message_empty">${_("No notifications")}</span>
 	% endif
 
 	<h2>${_("Recent Messages")}</h2>
@@ -51,9 +51,9 @@
 				<span class="source">${str(message['source'])}</span>
 			</div>
 		% endfor
-		<a class="read_more" href="${url('messages')}">View All Messages &rarr;</a>
+		<a class="read_more" href="${url('messages')}">${_("View All Messages")} &rarr;</a>
 	% else:
-		<span class="message_empty">No messages</span>
+		<span class="message_empty">${_("No messages")}</span>
 	% endif
 
 	<h2>${_("Where I Am Now")}</h2>
@@ -69,9 +69,9 @@ from civicboom.model.meta import Session
 		lat=d['member']['location_home'].split[1]
 	)}
 	% else:
-		<span class="message_empty">No location specified</span>
+		<span class="message_empty">${_("No location specified")}</span>
 	% endif
-	<a class="read_more" href="${url(controller='settings', action='location')}">Set Location &rarr;</a>
+	<a class="read_more" href="${url(controller='settings', action='location')}">${_("Set Location")} &rarr;</a>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -79,24 +79,8 @@ from civicboom.model.meta import Session
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-
-
-
-<%doc>
-    % for content in c.viewing_user.content:
-        <div class="content_summary">
-            <a href="${h.url(controller='content', action="view", id=content.id)}">${content.title}:${content.__type__}</a>
-        </div>
-</%doc>
-
     ## reminder that new relationships have been setup as -
     ##   content_assignments_active and content_assignments_previous
-
     ${public_profile.content_list(d['content'], type_filters=["draft", "article", "assignment", "syndicate"], show_actions=True)}
-    
     ${public_profile.content_list_group(d['member']['assignments_accepted'], "assignments accepted")}
-        
-
-
-    
 </%def>

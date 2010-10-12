@@ -6,9 +6,9 @@
 <%def name="body()">
 <table>
 	<tr>
-		<th>From</th>
-		<th>Subject</th>
-		<th>Date</th>
+		<th>${_("From")}</th>
+		<th>${_("Subject")}</th>
+		<th>${_("Date")}</th>
 	</tr>
 	<tr>
 		<td>${str(c.result['data']["source"])}</td>
