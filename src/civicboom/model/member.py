@@ -342,21 +342,21 @@ class Group(Member):
         from civicboom.lib.database.get_cached import get_membership
         return get_membership(self, member)
 
-    def join(self, member):
+    def join(self, member, delay_commit=False):
         from civicboom.lib.database.actions import join_group
-        return join_group(self, member)
+        return join_group(self, member, delay_commit=delay_commit)
     
-    def remove_member(self, member):
+    def remove_member(self, member, delay_commit=False):
         from civicboom.lib.database.actions import remove_member
-        return remove_member(self, member)
+        return remove_member(self, member, delay_commit=delay_commit)
     
-    def invite(self, member, role=None):
+    def invite(self, member, role=None, delay_commit=False):
         from civicboom.lib.database.actions import invite
-        return invite(self, member, role)
+        return invite(self, member, role, delay_commit=delay_commit)
         
-    def set_role(self, member, role):
+    def set_role(self, member, role, delay_commit=False):
         from civicboom.lib.database.actions import set_role
-        return set_role(self, member, role)
+        return set_role(self, member, role, delay_commit=delay_commit)
     
     def delete(self):
         from civicboom.lib.database.actions import del_group
