@@ -19,34 +19,6 @@ def random_string(length=8):
         r += random_symbols[random.randint(0,len(random_symbols)-1)]
     return r
 
-# AllanC - cant this be removed and replaced with filter()? see python docs for more info on filter
-def remove_where(list, check_for_removal_function):
-    """
-    Remove items from a list is the removal function returns True
-    """
-    for item in list:
-        if check_for_removal_function(item):
-            list.remove(item)
-
-
-def dict_to_stringprint(d, indent=''):
-    """
-    Iterate though dictionatys and sub dictonarys creating a formatted plain text string
-    Useful for debugging
-    """
-    s = ''
-    if hasattr(d,'keys'):
-      keylist = d.keys()
-      keylist.sort()
-      for key in keylist:
-        s += key +"\n"+ dict_to_stringprint(d.get(key), indent=indent+'  ')
-    elif hasattr(d, '__iter__'):
-        for i in d:
-            s += dict_to_stringprint(i, indent=indent+'  ')
-    elif isinstance(d, basestring):
-        s += indent + d.encode("utf-8") + "\n"
-    return s
-
 
 def calculate_age(born):
     """
