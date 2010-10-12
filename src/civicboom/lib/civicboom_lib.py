@@ -22,7 +22,6 @@ from civicboom.lib.services.twitter_global  import status as twitter_global_stat
 from civicboom.lib.services.tiny_url        import tiny_url
 
 from civicboom.lib.text          import clean_html_markup, strip_html_tags, safe_python_strings
-from civicboom.lib.misc          import remove_where
 from civicboom.lib.helpers       import truncate
 
 
