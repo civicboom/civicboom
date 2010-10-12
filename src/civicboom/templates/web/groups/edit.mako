@@ -10,32 +10,45 @@
 
 <%def name="body()">
 
-    <% from civicboom.model.member import group_member_roles, group_join_mode, group_member_visability, group_content_visability %>
+    <%
+        from civicboom.model.member import group_member_roles, group_join_mode, group_member_visability, group_content_visability
+        
+        def get_param(name):
+            if 'group' in d and name in d['group']:
+                return d['group'][name]
+            return ''
+    %>
 
-    ${h.form(h.url('setting', id='None'), method='put')}
+    % if 'group' in d:
+        ## Editing Form
+        ${h.form(h.url('groups', id=d['group']['id']), method='put')}
+    % else:
+        ## Creating Form
+        ${h.form(h.url('groups', ), method='post')}
+    % endif
     
     <fieldset><legend>Group</legend>
-        Name:<input type="text" name="name" value=""/>
+        Name:<input type="text" name="name" value="${get_param('name')}"/>
         
         <br/>
         
         ${_("default member role")}
-        ${h.html.select('default_member_role', None, group_member_roles.enums)}
+        ${h.html.select('default_member_role', get_param('default_member_role'), group_member_roles.enums)}
         
         <br/>
         
         ${_("join mode")}
-        ${h.html.select('join_mode', None, group_join_mode.enums)}
+        ${h.html.select('join_mode', get_param('join_mode'), group_join_mode.enums)}
         
         <br/>
         
         ${_("member visability")}
-        ${h.html.select('member_visability', None, group_member_visability.enums)}
+        ${h.html.select('member_visability', get_param('member_visability'), group_member_visability.enums)}
         
         <br/>
         
         ${_("content visability")}
-        ${h.html.select('content_visability', None, group_content_visability.enums)}
+        ${h.html.select('content_visability', get_param('content_visability'), group_content_visability.enums)}
         
         
     </fieldset>

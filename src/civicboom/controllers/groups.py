@@ -1,4 +1,6 @@
 from civicboom.lib.base import *
+
+from civicboom.model.member import Group, GroupMembership
 from civicboom.lib.form_validators.base import DefaultSchema
 from civicboom.lib.form_validators.registration import UniqueUsernameValidator
 from civicboom.lib.misc import update_dict
@@ -152,4 +154,4 @@ class GroupsController(BaseController):
         """
         # url('edit_content', id=ID)
         group = _get_group(id, check_admin=True)
-        return action_ok(data=group.to_dict())
+        return action_ok(data={'group':group.to_dict()})

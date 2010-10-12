@@ -155,7 +155,7 @@ class Member(Base):
         action_list = []
         #if self.can_message(member):
         #    action_list.append('editable')
-        if is_following(member):
+        if self.is_follower(member):
             action_list.append('unfollow')
         else:
             action_list.append('follow')
@@ -299,12 +299,12 @@ class Group(Member):
     
     def action_list_for(self, member):
         action_list = Member.action_list_for(self, member)
-        member_membership = get_membership(member)
-        join = can_join(member, member_membership)
+        membership = self.get_membership(member)
+        join = self.can_join(member, membership)
         if join=="join" or join=="request":
             action_list.append(join)
         else:
-            if is_admin(member, membership):
+            if self.is_admin(member, membership):
                 action_list.append('invite')
                 action_list.append('remove')
                 action_list.append('set_role')
@@ -321,20 +321,20 @@ class Group(Member):
 
     def is_admin(self, member, membership=None):
         if not membership:
-            membership = get_membership(member)
-        if membership.member_id==member.id and member_membership.status=="active" and member_membership.role=="admin":
+            membership = self.get_membership(member)
+        elif membership.member_id==member.id and member_membership.status=="active" and member_membership.role=="admin":
             return True
         return False
 
     def can_join(self, member, membership=None):
         if not membership:
-            membership = get_membership(member)
+            membership = self.get_membership(member)
         if not membership:
             if self.join_mode=="open":
                 return "join"
             if self.join_mode=="invite_and_request":
                 return "request"
-        if membership.member_id==member.id and membership.status=="invite":
+        elif membership.member_id==member.id and membership.status=="invite":
             return "join"
         return False
 

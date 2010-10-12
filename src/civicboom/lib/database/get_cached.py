@@ -1,4 +1,4 @@
-from civicboom.model.member  import Member, User
+from civicboom.model.member  import Member, User, Group
 from civicboom.model.content import Content, Tag, License
 from civicboom.model.media   import Media
 from civicboom.model.meta    import Session
