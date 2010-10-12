@@ -4,6 +4,7 @@ from pylons.i18n.translation import _
 
 from civicboom.model.meta import Session
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent
+from civicboom.model.member import GroupMembership, group_member_roles
 
 from civicboom.lib.database.get_cached import get_member, get_content, update_content, update_accepted_assignment, update_member
 
@@ -129,13 +130,16 @@ def remove_member(group, member, delay_commit=False):
     if not group:
         raise action_error(_('unable to find group'), 404)
     if not member:
-        raise action_error(_('unable to find member to add'), 404)
+        raise action_error(_('unable to find member'), 404)
     if not membership:
         raise action_error(_('not a member of group'), 400)
-    if member!=c.logged_in_member and not group.is_admin(member):
+    if member!=c.logged_in_user and not group.is_admin(c.logged_in_user):
         raise action_error('current user has no permissions for this group', 403)
     if membership.role=="admin" and num_admins<=1:
         raise action_error('cannot remove last admin', 400)
+    
+    # AllanC - TODO send notification to removed member
+    #membership.member.send_message(messages.?????(group=group), delay_commit=True)
     
     Session.delete(membership)
     
@@ -146,8 +150,71 @@ def remove_member(group, member, delay_commit=False):
     update_member(member)
     
     return True
+
+
+def invite(group, member, role, delay_commit=False):
+    group      = get_group(group)
+    member     = get_member(member)
+    membership = get_membership(group, member)
+    
+    if not group:
+        raise action_error(_('unable to find group'), 404)
+    if not member:
+        raise action_error(_('unable to find member'), 404)
+    if membership:
+        raise action_error(_('already a member of group'), 400)
+    if not group.is_admin(c.logged_in_user):
+        raise action_error(_('no permissions for this group'), 403)
+    if role and role not in group_member_roles.enums:
+        raise action_error('not a valid role', 400)
+
+    membership = GroupMembership()
+    membership.member = member
+    membership.role   = role or group.default_role
+    group.members_roles.append(membership)
+    
+    # TODO - send notification of invitation
+    #member.send_message(messages.group_invitation(reporter=follower), delay_commit=True)
+    
+    if not dealy_commit:
+        Session.commit()
+    
+    update_member(group)
+    update_member(member)
+    
+    return True
     
     
+def set_role(group, member, role, delay_commit=False):
+    group      = get_group(group)
+    member     = get_member(member)
+    membership = get_membership(group, member)
+    
+    if not group:
+        raise action_error(_('unable to find group'), 404)
+    if not member:
+        raise action_error(_('unable to find member'), 404)
+    if not membership:
+        raise action_error(_('not a member of group'), 400)
+    if not group.is_admin(c.logged_in_user):
+        raise action_error(_('no permissions for this group'), 403)
+    if membership.role=="admin" and num_admins<=1:
+        raise action_error('cannot remove last admin', 400)
+    if role not in group_member_roles.enums:
+        raise action_error('not a valid role', 400)
+
+    membership.role = role
+
+    # TODO - send notification of invitation
+    #member.send_message(messages.set_role(reporter=follower), delay_commit=True)
+
+    if not dealy_commit:
+        Session.commit()
+    
+    update_member(group)
+    update_member(member)
+    
+    return True
 
 
 #-------------------------------------------------------------------------------

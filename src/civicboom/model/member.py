@@ -347,8 +347,17 @@ class Group(Member):
     
     def remove_member(self, member):
         from civicboom.lib.database.actions import remove_member
-        return remove_member
+        return remove_member(self,member)
+    
+    def invite(self, member, role):
+        from civicboom.lib.database.actions import invite
+        return invite(self,member,role)
         
+    def set_role(self, member, role):
+        from civicboom.lib.database.actions import set_role
+        return set_role(self,member,role)
+    
+    
 class UserLogin(Base):
     __tablename__    = "member_user_login"
     id          = Column(Integer(),    primary_key=True)
