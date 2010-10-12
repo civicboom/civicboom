@@ -45,6 +45,33 @@ AndFilter([OrFilter([
 
 >>> print sql(query)
 ((to_tsvector(content.content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1 51)', 10)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 1)) AND (NOT ((to_tsvector(content.content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
+
+
+LabelFilter is a thing to put text into the human-readable output while having
+no effect on the query:
+
+>>> q = LabelFilter("waffo")
+>>> print unicode(q)
+(1=1)
+>>> print repr(q)
+LabelFilter('waffo')
+>>> print html(q)
+<div class='label'>waffo</div>
+>>> print sql(q)
+(1=1)
+
+
+All classes are children of the stub Filter class:
+
+>>> q = Filter()
+>>> print unicode(q)
+(1=1)
+>>> print repr(q)
+Filter()
+>>> print html(q)
+<div class='fil'>Filter()</div>
+>>> print sql(q)
+(1=1)
 """
 
 def html(o):
@@ -61,37 +88,29 @@ def sql(o):
 
 
 class Filter(object):
-    def __init__(self):
-        pass
 
     def __unicode__(self):
-        pass
+        return "(1=1)"
 
     def __repr__(self):
-        pass
+        return "Filter()"
 
     def __html__(self):
         return "<div class='fil'>" + str(self) + "</div>"
 
     def __sql__(self):
-        return str(self)
+        return "(1=1)"
 
 
 class LabelFilter(Filter):
     def __init__(self, label):
         self.label = label
 
-    def __unicode__(self):
-        return "(1=1)"
-
     def __repr__(self):
         return "LabelFilter("+repr(self.label)+")"
 
     def __html__(self):
         return "<div class='label'>"+self.label+"</div>"
-
-    def __sql__(self):
-        return "(1=1)"
 
 
 class OrFilter(Filter):
