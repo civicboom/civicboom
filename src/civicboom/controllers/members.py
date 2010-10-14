@@ -15,6 +15,11 @@ user_log = logging.getLogger("user")
 #}
 
 class MembersController(BaseController):
+    """
+    @title Members
+    @doc members
+    @desc REST Controller styled on the Atom Publishing Protocol
+    """
 
     #@auto_format_output()
     #@authorize(is_valid_user)
@@ -30,7 +35,13 @@ class MembersController(BaseController):
     @web_params_to_kwargs()
     def show(self, id=None, **kwargs):
         """
-        Get single user
+        GET /members/{id}: Show a specific item
+
+        @api members 1.0 (WIP)
+
+        @return 200      page ok
+                member   member object
+        @return 404      member not found
         """
         if 'list_type' not in kwargs:
             kwargs['list_type'] = 'single'

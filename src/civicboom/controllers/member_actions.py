@@ -14,6 +14,14 @@ class MemberActionsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def follow(self, id, format="html"):
+        """
+        POST /members/{name}/follow: follow the member
+
+        @api members 1.0 (WIP)
+
+        @return 200   following ok
+        @return 500   error following
+        """
         status = c.logged_in_user.follow(id)
         if status == True:
             return action_ok(_('You are now following %s') % id)
@@ -24,6 +32,14 @@ class MemberActionsController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def unfollow(self, id, format="html"):
+        """
+        POST /members/{name}/unfollow: unfollow the member
+
+        @api members 1.0 (WIP)
+
+        @return 200   unfollowing ok
+        @return 500   error unfollowing
+        """
         status = c.logged_in_user.unfollow(id)
         if status == True:
             return action_ok(_('You have stopped following %s') % id)
