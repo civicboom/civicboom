@@ -82,6 +82,7 @@ class MessagesController(BaseController):
         @return 404   target user doesn't exist
 
         @comment Shish  do we want some sort of "too many messages, stop spamming" response?
+        @comment Shish  do we want to support multiple names in the 'target' box?
         """
         # url('messages')
 
