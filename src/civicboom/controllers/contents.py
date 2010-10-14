@@ -133,7 +133,7 @@ class ContentsController(BaseController):
         we create a blank object and redirect to "edit-existing" mode
         """
         #url_for('new_content')
-        content_id = self.create(format='python')['data']['id']
+        content_id = call_action(ContentsController().create, format='python')['data']['id']
         return redirect(url('edit_content', id=content_id))
 
 
