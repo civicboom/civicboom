@@ -1,6 +1,6 @@
 <%inherit file="/web/common/html_base.mako"/>
 
-<%namespace name="public_profile"   file="view.mako"     />
+<%namespace name="public_profile"   file="/web/members/show.mako"     />
 <%namespace name="loc"              file="/web/common/location.mako"     />
 <%namespace name="member_includes"  file="/web/common/member.mako"       />
 <%namespace name="content_includes" file="/web/common/content_list.mako" />
