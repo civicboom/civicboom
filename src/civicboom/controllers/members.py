@@ -14,7 +14,7 @@ user_log = logging.getLogger("user")
 #     'assignments_accepted': lambda member: member.assignments_accepted , 
 #}
 
-class MemberController(BaseController):
+class MembersController(BaseController):
 
     #@auto_format_output()
     #@authorize(is_valid_user)
@@ -41,24 +41,5 @@ class MemberController(BaseController):
             member = c.logged_in_user
         if not member:
             raise action_error(_("User does not exist"), code=404)
-        
-        return {'data': member.to_dict(**kwargs)}
 
-    @auto_format_output()
-    @authorize(is_valid_user)
-    @authenticate_form
-    def follow(self, id, format="html"):
-        status = c.logged_in_user.follow(id)
-        if status == True:
-            return action_ok(_('You are now following %s') % id)
-        raise action_error(_('Unable to follow member: %s') % status)
-
-
-    @auto_format_output()
-    @authorize(is_valid_user)
-    @authenticate_form
-    def unfollow(self, id, format="html"):
-        status = c.logged_in_user.unfollow(id)
-        if status == True:
-            return action_ok(_('You have stopped following %s') % id)
-        raise action_error(_('Unable to stop following member: %s') % status)
+        return action_ok(data={'member': member.to_dict(**kwargs)})

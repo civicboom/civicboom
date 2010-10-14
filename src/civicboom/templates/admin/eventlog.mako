@@ -127,7 +127,7 @@
 					<center>${event.username} (${event.address})</center>
 					<br><a href="?username=${event.username}">Find other messages from this user</a>
 					<br><a href="?address=${event.address}">Find other messages from this IP address</a>
-					<br><a href="${url(controller='user', action='view', id=event.username)}">Visit this user's profile</a>
+					<br><a href="${url('member', id=event.username)}">Visit this user's profile</a>
 				</div>
 			</td>
 			<td>${h.link_to_objects(event.message)|n}</td>

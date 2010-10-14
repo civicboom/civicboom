@@ -42,7 +42,7 @@
             widget_width    = '240', widget_height='370'
         )}'
         width='240' height='370' scrolling='no' frameborder='0'>'
-    <a href='${h.url(host=app_globals.site_host, controller='reporter', action='profile', id=member)}'>
+    <a href='${h.url(host=app_globals.site_host, controller='members', action='show', id=member)}'>
         ${_('%ss _assigments on _site_name' % member)}
     </a>
 </iframe>
@@ -125,7 +125,7 @@
         var height = document.widget_customisation.height.value
         link += "widget_width="+width+"&";
         link += "widget_height="+height;
-        link += "' width='"+width+"' height='"+height+"' scrolling='no' frameborder='0'><a href='${h.url(host=app_globals.site_host, controller='reporter', action='profile', id=member)}'>${_('%ss _assigments on _site_name' % member)}</a></iframe>";
+        link += "' width='"+width+"' height='"+height+"' scrolling='no' frameborder='0'><a href='${h.url(host=app_globals.site_host, controller='members', action='show', id=member)}'>${_('%ss _assigments on _site_name' % member)}</a></iframe>";
         document.widget_creator.widget_link.value = link
         
         document.getElementById("widget_container").innerHTML = link

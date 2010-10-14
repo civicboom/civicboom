@@ -1,7 +1,7 @@
 % if c.logged_in_user:
 <a class="settings" href="${url('settings')}"><span>${_("settings")}</span></a>
 
-<a class="name" href="${url(controller='profile', action='view', id=c.logged_in_user.username)}">${c.logged_in_user.name}</a>
+<a class="name" href="${url('member', id=c.logged_in_user.username)}">${c.logged_in_user.name}</a>
 <a class="clock">[Clock]</a>
 <a class="role">[Role]</a>
 

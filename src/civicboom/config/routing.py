@@ -50,9 +50,10 @@ def make_map(config):
 
     # CUSTOM ROUTES HERE
     map.connect('/', controller='misc', action='titlepage')
-    cb_resource(map, 'message', 'messages')
-    cb_resource(map, 'setting', 'settings')
     cb_resource(map, 'content', 'contents')
+    cb_resource(map, 'message', 'messages')
+    cb_resource(map, 'member',  'members' )
+    cb_resource(map, 'setting', 'settings')
     cb_resource(map, 'feed',    'feeds'   )
 
 
