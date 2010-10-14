@@ -6,7 +6,7 @@
 <a class="role">[Role]</a>
 
 <a class="profile" href="${url(controller='profile', action='index')}">${_("profile")}</a>
-<a class="groups"  href="${url(controller='profile', action='index')}">${_("groups")}</a>
+<a class="groups"  href="${url(controller='groups', action='index')}">${_("groups")}</a>
 <a class="assignments"  href="${url(controller='profile', action='index')}">${_("assignments")}</a>
 
 <a class="messages" href="${url('messages')}">${_("messages")}</a>
