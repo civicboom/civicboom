@@ -8,8 +8,9 @@ from pylons import config
 from routes import Mapper
 
 def cb_resource(mapper, single, plural, **kwargs):
-    if kwargs:
-        return mapper.resource(single, plural, **kwargs)
+    # nothing uses this yet, so it is untested
+    #if kwargs:
+    #    return mapper.resource(single, plural, **kwargs)
 
     # list actions
     mapper.connect('formatted_'+plural, '/'+plural+'.{format}',                controller=plural, action='index',  conditions=dict(method=['GET']))
