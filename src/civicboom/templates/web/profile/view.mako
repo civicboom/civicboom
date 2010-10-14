@@ -63,13 +63,24 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-
 	<h2>Write to ${d['member']['username']}</h2>
 	${h.form(url('messages', format='redirect'))}
-		<input type="hidden" name="target" value="${d['member']['username']}">
-		<input type="text" name="subject">
-		<textarea name="content"></textarea>
-		<input type="submit" value="Send">
+		<table class="message_composer">
+			<tr>
+				<td>To&nbsp;</td>
+				<td><input type="text" name="target" value="${d['member']['username']}"></td>
+			</tr>
+			<tr>
+				<td>Subject&nbsp;</td>
+				<td><input type="text" name="subject"></td>
+			</tr>
+			<tr>
+				<td colspan="2"><textarea name="content"></textarea></td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="submit" value="Send"></td>
+			</tr>
+		</table>
 	${h.end_form()}
 
 

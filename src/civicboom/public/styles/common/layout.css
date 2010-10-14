@@ -88,3 +88,14 @@ HTML, BODY {
 	padding: 2px;
 }
 .avatar .clipper:hover .follow {opacity: 1;}
+
+/*
+ * message composer
+ */
+.message_composer {
+	text-align: right;
+}
+.message_composer INPUT,
+.message_composer TEXTAREA {
+	width: 100%;
+}
