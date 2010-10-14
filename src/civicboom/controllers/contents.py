@@ -15,10 +15,10 @@ from civicboom.lib.base import *
 from civicboom.model                   import Media, CommentContent, DraftContent
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
 
-
 # Other imports
 from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key, profanity_filter, twitter_global
 from civicboom.lib.communication import messages
+from civicboom.lib.helpers          import call_action
 
 
 # Logging setup
