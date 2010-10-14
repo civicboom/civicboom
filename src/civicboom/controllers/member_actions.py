@@ -44,3 +44,31 @@ class MemberActionsController(BaseController):
         if status == True:
             return action_ok(_('You have stopped following %s') % id)
         raise action_error(_('Unable to stop following member: %s') % status)
+
+
+    @auto_format_output()
+    def followers(self, id, format="html"):
+        """
+        GET /members/{name}/followers: get a list of followers
+
+        @api members 1.0 (WIP)
+
+        @return 200   list ok
+                list  the list
+        """
+        m = get_user(id)
+        return action_ok(data={"list": [f.to_dict() for f in m.followers]})
+
+
+    @auto_format_output()
+    def following(self, id, format="html"):
+        """
+        GET /members/{name}/following: get a list of members the user is following
+
+        @api members 1.0 (WIP)
+
+        @return 200   list ok
+                list  the list
+        """
+        m = get_user(id)
+        return action_ok(data={"list": [f.to_dict() for f in m.following]})
