@@ -27,15 +27,19 @@ def get_licenses():
     return Session.query(License).all()
 
 def get_user_nocache(user):
-    user = unicode(user) # AllanC - shish suspects that passing an integer may make the DB go mental
-    try:
-        return Session.query(User).filter_by(username=user).one()
-    except:
+    assert type(user) in [int, str, unicode]
+
+    if type(user) == int:
         try:
-            return Session.query(User).filter_by(email=user).one()
+            return Session.query(User).filter_by(id=user).one()
+        except:
+            pass
+    else:
+        try:
+            return Session.query(User).filter_by(username=user).one()
         except:
             try:
-                return Session.query(User).filter_by(id=user).one()
+                return Session.query(User).filter_by(email=user).one()
             except:
                 pass
     return None
