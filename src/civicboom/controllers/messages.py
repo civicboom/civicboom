@@ -109,7 +109,7 @@ class MessagesController(BaseController):
         GET /messages/new: Form to create a new item.
         """
         # url('new_message')
-        raise action_error(_("'New Message' page not implemented - go to somebody's profile page to message them"), code=501)
+        return action_ok()
 
 
     @auto_format_output()

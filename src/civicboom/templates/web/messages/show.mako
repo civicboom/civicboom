@@ -4,19 +4,6 @@
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
-<table>
-	<tr>
-		<th>${_("From")}</th>
-		<th>${_("Subject")}</th>
-		<th>${_("Date")}</th>
-	</tr>
-	<tr>
-		<td>${str(c.result['data']["source"])}</td>
-		<td>${c.result['data']["subject"]}</td>
-		<td>${c.result['data']["timestamp"][0:16]}</td>
-	</tr>
-	<tr>
-		<td colspan="3">${c.result['data']["content"]}</td>
-	</tr>
-</table>
+<!--#include virtual="/messages/${d['id']}.frag" -->
+<!--#include virtual="/messages/new.frag?to=${d['source']|u}&subject=${"Re: "+d['subject']|u}" -->
 </%def>

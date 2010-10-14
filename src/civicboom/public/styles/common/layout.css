@@ -29,6 +29,28 @@ HTML, BODY {
 	background: url("/styles/web/grad-top.png") repeat-x top left, url("/styles/web/grad-bottom.png") repeat-x bottom left;
 }
 
+
+.zebra {
+	width: 100%;
+	border: 1px solid black;
+}
+.zebra TH {
+	font-weight: bold;
+}
+.zebra THEAD TR                 {background: #888;}
+.zebra TBODY TR:nth-child(odd)  {background: #CCC;}
+.zebra TBODY TR:nth-child(even) {background: #EEE;}
+
+.zebra THEAD TR            {border-bottom: 1px solid black;}
+.zebra TBODY TR            {border-bottom: 1px solid #999;}
+.zebra TBODY TR:last-child {border-bottom: none;}
+
+.zebra THEAD TH,
+.zebra TBODY TD {
+	padding: 2px;
+}
+
+
 /*
  * flash message
  */ 
@@ -89,13 +111,3 @@ HTML, BODY {
 }
 .avatar .clipper:hover .follow {opacity: 1;}
 
-/*
- * message composer
- */
-.message_composer {
-	text-align: right;
-}
-.message_composer INPUT,
-.message_composer TEXTAREA {
-	width: 100%;
-}

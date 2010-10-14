@@ -64,24 +64,7 @@
 
 <%def name="body()">
 	<h2>Write to ${d['member']['username']}</h2>
-	${h.form(url('messages', format='redirect'))}
-		<table class="message_composer">
-			<tr>
-				<td>To&nbsp;</td>
-				<td><input type="text" name="target" value="${d['member']['username']}"></td>
-			</tr>
-			<tr>
-				<td>Subject&nbsp;</td>
-				<td><input type="text" name="subject"></td>
-			</tr>
-			<tr>
-				<td colspan="2"><textarea name="content"></textarea></td>
-			</tr>
-			<tr>
-				<td colspan="2"><input type="submit" value="Send"></td>
-			</tr>
-		</table>
-	${h.end_form()}
+	<!--#include virtual="/messages/new.frag?to=${d['member']['username']}" -->
 
 
     ${content_list(d['member']['content_public'], type_filters=["article", "assignment"])}
