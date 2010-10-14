@@ -33,7 +33,7 @@ class MembersController(BaseController):
 
     @auto_format_output()
     @web_params_to_kwargs()
-    def show(self, id=None, **kwargs):
+    def show(self, id, **kwargs):
         """
         GET /members/{id}: Show a specific item
 
@@ -45,11 +45,8 @@ class MembersController(BaseController):
         """
         if 'list_type' not in kwargs:
             kwargs['list_type'] = 'single'
-            
-        if id:
-            member = get_user(id)
-        else:
-            member = c.logged_in_user
+
+        member = get_user(id)
         if not member:
             raise action_error(_("User does not exist"), code=404)
 
