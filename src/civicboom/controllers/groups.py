@@ -130,8 +130,8 @@ class GroupsController(BaseController):
     @authenticate_form
     def delete(self, id):
         """
-        DELETE /contents/{id}: Delete an existing group
-        (aka POST /contents/{id} with POST[_method] = "DELETE")
+        DELETE /groups/{id}: Delete an existing group
+        (aka POST /groups/{id} with POST[_method] = "DELETE")
         
         @return 403 - lacking permission
         @return 200 - content deleted successfully
