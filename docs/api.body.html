@@ -2,7 +2,17 @@
 <h2>Things common to all requests:</h2>
 
 <section>
-<h3>Transport</h3>
+<h3>Notes about this document</h3>
+<ul>
+<li>"WIP" = "Work in Progress; first attempt to get something that works at all"
+<li>"Draft" = "It seems to work, waiting for the whole team to say Yay"
+<li>"Untested" = "The team agree that it is good, but automated tests are incomplete"
+<li>Just a number = "Ready to be used"
+</ul>
+</section>
+
+<section>
+<h3><span>(1.0 WIP)</span>Transport</h3>
 <ul>
 <li>All content-modifying actions (POST, PUT, DELETE) require an _authentication_token
     argument; since this is universal, it isn't mentioned in the docs for each action
@@ -25,7 +35,7 @@
 </section>
 
 <section>
-<h3>Data formats</h3>
+<h3><span>(1.0 WIP)</span>Data formats</h3>
 <p>Formats can be added to the end of the URL; for instance while /messages/42
 will show you message #42 in a browser-friendly way (HTML), a standalone app
 may prefer /messages/42.json or /messages/42.xml
@@ -45,13 +55,4 @@ may prefer /messages/42.json or /messages/42.xml
 <p>XML is pretty much the same, just in XML
 </section>
 
-<section>
-<h3>Notes about this document</h3>
-<ul>
-<li>"WIP" = "Work in Progress; first attempt to get something that works at all"
-<li>"Draft" = "It seems to work, waiting for the whole team to say Yay"
-<li>"Untested" = "The team agree that it is good, but automated tests are incomplete"
-<li>Just a number = "Ready to be used"
-</ul>
-</section>
 </article>
