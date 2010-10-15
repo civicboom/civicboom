@@ -3,6 +3,9 @@
 from glob import glob
 import re
 import sys
+import os.path
+from optparse import OptionParser
+
 
 class Param(object):
     def __init__(self, text):
@@ -125,159 +128,87 @@ class VerbDoc(Doc):
 # in the right section
 #
 
-sections = {}
-for controller in glob(sys.argv[2]+"/*.py"):
-    print "Scanning "+controller
+def scan(folder):
+    sections = {}
+    for controller in glob(os.path.join(folder, "*.py")):
+        print "Scanning "+controller
 
-    data = file(controller).read()
-    for doc in data.split('"""'):
-        if "@doc" in doc:
-            d = VerbDoc(doc)
-            if d.section not in sections:
-                sections[d.section] = {'head': [], 'items': []}
-            sections[d.section]['head'].append(d)
-        if "@api" in doc:
-            d = FuncDoc(doc)
-            if d.section not in sections:
-                sections[d.section] = {'head': [], 'items': []}
-            sections[d.section]['items'].append(d)
+        data = file(controller).read()
+        for doc in data.split('"""'):
+            if "@doc" in doc:
+                d = VerbDoc(doc)
+                if d.section not in sections:
+                    sections[d.section] = {'head': [], 'items': []}
+                sections[d.section]['head'].append(d)
+            if "@api" in doc:
+                d = FuncDoc(doc)
+                if d.section not in sections:
+                    sections[d.section] = {'head': [], 'items': []}
+                sections[d.section]['items'].append(d)
+    return sections
 
 
-fp = file(sys.argv[1], "w")
-fp.write("""<!DOCTYPE html>
-<html>
-    <head>
-        <title>Civicboom API docs</title>
-        <style>
-H1 { /* document title */
-    text-align: center;
-    margin: 0px;
-    padding: 16px;
-}
-ARTICLE {
-    border: 1px solid grey;
-    margin: 32px;
-}
-H2 { /* module title */
-    margin: 0px;
-    padding: 4px;
-    border-bottom: 1px solid grey;
-    background: #AAF;
-}
-SECTION {
-    border: 1px solid grey;
-    margin: 32px;
-}
-SECTION > DIV, ARTICLE > DIV {
-    padding: 16px;
-}
-H3 { /* function title */
-    margin: 0px;
-    padding: 4px;
-    border-bottom: 1px solid grey;
-    background: #AAF;
-}
-H3 SPAN {
-    float: right;
-}
-H4 { /* function part */
-    margin: 0px;
-}
-H4:first-child {
-}
+#
+# Write out the HTML
+#
 
-SECTION, ARTICLE {
-    display: block;
-}
-        </style>
-    </head>
-    <body>
-        <h1>Civicboom API docs</h1>
-""")
+def to_html(template_dir, sections):
+    html = ""
 
-fp.write("<ul>")
-for section in sections.values():
-    for doc in section['head']:
-        fp.write("<li><a href='#%s'>%s</a>\n" % (doc.section, doc.title))
-fp.write("</ul>")
+    html = html + file(template_dir+"api.head.html").read()
 
-fp.write("""
-<article>
-<h2>Things common to all requests:</h2>
+    # main TOC
+    html = html + "<ul>"
+    for section in sections.values():
+        for doc in section['head']:
+            html = html + "<li><a href='#%s'>%s</a>\n" % (doc.section, doc.title)
+    html = html + "</ul>"
 
-<section>
-<h3>Transport</h3>
-<ul>
-<li>All content-modifying actions (POST, PUT, DELETE) require an _authentication_token
-    argument; since this is universal, it isn't mentioned in the docs for each action
-    separately. The token can be found by calling /account/signin.json / xml
-<li>Cookies are used to keep track of sessions
-<li>PUT and DELETE can be emulated with POST, having the form variable "_method" set
-    to PUT or DELETE respectively
-<li>HTTP status codes are used:
-    <ul>
-      <li>200 - generic success
-      <li>201 - content created
-      <li>400 - generic user error (commonly missing required data when submitting a form)
-      <li>403 - permission denied
-      <li>404 - content not found
-      <li>500 - generic server error
-      <li>501 - not implemented
-      <li>502 - back-end server is down for maintenance
-    </ul>
-</ul>
-</section>
+    # main intro
+    html = html + file(template_dir+"api.body.html").read()
 
-<section>
-<h3>Data formats</h3>
-<p>Formats can be added to the end of the URL; for instance while /messages/42
-will show you message #42 in a browser-friendly way (HTML), a standalone app
-may prefer /messages/42.json or /messages/42.xml
+    # main body
+    for section in sections.values():
+        html = html + "<article>"
+        # chapter intro
+        for doc in section['head']:
+            html = html + (str(doc))
 
-<p>JSON data format:
-<pre>
-{
-    "status": "ok" / "error",                              (required)
-    "message": "string to show in app status bar / popup", (string or None, should be there if status = error)
-    "data": {                                              (required; blank dictionary if there is no data)
-        "foo": "bar", # function-specific data
-        "baz": "qux"
-    }
-}
-</pre>
+        # chapter TOC
+        html = html + "<ul>"
+        section['items'].sort()
+        for doc in section['items']:
+            html = html + "<li><a href='#%s'>%s</a>\n" % (doc.method, doc.method+" - "+doc.desc)
+        html = html + "</ul>"
 
-<p>XML is pretty much the same, just in XML
-</section>
+        # chapter body
+        for doc in section['items']:
+            html = html + str(doc)
+        html = html + "</article>"
 
-<section>
-<h3>Notes about this document</h3>
-<ul>
-<li>"WIP" = "Work in Progress; first attempt to get something that works at all"
-<li>"Draft" = "It seems to work, waiting for the whole team to say Yay"
-<li>"Untested" = "The team agree that it is good, but automated tests are incomplete"
-<li>Just a number = "Ready to be used"
-</ul>
-</section>
-</article>
-""")
+    # main footer
+    html = html + file(template_dir+"api.foot.html").read()
 
-for section in sections.values():
-    fp.write("<article>")
-    for doc in section['head']:
-        fp.write(str(doc))
+    return html
 
-    fp.write("<ul>")
-    section['items'].sort()
-    for doc in section['items']:
-        fp.write("<li><a href='#%s'>%s</a>\n" % (doc.method, doc.method+" - "+doc.desc))
-    fp.write("</ul>")
 
-    for doc in section['items']:
-        fp.write(str(doc))
-    fp.write("</article>")
+def main(input_dir, template_dir, output):
+    sections = scan(input_dir)
+    html = to_html(template_dir, sections)
+    file(output, "w").write(html)
 
-fp.write("""
-    </body>
-</html>
-""")
-fp.close()
+if __name__ == "__main__":
+    parser = OptionParser()
+    parser.add_option("-i", "--input-dir", dest="input_dir",
+        help="scan this controllers DIR", metavar="DIR")
+    parser.add_option("-t", "--template-dir", dest="template_dir",
+        help="pick up api.head/body/foot.html from DIR", metavar="DIR")
+    parser.add_option("-o", "--output", dest="output",
+        help="write output to FILE", metavar="FILE")
+    (options, args) = parser.parse_args()
+
+    if options.input_dir and options.template_dir and options.output:
+        sys.exit(main(options.input_dir, options.template_dir, options.output))
+    else:
+        print "Missing option"
+        sys.exit(1)

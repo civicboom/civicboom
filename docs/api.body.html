@@ -1,0 +1,57 @@
+<article>
+<h2>Things common to all requests:</h2>
+
+<section>
+<h3>Transport</h3>
+<ul>
+<li>All content-modifying actions (POST, PUT, DELETE) require an _authentication_token
+    argument; since this is universal, it isn't mentioned in the docs for each action
+    separately. The token can be found by calling /account/signin.json / xml
+<li>Cookies are used to keep track of sessions
+<li>PUT and DELETE can be emulated with POST, having the form variable "_method" set
+    to PUT or DELETE respectively
+<li>HTTP status codes are used:
+    <ul>
+      <li>200 - generic success
+      <li>201 - content created
+      <li>400 - generic user error (commonly missing required data when submitting a form)
+      <li>403 - permission denied
+      <li>404 - content not found
+      <li>500 - generic server error
+      <li>501 - not implemented
+      <li>502 - back-end server is down for maintenance
+    </ul>
+</ul>
+</section>
+
+<section>
+<h3>Data formats</h3>
+<p>Formats can be added to the end of the URL; for instance while /messages/42
+will show you message #42 in a browser-friendly way (HTML), a standalone app
+may prefer /messages/42.json or /messages/42.xml
+
+<p>JSON data format:
+<pre>
+{
+    "status": "ok" / "error",                              (required)
+    "message": "string to show in app status bar / popup", (string or None, should be there if status = error)
+    "data": {                                              (required; blank dictionary if there is no data)
+        "foo": "bar", # function-specific data
+        "baz": "qux"
+    }
+}
+</pre>
+
+<p>XML is pretty much the same, just in XML
+</section>
+
+<section>
+<h3>Notes about this document</h3>
+<ul>
+<li>"WIP" = "Work in Progress; first attempt to get something that works at all"
+<li>"Draft" = "It seems to work, waiting for the whole team to say Yay"
+<li>"Untested" = "The team agree that it is good, but automated tests are incomplete"
+<li>Just a number = "Ready to be used"
+</ul>
+</section>
+</article>
