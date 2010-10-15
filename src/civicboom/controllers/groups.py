@@ -23,7 +23,7 @@ error_unauthorised = action_error(_("you do not have permission access this grou
 class CreateGroupSchema(DefaultSchema):
     name = UniqueUsernameValidator()
 
-def _get_group(id, check_admin=False):
+def _get_group(id, admin_only=False):
     group = get_group(id)
     if not group:
         raise error_not_found

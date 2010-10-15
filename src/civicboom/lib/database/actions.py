@@ -99,8 +99,8 @@ def join_group(group, member, dealy_commit=False):
         raise action_error(_('unable to find group'), 404)
     if not member:
         raise action_error(_('unable to find member to add'), 404)
-    if not group.can_join(member, membership):
-        raise action_error(_('current user cannot join this group'), 403)
+    # AllanC - join permissions moved to controller
+
         
     if membership and membership.status=="invite":
         membership.status = "active"
@@ -142,10 +142,12 @@ def remove_member(group, member, delay_commit=False):
         raise action_error(_('unable to find member'), 404)
     if not membership:
         raise action_error(_('not a member of group'), 400)
-    if member!=c.logged_in_user and not group.is_admin(c.logged_in_user):
-        raise action_error('current user has no permissions for this group', 403)
-    if membership.role=="admin" and num_admins<=1:
-        raise action_error('cannot remove last admin', 400)
+    # AllanC - permissions moved to controller
+    #if member!=c.logged_in_user and not group.is_admin(c.logged_in_user):
+    #    raise action_error('current user has no permissions for this group', 403)
+    #AllanC - integrety moved to model
+    #if membership.role=="admin" and num_admins<=1:
+    #    raise action_error('cannot remove last admin', 400)
     
     # AllanC - TODO send notification to removed member
     if membership.status == "active":
@@ -182,10 +184,11 @@ def invite(group, member, role, delay_commit=False):
         raise action_error(_('unable to find member'), 404)
     if membership:
         raise action_error(_('already a member of group'), 400)
-    if not group.is_admin(c.logged_in_user):
-        raise action_error(_('no permissions for this group'), 403)
     if role not in group_member_roles.enums:
         raise action_error('not a valid role', 400)
+    # AllanC - permissions moved to controller
+    #if not group.is_admin(c.logged_in_user):
+    #    raise action_error(_('no permissions for this group'), 403)
 
     membership = GroupMembership()
     membership.member = member
@@ -217,12 +220,14 @@ def set_role(group, member, role, delay_commit=False):
         raise action_error(_('unable to find member'), 404)
     if not membership:
         raise action_error(_('not a member of group'), 400)
-    if not group.is_admin(c.logged_in_user):
-        raise action_error(_('no permissions for this group'), 403)
-    if membership.role=="admin" and num_admins<=1:
-        raise action_error('cannot remove last admin', 400)
     if role not in group_member_roles.enums:
         raise action_error('not a valid role', 400)
+    # AllanC - permisions moved to controller
+    #if not group.is_admin(c.logged_in_user):
+    #    raise action_error(_('no permissions for this group'), 403)
+    # AllanC - integrtiy moved to model
+    #if membership.role=="admin" and num_admins<=1:
+    #    raise action_error('cannot remove last admin', 400)
 
     membership.role = role
     if membership.status=="request":

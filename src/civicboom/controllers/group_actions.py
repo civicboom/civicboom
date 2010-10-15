@@ -25,11 +25,18 @@ class GroupActionsController(BaseController):
         @return 200 - joined ok
         """
         group = _get_group(id)
+
+        # Check permissions
+        if not group.can_join(c.logged_in_user):
+            raise action_error(_('current user cannot join this group'), 403)
+        
+        # Join action
         join_status = group.join(c.logged_in_user)
         if join_status == True:
             return action_ok(_('joined %s' % group.username))
         elif join_status == "request":
             return action_ok(_('join request sent'))
+            
         raise action_error(_('unable to join %s' % group.username), 500)
 
 
@@ -43,7 +50,12 @@ class GroupActionsController(BaseController):
     def remove_member(self, id, member=None, **kwargs):
         """
         """
-        group = _get_group()
+        group  = _get_group(id)
+        member = get_member(member)
+        # permissions check
+        if member!=c.logged_in_user and not group.is_admin(c.logged_in_user):
+            raise action_error('current user has no permissions for this group', 403)
+        # remove action
         if group.remove_member(member):
             return action_ok(message='member removed sucessfully')
         raise action_error('unable to remove member', 500)
@@ -69,7 +81,7 @@ class GroupActionsController(BaseController):
         
         @return 200 - invite sent ok
         """
-        group = _get_group(id)
+        group = _get_group(id, check_admin=True)
         if group.invite(member, role):
             return action_ok(_('member invited ok'))
         raise action_error('unable to invite member', 500)
@@ -90,7 +102,7 @@ class GroupActionsController(BaseController):
         
         return 200 - role set ok
         """
-        group = _get_group(id)
+        group = _get_group(id, check_admin=True)
         if group.set_role(member, role):
             return action_ok(_('role set successfully'))
         raise action_error('unable to set role', 500)

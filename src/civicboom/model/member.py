@@ -296,6 +296,13 @@ class Group(Member):
         'members'           : lambda group: [update_dict(m.member.to_dict(),{'role':m.role, 'status':m.status}) for m in group.members_roles] if group.member_visability=="public" else None ,
     })
     __to_dict__['actions'].update(__to_dict__['single'])
+
+    # Private admin integrity helper - used in set_role and remove_member
+    def _check_last_admin(member=None, membership=None):
+        if not membership:
+            membership = self.get_membership(member)
+        if membership.role=="admin" and num_admins<=1:
+            raise action_error('cannot remove last admin', 400)
     
     def action_list_for(self, member):
         action_list = Member.action_list_for(self, member)
@@ -349,9 +356,10 @@ class Group(Member):
     def join(self, member, delay_commit=False):
         from civicboom.lib.database.actions import join_group
         return join_group(self, member, delay_commit=delay_commit)
-    
+        
     def remove_member(self, member, delay_commit=False):
         from civicboom.lib.database.actions import remove_member
+        self._check_last_admin(member) # Check admin integrity
         return remove_member(self, member, delay_commit=delay_commit)
     
     def invite(self, member, role=None, delay_commit=False):
@@ -360,6 +368,7 @@ class Group(Member):
         
     def set_role(self, member, role, delay_commit=False):
         from civicboom.lib.database.actions import set_role
+        self._check_last_admin(member) # Check admin integrity
         return set_role(self, member, role, delay_commit=delay_commit)
     
     def delete(self):

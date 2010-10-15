@@ -61,9 +61,10 @@ def load_environment(global_conf, app_conf):
     config['development_mode'] = asbool(config['debug'])
 
     # Booleans in config file
-    boolean_varnames = ['feature.aggregate.email',
+    boolean_varnames = ['feature.notifications',
+                        'feature.aggregate.email',
                         'feature.aggregate.janrain',
-                        'feature.profanity_filter'
+                        'feature.profanity_filter',
                         ]
     for varname in boolean_varnames:
         config[varname] = asbool(config[varname])
