@@ -155,7 +155,7 @@ def scan(folder):
 def to_html(template_dir, sections):
     html = ""
 
-    html = html + file(template_dir+"api.head.html").read()
+    html = html + file(os.path.join(template_dir, "api.head.html")).read()
 
     # main TOC
     html = html + "<ul>"
@@ -165,7 +165,7 @@ def to_html(template_dir, sections):
     html = html + "</ul>"
 
     # main intro
-    html = html + file(template_dir+"api.body.html").read()
+    html = html + file(os.path.join(template_dir, "api.body.html")).read()
 
     # main body
     for section in sections.values():
@@ -187,7 +187,7 @@ def to_html(template_dir, sections):
         html = html + "</article>"
 
     # main footer
-    html = html + file(template_dir+"api.foot.html").read()
+    html = html + file(os.path.join(template_dir, "api.foot.html")).read()
 
     return html
 
