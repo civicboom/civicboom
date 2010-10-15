@@ -1071,7 +1071,14 @@ CREATE TRIGGER update_content
         gm.role   = "admin"
         g.members_roles.append(gm)
         Session.add_all([g, ])
+        
         Session.commit()
+        
+        g.join(u1)
+        g.invite(u3)
+        g.set_role(u1,"contributor")
+        
+
 
         ###############################################################
         log.debug("Assignments")
@@ -1122,14 +1129,6 @@ CREATE TRIGGER update_content
         
         Session.add_all([f1, f2, f3])
         Session.commit()
-        
-        ###############################################################
-        log.debug("Groups")
-        
-        #g1 = Group()
-        
-        #Session.add_all([g1,])
-        #Session.commit()
         
         
         # }}}

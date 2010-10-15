@@ -6,7 +6,7 @@ from civicboom.model.meta import Session
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent
 from civicboom.model.member import GroupMembership, group_member_roles
 
-from civicboom.lib.database.get_cached import get_member, get_content, update_content, update_accepted_assignment, update_member
+from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content, update_content, update_accepted_assignment, update_member
 
 from civicboom.lib.communication       import messages
 from civicboom.lib.communication.email import send_email
@@ -88,7 +88,7 @@ def unfollow(follower,followed, delay_commit=False):
 # Group Actions
 #-------------------------------------------------------------------------------
 
-def join_group(group, member, dealy_commit=False):
+def join_group(group, member, delay_commit=False):
     return_value = True
     
     group      = get_group(group)
@@ -106,6 +106,7 @@ def join_group(group, member, dealy_commit=False):
         membership.status = "active"
     else:
         membership = GroupMembership()
+        membership.group  = group
         membership.member = member
         membership.role   = group.default_role
         group.members_roles.append(membership)
@@ -163,7 +164,7 @@ def remove_member(group, member, delay_commit=False):
     
     Session.delete(membership)
     
-    if not dealy_commit:
+    if not delay_commit:
         Session.commit()
     
     update_member(group)
@@ -191,6 +192,7 @@ def invite(group, member, role, delay_commit=False):
     #    raise action_error(_('no permissions for this group'), 403)
 
     membership = GroupMembership()
+    membership.group  = group
     membership.member = member
     membership.role   = role
     membership.status = "invite"
@@ -199,7 +201,7 @@ def invite(group, member, role, delay_commit=False):
     # TODO - send notification of invitation
     #member.send_message(messages.group_invitation(reporter=follower), delay_commit=True)
     
-    if not dealy_commit:
+    if not delay_commit:
         Session.commit()
     
     update_member(group)
@@ -237,7 +239,7 @@ def set_role(group, member, role, delay_commit=False):
         pass
         #member.send_message(messages.role_changed(reporter=follower), delay_commit=True)
 
-    if not dealy_commit:
+    if not delay_commit:
         Session.commit()
     
     update_member(group)

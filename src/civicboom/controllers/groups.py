@@ -55,9 +55,10 @@ class GroupsController(BaseController):
 
 
     @auto_format_output()
+    @web_params_to_kwargs()
     @authorize(is_valid_user)
     @authenticate_form
-    def create(self):
+    def create(self, **kwargs):
         """
         POST /groups: Create a new group
         
@@ -73,7 +74,7 @@ class GroupsController(BaseController):
         
         try:                                                # Try validation
             schema = CreateGroupSchema()                    #   Build schema
-            form   = schema.to_python(dict(request.params)) #   Validate
+            form   = schema.to_python(dict(kwargs))         #   Validate
         except formencode.Invalid, error:                   # Form has failed validation
             form        = error.value                       #   Setup error vars
             form_errors = error.error_dict or {}            #   
@@ -100,16 +101,17 @@ class GroupsController(BaseController):
         """
         GET /groups/new - Form to create a new item
         
-        @return 301 - redirect to /contents/{id}/edit
+        @return 200 - ???
         """
         #url_for('new_group')
         return action_ok(template='groups/edit')
 
 
     @auto_format_output()
+    @web_params_to_kwargs()
     @authorize(is_valid_user)
     @authenticate_form
-    def update(self, id):
+    def update(self, id, **kwargs):
         """
         PUT /groups/{id} - Update a groups settings
         (aka POST /groups/{id} with POST[_method] = "PUT")
@@ -122,8 +124,6 @@ class GroupsController(BaseController):
         
         group = _get_group(id, check_admin=True)
         
-
-
 
     @auto_format_output()
     @authorize(is_valid_user)

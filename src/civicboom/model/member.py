@@ -298,7 +298,7 @@ class Group(Member):
     __to_dict__['actions'].update(__to_dict__['single'])
 
     # Private admin integrity helper - used in set_role and remove_member
-    def _check_last_admin(member=None, membership=None):
+    def _check_last_admin(self, member=None, membership=None):
         if not membership:
             membership = self.get_membership(member)
         if membership.role=="admin" and num_admins<=1:
