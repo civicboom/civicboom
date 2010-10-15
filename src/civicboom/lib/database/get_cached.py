@@ -28,17 +28,19 @@ def get_licenses():
     return Session.query(License).all()
 
 def get_member_nocache(member):
-    member = unicode(member) # AllanC - shish suspects that passing an integer may make the DB go mental
-    try:
-        return Session.query(Member).with_polymorphic('*').filter_by(username=member).one()
-    except:
+    assert type(member) in [int, str, unicode]
+    if type(member) == int:
         try:
             return Session.query(Member).with_polymorphic('*').filter_by(id=member).one()
         except:
-            try:
-                return Session.query(User).filter_by(email=member).one()
-            except:
-                pass
+            pass
+    else:
+        try:
+            return Session.query(Member).with_polymorphic('*').filter_by(username=member).one()   
+        except:
+            #try:
+            #    return Session.query(User).filter_by(email=member).one()
+            pass
     return None
 
 #@cache_test.cache() #Cache decorator to go here

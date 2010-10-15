@@ -13,6 +13,8 @@ import os
 import subprocess
 import civicboom.lib.services.warehouse as wh
 
+from pylons import config
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -153,7 +155,6 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     # We should include here a call to database to update the length field
     #_update_media_length(file_hash, os.path.getsize(processed.name))
 
-    from pylons import config
     import memcache
     m = memcache.Client([config['service.memcache.server']], debug=0)
     m.delete(str("media_processing_"+file_hash))

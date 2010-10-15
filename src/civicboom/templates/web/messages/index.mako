@@ -1,17 +1,17 @@
-<%inherit file="/web/common/layout_2cols.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 
-<%def name="col_side()">
+<%def name="col_left()">
 	<div class="avatar">
 		<img class="avatar" src="${c.viewing_user.avatar_url}">
 		<br>${c.viewing_user.name}
 		<br>(${c.viewing_user.username})
 	</div>
 
-	<h2>Tools</h2>
-	    <a href="${url(controller='profile', action='index')}">My Profile</a>
-	<br><a href="${url(controller='settings', action='general')}">Edit Settings</a>
-	<br><a href="${url(controller='settings', action='messages')}">Edit Notifications</a>
-	<br><a href="${url('messages')}">My Messages</a>
+	<h2>${_("Tools")}</h2>
+	    <a href="${url(controller='profile', action='index')}">${_("My Profile")}</a>
+	<br><a href="${url(controller='settings', action='general')}">${_("Edit Settings")}</a>
+	<br><a href="${url(controller='settings', action='messages')}">${_("Edit Notifications")}</a>
+	<br><a href="${url('messages')}">${_("My Messages")}</a>
 </%def>
 
 

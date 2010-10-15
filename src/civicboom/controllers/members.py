@@ -14,7 +14,12 @@ user_log = logging.getLogger("user")
 #     'assignments_accepted': lambda member: member.assignments_accepted , 
 #}
 
-class MemberController(BaseController):
+class MembersController(BaseController):
+    """
+    @title Members
+    @doc members
+    @desc REST Controller styled on the Atom Publishing Protocol
+    """
 
     #@auto_format_output()
     #@authorize(is_valid_user)
@@ -28,37 +33,22 @@ class MemberController(BaseController):
 
     @auto_format_output()
     @web_params_to_kwargs()
-    def show(self, id=None, **kwargs):
+    def show(self, id, **kwargs):
         """
-        Get single user
+        GET /members/{id}: Show a specific item
+
+        @api members 1.0 (WIP)
+
+        @return 200      page ok
+                member   member object
+        @return 404      member not found
         """
         if 'list_type' not in kwargs:
             kwargs['list_type'] = 'single'
-            
-        if id:
-            member = get_member(id)
-        else:
-            member = c.logged_in_user
+        
+        member = get_member(id)
+        
         if not member:
             raise action_error(_("User does not exist"), code=404)
         
-        return {'data': member.to_dict(**kwargs)}
-
-    @auto_format_output()
-    @authorize(is_valid_user)
-    @authenticate_form
-    def follow(self, id, format="html"):
-        status = c.logged_in_user.follow(id)
-        if status == True:
-            return action_ok(_('You are now following %s') % id)
-        raise action_error(_('Unable to follow member: %s') % status)
-
-
-    @auto_format_output()
-    @authorize(is_valid_user)
-    @authenticate_form
-    def unfollow(self, id, format="html"):
-        status = c.logged_in_user.unfollow(id)
-        if status == True:
-            return action_ok(_('You have stopped following %s') % id)
-        raise action_error(_('Unable to stop following member: %s') % status)
+        return action_ok(data={'member': member.to_dict(**kwargs)})

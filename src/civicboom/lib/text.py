@@ -8,24 +8,46 @@ import xml.sax.saxutils as saxutils
 
 #-------------------------------------------------------------------------------
 
-def split_word(text,max_chars=None):
+def split_word(text, max_chars):
     """
     used to split long usernames with spaces, seeks capitals as a prefernce to split with
+
+    >>> split_word("IAmAWaffleFiend", 6)
+    'IAmA Waffle Fiend'
+
+    >>> split_word("abcde12345abcde12345", 5)
+    'abcde 12345 abcde 12345'
+
+    >>> split_word("abc de12345", 5)
+    'abc de123 45'
+
+    >>> split_word("abc de12345", 0)
+    'abc de12345'
+
+    >>> split_word("Mr.Longname", 8)
+    'Mr. Longname'
     """
-    if max_chars==None or max_chars<=0:
+    if max_chars <= 0:
         return text
-    #print "split text: %s" % text
+
     new_text = ''
     current_count = 0
     for i in range(len(text)):
         if (text[i].isspace()):
             current_count = 0
-        elif (text[i].isupper() and text[i-1].islower()) or current_count>max_chars:
-            new_text += ' '
-            current_count = 0
+        elif current_count >= max_chars:
+            for n in range(1, current_count):
+                if new_text[-n].isupper():
+                    new_text = new_text[0:-n] + " " + new_text[-n:]
+                    current_count = n
+                    break
+            else:
+                new_text += ' '
+                current_count = 1
+        else:
+            current_count += 1
         new_text += text[i]
-        current_count += 1
-        #print "out text: %s" % new_text
+
     return new_text
 
 #-------------------------------------------------------------------------------

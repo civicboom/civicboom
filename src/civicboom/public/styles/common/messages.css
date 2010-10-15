@@ -1,0 +1,23 @@
+/*
+ * composer (/messages/new)
+ */
+.message_composer {
+	text-align: right;
+}
+.message_composer INPUT,
+.message_composer TEXTAREA {
+	width: 100%;
+}
+
+/*
+ * list (/messages)
+ */
+.message_list .from {
+	width: 16em;
+}
+.message_list .date {
+	width: 16em;
+}
+.message_list .action {
+	width: 8em;
+}

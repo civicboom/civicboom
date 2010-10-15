@@ -12,7 +12,9 @@ from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
 from webhelpers.html.tags import end_form
 
-from civicboom.lib.text import scan_for_embedable_view_and_autolink
+# use relative import so that "import helpers" works
+#from civicboom.lib.text import scan_for_embedable_view_and_autolink
+from text import scan_for_embedable_view_and_autolink
 
 import webhelpers.html.tags as html
 
@@ -60,9 +62,28 @@ def call_action(func, format="frag", *args, **kwargs):
     return data
 
 def shorten_url(url):
+    """
+    Return a URL which is shorter but still useful, for
+    being displayed in logs
+
+    >>> shorten_url("https://www.civicboom.com/i/like/bacon")
+    '/i/like/bacon'
+
+    doesn't affect urls that are already short:
+
+    >>> shorten_url("/waffo/waffo")
+    '/waffo/waffo'
+    """
     return re.sub("https?://[^/]+", "", url)
 
 def shorten_module(mod):
+    """
+    Return a module name that is shorter but still useful, for
+    being displayed in logs
+
+    >>> shorten_module("civicboom/lib/helpers.py")
+    'lib.helpers'
+    """
     return re.sub("civicboom/(.*).py", "\\1", mod).replace("/", ".")
 
 def link_to_objects(text):

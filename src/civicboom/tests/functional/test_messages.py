@@ -13,7 +13,7 @@ class TestMessagesController(TestController):
         assert "Re: Re: singing" in response
 
     def test_show(self):
-        response = self.app.get(url('message', id=2))
+        response = self.app.get(url('formatted_message', id=2, format="frag"))
         assert "truncation" in response
 
     def test_show_as_json(self):
@@ -28,13 +28,12 @@ class TestMessagesController(TestController):
 
 
     ## new -> create #########################################################
-    # there is no "new message" form page; the form is embedded in other pages for now
 
     def test_new(self):
-        response = self.app.get(url('new_message'), status=501)
+        response = self.app.get(url('new_message'))
 
-    def test_new_as_json(self):
-        response = self.app.get(url('formatted_new_message', format='json'), status=501)
+    def test_new_frag(self):
+        response = self.app.get(url('formatted_new_message', format='frag'))
 
     def test_create(self):
         response = self.app.post(

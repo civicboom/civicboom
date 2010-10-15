@@ -1,4 +1,4 @@
-<%inherit file="/web/common/layout_3cols.mako"/>
+<%inherit file="/web/common/html_base.mako"/>
 
 <%namespace name="member_includes"  file="/web/common/member.mako"  />
 <%namespace name="content_includes" file="/web/common/content_list.mako"/>
@@ -28,7 +28,7 @@
             % if d['member']['following']:
                 ${member_includes.member_list(d['member']['following'], show_avatar=True, class_="avatar_thumbnail_list")}
             % else:
-                <span class="message_empty">Not following anyone</span>
+                <span class="message_empty">${_("Not following anyone")}</span>
             % endif
             </div>
     
@@ -37,7 +37,7 @@
             % if d['member']['followers']:
                 ${member_includes.member_list(d['member']['followers'], show_avatar=True, class_="avatar_thumbnail_list")}
             % else:
-                <span class="message_empty">No followers</span>
+                <span class="message_empty">${_("No followers")}</span>
             % endif
             </div>
     % endif
@@ -50,7 +50,7 @@
 
 
 <%def name="col_right()">
-    <h2>Public Messages</h2>
+    <h2>${_("Public Messages")}</h2>
 	% if d['member']['messages_public']:
         % for message in d['member']['messages_public']:
             ${message}
@@ -63,14 +63,8 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-
 	<h2>Write to ${d['member']['username']}</h2>
-	${h.form(url('messages', format='redirect'))}
-		<input type="hidden" name="target" value="${d['member']['username']}">
-		<input type="text" name="subject">
-		<textarea name="content"></textarea>
-		<input type="submit" value="Send">
-	${h.end_form()}
+	<!--#include virtual="/messages/new.frag?to=${d['member']['username']}" -->
 
 
     ${content_list(d['member']['content_public'], type_filters=["article", "assignment"])}

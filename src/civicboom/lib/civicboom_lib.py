@@ -22,7 +22,6 @@ from civicboom.lib.services.twitter_global  import status as twitter_global_stat
 from civicboom.lib.services.tiny_url        import tiny_url
 
 from civicboom.lib.text          import clean_html_markup, strip_html_tags, safe_python_strings
-from civicboom.lib.misc          import remove_where
 from civicboom.lib.helpers       import truncate
 
 
@@ -364,17 +363,8 @@ def form_to_content(form, content):
 
     # Tags
     if "form_tags" in form:
-        form_tags    = [tag for tag in form["form_tags"].split(" ") if tag!=""] # Get tags from form removing any empty strings
-        content_tags = [tag.name for tag in content.tags]                     # Get tags form current content object
-        
-        # Add any new tag objects
-        for tag in Set(form_tags).difference(content_tags):
-            content.tags.append(get_tag(tag))
-
-        # Remove any missing tag objects
-        def remove_check(tag):
-            return tag.name in Set(content_tags).difference(form_tags)
-        remove_where(content.tags, remove_check)
+        tags_raw     = form["form_tags"].split(" ")
+        content.tags = [get_tag(tag) for tag in tags_raw if tag!=""]
 
     # Existing Media Form Fields
     for media in content.attachments:

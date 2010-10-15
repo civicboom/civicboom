@@ -85,7 +85,9 @@ class BaseController(WSGIController):
         c.controller = current_request.get("controller")
         c.action     = current_request.get("action")
         c.id         = current_request.get("id")
-        c.format     = current_request.get("format", request.params.get('format', config['default_format'] ) )
+        # config breaks in production?
+        #c.format     = current_request.get("format", request.params.get('format', config['default_format'] ) )
+        c.format     = current_request.get("format", request.params.get('format', "html" ) )
         
         c.result = {'status':'ok', 'message':'', 'data':{}}
         

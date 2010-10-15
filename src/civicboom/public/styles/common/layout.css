@@ -29,6 +29,28 @@ HTML, BODY {
 	background: url("/styles/web/grad-top.png") repeat-x top left, url("/styles/web/grad-bottom.png") repeat-x bottom left;
 }
 
+
+.zebra {
+	width: 100%;
+	border: 1px solid black;
+}
+.zebra TH {
+	font-weight: bold;
+}
+.zebra THEAD TR                 {background: #888;}
+.zebra TBODY TR:nth-child(odd)  {background: #CCC;}
+.zebra TBODY TR:nth-child(even) {background: #EEE;}
+
+.zebra THEAD TR            {border-bottom: 1px solid black;}
+.zebra TBODY TR            {border-bottom: 1px solid #999;}
+.zebra TBODY TR:last-child {border-bottom: none;}
+
+.zebra THEAD TH,
+.zebra TBODY TD {
+	padding: 2px;
+}
+
+
 /*
  * flash message
  */ 
@@ -42,6 +64,50 @@ HTML, BODY {
 	display: none;
 	border-bottom: 1px solid black;
 }
-#flash_message.status_ok {background: yellow;}
-#flash_message.status_error {background: red;}
+#flash_message.status_ok {background: #FFA;}
+#flash_message.status_error {background: #FAA;}
+
+/*
+ * avatars
+ */
+.avatar {
+	margin: auto;
+	text-align: center;
+}
+.avatar .clipper {
+	width: 80px;
+	height: 80px;
+	overflow: hidden;
+	position: relative;
+	border: 1px solid black;
+}
+.avatar .clipper .type,
+.avatar .clipper .info,
+.avatar .clipper .follow {
+	position: absolute;
+}
+.avatar .clipper .type {
+	top: 0px;
+	right: 0px;
+}
+.avatar .clipper .info {
+	background: gray;
+	bottom: 0em;
+	left: 0px;
+	opacity: 0;
+	padding: 2px;
+}
+.avatar .clipper:hover .info {opacity: 1;}
+
+.avatar .clipper .img {opacity: 1;}
+.avatar .clipper:hover .img {opacity: 0.25;}
+
+.avatar .clipper .follow {
+	background: gray;
+	bottom: 0px;
+	right: 0px;
+	opacity: 0;
+	padding: 2px;
+}
+.avatar .clipper:hover .follow {opacity: 1;}
 

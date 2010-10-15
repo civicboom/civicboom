@@ -15,10 +15,10 @@ from civicboom.lib.base import *
 from civicboom.model                   import Media, CommentContent, DraftContent
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
 
-
 # Other imports
 from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key, profanity_filter, twitter_global
 from civicboom.lib.communication import messages
+from civicboom.lib.helpers          import call_action
 
 
 # Logging setup
@@ -93,11 +93,11 @@ class ContentsController(BaseController):
         @param form_type
         @param ...
 
-        @return 404   parent not found
-        @return 403   can't reply to parent
-        @return 400   missing data (ie, a type=comment with no parent_id)
         @return 201   content created
                 id    new content id
+        @return 400   missing data (ie, a type=comment with no parent_id)
+        @return 403   can't reply to parent
+        @return 404   parent not found
 
         @comment Shish paramaters need filling out
         @comment Shish do all the paramaters need to start with "form_"?
@@ -133,7 +133,7 @@ class ContentsController(BaseController):
         we create a blank object and redirect to "edit-existing" mode
         """
         #url_for('new_content')
-        content_id = self.create(format='python')['data']['id']
+        content_id = call_action(ContentsController().create, format='python')['data']['id']
         return redirect(url('edit_content', id=content_id))
 
 
@@ -148,8 +148,11 @@ class ContentsController(BaseController):
 
         @param *  see "POST /contents"
 
-        @return 403   lacking permission to edit
         @return 200   success
+        @return 403   lacking permission to edit
+        @return 404   no content to be edited
+
+        @comment Shish needs to check validity of parent if set
         """
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="PUT" />
@@ -232,6 +235,7 @@ class ContentsController(BaseController):
 
         @return 200   content deleted successfully
         @return 403   lacking permission
+        @return 404   no content to delete
         """
         # Forms posted to this method should contain a hidden field:
         #    <input type="hidden" name="_method" value="DELETE" />
@@ -257,6 +261,8 @@ class ContentsController(BaseController):
 
         @return 200      page ok
                 content  content object
+        @return 403      permission denied
+        @return 404      content not found
         """
         # url('content', id=ID)
         """

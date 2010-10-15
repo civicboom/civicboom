@@ -11,6 +11,7 @@ class TestContentsController(TestController):
     def test_index_as_xml(self):
         response = self.app.get(url('formatted_contents', format='xml'))
 
+
     def test_can_show_own_article(self):
         response = self.app.get(url('content', id=1))
 
@@ -38,9 +39,15 @@ class TestContentsController(TestController):
 
     ## new -> create #########################################################
 
-    # FIXME: new requires auth as it creates something
-    #def test_new_redirects_to_edit(self):
-    #    response = self.app.get(url('new_content'), status=302)
+    # new requires auth as it creates something
+    def test_new_redirects_to_edit(self):
+        response = self.app.post(
+            url('new_content'),
+            params={
+                '_authentication_token': self.auth_token,
+            },
+            status=302
+        )
 
     def test_create_comment(self):
         response = self.app.post(
@@ -198,7 +205,6 @@ class TestContentsController(TestController):
         )
 
     def test_cant_delete_someone_elses_article(self):
-        # FACT: a user should not be able to delete another user's article
         response = self.app.delete(
             url('content', id=2, format="json"),
             params={

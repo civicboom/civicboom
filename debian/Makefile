@@ -2,7 +2,7 @@ all: cb-website.deb python-cbmisc.deb
 
 VERSION := $(shell git describe)
 
-cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type f) _combined.js web.css widget.css mobile.css
+cb-website.deb: $(shell find ../admin_scripts ../docs ../nginx ../selenium ../src -type f) _combined.js web.css widget.css mobile.css
 	rm -rf fs-website
 	mkdir -p fs-website/DEBIAN/
 	cp control fs-website/DEBIAN/control
@@ -10,6 +10,8 @@ cb-website.deb: $(shell find ../admin_scripts ../nginx ../selenium ../src -type 
 	sed -i s/VERSION/${VERSION}/ fs-website/DEBIAN/control
 	mkdir -p fs-website/opt/cb/bin
 	cp ../admin_scripts/* ./fs-website/opt/cb/bin/
+	mkdir -p fs-website/opt/cb/share/doc/website
+	cp -r ../docs/* ./fs-website/opt/cb/share/doc/website/
 	mkdir -p fs-website/opt/cb/share/website
 	cp -r ../src/* ./fs-website/opt/cb/share/website/
 	cd ./fs-website/opt/cb/share/website/ && python setup.py compile_catalog

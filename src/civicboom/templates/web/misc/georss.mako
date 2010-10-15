@@ -14,5 +14,5 @@
 		</script>
 	</div>
 % except:
-	<span class="error">Error decoding location "${request.params.get("location", "")}"</span>
+	<span class="error">${_("Error decoding location")} "${request.params.get("location", "")}"</span>
 % endtry

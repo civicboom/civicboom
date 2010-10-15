@@ -49,6 +49,9 @@ class MessagesController(BaseController):
                          the target may not want their activity known
         @comment Shish   are public messages used yet? if they aren't used, IMHO
                          they should be left undocumented
+        @comment Shish   using a list of functions makes it impossible to check
+                         that all paths are tested - we can only tell that the
+                         lookup table has been referenced at least once :/
         """
         # url('messages')
         # AllanC - this feels duplicated from the member controler - humm ... need to think about a sensible stucture
@@ -73,32 +76,33 @@ class MessagesController(BaseController):
         @param target   the username of the target user
         @param subject  message subject
         @param content  message body
-
+        
         @return 201   message sent
         @return 400   missing required field
         @return 404   target user doesn't exist
+        
+        @comment Shish  do we want some sort of "too many messages, stop spamming" response?
+        @comment Shish  do we want to support multiple names in the 'target' box?
         """
         # url('messages')
-        try:
-            target = get_member(request.POST["target"])
-            if not target:
-                # FIXME: form validator to refresh with the same values?
-                raise action_error(_("Can't find user '%s'") % request.POST["target"], code=404)
-            m = Message()
-            m.source_id = c.logged_in_user.id # FIXME: or from any group they are admin of?
-            m.target_id = target.id
-            m.subject = request.POST["subject"]
-            m.content = request.POST["content"]
-            # FIXME: send a notification too?
-            user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
-            Session.add(m)
-            Session.commit()
-            return action_ok(_("Message sent"), code=201)
-        except action_error as ae:
-            raise
-        except Exception, e:
-            log.exception("Error sending message:")
-            raise action_error(_("Error sending message"), code=400)
+        
+        # FIXME: form validator to refresh with the same values?
+        if not set(["target", "subject", "content"]).issubset(request.POST.keys()):
+            raise action_error(_("Missing inputs"), code=400)
+        target = get_member(request.POST["target"])
+        if not target:
+            raise action_error(_("Can't find user '%s'") % request.POST["target"], code=404)
+        
+        m = Message()
+        m.source_id = c.logged_in_user.id # FIXME: or from any group they are admin of?
+        m.target_id = target.id
+        m.subject = request.POST["subject"]
+        m.content = request.POST["content"]
+        user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
+        Session.add(m)
+        Session.commit()
+        return action_ok(_("Message sent"), code=201)
+
 
 
     @auto_format_output()
@@ -107,7 +111,7 @@ class MessagesController(BaseController):
         GET /messages/new: Form to create a new item.
         """
         # url('new_message')
-        raise action_error(_("'New Message' page not implemented - go to somebody's profile page to message them"), code=501)
+        return action_ok()
 
 
     @auto_format_output()
@@ -157,7 +161,7 @@ class MessagesController(BaseController):
             Session.commit()
             return action_ok(_("Message deleted"))
         else:
-            user_log.warning("User tried to delete somebody else's message") # FIXME: details
+            user_log.warning("User %s tried to delete %s message" % (c.logged_in_user.username, msg.target.username))
             raise action_error(_("You are not the target of this message"), code=403)
 
 
@@ -169,14 +173,14 @@ class MessagesController(BaseController):
 
         @api messages 1.0 (WIP)
 
-        @return  200       show the message
-                 id        message id
-                 source    username (None if system notification)
-                 timestamp time that the message was sent
-                 subject   message subject
-                 content   message body
-        @return  403       current user is not the message target
-        @return  404       the message does not exist
+        @return 200       show the message
+                id        message id
+                source    username (None if system notification)
+                timestamp time that the message was sent
+                subject   message subject
+                content   message body
+        @return 403       current user is not the message target
+        @return 404       the message does not exist
 
         @comment Shish  do we want to return permission denied, or
                         should we pretend the message doesn't exist

@@ -11,38 +11,6 @@ BODY.c-misc.a-about .cols {
 }
 
 /*
- * front page, a blurb and a signup box
- */
-BODY.c-misc.a-titlepage SECTION.blurb {
-	display: block;
-	width: 500px;
-	padding: 100px;
-	font-style: italic;
-	font-size: 1.5em;
-	text-align: center;
-}
-BODY.c-misc.a-titlepage SECTION.signup {
-	float: right;
-	width: 300px;
-	padding: 16px;
-	background: white;
-	margin: 50px;
-	margin-right: 100px;
-	border-radius: 8px;
-	-moz-border-radius: 8px;
-	border: 1px solid #AAA;
-}
-BODY.c-misc.a-titlepage SECTION.signup P {
-	margin: 8px;
-	font-size: 1.5em;
-}
-BODY.c-misc.a-titlepage SECTION.signup INPUT[type="text"],
-BODY.c-misc.a-titlepage SECTION.signup INPUT[type="email"],
-BODY.c-misc.a-titlepage SECTION.signup INPUT[type="password"] {
-	width: 100%;
-}
-
-/*
  * press page, a list of articles each containing TIME, A, BLOCKQUOTE
  */
 BODY.c-misc.a-press #app {

@@ -862,9 +862,9 @@ CREATE TRIGGER update_content
         # FIXME: Image.open() locks up under nosetests, see Bug #45
         #m.load_from_file("civicboom/public/images/star.png", "star.jpg", "A photo of people saying hello", "Shish")
         m.name        = u"hello.jpg"
-        m.type        = "image"
-        m.subtype     = "jpeg"
-        m.hash        = "00000000000000000000000000000000"
+        m.type        = "video"
+        m.subtype     = "x-ms-asf"
+        m.hash        = "89e69557a19a5b168cafc8a56493a08022a49cdd"
         m.caption     = u"A photo of people saying hello"
         m.credit      = u"Shish"
         ca.attachments.append(m)
