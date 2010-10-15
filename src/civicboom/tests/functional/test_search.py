@@ -38,7 +38,7 @@ class TestSearchController(TestController):
 
     def test_content_type(self):
         response = self.app.get(url(controller='search', action='content', type='assignment'))
-        assert "Silence Mr U. Test" in response
+        assert "There once was" in response
 
     def test_content_author(self):
         response = self.app.get(url(controller='search', action='content', author='unittest'))
