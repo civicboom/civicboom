@@ -6,7 +6,7 @@ from civicboom.model import meta
 
 from civicboom.model.meta import Base, Session, LegacySession
 from civicboom.model import License, Tag, Rating
-from civicboom.model import User, Group, UserLogin
+from civicboom.model import User, Group, UserLogin, GroupMembership
 from civicboom.model import ArticleContent, CommentContent, DraftContent, AssignmentContent, Media
 from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
@@ -26,7 +26,7 @@ import tempfile
 import hashlib
 
 import pylons.test
-
+from pylons import config
 
 log = logging.getLogger(__name__)
 
@@ -38,6 +38,8 @@ def setup_app(command, conf, variables):
     """Place any commands to setup civicboom here"""
     if not pylons.test.pylonsapp: # pragma: no cover -- "if not testing" will not be true for testing...
         load_environment(conf.global_conf, conf.local_conf)
+
+    config['feature.notifications'] = False
 
     ###################################################################
     log.info("Creating tables") # {{{
@@ -830,8 +832,8 @@ CREATE TRIGGER update_content
 
         ###############################################################
         
-        #u1.follow(u2) # Broken ... follow genertes a notification that requires translation - cannot be done here
-        #u2.follow(u1)
+        u1.follow(u2)
+        u2.follow(u1)
 
         ###############################################################
         log.debug("Content")
@@ -1064,9 +1066,21 @@ CREATE TRIGGER update_content
         g.home_location = u"The Moon"
         g.description   = u"Mr U. Test's awful singing has gone on long enough!"
         g.status        = "active"
-        g.members.append(u2)
+        gm = GroupMembership()
+        gm.member = u2
+        gm.role   = "admin"
+        g.members_roles.append(gm)
         Session.add_all([g, ])
+        
         Session.commit()
+        
+        g.join(u1)
+        g.invite(u3)
+        g.set_role(u1,"editor")
+        g.join(u4)
+        g.remove_member(u4)
+        
+
 
         ###############################################################
         log.debug("Assignments")
@@ -1082,7 +1096,7 @@ CREATE TRIGGER update_content
         Session.add_all([asc, ])
         Session.commit()
 
-        #asc.invite([u1,u2,u3,u4])
+        asc.invite([u1,u2,u3,])
 
         asc2 = AssignmentContent()
         asc2.title      = u"Assignment for the world to see"
@@ -1091,34 +1105,34 @@ CREATE TRIGGER update_content
         asc2.license_id = cc_by.id
         u1.content.append(asc2)
         Session.add_all([asc2, ])
-
-        # Get test users to accept the assignment - cant be done in setup :(
-        #asc2.accept(u2)
-        #asc2.accept(u3)
-        #asc2.accept(u4)
+        
+        # Get test users to accept the assignment
+        asc2.accept(u3)
+        asc2.accept(u4)
         Session.commit()
 
         ###############################################################
         log.debug("Feeds")
-
+        
         f1 = Feed()
         f1.name = u"test feed #1"
         f1.member = u1
         f1.query = ""
-
+        
         f2 = Feed()
         f2.name = u"test feed #2 to be deleted"
         f2.member = u1
         f2.query = ""
-
+        
         f3 = Feed()
         f3.name = u"test feed #3 to be deleted with fakeout"
         f3.member = u1
         f3.query = ""
-
+        
         Session.add_all([f1, f2, f3])
         Session.commit()
-
+        
+        
         # }}}
     ###################################################################
     log.info("Successfully set up tables")

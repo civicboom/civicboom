@@ -24,7 +24,7 @@ def init():
                                     )
     Member.content        = relationship(Content, primaryjoin=and_(Member.id==Content.creator_id, Content.__type__!='comment'))
     
-    Member.content_public = relationship(Content, primaryjoin=and_(Member.id==Content.creator_id, Content.__type__!='comment', Content.__type__!='draft', Content.status=='show'))
+    Member.content_public = relationship(Content, primaryjoin=and_(Member.id==Content.creator_id, Content.__type__!='comment', Content.__type__!='draft', Content.status=='show', Content.private==False))
     
     Member.content_assignments_active   = relationship(AssignmentContent, primaryjoin=and_(Member.id==AssignmentContent.creator_id, AssignmentContent.due_date>=datetime.datetime.now()))    
     Member.content_assignments_previous = relationship(AssignmentContent, primaryjoin=and_(Member.id==AssignmentContent.creator_id, AssignmentContent.due_date< datetime.datetime.now()))

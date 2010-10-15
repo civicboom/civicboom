@@ -12,6 +12,7 @@ from civicboom.lib.communication.email import send_email
 from civicboom.model      import Message
 from civicboom.model.meta import Session
 from civicboom.lib.database.get_cached import update_member_messages
+from pylons import config
 from pylons.i18n          import lazy_ugettext as _
 from webhelpers.html      import HTML
 
@@ -39,8 +40,12 @@ class MessageData(object):
                 linked[key] = HTML.a(unicode(kwargs[key]), href=kwargs[key].__link__())
             else:
                 linked[key] = HTML.span(unicode(kwargs[key])) # the span here is for security, it does HTML escaping
-        self.subject = unicode(self.subject) % linked
-        self.content = unicode(self.content) % linked
+        if config['feature.notifications']: # Only generate messages if notifications enabled - required to bypass requireing the internationalisation module to be activated
+            self.subject = unicode(self.subject) % linked
+            self.content = unicode(self.content) % linked
+        else:
+            self.subject = u'notification generation diabled'
+            self.content = u'notification generation diabled'
 
 
 generators = [
@@ -95,6 +100,9 @@ def send_message(member, message_data, delay_commit=False):
     """
     private guts to the message system, save and handles propogating the message to different technologies
     """
+    # If notifications not enabled return silently
+    if not config['feature.notifications']:
+        return
 
     # Get propergate settings - what other technologies is this message going to be sent over
     # Attempt to get routing settings from the member's config; if that fails, use the

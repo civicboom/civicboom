@@ -49,7 +49,7 @@ class RegisterController(BaseController):
         """
         registration_template = "/web/account/register.mako"
         
-        c.new_user = get_user(id)
+        c.new_user = get_member(id)
         
         # Validate User
         if c.logged_in_user and c.logged_in_user == c.new_user: # from janrain login
@@ -131,11 +131,11 @@ class RegisterController(BaseController):
         Session.commit()
         
         # Automatically Follow Civicboom
-        follow(get_user('civicboom'), u)
+        follow(get_member('civicboom'), u)
         
         # Follow the refered_by user if they exisits
         if 'refered_by' in request.params:
-            refered_by = get_user(request.params['refered_by'])
+            refered_by = get_member(request.params['refered_by'])
             if follow(refered_by, u) == True:
                 log.debug("message generation not implmented yet")
                 #refered_by.send_message(messages.followed_on_signup(reporter=u)

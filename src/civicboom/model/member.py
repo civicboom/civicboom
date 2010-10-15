@@ -1,6 +1,7 @@
 
 from civicboom.model.meta import Base
 from civicboom.model.message import Message
+from civicboom.lib.misc import update_dict
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
@@ -9,18 +10,27 @@ from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref, dynamic_loader
 
-import urllib, hashlib
+import urllib, hashlib, copy
 
 
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 
+group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
+group_member_status      = Enum("active", "invite", "request",                name="group_member_status")
+
+group_join_mode          = Enum("public", "invite" , "invite_and_request",    name="group_join_mode")
+group_member_visability  = Enum("public", "private",                          name="group_member_visability" )
+group_content_visability = Enum("public", "private",                          name="group_content_visability")
+
+
+
 class GroupMembership(Base):
     __tablename__ = "map_user_to_group"
-    _gmp          = Enum("admin", "normal", "view_only", name="group_membership_permission")
     group_id      = Column(Integer(), ForeignKey('member_group.id'), primary_key=True)
-    member_id     = Column(Integer(), ForeignKey('member.id'), primary_key=True)
-    premissions   = Column(_gmp,      nullable=False, default="normal")
+    member_id     = Column(Integer(), ForeignKey('member.id')      , primary_key=True)
+    role          = Column(group_member_roles , nullable=False, default="contributor")
+    status        = Column(group_member_status, nullable=False, default="active")
 
 class Follow(Base):
     __tablename__ = "map_member_to_follower"
@@ -52,8 +62,8 @@ class Member(Base):
     messages_public       = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id==null()) )
     messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id    ) )
 
-    login_details        = relationship("UserLogin"       , backref=('user'), cascade="all,delete-orphan")
-    groups               = relationship("Group"           , secondary=GroupMembership.__table__)
+    #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
+    groups_roles         = relationship("GroupMembership" , backref="member")
     followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
     following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
@@ -74,7 +84,7 @@ class Member(Base):
 
     _config = None
 
-    __to_dict__ = Base.__to_dict__.copy()
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'list': {
             'id'                : None ,
@@ -83,11 +93,12 @@ class Member(Base):
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
             'location_home'     : lambda content: content.location_home_string ,
+            'num_followers'     : None ,
         },
     })
     
     __to_dict__.update({
-        'single': __to_dict__['list'].copy()
+        'single': copy.deepcopy(__to_dict__['list'])
     })
     __to_dict__['single'].update({
             'num_followers'       : None ,
@@ -97,17 +108,25 @@ class Member(Base):
             'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
             'following'           : lambda member: [m.to_dict() for m in member.following            ] ,
             'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
-            'assignments_accepted': lambda member: [m.to_dict() for m in member.assignments_accepted if m.private==False] ,
-            'content_public'      : lambda member: [m.to_dict() for m in member.content_public       ] ,
+            'assignments_accepted': lambda member: [a.to_dict() for a in member.assignments_accepted if a.private==False] ,
+            'content_public'      : lambda member: [c.to_dict() for c in member.content_public       ] ,
+            'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] ,
+    })
+
+    __to_dict__.update({
+        'actions': copy.deepcopy(__to_dict__['single'])
     })
     
-    __to_dict__.update({
-        'actions': __to_dict__['single'].copy()
-    })
-    __to_dict__['actions'].update({
-            'is_following'        : lambda member: member.is_following(None), #c.logged_in_user
-            'is_follower'         : lambda member: member.is_follower(None), #c.logged_in_user
+    #__to_dict__['actions'].update({
+    #        'is_following'        : lambda member: member.is_following(None), #c.logged_in_user
+    #        'is_follower'         : lambda member: member.is_follower(None), #c.logged_in_user
             #'join' # join group?
+    #})
+    def __to_dict_function_action_list__(member):
+        from pylons import tmpl_context as c
+        return member.action_list_for(c.logged_in_user)
+    __to_dict__['actions'].update({
+            'actions': __to_dict_function_action_list__
     })
 
 
@@ -132,6 +151,16 @@ class Member(Base):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
+    def action_list_for(self, member):
+        action_list = []
+        #if self.can_message(member):
+        #    action_list.append('editable')
+        if self.is_follower(member):
+            action_list.append('unfollow')
+        else:
+            action_list.append('follow')
+        return action_list
+
     def send_message(self, m, delay_commit=False):
         import civicboom.lib.communication.messages as messages
         messages.send_message(self, m, delay_commit)
@@ -146,11 +175,11 @@ class Member(Base):
 
     def follow(self, member):
         from civicboom.lib.database.actions import follow
-        return follow(self,member)
+        return follow(self, member)
         
     def unfollow(self, member):
         from civicboom.lib.database.actions import unfollow
-        return unfollow(self,member)
+        return unfollow(self, member)
 
     def is_follower(self, member):
         if isinstance(member, basestring):
@@ -194,7 +223,9 @@ class User(Member):
     email            = Column(Unicode(250), nullable=True)
     email_unverifyed = Column(Unicode(250), nullable=True)
 
-    __to_dict__ = Member.__to_dict__.copy()
+    login_details    = relationship("UserLogin"       , backref=('user'), cascade="all,delete-orphan")
+
+    __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_user_fields = {
         'location_current' : lambda member: 'not implemented yet' ,
         'location_updated' : None ,
@@ -233,21 +264,117 @@ class User(Member):
         return "http://www.gravatar.com/avatar/%s?%s" % (hash, args)
 
 
-
 class Group(Member):
-    __tablename__    = "member_group"
-    __mapper_args__  = {'polymorphic_identity': 'group'}
-    id               = Column(Integer(), ForeignKey('member.id'), primary_key=True)
-    permissions_join = Column(Enum("open", "invite_only", name="group_permissions_join"), nullable=False, default="open")
-    permissions_view = Column(Enum("open", "members_only", name="group_permissions_view"), nullable=False, default="open")
-    behaviour        = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
-    num_members      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
-    members          = relationship("Member", secondary=GroupMembership.__table__)
+    __tablename__      = "member_group"
+    __mapper_args__    = {'polymorphic_identity': 'group'}
+    id                         = Column(Integer(), ForeignKey('member.id'), primary_key=True)    
+    join_mode                  = Column(group_join_mode         , nullable=False, default="invite")
+    member_visability          = Column(group_member_visability , nullable=False, default="public")
+    default_content_visability = Column(group_content_visability, nullable=False, default="public")
+    #behaviour                  = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
+    default_role               = Column(group_member_roles, nullable=False, default="contributor")
+    # AllanC: TODO - num_mumbers postgress trigger needs updating, we only want to show GroupMembership.status=="active" in the count
+    num_members                = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    #members                    = relationship("Member", secondary=GroupMembership.__table__)
+    members_roles              = relationship("GroupMembership", backref="group")
+    
 
     def __unicode__(self):
         return self.name + " ("+self.username+") (Group)"
 
+    __to_dict__ = copy.deepcopy(Member.__to_dict__)
+    _extra_group_fields = {
+        'join_mode'         : None ,
+        'member_visability' : None ,
+        'content_visability': None ,
+        'default_role'      : None ,
+        'num_members'       : lambda group: group.num_members if group.member_visability=="public" else None ,
+    }
+    __to_dict__['list'   ].update(_extra_group_fields)
+    __to_dict__['single' ].update(_extra_group_fields)
+    __to_dict__['single' ].update({
+        'members'           : lambda group: [update_dict(m.member.to_dict(),{'role':m.role, 'status':m.status}) for m in group.members_roles] if group.member_visability=="public" else None ,
+    })
+    __to_dict__['actions'].update(__to_dict__['single'])
 
+    # Private admin integrity helper - used in set_role and remove_member
+    def _check_last_admin(self, member=None, membership=None):
+        if not membership:
+            membership = self.get_membership(member)
+        if membership.role=="admin" and num_admins<=1:
+            raise action_error('cannot remove last admin', 400)
+    
+    def action_list_for(self, member):
+        action_list = Member.action_list_for(self, member)
+        membership = self.get_membership(member)
+        join = self.can_join(member, membership)
+        if join=="join" or join=="request":
+            action_list.append(join)
+        else:
+            if self.is_admin(member, membership):
+                action_list.append('invite')
+                action_list.append('remove')
+                action_list.append('set_role')
+                if self.num_admins>1:
+                    action_list.append('remove_self')
+                    action_list.append('set_role_self')
+            else:
+                action_list.append('remove_self')
+        return action_list
+
+    @property
+    def num_admins(self):
+        return len([m for m in self.members_roles if m.role=="admin"]) #Count be optimised with Session.query....limit(2).count()?
+
+    def is_admin(self, member, membership=None):
+        if not member:
+            return False
+        if self.username == member.username: #originaly self==member but wasnt sure if SQL alchemy calculates equality, they could have differnt object references
+            return True
+        if not membership:
+            membership = self.get_membership(member)
+        if membership and membership.member_id==member.id and membership.status=="active" and membership.role=="admin":
+            return True
+        return False
+
+    def can_join(self, member, membership=None):
+        if not membership:
+            membership = self.get_membership(member)
+        if not membership:
+            if self.join_mode=="open":
+                return "join"
+            if self.join_mode=="invite_and_request":
+                return "request"
+        elif membership.member_id==member.id and membership.status=="invite":
+            return "join"
+        return False
+
+    def get_membership(self, member):
+        from civicboom.lib.database.get_cached import get_membership
+        return get_membership(self, member)
+
+    def join(self, member, delay_commit=False):
+        from civicboom.lib.database.actions import join_group
+        return join_group(self, member, delay_commit=delay_commit)
+        
+    def remove_member(self, member, delay_commit=False):
+        from civicboom.lib.database.actions import remove_member
+        self._check_last_admin(member) # Check admin integrity
+        return remove_member(self, member, delay_commit=delay_commit)
+    
+    def invite(self, member, role=None, delay_commit=False):
+        from civicboom.lib.database.actions import invite
+        return invite(self, member, role, delay_commit=delay_commit)
+        
+    def set_role(self, member, role, delay_commit=False):
+        from civicboom.lib.database.actions import set_role
+        self._check_last_admin(member) # Check admin integrity
+        return set_role(self, member, role, delay_commit=delay_commit)
+    
+    def delete(self):
+        from civicboom.lib.database.actions import del_group
+        return del_group(self)
+    
 class UserLogin(Base):
     __tablename__    = "member_user_login"
     id          = Column(Integer(),    primary_key=True)

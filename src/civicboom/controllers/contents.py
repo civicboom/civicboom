@@ -166,6 +166,11 @@ class ContentsController(BaseController):
         if not content.editable_by(c.logged_in_user):
             raise action_error(_("You do not have permission to edit this _content"), code=403)
         
+        # AllanC - Publish Permission placeholder for groups
+        #          We need to not only know the current user persona, but also the role of that current persona e.g - might be logged in as EvilCorp but only as a 'contributor' or 'observer'
+        #if 'submit_publish' in request.POST and :
+        #    raise action_error(_("You do not have permission to publish this _content"), code=403)
+        
         # Overlay form data over the current content object or return a new instance of an object
         content = form_to_content(request.params, content) #request.POST
         starting_content_type = content.__type__
@@ -246,7 +251,7 @@ class ContentsController(BaseController):
     @auto_format_output()
     def show(self, id, format='html'):
         """
-        GET /contents/{id}: Show a specific item
+        GET /content/{id}: Show a specific item
 
         @api contents 1.0 (WIP)
 

@@ -36,7 +36,7 @@ class MemberController(BaseController):
             kwargs['list_type'] = 'single'
             
         if id:
-            member = get_user(id)
+            member = get_member(id)
         else:
             member = c.logged_in_user
         if not member:

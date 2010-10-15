@@ -61,6 +61,12 @@ def calculate_age(born):
     if birthday > today: return today.year - born.year - 1
     else               : return today.year - born.year
 
+def update_dict(dict_a, dict_b):
+    """
+    Because dict.update(d) does not return the new dict
+    """
+    dict_a.update(dict_b)
+    return dict_a
 
 def obj_to_dict(obj, dict_fields):
     """

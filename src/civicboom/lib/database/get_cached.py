@@ -1,8 +1,9 @@
-from civicboom.model.member  import User
+from civicboom.model.member  import Member, User, Group, GroupMembership
 from civicboom.model.content import Content, Tag, License
 from civicboom.model.media   import Media
 from civicboom.model.meta    import Session
 
+from sqlalchemy     import and_, or_, not_
 
 #-------------------------------------------------------------------------------
 # Cashe Management - Part 1
@@ -26,25 +27,37 @@ add_etag_dependency_key("member_assignments_active")
 def get_licenses():
     return Session.query(License).all()
 
-def get_user_nocache(user):
-    user = unicode(user) # AllanC - shish suspects that passing an integer may make the DB go mental
+def get_member_nocache(member):
+    member = unicode(member) # AllanC - shish suspects that passing an integer may make the DB go mental
     try:
-        return Session.query(User).filter_by(username=user).one()
+        return Session.query(Member).with_polymorphic('*').filter_by(username=member).one()
     except:
         try:
-            return Session.query(User).filter_by(email=user).one()
+            return Session.query(Member).with_polymorphic('*').filter_by(id=member).one()
         except:
             try:
-                return Session.query(User).filter_by(id=user).one()
+                return Session.query(User).filter_by(email=member).one()
             except:
                 pass
     return None
 
 #@cache_test.cache() #Cache decorator to go here
-def get_user(user):
-    if not user              : return None
-    if isinstance(user, User): return user
-    return get_user_nocache(user)
+def get_member(member):
+    if not member                : return None
+    if isinstance(member, Member): return member
+    return get_member_nocache(member)
+
+def get_group(group):
+    if isinstance(group, Group): return group
+    group = get_member(group)
+    if isinstance(group, Group): return group
+    return None
+
+def get_membership(group, member):
+    try:
+        return Session.query(GroupMembership).filter(and_(GroupMembership.group_id==group.id, GroupMembership.member_id==member.id)).one()
+    except:
+        return None
 
 def get_content_nocache(content_id):
     #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried

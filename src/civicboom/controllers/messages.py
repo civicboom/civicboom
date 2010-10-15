@@ -80,7 +80,7 @@ class MessagesController(BaseController):
         """
         # url('messages')
         try:
-            target = get_user(request.POST["target"])
+            target = get_member(request.POST["target"])
             if not target:
                 # FIXME: form validator to refresh with the same values?
                 raise action_error(_("Can't find user '%s'") % request.POST["target"], code=404)

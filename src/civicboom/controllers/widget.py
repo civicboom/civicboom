@@ -7,7 +7,7 @@ The widget is an HTML iFrame that members can place on there own webpages reflec
 from civicboom.lib.base import *
 
 from civicboom.lib.database.etag_manager import gen_cache_key
-from civicboom.lib.database.get_cached   import get_user, get_content
+from civicboom.lib.database.get_cached   import get_member, get_content
 from civicboom.lib.helpers import url_from_widget
 
 import re
@@ -55,7 +55,7 @@ def setup_widget_env():
         return query_string
     get_widget_varibles_from_env()
     c.widget_query_string = construct_widget_query_string() #construct a new query string based on current widget global variables (this is needed for intercepted signin pages to pass the variables on see widget_signin.mako FORM_ACTION)
-    c.widget_owner        = get_user(c.widget_username)
+    c.widget_owner        = get_member(c.widget_username)
 
 
 #-------------------------------------------------------------------------------

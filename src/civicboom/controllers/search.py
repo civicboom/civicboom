@@ -40,10 +40,7 @@ def _get_search_filters():
     
     def append_search_response_to(query, article_id):
         return query.filter(Content.parent_id==int(article_id))
-        
-    #def append_search_limit(query, limit):
-    #    print "limit"
-    #    return query.limit(limit)
+
     
     search_filters = {
         'creator'    : append_search_creator ,
@@ -51,7 +48,6 @@ def _get_search_filters():
         'location'   : append_search_location ,
         'type'       : append_search_type ,
         'response_to': append_search_response_to ,
-    #    'limit'      : append_search_limit ,
     }
     
     return search_filters
@@ -73,7 +69,7 @@ class SearchController(BaseController):
     @web_params_to_kwargs()
     def content(self, **kwargs):
         
-        results  = Session.query(Content).select_from(join(Content, Member, Content.creator)).filter(and_(Content.__type__!='comment', Content.__type__!='draft')).filter(Content.status=='show').order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
+        results  = Session.query(Content).select_from(join(Content, Member, Content.creator)).filter(and_(Content.__type__!='comment', Content.__type__!='draft', Content.status=='show', Content.private==False)).order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
         
         
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
@@ -123,7 +119,7 @@ class SearchController(BaseController):
             results = results.filter(Content.__type__==t)
         
         if "author" in request.GET:
-            u = get_user(request.GET["author"])
+            u = get_member(request.GET["author"])
             results = results.filter(Content.creator_id==u.id)
         
         if "response_to" in request.GET:
