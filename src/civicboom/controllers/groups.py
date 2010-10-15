@@ -23,11 +23,11 @@ error_unauthorised = action_error(_("you do not have permission access this grou
 class CreateGroupSchema(DefaultSchema):
     name = UniqueUsernameValidator()
 
-def _get_group(id, admin_only=False):
+def _get_group(id, is_admin=False):
     group = get_group(id)
     if not group:
         raise error_not_found
-    if check_admin and not group.is_admin(c.logged_in_user):
+    if is_admin and not group.is_admin(c.logged_in_user):
         raise error_unauthorised
     return group
 
@@ -122,7 +122,7 @@ class GroupsController(BaseController):
         @return 200 - success
         """
         
-        group = _get_group(id, check_admin=True)
+        group = _get_group(id, is_admin=True)
         
 
     @auto_format_output()
@@ -136,7 +136,7 @@ class GroupsController(BaseController):
         @return 403 - lacking permission
         @return 200 - content deleted successfully
         """
-        group = _get_group(id, check_admin=True)
+        group = _get_group(id, is_admin=True)
         group.delete()
         return action_ok(_("group deleted"), code=200)
 
@@ -159,5 +159,5 @@ class GroupsController(BaseController):
         GET /contents/{id}/edit: Form to edit an existing item
         """
         # url('edit_content', id=ID)
-        group = _get_group(id, check_admin=True)
+        group = _get_group(id, is_admin=True)
         return action_ok(data={'group':group.to_dict()})

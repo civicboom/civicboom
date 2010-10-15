@@ -1076,7 +1076,9 @@ CREATE TRIGGER update_content
         
         g.join(u1)
         g.invite(u3)
-        g.set_role(u1,"contributor")
+        g.set_role(u1,"editor")
+        g.join(u4)
+        g.remove_member(u4)
         
 
 
