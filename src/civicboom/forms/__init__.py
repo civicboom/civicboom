@@ -100,7 +100,7 @@ class CustomTemplateEngine(TemplateEngine):
 Content = FieldSet(model.Content)
 Content.engine = CustomTemplateEngine("content")
 Content.configure(include=[
-        Content.creator.with_renderer(create_autocompleter("/members.json?list=search")),
+        Content.creator.with_renderer(create_autocompleter("/members.json?list=all")),
         Content.title,
         Content.status,
         Content.private,
@@ -119,7 +119,7 @@ Content.configure(include=[
 ArticleContent = FieldSet(model.ArticleContent)
 ArticleContent.engine = CustomTemplateEngine("content")
 ArticleContent.configure(include=[
-        ArticleContent.creator.with_renderer(create_autocompleter("/members.json?list=search")),
+        ArticleContent.creator.with_renderer(create_autocompleter("/members.json?list=all")),
         ArticleContent.title,
         ArticleContent.status,
         ArticleContent.private,
@@ -137,7 +137,7 @@ ArticleContent.configure(include=[
 AssignmentContent = FieldSet(model.AssignmentContent)
 AssignmentContent.engine = CustomTemplateEngine("content")
 AssignmentContent.configure(include=[
-        AssignmentContent.creator.with_renderer(create_autocompleter("/members.json?list=search")),
+        AssignmentContent.creator.with_renderer(create_autocompleter("/members.json?list=all")),
         AssignmentContent.title,
         AssignmentContent.status,
         AssignmentContent.private,
@@ -155,7 +155,7 @@ AssignmentContent.configure(include=[
 DraftContent = FieldSet(model.DraftContent)
 DraftContent.engine = CustomTemplateEngine("content")
 DraftContent.configure(include=[
-        DraftContent.creator.with_renderer(create_autocompleter("/members.json?list=search")),
+        DraftContent.creator.with_renderer(create_autocompleter("/members.json?list=all")),
         DraftContent.title,
         DraftContent.status,
         DraftContent.private,
@@ -173,7 +173,7 @@ DraftContent.configure(include=[
 CommentContent = FieldSet(model.CommentContent)
 CommentContent.engine = CustomTemplateEngine("comment")
 CommentContent.configure(include=[
-        CommentContent.creator.with_renderer(create_autocompleter("/members.json?list=search")),
+        CommentContent.creator.with_renderer(create_autocompleter("/members.json?list=all")),
         CommentContent.title,
         CommentContent.parent,
         CommentContent.content,
