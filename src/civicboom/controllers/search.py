@@ -169,7 +169,7 @@ class SearchController(BaseController):
             connection = get_engine().connect()
             query = """
                 SELECT name, ST_AsText(way) AS location, place
-                FROM planet_osm_point
+                FROM osm_point
                 WHERE
                     name ILIKE %s
                     AND place IS NOT NULL -- IN ('city')
