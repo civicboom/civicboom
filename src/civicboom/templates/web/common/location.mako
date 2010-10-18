@@ -70,7 +70,7 @@ $(function() {
 </div>
 </%def>
 
-<%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13, auto=False)">
+<%def name="minimap(name='map', width='250px', height='250px', lon=None, lat=None, zoom=13)">
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 <script src="http://openlayers.org/api/OpenLayers.js"></script>
 <script src="/javascript/mxn/mxn.js"></script>
@@ -81,9 +81,10 @@ $(function() {
 <script type="text/javascript">
 $(function() {
 	${name} = new mxn.Mapstraction("${name}_div", "openlayers");
-	${name}.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
 	${name}.addControls({pan: false, zoom: false, map_type: false});
-% if auto:
+% if lat and lon:
+	${name}.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
+% else:
 	function show_map(position) {
 		var latitude = position.coords.latitude;
 		var longitude = position.coords.longitude;
