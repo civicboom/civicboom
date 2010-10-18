@@ -31,7 +31,7 @@
 
     % if d['action']=='edit' and 'group' in d:
         ## Editing Form
-        ${h.form(h.url('group', id=d['group']['id']), method='put')}
+        ${h.form(h.url('group', id=d['group']['id'], format='redirect'), method='put')}
     % else:
         ## Creating Form
         ${h.form(h.url('groups', ), method='post')}
@@ -40,8 +40,14 @@
     ##${d}
     
     <fieldset><legend>Group</legend>
-        Groupname:<input type="text" name="username" value="${get_param('username')}"/>
-        ${show_error('username')}
+        
+        Groupname:
+        % if d['action'] == "create":
+            <input type="text" name="username" value="${get_param('username')}"/>
+            ${show_error('username')}
+        % else:
+            ${get_param('username')}
+        % endif
         
         Full Name:<input type="text" name="name" value="${get_param('name')}"/>
         ${show_error('name')}
@@ -52,7 +58,7 @@
         <br/>
         
         ${_("default member role")}
-        ${h.html.select('default_member_role', get_param('default_role'), group_member_roles.enums)}
+        ${h.html.select('default_role', get_param('default_role'), group_member_roles.enums)}
         ${show_error('default_role')}
         
         <br/>
@@ -69,9 +75,9 @@
         
         <br/>
         
-        ${_("content visability")}
-        ${h.html.select('content_visability', get_param('content_visability'), group_content_visability.enums)}
-        ${show_error('content_visability')}
+        ${_("default content visability")}
+        ${h.html.select('default_content_visability', get_param('default_content_visability'), group_content_visability.enums)}
+        ${show_error('default_content_visability')}
         
     </fieldset>
     
