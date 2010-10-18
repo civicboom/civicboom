@@ -1,9 +1,13 @@
 from civicboom.lib.base import *
 
-from civicboom.model.member import Group, GroupMembership
+from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visability, group_content_visability
 from civicboom.lib.form_validators.base import DefaultSchema
 from civicboom.lib.form_validators.registration import UniqueUsernameValidator
 from civicboom.lib.misc import update_dict
+from civicboom.lib.form_validators.dict_overlay import overlay_errors
+
+import formencode
+
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -20,16 +24,53 @@ error_unauthorised = action_error(_("you do not have permission access this grou
 # Form Schema
 #-------------------------------------------------------------------------------
 
-class CreateGroupSchema(DefaultSchema):
-    name = UniqueUsernameValidator()
+class GroupSchema(DefaultSchema):
+    name                = formencode.validators.String(max=255, min=2               , not_empty=False)
+    description         = formencode.validators.String(max=255, min=2               , not_empty=False)
+    default_role        = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
+    join_mode           = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
+    member_visability   = formencode.validators.OneOf(group_member_visability.enums , not_empty=False)
+    content_visability  = formencode.validators.OneOf(group_content_visability.enums, not_empty=False)
+
+class CreateGroupSchema(GroupSchema):
+    username            = UniqueUsernameValidator()
+
+
+#-------------------------------------------------------------------------------
+# Global Functions
+#-------------------------------------------------------------------------------
 
 def _get_group(id, is_admin=False):
+    """
+    Shortcut to return a group and raise not found or permission exceptions automatically (as these are common opertations every time a group is fetched)
+    """
     group = get_group(id)
     if not group:
         raise error_not_found
     if is_admin and not group.is_admin(c.logged_in_user):
         raise error_unauthorised
     return group
+
+def validate_group_dict(group_dict, schema, action='create'):
+    """
+    When groups are created or edited the form contents need to be validated
+    """
+    # Convert kwargs and form post to dict for overlaying
+    group = {}
+    for key in group_dict.keys():
+        group[key] = {
+            'name' : key,
+            'value': group_dict[key]
+        }
+    
+    try:                                                # Try validation
+        #schema = CreateGroupSchema()                    #   Build schema
+        return schema.to_python(dict(group_dict))         #   Validate
+    except formencode.Invalid, error:                   # Form has failed validation
+        group['missing'] = []
+        overlay_errors(error, group.values(), group['missing'])
+        return {'status':'error', 'message':'failed validation', 'data': {'group':group, 'action':action}, 'template':'groups/edit'}
+        #raise action_error(message="unable to create group", data=kwargs)
 
 
 #-------------------------------------------------------------------------------
@@ -71,18 +112,11 @@ class GroupsController(BaseController):
         @return 201 - content created, data.id = new content id
         """
         # url('contents') + POST
-        
-        try:                                                # Try validation
-            schema = CreateGroupSchema()                    #   Build schema
-            form   = schema.to_python(dict(kwargs))         #   Validate
-        except formencode.Invalid, error:                   # Form has failed validation
-            form        = error.value                       #   Setup error vars
-            form_errors = error.error_dict or {}            #   
-            raise action_error(message="unable to create group")
+        form = validate_group_dict(kwargs, CreateGroupSchema(), action='create')
         
         group              = Group()
-        group.name         = form['name']
-        group.status       = 'show'
+        group.username     = form['username']
+        group.status       = 'active'
         group_admin        = GroupMembership()
         group_admin.member = c.logged_in_user
         group_admin.role   = "admin"
@@ -121,9 +155,23 @@ class GroupsController(BaseController):
         @return 403 - lacking permission to edit
         @return 200 - success
         """
-        
         group = _get_group(id, is_admin=True)
         
+        group_dict = group.to_dict('single')
+        group_dict.update(kwargs)
+        form = validate_group_dict(group_dict, GroupSchema(), action='edit')
+        
+        group.name                = form['name']
+        group.description         = form['description']
+        group.default_role        = form['default_role']
+        group.join_mode           = form['join_mode']
+        group.member_visability   = form['member_visability']
+        group.content_visability  = form['content_visability']
+        
+        Session.commit()
+        
+        return action_ok(message=_('group updated ok'), data={'group':group.to_dict(), 'action':'edit'})
+
 
     @auto_format_output()
     @authorize(is_valid_user)
@@ -160,4 +208,4 @@ class GroupsController(BaseController):
         """
         # url('edit_content', id=ID)
         group = _get_group(id, is_admin=True)
-        return action_ok(data={'group':group.to_dict()})
+        return action_ok(data={'group':group.to_dict(), 'action':'edit'})
