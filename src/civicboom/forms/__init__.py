@@ -50,10 +50,10 @@ $('#%(name)s_name').autocomplete({
     source: function(req, respond) {
         // translate from CB-API formatted data ('response')
         // to jQueryUI formatted ('suggestions')
-        $.getJSON("%(url)s?", req, function(response) {
+        $.getJSON("%(url)s&", req, function(response) {
             var suggestions = [];
             $.each(response.data.members, function(i, val) {
-                suggestions.push({"label": val.description, "value": val.id});
+                suggestions.push({"label": val.name+" ("+val.username+")", "value": val.id});
             });
             respond(suggestions);
         });
@@ -100,7 +100,7 @@ class CustomTemplateEngine(TemplateEngine):
 Content = FieldSet(model.Content)
 Content.engine = CustomTemplateEngine("content")
 Content.configure(include=[
-        Content.creator.with_renderer(create_autocompleter("/search/member.json")),
+        Content.creator.with_renderer(create_autocompleter("/members.json?list=search")),
         Content.title,
         Content.status,
         Content.private,
@@ -119,7 +119,7 @@ Content.configure(include=[
 ArticleContent = FieldSet(model.ArticleContent)
 ArticleContent.engine = CustomTemplateEngine("content")
 ArticleContent.configure(include=[
-        ArticleContent.creator.with_renderer(create_autocompleter("/search/member.json")),
+        ArticleContent.creator.with_renderer(create_autocompleter("/members.json?list=search")),
         ArticleContent.title,
         ArticleContent.status,
         ArticleContent.private,
@@ -137,7 +137,7 @@ ArticleContent.configure(include=[
 AssignmentContent = FieldSet(model.AssignmentContent)
 AssignmentContent.engine = CustomTemplateEngine("content")
 AssignmentContent.configure(include=[
-        AssignmentContent.creator.with_renderer(create_autocompleter("/search/member.json")),
+        AssignmentContent.creator.with_renderer(create_autocompleter("/members.json?list=search")),
         AssignmentContent.title,
         AssignmentContent.status,
         AssignmentContent.private,
@@ -155,7 +155,7 @@ AssignmentContent.configure(include=[
 DraftContent = FieldSet(model.DraftContent)
 DraftContent.engine = CustomTemplateEngine("content")
 DraftContent.configure(include=[
-        DraftContent.creator.with_renderer(create_autocompleter("/search/member.json")),
+        DraftContent.creator.with_renderer(create_autocompleter("/members.json?list=search")),
         DraftContent.title,
         DraftContent.status,
         DraftContent.private,
@@ -173,7 +173,7 @@ DraftContent.configure(include=[
 CommentContent = FieldSet(model.CommentContent)
 CommentContent.engine = CustomTemplateEngine("comment")
 CommentContent.configure(include=[
-        CommentContent.creator.with_renderer(create_autocompleter("/search/member.json")),
+        CommentContent.creator.with_renderer(create_autocompleter("/members.json?list=search")),
         CommentContent.title,
         CommentContent.parent,
         CommentContent.content,

@@ -168,10 +168,11 @@ class SearchController(BaseController):
             q = request.GET["term"]
             connection = get_engine().connect()
             query = """
-                SELECT name, ST_AsText(location) AS location, type
-                FROM places
+                SELECT name, ST_AsText(way) AS location, place
+                FROM planet_osm_point
                 WHERE
                     name ILIKE %s
+                    AND place IS NOT NULL -- IN ('city')
                     AND ST_DWithin(location, 'SRID=4326;POINT(-3 54)', 10)
                 LIMIT 20
             """;
@@ -181,17 +182,3 @@ class SearchController(BaseController):
 
         json_rows = [{"name":row.name, "location":row.location, "type":row.type} for row in result]
         return action_ok(data={"locations":json_rows})
-
-
-    @auto_format_output()
-    def member(self, format="html"):
-        if "term" in request.GET:
-            s = request.GET["term"]
-            q = Session.query(Member)
-            q = q.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
-            result = q[0:20]
-        else:
-            result = []
-
-        json_rows = [{"id":row.id, "name":row.name, "username":row.username, "avatar":row.avatar, "description":str(row)} for row in result]
-        return action_ok(data={"members":json_rows})
