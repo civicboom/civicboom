@@ -881,6 +881,7 @@ CREATE TRIGGER update_content
         ca2.creator    = u2
         ca2.status     = "show"
         ca2.license_id = cc_by.id
+        ca2.location   = "SRID=4326;POINT(-0.1178328 51.5072648)"
         ca2.tags       = [open_source, the_moon_loc]
 
         Session.add(ca2); Session.commit();
@@ -966,6 +967,7 @@ CREATE TRIGGER update_content
         c.content    = u"this is here to test that the logged in user can delete their own articles with DELETE"
         c.creator    = u1
         c.status     = "show"
+        c.location   = "SRID=4326;POINT(-0.1278328 51.5102648)"
         c.license_id = cc_by.id
 
         Session.add(c); Session.commit();
