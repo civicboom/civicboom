@@ -7,7 +7,7 @@ Pre-Depends: python, python-cbmisc(>=0.3.18-75),
  python-psycopg2, python-imaging, python-boto, python-authkit, python-memcache,
  python-nose, python-coverage, python-dns, python-recaptcha, python-decorator,
  python-lxml, python-pybabel,
- ffmpeg,
+ ffmpeg, osm2pgsql,
  nginx, memcached,
  postgresql-8.4, postgresql-8.4-postgis
 Description: The code for the main civicboom website rewrite

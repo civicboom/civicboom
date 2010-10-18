@@ -70,17 +70,31 @@ $(function() {
 </div>
 </%def>
 
-<%def name="minimap(name='map', width='250px', height='250px', lon=1.08, lat=51.28, zoom=13)">
+<%def name="minimap(name='map', width='250px', height='250px', lon=None, lat=None, zoom=13)">
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
-<script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
-<script type="text/javascript" src="/javascript/mxn/mxn.js"></script>
-<script type="text/javascript" src="/javascript/mxn/mxn.core.js"></script>
-<script type="text/javascript" src="/javascript/mxn/mxn.openlayers.core.js"></script>
+<script src="http://openlayers.org/api/OpenLayers.js"></script>
+<script src="/javascript/mxn/mxn.js"></script>
+<script src="/javascript/mxn/mxn.core.js"></script>
+<script src="/javascript/mxn/mxn.openlayers.core.js"></script>
+<script src="/javascript/gears_init.js"></script>
+<script src="/javascript/geo.js"></script>
 <script type="text/javascript">
 $(function() {
 	${name} = new mxn.Mapstraction("${name}_div", "openlayers");
-	${name}.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
 	${name}.addControls({pan: false, zoom: false, map_type: false});
+% if lat and lon:
+	${name}.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
+% else:
+	function show_map(position) {
+		var latitude = position.coords.latitude;
+		var longitude = position.coords.longitude;
+		${name}.setCenter(new mxn.LatLonPoint(latitude, longitude));
+		// FIXME: setCenterAndZoom(position.coords.accuracy)
+	}
+	if(geo_position_js.init()){
+	   geo_position_js.getCurrentPosition(show_map);
+	}
+% endif
 });
 </script>
 </%def>
