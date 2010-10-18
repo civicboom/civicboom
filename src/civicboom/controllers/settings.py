@@ -18,6 +18,7 @@ import civicboom.lib.form_validators
 import civicboom.lib.form_validators.base
 import civicboom.lib.form_validators.registration
 from   civicboom.lib.form_validators.validator_factory import build_schema
+from   civicboom.lib.form_validators.dict_overlay import overlay_errors
 
 from civicboom.lib.civicboom_lib import set_password
 
@@ -136,7 +137,7 @@ class SettingsController(BaseController):
     #---------------------------------------------------------------------------
     @auto_format_output()
     @authorize(is_valid_user)
-    def edit(self, id, format=None):
+    def edit(self, id):
         """GET /id;edit: Form to edit an existing item."""
         
         # Generate base settings dictonary for ALL settings or SINGLE ID provided
@@ -170,7 +171,7 @@ class SettingsController(BaseController):
         - Saves update
         - Returns written object
         """
-        edit_action = call_action(self.edit, id, format='python') #self.edit(id, format='python')
+        edit_action = call_action(self.edit, id=id, format='python') #self.edit(id, format='python')
         settings    = edit_action['data']
         user        = c.logged_in_user
         
@@ -194,28 +195,8 @@ class SettingsController(BaseController):
                 schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
             form   = schema.to_python(dict(request.params)) # Validate
         except formencode.Invalid, error:
-            # Form has failed validation
-            form        = error.value
-            form_errors = error.error_dict or {}
-            
-            # Set error property for each failed property
-            for setting in settings_list():
-                setting_fieldname = setting['name']                            # For each setting
-                if setting_fieldname in form:                                  #   If in form 
-                    setting['value'] = form[setting_fieldname]                 #     populate value with form data
-                if setting_fieldname in form_errors:                           #   If error
-                    e = form_errors[setting_fieldname]                         #     
-                    del form_errors[setting_fieldname]                         #     delete error object (so we can see if any are outstanding/missing at the end)
-                    if hasattr(e,'msg'): e = e.msg                             #     append error
-                    setting['error'] = e                                       #
-            
-            # Report any missing fields (anything that is left in error.error_dict)
-            if len(form_errors) > 0:
-                settings['missing'] = []
-                for missing_fieldname in form_errors.keys():
-                    e = form_errors[missing_fieldname]
-                    if hasattr(e,'msg') : e = e.msg
-                    settings['missing'].append({'name':missing_fieldname, 'description':missing_fieldname, 'error':e, 'value':''})
+            settings['missing'] = []
+            overlay_errors(error, settings_list(), settings['missing']) # Overlays error fields over the returned dict
             
             # Set error status
             edit_action['status']  = 'error'

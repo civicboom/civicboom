@@ -176,7 +176,8 @@ def _find_template(result, type='html'):
 
     #If the result status is not OK then use the template for that status
     if result.get('status', 'ok') != 'ok':
-        result['template'] = "%s" % result['status']
+        #result['template'] = "%s" % result['status']
+        pass
 
     if result.get('template'):
         template_part = result.get('template')               # Attempt to get template named in result
@@ -308,7 +309,7 @@ def auto_format_output():
                     raise
                 else:
                     result = ae.original_dict
-
+                
             # After
             # Is result a dict with data?
             if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
@@ -420,6 +421,10 @@ def web_params_to_kwargs():
     def my_decorator(target):
         def wrapper(target, *args, **kwargs):
             kwargs.update(request.params) # Update the kwargs
+            exclude_fields = ['pylons', 'environ','start_response']
+            for exclude_field in exclude_fields:
+                if exclude_field in kwargs:
+                    del kwargs[exclude_field]
             result = target(*args, **kwargs) # Execute the wrapped function
             return result
         return decorator(wrapper)(target) # Fix the wrappers call signiture

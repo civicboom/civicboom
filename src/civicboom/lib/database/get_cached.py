@@ -29,12 +29,12 @@ def get_licenses():
 
 def get_member_nocache(member):
     assert type(member) in [int, str, unicode]
-    if type(member) == int:
-        try:
-            return Session.query(Member).with_polymorphic('*').filter_by(id=member).one()
-        except:
-            pass
-    else:
+    #if type(member) == int:
+    try:
+        return Session.query(Member).with_polymorphic('*').filter_by(id=int(member)).one()
+    except:
+        #pass
+    #else:
         try:
             return Session.query(Member).with_polymorphic('*').filter_by(username=member).one()   
         except:
