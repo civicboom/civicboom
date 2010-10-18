@@ -43,20 +43,20 @@ class MembersController(BaseController):
         @api members 1.0 (WIP)
 
         @param list    type of list to get
-               search  search the list
-        @param term    if list=search, term is the text to search for
+               all     all members (useful with "term")
+        @param term    filter results
 
         @return 200      list ok
                 members  array of member objects
         """
         result = []
 
-        if request.params.get('list') == "search":
-            if "term" in request.GET:
-                s = request.GET["term"]
-                q = Session.query(Member)
-                q = q.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
-                result = q[0:20]
+        if request.params.get('list', "all") == "all":
+            result = Session.query(Member)
+
+        if "term" in request.GET:
+            s = request.GET["term"]
+            result = result.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
 
         return action_ok(data={"members": [m.to_dict('list') for m in result]})
 
