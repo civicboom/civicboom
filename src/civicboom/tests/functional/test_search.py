@@ -65,24 +65,3 @@ class TestSearchController(TestController):
     def test_location_no_results(self):
         response = self.app.get(url(controller='search', action='location', format="json", term="waffleville"))
         assert "Canterbury" not in response
-
-
-    ##########################################################################
-    # Location search
-    ##########################################################################
-
-    def test_member_page(self):
-        response = self.app.get(url(controller='search', action='member'))
-
-    def test_member_name_results(self):
-        response = self.app.get(url(controller='search', action='member', format="json", term="mr"))
-        assert "Mr U. Test" in response
-
-    def test_member_username_results(self):
-        response = self.app.get(url(controller='search', action='member', format="json", term="unit"))
-        assert "Mr U. Test" in response
-
-    def test_member_no_results(self):
-        response = self.app.get(url(controller='search', action='member', format="json", term="waffleville"))
-        assert "Mr" not in response
-
