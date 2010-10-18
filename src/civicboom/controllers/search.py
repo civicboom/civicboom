@@ -173,12 +173,12 @@ class SearchController(BaseController):
                 WHERE
                     name ILIKE %s
                     AND place IS NOT NULL -- IN ('city')
-                    AND ST_DWithin(location, 'SRID=4326;POINT(-3 54)', 10)
+                    AND ST_DWithin(way, 'SRID=4326;POINT(-3 54)', 10)
                 LIMIT 20
             """;
             result = connection.execute(query, [q+"%", ])
         else:
             result = []
 
-        json_rows = [{"name":row.name, "location":row.location, "type":row.type} for row in result]
+        json_rows = [{"name":row.name, "location":row.location, "type":row.place} for row in result]
         return action_ok(data={"locations":json_rows})
