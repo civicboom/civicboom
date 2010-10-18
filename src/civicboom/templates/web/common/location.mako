@@ -70,31 +70,45 @@ $(function() {
 </div>
 </%def>
 
-<%def name="minimap(name='map', width='250px', height='250px', lon=None, lat=None, zoom=13)">
+<%def name="minimap(name='map', width='250px', height='250px', lon=None, lat=None, zoom=13, feeds=[])">
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 <script src="http://openlayers.org/api/OpenLayers.js"></script>
-<script src="/javascript/mxn/mxn.js"></script>
-<script src="/javascript/mxn/mxn.core.js"></script>
-<script src="/javascript/mxn/mxn.openlayers.core.js"></script>
 <script src="/javascript/gears_init.js"></script>
 <script src="/javascript/geo.js"></script>
 <script type="text/javascript">
 $(function() {
-	${name} = new mxn.Mapstraction("${name}_div", "openlayers");
-	${name}.addControls({pan: false, zoom: false, map_type: false});
-% if lat and lon:
-	${name}.setCenterAndZoom(new mxn.LatLonPoint(${lat}, ${lon}), ${zoom});
+	${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto', controls:[]});
+	${name}.addLayer(new OpenLayers.Layer.OSM("OpenLayers OSM"));
+% if lon and lat:
+	${name}.setCenter(
+		new OpenLayers.LonLat(${lon}, ${lat}).transform(
+			new OpenLayers.Projection("EPSG:4326"),
+			${name}.getProjectionObject()
+		),
+		${zoom}
+	);
 % else:
 	function show_map(position) {
 		var latitude = position.coords.latitude;
 		var longitude = position.coords.longitude;
-		${name}.setCenter(new mxn.LatLonPoint(latitude, longitude));
+		${name}.setCenter(
+			new OpenLayers.LonLat(longitude, latitude).transform(
+				new OpenLayers.Projection("EPSG:4326"),
+				${name}.getProjectionObject()
+			)
+		);
 		// FIXME: setCenterAndZoom(position.coords.accuracy)
 	}
 	if(geo_position_js.init()){
 	   geo_position_js.getCurrentPosition(show_map);
 	}
 % endif
+	/* ${name}.addControl(new OpenLayers.Control.LayerSwitcher()); */
+% for feed in feeds:
+	var pin  = new OpenLayers.Icon("/images/pins/${feed['pin']}.png", new OpenLayers.Size(21,25));
+	var newl = new OpenLayers.Layer.GeoRSS( 'GeoRSS', '${feed['url']}', {'icon': pin});
+	${name}.addLayer(newl);
+% endfor
 });
 </script>
 </%def>
