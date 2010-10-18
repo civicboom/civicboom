@@ -49,14 +49,14 @@ class MembersController(BaseController):
         @return 200      list ok
                 members  array of member objects
         """
+        result = []
+
         if request.params.get('list') == "search":
             if "term" in request.GET:
                 s = request.GET["term"]
                 q = Session.query(Member)
                 q = q.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
                 result = q[0:20]
-            else:
-                result = []
 
         return action_ok(data={"members": [m.to_dict('list') for m in result]})
 
