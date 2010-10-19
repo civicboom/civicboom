@@ -30,14 +30,14 @@ class TestMessagesController(TestController):
     ## new -> create #########################################################
 
     def test_new(self):
-        response = self.app.get(url('new_message'))
+        response = self.app.get(url('new_message', format='json'))
 
     def test_new_frag(self):
         response = self.app.get(url('formatted_new_message', format='frag'))
 
     def test_create(self):
         response = self.app.post(
-            url('messages'),
+            url('messages', format='json'),
             params={
                 '_authentication_token': self.auth_token,
                 'target': 'unittest',

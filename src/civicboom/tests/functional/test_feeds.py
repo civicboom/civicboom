@@ -21,7 +21,7 @@ class TestFeedsController(TestController):
 
     def test_update(self):
         response = self.app.put(
-            url('feed', id=1),
+            url('feed', id=1, format='json'),
             params={
                 "name": "new name from put",
             }
@@ -29,7 +29,7 @@ class TestFeedsController(TestController):
 
     def test_update_browser_fakeout(self):
         response = self.app.post(
-            url('feed', id=1),
+            url('feed', id=1, format='json'),
             params={
                 "_method": 'put',
                 "name": "update from fakeout",
@@ -37,10 +37,10 @@ class TestFeedsController(TestController):
         )
 
     def test_delete(self):
-        response = self.app.delete(url('feed', id=2))
+        response = self.app.delete(url('feed', id=2, format='json'))
 
     def test_delete_browser_fakeout(self):
-        response = self.app.post(url('feed', id=3), params=dict(_method='delete'))
+        response = self.app.post(url('feed', id=3, format='json'), params=dict(_method='delete'))
 
     def test_show(self):
         response = self.app.get(url('feed', id=1))
