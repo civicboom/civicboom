@@ -35,9 +35,8 @@ IMG.avatar {
 
 <%def name="body()">
 	% if len(d['list']) > 0:
-    <%doc>
 		<br><a href="${url.current(
-			format='xml',
+			format='rss',
 			query=request.params.get('query'),
 			location=request.params.get('location')
 		)}">RSS feed of results</a>
@@ -52,7 +51,7 @@ IMG.avatar {
 				location=request.params.get('location')
 			)
 		)}">View results on map</a>
-    </%doc>
+
 		<p>${cl.content_list(d['list'])}
 	% else:
 		##'${d['term']}' did not match any articles
