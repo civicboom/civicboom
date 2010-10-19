@@ -27,7 +27,6 @@ class TestSearchController(TestController):
         response = self.app.get(url(controller='search', action='content', format="json", query='someone'))
         assert "A test article by someone else" in response
         assert "Friend" in response
-        assert "0 responses" in response
 
     def test_content_no_results(self):
         response = self.app.get(url(controller='search', action='content', query='cake'))
