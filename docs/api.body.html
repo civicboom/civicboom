@@ -43,7 +43,7 @@ may prefer /messages/42.json or /messages/42.xml
 <p>JSON data format:
 <pre>
 {
-    "status": "ok" / "error",                              (required)
+    "status": "ok" / "error" / "invalid",                  (required)
     "message": "string to show in app status bar / popup", (string or None, should be there if status = error)
     "data": {                                              (required; blank dictionary if there is no data)
         "foo": "bar", # function-specific data
