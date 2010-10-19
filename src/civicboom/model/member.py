@@ -301,7 +301,7 @@ class Group(Member):
     def _check_last_admin(self, member=None, membership=None):
         if not membership:
             membership = self.get_membership(member)
-        if membership.role=="admin" and num_admins<=1:
+        if membership and membership.role=="admin" and num_admins<=1:
             raise action_error('cannot remove last admin', 400)
     
     def action_list_for(self, member):

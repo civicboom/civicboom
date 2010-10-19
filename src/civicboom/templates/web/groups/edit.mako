@@ -31,13 +31,13 @@
 
     % if d['action']=='edit' and 'group' in d:
         ## Editing Form
-        ${h.form(h.url('group', id=d['group']['id'], format='redirect'), method='put')}
+        ${h.form(h.url('group', id=get_param('id')), method='put')}
     % else:
         ## Creating Form
         ${h.form(h.url('groups', ), method='post')}
     % endif
 
-    ##${d}
+    ${d}
     
     <fieldset><legend>Group</legend>
         

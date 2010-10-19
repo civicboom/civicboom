@@ -105,12 +105,12 @@ def action_ok(message=None, data={}, code=200, template=None):
     }
 
 class action_error(Exception):
-    def __init__(self, message=None, data={}, code=500, template=None):
+    def __init__(self, message=None, data={}, code=500, template=None, status='error'):
         assert not message or isinstance(message, basestring)
         assert isinstance(data, dict)
         assert isinstance(code, int)
         self.original_dict = {
-            "status" : "error",
+            "status" : status,
             "message": message,
             "data"   : data,
             "code"   : code,
@@ -175,9 +175,8 @@ def _find_template(result, type='html'):
             type = 'mobile'
 
     #If the result status is not OK then use the template for that status
-    if result.get('status', 'ok') != 'ok':
-        #result['template'] = "%s" % result['status']
-        pass
+    if result.get('status', 'ok') == 'error':
+        result['template'] = "%s" % result['status']
 
     if result.get('template'):
         template_part = result.get('template')               # Attempt to get template named in result
@@ -309,7 +308,7 @@ def auto_format_output():
                     raise
                 else:
                     result = ae.original_dict
-                
+            
             # After
             # Is result a dict with data?
             if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
