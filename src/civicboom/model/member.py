@@ -282,6 +282,11 @@ class Group(Member):
     def __unicode__(self):
         return self.name + " ("+self.username+") (Group)"
 
+    @property
+    def num_admins(self):
+        return len([m for m in self.members_roles if m.role=="admin"]) #Count be optimised with Session.query....limit(2).count()?
+
+
     __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_group_fields = {
         'join_mode'                 : None ,
@@ -301,8 +306,9 @@ class Group(Member):
     def _check_last_admin(self, member=None, membership=None):
         if not membership:
             membership = self.get_membership(member)
-        if membership and membership.role=="admin" and num_admins<=1:
-            raise action_error('cannot remove last admin', 400)
+        if membership and membership.role=="admin" and self.num_admins<=1:
+            from civicboom.lib.web import action_error
+            raise action_error('cannot remove last admin', code=400)
     
     def action_list_for(self, member):
         action_list = Member.action_list_for(self, member)
@@ -315,6 +321,7 @@ class Group(Member):
                 action_list.append('invite')
                 action_list.append('remove')
                 action_list.append('set_role')
+                action_list.append('edit')
                 if self.num_admins>1:
                     action_list.append('remove_self')
                     action_list.append('set_role_self')
@@ -322,9 +329,6 @@ class Group(Member):
                 action_list.append('remove_self')
         return action_list
 
-    @property
-    def num_admins(self):
-        return len([m for m in self.members_roles if m.role=="admin"]) #Count be optimised with Session.query....limit(2).count()?
 
     def is_admin(self, member, membership=None):
         if not member:
@@ -341,7 +345,7 @@ class Group(Member):
         if not membership:
             membership = self.get_membership(member)
         if not membership:
-            if self.join_mode=="open":
+            if self.join_mode=="public":
                 return "join"
             if self.join_mode=="invite_and_request":
                 return "request"

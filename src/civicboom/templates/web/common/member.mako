@@ -15,7 +15,7 @@
 ## Member Avatar - display a member as text/image + link to profile + follow actions
 ##------------------------------------------------------------------------------
 
-<%def name="avatar(member, show_avatar=True, show_name=False, show_follow_button=False, class_=None)">
+<%def name="avatar(member, show_avatar=True, show_name=False, show_follow_button=False, show_join_button=False, show_invite_button=False, class_=None)">
     <div class="${class_} avatar">
 		% if show_avatar:
 		<div class="clipper">
@@ -45,6 +45,12 @@
             % else:
             ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _('Follow')        , css_class="button_small button_small_style_1")}
             % endif
+        % endif
+        % if show_join_button:
+            ${h.secure_link(url('group_action', action='join'     , id=member['id']       , member=c.logged_in_user.username), _('Join')        , css_class="button_small button_small_style_1")}
+        % endif
+        % if show_invite_button and c.logged_in_user and c.logged_in_user.__type__=='group':
+            ${h.secure_link(url('group_action', action='invite'   , id=c.logged_in_user.id, member=member['username']       ), _('Invite')      , css_class="button_small button_small_style_1")}
         % endif
     </div>
 </%def>

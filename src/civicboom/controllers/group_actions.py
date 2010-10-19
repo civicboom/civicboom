@@ -28,7 +28,7 @@ class GroupActionsController(BaseController):
 
         # Check permissions
         if not group.can_join(c.logged_in_user):
-            raise action_error(_('current user cannot join this group'), 403)
+            raise action_error(_('current user cannot join this group'), code=403)
         
         # Join action
         join_status = group.join(c.logged_in_user)
@@ -37,7 +37,7 @@ class GroupActionsController(BaseController):
         elif join_status == "request":
             return action_ok(_('join request sent'))
             
-        raise action_error(_('unable to join %s' % group.username), 500)
+        raise action_error(_('unable to join %s' % group.username), code=500)
 
 
     #---------------------------------------------------------------------------
@@ -47,18 +47,21 @@ class GroupActionsController(BaseController):
     @web_params_to_kwargs()
     @authorize(is_valid_user)
     @authenticate_form
-    def remove_member(self, id, member=None, **kwargs):
+    def remove_member(self, id, **kwargs):
         """
+        
         """
+        member = kwargs.get('member', None)
+        
         group  = _get_group(id)
         member = get_member(member)
         # permissions check
         if member!=c.logged_in_user and not group.is_admin(c.logged_in_user):
-            raise action_error('current user has no permissions for this group', 403)
+            raise action_error('current user has no permissions for this group', code=403)
         # remove action
         if group.remove_member(member):
             return action_ok(message='member removed sucessfully')
-        raise action_error('unable to remove member', 500)
+        raise action_error('unable to remove member', code=500)
 
 
     #---------------------------------------------------------------------------
@@ -68,7 +71,7 @@ class GroupActionsController(BaseController):
     @web_params_to_kwargs()
     @authorize(is_valid_user)
     @authenticate_form
-    def invite(self, id, member=None, role=None, **kwargs):
+    def invite(self, id, **kwargs):
         """
         Invite a member to join this groups
         (only if current user has admin role in group)
@@ -81,10 +84,13 @@ class GroupActionsController(BaseController):
         
         @return 200 - invite sent ok
         """
-        group = _get_group(id, check_admin=True)
+        member = kwargs.get('member', None)
+        role   = kwargs.get('role'  , None)        
+        
+        group = _get_group(id, is_admin=True)
         if group.invite(member, role):
-            return action_ok(_('member invited ok'))
-        raise action_error('unable to invite member', 500)
+            return action_ok(_('%{member}s has been invited to join %{group}s' % {'member':member, 'group':group.name}))
+        raise action_error('unable to invite member', code=500)
     
     
     #---------------------------------------------------------------------------
@@ -94,7 +100,7 @@ class GroupActionsController(BaseController):
     @web_params_to_kwargs()
     @authorize(is_valid_user)
     @authenticate_form
-    def set_role(self, id, member=None, role=None, **kwargs):
+    def set_role(self, id, **kwargs):
         """
         (only if current user has admin role in group)
         
@@ -102,7 +108,10 @@ class GroupActionsController(BaseController):
         
         return 200 - role set ok
         """
-        group = _get_group(id, check_admin=True)
+        member = kwargs.get('member', None)
+        role   = kwargs.get('role'  , None)
+        
+        group = _get_group(id, is_admin=True)
         if group.set_role(member, role):
             return action_ok(_('role set successfully'))
-        raise action_error('unable to set role', 500)
+        raise action_error('unable to set role', code=500)
