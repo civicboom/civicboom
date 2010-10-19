@@ -25,9 +25,6 @@ from civicboom.lib.helpers          import call_action
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
-error_not_found = action_error(_("_content not found"), code=404)
-
-
 
 index_lists = {
     'content'             : lambda member: member.content ,
@@ -164,7 +161,7 @@ class ContentsController(BaseController):
         content = get_content(id)
         
         if not content:
-            raise error_not_found
+            raise action_error(_("_content not found"), code=404)
         
         if not content.editable_by(c.logged_in_user):
             raise action_error(_("You do not have permission to edit this _content"), code=403)
@@ -245,7 +242,7 @@ class ContentsController(BaseController):
         # url('content', id=ID)
         content = get_content(id)
         if not content:
-            raise error_not_found
+            raise action_error(_("_content not found"), code=404)
         if not content.editable_by(c.logged_in_user):
             raise action_error(_("your current user does not have the permissions to delete this _content"), code=403)
         content.delete()
@@ -274,10 +271,10 @@ class ContentsController(BaseController):
         
         # Check content is visable
         if not content:
-            raise error_not_found
+            raise action_error(_("_content not found"), code=404)
         if content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
-            raise error_not_found
+            raise action_error(_("_content not found"), code=404)
         if not content.viewable_by(c.logged_in_user): 
             raise action_error(_("_content not viewable"), code=403)
         
@@ -308,7 +305,7 @@ class ContentsController(BaseController):
         
         c.content = get_content(id)
         if not c.content:
-            raise error_not_found
+            raise action_error(_("_content not found"), code=404)
         
         c.content                  = form_to_content(request.params, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)
