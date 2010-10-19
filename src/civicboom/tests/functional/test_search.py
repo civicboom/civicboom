@@ -20,6 +20,7 @@ class TestSearchController(TestController):
     def test_content_results_rss(self):
         response = self.app.get(url(controller='search', action='content', format="rss", query='someone'))
         assert "A test article by someone else" in response
+        assert "Friend" in response
 
     def test_content_results_json(self):
         response = self.app.get(url(controller='search', action='content', format="json", query='someone'))

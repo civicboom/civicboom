@@ -8,6 +8,7 @@
     <pubDate>Tue, 25 Oct 2005 15:42:32 -0700</pubDate> 
     <guid isPermaLink="false">Civicboom Content #${content['id']}</guid>
     <category>${content['tags']}</category>
+    <dc:creator>${content['creator']['name']} (${content['creator']['username']})</dc:creator>
     ##
     % if 'attachments' in content:
         % for media in content['attachments']:
