@@ -194,9 +194,6 @@ def _find_template(result, type='html'):
             template = None
             type     = type_fallback[type]
 
-    if not template:
-        log.warn("Can't find template")
-
     return template
 
 
@@ -321,7 +318,7 @@ def auto_format_output():
             if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
                 
                 if c.format=='html' and not _find_template(result):
-                    log.warning("Format HTML with no template")
+                    log.warning("Format HTML with no template for %s/%s" % (c.controller, c.action))
                     c.format='xml' #If format HTML and no template supplied fall back to XML
                 
                 # set the HTTP status code
