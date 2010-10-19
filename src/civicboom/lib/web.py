@@ -206,18 +206,16 @@ def setup_format_processors():
         
     def format_json(result):
         response.headers['Content-type'] = "application/json"
-        if 'template' in result:
-            del result['template']
-        if 'code' in result:
-            del result['code']
+        for n in result:
+            if n not in ['status', 'message', 'data']:
+                del result[n]
         return json.dumps(result)
         
     def format_xml(result):
         response.headers['Content-type'] = "text/xml"
-        if 'template' in result:
-            del result['template']
-        if 'code' in result:
-            del result['code']
+        for n in result:
+            if n not in ['status', 'message', 'data']:
+                del result[n]
         return dictToXMLString(result)
         
     def format_rss(result):
