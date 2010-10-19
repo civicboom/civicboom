@@ -5,6 +5,8 @@
 <%
 try:
 	location = [float(n) for n in request.params.get("location").split(",")]
+	if len(location) != 3:
+		raise ValueError("location needs 3 parts")
 except:
 	location = [-1.0, 53.0, 5.0]
 %>
