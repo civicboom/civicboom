@@ -11,4 +11,4 @@ class TestMobileController(TestController):
         pass
 
     def test_error(self):
-        response = self.app.get(url(controller='mobile', action='error'))
+        response = self.app.get(url(controller='mobile', action='error', format="json"))
