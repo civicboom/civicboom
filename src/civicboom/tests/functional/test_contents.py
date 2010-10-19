@@ -149,7 +149,7 @@ class TestContentsController(TestController):
 
     def test_can_update_own_article(self):
         response = self.app.put(
-            url('content', id=1),
+            url('content', id=1, format='json'),
             params={
                 '_authentication_token': self.auth_token
             }
@@ -157,7 +157,7 @@ class TestContentsController(TestController):
 
     def test_update_browser_fakeout(self):
         response = self.app.post(
-            url('content', id=1),
+            url('content', id=1, format='json'),
             params={
                 "_method": 'put',
                 '_authentication_token': self.auth_token
