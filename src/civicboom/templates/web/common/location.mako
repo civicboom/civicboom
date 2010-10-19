@@ -70,14 +70,18 @@ $(function() {
 </div>
 </%def>
 
-<%def name="minimap(name='map', width='250px', height='250px', lon=None, lat=None, zoom=13, feeds=[])">
+<%def name="minimap(name='map', width='250px', height='250px', lon=None, lat=None, zoom=13, feeds=[], controls=False)">
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 <script src="http://openlayers.org/api/OpenLayers.js"></script>
 <script src="/javascript/gears_init.js"></script>
 <script src="/javascript/geo.js"></script>
 <script type="text/javascript">
 $(function() {
+% if controls:
+	${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto'});
+% else:
 	${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto', controls:[]});
+% endif
 	${name}.addLayer(new OpenLayers.Layer.OSM("OpenLayers OSM"));
 % if lon and lat:
 	${name}.setCenter(
