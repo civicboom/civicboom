@@ -206,14 +206,14 @@ def setup_format_processors():
         
     def format_json(result):
         response.headers['Content-type'] = "application/json"
-        for n in result:
+        for n in list(result):
             if n not in ['status', 'message', 'data']:
                 del result[n]
         return json.dumps(result)
         
     def format_xml(result):
         response.headers['Content-type'] = "text/xml"
-        for n in result:
+        for n in list(result):
             if n not in ['status', 'message', 'data']:
                 del result[n]
         return dictToXMLString(result)
