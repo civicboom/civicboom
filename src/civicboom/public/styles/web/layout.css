@@ -123,7 +123,7 @@ BODY>DIV#app {
 	border: 1px solid black;
 }
 #col_main {
-	border: 1px solid black;
+	/*border: 1px solid black;*/
 }
 #col_left  ~ #col_main { margin-left:  296px; }
 #col_right ~ #col_main { margin-right: 296px; }
