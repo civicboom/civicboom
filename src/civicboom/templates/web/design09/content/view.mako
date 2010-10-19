@@ -173,10 +173,18 @@ r = (d['content']['rating'] * 5)
 
 <%def name="col_right()">
     % if d['content'].get('location'):
+<%
+lat = d['content']['location'].split(' ')[0]
+lon = d['content']['location'].split(' ')[1]
+%>
       <p>${loc.minimap(
           width="100%", height="200px",
           lat = d['content']['location'].split(' ')[0],
           lon = d['content']['location'].split(' ')[1],
+          feeds = [
+              dict(pin='yellow',  url='/search/content.rss?location='+lon+','+lat   ),
+              dict(pin='red',     url='/search/content.rss?id='+d['content']['id']  )
+		  ]
       )}</p>
     % endif
   

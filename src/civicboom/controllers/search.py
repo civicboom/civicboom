@@ -29,6 +29,9 @@ def _get_search_filters():
         else:
             return query
     
+    def append_search_id(query, id):
+        return query.filter(Content.id==int(id))
+
     def append_search_type(query, type_text):
         return query.filter(Content.__type__==type_text)
     
@@ -43,6 +46,7 @@ def _get_search_filters():
 
     
     search_filters = {
+        'id'         : append_search_id ,
         'creator'    : append_search_creator ,
         'query'      : append_search_text ,
         'location'   : append_search_location ,
