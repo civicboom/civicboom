@@ -39,26 +39,43 @@
     % if d['group']['member_visability']=="private" and not d['group']['members']:
         <p>members are private</p>
     % else:
-        <ul>
-        % for member in d['group']['members']:
-            <li>
-                ${member['name']} (${member['username']}) [${member['role']}]
-                % if permission_set_role:
-                    ${h.form(h.url('group_action', id=d['group']['id'], action='set_role'), method='post')}
-                        <input type="hidden" name="member" value="${member['username']}"/>
-                        ${h.html.select('role', member['role'], group_member_roles.enums)}
-                        <input type="submit" name="submit" value="${_('Set role')}"/>
-                    ${h.end_form()}
-                % endif
-                % if c.logged_in_user and (c.logged_in_user.username == member['username'] and permission_remove_self) or (c.logged_in_user.username != member['username'] and permission_remove):
-                    ${h.form(h.url('group_action', id=d['group']['id'], action='remove_member'), method='post')}
-                        <input type="hidden" name="member" value="${member['username']}"/>
-                        <input type="submit" name="submit" value="${_('Remove')}"/>
-                    ${h.end_form()}
-                % endif
-            </li>
+        <%
+            member_status = ['active', 'invite', 'request']
+            members = {}
+            for status in member_status:
+                members[status] = [member for member in d['group']['members'] if member['status']==status]
+                #[a.to_dict() for a in member.assignments_accepted if a.private==False]
+        %>
+        % for status in member_status:
+            % if len(members[status])>0:
+                <h3>${status}</h3>
+                <ul>
+                % for member in members[status]:
+                    <li>
+                        ${member['name']} (${member['username']}) [${member['role']}]
+                        % if permission_set_role:
+                            ${h.form(h.url('group_action', id=d['group']['id'], action='set_role'), method='post')}
+                                <input type="hidden" name="member" value="${member['username']}"/>
+                                % if member['status']=='active':
+                                        ${h.html.select('role', member['role'], group_member_roles.enums)}
+                                        <input type="submit" name="submit" value="${_('Set role')}"/>
+                                % elif member['status']=='request':
+                                        <input type="hidden" name="role"   value=""/>
+                                        <input type="submit" name="submit" value="${_('Accept join request')}"/>
+                                % endif
+                            ${h.end_form()}
+                        % endif
+                        % if c.logged_in_user and (c.logged_in_user.username == member['username'] and permission_remove_self) or (c.logged_in_user.username != member['username'] and permission_remove):
+                            ${h.form(h.url('group_action', id=d['group']['id'], action='remove_member'), method='post')}
+                                <input type="hidden" name="member" value="${member['username']}"/>
+                                <input type="submit" name="submit" value="${_('Remove')}"/>
+                            ${h.end_form()}
+                        % endif
+                    </li>
+                % endfor
+                </ul>
+            % endif
         % endfor
-        </ul>
     % endif
     
     <h2>Followers</h2>

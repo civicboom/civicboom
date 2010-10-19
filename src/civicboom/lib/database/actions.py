@@ -214,7 +214,7 @@ def set_role(group, member, role, delay_commit=False):
     group      = get_group(group)
     member     = get_member(member)
     membership = get_membership(group, member)
-    role       = role or group.default_role
+    role       = role or membership.role or group.default_role
     
     if not group:
         raise action_error(_('unable to find group'), code=404)
