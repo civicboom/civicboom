@@ -224,7 +224,7 @@ def setup_format_processors():
         return dictToXMLString(result)
         
     def format_rss(result):
-        response.headers['Content-type'] = "application/rss+xml"
+        response.headers['Content-type'] = "application/rss+xml; charset=utf-8"
         return render_template(result, 'rss')
     
     def format_frag(result):
