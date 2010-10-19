@@ -5,7 +5,7 @@ class TestContentsController(TestController):
     ## index -> show #########################################################
 
     def test_index(self):
-        response = self.app.get(url('contents'))
+        response = self.app.get(url('contents', format="json"))
         # Test response...
 
     def test_index_as_xml(self):
