@@ -208,16 +208,23 @@ def setup_format_processors():
         return render_mako(_find_template(result, type), extra_vars={"d": c.result['data']} )
         
     def format_json(result):
-        #response.headers['Content-type'] = "application/json" #AllanC - Is this fixed now? - this used to break the error middleware when returning error codes like 403, long term this needs to be fixed
+        response.headers['Content-type'] = "application/json"
+        if 'template' in result:
+            del result['template']
+        if 'code' in result:
+            del result['code']
         return json.dumps(result)
         
     def format_xml(result):
         response.headers['Content-type'] = "text/xml"
+        if 'template' in result:
+            del result['template']
+        if 'code' in result:
+            del result['code']
         return dictToXMLString(result)
         
     def format_rss(result):
-        #response.headers['Content-type'] = "application/rss+xml"
-        #response.headers['Content-type'] = "text/xml"
+        response.headers['Content-type'] = "application/rss+xml"
         return render_template(result, 'rss')
     
     def format_frag(result):
