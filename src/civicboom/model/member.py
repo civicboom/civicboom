@@ -286,6 +286,11 @@ class Group(Member):
     def num_admins(self):
         return len([m for m in self.members_roles if m.role=="admin"]) #Count be optimised with Session.query....limit(2).count()?
 
+    def __to_dict_function_members__(group):
+        from pylons import tmpl_context as c
+        if group.member_visability=="public" or group.get_membership(c.logged_in_user):
+            return [update_dict(m.member.to_dict(),{'role':m.role, 'status':m.status}) for m in group.members_roles]
+        return None
 
     __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_group_fields = {
@@ -298,9 +303,12 @@ class Group(Member):
     __to_dict__['list'   ].update(_extra_group_fields)
     __to_dict__['single' ].update(_extra_group_fields)
     __to_dict__['single' ].update({
-        'members'           : lambda group: [update_dict(m.member.to_dict(),{'role':m.role, 'status':m.status}) for m in group.members_roles] if group.member_visability=="public" else None ,
+        #'members'           : lambda group: [update_dict(m.member.to_dict(),{'role':m.role, 'status':m.status}) for m in group.members_roles] if group.member_visability=="public" else None ,
+        'members'           : __to_dict_function_members__ , 
     })
     __to_dict__['actions'].update(__to_dict__['single'])
+
+
 
     # Private admin integrity helper - used in set_role and remove_member
     def _check_last_admin(self, member=None, membership=None):

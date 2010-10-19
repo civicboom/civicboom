@@ -36,29 +36,33 @@
     <h2>Members</h2>
     ##${member_includes.member_list(d['group']['members'], show_avatar=False, show_name=True, class_="avatar_thumbnail_list")}
     
-    <ul>
-    % for member in d['group']['members']:
-        <li>
-            ${member['name']} (${member['username']}) [${member['role']}]
-            % if permission_set_role:
-                ${h.form(h.url('group_action', id=d['group']['id'], action='set_role'), method='post')}
-                    <input type="hidden" name="member" value="${member['username']}"/>
-                    ${h.html.select('role', member['role'], group_member_roles.enums)}
-                    <input type="submit" name="submit" value="${_('Set role')}"/>
-                ${h.end_form()}
-            % endif
-            % if c.logged_in_user and (c.logged_in_user.username == member['username'] and permission_remove_self) or (c.logged_in_user.username != member['username'] and permission_remove):
-                ${h.form(h.url('group_action', id=d['group']['id'], action='remove_member'), method='post')}
-                    <input type="hidden" name="member" value="${member['username']}"/>
-                    <input type="submit" name="submit" value="${_('Remove')}"/>
-                ${h.end_form()}
-            % endif
-        </li>
-    % endfor
-    </ul>
+    % if d['group']['member_visability']=="private" and not d['group']['members']:
+        <p>members are private</p>
+    % else:
+        <ul>
+        % for member in d['group']['members']:
+            <li>
+                ${member['name']} (${member['username']}) [${member['role']}]
+                % if permission_set_role:
+                    ${h.form(h.url('group_action', id=d['group']['id'], action='set_role'), method='post')}
+                        <input type="hidden" name="member" value="${member['username']}"/>
+                        ${h.html.select('role', member['role'], group_member_roles.enums)}
+                        <input type="submit" name="submit" value="${_('Set role')}"/>
+                    ${h.end_form()}
+                % endif
+                % if c.logged_in_user and (c.logged_in_user.username == member['username'] and permission_remove_self) or (c.logged_in_user.username != member['username'] and permission_remove):
+                    ${h.form(h.url('group_action', id=d['group']['id'], action='remove_member'), method='post')}
+                        <input type="hidden" name="member" value="${member['username']}"/>
+                        <input type="submit" name="submit" value="${_('Remove')}"/>
+                    ${h.end_form()}
+                % endif
+            </li>
+        % endfor
+        </ul>
+    % endif
     
     <h2>Followers</h2>
-    ${member_includes.member_list(d['group']['followers'], show_avatar=False, show_name=True, class_="avatar_thumbnail_list")}
+    ${member_includes.member_list(d['group']['followers'], show_avatar=False, show_name=True)}
 
 
 </%def>
