@@ -2,16 +2,20 @@
 <%namespace name="loc" file="/web/common/location.mako" />
 <%def name="title()">${_("GeoRSS Viewer")}</%def>
 
-% try:
-	<% location = request.params.get("location", "0,53,4").split(",") %>
-	<p>${loc.minimap(
-		width="100%", height="600px",
-		lat = location[0],
-		lon = location[1],
-		feeds = [
-			dict(pin='red', url='/search/content.rss')
-		]
-	)}</p>
-% except:
-	<span class="error">${_("Error decoding location")} "${request.params.get("location", "")}"</span>
-% endtry
+<%
+try:
+	location = [float(n) for n in request.params.get("location").split(",")]
+except:
+	location = [-1.0, 53.0, 5.0]
+%>
+
+<p>${loc.minimap(
+	width="100%", height="600px",
+	lon = location[0],
+	lat = location[1],
+	zoom = location[2],
+	feeds = [
+		dict(pin='red', url='/search/content.rss')
+	],
+	controls = True
+)}</p>
