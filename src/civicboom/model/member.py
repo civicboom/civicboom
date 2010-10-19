@@ -284,11 +284,11 @@ class Group(Member):
 
     __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_group_fields = {
-        'join_mode'         : None ,
-        'member_visability' : None ,
-        'content_visability': None ,
-        'default_role'      : None ,
-        'num_members'       : lambda group: group.num_members if group.member_visability=="public" else None ,
+        'join_mode'                 : None ,
+        'member_visability'         : None ,
+        'default_content_visability': None ,
+        'default_role'              : None ,
+        'num_members'               : lambda group: group.num_members if group.member_visability=="public" else None ,
     }
     __to_dict__['list'   ].update(_extra_group_fields)
     __to_dict__['single' ].update(_extra_group_fields)
@@ -301,7 +301,7 @@ class Group(Member):
     def _check_last_admin(self, member=None, membership=None):
         if not membership:
             membership = self.get_membership(member)
-        if membership.role=="admin" and num_admins<=1:
+        if membership and membership.role=="admin" and num_admins<=1:
             raise action_error('cannot remove last admin', 400)
     
     def action_list_for(self, member):
