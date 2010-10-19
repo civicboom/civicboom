@@ -37,7 +37,7 @@
         ${h.form(h.url('groups', ), method='post')}
     % endif
 
-    ${d}
+    ##${d}
     
     <fieldset><legend>Group</legend>
         

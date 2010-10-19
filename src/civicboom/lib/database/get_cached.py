@@ -56,6 +56,7 @@ def get_group(group):
     return None
 
 def get_membership(group, member):
+    member = get_member(member)
     try:
         return Session.query(GroupMembership).filter(and_(GroupMembership.group_id==group.id, GroupMembership.member_id==member.id)).one()
     except:

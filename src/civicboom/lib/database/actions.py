@@ -42,11 +42,11 @@ def follow(follower, followed, delay_commit=False):
     follower = get_member(follower)
     
     if not followed:
-        raise action_error(_('unable to find followed'), 404)
+        raise action_error(_('unable to find followed'), code=404)
     if not follower:
-        raise action_error(_('unable to find follower'), 404)    
+        raise action_error(_('unable to find follower'), code=404)
     if followed in follower.following:
-        raise action_error(_('already following'), 400)
+        raise action_error(_('already following'), code=400)
     
     follower.following.append(followed)
         
@@ -65,11 +65,11 @@ def unfollow(follower,followed, delay_commit=False):
     follower = get_member(follower)
     
     if not followed:
-        raise action_error(_('unable to find followed'), 404)
+        raise action_error(_('unable to find followed'), code=404)
     if not follower:
-        raise action_error(_('unable to find follower'), 404)    
+        raise action_error(_('unable to find follower'), code=404)
     if followed not in follower.following:
-        raise action_error(_('not currently following'), 400)
+        raise action_error(_('not currently following'), code=400)
     
     follower.following.remove(followed)
         
@@ -96,9 +96,9 @@ def join_group(group, member, delay_commit=False):
     membership = get_membership(group, member)
     
     if not group:
-        raise action_error(_('unable to find group'), 404)
+        raise action_error(_('unable to find group'), code=404)
     if not member:
-        raise action_error(_('unable to find member to add'), 404)
+        raise action_error(_('unable to find member to add'), code=404)
     # AllanC - join permissions moved to controller
 
         
@@ -138,11 +138,11 @@ def remove_member(group, member, delay_commit=False):
     membership = get_membership(group, member)
     
     if not group:
-        raise action_error(_('unable to find group'), 404)
+        raise action_error(_('unable to find group'), code=404)
     if not member:
-        raise action_error(_('unable to find member'), 404)
+        raise action_error(_('unable to find member'), code=404)
     if not membership:
-        raise action_error(_('not a member of group'), 400)
+        raise action_error(_('not a member of group'), code=400)
     # AllanC - permissions moved to controller
     #if member!=c.logged_in_user and not group.is_admin(c.logged_in_user):
     #    raise action_error('current user has no permissions for this group', 403)
@@ -180,13 +180,13 @@ def invite(group, member, role, delay_commit=False):
     role       = role or group.default_role
     
     if not group:
-        raise action_error(_('unable to find group'), 404)
+        raise action_error(_('unable to find group'), code=404)
     if not member:
-        raise action_error(_('unable to find member'), 404)
+        raise action_error(_('unable to find member'), code=404)
     if membership:
-        raise action_error(_('already a member of group'), 400)
+        raise action_error(_('already a member of group'), code=400)
     if role not in group_member_roles.enums:
-        raise action_error('not a valid role', 400)
+        raise action_error('not a valid role', code=400)
     # AllanC - permissions moved to controller
     #if not group.is_admin(c.logged_in_user):
     #    raise action_error(_('no permissions for this group'), 403)
@@ -217,13 +217,13 @@ def set_role(group, member, role, delay_commit=False):
     role       = role or group.default_role
     
     if not group:
-        raise action_error(_('unable to find group'), 404)
+        raise action_error(_('unable to find group'), code=404)
     if not member:
-        raise action_error(_('unable to find member'), 404)
+        raise action_error(_('unable to find member'), code=404)
     if not membership:
-        raise action_error(_('not a member of group'), 400)
+        raise action_error(_('not a member of group'), code=400)
     if role not in group_member_roles.enums:
-        raise action_error('not a valid role', 400)
+        raise action_error('not a valid role', code=400)
     # AllanC - permisions moved to controller
     #if not group.is_admin(c.logged_in_user):
     #    raise action_error(_('no permissions for this group'), 403)
@@ -275,13 +275,13 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     assignment = get_content(assignment)
 
     if not member:
-        raise action_error(_("cant find user"), 404)
+        raise action_error(_("cant find user"), code=404)
     if not assignment:
-        raise action_error(_("cant find assignment"), 404)
+        raise action_error(_("cant find assignment"), code=404)
     if not issubclass(assignment.__class__,AssignmentContent):
-        raise action_error(_("only _assignments can be accepted"), 400)
+        raise action_error(_("only _assignments can be accepted"), code=400)
     if assignment_previously_accepted_by(assignment, member):
-        raise action_error(_('_assignment has been previously accepted and cannot be accepted again'), 400)
+        raise action_error(_('_assignment has been previously accepted and cannot be accepted again'), code=400)
     
     assignment_accepted        = MemberAssignment()
     assignment.assigned_to.append(assignment_accepted)
@@ -305,9 +305,9 @@ def withdraw_assignemnt(assignment, member, delay_commit=False):
     assignment = get_content(assignment)
     
     if not member:
-        raise action_error(_("cant find user"), 404)
+        raise action_error(_("cant find user"), code=404)
     if not assignment:
-        raise action_error(_("cant find assignment"), 404)
+        raise action_error(_("cant find assignment"), code=404)
     
     try:
         assignment_accepted = Session.query(MemberAssignment).filter_by(member_id=member.id, content_id=assignment.id, status="accepted").one()
