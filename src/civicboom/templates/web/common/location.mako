@@ -83,7 +83,7 @@ $(function() {
 	${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto', controls:[]});
 % endif
 	${name}.addLayer(new OpenLayers.Layer.OSM("OpenLayers OSM"));
-% if lon and lat:
+% if lon != None and lat != None:
 	${name}.setCenter(
 		new OpenLayers.LonLat(${lon}, ${lat}).transform(
 			new OpenLayers.Projection("EPSG:4326"),
