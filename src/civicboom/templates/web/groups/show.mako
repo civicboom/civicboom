@@ -4,12 +4,6 @@
 <%namespace name="content_includes" file="/web/common/content_list.mako" />
 
 
-##<%def name="col_left()">
-##</%def>
-
-##<%def name="col_right()">
-##</%def>
-
 <%def name="body()">
 
     <%
@@ -25,7 +19,7 @@
     ${member_includes.avatar(d['group'] , show_name=True, show_follow_button=True, show_join_button=show_join_button)}
     
     
-    <h2>deatails</h2>
+    <h2>details</h2>
     <p>full name ${d['group']['name']}</p>
     <p>default_role ${d['group']['default_role']}</p>
     <p>member_visability ${d['group']['member_visability']}</p>
@@ -34,11 +28,11 @@
     
     
     <h2>Members</h2>
-    ##${member_includes.member_list(d['group']['members'], show_avatar=False, show_name=True, class_="avatar_thumbnail_list")}
     
     % if d['group']['member_visability']=="private" and not d['group']['members']:
         <p>members are private</p>
     % else:
+        ## members are public
         <%
             member_status = ['active', 'invite', 'request']
             members = {}
