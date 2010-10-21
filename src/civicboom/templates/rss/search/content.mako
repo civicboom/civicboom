@@ -16,6 +16,8 @@ from datetime import datetime
 % if 'attachments' in content:
 	% for media in content['attachments']:
 	## http://video.search.yahoo.com/mrss
+<!-- having both types of attachment means that it shows up twice in RSS readers; do we need both? -->
+<!--
 	<media:content url="${media['media_url']}" fileSize="${media['filesize']}" type="${media['type']}/${media['subtype']}" expression="full">
 		<media:thumbnail url="${media['thumbnail_url']}" />
 		<media:title     type="plain"                 >${media['caption']}</media:title>
@@ -39,6 +41,7 @@ from datetime import datetime
 		</media:location>
 	% endif
 	</media:content>
+-->
 	##
 	## Standard RSS 2.0 Media enclosure
 	<enclosure url="${media['media_url']}" length="${media['filesize']}" type="${media['type']}/${media['subtype']}" />
