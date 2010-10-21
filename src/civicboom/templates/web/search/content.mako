@@ -46,7 +46,7 @@ IMG.avatar {
 			action='georss',
 			location=request.params.get('location'),
 			feed=url.current(
-				format='xml',
+				format='rss',
 				query=request.params.get('query'),
 				location=request.params.get('location')
 			)

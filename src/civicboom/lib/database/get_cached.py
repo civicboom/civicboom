@@ -46,14 +46,18 @@ def get_member_nocache(member):
 
 #@cache_test.cache() #Cache decorator to go here
 def get_member(member):
-    if not member                : return None
-    if isinstance(member, Member): return member
+    if not member:
+        return None
+    if isinstance(member, Member):
+        return member
     return get_member_nocache(member)
 
 def get_group(group):
-    if isinstance(group, Group): return group
+    if isinstance(group, Group):
+        return group
     group = get_member(group)
-    if isinstance(group, Group): return group
+    if isinstance(group, Group):
+        return group
     return None
 
 def get_membership(group, member):
@@ -73,9 +77,11 @@ def get_content_nocache(content_id):
     except: return None
 
 def get_content(content):
-    if not content: return None
+    if not content:
+        return None
     #if content is Content object or a subclass: return content
-    if issubclass(content.__class__,Content): return content
+    if issubclass(content.__class__,Content):
+        return content
     return get_content_nocache(content)
 
 

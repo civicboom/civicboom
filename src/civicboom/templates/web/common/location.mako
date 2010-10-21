@@ -78,12 +78,12 @@ $(function() {
 <script type="text/javascript">
 $(function() {
 % if controls:
-	${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto'});
+	var ${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto'});
 % else:
-	${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto', controls:[]});
+	var ${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto', controls:[]});
 % endif
 	${name}.addLayer(new OpenLayers.Layer.OSM("OpenLayers OSM"));
-% if lon and lat:
+% if lon != None and lat != None:
 	${name}.setCenter(
 		new OpenLayers.LonLat(${lon}, ${lat}).transform(
 			new OpenLayers.Projection("EPSG:4326"),
@@ -111,6 +111,9 @@ $(function() {
 % for feed in feeds:
 	var pin  = new OpenLayers.Icon("/images/pins/${feed['pin']}.png", new OpenLayers.Size(21,25));
 	var newl = new OpenLayers.Layer.GeoRSS( 'GeoRSS', '${feed['url']}', {'icon': pin});
+	% if 'focus' in feed and feed['focus'] == True:
+		newl.events.on({'loadend': function() {${name}.zoomToExtent(newl.getDataExtent());}});
+	% endif
 	${name}.addLayer(newl);
 % endfor
 });

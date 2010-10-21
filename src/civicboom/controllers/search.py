@@ -78,7 +78,9 @@ class SearchController(BaseController):
         @param offset
         """
         
-        results  = Session.query(Content).select_from(join(Content, Member, Content.creator)).filter(and_(Content.__type__!='comment', Content.__type__!='draft', Content.status=='show', Content.private==False)).order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
+        results = Session.query(Content).select_from(join(Content, Member, Content.creator))
+        results = results.filter(and_(Content.__type__!='comment', Content.__type__!='draft', Content.status=='show', Content.private==False))
+        results = results.order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
         
         
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
@@ -98,53 +100,10 @@ class SearchController(BaseController):
             results = search_filters[key](results, kwargs[key])
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
-        #kwargs['list_type'], include_fields=kwargs['include_fields'], exclude_fields=kwargs['exclude_fields']
         return action_ok(data={'list': [content.to_dict(**kwargs) for content in results.all()]}) # return dictionaty of content to be formatted
-        
-        """
-        if "query" in request.GET:
-            q = request.GET["query"]
-            results = results.filter(or_(Content.title.match(q), Content.content.match(q)))
-        else:
-            q = None
-        
-        if "location" in request.GET:
-            location = request.GET["location"]
-            parts = location.split(",")
-            (lon, lat, radius) = (None, None, None)
-            if len(parts) == 2:
-                (lon, lat) = parts
-                radius = 10
-            elif len(parts) == 3:
-                (lon, lat, radius) = parts
-            zoom = 10 # FIXME: inverse of radius? see bug #50
-            if lon:
-                location = (lon, lat, zoom)
-                results = results.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
-        else:
-            location = None
-        
-        if "type" in request.GET:
-            t = request.GET["type"]
-            results = results.filter(Content.__type__==t)
-        
-        if "author" in request.GET:
-            u = get_member(request.GET["author"])
-            results = results.filter(Content.creator_id==u.id)
-        
-        if "response_to" in request.GET:
-            cid = int(request.GET["response_to"])
-            results = results.filter(Content.parent_id==cid)
-        
-        results = results[0:20]
-        
-        
-        if format == "xml":
-            return render("/rss/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
-        else:
-            return render("/search/content.mako", extra_vars={"term":q, "location":location, "results":results})
-        """
-        
+
+
+
 
     @auto_format_output()
     def content2(self, format="html"):

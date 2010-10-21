@@ -201,3 +201,16 @@ class ContentActionsController(BaseController):
         _get_content(id).flag(member=c.logged_in_user, type=kwargs['type'], comment=kwargs['comment'])
         return action_ok(_("An administrator has been alerted to this content"))
         #raise action_error(_("Error flaging content, please email us"))
+
+    @auto_format_output()
+    def comments(self, id):
+        """
+        POST /contents/{id}/comments: Get a list of comments on the article
+        
+        @api contents 1.0 (WIP)
+        
+        @return list  the list of comments
+        """
+        content = _get_content(id, is_viewable=True)
+        return action_ok(data={'list': [c.to_dict() for c in content.comments]})
+

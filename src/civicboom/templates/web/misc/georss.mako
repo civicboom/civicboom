@@ -11,13 +11,13 @@ except:
 	location = [-1.0, 53.0, 5.0]
 %>
 
-<p>${loc.minimap(
+${loc.minimap(
 	width="100%", height="600px",
 	lon = location[0],
 	lat = location[1],
 	zoom = location[2],
 	feeds = [
-		dict(pin='red', url='/search/content.rss')
+		dict(pin='red', url=request.params.get('feed', '/search/content.rss'), focus=True)
 	],
 	controls = True
-)}</p>
+)}
