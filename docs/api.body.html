@@ -57,12 +57,30 @@ may prefer /messages/42.json or /messages/42.xml
 
 <section>
 <h3>Common List Return Controls</h3>
-<pre>
-placeholder - needs documenting/formating properly
-	@param exclude_fields    - ommit fields from the return object e.g "exclude_fields=avatar_url,location_home" will ommit the fields avatar_url and location_home form the returned list
-	@param include_fields    - fields to include in return object e.g "include_field=followers,username,name,webpage,content_public". Often used in conjection with list_type=empty to build a custom return object
-	@param list_type         - default 'default'. permitted values (empty, default, full, full+actions): empty=no fields (to be used with include_fields to build a custom object) default(basic)=object_fields. full(a single item)=object+links. full+actions=object+links+actions(current user can perform)
-</pre>
+<p>Calls to objects/ or objects/id will return an object or a list of objects</p>
+<p>The fields returned by these calls can be customised by passing the following paramiters:</p>
+<ul>
+    <li>
+        <p>list_type: default='default'</p>
+        <p>Permitted Values</p>
+        <ul>
+        <li>'empty' = no fields (to be used with include_fields to build a custom object)</li>
+        <li>'default' = object fields (usually used for list as no links to other objects are present)</li>
+        <li>'full' = object + links (links to sub objects or lists are followed e.g a members content_public field will contain a list of published content sub objects)</li>
+        <li>'full+actions' = object + links + actions(the current user can perform on this object)</li>
+        </ul>
+    </li>
+    <li>
+        <p>'exclude_fields' - ommit fields from the return object</p>
+        <p>e.g "exclude_fields=avatar_url,location_home" will ommit the fields avatar_url and location_home form the returned list.</p>
+    </li>
+    <li>
+        <p>'include_fields' - fields to include in the return object</p>
+        <p>e.g "include_field=followers,username,name,webpage,content_public".</p>
+        <p>Often used in conjection with list_type=empty to build a custom return object.</p>
+    </li>
+</ul>
+
 </section>
 
 </article>
