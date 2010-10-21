@@ -44,7 +44,6 @@
             members = {}
             for status in member_status:
                 members[status] = [member for member in d['group']['members'] if member['status']==status]
-                #[a.to_dict() for a in member.assignments_accepted if a.private==False]
         %>
         % for status in member_status:
             % if len(members[status])>0:
@@ -65,7 +64,7 @@
                                 % endif
                             ${h.end_form()}
                         % endif
-                        % if c.logged_in_user and (c.logged_in_user.username == member['username'] and permission_remove_self) or (c.logged_in_user.username != member['username'] and permission_remove):
+                        % if c.logged_in_user and ((c.logged_in_user.username == member['username'] and permission_remove_self) or (c.logged_in_user.username != member['username'] and permission_remove)):
                             ${h.form(h.url('group_action', id=d['group']['id'], action='remove_member'), method='post')}
                                 <input type="hidden" name="member" value="${member['username']}"/>
                                 <input type="submit" name="submit" value="${_('Remove')}"/>
