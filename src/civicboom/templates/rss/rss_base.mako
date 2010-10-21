@@ -10,19 +10,22 @@
     xmlns:gml="http://www.opengis.net/gml"
     xmlns:woe="http://where.yahooapis.com/v1/schema.rng"
 >
-	<channel> 
-		<title        >? [${_('_site_name Search Results')}]</title>
-		<link         >${url.current(host=app_globals.site_host)}</link> 
- 		<description  >News and articles relating to ?</description> 
-		<pubDate      >Thu, 22 Mar 2007 19:08:17 -0700</pubDate> 
-		<lastBuildDate>Thu, 22 Mar 2007 19:08:17 -0700</lastBuildDate> 
-		<generator    >http://www.civicboom.com/</generator>
-        <image url  ="/images/rss_large.png"
-               link ="${url.current(host=app_globals.site_host)}"
-               title="${_('_site_name')}"
-        />
-        
-        ${next.body()}
+<%
+from datetime import datetime
+%>
+<channel>
+	<title        >? [${_('_site_name Search Results')}]</title>
+	<link         >${url.current(host=app_globals.site_host)}</link>
+	<description  >News and articles relating to ?</description>
+	<pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
+	<lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
+	<generator    >http://www.civicboom.com/</generator>
+	<image url  ="/images/rss_large.png"
+		   link ="${url.current(host=app_globals.site_host)}"
+		   title="${_('_site_name')}"
+	/>
+	
+	${next.body()}
         
 	</channel>
 </rss>
