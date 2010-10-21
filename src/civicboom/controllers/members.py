@@ -1,22 +1,29 @@
 """
 Member
 """
-
 from civicboom.lib.base import *
-from civicboom.model    import Member
-
-from sqlalchemy         import or_, and_
-from sqlalchemy.orm     import join
 
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 
-#index_lists = {
-#    'following'             : lambda member: member.following ,
-#    'followers'             : lambda member: member.followers ,
-#     'assignments_accepted': lambda member: member.assignments_accepted , 
-#}
+#-------------------------------------------------------------------------------
+# Global Functions
+#-------------------------------------------------------------------------------
+
+def _get_member(member):
+    """
+    Shortcut to return a member and raise not found automatically (as these are common opertations every time a member is fetched)
+    """
+    member = get_member(member)
+    if not member:
+        raise action_error(_("member not found"), code=404)
+    return member
+
+
+#-------------------------------------------------------------------------------
+# Members Controler
+#-------------------------------------------------------------------------------
 
 class MembersController(BaseController):
     """
@@ -24,43 +31,6 @@ class MembersController(BaseController):
     @doc members
     @desc REST Controller styled on the Atom Publishing Protocol
     """
-
-    #@auto_format_output()
-    #@authorize(is_valid_user)
-    #def index(self, list=None):
-    #    member_list_name = request.params.get('list', list)
-    #    if member_list_name not in index_lists: raise action_error(_('list type %s not supported') % member_list_name)
-    #    members = index_lists[member_list_name](c.logged_in_user)
-    #    members = [member.to_dict('default_list') for member in members]
-    #    
-    #    return {'data': {'list': members}}
-
-    @auto_format_output()
-    @web_params_to_kwargs()
-    def index(self, **kwargs):
-        """
-        GET /members: Show a list of members
-
-        @api members 1.0 (WIP)
-
-        @param list    type of list to get
-               all     all members (useful with "term")
-        @param term    filter results
-        @param * (see common list return controls)
-
-        @return 200      list ok
-                members  array of member objects
-        """
-        result = []
-
-        if kwargs.get('list', "all") == "all":
-            result = Session.query(Member)
-
-        if "term" in kwargs:
-            s = kwargs["term"]
-            result = result.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
-
-        return action_ok(data={"members": [m.to_dict(**kwargs) for m in result]})
 
     @auto_format_output()
     @web_params_to_kwargs()
@@ -79,9 +49,62 @@ class MembersController(BaseController):
         if 'list_type' not in kwargs:
             kwargs['list_type'] = 'full+actions'
         
-        member = get_member(id)
-        
-        if not member:
-            raise action_error(_("User does not exist"), code=404)
+        member = _get_member(id)
         
         return action_ok(data={'member': member.to_dict(**kwargs)})
+
+
+
+    # AllanC
+    # ?? Listing members should be done through search - listing all members is not a function any user should be performing and will not scale
+
+
+#from civicboom.model    import Member
+#from sqlalchemy         import or_, and_
+#from sqlalchemy.orm     import join
+
+    #@auto_format_output()
+    #@web_params_to_kwargs()
+    #def index(self, **kwargs):
+    #    """
+    #    GET /members: Show a list of members
+    #    
+    #    @api members 1.0 (WIP)
+    #
+    #    @param list    type of list to get
+    #           all     all members (useful with "term")
+    #    @param term    filter results
+    #    @param * (see common list return controls)
+    #
+    #    @return 200      list ok
+    #            members  array of member objects
+    #    """
+    #    result = []
+    #
+    #    if kwargs.get('list', "all") == "all":
+    #        result = Session.query(Member)
+    #
+    #    if "term" in kwargs:
+    #        s = kwargs["term"]
+    #        result = result.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
+    #
+    #    return action_ok(data={"members": [m.to_dict(**kwargs) for m in result]})
+
+# AllanC - Depricated old stuff?
+
+#index_lists = {
+#    'following'             : lambda member: member.following ,
+#    'followers'             : lambda member: member.followers ,
+#     'assignments_accepted': lambda member: member.assignments_accepted , 
+#}
+
+
+    #@auto_format_output()
+    #@authorize(is_valid_user)
+    #def index(self, list=None):
+    #    member_list_name = request.params.get('list', list)
+    #    if member_list_name not in index_lists: raise action_error(_('list type %s not supported') % member_list_name)
+    #    members = index_lists[member_list_name](c.logged_in_user)
+    #    members = [member.to_dict('default_list') for member in members]
+    #    
+    #    return {'data': {'list': members}}

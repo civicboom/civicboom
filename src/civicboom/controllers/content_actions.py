@@ -1,27 +1,25 @@
-"""
-Actions
-"""
-
 from civicboom.lib.base import *
-from civicboom.lib.database.get_cached import get_content
+from civicboom.controllers.contents import _get_content
+
 from civicboom.lib.communication       import messages
-from civicboom.model                   import Rating
-from sqlalchemy.orm.exc import NoResultFound
 
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 
 class ContentActionsController(BaseController):
+    """
+    Content Actions
+    """
 
     #---------------------------------------------------------------------------
-    # Rate: User Visable Content
+    # Rate: Article
     #---------------------------------------------------------------------------
     @auto_format_output()
     @web_params_to_kwargs()
     @authorize(is_valid_user)
     @authenticate_form
-    def rate(self, id, rating=None, **kwargs):
+    def rate(self, id, **kwargs):
         """
         POST /contents/{id}/rate: rate an article
 
@@ -34,36 +32,11 @@ class ContentActionsController(BaseController):
         @return 200   rated ok
         @return 400   invalid rating
         """
-        # remove any existing ratings
-        # we need to commit after removal, otherwise SQLAlchemy
-        # will optimise remove->add as modify-existing, and the
-        # SQL trigger will break
-        try:
-            q = Session.query(Rating)
-            q = q.filter(Rating.content_id==int(id))
-            q = q.filter(Rating.member==c.logged_in_user)
-            existing = q.one()
-            Session.delete(existing)
-            Session.commit()
-        except NoResultFound:
-            pass
-
-        # add a new one
-        if rating:
-            rating = int(rating)
-            if rating < 0 or rating > 5:
-                raise action_error(_("Ratings can only be in the range 0 to 5"), code=400)
-
-            # rating = 0 = remove vote
-            if rating > 0:
-                r = Rating()
-                r.content_id = int(id)
-                r.member     = c.logged_in_user
-                r.rating     = rating
-                Session.add(r)
-                Session.commit()
-
-        user_log.debug("Rated Content #%d as %d" % (int(id), int(request.POST["rating"])))
+        if 'rating' not in kwargs:
+            kwargs['rating'] = None
+        
+        content = _get_content(id)
+        content.rate(c.logged_in_user, kwargs['rating'])
         return action_ok(_("Vote counted"))
 
 
@@ -85,10 +58,10 @@ class ContentActionsController(BaseController):
         # FIXME: add entry to booms table, and look that up rather than the session variable
         boomkey = 'boom%s' % id
         if boomkey in session:
-            raise action_error(_('already boomed this'))
+            raise action_error(_('already boomed this'), code=400)
         session[boomkey] = True
 
-        content = get_content(id)
+        content = _get_content(id)
         if content.creator == c.logged_in_user:
             raise action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
         content.boom_to_all_followers(c.logged_in_user)
@@ -113,7 +86,7 @@ class ContentActionsController(BaseController):
         @return 200   locked ok
         @return 500   error locking
         """
-        content = get_content(id)
+        content = _get_content(id)
         if content.is_parent_owner(c.logged_in_user):
             if content.lock():
                 user_log.debug("Locked Content #%d" % int(id))
@@ -142,7 +115,7 @@ class ContentActionsController(BaseController):
         @return 200   disassociated ok
         @return 500   error disassociating
         """
-        content = get_content(id)
+        content = _get_content(id)
         if content.is_parent_owner(c.logged_in_user):
             if content.dissasociate_from_parent():
                 user_log.debug("Disassociated Content #%d" % int(id))
@@ -167,7 +140,7 @@ class ContentActionsController(BaseController):
         @return 200   accepted ok
         @return 500   error accepting
         """
-        assignment = get_content(id)
+        assignment = _get_content(id)
         status     = assignment.accept(c.logged_in_user)
         if status == True:
             assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_user, assignment=assignment))
@@ -193,7 +166,7 @@ class ContentActionsController(BaseController):
         @return 200   withdrawn ok
         @return 500   error withdrawing
         """
-        assignment = get_content(id)
+        assignment = _get_content(id)
         status     = assignment.withdraw(c.logged_in_user)
         if status == True:
             assignment.creator.send_message(messages.assignment_interest_withdrawn(member=c.logged_in_user, assignment=assignment))
@@ -208,9 +181,10 @@ class ContentActionsController(BaseController):
     # Flag
     #-----------------------------------------------------------------------------
     @auto_format_output()
+    @web_params_to_kwargs()
     @authorize(is_valid_user)
     @authenticate_form
-    def flag(self, id):
+    def flag(self, id, **kwargs):
         """
         POST /contents/{id}/flag: Flag this content as being inapproprate of copyright violoation
 
@@ -219,9 +193,11 @@ class ContentActionsController(BaseController):
         @param type      ?
         @param comment   ?
         """
-        form = request.POST
-        try:
-            get_content(id).flag(member=c.logged_in_user, type=form['type'], comment=form['comment'])
-            return action_ok(_("An administrator has been alerted to this content"))
-        except:
-            raise action_error(_("Error flaging content, please email us"))
+        if 'type' not in kwargs:
+            kwargs['type'] = 'offensive'
+        if 'comment' not in kwargs:
+            kwargs['comment'] = ''
+            
+        _get_content(id).flag(member=c.logged_in_user, type=kwargs['type'], comment=kwargs['comment'])
+        return action_ok(_("An administrator has been alerted to this content"))
+        #raise action_error(_("Error flaging content, please email us"))

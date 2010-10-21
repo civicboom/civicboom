@@ -359,6 +359,9 @@ class ArticleContent(UserVisibleContent):
     #__to_dict__['list_with_media'].update(_extra_article_fields)
     #__to_dict__['list_no_creator'].update(_extra_article_fields)
 
+    def rate(self, member, rating):
+        from civicboom.lib.database.actions import rate_content
+        return rate_content(self, member, rating)
 
 
 class SyndicatedContent(UserVisibleContent):

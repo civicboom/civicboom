@@ -3,7 +3,6 @@ Group Actions
 """
 
 from civicboom.lib.base import *
-
 from civicboom.controllers.groups import _get_group
 
 log      = logging.getLogger(__name__)
@@ -36,7 +35,7 @@ class GroupActionsController(BaseController):
             return action_ok(_('joined %s' % group.username))
         elif join_status == "request":
             return action_ok(_('join request sent'))
-            
+        
         raise action_error(_('unable to join %s' % group.username), code=500)
 
 

@@ -197,7 +197,7 @@ class MessagesController(BaseController):
         #c.viewing_user = c.logged_in_user - swiching persona will mean that logged_in_user is group
         
         message = _get_message(id, is_target=True)
-        return action_ok(data=message.to_dict(**kwargs))
+        return action_ok(data={'message': message.to_dict(**kwargs)})
 
 
     @auto_format_output()
