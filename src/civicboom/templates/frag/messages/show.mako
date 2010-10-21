@@ -1,4 +1,4 @@
-${show_message(c.result['data'])}
+${show_message(c.result['data']['message'])}
 
 <%def name="show_message(message)">
 <table>

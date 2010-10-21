@@ -2,9 +2,9 @@
 
 <%def name="col_left()">
 	<div class="avatar">
-		<img class="avatar" src="${c.viewing_user.avatar_url}">
-		<br>${c.viewing_user.name}
-		<br>(${c.viewing_user.username})
+		<img class="avatar" src="${c.logged_in_user.avatar_url}">
+		<br>${c.logged_in_user.name}
+		<br>(${c.logged_in_user.username})
 	</div>
 
 	<h2>${_("Tools")}</h2>

@@ -108,7 +108,7 @@ class ContentsController(BaseController):
         contents = index_lists[list](c.logged_in_user)
         contents = [content.to_dict(**kwargs) for content in contents]
         
-        return action_ok(data={'list': content_list})
+        return action_ok(data={'list': contents})
 
 
     @auto_format_output()

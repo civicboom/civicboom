@@ -3,6 +3,9 @@ from civicboom.lib.database.get_cached import get_message
 from civicboom.model import Message
 import json
 
+from civicboom.lib.form_validators.base import DefaultSchema, MemberValidator
+import formencode
+
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
@@ -17,6 +20,16 @@ index_lists = {
     'public'      : lambda member: member.messages_public ,    
     'notification': lambda member: member.messages_notification ,
 }
+
+#-------------------------------------------------------------------------------
+# Form Schema
+#-------------------------------------------------------------------------------
+
+class NewMessageSchema(DefaultSchema):
+    #source                     = MemberValidator()
+    target                     = MemberValidator()
+    subject                    = formencode.validators.String(not_empty=False, max=255)
+    content                    = formencode.validators.String(not_empty=False)
 
 #-------------------------------------------------------------------------------
 # Global Functions
@@ -109,20 +122,30 @@ class MessagesController(BaseController):
         # url('messages')
         
         # FIXME: form validator to refresh with the same values?
-        if not set(["target", "subject", "content"]).issubset(request.POST.keys()):
-            raise action_error(_("Missing inputs"), code=400)
-        target = get_member(request.POST["target"])
+        #if not set(["target", "subject", "content"]).issubset(request.POST.keys()):
+        #    raise action_error(_("Missing inputs"), code=400)
+        #target = get_member(request.POST["target"])
+        #if not target:
+        #    raise action_error(_("Can't find user '%s'") % request.POST["target"], code=404)
+        
+        for field in ['subject','content','targetx']:
+            if field not in kwargs:
+                kwargs[field] = ''
+        
+        target = get_member(kwargs['targetx' ])
         if not target:
-            raise action_error(_("Can't find user '%s'") % request.POST["target"], code=404)
+            raise action_error('no target')
         
         m = Message()
-        m.source_id = c.logged_in_user.id # FIXME: or from any group they are admin of?
-        m.target_id = target.id
-        m.subject = request.POST["subject"]
-        m.content = request.POST["content"]
-        user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
+        m.source  = c.logged_in_user
+        m.target  = target
+        m.subject = kwargs['subject']
+        m.content = kwargs['content']
         Session.add(m)
         Session.commit()
+        
+        user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
+        
         return action_ok(_("Message sent"), code=201)
 
 
