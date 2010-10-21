@@ -17,7 +17,7 @@ except:
 	lat = location[1],
 	zoom = location[2],
 	feeds = [
-		dict(pin='red', url='/search/content.rss')
+		dict(pin='red', url=request.params.get('feed', '/search/content.rss'))
 	],
 	controls = True
 )}</p>
