@@ -9,6 +9,7 @@ import civicboom.lib.worker as worker
 from pylons import config, app_globals # used in generation of URL's for media
 
 import magic
+import copy
 import logging
 
 log = logging.getLogger(__name__)

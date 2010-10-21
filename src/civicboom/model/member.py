@@ -229,7 +229,7 @@ class User(Member):
         'location_current' : lambda member: 'not implemented yet' ,
         'location_updated' : None ,
     }
-    __to_dict__['deafult'     ].update(_extra_user_fields)
+    __to_dict__['default'     ].update(_extra_user_fields)
     __to_dict__['full'        ].update(_extra_user_fields)
     __to_dict__['full+actions'].update(_extra_user_fields)
 
