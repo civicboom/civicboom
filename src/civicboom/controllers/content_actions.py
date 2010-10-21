@@ -225,3 +225,20 @@ class ContentActionsController(BaseController):
             return action_ok(_("An administrator has been alerted to this content"))
         except:
             raise action_error(_("Error flaging content, please email us"))
+
+
+    @auto_format_output()
+    def comments(self, id):
+        """
+        POST /contents/{id}/comments: Get a list of comments on the article
+
+        @api contents 1.0 (WIP)
+
+        @return list  the list of comments
+        """
+        co = get_content(id)
+        if not co:
+            raise action_error(code=404)
+        if not co.viewable_by(c.logged_in_user):
+            raise action_error(code=403)
+        return action_ok(data={'list': [cm.to_dict() for cm in co.comments]})

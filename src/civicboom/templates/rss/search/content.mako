@@ -11,6 +11,7 @@ from datetime import datetime
 	<guid isPermaLink="false">Civicboom Content #${content['id']}</guid>
 	<category>${content['tags']}</category>
 	<dc:creator>${content['creator']['name']} (${content['creator']['username']})</dc:creator>
+	<wfw:commentRss>${url(host=app_globals.site_host, controller='content_actions', id=content['id'], action='comments', format='rss')}</wfw:commentRss>
 ##
 % if 'attachments' in content:
 	% for media in content['attachments']:
