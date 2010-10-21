@@ -98,6 +98,7 @@ class ContentsController(BaseController):
 
         @comment Shish paramaters need filling out
         @comment Shish do all the paramaters need to start with "form_"?
+        @comment Allan   no need for all params to start with "form_" this was a leftover from the first prototype, they can be removed
         """
         # url('contents') + POST
         
@@ -250,12 +251,15 @@ class ContentsController(BaseController):
 
 
     @auto_format_output()
-    def show(self, id, format='html'):
+    @web_params_to_kwargs()
+    def show(self, id, **kwargs):
         """
         GET /content/{id}: Show a specific item
-
+        
         @api contents 1.0 (WIP)
-
+        
+        @param * (see common list return controls)
+        
         @return 200      page ok
                 content  content object
         @return 403      permission denied
@@ -267,6 +271,9 @@ class ContentsController(BaseController):
         Different content object types require a different view template
         Identify the object type and render with approriate renderer
         """
+        if 'list_type' not in kwargs:
+            kwargs['list_type'] = 'full+actions'
+        
         content = get_content(id)
         
         # Check content is visable
@@ -291,7 +298,7 @@ class ContentsController(BaseController):
             
         return action_ok(
             template = 'design09/content/view',
-            data     = {'content':content.to_dict('actions')}
+            data     = {'content':content.to_dict(**kwargs)}
         )
 
 

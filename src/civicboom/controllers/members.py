@@ -36,7 +36,8 @@ class MembersController(BaseController):
     #    return {'data': {'list': members}}
 
     @auto_format_output()
-    def index(self, format="html"):
+    @web_params_to_kwargs()
+    def index(self, **kwargs):
         """
         GET /members: Show a list of members
 
@@ -45,35 +46,38 @@ class MembersController(BaseController):
         @param list    type of list to get
                all     all members (useful with "term")
         @param term    filter results
+        @param * (see common list return controls)
 
         @return 200      list ok
                 members  array of member objects
         """
         result = []
 
-        if request.params.get('list', "all") == "all":
+        if kwargs.get('list', "all") == "all":
             result = Session.query(Member)
 
-        if "term" in request.GET:
-            s = request.GET["term"]
+        if "term" in kwargs:
+            s = kwargs["term"]
             result = result.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
 
-        return action_ok(data={"members": [m.to_dict('list') for m in result]})
+        return action_ok(data={"members": [m.to_dict(**kwargs) for m in result]})
 
     @auto_format_output()
     @web_params_to_kwargs()
     def show(self, id, **kwargs):
         """
         GET /members/{id}: Show a specific item
-
+        
         @api members 1.0 (WIP)
-
+        
+        @param * (see common list return controls)
+        
         @return 200      page ok
                 member   member object
         @return 404      member not found
         """
         if 'list_type' not in kwargs:
-            kwargs['list_type'] = 'single'
+            kwargs['list_type'] = 'full+actions'
         
         member = get_member(id)
         

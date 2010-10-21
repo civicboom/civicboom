@@ -52,7 +52,17 @@ may prefer /messages/42.json or /messages/42.xml
 }
 </pre>
 
-<p>XML is pretty much the same, just in XML
+<p>XML is pretty much the same, just in XML</p>
+</section>
+
+<section>
+<h3>Common List Return Controls</h3>
+<pre>
+placeholder - needs documenting/formating properly
+	@param exclude_fields    - ommit fields from the return object e.g "exclude_fields=avatar_url,location_home" will ommit the fields avatar_url and location_home form the returned list
+	@param include_fields    - fields to include in return object e.g "include_field=followers,username,name,webpage,content_public". Often used in conjection with list_type=empty to build a custom return object
+	@param list_type         - default 'default'. permitted values (empty, default, full, full+actions): empty=no fields (to be used with include_fields to build a custom object) default(basic)=object_fields. full(a single item)=object+links. full+actions=object+links+actions(current user can perform)
+</pre>
 </section>
 
 </article>

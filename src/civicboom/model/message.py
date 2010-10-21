@@ -20,7 +20,7 @@ class Message(Base):
 
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
-        'list': {
+        'default': {
             'id'           : None ,
             'source_id'    : None ,
             'source'       : lambda m: str(m.source) ,
@@ -32,5 +32,10 @@ class Message(Base):
         },
     })
     __to_dict__.update({
-        'single': copy.deepcopy(__to_dict__['list'])
+        'full'        : copy.deepcopy(__to_dict__['default']) , 
+        'full+actions': copy.deepcopy(__to_dict__['default']) , 
     })
+
+    def delete(self):
+        from civicboom.lib.database.actions import del_message
+        return del_message(self)

@@ -83,6 +83,16 @@ def unfollow(follower,followed, delay_commit=False):
 
     return True
 
+#-------------------------------------------------------------------------------
+# Message Actions
+#-------------------------------------------------------------------------------
+
+def del_message(message):
+    Session.delete(message)
+    Session.commit()
+    #update_member() # invalidate needed lists!!!
+
+
 
 #-------------------------------------------------------------------------------
 # Group Actions

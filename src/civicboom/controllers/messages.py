@@ -1,11 +1,15 @@
-
 from civicboom.lib.base import *
+from civicboom.lib.database.get_cached import get_message
 from civicboom.model import Message
 import json
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
+
+#-------------------------------------------------------------------------------
+# Constants
+#-------------------------------------------------------------------------------
 
 index_lists = {
     'to'          : lambda member: member.messages_to ,
@@ -14,6 +18,22 @@ index_lists = {
     'notification': lambda member: member.messages_notification ,
 }
 
+#-------------------------------------------------------------------------------
+# Global Functions
+#-------------------------------------------------------------------------------
+
+def _get_message(message, is_target=False):
+    message = get_message(message)
+    if not message:
+        raise action_error(_("Message does not exist"), code=404)
+    if is_target and message.target != c.logged_in_user:
+        raise action_error(_("You are not the target of this message"), code=403)
+    return message
+
+
+#-------------------------------------------------------------------------------
+# Message Controler
+#-------------------------------------------------------------------------------
 
 class MessagesController(BaseController):
     """
@@ -21,20 +41,17 @@ class MessagesController(BaseController):
     @title Messages
     @desc REST Controller styled on the Atom Publishing Protocol
     """
-    # To properly map this controller, ensure your config/routing.py file has
-    # a resource setup:
-    #     map.resource('message', 'messages')
-
 
     @auto_format_output()
     @web_params_to_kwargs()
     @authorize(is_valid_user)
-    def index(self, list='to', **kwargs):
+    def index(self, **kwargs):
         """
         GET /messages: All items in the collection.
         
         @api messages 1.0 (WIP)
         
+        @param * (see common list return controls)
         @param list  which list to get
                to            ?
                from          ?
@@ -54,20 +71,25 @@ class MessagesController(BaseController):
                          lookup table has been referenced at least once :/
         """
         # url('messages')
-        # AllanC - this feels duplicated from the member controler - humm ... need to think about a sensible stucture
-        c.viewing_user = c.logged_in_user
         
-        if list not in index_lists: raise action_error(_('list type %s not supported') % list)
+        if 'list' not in kwargs:
+            kwargs['list'] = 'to'
+        list = kwargs['list']
+        
+        if list not in index_lists:
+            raise action_error(_('list %s not supported') % list, code=400)
+        
         messages = index_lists[list](c.logged_in_user)
-        messages = [message.to_dict() for message in messages]
+        messages = [message.to_dict(**kwargs) for message in messages]
         
         return action_ok(data={'list': messages})
 
 
     @auto_format_output()
+    @web_params_to_kwargs()
     @authorize(is_valid_user)
     @authenticate_form
-    def create(self):
+    def create(self, **kwargs):
         """
         POST /messages: Create a new item.
         
@@ -117,10 +139,6 @@ class MessagesController(BaseController):
     @auto_format_output()
     def update(self, id):
         """PUT /messsages/id: Update an existing item."""
-        # Forms posted to this method should contain a hidden field:
-        #    <input type="hidden" name="_method" value="PUT" />
-        # Or using helpers:
-        #    h.form(h.url('message', id=ID), method='put')
         # url('message', id=ID)
         raise action_error(_("Messages cannot be edited"), code=501)
 
@@ -143,36 +161,24 @@ class MessagesController(BaseController):
         # Or using helpers:
         #    h.form(h.url('message', id=ID), method='delete')
         # url('message', id=ID)
-        c.viewing_user = c.logged_in_user
-        msg = Session.query(Message).filter(Message.id==int(id)).first()
-        if not msg:
-            raise action_error(_("Message does not exist"), code=404)
-
-        redir = None
-        if msg.target == c.viewing_user: # FIXME messages to groups?
-            # FIXME: test that delete-orphan works, and removes the
-            # de-parented message
-            if msg.source: # source exists = message, no source = notification
-                user_log.debug("Deleting message")
-                c.viewing_user.messages_to.remove(msg)
-            else:
-                user_log.debug("Deleting notification")
-                c.viewing_user.messages_notification.remove(msg)
-            Session.commit()
-            return action_ok(_("Message deleted"))
-        else:
-            user_log.warning("User %s tried to delete %s message" % (c.logged_in_user.username, msg.target.username))
-            raise action_error(_("You are not the target of this message"), code=403)
+        
+        message = _get_message(id, is_target=True) 
+        message.delete()
+        
+        return action_ok(_("Message deleted"))
 
 
     @auto_format_output()
+    @web_params_to_kwargs()
     @authorize(is_valid_user)
-    def show(self, id, format='html'):
+    def show(self, id, **kwargs):
         """
         GET /messages/{id}: Show a specific item.
-
+        
         @api messages 1.0 (WIP)
-
+        
+        @param * (see common list return controls)
+        
         @return 200       show the message
                 id        message id
                 source    username (None if system notification)
@@ -187,30 +193,15 @@ class MessagesController(BaseController):
                         at all?
         """
         # url('message', id=ID)
-        c.viewing_user = c.logged_in_user
-
-        msg = Session.query(Message).filter(Message.id==id).first()
-        if not msg:
-            raise action_error(_("Message does not exist"), code=404)
-
-        if msg.target == c.viewing_user: # FIXME messages to groups?
-            c.msg = msg
-        else:
-            raise action_error(_("You are not the target of this message"), code=403)
-
-        return action_ok(
-            data = {
-                "id": c.msg.id,
-                "source": str(c.msg.source),
-                "subject": c.msg.subject,
-                "timestamp": str(c.msg.timestamp),
-                "content": c.msg.content,
-            }
-        )
+        
+        #c.viewing_user = c.logged_in_user - swiching persona will mean that logged_in_user is group
+        
+        message = _get_message(id, is_target=True)
+        return action_ok(data=message.to_dict(**kwargs))
 
 
     @auto_format_output()
-    def edit(self, id, format='html'):
+    def edit(self, id):
         """GET /messages/id/edit: Form to edit an existing item."""
         # url('edit_message', id=ID)
         raise action_error(_("Messages cannot be edited"), code=501)

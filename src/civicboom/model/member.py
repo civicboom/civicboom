@@ -86,7 +86,7 @@ class Member(Base):
 
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
-        'list': {
+        'default': {
             'id'                : None ,
             'name'              : None ,
             'username'          : None ,
@@ -98,9 +98,9 @@ class Member(Base):
     })
     
     __to_dict__.update({
-        'single': copy.deepcopy(__to_dict__['list'])
+        'full': copy.deepcopy(__to_dict__['default'])
     })
-    __to_dict__['single'].update({
+    __to_dict__['full'].update({
             'num_followers'       : None ,
             'webpage'             : None ,
             'utc_offset'          : None ,
@@ -112,20 +112,19 @@ class Member(Base):
             'content_public'      : lambda member: [c.to_dict() for c in member.content_public       ] ,
             'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] ,
     })
-
-    __to_dict__.update({
-        'actions': copy.deepcopy(__to_dict__['single'])
-    })
     
     #__to_dict__['actions'].update({
     #        'is_following'        : lambda member: member.is_following(None), #c.logged_in_user
     #        'is_follower'         : lambda member: member.is_follower(None), #c.logged_in_user
             #'join' # join group?
     #})
+    __to_dict__.update({
+        'full+actions': copy.deepcopy(__to_dict__['full'])
+    })
     def __to_dict_function_action_list__(member):
         from pylons import tmpl_context as c
         return member.action_list_for(c.logged_in_user)
-    __to_dict__['actions'].update({
+    __to_dict__['full+actions'].update({
             'actions': __to_dict_function_action_list__
     })
 
@@ -230,9 +229,9 @@ class User(Member):
         'location_current' : lambda member: 'not implemented yet' ,
         'location_updated' : None ,
     }
-    __to_dict__['list'   ].update(_extra_user_fields)
-    __to_dict__['single' ].update(_extra_user_fields)
-    __to_dict__['actions'].update(_extra_user_fields)
+    __to_dict__['deafult'     ].update(_extra_user_fields)
+    __to_dict__['full'        ].update(_extra_user_fields)
+    __to_dict__['full+actions'].update(_extra_user_fields)
 
 
     def __unicode__(self):
@@ -300,13 +299,13 @@ class Group(Member):
         'default_role'              : None ,
         'num_members'               : lambda group: group.num_members if group.member_visability=="public" else None ,
     }
-    __to_dict__['list'   ].update(_extra_group_fields)
-    __to_dict__['single' ].update(_extra_group_fields)
-    __to_dict__['single' ].update({
+    __to_dict__['default'].update(_extra_group_fields)
+    __to_dict__['full'   ].update(_extra_group_fields)
+    __to_dict__['full'   ].update({
         #'members'           : lambda group: [update_dict(m.member.to_dict(),{'role':m.role, 'status':m.status}) for m in group.members_roles] if group.member_visability=="public" else None ,
         'members'           : __to_dict_function_members__ , 
     })
-    __to_dict__['actions'].update(__to_dict__['single'])
+    __to_dict__['full+actions'].update(__to_dict__['full'])
 
 
 
