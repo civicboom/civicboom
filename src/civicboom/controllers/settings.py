@@ -13,12 +13,9 @@ from civicboom.lib.base import *
 import hashlib
 import copy
 
-import formencode
-import civicboom.lib.form_validators
-import civicboom.lib.form_validators.base
-import civicboom.lib.form_validators.registration
+
 from   civicboom.lib.form_validators.validator_factory import build_schema
-from   civicboom.lib.form_validators.dict_overlay import overlay_errors
+from   civicboom.lib.form_validators.dict_overlay import validate_dict
 
 from civicboom.lib.civicboom_lib import set_password
 
@@ -31,42 +28,37 @@ user_log = logging.getLogger("user")
 #---------------------------------------------------------------------------
 # Define settings groups, default values and display text
 
-settings_units = dict(
-    general=[
-        dict(name='name'       , description=_('Display name' ), value=''),
-        #{name:'location'   , description:_('Home location'), value:''},
-        dict(name='description', description=_('Description'  ), value=''),
-        dict(name='home_page'  , description=_('Home page'    ), value=''),
-    ],
-    email=[
-        dict(name='email'      , description=_('Email Address'), value=''),
-    ],
-    password=[
-        dict(name='password_new'        , description=_('New password')        , value='', type='password'),
-        dict(name='password_new_confirm', description=_('New password again')  , value='', type='password'),
-        dict(name='password_current'    , description=_('Current password')    , value='', type='password'),
-    ],
-    aggregation=[
-        dict(name='twitter_username'       , value='', description=_('Twitter username')    ),
-        dict(name='twitter_auth_key'       , value='', description=_('Twitter authkey' )    ),
-        dict(name='broadcast_instant_news' , value='', description=_('Twitter instant news'), type='boolean'),
-        dict(name='broadcast_content_posts', value='', description=_('Twitter content' )    , type='boolean'),
-    ],
-    avatar=[
-        dict(name='avatar'       , description=_('Avatar' ), value='', info='leave blank to use a gravatar'),
-    ],
-    location=[
-        dict(name='location'     , description=_('Home Location' ), value='', info='type in your town name or select a locaiton from the map'),
-    ],
-    message_routes=[
-    ],
-)
+settings_base = {}
+def add_setting(name, description, value='', group=None, **kwargs):
+    setting = dict(name=name, description=description, value=value, group=group, **kwargs)
+    settings_base[setting['name']]=setting
+    
+add_setting('name'                   , _('Display name' )       , group='general')
+add_setting('description'            , _('Description'  )       , group='general')
+add_setting('home_page'              , _('Home page'    )       , group='general')
+add_setting('email'                  , _('Email Address')       , group='contact')
+add_setting('password_new'           , _('New password')        , group='password'   , type='password')
+add_setting('password_new_confirm'   , _('New password again')  , group='password'   , type='password')
+add_setting('password_current'       , _('Current password')    , group='password'   , type='password')
+add_setting('twitter_username'       , _('Twitter username')    , group='aggregation')
+add_setting('twitter_auth_key'       , _('Twitter authkey' )    , group='aggregation')
+add_setting('broadcast_instant_news' , _('Twitter instant news'), group='aggregation', type='boolean')
+add_setting('broadcast_content_posts', _('Twitter content' )    , group='aggregation', type='boolean')
+add_setting('avatar'                 , _('Avatar' )             , group='avatar'     , info='leave blank to use a gravatar')
+add_setting('location'               , _('Home Location' )      , group='location'   , info='type in your town name or select a locaiton from the map')
+
+
 
 
 #---------------------------------------------------------------------------
 # Setting Validators (for dynamic scema construction)
 #---------------------------------------------------------------------------
 #  these are kept separte from the group definitions because the group defenitions dict is sent to clients, we do not want to contaminate that dict
+
+import formencode
+import civicboom.lib.form_validators
+import civicboom.lib.form_validators.base
+import civicboom.lib.form_validators.registration
 
 settings_validators = dict(
     name        = formencode.validators.UnicodeString(),
@@ -140,20 +132,23 @@ class SettingsController(BaseController):
     def edit(self, id):
         """GET /id;edit: Form to edit an existing item."""
         
-        # Generate base settings dictonary for ALL settings or SINGLE ID provided
-        if id=="index" or id=="None": id=None
-        if not id: settings =     copy.deepcopy(settings_units)
-        else     : settings = {id:copy.deepcopy(settings_units[id])}
-        
         user = c.logged_in_user
-        c.viewing_user = c.logged_in_user # HACK - please remove when templates are refactored
+        
+        # Generate base settings dictonary for ALL settings
+        settings_meta = copy.deepcopy(settings_base)
+        settings      = {}
         
         # Populate settings dictionary for this user
-        for setting_group in settings.keys():
-            for setting in settings[setting_group]:
-                setting['value'] = user.config.get(setting['name'])
+        for setting_name in settings_meta.keys():
+            settings[setting_name] = user.config.get(setting_name)
         
-        return dict(data=settings, template="settings/settings")
+        return dict(
+            data={
+                'settings_meta' : settings_meta ,
+                'settings'      : settings ,
+            },
+            template='settings/settings' ,
+        )
 
 
     #---------------------------------------------------------------------------
@@ -161,8 +156,9 @@ class SettingsController(BaseController):
     #---------------------------------------------------------------------------
     
     @auto_format_output()
+    @web_params_to_kwargs()
     @authorize(is_valid_user)
-    def update(self, id):
+    def update(self, id, **kwargs):
         """
         PUT /id: Update an existing item.
         
@@ -171,62 +167,54 @@ class SettingsController(BaseController):
         - Saves update
         - Returns written object
         """
-        edit_action = call_action(self.edit, id=id, format='python') #self.edit(id, format='python')
-        settings    = edit_action['data']
-        user        = c.logged_in_user
-        
-        def settings_list():
-            """a function to allow iterating over all settings as if they were a single list"""
-            for group in settings.keys():
-                for setting in settings[group]:
-                    yield setting        
+        data        = call_action(self.edit, id=id, format='python')['data']
+        settings    = data['settings']
         
         # Setup custom schema for this update
+        # List validators required
         validators = {}
-        for validate_fieldname in [setting['name'] for setting in settings_list() if setting['name'] in settings_validators and setting['name'] in request.params and setting['value'] != request.params[setting['name']] ]:
+        for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings[setting_name] != kwargs[setting_name] ]:
             #print "adding validator: %s" % validate_fieldname
             validators[validate_fieldname] = settings_validators[validate_fieldname]
+        # Build a dynamic validation scema based on these required fields and validate the form
+        schema = build_schema(**validators)
+        # Add any additional validators for custom fields
+        if 'password_new' in validators:
+            schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the 
+            schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
         
-        # Form validation
-        try:
-            schema = build_schema(**validators) # Build a dynamic validation scema based on these required fields and validate the form
-            if 'password_new' in validators:
-                schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the 
-                schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
-            form   = schema.to_python(dict(request.params)) # Validate
-        except formencode.Invalid, error:
-            settings['missing'] = []
-            overlay_errors(error, settings_list(), settings['missing']) # Overlays error fields over the returned dict
-            
-            # Set error status
-            edit_action['status']  = 'error'
-            edit_action['message'] = error.msg #_('failed validation') # This is frustrating, if this a a decriptive error, then error.msg is fine, but normally this returns the whole dict with values and stuff, we need to tell users why the validation has failed
-            #response.status = 400 # 400 = Bad request # is this the correct HTTP code for this event? # This BREAKS html layout bigtime!
-            return edit_action
+        settings.update(kwargs)
+        
+        validate_dict(data, schema, dict_to_validate_key='settings', template_error='settings/settings')
         
         # Form has passed validation - continue to save/commit changes
+        user        = c.logged_in_user
+        settings    = data['settings']
         
         # Save special properties that need special processing
         # (counld have a dictionary of special processors here rather than having this code cludge this controller action up)
-        if 'password_new' in form:
-            # We could put this in settings.py manager, have a dictionarys with special cases and functions to process/save them, therefor the code is transparent in the background. an idea?
-            set_password(user,form['password_new'])
-            del form['password_new'        ] # We dont want these saved
-            del form['password_new_confirm']
-            del form['password_current'    ]
-            
+        if 'password_new' in settings:
+            # OLD: We could put this in settings.py manager, have a dictionarys with special cases and functions to process/save them, therefor the code is transparent in the background. an idea?
+            set_password(user,settings['password_new'])
+            del settings['password_new'        ] # We dont want these saved
+            del settings['password_new_confirm']
+            del settings['password_current'    ]
         
         # Save all remaining properties
-        for setting in settings_list():
-            setting_fieldname = setting['name']
-            if setting_fieldname in form:                                    # For each setting
-                #if setting['value'] != form[setting_fieldname]:              #   If value has changed # Unneeded as the form vaidators are built of feilds that have changed
-                    print "saving setting %s" % setting_fieldname
-                    user.config[setting_fieldname] = form[setting_fieldname] #     change the actual user object
-                    setting['value'] = form[setting_fieldname]               #     update the return dict
-        Session.commit()                                                     # save changes to database
+        for setting_name in settings.keys():
+            print "saving setting %s" % setting_name
+            user.config[setting_name] = settings[setting_name]
+            
+        Session.commit()
         
-        return edit_action
+        if c.format == 'html':
+            return redirect(url('settings'))
+        
+        return action_ok(
+            message = _('settings updated') ,
+            data    = data ,
+            template='settings/settings' ,
+        )
 
 
 
