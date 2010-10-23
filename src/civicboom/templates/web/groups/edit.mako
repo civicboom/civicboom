@@ -10,25 +10,23 @@
         
         def get_param(name):
             if 'group' in d and name in d['group']:
-                param = d['group'][name]
-                if isinstance(param, basestring):
-                    return param
-                elif 'value' in param:
-                    return param['value']
+                return d['group'][name]
             return ''
     %>
-
     <%def name="show_error(name)">
-        % if 'group' in d and name in d['group'] and 'error' in d['group'][name]:
-            <span class="error-message">${d['group'][name]['error']}</span>
+        ##% if 'group' in d and name in d['group'] and 'error' in d['group'][name]:
+        % if 'invalid' in d and name in d['invalid']:
+            <span class="error-message">${d['invalid'][name]}</span>
         % endif
     </%def>
 
+
+
+    ## Setup Form
     <%
         if 'action' not in d:
             d['action'] = 'create'
     %>
-
     % if d['action']=='edit' and 'group' in d:
         ## Editing Form
         ${h.form(h.url('group', id=get_param('id')), method='put')}
@@ -37,7 +35,7 @@
         ${h.form(h.url('groups', ), method='post')}
     % endif
 
-    ##${d}
+
     
     <fieldset><legend>Group</legend>
         

@@ -1,13 +1,14 @@
 from civicboom.lib.base import *
 
 from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visability, group_content_visability
-from civicboom.lib.form_validators.base import DefaultSchema
-from civicboom.lib.form_validators.registration import UniqueUsernameValidator
+
 from civicboom.lib.misc import update_dict
-from civicboom.lib.form_validators.dict_overlay import overlay_errors
+from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 import formencode
 
+from civicboom.lib.form_validators.base         import DefaultSchema
+from civicboom.lib.form_validators.registration import UniqueUsernameValidator
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -46,29 +47,8 @@ def _get_group(id, is_admin=False):
     if not group:
         raise action_error(_("group not found"), code=404)
     if is_admin and not group.is_admin(c.logged_in_user):
-        raise action_error(_("you do not have permission access this group"), code=403)
+        raise action_error(_("you do not have permission for this group"), code=403)
     return group
-
-def validate_group_dict(group_dict, schema, action='create'):
-    """
-    When groups are created or edited the form contents need to be validated
-    """
-    # Convert kwargs and form post to dict for overlaying
-    group = {}
-    for key in group_dict.keys():
-        group[key] = {
-            'name' : key,
-            'value': group_dict[key]
-        }
-    
-    try:                                                # Try validation
-        #schema =                                       #   Build schema
-        return schema.to_python(dict(group_dict))       #   Validate
-    except formencode.Invalid, error:                   # Form has failed validation
-        group['missing'] = []
-        overlay_errors(error, group.values(), group['missing'])
-        #return {'status':'error', 'message':'failed validation', 'data': {'group':group, 'action':action}, 'template':'groups/edit'}
-        raise action_error(status='invalid', message=_('group validation failed'), data={'group':group, 'action':action}, template='groups/edit', code=400)
 
 
 #-------------------------------------------------------------------------------
@@ -116,10 +96,13 @@ class GroupsController(BaseController):
         @return 301 - if format redirect specifyed will redirect to show group
         """
         # url('groups') + POST
-        form = validate_group_dict(kwargs, CreateGroupSchema(), action='create')
+        
+        data       = {'group':kwargs, 'action':'create'}
+        data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
+        group_dict = data['group']
         
         group              = Group()
-        group.username     = form['username']
+        group.username     = group_dict['username']
         group.status       = 'active'
         group_admin        = GroupMembership()
         group_admin.member = c.logged_in_user
@@ -163,25 +146,23 @@ class GroupsController(BaseController):
         
         group_dict = group.to_dict()
         group_dict.update(kwargs)
-        form = validate_group_dict(group_dict, GroupSchema(), action='edit')
-        print "hu?"
-        #if form.get('status')=='error':
-        #    print form
-        #    return form
+        data = {'group':group_dict, 'action':'edit'}
+        data = validate_dict(data, GroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
+        group_dict = data['group']
         
-        group.name                       = form['name']
-        group.description                = form['description']
-        group.default_role               = form['default_role']
-        group.join_mode                  = form['join_mode']
-        group.member_visability          = form['member_visability']
-        group.default_content_visability = form['default_content_visability']
+        group.name                       = group_dict['name']
+        group.description                = group_dict['description']
+        group.default_role               = group_dict['default_role']
+        group.join_mode                  = group_dict['join_mode']
+        group.member_visability          = group_dict['member_visability']
+        group.default_content_visability = group_dict['default_content_visability']
         
         Session.commit()
         
         if c.format == 'html':
             return redirect(url('group', id=group.id))
         
-        return action_ok(message=_('group updated ok'), data={'group':group.to_dict(), 'action':'edit'})
+        return action_ok(message=_('group updated ok'), data=data)
 
 
     @auto_format_output()

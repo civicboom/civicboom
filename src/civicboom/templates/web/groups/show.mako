@@ -9,6 +9,7 @@
     <%
         from civicboom.model.member import group_member_roles, group_join_mode, group_member_visability, group_content_visability
         
+        permission_edit        = 'edit'        in d['group']['actions']
         permission_set_role    = 'set_role'    in d['group']['actions']
         permission_remove      = 'remove'      in d['group']['actions']
         permission_remove_self = 'remove_self' in d['group']['actions']
@@ -18,6 +19,9 @@
 
     ${member_includes.avatar(d['group'] , show_name=True, show_follow_button=True, show_join_button=show_join_button)}
     
+    % if permission_edit:
+        <a href="${h.url('new_group')}">edit</a>
+    % endif
     
     <h2>details</h2>
     <p>full name ${d['group']['name']}</p>

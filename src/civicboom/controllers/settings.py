@@ -238,7 +238,7 @@ class SettingsController(BaseController):
 #---------------------------------------------------------------------------
 # Old Settings Reference
 #---------------------------------------------------------------------------
-
+"""
     @authorize(is_valid_user)
     def general(self, id=None):
         c.viewing_user = c.logged_in_user
@@ -349,3 +349,4 @@ class SettingsController(BaseController):
         #    request.params.get("location", "[pos]"),
          #   request.params.get("location_name", "[name]"),
         #)
+"""
