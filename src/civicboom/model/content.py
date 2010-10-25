@@ -98,14 +98,14 @@ class Content(Base):
     # used by obj_to_dict to create a string dictonary representation of this object
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
-        'list': {
+        'default': {
             'id'           : None ,
             'type'         : lambda content: content.__type__ ,
             'status'       : None ,
             'parent_id'    : None ,
             'title'        : None ,
             'content_short': None ,
-            #'creator'      : lambda content: content.creator.to_dict('list') ,
+            #'creator'      : lambda content: content.creator.to_dict('deafult') ,
             'creator_id'   : None , 
             'url'          : None ,
             'thumbnail_url': None ,
@@ -121,9 +121,9 @@ class Content(Base):
     
     # Single Content Item
     __to_dict__.update({
-        'single': copy.deepcopy(__to_dict__['list'])
+        'full': copy.deepcopy(__to_dict__['default'])
     })
-    __to_dict__['single'].update({
+    __to_dict__['full'].update({
             'content'           : None ,
             'parent'            : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
             'creator'           : lambda content: content.creator.to_dict() ,
@@ -131,33 +131,19 @@ class Content(Base):
             'responses'         : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
             'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
     })
-    del __to_dict__['single']['content_short']
-    del __to_dict__['single']['parent_id']
+    del __to_dict__['full']['content_short']
+    del __to_dict__['full']['parent_id']
     
     # Actions
     __to_dict__.update({
-        'actions': copy.deepcopy(__to_dict__['single'])
+        'full+actions': copy.deepcopy(__to_dict__['full'])
     })
     def __to_dict_function_action_list__(content):
         from pylons import tmpl_context as c
         return content.action_list_for(c.logged_in_user)
-    __to_dict__['actions'].update({
+    __to_dict__['full+actions'].update({
             'actions': __to_dict_function_action_list__
     })
-
-    # List with media
-    #__to_dict__.update({
-    #    'list_with_media': copy.deepcopy(__to_dict__['list'])
-    #})
-    #__to_dict__['list_with_media'].update({
-    #        'attachments'       : __to_dict__['single']['attachments']
-    #})
-
-    # List with no creator
-    #__to_dict__.update({
-    #    'list_no_creator': copy.deepcopy(__to_dict__['list'])
-    #})
-    #del __to_dict__['list_no_creator']['creator']
 
     
     def __unicode__(self):
@@ -294,12 +280,13 @@ class CommentContent(Content):
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
 
     __to_dict__ = {} #Content.__to_dict__.copy()
-    __to_dict__['list'] = {
-        'creator'      : lambda content: content.creator.to_dict('list') ,
+    __to_dict__['default'] = {
+        'creator'      : lambda content: content.creator.to_dict('default') ,
         'content'      : None ,
         'creation_date': None ,
     }
-    __to_dict__['single'] = copy.deepcopy(__to_dict__['list'])
+    __to_dict__['full']         = copy.deepcopy(__to_dict__['default'])
+    __to_dict__['full+actions'] = copy.deepcopy(__to_dict__['full'])
 
 
 class UserVisibleContent(Content):
@@ -315,9 +302,9 @@ class UserVisibleContent(Content):
             'views'        : None ,
             'boom_count'   : None ,
     }
-    __to_dict__['list'           ].update(_extra_user_visible_fields)
-    __to_dict__['single'         ].update(_extra_user_visible_fields)
-    __to_dict__['actions'        ].update(_extra_user_visible_fields)
+    __to_dict__['default'     ].update(_extra_user_visible_fields)
+    __to_dict__['full'        ].update(_extra_user_visible_fields)
+    __to_dict__['full+actions'].update(_extra_user_visible_fields)
     #__to_dict__['list_with_media'].update(_extra_user_visible_fields)
     #__to_dict__['list_no_creator'].update(_extra_user_visible_fields)
 
@@ -366,12 +353,15 @@ class ArticleContent(UserVisibleContent):
     _extra_article_fields = {
         'rating'        : None ,
     }
-    __to_dict__['list'   ].update(_extra_article_fields)
-    __to_dict__['single' ].update(_extra_article_fields)
-    __to_dict__['actions'].update(_extra_article_fields)
+    __to_dict__['default'     ].update(_extra_article_fields)
+    __to_dict__['full'        ].update(_extra_article_fields)
+    __to_dict__['full+actions'].update(_extra_article_fields)
     #__to_dict__['list_with_media'].update(_extra_article_fields)
     #__to_dict__['list_no_creator'].update(_extra_article_fields)
 
+    def rate(self, member, rating):
+        from civicboom.lib.database.actions import rate_content
+        return rate_content(self, member, rating)
 
 
 class SyndicatedContent(UserVisibleContent):
@@ -398,14 +388,14 @@ class AssignmentContent(UserVisibleContent):
             'event_date'            : None ,
             'closed'                : None ,
     }
-    __to_dict__['list'  ].update(_extra_assignment_fields)
-    __to_dict__['single'].update(_extra_assignment_fields)
-    __to_dict__['single'].update({
+    __to_dict__['default'     ].update(_extra_assignment_fields)
+    __to_dict__['full'        ].update(_extra_assignment_fields)
+    __to_dict__['full+actions'].update({
             'accepted' : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="accepted" ] ,
             'pending'  : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="pending"  ] ,
             'withdrawn': lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"] ,
     })
-    __to_dict__['actions'].update(__to_dict__['single'])
+    __to_dict__['full+actions'].update(__to_dict__['full'])
     #__to_dict__['list_with_media'].update(_extra_assignment_fields)
     #__to_dict__['list_no_creator'].update(_extra_assignment_fields)
 

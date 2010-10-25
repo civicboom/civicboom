@@ -1,13 +1,14 @@
 from civicboom.lib.base import *
 
 from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visability, group_content_visability
-from civicboom.lib.form_validators.base import DefaultSchema
-from civicboom.lib.form_validators.registration import UniqueUsernameValidator
+
 from civicboom.lib.misc import update_dict
-from civicboom.lib.form_validators.dict_overlay import overlay_errors
+from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 import formencode
 
+from civicboom.lib.form_validators.base         import DefaultSchema
+from civicboom.lib.form_validators.registration import UniqueUsernameValidator
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -16,8 +17,6 @@ user_log = logging.getLogger("user")
 # Constants
 #-------------------------------------------------------------------------------
 
-error_not_found    = action_error(_("group not found"), code=404)
-error_unauthorised = action_error(_("you do not have permission access this group"), code=403)
 
 
 #-------------------------------------------------------------------------------
@@ -46,31 +45,10 @@ def _get_group(id, is_admin=False):
     """
     group = get_group(id)
     if not group:
-        raise error_not_found
+        raise action_error(_("group not found"), code=404)
     if is_admin and not group.is_admin(c.logged_in_user):
-        raise error_unauthorised
+        raise action_error(_("you do not have permission for this group"), code=403)
     return group
-
-def validate_group_dict(group_dict, schema, action='create'):
-    """
-    When groups are created or edited the form contents need to be validated
-    """
-    # Convert kwargs and form post to dict for overlaying
-    group = {}
-    for key in group_dict.keys():
-        group[key] = {
-            'name' : key,
-            'value': group_dict[key]
-        }
-    
-    try:                                                # Try validation
-        #schema =                                       #   Build schema
-        return schema.to_python(dict(group_dict))       #   Validate
-    except formencode.Invalid, error:                   # Form has failed validation
-        group['missing'] = []
-        overlay_errors(error, group.values(), group['missing'])
-        #return {'status':'error', 'message':'failed validation', 'data': {'group':group, 'action':action}, 'template':'groups/edit'}
-        raise action_error(status='invalid', message=_('group validation failed'), data={'group':group, 'action':action}, template='groups/edit')
 
 
 #-------------------------------------------------------------------------------
@@ -78,17 +56,22 @@ def validate_group_dict(group_dict, schema, action='create'):
 #-------------------------------------------------------------------------------
 
 class GroupsController(BaseController):
+    """
+    @doc groups
+    @title Groups
+    @desc REST Controller styled on the Atom Publishing Protocol
+    """
     
     @auto_format_output()
     @web_params_to_kwargs()
     @authorize(is_valid_user)
     def index(self, **kwargs):
         """
-        GET /groups: All groups the current user belongs to
+        GET /groups: All groups the current user is a member of
         
-        @param exclude_fields - 
+        @param * (see common list return controls)
         
-        @return 200 - data.list = array of group objects that logged in user is a member including the members role in the group
+        @return 200 - data.list = array of group objects that logged in user is a member including the additional field 'members "role" in the group'
         """
         # url('groups')
         groups = [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role}) for group_role in c.logged_in_user.groups_roles]
@@ -105,18 +88,21 @@ class GroupsController(BaseController):
         
         Creates a new group with the specifyed username with the currently logged in user as as administrator of the new group
         
-        @param username
-        @param x - optional additional fields can be passed (see update)
+        @param username - a unique username, cannot clash with existing usernames
+        @param *        - see "POST /groups"
         
-        @return 400 - missing data (ie, a type=comment with no parent_id)
-        @return 201 - content created, data.id = new content id
+        @return 400 - data invalid (ie, username that already exisits)
+        @return 201 - group created, data.id = new group id
         @return 301 - if format redirect specifyed will redirect to show group
         """
         # url('groups') + POST
-        form = validate_group_dict(kwargs, CreateGroupSchema(), action='create')
+        
+        data       = {'group':kwargs, 'action':'create'}
+        data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
+        group_dict = data['group']
         
         group              = Group()
-        group.username     = form['username']
+        group.username     = group_dict['username']
         group.status       = 'active'
         group_admin        = GroupMembership()
         group_admin.member = c.logged_in_user
@@ -160,25 +146,23 @@ class GroupsController(BaseController):
         
         group_dict = group.to_dict()
         group_dict.update(kwargs)
-        form = validate_group_dict(group_dict, GroupSchema(), action='edit')
-        print "hu?"
-        #if form.get('status')=='error':
-        #    print form
-        #    return form
+        data = {'group':group_dict, 'action':'edit'}
+        data = validate_dict(data, GroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
+        group_dict = data['group']
         
-        group.name                       = form['name']
-        group.description                = form['description']
-        group.default_role               = form['default_role']
-        group.join_mode                  = form['join_mode']
-        group.member_visability          = form['member_visability']
-        group.default_content_visability = form['default_content_visability']
+        group.name                       = group_dict['name']
+        group.description                = group_dict['description']
+        group.default_role               = group_dict['default_role']
+        group.join_mode                  = group_dict['join_mode']
+        group.member_visability          = group_dict['member_visability']
+        group.default_content_visability = group_dict['default_content_visability']
         
         Session.commit()
         
         if c.format == 'html':
             return redirect(url('group', id=group.id))
         
-        return action_ok(message=_('group updated ok'), data={'group':group.to_dict(), 'action':'edit'})
+        return action_ok(message=_('group updated ok'), data=data)
 
 
     @auto_format_output()
@@ -189,7 +173,12 @@ class GroupsController(BaseController):
         DELETE /group/{id}: Delete an existing group
         (aka POST /group/{id} with POST[_method] = "DELETE")
         
+        Current user must be identifyed as an administrator of this group.
+        
+        @api groups 1.0 (WIP)
+        
         @return 403 - lacking permission
+        @return 404   group not found to delete
         @return 200 - group deleted successfully
         """
         group = _get_group(id, is_admin=True)
@@ -198,14 +187,23 @@ class GroupsController(BaseController):
 
 
     @auto_format_output()
-    def show(self, id):
+    @web_params_to_kwargs()
+    def show(self, id, **kwargs):
         """
         GET /group/{id}: Show a specific item
         
-        @return 200 - data.content = group object (with list of members [if public])
+        @api groups 1.0 (WIP)
+        
+        @param * (see common list return controls)
+        
+        @return 200      page ok
+                group    group object (with list of members [if group members public])
+        @return 404      group not found
         """
+        if 'list_type' not in kwargs:
+            kwargs['list_type'] = 'full+actions'
         group = _get_group(id)
-        return action_ok(data={'group':group.to_dict('actions')})
+        return action_ok(data={'group':group.to_dict(**kwargs)})
 
 
     @auto_format_output()
@@ -213,6 +211,8 @@ class GroupsController(BaseController):
     def edit(self, id):
         """
         GET /contents/{id}/edit: Form to edit an existing item
+        
+        Current user must be identifyed as an administrator of this group.
         """
         # url('edit_group', id=ID)
         group = _get_group(id, is_admin=True)

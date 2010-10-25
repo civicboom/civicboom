@@ -1,6 +1,7 @@
 from civicboom.model.member  import Member, User, Group, GroupMembership
 from civicboom.model.content import Content, Tag, License
 from civicboom.model.media   import Media
+from civicboom.model.message import Message
 from civicboom.model.meta    import Session
 
 from sqlalchemy     import and_, or_, not_
@@ -65,6 +66,9 @@ def get_membership(group, member):
         return Session.query(GroupMembership).filter(and_(GroupMembership.group_id==group.id, GroupMembership.member_id==member.id)).one()
     except:
         return None
+
+def get_message(message):
+    return Session.query(Message).filter(Message.id==int(message)).first()
 
 def get_content_nocache(content_id):
     #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried

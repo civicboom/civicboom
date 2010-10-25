@@ -30,27 +30,27 @@ Base = declarative_base()
 #
 # Enchancements to Base object
 
-def to_dict(self, list_type=None, include_fields=None, exclude_fields=None, default_list_type='list', include_exclusive=False, **kwargs):
+def to_dict(self, list_type='default', include_fields=None, exclude_fields=None, **kwargs):
     """
     describe
     """
     from civicboom.lib.misc import obj_to_dict
     
-    # Copy list for field_list_name
-    if list_type not in self.__to_dict__:
-        list_type = default_list_type
-    
-    if include_exclusive: # Don't copt a base list if include_exclusive is set
+    if list_type=='empty': # Don't copy a base list if empty list is requested
         fields = {}
     else:
+        if list_type not in self.__to_dict__:
+            from civicboom.lib.web import action_error
+            raise action_error(message="unsupported list type", code=400)
         fields = copy.deepcopy(self.__to_dict__[list_type])
     
-    # Include fields from ['single'] is specifyed in include_fields (can be list of strings or single string separated by ',' )
+    # Include fields from ['full+actions'] is specifyed in include_fields (can be list of strings or single string separated by ',' )
+    master_list_name = 'full+actions' # Constant - should be defined elsewhere?
     if isinstance(include_fields, basestring):
         include_fields = include_fields.split(',')
     if isinstance(include_fields, list):
-        for field in [field for field in include_fields if field in self.__to_dict__['single']]:
-            fields[field] = self.__to_dict__['single'][field]
+        for field in [field for field in include_fields if field in self.__to_dict__[master_list_name]]:
+            fields[field] = self.__to_dict__[master_list_name][field]
 
     # Exclude fields
     if isinstance(exclude_fields, basestring):

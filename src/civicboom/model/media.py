@@ -9,6 +9,7 @@ import civicboom.lib.worker as worker
 from pylons import config, app_globals # used in generation of URL's for media
 
 import magic
+import copy
 import logging
 
 log = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ class Media(Base):
     
     __to_dict__ = Base.__to_dict__.copy()
     __to_dict__.update({
-        'list': {
+        'default': {
             'id'           : None ,
             'name'         : None ,
             'type'         : None ,
@@ -44,6 +45,10 @@ class Media(Base):
             'thumbnail_url': None ,
             'filesize'     : None ,
         },
+    })
+    __to_dict__.update({
+        'full'        : copy.deepcopy(__to_dict__['default']) , 
+        'full+actions': copy.deepcopy(__to_dict__['default']) , 
     })
 
 

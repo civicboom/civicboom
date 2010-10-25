@@ -1062,7 +1062,7 @@ CREATE TRIGGER update_content
         log.debug("Groups")
 
         g = Group()
-        g.username      = u"p.a.t.t.y."
+        g.username      = u"patty"
         g.name          = u"People Against Test's Torturous Yodelling"
         g.join_date     = datetime.datetime.now()
         g.home_location = u"The Moon"

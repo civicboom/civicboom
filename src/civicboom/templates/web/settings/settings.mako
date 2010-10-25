@@ -15,28 +15,48 @@
 
 <%def name="body()">
     ${h.form(h.url('setting', id='None'), method='put')}
-    % for group_name in d.keys():
+    <%
+        # Setup Settings groups
+        setting_groups = {}
+        for setting_meta in d['settings_meta'].values():
+            if 'group' not in setting_meta:
+               setting_meta['group'] = 'undefined'
+            if setting_meta['group'] not in setting_groups:
+                setting_groups[setting_meta['group']] = []
+            setting_groups[setting_meta['group']].append(setting_meta['name'])
+    %>
+    
+    % for group_name in setting_groups.keys():
         <fieldset><legend>${group_name.capitalize()}</legend>
-            % for field in d[group_name]:
+            % for setting_name in setting_groups[group_name]:
                 <p>
-                    ${field['description']} :
-                    % if 'type' not in field:
-                        <input name="${field['name']}" value="${field['value']}">
-                    % elif field['type'] == 'boolean':
+                    <%
+                        setting_meta  = d['settings_meta'][setting_name]
+                        setting_type  = None
+                        if 'type' in setting_meta:
+                            setting_type  = setting_meta['type']
+                        setting_value = ''
+                        if setting_name in d['settings']:
+                            setting_value = d['settings'][setting_name]
+                    %>
+
+                    ${setting_meta['description']}:
+                    
+                    % if not setting_type:
+                        <input name="${setting_name}" value="${setting_value}">
+                    % elif setting_type == 'boolean':
                         <%
                             checked = None
-                            if field['value']: checked="checked='%s'" % field['value']
+                            if setting_value and setting_value!='': checked="checked='%s'" % setting_value
                         %>
-                        <input name="${field['name']}" value="True" type='checkbox' ${checked}>
-                    % elif field['type'] == 'password':
-                        <input name="${field['name']}" type="password" />
+                        <input name="${setting_name}" value="True" type='checkbox' ${checked}>
+                    % elif setting_type == 'password':
+                        <input name="${setting_name}" type="password" />
                     % endif
-                ##% for key in field.keys():
-                ##    <p>${key}</p>
-                ##% endfor
-                % if field.get('error'):
-                    <span class="error-message">${field['error']}</span>
-                % endif
+
+                    % if 'invalid' in d and setting_name in d['invalid']:
+                        <span class="error-message">${d['invalid'][setting_name]}</span>
+                    % endif
                 </p>
             % endfor
         </fieldset>

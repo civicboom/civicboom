@@ -1,68 +1,45 @@
-def overlay_errors(error, item_list, missing_list):
-    """
-    To be used in the form
-    
-        # Form validation
-        try:
-            schema = ?
-            form   = schema.to_python(dict(request.params)) # Validate
-        except formencode.Invalid, error:
-            overlay_errors(error, settings_list(), missing_list) # Overlays error fields over the returned dict
-            
-            # Set error status
-            edit_action['status']  = 'error'
-            edit_action['message'] = error.msg #_('failed validation') # This is frustrating, if this a a decriptive error, then error.msg is fine, but normally this returns the whole dict with values and stuff, we need to tell users why the validation has failed
-            return edit_action
-    """
-    # Form has failed validation
-    form        = error.value
-    form_errors = error.error_dict or {}
-    
-    # Set error property for each failed property
+from civicboom.lib.base import _, action_error
+import formencode
 
-    for item in item_list:
-        if 'name' in item:
-            item_name = item['name']                            # For each setting
-            if item_name in form:                                  #   If in form 
-                item['value'] = form[item_name]                 #     populate value with form data
-            if item_name in form_errors:                           #   If error
-                e = form_errors[item_name]                         #     
-                del form_errors[item_name]                         #     delete error object (so we can see if any are outstanding/missing at the end)
-                if hasattr(e,'msg'): e = e.msg                             #     append error
-                item['error'] = e                                       #
+def validate_dict(data, schema, dict_to_validate_key=None, template_error=None):
+    # Prepare dict to validate
+    if len(data.keys())==1: #If dict only contains 1 key then validate that one key
+        dict_to_validate_key = data.keys()[0]
+    if dict_to_validate_key:
+        dict_to_validate = data[dict_to_validate_key]
     
-    # Report any missing fields (anything that is left in error.error_dict)
-    if len(form_errors) > 0:
-        #settings['missing'] = []
-        for missing_name in form_errors.keys():
-            e = form_errors[missing_name]
-            if hasattr(e,'msg') : e = e.msg
-            missing_list.append({'name':missing_name, 'description':missing_name, 'error':e, 'value':''})
+    # Validate
+    try:
+        dict_validated = schema.to_python(dict_to_validate)
     
+    # Validation Failed
+    except formencode.Invalid, error:
+        dict_validated        = error.value
+        dict_validated_errors = error.error_dict or {}
+        
+        # Record errors in data['invalid']
+        invalid_dict = {}
+        data['invalid'] = invalid_dict
+        
+        print dict_validated
+        print dict_validated_errors
+        
+        for key in dict_validated_errors.keys():
+            e = dict_validated_errors[key]
+            if hasattr(e,'msg'): e = e.msg
+            invalid_dict[key] = e
+        
+        # Raise Validation Error
+        raise action_error(
+            status   = 'invalid' ,
+            code     = 400 ,
+            message  = _('failed validation') ,
+            data     = data ,
+            template = template_error ,
+        )
     
+    # Overlay validated dict back over data and return
+    if dict_to_validate_key:
+        data[dict_to_validate_key] = dict_validated
     
-    # Reference to validation code in settings
-    """"
-    # Form has failed validation
-    form        = error.value
-    form_errors = error.error_dict or {}
-    
-    # Set error property for each failed property
-    for setting in settings_list():
-        setting_fieldname = setting['name']                            # For each setting
-        if setting_fieldname in form:                                  #   If in form 
-            setting['value'] = form[setting_fieldname]                 #     populate value with form data
-        if setting_fieldname in form_errors:                           #   If error
-            e = form_errors[setting_fieldname]                         #     
-            del form_errors[setting_fieldname]                         #     delete error object (so we can see if any are outstanding/missing at the end)
-            if hasattr(e,'msg'): e = e.msg                             #     append error
-            setting['error'] = e                                       #
-    
-    # Report any missing fields (anything that is left in error.error_dict)
-    if len(form_errors) > 0:
-        settings['missing'] = []
-        for missing_fieldname in form_errors.keys():
-            e = form_errors[missing_fieldname]
-            if hasattr(e,'msg') : e = e.msg
-            settings['missing'].append({'name':missing_fieldname, 'description':missing_fieldname, 'error':e, 'value':''})
-    """
+    return data

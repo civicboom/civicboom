@@ -25,6 +25,19 @@ class DefaultSchema(formencode.Schema):
     filter_extra_fields = True
 
 
+class MemberValidator(validators.FancyValidator):
+    not_empty = True
+    messages = {
+        'empty'     : _('You must specify a member'),
+        'not_member': _('Not a valid member'),
+    }
+    def _to_python(self, value, state):
+        from civicboom.lib.database.get_cached import get_member
+        member = get_member(value)
+        if member:
+            return member
+        raise formencode.Invalid(self.message("not_member", state), value, state)
+    
 
 class CurrentUserPasswordValidator(validators.FancyValidator):
     not_empty    = True

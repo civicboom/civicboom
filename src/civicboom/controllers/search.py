@@ -72,6 +72,11 @@ class SearchController(BaseController):
     @auto_format_output()
     @web_params_to_kwargs()
     def content(self, **kwargs):
+        """
+        @param * (see common list return controls)
+        @param limit
+        @param offset
+        """
         
         results = Session.query(Content).select_from(join(Content, Member, Content.creator))
         results = results.filter(and_(Content.__type__!='comment', Content.__type__!='draft', Content.status=='show', Content.private==False))
@@ -87,7 +92,7 @@ class SearchController(BaseController):
         if 'exclude_fields' not in kwargs:
             kwargs['exclude_fields'] = ",creator_id"
         if 'list_type' not in kwargs:
-            kwargs['list_type'] = 'list'
+            #kwargs['list_type'] = 'default'
             if c.format == 'rss':                       # Default RSS to list_with_media
                 kwargs['include_fields'] += ',attachments'
         
@@ -95,7 +100,9 @@ class SearchController(BaseController):
             results = search_filters[key](results, kwargs[key])
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
-        return action_ok(data={'list': [content.to_dict(kwargs['list_type'], include_fields=kwargs['include_fields'], exclude_fields=kwargs['exclude_fields']) for content in results.all()]}) # return dictionaty of content to be formatted
+        return action_ok(data={'list': [content.to_dict(**kwargs) for content in results.all()]}) # return dictionaty of content to be formatted
+
+
 
 
     @auto_format_output()

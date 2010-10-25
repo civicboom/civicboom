@@ -25,6 +25,10 @@ from civicboom.lib.helpers          import call_action
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
+#-------------------------------------------------------------------------------
+# Constants
+#-------------------------------------------------------------------------------
+
 
 index_lists = {
     'content'             : lambda member: member.content ,
@@ -35,7 +39,31 @@ index_lists = {
     'drafts'              : lambda member: member.content_drafts ,
 }
 
+#-------------------------------------------------------------------------------
+# Global Functions
+#-------------------------------------------------------------------------------
 
+def _get_content(id, is_editable=False, is_viewable=False):
+    """
+    Shortcut to return content and raise not found or permission exceptions automatically (as these are common opertations every time a content is fetched)
+    """
+    content = get_content(id)
+    if not content:
+        raise action_error(_("content not found"), code=404)
+    if is_viewable:
+        if not content.viewable_by(c.logged_in_user): 
+            raise action_error(_("_content not viewable"), code=403)
+        if content.__type__ == "comment":
+            user_log.debug("Attempted to view a comment as an article")
+            raise action_error(_("_content not found"), code=404)
+    if is_editable and not content.editable_by(c.logged_in_user):
+        raise action_error(_("You do not have permission to edit this _content"), code=403)
+    return content
+
+
+#-------------------------------------------------------------------------------
+# Content Controler
+#-------------------------------------------------------------------------------
 
 class ContentsController(BaseController):
     """
@@ -50,7 +78,7 @@ class ContentsController(BaseController):
     @auto_format_output()
     @web_params_to_kwargs()
     @authorize(is_valid_user)
-    def index(self, list='content'):
+    def index(self, **kwargs):
         """
         GET /contents: All items in the collection
 
@@ -68,12 +96,19 @@ class ContentsController(BaseController):
                 list   array of content objects
         """
         # url('contents')
+        if 'list' not in kwargs:
+            kwargs['list'] = 'content'
+        if 'exclude_fields' not in kwargs:
+            kwargs['exclude_fields'] = 'creator'
         
-        if list not in index_lists: raise action_error(_('list type %s not supported') % list)
-        content_list      = index_lists[list](c.logged_in_user)
-        content_list      = [content.to_dict(exclude_fields="creator") for content in content_list]
+        list = kwargs['list']
+        if list not in index_lists:
+            raise action_error(_('list type %s not supported') % list, code=400)
+            
+        contents = index_lists[list](c.logged_in_user)
+        contents = [content.to_dict(**kwargs) for content in contents]
         
-        return action_ok(data={'list': content_list})
+        return action_ok(data={'list': contents})
 
 
     @auto_format_output()
@@ -98,6 +133,7 @@ class ContentsController(BaseController):
 
         @comment Shish paramaters need filling out
         @comment Shish do all the paramaters need to start with "form_"?
+        @comment Allan   no need for all params to start with "form_" this was a leftover from the first prototype, they can be removed
         """
         # url('contents') + POST
         
@@ -122,7 +158,7 @@ class ContentsController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    def new(self, format='html'):
+    def new(self):
         """
         GET /contents/new: Form to create a new item
 
@@ -151,20 +187,9 @@ class ContentsController(BaseController):
 
         @comment Shish needs to check validity of parent if set
         """
-        # Forms posted to this method should contain a hidden field:
-        #    <input type="hidden" name="_method" value="PUT" />
-        # Or using helpers:
-        #    h.form(url('content', id=ID),
-        #           method='put')
         # url('content', id=ID)
         
-        content = get_content(id)
-        
-        if not content:
-            raise action_error(_("_content not found"), code=404)
-        
-        if not content.editable_by(c.logged_in_user):
-            raise action_error(_("You do not have permission to edit this _content"), code=403)
+        content = _get_content(id, is_editable=True)
         
         # AllanC - Publish Permission placeholder for groups
         #          We need to not only know the current user persona, but also the role of that current persona e.g - might be logged in as EvilCorp but only as a 'contributor' or 'observer'
@@ -224,7 +249,7 @@ class ContentsController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    def delete(self, id, format="html"):
+    def delete(self, id):
         """
         DELETE /contents/{id}: Delete an existing item
 
@@ -234,28 +259,22 @@ class ContentsController(BaseController):
         @return 403   lacking permission
         @return 404   no content to delete
         """
-        # Forms posted to this method should contain a hidden field:
-        #    <input type="hidden" name="_method" value="DELETE" />
-        # Or using helpers:
-        #    h.form(url('content', id=ID),
-        #           method='delete')
         # url('content', id=ID)
-        content = get_content(id)
-        if not content:
-            raise action_error(_("_content not found"), code=404)
-        if not content.editable_by(c.logged_in_user):
-            raise action_error(_("your current user does not have the permissions to delete this _content"), code=403)
+        content = _get_content(id, is_editable=True)
         content.delete()
         return action_ok(_("_content deleted"), code=200)
 
 
     @auto_format_output()
-    def show(self, id, format='html'):
+    @web_params_to_kwargs()
+    def show(self, id, **kwargs):
         """
         GET /content/{id}: Show a specific item
-
+        
         @api contents 1.0 (WIP)
-
+        
+        @param * (see common list return controls)
+        
         @return 200      page ok
                 content  content object
         @return 403      permission denied
@@ -267,16 +286,10 @@ class ContentsController(BaseController):
         Different content object types require a different view template
         Identify the object type and render with approriate renderer
         """
-        content = get_content(id)
+        if 'list_type' not in kwargs:
+            kwargs['list_type'] = 'full+actions'
         
-        # Check content is visable
-        if not content:
-            raise action_error(_("_content not found"), code=404)
-        if content.__type__ == "comment":
-            user_log.debug("Attempted to view a comment as an article")
-            raise action_error(_("_content not found"), code=404)
-        if not content.viewable_by(c.logged_in_user): 
-            raise action_error(_("_content not viewable"), code=403)
+        content = _get_content(id, is_viewable=True)
         
         # Increase content view count
         if hasattr(content,'views'):
@@ -291,7 +304,7 @@ class ContentsController(BaseController):
             
         return action_ok(
             template = 'design09/content/view',
-            data     = {'content':content.to_dict('actions')}
+            data     = {'content':content.to_dict(**kwargs)}
         )
 
 
@@ -303,15 +316,10 @@ class ContentsController(BaseController):
         """
         # url('edit_content', id=ID)
         
-        c.content = get_content(id)
-        if not c.content:
-            raise action_error(_("_content not found"), code=404)
+        c.content = _get_content(id, is_editable=True)
         
         c.content                  = form_to_content(request.params, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)
-        
-        if not c.content.editable_by(c.logged_in_user):
-            raise action_error(_("your user does not have the permissions to edit this _content"), code=403)
         
         return render("/web/content_editor/content_editor.mako")
 

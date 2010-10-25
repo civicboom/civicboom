@@ -3,8 +3,10 @@ from pylons.templating  import render_mako as render #for rendering emails
 from pylons.i18n.translation import _
 
 from civicboom.model.meta import Session
+from civicboom.model         import Rating
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent
-from civicboom.model.member import GroupMembership, group_member_roles
+from civicboom.model.member  import GroupMembership, group_member_roles
+
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content, update_content, update_accepted_assignment, update_member
 
@@ -13,6 +15,8 @@ from civicboom.lib.communication.email import send_email
 
 from civicboom.lib.text import strip_html_tags
 from civicboom.lib.web  import action_error
+
+from sqlalchemy.orm.exc import NoResultFound
 
 
 """
@@ -82,6 +86,16 @@ def unfollow(follower,followed, delay_commit=False):
     update_member(followed)
 
     return True
+
+#-------------------------------------------------------------------------------
+# Message Actions
+#-------------------------------------------------------------------------------
+
+def del_message(message):
+    Session.delete(message)
+    Session.commit()
+    #update_member() # invalidate needed lists!!!
+
 
 
 #-------------------------------------------------------------------------------
@@ -392,3 +406,43 @@ def disasociate_content_from_parent(content):
     content.parent = None
     Session.commit()
     return True
+
+def rate_content(content, member, rating):
+    content = get_content(content)
+    member  = get_member(member)
+
+    if not content:
+        raise action_error(_('unable to find content'), code=404)
+    if not member:
+        raise action_error(_('unable to find member'), code=404)
+    if rating and int(rating)<0 or int(rating)>5:
+        raise action_error(_("Ratings can only be in the range 0 to 5"), code=400)
+
+    # remove any existing ratings
+    # we need to commit after removal, otherwise SQLAlchemy
+    # will optimise remove->add as modify-existing, and the
+    # SQL trigger will break
+    try:
+        q = Session.query(Rating)
+        q = q.filter(Rating.content_id==content.id)
+        q = q.filter(Rating.member    ==member)
+        existing = q.one()
+        Session.delete(existing)
+        Session.commit()
+    except NoResultFound:
+        pass
+
+    # add a new one
+    if rating:
+        rating = int(rating)
+        
+        # rating = 0 = remove vote
+        if rating > 0:
+            r = Rating()
+            r.content_id = content.id
+            r.member     = member
+            r.rating     = rating
+            Session.add(r)
+            Session.commit()
+
+    user_log.debug("Rated Content #%d as %d" % (content.id, int(rating)))
