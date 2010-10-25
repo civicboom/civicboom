@@ -61,9 +61,10 @@ class Content(Base):
     (FIXME: is this correct?)
     """
     __tablename__   = "content"
-    __type__        = Column(Enum("comment", "draft", "article", "assignment", "syndicate", name="content_type"), nullable=False)
+    __type__        = Column(Enum("comment", "draft", "article", "response", "assignment", "syndicate", name="content_type"), nullable=False)
     __mapper_args__ = {'polymorphic_on': __type__}
-    _content_status = Enum("pending", "show", "locked", name="content_status")
+    #_visiability = Enum("pending", "show", name="content_")
+    _edit_lock   = Enum("none", "parent_owner", "group", "system", name="edit_lock_level")
     id              = Column(Integer(),        primary_key=True)
     title           = Column(Unicode(250),     nullable=False, default=u"Untitled")
     content         = Column(UnicodeText(),    nullable=False, default=u"", doc="The body of text")
@@ -72,12 +73,14 @@ class Content(Base):
     location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)
     creation_date   = Column(DateTime(),       nullable=False, default=func.now())
     update_date     = Column(DateTime(),       nullable=False, default=func.now(), doc="Controlled by postgres trigger")
-    status          = Column(_content_status,  nullable=False, default="show")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
+    
+    visable         = Column(Boolean(),        nullable=False, default=True)
+    edit_lock       = Column(_edit_lock,       nullable=False, default="none")
 
-    num_responses   = Column(Integer(),        nullable=False, default=0)
-    num_comments    = Column(Integer(),        nullable=False, default=0)
+    num_responses   = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
+    num_comments    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
     
     # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
     # AllanC - see civicboom_init.py for 'responsese'
@@ -179,7 +182,7 @@ class Content(Base):
         """
         Check to see if a member object has the rights to edit this content
         """
-        if self.status  == "locked":
+        if self.edit_lock != "none":
             return False
         if self.creator == member  :
             return True
@@ -197,9 +200,7 @@ class Content(Base):
             return False # if draft, only editors (above) can see
         if self.__type__ == "comment":
             return self.parent.viewable_by(member) # if comment, show if we can see the parent article
-        if self.status == "show":
-            return True
-        if self.status == "locked":
+        if self.visable == True:
             return True
         return False
 
@@ -261,7 +262,7 @@ class Content(Base):
             return '%s %s' % (self.location.coords(Session)[1], self.location.coords(Session)[0])
         return None
         # AllanC Note: duplicated for Member location ... could we have location_string in a common place?
-
+    
 
 class DraftContent(Content):
     __tablename__   = "content_draft"
@@ -311,9 +312,10 @@ class UserVisibleContent(Content):
     def action_list_for(self, member):
         action_list = Content.action_list_for(self, member)
         if self.is_parent_owner(member):
-            if self.status != 'locked':
+            if self.response_type == 'none':
                 action_list.append('approve')
-            action_list.append('dissasociate')
+                action_list.append('seen')
+                action_list.append('dissasociate')
         return action_list
 
     def is_parent_owner(self, member):
@@ -322,15 +324,7 @@ class UserVisibleContent(Content):
         if self.parent:
             return self.parent.editable_by(member)
         return False
-        
-    def lock(self):
-        from civicboom.lib.database.actions import lock_content
-        return lock_content(self)
-    
-    def dissasociate_from_parent(self):
-        from civicboom.lib.database.actions import disasociate_content_from_parent
-        return disasociate_content_from_parent(self)
-        
+
     def boom_to_all_followers(self, member):
         from civicboom.lib.database.actions import boom_to_all_followers
         return boom_to_all_followers(self, member)
@@ -339,9 +333,11 @@ class UserVisibleContent(Content):
 class ArticleContent(UserVisibleContent):
     __tablename__   = "content_article"
     __mapper_args__ = {'polymorphic_identity': 'article'}
+    _response_type  = Enum("none", "approved", "seen", "dissassociated", name="response_type")
     id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
     rating          = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
     ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
+    response_type   = Column(_response_type, nullable=False, default="none")
 
     # AllanC TODO:
     # Could have derived fields for count="20" min="1" max="10"
@@ -352,6 +348,7 @@ class ArticleContent(UserVisibleContent):
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_article_fields = {
         'rating'        : None ,
+        'response_type' : None ,
     }
     __to_dict__['default'     ].update(_extra_article_fields)
     __to_dict__['full'        ].update(_extra_article_fields)
@@ -362,6 +359,18 @@ class ArticleContent(UserVisibleContent):
     def rate(self, member, rating):
         from civicboom.lib.database.actions import rate_content
         return rate_content(self, member, rating)
+
+    def parent_seen(self):
+        from civicboom.lib.database.actions import parent_seen
+        return parent_seen(self)
+
+    def parent_approved(self):
+        from civicboom.lib.database.actions import parent_approved
+        return parent_approved(self)
+
+    def parent_dissasociate(self):
+        from civicboom.lib.database.actions import parent_disasociate
+        return parent_disasociate(self)
 
 
 class SyndicatedContent(UserVisibleContent):

@@ -79,7 +79,7 @@ class SearchController(BaseController):
         """
         
         results = Session.query(Content).select_from(join(Content, Member, Content.creator))
-        results = results.filter(and_(Content.__type__!='comment', Content.__type__!='draft', Content.status=='show', Content.private==False))
+        results = results.filter(and_(Content.__type__!='comment', Content.__type__!='draft', Content.visable==True, Content.private==False))
         results = results.order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
         
         

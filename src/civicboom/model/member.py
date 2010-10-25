@@ -63,7 +63,7 @@ class Member(Base):
     messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id    ) )
 
     #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
-    groups_roles         = relationship("GroupMembership" , backref="member")
+    groups_roles         = relationship("GroupMembership" , backref="member") #AllanC- TODO: needs eagerload group
     followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
     following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
@@ -275,7 +275,7 @@ class Group(Member):
     # AllanC: TODO - num_mumbers postgress trigger needs updating, we only want to show GroupMembership.status=="active" in the count
     num_members                = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     #members                    = relationship("Member", secondary=GroupMembership.__table__)
-    members_roles              = relationship("GroupMembership", backref="group")
+    members_roles              = relationship("GroupMembership", backref="group") #AllanC TODO: need eagerload member
     
 
     def __unicode__(self):

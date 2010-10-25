@@ -102,7 +102,9 @@ Content.engine = CustomTemplateEngine("content")
 Content.configure(include=[
         Content.creator.with_renderer(create_autocompleter("/members.json?list=all")),
         Content.title,
-        Content.status,
+        #Content.status,
+        Content.edit_lock,
+        Content.visable,
         Content.private,
         Content.parent,
         Content.tags,
@@ -121,7 +123,8 @@ ArticleContent.engine = CustomTemplateEngine("content")
 ArticleContent.configure(include=[
         ArticleContent.creator.with_renderer(create_autocompleter("/members.json?list=all")),
         ArticleContent.title,
-        ArticleContent.status,
+        ArticleContent.edit_lock,
+        ArticleContent.visable,
         ArticleContent.private,
         ArticleContent.parent,
         ArticleContent.tags,
@@ -139,7 +142,8 @@ AssignmentContent.engine = CustomTemplateEngine("content")
 AssignmentContent.configure(include=[
         AssignmentContent.creator.with_renderer(create_autocompleter("/members.json?list=all")),
         AssignmentContent.title,
-        AssignmentContent.status,
+        AssignmentContent.edit_lock,
+        AssignmentContent.visable,
         AssignmentContent.private,
         AssignmentContent.parent,
         AssignmentContent.tags,
@@ -157,7 +161,9 @@ DraftContent.engine = CustomTemplateEngine("content")
 DraftContent.configure(include=[
         DraftContent.creator.with_renderer(create_autocompleter("/members.json?list=all")),
         DraftContent.title,
-        DraftContent.status,
+        #DraftContent.status,
+        DraftContent.edit_lock,
+        DraftContent.visable,
         DraftContent.private,
         DraftContent.parent,
         DraftContent.tags,
@@ -257,7 +263,7 @@ ArticleContentGrid.configure(include=[
         ArticleContentGrid.title,
         ArticleContentGrid.creator,
         ArticleContentGrid.update_date.readonly(),
-        ArticleContentGrid.status,
+        #ArticleContentGrid.status,
         ArticleContentGrid.attachments.readonly(),
         ArticleContentGrid.tags.readonly(),
         ])
@@ -267,7 +273,7 @@ AssignmentContentGrid.configure(include=[
         AssignmentContentGrid.title,
         AssignmentContentGrid.creator,
         AssignmentContentGrid.update_date.readonly(),
-        AssignmentContentGrid.status,
+        #AssignmentContentGrid.status,
         AssignmentContentGrid.attachments.readonly(),
         AssignmentContentGrid.tags.readonly(),
         ])
@@ -285,7 +291,7 @@ DraftContentGrid.configure(include=[
         DraftContentGrid.title,
         DraftContentGrid.creator,
         DraftContentGrid.update_date.readonly(),
-        DraftContentGrid.status,
+        #DraftContentGrid.status,
         DraftContentGrid.attachments.readonly(),
         DraftContentGrid.tags.readonly(),
         ])

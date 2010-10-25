@@ -853,7 +853,7 @@ CREATE TRIGGER update_content
         דאָ איז עטלעכע טעקסט.
         """
         ca.creator    = u1
-        ca.status     = "show"
+        #ca.status     = "show"
         ca.license_id = cc_by.id
         ca.tags       = [open_source, the_moon_loc]
         ca.location   = "SRID=4326;POINT(-0.1278328 51.5072648)"
@@ -879,7 +879,7 @@ CREATE TRIGGER update_content
         ca2.title      = u"A test article by someone else"
         ca2.content    = u"Content #2 should be owned by unitfriend for testing purposes"
         ca2.creator    = u2
-        ca2.status     = "show"
+        #ca2.status     = "show"
         ca2.license_id = cc_by.id
         ca2.location   = "SRID=4326;POINT(-0.1178328 51.5072648)"
         ca2.tags       = [open_source, the_moon_loc]
@@ -894,7 +894,7 @@ CREATE TRIGGER update_content
         c.title      = u"A test draft by the test user"
         c.content    = u"Content #3 should be owned by unittest for testing purposes"
         c.creator    = u1
-        c.status     = "show"
+        #c.status     = "show"
         c.license_id = cc_by.id
         c.tags       = [open_source, the_moon_loc]
 
@@ -908,7 +908,7 @@ CREATE TRIGGER update_content
         c.title      = u"A test draft by someone else"
         c.content    = u"Content #4 should be owned by unitfriend for testing purposes"
         c.creator    = u2
-        c.status     = "show"
+        #c.status     = "show"
         c.license_id = cc_by.id
         c.tags       = [open_source, the_moon_loc]
 
@@ -922,7 +922,7 @@ CREATE TRIGGER update_content
         c.title      = u"A test response"
         c.content    = u"Here is a response by the test user"
         c.creator    = u1
-        c.status     = "show"
+        #c.status     = "show"
         c.license_id = cc_by.id
         ca2.responses.append(c)
 
@@ -937,7 +937,7 @@ CREATE TRIGGER update_content
         c.title      = u"A test response"
         c.content    = u"Here is a response by the article writer"
         c.creator    = u2
-        c.status     = "show"
+        #c.status     = "show"
         c.license_id = cc_by.id
         ca2.responses.append(c)
 
@@ -952,7 +952,7 @@ CREATE TRIGGER update_content
         c.title      = u"A test response"
         c.content    = u"Here is a response by someone who is neither the current user nor the article author"
         c.creator    = u3
-        c.status     = "show"
+        #c.status     = "show"
         c.license_id = cc_by.id
         ca2.responses.append(c)
 
@@ -966,7 +966,7 @@ CREATE TRIGGER update_content
         c.title      = u"deleteme"
         c.content    = u"this is here to test that the logged in user can delete their own articles with DELETE"
         c.creator    = u1
-        c.status     = "show"
+        #c.status     = "show"
         c.location   = "SRID=4326;POINT(-0.1278328 51.5102648)"
         c.license_id = cc_by.id
 
@@ -980,7 +980,7 @@ CREATE TRIGGER update_content
         c.title      = u"deleteme"
         c.content    = u"this is here to test that the logged in user can delete their own articles with _method=DELETE"
         c.creator    = u1
-        c.status     = "show"
+        #c.status     = "show"
         c.license_id = cc_by.id
 
         Session.add(c); Session.commit();
@@ -993,7 +993,7 @@ CREATE TRIGGER update_content
         cc2.title      = u"A comment"
         cc2.content    = u"Here is a response by the article author"
         cc2.creator    = u1
-        cc2.status     = "show"
+        #cc2.status     = "show"
         cc2.license_id = cc_by.id
         ca.responses.append(cc2)
 
@@ -1001,7 +1001,7 @@ CREATE TRIGGER update_content
         cc3.title      = u"A test response with media"
         cc3.content    = u"Here is a response with media"
         cc3.creator    = u4
-        cc3.status     = "show"
+        #cc3.status     = "show"
         cc3.license_id = cc_by.id
         ca.responses.append(cc3)
 
@@ -1009,7 +1009,7 @@ CREATE TRIGGER update_content
         cc4.title      = u"A test response with media"
         cc4.content    = u"Here is a response by you (if you = unittest)"
         cc4.creator    = u1
-        cc4.status     = "show"
+        #cc4.status     = "show"
         cc4.license_id = cc_by.id
         ca.responses.append(cc4)
 
@@ -1017,7 +1017,7 @@ CREATE TRIGGER update_content
         cc5.title      = u"A test response with media"
         cc5.content    = u"Here is a response by someone else"
         cc5.creator    = u5
-        cc5.status     = "show"
+        #cc5.status     = "show"
         cc5.license_id = cc_by.id
         ca.responses.append(cc5)
 
@@ -1035,14 +1035,14 @@ CREATE TRIGGER update_content
         dc1 = DraftContent()
         dc1.title      = u"Delete me with DELETE"
         dc1.content    = u"I am writing a longer response, worthy of being published separately"
-        dc1.status     = "show"
+        #dc1.status     = "show"
         dc1.license_id = cc_by.id
         u1.content.append(dc1)
 
         dc2 = DraftContent()
         dc2.title      = u"Delete me with fakeout"
         dc2.content    = u"I am writing a longer response, worthy of being published separately"
-        dc2.status     = "show"
+        #dc2.status     = "show"
         dc2.license_id = cc_by.id
         u1.content.append(dc2)
 
@@ -1050,7 +1050,7 @@ CREATE TRIGGER update_content
         res1.title      = u"A response article"
         res1.content    = u"oh me oh my"
         res1.creator    = u2
-        res1.status     = "show"
+        #res1.status     = "show"
         res1.license_id = cc_by.id
         res1.parent     = ca
 
@@ -1090,7 +1090,7 @@ CREATE TRIGGER update_content
         asc = AssignmentContent()
         asc.title      = u"Silence Mr U. Test"
         asc.content    = u"Get Mr Test to stop singing, write an article about how you did it"
-        asc.status     = "show"
+        #asc.status     = "show"
         asc.private    = True
         asc.license_id = cc_by.id
         #asc.assigned_to.append(g)
@@ -1103,7 +1103,7 @@ CREATE TRIGGER update_content
         asc2 = AssignmentContent()
         asc2.title      = u"Assignment for the world to see"
         asc2.content    = u"There once was a ugly duckling. Damn it was ugly"
-        asc2.status     = "show"
+        #asc2.status     = "show"
         asc2.license_id = cc_by.id
         u1.content.append(asc2)
         Session.add_all([asc2, ])

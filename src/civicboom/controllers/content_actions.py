@@ -71,13 +71,36 @@ class ContentActionsController(BaseController):
 
 
     #---------------------------------------------------------------------------
-    # Approve: User Visable Content (organisation only)
+    # Seen: Response Content (organisation only)
     #---------------------------------------------------------------------------
 
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    def approve(self, id, format="html"):
+    def seen(self, id):
+        """
+        POST /contents/{id}/seen: mark response as seen
+
+        @api contents 1.0 (WIP)
+
+        @return 200   seen ok
+        @return 500   error
+        """
+        content = _get_content(id, is_parent_owner=True)
+        if content.parent_seen():
+            user_log.debug("Seen Content #%d" % int(id))
+            return action_ok(_("content has been marked as seen"))
+        raise action_error(_('Error'))
+
+
+    #---------------------------------------------------------------------------
+    # Approve: Response Content (organisation only)
+    #---------------------------------------------------------------------------
+
+    @auto_format_output()
+    @authorize(is_valid_user)
+    @authenticate_form
+    def approve(self, id):
         """
         POST /contents/{id}/approve: claim an article for publishing
 
@@ -86,24 +109,23 @@ class ContentActionsController(BaseController):
         @return 200   locked ok
         @return 500   error locking
         """
-        content = _get_content(id)
-        if content.is_parent_owner(c.logged_in_user):
-            if content.lock():
-                user_log.debug("Locked Content #%d" % int(id))
-                return action_ok(_("content has been approved and locked"))
+        content = _get_content(id, is_parent_owner=True)
+        if content.parent_approve():
+            user_log.debug("Approved&Locked Content #%d" % int(id))
+            return action_ok(_("content has been approved and locked"))
         raise action_error(_('Error locking content'))
 
 
 
 
     #---------------------------------------------------------------------------
-    # Disassociate: User Visable Content (organistaion only)
+    # Disassociate: Response Content (organistaion only)
     #---------------------------------------------------------------------------
 
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    def disasociate(self, format="html"):
+    def disasociate(self):
         """
         POST /contents/{id}/disassociate: unlink an article from its parent
 
@@ -115,11 +137,10 @@ class ContentActionsController(BaseController):
         @return 200   disassociated ok
         @return 500   error disassociating
         """
-        content = _get_content(id)
-        if content.is_parent_owner(c.logged_in_user):
-            if content.dissasociate_from_parent():
-                user_log.debug("Disassociated Content #%d" % int(id))
-                return action_ok(_("content has dissasociated from your content"))
+        content = _get_content(id, is_parent_owner=True)
+        if content.parent_dissasociate():
+            user_log.debug("Disassociated Content #%d" % int(id))
+            return action_ok(_("content has dissasociated from your parent content"))
         raise action_error(_('Error dissasociating content'))
 
 
@@ -131,7 +152,7 @@ class ContentActionsController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    def accept(self, id=None, format="html"):
+    def accept(self, id=None):
         """
         POST /contents/{id}/accept: accept an assignment
 
@@ -157,7 +178,7 @@ class ContentActionsController(BaseController):
     @auto_format_output()
     @authorize(is_valid_user)
     @authenticate_form
-    def withdraw(self, id=None, format="html"):
+    def withdraw(self, id=None):
         """
         POST /contents/{id}/witdraw: withdraw from an assignment
 

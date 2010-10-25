@@ -43,7 +43,7 @@ index_lists = {
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_content(id, is_editable=False, is_viewable=False):
+def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False):
     """
     Shortcut to return content and raise not found or permission exceptions automatically (as these are common opertations every time a content is fetched)
     """
@@ -58,6 +58,8 @@ def _get_content(id, is_editable=False, is_viewable=False):
             raise action_error(_("_content not found"), code=404)
     if is_editable and not content.editable_by(c.logged_in_user):
         raise action_error(_("You do not have permission to edit this _content"), code=403)
+    if is_parent_owner and not content.is_parent_owner(c.logged_in_user):
+        raise action_error(_("not parent owner"), code=403)
     return content
 
 

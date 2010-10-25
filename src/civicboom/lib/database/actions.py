@@ -374,12 +374,21 @@ def boom_to_all_followers(content, member):
         member.send_message_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
     Session.commit()
 
-
-def lock_content(content):
-    if content.status == "locked": return False
+def parent_seen(content, delay_commit=False):
+    content.response_type = "seen"
     
-    # Lock content
-    content.status = "locked"
+    # AllanC - TODO generate notification
+    #content.creator.send_message(???, delay_commit=True)
+    
+    if not delay_commit:
+        Session.commit()        
+    update_content(content)
+    return True
+
+def parent_approved(content, delay_commit=False):
+
+    content.edit_lock     = "parent_owner"
+    content.response_type = "approved"
 
     from pylons import tmpl_context as c # Needed for passing varibles to templates
     c.content = content
@@ -391,20 +400,28 @@ def lock_content(content):
     content.creator.send_email(subject=_('content approved'), content_html=render('/email/corporate/lock_article_to_member.mako'))
     content.creator.send_message(messages.article_approved(member=content.parent.creator, parent=content.parent, content=content), delay_commit=True)
 
-    Session.commit()
+    if not delay_commit:
+        Session.commit()
+        
     update_content(content)
     return True
     
     
-def disasociate_content_from_parent(content):
+def parent_disasociate(content, delay_commit=False):
     if not content.parent: return False
+    
     # Update has to be done before the commit in this case bcause the parent is needed
     update_content(content.parent) # Could update responses in the future, but for now we just invalidate the whole content
     update_content(content)        # this currently has code to update parents reponses, is the line above needed?
     
     content.creator.send_message(messages.article_disasociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent), delay_commit=True)
+    
     content.parent = None
-    Session.commit()
+    content.response_type = "dissassociated"
+    
+    if not delay_commit:
+        Session.commit()
+    
     return True
 
 def rate_content(content, member, rating):

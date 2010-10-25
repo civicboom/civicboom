@@ -49,7 +49,7 @@
         % for response in assignment.responses:
             <tr>
                 <td>
-                % if response.status == "locked":
+                % if response.edit_lock != "none":
                     <img src="/images/star2.gif" alt="${_("_article approved")}"/>
                 % endif
                 </td>
