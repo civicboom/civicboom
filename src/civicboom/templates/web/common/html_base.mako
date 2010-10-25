@@ -33,6 +33,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/content_editor.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/messages.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/menuh.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
 % else:
