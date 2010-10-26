@@ -27,7 +27,13 @@ All rights reserved.
 
 <div>
 <span>Feature detection:</span>
-<a href="http://www.modernizr.com//">Modernizr</a> (MIT)
+<a href="http://www.modernizr.com/">Modernizr</a> (MIT)
+</div>
+
+<div>
+<span>Images:</span>
+KM Avatar <a href="">Kent Messanger Group</a> (&copy;, fair use)
+<br>Mobiletest Avatar <a href="http://www.flickr.com/photos/johnkarakatsanis/4805593861/">John.Karakatsanis</a> (CC-BY-SA)
 </div>
 
 </article>

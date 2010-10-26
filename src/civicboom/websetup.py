@@ -753,6 +753,7 @@ CREATE TRIGGER update_content
         u6.name          = u"Kent Messenger"
         u6.status        = "active"
         u6.email         = u""
+        u6.avatar        = u"/images/test/avatar_km.png"
 
         u6_login = UserLogin()
         u6_login.user   = u6
@@ -764,6 +765,7 @@ CREATE TRIGGER update_content
         u7.name          = u"Mr. Mobile User"
         u7.status        = "active"
         u7.email         = u""
+        u7.avatar        = u"/images/test/avatar_mobiletest.jpg"
 
         u7_login = UserLogin()
         u7_login.user   = u7
