@@ -40,7 +40,7 @@ class FeedsController(BaseController):
     # file has a resource setup:
     #     map.resource('feed', 'feeds')
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def index(self, format='html'):
         """GET /feeds: All items in the collection"""
@@ -53,7 +53,7 @@ class FeedsController(BaseController):
             ]}
         )
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def create(self):
         """POST /feeds: Create a new item"""
@@ -68,14 +68,14 @@ class FeedsController(BaseController):
         except Exception, e:
             raise action_error(_("Error creating feed"), code=500)
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def new(self, format='html'):
         """GET /feeds/new: Form to create a new item"""
         # url('new_feed')
         return action_ok()
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def update(self, id):
         """PUT /feeds/id: Update an existing item"""
@@ -95,7 +95,7 @@ class FeedsController(BaseController):
         f.query = _post_to_query(request.POST)
         return action_ok(_("Feed updated"), code=200)
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def delete(self, id):
         """DELETE /feeds/id: Delete an existing item"""
@@ -115,7 +115,7 @@ class FeedsController(BaseController):
         Session.commit()
         return action_ok(_("Feed deleted"), code=200)
 
-    @auto_format_output()
+    @auto_format_output
     def show(self, id, format='html'):
         """GET /feeds/id: Show a specific item"""
         # url('feed', id=ID)
@@ -131,7 +131,7 @@ class FeedsController(BaseController):
             data={"name": f.name, "results": results}
         )
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def edit(self, id, format='html'):
         """GET /feeds/id/edit: Form to edit an existing item"""

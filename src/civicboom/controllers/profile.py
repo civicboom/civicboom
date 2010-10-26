@@ -13,7 +13,7 @@ class ProfileController(BaseController):
     @desc a controller which pulls together many odd bits of user-relevant information
     """
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def index(self):
         """

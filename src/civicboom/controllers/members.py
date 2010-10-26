@@ -39,9 +39,9 @@ class MembersController(BaseController):
     """
 
 
-    @auto_format_output()
-    @web_params_to_kwargs()
-    def index(self, **kwargs):
+    @auto_format_output
+    @web_params_to_kwargs
+    def index(self, list='all', term=None, **kwargs):
         """
         GET /members: Show a list of members
         
@@ -57,18 +57,17 @@ class MembersController(BaseController):
         """
         result = []
     
-        if kwargs.get('list', "all") == "all":
+        if list == "all":
             result = Session.query(Member)
     
-        if "term" in kwargs:
-            s = kwargs["term"]
-            result = result.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
+        if term:
+            result = result.filter(or_(Member.name.ilike("%"+term+"%"), Member.username.ilike("%"+term+"%")))
     
         return action_ok(data={"members": [m.to_dict(**kwargs) for m in result]})
 
 
-    @auto_format_output()
-    @web_params_to_kwargs()
+    @auto_format_output
+    @web_params_to_kwargs
     def show(self, id, **kwargs):
         """
         GET /members/{id}: Show a specific item
@@ -101,7 +100,7 @@ class MembersController(BaseController):
 #}
 
 
-    #@auto_format_output()
+    #@auto_format_output
     #@authorize(is_valid_user)
     #def index(self, list=None):
     #    member_list_name = request.params.get('list', list)

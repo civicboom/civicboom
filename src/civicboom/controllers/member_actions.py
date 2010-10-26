@@ -11,7 +11,7 @@ user_log = logging.getLogger("user")
 
 class MemberActionsController(BaseController):
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def follow(self, id, format="html"):
@@ -29,7 +29,7 @@ class MemberActionsController(BaseController):
         raise action_error(_('Unable to follow member: %s') % status)
 
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def unfollow(self, id, format="html"):
@@ -47,8 +47,8 @@ class MemberActionsController(BaseController):
         raise action_error(_('Unable to stop following member: %s') % status)
 
 
-    @auto_format_output()
-    @web_params_to_kwargs()
+    @auto_format_output
+    @web_params_to_kwargs
     def followers(self, id, **kwargs):
         """
         GET /members/{name}/followers: get a list of followers
@@ -65,8 +65,8 @@ class MemberActionsController(BaseController):
         return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.followers]})
 
 
-    @auto_format_output()
-    @web_params_to_kwargs()
+    @auto_format_output
+    @web_params_to_kwargs
     def following(self, id, **kwargs):
         """
         GET /members/{name}/following: get a list of members the user is following

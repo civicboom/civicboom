@@ -35,7 +35,7 @@ class MobileController(BaseController):
     #-----------------------------------------------------------------------------
     # Latest Version
     #-----------------------------------------------------------------------------  
-    @auto_format_output()
+    @auto_format_output
     def latest_version(self, format="html"):
         if format == "html":
             # HTML format = really old; the only HTML output we want to support
@@ -47,7 +47,7 @@ class MobileController(BaseController):
 
 
     #@_logged_in_mobile
-    @auto_format_output()
+    @auto_format_output
     def media(self):
         log.debug("Uploading media from mobile")
         content = get_content(int(request.POST['content_id']))
@@ -84,7 +84,7 @@ class MobileController(BaseController):
     #-----------------------------------------------------------------------------
     # If the mobile app has an error that it is not expecting then it can notify the live server
     # This can then be logged and email sent etc
-    @auto_format_output()
+    @auto_format_output
     def error(self):
         #from civicboom.lib.communication.email import send_email
         if not request.POST:

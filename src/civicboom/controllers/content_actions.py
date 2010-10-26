@@ -15,8 +15,8 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Rate: Article
     #---------------------------------------------------------------------------
-    @auto_format_output()
-    @web_params_to_kwargs()
+    @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
     def rate(self, id, **kwargs):
@@ -44,7 +44,7 @@ class ContentActionsController(BaseController):
     # Boom: User Visable Content (to all followers)
     #---------------------------------------------------------------------------
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def boom(self, id, format="html"):
@@ -74,7 +74,7 @@ class ContentActionsController(BaseController):
     # Seen: Response Content (organisation only)
     #---------------------------------------------------------------------------
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def seen(self, id):
@@ -97,7 +97,7 @@ class ContentActionsController(BaseController):
     # Approve: Response Content (organisation only)
     #---------------------------------------------------------------------------
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def approve(self, id):
@@ -122,7 +122,7 @@ class ContentActionsController(BaseController):
     # Disassociate: Response Content (organistaion only)
     #---------------------------------------------------------------------------
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def disasociate(self):
@@ -149,7 +149,7 @@ class ContentActionsController(BaseController):
     # Accept: Assignment
     #---------------------------------------------------------------------------
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def accept(self, id=None):
@@ -175,7 +175,7 @@ class ContentActionsController(BaseController):
     # Withdraw: from Assignment
     #---------------------------------------------------------------------------
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def withdraw(self, id=None):
@@ -201,8 +201,8 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     # Flag
     #-----------------------------------------------------------------------------
-    @auto_format_output()
-    @web_params_to_kwargs()
+    @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
     def flag(self, id, **kwargs):
@@ -223,10 +223,12 @@ class ContentActionsController(BaseController):
         return action_ok(_("An administrator has been alerted to this content"))
         #raise action_error(_("Error flaging content, please email us"))
 
+
     #-----------------------------------------------------------------------------
     # Comments (View)
     #-----------------------------------------------------------------------------
-    @auto_format_output()
+
+    @auto_format_output
     def comments(self, id):
         """
         POST /contents/{id}/comments: Get a list of comments on the article
@@ -241,7 +243,7 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     # Add to Interest List
     #-----------------------------------------------------------------------------
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def add_to_interests(self, id):

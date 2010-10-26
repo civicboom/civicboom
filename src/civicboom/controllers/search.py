@@ -65,12 +65,12 @@ search_filters = _get_search_filters()
 
 class SearchController(BaseController):
     
-    @auto_format_output()
+    @auto_format_output
     def index(self):
         return action_ok()
 
-    @auto_format_output()
-    @web_params_to_kwargs()
+    @auto_format_output
+    @web_params_to_kwargs
     def content(self, **kwargs):
         """
         @param * (see common list return controls)
@@ -105,7 +105,7 @@ class SearchController(BaseController):
 
 
 
-    @auto_format_output()
+    @auto_format_output
     def content2(self, format="html"):
         results = Session.query(Content)
         query = AndFilter([
@@ -128,7 +128,7 @@ class SearchController(BaseController):
         return action_ok(data={"term":"moo", "location":"location", "results":results})
 
 
-    @auto_format_output()
+    @auto_format_output
     def location(self, format="html"):
         """
         Used in location autocomplete

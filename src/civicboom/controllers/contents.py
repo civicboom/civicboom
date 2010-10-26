@@ -77,8 +77,8 @@ class ContentsController(BaseController):
     # file has a resource setup:
     #     map.resource('content', 'contents')
 
-    @auto_format_output()
-    @web_params_to_kwargs()
+    @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     def index(self, **kwargs):
         """
@@ -113,7 +113,7 @@ class ContentsController(BaseController):
         return action_ok(data={'list': contents})
 
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def create(self, format=None):
@@ -157,7 +157,7 @@ class ContentsController(BaseController):
         return action_ok(message=_(' _content created ok'), data={'id':content.id}, code=201)
 
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def new(self):
@@ -172,8 +172,10 @@ class ContentsController(BaseController):
         return redirect(url('edit_content', id=content_id))
 
 
-    @auto_format_output()
-    @web_params_to_kwargs()
+
+
+    @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
     def update(self, id, **kwargs):
@@ -260,7 +262,7 @@ class ContentsController(BaseController):
         return action_ok(_("_content updated"))
 
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def delete(self, id):
@@ -279,8 +281,8 @@ class ContentsController(BaseController):
         return action_ok(_("_content deleted"), code=200)
 
 
-    @auto_format_output()
-    @web_params_to_kwargs()
+    @auto_format_output
+    @web_params_to_kwargs
     def show(self, id, **kwargs):
         """
         GET /content/{id}: Show a specific item
@@ -322,7 +324,7 @@ class ContentsController(BaseController):
         )
 
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def edit(self, id, format='html'):
         """
