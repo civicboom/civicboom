@@ -375,6 +375,7 @@ def boom_to_all_followers(content, member):
     Session.commit()
 
 def parent_seen(content, delay_commit=False):
+    content.edit_lock     = "parent_owner"
     content.response_type = "seen"
     
     # AllanC - TODO generate notification

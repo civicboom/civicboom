@@ -61,7 +61,7 @@ class Content(Base):
     (FIXME: is this correct?)
     """
     __tablename__   = "content"
-    __type__        = Column(Enum("comment", "draft", "article", "response", "assignment", "syndicate", name="content_type"), nullable=False)
+    __type__        = Column(Enum("comment", "draft", "article", "assignment", "syndicate", name="content_type"), nullable=False)
     __mapper_args__ = {'polymorphic_on': __type__}
     #_visiability = Enum("pending", "show", name="content_")
     _edit_lock   = Enum("none", "parent_owner", "group", "system", name="edit_lock_level")
@@ -151,6 +151,10 @@ class Content(Base):
     
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"
+
+    def __link__(self):
+        from pylons import url, app_globals
+        return url('content', id=self.id, host=app_globals.site_host)
 
     def clone(self, content):
         if content and content.id:

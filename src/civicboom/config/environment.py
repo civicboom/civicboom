@@ -64,6 +64,7 @@ def load_environment(global_conf, app_conf):
     boolean_varnames = ['feature.notifications',
                         'feature.aggregate.email',
                         'feature.aggregate.janrain',
+                        'feature.aggregate.twitter_global',
                         'feature.profanity_filter',
                         ]
     for varname in boolean_varnames:

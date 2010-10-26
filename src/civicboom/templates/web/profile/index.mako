@@ -36,7 +36,8 @@
 		% for message in d['messages']['notifications']:
 			<div class="notification">
 				${h.secure_link(url('message', id=message['id'], format='redirect'), "X", [("_method", "DELETE"), ])}
-				${message['subject']|n}
+				<p>${message['subject']|n}</p>
+                <p>${message['content']|n}</p>
 			</div>
 		% endfor
 	% else:

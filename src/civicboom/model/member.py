@@ -13,6 +13,7 @@ from sqlalchemy.orm import relationship, backref, dynamic_loader
 import urllib, hashlib, copy
 
 
+
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 
@@ -143,6 +144,10 @@ class Member(Base):
 
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
+
+    def __link__(self):
+        from pylons import url, app_globals
+        return url('member', id=self.id, host=app_globals.site_host)
 
     def hash(self):
         h = hashlib.md5()
