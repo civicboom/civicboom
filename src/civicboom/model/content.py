@@ -39,6 +39,11 @@ class Rating(Base):
     member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
     rating        = Column(Integer(),    nullable=False, default=0)
 
+class Interest(Base):
+    __tablename__ = "map_interest"
+    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
+    member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
+
 
 class Content(Base):
     """

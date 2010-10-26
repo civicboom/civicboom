@@ -464,3 +464,23 @@ def rate_content(content, member, rating):
             Session.commit()
 
     user_log.debug("Rated Content #%d as %d" % (content.id, int(rating)))
+
+def add_to_interests(member, content, delay_commit=False):
+    content = get_content(content)
+    member  = get_member(member)
+
+    if not content:
+        raise action_error(_('unable to find content'), code=404)
+    if not member:
+        raise action_error(_('unable to find member'), code=404)
+    
+    #AllanC - TODO: humm ... if we have a duplicate entry being added it will error ... we want to suppress that error
+    
+    member.interest.append(content)
+    
+    if not delay_commit:
+        Session.commit()
+
+    user_log.debug("Added to interests #%d" % (content.id))
+    
+    return True

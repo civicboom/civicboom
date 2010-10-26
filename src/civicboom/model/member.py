@@ -82,6 +82,7 @@ class Member(Base):
     # content_assignments_active
     # content_assignments_previous
     # assignments_accepted = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
+    #interests = relationship("")
 
     _config = None
 
@@ -212,7 +213,10 @@ class Member(Base):
             return '%s %s' % (self.location_home.coords(Session)[1], self.location_home.coords(Session)[0])
         return None
         # AllanC Note: duplicated for Content location ... could we have location_string in a common place?
-    
+
+    def add_to_interests(self, content):
+        from civicboom.lib.database.actions import add_to_interests
+        return add_to_interests(self, content)
 
 
 class User(Member):
