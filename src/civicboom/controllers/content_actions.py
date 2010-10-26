@@ -16,7 +16,7 @@ class ContentActionsController(BaseController):
     # Rate: Article
     #---------------------------------------------------------------------------
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
     def rate(self, id, **kwargs):
@@ -202,7 +202,7 @@ class ContentActionsController(BaseController):
     # Flag
     #-----------------------------------------------------------------------------
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
     def flag(self, id, **kwargs):

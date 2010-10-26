@@ -63,7 +63,7 @@ class GroupsController(BaseController):
     """
     
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     def index(self, **kwargs):
         """
@@ -79,7 +79,7 @@ class GroupsController(BaseController):
 
 
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
     def create(self, **kwargs):
@@ -129,7 +129,7 @@ class GroupsController(BaseController):
 
 
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
     def update(self, id, **kwargs):
@@ -187,7 +187,7 @@ class GroupsController(BaseController):
 
 
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     def show(self, id, **kwargs):
         """
         GET /group/{id}: Show a specific item

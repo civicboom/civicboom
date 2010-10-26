@@ -43,7 +43,7 @@ class GroupActionsController(BaseController):
     # Remove Member : (Admin Action) or self
     #---------------------------------------------------------------------------
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
     def remove_member(self, id, **kwargs):
@@ -67,7 +67,7 @@ class GroupActionsController(BaseController):
     # Invite Member : (Admin Action)
     #---------------------------------------------------------------------------
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
     def invite(self, id, **kwargs):
@@ -96,7 +96,7 @@ class GroupActionsController(BaseController):
     # Set Member Role : (Admin Action)
     #---------------------------------------------------------------------------
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
     def set_role(self, id, **kwargs):

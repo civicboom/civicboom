@@ -78,7 +78,7 @@ class ContentsController(BaseController):
     #     map.resource('content', 'contents')
 
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     def index(self, **kwargs):
         """
@@ -268,7 +268,7 @@ class ContentsController(BaseController):
 
 
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     def show(self, id, **kwargs):
         """
         GET /content/{id}: Show a specific item

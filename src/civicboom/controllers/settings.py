@@ -156,7 +156,7 @@ class SettingsController(BaseController):
     #---------------------------------------------------------------------------
     
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     def update(self, id, **kwargs):
         """

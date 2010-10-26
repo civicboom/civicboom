@@ -48,7 +48,7 @@ class MemberActionsController(BaseController):
 
 
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     def followers(self, id, **kwargs):
         """
         GET /members/{name}/followers: get a list of followers
@@ -66,7 +66,7 @@ class MemberActionsController(BaseController):
 
 
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     def following(self, id, **kwargs):
         """
         GET /members/{name}/following: get a list of members the user is following

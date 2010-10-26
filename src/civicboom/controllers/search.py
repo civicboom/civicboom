@@ -70,7 +70,7 @@ class SearchController(BaseController):
         return action_ok()
 
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     def content(self, **kwargs):
         """
         @param * (see common list return controls)

@@ -40,7 +40,7 @@ class MembersController(BaseController):
 
 
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     def index(self, **kwargs):
         """
         GET /members: Show a list of members
@@ -68,7 +68,7 @@ class MembersController(BaseController):
 
 
     @auto_format_output()
-    @web_params_to_kwargs()
+    @web_params_to_kwargs
     def show(self, id, **kwargs):
         """
         GET /members/{id}: Show a specific item

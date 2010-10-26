@@ -15,10 +15,12 @@ import os
 import time
 import json
 from decorator import decorator
+from pprint import pformat
 import logging
 import os
 
 log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 
 #-------------------------------------------------------------------------------
 # UnicodeMultiDict Convertion
@@ -412,21 +414,37 @@ def cacheable(time=60*60*24*365, anon_only=True):
     return decorator(_cacheable)
 
 
-def web_params_to_kwargs():
+@decorator
+def web_params_to_kwargs(target, *args, **kwargs):
     """
     converts any params from a form submission or query string into kwargs
     NOTE: Any method decorated by this SHOULD have the inclusion ", **kwargs):" without this a user could pass a kwarg that is unknown to the method and cause an exception to be thrown
     Security notice - Developers should be aware that kwargs could be passed by the user and override kwargs set in the orrigninal method call
                       If this behaviure is incorrect then rather than using dict.update() method, it should be made to SKIP existing kwargs and not overwreit them
     """
-    def my_decorator(target):
-        def wrapper(target, *args, **kwargs):
-            kwargs.update(request.params) # Update the kwargs
-            exclude_fields = ['pylons', 'environ','start_response']
-            for exclude_field in exclude_fields:
-                if exclude_field in kwargs:
-                    del kwargs[exclude_field]
-            result = target(*args, **kwargs) # Execute the wrapped function
-            return result
-        return decorator(wrapper)(target) # Fix the wrappers call signiture
-    return my_decorator
+    exclude_fields = ['pylons', 'environ', 'start_response']
+    for exclude_field in exclude_fields:
+        if exclude_field in kwargs:
+            del kwargs[exclude_field]
+
+    arg_names = target.func_code.co_varnames[:target.func_code.co_argcount]
+    new_args = []
+    new_kwargs = {}
+    for k, v in kwargs.items():
+        new_kwargs[k] = v
+    if "kwargs" in arg_names: # FIXME: need to detect if the function accepts a "**" type, as this could be "**foo" rather than "**kwargs"
+        new_kwargs.update(request.params)
+
+    for n, varname in enumerate(arg_names):
+        if varname in request.params:
+            new_args.append(request.params[varname])
+        elif varname in kwargs:
+            new_args.append(kwargs[varname])
+        else:
+            new_args.append(args[n])
+        if varname in new_kwargs:
+            del new_kwargs[varname]
+
+    #user_log.info("calling "+target.func_name+", given param names, defaults, kwargs are "+pformat(arg_names)+pformat(args)+pformat(kwargs))
+    #user_log.info("calling "+target.func_name+", now have param values and kwargs "+pformat(new_args)+pformat(new_kwargs))
+    return target(*new_args, **new_kwargs) # Execute the wrapped function
