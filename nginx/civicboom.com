@@ -8,7 +8,7 @@ server {
 	# server stuff
 	listen 80;
 	listen 443 default ssl;
-	server_name .civicboom.com new-server localhost;
+	server_name .civicboom.com localhost _;
 	access_log /var/log/civicboom/nginx.log;
 	root /opt/cb/share/website/civicboom/public/;
 	error_page 500 502 503 504 /errors/50x.html;
