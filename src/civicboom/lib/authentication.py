@@ -81,11 +81,6 @@ def is_valid_user(u):
 # Todo - look into how session is verifyed - http://pylonshq.com/docs/en/1.0/sessions/#using-session-in-secure-forms
 #        what is the secure form setting for?
 
-#is_valid_user=None # Override for AuthKit transition, if this is remmed out AuthKit can be re-endabled without any changes to controlers
-#def login_redirector(authenticator):
-
-# Override AuthKits authorise method with our own custom login decorator
-# To degrade back to AuthKit rename this method
 def authorize(authenticator):
     """
     Check if logged in user has been set
@@ -93,7 +88,7 @@ def authorize(authenticator):
     Once you log in, it sends you back to the original url call.
     """
     @decorator
-    def wrapper(target, *args, **kwargs):
+    def wrapper(_target, *args, **kwargs):
 
         # CHECK Loggin in
         if authenticator(c.logged_in_user):
@@ -108,7 +103,7 @@ def authorize(authenticator):
                     return render("web/design09/misc/confirmpost.mako")
 
             # Make original method call
-            result = target(*args, **kwargs)
+            result = _target(*args, **kwargs)
             return result
 
         # ELSE Unauthorised

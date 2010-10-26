@@ -62,7 +62,7 @@ class GroupsController(BaseController):
     @desc REST Controller styled on the Atom Publishing Protocol
     """
     
-    @auto_format_output()
+    @auto_format_output
     @web_params_to_kwargs
     @authorize(is_valid_user)
     def index(self, **kwargs):
@@ -78,7 +78,7 @@ class GroupsController(BaseController):
         return action_ok(data={'list': groups})
 
 
-    @auto_format_output()
+    @auto_format_output
     @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
@@ -116,7 +116,7 @@ class GroupsController(BaseController):
         return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)
 
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def new(self):
         """
@@ -128,7 +128,7 @@ class GroupsController(BaseController):
         return action_ok(template='groups/edit')
 
 
-    @auto_format_output()
+    @auto_format_output
     @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
@@ -165,7 +165,7 @@ class GroupsController(BaseController):
         return action_ok(message=_('group updated ok'), data=data)
 
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def delete(self, id):
@@ -186,7 +186,7 @@ class GroupsController(BaseController):
         return action_ok(_("group deleted"), code=200)
 
 
-    @auto_format_output()
+    @auto_format_output
     @web_params_to_kwargs
     def show(self, id, **kwargs):
         """
@@ -206,7 +206,7 @@ class GroupsController(BaseController):
         return action_ok(data={'group':group.to_dict(**kwargs)})
 
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def edit(self, id):
         """

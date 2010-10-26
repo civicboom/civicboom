@@ -273,7 +273,8 @@ def setup_format_processors():
 
 format_processors = setup_format_processors()
 
-def auto_format_output():
+@decorator
+def auto_format_output(target, *args, **kwargs):
     """
     Once a controler aciton has finished processing it will return a python dict
     This decorator inspects the python dict and converts the dict into one of the following:
@@ -298,51 +299,41 @@ def auto_format_output():
             template: (required for html rendering) the template name, will default to XML if format==html and template not specifyed
         }
     """
-    def my_decorator(target):
-        def wrapper(target, *args, **kwargs):
-            
-            #if format in format_processors_pre:
-            #    format_processors[format]()
-            
-            # Origninal method call
-            try:
-                result = target(*args, **kwargs) # Execute the wrapped function
-            except action_error as ae:
-                if c.format == "python":
-                    raise
-                else:
-                    result = ae.original_dict
-            
-            # After
-            # Is result a dict with data?
-            if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
-                
-                if c.format=='html' and not _find_template(result):
-                    log.warning("Format HTML with no template for %s/%s" % (c.controller, c.action))
-                    c.format='xml' #If format HTML and no template supplied fall back to XML
-                
-                # set the HTTP status code
-                if 'code' in result:
-                    response.status = int(result['code'])
-                    # Status code redirector has been disabled - old notes:
-                    # This will trigger the error document action in the error controler after this action is returned
-                    # problem with the error document intercepting is that we loose the {'message':''}
-                    # a new call to error/document is made from scratch, this sets the default format to html again! if the format is in the query string this overrides it, but in the url path it gets lost
-                    # Verifyed as calling error/document.html/None
-                    #del result['code']
-                
-                # Render to format
-                if c.format in format_processors:
-                    return format_processors[c.format](result)
-                else:
-                    log.warning("Unknown format: "+str(c.format))
-                
-            # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
-            log.debug("returning pre-rendered stuff")
-            return result
+    try:
+        result = target(*args, **kwargs) # Execute the wrapped function
+    except action_error as ae:
+        if c.format == "python":
+            raise
+        else:
+            result = ae.original_dict
+    
+    # After
+    # Is result a dict with data?
+    if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
         
-        return decorator(wrapper)(target) # Fix the wrappers call signiture
-    return my_decorator
+        if c.format=='html' and not _find_template(result):
+            log.warning("Format HTML with no template for %s/%s" % (c.controller, c.action))
+            c.format='xml' #If format HTML and no template supplied fall back to XML
+        
+        # set the HTTP status code
+        if 'code' in result:
+            response.status = int(result['code'])
+            # Status code redirector has been disabled - old notes:
+            # This will trigger the error document action in the error controler after this action is returned
+            # problem with the error document intercepting is that we loose the {'message':''}
+            # a new call to error/document is made from scratch, this sets the default format to html again! if the format is in the query string this overrides it, but in the url path it gets lost
+            # Verifyed as calling error/document.html/None
+            #del result['code']
+        
+        # Render to format
+        if c.format in format_processors:
+            return format_processors[c.format](result)
+        else:
+            log.warning("Unknown format: "+str(c.format))
+        
+    # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
+    log.debug("returning pre-rendered stuff")
+    return result
 
 
 #-------------------------------------------------------------------------------

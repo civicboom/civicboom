@@ -55,7 +55,7 @@ class MessagesController(BaseController):
     @desc REST Controller styled on the Atom Publishing Protocol
     """
 
-    @auto_format_output()
+    @auto_format_output
     @web_params_to_kwargs
     @authorize(is_valid_user)
     def index(self, **kwargs):
@@ -98,11 +98,11 @@ class MessagesController(BaseController):
         return action_ok(data={'list': messages})
 
 
-    @auto_format_output()
+    @auto_format_output
     @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
-    def create(self, **kwargs):
+    def create(self, target=None, subject=None, content=None):
         """
         POST /messages: Create a new item.
         
@@ -121,26 +121,15 @@ class MessagesController(BaseController):
         """
         # url('messages')
         
-        # FIXME: form validator to refresh with the same values?
-        #if not set(["target", "subject", "content"]).issubset(request.POST.keys()):
-        #    raise action_error(_("Missing inputs"), code=400)
-        #target = get_member(request.POST["target"])
-        #if not target:
-        #    raise action_error(_("Can't find user '%s'") % request.POST["target"], code=404)
-        
-        for field in ['subject','content','targetx']:
-            if field not in kwargs:
-                kwargs[field] = ''
-        
-        target = get_member(kwargs['targetx' ])
+        target = get_member(target)
         if not target:
             raise action_error('no target')
         
         m = Message()
         m.source  = c.logged_in_user
         m.target  = target
-        m.subject = kwargs['subject']
-        m.content = kwargs['content']
+        m.subject = subject
+        m.content = content
         Session.add(m)
         Session.commit()
         
@@ -150,7 +139,7 @@ class MessagesController(BaseController):
 
 
 
-    @auto_format_output()
+    @auto_format_output
     def new(self, format='html'):
         """
         GET /messages/new: Form to create a new item.
@@ -159,14 +148,14 @@ class MessagesController(BaseController):
         return action_ok()
 
 
-    @auto_format_output()
+    @auto_format_output
     def update(self, id):
         """PUT /messsages/id: Update an existing item."""
         # url('message', id=ID)
         raise action_error(_("Messages cannot be edited"), code=501)
 
 
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def delete(self, id):
@@ -191,7 +180,7 @@ class MessagesController(BaseController):
         return action_ok(_("Message deleted"))
 
 
-    @auto_format_output()
+    @auto_format_output
     @web_params_to_kwargs
     @authorize(is_valid_user)
     def show(self, id, **kwargs):
@@ -223,7 +212,7 @@ class MessagesController(BaseController):
         return action_ok(data={'message': message.to_dict(**kwargs)})
 
 
-    @auto_format_output()
+    @auto_format_output
     def edit(self, id):
         """GET /messages/id/edit: Form to edit an existing item."""
         # url('edit_message', id=ID)

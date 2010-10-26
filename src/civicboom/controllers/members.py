@@ -39,7 +39,7 @@ class MembersController(BaseController):
     """
 
 
-    @auto_format_output()
+    @auto_format_output
     @web_params_to_kwargs
     def index(self, **kwargs):
         """
@@ -67,7 +67,7 @@ class MembersController(BaseController):
         return action_ok(data={"members": [m.to_dict(**kwargs) for m in result]})
 
 
-    @auto_format_output()
+    @auto_format_output
     @web_params_to_kwargs
     def show(self, id, **kwargs):
         """
@@ -101,7 +101,7 @@ class MembersController(BaseController):
 #}
 
 
-    #@auto_format_output()
+    #@auto_format_output
     #@authorize(is_valid_user)
     #def index(self, list=None):
     #    member_list_name = request.params.get('list', list)
