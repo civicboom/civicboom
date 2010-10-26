@@ -6,6 +6,12 @@ from civicboom.lib.base import *
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
+# AllanC - for members autocomplete index
+from civicboom.model    import Member
+from sqlalchemy         import or_, and_
+from sqlalchemy.orm     import join
+
+
 
 #-------------------------------------------------------------------------------
 # Global Functions
@@ -32,6 +38,35 @@ class MembersController(BaseController):
     @desc REST Controller styled on the Atom Publishing Protocol
     """
 
+
+    @auto_format_output()
+    @web_params_to_kwargs()
+    def index(self, **kwargs):
+        """
+        GET /members: Show a list of members
+        
+        @api members 1.0 (WIP)
+    
+        @param list    type of list to get
+               all     all members (useful with "term")
+        @param term    filter results
+        @param * (see common list return controls)
+    
+        @return 200      list ok
+                members  array of member objects
+        """
+        result = []
+    
+        if kwargs.get('list', "all") == "all":
+            result = Session.query(Member)
+    
+        if "term" in kwargs:
+            s = kwargs["term"]
+            result = result.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
+    
+        return action_ok(data={"members": [m.to_dict(**kwargs) for m in result]})
+
+
     @auto_format_output()
     @web_params_to_kwargs()
     def show(self, id, **kwargs):
@@ -55,40 +90,7 @@ class MembersController(BaseController):
 
 
 
-    # AllanC
-    # ?? Listing members should be done through search - listing all members is not a function any user should be performing and will not scale
 
-
-#from civicboom.model    import Member
-#from sqlalchemy         import or_, and_
-#from sqlalchemy.orm     import join
-
-    #@auto_format_output()
-    #@web_params_to_kwargs()
-    #def index(self, **kwargs):
-    #    """
-    #    GET /members: Show a list of members
-    #    
-    #    @api members 1.0 (WIP)
-    #
-    #    @param list    type of list to get
-    #           all     all members (useful with "term")
-    #    @param term    filter results
-    #    @param * (see common list return controls)
-    #
-    #    @return 200      list ok
-    #            members  array of member objects
-    #    """
-    #    result = []
-    #
-    #    if kwargs.get('list', "all") == "all":
-    #        result = Session.query(Member)
-    #
-    #    if "term" in kwargs:
-    #        s = kwargs["term"]
-    #        result = result.filter(or_(Member.name.ilike("%"+s+"%"), Member.username.ilike("%"+s+"%")))
-    #
-    #    return action_ok(data={"members": [m.to_dict(**kwargs) for m in result]})
 
 # AllanC - Depricated old stuff?
 
