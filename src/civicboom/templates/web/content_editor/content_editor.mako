@@ -85,7 +85,7 @@
 ##------------------------------------------------------------------------------
 <%def name="base_content()">
     <fieldset><legend>${_("Content")}</legend>
-        ${instruction("Got an opinion? want to ask a question?")}
+        ${form_instruction("Got an opinion? want to ask a question?")}
 
         <p>
             <label for="title">${_("Title")}</label>
@@ -184,7 +184,7 @@
 <%def name="media()">
 
     <fieldset><legend>${_("Attach Media (optional)")}</legend>      
-        ${instruction("Add any relevent pictures, videos, sounds, links to your content")}
+        ${form_instruction("Add any relevent pictures, videos, sounds, links to your content")}
         
         <ul class="media_files">
 
@@ -267,7 +267,7 @@
 ##------------------------------------------------------------------------------
 <%def name="content_type()">
     <fieldset><legend>${_("Publish Type")}</legend>
-        ${instruction("What do you want to do with your content?")}
+        ${form_instruction("What do you want to do with your content?")}
 
         <script type="text/javascript">
             // Reference: http://www.somacon.com/p143.php
@@ -357,7 +357,7 @@
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Location (optional)")}</span></legend>
         <div class="hideable">
-            ${instruction("why give us this...")}
+            ${form_instruction("why give us this...")}
             stuff!!
       </div>
 	  ${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
@@ -373,7 +373,7 @@
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
         <div class="hideable">
-            ${instruction("What is licensing explanation")}
+            ${form_instruction("What is licensing explanation")}
 			<table>
             % for license in get_licenses():
 				<tr>
