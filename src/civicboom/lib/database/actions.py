@@ -478,6 +478,8 @@ def add_to_interests(member, content, delay_commit=False):
     
     member.interest.append(content)
     
+    # Could update "recomended" feed with new criteria?
+    
     if not delay_commit:
         Session.commit()
 

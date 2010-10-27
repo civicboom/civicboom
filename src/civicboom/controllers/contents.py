@@ -201,17 +201,19 @@ class ContentsController(BaseController):
         #if 'submit_publish' in request.POST and :
         #    raise action_error(_("You do not have permission to publish this _content"), code=403)
         
-
-        starting_content_type = content.__type__                          # Rember the original content type to see if it has morphed
+        
+        starting_content_type = content.__type__                  # Rember the original content type to see if it has morphed
         content               = form_to_content(kwargs, content)  # Overlay form data over the current content object or return a new instance of an object
         
+        print kwargs
         
         # If publishing perform profanity check and send notifications
-        if 'submit_publish' in request.POST:
+        if 'submit_publish' in kwargs:
             profanity_filter(content) # Filter any naughty words and alert moderator
             
             m = None
-            if starting_content_type and starting_content_type != content.__type__:
+            print "DAMN IT!!!! %s %s" % (starting_content_type, content.__type__)
+            if starting_content_type != content.__type__:
                 # Send notifications about NEW published content
                 if   content.__type__ == "article"   :
                     m = messages.article_published_by_followed(creator=content.creator, article   =content)
