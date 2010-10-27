@@ -22,13 +22,16 @@
         <ul>
             <li><input type="text" placeholder="Quick Search"></li>
             <li><a href="/search" class="sub_option">Advanced Search</a></li>
+% if c.logged_in_user:
             <li><a href="/feeds" class="parent">News Feeds</a>
 				<ul>
-					<li><a href="/feeds/1" class="sub_option">Fishing in Whitstable</a></li>
-					<li><a href="/feeds/2" class="sub_option">World News in the last 10 minutes</a></li>
+					% for f in c.logged_in_user.feeds:
+					<li><a href="/feeds/${f.id}" class="sub_option">${f.name}</a></li>
+					% endfor
 					<li><a href="/feeds/new" class="sub_option">Create New Feed</a></li>
 				</ul>
 			</li>
+% endif
             <li><a href="/groups" class="sub_option">Find Groups</a></li>
         </ul>
         </li>
