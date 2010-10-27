@@ -9,7 +9,7 @@ from civicboom.lib.base import *
 from civicboom.model      import User, UserLogin
 from civicboom.model.meta import Session
 
-from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict
+from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url
 from civicboom.lib.helpers import url_from_widget
 
 # Other imports
@@ -97,7 +97,7 @@ def authorize(authenticator):
                 json_post = session_remove('login_redirect_post')
                 if json_post:
                     post_overlay = json.loads(json_post)
-                    c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
+                    c.target_url = current_url()
                     c.post_values = post_overlay
                     from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
                     return render("web/design09/misc/confirmpost.mako")
@@ -112,9 +112,7 @@ def authorize(authenticator):
             if c.format == "redirect":
                 raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
             if c.format == "html":
-                redirect_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO') # AllanC - is there a way of just getting the whole request URL? why do I have to peice it together myself!
-                if 'QUERY_STRING' in request.environ:
-                    redirect_url += '?'+request.environ.get('QUERY_STRING')
+                redirect_url = current_url()
                 session_set('login_redirect'     , redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
                 # save the the session POST data to be reinstated after the redirect
                 if request.POST:

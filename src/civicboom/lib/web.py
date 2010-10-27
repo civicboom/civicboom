@@ -45,6 +45,15 @@ def redirect_to_referer():
     #print "yay redirecting to %s" % url_to
     return redirect(url_to)
 
+def current_host():
+    return request.environ.get('HTTP_X_URL_SCHEME', 'http') + "://" + request.environ.get('HTTP_HOST')
+
+def current_url():
+    target_url = current_host() + request.environ.get('PATH_INFO')
+    if 'QUERY_STRING' in request.environ:
+        target_url += '?'+request.environ.get('QUERY_STRING')
+    return target_url
+
 
 #-------------------------------------------------------------------------------
 # Session Timed Keys Management
@@ -384,9 +393,7 @@ def authenticate_form(func, *args, **kwargs):
             format = args[-1]
         
         if format in ['html','redirect']:
-            c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
-            if 'QUERY_STRING' in request.environ:
-                c.target_url += '?'+request.environ.get('QUERY_STRING')
+            c.target_url = current_url()
             c.post_values = param_dict
             return render_mako("web/misc/confirmpost.mako")
         else:
