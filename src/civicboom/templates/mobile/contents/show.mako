@@ -1,3 +1,5 @@
+<%inherit file="/mobile/common/mobile_base.mako"/>
+
 <h1>${d['content']['title']}</h1>
 
 ##----Type----
