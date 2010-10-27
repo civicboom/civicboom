@@ -413,10 +413,6 @@ def web_params_to_kwargs(target, *args, **kwargs):
     Security notice - Developers should be aware that kwargs could be passed by the user and override kwargs set in the orrigninal method call
                       If this behaviure is incorrect then rather than using dict.update() method, it should be made to SKIP existing kwargs and not overwreit them
     """
-    exclude_fields = ['pylons', 'environ', 'start_response']
-    for exclude_field in exclude_fields:
-        if exclude_field in kwargs:
-            del kwargs[exclude_field]
 
     arg_names = target.func_code.co_varnames[:target.func_code.co_argcount]
     new_args = []
@@ -425,6 +421,11 @@ def web_params_to_kwargs(target, *args, **kwargs):
         new_kwargs[k] = v
     if "kwargs" in arg_names: # FIXME: need to detect if the function accepts a "**" type, as this could be "**foo" rather than "**kwargs"
         new_kwargs.update(request.params)
+
+    exclude_fields = ['pylons', 'environ', 'start_response']
+    for exclude_field in exclude_fields:
+        if exclude_field in new_kwargs:
+            del new_kwargs[exclude_field]
 
     for n, varname in enumerate(arg_names):
         if varname in request.params:

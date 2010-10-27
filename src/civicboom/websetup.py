@@ -39,6 +39,8 @@ def setup_app(command, conf, variables):
     if not pylons.test.pylonsapp: # pragma: no cover -- "if not testing" will not be true for testing...
         load_environment(conf.global_conf, conf.local_conf)
 
+    # Notifications disabled because no it8n is setup
+    # original_feature_notification_setting = config['feature.notifications'] # AllanC - this does not help has notifications will have been generated if they are turned on again :(
     config['feature.notifications'] = False
 
     ###################################################################
@@ -1151,3 +1153,4 @@ CREATE TRIGGER update_content
     # Create the tables if they don't already exist
     meta.metadata.create_all(bind=meta.engine)
     log.info("Setup complete")
+    

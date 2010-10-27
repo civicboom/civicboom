@@ -223,6 +223,11 @@ class ContentActionsController(BaseController):
         return action_ok(_("An administrator has been alerted to this content"))
         #raise action_error(_("Error flaging content, please email us"))
 
+
+    #-----------------------------------------------------------------------------
+    # Comments (View)
+    #-----------------------------------------------------------------------------
+
     @auto_format_output
     def comments(self, id):
         """
@@ -235,3 +240,18 @@ class ContentActionsController(BaseController):
         content = _get_content(id, is_viewable=True)
         return action_ok(data={'list': [c.to_dict() for c in content.comments]})
 
+    #-----------------------------------------------------------------------------
+    # Add to Interest List
+    #-----------------------------------------------------------------------------
+    @auto_format_output
+    @authorize(is_valid_user)
+    @authenticate_form
+    def add_to_interests(self, id):
+        """
+        POST /contents/{id}/add_to_interests: Flag this content as being interesting
+        
+        @api contents 1.0 (WIP)
+        """
+        
+        c.logged_in_user.add_to_interests(id)
+        return action_ok(_("added to interest list"))

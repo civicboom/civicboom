@@ -172,10 +172,13 @@ class ContentsController(BaseController):
         return redirect(url('edit_content', id=content_id))
 
 
+
+
     @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
-    def update(self, id):
+    def update(self, id, **kwargs):
         """
         PUT /contents/{id}: Update an existing item
 
@@ -198,9 +201,10 @@ class ContentsController(BaseController):
         #if 'submit_publish' in request.POST and :
         #    raise action_error(_("You do not have permission to publish this _content"), code=403)
         
-        # Overlay form data over the current content object or return a new instance of an object
-        content = form_to_content(request.params, content) #request.POST
-        starting_content_type = content.__type__
+
+        starting_content_type = content.__type__                          # Rember the original content type to see if it has morphed
+        content               = form_to_content(kwargs, content)  # Overlay form data over the current content object or return a new instance of an object
+        
         
         # If publishing perform profanity check and send notifications
         if 'submit_publish' in request.POST:
@@ -209,8 +213,17 @@ class ContentsController(BaseController):
             m = None
             if starting_content_type and starting_content_type != content.__type__:
                 # Send notifications about NEW published content
-                if   content.__type__ == "article"   : m = messages.article_published_by_followed(reporter=content.creator, article   =content)
-                elif content.__type__ == "assignment": m = messages.assignment_created           (reporter=content.creator, assignment=content)
+                if   content.__type__ == "article"   :
+                    m = messages.article_published_by_followed(creator=content.creator, article   =content)
+                elif content.__type__ == "assignment":
+                    m = messages.assignment_created           (creator=content.creator, assignment=content)
+                
+                # if this is a response - notify parent content creator
+                if content.parent:
+                    content.parent.creator.send_message(
+                        messages.new_response(member = content.creator, content = content, parent = content.parent), delay_commit=True
+                    )
+                
                 # TODO: Clear comments when upgraded from draft to published content?
                 user_log.info("published new Content #%d" % (content.id, ))
                 # Aggregate new content
@@ -218,7 +231,8 @@ class ContentsController(BaseController):
                 twitter_global(content) # TODO? diseminate new or updated content?
             else:
                 # Send notifications about previously published content has been UPDATED
-                if   content.__type__ == "assignment": m = messages.assignment_updated           (reporter=content.creator, assignment=content)
+                if   content.__type__ == "assignment":
+                    m = messages.assignment_updated           (creator=content.creator, assignment=content)
                 user_log.info("updated published Content #%d" % (content.id, ))
             if m:
                 content.creator.send_message_to_followers(m, delay_commit=True)
