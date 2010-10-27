@@ -21,15 +21,13 @@
 		<div class="clipper">
 			<img src="${member['avatar_url']}" alt="${member['username']}" width="80" class="img"/>
 			<img src="/images/badges/user.png" alt="User" class="type">
-			<a class="info" href="${h.url('member', id=member['username'])}" title="${member['username']}">Info</a>
+			<a class="info" href="${h.url('member', id=member['username'])}" title="${member['username']}">i</a>
 			% if c.logged_in_user:
-			<div class="follow">
             % if c.logged_in_user.is_following(member['username']):
-            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _('Stop following'), css_class="button_small button_small_style_2")}
+            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _('-'), css_class="follow")}
             % else:
-            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _('Follow')        , css_class="button_small button_small_style_1")}
+            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _('+'), css_class="follow")}
             % endif
-			</div>
 			% endif
 		</div>
 		% endif
