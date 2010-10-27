@@ -416,18 +416,59 @@ def cacheable(time=60*60*24*365, anon_only=True):
 def web_params_to_kwargs(target, *args, **kwargs):
     """
     converts any params from a form submission or query string into kwargs
-    NOTE: Any method decorated by this SHOULD have the inclusion ", **kwargs):" without this a user could pass a kwarg that is unknown to the method and cause an exception to be thrown
     Security notice - Developers should be aware that kwargs could be passed by the user and override kwargs set in the orrigninal method call
                       If this behaviure is incorrect then rather than using dict.update() method, it should be made to SKIP existing kwargs and not overwreit them
+
+
+
+    Some boilerplate to trick the function into thinking it is inside a pylons app
+
+    FIXME: this doesn't work, so none of the tests do :(
+
+    ->>> import civicboom.lib.web
+    ->>> class fake_request():
+    -...     params = {}
+    -...
+    ->>> civicboom.lib.web.request = fake_request()
+
+
+    Create a function like so
+
+    ->>> @web_params_to_kwargs
+    -... def test(id, cake=2):
+    -...     print id, cake
+
+
+    Called normally, it works normally
+
+    ->>> print test(1)
+    -1 2
+
+
+    Called with pylons paramaters, it works too
+
+    ->>> print test(1, cake=3)
+    -1 3
+
+
+    Called with web paramaters, it uses those
+
+    ->>> request.params = {"cake": 4}
+    ->>> print test(1)
+    -1 4
     """
 
     arg_names = target.func_code.co_varnames[:target.func_code.co_argcount]
+    params = request.params
     new_args = []
     new_kwargs = {}
+
     for k, v in kwargs.items():
         new_kwargs[k] = v
-    if "kwargs" in arg_names: # FIXME: need to detect if the function accepts a "**" type, as this could be "**foo" rather than "**kwargs"
-        new_kwargs.update(request.params)
+    # FIXME: need to detect if the function accepts a "**" type, as this could be "**foo" rather than "**kwargs"
+    # NOTE: ** types aren't counted towards the function's argument count, so arg_names cuts it off
+    if "kwargs" in target.func_code.co_varnames:
+        new_kwargs.update(params)
 
     exclude_fields = ['pylons', 'environ', 'start_response']
     for exclude_field in exclude_fields:
@@ -435,8 +476,8 @@ def web_params_to_kwargs(target, *args, **kwargs):
             del new_kwargs[exclude_field]
 
     for n, varname in enumerate(arg_names):
-        if varname in request.params:
-            new_args.append(request.params[varname])
+        if varname in params:
+            new_args.append(params[varname])
         elif varname in kwargs:
             new_args.append(kwargs[varname])
         else:
@@ -444,6 +485,6 @@ def web_params_to_kwargs(target, *args, **kwargs):
         if varname in new_kwargs:
             del new_kwargs[varname]
 
-    #user_log.info("calling "+target.func_name+", given param names, defaults, kwargs are "+pformat(arg_names)+pformat(args)+pformat(kwargs))
+    #user_log.info("calling "+target.func_name+", given param names, defaults, kwargs, web params are "+pformat(arg_names)+pformat(args)+pformat(kwargs)+pformat(params))
     #user_log.info("calling "+target.func_name+", now have param values and kwargs "+pformat(new_args)+pformat(new_kwargs))
     return target(*new_args, **new_kwargs) # Execute the wrapped function
