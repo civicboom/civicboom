@@ -36,7 +36,7 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
 
     @auto_format_output
-    @https() # redirect to https for transfer of password
+    #@https() # redirect to https for transfer of password
     def signin(self, format="json"):
 
         # If no POST display signin template
