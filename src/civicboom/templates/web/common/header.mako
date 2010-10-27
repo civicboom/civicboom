@@ -10,8 +10,8 @@
     <ul>
         <li><a href="#" class="top_parent">Create</a>
         <ul>
-            <li><a href="/contents/new" class="sub_option">Question</a></li>
-            <li><a href="/contents/new" class="sub_option">Article</a></li>
+            <li><a href="/contents/new?target_type=assignment" class="sub_option">Assignment</a></li>
+            <li><a href="/contents/new?target_type=article" class="sub_option">Article</a></li>
             <li><a href="/groups/new" class="sub_option">Group</a></li>
         </ul>
         </li>
