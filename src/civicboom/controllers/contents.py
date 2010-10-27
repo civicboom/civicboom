@@ -328,8 +328,7 @@ class ContentsController(BaseController):
                 #update_content(content)
             
         return action_ok(
-            template = 'design09/content/view',
-            data     = {'content':content.to_dict(**kwargs)}
+            data = {'content':content.to_dict(**kwargs)}
         )
 
 
