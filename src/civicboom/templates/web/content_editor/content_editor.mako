@@ -66,8 +66,8 @@
 <span class="tooltip tooltip_icon"><span>${_(text)}</span></span>
 </%def>
 
-<%def name="instruction(text)">
-<p class="form_instuctions">${_(text)}</p>
+<%def name="form_instruction(text)">
+<p class="instuctions">${_(text)}</p>
 </%def>
 
 
@@ -85,16 +85,16 @@
 ##------------------------------------------------------------------------------
 <%def name="base_content()">
     <fieldset><legend>${_("Content")}</legend>
-        ${instruction("Got an opinion? want to ask a question?")}
+        ${form_instruction("Got an opinion? want to ask a question?")}
 
         <p>
-            <label for="form_title">${_("Title")}</label>
-            <input id="form_title" name="form_title" type="text" value="${c.content.title}" style="width:80%;"/>
+            <label for="title">${_("Title")}</label>
+            <input id="title" name="title" type="text" value="${c.content.title}" style="width:80%;"/>
             ${popup("extra info")}
         </p>
   
         ##${YUI.richtext(c.content.content, width='100%', height='300px')}
-		<textarea name="form_content" id="form_content" style="width:100%; height:300px;">${c.content.content}</textarea>
+		<textarea name="content" id="content" style="width:100%; height:300px;">${c.content.content}</textarea>
 		<script type="text/javascript">
 		tinyMCE.init({
 			mode : "textareas",
@@ -106,7 +106,7 @@
 			theme_advanced_toolbar_align : "left",
 		});
 		function ajaxSave() {
-			var ed = tinyMCE.get('form_content');
+			var ed = tinyMCE.get('content');
 			ed.setProgressState(1); // Show progress spinner
 			$.ajax({
 				type    : 'POST',
@@ -114,7 +114,7 @@
 				url     : "${url('content', id=c.content.id, format='json')}",
 				data    : {
                     "_method"     : 'PUT',
-					"form_content": ed.getContent(),
+					"content": ed.getContent(),
 					"mode"        : 'autosave',
                     "_authentication_token": '${h.authentication_token()}'
                     ##"upload_key": '${c.content_media_upload_key}',
@@ -135,8 +135,8 @@
         % endif
 
         ## Owner
-        <p><label for="form_owner">${_("By")}</label>
-        <select name="form_owner">
+        <p><label for="owner">${_("By")}</label>
+        <select name="owner">
             <%
             owners = []
             owners.append(c.logged_in_user)
@@ -161,13 +161,13 @@
         
         ## Tags
         <p>
-            <label for="form_tags">${_("Tags")}</label>
+            <label for="tags">${_("Tags")}</label>
             <%
             tag_string = u""
             for tag in [tag.name for tag in c.content.tags]:
                 tag_string += tag + u" "
             %>
-            <input id="form_tags" name="form_tags" type="text" value="${tag_string}"/>
+            <input id="tags" name="tags" type="text" value="${tag_string}"/>
             ${popup("extra_info")}
         </p>
 
@@ -184,7 +184,7 @@
 <%def name="media()">
 
     <fieldset><legend>${_("Attach Media (optional)")}</legend>      
-        ${instruction("Add any relevent pictures, videos, sounds, links to your content")}
+        ${form_instruction("Add any relevent pictures, videos, sounds, links to your content")}
         
         <ul class="media_files">
 
@@ -225,9 +225,9 @@
                 </a>
                 
                 <div class="media_fields">
-                    <p><label for="form_media_file_${media.id}"   >${_("File")}       </label><input id="form_media_file_${media.id}"    name="form_media_file_${media.id}"    type="text" disabled="true" value="${media.name}"   /><input type="submit" name="form_file_remove_${media.id}" value="Remove" class="form_file_remove"/></p>
-                    <p><label for="form_media_caption_${media.id}">${_("Caption")}    </label><input id="form_media_caption_${media.id}" name="form_media_caption_${media.id}" type="text"                 value="${media.caption}"/></p>
-                    <p><label for="form_media_credit_${media.id}" >${_("Credited to")}</label><input id="form_media_credit_${media.id}"  name="form_media_credit_${media.id}"  type="text"                 value="${media.credit}" /></p>
+                    <p><label for="media_file_${media.id}"   >${_("File")}       </label><input id="media_file_${media.id}"    name="media_file_${media.id}"    type="text" disabled="true" value="${media.name}"   /><input type="submit" name="file_remove_${media.id}" value="Remove" class="file_remove"/></p>
+                    <p><label for="media_caption_${media.id}">${_("Caption")}    </label><input id="media_caption_${media.id}" name="media_caption_${media.id}" type="text"                 value="${media.caption}"/></p>
+                    <p><label for="media_credit_${media.id}" >${_("Credited to")}</label><input id="media_credit_${media.id}"  name="media_credit_${media.id}"  type="text"                 value="${media.credit}" /></p>
                 </div>
             </li>
             % endfor
@@ -249,9 +249,9 @@
                     <div class="media_preview_none">${_("Select a file to upload")}</div>
                 </div>
                 <div class="media_fields">
-                    <p><label for="form_media_file"   >${_("File")}       </label><input id="form_media_file"    name="form_media_file"    type="file" class="form_field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="form_file_upload"/></p>
-                    <p><label for="form_media_caption">${_("Caption")}    </label><input id="form_media_caption" name="form_media_caption" type="text" />${popup("extra_info")}</p>
-                    <p><label for="form_media_credit" >${_("Credited to")}</label><input id="form_media_credit"  name="form_media_credit"  type="text" />${popup("extra_info")}</p>
+                    <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></p>
+                    <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" />${popup("extra_info")}</p>
+                    <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" />${popup("extra_info")}</p>
                 </div>              
             </li>
             <!-- End Add media -->
@@ -267,7 +267,7 @@
 ##------------------------------------------------------------------------------
 <%def name="content_type()">
     <fieldset><legend>${_("Publish Type")}</legend>
-        ${instruction("What do you want to do with your content?")}
+        ${form_instruction("What do you want to do with your content?")}
 
         <script type="text/javascript">
             // Reference: http://www.somacon.com/p143.php
@@ -291,15 +291,15 @@
 
             function highlightType(type) {
                 // Select radio button
-                setCheckedValue(document.forms['content'].elements['form_type'], type);
+                setCheckedValue(document.forms['content'].elements['type'], type);
                 // reset all radio buttons to unselected
-                setSingleCSSClass(document.getElementById('form_type_'+type), 'section_selected', 'type_selection');
+                setSingleCSSClass(document.getElementById('type_'+type), 'section_selected', 'type_selection');
                 ##var elements = getElementByClass("section_selectable","type_selection");
                 ##for (var element in elements) {
                 ##    removeClass(elements[element], "section_selected");
                 ##}
                 ##// select section by setting selected class
-                ##addClass(YAHOO.util.Dom.get('form_type_'+type), "section_selected");
+                ##addClass(YAHOO.util.Dom.get('type_'+type), "section_selected");
             }
 
             highlightType('${c.content.__type__}'); //Set the default highlighted item to be the content type
@@ -320,9 +320,9 @@
                 if c.content.__type__ == type:
                     selected = 'checked="checked"'
             %>
-            <td id="form_type_${type}" onClick="highlightType('${type}');" class="section_selectable">
-              <input class="hideable" type="radio" name="form_type" value="${type}" ${selected}/>
-              <label for="form_type_${type}">${type}</label>
+            <td id="type_${type}" onClick="highlightType('${type}');" class="section_selectable">
+              <input class="hideable" type="radio" name="type" value="${type}" ${selected}/>
+              <label for="type_${type}">${type}</label>
               <p class="type_description">${_(description)}</p>
             </td>
         </%def>
@@ -357,10 +357,10 @@
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Location (optional)")}</span></legend>
         <div class="hideable">
-            ${instruction("why give us this...")}
+            ${form_instruction("why give us this...")}
             stuff!!
       </div>
-	  ${loc.location_picker(field_name='form_location', always_show_map=True, width="100%")}
+	  ${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
     </fieldset>
 </%def>
 
@@ -373,7 +373,7 @@
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
         <div class="hideable">
-            ${instruction("What is licensing explanation")}
+            ${form_instruction("What is licensing explanation")}
 			<table>
             % for license in get_licenses():
 				<tr>
@@ -382,9 +382,9 @@
                   if c.content.license and license.id == c.content.license_id:
                       license_selected = h.literal('checked="checked"')
                 %>
-                <td><input id="form_licence_${license.id}" type="radio" name="form_licence" value="${license.id}" ${license_selected} /></td>
+                <td><input id="licence_${license.id}" type="radio" name="licence" value="${license.id}" ${license_selected} /></td>
 				<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a></td>
-                <td><label for="form_licence_${license.id}">${license.description}</label></td>
+                <td><label for="licence_${license.id}">${license.description}</label></td>
 				</tr>
                 ##${popup(license.description)}
             % endfor

@@ -727,24 +727,25 @@ CREATE TRIGGER update_content
 
 
         u3 = User()
-        u3.username      = u"cookie"
-        u3.name          = u"Amy M. Anderson"
+        u3.username      = u"kitten"
+        u3.name          = u"Amy M. Kitten"
         u3.status        = "active"
         u3.email         = u"AmyMAnderson@example.com"
-        u3.avatar        = u"http://rav.shishnet.org/Sylph.png"
+        u3.avatar        = u"/images/test/avatar_kitten.jpg"
 
         u4 = User()
-        u4.username      = u"jammy"
-        u4.name          = u"Jamie L. Riley"
+        u4.username      = u"puppy"
+        u4.name          = u"Jamie L. Puppy"
         u4.status        = "active"
         u4.email         = u"waffleking@example.com"
-        u4.avatar        = u"http://rav.shishnet.org/Arrnea.png"
+        u4.avatar        = u"/images/test/avatar_puppy.jpg"
 
         u5 = User()
-        u5.username      = u"Davy_H"
-        u5.name          = u"David O. Hughes"
+        u5.username      = u"bunny"
+        u5.name          = u"David O. Bunny"
         u5.status        = "active"
         u5.email         = u""
+        u5.avatar        = u"/images/test/avatar_bunny.jpg"
 
         Session.add_all([u3, u4, u5]); Session.commit()
 
@@ -776,6 +777,9 @@ CREATE TRIGGER update_content
 
         Session.add_all([u6, u6_login, u7, u7_login]);
         u6.followers.append(u7)
+        u6.followers.append(u3)
+        u6.followers.append(u4)
+        u6.followers.append(u5)
         Session.commit();
 
 

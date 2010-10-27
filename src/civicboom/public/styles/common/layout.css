@@ -91,11 +91,15 @@ HTML, BODY {
 	right: 0px;
 }
 .avatar .clipper .info {
-	background: gray;
-	bottom: 0em;
-	left: 0px;
+	display: block;
+	height: 12px;
+	width: 12px;
+	background: #AAA;
+	bottom: 4px;
+	left: 4px;
 	opacity: 0;
 	padding: 2px;
+	border-radius: 6px;
 }
 .avatar .clipper:hover .info {opacity: 1;}
 
@@ -103,11 +107,15 @@ HTML, BODY {
 .avatar .clipper:hover .img {opacity: 0.25;}
 
 .avatar .clipper .follow {
-	background: gray;
-	bottom: 0px;
-	right: 0px;
+	display: block;
+	height: 12px;
+	width: 12px;
+	background: #AAA;
+	bottom: 4px;
+	right: 4px;
 	opacity: 0;
 	padding: 2px;
+	border-radius: 6px;
 }
 .avatar .clipper:hover .follow {opacity: 1;}
 

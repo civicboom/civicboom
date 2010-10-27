@@ -7,11 +7,13 @@ class TestAccountController(TestController):
 
 
     def test_https_is_required_for_login(self):
-        response = self.app.get(
-            url(controller='account', action='signin'),
-            extra_environ={'HTTP_X_URL_SCHEME': 'http'},
-            status=302
-        )
+        # FIXME: force-https disabled because the mobile app needs
+        # a valid certificate, which we don't have for dev.
+        #response = self.app.get(
+        #    url(controller='account', action='signin'),
+        #    extra_environ={'HTTP_X_URL_SCHEME': 'http'},
+        #    status=302
+        #)
 
         response = self.app.get(
             url(controller='account', action='signin'),

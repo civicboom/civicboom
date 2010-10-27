@@ -350,10 +350,10 @@ from civicboom.model import CommentContent
 		</td>
 		<td class="comment">
 			${h.form(url('contents'))}
-				<input type="hidden" name="form_parent_id" value="${d['content']['id']}">
-				<input type="hidden" name="form_title" value="Re: ${d['content']['title']}">
-				<input type="hidden" name="form_type" value="comment">
-				<textarea name="form_content" style="width: 100%; height: 100px;"></textarea>
+				<input type="hidden" name="parent_id" value="${d['content']['id']}">
+				<input type="hidden" name="title" value="Re: ${d['content']['title']}">
+				<input type="hidden" name="type" value="comment">
+				<textarea name="content" style="width: 100%; height: 100px;"></textarea>
 				<br><!--<input type="submit" name="submit_preview" value="Preview">--><input type="submit" name="submit_response" value="Post">
 			${h.end_form()}
   		</td>

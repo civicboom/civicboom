@@ -54,10 +54,10 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_parent_id': "1",
-                'form_type': "comment",
-                'form_content': 'content of a test comment',
+                'title': "a response",
+                'parent_id': "1",
+                'type': "comment",
+                'content': 'content of a test comment',
             },
             status=201
         )
@@ -67,10 +67,10 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_parent_id': "1",
-                'form_type': "draft",
-                'form_content': 'content of a test draft',
+                'title': "a response",
+                'parent_id': "1",
+                'type': "draft",
+                'content': 'content of a test draft',
             },
             status=201
         )
@@ -80,9 +80,9 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_type': "article",
-                'form_content': 'content of a directly-created article',
+                'title': "a response",
+                'type': "article",
+                'content': 'content of a directly-created article',
             },
             status=201
         )
@@ -92,9 +92,9 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_type': "comment",
-                'form_content': 'content of a test comment',
+                'title': "a response",
+                'type': "comment",
+                'content': 'content of a test comment',
             },
             status=400
         )
@@ -104,10 +104,10 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_parent_id': "0",
-                'form_type': "comment",
-                'form_content': 'content of a test comment',
+                'title': "a response",
+                'parent_id': "0",
+                'type': "comment",
+                'content': 'content of a test comment',
             },
             status=404
         )
@@ -117,10 +117,10 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_parent_id': "4",
-                'form_type': "comment",
-                'form_content': 'content of a test comment',
+                'title': "a response",
+                'parent_id': "4",
+                'type': "comment",
+                'content': 'content of a test comment',
             },
             status=403
         )

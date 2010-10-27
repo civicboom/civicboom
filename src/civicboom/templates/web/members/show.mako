@@ -63,7 +63,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	<h2>Write to ${d['member']['username']}</h2>
+	<h2>Write to ${d['member']['name']}</h2>
 	<!--#include virtual="/messages/new.frag?to=${d['member']['username']}" -->
 
 
