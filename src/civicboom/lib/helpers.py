@@ -159,7 +159,10 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
 
     Then use javascript to hide the form and show the pretty link
     """
-    hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
+    if not hasattr(c, 'secure_link_count'):
+        c.secure_link_count = 0
+    c.secure_link_count = c.secure_link_count + 1
+    hhash = hashlib.md5(str([href, value, vals, c.secure_link_count])).hexdigest()[0:6]
 
     # form version
     values = ''
