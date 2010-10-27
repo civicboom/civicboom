@@ -114,9 +114,10 @@ class ContentsController(BaseController):
 
 
     @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
-    def create(self, format=None):
+    def create(self, **kwargs):
         """
         POST /contents: Create a new item
 
@@ -137,23 +138,30 @@ class ContentsController(BaseController):
         """
         # url('contents') + POST
         
+        # TODO:
+        # AllanC -This actions needs a potential revamp
+        #         preferably it shoudl call update to do all overlay processing
+        #         "new" should ONLY call create and create should auto_redirect to edit?
+        
         # if parent is specified, make sure it is valid
-        if 'parent_id' in request.params:
-            parent = get_content(request.params['parent_id'])
+        if 'parent_id' in kwargs:
+            parent = get_content(kwargs['parent_id'])
             if not parent:
                 raise action_error(message='parent not found', code=404)
             if not parent.viewable_by(c.logged_in_user):
-                raise action_error(code=403)
+                raise action_error(message='you do not have permission to respond to this content', code=403)
         
         # if type is comment, it must have a parent
-        # FIXME: check that the parent is not only set, but is also valid (the
-        # parent should exist and be viewable)
-        if request.params.get('type') == "comment" and 'parent_id' not in request.params:
+        if kwargs.get('type') == "comment" and 'parent_id' not in kwargs:
             raise action_error(code=400)
         
-        content = form_to_content(request.params, None)
+        content = form_to_content(kwargs, None)
         Session.add(content)
         Session.commit()
+        
+        if c.format == 'redirect' and content.parent:
+            return redirect(url('content', id=content.parent.id))
+        
         return action_ok(message=_(' _content created ok'), data={'id':content.id}, code=201)
 
 
@@ -168,6 +176,8 @@ class ContentsController(BaseController):
         we create a blank object and redirect to "edit-existing" mode
         """
         #url_for('new_content')
+        
+        # AllanC TODO - needs restructure - see create
         content_id = call_action(ContentsController().create, format='python')['data']['id']
         return redirect(url('edit_content', id=content_id))
 
@@ -205,14 +215,11 @@ class ContentsController(BaseController):
         starting_content_type = content.__type__                  # Rember the original content type to see if it has morphed
         content               = form_to_content(kwargs, content)  # Overlay form data over the current content object or return a new instance of an object
         
-        print kwargs
-        
         # If publishing perform profanity check and send notifications
         if 'submit_publish' in kwargs:
             profanity_filter(content) # Filter any naughty words and alert moderator
             
             m = None
-            print "DAMN IT!!!! %s %s" % (starting_content_type, content.__type__)
             if starting_content_type != content.__type__:
                 # Send notifications about NEW published content
                 if   content.__type__ == "article"   :
@@ -327,8 +334,9 @@ class ContentsController(BaseController):
 
 
     @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
-    def edit(self, id, format='html'):
+    def edit(self, id, **kwargs):
         """
         GET /contents/{id}/edit: Form to edit an existing item
         """
@@ -336,7 +344,7 @@ class ContentsController(BaseController):
         
         c.content = _get_content(id, is_editable=True)
         
-        c.content                  = form_to_content(request.params, c.content)
+        c.content                  = form_to_content(kwargs, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
         return render("/web/content_editor/content_editor.mako")

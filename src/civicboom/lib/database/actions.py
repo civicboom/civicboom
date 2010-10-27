@@ -49,6 +49,8 @@ def follow(follower, followed, delay_commit=False):
         raise action_error(_('unable to find followed'), code=404)
     if not follower:
         raise action_error(_('unable to find follower'), code=404)
+    if follower == followed:
+        raise action_error(_('may not follow yourself'), code=400)
     if followed in follower.following:
         raise action_error(_('already following'), code=400)
     
@@ -386,7 +388,7 @@ def parent_seen(content, delay_commit=False):
     update_content(content)
     return True
 
-def parent_approved(content, delay_commit=False):
+def parent_approve(content, delay_commit=False):
 
     content.edit_lock     = "parent_owner"
     content.response_type = "approved"

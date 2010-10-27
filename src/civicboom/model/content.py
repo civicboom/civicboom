@@ -373,9 +373,9 @@ class ArticleContent(UserVisibleContent):
         from civicboom.lib.database.actions import parent_seen
         return parent_seen(self)
 
-    def parent_approved(self):
-        from civicboom.lib.database.actions import parent_approved
-        return parent_approved(self)
+    def parent_approve(self):
+        from civicboom.lib.database.actions import parent_approve
+        return parent_approve(self)
 
     def parent_dissasociate(self):
         from civicboom.lib.database.actions import parent_disasociate

@@ -271,7 +271,8 @@ lon = d['content']['location'].split(' ')[1]
   % endfor
   
   ##----Temp Respond----
-  <a href="${h.url('new_content', form_parent_id=d['content']['id'])}">Respond to this</a>
+  ${h.secure_link(url('new_content', parent_id=d['content']['id']), value=_("Respond to this")  )}
+
   
   ##----Comments----
   ${comments()}
@@ -349,7 +350,7 @@ from civicboom.model import CommentContent
 			% endif
 		</td>
 		<td class="comment">
-			${h.form(url('contents'))}
+			${h.form(url('contents', format='redirect'))}
 				<input type="hidden" name="parent_id" value="${d['content']['id']}">
 				<input type="hidden" name="title" value="Re: ${d['content']['title']}">
 				<input type="hidden" name="type" value="comment">
