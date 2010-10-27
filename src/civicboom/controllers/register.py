@@ -108,7 +108,7 @@ class RegisterController(BaseController):
     #---------------------------------------------------------------------------
     # Register - via email (no janrain)
     #---------------------------------------------------------------------------
-    @auto_format_output()
+    @auto_format_output
     def email(self, format="redirect"):
         """
         Register - via email (no janrain)

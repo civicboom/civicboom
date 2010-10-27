@@ -35,7 +35,7 @@ class AccountController(BaseController):
     # Janrain Engage - http://www.janrain.com/products/engage
     #---------------------------------------------------------------------------
 
-    @auto_format_output()
+    @auto_format_output
     @https() # redirect to https for transfer of password
     def signin(self, format="json"):
 

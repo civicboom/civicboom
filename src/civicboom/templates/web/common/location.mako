@@ -80,7 +80,7 @@ $(function() {
 % if controls:
 	var ${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto'});
 % else:
-	var ${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto', controls:[]});
+	var ${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto', controls:[new OpenLayers.Control.Attribution()]});
 % endif
 	${name}.addLayer(new OpenLayers.Layer.OSM("OpenLayers OSM"));
 % if lon != None and lat != None:

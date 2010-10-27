@@ -2,7 +2,7 @@ ${h.form(url('messages', format='redirect'))}
 	<table class="message_composer">
 		<tr>
 			<td>To&nbsp;</td>
-			<td><input type="text" name="targetx" value="${request.GET.get("to", "")}"></td>
+			<td><input type="text" name="target" value="${request.GET.get("to", "")}"></td>
 		</tr>
 		<tr>
 			<td>Subject&nbsp;</td>

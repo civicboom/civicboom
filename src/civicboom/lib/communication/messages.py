@@ -34,13 +34,14 @@ class MessageData(object):
         we call that to turn it into an HTML link to be put in the message;
         if not, use __unicode__ and include it as a string.
         """
-        linked = {}
-        for key in kwargs:
-            if hasattr(kwargs[key], "__link__"):
-                linked[key] = HTML.a(unicode(kwargs[key]), href=kwargs[key].__link__())
-            else:
-                linked[key] = HTML.span(unicode(kwargs[key])) # the span here is for security, it does HTML escaping
         if config['feature.notifications']: # Only generate messages if notifications enabled - required to bypass requireing the internationalisation module to be activated
+            linked = {}
+            for key in kwargs:
+                if hasattr(kwargs[key], "__link__"):
+                    linked[key] = HTML.a(unicode(kwargs[key]), href=kwargs[key].__link__())
+                else:
+                    linked[key] = HTML.span(unicode(kwargs[key])) # the span here is for security, it does HTML escaping
+                
             self.subject = unicode(self.subject) % linked
             self.content = unicode(self.content) % linked
         else:
@@ -59,16 +60,15 @@ generators = [
     ["tipoff_deleted",                       "",   _("tipoff deleted"),              _("%(reporter)s has withdrawn their _tipoff")],
     ["instant_news_update",                  "n",  _("_reporter has updated their instant news"), _("%(reporter)s has updated their instant news: %(instant)s_news")],
     ["interview_used",                       "ne", _("interview has been used"),     _("%(reporter)s has written a _article in response to the interview with you called %(article)s")],
-    ["article_published_by_followed",        "ne", _("new _article"),                _("%(reporter)s has written new _article : %(article)s")],
+    ["article_published_by_followed",        "ne", _("new _article"),                _("%(creator)s has written new _article : %(article)s")],
     ["article_published_by_followed_mobile", "ne", _("new mobile _article"),         _("%(reporter)s has uploaded mobile _article : %(article)s")],
-    ["assignment_response",                  "ne", _("_assignment response"),        _("%(reporter)s has published a _report called %(article)s based on your _assignment %(assignment)s")],
+    ["new_response",                         "ne", _("new response"),                _("%(member)s has published a response to your content %(parent)s called %(content)s ")],
     ["assignment_response_mobile",           "ne", _("_assignment mobile response"), _("%(reporter)s has uploaded mobile _article titled %(article)s based on your _assignment %(assignment)s")],
     ["topic_update",                         "ne", _("topic update to an _article"), _("%(reporter)s wrote a topic update for your _report %(partent)s_article titled %(article)s")],
     ["article_rated",                        "",   _("_article rated"),              _("your _article %(article)s was rated a %(rating)s")],
     ["comment",                              "n",  _("comment made on _article"),    _("%(reporter)s commented on your _article %(article)s")],  #Also passes comment.contents as a string and could be used here
-    ["eyewitness_report",                    "ne", _("new eyewitness"),              _("%(reporter)s wrote an eyewitness for your _article %(article)s")],
-    ["assignment_created",                   "ne", _("new _assignment"),             _("%(reporter)s created a new _assignment %(assignment)s")],
-    ["assignment_updated",                   "ne", _("_assignment updated"),         _("%(reporter)s has updated their _assignment %(assignment)s")],
+    ["assignment_created",                   "ne", _("new _assignment"),             _("%(creator)s created a new _assignment %(assignment)s")],
+    ["assignment_updated",                   "ne", _("_assignment updated"),         _("%(creator)s has updated their _assignment %(assignment)s")],
     ["assignment_accepted",                  "ne", _("_assignment accepted"),        _("%(member)s accepted your _assignment %(assignment)s")],
     ["assignment_interest_withdrawn",        "",   _("_assignment interest withdrawn"), _("%(member)s withdrew their interest in your _assignment %(assignment)s")],
     ["assignment_invite",                    "ne", _("closed _assignment invitation") , _("%(member)s has invited you to participate in the _assignment %(assignment)s")],

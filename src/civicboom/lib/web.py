@@ -15,10 +15,12 @@ import os
 import time
 import json
 from decorator import decorator
+from pprint import pformat
 import logging
 import os
 
 log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 
 #-------------------------------------------------------------------------------
 # UnicodeMultiDict Convertion
@@ -271,7 +273,8 @@ def setup_format_processors():
 
 format_processors = setup_format_processors()
 
-def auto_format_output():
+@decorator
+def auto_format_output(target, *args, **kwargs):
     """
     Once a controler aciton has finished processing it will return a python dict
     This decorator inspects the python dict and converts the dict into one of the following:
@@ -296,51 +299,41 @@ def auto_format_output():
             template: (required for html rendering) the template name, will default to XML if format==html and template not specifyed
         }
     """
-    def my_decorator(target):
-        def wrapper(target, *args, **kwargs):
-            
-            #if format in format_processors_pre:
-            #    format_processors[format]()
-            
-            # Origninal method call
-            try:
-                result = target(*args, **kwargs) # Execute the wrapped function
-            except action_error as ae:
-                if c.format == "python":
-                    raise
-                else:
-                    result = ae.original_dict
-            
-            # After
-            # Is result a dict with data?
-            if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
-                
-                if c.format=='html' and not _find_template(result):
-                    log.warning("Format HTML with no template for %s/%s" % (c.controller, c.action))
-                    c.format='xml' #If format HTML and no template supplied fall back to XML
-                
-                # set the HTTP status code
-                if 'code' in result:
-                    response.status = int(result['code'])
-                    # Status code redirector has been disabled - old notes:
-                    # This will trigger the error document action in the error controler after this action is returned
-                    # problem with the error document intercepting is that we loose the {'message':''}
-                    # a new call to error/document is made from scratch, this sets the default format to html again! if the format is in the query string this overrides it, but in the url path it gets lost
-                    # Verifyed as calling error/document.html/None
-                    #del result['code']
-                
-                # Render to format
-                if c.format in format_processors:
-                    return format_processors[c.format](result)
-                else:
-                    log.warning("Unknown format: "+str(c.format))
-                
-            # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
-            log.debug("returning pre-rendered stuff")
-            return result
+    try:
+        result = target(*args, **kwargs) # Execute the wrapped function
+    except action_error as ae:
+        if c.format == "python":
+            raise
+        else:
+            result = ae.original_dict
+    
+    # After
+    # Is result a dict with data?
+    if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
         
-        return decorator(wrapper)(target) # Fix the wrappers call signiture
-    return my_decorator
+        if c.format=='html' and not _find_template(result):
+            log.warning("Format HTML with no template for %s/%s" % (c.controller, c.action))
+            c.format='xml' #If format HTML and no template supplied fall back to XML
+        
+        # set the HTTP status code
+        if 'code' in result:
+            response.status = int(result['code'])
+            # Status code redirector has been disabled - old notes:
+            # This will trigger the error document action in the error controler after this action is returned
+            # problem with the error document intercepting is that we loose the {'message':''}
+            # a new call to error/document is made from scratch, this sets the default format to html again! if the format is in the query string this overrides it, but in the url path it gets lost
+            # Verifyed as calling error/document.html/None
+            #del result['code']
+        
+        # Render to format
+        if c.format in format_processors:
+            return format_processors[c.format](result)
+        else:
+            log.warning("Unknown format: "+str(c.format))
+        
+    # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
+    log.debug("returning pre-rendered stuff")
+    return result
 
 
 #-------------------------------------------------------------------------------
@@ -412,21 +405,38 @@ def cacheable(time=60*60*24*365, anon_only=True):
     return decorator(_cacheable)
 
 
-def web_params_to_kwargs():
+@decorator
+def web_params_to_kwargs(target, *args, **kwargs):
     """
     converts any params from a form submission or query string into kwargs
     NOTE: Any method decorated by this SHOULD have the inclusion ", **kwargs):" without this a user could pass a kwarg that is unknown to the method and cause an exception to be thrown
     Security notice - Developers should be aware that kwargs could be passed by the user and override kwargs set in the orrigninal method call
                       If this behaviure is incorrect then rather than using dict.update() method, it should be made to SKIP existing kwargs and not overwreit them
     """
-    def my_decorator(target):
-        def wrapper(target, *args, **kwargs):
-            kwargs.update(request.params) # Update the kwargs
-            exclude_fields = ['pylons', 'environ','start_response']
-            for exclude_field in exclude_fields:
-                if exclude_field in kwargs:
-                    del kwargs[exclude_field]
-            result = target(*args, **kwargs) # Execute the wrapped function
-            return result
-        return decorator(wrapper)(target) # Fix the wrappers call signiture
-    return my_decorator
+
+    arg_names = target.func_code.co_varnames[:target.func_code.co_argcount]
+    new_args = []
+    new_kwargs = {}
+    for k, v in kwargs.items():
+        new_kwargs[k] = v
+    if "kwargs" in arg_names: # FIXME: need to detect if the function accepts a "**" type, as this could be "**foo" rather than "**kwargs"
+        new_kwargs.update(request.params)
+
+    exclude_fields = ['pylons', 'environ', 'start_response']
+    for exclude_field in exclude_fields:
+        if exclude_field in new_kwargs:
+            del new_kwargs[exclude_field]
+
+    for n, varname in enumerate(arg_names):
+        if varname in request.params:
+            new_args.append(request.params[varname])
+        elif varname in kwargs:
+            new_args.append(kwargs[varname])
+        else:
+            new_args.append(args[n])
+        if varname in new_kwargs:
+            del new_kwargs[varname]
+
+    #user_log.info("calling "+target.func_name+", given param names, defaults, kwargs are "+pformat(arg_names)+pformat(args)+pformat(kwargs))
+    #user_log.info("calling "+target.func_name+", now have param values and kwargs "+pformat(new_args)+pformat(new_kwargs))
+    return target(*new_args, **new_kwargs) # Execute the wrapped function

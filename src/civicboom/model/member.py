@@ -13,6 +13,7 @@ from sqlalchemy.orm import relationship, backref, dynamic_loader
 import urllib, hashlib, copy
 
 
+
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 
@@ -81,6 +82,7 @@ class Member(Base):
     # content_assignments_active
     # content_assignments_previous
     # assignments_accepted = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
+    #interests = relationship("")
 
     _config = None
 
@@ -143,6 +145,10 @@ class Member(Base):
 
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
+
+    def __link__(self):
+        from pylons import url, app_globals
+        return url('member', id=self.id, host=app_globals.site_host)
 
     def hash(self):
         h = hashlib.md5()
@@ -207,7 +213,10 @@ class Member(Base):
             return '%s %s' % (self.location_home.coords(Session)[1], self.location_home.coords(Session)[0])
         return None
         # AllanC Note: duplicated for Content location ... could we have location_string in a common place?
-    
+
+    def add_to_interests(self, content):
+        from civicboom.lib.database.actions import add_to_interests
+        return add_to_interests(self, content)
 
 
 class User(Member):

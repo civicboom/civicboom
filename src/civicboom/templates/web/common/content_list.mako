@@ -98,7 +98,8 @@
                 ${_("Edit")}
               </a>
 			  ${h.secure_link(
-				href=url('content', id=content['id']), method="DELETE",
+				href=url('content', id=content['id'], format="redirect"),
+                method="DELETE",
 				value=_("Delete"),
 				css_class="button_small button_small_style_2",
 				confirm_text=_("Are your sure you want to delete this content?")

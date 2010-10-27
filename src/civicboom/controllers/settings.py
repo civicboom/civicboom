@@ -127,7 +127,7 @@ class SettingsController(BaseController):
     #---------------------------------------------------------------------------
     # REST Action - EDIT/SHOW
     #---------------------------------------------------------------------------
-    @auto_format_output()
+    @auto_format_output
     @authorize(is_valid_user)
     def edit(self, id):
         """GET /id;edit: Form to edit an existing item."""
@@ -155,8 +155,8 @@ class SettingsController(BaseController):
     # REST Action - UPDATE
     #---------------------------------------------------------------------------
     
-    @auto_format_output()
-    @web_params_to_kwargs()
+    @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     def update(self, id, **kwargs):
         """

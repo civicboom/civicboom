@@ -15,7 +15,7 @@
 <%def name="head_links()">
   ${parent.head_links()}
   <script type="text/javascript" src ="/javascript/tiny_mce/tiny_mce.js"></script>
-  <link   type="text/css"        href="/styles/content_editor/content_editor.css" rel="stylesheet" />
+  <link   type="text/css"        href="/styles/common/content_editor.css" rel="stylesheet" />
 </%def>
 
 
@@ -238,7 +238,8 @@
             <!-- Add media javascript-->
             % if c.content.id:
             <li>
-                ${YUI.file_uploader()}
+                YUI SWF Uploader disabled for now
+                ##${YUI.file_uploader()}
             </li>
             % endif
 
@@ -292,7 +293,7 @@
                 // Select radio button
                 setCheckedValue(document.forms['content'].elements['form_type'], type);
                 // reset all radio buttons to unselected
-                setSingleCSSClass(document.getElementById('form_type_'+type, 'section_selected', 'type_selection');
+                setSingleCSSClass(document.getElementById('form_type_'+type), 'section_selected', 'type_selection');
                 ##var elements = getElementByClass("section_selectable","type_selection");
                 ##for (var element in elements) {
                 ##    removeClass(elements[element], "section_selected");
@@ -300,7 +301,7 @@
                 ##// select section by setting selected class
                 ##addClass(YAHOO.util.Dom.get('form_type_'+type), "section_selected");
             }
-            
+
             highlightType('${c.content.__type__}'); //Set the default highlighted item to be the content type
         </script>
         
@@ -335,7 +336,6 @@
         % else:
             ${c.content.__type__}
         % endif
-
 
         <div style="float: right;">
             % if c.content.__type__ == "draft":

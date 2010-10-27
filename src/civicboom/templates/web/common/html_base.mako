@@ -60,16 +60,44 @@
 	<script src="/javascript/_combined.js"></script>
 % endif
 
+
+##--------------------------------------------------------
+## Head Links - child templates can add scripts & styles
+##--------------------------------------------------------
+<%def name="head_links()"></%def>
+${self.head_links()}
+
+
+##-------------------
+## Style Overrides
+##-------------------
+% if hasattr(next, 'styleOverides'):
+    <style type="text/css" >
+    ${next.styleOverides()}
+    </style>
+% endif
+
+
 ##----------------------------------------------------------------------------
 ## Development Javascript Debug Console Output
 ##----------------------------------------------------------------------------
 % if config['development_mode']:
 	<!-- Development Mode - Enabale Console Logging in client browser (recomend firebug) but could instate YUI log console here -->
-	<!-- Use console output with: YAHOO.log("Loggy log log"); -->
-	<!-- broken?
-	<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/logger/logger-min.js"></script>
-	<script type="text/javascript">YAHOO.widget.Logger.enableBrowserConsole();</script>
-	-->
+    
+    ## YUI 2 (old and poo)
+	##<!-- Use console output with: YAHOO.log("Loggy log log"); -->
+    ##<script type="text/javascript" src="http://yui.yahooapis.com/2.8.2/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+	##<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/logger/logger-min.js"></script>
+	##<script type="text/javascript">
+    ##    YAHOO.widget.Logger.enableBrowserConsole();
+    ##</script>
+    
+	## YUI 3
+    <script type="text/javascript" charset="utf-8" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js"></script>
+    <script type="text/javascript">
+        Y = new YUI({ debug : true }); //var 
+        Y.log("YUI Debugger Enabled", "info",  "civicboom");
+    </script>
 % endif
 </head>
 
