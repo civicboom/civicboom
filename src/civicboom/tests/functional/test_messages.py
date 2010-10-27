@@ -8,6 +8,11 @@ class TestMessagesController(TestController):
         response = self.app.get(url('formatted_messages', format="frag"))
         assert "Re: Re: singing" in response
 
+    def test_index_lists(self):
+        response = self.app.get(url('formatted_messages', format="json", list="notification"))
+        response = self.app.get(url('formatted_messages', format="json", list="to"))
+        response = self.app.get(url('formatted_messages', format="json", list="whgarbl"), status=400)
+
     def test_index_as_json(self):
         response = self.app.get(url('formatted_messages', format='json'))
         assert "Re: Re: singing" in response
