@@ -275,7 +275,7 @@ def form_post_contains_content(form):
     return_bool = False
     if form:
         for field in ("title","content","media_file"):
-            if "form_"+field in form and form["form_"+field]:
+            if field in form and form[field]:
                 return_bool = True
     return return_bool
   
@@ -291,16 +291,17 @@ def form_to_content(form, content):
     """
     
     if not content:
-        if   not form                          : content = DraftContent()
-        elif form.get('form_type') == "comment": content = CommentContent()
-        elif form.get('form_type') == "article": content = ArticleContent()
-        else                                   : content = DraftContent()
+        if   not form                     : content = DraftContent()
+        elif form.get('type') == "comment": content = CommentContent()
+        elif form.get('type') == "article": content = ArticleContent()
+        else                              : content = DraftContent()
         content.creator = c.logged_in_user
         
-    if not content.parent and "form_parent_id" in form:
-        content.parent_id = form["form_parent_id"]
+    if not content.parent and "parent_id" in form:
+        content.parent_id = form["parent_id"]
         
-    if not form: return content #If there is no form data there is nothing to overlay or do
+    if not form:
+        return content #If there is no form data there is nothing to overlay or do
 
     #----------------------------------------------------
     # Morph content type before overlaying any form data
@@ -337,16 +338,16 @@ def form_to_content(form, content):
             # The content will be populated with the form data and commited by the controler
     """
 
-    if 'form_type' in form:
-        content = morph_content_to(content, form['form_type'])
+    if 'type' in form:
+        content = morph_content_to(content, form['type'])
 
 
     #-------------------------------
     # Overlay Form over Base Content
     #-------------------------------
     # Owner
-    if "form_owner" in form:
-        content.creator_id = form["form_owner"]
+    if "owner" in form:
+        content.creator_id = form["owner"]
         # Although the form limits the user to a selectable list, any id can be passed here, it is possible that with an API call a user can give content to anyone.
         # FIXME: including people who don't want the content attributed to them...
     elif content.creator == None:
@@ -358,48 +359,48 @@ def form_to_content(form, content):
     # TODO: from most form values we need to escape '"' and "'" characters as these are used in HTML alt tags and value tags
     
     # Content
-    if "form_content" in form:
-        content.content = clean_html_markup(form["form_content"])
+    if "content" in form:
+        content.content = clean_html_markup(form["content"])
 
     # Tags
-    if "form_tags" in form:
-        tags_raw     = form["form_tags"].split(" ")
+    if "tags" in form:
+        tags_raw     = form["tags"].split(" ")
         content.tags = [get_tag(tag) for tag in tags_raw if tag!=""]
 
     # Existing Media Form Fields
     for media in content.attachments:
         # Update media item fields
-        caption_key = "form_media_caption_%d" % (media.id)
+        caption_key = "media_caption_%d" % (media.id)
         if caption_key in form:
             media.caption = form[caption_key]
-        credit_key = "form_media_credit_%d"   % (media.id)
+        credit_key = "media_credit_%d"   % (media.id)
         if credit_key in form:
             media.credit = form[credit_key]
         # Remove media if required
-        if "form_file_remove_%d" % media.id in form:
+        if "file_remove_%d" % media.id in form:
             content.attachments.remove(media)
 
     # Add Media - if file present in form post
-    if 'form_media_file' in form and form['form_media_file'] != "":
-        form_file = form["form_media_file"]
+    if 'media_file' in form and form['media_file'] != "":
+        form_file = form["media_file"]
         media = Media()
-        media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=form["form_media_caption"], credit=form["form_media_credit"])
+        media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=form["media_caption"], credit=form["media_credit"])
         content.attachments.append(media)
         #Session.add(media) # is this needed as it is appended to content and content is in the session?
 
-    if 'form_licence' in form:
-        content.license_id = form['form_licence']
+    if 'licence' in form:
+        content.license_id = form['licence']
 
-    if 'form_location' in form:
+    if 'location' in form:
         try:
-            (lon, lat) = form['form_location'].split(" ")
+            (lon, lat) = form['location'].split(" ")
             content.location = "SRID=4326;POINT(%f %f)" % (float(lon), float(lat))
         except:
             pass
 
     # Any left over fields that just need a simple set
     for field in ["title", ]:
-        form_field_name = "form_"+field
+        form_field_name = field
         if form_field_name in form:
             setattr(content,field,form[form_field_name])
 
@@ -419,7 +420,8 @@ def get_content_media_upload_key(content):
     
     Suggestion: This could be persisted in the database? Maybe a separate database JUST for tempory stuff like this
     """
-    if not content or content.id == None: return ""
+    if not content or content.id == None:
+        return ""
     content_id_key  = "content_upload_%d" % content.id
     memcache_expire = 60*60 # memcache expire time in seconds 60*60 = 1 Hour
     mc              = app_globals.memcache

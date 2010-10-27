@@ -122,9 +122,9 @@ class ContentsController(BaseController):
 
         @api contents 1.0 (WIP)
 
-        @param form_title
-        @param form_contents
-        @param form_type
+        @param title
+        @param contents
+        @param type
         @param ...
 
         @return 201   content created
@@ -134,21 +134,21 @@ class ContentsController(BaseController):
         @return 404   parent not found
 
         @comment Shish paramaters need filling out
-        @comment Shish do all the paramaters need to start with "form_"?
-        @comment Allan   no need for all params to start with "form_" this was a leftover from the first prototype, they can be removed
         """
         # url('contents') + POST
         
         # if parent is specified, make sure it is valid
-        if 'form_parent_id' in request.params:
-            parent = get_content(request.params['form_parent_id'])
+        if 'parent_id' in request.params:
+            parent = get_content(request.params['parent_id'])
             if not parent:
                 raise action_error(message='parent not found', code=404)
             if not parent.viewable_by(c.logged_in_user):
                 raise action_error(code=403)
         
         # if type is comment, it must have a parent
-        if request.params.get('form_type') == "comment" and 'form_parent_id' not in request.params:
+        # FIXME: check that the parent is not only set, but is also valid (the
+        # parent should exist and be viewable)
+        if request.params.get('type') == "comment" and 'parent_id' not in request.params:
             raise action_error(code=400)
         
         content = form_to_content(request.params, None)
