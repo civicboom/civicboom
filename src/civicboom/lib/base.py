@@ -97,7 +97,13 @@ class BaseController(WSGIController):
 
 
         # Login - Fetch logged in user from session id (if present)
-        c.logged_in_persona = get_member(session_get('user_id'))
+        username         = session_get('username')
+        username_persona = session_get('username_persona')
+        c.logged_in_user = get_member(username)
+        if username != username_persona:
+            c.logged_in_persona = c.logged_in_user
+        else:
+            c.logged_in_persona = get_member(username_persona)
 
         # Setup Langauge
         #  - there is a way of setting fallback langauges, investigate?
@@ -107,9 +113,9 @@ class BaseController(WSGIController):
         else                         :  self._set_lang(        config['lang']) # Default lang in config file
 
         # User pending regisration? - redirect to complete registration process
-        if c.logged_in_persona and c.logged_in_persona.status=='pending' and deny_pending_user(url.current()):
+        if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url.current()):
             set_flash_message(_('Please complete the regisration process'))
-            redirect(url(controller='register', action='new_user', id=c.logged_in_persona.id))
+            redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 
         # Setup site app_globals on first request
         # AllanC - I dont like this, is there a call we can maybe put in the tasks controler? or an init controler? that we can fire when the site is restarted?

@@ -234,7 +234,7 @@ def twitter_global(content):
     #content_dict = aggregation_dict(content, safe_strings=True)
 
     # Create Twitter message with tiny URL
-    if len(content_dict['title']) > 70:
+    if len(content.title) > 70:
         title           = truncate(content.title  , length=70)
         content_preview = truncate(content.content, length=30)
     else:

@@ -4,9 +4,10 @@ Tools used for Authentication of users
 
 # Pylons imports
 from civicboom.lib.base import *
+from civicboom.lib.database.get_cached import get_membership
 
 # Civicboom imports
-from civicboom.model      import User, UserLogin
+from civicboom.model      import User, UserLogin, Member
 from civicboom.model.meta import Session
 
 from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url
@@ -145,8 +146,9 @@ def signin_user(user, login_provider=None):
     Perform the sigin for a user
     """
     user_log.info("logged in with %s" % login_provider)   # Log user login
-    session_set('user_id' , user.id      ) # Set server session variable to user.id
-    session_set('username', user.username) # Set server session username so in debug email can identify user    
+    #session_set('user_id' , user.id      ) # Set server session variable to user.id
+    session_set('username'        , user.username) # Set server session username so we know the actual user regardless of persona
+    set_persona(user)
     response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))
 
 def signin_user_and_redirect(user, login_provider=None):
@@ -171,3 +173,20 @@ def signout_user(user):
     response.delete_cookie("civicboom_logged_in")
     #session.save()
     #flash_message("Successfully signed out!")
+
+def set_persona(group_persona):
+    
+    def set_persona_session(username, role='admin'):
+        session_set('username_persona', user)
+        session_set('role'            , role)
+        
+    if (
+        (isinstance(group_persona, basestring) and group_persona == c.logged_in_user.username) 
+        or
+        (isinstance(group_persona, Member    ) and group_persona == c.logged_in_user         )
+       ):
+        set_persona_session(group_persona)
+    else:
+        membership = get_membership(group_persona, c.logged_in_user)
+        if membership:
+            set_persona_session(group_persona, membership.role)

@@ -95,6 +95,18 @@ class AccountController(BaseController):
             raise err
 
     #---------------------------------------------------------------------------
+    # Switch Persona
+    #---------------------------------------------------------------------------
+    @authorize(is_valid_user)
+    @authenticate_form
+    def set_persona(self, id):
+        if set_persona(id):
+            return action_ok("switched persona")
+        else:
+            raise action_error("failed to swich persona")
+
+
+    #---------------------------------------------------------------------------
     # Link Janrain Account
     #---------------------------------------------------------------------------
     @authorize(is_valid_user)
