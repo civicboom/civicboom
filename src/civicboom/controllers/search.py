@@ -7,56 +7,6 @@ from sqlalchemy.orm       import join
 
 log = logging.getLogger(__name__)
 
-#-------------------------------------------------------------------------------
-# Search Filters
-#-------------------------------------------------------------------------------
-def _get_search_filters():
-    def append_search_text(query, text):
-        return query.filter(or_(Content.title.match(text), Content.content.match(text)))
-    
-    def append_search_location(query, location_text):
-        parts = location_text.split(",")
-        (lon, lat, radius) = (None, None, None)
-        if len(parts) == 2:
-            (lon, lat) = parts
-            radius = 10
-        elif len(parts) == 3:
-            (lon, lat, radius) = parts
-        zoom = 10 # FIXME: inverse of radius? see bug #50
-        if lon and lat and radius:
-            location = (lon, lat, zoom)
-            return query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
-        else:
-            return query
-    
-    def append_search_id(query, id):
-        return query.filter(Content.id==int(id))
-
-    def append_search_type(query, type_text):
-        return query.filter(Content.__type__==type_text)
-    
-    def append_search_creator(query, creator_text):
-        try:
-            return query.filter(Content.creator_id==int(creator_text))
-        except:
-            return query.filter(Member.username==creator_text)
-    
-    def append_search_response_to(query, article_id):
-        return query.filter(Content.parent_id==int(article_id))
-
-    
-    search_filters = {
-        'id'         : append_search_id ,
-        'creator'    : append_search_creator ,
-        'query'      : append_search_text ,
-        'location'   : append_search_location ,
-        'type'       : append_search_type ,
-        'response_to': append_search_response_to ,
-    }
-    
-    return search_filters
-
-search_filters = _get_search_filters()
 
 
 #-------------------------------------------------------------------------------
@@ -72,37 +22,9 @@ class SearchController(BaseController):
     @auto_format_output
     @web_params_to_kwargs
     def content(self, **kwargs):
-        """
-        @param * (see common list return controls)
-        @param limit
-        @param offset
-        """
-        
-        results = Session.query(Content).select_from(join(Content, Member, Content.creator))
-        results = results.filter(and_(Content.__type__!='comment', Content.__type__!='draft', Content.visable==True, Content.private==False))
-        results = results.order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
-        
-        
-        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = 20
-        if 'offset' not in kwargs:
-            kwargs['offset'] = 0
-        if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = ",creator"
-        if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = ",creator_id"
-        if 'list_type' not in kwargs:
-            #kwargs['list_type'] = 'default'
-            if c.format == 'rss':                       # Default RSS to list_with_media
-                kwargs['include_fields'] += ',attachments'
-        
-        for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
-            results = search_filters[key](results, kwargs[key])
-        results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
-        
-        return action_ok(data={'list': [content.to_dict(**kwargs) for content in results.all()]}) # return dictionaty of content to be formatted
-
-
+        # AllanC - moved to content/index - this call is to be depricated
+        from civicboom.controllers.contents import ContentsController
+        return call_action(ContentsController().index, format='python', **kwargs)
 
 
     @auto_format_output

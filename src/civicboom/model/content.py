@@ -113,7 +113,6 @@ class Content(Base):
             'parent_id'    : None ,
             'title'        : None ,
             'content_short': None ,
-            #'creator'      : lambda content: content.creator.to_dict() ,
             'creator_id'   : None , 
             'url'          : None ,
             'thumbnail_url': None ,
@@ -123,6 +122,7 @@ class Content(Base):
             'num_comments' : None ,
             'tags'         : lambda content: "implement tags" ,
             'license_id'   : None ,
+            'private'      : None ,
         },
     })
     
@@ -281,6 +281,9 @@ class DraftContent(Content):
     __mapper_args__ = {'polymorphic_identity': 'draft'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
     #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
+
+    def __init__(self):
+        self.private = True
 
     def clone(self, content):
         Content.clone(self, content)

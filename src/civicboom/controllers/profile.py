@@ -1,7 +1,8 @@
 from civicboom.lib.base import *
 
 from civicboom.controllers.members  import MembersController
-from civicboom.controllers.contents import ContentsController
+#from civicboom.controllers.contents import ContentsController
+from civicboom.controllers.member_actions import MemberActionsController
 from civicboom.controllers.messages import MessagesController
 from civicboom.controllers.search   import SearchController
 from civicboom.controllers.groups   import GroupsController
@@ -28,8 +29,8 @@ class ProfileController(BaseController):
         """
         # AllanC - contruct an uber dictionary for the template to render built from data from other controller actions
         results = action_ok(data={
-            'member'  : call_action(MembersController().show  , format='python', id=c.logged_in_user.id, exclude_fields='content_public, groups_public')['data']['member'],
-            'content' : call_action(ContentsController().index, format='python'                                                                        )['data']['list'],
+            'member'  : call_action(MembersController().show         , format='python', id=c.logged_in_user.id, exclude_fields='content_public, groups_public')['data']['member'],
+            'content' : call_action(MemberActionsController().content, format='python', id=c.logged_in_user.id,                                               )['data']['list']  ,
             'messages': {
                 'notifications': call_action(MessagesController().index, format='python', list='notification')['data']['list'] ,
                 'to'           : call_action(MessagesController().index, format='python', list='to'          )['data']['list'] ,
