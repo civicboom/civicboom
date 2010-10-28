@@ -53,20 +53,20 @@ class AccountController(BaseController):
         if 'token' in request.POST:
             c.auth_info = janrain('auth_info', token=request.POST.get('token'))
             if c.auth_info:
-                c.logged_in_persona = get_user_from_openid_identifyer(c.auth_info['profile']['identifier']) #Janrain guarntees the identifyer to be set
+                c.logged_in_user = get_user_from_openid_identifyer(c.auth_info['profile']['identifier']) #Janrain guarntees the identifyer to be set
                 login_provider = c.auth_info['profile']['providerName']
 
         # Authenticate with standard username
         if 'username' in request.POST and 'password' in request.POST:
-            c.logged_in_persona = get_user_and_check_password(request.POST['username'], request.POST['password'])
+            c.logged_in_user = get_user_and_check_password(request.POST['username'], request.POST['password'])
             login_provider = "password"
 
         # If user has existing account: Login
-        if c.logged_in_persona:
+        if c.logged_in_user:
             if c.format in ["html", "redirect"]:
-                signin_user_and_redirect(c.logged_in_persona, login_provider=login_provider)
+                signin_user_and_redirect(c.logged_in_user, login_provider=login_provider)
             else:
-                signin_user(c.logged_in_persona, "api-password")
+                signin_user(c.logged_in_user, "api-password")
                 return action_ok("logged in ok", {"auth_token": authentication_token()})
         
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration

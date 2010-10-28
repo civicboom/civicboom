@@ -98,7 +98,7 @@ def authorize(authenticator):
     def wrapper(_target, *args, **kwargs):
 
         # CHECK Loggin in
-        if authenticator(c.logged_in_persona):
+        if authenticator(c.logged_in_user):
             # Reinstate any session encoded POST data if this is the first page since the login_redirect
             if not session_get('login_redirect'):
                 json_post = session_remove('login_redirect_post')
@@ -148,7 +148,7 @@ def signin_user(user, login_provider=None):
     user_log.info("logged in with %s" % login_provider)   # Log user login
     #session_set('user_id' , user.id      ) # Set server session variable to user.id
     session_set('username'        , user.username) # Set server session username so we know the actual user regardless of persona
-    set_persona(user)
+    set_persona(user.username)
     response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))
 
 def signin_user_and_redirect(user, login_provider=None):
@@ -181,9 +181,10 @@ def set_persona(group_persona):
         session_set('role'            , role)
 
     if (
-        (isinstance(group_persona, basestring) and group_persona == c.logged_in_user.username) 
-        or
-        (isinstance(group_persona, Member    ) and group_persona == c.logged_in_user         )
+        #(isinstance(group_persona, basestring) and
+        group_persona == c.logged_in_user.username 
+        #or
+        #(isinstance(group_persona, Member    ) and group_persona == c.logged_in_user         )
        ):
         set_persona_session(group_persona)
         return True
