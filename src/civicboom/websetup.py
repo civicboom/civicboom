@@ -501,7 +501,7 @@ CREATE TRIGGER update_content
                 wh.copy_to_warehouse(processed.name, "avatars", file_hash, "avatar.jpg")
                 processed.close()
 
-                file_hash = "http://cb-wh-live.s3.amazonaws.com/avatars/" + file_hash
+                file_hash = "http://static.civicboom.com/avatars/" + file_hash
             return file_hash
         # }}}
 
@@ -731,21 +731,21 @@ CREATE TRIGGER update_content
         u3.name          = u"Amy M. Kitten"
         u3.status        = "active"
         u3.email         = u"AmyMAnderson@example.com"
-        u3.avatar        = u"/images/test/avatar_kitten.jpg"
+        u3.avatar        = u"http://static.civicboom.com/public/images/test/avatar_kitten.jpg"
 
         u4 = User()
         u4.username      = u"puppy"
         u4.name          = u"Jamie L. Puppy"
         u4.status        = "active"
         u4.email         = u"waffleking@example.com"
-        u4.avatar        = u"/images/test/avatar_puppy.jpg"
+        u4.avatar        = u"http://static.civicboom.com/public/images/test/avatar_puppy.jpg"
 
         u5 = User()
         u5.username      = u"bunny"
         u5.name          = u"David O. Bunny"
         u5.status        = "active"
         u5.email         = u""
-        u5.avatar        = u"/images/test/avatar_bunny.jpg"
+        u5.avatar        = u"http://static.civicboom.com/public/images/test/avatar_bunny.jpg"
 
         Session.add_all([u3, u4, u5]); Session.commit()
 
@@ -756,7 +756,7 @@ CREATE TRIGGER update_content
         u6.name          = u"Kent Messenger"
         u6.status        = "active"
         u6.email         = u""
-        u6.avatar        = u"/images/test/avatar_km.png"
+        u6.avatar        = u"http://static.civicboom.com/public/images/test/avatar_km.png"
 
         u6_login = UserLogin()
         u6_login.user   = u6
@@ -768,7 +768,7 @@ CREATE TRIGGER update_content
         u7.name          = u"Mr. Mobile User"
         u7.status        = "active"
         u7.email         = u""
-        u7.avatar        = u"/images/test/avatar_mobiletest.jpg"
+        u7.avatar        = u"http://static.civicboom.com/public/images/test/avatar_mobiletest.jpg"
 
         u7_login = UserLogin()
         u7_login.user   = u7

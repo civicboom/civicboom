@@ -110,12 +110,7 @@ def link_to_objects(text):
     return output
 
 def wh_public(filename):
-    return "http://"+config["s3_bucket_name"]+".s3.amazonaws.com/public/"+filename
-    # we are always using s3
-    #if config["warehouse"] == "s3":
-    #    return "http://"+config["s3_bucket_name"]+".s3.amazonaws.com/public/"+filename
-    #else:
-    #    return "/"+filename
+    return config["warehouse_url"]+"/public/"+filename
 
 def url_from_widget(*args, **kargs):
     if hasattr(app_globals,'widget_variables'):
