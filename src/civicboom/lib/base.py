@@ -97,14 +97,14 @@ class BaseController(WSGIController):
 
 
         # Login - Fetch logged in user from session id (if present)
-        username         = session_get('username')
-        username_persona = session_get('username_persona')
-        c.logged_in_user = get_member(username)
-        if username != username_persona:
-            c.logged_in_persona = c.logged_in_user
-        else:
-            c.logged_in_persona = get_member(username_persona)
+        username                 = session_get('username')
+        username_persona         = session_get('username_persona')
+        c.logged_in_user         = get_member(username)
+        c.logged_in_persona      = c.logged_in_user
         c.logged_in_persona_role = session_get('role')
+        if username != username_persona:
+            c.logged_in_persona = get_member(username_persona)
+        
 
         # Setup Langauge
         #  - there is a way of setting fallback langauges, investigate?
