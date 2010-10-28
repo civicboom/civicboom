@@ -768,7 +768,7 @@ CREATE TRIGGER update_content
         u7.name          = u"Mr. Mobile User"
         u7.status        = "active"
         u7.email         = u""
-        u7.avatar        = u"/images/test/avatar_mobiletest.jpg"
+        u7.avatar        = u"http://static.civicboom.com/public/images/test/avatar_mobiletest.jpg"
 
         u7_login = UserLogin()
         u7_login.user   = u7
