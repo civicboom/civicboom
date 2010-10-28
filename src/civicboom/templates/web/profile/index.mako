@@ -16,11 +16,12 @@
     ${public_profile.col_left()}
 
 	<h2>${_("Tools")}</h2>
-	    <a href="${url(controller='profile', action='index')}">${_("My Profile")}</a>
-	<br><a href="${url('settings')}">${_("Edit Settings")}</a>
-	<br><a href="${url(controller='settings', action='messages')}">${_("Edit Notifications")}</a>
-	<br><a href="${url('messages')}">${_("My Messages")}</a>
-    <br><a href="${url(controller='account', action='link_janrain')}">${_("Manage Login Accounts")}</a>
+         <a href="${url('member', id=c.logged_in_user.username)}">${_("Public Profile")}</a>
+	<br/><a href="${url(controller='profile', action='index')}">${_("Private Profile")}</a>
+	<br/><a href="${url('settings')}">${_("Edit Settings")}</a>
+	<br/><a href="${url(controller='settings', action='messages')}">${_("Edit Notifications")}</a>
+	<br/><a href="${url('messages')}">${_("My Messages")}</a>
+    <br/><a href="${url(controller='account', action='link_janrain')}">${_("Manage Login Accounts")}</a>
 
 </%def>
 
