@@ -256,7 +256,10 @@ class Content(Base):
                 return thumbnail_url
 
         from civicboom.lib.helpers import wh_public
-        return wh_public("images/default_thumbnail_%s.png" % self.__type__)
+        thumbnail_type = self.__type__
+        if thumbnail_type=='article' and self.response_type != None:
+            thumbnail_type = 'response'
+        return wh_public("images/default_thumbnail_%s.png" % thumbnail_type)
 
     @property
     def url(self):
