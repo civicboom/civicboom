@@ -81,6 +81,12 @@ def is_valid_user(u):
 # Todo - look into how session is verifyed - http://pylonshq.com/docs/en/1.0/sessions/#using-session-in-secure-forms
 #        what is the secure form setting for?
 
+# AllanC - these should look at config['ssl']
+#          do we always want logged_in users to always use HTTPS?
+#          what about the https() decorator on signin paying attention to config['ssl']
+protocol_for_login   = "https"
+protocol_after_login = "http"
+
 def authorize(authenticator):
     """
     Check if logged in user has been set
@@ -117,7 +123,7 @@ def authorize(authenticator):
                 # save the the session POST data to be reinstated after the redirect
                 if request.POST:
                     session_set('login_redirect_post', json.dumps(multidict_to_dict(request.POST)), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
-                return redirect(url_from_widget(controller='account', action='signin', protocol="https")) #This uses the from_widget url call to ensure that widget actions preserve the widget env
+                return redirect(url_from_widget(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
 
             # If API request - error unauthorised
             else:
@@ -157,7 +163,7 @@ def signin_user_and_redirect(user, login_provider=None):
     login_redirector()
     
     # If no redirect send them to private profile and out of https and back to http
-    return redirect(url(controller="profile", action="index", protocol="http"))
+    return redirect(url(controller="profile", action="index", protocol=protocol_after_login))
     
 def signout_user(user):
     user_log.info("logged out")
