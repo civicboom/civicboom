@@ -22,5 +22,5 @@ class TestMembersController(TestController):
         response = self.app.get(url('member', id='unittest', format='json'))
 
     def test_member_show_nonexist(self):
-        response = self.app.get(url('member', id='mrdoesnotexist', format='json'))
+        response = self.app.get(url('member', id='mrdoesnotexist', format='json'), status=404)
 
