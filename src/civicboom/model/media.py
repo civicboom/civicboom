@@ -14,7 +14,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-memcache_expire = 10*60 # 10 * 60 Seconds = 10 Minuets
+#memcache_expire = 10*60 # 10 * 60 Seconds = 10 Minuets
 
 
 class Media(Base):
@@ -79,9 +79,9 @@ class Media(Base):
         #    return d
         
         memcache_key = str("media_processing_"+self.hash)
-        memcache_val = "temp"
+        memcache_val = "que media"
         log.debug("set media memcache %s:%s")
-        app_globals.memcache.set(memcache_key, memcache_val, time=memcache_expire) # Flag memcache to indicate this media is being processed
+        app_globals.memcache.set(memcache_key, memcache_val, time=int(config['media.processing.expire_memcache_time'])) # Flag memcache to indicate this media is being processed
 
         wh.copy_to_warehouse("./civicboom/public/images/media_placeholder.gif", "media-thumbnail", self.hash, placeholder=True)
 
