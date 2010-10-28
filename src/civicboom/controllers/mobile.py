@@ -46,9 +46,9 @@ class MobileController(BaseController):
             return action_ok(data={"version": "1.13"})
 
 
-    #@_logged_in_mobile
+    @_logged_in_mobile
     @auto_format_output
-    def media(self):
+    def media_part(self):
         log.debug("Uploading media from mobile")
         content = get_content(int(request.POST['content_id']))
         if not content:
@@ -56,25 +56,32 @@ class MobileController(BaseController):
         #if content.editable_by(c.logged_in_persona):
         #    raise action_error(_("You are not the owner of that content"), code=403)
 
-        log.debug("Attaching media to "+content.title)
-
-        m = Media()
-        log.debug("Dumping to file")
         import base64
-        tmp = file("/tmp/upload", "w")
+        tmp = file("/tmp/upload-"+str(content.id), "a")
         tmp.write(base64.b64decode(request.POST["file_data"]))
         tmp.close()
-        log.debug("Loading")
+
+        return action_ok(_("Part appended"), code=201)
+
+
+    @_logged_in_mobile
+    @auto_format_output
+    def media_finish(self):
+        log.debug("Finishing media")
+        content = get_content(int(request.POST['content_id']))
+        if not content:
+            raise action_error(_("The content does not exist"), code=404)
+        #if content.editable_by(c.logged_in_user):
+        #    raise action_error(_("You are not the owner of that content"), code=403)
+
+        m = Media()
         m.load_from_file(
-            tmp_file="/tmp/upload",
+            tmp_file="/tmp/upload-"+str(content.id),
             original_name=request.POST["file_name"],
             caption=None,
             credit=c.logged_in_persona.name
         )
-        log.debug("Attaching")
         content.attachments.append(m)
-
-        log.debug("Committing")
         Session.commit()
 
         return action_ok(_("Media attached"), code=201)
