@@ -53,12 +53,9 @@ class MobileController(BaseController):
         content = get_content(int(request.POST['content_id']))
         if not content:
             raise action_error(_("The content does not exist"), code=404)
-        if content.editable_by(c.logged_in_user):
-            raise action_error(_("You are not the owner of that content"), code=403)
+        #if content.editable_by(c.logged_in_user):
+        #    raise action_error(_("You are not the owner of that content"), code=403)
 
-        log.debug("Attaching media to "+content.title)
-
-        log.debug("Dumping to file")
         import base64
         tmp = file("/tmp/upload-"+str(content.id), "a")
         tmp.write(base64.b64decode(request.POST["file_data"]))
@@ -70,11 +67,12 @@ class MobileController(BaseController):
     @_logged_in_mobile
     @auto_format_output
     def media_finish(self):
+        log.debug("Finishing media")
         content = get_content(int(request.POST['content_id']))
         if not content:
             raise action_error(_("The content does not exist"), code=404)
-        if content.editable_by(c.logged_in_user):
-            raise action_error(_("You are not the owner of that content"), code=403)
+        #if content.editable_by(c.logged_in_user):
+        #    raise action_error(_("You are not the owner of that content"), code=403)
 
         m = Media()
         m.load_from_file(
