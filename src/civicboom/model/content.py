@@ -185,9 +185,9 @@ class Content(Base):
     def action_list_for(self, member):
         action_list = []
         if self.editable_by(member):
-            action_list.append('editable')
+            action_list.append('edit')
         if self.viewable_by(member):
-            action_list.append('viewable')
+            action_list.append('view')
         return action_list
 
     def editable_by(self, member):

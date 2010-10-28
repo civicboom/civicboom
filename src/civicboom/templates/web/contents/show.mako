@@ -42,7 +42,7 @@
   
   
     ## Content Owner Actions
-    % if 'editable' in d['content']['actions']:
+    % if 'edit' in d['content']['actions']:
         <a class="button_small button_small_style_2" href="${h.url('edit_content', id=d['content']['id'])}">
           Edit
         </a>
@@ -369,9 +369,8 @@ from civicboom.model import CommentContent
 
 <%def name="share_links()">
 
-    % if 'editable' in d['content']['actions']:
-        ##AllanC - temp dissabled until we can create a janrain object based on API output rather than python SQLAlchemy objects
-        ##${janrain_aggregate_button()}
+    % if 'edit' in d['content']['actions'] and d['content']['private']==False:
+        ${janrain_aggregate_button()}
     %endif
     
     
