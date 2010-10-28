@@ -37,7 +37,7 @@ class AccountController(BaseController):
 
     @auto_format_output
     #@https() # redirect to https for transfer of password
-    def signin(self, format="json"):
+    def signin(self):
 
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':
@@ -63,7 +63,7 @@ class AccountController(BaseController):
 
         # If user has existing account: Login
         if c.logged_in_user:
-            if format in ["html", "redirect"]:
+            if c.format in ["html", "redirect"]:
                 signin_user_and_redirect(c.logged_in_user, login_provider=login_provider)
             else:
                 signin_user(c.logged_in_user, "api-password")

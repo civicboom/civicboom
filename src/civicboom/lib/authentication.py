@@ -158,10 +158,10 @@ def signin_user_and_redirect(user, login_provider=None):
     if 'popup_close' in request.params:
         # Redirect to close the login frame, but keep the login_redirector for a separte call later
         return redirect(url(controller='misc', action='close_popup'))
-    
+
     # Redirect them back to where they were going if a redirect was set
     login_redirector()
-    
+
     # If no redirect send them to private profile and out of https and back to http
     return redirect(url(controller="profile", action="index", protocol=protocol_after_login))
     
