@@ -177,16 +177,19 @@ def signout_user(user):
 def set_persona(group_persona):
     
     def set_persona_session(username, role='admin'):
-        session_set('username_persona', user)
+        session_set('username_persona', username)
         session_set('role'            , role)
-        
+
     if (
         (isinstance(group_persona, basestring) and group_persona == c.logged_in_user.username) 
         or
         (isinstance(group_persona, Member    ) and group_persona == c.logged_in_user         )
        ):
         set_persona_session(group_persona)
+        return True
     else:
         membership = get_membership(group_persona, c.logged_in_user)
         if membership:
             set_persona_session(group_persona, membership.role)
+            return True
+    return False

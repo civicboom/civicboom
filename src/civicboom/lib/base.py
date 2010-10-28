@@ -104,6 +104,7 @@ class BaseController(WSGIController):
             c.logged_in_persona = c.logged_in_user
         else:
             c.logged_in_persona = get_member(username_persona)
+        c.logged_in_persona_role = session_get('role')
 
         # Setup Langauge
         #  - there is a way of setting fallback langauges, investigate?
