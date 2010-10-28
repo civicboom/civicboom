@@ -58,7 +58,7 @@ class MessagesController(BaseController):
     @auto_format_output
     @web_params_to_kwargs
     @authorize(is_valid_user)
-    def index(self, **kwargs):
+    def index(self, list='to', **kwargs):
         """
         GET /messages: All items in the collection.
         
@@ -85,9 +85,9 @@ class MessagesController(BaseController):
         """
         # url('messages')
         
-        if 'list' not in kwargs:
-            kwargs['list'] = 'to'
-        list = kwargs['list']
+        #if 'list' not in kwargs:
+        #    kwargs['list'] = 'to'
+        #list = kwargs['list']
         
         if list not in index_lists:
             raise action_error(_('list %s not supported') % list, code=400)

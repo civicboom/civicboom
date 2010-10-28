@@ -78,7 +78,10 @@ class Media(Base):
         #        d[key] = config[key]
         #    return d
         
-        app_globals.memcache.set(str("media_processing_"+self.hash), "temp", time=memcache_expire) # Flag memcache to indicate this media is being processed
+        memcache_key = str("media_processing_"+self.hash)
+        memcache_val = "temp"
+        log.debug("set media memcache %s:%s")
+        app_globals.memcache.set(memcache_key, memcache_val, time=memcache_expire) # Flag memcache to indicate this media is being processed
 
         wh.copy_to_warehouse("./civicboom/public/images/media_placeholder.gif", "media-thumbnail", self.hash, placeholder=True)
 

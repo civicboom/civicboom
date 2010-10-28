@@ -86,6 +86,39 @@ def _update_media_length(hash, length):
     # update the record in db
 
 def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
+
+    if file_type == "image":
+        processed = tempfile.NamedTemporaryFile(suffix=".jpg")
+        size = (int(config["media.media.width"]), int(config["media.media.height"]))
+        im = Image.open(tmp_file)
+        if im.mode != "RGB":
+            im = im.convert("RGB")
+        im.thumbnail(size, Image.ANTIALIAS)
+        im.save(processed.name, "JPEG")
+        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
+        processed.close()
+    elif file_type == "audio":
+        processed = tempfile.NamedTemporaryFile(suffix=".ogg")
+        _ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
+        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
+        processed.close()
+    elif file_type == "video":
+        log.debug("encoding video to flv")
+        processed = tempfile.NamedTemporaryFile(suffix=".flv")
+        size = (int(config["media.media.width"]), int(config["media.media.height"]))
+        _ffmpeg([
+            "-y", "-i", tmp_file,
+            "-ab", "56k", "-ar", "22050",
+            "-qmin", "2", "-qmax", "16",
+            "-b", "320k", "-r", "15",
+            "-s", "%dx%d" % (size[0], size[1]),
+            processed.name
+        ])
+        log.debug("START copying processed video to warehouse %s:%s" % (file_name, processed.name))
+        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
+        log.debug("END   copying processed video to warehouse %s:%s" % (file_name, processed.name))
+        processed.close()
+
     # Get the thumbnail processed and uploaded ASAP
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
@@ -115,37 +148,12 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         wh.copy_to_warehouse(processed.name, "media-thumbnail", file_hash, "thumb.jpg")
         processed.close()
 
-    # next most important, the original
-    wh.copy_to_warehouse(tmp_file, "media-original", file_hash, file_name)
 
-    if file_type == "image":
-        processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-        size = (int(config["media.media.width"]), int(config["media.media.height"]))
-        im = Image.open(tmp_file)
-        if im.mode != "RGB":
-            im = im.convert("RGB")
-        im.thumbnail(size, Image.ANTIALIAS)
-        im.save(processed.name, "JPEG")
-        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
-        processed.close()
-    elif file_type == "audio":
-        processed = tempfile.NamedTemporaryFile(suffix=".ogg")
-        _ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
-        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
-        processed.close()
-    elif file_type == "video":
-        processed = tempfile.NamedTemporaryFile(suffix=".flv")
-        size = (int(config["media.media.width"]), int(config["media.media.height"]))
-        _ffmpeg([
-            "-y", "-i", tmp_file,
-            "-ab", "56k", "-ar", "22050",
-            "-qmin", "2", "-qmax", "16",
-            "-b", "320k", "-r", "15",
-            "-s", "%dx%d" % (size[0], size[1]),
-            processed.name
-        ])
-        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
-        processed.close()
+    # leist important, the original
+    log.debug("START copying original media to warehouse %s:%s" % (file_name, tmp_file) )
+    wh.copy_to_warehouse(tmp_file, "media-original", file_hash, file_name)
+    log.debug("END   copying original media to warehouse %s:%s" % (file_name, tmp_file) )
+
 
     if delete_tmp:
         os.unlink(tmp_file)
@@ -157,6 +165,8 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
 
     import memcache
     m = memcache.Client([config['service.memcache.server']], debug=0)
-    m.delete(str("media_processing_"+file_hash))
+    memcache_key = str("media_processing_"+file_hash)
+    m.delete(memcache_key)
+    log.debug("deleting memcache %s" % memcache_key)
 
 
