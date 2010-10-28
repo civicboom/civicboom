@@ -26,11 +26,11 @@ class GroupActionsController(BaseController):
         group = _get_group(id)
 
         # Check permissions
-        if not group.can_join(c.logged_in_user):
+        if not group.can_join(c.logged_in_persona):
             raise action_error(_('current user cannot join this group'), code=403)
         
         # Join action
-        join_status = group.join(c.logged_in_user)
+        join_status = group.join(c.logged_in_persona)
         if join_status == True:
             return action_ok(_('joined %s' % group.username))
         elif join_status == "request":
@@ -55,7 +55,7 @@ class GroupActionsController(BaseController):
         group  = _get_group(id)
         member = get_member(member)
         # permissions check
-        if member!=c.logged_in_user and not group.is_admin(c.logged_in_user):
+        if member!=c.logged_in_persona and not group.is_admin(c.logged_in_persona):
             raise action_error('current user has no permissions for this group', code=403)
         # remove action
         if group.remove_member(member):

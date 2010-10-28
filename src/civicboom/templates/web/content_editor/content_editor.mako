@@ -139,12 +139,12 @@
         <select name="owner">
             <%
             owners = []
-            owners.append(c.logged_in_user)
+            owners.append(c.logged_in_persona)
             # TODO - unfinished
             # AllanC - this is really odd! activating the hasattr triggers a query (im cool with that, it's expected) but an INSERT query?! that then errors?
-            #if hasattr(c.logged_in_user,"groups"):
+            #if hasattr(c.logged_in_persona,"groups"):
             #    pass
-            #owners += c.logged_in_user.groups
+            #owners += c.logged_in_persona.groups
             %>
             % for owner in owners:
                 <%

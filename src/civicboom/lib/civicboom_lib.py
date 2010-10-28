@@ -297,7 +297,7 @@ def form_to_content(form, content):
         elif form.get('type') == "comment": content = CommentContent()
         elif form.get('type') == "article": content = ArticleContent()
         else                              : content = DraftContent()
-        content.creator = c.logged_in_user
+        content.creator = c.logged_in_persona
         
     if not content.parent and "parent_id" in form:
         content.parent_id = form["parent_id"]
@@ -321,7 +321,7 @@ def form_to_content(form, content):
         else:
             content = DraftContent() # The existing article the publish_id is pointing too does not exisit any more, so the content should be saved as a draft, 
         
-        #if not content.editable_by(c.logged_in_user): # AllanC - do we need to double double check this user has permissions on this content to do this?
+        #if not content.editable_by(c.logged_in_persona): # AllanC - do we need to double double check this user has permissions on this content to do this?
         #    raise exception
 
 
@@ -353,7 +353,7 @@ def form_to_content(form, content):
         # Although the form limits the user to a selectable list, any id can be passed here, it is possible that with an API call a user can give content to anyone.
         # FIXME: including people who don't want the content attributed to them...
     elif content.creator == None:
-        content.creator = c.logged_in_user
+        content.creator = c.logged_in_persona
 
     
     # for key in form: print "%s:%s" % (key,form[key])

@@ -20,8 +20,8 @@ class UserLogHandler(logging.Handler):
         db_engine = get_engine()
 
         username = "None"
-        if c.logged_in_user:
-            username = c.logged_in_user.username
+        if c.logged_in_persona:
+            username = c.logged_in_persona.username
         url      = request.url
         addr     = request.environ["REMOTE_ADDR"]
         priority = record.levelno

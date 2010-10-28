@@ -97,7 +97,7 @@ def authorize(authenticator):
     def wrapper(_target, *args, **kwargs):
 
         # CHECK Loggin in
-        if authenticator(c.logged_in_user):
+        if authenticator(c.logged_in_persona):
             # Reinstate any session encoded POST data if this is the first page since the login_redirect
             if not session_get('login_redirect'):
                 json_post = session_remove('login_redirect_post')

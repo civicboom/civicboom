@@ -16,7 +16,7 @@
 
 <h2>Currently linked accounts</h2>
     <ul>
-        % for login in c.logged_in_user.login_details:
+        % for login in c.logged_in_persona.login_details:
         <li>${login.type}</li>
         % endfor
     </ul>

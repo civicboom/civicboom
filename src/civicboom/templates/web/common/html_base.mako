@@ -122,7 +122,7 @@ ${self.head_links()}
 ## HTML Body
 ##------------------------------------------------------------------------------
 <%
-if c.logged_in_user:
+if c.logged_in_persona:
 	u = "user"
 else:
 	u = "anon"

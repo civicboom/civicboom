@@ -44,7 +44,7 @@ class MemberActionsController(BaseController):
         @return 200   following ok
         @return 500   error following
         """
-        status = c.logged_in_user.follow(id)
+        status = c.logged_in_persona.follow(id)
         if status == True:
             return action_ok(_('You are now following %s') % id)
         raise action_error(_('Unable to follow member: %s') % status)
@@ -62,7 +62,7 @@ class MemberActionsController(BaseController):
         @return 200   unfollowing ok
         @return 500   error unfollowing
         """
-        status = c.logged_in_user.unfollow(id)
+        status = c.logged_in_persona.unfollow(id)
         if status == True:
             return action_ok(_('You have stopped following %s') % id)
         raise action_error(_('Unable to stop following member: %s') % status)
@@ -140,7 +140,7 @@ class MemberActionsController(BaseController):
         #          we want people to be able to filter the lists from the API ... but as we just call the SQLAlchemy links we cant tell what data is public or private
         #          we need a more sophisticated method of doing this, maybe leveraging a new search with public=true
         #          content_lists (above) should be refactored?
-        if member != c.logged_in_user:
+        if member != c.logged_in_persona:
             kwargs['list'] = 'content_public'
         
         list = kwargs['list']

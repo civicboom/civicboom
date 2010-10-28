@@ -22,10 +22,10 @@
         <ul>
             <li><input type="text" placeholder="Quick Search"></li>
             <li><a href="/search" class="sub_option">Advanced Search</a></li>
-% if c.logged_in_user:
+% if c.logged_in_persona:
             <li><a href="/feeds" class="parent">News Feeds</a>
 				<ul>
-					% for f in c.logged_in_user.feeds:
+					% for f in c.logged_in_persona.feeds:
 					<li><a href="/feeds/${f.id}" class="sub_option">${f.name}</a></li>
 					% endfor
 					<li><a href="/feeds/new" class="sub_option">Create New Feed</a></li>

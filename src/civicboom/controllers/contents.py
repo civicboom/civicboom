@@ -45,14 +45,14 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
     if not content:
         raise action_error(_("content not found"), code=404)
     if is_viewable:
-        if not content.viewable_by(c.logged_in_user): 
+        if not content.viewable_by(c.logged_in_persona): 
             raise action_error(_("_content not viewable"), code=403)
         if content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
             raise action_error(_("_content not found"), code=404)
-    if is_editable and not content.editable_by(c.logged_in_user):
+    if is_editable and not content.editable_by(c.logged_in_persona):
         raise action_error(_("You do not have permission to edit this _content"), code=403)
-    if is_parent_owner and not content.is_parent_owner(c.logged_in_user):
+    if is_parent_owner and not content.is_parent_owner(c.logged_in_persona):
         raise action_error(_("not parent owner"), code=403)
     return content
 
@@ -198,7 +198,7 @@ class ContentsController(BaseController):
             parent = get_content(kwargs['parent_id'])
             if not parent:
                 raise action_error(message='parent not found', code=404)
-            if not parent.viewable_by(c.logged_in_user):
+            if not parent.viewable_by(c.logged_in_persona):
                 raise action_error(message='you do not have permission to respond to this content', code=403)
         
         # if type is comment, it must have a parent

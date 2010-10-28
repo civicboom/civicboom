@@ -16,7 +16,7 @@
     ${public_profile.col_left()}
 
 	<h2>${_("Tools")}</h2>
-         <a href="${url('member', id=c.logged_in_user.username)}">${_("Public Profile")}</a>
+         <a href="${url('member', id=c.logged_in_persona.username)}">${_("Public Profile")}</a>
 	<br/><a href="${url(controller='profile', action='index')}">${_("Private Profile")}</a>
 	<br/><a href="${url('settings')}">${_("Edit Settings")}</a>
 	<br/><a href="${url(controller='settings', action='messages')}">${_("Edit Notifications")}</a>

@@ -46,7 +46,7 @@ def _get_group(id, is_admin=False):
     group = get_group(id)
     if not group:
         raise action_error(_("group not found"), code=404)
-    if is_admin and not group.is_admin(c.logged_in_user):
+    if is_admin and not group.is_admin(c.logged_in_persona):
         raise action_error(_("you do not have permission for this group"), code=403)
     return group
 
@@ -74,7 +74,7 @@ class GroupsController(BaseController):
         @return 200 - data.list = array of group objects that logged in user is a member including the additional field 'members "role" in the group'
         """
         # url('groups')
-        groups = [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role}) for group_role in c.logged_in_user.groups_roles]
+        groups = [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role}) for group_role in c.logged_in_persona.groups_roles]
         return action_ok(data={'list': groups})
 
 
@@ -105,7 +105,7 @@ class GroupsController(BaseController):
         group.username     = group_dict['username']
         group.status       = 'active'
         group_admin        = GroupMembership()
-        group_admin.member = c.logged_in_user
+        group_admin.member = c.logged_in_persona
         group_admin.role   = "admin"
         group.members_roles.append(group_admin)
         Session.add(group)

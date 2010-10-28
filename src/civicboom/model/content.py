@@ -151,7 +151,7 @@ class Content(Base):
     })
     def __to_dict_function_action_list__(content):
         from pylons import tmpl_context as c
-        return content.action_list_for(c.logged_in_user)
+        return content.action_list_for(c.logged_in_persona)
     __to_dict__['full+actions'].update({
             'actions': __to_dict_function_action_list__
     })

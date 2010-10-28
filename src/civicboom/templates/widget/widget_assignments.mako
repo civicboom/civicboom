@@ -4,7 +4,7 @@
 
 
 % if len(c.assignments) == 0:
-    % if c.widget_owner == c.logged_in_user:
+    % if c.widget_owner == c.logged_in_persona:
         <p style="margin: 0.5em;">
             ${_("Set an _assignment to have it appear here on your widget")}
         </p>

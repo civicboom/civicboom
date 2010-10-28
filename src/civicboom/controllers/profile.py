@@ -29,8 +29,8 @@ class ProfileController(BaseController):
         """
         # AllanC - contruct an uber dictionary for the template to render built from data from other controller actions
         results = action_ok(data={
-            'member'  : call_action(MembersController().show         , format='python', id=c.logged_in_user.id, exclude_fields='content_public, groups_public')['data']['member'],
-            'content' : call_action(MemberActionsController().content, format='python', id=c.logged_in_user.id,                                               )['data']['list']  ,
+            'member'  : call_action(MembersController().show         , format='python', id=c.logged_in_persona.id, exclude_fields='content_public, groups_public')['data']['member'],
+            'content' : call_action(MemberActionsController().content, format='python', id=c.logged_in_persona.id,                                               )['data']['list']  ,
             'messages': {
                 'notifications': call_action(MessagesController().index, format='python', list='notification')['data']['list'] ,
                 'to'           : call_action(MessagesController().index, format='python', list='to'          )['data']['list'] ,

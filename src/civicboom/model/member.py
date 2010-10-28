@@ -116,8 +116,8 @@ class Member(Base):
     })
     
     #__to_dict__['actions'].update({
-    #        'is_following'        : lambda member: member.is_following(None), #c.logged_in_user
-    #        'is_follower'         : lambda member: member.is_follower(None), #c.logged_in_user
+    #        'is_following'        : lambda member: member.is_following(None), #c.logged_in_persona
+    #        'is_follower'         : lambda member: member.is_follower(None), #c.logged_in_persona
             #'join' # join group?
     #})
     __to_dict__.update({
@@ -125,7 +125,7 @@ class Member(Base):
     })
     def __to_dict_function_action_list__(member):
         from pylons import tmpl_context as c
-        return member.action_list_for(c.logged_in_user)
+        return member.action_list_for(c.logged_in_persona)
     __to_dict__['full+actions'].update({
             'actions': __to_dict_function_action_list__
     })
@@ -296,7 +296,7 @@ class Group(Member):
 
     def __to_dict_function_members__(group):
         from pylons import tmpl_context as c
-        if group.member_visability=="public" or group.get_membership(c.logged_in_user):
+        if group.member_visability=="public" or group.get_membership(c.logged_in_persona):
             return [update_dict(m.member.to_dict(),{'role':m.role, 'status':m.status}) for m in group.members_roles]
         return None
 

@@ -25,7 +25,7 @@ user_log = logging.getLogger("user")
 # Check logged in - No need for redirect to HTML signin form as the mobile app is not a human
 @decorator
 def _logged_in_mobile(func, *args, **kargs):
-    if not c.logged_in_user:
+    if not c.logged_in_persona:
         raise action_error("not authenticated", code=403)
     return func(*args, **kargs)
 
@@ -53,7 +53,7 @@ class MobileController(BaseController):
         content = get_content(int(request.POST['content_id']))
         if not content:
             raise action_error(_("The content does not exist"), code=404)
-        #if content.editable_by(c.logged_in_user):
+        #if content.editable_by(c.logged_in_persona):
         #    raise action_error(_("You are not the owner of that content"), code=403)
 
         log.debug("Attaching media to "+content.title)
@@ -69,7 +69,7 @@ class MobileController(BaseController):
             tmp_file="/tmp/upload",
             original_name=request.POST["file_name"],
             caption=None,
-            credit=c.logged_in_user.name
+            credit=c.logged_in_persona.name
         )
         log.debug("Attaching")
         content.attachments.append(m)

@@ -327,7 +327,7 @@ from civicboom.model import CommentContent
 	<table>
 
     % for comment in d['content']['comments']:
-	##${relation(comment['creator']['username'], c.logged_in_user.username, content['creator']['username'], 'tr')}
+	##${relation(comment['creator']['username'], c.logged_in_persona.username, content['creator']['username'], 'tr')}
     <tr>
 		<td class="avatar">
 			${member_includes.avatar(comment['creator'])}
@@ -336,7 +336,7 @@ from civicboom.model import CommentContent
 			${comment['content']}
 			<b style="float: right;">
 				${comment['creator']['name']}
-				${relation(comment['creator'], c.logged_in_user, d['content']['creator'], 'text')} --
+				${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
 				${str(comment['creation_date'])[0:19]}
 			</b>
 		</td>
@@ -344,8 +344,8 @@ from civicboom.model import CommentContent
 	% endfor
 	<tr class="self_comment" style="background: #FFA;">
 		<td class="avatar">
-			% if c.logged_in_user:
-			<img class='avatar' src="${c.logged_in_user.avatar_url}"><br>
+			% if c.logged_in_persona:
+			<img class='avatar' src="${c.logged_in_persona.avatar_url}"><br>
 			% endif
 		</td>
 		<td class="comment">
@@ -491,7 +491,7 @@ from civicboom.model import CommentContent
                     import hashlib, hmac, base64, time
                     apiKey     = config['api_key.janrain']
                     timestamp  = int(time.time())
-                    primaryKey = c.logged_in_user.id
+                    primaryKey = c.logged_in_persona.id
                     message    = "%s|%s" % (timestamp,primaryKey)
                     signature  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
                 %>

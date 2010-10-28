@@ -105,7 +105,7 @@ class MembersController(BaseController):
     #def index(self, list=None):
     #    member_list_name = request.params.get('list', list)
     #    if member_list_name not in index_lists: raise action_error(_('list type %s not supported') % member_list_name)
-    #    members = index_lists[member_list_name](c.logged_in_user)
+    #    members = index_lists[member_list_name](c.logged_in_persona)
     #    members = [member.to_dict('default_list') for member in members]
     #    
     #    return {'data': {'list': members}}

@@ -46,7 +46,7 @@ class CurrentUserPasswordValidator(validators.FancyValidator):
         'invalid'   : _('Invalid password'),
     }
     def _to_python(self, value, state):
-        if get_user_and_check_password(c.logged_in_user.username, value):
+        if get_user_and_check_password(c.logged_in_persona.username, value):
             return value
         raise formencode.Invalid(self.message("invalid", state), value, state)
         

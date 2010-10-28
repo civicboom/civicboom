@@ -52,19 +52,19 @@ class RegisterController(BaseController):
         c.new_user = get_member(id)
         
         # Validate User
-        if c.logged_in_user and c.logged_in_user == c.new_user: # from janrain login
+        if c.logged_in_persona and c.logged_in_persona == c.new_user: # from janrain login
             pass
         elif verify_email(c.new_user, request.params.get('hash')): # or from email hash
-            c.logged_in_user = c.new_user
+            c.logged_in_persona = c.new_user
         else:
             abort(403)
         
         # Build required fields list from current user data - the template will then display these and a custom validator will be created for them
         c.required_fields = ['username','email','password','dob']
-        if not c.logged_in_user.username.startswith(new_user_prefix): c.required_fields.remove('username')
-        if c.logged_in_user.email                                   : c.required_fields.remove('email')
-        if len(c.logged_in_user.login_details) > 0                  : c.required_fields.remove('password')
-        if c.logged_in_user.config["dob"] != u""                    : c.required_fields.remove('dob')
+        if not c.logged_in_persona.username.startswith(new_user_prefix): c.required_fields.remove('username')
+        if c.logged_in_persona.email                                   : c.required_fields.remove('email')
+        if len(c.logged_in_persona.login_details) > 0                  : c.required_fields.remove('password')
+        if c.logged_in_persona.config["dob"] != u""                    : c.required_fields.remove('dob')
         
         # If no post data, display the registration form with required fields
         if request.environ['REQUEST_METHOD'] == 'GET':
@@ -85,21 +85,21 @@ class RegisterController(BaseController):
         
         # If the validator has not forced a page render
         # then the data is fine - save the new user data
-        if 'username' in form: c.logged_in_user.username         = form['username']
-        if 'dob'      in form: c.logged_in_user.config['dob']    = form['dob']
-        if 'email'    in form: c.logged_in_user.email_unverifyed = form['email']
+        if 'username' in form: c.logged_in_persona.username         = form['username']
+        if 'dob'      in form: c.logged_in_persona.config['dob']    = form['dob']
+        if 'email'    in form: c.logged_in_persona.email_unverifyed = form['email']
         if 'password' in form:
-            set_password(c.logged_in_user, form['password'])
-        c.logged_in_user.status = "active"
+            set_password(c.logged_in_persona, form['password'])
+        c.logged_in_persona.status = "active"
         
-        Session.add(c.logged_in_user) #Already in session?
+        Session.add(c.logged_in_persona) #Already in session?
         Session.commit()
         
-        if c.logged_in_user.email_unverifyed:
-            send_verifiy_email(c.logged_in_user)
+        if c.logged_in_persona.email_unverifyed:
+            send_verifiy_email(c.logged_in_persona)
             set_flash_message(_('Please check your email to validate your email address'))
         
-        c.logged_in_user.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako'))
+        c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako'))
         
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))
         redirect('/')
