@@ -151,3 +151,14 @@ class MemberActionsController(BaseController):
         contents = [content.to_dict(**kwargs) for content in contents]
         
         return action_ok(data={'list': contents})
+
+
+    @auto_format_output
+    @web_params_to_kwargs
+    def assignments(self, id, **kwargs):
+        member = _get_member(id)
+        if member != c.logged_in_user:
+            raise action_error(_("Users may only view their own assignments (for now)"), code=403)
+        contents = [content.to_dict("full") for content in member.assignments_accepted]
+        return action_ok(data={'list': contents})
+
