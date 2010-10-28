@@ -134,10 +134,9 @@ r = (d['content']['rating'] * 5)
 
     ##-------- Licence----------
     <h2>${_("Licence")}</h2>
-        dont use obj ref
-        ##<a href="${content.license.url}" target="_blank" title="${_(content.license.name)}">
-        ##  <img src="/images/licenses/${content.license.code}.png" alt="${_(content.license.name)}" />
-        ##</a>
+        <a href="${d['content']['license']['url']}" target="_blank" title="${d['content']['license']['name']}">
+          <img src="/images/licenses/${d['content']['license']['code']}.png" alt="${d['content']['license']['name']}" />
+        </a>
   
     ##-----Copyright/Inapropriate?-------
     <h2>${_("Content issues?")}</h2>

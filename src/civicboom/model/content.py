@@ -113,7 +113,7 @@ class Content(Base):
             'parent_id'    : None ,
             'title'        : None ,
             'content_short': None ,
-            #'creator'      : lambda content: content.creator.to_dict('deafult') ,
+            #'creator'      : lambda content: content.creator.to_dict() ,
             'creator_id'   : None , 
             'url'          : None ,
             'thumbnail_url': None ,
@@ -121,7 +121,6 @@ class Content(Base):
             'location'     : lambda content: content.location_string ,
             'num_responses': None ,
             'num_comments' : None ,
-            #'licence'
             'tags'         : lambda content: "implement tags" ,
             'license_id'   : None ,
         },
@@ -138,9 +137,13 @@ class Content(Base):
             'attachments'       : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
             'responses'         : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
             'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
+            'license'           : lambda content: content.license.to_dict() , 
     })
     del __to_dict__['full']['content_short']
     del __to_dict__['full']['parent_id']
+    del __to_dict__['full']['license_id']
+    del __to_dict__['full']['creator_id']
+    
     
     # Actions
     __to_dict__.update({
@@ -497,6 +500,24 @@ class License(Base):
     url           = Column(Unicode(250),  nullable=False)
     description   = Column(UnicodeText(), nullable=False)
     #articles      = relationship("Content", backref=backref('license'))
+
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
+    __to_dict__.update({
+        'default': {
+            'id'           : None ,
+            'code'         : None ,
+            'name'         : None ,
+            'url'          : None ,
+            'description'  : None ,
+        },
+    })
+    __to_dict__.update({
+        'full'   : copy.deepcopy(__to_dict__['default'])
+    })
+    __to_dict__.update({
+        'actions': copy.deepcopy(__to_dict__['default'])
+    })
+
 
     def __init__(self, code=None, name=None, description=None, url=None):
         self.code = code
