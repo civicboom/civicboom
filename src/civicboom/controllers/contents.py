@@ -159,7 +159,6 @@ class ContentsController(BaseController):
         
         return action_ok(
             data     = {'list': [content.to_dict(**kwargs) for content in results.all()]} ,
-            template = 'search/content' ,
         ) # return dictionaty of content to be formatted
 
 

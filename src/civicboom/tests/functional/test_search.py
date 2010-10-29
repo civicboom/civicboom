@@ -8,59 +8,6 @@ class TestSearchController(TestController):
 
 
     ##########################################################################
-    # Content search
-    ##########################################################################
-
-    def test_content_results(self):
-        response = self.app.get(url(controller='search', action='content', query='someone'))
-        assert "A test article by someone else" in response
-        assert "Friend" in response
-        assert "0 responses" in response
-
-    def test_content_results_rss(self):
-        response = self.app.get(url(controller='search', action='content', format="rss", query='someone'))
-        assert "A test article by someone else" in response
-        assert "Friend" in response
-
-    def test_content_results_json(self):
-        response = self.app.get(url(controller='search', action='content', format="json", query='someone'))
-        assert "A test article by someone else" in response
-        assert "Friend" in response
-
-    def test_content_no_results(self):
-        response = self.app.get(url(controller='search', action='content', query='cake'))
-        # FIXME: term is no longer used in output
-        #assert "'cake' did not match any articles" in response
-
-    def test_content_no_query(self):
-        response = self.app.get(url(controller='search', action='content'))
-
-    def test_content_rss(self):
-        response = self.app.get(url(controller='search', action='content', format='xml'))
-
-    def test_content_location(self):
-        response = self.app.get(url(controller='search', action='content', location='1,51'))
-        assert "Here is some text" in response
-
-    def test_content_location_radius(self):
-        response = self.app.get(url(controller='search', action='content', location='1,51,10'))
-        assert "Here is some text" in response
-
-    def test_content_type(self):
-        response = self.app.get(url(controller='search', action='content', type='assignment'))
-        assert "There once was" in response
-
-    def test_content_author(self):
-        response = self.app.get(url(controller='search', action='content', author='unittest'))
-        assert "Assignment for the world to see" in response
-
-    def test_content_response_to(self):
-        response = self.app.get(url(controller='search', action='content', response_to=2))
-        # FIXME: create a response as test data
-        #assert "something" in response
-
-
-    ##########################################################################
     # Location search
     ##########################################################################
 
