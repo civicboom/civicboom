@@ -401,11 +401,11 @@ def form_to_content(form, content):
             pass
 
     # Any left over fields that just need a simple set
-    for field in ["title", ]:
+    for field in ["title", "target_type", ]:
         form_field_name = field
         if form_field_name in form:
-            setattr(content,field,form[form_field_name])
-
+            if hasattr(content, field):
+                setattr(content,field,form[form_field_name])
     
 
     return content
