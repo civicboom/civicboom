@@ -125,9 +125,13 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
             processed.name
         ])
         m.set(memcache_key, "copying video", memcache_expire)
-        log.debug("START copying processed video to warehouse %s:%s" % (file_name, processed.name))
+        log.debug("START copying processed video to warehouse %s:%s (%dKB)" % (file_name, processed.name, os.path.getsize(processed.name)/1024))
         wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
         log.debug("END   copying processed video to warehouse %s:%s" % (file_name, processed.name))
+        # TODO:
+        # for RSS 2.0 'enclosure' we need to know the length of the processed file in bytes
+        # We should include here a call to database to update the length field
+        #_update_media_length(file_hash, os.path.getsize(processed.name))
         processed.close()
 
     # Get the thumbnail processed and uploaded ASAP
@@ -162,7 +166,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
 
 
     # leist important, the original
-    log.debug("START copying original media to warehouse %s:%s" % (file_name, tmp_file) )
+    log.debug("START copying original media to warehouse %s:%s (%dKB)" % (file_name, tmp_file, os.path.getsize(tmp_file)/1024) )
     m.set(memcache_key, "copying original video", memcache_expire)
     wh.copy_to_warehouse(tmp_file, "media-original", file_hash, file_name)
     log.debug("END   copying original media to warehouse %s:%s" % (file_name, tmp_file) )
@@ -170,12 +174,6 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
 
     if delete_tmp:
         os.unlink(tmp_file)
-
-    # TODO:
-    # for RSS 2.0 'enclosure' we need to know the length of the processed file in bytes
-    # We should include here a call to database to update the length field
-    #_update_media_length(file_hash, os.path.getsize(processed.name))
-
 
     m.delete(memcache_key)
     log.debug("deleting memcache %s" % memcache_key)
