@@ -22,6 +22,7 @@ if not always_show_map:
 	<script src="/javascript/geo.js"></script>
 	<script type="text/javascript">
 $(function() {
+	OpenLayers.ImgPath = "/images/map-icons/";
 	var ${field_name}_map = new OpenLayers.Map('${field_name}_div', {maxResolution:'auto'});
 	${field_name}_map.addLayer(new OpenLayers.Layer.OSM("OpenLayers OSM"));
 % if lon != None and lat != None:
@@ -129,6 +130,7 @@ $(function() {
 <script src="/javascript/geo.js"></script>
 <script type="text/javascript">
 $(function() {
+	OpenLayers.ImgPath = "/images/map-icons/";
 % if controls:
 	var ${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto'});
 % else:
