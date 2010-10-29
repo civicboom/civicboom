@@ -19,16 +19,21 @@
     <div class="${class_} avatar">
 		% if show_avatar:
 		<div class="clipper">
-			<img src="${member['avatar_url']}" alt="${member['username']}" width="80" class="img"/>
+            <a href="${h.url('member', id=member['username'])}" title="${member['username']}">
+			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img"/>
+            </a>
 			<img src="/images/badges/user.png" alt="User" class="type">
-			<a class="info" href="${h.url('member', id=member['username'])}" title="${member['username']}">i</a>
-			% if c.logged_in_persona:
+            
+            ## TODO - onClick javascript AJAX id card:
+			<a class="info" href="${h.url('member', id=member['username'])}" title="${member['username']}"></a>
+            
+			% if c.logged_in_persona and c.logged_in_persona.username != member['username']:
             % if c.logged_in_persona.is_following(member['username']):
-            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _('-'), css_class="follow")}
+            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _(' '), css_class="follow_action unfollow")}
             % else:
-            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _('+'), css_class="follow")}
+            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _(' '), css_class="follow_action follow"  )}
             % endif
-			% endif
+            % endif
 		</div>
 		% endif
 		% if show_name:
