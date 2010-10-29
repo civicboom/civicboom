@@ -330,12 +330,6 @@
                 setCheckedValue(document.forms['content'].elements['type'], type);
                 // reset all radio buttons to unselected
                 setSingleCSSClass(document.getElementById('type_'+type), 'section_selected', 'type_selection');
-                ##var elements = getElementByClass("section_selectable","type_selection");
-                ##for (var element in elements) {
-                ##    removeClass(elements[element], "section_selected");
-                ##}
-                ##// select section by setting selected class
-                ##addClass(YAHOO.util.Dom.get('type_'+type), "section_selected");
             }
 
             highlightType('${selected_type}'); //Set the default highlighted item to be the content type
