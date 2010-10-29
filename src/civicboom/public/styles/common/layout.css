@@ -51,6 +51,40 @@ HTML, BODY {
 }
 
 
+/* from http://psacake.com/web/jl.asp */
+.tooltip {
+	position:relative; /*this is the key*/
+	z-index:24; background-color:#ccc;
+	color:#000;
+	text-decoration:none;
+
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+}
+.tooltip:hover {
+	z-index:25; background-color:#ccc;
+}
+.tooltip span {
+	display: none;
+	border-radius: 5px 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	box-shadow: 0.2em 0.2em 0.2em rgba(0, 0, 0, 0.1);
+	-webkit-box-shadow: 0.2em 0.2em rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0.2em 0.2em rgba(0, 0, 0, 0.1);
+}
+.tooltip:hover span{ /*the span will display just on :hover state*/
+	display:block;
+	position:absolute;
+	top:1em; left:1em; width:15em;
+	border:1px solid #888;
+	background-color: #ccc;
+	color:#000;
+	text-align: center;
+}
+
+
 /*
  * flash message
  */ 
@@ -75,15 +109,15 @@ HTML, BODY {
 	text-align: center;
 }
 .avatar .clipper {
-	width: 80px;
-	height: 80px;
+	width: 40px;
+	height: 40px;
 	overflow: hidden;
 	position: relative;
 	border: 1px solid black;
 }
 .avatar .clipper .type,
 .avatar .clipper .info,
-.avatar .clipper .follow {
+.avatar .clipper .follow_action {
 	position: absolute;
 }
 .avatar .clipper .type {
@@ -92,32 +126,47 @@ HTML, BODY {
 }
 .avatar .clipper .info {
 	display: block;
-	height: 12px;
-	width: 12px;
-	background: #AAA;
-	bottom: 4px;
-	left: 4px;
+    width  : 16px;
+	height : 10px;
+	/*background: #AAA;*/
+	background: transparent url('/styles/web/icons/card-icon.png') no-repeat;
+    bottom: 0px;
+	left  : 2px;
 	opacity: 0;
 	padding: 2px;
 	border-radius: 6px;
 }
+/*
+http://www.iconarchive.com/category/application/toolbar-icons-by-shlyapnikova.html
+ - http://www.iconarchive.com/icons/shlyapnikova/toolbar/32/card-icon.png
+http://www.iconarchive.com/show/basic-icons-by-pixelmixer/tick-icon.html
+ - right-icon.png
+ - stop-icon.png
+*/
 .avatar .clipper:hover .info {opacity: 1;}
 
-.avatar .clipper .img {opacity: 1;}
-.avatar .clipper:hover .img {opacity: 0.25;}
+.avatar .clipper       .img {opacity: 1   ; height: 40px; width:40px;}
+.avatar .clipper:hover .img {opacity: 0.5 ;}
 
-.avatar .clipper .follow {
+.avatar .clipper .follow_action {
 	display: block;
-	height: 12px;
-	width: 12px;
-	background: #AAA;
-	bottom: 4px;
-	right: 4px;
-	opacity: 0;
+	height : 16px;
+	width  : 16px;
+    opacity: 0;
+	bottom :  0px;
+	right  :  2px;
+    /*
+	bottom: 2px;
+	right: 2px;
 	padding: 2px;
 	border-radius: 6px;
+	*/
 }
-.avatar .clipper:hover .follow {opacity: 1;}
+
+.avatar .clipper .follow   {background: transparent url('/styles/web/icons/right-icon.png') no-repeat;}
+.avatar .clipper .unfollow {background: transparent url('/styles/web/icons/stop-icon.png' ) no-repeat;}
+
+.avatar .clipper:hover .follow_action {opacity: 1;}
 
 /*
  * openlayers overrides

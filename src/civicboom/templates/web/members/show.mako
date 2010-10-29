@@ -67,7 +67,7 @@
 	<!--#include virtual="/messages/new.frag?to=${d['member']['username']}" -->
 
 
-    ${content_list(d['member']['content_public'], type_filters=["article", "assignment"])}
+    ${content_list(d['member']['content_public'], type_filters=["draft", "article", "assignment"])}
     
     ${content_list_group(d['member']['assignments_accepted'], "assignments accepted")}
     

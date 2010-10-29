@@ -160,7 +160,7 @@ def remove_member(group, member, delay_commit=False):
     if not membership:
         raise action_error(_('not a member of group'), code=400)
     # AllanC - permissions moved to controller
-    #if member!=c.logged_in_user and not group.is_admin(c.logged_in_user):
+    #if member!=c.logged_in_persona and not group.is_admin(c.logged_in_persona):
     #    raise action_error('current user has no permissions for this group', 403)
     #AllanC - integrety moved to model
     #if membership.role=="admin" and num_admins<=1:
@@ -204,7 +204,7 @@ def invite(group, member, role, delay_commit=False):
     if role not in group_member_roles.enums:
         raise action_error('not a valid role', code=400)
     # AllanC - permissions moved to controller
-    #if not group.is_admin(c.logged_in_user):
+    #if not group.is_admin(c.logged_in_persona):
     #    raise action_error(_('no permissions for this group'), 403)
 
     membership = GroupMembership()
@@ -241,7 +241,7 @@ def set_role(group, member, role, delay_commit=False):
     if role not in group_member_roles.enums:
         raise action_error('not a valid role', code=400)
     # AllanC - permisions moved to controller
-    #if not group.is_admin(c.logged_in_user):
+    #if not group.is_admin(c.logged_in_persona):
     #    raise action_error(_('no permissions for this group'), 403)
     # AllanC - integrtiy moved to model
     #if membership.role=="admin" and num_admins<=1:

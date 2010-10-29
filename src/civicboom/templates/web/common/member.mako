@@ -19,16 +19,21 @@
     <div class="${class_} avatar">
 		% if show_avatar:
 		<div class="clipper">
-			<img src="${member['avatar_url']}" alt="${member['username']}" width="80" class="img"/>
+            <a href="${h.url('member', id=member['username'])}" title="${member['username']}">
+			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img"/>
+            </a>
 			<img src="/images/badges/user.png" alt="User" class="type">
-			<a class="info" href="${h.url('member', id=member['username'])}" title="${member['username']}">i</a>
-			% if c.logged_in_user:
-            % if c.logged_in_user.is_following(member['username']):
-            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _('-'), css_class="follow")}
+            
+            ## TODO - onClick javascript AJAX id card:
+			<a class="info" href="${h.url('member', id=member['username'])}" title="${_("click for more info about %s" % member['username'])}"></a>
+            
+			% if c.logged_in_persona and c.logged_in_persona.username != member['username']:
+            % if c.logged_in_persona.is_following(member['username']):
+            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action unfollow")}
             % else:
-            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _('+'), css_class="follow")}
+            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _(' '), title=_("Follow %s" % member['username']), css_class="follow_action follow"  )}
             % endif
-			% endif
+            % endif
 		</div>
 		% endif
 		% if show_name:
@@ -37,18 +42,18 @@
         ## AllanC -FIXME? - this is cheating! how are API users ment to have access to this!
         ## AllanC - No need to fix API users can get a list of follower and perform this comparison themselfs
         ##          If we did the checking for them that would take lots of querys and time and reducde the ability to cache generated member lists
-        % if show_follow_button and c.logged_in_user and c.logged_in_user.username != member['username']:
-            % if c.logged_in_user.is_following(member['username']):
+        % if show_follow_button and c.logged_in_persona and c.logged_in_persona.username != member['username']:
+            % if c.logged_in_persona.is_following(member['username']):
             ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _('Stop following'), css_class="button_small button_small_style_2")}
             % else:
             ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _('Follow')        , css_class="button_small button_small_style_1")}
             % endif
         % endif
         % if show_join_button:
-            ${h.secure_link(url('group_action', action='join'     , id=member['id']       , member=c.logged_in_user.username), _('Join')        , css_class="button_small button_small_style_1")}
+            ${h.secure_link(url('group_action', action='join'     , id=member['id']       , member=c.logged_in_persona.username), _('Join')        , css_class="button_small button_small_style_1")}
         % endif
-        % if show_invite_button and c.logged_in_user and c.logged_in_user.__type__=='group':
-            ${h.secure_link(url('group_action', action='invite'   , id=c.logged_in_user.id, member=member['username']       ), _('Invite')      , css_class="button_small button_small_style_1")}
+        % if show_invite_button and c.logged_in_persona and c.logged_in_persona.__type__=='group':
+            ${h.secure_link(url('group_action', action='invite'   , id=c.logged_in_persona.id, member=member['username']       ), _('Invite')      , css_class="button_small button_small_style_1")}
         % endif
     </div>
 </%def>

@@ -42,7 +42,7 @@ def gen_cache_key(**kargs):
       cache_key = gen_cache_key(reporter=c.widget_reporter.id, assignment=id)  #if the etag is dependent on content of the listed reporter and listed assingnment
     """
     def getsafe_current_username():
-        if c.logged_in_user: return c.logged_in_user.username
+        if c.logged_in_persona: return c.logged_in_persona.username
         return ""
     def getsafe_flash_message():
         #if 'flash_message' in session: return session['flash_message']

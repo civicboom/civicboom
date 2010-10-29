@@ -14,6 +14,10 @@ import hashlib
 import copy
 from webhelpers.text import truncate
 
+#-------------------------------------------------------------------------------
+# Enumerated Types
+#-------------------------------------------------------------------------------
+_content_type = Enum("comment", "draft", "article", "assignment", "syndicate", name="content_type")
 
 
 #-------------------------------------------------------------------------------
@@ -66,10 +70,10 @@ class Content(Base):
     (FIXME: is this correct?)
     """
     __tablename__   = "content"
-    __type__        = Column(Enum("comment", "draft", "article", "assignment", "syndicate", name="content_type"), nullable=False)
+    __type__        = Column(_content_type, nullable=False)
     __mapper_args__ = {'polymorphic_on': __type__}
     #_visiability = Enum("pending", "show", name="content_")
-    _edit_lock   = Enum("none", "parent_owner", "group", "system", name="edit_lock_level")
+    _edit_lock   = Enum("parent_owner", "group", "system", name="edit_lock_level")
     id              = Column(Integer(),        primary_key=True)
     title           = Column(Unicode(250),     nullable=False, default=u"Untitled")
     content         = Column(UnicodeText(),    nullable=False, default=u"", doc="The body of text")
@@ -82,7 +86,7 @@ class Content(Base):
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
     
     visable         = Column(Boolean(),        nullable=False, default=True)
-    edit_lock       = Column(_edit_lock,       nullable=False, default="none")
+    edit_lock       = Column(_edit_lock,       nullable=True , default=None)
 
     num_responses   = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
     num_comments    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
@@ -113,7 +117,6 @@ class Content(Base):
             'parent_id'    : None ,
             'title'        : None ,
             'content_short': None ,
-            #'creator'      : lambda content: content.creator.to_dict() ,
             'creator_id'   : None , 
             'url'          : None ,
             'thumbnail_url': None ,
@@ -123,6 +126,7 @@ class Content(Base):
             'num_comments' : None ,
             'tags'         : lambda content: "implement tags" ,
             'license_id'   : None ,
+            'private'      : None ,
         },
     })
     
@@ -151,7 +155,7 @@ class Content(Base):
     })
     def __to_dict_function_action_list__(content):
         from pylons import tmpl_context as c
-        return content.action_list_for(c.logged_in_user)
+        return content.action_list_for(c.logged_in_persona)
     __to_dict__['full+actions'].update({
             'actions': __to_dict_function_action_list__
     })
@@ -185,16 +189,16 @@ class Content(Base):
     def action_list_for(self, member):
         action_list = []
         if self.editable_by(member):
-            action_list.append('editable')
+            action_list.append('edit')
         if self.viewable_by(member):
-            action_list.append('viewable')
+            action_list.append('view')
         return action_list
 
     def editable_by(self, member):
         """
         Check to see if a member object has the rights to edit this content
         """
-        if self.edit_lock != "none":
+        if self.edit_lock:
             return False
         if self.creator == member  :
             return True
@@ -256,7 +260,10 @@ class Content(Base):
                 return thumbnail_url
 
         from civicboom.lib.helpers import wh_public
-        return wh_public("images/default_thumbnail_%s.png" % self.__type__)
+        thumbnail_type = self.__type__
+        if thumbnail_type=='article' and self.response_type != None:
+            thumbnail_type = 'response'
+        return wh_public("images/default_thumbnail_%s.png" % thumbnail_type)
 
     @property
     def url(self):
@@ -280,7 +287,11 @@ class DraftContent(Content):
     __tablename__   = "content_draft"
     __mapper_args__ = {'polymorphic_identity': 'draft'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
+    target_type     = Column(_content_type, nullable=True, default=None)
     #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
+
+    def __init__(self):
+        self.private = True
 
     def clone(self, content):
         Content.clone(self, content)

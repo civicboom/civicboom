@@ -111,7 +111,7 @@
 			$.ajax({
 				type    : 'POST',
 				dataType: 'json',
-				url     : "${url('content', id=c.content.id, format='json')}",
+				url     : "${url('formatted_content', id=c.content.id, format='json')}",
 				data    : {
                     "_method"     : 'PUT',
 					"content": ed.getContent(),
@@ -139,12 +139,12 @@
         <select name="owner">
             <%
             owners = []
-            owners.append(c.logged_in_user)
+            owners.append(c.logged_in_persona)
             # TODO - unfinished
             # AllanC - this is really odd! activating the hasattr triggers a query (im cool with that, it's expected) but an INSERT query?! that then errors?
-            #if hasattr(c.logged_in_user,"groups"):
+            #if hasattr(c.logged_in_persona,"groups"):
             #    pass
-            #owners += c.logged_in_user.groups
+            #owners += c.logged_in_persona.groups
             %>
             % for owner in owners:
                 <%
@@ -268,6 +268,42 @@
 <%def name="content_type()">
     <fieldset><legend>${_("Publish Type")}</legend>
         ${form_instruction("What do you want to do with your content?")}
+        
+        <%
+            selected_type = c.content.__type__
+            if c.content.__type__ == 'draft':
+                selected_type = c.content.target_type
+            
+            types = [
+                #("draft"     ,"description of draft content"   ),
+                ("article"   ,"description of _article"        ),
+                ("assignment","description of _assignemnt"     ),
+                ("syndicate" ,"description of syndicated stuff"),
+            ]
+        %>
+        
+        <%def name="type_option(type, description)">
+            <%
+                selected = ""
+                if selected_type == type:
+                    selected = h.literal('checked="checked"')
+            %>
+            <td id="type_${type}" onClick="highlightType('${type}');" class="section_selectable">
+              <input class="hideable" type="radio" name="type" value="${type}" ${selected}/>
+              <label for="type_${type}">${type}</label>
+              <p class="type_description">${_(description)}</p>
+            </td>
+        </%def>
+        
+        % if c.content.__type__ == "draft":
+            <table id="type_selection"><tr>
+            % for type in types:
+                ${type_option(type[0],type[1])}
+            % endfor
+            <tr></table>
+        % else:
+            ${c.content.__type__}
+        % endif
 
         <script type="text/javascript">
             // Reference: http://www.somacon.com/p143.php
@@ -294,48 +330,10 @@
                 setCheckedValue(document.forms['content'].elements['type'], type);
                 // reset all radio buttons to unselected
                 setSingleCSSClass(document.getElementById('type_'+type), 'section_selected', 'type_selection');
-                ##var elements = getElementByClass("section_selectable","type_selection");
-                ##for (var element in elements) {
-                ##    removeClass(elements[element], "section_selected");
-                ##}
-                ##// select section by setting selected class
-                ##addClass(YAHOO.util.Dom.get('type_'+type), "section_selected");
             }
 
-            highlightType('${c.content.__type__}'); //Set the default highlighted item to be the content type
+            highlightType('${selected_type}'); //Set the default highlighted item to be the content type
         </script>
-        
-        <%
-        types = [
-            #("draft"     ,"description of draft content"   ),
-            ("article"   ,"description of _article"        ),
-            ("assignment","description of _assignemnt"     ),
-            ("syndicate" ,"description of syndicated stuff"),
-        ]
-        %>
-        
-        <%def name="type_option(type, description)">
-            <%
-                selected = ""
-                if c.content.__type__ == type:
-                    selected = 'checked="checked"'
-            %>
-            <td id="type_${type}" onClick="highlightType('${type}');" class="section_selectable">
-              <input class="hideable" type="radio" name="type" value="${type}" ${selected}/>
-              <label for="type_${type}">${type}</label>
-              <p class="type_description">${_(description)}</p>
-            </td>
-        </%def>
-        
-        % if c.content.__type__ == "draft":
-            <table id="type_selection"><tr>
-            % for type in types:
-                ${type_option(type[0],type[1])}
-            % endfor
-            <tr></table>
-        % else:
-            ${c.content.__type__}
-        % endif
 
         <div style="float: right;">
             % if c.content.__type__ == "draft":

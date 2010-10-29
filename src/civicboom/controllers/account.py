@@ -1,6 +1,6 @@
 from civicboom.lib.base import *
 
-from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector
+from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
 from civicboom.controllers.widget   import setup_widget_env
 from civicboom.lib.helpers          import url_from_widget
@@ -27,7 +27,7 @@ class AccountController(BaseController):
         """
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies
         """
-        signout_user(c.logged_in_user)
+        signout_user(c.logged_in_persona)
         return redirect('/')
 
 
@@ -37,7 +37,7 @@ class AccountController(BaseController):
 
     @auto_format_output
     #@https() # redirect to https for transfer of password
-    def signin(self, format="json"):
+    def signin(self):
 
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':
@@ -63,7 +63,7 @@ class AccountController(BaseController):
 
         # If user has existing account: Login
         if c.logged_in_user:
-            if format in ["html", "redirect"]:
+            if c.format in ["html", "redirect"]:
                 signin_user_and_redirect(c.logged_in_user, login_provider=login_provider)
             else:
                 signin_user(c.logged_in_user, "api-password")
@@ -95,6 +95,21 @@ class AccountController(BaseController):
             raise err
 
     #---------------------------------------------------------------------------
+    # Switch Persona
+    #---------------------------------------------------------------------------
+    @authorize(is_valid_user)
+    @authenticate_form
+    def set_persona(self, id):
+        print "YAY with %s" % id
+        if set_persona(id):
+            print "ok"
+            return action_ok("switched persona")
+        else:
+            print "oh no"
+            raise action_error("failed to swich persona")
+
+
+    #---------------------------------------------------------------------------
     # Link Janrain Account
     #---------------------------------------------------------------------------
     @authorize(is_valid_user)
@@ -115,7 +130,7 @@ class AccountController(BaseController):
             c.auth_info = janrain('auth_info', token=request.POST.get('token'))
             
         if c.auth_info:
-            associate_janrain_account(c.logged_in_user, c.auth_info['profile']['providerName'], c.auth_info['profile']['identifier'])
+            associate_janrain_account(c.logged_in_persona, c.auth_info['profile']['providerName'], c.auth_info['profile']['identifier'])
             set_flash_message(action_ok("Account successfully linked to _site_name"))
         else:
             set_flash_message(action_error("Error linking accounts"))

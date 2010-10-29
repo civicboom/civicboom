@@ -112,12 +112,12 @@ class Member(Base):
             'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
             'assignments_accepted': lambda member: [a.to_dict() for a in member.assignments_accepted if a.private==False] ,
             'content_public'      : lambda member: [c.to_dict() for c in member.content_public       ] ,
-            'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] ,
+            'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] ,  #AllanC - also duplicated in members_actions.groups ... can this be unifyed
     })
     
     #__to_dict__['actions'].update({
-    #        'is_following'        : lambda member: member.is_following(None), #c.logged_in_user
-    #        'is_follower'         : lambda member: member.is_follower(None), #c.logged_in_user
+    #        'is_following'        : lambda member: member.is_following(None), #c.logged_in_persona
+    #        'is_follower'         : lambda member: member.is_follower(None), #c.logged_in_persona
             #'join' # join group?
     #})
     __to_dict__.update({
@@ -125,7 +125,7 @@ class Member(Base):
     })
     def __to_dict_function_action_list__(member):
         from pylons import tmpl_context as c
-        return member.action_list_for(c.logged_in_user)
+        return member.action_list_for(c.logged_in_persona)
     __to_dict__['full+actions'].update({
             'actions': __to_dict_function_action_list__
     })
@@ -296,7 +296,7 @@ class Group(Member):
 
     def __to_dict_function_members__(group):
         from pylons import tmpl_context as c
-        if group.member_visability=="public" or group.get_membership(c.logged_in_user):
+        if group.member_visability=="public" or group.get_membership(c.logged_in_persona):
             return [update_dict(m.member.to_dict(),{'role':m.role, 'status':m.status}) for m in group.members_roles]
         return None
 

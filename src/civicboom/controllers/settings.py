@@ -132,7 +132,7 @@ class SettingsController(BaseController):
     def edit(self, id):
         """GET /id;edit: Form to edit an existing item."""
         
-        user = c.logged_in_user
+        user = c.logged_in_persona
         
         # Generate base settings dictonary for ALL settings
         settings_meta = copy.deepcopy(settings_base)
@@ -188,7 +188,7 @@ class SettingsController(BaseController):
         validate_dict(data, schema, dict_to_validate_key='settings', template_error='settings/settings')
         
         # Form has passed validation - continue to save/commit changes
-        user        = c.logged_in_user
+        user        = c.logged_in_persona
         settings    = data['settings']
         
         # Save special properties that need special processing
@@ -229,14 +229,14 @@ class SettingsController(BaseController):
 """
     @authorize(is_valid_user)
     def general(self, id=None):
-        c.viewing_user = c.logged_in_user
+        c.viewing_user = c.logged_in_persona
         return render("web/settings/general.mako")
 
     @https()
     @authorize(is_valid_user)
     @authenticate_form
     def save_general(self, id=None, format="html"):
-        c.viewing_user = c.logged_in_user
+        c.viewing_user = c.logged_in_persona
         u_config = c.viewing_user.config
         current_keys = u_config.keys()
 
@@ -287,13 +287,13 @@ class SettingsController(BaseController):
 
     @authorize(is_valid_user)
     def messages(self, id=None):
-        c.viewing_user = c.logged_in_user
+        c.viewing_user = c.logged_in_persona
         return render("web/settings/messages.mako")
 
     @authorize(is_valid_user)
     @authenticate_form
     def save_messages(self, id=None, format="html"):
-        c.viewing_user = c.logged_in_user
+        c.viewing_user = c.logged_in_persona
         from civicboom.lib.communication.messages import generators
         for gen in generators:
             route_name = "route_"+gen[0]
@@ -312,7 +312,7 @@ class SettingsController(BaseController):
 
     @authorize(is_valid_user)
     def location(self, id=None):
-        c.viewing_user = c.logged_in_user
+        c.viewing_user = c.logged_in_persona
         return render("web/settings/location.mako")
 
     @authorize(is_valid_user)
@@ -328,7 +328,7 @@ class SettingsController(BaseController):
             (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_name"]), see Feature #47
         else:
             raise action_error(_("No position specified"))
-        c.viewing_user = c.logged_in_user
+        c.viewing_user = c.logged_in_persona
         c.viewing_user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
         Session.commit()
 
