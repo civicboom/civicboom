@@ -14,6 +14,10 @@ import hashlib
 import copy
 from webhelpers.text import truncate
 
+#-------------------------------------------------------------------------------
+# Enumerated Types
+#-------------------------------------------------------------------------------
+_content_type = Enum("comment", "draft", "article", "assignment", "syndicate", name="content_type")
 
 
 #-------------------------------------------------------------------------------
@@ -66,10 +70,10 @@ class Content(Base):
     (FIXME: is this correct?)
     """
     __tablename__   = "content"
-    __type__        = Column(Enum("comment", "draft", "article", "assignment", "syndicate", name="content_type"), nullable=False)
+    __type__        = Column(_content_type, nullable=False)
     __mapper_args__ = {'polymorphic_on': __type__}
     #_visiability = Enum("pending", "show", name="content_")
-    _edit_lock   = Enum("none", "parent_owner", "group", "system", name="edit_lock_level")
+    _edit_lock   = Enum("parent_owner", "group", "system", name="edit_lock_level")
     id              = Column(Integer(),        primary_key=True)
     title           = Column(Unicode(250),     nullable=False, default=u"Untitled")
     content         = Column(UnicodeText(),    nullable=False, default=u"", doc="The body of text")
@@ -82,7 +86,7 @@ class Content(Base):
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
     
     visable         = Column(Boolean(),        nullable=False, default=True)
-    edit_lock       = Column(_edit_lock,       nullable=False, default="none")
+    edit_lock       = Column(_edit_lock,       nullable=True , default=None)
 
     num_responses   = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
     num_comments    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
@@ -194,7 +198,7 @@ class Content(Base):
         """
         Check to see if a member object has the rights to edit this content
         """
-        if self.edit_lock != "none":
+        if self.edit_lock:
             return False
         if self.creator == member  :
             return True
@@ -283,6 +287,7 @@ class DraftContent(Content):
     __tablename__   = "content_draft"
     __mapper_args__ = {'polymorphic_identity': 'draft'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
+    target_type     = Column(_content_type, nullable=True, default=None)
     #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
 
     def __init__(self):
