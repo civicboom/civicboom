@@ -14,7 +14,7 @@ $(function() {
 <%
 style = ""
 if not always_show_map:
-	style = "display: none; position: absolute; -webkit-box-shadow: 3px 3px 3px #666;"
+	style = style + " display: none; position: absolute; -webkit-box-shadow: 3px 3px 3px #666;"
 %>
 <div style="width: ${width}; height: ${height}; border: 1px solid black; ${style}" id="${field_name}_div">
 	<script src="/javascript/OpenLayers.js"></script>
@@ -107,8 +107,8 @@ $(function() {
 
 			$('#${field_name}').val(lon+","+lat);
 			$('#${field_name}_name').val(ui.item.label);
-			${field_name}_map.setCenterAndZoom(
-				new OpenLayers.LonLat(Number(longitude), Number(latitude)).transform(
+			${field_name}_map.setCenter(
+				new OpenLayers.LonLat(Number(lon), Number(lat)).transform(
 					new OpenLayers.Projection("EPSG:4326"),
 					${field_name}_map.getProjectionObject()
 				),
