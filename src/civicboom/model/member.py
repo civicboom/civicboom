@@ -112,7 +112,7 @@ class Member(Base):
             'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
             'assignments_accepted': lambda member: [a.to_dict() for a in member.assignments_accepted if a.private==False] ,
             'content_public'      : lambda member: [c.to_dict() for c in member.content_public       ] ,
-            'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] ,
+            'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] ,  #AllanC - also duplicated in members_actions.groups ... can this be unifyed
     })
     
     #__to_dict__['actions'].update({

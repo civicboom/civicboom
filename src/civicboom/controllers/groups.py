@@ -2,7 +2,6 @@ from civicboom.lib.base import *
 
 from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visability, group_content_visability
 
-from civicboom.lib.misc import update_dict
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 import formencode
@@ -74,8 +73,11 @@ class GroupsController(BaseController):
         @return 200 - data.list = array of group objects that logged in user is a member including the additional field 'members "role" in the group'
         """
         # url('groups')
-        groups = [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role}) for group_role in c.logged_in_persona.groups_roles]
-        return action_ok(data={'list': groups})
+        
+        # member searching?
+        
+        pass
+
 
 
     @auto_format_output
