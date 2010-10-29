@@ -71,6 +71,10 @@ $(function() {
 
 		trigger: function(e) {
 			 var p = ${field_name}_map.getLonLatFromViewPortPx(e.xy);
+			 p = new OpenLayers.LonLat(p.lon, p.lat).transform(
+				 ${field_name}_map.getProjectionObject(),
+				 new OpenLayers.Projection("EPSG:4326")
+			 );
 
 			 namebox = document.getElementById("${field_name}_name");
 			 if(namebox.value == "" || namebox.value.match(/^[\d\., ]+$/)) {
