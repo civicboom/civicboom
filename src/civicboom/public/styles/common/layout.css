@@ -98,10 +98,6 @@ HTML, BODY {
 	background: transparent url('/styles/web/icons/card-icon.png') no-repeat;
     bottom: 0px;
 	left  : 2px;
-	/*
-    bottom: 4px;
-	left: 4px;
-    */
 	opacity: 0;
 	padding: 2px;
 	border-radius: 6px;
@@ -110,14 +106,13 @@ HTML, BODY {
 http://www.iconarchive.com/category/application/toolbar-icons-by-shlyapnikova.html
  - http://www.iconarchive.com/icons/shlyapnikova/toolbar/32/card-icon.png
 http://www.iconarchive.com/show/basic-icons-by-pixelmixer/tick-icon.html
- - right
- - stop
-#CivicboomWidget .widget_content_assignment_list li:hover {color: #04145a; background: transparent url('/design09/background_transparent_light.png') repeat;}
+ - right-icon.png
+ - stop-icon.png
 */
 .avatar .clipper:hover .info {opacity: 1;}
 
 .avatar .clipper       .img {opacity: 1   ; height: 40px; width:40px;}
-.avatar .clipper:hover .img {opacity: 0.25;}
+.avatar .clipper:hover .img {opacity: 0.5 ;}
 
 .avatar .clipper .follow_action {
 	display: block;
