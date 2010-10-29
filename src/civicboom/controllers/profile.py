@@ -35,6 +35,6 @@ class ProfileController(BaseController):
                 'notifications': call_action(MessagesController().index, format='python', list='notification')['data']['list'] ,
                 'to'           : call_action(MessagesController().index, format='python', list='to'          )['data']['list'] ,
             } ,
-            'groups'  : call_action(GroupsController().index  , format='python')['data']['list'] ,
+            'groups'  : call_action(MemberActionsController().groups , format='python', id=c.logged_in_persona.id)['data']['list'] ,
         })
         return results

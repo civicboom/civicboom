@@ -100,8 +100,6 @@ class BaseController(WSGIController):
         username                 = session_get('username')
         username_persona         = session_get('username_persona')
         
-        print "username:%s persona:%s" % (username,username_persona)
-        
         c.logged_in_user         = get_member(username)
         c.logged_in_persona      = c.logged_in_user
         c.logged_in_persona_role = session_get('role')

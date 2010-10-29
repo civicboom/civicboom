@@ -5,6 +5,8 @@ Member Actions
 from civicboom.lib.base import *
 from civicboom.controllers.members import _get_member
 
+from civicboom.lib.misc import update_dict
+
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
@@ -155,7 +157,25 @@ class MemberActionsController(BaseController):
 
     @auto_format_output
     @web_params_to_kwargs
+    def groups(self, id, **kwargs):
+        member = _get_member(id)
+        
+        if member == c.logged_in_persona:
+            group_roles = member.groups_roles
+        else: # Else only show public groups
+            group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
+        
+        groups = [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
+        return action_ok(data={'list': groups})
+        
+
+
+    @auto_format_output
+    @web_params_to_kwargs
     def assignments(self, id, **kwargs):
+        # AllanC - ????
+        #          currently accepted assignments are publicly visable?
+        #          is this only temporary for the km_demo?
         member = _get_member(id)
         if member != c.logged_in_user:
             raise action_error(_("Users may only view their own assignments (for now)"), code=403)
