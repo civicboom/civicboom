@@ -129,6 +129,9 @@
 					<br><a href="?address=${event.address}">Find other messages from this IP address</a>
 					<br><a href="${url('member', id=event.username)}">Visit this user's profile</a>
 				</div>
+				% if event.persona != "None":
+				(${event.persona})
+				% endif
 			</td>
 			<td>${h.link_to_objects(event.message)|n}</td>
 		</tr>

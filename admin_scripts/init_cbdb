@@ -91,6 +91,7 @@ CREATE TABLE events(
 	module VARCHAR(250) NOT NULL,
 	line_num INTEGER NOT NULL,
 	username VARCHAR(64) NOT NULL,
+	persona VARCHAR(64) NOT NULL,
 	url TEXT NOT NULL,
 	address INET NOT NULL,
 	priority INT NOT NULL,

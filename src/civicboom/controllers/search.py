@@ -14,18 +14,6 @@ log = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 
 class SearchController(BaseController):
-    
-    @auto_format_output
-    def index(self):
-        return action_ok()
-
-    @auto_format_output
-    @web_params_to_kwargs
-    def content(self, **kwargs):
-        # AllanC - moved to content/index - this call is to be depricated
-        from civicboom.controllers.contents import ContentsController
-        return call_action(ContentsController().index, format='python', **kwargs)
-
 
     @auto_format_output
     def content2(self, format="html"):

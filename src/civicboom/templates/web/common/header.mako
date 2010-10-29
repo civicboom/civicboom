@@ -1,5 +1,5 @@
 <div id="search">
-	<form action="${h.url(controller='search', action='content')}" method='GET'>
+	<form action="${h.url('contents')}" method='GET'>
 		<input type="search" class="search_input" name="query" placeholder="${_("Search")}" />
 		<input type="image" class="search_button" src="/styles/web/go.png" alt="${_("Search")}">
 	</form>
