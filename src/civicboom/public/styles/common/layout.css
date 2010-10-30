@@ -123,18 +123,25 @@ HTML, BODY {
 .avatar .clipper .type {
 	top: 0px;
 	right: 0px;
+    width: 16px;
+    height: 16px;
 }
+.avatar .clipper .user  {background: transparent url('/styles/web/icons/user-3-icon.png') no-repeat;}
+.avatar .clipper .group {background: transparent url('/styles/web/icons/network-icon.png') no-repeat;}
+
 .avatar .clipper .info {
 	display: block;
     width  : 16px;
 	height : 16px;
-	/*background: #AAA;*/
+	/*
+	background: #AAA;
+	padding: 2px;
+	border-radius: 6px;
+	*/
 	background: transparent url('/styles/web/icons/user-info-icon.png') no-repeat;
     bottom: 0px;
 	left  : 2px;
-	opacity: 0;
-	padding: 2px;
-	border-radius: 6px;
+    opacity: 0;
 }
 /*
 http://www.iconarchive.com/category/application/toolbar-icons-by-shlyapnikova.html

@@ -22,7 +22,14 @@
             <a href="${h.url('member', id=member['username'])}" title="${member['name']}">
 			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img"/>
             </a>
-			<img src="/images/badges/user.png" alt="User" class="type">
+			##<img src="/images/badges/user.png" alt="User" class="type">
+            ##% if member['type']=="user":
+            ##<div class="type user">&nbsp;</div>
+            ##% endif
+            % if member['type']=="group":
+            <div class="type group" title="group"></div>
+            % endif
+            
             
             ## TODO - onClick javascript AJAX id card:
 			<a class="info" href="${h.url('member', id=member['username'])}" title="${_("click for more info about %s" % member['username'])}"></a>

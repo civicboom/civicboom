@@ -34,10 +34,10 @@
                 <a href="${h.url('content', id=content['id'])}">
                     <div class="icons">
                         % if content['private']:
-                        <div class="icon private" title="private">&nbsp;</div>
+                        <div class="icon private" title="private"></div>
                         % endif
                         % if content['edit_lock']:
-                        <div class="icon edit_lock" title="edit lock">&nbsp;</div>
+                        <div class="icon edit_lock" title="edit lock"></div>
                         % endif
                         % if 'response_type' in content:
                             <%
@@ -54,7 +54,7 @@
                                     response_type_description = _('parent owner has disassociated this content')
                             %>
                             % if response_type_class:
-                            <div class="icon ${response_type_class}" title="${response_type_description}">&nbsp;</div>
+                            <div class="icon ${response_type_class}" title="${response_type_description}"></div>
                             % endif
                         % endif
                     </div>
