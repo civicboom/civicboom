@@ -27,30 +27,40 @@
 <%def name="content_item_row(content, show_actions=False)">
     <tr>
         ##---------------------------
-        ## Thumbnail Col
+        ## Thumbnail
         ##---------------------------
-        <td class="content_thumbnail">
-            ## Content Link
-            ##---------------------------
-            <a href="${h.url('content', id=content['id'])}">
-            
-            ## Thumbnail Status Overlay
-            ##---------------------------
-            <%
-                overlay = None
-                if content['type']=='syndicate' or content['type']=='pending':
-                    overlay = content['type']
-                if content['status'] == 'locked':
-                    overlay = 'approved'
-            %>
-            % if overlay:
-              <span class="thumbnail_overlay thumbnail_overlay_${overlay}">&nbsp;</span>
-            % endif
-            
-            ## Thumbnail image
-            ##---------------------------
-            <img src="${content['thumbnail_url']}" alt="${content['title']}"/>
-          </a>
+        <td class="thumbnail">
+            <div class="clipper">
+                <a href="${h.url('content', id=content['id'])}">
+                    <div class="icons">
+                        % if content['private']:
+                        <div class="icon private" title="private">&nbsp;</div>
+                        % endif
+                        % if content['edit_lock']:
+                        <div class="icon edit_lock" title="edit lock">&nbsp;</div>
+                        % endif
+                        % if 'response_type' in content:
+                            <%
+                                response_type_class       = None
+                                response_type_description = None
+                                if   content['response_type'] == 'approved':
+                                    response_type_class       = 'approved'
+                                    response_type_description = _('approved by parent owner')
+                                elif content['response_type'] == 'seen':
+                                    response_type_class       = 'seen'
+                                    response_type_description = _('parent owner has seen this content')
+                                elif content['response_type'] == 'dissasociate':
+                                    response_type_class       = 'dissasociate'
+                                    response_type_description = _('parent owner has disassociated this content')
+                            %>
+                            % if response_type_class:
+                            <div class="icon ${response_type_class}" title="${response_type_description}">&nbsp;</div>
+                            % endif
+                        % endif
+                    </div>
+                    <img class="img" src="${content['thumbnail_url']}" alt="${content['title']}"/>
+                </a>
+            </div>
         </td>
         
         ##---------------------------
@@ -91,8 +101,8 @@
         ##---------------------------
         % if show_actions:
         <td>
-            % if content['status'] == "locked":
-              <span class="icon_large icon_locked">Approved and locked</span>
+            % if content['edit_lock']:
+              <span class="icon_large icon_locked">edit locked</span>
             % else:
               <a class="button_small button_small_style_2" href="${h.url('edit_content', id=content['id'])}">
                 ${_("Edit")}

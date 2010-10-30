@@ -127,9 +127,9 @@ HTML, BODY {
 .avatar .clipper .info {
 	display: block;
     width  : 16px;
-	height : 10px;
+	height : 16px;
 	/*background: #AAA;*/
-	background: transparent url('/styles/web/icons/card-icon.png') no-repeat;
+	background: transparent url('/styles/web/icons/user-info-icon.png') no-repeat;
     bottom: 0px;
 	left  : 2px;
 	opacity: 0;
@@ -139,14 +139,14 @@ HTML, BODY {
 /*
 http://www.iconarchive.com/category/application/toolbar-icons-by-shlyapnikova.html
  - http://www.iconarchive.com/icons/shlyapnikova/toolbar/32/card-icon.png
-http://www.iconarchive.com/show/basic-icons-by-pixelmixer/tick-icon.html
+http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
  - right-icon.png
  - stop-icon.png
 */
 .avatar .clipper:hover .info {opacity: 1;}
 
 .avatar .clipper       .img {opacity: 1   ; height: 40px; width:40px;}
-.avatar .clipper:hover .img {opacity: 0.5 ;}
+.avatar .clipper:hover .img {opacity: 0.25 ;}
 
 .avatar .clipper .follow_action {
 	display: block;
@@ -167,6 +167,44 @@ http://www.iconarchive.com/show/basic-icons-by-pixelmixer/tick-icon.html
 .avatar .clipper .unfollow {background: transparent url('/styles/web/icons/stop-icon.png' ) no-repeat;}
 
 .avatar .clipper:hover .follow_action {opacity: 1;}
+
+/*
+ * thumbnails
+ */
+.thumbnail {
+	margin: auto;
+	text-align: center;
+}
+.thumbnail .clipper {
+	width: 100px;
+	height: 80px;
+	overflow: hidden;
+	position: relative;
+	border: 1px solid black;
+}
+
+.thumbnail .clipper .img {opacity: 1   ; width:100px; height: 80px;}
+
+.thumbnail .clipper .icons {
+	position: absolute;
+    display : block;
+	bottom  : 0px;
+	right   : 0px;
+    padding-bottom: 2px;
+    /* width: 80px;*/
+}
+.thumbnail .clipper .icon {
+	display: inline-block;
+    width  : 16px;
+	height : 16px;
+    
+}
+.thumbnail .clipper .approved  {background: transparent url('/styles/web/icons/licence-icon.png') no-repeat;}
+.thumbnail .clipper .edit_lock {background: transparent url('/styles/web/icons/lock-icon.png'   ) no-repeat;}
+.thumbnail .clipper .private   {background: transparent url('/styles/web/icons/key-icon.png'    ) no-repeat;}
+.thumbnail .clipper .seen      {background: transparent url('/styles/web/icons/tick-icon.png'   ) no-repeat;}
+
+
 
 /*
  * openlayers overrides

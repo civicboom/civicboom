@@ -19,7 +19,7 @@
     <div class="${class_} avatar">
 		% if show_avatar:
 		<div class="clipper">
-            <a href="${h.url('member', id=member['username'])}" title="${member['username']}">
+            <a href="${h.url('member', id=member['username'])}" title="${member['name']}">
 			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img"/>
             </a>
 			<img src="/images/badges/user.png" alt="User" class="type">
