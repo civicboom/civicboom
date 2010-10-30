@@ -115,6 +115,11 @@ HTML, BODY {
 	position: relative;
 	border: 1px solid black;
 }
+
+.avatar.large .clipper      {width: 80px; height: 80px;}
+.avatar.large .clipper .img {width: 80px; height: 80px;}
+
+
 .avatar .clipper .type,
 .avatar .clipper .info,
 .avatar .clipper .follow_action {
@@ -176,7 +181,7 @@ http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
 .avatar .clipper:hover .follow_action {opacity: 1;}
 
 /*
- * thumbnails
+ * content thumbnails
  */
 .thumbnail {
 	margin: auto;
@@ -189,8 +194,10 @@ http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
 	position: relative;
 	border: 1px solid black;
 }
-
 .thumbnail .clipper .img {opacity: 1   ; width:100px; height: 80px;}
+
+.thumbnail.small .clipper      {width: 60px; height: 50px;}
+.thumbnail.small .clipper .img {width: 60px; height: 50px;}
 
 .thumbnail .clipper .icons {
 	position: absolute;
@@ -198,13 +205,17 @@ http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
 	bottom  : 0px;
 	right   : 0px;
     padding-bottom: 2px;
-    /* width: 80px;*/
+    opacity: 0.75;
 }
+/* AllanC - not sure if I like this transparent rollover effect or not ... */
+.thumbnail .clipper:hover .icons {
+    opacity: 1;
+}
+
 .thumbnail .clipper .icon {
 	display: inline-block;
     width  : 16px;
 	height : 16px;
-    
 }
 .thumbnail .clipper .approved  {background: transparent url('/styles/web/icons/licence-icon.png') no-repeat;}
 .thumbnail .clipper .edit_lock {background: transparent url('/styles/web/icons/lock-icon.png'   ) no-repeat;}

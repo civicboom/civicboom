@@ -32,32 +32,7 @@
         <td class="thumbnail">
             <div class="clipper">
                 <a href="${h.url('content', id=content['id'])}">
-                    <div class="icons">
-                        % if content['private']:
-                        <div class="icon private" title="private"></div>
-                        % endif
-                        % if content['edit_lock']:
-                        <div class="icon edit_lock" title="edit lock"></div>
-                        % endif
-                        % if 'response_type' in content:
-                            <%
-                                response_type_class       = None
-                                response_type_description = None
-                                if   content['response_type'] == 'approved':
-                                    response_type_class       = 'approved'
-                                    response_type_description = _('approved by parent owner')
-                                elif content['response_type'] == 'seen':
-                                    response_type_class       = 'seen'
-                                    response_type_description = _('parent owner has seen this content')
-                                elif content['response_type'] == 'dissasociate':
-                                    response_type_class       = 'dissasociate'
-                                    response_type_description = _('parent owner has disassociated this content')
-                            %>
-                            % if response_type_class:
-                            <div class="icon ${response_type_class}" title="${response_type_description}"></div>
-                            % endif
-                        % endif
-                    </div>
+                    ${content_thumbnail_icons(content)}
                     <img class="img" src="${content['thumbnail_url']}" alt="${content['title']}"/>
                 </a>
             </div>
@@ -127,10 +102,13 @@
 ##------------------------------------------------------------------------------
 <%def name="content_item_row_mini(content, location=False)">
     <tr>
-        <td class="content_thumbnail">
-            <a href="${h.url('content', id=content['id'])}">
-                <img src="${content['thumbnail_url']}" alt="${content['title']}" />
-            </a>
+        <td class="thumbnail small">
+            <div class="clipper">
+                <a href="${h.url('content', id=content['id'])}">
+                    ${content_thumbnail_icons(content)}
+                    <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
+                </a>
+            </div>
         </td>
         <td>
             <a href="${h.url('content', id=content['id'])}">
@@ -146,7 +124,7 @@
             rating <br/> comments
         </td>
         <td>
-            ${member_includes.avatar(content['creator'], show_name=True, class_="content_creator_thumbnail")}
+            ${member_includes.avatar(content['creator'], show_name=False, class_="content_creator_thumbnail")}
         </td>
     </tr>
 </%def>
@@ -165,4 +143,38 @@
 </%def>
 <%def name="content_item_li(content)">
 <a href="${url('content', id=content['id'])}">${content['title']}</a>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Content Thumbnail Icons
+##------------------------------------------------------------------------------
+
+<%def name="content_thumbnail_icons(content)">
+    <div class="icons">
+        % if content['private']:
+        <div class="icon private" title="private"></div>
+        % endif
+        % if content['edit_lock']:
+        <div class="icon edit_lock" title="edit lock"></div>
+        % endif
+        % if 'response_type' in content:
+            <%
+                response_type_class       = None
+                response_type_description = None
+                if   content['response_type'] == 'approved':
+                    response_type_class       = 'approved'
+                    response_type_description = _('approved by parent owner')
+                elif content['response_type'] == 'seen':
+                    response_type_class       = 'seen'
+                    response_type_description = _('parent owner has seen this content')
+                elif content['response_type'] == 'dissasociate':
+                    response_type_class       = 'dissasociate'
+                    response_type_description = _('parent owner has disassociated this content')
+            %>
+            % if response_type_class:
+            <div class="icon ${response_type_class}" title="${response_type_description}"></div>
+            % endif
+        % endif
+    </div>
 </%def>
