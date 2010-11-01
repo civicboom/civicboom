@@ -86,6 +86,12 @@ class TestController(BaseController):
         m = Session.query(Member).first()
         m.send_message(messages.msg_test(text="hello o/"))
 
+    def send_email(self):
+        from civicboom.lib.database.get_cached import get_member
+        m = get_member("mobiletest")
+        m.send_email(subject="Test Email", content_text="This is testing the email module. Hello")
+        return "email test sent"
+
     def email_render(self):
         from webhelpers.html import literal
         c.email_content = literal("<h1>Email Test OK!</h1>")

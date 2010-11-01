@@ -8,7 +8,7 @@ m2 = Member()
 m1.send_message(messages.tipoff(reporter=m2, tipoff="there is a bomb"))
 """
 
-from civicboom.lib.communication.email import send_email
+from civicboom.lib.communication.email_lib import send_email
 from civicboom.model      import Message
 from civicboom.model.meta import Session
 from civicboom.lib.database.get_cached import update_member_messages

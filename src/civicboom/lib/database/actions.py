@@ -10,8 +10,8 @@ from civicboom.model.member  import GroupMembership, group_member_roles
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content, update_content, update_accepted_assignment, update_member
 
-from civicboom.lib.communication       import messages
-from civicboom.lib.communication.email import send_email
+from civicboom.lib.communication           import messages
+from civicboom.lib.communication.email_lib import send_email
 
 from civicboom.lib.text import strip_html_tags
 from civicboom.lib.web  import action_error
