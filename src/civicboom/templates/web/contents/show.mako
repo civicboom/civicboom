@@ -405,7 +405,7 @@ from civicboom.model import CommentContent
 <%def name="share_links()">
 
     % if 'edit' in d['content']['actions'] and d['content']['private']==False:
-        ${janrain_aggregate_button()}
+        ##${janrain_aggregate_button()}
     %endif
     
     
