@@ -149,7 +149,12 @@ def signin_user(user, login_provider=None):
     #session_set('user_id' , user.id      ) # Set server session variable to user.id
     session_set('username'        , user.username) # Set server session username so we know the actual user regardless of persona
     set_persona(user.username)
-    response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))
+    response.set_cookie(
+        "civicboom_logged_in", "True",
+        int(config["beaker.session.timeout"]),
+        secure=(request.environ['wsgi.url_scheme']=="https"),
+        httponly=True
+    )
 
 def signin_user_and_redirect(user, login_provider=None):
     """
@@ -164,8 +169,8 @@ def signin_user_and_redirect(user, login_provider=None):
     # Redirect them back to where they were going if a redirect was set
     login_redirector()
 
-    # If no redirect send them to private profile and out of https and back to http
-    return redirect(url(controller="profile", action="index", protocol=protocol_after_login))
+    # If no redirect send them to private profile
+    return redirect(url(controller="profile", action="index"))
     
 def signout_user(user):
     user_log.info("logged out")
