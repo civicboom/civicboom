@@ -864,7 +864,7 @@ CREATE TRIGGER update_content
         #ca.status     = "show"
         ca.license_id = cc_by.id
         ca.tags       = [open_source, the_moon_loc]
-        ca.location   = "SRID=4326;POINT(-0.1278328 51.5072648)"
+        ca.location   = "SRID=4326;POINT(1.0707 51.2999)"
 
         m = Media()
         # FIXME: Image.open() locks up under nosetests, see Bug #45
@@ -889,7 +889,7 @@ CREATE TRIGGER update_content
         ca2.creator    = u2
         #ca2.status     = "show"
         ca2.license_id = cc_by.id
-        ca2.location   = "SRID=4326;POINT(-0.1178328 51.5072648)"
+        ca2.location   = "SRID=4326;POINT(1.0672 51.2961)"
         ca2.tags       = [open_source, the_moon_loc]
 
         Session.add(ca2); Session.commit();
@@ -975,7 +975,7 @@ CREATE TRIGGER update_content
         c.content    = u"this is here to test that the logged in user can delete their own articles with DELETE"
         c.creator    = u1
         #c.status     = "show"
-        c.location   = "SRID=4326;POINT(-0.1278328 51.5102648)"
+        c.location   = "SRID=4326;POINT(1.0713 51.2974)"
         c.license_id = cc_by.id
 
         Session.add(c); Session.commit();
@@ -990,6 +990,7 @@ CREATE TRIGGER update_content
         c.creator    = u1
         #c.status     = "show"
         c.license_id = cc_by.id
+        c.location   = "SRID=4326;POINT(1.0862 51.2776)"
 
         Session.add(c); Session.commit();
         assert c.id == 9
@@ -1061,6 +1062,7 @@ CREATE TRIGGER update_content
         #res1.status     = "show"
         res1.license_id = cc_by.id
         res1.parent     = ca
+        res1.location   = "SRID=4326;POINT(1.0794 51.2794)"
 
 
         Session.add_all([ca, ca2, dc1, dc2, res1])

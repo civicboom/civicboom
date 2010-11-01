@@ -244,3 +244,9 @@ HTML, BODY {
 	border-top: 1px solid black;
 	border-left: 1px solid black;
 }
+.olPopup {
+	border: 2px solid gray;
+	border-radius: 8px 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+}
