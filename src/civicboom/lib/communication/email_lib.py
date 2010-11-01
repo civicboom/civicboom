@@ -110,7 +110,7 @@ def send_email_smtp(email_to, subject, content_text, content_html, sender=None):
     # Send the email
     try:
         smtp = smtplib.SMTP()
-        smtp.connect(config['email.smtp_server']) #Use the smtp server from the configuration file
+        smtp.connect(config['email.smtp_server'], int(config['email.smtp_port'])) #Use the smtp server from the configuration file
         smtp.ehlo()
         #sending locally so we don't need the below
         smtp.starttls()
