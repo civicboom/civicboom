@@ -75,16 +75,16 @@ def send_email_smtp(email_to, subject, content_text, content_html, sender=None):
     and sends it out to all the recipients
     No modification is made to any content
     """
-    #from email.MIMEMultipart import MIMEMultipart
-    #from email.MIMEText import MIMEText
-    #from email.MIMEImage import MIMEImage
-    import email, smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text      import MIMEText
+    from email.mime.image     import MIMEImage
+    import smtplib
 
     if not sender:
         sender = config['email.autogen_from']
     
     # Create the root message and fill in the from, to, and subject headers
-    msgRoot = email.MIMEMultipart('related')
+    msgRoot = MIMEMultipart('related')
     msgRoot['Subject'] = subject
     msgRoot['From']    = sender
     msgRoot['To']      = email_to
@@ -92,19 +92,19 @@ def send_email_smtp(email_to, subject, content_text, content_html, sender=None):
 
     # Encapsulate the plain and HTML versions of the message body in an
     # 'alternative' part, so message agents can decide which they want to display.
-    msgAlternative = email.MIMEMultipart('alternative')
+    msgAlternative = MIMEMultipart('alternative')
     msgRoot.attach(msgAlternative)
     
     #content_text - encoded correctly
     try                : content_text = content_text.encode('UTF-8')
     except UnicodeError: pass
-    msgText = email.MIMEText(content_text, 'plain', 'UTF-8')
+    msgText = MIMEText(content_text, 'plain', 'UTF-8')
     msgAlternative.attach(msgText)
     
     #content_html - encoded correctly
     try                : content_html = content_html.encode('UTF-8')
     except UnicodeError: pass
-    msgText = email.MIMEText(content_html, 'html', 'UTF-8')
+    msgText = MIMEText(content_html, 'html', 'UTF-8')
     msgAlternative.attach(msgText)
     
     # Send the email
