@@ -10,9 +10,8 @@
 
 <div>
 <span>Map interaction:</span>
-<a href="http://www.mapstraction.com/">Mapstraction</a> (BSD)
-<p>&copy; 2010 Tom Carden, Steve Coast, Mikel Maron, Andrew Turner, Henri Bergius, Rob Moran, Derek Fowler
-All rights reserved.
+<a href="http://www.openlayers.org/">OpenLayers</a> (BSD)
+<p>&copy; 2005-2010 OpenLayers Contributors.
 </div>
 
 <div>
