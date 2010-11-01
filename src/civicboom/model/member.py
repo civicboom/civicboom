@@ -171,7 +171,7 @@ class Member(Base):
         messages.send_message(self, m, delay_commit)
 
     def send_email(self, **kargs):
-        from civicboom.lib.communication.email import send_email
+        from civicboom.lib.communication.email_lib import send_email
         send_email(self, **kargs)
 
     def send_message_to_followers(self, m, delay_commit=False):
