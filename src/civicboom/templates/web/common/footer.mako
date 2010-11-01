@@ -1,14 +1,12 @@
-<a href="mailto:feedback@civicboom.com">${_("Please send us your Feedback")} <span class="icon_large icon_comment footer_feedback_icon">&nbsp;</span></a>
+<a href="mailto:feedback@civicboom.com">${_("Please send us your Feedback")}</a>
 
-<ul>
-	<li><a href="${h.url(controller='misc', action='about'  )}">${_("About")}</a></li>
-	<li><a href="${h.url(controller='misc', action='press'  )}">${_("Press Coverage")}</a></li>
-	<li><a href="${h.url(controller='misc', action='terms'  )}">${_("Terms and Conditions")}</a></li>
-	<li><a href="${h.url(controller='misc', action='privacy')}">${_("Privacy policy")}</a></li>
-	<li><a href="${h.url(controller='misc', action='credits')}">${_("Credits")}</a>
-</ul>
+<a href="${h.url(controller='misc', action='about'  )}">${_("About")}</a>
+<a href="${h.url(controller='misc', action='press'  )}">${_("Press Coverage")}</a>
+<a href="${h.url(controller='misc', action='terms'  )}">${_("Terms and Conditions")}</a>
+<a href="${h.url(controller='misc', action='privacy')}">${_("Privacy policy")}</a>
+<a href="${h.url(controller='misc', action='credits')}">${_("Credits")}</a>
 
-<div class="copyright">
+<span class="copyright">
 	Website &copy; 2009-2010 Indiconews Ltd,
 	articles &copy; their respective authors
-</div>
+</span>

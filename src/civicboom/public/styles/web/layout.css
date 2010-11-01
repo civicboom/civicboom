@@ -134,9 +134,11 @@ BODY>DIV#app {
 FOOTER {
 	clear: both;
 	background: url("/styles/web/userbarbk.png");
+	text-align: center;
+	color: #CCC;
 }
-FOOTER LI {
-	float: left;
+FOOTER A {
+	color: #CCC;
 }
 
 /*
