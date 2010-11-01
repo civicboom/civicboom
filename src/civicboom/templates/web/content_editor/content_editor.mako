@@ -23,8 +23,9 @@
 ## Style Overrides
 ##------------------------------------------------------------------------------
 <%def name="styleOverides()">
-  .section_selectable {border: 1px solid transparent;}
-  .section_selected   {border: 1px solid black; background-color: #ccc;}
+.section_selectable {border: 1px solid transparent;}
+.section_selected   {border: 1px solid black; background-color: #ccc;}
+.active {display: block !important;}
 </%def>
 
 
@@ -305,6 +306,23 @@
             ${c.content.__type__}
         % endif
 
+        <div id="content_type_additional_fields">
+            ## See CSS for "active" class
+            <div id="type_assignment_extras" class="hideable">
+                <script>
+                    $(function() {$( "#datepicker1" ).datepicker();});
+                    $(function() {$( "#datepicker2" ).datepicker();});
+                </script>
+                <%
+                    due_date   = c.content.due_date   if hasattr(c.content, 'due_date'  ) else ""
+                    event_date = c.content.event_date if hasattr(c.content, 'event_date') else ""
+                %>
+                <p>Due Date:   <input id="datepicker1" type="date" name="due_date"   value="${due_date}"></p>
+                <p>Event Date: <input id="datepicker2" type="date" name="event_date" value="${event_date}"></p>
+            </div>
+        </div>
+
+
         <script type="text/javascript">
             // Reference: http://www.somacon.com/p143.php
             // set the radio button with the given value as being checked
@@ -329,7 +347,8 @@
                 // Select radio button
                 setCheckedValue(document.forms['content'].elements['type'], type);
                 // reset all radio buttons to unselected
-                setSingleCSSClass(document.getElementById('type_'+type), 'section_selected', 'type_selection');
+                setSingleCSSClass(document.getElementById('type_'+type          ), 'section_selected', 'type_selection'                );
+                setSingleCSSClass(document.getElementById('type_'+type+'_extras'), 'active'          , 'content_type_additional_fields');
             }
 
             highlightType('${selected_type}'); //Set the default highlighted item to be the content type
