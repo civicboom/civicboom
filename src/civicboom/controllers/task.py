@@ -156,6 +156,7 @@ class TaskController(BaseController):
                         continue
                     k = Key(bucket)
                     k.key = kname
+                    k.set_metadata('Cache-Control', 'public')
                     k.set_metadata('Content-Type', magic.from_file(fname, mime=True))
                     k.set_contents_from_filename(fname)
                     k.set_acl('public-read')
