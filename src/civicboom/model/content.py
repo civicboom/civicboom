@@ -113,7 +113,7 @@ class Content(Base):
         'default': {
             'id'           : None ,
             'type'         : lambda content: content.__type__ ,
-            'status'       : None ,
+            #'status'       : None ,
             'parent_id'    : None ,
             'title'        : None ,
             'content_short': None ,
@@ -127,6 +127,7 @@ class Content(Base):
             'tags'         : lambda content: "implement tags" ,
             'license_id'   : None ,
             'private'      : None ,
+            'edit_lock'    : None ,
         },
     })
     

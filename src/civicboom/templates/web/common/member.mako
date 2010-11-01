@@ -19,19 +19,27 @@
     <div class="${class_} avatar">
 		% if show_avatar:
 		<div class="clipper">
-            <a href="${h.url('member', id=member['username'])}" title="${member['username']}">
+            <a href="${h.url('member', id=member['username'])}" title="${member['name']}">
 			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img"/>
             </a>
-			<img src="/images/badges/user.png" alt="User" class="type">
+			##<img src="/images/badges/user.png" alt="User" class="type">
+            ##% if member['type']=="user":
+            ##<div class="type icon16 icon_user"></div>
+            ##% endif
+            % if member['type']=="group":
+                ##<div class="type icon icon_group" title="group"></div>
+                ${h.icon('group', class_="type")}
+            % endif
+            
             
             ## TODO - onClick javascript AJAX id card:
-			<a class="info" href="${h.url('member', id=member['username'])}" title="${_("click for more info about %s" % member['username'])}"></a>
+			<a class="info icon icon_userid" href="${h.url('member', id=member['username'])}" title="${_("click for more info about %s" % member['username'])}"><span>more</span></a>
             
 			% if c.logged_in_persona and c.logged_in_persona.username != member['username']:
             % if c.logged_in_persona.is_following(member['username']):
-            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action unfollow")}
+            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
             % else:
-            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _(' '), title=_("Follow %s" % member['username']), css_class="follow_action follow"  )}
+            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _(' '), title=_("Follow %s" % member['username']),         css_class="follow_action icon icon_follow"  )}
             % endif
             % endif
 		</div>

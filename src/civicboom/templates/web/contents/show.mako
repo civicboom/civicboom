@@ -33,28 +33,32 @@
     
     ##-------- By ----------
     <h2>${_("Content by")}</h2>
-    ${member_includes.avatar(d['content']['creator'], show_name=True, show_follow_button=True)}
+    ${member_includes.avatar(d['content']['creator'], show_name=True, show_follow_button=True, class_="large")}
   
   
     ##-------Actions-------
     <h2>${_("Actions")}</h2>
-  
+    <ul>  
   
   
     ## Content Owner Actions
     % if 'edit' in d['content']['actions']:
+        <li>
         <a class="button_small button_small_style_2" href="${h.url('edit_content', id=d['content']['id'])}">
           Edit
         </a>
+        </li>
+        <li>
         ${h.secure_link(url('content', id=d['content']['id'], format='redirect'), method="DELETE", value=_("Delete"), css_class="button_small button_small_style_2", confirm_text=_("Are your sure you want to delete this content?") )}
+        </li>
     % endif
 
     ## Assignment Accept and Withdraw
     % if 'accept' in d['content']['actions']:
-        ${h.secure_link(h.url('content_action', action='accept'  , id=d['content']['id']), _('Accept')  , css_class="button_small button_small_style_2")}
+        <li>${h.secure_link(h.url('content_action', action='accept'  , id=d['content']['id']), _('Accept')  , css_class="button_small button_small_style_2")}</li>
     % endif
     % if 'withdraw' in d['content']['actions']:
-        ${h.secure_link(h.url('content_action', action='withdraw', id=d['content']['id']), _('Withdraw'), css_class="button_small button_small_style_2")}
+        <li>${h.secure_link(h.url('content_action', action='withdraw', id=d['content']['id']), _('Withdraw'), css_class="button_small button_small_style_2")}</li>
     % endif
 
     ## Parent Content Owner Actions
@@ -63,20 +67,22 @@
     ##    <a href="" class="button_small button_small_style_2">
     ##        Email Resorces
     ##    </a>
+
     % if 'approve' in d['content']['actions']:
-        ${h.secure_link(h.url('content_action', action='approve'    , id=d['content']['id']), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
+        <li class="approve"     >${h.secure_link(h.url('content_action', action='approve'    , id=d['content']['id']), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}</li>
     % endif
     % if 'seen' in d['content']['actions']:
-        ${h.secure_link(h.url('content_action', action='seen'       , id=d['content']['id']), _('Seen, like it')   , title=_("Seen it, like it"),                    css_class="button_small button_small_style_2" )}
+        <li class="seen"        >${h.secure_link(h.url('content_action', action='seen'       , id=d['content']['id']), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="button_small button_small_style_2" )}</li>
     % endif
     % if 'dissasociate' in d['content']['actions']:
-        ${h.secure_link(h.url('content_action', action='disasociate', id=d['content']['id']), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+        <li class="dissasociate">${h.secure_link(h.url('content_action', action='disasociate', id=d['content']['id']), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}</li>
     % endif
-    
+
     
     
 
     % if 'rating' in d['content']:
+        <li>
 <%
 def selif(r, n):
 	if round(r) == n:
@@ -119,7 +125,10 @@ r = (d['content']['rating'] * 5)
 			});
 		});
 		</script>
+        </li>
     % endif
+    <ul>
+    ##-----End Actions-----
 
 
     ##-----Share Article Links--------
@@ -231,52 +240,78 @@ lon = d['content']['location'].split(' ')[1]
 
 <%def name="body()">
 
+    <div class="content">
+        ${content(d['content'])}
+    </div>
 
-  ##----Title----
-  <h1>${d['content']['title']}</h1>
-
-  ##----Type----
-  <p>Type: ${d['content']['type']}</p>
-
-  ##----Details----
-  % if hasattr(d['content'],'views'):
-  <p>views: ${d['content']['views']}</p>
-  % endif
-
-  ##----Content----
-  <div class="content_text">
-    ${h.literal(h.scan_for_embedable_view_and_autolink(d['content']['content']))}
-  </div>
-
-  ##----Media-----
-  % for media in d['content']['attachments']:
-    % if media['type'] == "image":
-      <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}"/></a>
-    % elif media['type'] == "audio":
-		<object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="30">
-			<param name="movie" value="/flash/player_flv_maxi.swf" />
-			<param name="allowFullScreen" value="true" />
-			<param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
-		</object>
-    % elif media['type'] == "video":
-		<object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="240">
-			<param name="movie" value="/flash/player_flv_maxi.swf" />
-			<param name="allowFullScreen" value="true" />
-			<param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;startimage=${media['thumbnail_url']}&amp;showvolume=1&amp;showfullscreen=1" />
-		</object>
-	% else:
-		unrecognised media type ${media['type']}
-    % endif
-  % endfor
-  
-  ##----Temp Respond----
-  ${h.secure_link(url('new_content', parent_id=d['content']['id']), value=_("Respond to this")  )}
-
-  
-  ##----Comments----
-  ${comments()}
+    <div class="comments">
+        ${comments()}
+    </div>
+    
 </%def>
 
+
+##------------------------------------------------------------------------------
+## Content
+##------------------------------------------------------------------------------
+
+<%def name="content(content)">
+
+    ##----Title----
+    <h1>${content['title']}</h1>
+
+    <div class="details">
+        ##----Type----
+        <p>Type: ${content['type']}</p>
+        
+        ##----Details----
+        % if hasattr(content,'views'):
+        <p>views: ${content['views']}</p>
+        % endif
+        
+        ##----Temp Respond----
+        ${h.secure_link(url('new_content', parent_id=content['id']), value=_("Respond to this")  )}
+        
+        <ul class="status">
+            % if 'response_type' in content and content['response_type']=='approved':
+            <li><div class="icon_large icon_approved_large" title="approved content"></div>approved content</li>
+            % endif
+        </ul>
+    </div>
+
+    ##----Content----
+    <div class="content_text">
+      ${h.literal(h.scan_for_embedable_view_and_autolink(content['content']))}
+    </div>
+
+    ##----Media-----
+    <ul class="media">
+    % for media in content['attachments']:
+        <li>
+        % if media['type'] == "image":
+            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}"/></a>
+        % elif media['type'] == "audio":
+            <object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="30">
+                <param name="movie" value="/flash/player_flv_maxi.swf" />
+                <param name="allowFullScreen" value="true" />
+                <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
+            </object>
+        % elif media['type'] == "video":
+            <object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="240">
+                <param name="movie" value="/flash/player_flv_maxi.swf" />
+                <param name="allowFullScreen" value="true" />
+                <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;startimage=${media['thumbnail_url']}&amp;showvolume=1&amp;showfullscreen=1" />
+            </object>
+        % else:
+            unrecognised media type ${media['type']}
+        % endif
+        </li>
+    % endfor
+    </ul>
+
+
+
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Comments

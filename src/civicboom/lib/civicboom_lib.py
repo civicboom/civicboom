@@ -401,7 +401,7 @@ def form_to_content(form, content):
             pass
 
     # Any left over fields that just need a simple set
-    for field in ["title", "target_type", ]:
+    for field in ["title", "target_type"]: #, "due_date", "event_date" # need validators/converters
         form_field_name = field
         if form_field_name in form:
             if hasattr(content, field):

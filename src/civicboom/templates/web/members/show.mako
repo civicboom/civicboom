@@ -20,7 +20,7 @@
 
     % if 'member' in d:
         <div class="avatar">
-            ${member_includes.avatar(d['member'] , show_name=True, show_follow_button=True)}
+            ${member_includes.avatar(d['member'] , show_name=True, show_follow_button=True, class_='large')}
         </div>
     
         <h2>${_("Following")}</h2>

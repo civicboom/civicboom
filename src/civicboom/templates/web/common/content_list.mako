@@ -27,30 +27,15 @@
 <%def name="content_item_row(content, show_actions=False)">
     <tr>
         ##---------------------------
-        ## Thumbnail Col
+        ## Thumbnail
         ##---------------------------
-        <td class="content_thumbnail">
-            ## Content Link
-            ##---------------------------
-            <a href="${h.url('content', id=content['id'])}">
-            
-            ## Thumbnail Status Overlay
-            ##---------------------------
-            <%
-                overlay = None
-                if content['type']=='syndicate' or content['type']=='pending':
-                    overlay = content['type']
-                if content['status'] == 'locked':
-                    overlay = 'approved'
-            %>
-            % if overlay:
-              <span class="thumbnail_overlay thumbnail_overlay_${overlay}">&nbsp;</span>
-            % endif
-            
-            ## Thumbnail image
-            ##---------------------------
-            <img src="${content['thumbnail_url']}" alt="${content['title']}"/>
-          </a>
+        <td class="thumbnail">
+            <div class="clipper">
+                <a href="${h.url('content', id=content['id'])}">
+                    ${content_thumbnail_icons(content)}
+                    <img class="img" src="${content['thumbnail_url']}" alt="${content['title']}"/>
+                </a>
+            </div>
         </td>
         
         ##---------------------------
@@ -91,8 +76,8 @@
         ##---------------------------
         % if show_actions:
         <td>
-            % if content['status'] == "locked":
-              <span class="icon_large icon_locked">Approved and locked</span>
+            % if content['edit_lock']:
+              <span class="icon_large icon_locked">edit locked</span>
             % else:
               <a class="button_small button_small_style_2" href="${h.url('edit_content', id=content['id'])}">
                 ${_("Edit")}
@@ -117,10 +102,13 @@
 ##------------------------------------------------------------------------------
 <%def name="content_item_row_mini(content, location=False)">
     <tr>
-        <td class="content_thumbnail">
-            <a href="${h.url('content', id=content['id'])}">
-                <img src="${content['thumbnail_url']}" alt="${content['title']}" />
-            </a>
+        <td class="thumbnail small">
+            <div class="clipper">
+                <a href="${h.url('content', id=content['id'])}">
+                    ${content_thumbnail_icons(content)}
+                    <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
+                </a>
+            </div>
         </td>
         <td>
             <a href="${h.url('content', id=content['id'])}">
@@ -136,7 +124,7 @@
             rating <br/> comments
         </td>
         <td>
-            ${member_includes.avatar(content['creator'], show_name=True, class_="content_creator_thumbnail")}
+            ${member_includes.avatar(content['creator'], show_name=False, class_="content_creator_thumbnail")}
         </td>
     </tr>
 </%def>
@@ -155,4 +143,23 @@
 </%def>
 <%def name="content_item_li(content)">
 <a href="${url('content', id=content['id'])}">${content['title']}</a>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Content Thumbnail Icons
+##------------------------------------------------------------------------------
+
+<%def name="content_thumbnail_icons(content)">
+    <div class="icons">
+        % if content['private']:
+            ${h.icon('private')}
+        % endif
+        % if content['edit_lock']:
+            ${h.icon('edit_lock')}
+        % endif
+        % if 'response_type' in content:
+            ${h.icon(content['response_type'])}
+        % endif
+    </div>
 </%def>

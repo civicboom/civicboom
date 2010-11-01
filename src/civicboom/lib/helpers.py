@@ -8,6 +8,7 @@ available to Controllers. This module is available to templates as 'h'.
 from webhelpers.pylonslib.secure_form import authentication_token, secure_form as form
 
 from pylons import url, config, app_globals, tmpl_context as c, request
+#from pylons.i18n.translation import _
 from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
 from webhelpers.html.tags import end_form
@@ -141,6 +142,30 @@ def objs_to_linked_formatted_dict(**kargs):
             val = c[val]
         links[key] = gen_link(val)
     return links
+
+
+# AllanC - TODO: HACK ALERT!!!
+# I wanted a helper to create icons in a standard way that would degrade without a CSS style.
+#  e.g. when no style sheet is used (or a screen reader) it will have the text "approved" rather than just the icon
+# I wanted the text description to be on the hover "title" and in a hidden-degradable <span>
+# Problem!!!!
+# cant have it8n in helpers ... ****!
+# so I created a dumby _ method ... this needs considering
+# Could be moved to common.mako template?
+def _(s):
+    return s
+icon_type_descriptions = {
+    'approved'    : _('approved by parent owner') ,
+    'seen'        : _('parent owner has seen this content') ,
+    'edit_lock'   : _('edit lock') ,
+    'dissacociate': _('parent owner has disassociated this content') ,
+    'group'       : _('group')
+}
+def icon(icon_type, description=None, class_=''):
+    if not description and icon_type in icon_type_descriptions:
+        description = icon_type_descriptions[icon_type]
+    return HTML.div(HTML.span(description), class_=class_+" icon icon_"+icon_type, title=description)
+
 
 #-------------------------------------------------------------------------------
 # Secure Link - Form Submit or Styled link (for JS browsers)
