@@ -101,6 +101,54 @@ HTML, BODY {
 #flash_message.status_ok {background: #FFA;}
 #flash_message.status_error {background: #FAA;}
 
+
+/*
+ * icons
+ */
+
+/* AllanC
+ *  I wanted the developer to be able to write <span class="icon_large approved"> or <span class="icon_small approved">
+ *  to select the right icon graphic and size
+ *  without the need for nested tags ... is this possible? is the nested tag idea cleaner?
+ */
+
+/*
+ Icons by: pixel-mixer
+ http://pixel-mixer.com/
+ http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
+ http://www.iconarchive.com/category/application/basic-2-icons-by-pixelmixer.html
+*/
+
+/* 16x16 icons */
+.icon {
+	display: inline-block;
+    width  : 16px;
+	height : 16px;
+}
+.icon span {display: none;}
+.icon_approved  {background: transparent url('/styles/web/icons16/licence-icon.png'  ) no-repeat;}
+.icon_edit_lock {background: transparent url('/styles/web/icons16/lock-icon.png'     ) no-repeat;}
+.icon_private   {background: transparent url('/styles/web/icons16/key-icon.png'      ) no-repeat;}
+.icon_seen      {background: transparent url('/styles/web/icons16/tick-icon.png'     ) no-repeat;}
+.icon_follow    {background: transparent url('/styles/web/icons16/right-icon.png'    ) no-repeat;}
+.icon_unfollow  {background: transparent url('/styles/web/icons16/stop-icon.png'     ) no-repeat;}
+.icon_user      {background: transparent url('/styles/web/icons16/user-3-icon.png'   ) no-repeat;}
+.icon_group     {background: transparent url('/styles/web/icons16/network-icon.png'  ) no-repeat;}
+.icon_userid    {background: transparent url('/styles/web/icons16/user-info-icon.png') no-repeat;}
+
+/* 32x32 icons */
+.icon_large {
+	display: inline-block;
+    width  : 32px;
+	height : 32px;
+}
+.icon_large span {display: none;}
+.icon_approved_large  {background: transparent url('/styles/web/icons32/licence-icon.png') no-repeat;}
+.icon_edit_lock_large {background: transparent url('/styles/web/icons32/lock-icon.png'   ) no-repeat;}
+.icon_private_large   {background: transparent url('/styles/web/icons32/key-icon.png'    ) no-repeat;}
+.icon_seen_large      {background: transparent url('/styles/web/icons32/tick-icon.png'   ) no-repeat;}
+
+
 /*
  * avatars
  */
@@ -128,57 +176,23 @@ HTML, BODY {
 .avatar .clipper .type {
 	top: 0px;
 	right: 0px;
-    width: 16px;
-    height: 16px;
 }
-.avatar .clipper .user  {background: transparent url('/styles/web/icons/user-3-icon.png') no-repeat;}
-.avatar .clipper .group {background: transparent url('/styles/web/icons/network-icon.png') no-repeat;}
-
 .avatar .clipper .info {
-	display: block;
-    width  : 16px;
-	height : 16px;
-	/*
-	background: #AAA;
-	padding: 2px;
-	border-radius: 6px;
-	*/
-	background: transparent url('/styles/web/icons/user-info-icon.png') no-repeat;
     bottom: 0px;
 	left  : 2px;
     opacity: 0;
 }
-/*
-http://www.iconarchive.com/category/application/toolbar-icons-by-shlyapnikova.html
- - http://www.iconarchive.com/icons/shlyapnikova/toolbar/32/card-icon.png
-http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
- - right-icon.png
- - stop-icon.png
-*/
 .avatar .clipper:hover .info {opacity: 1;}
-
 .avatar .clipper       .img {opacity: 1   ; height: 40px; width:40px;}
 .avatar .clipper:hover .img {opacity: 0.25 ;}
-
 .avatar .clipper .follow_action {
-	display: block;
-	height : 16px;
-	width  : 16px;
     opacity: 0;
 	bottom :  0px;
 	right  :  2px;
-    /*
-	bottom: 2px;
-	right: 2px;
-	padding: 2px;
-	border-radius: 6px;
-	*/
 }
-
-.avatar .clipper .follow   {background: transparent url('/styles/web/icons/right-icon.png') no-repeat;}
-.avatar .clipper .unfollow {background: transparent url('/styles/web/icons/stop-icon.png' ) no-repeat;}
-
 .avatar .clipper:hover .follow_action {opacity: 1;}
+
+
 
 /*
  * content thumbnails
@@ -204,23 +218,17 @@ http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
     display : block;
 	bottom  : 0px;
 	right   : 0px;
-    padding-bottom: 2px;
-    opacity: 0.75;
+    /* opacity: 0.75; */
 }
 /* AllanC - not sure if I like this transparent rollover effect or not ... */
+/*
 .thumbnail .clipper:hover .icons {
     opacity: 1;
 }
+*/
 
-.thumbnail .clipper .icon {
-	display: inline-block;
-    width  : 16px;
-	height : 16px;
-}
-.thumbnail .clipper .approved  {background: transparent url('/styles/web/icons/licence-icon.png') no-repeat;}
-.thumbnail .clipper .edit_lock {background: transparent url('/styles/web/icons/lock-icon.png'   ) no-repeat;}
-.thumbnail .clipper .private   {background: transparent url('/styles/web/icons/key-icon.png'    ) no-repeat;}
-.thumbnail .clipper .seen      {background: transparent url('/styles/web/icons/tick-icon.png'   ) no-repeat;}
+
+
 
 
 

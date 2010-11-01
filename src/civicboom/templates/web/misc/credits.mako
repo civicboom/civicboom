@@ -36,4 +36,13 @@ KM Avatar <a href="">Kent Messanger Group</a> (&copy;, fair use)
 <br>Mobiletest Avatar <a href="http://www.flickr.com/photos/johnkarakatsanis/4805593861/">John.Karakatsanis</a> (CC-BY-SA)
 </div>
 
+<div>
+<span>Icons:</span>
+pixel-mixer
+ <a href="http://pixel-mixer.com/">pixel-mixer.com</a>
+ http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
+ http://www.iconarchive.com/category/application/basic-2-icons-by-pixelmixer.html
+</div>
+
+
 </article>

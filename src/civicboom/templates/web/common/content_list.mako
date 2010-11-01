@@ -153,28 +153,13 @@
 <%def name="content_thumbnail_icons(content)">
     <div class="icons">
         % if content['private']:
-        <div class="icon private" title="private"></div>
+            ${h.icon('private')}
         % endif
         % if content['edit_lock']:
-        <div class="icon edit_lock" title="edit lock"></div>
+            ${h.icon('edit_lock')}
         % endif
         % if 'response_type' in content:
-            <%
-                response_type_class       = None
-                response_type_description = None
-                if   content['response_type'] == 'approved':
-                    response_type_class       = 'approved'
-                    response_type_description = _('approved by parent owner')
-                elif content['response_type'] == 'seen':
-                    response_type_class       = 'seen'
-                    response_type_description = _('parent owner has seen this content')
-                elif content['response_type'] == 'dissasociate':
-                    response_type_class       = 'dissasociate'
-                    response_type_description = _('parent owner has disassociated this content')
-            %>
-            % if response_type_class:
-            <div class="icon ${response_type_class}" title="${response_type_description}"></div>
-            % endif
+            ${h.icon(content['response_type'])}
         % endif
     </div>
 </%def>
