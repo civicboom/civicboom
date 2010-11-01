@@ -23,10 +23,11 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
     Prepares and converts between plain text and HTML content
     If email is disabled in the config it is sent to the logger
     """
+    
     # User object passed, get email address
     #  else the email_to is assumed to be a CSV list of email address's
-    if hasattr(email_to, 'email_unverifyed'): email_to = email_to.email_unverifyed
-    if hasattr(email_to, 'email'           ): email_to = email_to.email
+    if hasattr(email_to, 'email_unverifyed') and email_to.email_unverifyed!=None: email_to = email_to.email_unverifyed
+    if hasattr(email_to, 'email'           ) and email_to.email           !=None: email_to = email_to.email
     email_to = str(email_to)
     
     # Check paramiters for validity and throw exception if needed
