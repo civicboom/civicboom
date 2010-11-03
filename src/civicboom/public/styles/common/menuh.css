@@ -48,7 +48,7 @@
 			
 #menuh a.top_parent, #menuh a.top_parent:hover  /* attaches down-arrow to all top-parents */
 	{
-	background-image: url(navdown_white.gif);
+	/*background-image: url(navdown_white.gif);*/
 	background-position: right center;
 	background-repeat: no-repeat;
 	font-size: 2em;
@@ -56,7 +56,7 @@
 	
 #menuh a.parent, #menuh a.parent:hover 	/* attaches side-arrow to all parents */
 	{
-	background-image: url(nav_white.gif);
+	/*background-image: url(nav_white.gif);*/
 	background-position: right center;
 	border: 1px solid #555;
 	background-repeat: no-repeat;
@@ -113,3 +113,7 @@ div#menuh li li li li:hover ul
 {display:block;}
 
 /* End CSS Drop Down Menu */
+
+#menuh INPUT {
+	width: 97%;
+}

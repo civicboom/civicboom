@@ -10,8 +10,8 @@ from civicboom.model.member  import GroupMembership, group_member_roles
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content, update_content, update_accepted_assignment, update_member
 
-from civicboom.lib.communication       import messages
-from civicboom.lib.communication.email import send_email
+from civicboom.lib.communication           import messages
+from civicboom.lib.communication.email_lib import send_email
 
 from civicboom.lib.text import strip_html_tags
 from civicboom.lib.web  import action_error
@@ -49,6 +49,8 @@ def follow(follower, followed, delay_commit=False):
         raise action_error(_('unable to find followed'), code=404)
     if not follower:
         raise action_error(_('unable to find follower'), code=404)
+    if follower == followed:
+        raise action_error(_('may not follow yourself'), code=400)
     if followed in follower.following:
         raise action_error(_('already following'), code=400)
     
@@ -158,7 +160,7 @@ def remove_member(group, member, delay_commit=False):
     if not membership:
         raise action_error(_('not a member of group'), code=400)
     # AllanC - permissions moved to controller
-    #if member!=c.logged_in_user and not group.is_admin(c.logged_in_user):
+    #if member!=c.logged_in_persona and not group.is_admin(c.logged_in_persona):
     #    raise action_error('current user has no permissions for this group', 403)
     #AllanC - integrety moved to model
     #if membership.role=="admin" and num_admins<=1:
@@ -202,7 +204,7 @@ def invite(group, member, role, delay_commit=False):
     if role not in group_member_roles.enums:
         raise action_error('not a valid role', code=400)
     # AllanC - permissions moved to controller
-    #if not group.is_admin(c.logged_in_user):
+    #if not group.is_admin(c.logged_in_persona):
     #    raise action_error(_('no permissions for this group'), 403)
 
     membership = GroupMembership()
@@ -239,7 +241,7 @@ def set_role(group, member, role, delay_commit=False):
     if role not in group_member_roles.enums:
         raise action_error('not a valid role', code=400)
     # AllanC - permisions moved to controller
-    #if not group.is_admin(c.logged_in_user):
+    #if not group.is_admin(c.logged_in_persona):
     #    raise action_error(_('no permissions for this group'), 403)
     # AllanC - integrtiy moved to model
     #if membership.role=="admin" and num_admins<=1:
@@ -386,7 +388,7 @@ def parent_seen(content, delay_commit=False):
     update_content(content)
     return True
 
-def parent_approved(content, delay_commit=False):
+def parent_approve(content, delay_commit=False):
 
     content.edit_lock     = "parent_owner"
     content.response_type = "approved"
@@ -477,6 +479,8 @@ def add_to_interests(member, content, delay_commit=False):
     #AllanC - TODO: humm ... if we have a duplicate entry being added it will error ... we want to suppress that error
     
     member.interest.append(content)
+    
+    # Could update "recomended" feed with new criteria?
     
     if not delay_commit:
         Session.commit()

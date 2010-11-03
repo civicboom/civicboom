@@ -39,7 +39,7 @@ def _get_message(message, is_target=False):
     message = get_message(message)
     if not message:
         raise action_error(_("Message does not exist"), code=404)
-    if is_target and message.target != c.logged_in_user:
+    if is_target and message.target != c.logged_in_persona:
         raise action_error(_("You are not the target of this message"), code=403)
     return message
 
@@ -58,7 +58,7 @@ class MessagesController(BaseController):
     @auto_format_output
     @web_params_to_kwargs
     @authorize(is_valid_user)
-    def index(self, **kwargs):
+    def index(self, list='to', **kwargs):
         """
         GET /messages: All items in the collection.
         
@@ -85,14 +85,14 @@ class MessagesController(BaseController):
         """
         # url('messages')
         
-        if 'list' not in kwargs:
-            kwargs['list'] = 'to'
-        list = kwargs['list']
+        #if 'list' not in kwargs:
+        #    kwargs['list'] = 'to'
+        #list = kwargs['list']
         
         if list not in index_lists:
             raise action_error(_('list %s not supported') % list, code=400)
         
-        messages = index_lists[list](c.logged_in_user)
+        messages = index_lists[list](c.logged_in_persona)
         messages = [message.to_dict(**kwargs) for message in messages]
         
         return action_ok(data={'list': messages})
@@ -128,7 +128,7 @@ class MessagesController(BaseController):
             raise action_error('user does not exist', code=404)
         
         m = Message()
-        m.source  = c.logged_in_user
+        m.source  = c.logged_in_persona
         m.target  = target
         m.subject = subject
         m.content = content
@@ -208,7 +208,7 @@ class MessagesController(BaseController):
         """
         # url('message', id=ID)
         
-        #c.viewing_user = c.logged_in_user - swiching persona will mean that logged_in_user is group
+        #c.viewing_user = c.logged_in_persona - swiching persona will mean that logged_in_user is group
         
         message = _get_message(id, is_target=True)
         return action_ok(data={'message': message.to_dict(**kwargs)})

@@ -71,11 +71,11 @@
 ##------------------------------------------------------------------------------
 <%def name="username()">
     <p>could not allocate your prefered username as it has already been taken, if you are xxx then you can link accounts</p>
-    Username<input type="text" name="username" value="${c.logged_in_user.username}" />
+    Username<input type="text" name="username" value="${c.logged_in_persona.username}" />
 </%def>
 
 <%def name="email()">
-    email<input type="text" name="email" value="${c.logged_in_user.email}" />
+    email<input type="text" name="email" value="${c.logged_in_persona.email}" />
 </%def>
 
 <%def name="dob()">

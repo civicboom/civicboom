@@ -8,6 +8,7 @@ available to Controllers. This module is available to templates as 'h'.
 from webhelpers.pylonslib.secure_form import authentication_token, secure_form as form
 
 from pylons import url, config, app_globals, tmpl_context as c, request
+#from pylons.i18n.translation import _
 from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
 from webhelpers.html.tags import end_form
@@ -110,12 +111,7 @@ def link_to_objects(text):
     return output
 
 def wh_public(filename):
-    return "http://"+config["s3_bucket_name"]+".s3.amazonaws.com/public/"+filename
-    # we are always using s3
-    #if config["warehouse"] == "s3":
-    #    return "http://"+config["s3_bucket_name"]+".s3.amazonaws.com/public/"+filename
-    #else:
-    #    return "/"+filename
+    return config["warehouse_url"]+"/public/"+filename
 
 def url_from_widget(*args, **kargs):
     if hasattr(app_globals,'widget_variables'):
@@ -147,6 +143,30 @@ def objs_to_linked_formatted_dict(**kargs):
         links[key] = gen_link(val)
     return links
 
+
+# AllanC - TODO: HACK ALERT!!!
+# I wanted a helper to create icons in a standard way that would degrade without a CSS style.
+#  e.g. when no style sheet is used (or a screen reader) it will have the text "approved" rather than just the icon
+# I wanted the text description to be on the hover "title" and in a hidden-degradable <span>
+# Problem!!!!
+# cant have it8n in helpers ... ****!
+# so I created a dumby _ method ... this needs considering
+# Could be moved to common.mako template?
+def _(s):
+    return s
+icon_type_descriptions = {
+    'approved'    : _('approved by parent owner') ,
+    'seen'        : _('parent owner has seen this content') ,
+    'edit_lock'   : _('edit lock') ,
+    'dissacociate': _('parent owner has disassociated this content') ,
+    'group'       : _('group')
+}
+def icon(icon_type, description=None, class_=''):
+    if not description and icon_type in icon_type_descriptions:
+        description = icon_type_descriptions[icon_type]
+    return HTML.div(HTML.span(description), class_=class_+" icon icon_"+icon_type, title=description)
+
+
 #-------------------------------------------------------------------------------
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
@@ -159,7 +179,10 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
 
     Then use javascript to hide the form and show the pretty link
     """
-    hhash = hashlib.md5(str([href, value, vals])).hexdigest()[0:4]
+    if not hasattr(c, 'secure_link_count'):
+        c.secure_link_count = 0
+    c.secure_link_count = c.secure_link_count + 1
+    hhash = hashlib.md5(str([href, value, vals, c.secure_link_count])).hexdigest()[0:6]
 
     # form version
     values = ''

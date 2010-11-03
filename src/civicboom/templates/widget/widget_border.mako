@@ -79,10 +79,10 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
           ## Sign in/up
           ##----------------------------------------
           <div class="action_bar_element" style="float:right;">
-          % if c.logged_in_user:
+          % if c.logged_in_persona:
               <p>${_("Logged in")} <a href="${h.url_from_widget(controller='reporter', action='myhome')}" target="_blank">
-              ${c.logged_in_user.username}
-              <img src="${c.logged_in_user.avatar_url}" style="max-height:1em;"/>
+              ${c.logged_in_persona.username}
+              <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;"/>
               </a></p>
           % else:
               <a href="${h.url_from_widget(controller='widget', action='signin')}">Sign up or Sign in to <img src="/design09/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/></a>

@@ -10,9 +10,8 @@
 
 <div>
 <span>Map interaction:</span>
-<a href="http://www.mapstraction.com/">Mapstraction</a> (BSD)
-<p>&copy; 2010 Tom Carden, Steve Coast, Mikel Maron, Andrew Turner, Henri Bergius, Rob Moran, Derek Fowler
-All rights reserved.
+<a href="http://www.openlayers.org/">OpenLayers</a> (BSD)
+<p>&copy; 2005-2010 OpenLayers Contributors.
 </div>
 
 <div>
@@ -35,5 +34,14 @@ All rights reserved.
 KM Avatar <a href="">Kent Messanger Group</a> (&copy;, fair use)
 <br>Mobiletest Avatar <a href="http://www.flickr.com/photos/johnkarakatsanis/4805593861/">John.Karakatsanis</a> (CC-BY-SA)
 </div>
+
+<div>
+<span>Icons:</span>
+pixel-mixer
+ <a href="http://pixel-mixer.com/">pixel-mixer.com</a>
+ http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
+ http://www.iconarchive.com/category/application/basic-2-icons-by-pixelmixer.html
+</div>
+
 
 </article>

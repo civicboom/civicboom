@@ -62,7 +62,7 @@
                                 % endif
                             ${h.end_form()}
                         % endif
-                        % if c.logged_in_user and ((c.logged_in_user.username == member['username'] and permission_remove_self) or (c.logged_in_user.username != member['username'] and permission_remove)):
+                        % if c.logged_in_persona and ((c.logged_in_persona.username == member['username'] and permission_remove_self) or (c.logged_in_persona.username != member['username'] and permission_remove)):
                             ${h.form(h.url('group_action', id=d['group']['id'], action='remove_member'), method='post')}
                                 <input type="hidden" name="member" value="${member['username']}"/>
                                 <input type="submit" name="submit" value="${_('Remove')}"/>

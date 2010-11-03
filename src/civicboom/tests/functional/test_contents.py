@@ -36,6 +36,58 @@ class TestContentsController(TestController):
         response = self.app.get(url('formatted_content', id=1, format='xml'))
 
 
+    ##########################################################################
+    # Content search
+    ##########################################################################
+
+    def test_content_results(self):
+        response = self.app.get(url('contents', query='someone'))
+        assert "A test article by someone else" in response
+        assert "Friend" in response
+        assert "0 responses" in response
+
+    def test_content_results_rss(self):
+        response = self.app.get(url('contents', format="rss", query='someone'))
+        assert "A test article by someone else" in response
+        assert "Friend" in response
+
+    def test_content_results_json(self):
+        response = self.app.get(url('contents', format="json", query='someone'))
+        assert "A test article by someone else" in response
+        assert "Friend" in response
+
+    def test_content_no_results(self):
+        response = self.app.get(url('contents', query='cake'))
+        # FIXME: term is no longer used in output
+        #assert "'cake' did not match any articles" in response
+
+    def test_content_no_query(self):
+        response = self.app.get(url('contents'))
+
+    def test_content_rss(self):
+        response = self.app.get(url('contents', format='xml'))
+
+    def test_content_location(self):
+        response = self.app.get(url('contents', location='1,51'))
+        assert "Here is some text" in response
+
+    def test_content_location_radius(self):
+        response = self.app.get(url('contents', location='1,51,10'))
+        assert "Here is some text" in response
+
+    def test_content_type(self):
+        response = self.app.get(url('contents', type='assignment'))
+        assert "There once was" in response
+
+    def test_content_author(self):
+        response = self.app.get(url('contents', author='unittest'))
+        assert "Assignment for the world to see" in response
+
+    def test_content_response_to(self):
+        response = self.app.get(url('contents', response_to=2))
+        # FIXME: create a response as test data
+        #assert "something" in response
+
 
     ## new -> create #########################################################
 
@@ -54,10 +106,10 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_parent_id': "1",
-                'form_type': "comment",
-                'form_content': 'content of a test comment',
+                'title': "a response",
+                'parent_id': "1",
+                'type': "comment",
+                'content': 'content of a test comment',
             },
             status=201
         )
@@ -67,10 +119,10 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_parent_id': "1",
-                'form_type': "draft",
-                'form_content': 'content of a test draft',
+                'title': "a response",
+                'parent_id': "1",
+                'type': "draft",
+                'content': 'content of a test draft',
             },
             status=201
         )
@@ -80,9 +132,9 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_type': "article",
-                'form_content': 'content of a directly-created article',
+                'title': "a response",
+                'type': "article",
+                'content': 'content of a directly-created article',
             },
             status=201
         )
@@ -92,9 +144,9 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_type': "comment",
-                'form_content': 'content of a test comment',
+                'title': "a response",
+                'type': "comment",
+                'content': 'content of a test comment',
             },
             status=400
         )
@@ -104,10 +156,10 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_parent_id': "0",
-                'form_type': "comment",
-                'form_content': 'content of a test comment',
+                'title': "a response",
+                'parent_id': "0",
+                'type': "comment",
+                'content': 'content of a test comment',
             },
             status=404
         )
@@ -117,10 +169,10 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'form_title': "a response",
-                'form_parent_id': "4",
-                'form_type': "comment",
-                'form_content': 'content of a test comment',
+                'title': "a response",
+                'parent_id': "4",
+                'type': "comment",
+                'content': 'content of a test comment',
             },
             status=403
         )

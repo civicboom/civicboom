@@ -97,13 +97,21 @@ class BaseController(WSGIController):
 
 
         # Login - Fetch logged in user from session id (if present)
-        c.logged_in_user = get_member(session_get('user_id'))
+        username                 = session_get('username')
+        username_persona         = session_get('username_persona')
+        
+        c.logged_in_user         = get_member(username)
+        c.logged_in_persona      = c.logged_in_user
+        c.logged_in_persona_role = session_get('role')
+        if username != username_persona:
+            c.logged_in_persona = get_member(username_persona)
+        
 
         # Setup Langauge
         #  - there is a way of setting fallback langauges, investigate?
         if   'lang' in request.params:  self._set_lang(request.params['lang']) # If lang set in URL
         elif 'lang' in session       :  self._set_lang(       session['lang']) # Lang set for this users session
-        #elif c.logged_in_user has lang: self._set_lang(c.logged_in_user.?)     # Lang in user preferences
+        #elif c.logged_in_persona has lang: self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
         else                         :  self._set_lang(        config['lang']) # Default lang in config file
 
         # User pending regisration? - redirect to complete registration process

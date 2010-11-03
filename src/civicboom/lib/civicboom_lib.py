@@ -9,7 +9,7 @@ from pylons.i18n.translation import _
 from civicboom.model.meta import Session
 from civicboom.lib.database.get_cached import get_member
 
-from civicboom.lib.communication.email import send_email
+from civicboom.lib.communication.email_lib import send_email
 
 from civicboom.model                            import DraftContent, ArticleContent, CommentContent, Media, Tag, FlaggedContent, UserLogin
 from civicboom.lib.database.get_cached          import get_content, get_tag
@@ -148,34 +148,34 @@ def aggregation_dict(content, safe_strings=True):
     
     content_preview = {}
     
-    content_url = url(host=app_globals.site_host, controller='content', action='view', id=content.id)
+    content_url = url(host=app_globals.site_host, controller='content', action='view', id=content['id'])
 
     def action(content):
-        if   content.__type__ == "assignment": return _("Set an _assignment")
-        elif content.parent                  : return _("Wrote a response")
-        elif content.__type__ == "article"   : return _("Wrote an _article")
+        if   content.get('type'  ) == "assignment": return _("Set an _assignment")
+        elif content.get('parent')                : return _("Wrote a response")
+        elif content.get('type'  ) == "article"   : return _("Wrote an _article")
     
     def description(content):
-        return "%s: %s" % (action(content), content.title)
+        return "%s: %s" % (action(content), content.get('title'))
 
     def action_links(content):
         action_links = []
-        action_links.append({'href':url(host=app_globals.site_host, controller='content_actions', action='edit'  , form_parent_id=content.id), 'text':_('Write a response')  })
-        if content.__type__ == "assignment":
-            action_links.append({'href':url(host=app_globals.site_host, controller='content_actions', action='accept', id            =content.id), 'text':_('Accept _assignment')})
+        action_links.append({'href':url(host=app_globals.site_host, controller='content_actions', action='edit'  , parent_id=content['id']), 'text':_('Write a response')  })
+        if content.get('type') == "assignment":
+            action_links.append({'href':url(host=app_globals.site_host, controller='content_actions', action='accept', id     =content['id']), 'text':_('Accept _assignment')})
         return action_links
     
     def media(content):
         media_list = []
-        for media in content.attachments:
-            if   media.type    == "image": media_list.append({'href':content_url, 'type':"image", 'src':media.thumbnail_url})
-            elif media.subtype == "mp3"  : media_list.append({'href':content_url, 'type':"mp3"  , 'src':media.media_url    })
+        for media in content.get('attachments'):
+            if   media.get('type')    == "image": media_list.append({'href':content_url, 'type':"image", 'src':media.get('thumbnail_url')})
+            elif media.get('subtype') == "mp3"  : media_list.append({'href':content_url, 'type':"mp3"  , 'src':media.get('media_url')    })
         return media_list
     
     def properties(content):
         properties = {}
-        if content.__type__ == "article":
-            properties['Rating'] = content.rating
+        if content.get('type') == "article":
+            properties['Rating'] = content.get('rating')
         # TODO: Additional properties
         #"Location": {
         #  "href": "http:\/\/bit.ly\/3fkBwe",
@@ -184,10 +184,10 @@ def aggregation_dict(content, safe_strings=True):
         return properties
 
     content_preview['url']                    = content_url
-    content_preview['title']                  = content.title
+    content_preview['title']                  = content.get('title')
     content_preview['action']                 = action(content)
     content_preview['description']            = description(content)
-    content_preview['user_generated_content'] = truncate(safe_python_strings(strip_html_tags(content.content)))
+    content_preview['user_generated_content'] = truncate(safe_python_strings(strip_html_tags(content['content'])))
     content_preview['action_links']           = action_links(content)
     content_preview['media']                  = media(content)
     content_preview['properties']             = properties(content)
@@ -209,12 +209,13 @@ def aggregate_via_user(content, user):
     #user    = get_member(user)
     #if not content: return
     #if not user   : return
-    content_json = json.dumps(aggregation_dict(content))
+    content_json = json.dumps(aggregation_dict(content.to_dict('full')))
     location = ''
     if content.location:
         location = '%s %s' % (content.location.coords(Session)[1], content.location.coords(Session)[0])
         
     if config['feature.aggregate.janrain']:
+        # AllanC: Q Does this need to be done for each login method? or does janrain handle this?
         for login in [login for login in user.login_details if login.type!='password']:
             janrain('activity', identifier=login.token, activity=content_json, location=location)
     else:
@@ -228,19 +229,20 @@ def twitter_global(content):
     
     In the future should maybe be linked to the Civicboom user, and all users could have twitter keys stored
     """
-
-    content_dict = aggregation_dict(content, safe_strings=True)
+    #if isinstance(content, Content):
+    #    content = content.to_dict('full')
+    #content_dict = aggregation_dict(content, safe_strings=True)
 
     # Create Twitter message with tiny URL
-    if len(content_dict['title']) > 70:
-        title           = truncate(content_dict['title']                 , length=70)
-        content_preview = truncate(content_dict['user_generated_content'], length=30)
+    if len(content.title) > 70:
+        title           = truncate(content.title  , length=70)
+        content_preview = truncate(content.content, length=30)
     else:
-        title           = content_dict['title']
-        content_preview = truncate(content_dict['user_generated_content'], length=100-len(content_dict['title']))
+        title           = content.title
+        content_preview = truncate(content.content, length=100-len(content.title))
     
     twitter_post = {}
-    twitter_post['status'] = "%s: %s (%s)" % (title, content_preview, tiny_url(content_dict['url']))
+    twitter_post['status'] = "%s: %s (%s)" % (title, content_preview, tiny_url(content.__link__()))
 
     # Add location if avalable
     if content.location:
@@ -275,7 +277,7 @@ def form_post_contains_content(form):
     return_bool = False
     if form:
         for field in ("title","content","media_file"):
-            if "form_"+field in form and form["form_"+field]:
+            if field in form and form[field]:
                 return_bool = True
     return return_bool
   
@@ -291,16 +293,17 @@ def form_to_content(form, content):
     """
     
     if not content:
-        if   not form                          : content = DraftContent()
-        elif form.get('form_type') == "comment": content = CommentContent()
-        elif form.get('form_type') == "article": content = ArticleContent()
-        else                                   : content = DraftContent()
-        content.creator = c.logged_in_user
+        if   not form                     : content = DraftContent()
+        elif form.get('type') == "comment": content = CommentContent()
+        elif form.get('type') == "article": content = ArticleContent()
+        else                              : content = DraftContent()
+        content.creator = c.logged_in_persona
         
-    if not content.parent and "form_parent_id" in form:
-        content.parent_id = form["form_parent_id"]
+    if not content.parent and "parent_id" in form:
+        content.parent_id = form["parent_id"]
         
-    if not form: return content #If there is no form data there is nothing to overlay or do
+    if not form:
+        return content #If there is no form data there is nothing to overlay or do
 
     #----------------------------------------------------
     # Morph content type before overlaying any form data
@@ -318,7 +321,7 @@ def form_to_content(form, content):
         else:
             content = DraftContent() # The existing article the publish_id is pointing too does not exisit any more, so the content should be saved as a draft, 
         
-        #if not content.editable_by(c.logged_in_user): # AllanC - do we need to double double check this user has permissions on this content to do this?
+        #if not content.editable_by(c.logged_in_persona): # AllanC - do we need to double double check this user has permissions on this content to do this?
         #    raise exception
 
 
@@ -337,20 +340,20 @@ def form_to_content(form, content):
             # The content will be populated with the form data and commited by the controler
     """
 
-    if 'form_type' in form:
-        content = morph_content_to(content, form['form_type'])
+    if 'type' in form:
+        content = morph_content_to(content, form['type'])
 
 
     #-------------------------------
     # Overlay Form over Base Content
     #-------------------------------
     # Owner
-    if "form_owner" in form:
-        content.creator_id = form["form_owner"]
+    if "owner" in form:
+        content.creator_id = form["owner"]
         # Although the form limits the user to a selectable list, any id can be passed here, it is possible that with an API call a user can give content to anyone.
         # FIXME: including people who don't want the content attributed to them...
     elif content.creator == None:
-        content.creator = c.logged_in_user
+        content.creator = c.logged_in_persona
 
     
     # for key in form: print "%s:%s" % (key,form[key])
@@ -358,51 +361,51 @@ def form_to_content(form, content):
     # TODO: from most form values we need to escape '"' and "'" characters as these are used in HTML alt tags and value tags
     
     # Content
-    if "form_content" in form:
-        content.content = clean_html_markup(form["form_content"])
+    if "content" in form:
+        content.content = clean_html_markup(form["content"])
 
     # Tags
-    if "form_tags" in form:
-        tags_raw     = form["form_tags"].split(" ")
+    if "tags" in form:
+        tags_raw     = form["tags"].split(" ")
         content.tags = [get_tag(tag) for tag in tags_raw if tag!=""]
 
     # Existing Media Form Fields
     for media in content.attachments:
         # Update media item fields
-        caption_key = "form_media_caption_%d" % (media.id)
+        caption_key = "media_caption_%d" % (media.id)
         if caption_key in form:
             media.caption = form[caption_key]
-        credit_key = "form_media_credit_%d"   % (media.id)
+        credit_key = "media_credit_%d"   % (media.id)
         if credit_key in form:
             media.credit = form[credit_key]
         # Remove media if required
-        if "form_file_remove_%d" % media.id in form:
+        if "file_remove_%d" % media.id in form:
             content.attachments.remove(media)
 
     # Add Media - if file present in form post
-    if 'form_media_file' in form and form['form_media_file'] != "":
-        form_file = form["form_media_file"]
+    if 'media_file' in form and form['media_file'] != "":
+        form_file = form["media_file"]
         media = Media()
-        media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=form["form_media_caption"], credit=form["form_media_credit"])
+        media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=form["media_caption"], credit=form["media_credit"])
         content.attachments.append(media)
         #Session.add(media) # is this needed as it is appended to content and content is in the session?
 
-    if 'form_licence' in form:
-        content.license_id = form['form_licence']
+    if 'licence' in form:
+        content.license_id = form['licence']
 
-    if 'form_location' in form:
+    if 'location' in form:
         try:
-            (lon, lat) = form['form_location'].split(" ")
+            (lon, lat) = form['location'].split(" ")
             content.location = "SRID=4326;POINT(%f %f)" % (float(lon), float(lat))
         except:
             pass
 
     # Any left over fields that just need a simple set
-    for field in ["title", ]:
-        form_field_name = "form_"+field
+    for field in ["title", "target_type"]: #, "due_date", "event_date" # need validators/converters
+        form_field_name = field
         if form_field_name in form:
-            setattr(content,field,form[form_field_name])
-
+            if hasattr(content, field):
+                setattr(content,field,form[form_field_name])
     
 
     return content
@@ -419,7 +422,8 @@ def get_content_media_upload_key(content):
     
     Suggestion: This could be persisted in the database? Maybe a separate database JUST for tempory stuff like this
     """
-    if not content or content.id == None: return ""
+    if not content or content.id == None:
+        return ""
     content_id_key  = "content_upload_%d" % content.id
     memcache_expire = 60*60 # memcache expire time in seconds 60*60 = 1 Hour
     mc              = app_globals.memcache

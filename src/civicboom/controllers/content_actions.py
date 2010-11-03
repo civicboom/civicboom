@@ -36,7 +36,7 @@ class ContentActionsController(BaseController):
             kwargs['rating'] = None
         
         content = _get_content(id)
-        content.rate(c.logged_in_user, kwargs['rating'])
+        content.rate(c.logged_in_persona, kwargs['rating'])
         return action_ok(_("Vote counted"))
 
 
@@ -62,9 +62,9 @@ class ContentActionsController(BaseController):
         session[boomkey] = True
 
         content = _get_content(id)
-        if content.creator == c.logged_in_user:
+        if content.creator == c.logged_in_persona:
             raise action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
-        content.boom_to_all_followers(c.logged_in_user)
+        content.boom_to_all_followers(c.logged_in_persona)
 
         user_log.debug("Boomed Content #%d" % int(id))
         return action_ok(_("All your followers have been informed about this content"))
@@ -162,9 +162,9 @@ class ContentActionsController(BaseController):
         @return 500   error accepting
         """
         assignment = _get_content(id)
-        status     = assignment.accept(c.logged_in_user)
+        status     = assignment.accept(c.logged_in_persona)
         if status == True:
-            assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_user, assignment=assignment))
+            assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
             user_log.debug("Accepted Content #%d" % int(id))
             return action_ok(_("_assignment accepted"))
         #elif isinstance(status,str):
@@ -188,9 +188,9 @@ class ContentActionsController(BaseController):
         @return 500   error withdrawing
         """
         assignment = _get_content(id)
-        status     = assignment.withdraw(c.logged_in_user)
+        status     = assignment.withdraw(c.logged_in_persona)
         if status == True:
-            assignment.creator.send_message(messages.assignment_interest_withdrawn(member=c.logged_in_user, assignment=assignment))
+            assignment.creator.send_message(messages.assignment_interest_withdrawn(member=c.logged_in_persona, assignment=assignment))
             user_log.debug("Withdrew from Content #%d" % int(id))
             return action_ok(_("_assignment interest withdrawn"))
         #elif isinstance(status,str):
@@ -219,7 +219,7 @@ class ContentActionsController(BaseController):
         if 'comment' not in kwargs:
             kwargs['comment'] = ''
             
-        _get_content(id).flag(member=c.logged_in_user, type=kwargs['type'], comment=kwargs['comment'])
+        _get_content(id).flag(member=c.logged_in_persona, type=kwargs['type'], comment=kwargs['comment'])
         return action_ok(_("An administrator has been alerted to this content"))
         #raise action_error(_("Error flaging content, please email us"))
 
@@ -253,5 +253,5 @@ class ContentActionsController(BaseController):
         @api contents 1.0 (WIP)
         """
         
-        c.logged_in_user.add_to_interests(id)
+        c.logged_in_persona.add_to_interests(id)
         return action_ok(_("added to interest list"))

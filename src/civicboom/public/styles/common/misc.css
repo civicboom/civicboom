@@ -93,3 +93,6 @@ BODY.c-account.a-signin .cols {
 	-webkit-column-gap: 1em;
 	-webkit-column-rule: 1px solid black;
 }
+BODY.c-account.a-signin .cols SECTION {
+	height: 100px;
+}

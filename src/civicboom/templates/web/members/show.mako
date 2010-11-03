@@ -20,7 +20,7 @@
 
     % if 'member' in d:
         <div class="avatar">
-            ${member_includes.avatar(d['member'] , show_name=True, show_follow_button=True)}
+            ${member_includes.avatar(d['member'] , show_name=True, show_follow_button=True, class_='large')}
         </div>
     
         <h2>${_("Following")}</h2>
@@ -63,11 +63,11 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	<h2>Write to ${d['member']['username']}</h2>
+	<h2>Write to ${d['member']['name']}</h2>
 	<!--#include virtual="/messages/new.frag?to=${d['member']['username']}" -->
 
 
-    ${content_list(d['member']['content_public'], type_filters=["article", "assignment"])}
+    ${content_list(d['member']['content_public'], type_filters=["draft", "article", "assignment"])}
     
     ${content_list_group(d['member']['assignments_accepted'], "assignments accepted")}
     

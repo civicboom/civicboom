@@ -24,7 +24,8 @@ def init():
                                     )
     Member.content        = relationship(Content, primaryjoin=and_(Member.id==Content.creator_id, Content.__type__!='comment'))
     
-    Member.content_public = relationship(Content, primaryjoin=and_(Member.id==Content.creator_id, Content.__type__!='comment', Content.__type__!='draft', Content.visable==True, Content.private==False))
+    Member.content_public = relationship(Content, primaryjoin=and_(Member.id==Content.creator_id, Content.__type__!='comment', Content.visable==True, Content.private==False)) #Content.__type__!='draft',
+    #Member.groups_public  = relationship(Group,   primaryjoin=and_() #AllanC - nice idea, but we need the roles .. maybe a roles public? with the group eagerloaded?
     
     Member.content_assignments_active   = relationship(AssignmentContent, primaryjoin=and_(Member.id==AssignmentContent.creator_id, AssignmentContent.due_date>=datetime.datetime.now()))    
     Member.content_assignments_previous = relationship(AssignmentContent, primaryjoin=and_(Member.id==AssignmentContent.creator_id, AssignmentContent.due_date< datetime.datetime.now()))

@@ -20,8 +20,11 @@ class UserLogHandler(logging.Handler):
         db_engine = get_engine()
 
         username = "None"
+        persona = "None"
         if c.logged_in_user:
             username = c.logged_in_user.username
+        if c.logged_in_persona:
+            persona = c.logged_in_persona.username
         url      = request.url
         addr     = request.environ["REMOTE_ADDR"]
         priority = record.levelno
@@ -31,9 +34,9 @@ class UserLogHandler(logging.Handler):
 
         connection = db_engine.connect()
         connection.execute(text("""
-            INSERT INTO events(module, line_num, username, url, address, priority, message)
-            VALUES(:module, :line_num, :username, :url, :address, :priority, :message)
-        """), module=module, line_num=line_num, username=username, url=url, address=addr, priority=priority, message=message)
+            INSERT INTO events(module, line_num, username, persona, url, address, priority, message)
+            VALUES(:module, :line_num, :username, :persona, :url, :address, :priority, :message)
+        """), module=module, line_num=line_num, username=username, persona=persona, url=url, address=addr, priority=priority, message=message)
         # connection.commit()
         connection.close()
 

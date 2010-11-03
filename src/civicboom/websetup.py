@@ -501,7 +501,7 @@ CREATE TRIGGER update_content
                 wh.copy_to_warehouse(processed.name, "avatars", file_hash, "avatar.jpg")
                 processed.close()
 
-                file_hash = "http://cb-wh-live.s3.amazonaws.com/avatars/" + file_hash
+                file_hash = "http://static.civicboom.com/avatars/" + file_hash
             return file_hash
         # }}}
 
@@ -727,24 +727,25 @@ CREATE TRIGGER update_content
 
 
         u3 = User()
-        u3.username      = u"cookie"
-        u3.name          = u"Amy M. Anderson"
+        u3.username      = u"kitten"
+        u3.name          = u"Amy M. Kitten"
         u3.status        = "active"
         u3.email         = u"AmyMAnderson@example.com"
-        u3.avatar        = u"http://rav.shishnet.org/Sylph.png"
+        u3.avatar        = u"http://static.civicboom.com/public/images/test/avatar_kitten.jpg"
 
         u4 = User()
-        u4.username      = u"jammy"
-        u4.name          = u"Jamie L. Riley"
+        u4.username      = u"puppy"
+        u4.name          = u"Jamie L. Puppy"
         u4.status        = "active"
         u4.email         = u"waffleking@example.com"
-        u4.avatar        = u"http://rav.shishnet.org/Arrnea.png"
+        u4.avatar        = u"http://static.civicboom.com/public/images/test/avatar_puppy.jpg"
 
         u5 = User()
-        u5.username      = u"Davy_H"
-        u5.name          = u"David O. Hughes"
+        u5.username      = u"bunny"
+        u5.name          = u"David O. Bunny"
         u5.status        = "active"
         u5.email         = u""
+        u5.avatar        = u"http://static.civicboom.com/public/images/test/avatar_bunny.jpg"
 
         Session.add_all([u3, u4, u5]); Session.commit()
 
@@ -754,8 +755,8 @@ CREATE TRIGGER update_content
         u6.username      = u"kentmessenger"
         u6.name          = u"Kent Messenger"
         u6.status        = "active"
-        u6.email         = u""
-        u6.avatar        = u"/images/test/avatar_km.png"
+        u6.email         = u"admin@civicboom.com"
+        u6.avatar        = u"http://static.civicboom.com/public/images/test/avatar_km.png"
 
         u6_login = UserLogin()
         u6_login.user   = u6
@@ -766,8 +767,8 @@ CREATE TRIGGER update_content
         u7.username      = u"mobiletest"
         u7.name          = u"Mr. Mobile User"
         u7.status        = "active"
-        u7.email         = u""
-        u7.avatar        = u"/images/test/avatar_mobiletest.jpg"
+        u7.email         = u"admin@civicboom.com"
+        u7.avatar        = u"http://static.civicboom.com/public/images/test/avatar_mobiletest.jpg"
 
         u7_login = UserLogin()
         u7_login.user   = u7
@@ -776,6 +777,9 @@ CREATE TRIGGER update_content
 
         Session.add_all([u6, u6_login, u7, u7_login]);
         u6.followers.append(u7)
+        u6.followers.append(u3)
+        u6.followers.append(u4)
+        u6.followers.append(u5)
         Session.commit();
 
 
@@ -860,7 +864,7 @@ CREATE TRIGGER update_content
         #ca.status     = "show"
         ca.license_id = cc_by.id
         ca.tags       = [open_source, the_moon_loc]
-        ca.location   = "SRID=4326;POINT(-0.1278328 51.5072648)"
+        ca.location   = "SRID=4326;POINT(1.0707 51.2999)"
 
         m = Media()
         # FIXME: Image.open() locks up under nosetests, see Bug #45
@@ -885,7 +889,7 @@ CREATE TRIGGER update_content
         ca2.creator    = u2
         #ca2.status     = "show"
         ca2.license_id = cc_by.id
-        ca2.location   = "SRID=4326;POINT(-0.1178328 51.5072648)"
+        ca2.location   = "SRID=4326;POINT(1.0672 51.2961)"
         ca2.tags       = [open_source, the_moon_loc]
 
         Session.add(ca2); Session.commit();
@@ -971,7 +975,7 @@ CREATE TRIGGER update_content
         c.content    = u"this is here to test that the logged in user can delete their own articles with DELETE"
         c.creator    = u1
         #c.status     = "show"
-        c.location   = "SRID=4326;POINT(-0.1278328 51.5102648)"
+        c.location   = "SRID=4326;POINT(1.0713 51.2974)"
         c.license_id = cc_by.id
 
         Session.add(c); Session.commit();
@@ -986,6 +990,7 @@ CREATE TRIGGER update_content
         c.creator    = u1
         #c.status     = "show"
         c.license_id = cc_by.id
+        c.location   = "SRID=4326;POINT(1.0862 51.2776)"
 
         Session.add(c); Session.commit();
         assert c.id == 9
@@ -1057,6 +1062,7 @@ CREATE TRIGGER update_content
         #res1.status     = "show"
         res1.license_id = cc_by.id
         res1.parent     = ca
+        res1.location   = "SRID=4326;POINT(1.0794 51.2794)"
 
 
         Session.add_all([ca, ca2, dc1, dc2, res1])

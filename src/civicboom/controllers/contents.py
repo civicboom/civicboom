@@ -20,24 +20,18 @@ from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_cont
 from civicboom.lib.communication import messages
 from civicboom.lib.helpers          import call_action
 
+# Search imports
+from civicboom.lib.search import *
+from civicboom.lib.database.gis import get_engine
+from civicboom.model      import Content, Member
+from sqlalchemy           import or_, and_
+from sqlalchemy.orm       import join
+
 
 # Logging setup
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
-#-------------------------------------------------------------------------------
-# Constants
-#-------------------------------------------------------------------------------
-
-
-index_lists = {
-    'content'             : lambda member: member.content ,
-    'assignments_active'  : lambda member: member.content_assignments_active ,
-    'assignments_previous': lambda member: member.content_assignments_previous,
-    'assignments'         : lambda member: member.content_assignments ,
-    'articles'            : lambda member: member.content_articles ,
-    'drafts'              : lambda member: member.content_drafts ,
-}
 
 #-------------------------------------------------------------------------------
 # Global Functions
@@ -51,16 +45,69 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
     if not content:
         raise action_error(_("content not found"), code=404)
     if is_viewable:
-        if not content.viewable_by(c.logged_in_user): 
+        if not content.viewable_by(c.logged_in_persona): 
             raise action_error(_("_content not viewable"), code=403)
         if content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
             raise action_error(_("_content not found"), code=404)
-    if is_editable and not content.editable_by(c.logged_in_user):
+    if is_editable and not content.editable_by(c.logged_in_persona):
         raise action_error(_("You do not have permission to edit this _content"), code=403)
-    if is_parent_owner and not content.is_parent_owner(c.logged_in_user):
+    if is_parent_owner and not content.is_parent_owner(c.logged_in_persona):
         raise action_error(_("not parent owner"), code=403)
     return content
+
+
+#-------------------------------------------------------------------------------
+# Search Filters
+#-------------------------------------------------------------------------------
+def _get_search_filters():
+    def append_search_text(query, text):
+        return query.filter(or_(Content.title.match(text), Content.content.match(text)))
+    
+    def append_search_location(query, location_text):
+        parts = location_text.split(",")
+        (lon, lat, radius) = (None, None, None)
+        if len(parts) == 2:
+            (lon, lat) = parts
+            radius = 10
+        elif len(parts) == 3:
+            (lon, lat, radius) = parts
+        zoom = 10 # FIXME: inverse of radius? see bug #50
+        if lon and lat and radius:
+            location = (lon, lat, zoom)
+            return query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
+        else:
+            return query
+    
+    def append_search_id(query, id):
+        return query.filter(Content.id==int(id))
+
+    def append_search_type(query, type_text):
+        return query.filter(Content.__type__==type_text)
+    
+    def append_search_creator(query, creator_text):
+        try:
+            return query.filter(Content.creator_id==int(creator_text))
+        except:
+            return query.filter(Member.username==creator_text)
+    
+    def append_search_response_to(query, article_id):
+        return query.filter(Content.parent_id==int(article_id))
+
+    
+    search_filters = {
+        'id'         : append_search_id ,
+        'creator'    : append_search_creator ,
+        'query'      : append_search_text ,
+        'location'   : append_search_location ,
+        'type'       : append_search_type ,
+        'response_to': append_search_response_to ,
+    }
+    
+    return search_filters
+
+search_filters = _get_search_filters()
+
 
 
 #-------------------------------------------------------------------------------
@@ -83,48 +130,51 @@ class ContentsController(BaseController):
     def index(self, **kwargs):
         """
         GET /contents: All items in the collection
-
-        @api contents 1.0 (WIP)
-
-        @param list what type of contents to return, possible values:
-          content
-          assignments_active
-          assignments_previous
-          assignments
-          articles
-          drafts
-
-        @return 200    list generated ok
-                list   array of content objects
+        @param * (see common list return controls)
+        @param limit
+        @param offset
         """
         # url('contents')
-        if 'list' not in kwargs:
-            kwargs['list'] = 'content'
+        
+        results = Session.query(Content).select_from(join(Content, Member, Content.creator))
+        results = results.filter(and_(Content.__type__!='comment', Content.visable==True, Content.private==False)) #Content.__type__!='draft'
+        results = results.order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
+        
+        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
+            kwargs['limit'] = 20
+        if 'offset' not in kwargs:
+            kwargs['offset'] = 0
+        if 'include_fields' not in kwargs:
+            kwargs['include_fields'] = ",creator"
         if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = 'creator'
+            kwargs['exclude_fields'] = ",creator_id"
+        if 'list_type' not in kwargs:
+            #kwargs['list_type'] = 'default'
+            if c.format == 'rss':                       # Default RSS to list_with_media
+                kwargs['include_fields'] += ',attachments'
         
-        list = kwargs['list']
-        if list not in index_lists:
-            raise action_error(_('list type %s not supported') % list, code=400)
-            
-        contents = index_lists[list](c.logged_in_user)
-        contents = [content.to_dict(**kwargs) for content in contents]
+        for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
+            results = search_filters[key](results, kwargs[key])
+        results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
-        return action_ok(data={'list': contents})
+        return action_ok(
+            data     = {'list': [content.to_dict(**kwargs) for content in results.all()]} ,
+        ) # return dictionaty of content to be formatted
 
 
     @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
-    def create(self, format=None):
+    def create(self, **kwargs):
         """
         POST /contents: Create a new item
 
         @api contents 1.0 (WIP)
 
-        @param form_title
-        @param form_contents
-        @param form_type
+        @param title
+        @param contents
+        @param type
         @param ...
 
         @return 201   content created
@@ -134,26 +184,33 @@ class ContentsController(BaseController):
         @return 404   parent not found
 
         @comment Shish paramaters need filling out
-        @comment Shish do all the paramaters need to start with "form_"?
-        @comment Allan   no need for all params to start with "form_" this was a leftover from the first prototype, they can be removed
         """
         # url('contents') + POST
         
+        # TODO:
+        # AllanC -This actions needs a potential revamp
+        #         preferably it shoudl call update to do all overlay processing
+        #         "new" should ONLY call create and create should auto_redirect to edit?
+        
         # if parent is specified, make sure it is valid
-        if 'form_parent_id' in request.params:
-            parent = get_content(request.params['form_parent_id'])
+        if 'parent_id' in kwargs:
+            parent = get_content(kwargs['parent_id'])
             if not parent:
                 raise action_error(message='parent not found', code=404)
-            if not parent.viewable_by(c.logged_in_user):
-                raise action_error(code=403)
+            if not parent.viewable_by(c.logged_in_persona):
+                raise action_error(message='you do not have permission to respond to this content', code=403)
         
         # if type is comment, it must have a parent
-        if request.params.get('form_type') == "comment" and 'form_parent_id' not in request.params:
+        if kwargs.get('type') == "comment" and 'parent_id' not in kwargs:
             raise action_error(code=400)
         
-        content = form_to_content(request.params, None)
+        content = form_to_content(kwargs, None)
         Session.add(content)
         Session.commit()
+        
+        if c.format == 'redirect' and content.parent:
+            return redirect(url('content', id=content.parent.id))
+        
         return action_ok(message=_(' _content created ok'), data={'id':content.id}, code=201)
 
 
@@ -168,6 +225,8 @@ class ContentsController(BaseController):
         we create a blank object and redirect to "edit-existing" mode
         """
         #url_for('new_content')
+        
+        # AllanC TODO - needs restructure - see create
         content_id = call_action(ContentsController().create, format='python')['data']['id']
         return redirect(url('edit_content', id=content_id))
 
@@ -201,17 +260,18 @@ class ContentsController(BaseController):
         #if 'submit_publish' in request.POST and :
         #    raise action_error(_("You do not have permission to publish this _content"), code=403)
         
-
-        starting_content_type = content.__type__                          # Rember the original content type to see if it has morphed
+        
+        starting_content_type = content.__type__                  # Rember the original content type to see if it has morphed
         content               = form_to_content(kwargs, content)  # Overlay form data over the current content object or return a new instance of an object
         
-        
         # If publishing perform profanity check and send notifications
-        if 'submit_publish' in request.POST:
+        if 'submit_publish' in kwargs:
             profanity_filter(content) # Filter any naughty words and alert moderator
             
+            content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
+            
             m = None
-            if starting_content_type and starting_content_type != content.__type__:
+            if starting_content_type != content.__type__:
                 # Send notifications about NEW published content
                 if   content.__type__ == "article"   :
                     m = messages.article_published_by_followed(creator=content.creator, article   =content)
@@ -319,14 +379,14 @@ class ContentsController(BaseController):
                 #update_content(content)
             
         return action_ok(
-            template = 'design09/content/view',
-            data     = {'content':content.to_dict(**kwargs)}
+            data = {'content':content.to_dict(**kwargs)}
         )
 
 
     @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
-    def edit(self, id, format='html'):
+    def edit(self, id, **kwargs):
         """
         GET /contents/{id}/edit: Form to edit an existing item
         """
@@ -334,7 +394,7 @@ class ContentsController(BaseController):
         
         c.content = _get_content(id, is_editable=True)
         
-        c.content                  = form_to_content(request.params, c.content)
+        c.content                  = form_to_content(kwargs, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
         return render("/web/content_editor/content_editor.mako")

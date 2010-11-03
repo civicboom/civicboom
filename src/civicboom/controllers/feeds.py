@@ -45,7 +45,7 @@ class FeedsController(BaseController):
     def index(self, format='html'):
         """GET /feeds: All items in the collection"""
         # url('feeds')
-        c.viewing_user = c.logged_in_user
+        c.viewing_user = c.logged_in_persona
         return action_ok(
             data={"feeds": [
                 {"id": f.id, "name": f.name, "query": str(f.query)}
@@ -62,7 +62,7 @@ class FeedsController(BaseController):
             f = Feed()
             f.name = request.POST['name']
             f.query = _post_to_query(request.POST)
-            c.logged_in_user.feeds.append(f)
+            c.logged_in_persona.feeds.append(f)
             Session.commit()
             return action_ok(_("Feed created"), code=201)
         except Exception, e:
@@ -88,7 +88,7 @@ class FeedsController(BaseController):
         f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
             raise action_error(_("No such feed"), code=404)
-        if f.member != c.logged_in_user:
+        if f.member != c.logged_in_persona:
             raise action_error(_("Not your feed"), code=403)
 
         f.name = request.POST['name']
@@ -108,7 +108,7 @@ class FeedsController(BaseController):
         f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
             raise action_error(_("No such feed"), code=404)
-        if f.member != c.logged_in_user:
+        if f.member != c.logged_in_persona:
             raise action_error(_("Not your feed"), code=403)
 
         Session.delete(f)
@@ -125,7 +125,7 @@ class FeedsController(BaseController):
 
         results = Session.query(Content)
         results = results.filter(sql(f.query))
-        results = filter(lambda content: content.viewable_by(c.logged_in_user), results)
+        results = filter(lambda content: content.viewable_by(c.logged_in_persona), results)
         results = results[0:20]
         return action_ok(
             data={"name": f.name, "results": results}
@@ -139,7 +139,7 @@ class FeedsController(BaseController):
         f = Session.query(Feed).filter(Feed.id==id).first()
         if not f:
             raise action_error(_("No such feed"), code=404)
-        if f.member != c.logged_in_user:
+        if f.member != c.logged_in_persona:
             raise action_error(_("Not your feed"), code=403)
 
         # ...

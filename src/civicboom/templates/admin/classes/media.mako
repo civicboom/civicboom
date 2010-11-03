@@ -20,7 +20,7 @@ ${common.errors(fieldset)}
 	<tr><th>${_("Media")}</th></tr>
 	<tr><td style="text-align: center">
 		## FIXME: hack because we don't have access to Media.media_url or the like
-		<% base = "http://" + config['s3_bucket_name'] + ".s3.amazonaws.com" %>
+		<% base = config['warehouse_url'] %>
 		<p><img src="${base}/media-thumbnail/${fieldset.hash.value}">
 		<p><a href="${base}/media-original/${fieldset.hash.value}">Original</a>,
 		<a href="${base}/media/${fieldset.hash.value}">Processed</a>,

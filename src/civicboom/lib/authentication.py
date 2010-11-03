@@ -4,12 +4,13 @@ Tools used for Authentication of users
 
 # Pylons imports
 from civicboom.lib.base import *
+from civicboom.lib.database.get_cached import get_membership
 
 # Civicboom imports
-from civicboom.model      import User, UserLogin
+from civicboom.model      import User, UserLogin, Member
 from civicboom.model.meta import Session
 
-from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict
+from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url
 from civicboom.lib.helpers import url_from_widget
 
 # Other imports
@@ -81,6 +82,12 @@ def is_valid_user(u):
 # Todo - look into how session is verifyed - http://pylonshq.com/docs/en/1.0/sessions/#using-session-in-secure-forms
 #        what is the secure form setting for?
 
+# AllanC - these should look at config['ssl']
+#          do we always want logged_in users to always use HTTPS?
+#          what about the https() decorator on signin paying attention to config['ssl']
+protocol_for_login   = "https"
+protocol_after_login = "http"
+
 def authorize(authenticator):
     """
     Check if logged in user has been set
@@ -97,10 +104,10 @@ def authorize(authenticator):
                 json_post = session_remove('login_redirect_post')
                 if json_post:
                     post_overlay = json.loads(json_post)
-                    c.target_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO')
+                    c.target_url = current_url()
                     c.post_values = post_overlay
                     from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
-                    return render("web/design09/misc/confirmpost.mako")
+                    return render("web/misc/confirmpost.mako")
 
             # Make original method call
             result = _target(*args, **kwargs)
@@ -112,14 +119,12 @@ def authorize(authenticator):
             if c.format == "redirect":
                 raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
             if c.format == "html":
-                redirect_url = "http://" + request.environ.get('HTTP_HOST') + request.environ.get('PATH_INFO') # AllanC - is there a way of just getting the whole request URL? why do I have to peice it together myself!
-                if 'QUERY_STRING' in request.environ:
-                    redirect_url += '?'+request.environ.get('QUERY_STRING')
+                redirect_url = current_url()
                 session_set('login_redirect'     , redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
                 # save the the session POST data to be reinstated after the redirect
                 if request.POST:
                     session_set('login_redirect_post', json.dumps(multidict_to_dict(request.POST)), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
-                return redirect(url_from_widget(controller='account', action='signin', protocol="https")) #This uses the from_widget url call to ensure that widget actions preserve the widget env
+                return redirect(url_from_widget(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
 
             # If API request - error unauthorised
             else:
@@ -141,9 +146,15 @@ def signin_user(user, login_provider=None):
     Perform the sigin for a user
     """
     user_log.info("logged in with %s" % login_provider)   # Log user login
-    session_set('user_id' , user.id      ) # Set server session variable to user.id
-    session_set('username', user.username) # Set server session username so in debug email can identify user    
-    response.set_cookie("civicboom_logged_in" , "True", int(config["beaker.session.timeout"]))
+    #session_set('user_id' , user.id      ) # Set server session variable to user.id
+    session_set('username'        , user.username) # Set server session username so we know the actual user regardless of persona
+    set_persona(user.username)
+    response.set_cookie(
+        "civicboom_logged_in", "True",
+        int(config["beaker.session.timeout"]),
+        secure=(request.environ['wsgi.url_scheme']=="https"),
+        httponly=True
+    )
 
 def signin_user_and_redirect(user, login_provider=None):
     """
@@ -154,12 +165,12 @@ def signin_user_and_redirect(user, login_provider=None):
     if 'popup_close' in request.params:
         # Redirect to close the login frame, but keep the login_redirector for a separte call later
         return redirect(url(controller='misc', action='close_popup'))
-    
+
     # Redirect them back to where they were going if a redirect was set
     login_redirector()
-    
-    # If no redirect send them to private profile and out of https and back to http
-    return redirect(url(controller="profile", action="index", protocol="http"))
+
+    # If no redirect send them to private profile
+    return redirect(url(controller="profile", action="index"))
     
 def signout_user(user):
     user_log.info("logged out")
@@ -167,3 +178,24 @@ def signout_user(user):
     response.delete_cookie("civicboom_logged_in")
     #session.save()
     #flash_message("Successfully signed out!")
+
+def set_persona(group_persona):
+    
+    def set_persona_session(username, role='admin'):
+        session_set('username_persona', username)
+        session_set('role'            , role)
+
+    if (
+        #(isinstance(group_persona, basestring) and
+        group_persona == c.logged_in_user.username 
+        #or
+        #(isinstance(group_persona, Member    ) and group_persona == c.logged_in_user         )
+       ):
+        set_persona_session(group_persona)
+        return True
+    else:
+        membership = get_membership(group_persona, c.logged_in_user)
+        if membership:
+            set_persona_session(group_persona, membership.role)
+            return True
+    return False

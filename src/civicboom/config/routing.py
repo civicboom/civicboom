@@ -35,7 +35,7 @@ def cb_resource(mapper, single, plural, **kwargs):
 
     # item extra actions
     # /foo/{id}/edit is part of the main controller by tradition, but do we want it there?
-    mapper.connect('formatted_edit_'+single, '/'+plural+'/{id}.{format}/edit', controller=plural, action='edit',   conditions=dict(method=['GET']))
+    mapper.connect('formatted_edit_'+single, '/'+plural+'/{id}/edit.{format}', controller=plural, action='edit',   conditions=dict(method=['GET']))
     mapper.connect('edit_'+single, '/'+plural+'/{id}/edit',                    controller=plural, action='edit',   conditions=dict(method=['GET']))
 
     # civicboom extra: foo_actions controller for separate /foo/42/activate methods
@@ -76,7 +76,7 @@ def make_map(config):
 
     # the first route that matches url() args is the one that's generated,
     # so put routes without slashes first
-    map.connect('/{controller}/{action}.{format}/{id}')  # CAFI
+    map.connect('/{controller}/{action}/{id}.{format}')  # CAFI
     map.connect('/{controller}/{action}/{id}')           # CAI
     map.connect('/{controller}/{action}.{format}')       # CAF
     map.connect('/{controller}/{action}')                # CA
