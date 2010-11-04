@@ -343,22 +343,6 @@ lon = d['content']['location'].split(' ')[1]
 from civicboom.model.meta import Session
 from civicboom.model import CommentContent
 %>
-<style>
-.comment TD {
-	border-top: 1px solid gray;
-	border-bottom: 1px solid gray;
-	padding: 8px;
-}
-.other_comment TD {
-	background: #FDF;
-}
-.self_comment TD {
-	background: #FFD;
-}
-.author_comment TD {
-	background: #DFD;
-}
-</style>
 	<table>
 
     % for comment in d['content']['comments']:
