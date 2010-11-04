@@ -334,9 +334,10 @@ CREATE TRIGGER update_content
         convert_legacy_database()
     ###################################################################
     
-    #else: # elif pylons.test.pylonsapp: # only populate when in test mode?
-    #    log.info("old insertion of websetup.py test data")
-        
+    if pylons.test.pylonsapp: # only populate when in test mode?
+        from civicboom.tests.init_base_data import init_base_data
+        init_base_data()
+
 
     log.info("Successfully set up tables")
 

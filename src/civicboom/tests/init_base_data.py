@@ -1,6 +1,10 @@
-from civicboom.tests import *
+# vim: set fileencoding=utf8:
+
+#from civicboom.tests import *
 from civicboom.lib.base import *
 from civicboom.model import *
+
+from civicboom.lib.database.get_cached import get_tag, get_license
 
 import hashlib
 import datetime
@@ -10,23 +14,23 @@ log = logging.getLogger(__name__)
 
 
 def init_base_data():
-        log.info("Populating tables with test data") # {{{
+        log.info("Populating tables with base test data") # {{{
 
         # Notifications disabled because no it8n is setup
-        # from pylons import config
-        # config['feature.notifications'] = False
+        from pylons import config
+        config['feature.notifications'] = False
 
 
         ###############################################################
         log.debug("Tags")
 
-        open_source   = Tag(u"Open Source", sci_tech)
-        the_moon_sci  = Tag(u"The Moon", sci_tech)
-        the_moon_loc  = Tag(u"The Moon", travel)
+        open_source   = Tag(u"Open Source", get_tag("science and technology"))
+        the_moon_sci  = Tag(u"The Moon"   , get_tag("science and technology"))
+        the_moon_loc  = Tag(u"The Moon"   , get_tag("travel"))
 
-        artist       = Tag(u"Artists", arts)
+        artist       = Tag(u"Artists", get_tag("arts"))
         mic1         = Tag(u"Michelangelo", artist)
-        characters   = Tag(u"Characters", entertainment)
+        characters   = Tag(u"Characters", get_tag("entertainment"))
         ninja        = Tag(u"Ninja Turtles", characters)
         mic2         = Tag(u"Michelangelo", ninja)
 
@@ -209,7 +213,7 @@ def init_base_data():
         """
         ca.creator    = u1
         #ca.status     = "show"
-        ca.license_id = cc_by.id
+        ca.license    = get_license("CC-BY")
         ca.tags       = [open_source, the_moon_loc]
         ca.location   = "SRID=4326;POINT(1.0707 51.2999)"
 
@@ -235,7 +239,7 @@ def init_base_data():
         ca2.content    = u"Content #2 should be owned by unitfriend for testing purposes"
         ca2.creator    = u2
         #ca2.status     = "show"
-        ca2.license_id = cc_by.id
+        ca2.license    = get_license("CC-BY")
         ca2.location   = "SRID=4326;POINT(1.0672 51.2961)"
         ca2.tags       = [open_source, the_moon_loc]
 
@@ -250,7 +254,7 @@ def init_base_data():
         c.content    = u"Content #3 should be owned by unittest for testing purposes"
         c.creator    = u1
         #c.status     = "show"
-        c.license_id = cc_by.id
+        c.license    = get_license("CC_BY")
         c.tags       = [open_source, the_moon_loc]
 
         Session.add(c); Session.commit();
@@ -264,7 +268,7 @@ def init_base_data():
         c.content    = u"Content #4 should be owned by unitfriend for testing purposes"
         c.creator    = u2
         #c.status     = "show"
-        c.license_id = cc_by.id
+        c.license    = get_license("CC-BY")
         c.tags       = [open_source, the_moon_loc]
 
         Session.add(c); Session.commit();
@@ -278,7 +282,7 @@ def init_base_data():
         c.content    = u"Here is a response by the test user"
         c.creator    = u1
         #c.status     = "show"
-        c.license_id = cc_by.id
+        #c.license    = get_license("CC_BY")
         ca2.responses.append(c)
 
         Session.add(c); Session.commit();
@@ -293,7 +297,7 @@ def init_base_data():
         c.content    = u"Here is a response by the article writer"
         c.creator    = u2
         #c.status     = "show"
-        c.license_id = cc_by.id
+        #c.license    = get_license("CC_BY")
         ca2.responses.append(c)
 
         Session.add(c); Session.commit();
@@ -308,7 +312,7 @@ def init_base_data():
         c.content    = u"Here is a response by someone who is neither the current user nor the article author"
         c.creator    = u3
         #c.status     = "show"
-        c.license_id = cc_by.id
+        #c.license    = get_license("CC_BY")
         ca2.responses.append(c)
 
         Session.add(c); Session.commit();
@@ -323,7 +327,7 @@ def init_base_data():
         c.creator    = u1
         #c.status     = "show"
         c.location   = "SRID=4326;POINT(1.0713 51.2974)"
-        c.license_id = cc_by.id
+        c.license    = get_license("CC-BY")
 
         Session.add(c); Session.commit();
         assert c.id == 8
@@ -336,7 +340,7 @@ def init_base_data():
         c.content    = u"this is here to test that the logged in user can delete their own articles with _method=DELETE"
         c.creator    = u1
         #c.status     = "show"
-        c.license_id = cc_by.id
+        #c.license    = get_license("CC_BY")
         c.location   = "SRID=4326;POINT(1.0862 51.2776)"
 
         Session.add(c); Session.commit();
@@ -350,7 +354,7 @@ def init_base_data():
         cc2.content    = u"Here is a response by the article author"
         cc2.creator    = u1
         #cc2.status     = "show"
-        cc2.license_id = cc_by.id
+        #cc2.license    = get_license("CC_BY")
         ca.responses.append(cc2)
 
         cc3 = CommentContent()
@@ -358,7 +362,7 @@ def init_base_data():
         cc3.content    = u"Here is a response with media"
         cc3.creator    = u4
         #cc3.status     = "show"
-        cc3.license_id = cc_by.id
+        #cc3.license    = get_license("CC_BY")
         ca.responses.append(cc3)
 
         cc4 = CommentContent()
@@ -366,7 +370,7 @@ def init_base_data():
         cc4.content    = u"Here is a response by you (if you = unittest)"
         cc4.creator    = u1
         #cc4.status     = "show"
-        cc4.license_id = cc_by.id
+        #cc4.license_id = cc_by.id
         ca.responses.append(cc4)
 
         cc5 = CommentContent()
@@ -374,7 +378,7 @@ def init_base_data():
         cc5.content    = u"Here is a response by someone else"
         cc5.creator    = u5
         #cc5.status     = "show"
-        cc5.license_id = cc_by.id
+        #cc5.license_id = cc_by.id
         ca.responses.append(cc5)
 
         m = Media()
@@ -392,14 +396,14 @@ def init_base_data():
         dc1.title      = u"Delete me with DELETE"
         dc1.content    = u"I am writing a longer response, worthy of being published separately"
         #dc1.status     = "show"
-        dc1.license_id = cc_by.id
+        dc1.license    = get_license("CC-BY")
         u1.content.append(dc1)
 
         dc2 = DraftContent()
         dc2.title      = u"Delete me with fakeout"
         dc2.content    = u"I am writing a longer response, worthy of being published separately"
         #dc2.status     = "show"
-        dc2.license_id = cc_by.id
+        dc2.license    = get_license("CC-BY")
         u1.content.append(dc2)
 
         res1 = ArticleContent()
@@ -407,7 +411,7 @@ def init_base_data():
         res1.content    = u"oh me oh my"
         res1.creator    = u2
         #res1.status     = "show"
-        res1.license_id = cc_by.id
+        res1.license    = get_license("CC-BY-NC")
         res1.parent     = ca
         res1.location   = "SRID=4326;POINT(1.0794 51.2794)"
 
@@ -449,7 +453,7 @@ def init_base_data():
         asc.content    = u"Get Mr Test to stop singing, write an article about how you did it"
         #asc.status     = "show"
         asc.private    = True
-        asc.license_id = cc_by.id
+        asc.license    = get_license("CC-BY")
         #asc.assigned_to.append(g)
         g.content.append(asc)
         Session.add_all([asc, ])
@@ -461,7 +465,7 @@ def init_base_data():
         asc2.title      = u"Assignment for the world to see"
         asc2.content    = u"There once was a ugly duckling. Damn it was ugly"
         #asc2.status     = "show"
-        asc2.license_id = cc_by.id
+        asc2.license    = get_license("CC-BY-NC")
         u1.content.append(asc2)
         Session.add_all([asc2, ])
         

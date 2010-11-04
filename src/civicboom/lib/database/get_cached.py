@@ -28,6 +28,17 @@ add_etag_dependency_key("member_assignments_active")
 def get_licenses():
     return Session.query(License).all()
 
+# AllanC - primarly used in setup of test data, not normally used in main site operation
+def get_license(license):
+    try:
+        return Session.query(License).filter_by(code=license).one()
+    except:
+        try:
+            return Session.query(License).filter_by(name=license).one()
+        except:
+            pass
+    return None
+
 def get_member_nocache(member):
     assert type(member) in [int, str, unicode]
     #if type(member) == int:
