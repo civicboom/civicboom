@@ -243,6 +243,7 @@ HTML, BODY {
 	background: #CCC;
 	border-top: 1px solid black;
 	border-left: 1px solid black;
+	font-size: 10px;
 }
 .olPopup {
 	border: 2px solid gray;
