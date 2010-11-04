@@ -25,9 +25,13 @@ __all__ = ['environ', 'url', 'TestController']
 # Invoke websetup with the current config file
 SetupCommand('setup-app').run([pylons.test.pylonsapp.config['__file__']])
 
+
 environ = {}
 
 class TestController(TestCase):
+
+    logged_in_as = None
+    auth_token   = None
 
     def __init__(self, *args, **kwargs):
         wsgiapp = pylons.test.pylonsapp
@@ -37,25 +41,34 @@ class TestController(TestCase):
         TestCase.__init__(self, *args, **kwargs)
 
     def log_in(self):
-        response = self.app.post(
-            url(controller='account', action='signin'),
-            extra_environ={'HTTP_X_URL_SCHEME': 'https'},
-            params={
-                'username': u'unittest',
-                'password': u'password'
-            }
-        )
-        response = self.app.get(url(controller='profile', action='index')) # get an auth token
-        self.auth_token = response.session['_authentication_token']
+        self.log_in_as(u'unittest')
+
+    def log_in_as(self, username, password=u'password'):
+        if self.logged_in_as != username:
+            self.log_out()
+            response = self.app.post(
+                url(controller='account', action='signin'),
+                extra_environ={'HTTP_X_URL_SCHEME': 'https'},
+                params={
+                    'username': username ,
+                    'password': password ,
+                }
+            )
+            response = self.app.get(url(controller='profile', action='index')) # get an auth token
+            self.auth_token   = response.session['_authentication_token']
+            self.logged_in_as = username
 
     def log_out(self):
-        response = self.app.post(
-            url(controller='account', action='signout'),
-            extra_environ={'HTTP_X_URL_SCHEME': 'https'},
-            params={
-                '_authentication_token': self.auth_token
-            }
-        )
+        if self.logged_in_as:
+            response = self.app.post(
+                url(controller='account', action='signout'),
+                extra_environ={'HTTP_X_URL_SCHEME': 'https'},
+                params={
+                    '_authentication_token': self.auth_token
+                }
+            )
+            self.auth_token   = None
+            self.logged_in_as = None
 
     def setUp(self):
         # log in by default

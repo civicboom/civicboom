@@ -39,9 +39,9 @@ def cb_resource(mapper, single, plural, **kwargs):
     mapper.connect('edit_'+single, '/'+plural+'/{id}/edit',                    controller=plural, action='edit',   conditions=dict(method=['GET']))
 
     # civicboom extra: foo_actions controller for separate /foo/42/activate methods
-    mapper.connect('formatted_'+single+'_action', '/'+plural+'/{id}/{action}.{format}',  controller=single+'_actions')
-    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}',              controller=single+'_actions', format="redirect", conditions=dict(method=['POST']))
-    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}',              controller=single+'_actions', format="html",     conditions=dict(method=['GET']))
+    #mapper.connect('formatted_'+single+'_action', '/'+plural+'/{id}/{action}.{format}',  controller=single+'_actions')
+    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',              controller=single+'_actions', format="redirect", conditions=dict(method=['POST']))
+    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',              controller=single+'_actions', format="html",     conditions=dict(method=['GET']))
 
 
 def make_map(config):

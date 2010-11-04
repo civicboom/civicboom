@@ -82,6 +82,7 @@ generators = [
     ["syndicate_expire",                     "ne", _("_article was not syndicated"), _("Your syndication request for %(article)s was unsuccessful. Your _article is now publicly visable")],
     ["assignment_due_7days",                 "ne", _("_assignment due next week"),   _("The _assignment you accepted %(assignment)s is due next week")],
     ["assignment_due_1day",                  "ne", _("_assignment due tomorrow"),    _("The _assignment you accepted %(assignment)s is due tomorrow")],
+    ["group_deleted",                        "ne", _("_group deleted"),              _("The _group %(group)s has been deleted")],
     # response seen
     # group join, role, invite, removed, etc
 ]
