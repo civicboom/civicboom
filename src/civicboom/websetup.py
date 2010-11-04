@@ -7,7 +7,7 @@ from civicboom.model import meta
 from civicboom.model.meta import Base, Session
 from civicboom.model import License, Tag
 
-#from civicboom.lib import worker
+from civicboom.lib import worker
 
 import pylons.test
 
@@ -341,7 +341,7 @@ CREATE TRIGGER update_content
 
     log.info("Successfully set up tables")
 
-    #worker.stop_worker()
+    worker.stop_worker()
     
     log.info("Setup complete")
     
