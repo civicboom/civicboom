@@ -22,8 +22,24 @@ class TestGroupsController(TestController):
 
     def test_new(self):
         response = self.app.get(url('new_group'))
-        
-    def test_create(self):
+
+
+
+
+
+
+
+    def test_subtests(self):
+        self.subtest_create()
+        self.subtest_create_invalid()
+        self.subtest_create_invalid_groupname()
+        self.subtest_edit()
+        #self.subtest_update()
+        self.subtest_join_request()
+        self.subtest_setrole()
+        self.subtest_delete()
+
+    def subtest_create(self):
         response = self.app.post(
             url('groups', format='json'),
             params={
@@ -44,7 +60,7 @@ class TestGroupsController(TestController):
         assert group_id > 0
         
 
-    def test_create_invalid(self):
+    def subtest_create_invalid(self):
         response = self.app.post(
             url('groups', format='json'),
             params={
@@ -67,7 +83,7 @@ class TestGroupsController(TestController):
 
 
 
-    def test_create_invalid_groupname(self):
+    def subtest_create_invalid_groupname(self):
         # username duplicate
         response = self.app.post(
             url('groups', format='json'),
@@ -109,7 +125,7 @@ class TestGroupsController(TestController):
 
     ## edit -> update ########################################################
     
-    def test_edit(self):
+    def subtest_edit(self):
         global group_id
         
         response = self.app.get(url('edit_group', id=1       ), status=404)
@@ -122,10 +138,12 @@ class TestGroupsController(TestController):
         response = self.app.get(url('edit_group', id=group_id), status=403) # permission denied not a group admin
 
         self.log_out()
-        self.log_in_as('unittest')
 
-    def test_update(self):
+
+    def subtest_update(self):
         global group_id
+
+        self.log_in_as('unittest')
         
         response = self.app.put(
             url('group', id=group_id, format='json'),
@@ -145,12 +163,12 @@ class TestGroupsController(TestController):
     
     ## invite -> join -> join request ########################################
     
-    def test_join_request(self):
+    def subtest_join_request(self):
         """
         Go though the process of requesting to join a group and the admin accepting the request
         """
         global group_id
-        self.log_out()
+        
         self.log_in_as('unitfriend')
         
         # Create a join request (as group is invite and request and unitfriend is not a member)
@@ -207,7 +225,7 @@ class TestGroupsController(TestController):
     
     ## setrole ###############################################################
     
-    def test_setrole(self):
+    def subtest_setrole(self):
         global group_id
         
         self.log_in_as('unittest')
@@ -250,11 +268,13 @@ class TestGroupsController(TestController):
     
     ## delete ################################################################
     
-    def test_delete(self):
+    def subtest_delete(self):
         """
         As 'unitfriend' is now the only admin of the group they will remove it
         """
         global group_id
+        
+        self.log_in_as('unittest')
         
         # Try deleting when logged in as 'unittest' ... should fail as 'unittest' is not an admin anymore
         response = self.app.delete(
@@ -265,7 +285,6 @@ class TestGroupsController(TestController):
             status=403
         )
         
-        self.log_out()
         self.log_in_as('unitfriend')
         
         response = self.app.delete(
