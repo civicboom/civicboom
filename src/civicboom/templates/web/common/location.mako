@@ -125,7 +125,7 @@ $(function() {
 
 <%def name="minimap(name='map', width='250px', height='250px', lon=None, lat=None, zoom=13, feeds=[], controls=False)">
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
-<script src="http://openlayers.org/api/OpenLayers.js"></script>
+<script src="/javascript/OpenLayers.js"></script>
 <script src="/javascript/gears_init.js"></script>
 <script src="/javascript/geo.js"></script>
 <script type="text/javascript">
