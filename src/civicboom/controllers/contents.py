@@ -397,5 +397,5 @@ class ContentsController(BaseController):
         c.content                  = form_to_content(kwargs, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
-        return render("/web/content_editor/content_editor.mako")
+        return action_ok()
 
