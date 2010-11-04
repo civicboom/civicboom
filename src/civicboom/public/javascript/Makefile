@@ -6,7 +6,8 @@ COMMON=\
 
 MAPS=\
 	gears_init.js geo.js \
-	OpenLayers.js
+	OpenLayers.js \
+	minimap.js
 
 OUT=_combined.common.js _combined.maps.js
 

@@ -17,43 +17,29 @@ if not always_show_map:
 	style = style + " display: none; position: absolute; -webkit-box-shadow: 3px 3px 3px #666;"
 %>
 <div style="width: ${width}; height: ${height}; border: 1px solid black; ${style}" id="${field_name}_div"></div>
-% if config['development_mode']:
-<script src="/javascript/OpenLayers.js"></script>
-<script src="/javascript/gears_init.js"></script>
-<script src="/javascript/geo.js"></script>
-% else:
-<script src="/javascript/_combined.maps.js"></script>
-% endif
+<%
+if config['development_mode']:
+	scripts_end.extend([
+		'<script src="/javascript/OpenLayers.js"></script>',
+		'<script src="/javascript/gears_init.js"></script>',
+		'<script src="/javascript/geo.js"></script>',
+		'<script src="/javascript/minimap.js"></script>',
+	])
+else:
+	scripts_end.append(
+		'<script src="/javascript/_combined.maps.js"></script>'
+	)
+%>
 <script type="text/javascript">
 $(function() {
-	OpenLayers.ImgPath = "/images/map-icons/";
-	var ${field_name}_map = new OpenLayers.Map('${field_name}_div', {maxResolution:'auto'});
-	${field_name}_map.addLayer(new OpenLayers.Layer.OSM("OpenLayers OSM"));
-% if lon != None and lat != None:
-	${field_name}_map.setCenter(
-		new OpenLayers.LonLat(${lon}, ${lat}).transform(
-			new OpenLayers.Projection("EPSG:4326"),
-			${field_name}_map.getProjectionObject()
-		),
-		${zoom}
+	map = minimap(
+		'${field_name}_div',
+		{
+			controls: true,
+			lonlat: {lon:${lon}, lat:${lat}},
+			zoom: ${zoom},
+		}
 	);
-% else:
-	function show_map(position) {
-		var latitude = position.coords.latitude;
-		var longitude = position.coords.longitude;
-		${field_name}_map.setCenter(
-			new OpenLayers.LonLat(longitude, latitude).transform(
-				new OpenLayers.Projection("EPSG:4326"),
-				${field_name}_map.getProjectionObject()
-			),
-			${zoom}
-		);
-		// FIXME: setCenterAndZoom(position.coords.accuracy)
-	}
-	if(geo_position_js.init()){
-	   geo_position_js.getCurrentPosition(show_map);
-	}
-% endif
 
 	OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
 		defaultHandlerOptions: {
@@ -75,9 +61,9 @@ $(function() {
 		}, 
 
 		trigger: function(e) {
-			 var p = ${field_name}_map.getLonLatFromViewPortPx(e.xy);
+			 var p = map.getLonLatFromViewPortPx(e.xy);
 			 p = new OpenLayers.LonLat(p.lon, p.lat).transform(
-				 ${field_name}_map.getProjectionObject(),
+				 map.getProjectionObject(),
 				 new OpenLayers.Projection("EPSG:4326")
 			 );
 
@@ -89,7 +75,7 @@ $(function() {
 	});
 
 	var click = new OpenLayers.Control.Click();
-	${field_name}_map.addControl(click);
+	map.addControl(click);
 	click.activate();
 
 
@@ -112,10 +98,10 @@ $(function() {
 
 			$('#${field_name}').val(lon+","+lat);
 			$('#${field_name}_name').val(ui.item.label);
-			${field_name}_map.setCenter(
+			map.setCenter(
 				new OpenLayers.LonLat(Number(lon), Number(lat)).transform(
 					new OpenLayers.Projection("EPSG:4326"),
-					${field_name}_map.getProjectionObject()
+					map.getProjectionObject()
 				),
 				13
 			);
@@ -128,55 +114,32 @@ $(function() {
 
 <%def name="minimap(name='map', width='250px', height='250px', lon=None, lat=None, zoom=13, feeds=[], controls=False)">
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
-% if config['development_mode']:
-<script src="/javascript/OpenLayers.js"></script>
-<script src="/javascript/gears_init.js"></script>
-<script src="/javascript/geo.js"></script>
-% else:
-<script src="/javascript/_combined.maps.js"></script>
-% endif
+<%
+import json
+
+if config['development_mode']:
+	scripts_end.extend([
+		'<script src="/javascript/OpenLayers.js"></script>',
+		'<script src="/javascript/gears_init.js"></script>',
+		'<script src="/javascript/geo.js"></script>',
+		'<script src="/javascript/minimap.js"></script>',
+	])
+else:
+	scripts_end.append(
+		'<script src="/javascript/_combined.maps.js"></script>'
+	)
+%>
 <script type="text/javascript">
 $(function() {
-	OpenLayers.ImgPath = "/images/map-icons/";
-% if controls:
-	var ${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto'});
-% else:
-	var ${name} = new OpenLayers.Map('${name}_div', {maxResolution:'auto', controls:[new OpenLayers.Control.Attribution()]});
-% endif
-	${name}.addLayer(new OpenLayers.Layer.OSM("OpenLayers OSM"));
-% if lon != None and lat != None:
-	${name}.setCenter(
-		new OpenLayers.LonLat(${lon}, ${lat}).transform(
-			new OpenLayers.Projection("EPSG:4326"),
-			${name}.getProjectionObject()
-		),
-		${zoom}
+	minimap(
+		'${name}_div',
+		{
+			controls: ${str(controls).lower()},
+			lonlat: {lon:${lon}, lat:${lat}},
+			zoom: ${zoom},
+		},
+		${json.dumps(feeds)|n}
 	);
-% else:
-	function show_map(position) {
-		var latitude = position.coords.latitude;
-		var longitude = position.coords.longitude;
-		${name}.setCenter(
-			new OpenLayers.LonLat(longitude, latitude).transform(
-				new OpenLayers.Projection("EPSG:4326"),
-				${name}.getProjectionObject()
-			)
-		);
-		// FIXME: setCenterAndZoom(position.coords.accuracy)
-	}
-	if(geo_position_js.init()){
-	   geo_position_js.getCurrentPosition(show_map);
-	}
-% endif
-	/* ${name}.addControl(new OpenLayers.Control.LayerSwitcher()); */
-% for feed in feeds:
-	var pin  = new OpenLayers.Icon("/images/pins/${feed['pin']}.png", new OpenLayers.Size(21,25));
-	var newl = new OpenLayers.Layer.GeoRSS( 'GeoRSS', '${feed['url']}', {'icon': pin});
-	% if 'focus' in feed and feed['focus'] == True:
-		newl.events.on({'loadend': function() {${name}.zoomToExtent(newl.getDataExtent());}});
-	% endif
-	${name}.addLayer(newl);
-% endfor
 });
 </script>
 </%def>
