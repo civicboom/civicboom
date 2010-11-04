@@ -2,7 +2,7 @@ all: cb-website.deb python-cbmisc.deb
 
 VERSION := $(shell git describe)
 
-cb-website.deb: $(shell find ../admin_scripts ../docs ../nginx ../selenium ../src -type f) _combined.js web.css widget.css mobile.css
+cb-website.deb: $(shell find ../admin_scripts ../docs ../nginx ../selenium ../src -type f)
 	rm -rf fs-website
 	mkdir -p fs-website/DEBIAN/
 	cp control fs-website/DEBIAN/control
@@ -23,26 +23,11 @@ cb-website.deb: $(shell find ../admin_scripts ../docs ../nginx ../selenium ../sr
 	cp init.d fs-website/etc/init.d/cb-website
 	mkdir -p fs-website/opt/cb/etc/ssl
 	cp ../ssl/* fs-website/opt/cb/etc/ssl/
-	cp _combined.js fs-website/opt/cb/share/website/civicboom/public/javascript/
-	cp web.css widget.css mobile.css fs-website/opt/cb/share/website/civicboom/public/styles/
+	cd fs-website/opt/cb/share/website/civicboom/public/javascript/ && make
+	cd fs-website/opt/cb/share/website/civicboom/public/styles/ && make
 	../admin_scripts/site_to_english ../src/civicboom/i18n/en/LC_MESSAGES/civicboom.po
 	fakeroot dpkg -b fs-website cb-website_${VERSION}_all.deb 
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
-
-_combined.js: $(shell python helper.py list_local_js) Makefile
-	( \
-	cat `python helper.py list_local_js` && \
-	curl `python helper.py list_remote_js` \
-	) | yui-compressor --type js -o _combined.js
-
-web.css: ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/web/*.css Makefile
-	cat ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/web/*.css | yui-compressor --type css -o web.css
-
-widget.css: ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/widget/*.css Makefile
-	cat ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/widget/*.css | yui-compressor --type css -o widget.css
-
-mobile.css: ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/mobile/*.css Makefile
-	cat ../src/civicboom/public/styles/common/*.css ../src/civicboom/public/styles/mobile/*.css | yui-compressor --type css -o mobile.css
 
 python-cbmisc.deb: ../src/setup.py
 	mkdir -p fs-env/DEBIAN/
