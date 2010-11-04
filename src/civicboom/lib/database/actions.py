@@ -265,7 +265,7 @@ def set_role(group, member, role, delay_commit=False):
 
 
 def del_group(group):    
-    for member in group.members:
+    for member in [member_role.member for member_role in group.members_roles]:
         member.send_message(messages.group_deleted(group=group), delay_commit=True)
     Session.delete(group)
     Session.commit()

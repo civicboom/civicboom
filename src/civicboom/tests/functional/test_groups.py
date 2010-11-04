@@ -2,28 +2,29 @@ from civicboom.tests import *
 
 import json
 
-group_id = 0
+#group_id = 0
 
 class TestGroupsController(TestController):
 
     #group_id = 0
 
+    def test_group(self):
+
     ## index -> show #########################################################
 
-    def test_group_page(self):
         response = self.app.get(url('group', id='patty', format='json'))
         assert 'patty' in response
 
-    def test_group_page_html(self):
+#    def test_group_page_html(self):
         response = self.app.get(url('group', id='patty'))
         assert 'patty' in response
 
     ## new -> create #########################################################
 
-    def test_new(self):
+#    def test_new(self):
         response = self.app.get(url('new_group'))
         
-    def test_create(self):
+#    def test_create(self):
         response = self.app.post(
             url('groups', format='json'),
             params={
@@ -33,19 +34,18 @@ class TestGroupsController(TestController):
                 'description'  : 'This group should not be visable once the tests have completed because it will be removed' ,
                 'default_role' : 'editor' ,
                 'join_mode'    : 'invite_and_request' ,
-                'member_visability'         : 'private' ,
+                'member_visability'         : 'public' , #required to test join request later
                 'default_content_visability': 'public' ,
             },
             status=201
         )
-        print response.body
         c = json.loads(response.body)
-        global group_id
+#        global group_id
         group_id = int(c['data']['id'])
         assert group_id > 0
         
 
-    def test_create_invalid(self):
+#    def test_create_invalid(self):
         response = self.app.post(
             url('groups', format='json'),
             params={
@@ -68,7 +68,7 @@ class TestGroupsController(TestController):
 
 
 
-    def test_create_invalid_groupname(self):
+#    def test_create_invalid_groupname(self):
         # username duplicate
         response = self.app.post(
             url('groups', format='json'),
@@ -110,9 +110,9 @@ class TestGroupsController(TestController):
 
     ## edit -> update ########################################################
     
-    def test_edit(self):
+#    def test_edit(self):
         response = self.app.get(url('edit_group', id=1       ), status=404)
-        global group_id
+#        global group_id
         assert group_id > 0
         response = self.app.get(url('edit_group', id=group_id), status=200)
         assert 'test_group' in response
@@ -121,8 +121,12 @@ class TestGroupsController(TestController):
         self.log_in_as(u'unitfriend')
         response = self.app.get(url('edit_group', id=group_id), status=403) # permission denied not a group admin
 
-    def test_update(self):
-        global group_id
+        self.log_out()
+        self.log_in_as('unittest')
+
+#    def test_update(self):
+#        global group_id
+        """
         response = self.app.put(
             url('group', id=group_id, format='json'),
             params={
@@ -137,11 +141,14 @@ class TestGroupsController(TestController):
         assert 'ALRIGHT' in response
         assert 'editor' not in response
         assert 'contributor' in response
-    
+        """
     
     ## invite -> join -> join request ########################################
     
-    def test_join_invite_request(self):
+#    def test_join_request(self):
+        """
+        Go though the process of requesting to join a group and the admin accepting the request
+        """
         self.log_out()
         self.log_in_as('unitfriend')
         
@@ -156,23 +163,119 @@ class TestGroupsController(TestController):
         )
         assert 'request' in response # successful "join request" in response
         
+        self.log_out()
+        
+        # check member is actually part of group
+        #   - member visability is public so the join request should be visable even when viewed by a logged_out user
+        response = self.app.get(url('group', id=group_id, format='json'))
+        response_json = json.loads(response.body)
+        found = False
+        for member in response_json['data']['group']['members']:
+            if member['username'] == 'unitfriend' and member['status']=='request':
+                found = True
+        assert found
+        
+        self.log_in_as('unittest')
+        
+        response = self.app.get(url('group', id=group_id, format='json'))
+        assert 'unitfriend' in response
+        assert 'request'    in response # successful "join request" in member list
+        
+        # accept join request
+        response = self.app.post(
+            url('group_action', action='set_role', id=group_id, format='json') ,
+            params={
+                '_authentication_token': self.auth_token ,
+                'member': 'unitfriend',
+            } ,
+            status=200
+        )
+
+        self.log_out()
+        
+        # check member is now part of group
+        response = self.app.get(url('group', id=group_id, format='json'))
+        response_json = json.loads(response.body)
+        found = False
+        for member in response_json['data']['group']['members']:
+            if member['username'] == 'unitfriend' and member['status']=='active':
+                found = True
+        assert found
+        
+        
     
     ## setrole ###############################################################
     
-    def test_setrole(self):
-        global group_id
+#    def test_setrole(self):
+#        global group_id
+        
+        self.log_in_as('unittest')
+        
+        # Cannot set own role as unittest is the only admin - error will be thrown
         response = self.app.post(
             url('group_action', action='set_role', id=group_id, format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unittest',
-                'role'  : 'editor'
+                'role'  : 'editor',
             } ,
             status=400
-        ) # Cannot remove last admin error to be thrown
+        ) 
         assert 'admin' in response
+        
+        # Upgrade 'unitfriend' to admin
+        response = self.app.post(
+            url('group_action', action='set_role', id=group_id, format='json') ,
+            params={
+                '_authentication_token': self.auth_token ,
+                'member': 'unitfriend',
+                'role'  : 'admin',
+            } ,
+            status=200
+        )
+        
+        # Now downgrade self to observer
+        response = self.app.post(
+            url('group_action', action='set_role', id=group_id, format='json') ,
+            params={
+                '_authentication_token': self.auth_token ,
+                'member': 'unittest',
+                'role'  : 'observer',
+            } ,
+            status=200
+        ) 
+        
     
     
     ## delete ################################################################
     
-    
+#    def test_delete(self):
+        """
+        As 'unitfriend' is now the only admin of the group they will remove it
+        """
+#        global group_id
+        
+        # Try deleting when logged in as 'unittest' ... should fail as 'unittest' is not an admin anymore
+        response = self.app.delete(
+            url('group', id=group_id, format="json"),
+            params={
+                '_authentication_token': self.auth_token
+            },
+            status=403
+        )
+        
+        self.log_out()
+        self.log_in_as('unitfriend')
+        
+        response = self.app.delete(
+            url('group', id=group_id, format="json"),
+            params={
+                '_authentication_token': self.auth_token
+            },
+            status=200
+        )
+        
+        self.log_out()
+        
+        # The group should not exist
+        response = self.app.get(url('group', id=group_id, format='json'), status=404)
