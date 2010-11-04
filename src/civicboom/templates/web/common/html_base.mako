@@ -56,7 +56,6 @@
 % if config['development_mode']:
 	<!-- Browser bug fixes -->
 	<script src="/javascript/Modernizr.js"></script>
-	<script src="/javascript/IE9.js"></script>
 	<!-- jQuery -->
 	<script src="/javascript/jquery-1.4.2.js"></script>
 	<script src="/javascript/jquery.ui-1.8.4.js"></script>
@@ -67,8 +66,12 @@
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/toggle_div.js"></script>
 % else:
-	<script src="/javascript/_combined.js"></script>
+	<script src="/javascript/_combined.common.js"></script>
 % endif
+<!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
+<!--[if lt IE 9]>
+	<script src="/javascript/IE9.js"></script>
+<![endif]-->
 
 
 ##--------------------------------------------------------
