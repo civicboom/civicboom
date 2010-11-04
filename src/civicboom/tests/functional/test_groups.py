@@ -8,23 +8,22 @@ class TestGroupsController(TestController):
 
     #group_id = 0
 
-    def test_group(self):
-
     ## index -> show #########################################################
 
+    def test_group(self):
         response = self.app.get(url('group', id='patty', format='json'))
         assert 'patty' in response
 
-#    def test_group_page_html(self):
+    def test_group_page_html(self):
         response = self.app.get(url('group', id='patty'))
         assert 'patty' in response
 
     ## new -> create #########################################################
 
-#    def test_new(self):
+    def test_new(self):
         response = self.app.get(url('new_group'))
         
-#    def test_create(self):
+    def test_create(self):
         response = self.app.post(
             url('groups', format='json'),
             params={
@@ -40,12 +39,12 @@ class TestGroupsController(TestController):
             status=201
         )
         c = json.loads(response.body)
-#        global group_id
+        global group_id
         group_id = int(c['data']['id'])
         assert group_id > 0
         
 
-#    def test_create_invalid(self):
+    def test_create_invalid(self):
         response = self.app.post(
             url('groups', format='json'),
             params={
@@ -68,7 +67,7 @@ class TestGroupsController(TestController):
 
 
 
-#    def test_create_invalid_groupname(self):
+    def test_create_invalid_groupname(self):
         # username duplicate
         response = self.app.post(
             url('groups', format='json'),
@@ -110,9 +109,10 @@ class TestGroupsController(TestController):
 
     ## edit -> update ########################################################
     
-#    def test_edit(self):
+    def test_edit(self):
+        global group_id
+        
         response = self.app.get(url('edit_group', id=1       ), status=404)
-#        global group_id
         assert group_id > 0
         response = self.app.get(url('edit_group', id=group_id), status=200)
         assert 'test_group' in response
@@ -124,9 +124,9 @@ class TestGroupsController(TestController):
         self.log_out()
         self.log_in_as('unittest')
 
-#    def test_update(self):
-#        global group_id
-        """
+    def test_update(self):
+        global group_id
+        
         response = self.app.put(
             url('group', id=group_id, format='json'),
             params={
@@ -141,14 +141,15 @@ class TestGroupsController(TestController):
         assert 'ALRIGHT' in response
         assert 'editor' not in response
         assert 'contributor' in response
-        """
+        
     
     ## invite -> join -> join request ########################################
     
-#    def test_join_request(self):
+    def test_join_request(self):
         """
         Go though the process of requesting to join a group and the admin accepting the request
         """
+        global group_id
         self.log_out()
         self.log_in_as('unitfriend')
         
@@ -206,8 +207,8 @@ class TestGroupsController(TestController):
     
     ## setrole ###############################################################
     
-#    def test_setrole(self):
-#        global group_id
+    def test_setrole(self):
+        global group_id
         
         self.log_in_as('unittest')
         
@@ -249,11 +250,11 @@ class TestGroupsController(TestController):
     
     ## delete ################################################################
     
-#    def test_delete(self):
+    def test_delete(self):
         """
         As 'unitfriend' is now the only admin of the group they will remove it
         """
-#        global group_id
+        global group_id
         
         # Try deleting when logged in as 'unittest' ... should fail as 'unittest' is not an admin anymore
         response = self.app.delete(
