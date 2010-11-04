@@ -1,8 +1,14 @@
 <!DOCTYPE html>
-<html class='no-js'>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" href="${h.wh_public("images/civicboom.ico")}" />
+	<link rel="apple-touch-icon" href="${h.wh_public("images/civicboom.png")}">
 
 ##----------------------------------------------------------------------------
 ## Meta Text
@@ -11,6 +17,8 @@
 	<meta name="keywords"    content="" />
 	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
 	<meta name="robots"      content="all" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta charset="utf-8">
 
 ##----------------------------------------------------------------------------
 ## Title
@@ -85,14 +93,6 @@ ${self.head_links()}
 ##----------------------------------------------------------------------------
 % if config['development_mode']:
 	<!-- Development Mode - Enabale Console Logging in client browser (recomend firebug) but could instate YUI log console here -->
-    
-    ## YUI 2 (old and poo)
-	##<!-- Use console output with: YAHOO.log("Loggy log log"); -->
-    ##<script type="text/javascript" src="http://yui.yahooapis.com/2.8.2/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-	##<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/logger/logger-min.js"></script>
-	##<script type="text/javascript">
-    ##    YAHOO.widget.Logger.enableBrowserConsole();
-    ##</script>
     
 	## YUI 3
     <script type="text/javascript" charset="utf-8" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js"></script>
