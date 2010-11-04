@@ -184,8 +184,8 @@ lon = d['content']['location'].split(' ')[1]
           lat = d['content']['location'].split(' ')[0],
           lon = d['content']['location'].split(' ')[1],
           feeds = [
-              dict(pin='yellow',  url='/search/content.rss?location='+lon+','+lat   ),
-              dict(pin='red',     url='/search/content.rss?id='+d['content']['id']  )
+              dict(pin='yellow',  url='/contents.rss?location='+lon+','+lat   ),
+              dict(pin='red',     url='/contents.rss?id='+d['content']['id']  )
 		  ]
       )}</p>
     % endif
