@@ -38,12 +38,15 @@ class TestController(TestCase):
         TestCase.__init__(self, *args, **kwargs)
 
     def log_in(self):
+        self.log_in_as(u'unittest')
+
+    def log_in_as(self, username, password=u'password'):
         response = self.app.post(
             url(controller='account', action='signin'),
             extra_environ={'HTTP_X_URL_SCHEME': 'https'},
             params={
-                'username': u'unittest',
-                'password': u'password'
+                'username': username ,
+                'password': password ,
             }
         )
         response = self.app.get(url(controller='profile', action='index')) # get an auth token

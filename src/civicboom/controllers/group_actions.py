@@ -106,6 +106,7 @@ class GroupActionsController(BaseController):
         used to approve join requests (role=None=default group join role)
         
         return 200 - role set ok
+        return 400 - cannot remove last admin
         """
         member = kwargs.get('member', None)
         role   = kwargs.get('role'  , None)
