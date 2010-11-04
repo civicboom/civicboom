@@ -95,8 +95,8 @@ ${self.head_links()}
 	<!-- Development Mode - Enabale Console Logging in client browser (recomend firebug) but could instate YUI log console here -->
     
 	## YUI 3
-    <script type="text/javascript" charset="utf-8" src="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js"></script>
-    <script type="text/javascript">
+    <script src="/javascript/yui-min.js"></script>
+    <script>
         Y = new YUI({ debug : true }); //var 
         Y.log("YUI Debugger Enabled", "info",  "civicboom");
     </script>

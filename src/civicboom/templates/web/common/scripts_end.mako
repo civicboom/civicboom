@@ -9,6 +9,7 @@ function redirect_function() {
 </script>
 </%doc>
 
+% if not config['development_mode']:
 <!-- Civicboom Analytics -->
 <script type="text/javascript">
   var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -20,3 +21,4 @@ function redirect_function() {
     pageTracker._trackPageview();
   } catch(err) {}
 </script>
+% endif
