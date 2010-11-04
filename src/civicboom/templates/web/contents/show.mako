@@ -419,38 +419,30 @@ from civicboom.model import CommentContent
       ##<li><a class="icon icon_twitter"      href="http://twitter.com/home?status=Currently reading ${c.current_URL}">Twitter     </a></li>
     </ul>
     </%doc>  
-    <!-- AddThis Button BEGIN http://addthis.com/ -->
-    <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4b7acd5429c82acd"><img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a><script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4b7acd5429c82acd"></script>
-    <!-- AddThis Button END -->
-    
-    
-    <div class="yui-g">
-        
-        <!-- Retweet button -->
-        <div class="yui-u first">
-##          waiting for this script to load delays rendering (if the network is dodgy, the page
-##          won't render at all until the connection times out). Since all it does is write an
-##          iframe into the document, we can do that for ourselves...
-##
-##			<script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
-			<iframe src="http://api.tweetmeme.com/button.js?url=${url('contents', id=d['content']['id'], protocol='https')|u}&style=normal&b=1" height="61" width="50" frameborder="0" scrolling="no"></iframe>
-        </div>
-        
-        <!-- Boom button -->
-        <div class="yui-u">
-            <% boom_count = 0 %>
-            % if hasattr(d['content'],'boom_count'):
-                <% boom_count = d['content']['boom_count'] %>
-            % endif
-            <a href="${h.url(controller='content' ,action='boom', id=d['content']['id'], format='redirect')}" title="${_("Boom this! Share this with all your Followers")}">
-            <div class="boom_this">
-                <span class="boom_count">${boom_count}</span>
-                <p>${_("Boom this")}</p>
-            </div>
-            </a>
-        </div>
-    </div>
 
+	<!-- AddThis menu -->
+##  script moved to scripts_footer.mako so we don't need to wait for it to load
+    <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4b7acd5429c82acd"><img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a>
+    
+    <!-- Retweet button -->
+##  waiting for this script to load delays rendering (if the network is dodgy, the page
+##  won't render at all until the connection times out). Since all it does is write an
+##  iframe into the document, we can do that for ourselves...
+##
+##	<script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
+	<br><iframe src="http://api.tweetmeme.com/button.js?url=${url('contents', id=d['content']['id'], protocol='https')|u}&style=normal&b=1" height="61" width="50" frameborder="0" scrolling="no"></iframe>
+        
+	<!-- Boom button -->
+	<% boom_count = 0 %>
+	% if hasattr(d['content'],'boom_count'):
+		<% boom_count = d['content']['boom_count'] %>
+	% endif
+	<a href="${h.url(controller='content' ,action='boom', id=d['content']['id'], format='redirect')}" title="${_("Boom this! Share this with all your Followers")}">
+	<div class="boom_this">
+		<span class="boom_count">${boom_count}</span>
+		<p>${_("Boom this")}</p>
+	</div>
+	</a>
 </%def>
 
 

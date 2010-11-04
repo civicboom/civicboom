@@ -9,6 +9,8 @@ function redirect_function() {
 </script>
 </%doc>
 
+<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4b7acd5429c82acd"></script>
+
 % if not config['development_mode']:
 <!-- Civicboom Analytics -->
 <script type="text/javascript">
