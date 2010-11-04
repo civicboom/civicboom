@@ -428,7 +428,12 @@ from civicboom.model import CommentContent
         
         <!-- Retweet button -->
         <div class="yui-u first">
-            <script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
+##          waiting for this script to load delays rendering (if the network is dodgy, the page
+##          won't render at all until the connection times out). Since all it does is write an
+##          iframe into the document, we can do that for ourselves...
+##
+##			<script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
+			<iframe src="http://api.tweetmeme.com/button.js?url=${url('contents', id=d['content']['id'], protocol='https')|u}&style=normal&b=1" height="61" width="50" frameborder="0" scrolling="no"></iframe>
         </div>
         
         <!-- Boom button -->
