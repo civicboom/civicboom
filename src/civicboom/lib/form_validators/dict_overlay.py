@@ -21,8 +21,8 @@ def validate_dict(data, schema, dict_to_validate_key=None, template_error=None):
         invalid_dict = {}
         data['invalid'] = invalid_dict
         
-        print dict_validated
-        print dict_validated_errors
+        #print dict_validated
+        #print dict_validated_errors
         
         for key in dict_validated_errors.keys():
             e = dict_validated_errors[key]

@@ -25,10 +25,6 @@ __all__ = ['environ', 'url', 'TestController']
 # Invoke websetup with the current config file
 SetupCommand('setup-app').run([pylons.test.pylonsapp.config['__file__']])
 
-# Setup base test data
-# - AllanC - I dont know if this is the best place for it ... 
-#from civicboom.tests.init_base_data import init_base_data
-#init_base_data()
 
 environ = {}
 
