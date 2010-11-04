@@ -1,38 +1,40 @@
 from civicboom.lib.base import *
 
-prefix = '/web/misc/'
-
 class MiscController(BaseController):
-    def index(self):
-        return "misc controller"
-
     @cacheable(time=600)
+    @auto_format_output
     def about(self):
-        return render(prefix+"about.mako")
+        return action_ok()
 
     @cacheable(time=600)
+    @auto_format_output
     def press(self):
-        return render(prefix+"press.mako")
+        return action_ok()
 
     @cacheable(time=600)
+    @auto_format_output
     def terms(self):
-        return render(prefix+"terms.mako")
+        return action_ok()
 
     @cacheable(time=600)
+    @auto_format_output
     def privacy(self):
-        return render(prefix+"privacy.mako")
+        return action_ok()
 
     @cacheable(time=60)
+    @auto_format_output
     def titlepage(self):
-        return render(prefix+"titlepage.mako")
+        return action_ok()
 
     @cacheable(time=600)
+    @auto_format_output
     def georss(self):
-        return render(prefix+"georss.mako")
+        return action_ok()
 
     @cacheable(time=600)
+    @auto_format_output
     def credits(self):
-        return render(prefix+"credits.mako")
+        return action_ok()
 
     def widget_preview(self, id=None):
         if not id: id = "unittest"
