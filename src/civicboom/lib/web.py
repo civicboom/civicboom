@@ -213,7 +213,7 @@ def setup_format_processors():
     
     def render_template(result, type):
         overlay_status_message(c.result, result)
-        return render_mako(_find_template(result, type), extra_vars={"d": c.result['data']} )
+        return render_mako(_find_template(result, type), extra_vars={"d": c.result['data'], "scripts_end": []} )
         
     def format_json(result):
         response.headers['Content-type'] = "application/json"
