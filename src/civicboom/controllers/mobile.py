@@ -84,6 +84,8 @@ class MobileController(BaseController):
         content.attachments.append(m)
         Session.commit()
 
+        #os.unlink("/tmp/upload-"+str(content.id))
+
         return action_ok(_("Media attached"), code=201)
 
     #-----------------------------------------------------------------------------
