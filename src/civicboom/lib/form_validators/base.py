@@ -28,8 +28,8 @@ class DefaultSchema(formencode.Schema):
 class MemberValidator(validators.FancyValidator):
     not_empty = True
     messages = {
-        'empty'     : _('You must specify a member'),
-        'not_member': _('Not a valid member'),
+        'empty'      : _('You must specify a member'),
+        'not_content': _('Not a valid member'),
     }
     def _to_python(self, value, state):
         from civicboom.lib.database.get_cached import get_member
@@ -37,7 +37,55 @@ class MemberValidator(validators.FancyValidator):
         if member:
             return member
         raise formencode.Invalid(self.message("not_member", state), value, state)
-    
+
+
+class LocationValidator(validators.FancyValidator):
+    not_empty = True
+    strip     = True
+    messages = {
+        'not_in_range': _('location is out of range'),
+    }
+    def _to_python(self, value, state):
+        try:
+            (lon, lat) = value.split(" ")
+            return "SRID=4326;POINT(%f %f)" % (float(lon), float(lat))
+        except:
+            return formencode.Invalid(self.message("not_in_range", state), value, state)
+
+
+
+class ContentObjectValidator(validators.FancyValidator):
+    not_empty = True
+    messages = {
+        'empty'     : _('You must specify content'),
+        'not_member': _('Not valid content'),
+    }
+    def _to_python(self, value, state):
+        from civicboom.lib.database.get_cached import get_content
+        content = get_content(value)
+        if content:
+            return content
+        raise formencode.Invalid(self.message("not_content", state), value, state)
+
+
+class ContentUnicodeValidator(validators.UnicodeString):
+    not_empty = False
+    strip     = True
+    def _to_python(self, value, state):
+        value = validators.UnicodeString._to_python(self, value)
+        from civicboom.lib.text import clean_html_markup
+        return clean_html_markup(value)
+
+
+class ContentTagsValidator(validators.FancyValidator):
+    not_empty = False
+    strip     = True
+    def _to_python(self, value, state):
+        from civicboom.lib.database.get_cached import get_tag        
+        tags_raw = value.split(" ")
+        tags     = [get_tag(tag) for tag in tags_raw if tag!=""]
+        return tags
+
 
 class CurrentUserPasswordValidator(validators.FancyValidator):
     not_empty    = True
@@ -49,7 +97,6 @@ class CurrentUserPasswordValidator(validators.FancyValidator):
         if get_user_and_check_password(c.logged_in_persona.username, value):
             return value
         raise formencode.Invalid(self.message("invalid", state), value, state)
-        
 
 
 class PasswordValidator(validators.FancyValidator):

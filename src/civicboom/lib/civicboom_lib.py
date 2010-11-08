@@ -348,12 +348,12 @@ def form_to_content(form, content):
     # Overlay Form over Base Content
     #-------------------------------
     # Owner
-    if "owner" in form:
-        content.creator_id = form["owner"]
+    #if "owner" in form:
+    #    content.creator_id = form["owner"]
         # Although the form limits the user to a selectable list, any id can be passed here, it is possible that with an API call a user can give content to anyone.
         # FIXME: including people who don't want the content attributed to them...
-    elif content.creator == None:
-        content.creator = c.logged_in_persona
+    #elif content.creator == None:
+    content.creator = c.logged_in_persona
 
     
     # for key in form: print "%s:%s" % (key,form[key])

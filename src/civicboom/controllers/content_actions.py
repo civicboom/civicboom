@@ -163,6 +163,9 @@ class ContentActionsController(BaseController):
         """
         assignment = _get_content(id)
         status     = assignment.accept(c.logged_in_persona)
+        # AllanC - TODO: need message to user as to why they could not accept the assignment
+        #         private assingment? not invited?
+        #         already withdraw before so cannot accept again
         if status == True:
             assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
             user_log.debug("Accepted Content #%d" % int(id))
