@@ -1,5 +1,5 @@
 COMMON=\
-	Modernizr.js yui-min.js \
+	Modernizr.js \
 	jquery-1.4.2.js jquery.ui.js \
 	jquery.html5-0.0.1.js jquery.ui.stars-3.0.1.js \
 	misc.js toggle_div.js url_encode.js
