@@ -28,15 +28,21 @@ class DefaultSchema(formencode.Schema):
 class MemberValidator(validators.FancyValidator):
     not_empty = True
     messages = {
-        'empty'      : _('You must specify a member'),
-        'not_content': _('Not a valid member'),
+        'empty'     : _('You must specify a member'),
+        'not_member': _('Not a valid member'),
     }
+    def __init__(self, return_object=False, *args, **kwargs):
+        validators.FancyValidator.__init__(self, *args, **kwargs)
+        self.return_object = return_object
     def _to_python(self, value, state):
         from civicboom.lib.database.get_cached import get_member
         member = get_member(value)
-        if member:
+        if not member:
+            raise formencode.Invalid(self.message("not_member", state), value, state)
+        if self.return_object:
             return member
-        raise formencode.Invalid(self.message("not_member", state), value, state)
+        return member.id
+        
 
 
 class LocationValidator(validators.FancyValidator):
@@ -57,15 +63,25 @@ class LocationValidator(validators.FancyValidator):
 class ContentObjectValidator(validators.FancyValidator):
     not_empty = True
     messages = {
-        'empty'     : _('You must specify content'),
-        'not_member': _('Not valid content'),
+        'empty'       : _('You must specify content'),
+        'not_member'  : _('Not valid content'),
+        'not_viewable': _('content not viewable by your user'),
     }
+    def __init__(self, return_object=False, *args, **kwargs):
+        validators.FancyValidator.__init__(self, *args, **kwargs)
+        self.return_object = return_object
     def _to_python(self, value, state):
+        from pylons import tmpl_context as c
         from civicboom.lib.database.get_cached import get_content
         content = get_content(value)
-        if content:
+        if not content:
+            raise formencode.Invalid(self.message("not_content", state), value, state)
+        if not content.viewable_by(c.logged_in_persona):
+            raise formencode.Invalid(self.message("not_viewable", state), value, state)
+        if self.return_object:
             return content
-        raise formencode.Invalid(self.message("not_content", state), value, state)
+        return content.id
+
 
 
 class ContentUnicodeValidator(validators.UnicodeString):
@@ -85,6 +101,24 @@ class ContentTagsValidator(validators.FancyValidator):
         tags_raw = value.split(" ")
         tags     = [get_tag(tag) for tag in tags_raw if tag!=""]
         return tags
+
+class LicenseValidator(validators.FancyValidator):
+    not_empty = False
+    messages = {
+        'empty'      : _('you must specify a licence type'),
+        'not_license': _('not a valid licence type'),
+    }
+    def __init__(self, return_object=False, *args, **kwargs):
+        validators.FancyValidator.__init__(self, *args, **kwargs)
+        self.return_object = return_object
+    def _to_python(self, value, state):
+        from civicboom.lib.database.get_cached import get_license
+        license = get_license(value)
+        if not license:
+            raise formencode.Invalid(self.message("not_license", state), value, state)
+        if self.return_object:
+            return license
+        return license.id
 
 
 class CurrentUserPasswordValidator(validators.FancyValidator):

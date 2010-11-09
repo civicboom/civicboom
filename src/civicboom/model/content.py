@@ -201,7 +201,7 @@ class Content(Base):
         """
         if self.edit_lock:
             return False
-        if self.creator == member  :
+        if self.creator == member:
             return True
         # TODO check groups of creator to see if member is in the owning group
         return False

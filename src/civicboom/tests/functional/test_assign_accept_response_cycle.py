@@ -179,6 +179,9 @@ class TestAssignAcceptResponseCycleController(TestController):
     # Accept / Withdraw Cycle
     #---------------------------------------------------------------------------
     def test_accept_withdraw(self):
+        """
+        Accept + withdraw ++
+        """
         
         # Create assignment ----------------------------------------------------
         
