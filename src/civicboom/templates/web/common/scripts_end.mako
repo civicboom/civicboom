@@ -1,5 +1,9 @@
-% if scripts_end:
+##% if scripts_end:
+##<%
+
 <%
+if not "scripts_end" in locals():
+	scripts_end = []
 if not config['development_mode']:
 	scripts_end.append("""
 <!-- Civicboom Analytics -->
@@ -15,5 +19,8 @@ if not config['development_mode']:
 </script>
 	""")
 %>
-	${"\n".join(scripts_end)|n}
-% endif
+
+##	${"\n".join(scripts_end)|n}
+##% endif
+${"\n".join(scripts_end)|n}
+

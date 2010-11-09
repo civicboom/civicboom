@@ -7,7 +7,7 @@ NAV {
 	left: 0px;
 	right: 0px;
 	background: url("/styles/web/userbarbk.png");
-	z-index: 1;
+	z-index: 2;
 }
 .u-anon NAV {height: 0px;}
 .u-user NAV {height: 17px;}
@@ -66,7 +66,7 @@ HEADER {
 	left: 0px;
 	right: 0px;
 	height: 122px;
-	z-index: 0;
+	z-index: 1;
 }
 .u-anon HEADER {top: 0px;}
 .u-user HEADER {top: 17px;}
@@ -102,6 +102,7 @@ HEADER #search .search_button {
  */
 BODY>DIV#app {
 	clear: both;
+	z-index: 0;
 }
 .u-anon #app {margin-top: 122px;}
 .u-user #app {margin-top: 139px;}
