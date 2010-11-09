@@ -334,15 +334,18 @@ class ContentsController(BaseController):
         
         # Morph Content type - if needed (only appropriate for data already in DB)
         starting_content_type = content.__type__
+        if submit_type == 'publish' and 'type' not in kwargs: # If publishing set 'type' (as this is submitted from the form as 'target_type')
+            if hasattr(content, 'target_type'):
+                kwargs['type'] = content.target_type
+            if 'target_type' in kwargs:
+                kwargs['type'] = kwargs['target_type']                
         if 'type' in kwargs:
-            if submit_type == 'publish':
-                content = morph_content_to(content, kwargs['type'])
-            elif hasattr(content,'target_type'):
-                kwargs['target_type'] = kwargs['type']
+            content = morph_content_to(content, kwargs['type'])
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
             if field in kwargs and hasattr(content,field):
+                print "set %s as %s" % (field, kwargs[field])
                 setattr(content,field,kwargs[field])
         
         # Update Existing Media - Form Fields
@@ -357,7 +360,7 @@ class ContentsController(BaseController):
             # Remove media if required
             if "file_remove_%d" % media.id in kwargs:
                 content.attachments.remove(media)
-    
+        
         # Add Media - if file present in form post
         if 'media_file' in kwargs and kwargs['media_file'] != "":
             form_file = kwargs["media_file"]
@@ -365,8 +368,7 @@ class ContentsController(BaseController):
             media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=kwargs["media_caption"], credit=kwargs["media_credit"])
             content.attachments.append(media)
             #Session.add(media) # is this needed as it is appended to content and content is in the session?
-
-
+        
         # -- Publishing --------------------------------------------------------
         if submit_type == 'publish':
             # Profanity Check
