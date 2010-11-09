@@ -52,7 +52,7 @@
 
 <h1 id="logo">
 	<a href='/'>
-		<img src='/styles/web/logo.png' alt='${_("_site_name")}'/>
+		<img src='/styles/web/logo.png' alt='${_("_site_name")}' width="217" height="58"/>
 		<span>${_("_site_name")}</span>
 	</a>
 </h1>
