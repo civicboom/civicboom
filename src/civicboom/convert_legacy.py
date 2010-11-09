@@ -22,7 +22,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def convert_legacy_database():
+def convert_legacy_database(): # pragma: no cover - this should only be run as a one-off
         log.info("Converting from legacy database") # {{{
         leg_sess = LegacySession()
         leg_conn = leg_sess.connection()
