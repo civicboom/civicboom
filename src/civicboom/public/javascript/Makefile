@@ -29,6 +29,7 @@ _combined.maps.js: $(MAPS)
 
 jquery.ui.js:
 	git clone git://github.com/jquery/jquery-ui.git
+	cd jquery-ui && git checkout 1.8.6
 	cd jquery-ui/ui/ && cat \
 		jquery.ui.core.js jquery.ui.widget.js jquery.ui.position.js \
 		jquery.ui.autocomplete.js jquery.ui.datepicker.js \
@@ -36,7 +37,7 @@ jquery.ui.js:
 	rm -rf jquery-ui
 
 OpenLayers.js:
-	svn checkout http://svn.openlayers.org/trunk/openlayers/
+	svn checkout http://svn.openlayers.org/tags/openlayers/release-2.10/ openlayers
 	cp OpenLayers.cfg ./openlayers/build/
 	cd openlayers/build && ./buildUncompressed.py OpenLayers
 	mv openlayers/build/OpenLayers.js ./
