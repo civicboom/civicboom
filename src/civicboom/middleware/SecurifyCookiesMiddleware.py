@@ -24,10 +24,8 @@ class SecurifyCookiesMiddleware(object):
             for k, v in headers:
                 if k.lower() == "set-cookie":
                     if "; secure" not in v and environ['wsgi.url_scheme']=="https":
-                        print "securing"
                         v = v + "; secure"
                     if "; httponly" not in v:
-                        print "httponlying"
                         v = v + "; httponly"
                 new_headers.append((k, v))
             return start_response(status, new_headers, exc_info)
