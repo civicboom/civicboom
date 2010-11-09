@@ -386,6 +386,7 @@
 ## License
 ##------------------------------------------------------------------------------
 <%def name="license()">
+    % if c.content.__type__ == 'draft':
     <% from civicboom.lib.database.get_cached import get_licenses %>
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
@@ -408,6 +409,7 @@
 			</table>
         </div>
     </fieldset>
+    % endif
 </%def>
 
 

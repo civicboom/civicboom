@@ -295,6 +295,17 @@ class ContentsController(BaseController):
         # TODO - Publish Permission for groups (to be part of is editable?)
         # return 403
 
+        # -- Decode Action -----------------------------------------------------
+        # AllanC - could this be turned into a validator?
+        def normalise_submit(kwargs):
+            submit_keys = [key.replace("submit_","") for key in kwargs.keys() if key.startswith("submit_") and kwargs[key]!=None and kwargs[key]!='']
+            if len(submit_keys) == 0:
+                return None
+            if len(submit_keys) == 1:
+                return submit_keys[0]
+            raise action_error(_('multiple submit types submited'), code=400)
+        submit_type = normalise_submit(kwargs)
+
         # -- Validate ----------------------------------------------------------
         
         # Select Validation Schema (based on content type)
@@ -314,14 +325,20 @@ class ContentsController(BaseController):
                 status   = 'invalid' ,
                 code     = 400 ,
                 message  = _('failed validation') ,
+                data     = {'invalid':dict_validated_errors} # TODO: we need to consider how this is returned to the user
             )
         
         # -- Set Content fields ------------------------------------------------
         
+        # TODO: dont allow licence type change after publication - could this be part of validators?
+        
         # Morph Content type - if needed (only appropriate for data already in DB)
         starting_content_type = content.__type__
         if 'type' in kwargs:
-            content = morph_content_to(content, kwargs['type'])
+            if submit_type == 'publish':
+                content = morph_content_to(content, kwargs['type'])
+            elif hasattr(content,'target_type'):
+                kwargs['target_type'] = kwargs['type']
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
@@ -349,15 +366,6 @@ class ContentsController(BaseController):
             content.attachments.append(media)
             #Session.add(media) # is this needed as it is appended to content and content is in the session?
 
-        # AllanC - could this be turned into a validator?
-        def normalise_submit(kwargs):
-            submit_keys = [key.replace("submit_","") for key in kwargs.keys() if key.startswith("submit_") and kwargs[key]!=None and kwargs[key]!='']
-            if len(submit_keys) == 0:
-                return None
-            if len(submit_keys) == 1:
-                return submit_keys[0]
-            raise action_error(_('multiple submit types submited'), code=400)
-        submit_type = normalise_submit(kwargs)
 
         # -- Publishing --------------------------------------------------------
         if submit_type == 'publish':
@@ -488,7 +496,7 @@ class ContentsController(BaseController):
         
         c.content = _get_content(id, is_editable=True)
         
-        c.content                  = form_to_content(kwargs, c.content)
+        #c.content                  = form_to_content(kwargs, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
         return action_ok() # Automatically finds edit template

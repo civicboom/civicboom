@@ -94,8 +94,10 @@ class ContentUnicodeValidator(validators.UnicodeString):
 
 
 class ContentTagsValidator(validators.FancyValidator):
-    not_empty = False
-    strip     = True
+    not_empty  = False
+    strip      = True
+    if_missing = []
+    if_empty   = []
     def _to_python(self, value, state):
         from civicboom.lib.database.get_cached import get_tag        
         tags_raw = value.split(" ")
