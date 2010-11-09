@@ -14,7 +14,7 @@ from civicboom.lib.communication.email_lib import send_email
 from civicboom.model                            import DraftContent, ArticleContent, CommentContent, Media, Tag, FlaggedContent, UserLogin
 from civicboom.lib.database.get_cached          import get_content, get_tag
 from civicboom.lib.database.actions             import del_content
-from civicboom.lib.database.polymorphic_helpers import morph_content_to
+
 
 from civicboom.lib.services.janrain         import janrain
 from civicboom.lib.services.cdyne_profanity import profanity_check

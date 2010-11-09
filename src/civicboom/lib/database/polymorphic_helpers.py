@@ -94,6 +94,7 @@ def morph_content_to(content, after_type):
     
     if content.id == None: #If the content has not been commited to the DB, then return an object of the correct type
         # todo?
+        log.info('content to morph not in DB? investigate')
         pass
     
     id                = content.id

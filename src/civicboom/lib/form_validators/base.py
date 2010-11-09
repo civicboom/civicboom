@@ -88,7 +88,7 @@ class ContentUnicodeValidator(validators.UnicodeString):
     not_empty = False
     strip     = True
     def _to_python(self, value, state):
-        value = validators.UnicodeString._to_python(self, value)
+        value = validators.UnicodeString._to_python(self, value, state)
         from civicboom.lib.text import clean_html_markup
         return clean_html_markup(value)
 

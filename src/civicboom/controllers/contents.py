@@ -2,15 +2,15 @@
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, CommentContent, DraftContent
+from civicboom.model                   import Media, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
-
-from civicboom.model.content import _content_type as content_types
+from civicboom.model.content           import _content_type as content_types
 
 # Other imports
 from civicboom.lib.civicboom_lib import get_content_media_upload_key, profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.helpers       import call_action
+from civicboom.lib.database.polymorphic_helpers import morph_content_to
 
 # Validation
 import formencode
@@ -35,12 +35,15 @@ user_log = logging.getLogger("user")
 #-------------------------------------------------------------------------------
 
 class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
+    allow_extra_fields  = True
+    filter_extra_fields = False
+    ignore_key_missing  = True
     type        = formencode.validators.OneOf(content_types.enums, not_empty=False)
     title       = formencode.validators.String(not_empty=False, strip=True, max=250, min=2)
     content     = civicboom.lib.form_validators.base.ContentUnicodeValidator()
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=False)
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
-    private     = formencode.validators.StringBool(not_empty=False, max=250, min=2)
+    private     = formencode.validators.StringBool(not_empty=False)
     license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused?
     tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False)
@@ -99,7 +102,7 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
 #-------------------------------------------------------------------------------
 # Search Filters
 #-------------------------------------------------------------------------------
-def _get_search_filters():
+def _init_search_filters():
     def append_search_text(query, text):
         return query.filter(or_(Content.title.match(text), Content.content.match(text)))
     
@@ -145,7 +148,7 @@ def _get_search_filters():
     
     return search_filters
 
-search_filters = _get_search_filters()
+search_filters = _init_search_filters()
 
 
 
@@ -228,22 +231,14 @@ class ContentsController(BaseController):
 
         @api contents 1.0 (WIP)
 
-        @param title
-        @param contents
         @param type
-        @param ...
+        @param *  see "PUT /contents/id"
 
         @return 201   content created
                 id    new content id
-        @return 400   missing data (ie, a type=comment with no parent_id)
-        @return 403   can't reply to parent
-        @return 404   parent not found
-
-        @comment Shish paramaters need filling out
+        @return x     see update return types
         """
         # url('contents') + POST
-        
-        # TODO - need to check role in group to see if they have permissions to do this
         
         # Create Content Object
         if   type == 'draft':
@@ -259,11 +254,13 @@ class ContentsController(BaseController):
         content.creator = c.logged_in_persona
         
         # Commit to database to get ID field
-        Session.add(content)
-        Session.commit()
+        # DEPRICATED
+        #Session.add(content)
+        #Session.commit()
+        # AllanC - if the update fails on validation we do not want a ghost record commited
         
         # Use update behaviour to save and commit object
-        self.update(content.id, **kwargs)
+        self.update(content, **kwargs)
         
         return action_ok(message=_('_content created ok'), data={'id':content.id}, code=201)
 
@@ -278,43 +275,55 @@ class ContentsController(BaseController):
 
         @api contents 1.0 (WIP)
 
-        @param *  see "POST /contents"
-
         @return 200   success
         @return 403   lacking permission to edit
         @return 404   no content to be edited
 
+        @comment Shish paramaters need filling out
         """
         # url('content', id=ID)
         
-        content = _get_content(id, is_editable=True)
+        # -- Get Content -------------------------------------------------------
+        if isinstance(id, Content):
+            content = id
+        else:
+            content = _get_content(id, is_editable=True)
+        assert content
         
-        # TODO - Publish Permission for groups
-        #        (to be part of is editable)
+        # -- Publish Permission-------------------------------------------------
+        # TODO - need to check role in group to see if they have permissions to do this
+        # TODO - Publish Permission for groups (to be part of is editable?)
+        # return 403
+
+        # -- Validate ----------------------------------------------------------
         
-        # Select appropriate schema based on content type
+        # Select Validation Schema (based on content type)
         schema = ContentSchema()
         if kwargs.get('type') == 'comment':
-            schema = CommentSchema()
+            schema = ContentCommentSchema()
         
-        # Validate
         try:
-            kwargs = schema.to_python(kwargs)
+            kwargs = schema.to_python(kwargs) # Validate
         except formencode.Invalid, error: # Failed Validation - Raise Error
             dict_validated        = error.value
             dict_validated_errors = error.error_dict or {}
+            print ""
+            print "content validation failed --------------------------"
+            print dict_validated_errors
             raise action_error(
                 status   = 'invalid' ,
                 code     = 400 ,
                 message  = _('failed validation') ,
             )
         
-        # Morph Content type - if needed
+        # -- Set Content fields ------------------------------------------------
+        
+        # Morph Content type - if needed (only appropriate for data already in DB)
         starting_content_type = content.__type__
         if 'type' in kwargs:
             content = morph_content_to(content, kwargs['type'])
         
-        # Set content fields from kwargs input
+        # Set content fields from validated kwargs input
         for field in schema.fields.keys():
             if field in kwargs and hasattr(content,field):
                 setattr(content,field,kwargs[field])
@@ -340,6 +349,7 @@ class ContentsController(BaseController):
             content.attachments.append(media)
             #Session.add(media) # is this needed as it is appended to content and content is in the session?
 
+        # AllanC - could this be turned into a validator?
         def normalise_submit(kwargs):
             submit_keys = [key.replace("submit_","") for key in kwargs.keys() if key.startswith("submit_") and kwargs[key]!=None and kwargs[key]!='']
             if len(submit_keys) == 0:
@@ -349,7 +359,7 @@ class ContentsController(BaseController):
             raise action_error(_('multiple submit types submited'), code=400)
         submit_type = normalise_submit(kwargs)
 
-        # Publishing
+        # -- Publishing --------------------------------------------------------
         if submit_type == 'publish':
             # Profanity Check
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
@@ -384,13 +394,14 @@ class ContentsController(BaseController):
             if m:
                 content.creator.send_message_to_followers(m, delay_commit=True)
 
-        # Save to Database
+
+        # -- Save to Database --------------------------------------------------
         Session.add(content)     
         Session.commit()         
         update_content(content)  #   Invalidate any cache associated with this content
         user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
         
-        # Set redirect destination
+        # -- Redirect ----------------------------------------------------------
         content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
         if submit_type == 'preview':
             content_redirect = url('content', id=content.id)
@@ -401,7 +412,7 @@ class ContentsController(BaseController):
         
         if c.format == 'redirect':
             return redirect(content_redirect)
-            
+        
         return action_ok(_("_content updated"))
 
 
@@ -480,5 +491,5 @@ class ContentsController(BaseController):
         c.content                  = form_to_content(kwargs, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
-        return action_ok()
+        return action_ok() # Automatically finds edit template
 
