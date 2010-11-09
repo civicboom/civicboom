@@ -71,29 +71,6 @@ class ContentActionsController(BaseController):
 
 
     #---------------------------------------------------------------------------
-    # Seen: Response Content (organisation only)
-    #---------------------------------------------------------------------------
-
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def seen(self, id):
-        """
-        POST /contents/{id}/seen: mark response as seen
-
-        @api contents 1.0 (WIP)
-
-        @return 200   seen ok
-        @return 500   error
-        """
-        content = _get_content(id, is_parent_owner=True)
-        if content.parent_seen():
-            user_log.debug("Seen Content #%d" % int(id))
-            return action_ok(_("content has been marked as seen"))
-        raise action_error(_('Error'))
-
-
-    #---------------------------------------------------------------------------
     # Approve: Response Content (organisation only)
     #---------------------------------------------------------------------------
 
@@ -117,7 +94,6 @@ class ContentActionsController(BaseController):
 
 
 
-
     #---------------------------------------------------------------------------
     # Disassociate: Response Content (organistaion only)
     #---------------------------------------------------------------------------
@@ -125,7 +101,7 @@ class ContentActionsController(BaseController):
     @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
-    def disasociate(self):
+    def disasociate(self, id):
         """
         POST /contents/{id}/disassociate: unlink an article from its parent
 
@@ -143,6 +119,28 @@ class ContentActionsController(BaseController):
             return action_ok(_("content has dissasociated from your parent content"))
         raise action_error(_('Error dissasociating content'))
 
+
+    #---------------------------------------------------------------------------
+    # Seen: Response Content (organisation only)
+    #---------------------------------------------------------------------------
+
+    @auto_format_output
+    @authorize(is_valid_user)
+    @authenticate_form
+    def seen(self, id):
+        """
+        POST /contents/{id}/seen: mark response as seen
+
+        @api contents 1.0 (WIP)
+
+        @return 200   seen ok
+        @return 500   error
+        """
+        content = _get_content(id, is_parent_owner=True)
+        if content.parent_seen():
+            user_log.debug("Seen Content #%d" % int(id))
+            return action_ok(_("content has been marked as seen"))
+        raise action_error(_('Error'))
 
 
     #---------------------------------------------------------------------------
@@ -171,7 +169,7 @@ class ContentActionsController(BaseController):
             user_log.debug("Accepted Content #%d" % int(id))
             return action_ok(_("_assignment accepted"))
         #elif isinstance(status,str):
-        raise action_error(_('Error accepting _assignment'))
+        raise action_error(_('Error accepting _assignment'), code=400)
 
 
     #---------------------------------------------------------------------------
@@ -193,12 +191,11 @@ class ContentActionsController(BaseController):
         assignment = _get_content(id)
         status     = assignment.withdraw(c.logged_in_persona)
         if status == True:
-            assignment.creator.send_message(messages.assignment_interest_withdrawn(member=c.logged_in_persona, assignment=assignment))
             user_log.debug("Withdrew from Content #%d" % int(id))
             return action_ok(_("_assignment interest withdrawn"))
         #elif isinstance(status,str):
         #return status
-        raise action_error(_('Error withdrawing _assignment interest'))
+        raise action_error(_('Error withdrawing _assignment interest'), code=400)
 
 
     #-----------------------------------------------------------------------------

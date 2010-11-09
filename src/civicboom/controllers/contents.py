@@ -345,7 +345,7 @@ class ContentsController(BaseController):
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
             if field in kwargs and hasattr(content,field):
-                print "set %s as %s" % (field, kwargs[field])
+                #print "set %s as %s" % (field, kwargs[field])
                 setattr(content,field,kwargs[field])
         
         # Update Existing Media - Form Fields
