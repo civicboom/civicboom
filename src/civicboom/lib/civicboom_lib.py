@@ -14,7 +14,7 @@ from civicboom.lib.communication.email_lib import send_email
 from civicboom.model                            import DraftContent, ArticleContent, CommentContent, Media, Tag, FlaggedContent, UserLogin
 from civicboom.lib.database.get_cached          import get_content, get_tag
 from civicboom.lib.database.actions             import del_content
-from civicboom.lib.database.polymorphic_helpers import morph_content_to
+
 
 from civicboom.lib.services.janrain         import janrain
 from civicboom.lib.services.cdyne_profanity import profanity_check
@@ -264,151 +264,8 @@ def twitter_global(content):
 # Content Management
 #-------------------------------------------------------------------------------
 
-
-#------------------------------
-# Form POST contains Content
-#------------------------------
-# AllanC - is there a way this can be placed at the end of the file away from the rest of the edit action for clarity?
-def form_post_contains_content(form):
-    """
-    Check if a range of required fields are not null
-    Returns boolean
-    """
-    return_bool = False
-    if form:
-        for field in ("title","content","media_file"):
-            if field in form and form[field]:
-                return_bool = True
-    return return_bool
   
 
-
-#------------------------------
-# Form POST to Content Object
-#------------------------------
-def form_to_content(form, content):
-    """
-    Takes form post data and either overlays the form with an existing object or create the relevent content object type and overlay form data
-    Will never return None - will always return at leist an empty content object
-    """
-    
-    if not content:
-        if   not form                     : content = DraftContent()
-        elif form.get('type') == "comment": content = CommentContent()
-        elif form.get('type') == "article": content = ArticleContent()
-        else                              : content = DraftContent()
-        content.creator = c.logged_in_persona
-        
-    if not content.parent and "parent_id" in form:
-        content.parent_id = form["parent_id"]
-        
-    if not form:
-        return content #If there is no form data there is nothing to overlay or do
-
-    #----------------------------------------------------
-    # Morph content type before overlaying any form data
-    #----------------------------------------------------
-    # As mophing functions alter the data at the database level, we perform the morph before we ever chnage any of the contents data
-
-    """
-    # If we are publishing from a draft and draft is linked to a publish id
-    if 'submit_publish' in form and content.__type__ == "draft" and content.publish_id:
-        # Get the original published content object and overlay the cloned draft
-        old_draft_id = content.id
-        content = get_content(content.publish_id)
-        if content:
-            del_content(old_draft_id) # This is kind of risky because if there is a problem with the form post and it does not commit, the old draft is los
-        else:
-            content = DraftContent() # The existing article the publish_id is pointing too does not exisit any more, so the content should be saved as a draft, 
-        
-        #if not content.editable_by(c.logged_in_persona): # AllanC - do we need to double double check this user has permissions on this content to do this?
-        #    raise exception
-
-
-    # If we are trying to save a draft over a published content object
-    if 'submit_draft' in form and content.__type__ != "draft":
-        # Rather than changing the published object, we create a draft clone of
-        # it that remebers the id of the orrignal content it was cloned from.
-        # Before we create this new clone, check the DB to see if there is an
-        # existing draft record associated with this published content
-        try:
-            content = Session.query(DraftContent).filter_by(publish_id=content.id).one()
-        except:
-            content_clone = DraftContent()
-            content_clone.publish_id = content.id
-            content = content_clone
-            # The content will be populated with the form data and commited by the controler
-    """
-
-    if 'type' in form:
-        content = morph_content_to(content, form['type'])
-
-
-    #-------------------------------
-    # Overlay Form over Base Content
-    #-------------------------------
-    # Owner
-    if "owner" in form:
-        content.creator_id = form["owner"]
-        # Although the form limits the user to a selectable list, any id can be passed here, it is possible that with an API call a user can give content to anyone.
-        # FIXME: including people who don't want the content attributed to them...
-    elif content.creator == None:
-        content.creator = c.logged_in_persona
-
-    
-    # for key in form: print "%s:%s" % (key,form[key])
-    
-    # TODO: from most form values we need to escape '"' and "'" characters as these are used in HTML alt tags and value tags
-    
-    # Content
-    if "content" in form:
-        content.content = clean_html_markup(form["content"])
-
-    # Tags
-    if "tags" in form:
-        tags_raw     = form["tags"].split(" ")
-        content.tags = [get_tag(tag) for tag in tags_raw if tag!=""]
-
-    # Existing Media Form Fields
-    for media in content.attachments:
-        # Update media item fields
-        caption_key = "media_caption_%d" % (media.id)
-        if caption_key in form:
-            media.caption = form[caption_key]
-        credit_key = "media_credit_%d"   % (media.id)
-        if credit_key in form:
-            media.credit = form[credit_key]
-        # Remove media if required
-        if "file_remove_%d" % media.id in form:
-            content.attachments.remove(media)
-
-    # Add Media - if file present in form post
-    if 'media_file' in form and form['media_file'] != "":
-        form_file = form["media_file"]
-        media = Media()
-        media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=form["media_caption"], credit=form["media_credit"])
-        content.attachments.append(media)
-        #Session.add(media) # is this needed as it is appended to content and content is in the session?
-
-    if 'licence' in form:
-        content.license_id = form['licence']
-
-    if 'location' in form:
-        try:
-            (lon, lat) = form['location'].split(" ")
-            content.location = "SRID=4326;POINT(%f %f)" % (float(lon), float(lat))
-        except:
-            pass
-
-    # Any left over fields that just need a simple set
-    for field in ["title", "target_type"]: #, "due_date", "event_date" # need validators/converters
-        form_field_name = field
-        if form_field_name in form:
-            if hasattr(content, field):
-                setattr(content,field,form[form_field_name])
-    
-
-    return content
 
 #---------------------------------------
 # Generate and Store Content Upload Key

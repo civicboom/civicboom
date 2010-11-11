@@ -15,6 +15,7 @@ from civicboom.config.environment import load_environment
 from civicboom.middleware.MobileDetectionMiddleware import MobileDetectionMiddleware
 from civicboom.middleware.HttpsDetectionMiddleware import HttpsDetectionMiddleware
 from civicboom.middleware.NoCookiesForStaticMiddleware import NoCookiesForStaticMiddleware
+from civicboom.middleware.SecurifyCookiesMiddleware import SecurifyCookiesMiddleware
 
 class HeaderURLParser(StaticURLParser):
     def make_app(self, filename):
@@ -62,6 +63,7 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     app = MobileDetectionMiddleware(app)
     app = HttpsDetectionMiddleware(app)
     app = NoCookiesForStaticMiddleware(app)
+    app = SecurifyCookiesMiddleware(app)
 
 
     if asbool(full_stack):

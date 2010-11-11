@@ -28,7 +28,7 @@ def profanity_check(content):
         ProfanityCount: Returns Integer
         CleanText     : Returns the clean text. profanitys replaced with [Explicit]
     """
-    
+    if not content: return
     try                : content = content.encode('utf-8')
     except UnicodeError: pass
 
