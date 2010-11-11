@@ -33,8 +33,8 @@ createdb -E utf8 -O civicboom civicboom
 createlang plpgsql civicboom
 
 echo "  Loading PostGIS extras"
-psql -q -d civicboom -f /usr/share/postgresql/8.4/contrib/postgis.sql
-psql -q -d civicboom -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
+psql -q -d civicboom -f /usr/share/postgresql/9.0/contrib/postgis-1.5/postgis.sql
+psql -q -d civicboom -f /usr/share/postgresql/9.0/contrib/postgis-1.5/spatial_ref_sys.sql
 
 echo "  Granting extra permissions"
 echo "grant all on spatial_ref_sys to civicboom;"  | psql -q -d civicboom
@@ -49,8 +49,8 @@ createdb -E utf8 -O civicboom civicboom_gis
 createlang plpgsql civicboom_gis
 
 echo "  Loading PostGIS extras"
-psql -q -d civicboom_gis -f /usr/share/postgresql/8.4/contrib/postgis.sql
-psql -q -d civicboom_gis -f /usr/share/postgresql/8.4/contrib/spatial_ref_sys.sql
+psql -q -d civicboom_gis -f /usr/share/postgresql/9.0/contrib/postgis-1.5/postgis.sql
+psql -q -d civicboom_gis -f /usr/share/postgresql/9.0/contrib/postgis-1.5/spatial_ref_sys.sql
 
 echo "  Granting extra permissions"
 echo "grant all on spatial_ref_sys to civicboom;"  | psql -q -d civicboom_gis
