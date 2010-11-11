@@ -15,7 +15,7 @@ from civicboom.lib.database.polymorphic_helpers import morph_content_to
 # Validation
 import formencode
 import civicboom.lib.form_validators.base
-#from civicboom.lib.form_validators.dict_overlay import validate_dict
+from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 # Search imports
 from civicboom.lib.search import *
@@ -260,7 +260,9 @@ class ContentsController(BaseController):
         # AllanC - if the update fails on validation we do not want a ghost record commited
         
         # Use update behaviour to save and commit object
-        self.update(content, **kwargs)
+        update_response = call_action(self.update, id=content, format='python') # no need to pass kwargs as these are reaquired from request.params
+        if update_response['status'] != 'ok':
+            return update_response
         
         return action_ok(message=_('_content created ok'), data={'id':content.id}, code=201)
 
@@ -307,26 +309,30 @@ class ContentsController(BaseController):
         submit_type = normalise_submit(kwargs)
 
         # -- Validate ----------------------------------------------------------
-        
+
         # Select Validation Schema (based on content type)
         schema = ContentSchema()
         if kwargs.get('type') == 'comment':
             schema = ContentCommentSchema()
         
-        try:
-            kwargs = schema.to_python(kwargs) # Validate
-        except formencode.Invalid, error: # Failed Validation - Raise Error
-            dict_validated        = error.value
-            dict_validated_errors = error.error_dict or {}
-            print ""
-            print "content validation failed --------------------------"
-            print dict_validated_errors
-            raise action_error(
-                status   = 'invalid' ,
-                code     = 400 ,
-                message  = _('failed validation') ,
-                data     = {'invalid':dict_validated_errors} # TODO: we need to consider how this is returned to the user
-            )
+        data       = {'content':kwargs}
+        data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
+        kwargs     = data['content']
+
+        #try:
+        #    kwargs = schema.to_python(kwargs) # Validate
+        #except formencode.Invalid, error: # Failed Validation - Raise Error
+        #    dict_validated        = error.value
+        #    dict_validated_errors = error.error_dict or {}
+        #    print ""
+        #    print "content validation failed --------------------------"
+        #    print dict_validated_errors
+        #    raise action_error(
+        #        status   = 'invalid' ,
+        #        code     = 400 ,
+        #        message  = _('failed validation') ,
+        #        data     = {'invalid':dict_validated_errors} # TODO: we need to consider how this is returned to the user
+        #    )
         
         # -- Set Content fields ------------------------------------------------
         
@@ -407,7 +413,7 @@ class ContentsController(BaseController):
 
         # -- Save to Database --------------------------------------------------
         Session.add(content)     
-        Session.commit()         
+        Session.commit()
         update_content(content)  #   Invalidate any cache associated with this content
         user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
         

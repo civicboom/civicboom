@@ -62,9 +62,11 @@ class LocationValidator(validators.FancyValidator):
 
 class ContentObjectValidator(validators.FancyValidator):
     not_empty = True
+    #if_missing = ''
+    #if_empty   = ''
     messages = {
         'empty'       : _('You must specify content'),
-        'not_member'  : _('Not valid content'),
+        'not_content' : _('Not valid content'),
         'not_viewable': _('content not viewable by your user'),
     }
     def __init__(self, return_object=False, *args, **kwargs):

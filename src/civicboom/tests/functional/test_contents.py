@@ -30,7 +30,8 @@ class TestContentsController(TestController):
     def test_cant_show_individual_comment(self):
         # comments should not be shown individually -- or should they? With threaded comments,
         # linking to a subthread may be useful
-        response = self.app.get(url('content', id=5), status=404)
+        response = self.app.get(url('content', id=5), status=302)
+        # AllanC - currently redirects to parent ... could be considered in the future with threaded comments (see Shish's comment)
 
     def test_show_as_xml(self):
         response = self.app.get(url('formatted_content', id=1, format='xml'))
@@ -138,7 +139,7 @@ class TestContentsController(TestController):
             },
             status=201
         )
-
+#FIX
     def test_cant_create_comment_without_parent(self):
         response = self.app.post(
             url('contents', format="json"),
@@ -150,6 +151,7 @@ class TestContentsController(TestController):
             },
             status=400
         )
+        assert 'invalid' in response
 
     def test_cant_comment_on_something_that_doesnt_exist(self):
         response = self.app.post(
@@ -161,8 +163,9 @@ class TestContentsController(TestController):
                 'type': "comment",
                 'content': 'content of a test comment',
             },
-            status=404
+            status=400
         )
+        assert 'invalid' in response
 
     def test_cant_comment_on_what_cant_be_seen(self):
         response = self.app.post(
@@ -174,7 +177,7 @@ class TestContentsController(TestController):
                 'type': "comment",
                 'content': 'content of a test comment',
             },
-            status=403
+            status=400
         )
 
     def test_can_update_article_owned_by_group_i_am_admin_of(self):

@@ -3,7 +3,7 @@ import formencode
 
 def validate_dict(data, schema, dict_to_validate_key=None, template_error=None):
     # Prepare dict to validate
-    if len(data.keys())==1: #If dict only contains 1 key then validate that one key
+    if dict_to_validate_key==None and len(data.keys())==1: #If dict only contains 1 key then validate that one key
         dict_to_validate_key = data.keys()[0]
     if dict_to_validate_key:
         dict_to_validate = data[dict_to_validate_key]
@@ -28,6 +28,9 @@ def validate_dict(data, schema, dict_to_validate_key=None, template_error=None):
             e = dict_validated_errors[key]
             if hasattr(e,'msg'): e = e.msg
             invalid_dict[key] = e
+            
+        #print "ERROR validation"
+        #print data
         
         # Raise Validation Error
         raise action_error(
