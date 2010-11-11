@@ -1,8 +1,5 @@
 #!/bin/sh
 
-mkdir -p /var/log/apache2/civicboom.com/
-make-ssl-cert generate-default-snakeoil
-
 ln -sf /etc/nginx/sites-available/civicboom.com /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
