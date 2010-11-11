@@ -317,24 +317,10 @@ class ContentsController(BaseController):
             # AllanC - HACK! the validators cant handle missing fields .. so we botch an empty string field in here
             if 'parent_id' not in kwargs: kwargs['parent_id'] = ''
         
+        # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic
         data       = {'content':kwargs}
         data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
         kwargs     = data['content']
-
-        #try:
-        #    kwargs = schema.to_python(kwargs) # Validate
-        #except formencode.Invalid, error: # Failed Validation - Raise Error
-        #    dict_validated        = error.value
-        #    dict_validated_errors = error.error_dict or {}
-        #    print ""
-        #    print "content validation failed --------------------------"
-        #    print dict_validated_errors
-        #    raise action_error(
-        #        status   = 'invalid' ,
-        #        code     = 400 ,
-        #        message  = _('failed validation') ,
-        #        data     = {'invalid':dict_validated_errors} # TODO: we need to consider how this is returned to the user
-        #    )
         
         # -- Set Content fields ------------------------------------------------
         
@@ -379,12 +365,12 @@ class ContentsController(BaseController):
         
         # -- Publishing --------------------------------------------------------
         if submit_type == 'publish':
-            # Profanity Check
+            # Profanity Check --------------------------------------------------
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
             content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
             
-            # Notifications
+            # Notifications ----------------------------------------------------
             m = None
             if starting_content_type != content.__type__:
                 # Send notifications about NEW published content

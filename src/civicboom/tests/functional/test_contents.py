@@ -139,7 +139,7 @@ class TestContentsController(TestController):
             },
             status=201
         )
-#FIX
+
     def test_cant_create_comment_without_parent(self):
         response = self.app.post(
             url('contents', format="json"),
