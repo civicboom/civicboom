@@ -314,6 +314,8 @@ class ContentsController(BaseController):
         schema = ContentSchema()
         if kwargs.get('type') == 'comment':
             schema = ContentCommentSchema()
+            # AllanC - HACK! the validators cant handle missing fields .. so we botch an empty string field in here
+            if 'parent_id' not in kwargs: kwargs['parent_id'] = ''
         
         data       = {'content':kwargs}
         data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
