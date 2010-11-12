@@ -1,55 +1,73 @@
 from civicboom.tests import *
+import json
 
 class TestFeedsController(TestController):
+    def test_all(self):
+        self.part_new()
+        self.part_create()
 
-    def test_index(self):
+        self.part_index()
+        self.part_index_as_xml()
+        self.part_show()
+        self.part_show_as_xml()
+
+        self.part_edit()
+        self.part_update()
+
+        self.part_delete()
+
+
+    def part_new(self):
+        response = self.app.get(url('new_feed'))
+
+    # FIXME: needs data to be submitted, data format isn't set yet
+    def part_create(self):
+        response = self.app.post(
+            url('feeds', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'name': 'test feed #1',
+            },
+            status=201
+        )
+        self.f1_id = json.loads(response.body)['data']['id']
+
+        response = self.app.post(
+            url('feeds', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'name': 'deleteme',
+            },
+            status=201
+        )
+        self.f2_id = json.loads(response.body)['data']['id']
+
+
+    def part_index(self):
         response = self.app.get(url('feeds'))
         # Test response...
 
-    def test_index_as_xml(self):
+    def part_index_as_xml(self):
         response = self.app.get(url('formatted_feeds', format='xml'))
 
-    # FIXME: needs data to be submitted, data format isn't set yet
-    #def test_create(self):
-    #    response = self.app.post(url('feeds'))
+    def part_show(self):
+        response = self.app.get(url('feed', id=self.f1_id))
 
-    def test_new(self):
-        response = self.app.get(url('new_feed'))
+    def part_show_as_xml(self):
+        response = self.app.get(url('formatted_feed', id=self.f1_id, format='xml'))
 
-    def test_new_as_xml(self):
-        response = self.app.get(url('formatted_new_feed', format='xml'))
 
-    def test_update(self):
+    def part_edit(self):
+        response = self.app.get(url('edit_feed', id=self.f1_id))
+
+    def part_update(self):
         response = self.app.put(
-            url('feed', id=1, format='json'),
+            url('feed', id=self.f1_id, format='json'),
             params={
                 "name": "new name from put",
             }
         )
 
-    def test_update_browser_fakeout(self):
-        response = self.app.post(
-            url('feed', id=1, format='json'),
-            params={
-                "_method": 'put',
-                "name": "update from fakeout",
-            }
-        )
 
-    def test_delete(self):
-        response = self.app.delete(url('feed', id=2, format='json'))
-
-    def test_delete_browser_fakeout(self):
-        response = self.app.post(url('feed', id=3, format='json'), params=dict(_method='delete'))
-
-    def test_show(self):
-        response = self.app.get(url('feed', id=1))
-
-    def test_show_as_xml(self):
-        response = self.app.get(url('formatted_feed', id=1, format='xml'))
-
-    def test_edit(self):
-        response = self.app.get(url('edit_feed', id=1))
-
-    def test_edit_as_xml(self):
-        response = self.app.get(url('formatted_edit_feed', id=1, format='xml'))
+    def part_delete(self):
+        response = self.app.delete(url('feed', id=self.f2_id, format='json'))

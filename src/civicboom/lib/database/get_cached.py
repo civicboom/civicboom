@@ -31,10 +31,10 @@ def get_licenses():
 # AllanC - primarly used in setup of test data, not normally used in main site operation
 def get_license(license):
     try:
-        return Session.query(License).filter_by(code=license).one()
+        return Session.query(License).filter_by(code=unicode(license)).one()
     except:
         try:
-            return Session.query(License).filter_by(name=license).one()
+            return Session.query(License).filter_by(name=unicode(license)).one()
         except:
             pass
     return None
@@ -108,8 +108,8 @@ def get_tag(tag):
     If it does not appear in the database then return a new tag object
     If it does exisit in the data then return the database object
     """
-    try   : return Session.query(Tag).filter_by(name=tag).one()
-    except: return Tag(tag)
+    try   : return Session.query(Tag).filter_by(name=unicode(tag)).one()
+    except: return Tag(unicode(tag))
 
 
 def get_media_nocache(media_id):
