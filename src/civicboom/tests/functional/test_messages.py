@@ -4,15 +4,35 @@ from civicboom.model import Message, Member
 import json
 
 class TestMessagesController(TestController):
-    setup_done = False
-    def setUp(self):
-        TestController.setUp(self)
+    def test_all(self):
+        self.part_setup()
 
-        if setup_done:
-            return
-        setup_done = True
+        self.part_new()
+        self.part_new_frag()
+        self.part_create()
+        self.part_create_bad_target()
+        self.part_create_no_content()
+
+        self.part_index()
+        self.part_index_lists()
+        self.part_index_as_json()
+
+        self.part_show()
+        self.part_show_as_json()
+        self.part_show_someone_elses()
+        self.part_show_non_exist()
+
+        self.part_edit()
+        self.part_edit_as_json()
+        self.part_update()
+
+        self.part_delete_message()
+        self.part_delete_notification()
+        self.part_delete_someone_elses()
+        self.part_delete_non_exist()
 
 
+    def part_setup(self):
         # notifications can't be created manually
         n1 = Message()
         n1.target = Session.query(Member).filter(Member.username=="unittest").first()
@@ -80,43 +100,43 @@ class TestMessagesController(TestController):
 
     ## index -> show #########################################################
 
-    def test_index(self):
+    def part_index(self):
         response = self.app.get(url('formatted_messages', format="frag"))
         assert "Re: Re: singing" in response
 
-    def test_index_lists(self):
+    def part_index_lists(self):
         response = self.app.get(url('formatted_messages', format="json", list="notification"))
         response = self.app.get(url('formatted_messages', format="json", list="to"))
         response = self.app.get(url('formatted_messages', format="json", list="whgarbl"), status=400)
 
-    def test_index_as_json(self):
+    def part_index_as_json(self):
         response = self.app.get(url('formatted_messages', format='json'))
         assert "Re: Re: singing" in response
 
-    def test_show(self):
+    def part_show(self):
         response = self.app.get(url('formatted_message', id=self.m2_id, format="frag"))
         assert "truncation" in response
 
-    def test_show_as_json(self):
+    def part_show_as_json(self):
         response = self.app.get(url('formatted_message', id=self.m2_id, format='json'))
         assert "truncation" in response
 
-    def test_show_someone_elses(self):
+    def part_show_someone_elses(self):
         response = self.app.get(url('message', id=self.m1_id), status=403)
 
-    def test_show_non_exist(self):
+    def part_show_non_exist(self):
         response = self.app.get(url('message', id=0), status=404)
 
 
     ## new -> create #########################################################
 
-    def test_new(self):
+    def part_new(self):
         response = self.app.get(url('new_message', format='json'))
 
-    def test_new_frag(self):
+    def part_new_frag(self):
         response = self.app.get(url('formatted_new_message', format='frag'))
 
-    def test_create(self):
+    def part_create(self):
         response = self.app.post(
             url('messages', format='json'),
             params={
@@ -128,7 +148,7 @@ class TestMessagesController(TestController):
             status=201
         )
 
-    def test_create_bad_target(self):
+    def part_create_bad_target(self):
         response = self.app.post(
             url('messages'),
             params={
@@ -140,7 +160,7 @@ class TestMessagesController(TestController):
             status=404
         )
 
-    def test_create_no_content(self):
+    def part_create_no_content(self):
         response = self.app.post(
             url('messages'),
             params={
@@ -154,7 +174,7 @@ class TestMessagesController(TestController):
 
     ## delete ################################################################
 
-    def test_delete_message(self):
+    def part_delete_message(self):
         response = self.app.delete(
             url('message', id=self.m5_id, format="json"),
             params={
@@ -162,7 +182,7 @@ class TestMessagesController(TestController):
             }
         )
 
-    def test_delete_notification(self):
+    def part_delete_notification(self):
         response = self.app.delete(
             url('message', id=self.n3_id, format="json"),
             params={
@@ -170,7 +190,7 @@ class TestMessagesController(TestController):
             }
         )
 
-    def test_delete_someone_elses(self):
+    def part_delete_someone_elses(self):
         response = self.app.delete(
             url('message', id=self.m1_id, format="json"),
             params={
@@ -179,7 +199,7 @@ class TestMessagesController(TestController):
             status=403
         )
 
-    def test_delete_non_exist(self):
+    def part_delete_non_exist(self):
         response = self.app.delete(
             url('message', id=0, format="json"),
             params={
@@ -192,14 +212,12 @@ class TestMessagesController(TestController):
     ## edit -> update ########################################################
     # messages are un-updatable, so these are stubs
 
-    def test_edit(self):
+    def part_edit(self):
         response = self.app.get(url('edit_message', id=1), status=501)
 
-    def test_edit_as_json(self):
+    def part_edit_as_json(self):
         response = self.app.get(url('formatted_edit_message', id=1, format='json'), status=501)
 
-    def test_update(self):
+    def part_update(self):
         response = self.app.put(url('message', id=1), status=501)
 
-    def test_update_browser_fakeout(self):
-        response = self.app.post(url('message', id=1), params=dict(_method='put'), status=501)
