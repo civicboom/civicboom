@@ -148,8 +148,8 @@ def signin_user(user, login_provider=None):
     """
     user_log.info("logged in with %s" % login_provider)   # Log user login
     #session_set('user_id' , user.id      ) # Set server session variable to user.id
-    session_set('username'        , user.username) # Set server session username so we know the actual user regardless of persona
-    set_persona(user.username)
+    session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
+    #set_persona(user)
     response.set_cookie(
         "civicboom_logged_in", "True",
         int(config["beaker.session.timeout"]),
@@ -180,23 +180,24 @@ def signout_user(user):
     #session.save()
     #flash_message("Successfully signed out!")
 
-def set_persona(group_persona):
+def set_persona(persona):
     
-    def set_persona_session(username, role='admin'):
-        session_set('username_persona', username)
-        session_set('role'            , role)
+    def set_persona_session(persona): #, role='admin'
+        if isintance(persona, Member):
+            persona = persona.username
+        session_set('username_persona', persona)
+        #session_set('role'            , role   )
 
-    if (
+    if (persona == c.logged_in_user):
         #(isinstance(group_persona, basestring) and
-        group_persona == c.logged_in_user.username 
         #or
         #(isinstance(group_persona, Member    ) and group_persona == c.logged_in_user         )
-       ):
-        set_persona_session(group_persona)
+        #set_persona_session(persona)
+        session_remove('username_persona')
         return True
     else:
-        membership = get_membership(group_persona, c.logged_in_user)
+        membership = get_membership(persona, c.logged_in_user)
         if membership:
-            set_persona_session(group_persona, membership.role)
+            set_persona_session(persona) #, membership.role
             return True
     return False

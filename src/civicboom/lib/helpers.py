@@ -38,7 +38,8 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
     """
     Generate Janrain IFRAME component
     """
-    if not return_url: return_url = urllib.quote_plus(url.current(host=app_globals.site_host, protocol='https')) #controller='account', action='signin',
+    if not return_url:
+        return_url = urllib.quote_plus(url.current(host=app_globals.site_host, protocol='https')) #controller='account', action='signin',
     query_params = ""
     for karg in kargs:
         query_params += karg+"="+str(kargs[karg])
