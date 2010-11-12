@@ -140,7 +140,7 @@ class ReCaptchaValidator(validators.FancyValidator):
 #-------------------------------------------------------------------------------
 # Schemas
 #-------------------------------------------------------------------------------
-    
+
 class RegisterSchemaEmailUsername(DefaultSchema):
   username  = UniqueUsernameValidator(not_empty=True)
   email     = UniqueEmailValidator   (not_empty=True)

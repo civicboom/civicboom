@@ -23,9 +23,9 @@ def build_schema(*args, **kargs):
             schema.fields[key] = kargs[key]
     elif args:
         for field in args:
-            if field=='username': schema.fields[field] = UniqueUsernameValidator()
-            if field=='email'   : schema.fields[field] = UniqueEmailValidator()
-            if field=='dob'     : schema.fields[field] = MinimumAgeValidator()
+            if field=='username': schema.fields[field] = UniqueUsernameValidator(not_empty=True)
+            if field=='email'   : schema.fields[field] = UniqueEmailValidator(not_empty=True)
+            if field=='dob'     : schema.fields[field] = MinimumAgeValidator(not_empty=True)
             if field=='password':
                 schema.fields[field]                = PasswordValidator()
                 schema.fields['password_confirm']   = PasswordValidator()
