@@ -1,6 +1,76 @@
 from civicboom.tests import *
+from civicboom.model.meta import Session
+from civicboom.model import Message, Member
+import json
 
 class TestMessagesController(TestController):
+    def setUp(self):
+        TestController.setUp(self)
+
+        # notifications can't be created manually
+        n1 = Message()
+        n1.target = Session.query(Member).filter(Member.username=="unittest").first()
+        n1.subject = u"Notification! A test"
+        n1.content = u"A test is happening now :O"
+
+        n2 = Message()
+        n2.target = Session.query(Member).filter(Member.username=="unitfriend").first()
+        n2.subject = u"Another notification! A test"
+        n2.content = u"A test part 2 is happening now :O"
+
+        n3 = Message()
+        n3.target = Session.query(Member).filter(Member.username=="unittest").first()
+        n3.subject = u"deleteme"
+        n3.content = u"This is a notification to test deletion with"
+
+        Session.add_all([n1, n2, n3])
+        Session.commit()
+
+        self.n1_id = n1.id
+        self.n2_id = n2.id
+        self.n3_id = n3.id
+
+
+        self.log_in_as("unittest")
+        response = self.app.post(
+            url('messages', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'unitfriend',
+                'subject': 'Re: singing',
+                'content': 'My singing is fine!',
+            },
+            status=201
+        )
+        self.m1_id = json.loads(response.body)['data']['id']
+
+        self.log_in_as("unitfriend")
+        response = self.app.post(
+            url('messages', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'unittest',
+                'subject': 'Re: Re: singing',
+                'content': 'It is totally not! And to explain, I will use a sentence that is over 50 characters long, to test the Message.__unicode__ truncation feature',
+            },
+            status=201
+        )
+        self.m2_id = json.loads(response.body)['data']['id']
+
+        response = self.app.post(
+            url('messages', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'unittest',
+                'subject': 'deleteme',
+                'content': 'this is a message to test deletion with',
+            },
+            status=201
+        )
+        self.m5_id = json.loads(response.body)['data']['id']
+
+        self.log_in_as("unittest")
+
 
     ## index -> show #########################################################
 
@@ -18,15 +88,15 @@ class TestMessagesController(TestController):
         assert "Re: Re: singing" in response
 
     def test_show(self):
-        response = self.app.get(url('formatted_message', id=2, format="frag"))
+        response = self.app.get(url('formatted_message', id=self.m2_id, format="frag"))
         assert "truncation" in response
 
     def test_show_as_json(self):
-        response = self.app.get(url('formatted_message', id=2, format='json'))
+        response = self.app.get(url('formatted_message', id=self.m2_id, format='json'))
         assert "truncation" in response
 
     def test_show_someone_elses(self):
-        response = self.app.get(url('message', id=1), status=403)
+        response = self.app.get(url('message', id=self.m1_id), status=403)
 
     def test_show_non_exist(self):
         response = self.app.get(url('message', id=0), status=404)
@@ -80,24 +150,15 @@ class TestMessagesController(TestController):
 
     def test_delete_message(self):
         response = self.app.delete(
-            url('message', id=5, format="json"),
+            url('message', id=self.m5_id, format="json"),
             params={
-                '_authentication_token': self.auth_token
-            }
-        )
-
-    def test_delete_browser_fakeout(self):
-        response = self.app.post(
-            url('message', id=6, format="json"),
-            params={
-                "_method": 'delete',
                 '_authentication_token': self.auth_token
             }
         )
 
     def test_delete_notification(self):
         response = self.app.delete(
-            url('message', id=7, format="json"),
+            url('message', id=self.n3_id, format="json"),
             params={
                 '_authentication_token': self.auth_token
             }
@@ -105,7 +166,7 @@ class TestMessagesController(TestController):
 
     def test_delete_someone_elses(self):
         response = self.app.delete(
-            url('message', id=1, format="json"),
+            url('message', id=self.m1_id, format="json"),
             params={
                 '_authentication_token': self.auth_token
             },
