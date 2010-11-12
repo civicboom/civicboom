@@ -16,7 +16,6 @@ class TestMessagesController(TestController):
         self.part_index()
         self.part_index_lists()
         self.part_index_as_json()
-
         self.part_show()
         self.part_show_as_json()
         self.part_show_someone_elses()
@@ -56,6 +55,26 @@ class TestMessagesController(TestController):
         self.n2_id = n2.id
         self.n3_id = n3.id
 
+
+    ## new -> create #########################################################
+
+    def part_new(self):
+        response = self.app.get(url('new_message', format='json'))
+
+    def part_new_frag(self):
+        response = self.app.get(url('formatted_new_message', format='frag'))
+
+    def part_create(self):
+        response = self.app.post(
+            url('messages', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'unittest',
+                'subject': 'arrr, a subject',
+                'content': 'I am content',
+            },
+            status=201
+        )
 
         self.log_in_as("unittest")
         response = self.app.post(
@@ -98,6 +117,31 @@ class TestMessagesController(TestController):
         self.log_in_as("unittest")
 
 
+
+    def part_create_bad_target(self):
+        response = self.app.post(
+            url('messages'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'MrNotExists',
+                'subject': 'arrr, a subject',
+                'content': 'I am content',
+            },
+            status=404
+        )
+
+    def part_create_no_content(self):
+        response = self.app.post(
+            url('messages'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'unittest',
+                'subject': 'arrr, a subject',
+            },
+            status=400
+        )
+
+
     ## index -> show #########################################################
 
     def part_index(self):
@@ -128,48 +172,17 @@ class TestMessagesController(TestController):
         response = self.app.get(url('message', id=0), status=404)
 
 
-    ## new -> create #########################################################
+    ## edit -> update ########################################################
+    # messages are un-updatable, so these are stubs
 
-    def part_new(self):
-        response = self.app.get(url('new_message', format='json'))
+    def part_edit(self):
+        response = self.app.get(url('edit_message', id=1), status=501)
 
-    def part_new_frag(self):
-        response = self.app.get(url('formatted_new_message', format='frag'))
+    def part_edit_as_json(self):
+        response = self.app.get(url('formatted_edit_message', id=1, format='json'), status=501)
 
-    def part_create(self):
-        response = self.app.post(
-            url('messages', format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-                'target': 'unittest',
-                'subject': 'arrr, a subject',
-                'content': 'I am content',
-            },
-            status=201
-        )
-
-    def part_create_bad_target(self):
-        response = self.app.post(
-            url('messages'),
-            params={
-                '_authentication_token': self.auth_token,
-                'target': 'MrNotExists',
-                'subject': 'arrr, a subject',
-                'content': 'I am content',
-            },
-            status=404
-        )
-
-    def part_create_no_content(self):
-        response = self.app.post(
-            url('messages'),
-            params={
-                '_authentication_token': self.auth_token,
-                'target': 'unittest',
-                'subject': 'arrr, a subject',
-            },
-            status=400
-        )
+    def part_update(self):
+        response = self.app.put(url('message', id=1), status=501)
 
 
     ## delete ################################################################
@@ -207,17 +220,3 @@ class TestMessagesController(TestController):
             },
             status=404
         )
-
-
-    ## edit -> update ########################################################
-    # messages are un-updatable, so these are stubs
-
-    def part_edit(self):
-        response = self.app.get(url('edit_message', id=1), status=501)
-
-    def part_edit_as_json(self):
-        response = self.app.get(url('formatted_edit_message', id=1, format='json'), status=501)
-
-    def part_update(self):
-        response = self.app.put(url('message', id=1), status=501)
-

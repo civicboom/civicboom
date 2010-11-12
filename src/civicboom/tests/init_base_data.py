@@ -421,24 +421,3 @@ def init_base_data():
         asc2.accept(u3)
         asc2.accept(u4)
         Session.commit()
-
-        ###############################################################
-        log.debug("Feeds")
-        
-        f1 = Feed()
-        f1.name = u"test feed #1"
-        f1.member = u1
-        f1.query = ""
-        
-        f2 = Feed()
-        f2.name = u"test feed #2 to be deleted"
-        f2.member = u1
-        f2.query = ""
-        
-        f3 = Feed()
-        f3.name = u"test feed #3 to be deleted with fakeout"
-        f3.member = u1
-        f3.query = ""
-        
-        Session.add_all([f1, f2, f3])
-        Session.commit()
