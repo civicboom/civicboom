@@ -202,7 +202,7 @@ class Member(Base):
 
     @property
     def avatar_url(self, size=80):
-        if self.avatar:
+        if self.avatar: # and self.avatar!='':
             return self.avatar
         return "http://static.civicboom.com/public/images/default_avatar.png"
 
@@ -265,11 +265,14 @@ class User(Member):
     def avatar_url(self, size=80):
         if self.avatar:
             return self.avatar
-        #default = "http://www.civicboom.com/images/default_avatar.jpg"
-        default = "identicon"
-        hash = hashlib.md5(self.email.lower()).hexdigest()
-        args = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
-        return "http://www.gravatar.com/avatar/%s?%s" % (hash, args)
+        email = self.email or self.email_unverifyed
+        if email:
+            hash    = hashlib.md5(email.lower()).hexdigest()
+            default = "identicon"
+            #default = "http://www.civicboom.com/images/default_avatar.jpg"
+            args    = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
+            return "http://www.gravatar.com/avatar/%s?%s" % (hash, args)
+        return Member.avatar_url(self)
 
 
 class Group(Member):

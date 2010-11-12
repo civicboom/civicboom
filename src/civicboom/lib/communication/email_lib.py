@@ -60,7 +60,7 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
 #-------------------------------------------------------------------------------
 
 def send_email_log(email_to, subject, content_text, content_html):
-    log.debug("--Email Send Disabled-- logging email output\n"
+    log.info("--Email Send Disabled-- \n"
               "To: %s Subject: %s" % (email_to, subject) +"\n"
               "Message (content_text): %s" % content_text +"\n"
             #+ "Message (content_html): %s" % content_html +"\n"

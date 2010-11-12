@@ -145,6 +145,16 @@ def objs_to_linked_formatted_dict(**kargs):
     return links
 
 
+# AllanC - not happy with this ... see register template for example ...
+# htmlfill does not support HTML5 - so I created a cusom way of getting invalid data into the template
+# in the future when htmlfill is fixed then we can swich back to it
+def get_data_value(field_name, sub_dict_name=None, default_value=''):
+    if sub_dict_name in c.result['data'] and field_name in c.result['data'][sub_dict_name]:
+        return c.result['data'][sub_dict_name][field_name]
+    else:
+        return default_value
+
+
 # AllanC - TODO: HACK ALERT!!!
 # I wanted a helper to create icons in a standard way that would degrade without a CSS style.
 #  e.g. when no style sheet is used (or a screen reader) it will have the text "approved" rather than just the icon
