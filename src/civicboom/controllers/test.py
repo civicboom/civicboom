@@ -115,6 +115,9 @@ class TestController(BaseController):
         
         Session.commit()
         
+    def post_faker(self):
+        return render("test_post_faker.mako")
+        
     def content_morph(self):
         from civicboom.lib.database.polymorphic_helpers import morph_content_to
         morph_content_to(2, "article")

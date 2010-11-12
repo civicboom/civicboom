@@ -2,11 +2,11 @@ from civicboom.tests import *
 
 import json
 
-#group_id = 0
+#self.group_id = 0
 
 class TestGroupsController(TestController):
 
-    #group_id = 0
+    #self.group_id = 0
 
     ## index -> show #########################################################
 
@@ -55,9 +55,9 @@ class TestGroupsController(TestController):
             status=201
         )
         c = json.loads(response.body)
-        global group_id
-        group_id = int(c['data']['id'])
-        assert group_id > 0
+        #
+        self.group_id = int(c['data']['id'])
+        assert self.group_id > 0
         
 
     def subtest_create_invalid(self):
@@ -126,27 +126,26 @@ class TestGroupsController(TestController):
     ## edit -> update ########################################################
     
     def subtest_edit(self):
-        global group_id
         
         response = self.app.get(url('edit_group', id=1       ), status=404)
-        assert group_id > 0
-        response = self.app.get(url('edit_group', id=group_id), status=200)
+        assert self.group_id > 0
+        response = self.app.get(url('edit_group', id=self.group_id), status=200)
         assert 'test_group' in response
         self.log_out()
-        response = self.app.get(url('edit_group', id=group_id), status=302) # redirect to login page as not logged in
+        response = self.app.get(url('edit_group', id=self.group_id), status=302) # redirect to login page as not logged in
         self.log_in_as('unitfriend')
-        response = self.app.get(url('edit_group', id=group_id), status=403) # permission denied not a group admin
+        response = self.app.get(url('edit_group', id=self.group_id), status=403) # permission denied not a group admin
 
         self.log_out()
 
 
     def subtest_update(self):
-        global group_id
+        
 
         self.log_in_as('unittest')
         
         response = self.app.put(
-            url('group', id=group_id, format='json'),
+            url('group', id=self.group_id, format='json'),
             params={
                 '_authentication_token': self.auth_token,
                 'name'         : 'Test group for unit tests (ALRIGHT!)' ,
@@ -167,13 +166,13 @@ class TestGroupsController(TestController):
         """
         Go though the process of requesting to join a group and the admin accepting the request
         """
-        global group_id
+        
         
         self.log_in_as('unitfriend')
         
         # Create a join request (as group is invite and request and unitfriend is not a member)
         response = self.app.post(
-            url('group_action', action='join', id=group_id, format='json') ,
+            url('group_action', action='join', id=self.group_id, format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unittest',
@@ -186,7 +185,7 @@ class TestGroupsController(TestController):
         
         # check member is actually part of group
         #   - member visability is public so the join request should be visable even when viewed by a logged_out user
-        response = self.app.get(url('group', id=group_id, format='json'))
+        response = self.app.get(url('group', id=self.group_id, format='json'))
         response_json = json.loads(response.body)
         found = False
         for member in response_json['data']['group']['members']:
@@ -196,13 +195,13 @@ class TestGroupsController(TestController):
         
         self.log_in_as('unittest')
         
-        response = self.app.get(url('group', id=group_id, format='json'))
+        response = self.app.get(url('group', id=self.group_id, format='json'))
         assert 'unitfriend' in response
         assert 'request'    in response # successful "join request" in member list
         
         # accept join request
         response = self.app.post(
-            url('group_action', action='set_role', id=group_id, format='json') ,
+            url('group_action', action='set_role', id=self.group_id, format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unitfriend',
@@ -213,7 +212,7 @@ class TestGroupsController(TestController):
         self.log_out()
         
         # check member is now part of group
-        response = self.app.get(url('group', id=group_id, format='json'))
+        response = self.app.get(url('group', id=self.group_id, format='json'))
         response_json = json.loads(response.body)
         found = False
         for member in response_json['data']['group']['members']:
@@ -226,13 +225,13 @@ class TestGroupsController(TestController):
     ## setrole ###############################################################
     
     def subtest_setrole(self):
-        global group_id
+        
         
         self.log_in_as('unittest')
         
         # Cannot set own role as unittest is the only admin - error will be thrown
         response = self.app.post(
-            url('group_action', action='set_role', id=group_id, format='json') ,
+            url('group_action', action='set_role', id=self.group_id, format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unittest',
@@ -244,7 +243,7 @@ class TestGroupsController(TestController):
         
         # Upgrade 'unitfriend' to admin
         response = self.app.post(
-            url('group_action', action='set_role', id=group_id, format='json') ,
+            url('group_action', action='set_role', id=self.group_id, format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unitfriend',
@@ -255,7 +254,7 @@ class TestGroupsController(TestController):
         
         # Now downgrade self to observer
         response = self.app.post(
-            url('group_action', action='set_role', id=group_id, format='json') ,
+            url('group_action', action='set_role', id=self.group_id, format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unittest',
@@ -272,13 +271,13 @@ class TestGroupsController(TestController):
         """
         As 'unitfriend' is now the only admin of the group they will remove it
         """
-        global group_id
+        
         
         self.log_in_as('unittest')
         
         # Try deleting when logged in as 'unittest' ... should fail as 'unittest' is not an admin anymore
         response = self.app.delete(
-            url('group', id=group_id, format="json"),
+            url('group', id=self.group_id, format="json"),
             params={
                 '_authentication_token': self.auth_token
             },
@@ -288,7 +287,7 @@ class TestGroupsController(TestController):
         self.log_in_as('unitfriend')
         
         response = self.app.delete(
-            url('group', id=group_id, format="json"),
+            url('group', id=self.group_id, format="json"),
             params={
                 '_authentication_token': self.auth_token
             },
@@ -298,4 +297,4 @@ class TestGroupsController(TestController):
         self.log_out()
         
         # The group should not exist
-        response = self.app.get(url('group', id=group_id, format='json'), status=404)
+        response = self.app.get(url('group', id=self.group_id, format='json'), status=404)

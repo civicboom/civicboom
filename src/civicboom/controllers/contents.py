@@ -1,24 +1,21 @@
-"""
-Content Controller
-
-For managing content:
- - creating/editing
- - attaching media
- - deleting
- - flagging
- - AJAX calls to get media processing status
-"""
 # Base controller imports
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, CommentContent, DraftContent
+from civicboom.model                   import Media, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
+from civicboom.model.content           import _content_type as content_types
 
 # Other imports
-from civicboom.lib.civicboom_lib import form_post_contains_content, form_to_content, get_content_media_upload_key, profanity_filter, twitter_global
+from civicboom.lib.civicboom_lib import get_content_media_upload_key, profanity_filter, twitter_global
 from civicboom.lib.communication import messages
-from civicboom.lib.helpers          import call_action
+from civicboom.lib.helpers       import call_action
+from civicboom.lib.database.polymorphic_helpers import morph_content_to
+
+# Validation
+import formencode
+import civicboom.lib.form_validators.base
+from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 # Search imports
 from civicboom.lib.search import *
@@ -31,6 +28,38 @@ from sqlalchemy.orm       import join
 # Logging setup
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
+
+
+#-------------------------------------------------------------------------------
+# Form Schema
+#-------------------------------------------------------------------------------
+
+class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
+    allow_extra_fields  = True
+    filter_extra_fields = False
+    ignore_key_missing  = True
+    type        = formencode.validators.OneOf(content_types.enums, not_empty=False)
+    title       = formencode.validators.String(not_empty=False, strip=True, max=250, min=2)
+    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator()
+    parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=False)
+    location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
+    private     = formencode.validators.StringBool(not_empty=False)
+    license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
+    creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused?
+    tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False)
+    # Draft Fields
+    target_type = formencode.validators.OneOf(content_types.enums, not_empty=False)
+    # Assignment Fields
+    due_date    = formencode.validators.DateConverter(not_empty=False, month_style='dd/mm/yyyy')
+    event_date  = formencode.validators.DateConverter(not_empty=False, month_style='dd/mm/yyyy')
+    # TODO: need date validators to check date is in future (and not too far in future as well)
+
+
+class ContentCommentSchema(ContentSchema):
+    parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator( not_empty=True, empty=_('comments must have a valid parent'))
+    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'))
+
+    
 
 
 #-------------------------------------------------------------------------------
@@ -49,18 +78,31 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
             raise action_error(_("_content not viewable"), code=403)
         if content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
-            raise action_error(_("_content not found"), code=404)
+            #raise action_error(_("_content not found"), code=404)
+            # AllanC - originaly viewing a comment was an error, we may want in the future to display comments and sub comments, for now we redirect to parent
+            return redirect(url('content', id=content.parent.id))
     if is_editable and not content.editable_by(c.logged_in_persona):
+        # AllanC TODO: need to check role in group to see if they can do this
         raise action_error(_("You do not have permission to edit this _content"), code=403)
     if is_parent_owner and not content.is_parent_owner(c.logged_in_persona):
         raise action_error(_("not parent owner"), code=403)
     return content
 
+#-------------------------------------------------------------------------------
+# Decorators 
+#-------------------------------------------------------------------------------
+
+#@decorator
+#def can_publish(target, *args, **kwargs):
+#    #c.logged_in_persona_role
+#    result = target(*args, **kwargs) # Execute the wrapped function
+#    return result
+
 
 #-------------------------------------------------------------------------------
 # Search Filters
 #-------------------------------------------------------------------------------
-def _get_search_filters():
+def _init_search_filters():
     def append_search_text(query, text):
         return query.filter(or_(Content.title.match(text), Content.content.match(text)))
     
@@ -106,7 +148,7 @@ def _get_search_filters():
     
     return search_filters
 
-search_filters = _get_search_filters()
+search_filters = _init_search_filters()
 
 
 
@@ -163,58 +205,6 @@ class ContentsController(BaseController):
 
 
     @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
-    def create(self, **kwargs):
-        """
-        POST /contents: Create a new item
-
-        @api contents 1.0 (WIP)
-
-        @param title
-        @param contents
-        @param type
-        @param ...
-
-        @return 201   content created
-                id    new content id
-        @return 400   missing data (ie, a type=comment with no parent_id)
-        @return 403   can't reply to parent
-        @return 404   parent not found
-
-        @comment Shish paramaters need filling out
-        """
-        # url('contents') + POST
-        
-        # TODO:
-        # AllanC -This actions needs a potential revamp
-        #         preferably it shoudl call update to do all overlay processing
-        #         "new" should ONLY call create and create should auto_redirect to edit?
-        
-        # if parent is specified, make sure it is valid
-        if 'parent_id' in kwargs:
-            parent = get_content(kwargs['parent_id'])
-            if not parent:
-                raise action_error(message='parent not found', code=404)
-            if not parent.viewable_by(c.logged_in_persona):
-                raise action_error(message='you do not have permission to respond to this content', code=403)
-        
-        # if type is comment, it must have a parent
-        if kwargs.get('type') == "comment" and 'parent_id' not in kwargs:
-            raise action_error(code=400)
-        
-        content = form_to_content(kwargs, None)
-        Session.add(content)
-        Session.commit()
-        
-        if c.format == 'redirect' and content.parent:
-            return redirect(url('content', id=content.parent.id))
-        
-        return action_ok(message=_(' _content created ok'), data={'id':content.id}, code=201)
-
-
-    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def new(self):
@@ -231,6 +221,50 @@ class ContentsController(BaseController):
         return redirect(url('edit_content', id=content_id))
 
 
+    @auto_format_output
+    @web_params_to_kwargs
+    @authorize(is_valid_user)
+    @authenticate_form
+    def create(self, type='draft', **kwargs):
+        """
+        POST /contents: Create a new item
+
+        @api contents 1.0 (WIP)
+
+        @param type
+        @param *  see "PUT /contents/id"
+
+        @return 201   content created
+                id    new content id
+        @return x     see update return types
+        """
+        # url('contents') + POST
+        
+        # Create Content Object
+        if   type == 'draft':
+            content = DraftContent()
+        elif type == "comment":
+            content = CommentContent()
+        elif type == "article":
+            content = ArticleContent()
+        elif type == "assignment":
+            content = AssignmentContent()
+        
+        # Set create to currently logged in user
+        content.creator = c.logged_in_persona
+        
+        # Commit to database to get ID field
+        # DEPRICATED
+        #Session.add(content)
+        #Session.commit()
+        # AllanC - if the update fails on validation we do not want a ghost record commited
+        
+        # Use update behaviour to save and commit object
+        update_response = call_action(self.update, id=content, format='python') # no need to pass kwargs as these are reaquired from request.params
+        if update_response['status'] != 'ok':
+            return update_response
+        
+        return action_ok(message=_('_content created ok'), data={'id':content.id}, code=201)
 
 
     @auto_format_output
@@ -243,33 +277,100 @@ class ContentsController(BaseController):
 
         @api contents 1.0 (WIP)
 
-        @param *  see "POST /contents"
-
         @return 200   success
         @return 403   lacking permission to edit
         @return 404   no content to be edited
 
-        @comment Shish needs to check validity of parent if set
+        @comment Shish paramaters need filling out
         """
         # url('content', id=ID)
         
-        content = _get_content(id, is_editable=True)
+        # -- Get Content -------------------------------------------------------
+        if isinstance(id, Content):
+            content = id
+        else:
+            content = _get_content(id, is_editable=True)
+        assert content
         
-        # AllanC - Publish Permission placeholder for groups
-        #          We need to not only know the current user persona, but also the role of that current persona e.g - might be logged in as EvilCorp but only as a 'contributor' or 'observer'
-        #if 'submit_publish' in request.POST and :
-        #    raise action_error(_("You do not have permission to publish this _content"), code=403)
+        # -- Publish Permission-------------------------------------------------
+        # TODO - need to check role in group to see if they have permissions to do this
+        # TODO - Publish Permission for groups (to be part of is editable?)
+        # return 403
+
+        # -- Decode Action -----------------------------------------------------
+        # AllanC - could this be turned into a validator?
+        def normalise_submit(kwargs):
+            submit_keys = [key.replace("submit_","") for key in kwargs.keys() if key.startswith("submit_") and kwargs[key]!=None and kwargs[key]!='']
+            if len(submit_keys) == 0:
+                return None
+            if len(submit_keys) == 1:
+                return submit_keys[0]
+            raise action_error(_('multiple submit types submited'), code=400)
+        submit_type = normalise_submit(kwargs)
+
+        # -- Validate ----------------------------------------------------------
+
+        # Select Validation Schema (based on content type)
+        schema = ContentSchema()
+        if kwargs.get('type') == 'comment':
+            schema = ContentCommentSchema()
+            # AllanC - HACK! the validators cant handle missing fields .. so we botch an empty string field in here
+            if 'parent_id' not in kwargs: kwargs['parent_id'] = ''
         
+        # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic
+        data       = {'content':kwargs}
+        data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
+        kwargs     = data['content']
         
-        starting_content_type = content.__type__                  # Rember the original content type to see if it has morphed
-        content               = form_to_content(kwargs, content)  # Overlay form data over the current content object or return a new instance of an object
+        # -- Set Content fields ------------------------------------------------
         
-        # If publishing perform profanity check and send notifications
-        if 'submit_publish' in kwargs:
-            profanity_filter(content) # Filter any naughty words and alert moderator
+        # TODO: dont allow licence type change after publication - could this be part of validators?
+        
+        # Morph Content type - if needed (only appropriate for data already in DB)
+        starting_content_type = content.__type__
+        if submit_type == 'publish' and 'type' not in kwargs: # If publishing set 'type' (as this is submitted from the form as 'target_type')
+            if hasattr(content, 'target_type'):
+                kwargs['type'] = content.target_type
+            if 'target_type' in kwargs:
+                kwargs['type'] = kwargs['target_type']                
+        if 'type' in kwargs:
+            content = morph_content_to(content, kwargs['type'])
+        
+        # Set content fields from validated kwargs input
+        for field in schema.fields.keys():
+            if field in kwargs and hasattr(content,field):
+                #print "set %s as %s" % (field, kwargs[field])
+                setattr(content,field,kwargs[field])
+        
+        # Update Existing Media - Form Fields
+        for media in content.attachments:
+            # Update media item fields
+            caption_key = "media_caption_%d" % (media.id)
+            if caption_key in kwargs:
+                media.caption = kwargs[caption_key]
+            credit_key = "media_credit_%d"   % (media.id)
+            if credit_key in kwargs:
+                media.credit = kwargs[credit_key]
+            # Remove media if required
+            if "file_remove_%d" % media.id in kwargs:
+                content.attachments.remove(media)
+        
+        # Add Media - if file present in form post
+        if 'media_file' in kwargs and kwargs['media_file'] != "":
+            form_file = kwargs["media_file"]
+            media = Media()
+            media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=kwargs["media_caption"], credit=kwargs["media_credit"])
+            content.attachments.append(media)
+            #Session.add(media) # is this needed as it is appended to content and content is in the session?
+        
+        # -- Publishing --------------------------------------------------------
+        if submit_type == 'publish':
+            # Profanity Check --------------------------------------------------
+            profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
             content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
             
+            # Notifications ----------------------------------------------------
             m = None
             if starting_content_type != content.__type__:
                 # Send notifications about NEW published content
@@ -296,29 +397,26 @@ class ContentsController(BaseController):
                 user_log.info("updated published Content #%d" % (content.id, ))
             if m:
                 content.creator.send_message_to_followers(m, delay_commit=True)
+
+
+        # -- Save to Database --------------------------------------------------
+        Session.add(content)     
+        Session.commit()
+        update_content(content)  #   Invalidate any cache associated with this content
+        user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
         
-        # AllanC - This was an idea that if the content has not changed then dont commit it, but for now it is simpler to always commit it
-        #content_hash_before = content.hash() # Generate hash of content
-        #content_hash_after  = "always trigger db commit on post" #content.hash()                # Generate hash of content again
-        #if content_hash_before != content_hash_after:         # If content has changed
-        Session.add(content)                            #   Save content to database
-        Session.commit()                                  #
-        update_content(content)                         #   Invalidate any cache associated with this content
-        user_log.info("edited Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
-        
-        content_message  = None
-        content_redirect = url('edit_content', id=content.id)
-        
-        if 'submit_preview' in request.POST:
+        # -- Redirect ----------------------------------------------------------
+        content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
+        if submit_type == 'preview':
             content_redirect = url('content', id=content.id)
-        if 'submit_publish' in request.POST:
+        if submit_type ==  'publish':
             content_redirect = url('content', id=content.id, prompt_aggregate=True)
-        if 'submit_response' in request.POST:
+        if submit_type == 'response':
             content_redirect = url('content', id=content.parent_id)
         
         if c.format == 'redirect':
             return redirect(content_redirect)
-            
+        
         return action_ok(_("_content updated"))
 
 
@@ -394,8 +492,8 @@ class ContentsController(BaseController):
         
         c.content = _get_content(id, is_editable=True)
         
-        c.content                  = form_to_content(kwargs, c.content)
+        #c.content                  = form_to_content(kwargs, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
-        return action_ok()
+        return action_ok() # Automatically finds edit template
 

@@ -117,6 +117,7 @@ def authorize(authenticator):
         else:
             # If request was a browser - prompt for login
             if c.format == "redirect":
+                #TODO
                 raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
             if c.format == "html":
                 redirect_url = current_url()

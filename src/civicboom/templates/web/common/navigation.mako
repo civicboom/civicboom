@@ -11,8 +11,8 @@
 
 <a class="messages" href="${url('messages')}">${_("messages")}</a>
 
-${h.secure_link(url(controller='account', action='signout'), h.literal('<img src="/styles/web/logout.png" alt="'+_("Log out")+'">'), css_class="logout")}
+${h.secure_link(url(controller='account', action='signout'), h.literal('<img src="/styles/web/logout.png" alt="'+_("Log out")+'" width="68" height="15">'), css_class="logout")}
 % else:
-<a class="login" href="${url(controller='account', action='signin')}"><img src="/styles/web/login.png" alt="${_("Log in")}"></a>
+<a class="login" href="${url(controller='account', action='signin')}"><img src="/styles/web/login.png" alt="${_("Log in")}" width="68" height="17"></a>
 % endif
 

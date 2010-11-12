@@ -290,7 +290,7 @@
                     selected = h.literal('checked="checked"')
             %>
             <td id="type_${type}" onClick="highlightType('${type}');" class="section_selectable">
-              <input class="hideable" type="radio" name="type" value="${type}" ${selected}/>
+              <input class="hideable" type="radio" name="target_type" value="${type}" ${selected}/>
               <label for="type_${type}">${type}</label>
               <p class="type_description">${_(description)}</p>
             </td>
@@ -345,7 +345,7 @@
 
             function highlightType(type) {
                 // Select radio button
-                setCheckedValue(document.forms['content'].elements['type'], type);
+                setCheckedValue(document.forms['content'].elements['target_type'], type);
                 // reset all radio buttons to unselected
                 setSingleCSSClass(document.getElementById('type_'+type          ), 'section_selected', 'type_selection'                );
                 setSingleCSSClass(document.getElementById('type_'+type+'_extras'), 'active'          , 'content_type_additional_fields');
@@ -386,6 +386,7 @@
 ## License
 ##------------------------------------------------------------------------------
 <%def name="license()">
+    % if c.content.__type__ == 'draft':
     <% from civicboom.lib.database.get_cached import get_licenses %>
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
@@ -408,6 +409,7 @@
 			</table>
         </div>
     </fieldset>
+    % endif
 </%def>
 
 

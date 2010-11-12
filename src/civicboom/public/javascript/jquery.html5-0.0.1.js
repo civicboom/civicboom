@@ -1,6 +1,7 @@
 // HTML5 feature emulation for older browsers
 
 // http://borderstylo.com/posts/213-html5-feature-detection-and-adding-support-for-the-placeholder-attribute
+$(function() {
 if (!Modernizr.input.placeholder){
   $('input').each(function(i){
     $(this).val($(this).attr('placeholder'));
@@ -26,3 +27,4 @@ if (!Modernizr.input.placeholder){
     });
   });
 }
+});
