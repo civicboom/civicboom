@@ -4,8 +4,14 @@ from civicboom.model import Message, Member
 import json
 
 class TestMessagesController(TestController):
+    setup_done = False
     def setUp(self):
         TestController.setUp(self)
+
+        if setup_done:
+            return
+        setup_done = True
+
 
         # notifications can't be created manually
         n1 = Message()
