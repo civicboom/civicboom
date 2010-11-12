@@ -17,7 +17,7 @@ from webhelpers.pylonslib.secure_form import authentication_token
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta
 from civicboom.lib.web                 import redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
-from civicboom.lib.database.get_cached import get_member, get_group
+from civicboom.lib.database.get_cached import get_member, get_group, get_membership
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, is_valid_user
 from civicboom.lib.helpers             import call_action
@@ -102,10 +102,13 @@ class BaseController(WSGIController):
         
         c.logged_in_user         = get_member(username)
         c.logged_in_persona      = c.logged_in_user
-        c.logged_in_persona_role = session_get('role')
+        c.logged_in_persona_role = None #session_get('role')
         if username != username_persona:
-            c.logged_in_persona = get_member(username_persona)
-        
+            persona    = get_group(username_persona)
+            membership = get_membership(persona ,c.logged_in_user)
+            if membership:
+                c.logged_in_persona      = persona
+                c.logged_in_persona_role = membership.role
 
         # Setup Langauge
         #  - there is a way of setting fallback langauges, investigate?

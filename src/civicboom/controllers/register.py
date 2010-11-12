@@ -23,7 +23,7 @@ from civicboom.lib.misc import random_string
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
-new_user_prefix = "newuser"
+new_user_prefix = "newuser__"
 
 
 class RegisterController(BaseController):
@@ -80,8 +80,14 @@ class RegisterController(BaseController):
             #try: del form_result['recaptcha_challenge_field']
             #except: pass
             form_errors = error.error_dict or {}
-            #print form_errors
-            return formencode.htmlfill.render(render(registration_template), defaults=form_result, errors=form_errors, prefix_error=False)
+            print form_result
+            print form_errors
+            return formencode.htmlfill.render(
+                render(registration_template) ,
+                defaults = form_result ,
+                errors   = form_errors ,
+                prefix_error=False ,
+            )
         
         # If the validator has not forced a page render
         # then the data is fine - save the new user data
@@ -92,7 +98,7 @@ class RegisterController(BaseController):
             set_password(c.logged_in_persona, form['password'])
         c.logged_in_persona.status = "active"
         
-        Session.add(c.logged_in_persona) #Already in session?
+        Session.add(c.logged_in_persona) #AllanC - is this needed? Already in session?
         Session.commit()
         
         if c.logged_in_persona.email_unverifyed:
