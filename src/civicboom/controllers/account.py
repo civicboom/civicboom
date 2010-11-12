@@ -88,7 +88,7 @@ class AccountController(BaseController):
             
         # If not authenticated or any janrain info then error
         err = action_error(_('Unable to authenticate user'), code=403)
-        if format in ["html", "redirect"]:
+        if c.format in ["html", "redirect"]:
             set_flash_message(err.original_dict)
             return redirect_to_referer()
         else:

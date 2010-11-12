@@ -66,7 +66,7 @@ def init_base_data():
         u2.username      = u"unitfriend"
         u2.name          = u"Mr U's Friend"
         u2.status        = "active"
-        u2.email         = u"spam@shishnet.org"
+        u2.email         = u"spam@example.com"
 
         u2_login = UserLogin()
         u2_login.user   = u2
