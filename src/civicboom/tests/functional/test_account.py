@@ -27,8 +27,8 @@ class TestAccountController(TestController):
             url(controller='account', action='signin', format="json"),
             extra_environ={'HTTP_X_URL_SCHEME': 'https'},
             params={
-                'username': u'unittest',
-                'password': u'password'
+                'username': 'unittest',
+                'password': 'password'
             },
             status=200
         )
@@ -39,8 +39,8 @@ class TestAccountController(TestController):
             url(controller='account', action='signin', format="json"),
             extra_environ={'HTTP_X_URL_SCHEME': 'https'},
             params={
-                'username': u'unittest',
-                'password': u'asdfasdf'
+                'username': 'unittest',
+                'password': 'asdfasdf'
             },
             status=403
         )
@@ -51,8 +51,8 @@ class TestAccountController(TestController):
             url(controller='account', action='signin', format="json"),
             extra_environ={'HTTP_X_URL_SCHEME': 'https'},
             params={
-                'username': u'unittest',
-                'password': u'asdfasdf'
+                'username': 'unittest',
+                'password': 'asdfasdf'
             },
             status=403
         )

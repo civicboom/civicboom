@@ -74,7 +74,7 @@ def load_environment(global_conf, app_conf):
     # worker and websetup.py both try to access pylons.config before it is
     # officially ready -- so make it unofficially ready and pray (HACK)
     from pylons import config as pylons_config
-    for k, v in config.items():
+    for k, v in list(config.items()):
         pylons_config[k] = v
 
     civicboom_init() # This will tirgger a set of additional initalizers

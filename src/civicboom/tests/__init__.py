@@ -41,9 +41,9 @@ class TestController(TestCase):
         TestCase.__init__(self, *args, **kwargs)
 
     def log_in(self):
-        self.log_in_as(u'unittest')
+        self.log_in_as('unittest')
 
-    def log_in_as(self, username, password=u'password'):
+    def log_in_as(self, username, password='password'):
         if self.logged_in_as != username:
             self.log_out()
             response = self.app.post(

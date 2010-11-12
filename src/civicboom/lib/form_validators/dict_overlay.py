@@ -13,7 +13,7 @@ def validate_dict(data, schema, dict_to_validate_key=None, template_error=None):
         dict_validated = schema.to_python(dict_to_validate)
     
     # Validation Failed
-    except formencode.Invalid, error:
+    except formencode.Invalid as error:
         dict_validated        = error.value
         dict_validated_errors = error.error_dict or {}
         
