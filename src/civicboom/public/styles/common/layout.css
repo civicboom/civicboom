@@ -87,19 +87,27 @@ HTML, BODY {
 
 /*
  * flash message
- */ 
+ */
+
 #flash_message {
-	position: absolute;
-	top: 0px;
+	position: fixed;
+	top: 17px;
 	left: 0px;
 	right: 0px;
 	z-index: 3;
 	padding: 8px;
 	display: none;
-	border-bottom: 1px solid black;
+	border: 1px solid black;
+    background: #FFA;
+    opacity: 0.90;
 }
-#flash_message.status_ok {background: #FFA;}
-#flash_message.status_error {background: #FAA;}
+HTML.no-js #flash_message {
+    position: static;
+    display: block;
+}
+/* #flash_message.status_ok      {} use default color*/
+#flash_message.status_error   {background: #FAA;}
+#flash_message.status_invalid {background: #FAA;}
 
 
 /*

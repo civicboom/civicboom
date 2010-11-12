@@ -1,7 +1,5 @@
 from civicboom.lib.base import *
 
-
-
 # Database Objects
 from civicboom.model.member            import User, UserLogin
 
@@ -16,7 +14,8 @@ from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email, 
 import formencode
 from civicboom.lib.form_validators.validator_factory import build_schema
 from civicboom.lib.form_validators.registration      import RegisterSchemaEmailUsername, UniqueEmailValidator, UniqueUsernameValidator
-from formencode import validators, htmlfill
+from formencode import validators#, htmlfill
+from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 from civicboom.lib.misc import random_string
 
@@ -42,8 +41,10 @@ class RegisterController(BaseController):
 
     #---------------------------------------------------------------------------
     # Register new user
-    #---------------------------------------------------------------------------    
-    def new_user(self, id=None):
+    #---------------------------------------------------------------------------
+    @auto_format_output
+    @web_params_to_kwargs
+    def new_user(self, id=None, **kwargs):
         """
         Register new user - look at exisiting user record and identify additioinal required fields to complete upload
         """
@@ -54,7 +55,7 @@ class RegisterController(BaseController):
         # Validate User
         if c.logged_in_persona and c.logged_in_persona == c.new_user: # from janrain login
             pass
-        elif verify_email(c.new_user, request.params.get('hash')): # or from email hash
+        elif verify_email(c.new_user, kwargs.get('hash')): # or from email hash # request.params.get('hash')
             c.logged_in_persona = c.new_user
         else:
             abort(403)
@@ -69,25 +70,22 @@ class RegisterController(BaseController):
         # If no post data, display the registration form with required fields
         if request.environ['REQUEST_METHOD'] == 'GET':
             return render(registration_template)
+
+        # Build a dynamic validation scema based on these required fields and validate the form
+        schema = build_schema(*c.required_fields)
+        schema.fields['terms'] = validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'}) # In addtion to required fields add the terms checkbox validator
         
-        try: # Form validation
-            # Build a dynamic validation scema based on these required fields and validate the form
-            schema = build_schema(*c.required_fields)
-            schema.fields['terms'] = validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'}) # In addtion to required fields add the terms checkbox validator
-            form = schema.to_python(dict(request.params))
-        except formencode.Invalid, error:  # If the form has errors overlay those errors over the previously rendered form
-            form_result = error.value
-            #try: del form_result['recaptcha_challenge_field']
-            #except: pass
-            form_errors = error.error_dict or {}
-            print form_result
-            print form_errors
-            return formencode.htmlfill.render(
-                render(registration_template) ,
-                defaults = form_result ,
-                errors   = form_errors ,
-                prefix_error=False ,
-            )
+        data = {'register':kwargs}
+        data = validate_dict(data, schema, dict_to_validate_key='register', template_error='account/register')
+        form = data['register']
+        
+        #try: # Form validation
+        #    form = schema.to_python(kwargs) #dict(request.params)
+        #except formencode.Invalid, error:  # If the form has errors overlay those errors over the previously rendered form
+        #    form_result = error.value
+        #    form_errors = error.error_dict or {}
+            # htmlfill does not work with HTML5 ... bugger
+            # return formencode.htmlfill.render(render(registration_template) , defaults = form_result , errors = form_errors, prefix_error=False)
         
         # If the validator has not forced a page render
         # then the data is fine - save the new user data

@@ -37,9 +37,9 @@
             
 			% if c.logged_in_persona and c.logged_in_persona.username != member['username']:
             % if c.logged_in_persona.is_following(member['username']):
-            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
+            ${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
             % else:
-            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _(' '), title=_("Follow %s" % member['username']),         css_class="follow_action icon icon_follow"  )}
+            ${h.secure_link(url('member_action', action='follow'  , id=member['username'], format='redirect'), _(' '), title=_("Follow %s" % member['username']),         css_class="follow_action icon icon_follow"  )}
             % endif
             % endif
 		</div>

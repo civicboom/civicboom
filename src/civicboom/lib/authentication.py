@@ -181,13 +181,7 @@ def signout_user(user):
     #flash_message("Successfully signed out!")
 
 def set_persona(persona):
-    
-    def set_persona_session(persona): #, role='admin'
-        if isintance(persona, Member):
-            persona = persona.username
-        session_set('username_persona', persona)
-        #session_set('role'            , role   )
-
+    persona = get_member(persona)
     if (persona == c.logged_in_user):
         #(isinstance(group_persona, basestring) and
         #or
@@ -198,6 +192,8 @@ def set_persona(persona):
     else:
         membership = get_membership(persona, c.logged_in_user)
         if membership:
-            set_persona_session(persona) #, membership.role
+            #if isintance(persona, Member):
+            #    persona = persona.username
+            session_set('username_persona', persona.username)
             return True
     return False
