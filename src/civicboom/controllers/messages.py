@@ -113,6 +113,7 @@ class MessagesController(BaseController):
         @param content  message body
         
         @return 201   message sent
+                id    the ID of the created message
         @return 400   missing required field
         @return 404   target user doesn't exist
         
@@ -137,7 +138,7 @@ class MessagesController(BaseController):
         
         user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
         
-        return action_ok(_("Message sent"), code=201)
+        return action_ok(_("Message sent"), code=201, data={'id': m.id})
 
 
 

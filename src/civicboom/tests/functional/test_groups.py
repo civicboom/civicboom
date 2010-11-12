@@ -133,7 +133,7 @@ class TestGroupsController(TestController):
         assert 'test_group' in response
         self.log_out()
         response = self.app.get(url('edit_group', id=self.group_id), status=302) # redirect to login page as not logged in
-        self.log_in_as(u'unitfriend')
+        self.log_in_as('unitfriend')
         response = self.app.get(url('edit_group', id=self.group_id), status=403) # permission denied not a group admin
 
         self.log_out()
@@ -153,7 +153,7 @@ class TestGroupsController(TestController):
             },
             #status=200
         )
-        print response
+        #print response
         # appears to be a validation error? why? description is missing!! ? WHAT? description is not a required field.. wtf
         assert 'ALRIGHT' in response
         assert 'editor' not in response

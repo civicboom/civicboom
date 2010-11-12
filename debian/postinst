@@ -1,8 +1,5 @@
 #!/bin/sh
 
-mkdir -p /var/log/apache2/civicboom.com/
-make-ssl-cert generate-default-snakeoil
-
 ln -sf /etc/nginx/sites-available/civicboom.com /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
@@ -20,8 +17,7 @@ invoke-rc.d cb-website start
 invoke-rc.d nginx restart
 
 cd /opt/cb/share/website
-
 find -name "*.pyc" | xargs rm -f
 
-echo "Copying static data to S3"
-/opt/cb/bin/cb-task sync_public_to_warehouse >/dev/null
+#echo "Copying static data to S3"
+#/opt/cb/bin/cb-task sync_public_to_warehouse >/dev/null

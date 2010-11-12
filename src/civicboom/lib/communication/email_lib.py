@@ -124,8 +124,8 @@ def send_email_smtp(email_to, subject, content_text, content_html, sender=None):
             smtp.sendmail(sender, recipient, msgRoot.as_string())
         smtp.quit()
 
-    except smtplib.SMTPException, e:
+    except smtplib.SMTPException as e:
         log.error('Unable to send email: %s' % e)
-    except smtplib.socket.error, e:
+    except smtplib.socket.error as e:
         log.error('Mail server not available/misconfigured: %s' % e)
 
