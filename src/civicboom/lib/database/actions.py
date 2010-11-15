@@ -131,12 +131,11 @@ def join_group(group, member, delay_commit=False):
         if group.join_mode == "invite_and_request":
             membership.status = "request"
             return_value = "request"
-            #group.send_message(messages.join_request(member=member), delay_commit=True)
+            group.send_message(messages.group_join_request(member=member, group=group), delay_commit=True)
             
     # If user has actually become a member (open or reply to invite) then notify group
     if return_value == True:
-        pass
-        #group.send_message(messages.joined_group(member=member), delay_commit=True)
+        group.send_message(messages.group_new_member(member=member, group=group))
         
     if not delay_commit:
         Session.commit()
@@ -154,7 +153,7 @@ def remove_member(group, member, delay_commit=False):
     membership = get_membership(group, member)
     
     if not group:
-        raise action_error(_('unable to find group'), code=404)
+        raise action_error(_('unable to find group') , code=404)
     if not member:
         raise action_error(_('unable to find member'), code=404)
     if not membership:
@@ -166,17 +165,16 @@ def remove_member(group, member, delay_commit=False):
     #if membership.role=="admin" and num_admins<=1:
     #    raise action_error('cannot remove last admin', 400)
     
-    # AllanC - TODO send notification to removed member
-    if membership.status == "active":
-        # you were removed from group by (current actual user?)
-        #membership.member.send_message(messages.?????(group=group), delay_commit=True)
-        pass
-    elif membership.status == "invite":
-        # invitation withdrawn
-        pass
-    elif membership.status == "request":
-        # request declined
-        pass
+    # Notifications
+    if membership.status == "active": # member removed
+        from pylons import tmpl_context as c
+        if member!=c.logged_in_user:
+            membership.member.send_message(messages.group_remove_member_to_member(admin=c.logged_in_user, group=group), delay_commit=True)
+        group.send_message(messages.group_remove_member_to_group( admin=c.logged_in_user, group=group, member=member), delay_commit=True)
+    elif membership.status == "invite": # invitation declined
+        group.send_message(messages.group_invitation_declined(member=member, group=group), delay_commit=True) 
+    elif membership.status == "request": # request declined
+        membership.member.send_message(messages.group_request_declined(group=group), delay_commit=True) 
     
     Session.delete(membership)
     
@@ -214,8 +212,9 @@ def invite(group, member, role, delay_commit=False):
     membership.status = "invite"
     group.members_roles.append(membership)
     
-    # TODO - send notification of invitation
-    #member.send_message(messages.group_invitation(reporter=follower), delay_commit=True)
+    # Notification of invitation
+    from pylons import tmpl_context as c
+    member.send_message(messages.group_invite(admin=c.logged_in_user, group=group, role=membership.role), delay_commit=True)
     
     if not delay_commit:
         Session.commit()
@@ -247,13 +246,14 @@ def set_role(group, member, role, delay_commit=False):
     #if membership.role=="admin" and num_admins<=1:
     #    raise action_error('cannot remove last admin', 400)
 
+    from pylons import tmpl_context as c
     membership.role = role
     if membership.status=="request":
         membership.status = "active"
-        # send "joined_group"
+        member.send_message(messages.group_request_accepted(admin=c.logged_in_user, group=group))
+        group.send_message(messages.group_new_member(member=member, group=group))
     else:
-        pass
-        #member.send_message(messages.role_changed(reporter=follower), delay_commit=True)
+        group.send_message(messages.group_role_changed(admin=c.logged_in_user, member=member, group=group, role=role), delay_commit=True)
 
     if not delay_commit:
         Session.commit()
@@ -264,9 +264,10 @@ def set_role(group, member, role, delay_commit=False):
     return True
 
 
-def del_group(group):    
+def del_group(group):
+    from pylons import tmpl_context as c
     for member in [member_role.member for member_role in group.members_roles]:
-        member.send_message(messages.group_deleted(group=group), delay_commit=True)
+        member.send_message(messages.group_deleted(group=group, admin=c.logged_in_user), delay_commit=True)
     Session.delete(group)
     Session.commit()
     update_member(group)

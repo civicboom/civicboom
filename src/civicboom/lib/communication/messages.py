@@ -50,41 +50,77 @@ class MessageData(object):
 
 
 generators = [
+    # Testing
     ["msg_test",                             "",   _("a test message"),              _("%(text)s")],
+    
+    # Member actions
     ["followed_by",                          "ne", _("new follower"),                _("%(reporter)s is now following you")],
     ["followed_on_signup",                   "ne", _("new sign up via widget"),      _("%(reporter)s has signed up via your widget and is now following you")],
     ["follow_stop",                          "",   _("lost a follower"),             _("%(reporter)s has stopped following you")],
+
+    # New Content
+    ["article_published_by_followed",        "ne", _("new _article"),                _("%(creator)s has written new _article : %(article)s")],
+    ["article_published_by_followed_mobile", "ne", _("new mobile _article"),         _("%(reporter)s has uploaded mobile _article : %(article)s")],
+    
+    # Content Actions
+    ["article_rated",                        "",   _("_article rated"),              _("your _article %(article)s was rated a %(rating)s")],
+    ["comment",                              "n",  _("comment made on _article"),    _("%(reporter)s commented on your _article %(article)s")],  #Also passes comment.contents as a string and could be used here
+
+    # Content Responses
+    ["assignment_response_mobile",           "ne", _("_assignment mobile response"), _("%(reporter)s has uploaded mobile _article titled %(article)s based on your _assignment %(assignment)s")],
+    ["new_response",                         "ne", _("new response"),                _("%(member)s has published a response to your content %(parent)s called %(content)s ")],
+    
+    # Assignment Actions
+    ["assignment_created",                   "ne", _("new _assignment"),             _("%(creator)s created a new _assignment %(assignment)s")],
+    ["assignment_updated",                   "ne", _("_assignment updated"),         _("%(creator)s has updated their _assignment %(assignment)s")],
+    ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been canceled"), _("%(reporter)s canceled the _assignment %(assignment)s")],
+    ["assignment_accepted",                  "ne", _("_assignment accepted"),        _("%(member)s accepted your _assignment %(assignment)s")],
+    ["assignment_interest_withdrawn",        "",   _("_assignment interest withdrawn"), _("%(member)s withdrew their interest in your _assignment %(assignment)s")],
+    ["assignment_invite",                    "ne", _("closed _assignment invitation") , _("%(member)s has invited you to participate in the _assignment %(assignment)s")],
+
+    # Assignment Timed Tasks
+    ["assignment_due_7days",                 "ne", _("_assignment due next week"),   _("The _assignment you accepted %(assignment)s is due next week")],
+    ["assignment_due_1day",                  "ne", _("_assignment due tomorrow"),    _("The _assignment you accepted %(assignment)s is due tomorrow")],
+
+    # Response Actions
+    ["article_disasociated_from_assignment", "n",  _("_article dissasociated from _assignment"), _("%(member)s dissasociated your _article %(article)s from the _assignment %(assignment)s")],
+    ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved your _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
+      # TODO: response seen
+
+    # Groups
+    ["group_invite",                         "ne", _("_group invitation"),           _("%(admin)s invited you to join %(group)s as a %(role)s")],
+    ["group_deleted",                        "ne", _("_group deleted"),              _("The _group %(group)s has been deleted by %(admin)s")],
+    ["group_new_member",                     "n" , _("_member joined group"),        _("%(member)s has joined %(group)s")],
+    ["group_role_changed",                   "n" , _("_member role changed"),        _("%(admin)s changed %(member)ss role for %(group)s to %(role)s")],
+    ["group_remove_member_to_group",         "ne", _("_member removed from _group"), _("%(admin)s removed %(member)s from %(group)s")],
+    ["group_remove_member_to_member",        "ne", _("removed from _group"),         _("%(admin)s removed your membership to %(group)s")],
+    ["group_join_request",                   "n" , _("join request"),                _("%(member)s has requested to join %(group)s")],
+    
+    ["group_request_declined",               "n" , _("_group membership request deceline"), _("your membership request to join %(group)s was declined")],
+    ["group_request_accepted",               "n" , _("_group request accepted"),     _("%(admin)s accepted your _group membership request. You are now a member of %(group)s")],
+    ["group_invitation_declined",            ""  , _("_group membership inviation declined"), _("%(member)s declined the invitaion to join %(group)s")],
+    
+    # Aggregation
+    ["boom_article",                         "ne", _("_article boom"),               _("%(member)s thinks you might find this _article interesting %(article)s")],
+    ["boom_assignment",                      "ne", _("_assignment boom"),            _("%(member)s thinks you might want to add your opinion to this _assignment %(assignment)s")],
+
+    # Syndication
+    ["syndicate_accept",                     "n",  _("_article was syndicated"),     _("%(reporter)s has accepted your syndication request for _article %(article)s. Check your email for the details")],
+    ["syndicate_decline",                    "ne", _("_article was declined syndication"), _("%(reporter)s declined your syndication request for _article %(article)s. Your _article is now publicly visable")],
+    ["syndicate_expire",                     "ne", _("_article was not syndicated"), _("Your syndication request for %(article)s was unsuccessful. Your _article is now publicly visable")],
+
+    # Old and depricated
     ["tipoff",                               "ne", _("tipoff"),                      _("you have been tipped off by %(reporter)s - %(tipoff)s")],
     ["tipoff_accepted",                      "ne", _("tipoff accepted"),             _("%(reporter)s has accepted your _tipoff - %(tipoff)s")],
     ["tipoff_declined",                      "ne", _("tipoff declined"),             _("%(reporter)s has declined your _tipoff - %(tipoff)s")],
     ["tipoff_deleted",                       "",   _("tipoff deleted"),              _("%(reporter)s has withdrawn their _tipoff")],
     ["instant_news_update",                  "n",  _("_reporter has updated their instant news"), _("%(reporter)s has updated their instant news: %(instant)s_news")],
     ["interview_used",                       "ne", _("interview has been used"),     _("%(reporter)s has written a _article in response to the interview with you called %(article)s")],
-    ["article_published_by_followed",        "ne", _("new _article"),                _("%(creator)s has written new _article : %(article)s")],
-    ["article_published_by_followed_mobile", "ne", _("new mobile _article"),         _("%(reporter)s has uploaded mobile _article : %(article)s")],
-    ["new_response",                         "ne", _("new response"),                _("%(member)s has published a response to your content %(parent)s called %(content)s ")],
-    ["assignment_response_mobile",           "ne", _("_assignment mobile response"), _("%(reporter)s has uploaded mobile _article titled %(article)s based on your _assignment %(assignment)s")],
     ["topic_update",                         "ne", _("topic update to an _article"), _("%(reporter)s wrote a topic update for your _report %(partent)s_article titled %(article)s")],
-    ["article_rated",                        "",   _("_article rated"),              _("your _article %(article)s was rated a %(rating)s")],
-    ["comment",                              "n",  _("comment made on _article"),    _("%(reporter)s commented on your _article %(article)s")],  #Also passes comment.contents as a string and could be used here
-    ["assignment_created",                   "ne", _("new _assignment"),             _("%(creator)s created a new _assignment %(assignment)s")],
-    ["assignment_updated",                   "ne", _("_assignment updated"),         _("%(creator)s has updated their _assignment %(assignment)s")],
-    ["assignment_accepted",                  "ne", _("_assignment accepted"),        _("%(member)s accepted your _assignment %(assignment)s")],
-    ["assignment_interest_withdrawn",        "",   _("_assignment interest withdrawn"), _("%(member)s withdrew their interest in your _assignment %(assignment)s")],
-    ["assignment_invite",                    "ne", _("closed _assignment invitation") , _("%(member)s has invited you to participate in the _assignment %(assignment)s")],
-    ["article_disasociated_from_assignment", "n",  _("_article dissasociated from _assignment"), _("%(member)s dissasociated your _article %(article)s from the _assignment %(assignment)s")],
-    ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been canceled"), _("%(reporter)s canceled the _assignment %(assignment)s")],
-    ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved your _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
-    ["boom_article",                         "ne", _("_article boom"),               _("%(member)s thinks you might find this _article interesting %(article)s")],
-    ["boom_assignment",                      "ne", _("_assignment boom"),            _("%(member)s thinks you might want to add your opinion to this _assignment %(assignment)s")],
-    ["syndicate_accept",                     "n",  _("_article was syndicated"),     _("%(reporter)s has accepted your syndication request for _article %(article)s. Check your email for the details")],
-    ["syndicate_decline",                    "ne", _("_article was declined syndication"), _("%(reporter)s declined your syndication request for _article %(article)s. Your _article is now publicly visable")],
-    ["syndicate_expire",                     "ne", _("_article was not syndicated"), _("Your syndication request for %(article)s was unsuccessful. Your _article is now publicly visable")],
-    ["assignment_due_7days",                 "ne", _("_assignment due next week"),   _("The _assignment you accepted %(assignment)s is due next week")],
-    ["assignment_due_1day",                  "ne", _("_assignment due tomorrow"),    _("The _assignment you accepted %(assignment)s is due tomorrow")],
-    ["group_deleted",                        "ne", _("_group deleted"),              _("The _group %(group)s has been deleted")],
-    # response seen
-    # group join, role, invite, removed, etc
+
+
+
+
 ]
 
 #

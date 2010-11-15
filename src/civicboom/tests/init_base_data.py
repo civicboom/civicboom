@@ -385,11 +385,11 @@ def init_base_data():
         
         Session.commit()
         
-        g.join(u1)
-        g.invite(u3)
-        g.set_role(u1,"editor")
-        g.join(u4)
-        g.remove_member(u4)
+        #g.join(u1)
+        #g.invite(u3)
+        #g.set_role(u1,"editor")
+        #g.join(u4)
+        #g.remove_member(u4)
         
 
 
