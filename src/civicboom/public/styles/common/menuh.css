@@ -37,7 +37,7 @@
 	padding: 0.2em;
 	}
 	
-.menuh a, #menuh a:visited	/* menu at rest */
+.menuh a, .menuh a:visited	/* menu at rest */
 	{
 	color: #000000;
 	text-decoration:none;
@@ -48,14 +48,14 @@
 	color: #000000;
 	}	
 			
-.menuh a.top_parent, #menuh a.top_parent:hover  /* attaches down-arrow to all top-parents */
+.menuh a.top_parent, .menuh a.top_parent:hover  /* attaches down-arrow to all top-parents */
 	{
 	/*background-image: url(navdown_white.gif);*/
 	background-position: right center;
 	background-repeat: no-repeat;
 	}
 	
-.menuh a.parent, #menuh a.parent:hover 	/* attaches side-arrow to all parents */
+.menuh a.parent, .menuh a.parent:hover 	/* attaches side-arrow to all parents */
 	{
 	/*background-image: url(nav_white.gif);*/
 	background-position: right center;
