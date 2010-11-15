@@ -20,11 +20,13 @@
 			${signup()}
 		</td>
 	</tr>
+	<!--
 	<tr>
 		<td class="block">
 			${forgot()}
 		</td>
 	</tr>
+	-->
 </table>
 
 
