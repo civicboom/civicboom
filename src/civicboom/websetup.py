@@ -240,20 +240,16 @@ CREATE TRIGGER update_rating
     conn.execute("""
 CREATE OR REPLACE FUNCTION update_location_time() RETURNS TRIGGER AS $$
     BEGIN
-        IF (
-                (NEW.location_current IS NULL     AND OLD.location_current IS NOT NULL) OR
-                (NEW.location_current IS NOT NULL AND OLD.location_current IS NULL    ) OR
-                (NOT (NEW.location_current ~= OLD.location_current))
-        ) THEN
-            UPDATE member_user SET location_updated = now() WHERE id=NEW.id;
-        END IF;
+        UPDATE member_user SET location_updated = now() WHERE id=NEW.id;
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_location_time
     AFTER UPDATE ON member_user
-    FOR EACH ROW EXECUTE PROCEDURE update_location_time();
+    FOR EACH ROW
+    WHEN (OLD.location_current IS DISTINCT FROM NEW.location_current)
+    EXECUTE PROCEDURE update_location_time();
     """)
     conn.execute("""
 ALTER TABLE content ADD COLUMN textsearch tsvector;
