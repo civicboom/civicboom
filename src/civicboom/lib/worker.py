@@ -36,7 +36,7 @@ class MediaThread(Thread):
                     process_media(**task)
                 if task_type == "die":
                     live = False
-            except Exception, e:
+            except Exception as e:
                 log.exception('Error in media processor thread:')
             _media_queue.task_done()
             sleep(3)

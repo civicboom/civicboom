@@ -1,46 +1,70 @@
 from civicboom.tests import *
+from civicboom.model.meta import Session
+from civicboom.model import Message, Member
+import json
 
 class TestMessagesController(TestController):
+    def test_all(self):
+        self.part_setup()
 
-    ## index -> show #########################################################
+        self.part_new()
+        self.part_new_frag()
+        self.part_create()
+        self.part_create_bad_target()
+        self.part_create_no_content()
 
-    def test_index(self):
-        response = self.app.get(url('formatted_messages', format="frag"))
-        assert "Re: Re: singing" in response
+        self.part_index()
+        self.part_index_lists()
+        self.part_index_as_json()
+        self.part_show()
+        self.part_show_as_json()
+        self.part_show_someone_elses()
+        self.part_show_non_exist()
 
-    def test_index_lists(self):
-        response = self.app.get(url('formatted_messages', format="json", list="notification"))
-        response = self.app.get(url('formatted_messages', format="json", list="to"))
-        response = self.app.get(url('formatted_messages', format="json", list="whgarbl"), status=400)
+        self.part_edit()
+        self.part_edit_as_json()
+        self.part_update()
 
-    def test_index_as_json(self):
-        response = self.app.get(url('formatted_messages', format='json'))
-        assert "Re: Re: singing" in response
+        self.part_delete_message()
+        self.part_delete_notification()
+        self.part_delete_someone_elses()
+        self.part_delete_non_exist()
 
-    def test_show(self):
-        response = self.app.get(url('formatted_message', id=2, format="frag"))
-        assert "truncation" in response
 
-    def test_show_as_json(self):
-        response = self.app.get(url('formatted_message', id=2, format='json'))
-        assert "truncation" in response
+    def part_setup(self):
+        # notifications can't be created manually
+        n1 = Message()
+        n1.target = Session.query(Member).filter(Member.username=="unittest").first()
+        n1.subject = u"Notification! A test"
+        n1.content = u"A test is happening now :O"
 
-    def test_show_someone_elses(self):
-        response = self.app.get(url('message', id=1), status=403)
+        n2 = Message()
+        n2.target = Session.query(Member).filter(Member.username=="unitfriend").first()
+        n2.subject = u"Another notification! A test"
+        n2.content = u"A test part 2 is happening now :O"
 
-    def test_show_non_exist(self):
-        response = self.app.get(url('message', id=0), status=404)
+        n3 = Message()
+        n3.target = Session.query(Member).filter(Member.username=="unittest").first()
+        n3.subject = u"deleteme"
+        n3.content = u"This is a notification to test deletion with"
+
+        Session.add_all([n1, n2, n3])
+        Session.commit()
+
+        self.n1_id = n1.id
+        self.n2_id = n2.id
+        self.n3_id = n3.id
 
 
     ## new -> create #########################################################
 
-    def test_new(self):
+    def part_new(self):
         response = self.app.get(url('new_message', format='json'))
 
-    def test_new_frag(self):
+    def part_new_frag(self):
         response = self.app.get(url('formatted_new_message', format='frag'))
 
-    def test_create(self):
+    def part_create(self):
         response = self.app.post(
             url('messages', format='json'),
             params={
@@ -52,7 +76,49 @@ class TestMessagesController(TestController):
             status=201
         )
 
-    def test_create_bad_target(self):
+        self.log_in_as("unittest")
+        response = self.app.post(
+            url('messages', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'unitfriend',
+                'subject': 'Re: singing',
+                'content': 'My singing is fine!',
+            },
+            status=201
+        )
+        self.m1_id = json.loads(response.body)['data']['id']
+
+        self.log_in_as("unitfriend")
+        response = self.app.post(
+            url('messages', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'unittest',
+                'subject': 'Re: Re: singing',
+                'content': 'It is totally not! And to explain, I will use a sentence that is over 50 characters long, to test the Message.__unicode__ truncation feature',
+            },
+            status=201
+        )
+        self.m2_id = json.loads(response.body)['data']['id']
+
+        response = self.app.post(
+            url('messages', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target': 'unittest',
+                'subject': 'deleteme',
+                'content': 'this is a message to test deletion with',
+            },
+            status=201
+        )
+        self.m5_id = json.loads(response.body)['data']['id']
+
+        self.log_in_as("unittest")
+
+
+
+    def part_create_bad_target(self):
         response = self.app.post(
             url('messages'),
             params={
@@ -64,7 +130,7 @@ class TestMessagesController(TestController):
             status=404
         )
 
-    def test_create_no_content(self):
+    def part_create_no_content(self):
         response = self.app.post(
             url('messages'),
             params={
@@ -76,43 +142,77 @@ class TestMessagesController(TestController):
         )
 
 
+    ## index -> show #########################################################
+
+    def part_index(self):
+        response = self.app.get(url('formatted_messages', format="frag"))
+        assert "Re: Re: singing" in response
+
+    def part_index_lists(self):
+        response = self.app.get(url('formatted_messages', format="json", list="notification"))
+        response = self.app.get(url('formatted_messages', format="json", list="to"))
+        response = self.app.get(url('formatted_messages', format="json", list="whgarbl"), status=400)
+
+    def part_index_as_json(self):
+        response = self.app.get(url('formatted_messages', format='json'))
+        assert "Re: Re: singing" in response
+
+    def part_show(self):
+        response = self.app.get(url('formatted_message', id=self.m2_id, format="frag"))
+        assert "truncation" in response
+
+    def part_show_as_json(self):
+        response = self.app.get(url('formatted_message', id=self.m2_id, format='json'))
+        assert "truncation" in response
+
+    def part_show_someone_elses(self):
+        response = self.app.get(url('message', id=self.m1_id), status=403)
+
+    def part_show_non_exist(self):
+        response = self.app.get(url('message', id=0), status=404)
+
+
+    ## edit -> update ########################################################
+    # messages are un-updatable, so these are stubs
+
+    def part_edit(self):
+        response = self.app.get(url('edit_message', id=1), status=501)
+
+    def part_edit_as_json(self):
+        response = self.app.get(url('formatted_edit_message', id=1, format='json'), status=501)
+
+    def part_update(self):
+        response = self.app.put(url('message', id=1), status=501)
+
+
     ## delete ################################################################
 
-    def test_delete_message(self):
+    def part_delete_message(self):
         response = self.app.delete(
-            url('message', id=5, format="json"),
+            url('message', id=self.m5_id, format="json"),
             params={
                 '_authentication_token': self.auth_token
             }
         )
 
-    def test_delete_browser_fakeout(self):
-        response = self.app.post(
-            url('message', id=6, format="json"),
-            params={
-                "_method": 'delete',
-                '_authentication_token': self.auth_token
-            }
-        )
-
-    def test_delete_notification(self):
+    def part_delete_notification(self):
         response = self.app.delete(
-            url('message', id=7, format="json"),
+            url('message', id=self.n3_id, format="json"),
             params={
                 '_authentication_token': self.auth_token
             }
         )
 
-    def test_delete_someone_elses(self):
+    def part_delete_someone_elses(self):
         response = self.app.delete(
-            url('message', id=1, format="json"),
+            url('message', id=self.m1_id, format="json"),
             params={
                 '_authentication_token': self.auth_token
             },
             status=403
         )
 
-    def test_delete_non_exist(self):
+    def part_delete_non_exist(self):
         response = self.app.delete(
             url('message', id=0, format="json"),
             params={
@@ -120,19 +220,3 @@ class TestMessagesController(TestController):
             },
             status=404
         )
-
-
-    ## edit -> update ########################################################
-    # messages are un-updatable, so these are stubs
-
-    def test_edit(self):
-        response = self.app.get(url('edit_message', id=1), status=501)
-
-    def test_edit_as_json(self):
-        response = self.app.get(url('formatted_edit_message', id=1, format='json'), status=501)
-
-    def test_update(self):
-        response = self.app.put(url('message', id=1), status=501)
-
-    def test_update_browser_fakeout(self):
-        response = self.app.post(url('message', id=1), params=dict(_method='put'), status=501)

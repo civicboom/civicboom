@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 
 def init_base_data():
-        log.info("Populating tables with base test data") # {{{
+        log.info("Populating tables with base test data")
 
         # Notifications disabled because no it8n is setup
         from pylons import config
@@ -66,7 +66,7 @@ def init_base_data():
         u2.username      = u"unitfriend"
         u2.name          = u"Mr U's Friend"
         u2.status        = "active"
-        u2.email         = u"spam@shishnet.org"
+        u2.email         = u"spam@example.com"
 
         u2_login = UserLogin()
         u2_login.user   = u2
@@ -136,58 +136,6 @@ def init_base_data():
 
         assert list(Session.query(User).filter(User.id==0)) == []
         assert list(Session.query(User).filter(User.username=="MrNotExists")) == []
-
-
-        ###############################################################
-        log.debug("Messages")
-
-        m = Message()
-        m.source = u1
-        m.target = u2
-        m.subject = u"Re: singing"
-        m.content = u"My singing is fine!"
-        Session.add(m); Session.commit(); assert m.id == 1
-
-        m = Message()
-        m.source = u2
-        m.target = u1
-        m.subject = u"Re: Re: singing"
-        m.content = u"It is totally not! And to explain, I will use a sentence that is over 50 characters long, to test the Message.__unicode__ truncation feature"
-        Session.add(m); Session.commit(); assert m.id == 2
-
-        n = Message()
-        n.target = u1
-        n.subject = u"Notification! A test"
-        n.content = u"A test is happening now :O"
-        Session.add(n); Session.commit(); assert n.id == 3
-
-        n = Message()
-        n.target = u2
-        n.subject = u"Another notification! A test"
-        n.content = u"A test part 2 is happening now :O"
-        Session.add(n); Session.commit(); assert n.id == 4
-
-        m = Message()
-        m.source = u2
-        m.target = u1
-        m.subject = u"deleteme"
-        m.content = u"This is a message to test deletion with"
-        Session.add(m); Session.commit(); assert m.id == 5
-
-        m = Message()
-        m.source = u2
-        m.target = u1
-        m.subject = u"deleteme"
-        m.content = u"This is a message to test deletion with, using browser fakeouts"
-        Session.add(m); Session.commit(); assert m.id == 6
-
-        n = Message()
-        n.target = u1
-        n.subject = u"deleteme"
-        n.content = u"This is a notification to test deletion with"
-        Session.add(n); Session.commit(); assert n.id == 7
-
-        Session.commit()
 
         ###############################################################
         
@@ -473,28 +421,3 @@ def init_base_data():
         asc2.accept(u3)
         asc2.accept(u4)
         Session.commit()
-
-        ###############################################################
-        log.debug("Feeds")
-        
-        f1 = Feed()
-        f1.name = u"test feed #1"
-        f1.member = u1
-        f1.query = ""
-        
-        f2 = Feed()
-        f2.name = u"test feed #2 to be deleted"
-        f2.member = u1
-        f2.query = ""
-        
-        f3 = Feed()
-        f3.name = u"test feed #3 to be deleted with fakeout"
-        f3.member = u1
-        f3.query = ""
-        
-        Session.add_all([f1, f2, f3])
-        Session.commit()
-        
-        
-        # }}}
-    ###################################################################

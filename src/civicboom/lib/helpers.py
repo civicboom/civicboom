@@ -38,7 +38,8 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
     """
     Generate Janrain IFRAME component
     """
-    if not return_url: return_url = urllib.quote_plus(url.current(host=app_globals.site_host, protocol='https')) #controller='account', action='signin',
+    if not return_url:
+        return_url = urllib.quote_plus(url.current(host=app_globals.site_host, protocol='https')) #controller='account', action='signin',
     query_params = ""
     for karg in kargs:
         query_params += karg+"="+str(kargs[karg])
@@ -142,6 +143,16 @@ def objs_to_linked_formatted_dict(**kargs):
             val = c[val]
         links[key] = gen_link(val)
     return links
+
+
+# AllanC - not happy with this ... see register template for example ...
+# htmlfill does not support HTML5 - so I created a cusom way of getting invalid data into the template
+# in the future when htmlfill is fixed then we can swich back to it
+def get_data_value(field_name, sub_dict_name=None, default_value=''):
+    if sub_dict_name in c.result['data'] and field_name in c.result['data'][sub_dict_name]:
+        return c.result['data'][sub_dict_name][field_name]
+    else:
+        return default_value
 
 
 # AllanC - TODO: HACK ALERT!!!

@@ -27,8 +27,8 @@ class TestAccountController(TestController):
             url(controller='account', action='signin', format="json"),
             extra_environ={'HTTP_X_URL_SCHEME': 'https'},
             params={
-                'username': u'unittest',
-                'password': u'password'
+                'username': 'unittest',
+                'password': 'password'
             },
             status=200
         )
@@ -39,11 +39,26 @@ class TestAccountController(TestController):
             url(controller='account', action='signin', format="json"),
             extra_environ={'HTTP_X_URL_SCHEME': 'https'},
             params={
-                'username': u'unittest',
-                'password': u'asdfasdf'
+                'username': 'unittest',
+                'password': 'asdfasdf'
             },
             status=403
         )
+
+
+    def test_bad_password_causes_reprompt(self):
+        response = self.app.post(
+            url(controller='account', action='signin', format="html"),
+            extra_environ={'HTTP_X_URL_SCHEME': 'https'},
+            params={
+                'username': 'unittest',
+                'password': 'asdfasdf'
+            },
+            status=302
+        )
+        assert "Civicboom Internal Error" not in response
+        # FIXME: follow the redirect, then test this
+        #assert "Sign in" in response
 
 
     def test_user_can_log_in_with_any_linked_janrain_account(self):

@@ -11,7 +11,7 @@ class MobileDetectionMiddleware(object):
         # TODO: middleware needs to be upgraded to look for subdomain m. in url
         is_mobile = False;
 
-        if environ.has_key('HTTP_USER_AGENT'):
+        if 'HTTP_USER_AGENT' in environ:
             user_agent = environ['HTTP_USER_AGENT']
 
             # Test common mobile values.
@@ -24,7 +24,7 @@ class MobileDetectionMiddleware(object):
             else:
                 # Nokia like test for WAP browsers.
                 # http://www.developershome.com/wap/xhtmlmp/xhtml_mp_tutorial.asp?page=mimeTypesFileExtension
-                if environ.has_key('HTTP_ACCEPT'):
+                if 'HTTP_ACCEPT' in environ:
                     http_accept = environ['HTTP_ACCEPT']
 
                     pattern = "application/vnd\.wap\.xhtml\+xml"

@@ -51,7 +51,7 @@ class TestController(BaseController):
     def environ(self):
         env_string = ""
         from pylons import request
-        keys = request.environ.keys()
+        keys = list(request.environ.keys())
         keys.sort()
         for key in keys:
             env_string += "<b>%s</b>:%s<br/>\n" % (key,request.environ[key])

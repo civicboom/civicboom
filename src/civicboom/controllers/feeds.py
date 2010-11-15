@@ -64,7 +64,7 @@ class FeedsController(BaseController):
             f.query = _post_to_query(request.POST)
             c.logged_in_persona.feeds.append(f)
             Session.commit()
-            return action_ok(_("Feed created"), code=201)
+            return action_ok(_("Feed created"), code=201, data={'id': f.id})
         except Exception, e:
             raise action_error(_("Error creating feed"), code=500)
 

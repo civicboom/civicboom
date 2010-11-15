@@ -37,9 +37,9 @@
             
 			% if c.logged_in_persona and c.logged_in_persona.username != member['username']:
             % if c.logged_in_persona.is_following(member['username']):
-            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
+            ${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
             % else:
-            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _(' '), title=_("Follow %s" % member['username']),         css_class="follow_action icon icon_follow"  )}
+            ${h.secure_link(url('member_action', action='follow'  , id=member['username'], format='redirect'), _(' '), title=_("Follow %s" % member['username']),         css_class="follow_action icon icon_follow"  )}
             % endif
             % endif
 		</div>
@@ -52,16 +52,16 @@
         ##          If we did the checking for them that would take lots of querys and time and reducde the ability to cache generated member lists
         % if show_follow_button and c.logged_in_persona and c.logged_in_persona.username != member['username']:
             % if c.logged_in_persona.is_following(member['username']):
-            ${h.secure_link(url('member_action', action='unfollow', id=member['username']), _('Stop following'), css_class="button_small button_small_style_2")}
+            ${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _('Stop following'), css_class="button_small button_small_style_2")}
             % else:
-            ${h.secure_link(url('member_action', action='follow'  , id=member['username']), _('Follow')        , css_class="button_small button_small_style_1")}
+            ${h.secure_link(url('member_action', action='follow'  , id=member['username'], format='redirect'), _('Follow')        , css_class="button_small button_small_style_1")}
             % endif
         % endif
         % if show_join_button:
             ${h.secure_link(url('group_action', action='join'     , id=member['id']       , member=c.logged_in_persona.username), _('Join')        , css_class="button_small button_small_style_1")}
         % endif
         % if show_invite_button and c.logged_in_persona and c.logged_in_persona.__type__=='group':
-            ${h.secure_link(url('group_action', action='invite'   , id=c.logged_in_persona.id, member=member['username']       ), _('Invite')      , css_class="button_small button_small_style_1")}
+            ${h.secure_link(url('group_action', action='invite'   , id=c.logged_in_persona.id, member=member['username'] , format='redirect'), _('Invite')      , css_class="button_small button_small_style_1")}
         % endif
     </div>
 </%def>

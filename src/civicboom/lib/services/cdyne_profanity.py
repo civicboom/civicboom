@@ -37,7 +37,7 @@ def profanity_check(content):
     def do_request(request):
         try:
             response = urllib2.urlopen(request, timeout=4)
-        except (urllib2.HTTPError, urllib2.URLError), e:
+        except (urllib2.HTTPError, urllib2.URLError) as e:
             log.error("The CDYNE server couldn't fulfill the request: Error code: %s", e)
             return None
         return response
