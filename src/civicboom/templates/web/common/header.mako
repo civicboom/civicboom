@@ -5,8 +5,8 @@
 	</form>
 </div>
 
-<div id="menuh-container">
-<div id="menuh">
+<div class="menuh-container">
+<div class="menuh">
     <ul>
         <li><a href="#" class="top_parent">Create</a>
         <ul>

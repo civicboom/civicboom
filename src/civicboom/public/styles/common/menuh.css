@@ -2,7 +2,7 @@
 /* Based on http://sperling.com/examples/menuh/ */
 
 
-#menuh-container
+.menuh-container
 	{
 	font-size: 1em;
 	position: absolute;
@@ -11,7 +11,7 @@
 	margin: 0px;
 	}
 
-#menuh
+.menuh
 	{
 	font-size: small;
 	font-family: arial, helvetica, sans-serif;
@@ -19,12 +19,12 @@
 	margin-top: 0px;
 	}
 
-#menuh a.sub_option
+.menuh a.sub_option
 	{
 	border: 1px solid #555;
 	}
 		
-#menuh a
+.menuh a
 	{
 	text-align: center;
 	background: #FFF;
@@ -35,18 +35,18 @@
 	padding: 0.2em;
 	}
 	
-#menuh a, #menuh a:visited	/* menu at rest */
+.menuh a, #menuh a:visited	/* menu at rest */
 	{
 	color: #000000;
 	text-decoration:none;
 	}
 	
-#menuh a:hover	/* menu at mouse-over  */
+.menuh a:hover	/* menu at mouse-over  */
 	{
 	color: #000000;
 	}	
 			
-#menuh a.top_parent, #menuh a.top_parent:hover  /* attaches down-arrow to all top-parents */
+.menuh a.top_parent, #menuh a.top_parent:hover  /* attaches down-arrow to all top-parents */
 	{
 	/*background-image: url(navdown_white.gif);*/
 	background-position: right center;
@@ -54,7 +54,7 @@
 	font-size: 2em;
 	}
 	
-#menuh a.parent, #menuh a.parent:hover 	/* attaches side-arrow to all parents */
+.menuh a.parent, #menuh a.parent:hover 	/* attaches side-arrow to all parents */
 	{
 	/*background-image: url(nav_white.gif);*/
 	background-position: right center;
@@ -62,7 +62,7 @@
 	background-repeat: no-repeat;
 	}
 
-#menuh ul
+.menuh ul
 	{
 	list-style:none;
 	margin:0;
@@ -71,14 +71,14 @@
 	width:9em;	/* width of all menu boxes */
 	}
 
-#menuh li
+.menuh li
 	{
 	position:relative;
     min-height: 1px; 	/* Sophie Dennis contribution for IE7 */
     vertical-align: bottom; /* Sophie Dennis contribution for IE7 */
 	}
 
-#menuh ul ul
+.menuh ul ul
 	{
 	position:absolute;
 	z-index:500;
@@ -88,32 +88,28 @@
 	margin:-1em 0 0 -1em;
 	}
 
-#menuh ul ul ul
+.menuh ul ul ul
 	{
 	top:0;
 	left:100%;
 	}
 
-div#menuh li:hover
+div.menuh li:hover
 	{
 	cursor:pointer;
 	z-index:100;
 	}
 
-div#menuh li:hover ul ul,
-div#menuh li li:hover ul ul,
-div#menuh li li li:hover ul ul,
-div#menuh li li li li:hover ul ul
+div.menuh li:hover ul ul,
+div.menuh li li:hover ul ul,
+div.menuh li li li:hover ul ul,
+div.menuh li li li li:hover ul ul
 {display:none;}
 
-div#menuh li:hover ul,
-div#menuh li li:hover ul,
-div#menuh li li li:hover ul,
-div#menuh li li li li:hover ul
+div.menuh li:hover ul,
+div.menuh li li:hover ul,
+div.menuh li li li:hover ul,
+div.menuh li li li li:hover ul
 {display:block;}
 
 /* End CSS Drop Down Menu */
-
-#menuh INPUT {
-	width: 97%;
-}
