@@ -5,9 +5,11 @@
 .menuh-container
 	{
 	font-size: 1em;
+	/* menu-specific settings should override these
 	position: absolute;
 	top: 40px;
 	left: 300px;
+	*/
 	margin: 0px;
 	}
 
@@ -51,7 +53,6 @@
 	/*background-image: url(navdown_white.gif);*/
 	background-position: right center;
 	background-repeat: no-repeat;
-	font-size: 2em;
 	}
 	
 .menuh a.parent, #menuh a.parent:hover 	/* attaches side-arrow to all parents */

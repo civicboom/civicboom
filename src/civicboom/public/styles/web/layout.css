@@ -97,6 +97,18 @@ HEADER #search .search_button {
 	left: 111px;
 }
 
+HEADER .menuh-container {
+	position: absolute;
+	top: 40px;
+	left: 300px;
+}
+HEADER .menuh a.top_parent, #menuh a.top_parent:hover {
+	font-size: 2em;
+}
+HEADER .menuh INPUT {
+	width: 97%;
+}
+
 /*
  * the bulk of the page in the middle
  */
