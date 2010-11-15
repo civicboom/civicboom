@@ -173,19 +173,11 @@ CREATE OR REPLACE FUNCTION pnormaldist(qn DOUBLE PRECISION) RETURNS NUMERIC AS $
         b[9] := 0.3657763036e-10;
         b[10] := 0.6936233982e-12;
 
-        IF qn < 0.0 OR 1.0 < qn THEN
+        IF qn < 0.0 OR 1.0 < qn OR qn = 0.5 THEN
             RETURN 0.0;
         END IF;
 
-        IF qn = 0.5 THEN
-            RETURN 0.0;
-        END IF;
-
-        w1 := qn;
-        IF qn > 0.5 THEN
-            w1 := 1.0 - w1;
-        END IF;
-        w3 := -log(4.0 * w1 * (1.0 - w1));
+        w3 := -log(4.0 * qn * (1.0 - qn));
         w1 := b[0];
         FOR i IN 1..10 LOOP
             w1 := w1 + b[i] * power(w3,i);
