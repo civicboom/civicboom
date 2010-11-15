@@ -173,19 +173,11 @@ CREATE OR REPLACE FUNCTION pnormaldist(qn DOUBLE PRECISION) RETURNS NUMERIC AS $
         b[9] := 0.3657763036e-10;
         b[10] := 0.6936233982e-12;
 
-        IF qn < 0.0 OR 1.0 < qn THEN
+        IF qn < 0.0 OR 1.0 < qn OR qn = 0.5 THEN
             RETURN 0.0;
         END IF;
 
-        IF qn = 0.5 THEN
-            RETURN 0.0;
-        END IF;
-
-        w1 := qn;
-        IF qn > 0.5 THEN
-            w1 := 1.0 - w1;
-        END IF;
-        w3 := -log(4.0 * w1 * (1.0 - w1));
+        w3 := -log(4.0 * qn * (1.0 - qn));
         w1 := b[0];
         FOR i IN 1..10 LOOP
             w1 := w1 + b[i] * power(w3,i);
@@ -248,20 +240,16 @@ CREATE TRIGGER update_rating
     conn.execute("""
 CREATE OR REPLACE FUNCTION update_location_time() RETURNS TRIGGER AS $$
     BEGIN
-        IF (
-                (NEW.location_current IS NULL     AND OLD.location_current IS NOT NULL) OR
-                (NEW.location_current IS NOT NULL AND OLD.location_current IS NULL    ) OR
-                (NOT (NEW.location_current ~= OLD.location_current))
-        ) THEN
-            UPDATE member_user SET location_updated = now() WHERE id=NEW.id;
-        END IF;
+        UPDATE member_user SET location_updated = now() WHERE id=NEW.id;
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_location_time
     AFTER UPDATE ON member_user
-    FOR EACH ROW EXECUTE PROCEDURE update_location_time();
+    FOR EACH ROW
+    WHEN (OLD.location_current IS DISTINCT FROM NEW.location_current)
+    EXECUTE PROCEDURE update_location_time();
     """)
     conn.execute("""
 ALTER TABLE content ADD COLUMN textsearch tsvector;
