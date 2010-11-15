@@ -30,7 +30,6 @@ echo "create user civicboom with password '$PGPASSWORD';" | psql -q
 
 echo "Creating civicboom database"
 createdb -E utf8 -O civicboom civicboom
-createlang plpgsql civicboom
 
 echo "  Loading PostGIS extras"
 psql -q -d civicboom -f /usr/share/postgresql/9.0/contrib/postgis-1.5/postgis.sql
@@ -46,7 +45,6 @@ echo "grant all on geometry_columns to civicboom;" | psql -q -d civicboom
 
 echo "Creating civicboom_gis database"
 createdb -E utf8 -O civicboom civicboom_gis
-createlang plpgsql civicboom_gis
 
 echo "  Loading PostGIS extras"
 psql -q -d civicboom_gis -f /usr/share/postgresql/9.0/contrib/postgis-1.5/postgis.sql
