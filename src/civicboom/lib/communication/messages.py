@@ -87,18 +87,19 @@ generators = [
     ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved your _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
       # TODO: response seen
 
-    # Groups
-    ["group_invite",                         "ne", _("_group invitation"),           _("%(admin)s invited you to join %(group)s as a %(role)s")],
-    ["group_deleted",                        "ne", _("_group deleted"),              _("The _group %(group)s has been deleted by %(admin)s")],
+    # Groups to group
     ["group_new_member",                     "n" , _("_member joined group"),        _("%(member)s has joined %(group)s")],
     ["group_role_changed",                   "n" , _("_member role changed"),        _("%(admin)s changed %(member)ss role for %(group)s to %(role)s")],
     ["group_remove_member_to_group",         "ne", _("_member removed from _group"), _("%(admin)s removed %(member)s from %(group)s")],
-    ["group_remove_member_to_member",        "ne", _("removed from _group"),         _("%(admin)s removed your membership to %(group)s")],
     ["group_join_request",                   "n" , _("join request"),                _("%(member)s has requested to join %(group)s")],
     
-    ["group_request_declined",               "n" , _("_group membership request deceline"), _("your membership request to join %(group)s was declined")],
-    ["group_request_accepted",               "n" , _("_group request accepted"),     _("%(admin)s accepted your _group membership request. You are now a member of %(group)s")],
+    # Groups to members
+    ["group_deleted",                        "ne", _("_group deleted"),              _("The _group %(group)s has been deleted by %(admin)s")],
+    ["group_invite",                         "ne", _("_group invitation"),           _("%(admin)s invited you to join %(group)s as a %(role)s")],
+    ["group_request_declined",               "n" , _("_group membership request decelined"), _("your membership request to join %(group)s was declined")],
     ["group_invitation_declined",            ""  , _("_group membership inviation declined"), _("%(member)s declined the invitaion to join %(group)s")],
+    ["group_request_accepted",               "n" , _("_group request accepted"),     _("%(admin)s accepted your _group membership request. You are now a member of %(group)s")],
+    ["group_remove_member_to_member",        "ne", _("removed from _group"),         _("%(admin)s removed your membership to %(group)s")],
     
     # Aggregation
     ["boom_article",                         "ne", _("_article boom"),               _("%(member)s thinks you might find this _article interesting %(article)s")],
