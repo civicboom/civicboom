@@ -57,10 +57,6 @@ CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_follower_count
-    AFTER INSERT OR UPDATE OR DELETE ON map_member_to_follower
-    FOR EACH ROW EXECUTE PROCEDURE update_follower_count();
     """)
     conn.execute("""
 CREATE OR REPLACE FUNCTION update_response_count() RETURNS TRIGGER AS $$
@@ -94,10 +90,6 @@ CREATE OR REPLACE FUNCTION update_response_count() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_response_count
-    AFTER INSERT OR UPDATE OR DELETE ON content
-    FOR EACH ROW EXECUTE PROCEDURE update_response_count();
     """)
     conn.execute("""
 CREATE OR REPLACE FUNCTION update_group_size() RETURNS TRIGGER AS $$
@@ -123,10 +115,6 @@ CREATE OR REPLACE FUNCTION update_group_size() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_group_size
-    AFTER INSERT OR UPDATE OR DELETE ON map_user_to_group
-    FOR EACH ROW EXECUTE PROCEDURE update_group_size();
     """)
     conn.execute("""
 CREATE OR REPLACE FUNCTION update_boom_count() RETURNS TRIGGER AS $$
@@ -244,12 +232,6 @@ CREATE OR REPLACE FUNCTION update_location_time() RETURNS TRIGGER AS $$
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_location_time
-    AFTER UPDATE ON member_user
-    FOR EACH ROW
-    WHEN (OLD.location_current IS DISTINCT FROM NEW.location_current)
-    EXECUTE PROCEDURE update_location_time();
     """)
     conn.execute("""
 ALTER TABLE content ADD COLUMN textsearch tsvector;

@@ -9,6 +9,7 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref, dynamic_loader
+from sqlalchemy.schema import DDL
 
 import urllib, hashlib, copy
 
@@ -33,10 +34,25 @@ class GroupMembership(Base):
     role          = Column(group_member_roles , nullable=False, default="contributor")
     status        = Column(group_member_status, nullable=False, default="active")
 
+DDL('DROP TRIGGER IF EXISTS update_group_size ON map_user_to_group').execute_at('before-drop', GroupMembership.__table__)
+DDL("""
+CREATE TRIGGER update_group_size
+    AFTER INSERT OR UPDATE OR DELETE ON map_user_to_group
+    FOR EACH ROW EXECUTE PROCEDURE update_group_size();
+""").execute_at('after-create', GroupMembership.__table__)
+
+
 class Follow(Base):
     __tablename__ = "map_member_to_follower"
     member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
     follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+
+DDL('DROP TRIGGER IF EXISTS update_follower_count ON map_member_to_follower').execute_at('before-drop', Follow.__table__)
+DDL("""
+CREATE TRIGGER update_follower_count
+    AFTER INSERT OR UPDATE OR DELETE ON map_member_to_follower
+    FOR EACH ROW EXECUTE PROCEDURE update_follower_count();
+""").execute_at('after-create', Follow.__table__)
 
 
 class Member(Base):
@@ -218,6 +234,8 @@ class Member(Base):
         from civicboom.lib.database.actions import add_to_interests
         return add_to_interests(self, content)
 
+GeometryDDL(Member.__table__)
+
 
 class User(Member):
     __tablename__    = "member_user"
@@ -273,6 +291,17 @@ class User(Member):
             args    = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
             return "http://www.gravatar.com/avatar/%s?%s" % (hash, args)
         return Member.avatar_url(self)
+
+DDL('DROP TRIGGER IF EXISTS update_location_time ON member_user').execute_at('before-drop', User.__table__)
+GeometryDDL(User.__table__)
+DDL("""
+CREATE TRIGGER update_location_time
+    AFTER UPDATE ON member_user
+    FOR EACH ROW
+    WHEN (OLD.location_current IS DISTINCT FROM NEW.location_current)
+    EXECUTE PROCEDURE update_location_time();
+""").execute_at('after-create', User.__table__)
+
 
 
 class Group(Member):
@@ -435,6 +464,3 @@ class MemberSetting(Base):
 #class MemberUserSettingsAggregationFacebook(Base):
 #    memberId
 #    OAuth token?
-
-GeometryDDL(User.__table__)
-GeometryDDL(Member.__table__)
