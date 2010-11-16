@@ -48,6 +48,20 @@ class MobileController(BaseController):
 
     @_logged_in_mobile
     @auto_format_output
+    def media_init(self):
+        log.debug("Preparing for media from mobile")
+        content = get_content(int(request.POST['content_id']))
+        if not content:
+            raise action_error(_("The content does not exist"), code=404)
+
+        if os.path.exists("/tmp/upload-"+str(content.id)):
+            os.remove("/tmp/upload-"+str(content.id))
+
+        return action_ok(_("File prepared"), code=201)
+
+
+    @_logged_in_mobile
+    @auto_format_output
     def media_part(self):
         log.debug("Uploading media from mobile")
         content = get_content(int(request.POST['content_id']))
