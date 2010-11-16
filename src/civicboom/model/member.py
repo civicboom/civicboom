@@ -36,6 +36,30 @@ class GroupMembership(Base):
 
 DDL('DROP TRIGGER IF EXISTS update_group_size ON map_user_to_group').execute_at('before-drop', GroupMembership.__table__)
 DDL("""
+CREATE OR REPLACE FUNCTION update_group_size() RETURNS TRIGGER AS $$
+    DECLARE
+        tmp_group_id integer;
+    BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            tmp_group_id := NEW.group_id;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            IF (NEW.member_id != OLD.member_id OR NEW.group_id != OLD.group_id) THEN
+                RAISE EXCEPTION 'Can only alter membership types, not relations';
+            END IF;
+            tmp_group_id := NEW.group_id;
+        ELSIF (TG_OP = 'DELETE') THEN
+            tmp_group_id := OLD.group_id;
+        END IF;
+
+        UPDATE member_group SET num_members = (
+            SELECT count(*)
+            FROM map_user_to_group
+            WHERE group_id=tmp_group_id
+        ) WHERE id=tmp_group_id;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER update_group_size
     AFTER INSERT OR UPDATE OR DELETE ON map_user_to_group
     FOR EACH ROW EXECUTE PROCEDURE update_group_size();
@@ -49,6 +73,27 @@ class Follow(Base):
 
 DDL('DROP TRIGGER IF EXISTS update_follower_count ON map_member_to_follower').execute_at('before-drop', Follow.__table__)
 DDL("""
+CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
+    DECLARE
+        tmp_member_id integer;
+    BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            tmp_member_id := NEW.member_id;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            RAISE EXCEPTION 'Can''t alter follows, only add or remove';
+        ELSIF (TG_OP = 'DELETE') THEN
+            tmp_member_id := OLD.member_id;
+        END IF;
+
+        UPDATE member SET num_followers = (
+            SELECT count(*)
+            FROM map_member_to_follower
+            WHERE member_id=tmp_member_id
+        ) WHERE id=tmp_member_id;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER update_follower_count
     AFTER INSERT OR UPDATE OR DELETE ON map_member_to_follower
     FOR EACH ROW EXECUTE PROCEDURE update_follower_count();
@@ -295,6 +340,13 @@ class User(Member):
 DDL('DROP TRIGGER IF EXISTS update_location_time ON member_user').execute_at('before-drop', User.__table__)
 GeometryDDL(User.__table__)
 DDL("""
+CREATE OR REPLACE FUNCTION update_location_time() RETURNS TRIGGER AS $$
+    BEGIN
+        UPDATE member_user SET location_updated = now() WHERE id=NEW.id;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER update_location_time
     AFTER UPDATE ON member_user
     FOR EACH ROW
