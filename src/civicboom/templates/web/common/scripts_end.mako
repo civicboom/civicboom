@@ -1,11 +1,8 @@
-##% if scripts_end:
-##<%
-
 <%
-if not "scripts_end" in locals():
-	scripts_end = []
+if c.scripts_end is None:
+	c.scripts_end = ["<!-- scripts_end not specified -->", ]
 if not config['development_mode']:
-	scripts_end.append("""
+	c.scripts_end.append("""
 <!-- Civicboom Analytics -->
 <script type="text/javascript">
   var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -19,8 +16,4 @@ if not config['development_mode']:
 </script>
 	""")
 %>
-
-##	${"\n".join(scripts_end)|n}
-##% endif
-${"\n".join(scripts_end)|n}
-
+${"\n".join(c.scripts_end)|n}

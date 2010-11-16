@@ -19,14 +19,14 @@ if not always_show_map:
 <div style="width: ${width}; height: ${height}; border: 1px solid black; ${style}" id="${field_name}_div"></div>
 <%
 if config['development_mode']:
-	scripts_end.extend([
+	c.scripts_end.extend([
 		'<script src="/javascript/OpenLayers.js"></script>',
 		'<script src="/javascript/gears_init.js"></script>',
 		'<script src="/javascript/geo.js"></script>',
 		'<script src="/javascript/minimap.js"></script>',
 	])
 else:
-	scripts_end.append(
+	c.scripts_end.append(
 		'<script src="/javascript/_combined.maps.js"></script>'
 	)
 %>
@@ -116,14 +116,14 @@ $(function() {
 import json
 
 if config['development_mode']:
-	scripts_end.extend([
+	c.scripts_end.extend([
 		'<script src="/javascript/OpenLayers.js"></script>',
 		'<script src="/javascript/gears_init.js"></script>',
 		'<script src="/javascript/geo.js"></script>',
 		'<script src="/javascript/minimap.js"></script>',
 	])
 else:
-	scripts_end.append(
+	c.scripts_end.append(
 		'<script src="/javascript/_combined.maps.js"></script>'
 	)
 %>
