@@ -406,7 +406,7 @@ from civicboom.model import CommentContent
 
 	<!-- AddThis menu -->
     <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4b7acd5429c82acd"><img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/></a>
-	<% scripts_end.append("""<script src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4b7acd5429c82acd"></script>""") %>
+	<% c.scripts_end.append("""<script src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4b7acd5429c82acd"></script>""") %>
     
     <!-- Retweet button -->
 ##  waiting for this script to load delays rendering (if the network is dodgy, the page

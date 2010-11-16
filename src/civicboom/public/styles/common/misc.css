@@ -81,18 +81,3 @@ BODY.c-misc.a-credits ARTICLE DIV SPAN {
 	font-size: 1.5em;
 	margin-bottom: 0.5em;
 }
-
-/*
- * signin page, 3 forms for "log in", "forgotten password" and "register"
- */
-BODY.c-account.a-signin .cols {
-	-moz-column-count: 3;
-	-moz-column-gap: 1em;
-	-moz-column-rule: 1px solid black;
-	-webkit-column-count: 3;
-	-webkit-column-gap: 1em;
-	-webkit-column-rule: 1px solid black;
-}
-BODY.c-account.a-signin .cols SECTION {
-	height: 100px;
-}

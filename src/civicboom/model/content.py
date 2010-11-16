@@ -9,6 +9,7 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.schema import DDL
 
 import hashlib
 import copy
@@ -283,6 +284,13 @@ class Content(Base):
         return None
         # AllanC Note: duplicated for Member location ... could we have location_string in a common place?
     
+DDL('DROP TRIGGER update_response_count ON content').execute_at('before-drop', Content.__table__)
+DDL("""
+CREATE TRIGGER update_response_count
+    AFTER INSERT OR UPDATE OR DELETE ON content
+    FOR EACH ROW EXECUTE PROCEDURE update_response_count();
+""").execute_at('after-create', Content.__table__)
+
 
 class DraftContent(Content):
     __tablename__   = "content_draft"

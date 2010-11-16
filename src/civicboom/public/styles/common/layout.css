@@ -50,6 +50,17 @@ HTML, BODY {
 	padding: 2px;
 }
 
+.form TH {
+	font-weight: bold;
+	text-align: center;
+}
+.form TD {
+	padding: 2px;
+}
+.form TD INPUT[type="submit"] {
+	width: 100%;
+}
+
 
 /* from http://psacake.com/web/jl.asp */
 .tooltip {
