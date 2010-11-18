@@ -7,7 +7,7 @@ from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
 
 from civicboom.lib.services import warehouse as wh
-from civicboom.lib.database.get_cached import get_tag
+from civicboom.lib.database.get_cached import get_tag, get_license
 from civicboom.lib.database.gis import get_location_by_name
 
 import datetime
@@ -30,13 +30,13 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
         # functions to convert from old data {{{
         licenses_by_old_id = [
             None, # l_id is 1-based, there is no zero
-            unspecified,
-            cc_by,
-            cc_by_nd,
-            cc_by_nc_nd,
-            cc_by_nc,
-            cc_by_nc_sa,
-            cc_by_sa,
+            get_license("Unspecified"),
+            get_license("CC-BY"),
+            get_license("CC-BY-ND"),
+            get_license("CC-BY-NC-ND"),
+            get_license("CC-BY-NC"),
+            get_license("CC-BY-NC-SA"),
+            get_license("CC-BY-SA"),
         ]
 
         def get_description(row):
