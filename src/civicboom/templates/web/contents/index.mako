@@ -1,6 +1,6 @@
 <%inherit file="/web/common/html_base.mako"/>
 <%namespace name="cl" file="/web/common/content_list.mako"/>
-##<%namespace name="loc" file="../common/location.mako"/>
+<%namespace name="loc" file="../common/location.mako"/>
 
 ##------------------------------------------------------------------------------
 ## Title - Override
@@ -34,6 +34,15 @@ IMG.avatar {
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
+	<form action="${url('contents')}" method="GET">
+		<fieldset>
+			<legend>Search</legend>
+			<br>Text: <input type="text" name="query">
+			<br>Location: ${loc.location_picker()}
+			<br><input type="submit" value="Search">
+		</fieldset>
+	</form>
+
 	% if len(d['list']) > 0:
 		<br><a href="${url.current(
 			format='rss',
