@@ -20,7 +20,7 @@
     <ul>
         <li><a href="#" class="top_parent">Explore</a>
         <ul>
-            <li><input type="text" placeholder="Quick Search"></li>
+            <li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="Quick Search"></form></li>
             <li><a href="/search" class="sub_option">Advanced Search</a></li>
 % if c.logged_in_persona:
             <li><a href="/feeds" class="parent">News Feeds</a>

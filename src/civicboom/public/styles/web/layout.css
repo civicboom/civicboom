@@ -106,7 +106,7 @@ HEADER .menuh a.top_parent, #menuh a.top_parent:hover {
 	font-size: 2em;
 }
 HEADER .menuh INPUT {
-	width: 97%;
+	width: 100%;
 }
 
 /*
