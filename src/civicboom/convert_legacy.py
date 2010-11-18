@@ -289,7 +289,7 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
                 c.content       = row["contents"].decode("utf-8")
                 c.creator       = reporters_by_old_id[row["ReporterId"]]
                 c.creation_date = row["creation_time"]
-                c.license_id    = unspecified.id
+                c.license_id    = get_license("Unspecified").id
                 # `status` enum('display','pending','deleted') NOT NULL default 'display',
                 log.debug("   |- %3d - %s" % (row["id"], c.title, ))
                 Session.add(c)
