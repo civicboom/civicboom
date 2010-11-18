@@ -8,42 +8,42 @@
 <div class="menuh-container">
 <div class="menuh">
     <ul>
-        <li><a href="#" class="top_parent">Create</a>
+        <li><a href="#" class="top_parent">${_("Create")}</a>
         <ul>
-            <li>${h.secure_link("/contents/new?target_type=assignment", "Assignment", css_class="sub_option")}</li>
-            <li>${h.secure_link("/contents/new?target_type=article", "Article", css_class="sub_option")}</li>
-            <li><a href="/groups/new" class="sub_option">Group</a></li>
+            <li>${h.secure_link("/contents/new?target_type=assignment", _("Assignment"), css_class="sub_option")}</li>
+            <li>${h.secure_link("/contents/new?target_type=article", _("Article"), css_class="sub_option")}</li>
+            <li><a href="/groups/new" class="sub_option">${_("Group")}</a></li>
         </ul>
         </li>
     </ul>
 
     <ul>
-        <li><a href="#" class="top_parent">Explore</a>
+        <li><a href="#" class="top_parent">${_("Explore")}</a>
         <ul>
-            <li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="Quick Search"></form></li>
-            <li><a href="/search" class="sub_option">Advanced Search</a></li>
+            <li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="${_("Quick Search")}"></form></li>
+            <li><a href="/search" class="sub_option">${_("Advanced Search")}</a></li>
 % if c.logged_in_persona:
-            <li><a href="/feeds" class="parent">News Feeds</a>
+            <li><a href="/feeds" class="parent">${_("News Feeds")}</a>
 				<ul>
 					% for f in c.logged_in_persona.feeds:
 					<li><a href="/feeds/${f.id}" class="sub_option">${f.name}</a></li>
 					% endfor
-					<li><a href="/feeds/new" class="sub_option">Create New Feed</a></li>
+					<li><a href="/feeds/new" class="sub_option">${_("Create New Feed")}</a></li>
 				</ul>
 			</li>
 % endif
-            <li><a href="/groups" class="sub_option">Find Groups</a></li>
+            <li><a href="/groups" class="sub_option">${_("Find Groups")}</a></li>
         </ul>
         </li>
     </ul>
 
     <ul>
-        <li><a href="#" class="top_parent">Manage</a>
+        <li><a href="#" class="top_parent">${_("Manage")}</a>
         <ul>
-            <li><a href="/profile" class="sub_option">My Profile</a></li>
-            <li><a href="/profile" class="sub_option">My Content</a></li>
-            <li><a href="/profile" class="sub_option">My Assignments</a></li>
-            <li><a href="/profile" class="sub_option">My Groups</a></li>
+            <li><a href="/profile" class="sub_option">${_("My Profile")}</a></li>
+            <li><a href="/profile" class="sub_option">${_("My Content")}</a></li>
+            <li><a href="/profile" class="sub_option">${_("My Assignments")}</a></li>
+            <li><a href="/profile" class="sub_option">${_("My Groups")}</a></li>
         </ul>
         </li>
     </ul>

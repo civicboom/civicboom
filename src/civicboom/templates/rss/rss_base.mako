@@ -17,7 +17,7 @@ from datetime import datetime
 <channel>
 	<title        >? [${_('_site_name Search Results')}]</title>
 	<link         >${url.current(host=app_globals.site_host)}</link>
-	<description  >News and articles relating to ?</description>
+	<description  >${_("News and articles from _site_name")}</description>
 	<pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
 	<lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
 	<generator    >http://www.civicboom.com/</generator>

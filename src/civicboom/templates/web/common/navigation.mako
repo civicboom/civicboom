@@ -2,7 +2,7 @@
 <a class="settings" href="${url('settings')}"><span>${_("settings")}</span></a>
 
 <a class="name" href="${url(controller='profile', action='index')}">${c.logged_in_persona.name}</a>
-<a class="clock">[Clock]</a>'
+<a class="clock">[Clock]</a>
 <a class="role">${c.logged_in_persona_role}</a>
 
 <a class="profile" href="${url(controller='profile', action='index')}">${_("profile")}</a>

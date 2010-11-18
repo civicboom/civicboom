@@ -39,7 +39,7 @@ IMG.avatar {
 			format='rss',
 			query=request.params.get('query'),
 			location=request.params.get('location')
-		)}">RSS feed of results</a>
+		)}">${_("RSS feed of results")}</a>
 
 		<br><a href="${url(
 			controller='misc',
@@ -50,7 +50,7 @@ IMG.avatar {
 				query=request.params.get('query'),
 				location=request.params.get('location')
 			)
-		)}">View results on map</a>
+		)}">${_("View results on map")}</a>
 
 		<p>${cl.content_list(d['list'])}
 	% else:

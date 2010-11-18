@@ -44,9 +44,7 @@
     ## Content Owner Actions
     % if 'edit' in d['content']['actions']:
         <li>
-        <a class="button_small button_small_style_2" href="${h.url('edit_content', id=d['content']['id'])}">
-          Edit
-        </a>
+        <a class="button_small button_small_style_2" href="${h.url('edit_content', id=d['content']['id'])}">${_("Edit")}</a>
         </li>
         <li>
         ${h.secure_link(url('content', id=d['content']['id'], format='redirect'), method="DELETE", value=_("Delete"), css_class="button_small button_small_style_2", confirm_text=_("Are your sure you want to delete this content?") )}
@@ -149,7 +147,7 @@ r = (d['content']['rating'] * 5)
   
     ##-----Copyright/Inapropriate?-------
     <h2>${_("Content issues?")}</h2>
-      <a href="" class="button_small button_small_style_1" onclick="swap('flag_content'); return false;">Inappropriate Content?</a>
+      <a href="" class="button_small button_small_style_1" onclick="swap('flag_content'); return false;">${_("Inappropriate Content?")}</a>
     
       <div id="flag_content" class="hideable">
         <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
@@ -163,7 +161,7 @@ r = (d['content']['rating'] * 5)
             <p class="form_instructions">${_('Comment (optional)')}</p>
             <textarea name="comment" style="width:90%; height:3em;"></textarea>
             <input type="submit" name="flagit" value="Flag it" class="button_small button_small_style_tiny "/>
-            <span class="button_small button_small_style_tiny " onclick="swap('flag_content'); return false;">Cancel</span>
+            <span class="button_small button_small_style_tiny " onclick="swap('flag_content'); return false;">${_("Cancel")}</span>
         ${h.end_form()}
       </div>
 </%def>
@@ -186,7 +184,7 @@ lon = d['content']['location'].split(' ')[1]
           feeds = [
               dict(pin='yellow',  url='/contents.rss?location='+lon+','+lat   ),
               dict(pin='red',     url='/contents.rss?id='+d['content']['id']  )
-		  ]
+          ]
       )}</p>
     % endif
   
@@ -197,39 +195,25 @@ lon = d['content']['location'].split(' ')[1]
     % endif
     
     <h2>${_("Responses")}</h2>
-    
     ${content_includes.content_list(d['content']['responses'], mode="mini", class_="content_list_mini")}
     
     % if d['content']['type'] == 'assignment':
-        <h2>Assignment</h2>
+        <h2>${_("Assignment")}</h2>
         % if 'accepted' in d['content']:
-            <h3>accepted by: ${len(d['content']['accepted'])}</h3>
+            <h3>${_("accepted by: %d") % len(d['content']['accepted'])}</h3>
             ${member_includes.member_list(d['content']['accepted'] , show_avatar=True, class_="avatar_thumbnail_list")}
         % endif
         
         % if 'invited' in d['content']:
-            <h3>awaiting reply: ${len(d['content']['invited'])}</h3>
+            <h3>${_("awaiting reply: %d") % len(d['content']['invited'])}</h3>
             ${member_includes.member_list(d['content']['invited']  , show_avatar=True, class_="avatar_thumbnail_list")}
         % endif
         
         % if 'withdrawn' in d['content']:
-            <h3>withdrawn members: ${len(d['content']['withdrawn'])}</h3>
+            <h3>${_("withdrawn members: %d") % len(d['content']['withdrawn'])}</h3>
             ${member_includes.member_list(d['content']['withdrawn'], show_avatar=True, class_="avatar_thumbnail_list")}
         % endif
-    % endif    
-  
-    <%doc>
-    % if hasattr(content, "accepted_by"):
-        <p>accepted by</p>
-        <ul>
-        % for member in content.accepted_by:
-            <li>${member.username}</li>
-        % endfor
-        </ul>
     % endif
-    </%doc>
-
-
 </%def>
 
 
@@ -266,15 +250,15 @@ lon = d['content']['location'].split(' ')[1]
         
         ##----Details----
         % if hasattr(content,'views'):
-        <p>views: ${content['views']}</p>
+        <p>${_("views: %d") % content['views']}</p>
         % endif
         
         ##----Temp Respond----
-        ${h.secure_link(url('new_content', parent_id=content['id']), value=_("Respond to this")  )}
+        ${h.secure_link(url('new_content', parent_id=content['id']), value=_("Respond to this"))}
         
         <ul class="status">
             % if 'response_type' in content and content['response_type']=='approved':
-            <li><div class="icon_large icon_approved_large" title="approved content"></div>approved content</li>
+            <li><div class="icon_large icon_approved_large" title="approved content"></div>${_("approved content")}</li>
             % endif
         </ul>
     </div>
@@ -291,25 +275,23 @@ lon = d['content']['location'].split(' ')[1]
         % if media['type'] == "image":
             <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}"/></a>
         % elif media['type'] == "audio":
-            <object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="30">
+            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="320" height="30">
                 <param name="movie" value="/flash/player_flv_maxi.swf" />
                 <param name="allowFullScreen" value="true" />
                 <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
             </object>
         % elif media['type'] == "video":
-            <object type="application/x-shockwave-flash" data="http://flv-player.net/medias/player_flv_maxi.swf" width="320" height="240">
+            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="320" height="240">
                 <param name="movie" value="/flash/player_flv_maxi.swf" />
                 <param name="allowFullScreen" value="true" />
                 <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;startimage=${media['thumbnail_url']}&amp;showvolume=1&amp;showfullscreen=1" />
             </object>
         % else:
-            unrecognised media type ${media['type']}
+            ${_("unrecognised media type: %s") % media['type']}
         % endif
         </li>
     % endfor
     </ul>
-
-
 
 </%def>
 
@@ -421,7 +403,7 @@ from civicboom.model import CommentContent
 	% if hasattr(d['content'],'boom_count'):
 		<% boom_count = d['content']['boom_count'] %>
 	% endif
-	<a href="${h.url(controller='content' ,action='boom', id=d['content']['id'], format='redirect')}" title="${_("Boom this! Share this with all your Followers")}">
+	<a href="${h.url(controller='content', action='boom', id=d['content']['id'], format='redirect')}" title="${_("Boom this! Share this with all your Followers")}">
 	<div class="boom_this">
 		<span class="boom_count">${boom_count}</span>
 		<p>${_("Boom this")}</p>
@@ -534,6 +516,4 @@ from civicboom.model import CommentContent
 
     <span class="button_small button_small_style_2" href="" onclick="publish_janrain_activity(); return false;">Aggregate</span>
 </%def>
-
-
 

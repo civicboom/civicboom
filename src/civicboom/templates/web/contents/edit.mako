@@ -77,7 +77,7 @@
 ##------------------------------------------------------------------------------
 <%def name="parent_preview()">
     % if c.content.parent:
-        <p>Responding to: ${c.content.parent.title}</p>
+        <p>${_("Responding to: %s") % c.content.parent.title}</p>
     % endif
 </%def>
 
@@ -86,12 +86,12 @@
 ##------------------------------------------------------------------------------
 <%def name="base_content()">
     <fieldset><legend>${_("Content")}</legend>
-        ${form_instruction("Got an opinion? want to ask a question?")}
+        ${form_instruction(_("Got an opinion? want to ask a question?"))}
 
         <p>
             <label for="title">${_("Title")}</label>
             <input id="title" name="title" type="text" value="${c.content.title}" style="width:80%;"/>
-            ${popup("extra info")}
+            ${popup(_("extra info"))}
         </p>
   
         ##${YUI.richtext(c.content.content, width='100%', height='300px')}
@@ -132,7 +132,7 @@
 		</script>
 
         % if c.content.__type__ == "draft":
-            <input type="submit" name="submit_draft"   value="Save Draft"   style="float: right;"/>
+            <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   style="float: right;"/>
         % endif
 
         ## Owner
@@ -156,7 +156,7 @@
                 <option value="${owner.id}" ${owner_selected}>${owner.username}</option>
             % endfor
         </select>
-        ${popup("extra_info")}
+        ${popup(_("extra_info"))}
         </p>
         
         
@@ -169,7 +169,7 @@
                 tag_string += tag + u" "
             %>
             <input id="tags" name="tags" type="text" value="${tag_string}"/>
-            ${popup("extra_info")}
+            ${popup(_("extra_info"))}
         </p>
 
     </fieldset>
@@ -185,7 +185,7 @@
 <%def name="media()">
 
     <fieldset><legend>${_("Attach Media (optional)")}</legend>      
-        ${form_instruction("Add any relevent pictures, videos, sounds, links to your content")}
+        ${form_instruction(_("Add any relevent pictures, videos, sounds, links to your content"))}
         
         <ul class="media_files">
 
@@ -237,12 +237,11 @@
             <!-- Add media -->
             
             <!-- Add media javascript-->
-            % if c.content.id:
-            <li>
-                YUI SWF Uploader disabled for now
+            ##% if c.content.id:
+            ##<li>
                 ##${YUI.file_uploader()}
-            </li>
-            % endif
+            ##</li>
+            ##% endif
 
             <!-- Add media non javascript -->
             <li>
@@ -251,8 +250,8 @@
                 </div>
                 <div class="media_fields">
                     <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></p>
-                    <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" />${popup("extra_info")}</p>
-                    <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" />${popup("extra_info")}</p>
+                    <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" />${popup(_("extra_info"))}</p>
+                    <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" />${popup(_("extra_info"))}</p>
                 </div>              
             </li>
             <!-- End Add media -->
@@ -268,7 +267,7 @@
 ##------------------------------------------------------------------------------
 <%def name="content_type()">
     <fieldset><legend>${_("Publish Type")}</legend>
-        ${form_instruction("What do you want to do with your content?")}
+        ${form_instruction(_("What do you want to do with your content?"))}
         
         <%
             selected_type = c.content.__type__
@@ -276,10 +275,10 @@
                 selected_type = c.content.target_type
             
             types = [
-                #("draft"     ,"description of draft content"   ),
-                ("article"   ,"description of _article"        ),
-                ("assignment","description of _assignemnt"     ),
-                ("syndicate" ,"description of syndicated stuff"),
+                #("draft"     , _("description of draft content")   ),
+                ("article"   , _("description of _article")        ),
+                ("assignment", _("description of _assignemnt")     ),
+                ("syndicate" , _("description of syndicated stuff")),
             ]
         %>
         
@@ -292,7 +291,7 @@
             <td id="type_${type}" onClick="highlightType('${type}');" class="section_selectable">
               <input class="hideable" type="radio" name="target_type" value="${type}" ${selected}/>
               <label for="type_${type}">${type}</label>
-              <p class="type_description">${_(description)}</p>
+              <p class="type_description">${description}</p>
             </td>
         </%def>
         
@@ -317,8 +316,8 @@
                     due_date   = c.content.due_date   if hasattr(c.content, 'due_date'  ) else ""
                     event_date = c.content.event_date if hasattr(c.content, 'event_date') else ""
                 %>
-                <p>Due Date:   <input id="datepicker1" type="date" name="due_date"   value="${due_date}"></p>
-                <p>Event Date: <input id="datepicker2" type="date" name="event_date" value="${event_date}"></p>
+                <p>${_("Due Date:")}   <input id="datepicker1" type="date" name="due_date"   value="${due_date}"></p>
+                <p>${_("Event Date:")} <input id="datepicker2" type="date" name="event_date" value="${event_date}"></p>
             </div>
         </div>
 
@@ -361,8 +360,6 @@
             <input type="submit" name="submit_publish" value="${_("Publish Update")}"/>
             % endif
         </div>
-
-
     </fieldset>
 </%def>
 
@@ -374,7 +371,7 @@
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Location (optional)")}</span></legend>
         <div class="hideable">
-            ${form_instruction("why give us this...")}
+            ${form_instruction(_("why give us this..."))}
             stuff!!
       </div>
 	  ${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
@@ -391,7 +388,7 @@
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
         <div class="hideable">
-            ${form_instruction("What is licensing explanation")}
+            ${form_instruction(_("What is licensing explanation"))}
 			<table>
             % for license in get_licenses():
 				<tr>
@@ -404,7 +401,7 @@
 				<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a></td>
                 <td><label for="licence_${license.id}">${license.description}</label></td>
 				</tr>
-                ##${popup(license.description)}
+                ##${popup(_(license.description))}
             % endfor
 			</table>
         </div>
@@ -423,7 +420,7 @@
 	<input type="submit" name="submit_preview" value="${_("Preview Draft")}"/>
 	<input type="submit" name="submit_draft"   value="${_("Save Draft")}"   />
 	% else:
-	<a href="${h.url('content', id=c.content.id)}">View Content</a>
+	<a href="${h.url('content', id=c.content.id)}">${_("View Content")}</a>
 	% endif
 
 </div>

@@ -11,6 +11,6 @@
 
     <% frag_url_messages = url('messages', format='frag') %>
     ${h.frag_div( "messages", frag_url_messages)}
-    ${h.frag_link("messages", frag_url_messages, "refresh messages")}
+    ${h.frag_link("messages", frag_url_messages, _("refresh messages"))}
 
 </%def>
