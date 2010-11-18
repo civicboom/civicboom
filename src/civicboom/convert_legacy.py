@@ -142,7 +142,8 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
             if "Address" in row and "Address2" in row:
                 addr = ", ".join([a for a in [row["Address"], row["Address2"]] if a])
                 lonlat = get_location_by_name(addr)
-                return "SRID=4326;POINT(%f %f)" % lonlat
+                if lonlat:
+                    return "SRID=4326;POINT(%f %f)" % lonlat
 
             return None
 
