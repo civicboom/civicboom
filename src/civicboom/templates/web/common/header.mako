@@ -42,6 +42,7 @@
         <ul>
             <li><a href="/profile" class="sub_option">My Profile</a></li>
             <li><a href="/profile" class="sub_option">My Content</a></li>
+            <li><a href="/profile" class="sub_option">My Assignments</a></li>
             <li><a href="/profile" class="sub_option">My Groups</a></li>
         </ul>
         </li>
