@@ -198,9 +198,12 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
             u.config["description"] = get_description(row)
             u.config["birthday"]    = str(row["Birth"])
             u.config["gender"]      = row["Gender"]
-            u.config["twitter_username"]        = row["twitter_username"]
-            u.config["broadcast_instant_news"]  = (row["twitter_instantnews"] == 1)
-            #u.config["broadcast_content_posts"] = (row["broadcast_content_posts"] == 1)
+            if row["twitter_username"]:
+                u.config["twitter_username"]        = row["twitter_username"]
+            if row["twitter_instantnews"] == 1:
+                u.config["broadcast_instant_news"]  = True
+            #if row["broadcast_content_posts"] == 1:
+            #    u.config["broadcast_content_posts"] = True
 
             u_login = UserLogin()
             u_login.user   = u
