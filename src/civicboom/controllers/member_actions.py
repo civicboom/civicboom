@@ -15,7 +15,7 @@ user_log = logging.getLogger("user")
 # Constants
 #-------------------------------------------------------------------------------
 
-# AllanC - TODO: these SQLAlchemy links should be depricated in preference to actual content searchs
+# AllanC - TODO: these SQLAlchemy links should be deprecated in preference to actual content searches
 content_lists = {
     'content'             : lambda member: member.content ,
     'content_public'      : lambda member: member.content_public ,
