@@ -192,7 +192,7 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
             u.status        = convert_status(row["Status"])
             u.last_check    = row["notification_check"]
             u.avatar        = get_avatar(row["id"])
-            u.config["location"]    = get_location(row)
+            u.location_home = get_location(row)
             u.config["description"] = get_description(row)
             u.config["birthday"]    = str(row["Birth"])
             u.config["gender"]      = row["Gender"]
