@@ -191,12 +191,12 @@ lon = d['content']['location'].split(' ')[1]
     % endif
   
     % if d['content']['parent']:
-    <h2>Parent content</h2>
+    <h2>${_("Parent content")}</h2>
     ${content_includes.content_list([d['content']['parent']], mode="mini", class_="content_list_mini")}
     ##<p><a href="${h.url(controller="content", action="view", id=content.parent.id)}">${content.parent.title}</a></p>
     % endif
     
-    <h2>Reponses</h2>
+    <h2>${_("Responses")}</h2>
     
     ${content_includes.content_list(d['content']['responses'], mode="mini", class_="content_list_mini")}
     
