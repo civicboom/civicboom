@@ -34,7 +34,7 @@ class ContentActionsController(BaseController):
         """
         content = _get_content(id)
         content.rate(c.logged_in_persona, int(rating))
-        user_log.debug("Rated Content #%d as %d" % (int(id), int(rating))
+        user_log.debug("Rated Content #%d as %d" % (int(id), int(rating)))
         return action_ok(_("Vote counted"))
 
 
