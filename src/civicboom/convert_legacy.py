@@ -130,12 +130,14 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
 
         def get_location(row):
             if "geolocation_latitude" in row and "geolocation_longitude" in row:
-                return "SRID=4326;POINT(%f %f)" % (row["geolocation_longitude"], row["geolocation_latitude"])
+                if row["geolocation_latitude"] and row["geolocation_longitude"]:
+                    return "SRID=4326;POINT(%f %f)" % (row["geolocation_longitude"], row["geolocation_latitude"])
 
             if "CityId" in row:
-                row = list(leg_conn.execute("SELECT latitude,longitude FROM cities WHERE id=%s", row["CityId"]))[0]
-                return "SRID=4326;POINT(%f %f)" % (row["longitude"], row["latitude"])
-                # see also CountyId, StateId, CountryId, ZipId -- are these needed when we have city?
+                if row["CityId"]:
+                    # see also CountyId, StateId, CountryId, ZipId -- are these needed when we have city?
+                    row = list(leg_conn.execute("SELECT latitude,longitude FROM cities WHERE id=%s", row["CityId"]))[0]
+                    return "SRID=4326;POINT(%f %f)" % (row["longitude"], row["latitude"])
 
             if "Address" in row and "Address2" in row:
                 addr = ", ".join([a for a in [row["Address"], row["Address2"]] if a])
