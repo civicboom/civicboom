@@ -174,7 +174,7 @@ class MemberActionsController(BaseController):
     @web_params_to_kwargs
     def assignments(self, id, **kwargs):
         # AllanC - ????
-        #          currently accepted assignments are publicly visable?
+        #          currently accepted assignments are publicly visible?
         #          is this only temporary for the km_demo?
         member = _get_member(id)
         if member != c.logged_in_user:

@@ -86,7 +86,7 @@ class Content(Base):
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
     
-    visable         = Column(Boolean(),        nullable=False, default=True)
+    visible         = Column(Boolean(),        nullable=False, default=True)
     edit_lock       = Column(_edit_lock,       nullable=True , default=None)
 
     num_responses   = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
@@ -218,7 +218,7 @@ class Content(Base):
             return False # if draft, only editors (above) can see
         if self.__type__ == "comment":
             return self.parent.viewable_by(member) # if comment, show if we can see the parent article
-        if self.visable == True:
+        if self.visible == True:
             return True
         return False
 

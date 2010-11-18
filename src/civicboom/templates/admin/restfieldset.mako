@@ -84,7 +84,7 @@ from civicboom.model import Content, User, Group, Media, FlaggedContent
 			<ul>
 				<li>
 					${Session.query(Content).count()} ${_("bits of content")}
-					(<a href="/admin/Content/models?Content--status=pending">${Session.query(Content).filter(Content.visable==False).count()} ${_("not visbale")}</a>,
+					(<a href="/admin/Content/models?Content--status=pending">${Session.query(Content).filter(Content.visible==False).count()} ${_("not visible")}</a>,
 					<a href="/admin/FlaggedContent/models">${Session.query(FlaggedContent).count()} ${_("flagged")}</a>)
 				</li>
 				<li>

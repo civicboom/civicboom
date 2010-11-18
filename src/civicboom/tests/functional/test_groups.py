@@ -46,7 +46,7 @@ class TestGroupsController(TestController):
                 '_authentication_token': self.auth_token,
                 'username'     : 'test_group',
                 'name'         : 'Test group for unit tests' ,
-                'description'  : 'This group should not be visable once the tests have completed because it will be removed' ,
+                'description'  : 'This group should not be visible once the tests have completed because it will be removed' ,
                 'default_role' : 'editor' ,
                 'join_mode'    : 'invite_and_request' ,
                 'member_visability'         : 'public' , #required to test join request later
@@ -184,7 +184,7 @@ class TestGroupsController(TestController):
         self.log_out()
         
         # check member is actually part of group
-        #   - member visability is public so the join request should be visable even when viewed by a logged_out user
+        #   - member visability is public so the join request should be visible even when viewed by a logged_out user
         response = self.app.get(url('group', id=self.group_id, format='json'))
         response_json = json.loads(response.body)
         found = False

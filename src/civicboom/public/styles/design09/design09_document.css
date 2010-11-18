@@ -39,7 +39,7 @@ h2 {
 
 
 .hidden_by_default {
-	/* be VERY careful with using this style, clients without javascrit enabled can NEVER make them visable */
+	/* be VERY careful with using this style, clients without javascrit enabled can NEVER make them visible */
 	/* Use .hideable instead, .hideable is a dynamic CSS style that hides by default by javascript, if javascript can hide it then it can also reveal it, problem solved */
 	display: none;
 }
