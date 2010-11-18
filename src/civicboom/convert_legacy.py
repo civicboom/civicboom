@@ -206,10 +206,11 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
             #if row["broadcast_content_posts"] == 1:
             #    u.config["broadcast_content_posts"] = True
 
-            u_login = UserLogin()
-            u_login.user   = u
-            u_login.type   = "password"
-            u_login.token  = row["Password"]
+            if row["Password"]:
+                u_login = UserLogin()
+                u_login.user   = u
+                u_login.type   = "password"
+                u_login.token  = row["Password"]
 
 #  `Photo` varchar(100) default NULL,
 #  `contact_status` tinyint(1) NOT NULL default '1',
