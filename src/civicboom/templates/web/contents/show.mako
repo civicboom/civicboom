@@ -55,10 +55,10 @@
 
     ## Assignment Accept and Withdraw
     % if 'accept' in d['content']['actions']:
-        <li>${h.secure_link(h.url('content_action', action='accept'  , id=d['content']['id']), _('Accept')  , css_class="button_small button_small_style_2")}</li>
+        <li>${h.secure_link(h.url('content_action', action='accept'  , format='redirect', id=d['content']['id']), _('Accept')  , css_class="button_small button_small_style_2")}</li>
     % endif
     % if 'withdraw' in d['content']['actions']:
-        <li>${h.secure_link(h.url('content_action', action='withdraw', id=d['content']['id']), _('Withdraw'), css_class="button_small button_small_style_2")}</li>
+        <li>${h.secure_link(h.url('content_action', action='withdraw', format='redirect', id=d['content']['id']), _('Withdraw'), css_class="button_small button_small_style_2")}</li>
     % endif
 
     ## Parent Content Owner Actions
@@ -69,13 +69,13 @@
     ##    </a>
 
     % if 'approve' in d['content']['actions']:
-        <li class="approve"     >${h.secure_link(h.url('content_action', action='approve'    , id=d['content']['id']), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}</li>
+        <li class="approve"     >${h.secure_link(h.url('content_action', action='approve'    , format='redirect', id=d['content']['id']), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}</li>
     % endif
     % if 'seen' in d['content']['actions']:
-        <li class="seen"        >${h.secure_link(h.url('content_action', action='seen'       , id=d['content']['id']), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="button_small button_small_style_2" )}</li>
+        <li class="seen"        >${h.secure_link(h.url('content_action', action='seen'       , format='redirect', id=d['content']['id']), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="button_small button_small_style_2" )}</li>
     % endif
     % if 'dissasociate' in d['content']['actions']:
-        <li class="dissasociate">${h.secure_link(h.url('content_action', action='disasociate', id=d['content']['id']), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}</li>
+        <li class="dissasociate">${h.secure_link(h.url('content_action', action='disasociate', format='redirect', id=d['content']['id']), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}</li>
     % endif
 
     
