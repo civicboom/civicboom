@@ -19,7 +19,7 @@ class ContentActionsController(BaseController):
     @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
-    def rate(self, id, **kwargs):
+    def rate(self, id, rating=None):
         """
         POST /contents/{id}/rate: rate an article
 
@@ -32,11 +32,9 @@ class ContentActionsController(BaseController):
         @return 200   rated ok
         @return 400   invalid rating
         """
-        if 'rating' not in kwargs:
-            kwargs['rating'] = None
-        
         content = _get_content(id)
-        content.rate(c.logged_in_persona, kwargs['rating'])
+        content.rate(c.logged_in_persona, int(rating))
+        user_log.debug("Rated Content #%d as %d" % (int(id), int(rating))
         return action_ok(_("Vote counted"))
 
 
@@ -88,7 +86,7 @@ class ContentActionsController(BaseController):
         """
         content = _get_content(id, is_parent_owner=True)
         if content.parent_approve():
-            user_log.debug("Approved&Locked Content #%d" % int(id))
+            user_log.debug("Approved & Locked Content #%d" % int(id))
             return action_ok(_("content has been approved and locked"))
         raise action_error(_('Error locking content'))
 
@@ -205,7 +203,7 @@ class ContentActionsController(BaseController):
     @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
-    def flag(self, id, **kwargs):
+    def flag(self, id, type='offensive', comment=''):
         """
         POST /contents/{id}/flag: Flag this content as being inapproprate of copyright violoation
 
@@ -214,12 +212,8 @@ class ContentActionsController(BaseController):
         @param type      ?
         @param comment   ?
         """
-        if 'type' not in kwargs:
-            kwargs['type'] = 'offensive'
-        if 'comment' not in kwargs:
-            kwargs['comment'] = ''
-            
-        _get_content(id).flag(member=c.logged_in_persona, type=kwargs['type'], comment=kwargs['comment'])
+        _get_content(id).flag(member=c.logged_in_persona, type=type, comment=comment)
+        user_log.debug("Flagged Content #%d as %s" % (int(id), type))
         return action_ok(_("An administrator has been alerted to this content"))
         #raise action_error(_("Error flaging content, please email us"))
 
@@ -252,6 +246,6 @@ class ContentActionsController(BaseController):
         
         @api contents 1.0 (WIP)
         """
-        
         c.logged_in_persona.add_to_interests(id)
+        user_log.debug("Interested in Content #%d" % int(id))
         return action_ok(_("added to interest list"))
