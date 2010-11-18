@@ -4,6 +4,7 @@ from civicboom.lib.search import *
 from civicboom.model      import Feed, Content
 
 log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 
 
 def _post_to_query(params):
