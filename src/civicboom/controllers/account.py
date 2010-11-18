@@ -100,12 +100,11 @@ class AccountController(BaseController):
     @authorize(is_valid_user)
     @authenticate_form
     def set_persona(self, id):
-        print "YAY with %s" % id
         if set_persona(id):
-            print "ok"
+            user_log.info("Switched to persona %s" % id)
             return action_ok("switched persona")
         else:
-            print "oh no"
+            user_log.info("Failed to switch to persona %s" % id)
             raise action_error("failed to swich persona")
 
 

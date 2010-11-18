@@ -32,6 +32,7 @@ class GroupActionsController(BaseController):
         # Join action
         join_status = group.join(c.logged_in_persona)
         if join_status == True:
+            user_log.info("joined %s" % group.username)
             return action_ok(_('joined %s' % group.username))
         elif join_status == "request":
             return action_ok(_('join request sent'))
@@ -59,6 +60,7 @@ class GroupActionsController(BaseController):
             raise action_error('current user has no permissions for this group', code=403)
         # remove action
         if group.remove_member(member):
+            user_log.info("Remebed member %s from group %s" % (member.username, group.username))
             return action_ok(message='member removed sucessfully')
         raise action_error('unable to remove member', code=500)
 
@@ -99,7 +101,7 @@ class GroupActionsController(BaseController):
     @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
-    def set_role(self, id, **kwargs):
+    def set_role(self, id, member=None, role=None):
         """
         (only if current user has admin role in group)
         
@@ -108,10 +110,8 @@ class GroupActionsController(BaseController):
         return 200 - role set ok
         return 400 - cannot remove last admin
         """
-        member = kwargs.get('member', None)
-        role   = kwargs.get('role'  , None)
-        
         group = _get_group(id, is_admin=True)
-        if group.set_role(member, role):
+        if group.set_role(member, role): # FIXME: check that member exists? If we _get_member, then member.username would work below
+            user_log.info("Set role of member %s to %s in group %s" % (member, role, group.username))
             return action_ok(_('role set successfully'))
         raise action_error('unable to set role', code=500)
