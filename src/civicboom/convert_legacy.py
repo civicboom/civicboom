@@ -7,7 +7,7 @@ from civicboom.model import MemberAssignment, Follow
 from civicboom.model import Message
 
 from civicboom.lib.services import warehouse as wh
-from civicboom.lib.database.get_cached import get_tag
+from civicboom.lib.database.get_cached import get_tag, get_license
 from civicboom.lib.database.gis import get_location_by_name
 
 import datetime
@@ -30,13 +30,13 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
         # functions to convert from old data {{{
         licenses_by_old_id = [
             None, # l_id is 1-based, there is no zero
-            unspecified,
-            cc_by,
-            cc_by_nd,
-            cc_by_nc_nd,
-            cc_by_nc,
-            cc_by_nc_sa,
-            cc_by_sa,
+            get_license("Unspecified"),
+            get_license("CC-BY"),
+            get_license("CC-BY-ND"),
+            get_license("CC-BY-NC-ND"),
+            get_license("CC-BY-NC"),
+            get_license("CC-BY-NC-SA"),
+            get_license("CC-BY-SA"),
         ]
 
         def get_description(row):
@@ -130,17 +130,20 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
 
         def get_location(row):
             if "geolocation_latitude" in row and "geolocation_longitude" in row:
-                return "SRID=4326;POINT(%d %d)" % (row["geolocation_longitude"], row["geolocation_latitude"])
+                if row["geolocation_latitude"] and row["geolocation_longitude"]:
+                    return "SRID=4326;POINT(%f %f)" % (row["geolocation_longitude"], row["geolocation_latitude"])
 
             if "CityId" in row:
-                row = list(leg_conn.execute("SELECT latitude,longitude FROM cities WHERE id=%s", row["CityId"]))[0]
-                return "SRID=4326;POINT(%d %d)" % (row["longitude"], row["latitude"])
-                # see also CountyId, StateId, CountryId, ZipId -- are these needed when we have city?
+                if row["CityId"]:
+                    # see also CountyId, StateId, CountryId, ZipId -- are these needed when we have city?
+                    row = list(leg_conn.execute("SELECT latitude,longitude FROM cities WHERE id=%s", row["CityId"]))[0]
+                    return "SRID=4326;POINT(%f %f)" % (row["longitude"], row["latitude"])
 
             if "Address" in row and "Address2" in row:
                 addr = ", ".join([a for a in [row["Address"], row["Address2"]] if a])
                 lonlat = get_location_by_name(addr)
-                return "SRID=4326;POINT(%d %d)" % lonlat
+                if lonlat:
+                    return "SRID=4326;POINT(%f %f)" % lonlat
 
             return None
 
@@ -192,18 +195,22 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
             u.status        = convert_status(row["Status"])
             u.last_check    = row["notification_check"]
             u.avatar        = get_avatar(row["id"])
-            u.config["location"]    = get_location(row)
+            u.location_home = get_location(row)
             u.config["description"] = get_description(row)
             u.config["birthday"]    = str(row["Birth"])
             u.config["gender"]      = row["Gender"]
-            u.config["twitter_username"]        = row["twitter_username"]
-            u.config["broadcast_instant_news"]  = (row["twitter_instantnews"] == 1)
-            #u.config["broadcast_content_posts"] = (row["broadcast_content_posts"] == 1)
+            if row["twitter_username"]:
+                u.config["twitter_username"]        = row["twitter_username"]
+            if row["twitter_instantnews"] == 1:
+                u.config["broadcast_instant_news"]  = True
+            #if row["broadcast_content_posts"] == 1:
+            #    u.config["broadcast_content_posts"] = True
 
-            u_login = UserLogin()
-            u_login.user   = u
-            u_login.type   = "password"
-            u_login.token  = row["Password"]
+            if row["Password"]:
+                u_login = UserLogin()
+                u_login.user   = u
+                u_login.type   = "password"
+                u_login.token  = row["Password"]
 
 #  `Photo` varchar(100) default NULL,
 #  `contact_status` tinyint(1) NOT NULL default '1',
@@ -282,7 +289,7 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
                 c.content       = row["contents"].decode("utf-8")
                 c.creator       = reporters_by_old_id[row["ReporterId"]]
                 c.creation_date = row["creation_time"]
-                c.license_id    = unspecified.id
+                c.license_id    = get_license("Unspecified").id
                 # `status` enum('display','pending','deleted') NOT NULL default 'display',
                 log.debug("   |- %3d - %s" % (row["id"], c.title, ))
                 Session.add(c)
