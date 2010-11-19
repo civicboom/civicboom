@@ -4,7 +4,7 @@
 ##------------------------------------------------------------------------------
 ## Title - Override
 ##------------------------------------------------------------------------------
-<%def name="title()">Widget Preview</%def>
+<%def name="title()">${_("Widget Preview")}</%def>
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -97,15 +97,15 @@
     <h2>${_('Customise this widget')}</h2>
     
     <form name="widget_customisation" action="">
-      <fieldset><legend>Title</legend>
+      <fieldset><legend>${_("Title")}</legend>
         <input type="text"   name="title" value="${_('%s insight: Share your news and opinion' % member)}" size="60"/><br/>
       </fieldset>
-      <fieldset><legend>Theme</legend>
+      <fieldset><legend>${_("Theme")}</legend>
         <label>${_('Light')}</label><input type="radio" name="theme" value="light" checked/><br/>
         <label>${_('Dark')} </label><input type="radio" name="theme" value="dark"         />
       </fieldset>
       
-      <fieldset><legend>Size</legend>
+      <fieldset><legend>${_("Size")}</legend>
         <label>${_('Width')} </label><input type="text" name="width"  value="240" size="3" /><br/>
         <label>${_('Height')}</label><input type="text" name="height" value="370" size="3" />
       </fieldset>

@@ -4,7 +4,7 @@
   % if c.assignment:
     ${widget_assignment(c.assignment)}
   % else:
-    Error: Unable to find content
+    ${_("Error: Unable to find content")}
   % endif
 </%def>
 
