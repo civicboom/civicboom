@@ -50,6 +50,17 @@ HTML, BODY {
 	padding: 2px;
 }
 
+.form TH {
+	font-weight: bold;
+	text-align: center;
+}
+.form TD {
+	padding: 2px;
+}
+.form TD INPUT[type="submit"] {
+	width: 100%;
+}
+
 
 /* from http://psacake.com/web/jl.asp */
 .tooltip {
@@ -258,6 +269,10 @@ HTML.no-js #flash_message {
 	border-radius: 8px 8px;
 	-moz-border-radius: 8px;
 	-webkit-border-radius: 8px;
+	padding: 4px;
+}
+.olLayerGeoRSSClose {
+	float: right;
 }
 
 

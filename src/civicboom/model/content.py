@@ -9,6 +9,7 @@ from sqlalchemy import Enum, Integer, Date, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.schema import DDL
 
 import hashlib
 import copy
@@ -85,7 +86,7 @@ class Content(Base):
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
     
-    visable         = Column(Boolean(),        nullable=False, default=True)
+    visible         = Column(Boolean(),        nullable=False, default=True)
     edit_lock       = Column(_edit_lock,       nullable=True , default=None)
 
     num_responses   = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
@@ -217,7 +218,7 @@ class Content(Base):
             return False # if draft, only editors (above) can see
         if self.__type__ == "comment":
             return self.parent.viewable_by(member) # if comment, show if we can see the parent article
-        if self.visable == True:
+        if self.visible == True:
             return True
         return False
 
@@ -283,6 +284,45 @@ class Content(Base):
         return None
         # AllanC Note: duplicated for Member location ... could we have location_string in a common place?
     
+DDL('DROP TRIGGER update_response_count ON content').execute_at('before-drop', Content.__table__)
+DDL("""
+CREATE OR REPLACE FUNCTION update_response_count() RETURNS TRIGGER AS $$
+    DECLARE
+        tmp_parent_id integer;
+    BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            tmp_parent_id := NEW.parent_id;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            -- use old because sometimes content will be updated to set parent to
+            -- null (disassociating), but there is no use case where the parent is
+            -- changed from null to a new value (yet...)
+            tmp_parent_id := OLD.parent_id;
+        ELSIF (TG_OP = 'DELETE') THEN
+            tmp_parent_id := OLD.parent_id;
+        END IF;
+
+        IF tmp_parent_id IS NOT NULL THEN
+            UPDATE content SET num_responses = (
+                SELECT count(*)
+                FROM content
+                WHERE __type__='article' AND parent_id=tmp_parent_id
+            ) WHERE id=tmp_parent_id;
+
+            UPDATE content SET num_comments = (
+                SELECT count(*)
+                FROM content
+                WHERE __type__='comment' AND parent_id=tmp_parent_id
+            ) WHERE id=tmp_parent_id;
+        END IF;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_response_count
+    AFTER INSERT OR UPDATE OR DELETE ON content
+    FOR EACH ROW EXECUTE PROCEDURE update_response_count();
+""").execute_at('after-create', Content.__table__)
+
 
 class DraftContent(Content):
     __tablename__   = "content_draft"

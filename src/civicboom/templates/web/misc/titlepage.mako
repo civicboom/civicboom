@@ -6,15 +6,15 @@
 		##<fieldset><legend>${_("Sign up today")}</legend>dd
 		<p>
 			<label for="username">${_("Username")}</label>
-			<br><input type="text"  name="username" placeholder="e.g. dave23"/>
+			<br><input type="text"  name="username" placeholder="e.g. dave23" autocomplete="off" />
 		</p>
 		<p>
 			<label for="email">${_("Password")}</label>
-			<br><input type="password" name="password" placeholder=""/>
+			<br><input type="password" name="password" placeholder="" autocomplete="off" />
 		</p>
 		<p>
 			<label for="email">${_("Email")}</label>
-			<br><input type="email" name="email" placeholder="e.g. dave@coolnews.com"/>
+			<br><input type="email" name="email" placeholder="e.g. dave@coolnews.com" autocomplete="off" />
 		</p>
 		<p>
 			<input class="signup_submit" type="image" name="submit" src="/styles/web/signup.png" value="${_("Sign up")}"/>

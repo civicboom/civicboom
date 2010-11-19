@@ -3,9 +3,9 @@ ${show_message(c.result['data']['message'])}
 <%def name="show_message(message)">
 <table>
 	<tr>
-		<th>From</th>
-		<th>Subject</th>
-		<th>Date</th>
+		<th>${_("From")}</th>
+		<th>${_("Subject")}</th>
+		<th>${_("Date")}</th>
 	</tr>
 	<tr>
 		<td>${str(message["source"])}</td>

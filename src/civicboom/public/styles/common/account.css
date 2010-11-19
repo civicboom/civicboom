@@ -1,0 +1,14 @@
+/*
+ * signin page, 3 forms for "log in", "forgotten password" and "register"
+ */
+BODY.c-account.a-signin .signin {
+	text-align: center;
+	margin: auto;
+}
+BODY.c-account.a-signin .signin TD.block {
+	padding: 16px;
+	width: 50%;
+}
+BODY.c-account.a-signin .signin TABLE {
+	margin: auto;
+}

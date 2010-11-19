@@ -4,10 +4,10 @@ ${show_messages(d['list'])}
     <table class='message_list zebra'>
 		<thead>
 			<tr>
-				<th class='from'>From</th>
-				<th class='subject'>Subject</th>
-				<th class='date'>Date</th>
-				<th class='action'>Action</th>
+				<th class='from'>${_("From")}</th>
+				<th class='subject'>${_("Subject")}</th>
+				<th class='date'>${_("Date")}</th>
+				<th class='action'>${_("Action")}</th>
 			</tr>
 		</thead>
 		<tbody>

@@ -92,6 +92,7 @@ class BaseController(WSGIController):
         #log.debug("BaseController: controller:%s action:%s id:%s format:%s" % (c.controller, c.action, c.id, c.format))
         
         c.result = {'status':'ok', 'message':'', 'data':{}}
+        c.scripts_end = []
         
         c.authenticated_form = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
 

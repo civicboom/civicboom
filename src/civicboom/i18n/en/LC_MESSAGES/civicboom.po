@@ -744,10 +744,10 @@ msgstr "content was declined syndication"
 #, python-format
 msgid ""
 "%(reporter)s declined your syndication request for _article %(article)s. "
-"Your _article is now publicly visable"
+"Your _article is now publicly visible"
 msgstr ""
 "%(reporter)s declined your syndication request for content %(article)s. "
-"Your content is now publicly visable"
+"Your content is now publicly visible"
 
 #: civicboom/lib/communication/messages.py:77
 msgid "_article was not syndicated"
@@ -757,10 +757,10 @@ msgstr "content was not syndicated"
 #, python-format
 msgid ""
 "Your syndication request for %(article)s was unsuccessful. Your _article "
-"is now publicly visable"
+"is now publicly visible"
 msgstr ""
 "Your syndication request for %(article)s was unsuccessful. Your content "
-"is now publicly visable"
+"is now publicly visible"
 
 #: civicboom/lib/communication/messages.py:78
 msgid "_assignment due next week"

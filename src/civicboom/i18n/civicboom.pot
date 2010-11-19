@@ -673,7 +673,7 @@ msgstr ""
 #, python-format
 msgid ""
 "%(reporter)s declined your syndication request for _article %(article)s. Your"
-" _article is now publicly visable"
+" _article is now publicly visible"
 msgstr ""
 
 #: civicboom/lib/communication/messages.py:77
@@ -684,7 +684,7 @@ msgstr ""
 #, python-format
 msgid ""
 "Your syndication request for %(article)s was unsuccessful. Your _article is "
-"now publicly visable"
+"now publicly visible"
 msgstr ""
 
 #: civicboom/lib/communication/messages.py:78

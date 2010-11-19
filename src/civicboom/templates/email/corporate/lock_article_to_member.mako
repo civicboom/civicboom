@@ -1,6 +1,6 @@
 <%inherit file="../base_email.mako"/>
 
-<%def name="subject()">Your _article has been approved</%def>
+<%def name="subject()">${_("Your _article has been approved")}</%def>
 
 <%
     formatted_links = h.objs_to_linked_formatted_dict(article=c.content, parent=c.content.parent, member=c.content.parent.creator)

@@ -15,7 +15,7 @@ user_log = logging.getLogger("user")
 # Constants
 #-------------------------------------------------------------------------------
 
-# AllanC - TODO: these SQLAlchemy links should be depricated in preference to actual content searchs
+# AllanC - TODO: these SQLAlchemy links should be deprecated in preference to actual content searches
 content_lists = {
     'content'             : lambda member: member.content ,
     'content_public'      : lambda member: member.content_public ,
@@ -174,7 +174,7 @@ class MemberActionsController(BaseController):
     @web_params_to_kwargs
     def assignments(self, id, **kwargs):
         # AllanC - ????
-        #          currently accepted assignments are publicly visable?
+        #          currently accepted assignments are publicly visible?
         #          is this only temporary for the km_demo?
         member = _get_member(id)
         if member != c.logged_in_user:

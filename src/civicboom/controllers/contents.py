@@ -179,7 +179,7 @@ class ContentsController(BaseController):
         # url('contents')
         
         results = Session.query(Content).select_from(join(Content, Member, Content.creator))
-        results = results.filter(and_(Content.__type__!='comment', Content.visable==True, Content.private==False)) #Content.__type__!='draft'
+        results = results.filter(and_(Content.__type__!='comment', Content.visible==True, Content.private==False)) #Content.__type__!='draft'
         results = results.order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
         
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)

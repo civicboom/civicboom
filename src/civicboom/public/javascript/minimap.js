@@ -8,6 +8,13 @@ function minimap(div_name, options, feeds) {
 	for(var d in defaults) {if(!options[d]) options[d] = defaults[d];}
 
 	OpenLayers.ImgPath = "/images/map-icons/";
+	OpenLayers.Rico = {Corner: {
+		round: function(a, b){},
+		reRound: function(a, b){},
+		changeColor: function(a, b){a.parentElement.style.background=b;},
+		changeOpacity: function(a, b){},
+	}};
+
 	if(options.controls) {
 		var map = new OpenLayers.Map(div_name, {maxResolution:'auto', theme:null});
 	}

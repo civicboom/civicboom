@@ -42,7 +42,7 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
             ##<a href="${h.url('member', id=c.widget_owner.username)}" target="_blank">
             <img src="${c.widget_owner.avatar_url}" />
             ##</a>
-            <a class="action button_style_1 inverted" href="${h.url(controller='reporter', action='followReporter', id=c.widget_owner.id)}">Follow</a>
+            <a class="action button_style_1 inverted" href="${h.url(controller='reporter', action='followReporter', id=c.widget_owner.id)}">${_("Follow")}</a>
         </div>
         <a class="tooltip_icon" style="float: right;" href="${h.url_from_widget(controller='widget',action='about')}" title="What is this?"></a>
         ##<span class="widget_header_title">
@@ -85,7 +85,7 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
               <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;"/>
               </a></p>
           % else:
-              <a href="${h.url_from_widget(controller='widget', action='signin')}">Sign up or Sign in to <img src="/design09/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/></a>
+              <a href="${h.url_from_widget(controller='widget', action='signin')}">${_("Sign up or Sign in to")} <img src="/design09/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/></a>
           % endif
           </div>
           <div class="clearboth_hack"></div>

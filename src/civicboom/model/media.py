@@ -11,6 +11,7 @@ from pylons import config, app_globals # used in generation of URL's for media
 import magic
 import copy
 import logging
+import os
 
 log = logging.getLogger(__name__)
 
@@ -63,6 +64,8 @@ class Media(Base):
 
         # make a personal copy of the file; tmp_file may not be a real
         # file, and it will disappear when the request is over
+        if not os.path.exists(config["path.temp"]):
+            os.makedirs(config["path.temp"])
         my_file = config["path.temp"]+"/media-"+self.hash
         wh.copy_cgi_file(tmp_file, my_file)
 
