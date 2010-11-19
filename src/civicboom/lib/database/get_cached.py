@@ -56,6 +56,7 @@ def get_member_nocache(member):
     return None
 
 #@cache_test.cache() #Cache decorator to go here
+# TODO: it might be nice to specify eager load fields here, so getting the logged in user eagerloads group_roles and groups to be show in the title bar with only one query
 def get_member(member):
     if not member:
         return None

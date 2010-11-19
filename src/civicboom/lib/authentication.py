@@ -182,18 +182,18 @@ def signout_user(user):
 
 def set_persona(persona):
     persona = get_member(persona)
-    if (persona == c.logged_in_user):
-        #(isinstance(group_persona, basestring) and
-        #or
-        #(isinstance(group_persona, Member    ) and group_persona == c.logged_in_user         )
-        #set_persona_session(persona)
+    if (persona == c.logged_in_user):        
+        # If trying to fall back to self login then remove persona selection
         session_remove('username_persona')
         return True
     else:
         membership = get_membership(persona, c.logged_in_user)
-        if membership:
-            #if isintance(persona, Member):
-            #    persona = persona.username
-            session_set('username_persona', persona.username)
-            return True
+        if not membership:
+            raise action_error(_('not a member of this group'), code=403)
+        if membership.status != "active":
+            raise action_error(_('not an active member of this group'), code=403)
+        #if isintance(persona, Member):
+        #    persona = persona.username
+        session_set('username_persona', persona.username)
+        return True
     return False
