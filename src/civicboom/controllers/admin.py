@@ -16,10 +16,12 @@ class AdminControllerBase(BaseController):
     forms = forms # module containing FormAlchemy fieldsets definitions
     template = "/admin/restfieldset.mako"
 
-    # # Uncomment this to impose an authentication requirement
-    # @authorize(SignedIn())
-    # def __before__(self):
-    #     pass
+    # Uncomment this to impose an authentication requirement
+    def __before__(self):
+        BaseController.__before__(self)
+        admins = ["shish", ] # HACK
+        if (not c.logged_in_user) or (c.logged_in_user.username not in admins):
+            abort(403)
 
     def Session(self): # Session factory
         return meta.Session
