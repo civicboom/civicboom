@@ -93,7 +93,7 @@ class RegisterController(BaseController):
         if 'dob'      in form: c.logged_in_persona.config['dob']    = form['dob']
         if 'email'    in form: c.logged_in_persona.email_unverifyed = form['email']
         if 'password' in form:
-            set_password(c.logged_in_persona, form['password'])
+            set_password(c.logged_in_persona, form['password'], delay_commit=True)
         c.logged_in_persona.status = "active"
         
         Session.add(c.logged_in_persona) #AllanC - is this needed? Already in session?
