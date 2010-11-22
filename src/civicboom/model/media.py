@@ -84,7 +84,9 @@ class Media(Base):
         memcache_key = str("media_processing_"+self.hash)
         memcache_val = "que media"
         log.debug("set media memcache %s:%s")
-        app_globals.memcache.set(memcache_key, memcache_val, time=int(config['media.processing.expire_memcache_time'])) # Flag memcache to indicate this media is being processed
+        # FIXME: key does not exist in production mode?
+        # app_globals.memcache.set(memcache_key, memcache_val, time=int(config['media.processing.expire_memcache_time'])) # Flag memcache to indicate this media is being processed
+        app_globals.memcache.set(memcache_key, memcache_val)
 
         wh.copy_to_warehouse("./civicboom/public/images/media_placeholder.gif", "media-thumbnail", self.hash, placeholder=True)
 

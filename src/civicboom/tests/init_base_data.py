@@ -134,6 +134,27 @@ def init_base_data():
         Session.commit();
 
 
+        # test data for commercial first demo
+        u8 = User()
+        u8.username      = u"cfirst"
+        u8.name          = u"Commercial First"
+        u8.status        = "active"
+        u8.email         = u"admin@civicboom.com"
+        u8.avatar        = u"http://static.civicboom.com/public/images/test/cfirst.png"
+
+        u8_login = UserLogin()
+        u8_login.user   = u8
+        u8_login.type   = "password"
+        u8_login.token  = hashlib.sha1("password").hexdigest()
+
+        Session.add_all([u8, u8_login]);
+        u8.followers.append(u7)
+        u8.followers.append(u3)
+        u8.followers.append(u4)
+        u8.followers.append(u5)
+        Session.commit();
+
+
         assert list(Session.query(User).filter(User.id==0)) == []
         assert list(Session.query(User).filter(User.username=="MrNotExists")) == []
 
