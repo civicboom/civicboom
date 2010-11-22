@@ -69,6 +69,12 @@ def verify_email(user, hash, commit=False):
         return True
     return False
 
+def send_forgot_password_email(user):
+    validation_link = url(controller='account', action='forgot_password', host=app_globals.site_host, username=user.username, hash=user.hash())
+    message         = _('Please click or copy the following link into your browser to reset your password: %s' % validation_link)
+    user.send_email(subject=_('reset password'), content_text=message)
+
+
 #-------------------------------------------------------------------------------
 # Accounts
 #-------------------------------------------------------------------------------
@@ -214,12 +220,12 @@ def aggregate_via_user(content, user):
     if content.location:
         location = '%s %s' % (content.location.coords(Session)[1], content.location.coords(Session)[0])
         
-    if config['feature.aggregate.janrain']:
+    if config['online'] and config['feature.aggregate.janrain']:
         # AllanC: Q Does this need to be done for each login method? or does janrain handle this?
         for login in [login for login in user.login_details if login.type!='password']:
             janrain('activity', identifier=login.token, activity=content_json, location=location)
     else:
-        log.debug('janrain aggregation disabled: \n%s' % content_json)
+        log.info('janrain aggregation disabled: \n%s' % content_json)
 
 
 
@@ -255,10 +261,10 @@ def twitter_global(content):
     # t['trim_user'] = False? default?
     # t['place_id']  = "" #need reverse Geocode using the twitter api call geo/reverse_geocode
     # t['include_entities'] = True
-    if config['feature.aggregate.twitter_global']:
+    if config['online'] and config['feature.aggregate.twitter_global']:
         twitter_global_status(twitter_post)
     else:
-        log.debug('twitter_global aggregation disabled: \n%s' % twitter_post)
+        log.info('twitter_global aggregation disabled: \n%s' % twitter_post)
 
 #-------------------------------------------------------------------------------
 # Content Management
@@ -302,6 +308,7 @@ def profanity_filter(content, delay_commit=False):
     """
     content = get_content(content)
     if not content                           : return
+    if not config['online']                  : return
     if not config['feature.profanity_filter']: return
     
     # TODO: this could fire off a thead to perform the profanity checking? (Raised as Feature #55)

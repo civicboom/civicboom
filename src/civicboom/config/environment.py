@@ -66,6 +66,7 @@ def load_environment(global_conf, app_conf):
                         'feature.aggregate.janrain',
                         'feature.aggregate.twitter_global',
                         'feature.profanity_filter',
+                        'online'
                         ]
     for varname in boolean_varnames:
         config[varname] = asbool(config[varname])

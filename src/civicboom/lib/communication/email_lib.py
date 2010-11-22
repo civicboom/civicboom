@@ -53,9 +53,12 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
     if subject==None or subject=='': subject = _("_site_name")
     else                           : subject = _("_site_name")+': '+subject  
   
-    # Log Debug data if send disabled
-    if config['feature.aggregate.email'] is False: send_email_log (email_to, subject, content_text, content_html)
-    else                                         : send_email_smtp(email_to, subject, content_text, content_html)
+    if config['online'] and config['feature.aggregate.email']:
+        send_email_smtp(email_to, subject, content_text, content_html)
+    else:
+        # Log Debug data if send disabled
+        send_email_log (email_to, subject, content_text, content_html)
+
 
 #-------------------------------------------------------------------------------
 
