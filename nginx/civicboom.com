@@ -42,3 +42,14 @@ server {
 	# for all requests that start with / (ie, all requests), proxy to pylons
 	location / {proxy_pass http://127.0.0.1:$proxy_port$uri$is_args$args;}
 }
+
+# for demo-mode, we need a local "static" server, because demo avatar
+# URLs are hardcoded as http://static.civicboom.com/public/blahblah.png
+server {
+	listen 80;
+	listen 443 ssl;
+	server_name static.civicboom.com;
+	location /public/ {
+		alias /opt/cb/share/website/civicboom/public/;
+	}
+}
