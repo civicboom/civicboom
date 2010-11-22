@@ -49,7 +49,7 @@ server {
 	listen 80;
 	listen 443 ssl;
 	server_name static.civicboom.com;
-	root /opt/cb/share/website/data/warehouse/;
+	root /tmp/warehouse/;
 	location /public/ {
 		alias /opt/cb/share/website/civicboom/public/;
 	}
