@@ -97,6 +97,7 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
     # Switch Persona
     #---------------------------------------------------------------------------
+    @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
     def set_persona(self, id):

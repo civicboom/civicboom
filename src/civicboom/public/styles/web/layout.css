@@ -55,6 +55,14 @@ NAV .login, NAV .logout {
 }
 NAV .logout {top: 17px;}
 
+NAV .persona_select img {
+    max-width: 40px;
+}
+NAV .persona_select ul {
+    top: 32px;
+    left: 32px;
+    background-color: #888;
+}
 
 /*
  * the header, with logo and search box
