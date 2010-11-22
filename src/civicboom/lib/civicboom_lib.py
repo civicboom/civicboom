@@ -62,15 +62,16 @@ def send_verifiy_email(user, controller='account', action='verify_email', messag
 def verify_email(user, hash, commit=False):
     user = get_member(user)
     if user and user.hash() == hash:
-        user.email            = user.email_unverifyed
-        user.email_unverifyed = None
+        if user.email_unverifyed:
+            user.email            = user.email_unverifyed
+            user.email_unverifyed = None
         if commit:
             Session.commit()
         return True
     return False
 
 def send_forgot_password_email(user):
-    validation_link = url(controller='account', action='forgot_password', host=app_globals.site_host, username=user.username, hash=user.hash())
+    validation_link = url(controller='account', action='forgot_password', host=app_globals.site_host, protocol='https', id=user.username, hash=user.hash())
     message         = _('Please click or copy the following link into your browser to reset your password: %s' % validation_link)
     user.send_email(subject=_('reset password'), content_text=message)
 
@@ -113,7 +114,7 @@ def associate_janrain_account(user, type, token):
 #-------------------------------------------------------------------------------
 # don't know if this is right place, but related account stuff was the closest I could think of
 
-def set_password(user, new_token):
+def set_password(user, new_token, delay_commit=False):
     """
     Set password
     WARNING! We assume the user has already been authenticated
@@ -123,11 +124,12 @@ def set_password(user, new_token):
     # search for existing record and remove it
     #
     try:
-        print "searching for password for %s" % user.username
-        existing_login = Session.query(UserLogin).filter(UserLogin.user==user, UserLogin.type=='password').one()
-        if existing_login:
+        #existing_login = Session.query(UserLogin).filter(UserLogin.user==user, UserLogin.type=='password').one()
+        for existing_login in [login for login in user.login_details if login.type=='password']:            
+            log.debug("removing password for %s" % user.username)
             #if existing_login.token == old_token: raise Exception('old password token does not match - aborting password change')
             Session.delete(existing_login)
+            log.debug("removed ok")
     #try: Session.execute(UserLogin.__table__.delete().where(and_(UserLogin.__table__.c.member_id == user.id, UserLogin.__table__.c.token == token)))
     except: pass
     # Set new password
@@ -136,6 +138,9 @@ def set_password(user, new_token):
     u_login.type   = 'password'
     u_login.token  = new_token
     Session.add(u_login)
+    
+    if not delay_commit:
+        Session.commit()
 
 
 

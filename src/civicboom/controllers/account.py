@@ -7,7 +7,7 @@ from civicboom.lib.helpers          import url_from_widget
 
 # Import other controller actions
 from civicboom.controllers.register import register_new_janrain_user
-from civicboom.lib.civicboom_lib    import verify_email, associate_janrain_account
+from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password
 from civicboom.lib.database.get_cached import get_member
 
 
@@ -151,7 +151,7 @@ class AccountController(BaseController):
         see civicboom_lib for the send_verify_email that generates this if needed
         """
         if 'hash' in request.params :
-            if verify_email(id, request.params['hash'], commit=True):
+            if verify_email_hash(id, request.params['hash'], commit=True):
                 set_flash_message(action_ok(_('email address has been successfully validated')))
             else:
                 set_flash_message(action_error(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again')))
@@ -163,17 +163,60 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
     @auto_format_output
     @web_params_to_kwargs
-    def forgot_password(self, **kwargs):
+    def forgot_password(self, id=None, **kwargs):
         """
         Users can get new hash link set to there email address
         """
-        member = get_member(kwargs.get('username') or kwargs.get('email'), search_email=True)
-        if member:
-            #member.send_email()
-            return action_ok(_('Password reminder sent, please check your email'))
-        raise action_error('user not found', code=404)
+        c.hash = kwargs.get('hash')
         
-    
+        user = get_member(id or kwargs.get('username') or kwargs.get('email'), search_email=True)
+        if not user:
+            raise action_error('user not found', code=404)
+
+        # Step 1: User request link with hash to be sent via email
+        if not c.hash:
+            send_forgot_password_email(user)
+            return action_ok(_('Password reminder sent, please check your email'))
+            
+        if not verify_email_hash(user, c.hash): # abort if unable to verify user
+            raise action_error(_('unable to verify user'), code=400)
+            
+        # Step 2: User identifed with hash, show form to enter new password
+        if request.environ['REQUEST_METHOD'] == 'GET':
+            # form to enter new password
+            return render("/web/account/forgot_password.mako")
+        
+        # Step 3: Validate new password and set
+        else:
+            print "setting new password before validation %s" % kwargs['password_new']
+            
+            import civicboom.lib.form_validators.base
+            import formencode.validators
+            class SetPasswordSchema(civicboom.lib.form_validators.base.DefaultSchema):
+                password_new         = civicboom.lib.form_validators.base.PasswordValidator(not_empty=True)
+                password_new_confirm = civicboom.lib.form_validators.base.PasswordValidator(not_empty=True)
+                chained_validators   = [formencode.validators.FieldsMatch('password_new', 'password_new_confirm')]
+            
+            # Validate new password
+            try:
+                kwargs = SetPasswordSchema().to_python(kwargs)            
+            # Validation Failed
+            except formencode.Invalid as error:
+                dict_validated        = error.value
+                dict_validated_errors = error.error_dict or {}
+                raise action_error(
+                    status   = 'invalid' ,
+                    code     = 400 ,
+                    message  = _('failed validation') ,
+                    template = 'account/forgot_password'
+                )
+            
+            print "setting new password %s" % kwargs['password_new']
+            
+            set_password(user, kwargs['password_new'])
+            set_flash_message(_('password has been set'))
+            redirect(url(controller='account', action='signin'))
+
 
     #-----------------------------------------------------------------------------
     # Standalone Login Redirector action

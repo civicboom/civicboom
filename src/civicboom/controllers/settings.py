@@ -195,7 +195,7 @@ class SettingsController(BaseController):
         # (counld have a dictionary of special processors here rather than having this code cludge this controller action up)
         if 'password_new' in settings:
             # OLD: We could put this in settings.py manager, have a dictionarys with special cases and functions to process/save them, therefor the code is transparent in the background. an idea?
-            set_password(user,settings['password_new'])
+            set_password(user,settings['password_new'], delay_commit=True)
             del settings['password_new'        ] # We dont want these saved
             del settings['password_new_confirm']
             del settings['password_current'    ]

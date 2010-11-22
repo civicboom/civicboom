@@ -313,6 +313,8 @@ class User(Member):
         h = hashlib.md5(Member.hash(self))
         for field in ("email",):
             h.update(str(getattr(self,field)))
+        for login in self.login_details:
+            h.update(login.token)
         return h.hexdigest()
 
     @property
