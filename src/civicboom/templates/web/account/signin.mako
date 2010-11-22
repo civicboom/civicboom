@@ -20,13 +20,13 @@
 			${signup()}
 		</td>
 	</tr>
-	<!--
+	##<!--
 	<tr>
 		<td class="block">
 			${forgot()}
 		</td>
 	</tr>
-	-->
+	##-->
 </table>
 
 
@@ -77,12 +77,12 @@
 				<td><label for="email_signup">${_("Email")}</label></td>
 				<td><input type="email" id="email_signup" name="email" placeholder="e.g. dave@coolnews.net"/></td>
 			</tr>
-			<tr>
-				<td colspan="2">
-					<label for="user_type_individual">${_("Individual")}</label> <input type="radio" id="user_type_individual"   name="user_type" value="individual"   checked='checked'/>
-					<label for="user_type_organisation">${_("Organisation")}</label> <input type="radio" id="user_type_organisation" name="user_type" value="organisation"                  />
-				</td>
-			</tr>
+			##<tr>
+			##	<td colspan="2">
+			##		<label for="user_type_individual">${_("Individual")}</label> <input type="radio" id="user_type_individual"   name="user_type" value="individual"   checked='checked'/>
+			##		<label for="user_type_organisation">${_("Organisation")}</label> <input type="radio" id="user_type_organisation" name="user_type" value="organisation"                  />
+			##	</td>
+			##</tr>
 			<tr>
 				<td colspan="2"><input type="submit" name="submit" value="${_("Sign up")}"/></td>
 			</tr>
@@ -93,7 +93,7 @@
 
 <%def name="forgot()">
 <section>
-	<form action="${h.url(controller='account', action='forgot_password_reminder', format='redirect')}" method="post">
+	<form action="${h.url(controller='account', action='forgot_password', format='redirect')}" method="post">
 		<table class="form">
 			<tr>
 				<th colspan="2">${_("Forgotten Password?")}</th>

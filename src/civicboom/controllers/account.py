@@ -8,6 +8,7 @@ from civicboom.lib.helpers          import url_from_widget
 # Import other controller actions
 from civicboom.controllers.register import register_new_janrain_user
 from civicboom.lib.civicboom_lib    import verify_email, associate_janrain_account
+from civicboom.lib.database.get_cached import get_member
 
 
 log      = logging.getLogger(__name__)
@@ -141,6 +142,9 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
     # Verify Email
     #---------------------------------------------------------------------------
+    #@auto_format_output
+    #@web_params_to_kwargs
+    # AllanC - TODO needs to be updated to use web_params and auto format
     def verify_email(self, id):
         """
         An email is generated for a user and a hash created for them in the URL
@@ -157,14 +161,19 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
     # Forgotten Password
     #---------------------------------------------------------------------------
-    def forgotten_password(self):
+    @auto_format_output
+    @web_params_to_kwargs
+    def forgot_password(self, **kwargs):
         """
-        Placeholder for forgotten password feature
+        Users can get new hash link set to there email address
         """
-        pass
+        member = get_member(kwargs.get('username') or kwargs.get('email'), search_email=True)
+        if member:
+            #member.send_email()
+            return action_ok(_('Password reminder sent, please check your email'))
+        raise action_error('user not found', code=404)
+        
     
-
-
 
     #-----------------------------------------------------------------------------
     # Standalone Login Redirector action

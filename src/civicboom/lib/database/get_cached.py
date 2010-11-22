@@ -39,7 +39,7 @@ def get_license(license):
             pass
     return None
 
-def get_member_nocache(member):
+def get_member_nocache(member, search_email=False):
     assert type(member) in [int, str, unicode]
     #if type(member) == int:
     try:
@@ -50,19 +50,21 @@ def get_member_nocache(member):
         try:
             return Session.query(Member).with_polymorphic('*').filter_by(username=member).one()   
         except:
-            #try:
-            #    return Session.query(User).filter_by(email=member).one()
-            pass
+            if search_email:
+                try:
+                    return Session.query(User).filter_by(email=member).one()
+                except:
+                    pass
     return None
 
 #@cache_test.cache() #Cache decorator to go here
 # TODO: it might be nice to specify eager load fields here, so getting the logged in user eagerloads group_roles and groups to be show in the title bar with only one query
-def get_member(member):
+def get_member(member, **kwargs):
     if not member:
         return None
     if isinstance(member, Member):
         return member
-    return get_member_nocache(member)
+    return get_member_nocache(member, **kwargs)
 
 def get_group(group):
     if isinstance(group, Group):
