@@ -35,7 +35,7 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
     """
 
     if config["warehouse"] == "local":
-        dest = "./civicboom/public/warehouse/%s/%s/%s/%s" % (warehouse, hash[0:2], hash[2:4], hash)
+        dest = "./data/warehouse/%s/%s" % (warehouse, hash)
         if not os.path.exists(os.path.dirname(dest)):
             os.makedirs(os.path.dirname(dest))
         shutil.copy(src, dest)
