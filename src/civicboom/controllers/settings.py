@@ -167,7 +167,7 @@ class SettingsController(BaseController):
         - Saves update
         - Returns written object
         """
-        data        = call_action(self.edit, id=id, format='python')['data']
+        data        = self.edit(id=id)['data']
         settings    = data['settings']
         
         # Setup custom schema for this update

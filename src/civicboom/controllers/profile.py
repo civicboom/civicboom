@@ -29,12 +29,12 @@ class ProfileController(BaseController):
         """
         # AllanC - contruct an uber dictionary for the template to render built from data from other controller actions
         results = action_ok(data={
-            'member'  : call_action(MembersController().show         , format='python', id=c.logged_in_persona.id, exclude_fields='content_public, groups_public')['data']['member'],
-            'content' : call_action(MemberActionsController().content, format='python', id=c.logged_in_persona.id,                                               )['data']['list']  ,
+            'member'  :       MembersController().show   (id=c.logged_in_persona.id, exclude_fields='content_public, groups_public')['data']['member'],
+            'content' : MemberActionsController().content(id=c.logged_in_persona.id,                                               )['data']['list']  ,
             'messages': {
-                'notifications': call_action(MessagesController().index, format='python', list='notification')['data']['list'] ,
-                'to'           : call_action(MessagesController().index, format='python', list='to'          )['data']['list'] ,
+                'notifications': MessagesController().index(list='notification')['data']['list'] ,
+                'to'           : MessagesController().index(list='to'          )['data']['list'] ,
             } ,
-            'groups'  : call_action(MemberActionsController().groups , format='python', id=c.logged_in_persona.id)['data']['list'] ,
+            'groups'  : MemberActionsController().groups(id=c.logged_in_persona.id)['data']['list'] ,
         })
         return results

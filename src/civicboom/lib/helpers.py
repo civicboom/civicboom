@@ -49,19 +49,6 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
         """<iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (return_url+query_params,lang)
     )
 
-#def get_frag(func, format="frag", *args, **kwargs):
-def call_action(func, format="frag", *args, **kwargs):
-    """
-    Example of use:
-      h.call_action(MessagesController().index)
-    """
-    old_format = c.format
-    c.format = format
-    try:
-        data = func(*args, **kwargs)
-    finally:
-        c.format = old_format
-    return data
 
 def shorten_url(url):
     """
