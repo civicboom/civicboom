@@ -203,7 +203,7 @@ class GroupsController(BaseController):
         @return 404      group not found
         """
         if 'list_type' not in kwargs:
-            kwargs['list_type'] = 'full+actions'
+            kwargs['list_type'] = 'full'
         group = _get_group(id)
         return action_ok(data={'group':group.to_dict(**kwargs)})
 

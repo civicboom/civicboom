@@ -31,7 +31,8 @@ class ContentListsController(BaseController):
     #-----------------------------------------------------------------------------
 
     @auto_format_output
-    def comments(self, id):
+    @web_params_to_kwargs
+    def comments(self, id, **kwargs):
         """
         POST /contents/{id}/comments: Get a list of comments on the article
         
@@ -42,15 +43,33 @@ class ContentListsController(BaseController):
         content = _get_content(id, is_viewable=True)
         return action_ok(data={'list': [c.to_dict() for c in content.comments]})
 
+    #-----------------------------------------------------------------------------
+    # Accepted status
+    #-----------------------------------------------------------------------------
+
+    @auto_format_output
+    @web_params_to_kwargs
+    def accepted_status(self, id, **kwargs):
+        content = _get_content(id, is_viewable=True)
+        accepted_status = {
+            'accepted' : [a.member.to_dict() for a in content.assigned_to if a.status=="accepted" ],
+            'pending'  : [a.member.to_dict() for a in content.assigned_to if a.status=="pending"  ],
+            'withdrawn': [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"],
+        }
+        return action_ok(data={'accepted_status': accepted_status})
+
 
     #-----------------------------------------------------------------------------
     # Responses
     #-----------------------------------------------------------------------------
 
     @auto_format_output
-    def responses(self, id):
+    @web_params_to_kwargs
+    def responses(self, id, **kwargs):
         content = _get_content(id, is_viewable=True)
-        return action_ok(data={'list': [c.to_dict() for c in content.responses]})
+        if 'include_fields' not in kwargs:
+            kwargs['include_fields']='creator'
+        return action_ok(data={'list': [c.to_dict(**kwargs) for c in content.responses]})
     
     
     #-----------------------------------------------------------------------------
@@ -58,6 +77,7 @@ class ContentListsController(BaseController):
     #-----------------------------------------------------------------------------
 
     @auto_format_output
-    def contributors(self, id):
+    @web_params_to_kwargs
+    def contributors(self, id, **kwargs):
         content = _get_content(id, is_viewable=True)
         return action_ok(data={'list': []})

@@ -458,12 +458,12 @@ class ContentsController(BaseController):
         content = _get_content(id, is_viewable=True)
         
         if 'lists' not in kwargs:
-            kwargs['lists'] = 'comments, responses, contributors'
+            kwargs['lists'] = 'comments, responses, contributors, actions'
         
-        data = {'content':content.to_dict(**kwargs)}
+        data = {'content':content.to_dict(list_type='full', **kwargs)}
         
         from civicboom.controllers.content_lists import ContentListsController        
-        list_controller = MemberListsController()
+        list_controller = ContentListsController()
         for list in [list.strip() for list in kwargs['lists'].split(',')]:
             if hasattr(list_controller, list):
                 data[list] = getattr(list_controller, list)(content, **kwargs)['data']['list']
