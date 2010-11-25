@@ -28,13 +28,13 @@ class ProfileController(BaseController):
                 messages a list of messages, split into 'notifications' and 'to'
         """
         # AllanC - contruct an uber dictionary for the template to render built from data from other controller actions
-        results = action_ok(data={
-            'member'  :       MembersController().show   (id=c.logged_in_persona.id, exclude_fields='content_public, groups_public')['data']['member'],
-            'content' : MemberActionsController().content(id=c.logged_in_persona.id,                                               )['data']['list']  ,
+        data = MembersController().show(id=c.logged_in_persona.id, lists='followers, following, assignments_accepted')['data']
+        data.update({
+            'content' : MemberActionsController().content(id=c.logged_in_persona.id          )['data']['list']  ,
             'messages': {
                 'notifications': MessagesController().index(list='notification')['data']['list'] ,
                 'to'           : MessagesController().index(list='to'          )['data']['list'] ,
             } ,
             'groups'  : MemberActionsController()._groups_list_dict(c.logged_in_persona.groups_roles) ,
         })
-        return results
+        return action_ok(data=data)

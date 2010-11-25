@@ -8,9 +8,9 @@ log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 # AllanC - for members autocomplete index
-from civicboom.model    import Member
-from sqlalchemy         import or_, and_
-from sqlalchemy.orm     import join
+#from civicboom.model    import Member
+#from sqlalchemy         import or_, and_
+#from sqlalchemy.orm     import join
 
 
 
@@ -84,7 +84,7 @@ class MembersController(BaseController):
         member = _get_member(id)
         
         if 'lists' not in kwargs:
-            kwargs['lists'] = 'followers, following, assignments_accepted, content, groups'
+            kwargs['lists'] = 'followers, following, assignments_accepted, content, groups, actions'
         
         data = {'member': member.to_dict(**kwargs)}
         

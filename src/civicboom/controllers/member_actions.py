@@ -73,6 +73,24 @@ class MemberActionsController(BaseController):
     #-----------------------------------------------------------------------------
     # Lists
     #-----------------------------------------------------------------------------
+    @auto_format_output
+    @web_params_to_kwargs
+    def actions(self, id, **kwargs):
+        """
+        GET /members/{name}/actions: actions the current user can perform on this member
+        
+        @api members 1.0 (WIP)
+        
+        @param * (see common list return controls)
+        
+        @return 200   list ok
+                list  the list
+        @return 404   not found
+        """
+        member = _get_member(id)
+        return action_ok(data={"list": member.action_list_for(c.logged_in_persona)})
+
+
 
     @auto_format_output
     @web_params_to_kwargs
