@@ -1,17 +1,7 @@
-"""
-Member
-"""
 from civicboom.lib.base import *
-
 
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
-
-# AllanC - for members autocomplete index
-#from civicboom.model    import Member
-#from sqlalchemy         import or_, and_
-#from sqlalchemy.orm     import join
-
 
 
 #-------------------------------------------------------------------------------
@@ -88,11 +78,11 @@ class MembersController(BaseController):
         
         data = {'member': member.to_dict(**kwargs)}
         
-        from civicboom.controllers.member_actions import MemberActionsController        
-        actions_controller = MemberActionsController()
+        from civicboom.controllers.member_lists import MemberListsController
+        list_controller = MemberListsController()
         for list in [list.strip() for list in kwargs['lists'].split(',')]:
-            if hasattr(actions_controller, list):
-                data[list] = getattr(actions_controller, list)(member, **kwargs)['data']['list']
+            if hasattr(list_controller, list):
+                data[list] = getattr(list_controller, list)(member, **kwargs)['data']['list']
         
         return action_ok(data=data)
 

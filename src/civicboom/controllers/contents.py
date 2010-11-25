@@ -454,15 +454,19 @@ class ContentsController(BaseController):
         @return 404      content not found
         """
         # url('content', id=ID)
-        """
-        View content
-        Different content object types require a different view template
-        Identify the object type and render with approriate renderer
-        """
-        if 'list_type' not in kwargs:
-            kwargs['list_type'] = 'full+actions'
         
         content = _get_content(id, is_viewable=True)
+        
+        if 'lists' not in kwargs:
+            kwargs['lists'] = 'comments, responses, contributors'
+        
+        data = {'content':content.to_dict(**kwargs)}
+        
+        from civicboom.controllers.content_lists import ContentListsController        
+        list_controller = MemberListsController()
+        for list in [list.strip() for list in kwargs['lists'].split(',')]:
+            if hasattr(list_controller, list):
+                data[list] = getattr(list_controller, list)(content, **kwargs)['data']['list']
         
         # Increase content view count
         if hasattr(content,'views'):
@@ -474,10 +478,8 @@ class ContentsController(BaseController):
                 # AllanC - invalidating the content on EVERY view does not make scence
                 #        - a cron should invalidate this OR the templates should expire after X time
                 #update_content(content)
-            
-        return action_ok(
-            data = {'content':content.to_dict(**kwargs)}
-        )
+        
+        return action_ok(data=data)
 
 
     @auto_format_output

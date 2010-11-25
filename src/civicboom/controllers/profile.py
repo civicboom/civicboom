@@ -2,10 +2,10 @@ from civicboom.lib.base import *
 
 from civicboom.controllers.members  import MembersController
 #from civicboom.controllers.contents import ContentsController
-from civicboom.controllers.member_actions import MemberActionsController
+from civicboom.controllers.member_lists import MemberListsController
 from civicboom.controllers.messages import MessagesController
-from civicboom.controllers.search   import SearchController
-from civicboom.controllers.groups   import GroupsController
+#from civicboom.controllers.search   import SearchController
+#from civicboom.controllers.groups   import GroupsController
 
 class ProfileController(BaseController):
     """
@@ -30,11 +30,11 @@ class ProfileController(BaseController):
         # AllanC - contruct an uber dictionary for the template to render built from data from other controller actions
         data = MembersController().show(id=c.logged_in_persona.id, lists='followers, following, assignments_accepted')['data']
         data.update({
-            'content' : MemberActionsController().content(id=c.logged_in_persona.id          )['data']['list']  ,
+            'content' : MemberListsController().content(id=c.logged_in_persona.id          )['data']['list']  ,
             'messages': {
                 'notifications': MessagesController().index(list='notification')['data']['list'] ,
                 'to'           : MessagesController().index(list='to'          )['data']['list'] ,
             } ,
-            'groups'  : MemberActionsController()._groups_list_dict(c.logged_in_persona.groups_roles) ,
+            'groups'  : MemberListsController()._groups_list_dict(c.logged_in_persona.groups_roles) ,
         })
         return action_ok(data=data)
