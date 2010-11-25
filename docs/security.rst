@@ -12,7 +12,9 @@ Network
   throughout (using HTTPS), so login sessions can't be hijacked, and
   data (eg assignments and responses) can't be sniffed
   - Most websites only encrypt the transfer of username & password,
-    then send the data back and forth in the clear
+    then send the data back and forth in the clear; this is like
+	having an armoured garage, then parking your convertible outside
+	with the top down and keys in the ignition.
 
 Server Side
 ~~~~~~~~~~~
@@ -38,11 +40,10 @@ Back-End
 Backups
 ~~~~~~~
 - Off-site backups of the database are taken every 8 hours and archived
-- Media is not backed up, as it is going to end up being a ginormous amount of
-  data. Amazon S3 is designed for 99.999999999% durability by storing each
-  file on multiple servers in multiple datacenters, and versioning can be used
-  to recover files after accidental deletion
-  - Versioning is not currently active, need a developer to look into this
+- Media backups are taken care of by Amazon, not locally, as it is going to
+  end up being a ginormous amount of data. S3 is designed for 99.999999999%
+  durability by storing each file on multiple servers in multiple datacenters,
+  and versioning can be used to recover files after accidental deletion
 
 
 Data locations
