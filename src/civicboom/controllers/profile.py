@@ -35,6 +35,6 @@ class ProfileController(BaseController):
                 'notifications': MessagesController().index(list='notification')['data']['list'] ,
                 'to'           : MessagesController().index(list='to'          )['data']['list'] ,
             } ,
-            'groups'  : MemberActionsController().groups(id=c.logged_in_persona.id)['data']['list'] ,
+            'groups'  : MemberActionsController()._groups_list_dict(c.logged_in_persona.groups_roles) ,
         })
         return results

@@ -71,7 +71,7 @@ class MemberActionsController(BaseController):
 
 
     #-----------------------------------------------------------------------------
-    # View
+    # Lists
     #-----------------------------------------------------------------------------
 
     @auto_format_output
@@ -155,30 +155,30 @@ class MemberActionsController(BaseController):
         return action_ok(data={'list': contents})
 
 
+    def _groups_list_dict(self, group_roles):
+        return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
+
     @auto_format_output
     @web_params_to_kwargs
     def groups(self, id, **kwargs):
         member = _get_member(id)
         
-        if member == c.logged_in_persona:
-            group_roles = member.groups_roles
-        else: # Else only show public groups
-            group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
+        #if member == c.logged_in_persona:
+        #    group_roles = member.groups_roles
+        #else: # Else only show public groups
+        group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
+        groups      = self._groups_list_dict(group_roles)
         
-        groups = [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
         return action_ok(data={'list': groups})
-        
+
 
 
     @auto_format_output
     @web_params_to_kwargs
-    def assignments(self, id, **kwargs):
-        # AllanC - ????
-        #          currently accepted assignments are publicly visible?
-        #          is this only temporary for the km_demo?
+    def assignments_accepted(self, id, **kwargs):
         member = _get_member(id)
-        if member != c.logged_in_user:
-            raise action_error(_("Users may only view their own assignments (for now)"), code=403)
+        #if member != c.logged_in_user:
+        #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_accepted]
         return action_ok(data={'list': contents})
 

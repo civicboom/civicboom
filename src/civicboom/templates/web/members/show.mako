@@ -25,8 +25,8 @@
     
         <h2>${_("Following")}</h2>
             <div id="following">
-            % if d['member']['following']:
-                ${member_includes.member_list(d['member']['following'], show_avatar=True, class_="avatar_thumbnail_list")}
+            % if d['following']:
+                ${member_includes.member_list(d['following'], show_avatar=True, class_="avatar_thumbnail_list")}
             % else:
                 <span class="message_empty">${_("Not following anyone")}</span>
             % endif
@@ -34,8 +34,8 @@
     
         <h2>${_("Followers")}</h2>
             <div id="followers">
-            % if d['member']['followers']:
-                ${member_includes.member_list(d['member']['followers'], show_avatar=True, class_="avatar_thumbnail_list")}
+            % if d['followers']:
+                ${member_includes.member_list(d['followers'], show_avatar=True, class_="avatar_thumbnail_list")}
             % else:
                 <span class="message_empty">${_("No followers")}</span>
             % endif
@@ -51,8 +51,8 @@
 
 <%def name="col_right()">
     <h2>${_("Public Messages")}</h2>
-	% if d['member']['messages_public']:
-        % for message in d['member']['messages_public']:
+    % if 'messages_public' in d:
+        % for message in d['messages_public']:
             ${message}
         % endfor
     % endif
@@ -67,9 +67,9 @@
 	<!--#include virtual="/messages/new.frag?to=${d['member']['username']}" -->
 
 
-    ${content_list(d['member']['content_public'], type_filters=["draft", "article", "assignment"])}
+    ${content_list(d['content'], type_filters=["draft", "article", "assignment"])}
     
-    ${content_list_group(d['member']['assignments_accepted'], "assignments accepted")}
+    ${content_list_group(d['assignments_accepted'], "assignments accepted")}
     
 </%def>
 

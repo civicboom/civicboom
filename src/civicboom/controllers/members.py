@@ -3,6 +3,7 @@ Member
 """
 from civicboom.lib.base import *
 
+
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
@@ -80,12 +81,20 @@ class MembersController(BaseController):
                 member   member object
         @return 404      member not found
         """
-        if 'list_type' not in kwargs:
-            kwargs['list_type'] = 'full+actions'
-        
         member = _get_member(id)
         
-        return action_ok(data={'member': member.to_dict(**kwargs)})
+        if 'lists' not in kwargs:
+            kwargs['lists'] = 'followers, following, assignments_accepted, content, groups'
+        
+        data = {'member': member.to_dict(**kwargs)}
+        
+        from civicboom.controllers.member_actions import MemberActionsController        
+        actions_controller = MemberActionsController()
+        for list in [list.strip() for list in kwargs['lists'].split(',')]:
+            if hasattr(actions_controller, list):
+                data[list] = getattr(actions_controller, list)(member, **kwargs)['data']['list']
+        
+        return action_ok(data=data)
 
 
 
