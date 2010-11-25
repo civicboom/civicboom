@@ -3,8 +3,10 @@ Server Security / Reliability Notes
 
 Client Side
 ~~~~~~~~~~~
-- The client side is just a web browser, so we aren't adding any
+- The standard client is just a web browser, so we aren't adding any
   custom software to the customer network
+  - We could develop other software, or other people could develop
+    some using our API, but this document only covers the website
 
 Network
 ~~~~~~~
@@ -53,12 +55,14 @@ Data locations
 - Backups:
   - Our office in Kent
 - Media:
-  - Amazon's Irish datacenter
+  - Amazon's datacenter in Dublin
 
 
 Reliability
 ~~~~~~~~~~~
-- Currently we only have one server, so it is unreliable in several ways
+- Currently we only have one server, so it is unreliable in several ways;
+  however, the software is designed with the future in mind, so as soon as we
+  can afford multiple servers the software will be ready to work with them.
 
 - With multiple servers, they can be taken out of action one at a time, upgrades
   done, and put back into service; that way, the service as a whole is always up
