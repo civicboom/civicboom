@@ -34,7 +34,7 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
     (eg S3:cb-wh:media/cade1361, ./civicboom/public/warehouse/media/ca/de/cade1361)
     """
 
-    if config["warehouse"] == "local":
+    if config["warehouse"] == "local" or not config['online']:
         dest = "/tmp/warehouse/%s/%s" % (warehouse, hash)
         if not os.path.exists(os.path.dirname(dest)):
             os.makedirs(os.path.dirname(dest))
