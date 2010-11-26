@@ -10,13 +10,13 @@ class TestGroupsController(TestController):
 
     ## index -> show #########################################################
 
-    def test_group(self):
-        response = self.app.get(url('group', id='patty', format='json'))
-        assert 'patty' in response
+    #def test_group(self):
+    #    response = self.app.get(url('group', id='patty', format='json'))
+    #    assert 'patty' in response
 
-    def test_group_page_html(self):
-        response = self.app.get(url('group', id='patty'))
-        assert 'patty' in response
+    #def test_group_page_html(self):
+    #    response = self.app.get(url('group', id='patty'))
+    #    assert 'patty' in response
 
     ## new -> create #########################################################
 

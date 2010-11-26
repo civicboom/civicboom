@@ -104,6 +104,20 @@ class TestContentsController(TestController):
         )
         self.my_comment_id = json.loads(response.body)["data"]["id"]
 
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test assignment by the test user",
+                'type': 'assignment',
+                'content': "a test assignment",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.my_assignment_id = json.loads(response.body)["data"]["id"]
+
 
         self.log_in_as("unitfriend")
 
@@ -148,6 +162,20 @@ class TestContentsController(TestController):
             status=201
         )
         self.his_comment_id = json.loads(response.body)["data"]["id"]
+
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test assignment by unitfriend",
+                'type': 'assignment',
+                'content': "with suggestion of CC-PD",
+                'license': 'CC-PD',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.my_assignment_id = json.loads(response.body)["data"]["id"]
 
         self.log_in_as("unittest")
 
@@ -251,6 +279,18 @@ class TestContentsController(TestController):
             },
             status=302
         )
+
+    def part_comment_has_no_license(self):
+        pass
+
+    def part_comment_has_no_license_even_if_specified_and_parent_has_preference(self):
+        pass
+
+    def part_response_has_parent_preference_license_by_default(self):
+        pass
+
+    def part_response_has_own_license_if_specified(self):
+        pass
 
     def part_cant_create_comment_without_parent(self):
         response = self.app.post(
