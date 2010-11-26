@@ -260,6 +260,11 @@ class ContentsController(BaseController):
             if parent and parent.default_response_license:
                 content.license = parent.default_response_license
 
+        # comments are always owned by the writer; ignore settings
+        # and parent preferences
+        if type == 'comment':
+            content.license = None
+
         # Commit to database to get ID field
         # DEPRICATED
         #Session.add(content)
