@@ -34,7 +34,11 @@
 <%def name="janrain()">
 % if 'api_key.janrain' in config:
 <section>
-	${h.get_janrain(lang=c.lang)}
+	% if config['online']:
+		${h.get_janrain(lang=c.lang)}
+	% else:
+		<img src="/images/test/janrain.png">
+	% endif
 </section>
 % endif
 </%def>
