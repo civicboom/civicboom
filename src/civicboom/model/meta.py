@@ -45,7 +45,7 @@ def to_dict(self, list_type='default', include_fields=None, exclude_fields=None,
         fields = copy.deepcopy(self.__to_dict__[list_type])
     
     # Include fields from ['full+actions'] is specifyed in include_fields (can be list of strings or single string separated by ',' )
-    master_list_name = 'full+actions' # Constant - should be defined elsewhere?
+    master_list_name = 'full' # Constant - should be defined elsewhere?
     if isinstance(include_fields, basestring):
         include_fields = include_fields.split(',')
     if isinstance(include_fields, list):

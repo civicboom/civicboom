@@ -141,8 +141,8 @@ class Content(Base):
             'parent'            : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
             'creator'           : lambda content: content.creator.to_dict() ,
             'attachments'       : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
-            'responses'         : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
-            'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
+            #'responses'         : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
+            #'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
             'license'           : lambda content: content.license.to_dict() , 
     })
     del __to_dict__['full']['content_short']
@@ -151,17 +151,6 @@ class Content(Base):
     del __to_dict__['full']['creator_id']
     
     
-    # Actions
-    __to_dict__.update({
-        'full+actions': copy.deepcopy(__to_dict__['full'])
-    })
-    def __to_dict_function_action_list__(content):
-        from pylons import tmpl_context as c
-        return content.action_list_for(c.logged_in_persona)
-    __to_dict__['full+actions'].update({
-            'actions': __to_dict_function_action_list__
-    })
-
     
     def __unicode__(self):
         return self.title + u" (" + self.__type__ + u")"
@@ -351,7 +340,7 @@ class CommentContent(Content):
         'creation_date': None ,
     }
     __to_dict__['full']         = copy.deepcopy(__to_dict__['default'])
-    __to_dict__['full+actions'] = copy.deepcopy(__to_dict__['full'])
+
 
 
 class UserVisibleContent(Content):
@@ -369,9 +358,7 @@ class UserVisibleContent(Content):
     }
     __to_dict__['default'     ].update(_extra_user_visible_fields)
     __to_dict__['full'        ].update(_extra_user_visible_fields)
-    __to_dict__['full+actions'].update(_extra_user_visible_fields)
-    #__to_dict__['list_with_media'].update(_extra_user_visible_fields)
-    #__to_dict__['list_no_creator'].update(_extra_user_visible_fields)
+
 
     def action_list_for(self, member):
         action_list = Content.action_list_for(self, member)
@@ -416,9 +403,7 @@ class ArticleContent(UserVisibleContent):
     }
     __to_dict__['default'     ].update(_extra_article_fields)
     __to_dict__['full'        ].update(_extra_article_fields)
-    __to_dict__['full+actions'].update(_extra_article_fields)
-    #__to_dict__['list_with_media'].update(_extra_article_fields)
-    #__to_dict__['list_no_creator'].update(_extra_article_fields)
+
 
     def rate(self, member, rating):
         from civicboom.lib.database.actions import rate_content
@@ -463,14 +448,13 @@ class AssignmentContent(UserVisibleContent):
     }
     __to_dict__['default'     ].update(_extra_assignment_fields)
     __to_dict__['full'        ].update(_extra_assignment_fields)
-    __to_dict__['full+actions'].update({
-            'accepted' : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="accepted" ] ,
-            'pending'  : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="pending"  ] ,
-            'withdrawn': lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"] ,
-    })
-    __to_dict__['full+actions'].update(__to_dict__['full'])
-    #__to_dict__['list_with_media'].update(_extra_assignment_fields)
-    #__to_dict__['list_no_creator'].update(_extra_assignment_fields)
+    #__to_dict__['full+actions'].update({
+    #        'accepted' : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="accepted" ] ,
+    #        'pending'  : lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="pending"  ] ,
+    #        'withdrawn': lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"] ,
+    #})
+    #__to_dict__['full+actions'].update(__to_dict__['full'])
+
 
 
     def action_list_for(self, member):
@@ -565,9 +549,6 @@ class License(Base):
     })
     __to_dict__.update({
         'full'   : copy.deepcopy(__to_dict__['default'])
-    })
-    __to_dict__.update({
-        'actions': copy.deepcopy(__to_dict__['default'])
     })
 
 

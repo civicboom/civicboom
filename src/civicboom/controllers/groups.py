@@ -38,7 +38,7 @@ class CreateGroupSchema(GroupSchema):
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_group(id, is_admin=False):
+def _get_group(id, is_admin=False, is_member=False):
     """
     Shortcut to return a group and raise not found or permission exceptions automatically (as these are common opertations every time a group is fetched)
     """
@@ -47,6 +47,8 @@ def _get_group(id, is_admin=False):
         raise action_error(_("group not found"), code=404)
     if is_admin and not group.is_admin(c.logged_in_persona):
         raise action_error(_("you do not have permission for this group"), code=403)
+    if is_member and not group.get_membership(c.logged_in_persona):
+        raise action_error(_("you are not a member of this group"), code=403)
     return group
 
 
@@ -202,10 +204,8 @@ class GroupsController(BaseController):
                 group    group object (with list of members [if group members public])
         @return 404      group not found
         """
-        if 'list_type' not in kwargs:
-            kwargs['list_type'] = 'full+actions'
-        group = _get_group(id)
-        return action_ok(data={'group':group.to_dict(**kwargs)})
+        from civicboom.controllers.members import MembersController
+        return MembersController().show(id, **kwargs)
 
 
     @auto_format_output

@@ -9,31 +9,33 @@
     <%
         from civicboom.model.member import group_member_roles, group_join_mode, group_member_visability, group_content_visability
         
-        permission_edit        = 'edit'        in d['group']['actions']
-        permission_set_role    = 'set_role'    in d['group']['actions']
-        permission_remove      = 'remove'      in d['group']['actions']
-        permission_remove_self = 'remove_self' in d['group']['actions']
-        show_join_button       = 'join'        in d['group']['actions']
+        permission_edit        = 'edit'        in d['actions']
+        permission_set_role    = 'set_role'    in d['actions']
+        permission_remove      = 'remove'      in d['actions']
+        permission_remove_self = 'remove_self' in d['actions']
+        show_join_button       = 'join'        in d['actions']
+        
+        group = d['member']
     %>
 
 
-    ${member_includes.avatar(d['group'] , show_name=True, show_follow_button=True, show_join_button=show_join_button)}
+    ${member_includes.avatar(group , show_name=True, show_follow_button=True, show_join_button=show_join_button)}
     
     % if permission_edit:
         <a href="${h.url('new_group')}">edit</a>
     % endif
     
     <h2>details</h2>
-    <p>full name ${d['group']['name']}</p>
-    <p>default_role ${d['group']['default_role']}</p>
-    <p>member_visability ${d['group']['member_visability']}</p>
-    <p>default_content_visability ${d['group']['default_content_visability']}</p>
-    <p>join_mode ${d['group']['join_mode']}</p>
+    <p>full name ${group['name']}</p>
+    <p>default_role ${group['default_role']}</p>
+    <p>member_visability ${group['member_visability']}</p>
+    <p>default_content_visability ${group['default_content_visability']}</p>
+    <p>join_mode ${group['join_mode']}</p>
     
     
     <h2>Members</h2>
     
-    % if d['group']['member_visability']=="private" and not d['group']['members']:
+    % if group['member_visability']=="private" and not d['members']:
         <p>members are private</p>
     % else:
         ## members are public
@@ -41,7 +43,7 @@
             member_status = ['active', 'invite', 'request']
             members = {}
             for status in member_status:
-                members[status] = [member for member in d['group']['members'] if member['status']==status]
+                members[status] = [member for member in d['members'] if member['status']==status]
         %>
         % for status in member_status:
             % if len(members[status])>0:
@@ -51,7 +53,7 @@
                     <li>
                         ${member['name']} (${member['username']}) [${member['role']}]
                         % if permission_set_role:
-                            ${h.form(h.url('group_action', id=d['group']['id'], action='set_role'), method='post')}
+                            ${h.form(h.url('group_action', id=group['id'], action='set_role', format='redirect'), method='post')}
                                 <input type="hidden" name="member" value="${member['username']}"/>
                                 % if member['status']=='active':
                                         ${h.html.select('role', member['role'], group_member_roles.enums)}
@@ -63,7 +65,7 @@
                             ${h.end_form()}
                         % endif
                         % if c.logged_in_persona and ((c.logged_in_persona.username == member['username'] and permission_remove_self) or (c.logged_in_persona.username != member['username'] and permission_remove)):
-                            ${h.form(h.url('group_action', id=d['group']['id'], action='remove_member'), method='post')}
+                            ${h.form(h.url('group_action', id=group['id'], action='remove_member', format='redirect'), method='post')}
                                 <input type="hidden" name="member" value="${member['username']}"/>
                                 <input type="submit" name="submit" value="${_('Remove')}"/>
                             ${h.end_form()}
@@ -76,7 +78,7 @@
     % endif
     
     <h2>Followers</h2>
-    ${member_includes.member_list(d['group']['followers'], show_avatar=False, show_name=True)}
+    ${member_includes.member_list(d['followers'], show_avatar=False, show_name=True)}
 
 
 </%def>
