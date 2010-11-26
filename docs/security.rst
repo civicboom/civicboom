@@ -15,8 +15,8 @@ Network
   data (eg assignments and responses) can't be sniffed
   - Most websites only encrypt the transfer of username & password,
     then send the data back and forth in the clear; this is like
-	having an armoured garage, then parking your convertible outside
-	with the top down and keys in the ignition.
+    having an armoured garage, then parking your convertible outside
+    with the top down and keys in the ignition.
 
 Server Side
 ~~~~~~~~~~~
@@ -90,9 +90,9 @@ Scaling
     batches
   - data writing speed can be scaled by using faster disks, RAID, SSDs, splitting
     tables over multiple disks, etc; but each increase in speed is more expensive
-	than the last, and is ultimately limited to a single server
-	- Based on experience with other projects, I would estimate that a dedicated
-	  database server with SSDs should handle 5000, maybe even 10,000 concurrent
-	  users before we hit a wall with disk speed. It would be a pretty expensive
-	  single server though, where everything else is clusters of cheap parts.
+    than the last, and is ultimately limited to a single server
+    - Based on experience with other projects, I would estimate that a dedicated
+      database server with SSDs should handle 5000, maybe even 10,000 concurrent
+      users before we hit a wall with disk speed. It would be a pretty expensive
+      single server though, where everything else is clusters of cheap parts.
 
