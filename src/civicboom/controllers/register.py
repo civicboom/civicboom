@@ -50,8 +50,6 @@ class RegisterController(BaseController):
         """
         registration_template = "/web/account/register.mako"
         
-        print kwargs
-        
         c.new_user = get_member(id)
         
         # Validate User
@@ -129,7 +127,7 @@ class RegisterController(BaseController):
         try:
             kwargs = RegisterSchemaEmailUsername().to_python(kwargs) #dict(request.params)
         except formencode.Invalid, error:
-            raise action_error(message=error.msg)
+            raise action_error(status='invalid', message=error.msg, code=400)
         
         # Create new user
         u = User()

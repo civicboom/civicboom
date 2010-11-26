@@ -221,6 +221,7 @@ CREATE TRIGGER update_content
         init_base_data()
 
 
+
     log.info("Successfully set up tables")
 
     worker.stop_worker()
