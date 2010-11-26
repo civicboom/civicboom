@@ -252,6 +252,14 @@ class ContentsController(BaseController):
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
         
+        # If a license isn't explicitly set, use the parent's preference
+        parent_id = kwargs.get('parent_id')
+        license_id = kwargs.get('license_id')
+        if parent_id and not license_id:
+            parent = get_content(parent_id)
+            if parent and parent.default_response_license:
+                content.license = parent.default_response_license
+
         # Commit to database to get ID field
         # DEPRICATED
         #Session.add(content)
