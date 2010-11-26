@@ -20,7 +20,7 @@ from civicboom.lib.web                 import redirect_to_referer, set_flash_mes
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, is_valid_user
-from civicboom.lib.helpers             import call_action
+
 
 import json
 
@@ -58,7 +58,6 @@ __all__ = [
     "redirect_to_referer", #TODO? potential for removal?
     "get_member", "get_group",
     "logging",
-    "call_action",
 ]
 
 #-------------------------------------------------------------------------------
@@ -85,11 +84,9 @@ class BaseController(WSGIController):
         c.controller = current_request.get("controller")
         c.action     = current_request.get("action")
         c.id         = current_request.get("id")
-        # config breaks in production?
-        #c.format     = current_request.get("format", request.params.get('format', config['default_format'] ) )
-        c.format     = request.params.get("format", current_request.get("format", "html" ) )
         
-        #log.debug("BaseController: controller:%s action:%s id:%s format:%s" % (c.controller, c.action, c.id, c.format))
+        c.format     = None
+        #AllanC - c.format now handled by @auto_format_output in lib
         
         c.result = {'status':'ok', 'message':'', 'data':{}}
         c.scripts_end = []

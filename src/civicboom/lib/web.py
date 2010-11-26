@@ -308,6 +308,18 @@ def auto_format_output(target, *args, **kwargs):
             template: (required for html rendering) the template name, will default to XML if format==html and template not specifyed
         }
     """
+
+    # If no format has been set, then this is the first time this dfecorator has been called
+    # We only format the output on the 'first master call' through this decorator
+    # This allows us to freely call controler actions internallay without haveing to worry about specifying a format because they will always return python dictionarys
+    auto_format_output_flag = False
+    if not c.format:
+        current_request = request.environ.get("pylons.routes_dict")
+        # config breaks in production?
+        #c.format     = current_request.get("format", request.params.get('format', config['default_format'] ) )
+        c.format        = request.params.get("format", current_request.get("format", "html" ) )
+        auto_format_output_flag = True
+
     try:
         result = target(*args, **kwargs) # Execute the wrapped function
     except action_error as ae:
@@ -318,7 +330,7 @@ def auto_format_output(target, *args, **kwargs):
     
     # After
     # Is result a dict with data?
-    if hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
+    if auto_format_output_flag and hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
         
         if c.format=='html' and not _find_template(result):
             log.warning("Format HTML with no template for %s/%s" % (c.controller, c.action))
@@ -341,7 +353,7 @@ def auto_format_output(target, *args, **kwargs):
             log.warning("Unknown format: "+str(c.format))
         
     # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
-    log.debug("returning pre-rendered stuff")
+    #log.debug("returning pre-rendered stuff")
     return result
 
 

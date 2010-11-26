@@ -9,7 +9,6 @@ from civicboom.model.content           import _content_type as content_types
 # Other imports
 from civicboom.lib.civicboom_lib import get_content_media_upload_key, profanity_filter, twitter_global
 from civicboom.lib.communication import messages
-from civicboom.lib.helpers       import call_action
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
 
 # Validation
@@ -217,7 +216,7 @@ class ContentsController(BaseController):
         #url_for('new_content')
         
         # AllanC TODO - needs restructure - see create
-        content_id = call_action(ContentsController().create, format='python')['data']['id']
+        content_id = ContentsController().create()['data']['id']
         return redirect(url('edit_content', id=content_id))
 
 
@@ -260,7 +259,7 @@ class ContentsController(BaseController):
         # AllanC - if the update fails on validation we do not want a ghost record commited
         
         # Use update behaviour to save and commit object
-        update_response = call_action(self.update, id=content, format='python') # no need to pass kwargs as these are reaquired from request.params
+        update_response = self.update(id=content) # no need to pass kwargs as these are reaquired from request.params
         if update_response['status'] != 'ok':
             return update_response
         

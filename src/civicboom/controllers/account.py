@@ -188,8 +188,6 @@ class AccountController(BaseController):
         
         # Step 3: Validate new password and set
         else:
-            print "setting new password before validation %s" % kwargs['password_new']
-            
             import civicboom.lib.form_validators.base
             import formencode.validators
             class SetPasswordSchema(civicboom.lib.form_validators.base.DefaultSchema):
@@ -211,7 +209,7 @@ class AccountController(BaseController):
                     template = 'account/forgot_password'
                 )
             
-            print "setting new password %s" % kwargs['password_new']
+            user_log.info('new password set for %s' % user)
             
             set_password(user, kwargs['password_new'])
             set_flash_message(_('password has been set'))

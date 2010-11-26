@@ -5,7 +5,8 @@ from pylons.i18n.translation import _
 from webhelpers.html.tools import auto_link
 from webhelpers.html       import literal
 
-from civicboom.lib.text import convert_html_to_plain_text
+from civicboom.lib.text                    import convert_html_to_plain_text
+from civicboom.lib.communication.email_log import email_log
 
 import re
 
@@ -57,17 +58,8 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
         send_email_smtp(email_to, subject, content_text, content_html)
     else:
         # Log Debug data if send disabled
-        send_email_log (email_to, subject, content_text, content_html)
+        email_log(email_to, subject, content_text, content_html)
 
-
-#-------------------------------------------------------------------------------
-
-def send_email_log(email_to, subject, content_text, content_html):
-    log.info("--Email Send Disabled-- \n"
-              "To: %s Subject: %s" % (email_to, subject) +"\n"
-              "Message (content_text): %s" % content_text +"\n"
-            #+ "Message (content_html): %s" % content_html +"\n"
-              "\n")
 
 
 #-------------------------------------------------------------------------------
