@@ -178,7 +178,7 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
                 wh.copy_to_warehouse(processed.name, "avatars", file_hash, "avatar.jpg")
                 processed.close()
 
-                file_hash = "http://static.civicboom.com/avatars/" + file_hash
+                file_hash = "https://civicboom-static.s3.amazonaws.com/avatars/" + file_hash
             return file_hash
         # }}}
 

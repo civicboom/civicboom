@@ -250,7 +250,7 @@ class Member(Base):
     def avatar_url(self, size=80):
         if self.avatar: # and self.avatar!='':
             return self.avatar
-        return "http://static.civicboom.com/public/images/default_avatar.png"
+        return "https://civicboom-static.s3.amazonaws.com/public/images/default_avatar.png"
 
     @property
     def location_home_string(self):
