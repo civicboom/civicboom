@@ -257,7 +257,7 @@ class ContentsController(BaseController):
         license_id = kwargs.get('license_id')
         if parent_id and not license_id:
             parent = get_content(parent_id)
-            if parent and parent.default_response_license:
+            if parent and parent.__type__ == "assignment" and parent.default_response_license:
                 content.license = parent.default_response_license
 
         # comments are always owned by the writer; ignore settings

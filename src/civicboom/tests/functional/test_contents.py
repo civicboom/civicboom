@@ -108,7 +108,7 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'title': "A test assignment by the test user",
+                'title': "Assignment for the world to see",
                 'type': 'assignment',
                 'content': "a test assignment",
                 'license': 'CC-BY',
@@ -167,7 +167,7 @@ class TestContentsController(TestController):
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                'title': "A test assignment by unitfriend",
+                'title': "There once was an assignment by unitfriend",
                 'type': 'assignment',
                 'content': "with suggestion of CC-PD",
                 'license': 'CC-PD',
