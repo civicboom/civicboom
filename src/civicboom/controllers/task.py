@@ -146,7 +146,7 @@ class TaskController(BaseController):
             connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
             bucket = connection.get_bucket(config["s3_bucket_name"])
             bucket.set_acl('public-read')
-            bucket.configure_versioning(True)
+            #bucket.configure_versioning(True)
             for dirpath, subdirs, filenames in os.walk("./civicboom/public/"):
                 for fname in filenames:
                     fname = os.path.join(dirpath, fname)
