@@ -1,6 +1,6 @@
 from base         import DefaultSchema, PasswordValidator
 from registration import MinimumAgeValidator, ReCaptchaValidator, UniqueEmailValidator, UniqueUsernameValidator
-from formencode.validators import FieldsMatch
+from formencode.validators import FieldsMatch, UnicodeString
 
 #-------------------------------------------------------------------------------
 # Schema Factory
@@ -30,7 +30,12 @@ def build_schema(*args, **kargs):
                 schema.fields[field]                = PasswordValidator()
                 schema.fields['password_confirm']   = PasswordValidator()
                 from pylons import request
-                setattr(schema, 'chained_validators', [FieldsMatch('password', 'password_confirm'),
+                schema.chained_validators.append(FieldsMatch('password', 'password_confirm'))
+
+                schema.fields['recaptcha_challenge_field'] = UnicodeString(not_empty=True)
+                schema.fields['recaptcha_response_field']  = UnicodeString(not_empty=True)
+                schema.chained_validators.append(ReCaptchaValidator(request.environ['REMOTE_ADDR']))
+                #setattr(schema, 'chained_validators', [FieldsMatch('password', 'password_confirm'),
                                                        #ReCaptchaValidator(request.environ['REMOTE_ADDR']),
-                                                      ])
+                #                                      ])
     return schema

@@ -27,7 +27,7 @@ setup(
     ] + [
         "Pylons>=1.0.0",
         "FormAlchemy",
-        "recaptcha-client",
+        #"recaptcha-client", #AllanC - I wrote our own one out of frustration, turned out to be the validator triggering twice :(
         "pyDNS",
         "python_memcached",
         "boto",

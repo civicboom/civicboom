@@ -37,6 +37,11 @@
 
 <%def name="body()">
 
+    % if 'invalid' in c.result['data']:
+    <p>INVALID:</p>
+    <pre>${c.result['data']['invalid']}</pre>
+    % endif
+
     <form action="" method="post">
         % for field in c.required_fields:
             % if field=='username':
@@ -89,18 +94,19 @@
     <script>
         $(function() {$( "#datepicker" ).datepicker();});
     </script>
-    <p>Date of Birth:<input id="datepicker" type="date" name="dob"   value="${h.get_dict_value('dob','register' ,c.logged_in_persona.dob)}"></p>
+    <p>Date of Birth:<input id="datepicker" type="date" name="dob"   value="${h.get_data_value('dob','register' ,c.logged_in_persona.config['dob'])}"></p>
     ${invalid('dob')}
     ##${YUI.calendar(form_field_name='dob')}
 </%def>
 
 <%def name="password()">
-  ##${h.get_captcha()}
-  ##${invalid('')}
+  ${h.get_captcha(c.lang, 'white')}
+  ${invalid('recaptcha_response_field')}
   
   password<input type="password" name="password"         value="" />
   password confirm<input type="password" name="password_confirm" value="" />
   ${invalid('password')}
+  ${invalid('password_confirm')}
 </%def>
 
 
