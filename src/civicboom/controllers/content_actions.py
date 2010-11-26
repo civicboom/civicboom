@@ -218,21 +218,6 @@ class ContentActionsController(BaseController):
         #raise action_error(_("Error flaging content, please email us"))
 
 
-    #-----------------------------------------------------------------------------
-    # Comments (View)
-    #-----------------------------------------------------------------------------
-
-    @auto_format_output
-    def comments(self, id):
-        """
-        POST /contents/{id}/comments: Get a list of comments on the article
-        
-        @api contents 1.0 (WIP)
-        
-        @return list  the list of comments
-        """
-        content = _get_content(id, is_viewable=True)
-        return action_ok(data={'list': [c.to_dict() for c in content.comments]})
 
     #-----------------------------------------------------------------------------
     # Add to Interest List

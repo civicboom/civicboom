@@ -37,46 +37,48 @@
   
   
     ##-------Actions-------
-    <h2>${_("Actions")}</h2>
-    <ul>  
-  
-  
-    ## Content Owner Actions
-    % if 'edit' in d['content']['actions']:
-        <li>
-        <a class="button_small button_small_style_2" href="${h.url('edit_content', id=d['content']['id'])}">${_("Edit")}</a>
-        </li>
-        <li>
-        ${h.secure_link(url('content', id=d['content']['id'], format='redirect'), method="DELETE", value=_("Delete"), css_class="button_small button_small_style_2", confirm_text=_("Are your sure you want to delete this content?") )}
-        </li>
-    % endif
-
-    ## Assignment Accept and Withdraw
-    % if 'accept' in d['content']['actions']:
-        <li>${h.secure_link(h.url('content_action', action='accept'  , format='redirect', id=d['content']['id']), _('Accept')  , css_class="button_small button_small_style_2")}</li>
-    % endif
-    % if 'withdraw' in d['content']['actions']:
-        <li>${h.secure_link(h.url('content_action', action='withdraw', format='redirect', id=d['content']['id']), _('Withdraw'), css_class="button_small button_small_style_2")}</li>
-    % endif
-
-    ## Parent Content Owner Actions
-    ## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
-    ##% if content.actions:
-    ##    <a href="" class="button_small button_small_style_2">
-    ##        Email Resorces
-    ##    </a>
-
-    % if 'approve' in d['content']['actions']:
-        <li class="approve"     >${h.secure_link(h.url('content_action', action='approve'    , format='redirect', id=d['content']['id']), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}</li>
-    % endif
-    % if 'seen' in d['content']['actions']:
-        <li class="seen"        >${h.secure_link(h.url('content_action', action='seen'       , format='redirect', id=d['content']['id']), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="button_small button_small_style_2" )}</li>
-    % endif
-    % if 'dissasociate' in d['content']['actions']:
-        <li class="dissasociate">${h.secure_link(h.url('content_action', action='disasociate', format='redirect', id=d['content']['id']), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}</li>
-    % endif
-
+    %if 'actions' in d:
     
+	<h2>${_("Actions")}</h2>
+	<ul>  
+      
+      
+	## Content Owner Actions
+	% if 'edit' in d['actions']:
+	    <li>
+	    <a class="button_small button_small_style_2" href="${h.url('edit_content', id=d['content']['id'])}">${_("Edit")}</a>
+	    </li>
+	    <li>
+	    ${h.secure_link(url('content', id=d['content']['id'], format='redirect'), method="DELETE", value=_("Delete"), css_class="button_small button_small_style_2", confirm_text=_("Are your sure you want to delete this content?") )}
+	    </li>
+	% endif
+    
+	## Assignment Accept and Withdraw
+	% if 'accept' in d['actions']:
+	    <li>${h.secure_link(h.url('content_action', action='accept'  , format='redirect', id=d['content']['id']), _('Accept')  , css_class="button_small button_small_style_2")}</li>
+	% endif
+	% if 'withdraw' in d['actions']:
+	    <li>${h.secure_link(h.url('content_action', action='withdraw', format='redirect', id=d['content']['id']), _('Withdraw'), css_class="button_small button_small_style_2")}</li>
+	% endif
+    
+	## Parent Content Owner Actions
+	## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
+	##% if content.actions:
+	##    <a href="" class="button_small button_small_style_2">
+	##        Email Resorces
+	##    </a>
+    
+	% if 'approve' in d['actions']:
+	    <li class="approve"     >${h.secure_link(h.url('content_action', action='approve'    , format='redirect', id=d['content']['id']), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}</li>
+	% endif
+	% if 'seen' in d['actions']:
+	    <li class="seen"        >${h.secure_link(h.url('content_action', action='seen'       , format='redirect', id=d['content']['id']), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="button_small button_small_style_2" )}</li>
+	% endif
+	% if 'dissasociate' in d['actions']:
+	    <li class="dissasociate">${h.secure_link(h.url('content_action', action='disasociate', format='redirect', id=d['content']['id']), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}</li>
+	% endif
+
+    % endif
     
 
     % if 'rating' in d['content']:
@@ -195,23 +197,23 @@ lon = d['content']['location'].split(' ')[1]
     % endif
     
     <h2>${_("Responses")}</h2>
-    ${content_includes.content_list(d['content']['responses'], mode="mini", class_="content_list_mini")}
+    ${content_includes.content_list(d['responses'], mode="mini", class_="content_list_mini")}
     
-    % if d['content']['type'] == 'assignment':
+    % if 'accepted_status' in d:
         <h2>${_("Assignment")}</h2>
         % if 'accepted' in d['content']:
-            <h3>${_("accepted by: %d") % len(d['content']['accepted'])}</h3>
-            ${member_includes.member_list(d['content']['accepted'] , show_avatar=True, class_="avatar_thumbnail_list")}
+            <h3>${_("accepted by: %d") % len(d['accepted_status']['accepted'])}</h3>
+            ${member_includes.member_list(d['accepted_status']['accepted'] , show_avatar=True, class_="avatar_thumbnail_list")}
         % endif
         
         % if 'invited' in d['content']:
-            <h3>${_("awaiting reply: %d") % len(d['content']['invited'])}</h3>
-            ${member_includes.member_list(d['content']['invited']  , show_avatar=True, class_="avatar_thumbnail_list")}
+            <h3>${_("awaiting reply: %d") % len(d['accepted_status']['invited'])}</h3>
+            ${member_includes.member_list(d['accepted_status']['invited']  , show_avatar=True, class_="avatar_thumbnail_list")}
         % endif
         
         % if 'withdrawn' in d['content']:
             <h3>${_("withdrawn members: %d") % len(d['content']['withdrawn'])}</h3>
-            ${member_includes.member_list(d['content']['withdrawn'], show_avatar=True, class_="avatar_thumbnail_list")}
+            ${member_includes.member_list(d['accepted_status']['withdrawn'], show_avatar=True, class_="avatar_thumbnail_list")}
         % endif
     % endif
 </%def>
@@ -319,17 +321,18 @@ lon = d['content']['location'].split(' ')[1]
 		% endif
 	% endif
 </%def>
+    
 <%def name="comments()">
+% if 'comments' in d:
 <h1>${_("Comments")}</h1>
 <%
 from civicboom.model.meta import Session
 from civicboom.model import CommentContent
 %>
-	<table>
-
-    % for comment in d['content']['comments']:
+    <table>
+    % for comment in d['comments']:
 	##${relation(comment['creator']['username'], c.logged_in_persona.username, content['creator']['username'], 'tr')}
-    <tr>
+        <tr>
 		<td class="avatar">
 			${member_includes.avatar(comment['creator'])}
 		</td>
@@ -342,7 +345,7 @@ from civicboom.model import CommentContent
 			</b>
 		</td>
 	</tr>
-	% endfor
+    % endfor
 	<tr class="self_comment" style="background: #FFA;">
 		<td class="avatar">
 			% if c.logged_in_persona:
@@ -359,7 +362,8 @@ from civicboom.model import CommentContent
 			${h.end_form()}
   		</td>
   	</tr>
-	</table>
+    </table>
+% endif
 </%def>
 
 
@@ -370,7 +374,7 @@ from civicboom.model import CommentContent
 
 <%def name="share_links()">
 
-    % if 'edit' in d['content']['actions'] and d['content']['private']==False:
+    % if 'actions' in d and 'edit' in d['actions'] and d['content']['private']==False:
         ##${janrain_aggregate_button()}
     %endif
     

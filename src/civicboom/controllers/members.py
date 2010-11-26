@@ -1,6 +1,3 @@
-"""
-Member
-"""
 from civicboom.lib.base import *
 
 log      = logging.getLogger(__name__)
@@ -9,9 +6,7 @@ user_log = logging.getLogger("user")
 # AllanC - for members autocomplete index
 from civicboom.model    import Member
 from sqlalchemy         import or_, and_
-from sqlalchemy.orm     import join
-
-
+#from sqlalchemy.orm     import join
 
 #-------------------------------------------------------------------------------
 # Global Functions
@@ -80,12 +75,20 @@ class MembersController(BaseController):
                 member   member object
         @return 404      member not found
         """
-        if 'list_type' not in kwargs:
-            kwargs['list_type'] = 'full+actions'
-        
         member = _get_member(id)
         
-        return action_ok(data={'member': member.to_dict(**kwargs)})
+        if 'lists' not in kwargs:
+            kwargs['lists'] = 'followers, following, assignments_accepted, content, groups, members, actions'
+        
+        data = {'member': member.to_dict(**kwargs)}
+        
+        from civicboom.controllers.member_lists import MemberListsController
+        list_controller = MemberListsController()
+        for list in [list.strip() for list in kwargs['lists'].split(',')]:
+            if hasattr(list_controller, list):
+                data[list] = getattr(list_controller, list)(member, **kwargs)['data']['list']
+        
+        return action_ok(data=data)
 
 
 
