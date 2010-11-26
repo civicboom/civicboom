@@ -1,6 +1,7 @@
 from civicboom.tests import *
 
 import json
+import warnings
 
 #self.group_id = 0
 
@@ -226,7 +227,7 @@ class TestGroupsController(TestController):
     
     def subtest_invite_join(self):
         # AllanC - TODO
-        pass
+        warnings.warn("test not implemented")
     
     
     ## setrole ###############################################################

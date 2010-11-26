@@ -338,10 +338,10 @@ class TestContentsController(TestController):
         )
 
     def part_can_update_article_owned_by_group_i_am_admin_of(self):
-        pass
+        warnings.warn("test not implemented")
 
     def part_can_update_article_owned_by_group_i_am_member_of(self):
-        pass
+        warnings.warn("test not implemented")
 
 
     ## edit -> update ########################################################
@@ -416,4 +416,4 @@ class TestContentsController(TestController):
         )
 
     def part_can_delete_article_owned_by_group_i_am_admin_of(self):
-        pass
+        warnings.warn("test not implemented")
