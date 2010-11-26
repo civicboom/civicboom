@@ -130,7 +130,7 @@ class MemberListsController(BaseController):
         return action_ok(data={'list': contents})
 
 
-    def _groups_list_dict(self, group_roles):
+    def _groups_list_dict(self, group_roles, **kwargs):
         return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
 
     @auto_format_output
@@ -142,7 +142,7 @@ class MemberListsController(BaseController):
         #    group_roles = member.groups_roles
         #else: # Else only show public groups
         group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
-        groups      = self._groups_list_dict(group_roles)
+        groups      = self._groups_list_dict(group_roles, **kwargs)
         
         return action_ok(data={'list': groups})
 
@@ -157,12 +157,23 @@ class MemberListsController(BaseController):
         contents = [content.to_dict("full") for content in member.assignments_accepted]
         return action_ok(data={'list': contents})
 
+
     @auto_format_output
     @web_params_to_kwargs
     def members(self, id, **kwargs):
         """
         groups only
+        
+        AllanC
+        not exactly the best place for this ... but it fits.
+        making a groups_list controler was overkill and compicated members/show ... so I left it here
         """
-        #if group.member_visability=="public" or group.get_membership(c.logged_in_persona):
-        #return [update_dict(m.member.to_dict(),{'role':m.role, 'status':m.status}) for m in group.members_roles]
-        pass
+        group = _get_member(id)
+        
+        if hasattr(group, 'member_visability'):
+            if group.member_visability=="public" or group.get_membership(c.logged_in_persona):
+                return action_ok(data={'list':
+                    [update_dict(mr.member.to_dict(),{'role':mr.role, 'status':mr.status}) for mr in group.members_roles]
+                })
+        
+        return action_ok(data={'list': []})

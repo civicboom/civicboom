@@ -43,8 +43,8 @@ def cb_resource(mapper, single, plural, **kwargs):
     mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',              controller=single+'_actions', format="redirect", conditions=dict(method=['POST']))
     mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',              controller=single+'_actions', format="html",     conditions=dict(method=['GET']))
 
-    mapper.connect(single+'_list', '/'+plural+'/{id}/{action}.{format}',              controller=single+'_lists', format="redirect", conditions=dict(method=['POST']))
-    mapper.connect(single+'_list', '/'+plural+'/{id}/{action}.{format}',              controller=single+'_lists', format="html",     conditions=dict(method=['GET']))
+    mapper.connect(single+'_list', '/'+plural+'/{id}/{action}.{format}',              controller=single+'_lists', format="html", conditions=dict(method=['POST']))
+    mapper.connect(single+'_list', '/'+plural+'/{id}/{action}.{format}',              controller=single+'_lists', format="html", conditions=dict(method=['GET']))
 
 
 def make_map(config):

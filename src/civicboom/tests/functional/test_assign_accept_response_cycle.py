@@ -101,7 +101,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         assert 'to approve'     in response
         assert 'to disasociate' in response
         assert 'to seen'        in response
-        assert len(response_json['data']['content']['responses']) == 3
+        assert len(response_json['data']['responses']) == 3
         
         # Approve and Dissassociate --------------------------------------------
         
@@ -130,7 +130,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         assert 'to approve'         in response
         assert 'to disasociate' not in response
         assert 'to seen'            in response
-        assert len(response_json['data']['content']['responses']) == 2
+        assert len(response_json['data']['responses']) == 2
         
         # Delete Assignment ----------------------------------------------------
         
@@ -218,7 +218,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         # record number of currently accepted assignments - to compare at end
         response      = self.app.get(url('member', id='unitfriend', format='json'), status=200)
         response_json = json.loads(response.body)
-        num_accepted  = len(response_json['data']['member']['assignments_accepted'])
+        num_accepted  = len(response_json['data']['assignments_accepted'])
         
         # Withdraw before accepting (should error)
         response = self.app.post(
@@ -256,7 +256,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         # record number of currently accepted assignments - to compare at end
         response = self.app.get(url('member', id='unitfriend', format='json'), status=200)
         response_json = json.loads(response.body)
-        assert num_accepted == len(response_json['data']['member']['assignments_accepted'])
+        assert num_accepted == len(response_json['data']['assignments_accepted'])
         
         # Cleanup --------------------------------------------------------------
         
