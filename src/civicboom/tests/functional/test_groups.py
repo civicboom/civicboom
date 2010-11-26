@@ -34,8 +34,9 @@ class TestGroupsController(TestController):
         self.subtest_create_invalid()
         self.subtest_create_invalid_groupname()
         self.subtest_edit()
-        #self.subtest_update()
+        #self.subtest_update() # AllanC - TODO!!!! URGENT! Fails validation!!!!
         self.subtest_join_request()
+        self.subtest_invite_join()
         self.subtest_setrole()
         self.subtest_delete()
 
@@ -160,7 +161,7 @@ class TestGroupsController(TestController):
         assert 'contributor' in response
         
     
-    ## invite -> join -> join request ########################################
+    ## join request ############################################################
     
     def subtest_join_request(self):
         """
@@ -188,7 +189,7 @@ class TestGroupsController(TestController):
         response = self.app.get(url('group', id=self.group_id, format='json'))
         response_json = json.loads(response.body)
         found = False
-        for member in response_json['data']['group']['members']:
+        for member in response_json['data']['members']:
             if member['username'] == 'unitfriend' and member['status']=='request':
                 found = True
         assert found
@@ -215,12 +216,18 @@ class TestGroupsController(TestController):
         response = self.app.get(url('group', id=self.group_id, format='json'))
         response_json = json.loads(response.body)
         found = False
-        for member in response_json['data']['group']['members']:
+        for member in response_json['data']['members']:
             if member['username'] == 'unitfriend' and member['status']=='active':
                 found = True
         assert found
-        
-        
+    
+    
+    ## invite ############################################################
+    
+    def subtest_invite_join(self):
+        # AllanC - TODO
+        pass
+    
     
     ## setrole ###############################################################
     
