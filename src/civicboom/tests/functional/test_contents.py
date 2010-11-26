@@ -2,6 +2,7 @@
 
 from civicboom.tests import *
 import json
+import warnings
 
 class TestContentsController(TestController):
     def test_all(self):
@@ -29,6 +30,10 @@ class TestContentsController(TestController):
         self.part_show_as_xml()
 
         self.part_new_redirects_to_edit()
+        self.part_comment_has_no_license()
+        self.part_comment_has_no_license_even_if_specified_and_parent_has_preference()
+        self.part_response_has_parent_preference_license_by_default()
+        self.part_response_has_own_license_if_specified()
         self.part_cant_create_comment_without_parent()
         self.part_cant_comment_on_something_that_doesnt_exist()
         self.part_cant_comment_on_what_cant_be_seen()
@@ -281,16 +286,16 @@ class TestContentsController(TestController):
         )
 
     def part_comment_has_no_license(self):
-        pass
+        warnings.warn("test not implemented")
 
     def part_comment_has_no_license_even_if_specified_and_parent_has_preference(self):
-        pass
+        warnings.warn("test not implemented")
 
     def part_response_has_parent_preference_license_by_default(self):
-        pass
+        warnings.warn("test not implemented")
 
     def part_response_has_own_license_if_specified(self):
-        pass
+        warnings.warn("test not implemented")
 
     def part_cant_create_comment_without_parent(self):
         response = self.app.post(
