@@ -133,7 +133,7 @@ r = (d['content']['rating'] * 5)
 
     ##<% from civicboom.model.content import UserVisibleContent %>
     ##% if issubclass(content_obj.__class__, UserVisibleContent):
-    % if d['content']['type'] == 'article' or d['content']['type'] == 'assignment':
+    % if (d['content']['type'] == 'article' or d['content']['type'] == 'assignment') and config['online']:
     <h2>${_("Share this")}</h2>
         ${share_links()}
     % endif

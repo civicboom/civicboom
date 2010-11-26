@@ -1,7 +1,7 @@
 <%
 if c.scripts_end is None:
 	c.scripts_end = ["<!-- scripts_end not specified -->", ]
-if not config['development_mode']:
+if (not config['development_mode']) and config['online']:
 	c.scripts_end.append("""
 <!-- Civicboom Analytics -->
 <script type="text/javascript">
