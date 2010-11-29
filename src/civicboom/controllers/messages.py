@@ -212,6 +212,9 @@ class MessagesController(BaseController):
         #c.viewing_user = c.logged_in_persona - swiching persona will mean that logged_in_user is group
         
         message = _get_message(id, is_target=True)
+        if not message.read:
+            message.read = True
+            Session.commit()
         return action_ok(data={'message': message.to_dict(**kwargs)})
 
 

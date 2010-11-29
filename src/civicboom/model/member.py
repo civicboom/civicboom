@@ -110,12 +110,15 @@ class Member(Base):
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
     name            = Column(Unicode(250),   nullable=False, default=u"")
     join_date       = Column(Date(),         nullable=False, default=func.now())
-    num_followers   = Column(Integer(),      nullable=False, default=0, doc="Controlled by postgres trigger")
     webpage         = Column(Unicode(),      nullable=True,  default=None)
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(Unicode(250),   nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
     location_home   = Golumn(Point(2),       nullable=True)
+
+    num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    num_unread_notifications = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
