@@ -24,3 +24,10 @@ class TestMembersController(TestController):
     def test_member_show_nonexist(self):
         response = self.app.get(url('member', id='mrdoesnotexist', format='json'), status=404)
 
+    def test_member_show_content_list(self):
+        response = self.app.get(url('member_list', id='unittest', action='content', format='json'))
+        response = self.app.get(url('member_list', id='unittest', action='content', list='articles', format='json'))
+
+    def test_member_show_bad_content_list(self):
+        response = self.app.get(url('member_list', id='unittest', action='content', list='cake', format='json'), status=400)
+
