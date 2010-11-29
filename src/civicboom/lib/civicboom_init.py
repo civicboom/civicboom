@@ -16,14 +16,16 @@ def init():
 
     import datetime
     
-    """
+    
     # Replaced with contents/index search
+    """    
     Content.responses = relationship(Content,
                                      primaryjoin=and_(Content.id==Content.parent_id,
                                                         not_(or_(Content.__type__=='comment',Content.__type__=='draft'))
                                                     ) ,
                                     order_by = Content.id.desc()
                                     )
+
     Member.content        = relationship(Content, primaryjoin=and_(Member.id==Content.creator_id, Content.__type__!='comment'))
     
     Member.content_public = relationship(Content, primaryjoin=and_(Member.id==Content.creator_id, Content.__type__!='comment', Content.visible==True, Content.private==False)) #Content.__type__!='draft',

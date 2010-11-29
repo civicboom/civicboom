@@ -92,20 +92,21 @@ class Content(Base):
     num_responses   = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
     num_comments    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
     
-    # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
-    # AllanC - see civicboom_init.py for 'responsese'
-    #responses       = relationship("Content",            backref=backref('parent', remote_side=id, order_by=creation_date), primaryjoin=and_("Content.id == Content.parent_id") )  #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content
-                                   #,or_("Content.__type__!='comment'","Content.__type__!='draft'")    # foreign_keys=["Content.id"]
-    
-    parent          = relationship("Content", primaryjoin=parent_id==id, remote_side=id)
-    creator         = relationship("Member" , primaryjoin="Content.creator_id==Member.id")
+    # FIXME: remote_side is confusing?
+    # AllanC - it would be great to just have 'parent', we get a list of responses from API (contnte_lists.repnses)
+    #          however :( without the 'responses' relationship deleting content goes nuts about orphas
+    # Shish  - do we want to cascade to delete replies?
+    # AllanC - we want to cascade deleting of comments, but not full responses. Does the 'comments' cascade below over this?
+    responses       = relationship("Content",  primaryjoin=id==parent_id, backref=backref('parent', remote_side=id, order_by=creation_date))
+    #parent          = relationship("Content", primaryjoin=parent_id==id, remote_side=id)
+    creator         = relationship("Member" , primaryjoin="Content.creator_id==Member.id", backref=backref('content'))
     
     attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
     license         = relationship("License")
 
-    comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id == Content.parent_id") #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content    
+    comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id == Content.parent_id")
     flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
 
     # used by obj_to_dict to create a string dictonary representation of this object

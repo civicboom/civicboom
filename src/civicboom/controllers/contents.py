@@ -164,23 +164,6 @@ list_filters = {
     'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type!='none')),
 }
 
-"""
-list = kwargs['list']
-if list == 'assignments_active':
-    results = 
-elif list == 'assignments_previous':
-    results = results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now()))
-elif list == 'assignments':
-    results = results.filter(Content.__type__=='assignment')
-elif list == 'articles':
-    results = results.filter(Content.__type__=='article')
-elif list == 'drafts':
-    results = results.filter(Content.__type__=='draft')
-elif list == 'responses':
-    results = results.filter(and_(Content.__type__=='article', ArticleContent.response_type!='none'))
-else:
-    raise action_error(_('list type %s not supported') % list, code=400)
-"""
 
 
 
@@ -209,9 +192,6 @@ class ContentsController(BaseController):
         @param offset
         """
         # url('contents')
-        print "search index"
-        print kwargs
-        print ""
         
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20
