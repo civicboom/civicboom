@@ -26,7 +26,14 @@
 <a class="groups"  href="${url(controller='groups', action='index')}">${_("groups")}</a>
 <a class="assignments"  href="${url(controller='profile', action='index')}">${_("assignments")}</a>
 
-<a class="messages" href="${url('messages')}">${_("messages")}</a>
+<%
+msg_count = len(filter(lambda x: not x.read, c.logged_in_persona.messages_to))
+if msg_count > 0:
+	n = " [%d]" % msg_count
+else:
+	n = ""
+%>
+<a class="messages" href="${url('messages')}">${_("messages")+n}</a>
 
 ${h.secure_link(url(controller='account', action='signout'), h.literal('<img src="/styles/web/logout.png" alt="'+_("Log out")+'" width="68" height="15">'), css_class="logout")}
 % else:
