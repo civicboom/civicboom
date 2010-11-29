@@ -8,6 +8,11 @@ from civicboom.lib.base import *
 
 from civicboom.lib.helpers import url_from_widget
 
+from civicboom.controllers.contents import ContentsController
+content_controller = ContentsController()
+from civicboom.controllers.member_lists import MemberListsController
+member_list_controller = MemberListsController()
+
 import re
 from urllib import quote_plus
 
@@ -69,7 +74,7 @@ class WidgetController(BaseController):
         """
         BaseController.__before__(self)
         setup_widget_env() #this sets c.widget_owner and takes c.widget_ variables from url
-        if not c.widget_owner:
+        if not c.widget_owner: # a widget must be owned by someone
             abort(400)
     
     #-----------------------------------------------------------------------------
@@ -82,17 +87,22 @@ class WidgetController(BaseController):
         return redirect(url_from_widget(controller='widget', action='main'))
   
     # Main assignments list
+    @auto_format_output
     def main(self):
         cache_key = gen_cache_key(member=c.widget_owner.id, member_assignments_active=c.widget_owner.id)
-        c.assignments = c.widget_owner.content_assignments #get_assignments_active(c.widget_owner)
+        #c.assignments = c.widget_owner.content_assignments
+        c.result = member_list_controller.content(c.widget_owner.id, list='assignments_active')
+        print c.result
         return render(prefix + 'widget_assignments.mako', cache_key=cache_key, cache_expire=template_expire)
     
     # Single assignment display
+    @auto_format_output #not really approriate, but needed for the recursive calls
     def assignment(self, id):
         cache_key = gen_cache_key(member=c.widget_owner.id, content=id)
         c.absolute_links           = True
         c.links_open_in_new_window = True
-        c.assignment = get_content(id)
+        #c.assignment = get_content(id)
+        c.result = content_controller.show(id)
         return render(prefix + 'widget_assignment.mako', cache_key=cache_key, cache_expire=template_expire)
 
 

@@ -1,33 +1,36 @@
 <%inherit file="./widget_content.mako"/>
 
+<% assignment = c.result['data']['content'] %>
+<% responses  = c.result['data']['responses'] %>
+
 <%def name="body()">
-  % if c.assignment:
-    ${widget_assignment(c.assignment)}
-  % else:
-    ${_("Error: Unable to find content")}
-  % endif
+  ##% if assignment:
+    ${widget_assignment(assignment)}
+  ##% else:
+  ##  ${_("Error: Unable to find content")}
+  ##% endif
 </%def>
 
 <%def name="widget_assignment(assignment)">
   
-    <a href="${h.url(controller='content',action='view',id=assignment.id)}" target="_blank">
+    <a href="${h.url(controller='content',action='view',id=assignment['id'])}" target="_blank">
         <p class="content_title">${assignment.title}</p>
         <img src=${assignment.thumbnail_url} class="assignment_thumbnail"/>
-        <p class="assignment_content">${h.truncate(assignment.content, length=180, indicator='...', whole_word=True)} <strong>more</strong></p>
+        <p class="assignment_content">${h.truncate(assignment['content_short'], length=180, indicator='...', whole_word=True)} <strong>more</strong></p>
     </a>
     
     <table class="assignment_actions">
         <tr>
             <td class="">
                 ##class="button button_large button_style_1"
-                <a class="action button_style_1" href="${h.url_from_widget(controller='assignment',action='accept',id=assignment.id)}">
+                <a class="action button_style_1" href="${h.url_from_widget('content_actions',action='accept',id=assignment['id'])}">
                     ${_("Accept _assignment")}
                 </a>
             </td>
             <td class="">
                 ##class="button button_large button_style_1"
-                <a class="action button_style_1" href="${h.url(controller='content', action='edit', parent_id=assignment.id)}" target="_blank">
-                    ${_("Publish response")}
+                <a class="action button_style_1" href="${h.url('contents', action='edit', parent_id=assignment['id'])}" target="_blank">
+                    ${_("Publish _response")}
                 </a>
             </td>
         </tr>
@@ -43,19 +46,20 @@
         ##${h.format_multiple_prefix(len(assignment.newsarticles),nothing="Be the first to respond to this!")}
     </div>
 
-    % if len(assignment.responses) > 0:
+    % if len(responses) > 0:
     <table class="assignment_responses">
         <tr><th>${_("Approved")}</th><th>${_("_article title")}</th><th colspan="2">${_("_reporter")}</th></tr>
-        % for response in assignment.responses:
-            <tr>
-                <td>
-                % if response.response_type == "approved":
-                    <img src="/images/star2.gif" alt="${_("_article approved")}"/>
-                % endif
-                </td>
-                <td>${response.title}</td> <!--article_includes.article_link(article)-->
+        % for response in responses:
+            <%
+                response_class = ""
+                if response['response_type']:
+                    response_class = response['response_type']
+            %>
+            <tr class="${response_class}>
+                <td class="${response_class}"></td>
+                <td>${response['title']}</td> <!--article_includes.article_link(article)-->
                 <td>fix</td> <!-- reporter_includes.reporter_thumbnail_no_text(article.reporter) -->
-                <td>fix</td> <!-- reporter_includes.reporter_link(article.reporter, max_chars=8) -->
+                <td>${response['creator']['name']}</td> <!-- reporter_includes.reporter_link(article.reporter, max_chars=8) -->
             </tr>
         % endfor
     </table>

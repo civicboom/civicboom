@@ -57,7 +57,7 @@ __all__ = [
     "BaseController",
     "authentication_token",
     "redirect_to_referer", #TODO? potential for removal?
-    "get_member", "get_group",
+    "get_member", "get_group", #AllanC - should be used with cuation, we need to be careful about permissions
     "logging",
     
     #cache

@@ -15,7 +15,9 @@ def init():
     from sqlalchemy.orm import mapper, dynamic_loader, relationship
 
     import datetime
-        
+    
+    """
+    # Replaced with contents/index search
     Content.responses = relationship(Content,
                                      primaryjoin=and_(Content.id==Content.parent_id,
                                                         not_(or_(Content.__type__=='comment',Content.__type__=='draft'))
@@ -30,6 +32,8 @@ def init():
     Member.content_assignments_active   = relationship(AssignmentContent, primaryjoin=and_(Member.id==AssignmentContent.creator_id, AssignmentContent.due_date>=datetime.datetime.now()))    
     Member.content_assignments_previous = relationship(AssignmentContent, primaryjoin=and_(Member.id==AssignmentContent.creator_id, AssignmentContent.due_date< datetime.datetime.now()))
 
+    """
+    
     Member.interest = dynamic_loader(Content,
                                         primaryjoin=Member.id==Interest.member_id,
                                         secondary=Interest.__table__,

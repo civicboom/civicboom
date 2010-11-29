@@ -1,27 +1,13 @@
 from civicboom.lib.base import *
 from civicboom.controllers.members import _get_member
+from civicboom.controllers.contents import ContentsController
+content_search = ContentsController().index
 
 from civicboom.lib.misc import update_dict
 
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
-
-#-------------------------------------------------------------------------------
-# Constants
-#-------------------------------------------------------------------------------
-
-# AllanC - TODO: these SQLAlchemy links should be deprecated in preference to actual content searches
-content_lists = {
-    'content'             : lambda member: member.content ,
-    'content_public'      : lambda member: member.content_public ,
-    'assignments_active'  : lambda member: member.content_assignments_active ,
-    'assignments_previous': lambda member: member.content_assignments_previous,
-    'assignments'         : lambda member: member.content_assignments ,
-    'articles'            : lambda member: member.content_articles ,
-    'drafts'              : lambda member: member.content_drafts ,
-    #'accepted_assignments': lambda member: member.accepted_assignments ,
-}
 
 
 
@@ -106,6 +92,9 @@ class MemberListsController(BaseController):
                 list   array of content objects
         @return 404   member not found
         """
+        return content_search(creator=id, **kwargs)
+        
+        """
         if 'list' not in kwargs:
             kwargs['list'] = 'content'
         if 'exclude_fields' not in kwargs:
@@ -128,6 +117,7 @@ class MemberListsController(BaseController):
         contents = [content.to_dict(**kwargs) for content in contents]
         
         return action_ok(data={'list': contents})
+        """
 
 
     def _groups_list_dict(self, group_roles, **kwargs):

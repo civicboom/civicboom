@@ -2,7 +2,7 @@
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent
+from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
 from civicboom.model.content           import _content_type as content_types
 
@@ -20,8 +20,8 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
-from sqlalchemy           import or_, and_
-from sqlalchemy.orm       import join
+from sqlalchemy           import or_, and_, null
+from sqlalchemy.orm       import join, joinedload
 
 
 # Logging setup
@@ -132,8 +132,10 @@ def _init_search_filters():
         except:
             return query.filter(Member.username==creator_text)
     
-    def append_search_response_to(query, article_id):
-        return query.filter(Content.parent_id==int(article_id))
+    def append_search_response_to(query, content_id):
+        if isinstance(content_id, Content):
+            content_id = content_id.id
+        return query.filter(Content.parent_id==int(content_id))
 
     
     search_filters = {
@@ -177,10 +179,6 @@ class ContentsController(BaseController):
         """
         # url('contents')
         
-        results = Session.query(Content).select_from(join(Content, Member, Content.creator))
-        results = results.filter(and_(Content.__type__!='comment', Content.visible==True, Content.private==False)) #Content.__type__!='draft'
-        results = results.order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
-        
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20
         if 'offset' not in kwargs:
@@ -194,13 +192,41 @@ class ContentsController(BaseController):
             if c.format == 'rss':                       # Default RSS to list_with_media
                 kwargs['include_fields'] += ',attachments'
         
+        results = Session.query(Content).with_polymorphic('*').select_from(join(Content, Member, Content.creator))
+        results = results.filter(and_(Content.__type__!='comment', Content.visible==True)) #Content.__type__!='draft'
+        
+        if 'creator' in kwargs['include_fields']:
+            results = results.options(joinedload('creator'))
+        if 'creator' in kwargs and (kwargs['creator']==c.logged_in_persona.id or kwargs['creator']==c.logged_in_persona.username or kwargs['creator']==c.logged_in_persona):
+            # Permissions: creator is logged in, allow private content
+            pass
+        else:
+            # Permissions: Public content only!
+            results = results.filter(Content.private==False)
+        if 'list' in kwargs:
+            list = kwargs['list']
+            if list == 'assignments_active':
+                results = results.filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null()))
+            if list == 'assignments_previous':
+                pass
+            if list == 'assignments':
+                results = results.filter(Content.__type__=='assignment')
+            if list == 'articles':
+                results = results.filter(Content.__type__=='article')
+            if list == 'drafts':
+                results = results.filter(Content.__type__=='draft')
+            if list == 'responses':
+                results = results.filter(ArticleContent.response_type!='none')
+        
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
+        
+        results = results.order_by(Content.id.desc()) # id order is also date created order, we dont need to index the date created field as well        
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
         return action_ok(
-            data     = {'list': [content.to_dict(**kwargs) for content in results.all()]} ,
-        ) # return dictionaty of content to be formatted
+            data = {'list': [content.to_dict(**kwargs) for content in results.all()]} ,
+        )
 
 
     @auto_format_output

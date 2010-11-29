@@ -1,6 +1,7 @@
 from civicboom.lib.base import *
-from civicboom.controllers.contents import _get_content
+from civicboom.controllers.contents import _get_content, ContentsController
 
+content_search = ContentsController().index
 
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -66,10 +67,11 @@ class ContentListsController(BaseController):
     @auto_format_output
     @web_params_to_kwargs
     def responses(self, id, **kwargs):
-        content = _get_content(id, is_viewable=True)
-        if 'include_fields' not in kwargs:
-            kwargs['include_fields']='creator'
-        return action_ok(data={'list': [c.to_dict(**kwargs) for c in content.responses]})
+        #content = _get_content(id, is_viewable=True)
+        #if 'include_fields' not in kwargs:
+        #    kwargs['include_fields']='creator'
+        #return action_ok(data={'list': [c.to_dict(**kwargs) for c in content.responses]})
+        return content_search(response_to=id, **kwargs)
     
     
     #-----------------------------------------------------------------------------
