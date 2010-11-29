@@ -3,7 +3,7 @@ from civicboom.model.meta import Base
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText
-from sqlalchemy import Integer, DateTime
+from sqlalchemy import Integer, DateTime, Boolean
 from sqlalchemy import func
 from sqlalchemy.orm import relationship, backref
 
@@ -17,6 +17,7 @@ class Message(Base):
     timestamp   = Column(DateTime(),    nullable=False, default=func.now())
     subject     = Column(Unicode(),     nullable=False)
     content     = Column(UnicodeText(), nullable=False)
+    read        = Column(Boolean(),     nullable=False, default=False)
 
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
