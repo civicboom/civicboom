@@ -15,7 +15,9 @@ from civicboom.model.member            import User, Member
 from civicboom.lib.misc           import calculate_age
 
 # Other libs
-import recaptcha.client.captcha as librecaptcha
+#import recaptcha.client.captcha as librecaptcha
+from civicboom.lib.services.reCAPTCHA import reCAPTCHA_verify
+
 import datetime
 import re
 
@@ -64,6 +66,10 @@ class UniqueEmailValidator(validators.Email):
 class MinimumAgeValidator(validators.FancyValidator):
     """Checks that date is ok and doesn't allow under 16"""
     age_min = 16
+    messages = {
+        'empty'       : _('Please enter a date of birth'),
+    }
+
     def _to_python(self, value, state):
          try:
              date = datetime.datetime.strptime(value, '%d/%m/%Y')
@@ -85,7 +91,7 @@ class ReCaptchaValidator(validators.FancyValidator):
     messages = {
         'incorrect'       : _('reCAPTCHA field is incorrect'),
         'missing'         : _("Missing reCAPTCHA value."),
-        'network_failure' : _("unable to contact reCAPTCHA server to validate response"),
+        'network_failure' : _("unable to contact reCAPTCHA server to validate response, our admins have been notifyed"),
         'recapture_error' : _("reCAPTCHA server returned an error %(error_code)s, the problem has been logged and reported to _site_name"),
     }
 
@@ -96,7 +102,7 @@ class ReCaptchaValidator(validators.FancyValidator):
 
     def __init__(self, remote_ip, *args, **kw):
         super(ReCaptchaValidator, self).__init__(args, kw)
-        self.remote_ip = remote_ip
+        self.remote_ip = remote_ip 
         self.field_names = ['recaptcha_challenge_field',
                             'recaptcha_response_field']
     
@@ -104,37 +110,26 @@ class ReCaptchaValidator(validators.FancyValidator):
         for name in self.field_names:
             if name not in field_dict:
                 return
-        self.validate_python(field_dict, state)
+        #self.validate_python(field_dict, state)
+        # AllanC . WTF!!! this partial validator was making the validator trigger twice!? seems to work now this is remmed
 
     def validate_python(self, field_dict, state):
-        #print "reCAPTCHA validator"
-        challenge = field_dict['recaptcha_challenge_field']
-        response  = field_dict['recaptcha_response_field']
-        if response == '' or challenge == '':
-            error = formencode.Invalid(self.message('missing', state), field_dict, state)
-            error.error_dict = {'recaptcha_response_field':'Missing value'}
-            raise error
-
-        from pylons import config
-        #print "captcha validator call"
-        print "IP:%s Chal:%s Resp:%s" % (self.remote_ip, challenge, response)
-        recaptcha_response = librecaptcha.submit(challenge, response, config['api_key.reCAPTCHA.private'], self.remote_ip)
-
-        if recaptcha_response and recaptcha_response.is_valid:
+        
+        recaptcha_response = reCAPTCHA_verify(
+            remote_ip = self.remote_ip, #request.environ['REMOTE_ADDR'],
+            challenge = field_dict['recaptcha_challenge_field'],
+            response  = field_dict['recaptcha_response_field'],
+        )
+        
+        if recaptcha_response == True:
             return True
-        if not recaptcha_response:
-            error = formencode.Invalid(self.message('network_failure', state), field_dict, state)
-            log.error(self.message('network_failure', state))
-            raise error
-        if recaptcha_response.error_code == 'incorrect-captcha-sol':
-            print "Solution incorrect"
+        if recaptcha_response == 'incorrect-captcha-sol':
             error = formencode.Invalid(self.message('incorrect', state), field_dict, state)
             error.error_dict = {'recaptcha_response_field':self.message('incorrect', state)}
             raise error
-        else:
-            error = formencode.Invalid(self.message('recapture_error', state, error_code=recaptcha_response.error_code), field_dict, state)
-            log.error('reCAPTCHA error %s' % recaptcha_response.error_code)
-            raise error
+        if recaptcha_response == 'recaptcha-not-reachable':
+            raise formencode.Invalid(self.message('network_failure', state), field_dict, state)
+        raise formencode.Invalid(self.message('recapture_error', state, error_code=recaptcha_response), field_dict, state)
 
 
 #-------------------------------------------------------------------------------

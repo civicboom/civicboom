@@ -19,19 +19,22 @@ from text import scan_for_embedable_view_and_autolink
 
 import webhelpers.html.tags as html
 
-import recaptcha.client.captcha as librecaptcha
+#import recaptcha.client.captcha as librecaptcha
+from civicboom.lib.services.reCAPTCHA import reCAPTCHA_html
 import re
 import urllib
 import hashlib
 import json
 
-def get_captcha(lang='en', theme='white'):
+def get_captcha(lang='en', theme='red'):
     """
     Generate reCAPTCHA html
-    (currently the python-recaptcha API does not support the lang or theme option, but these are fields in the html, maybe we need a modifyed version, see the django example for more info)
-    http://k0001.wordpress.com/2007/11/15/using-recaptcha-with-python-and-django/
     """
-    return literal(librecaptcha.displayhtml(config['api_key.reCAPTCHA.public'])) #, lang="es", theme='white'
+    return literal(reCAPTCHA_html(lang,theme))
+    # Old use of pythonrecaptcha
+    # (currently the python-recaptcha API does not support the lang or theme option, but these are fields in the html, maybe we need a modifyed version, see the django example for more info)
+    # http://k0001.wordpress.com/2007/11/15/using-recaptcha-with-python-and-django/
+    #return literal(librecaptcha.displayhtml(config['api_key.reCAPTCHA.public'])) #, lang="es", theme='white'
 
 
 def get_janrain(lang='en', theme='', return_url=None, **kargs):

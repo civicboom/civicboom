@@ -4,7 +4,7 @@ from civicboom.lib.base import *
 from civicboom.model.member            import User, UserLogin
 
 # Database Actions
-from civicboom.lib.database.actions    import follow, accept_assignment
+#from civicboom.lib.database.actions    import follow, accept_assignment
 
 # Communication & Messages
 from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email, associate_janrain_account, set_password
@@ -55,7 +55,8 @@ class RegisterController(BaseController):
         # Validate User
         if c.logged_in_persona and c.logged_in_persona == c.new_user: # from janrain login
             pass
-        elif verify_email(c.new_user, kwargs.get('hash')): # or from email hash # request.params.get('hash')
+        elif verify_email(c.new_user, kwargs.get('hash')): # or from email hash
+            c.logged_in_user    = c.new_user #fake logged in user for rendering template
             c.logged_in_persona = c.new_user
         else:
             abort(403)
@@ -113,7 +114,8 @@ class RegisterController(BaseController):
     # Register - via email (no janrain)
     #---------------------------------------------------------------------------
     @auto_format_output
-    def email(self, format="redirect"):
+    @web_params_to_kwargs
+    def email(self, **kwargs):
         """
         Register - via email (no janrain)
         User submits a proposed username and email to this action
@@ -123,29 +125,31 @@ class RegisterController(BaseController):
 
         # Check the username and email and raise any problems via the flash message session system
         try:
-            form = RegisterSchemaEmailUsername().to_python(dict(request.params))
+            kwargs = RegisterSchemaEmailUsername().to_python(kwargs) #dict(request.params)
         except formencode.Invalid, error:
-            raise action_error(message=error.msg)        
+            raise action_error(status='invalid', message=error.msg, code=400)
         
         # Create new user
         u = User()
-        u.username         = form['username']
-        u.email_unverifyed = form['email']
+        u.username         = kwargs['username']
+        u.email_unverifyed = kwargs['email']
         Session.add(u)
         Session.commit()
         
         # Automatically Follow Civicboom
-        follow(get_member('civicboom'), u)
+        civicboom = get_member('civicboom')
+        if civicboom:
+            u.follow(civicboom)
         
         # Follow the refered_by user if they exisits
-        if 'refered_by' in request.params:
-            refered_by = get_member(request.params['refered_by'])
-            if follow(refered_by, u) == True:
+        if 'refered_by' in kwargs:
+            refered_by = get_member(kwargs['refered_by'])
+            if refered_by and u.follow(refered_by) == True:
                 log.debug("message generation not implmented yet")
                 #refered_by.send_message(messages.followed_on_signup(reporter=u)
         
         # Accept assignment
-        if 'accept_assignment' in request.params:
+        if 'accept_assignment' in kwargs:
             log.debug("auto accepting not implemented yet")
             # TODO: Implement
             #assignment = get_assignment(request.params['accept_assignment'])

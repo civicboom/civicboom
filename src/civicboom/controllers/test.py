@@ -144,3 +144,20 @@ class TestController(BaseController):
 
     def abort(self, id):
         return abort(int(id))
+
+    @web_params_to_kwargs
+    def recaptcha(self, **kwargs):
+        c.kwargs = kwargs
+        from pylons import request
+        #print request
+
+        if request.environ['REQUEST_METHOD'] == 'POST':
+            from civicboom.lib.services.reCAPTCHA import reCAPTCHA_verify
+            reponse = reCAPTCHA_verify(
+                remote_ip = request.environ['REMOTE_ADDR'],
+                challenge = kwargs['recaptcha_challenge_field'],
+                response  = kwargs['recaptcha_response_field'],
+            )
+            c.kwargs['response'] = reponse
+        
+        return render('/test_post_faker.mako')
