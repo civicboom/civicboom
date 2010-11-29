@@ -33,9 +33,11 @@ def get_license(license):
     try:
         return Session.query(License).filter_by(code=unicode(license)).one()
     except:
-        try:
-            return Session.query(License).filter_by(name=unicode(license)).one()
-        except:
+        # Shish - as far as I can tell, we will never want to find by name; so
+        #         leave the unused code commented out until it is wanted
+        #try:
+        #    return Session.query(License).filter_by(name=unicode(license)).one()
+        #except:
             pass
     return None
 
