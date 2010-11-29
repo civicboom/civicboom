@@ -52,6 +52,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     # Assignment Fields
     due_date    = formencode.validators.DateConverter(not_empty=False, month_style='dd/mm/yyyy')
     event_date  = formencode.validators.DateConverter(not_empty=False, month_style='dd/mm/yyyy')
+    default_response_license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     # TODO: need date validators to check date is in future (and not too far in future as well)
 
 
@@ -285,6 +286,19 @@ class ContentsController(BaseController):
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
         
+        # If a license isn't explicitly set, use the parent's preference
+        parent_id = kwargs.get('parent_id')
+        license_id = kwargs.get('license_id')
+        if parent_id and not license_id:
+            parent = get_content(parent_id)
+            if parent and parent.__type__ == "assignment" and parent.default_response_license:
+                content.license = parent.default_response_license
+
+        # comments are always owned by the writer; ignore settings
+        # and parent preferences
+        if type == 'comment':
+            content.license = None
+
         # Commit to database to get ID field
         # DEPRICATED
         #Session.add(content)

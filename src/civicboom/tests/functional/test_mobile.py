@@ -1,4 +1,5 @@
 from civicboom.tests import *
+import warnings
 
 class TestMobileController(TestController):
 
@@ -8,7 +9,7 @@ class TestMobileController(TestController):
     def test_media(self):
         #response = self.app.get(url(controller='mobile', action='upload'))
         #response = self.app.get(url(controller='mobile', action='upload_file'))
-        pass
+        warnings.warn("test not implemented")
 
     def test_error(self):
         response = self.app.get(url(controller='mobile', action='error', format="json"))

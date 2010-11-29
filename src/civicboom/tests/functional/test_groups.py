@@ -1,6 +1,7 @@
 from civicboom.tests import *
 
 import json
+import warnings
 
 #self.group_id = 0
 
@@ -10,13 +11,13 @@ class TestGroupsController(TestController):
 
     ## index -> show #########################################################
 
-    def test_group(self):
-        response = self.app.get(url('group', id='patty', format='json'))
-        assert 'patty' in response
+    #def test_group(self):
+    #    response = self.app.get(url('group', id='patty', format='json'))
+    #    assert 'patty' in response
 
-    def test_group_page_html(self):
-        response = self.app.get(url('group', id='patty'))
-        assert 'patty' in response
+    #def test_group_page_html(self):
+    #    response = self.app.get(url('group', id='patty'))
+    #    assert 'patty' in response
 
     ## new -> create #########################################################
 
@@ -226,7 +227,7 @@ class TestGroupsController(TestController):
     
     def subtest_invite_join(self):
         # AllanC - TODO
-        pass
+        warnings.warn("test not implemented")
     
     
     ## setrole ###############################################################

@@ -2,6 +2,7 @@
 
 from civicboom.tests import *
 import json
+import warnings
 
 class TestContentsController(TestController):
     def test_all(self):
@@ -29,6 +30,10 @@ class TestContentsController(TestController):
         self.part_show_as_xml()
 
         self.part_new_redirects_to_edit()
+        self.part_comment_has_no_license()
+        self.part_comment_has_no_license_even_if_specified_and_parent_has_preference()
+        self.part_response_has_parent_preference_license_by_default()
+        self.part_response_has_own_license_if_specified()
         self.part_cant_create_comment_without_parent()
         self.part_cant_comment_on_something_that_doesnt_exist()
         self.part_cant_comment_on_what_cant_be_seen()
@@ -104,6 +109,20 @@ class TestContentsController(TestController):
         )
         self.my_comment_id = json.loads(response.body)["data"]["id"]
 
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "Assignment for the world to see",
+                'type': 'assignment',
+                'content': "a test assignment",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.my_assignment_id = json.loads(response.body)["data"]["id"]
+
 
         self.log_in_as("unitfriend")
 
@@ -148,6 +167,20 @@ class TestContentsController(TestController):
             status=201
         )
         self.his_comment_id = json.loads(response.body)["data"]["id"]
+
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "There once was an assignment by unitfriend",
+                'type': 'assignment',
+                'content': "with suggestion of CC-PD",
+                'license': 'CC-PD',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.my_assignment_id = json.loads(response.body)["data"]["id"]
 
         self.log_in_as("unittest")
 
@@ -252,6 +285,18 @@ class TestContentsController(TestController):
             status=302
         )
 
+    def part_comment_has_no_license(self):
+        warnings.warn("test not implemented")
+
+    def part_comment_has_no_license_even_if_specified_and_parent_has_preference(self):
+        warnings.warn("test not implemented")
+
+    def part_response_has_parent_preference_license_by_default(self):
+        warnings.warn("test not implemented")
+
+    def part_response_has_own_license_if_specified(self):
+        warnings.warn("test not implemented")
+
     def part_cant_create_comment_without_parent(self):
         response = self.app.post(
             url('contents', format="json"),
@@ -293,10 +338,10 @@ class TestContentsController(TestController):
         )
 
     def part_can_update_article_owned_by_group_i_am_admin_of(self):
-        pass
+        warnings.warn("test not implemented")
 
     def part_can_update_article_owned_by_group_i_am_member_of(self):
-        pass
+        warnings.warn("test not implemented")
 
 
     ## edit -> update ########################################################
@@ -371,4 +416,4 @@ class TestContentsController(TestController):
         )
 
     def part_can_delete_article_owned_by_group_i_am_admin_of(self):
-        pass
+        warnings.warn("test not implemented")

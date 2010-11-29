@@ -127,7 +127,7 @@ class Content(Base):
             'num_responses': None ,
             'num_comments' : None ,
             'tags'         : lambda content: "implement tags" ,
-            'license_id'   : None ,
+            'license'      : lambda content: content.license.code if content.license else None ,
             'private'      : None ,
             'edit_lock'    : None ,
         },
@@ -148,7 +148,6 @@ class Content(Base):
     })
     del __to_dict__['full']['content_short']
     del __to_dict__['full']['parent_id']
-    del __to_dict__['full']['license_id']
     del __to_dict__['full']['creator_id']
     
     
@@ -439,6 +438,8 @@ class AssignmentContent(UserVisibleContent):
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
+    default_response_license_id = Column(Integer(),        ForeignKey('license.id'))
+    default_response_license    = relationship("License")
     
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
@@ -446,6 +447,7 @@ class AssignmentContent(UserVisibleContent):
             'due_date'              : None ,
             'event_date'            : None ,
             'closed'                : None ,
+            'default_response_license': lambda content: content.license.code if content.license else None ,
     }
     __to_dict__['default'     ].update(_extra_assignment_fields)
     __to_dict__['full'        ].update(_extra_assignment_fields)
