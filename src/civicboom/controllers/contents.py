@@ -22,6 +22,7 @@ from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null
 from sqlalchemy.orm       import join, joinedload
+import datetime
 
 
 # Logging setup
@@ -126,11 +127,13 @@ def _init_search_filters():
     def append_search_type(query, type_text):
         return query.filter(Content.__type__==type_text)
     
-    def append_search_creator(query, creator_text):
+    def append_search_creator(query, creator):
+        if isinstance(creator, Member):
+            creator = creator.id
         try:
-            return query.filter(Content.creator_id==int(creator_text))
+            return query.filter(Content.creator_id==int(creator))
         except:
-            return query.filter(Member.username==creator_text)
+            return query.filter(Member.username==creator)
     
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
@@ -152,6 +155,34 @@ def _init_search_filters():
 search_filters = _init_search_filters()
 
 
+list_filters = {
+    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null())) ,
+    'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
+    'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
+    'articles'            : lambda results: results.filter(Content.__type__=='article') ,
+    'drafts'              : lambda results: results.filter(Content.__type__=='draft') ,
+    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type!='none')),
+}
+
+"""
+list = kwargs['list']
+if list == 'assignments_active':
+    results = 
+elif list == 'assignments_previous':
+    results = results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now()))
+elif list == 'assignments':
+    results = results.filter(Content.__type__=='assignment')
+elif list == 'articles':
+    results = results.filter(Content.__type__=='article')
+elif list == 'drafts':
+    results = results.filter(Content.__type__=='draft')
+elif list == 'responses':
+    results = results.filter(and_(Content.__type__=='article', ArticleContent.response_type!='none'))
+else:
+    raise action_error(_('list type %s not supported') % list, code=400)
+"""
+
+
 
 #-------------------------------------------------------------------------------
 # Content Controler
@@ -169,7 +200,7 @@ class ContentsController(BaseController):
 
     @auto_format_output
     @web_params_to_kwargs
-    @authorize(is_valid_user)
+    #@authorize(is_valid_user)
     def index(self, **kwargs):
         """
         GET /contents: All items in the collection
@@ -178,6 +209,9 @@ class ContentsController(BaseController):
         @param offset
         """
         # url('contents')
+        print "search index"
+        print kwargs
+        print ""
         
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20
@@ -192,34 +226,27 @@ class ContentsController(BaseController):
             if c.format == 'rss':                       # Default RSS to list_with_media
                 kwargs['include_fields'] += ',attachments'
         
-        results = Session.query(Content).with_polymorphic('*').select_from(join(Content, Member, Content.creator))
+        results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*').
         results = results.filter(and_(Content.__type__!='comment', Content.visible==True)) #Content.__type__!='draft'
         
         if 'creator' in kwargs['include_fields']:
             results = results.options(joinedload('creator'))
-        if 'creator' in kwargs and (kwargs['creator']==c.logged_in_persona.id or kwargs['creator']==c.logged_in_persona.username or kwargs['creator']==c.logged_in_persona):
+            pass
+        if 'return_public_only' not in kwargs and 'creator' in kwargs and (kwargs['creator']==c.logged_in_persona.id or kwargs['creator']==c.logged_in_persona.username or kwargs['creator']==c.logged_in_persona):
             # Permissions: creator is logged in, allow private content
             pass
         else:
-            # Permissions: Public content only!
+            # Permissions: Limit to public content only!
             results = results.filter(Content.private==False)
-        if 'list' in kwargs:
-            list = kwargs['list']
-            if list == 'assignments_active':
-                results = results.filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null()))
-            if list == 'assignments_previous':
-                pass
-            if list == 'assignments':
-                results = results.filter(Content.__type__=='assignment')
-            if list == 'articles':
-                results = results.filter(Content.__type__=='article')
-            if list == 'drafts':
-                results = results.filter(Content.__type__=='draft')
-            if list == 'responses':
-                results = results.filter(ArticleContent.response_type!='none')
         
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
+        
+        if 'list' in kwargs:
+            if kwargs['list'] in list_filters:
+                results = list_filters[kwargs['list']](results)
+            else:
+                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
         
         results = results.order_by(Content.id.desc()) # id order is also date created order, we dont need to index the date created field as well        
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)

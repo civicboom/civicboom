@@ -77,6 +77,8 @@ class MembersController(BaseController):
         """
         member = _get_member(id)
         
+        kwargs['return_public_only'] = True
+        
         if 'lists' not in kwargs:
             kwargs['lists'] = 'followers, following, assignments_accepted, content, groups, members, actions'
         

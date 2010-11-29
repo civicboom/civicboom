@@ -15,6 +15,9 @@ user_log = logging.getLogger("user")
 # Controller
 #-------------------------------------------------------------------------------
 class MemberListsController(BaseController):
+    """
+    @comment AllanC the id value given to these lists could be str, int or loaded object
+    """
 
     @auto_format_output
     @web_params_to_kwargs
@@ -93,31 +96,6 @@ class MemberListsController(BaseController):
         @return 404   member not found
         """
         return content_search(creator=id, **kwargs)
-        
-        """
-        if 'list' not in kwargs:
-            kwargs['list'] = 'content'
-        if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = 'creator'
-        
-        member = _get_member(id)
-        
-        # AllanC - I dont like this ...
-        #          we want people to be able to filter the lists from the API ... but as we just call the SQLAlchemy links we cant tell what data is public or private
-        #          we need a more sophisticated method of doing this, maybe leveraging a new search with public=true
-        #          content_lists (above) should be refactored?
-        if member != c.logged_in_persona:
-            kwargs['list'] = 'content_public'
-        
-        list = kwargs['list']
-        if list not in content_lists:
-            raise action_error(_('list type %s not supported') % list, code=400)
-            
-        contents = content_lists[list](member)
-        contents = [content.to_dict(**kwargs) for content in contents]
-        
-        return action_ok(data={'list': contents})
-        """
 
 
     def _groups_list_dict(self, group_roles, **kwargs):
