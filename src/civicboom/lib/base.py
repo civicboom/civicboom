@@ -18,6 +18,7 @@ from civicboom.model.meta              import Session
 from civicboom.model                   import meta
 from civicboom.lib.web                 import redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership
+from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, is_valid_user
 
@@ -58,6 +59,9 @@ __all__ = [
     "redirect_to_referer", #TODO? potential for removal?
     "get_member", "get_group",
     "logging",
+    
+    #cache
+    "gen_cache_key"
 ]
 
 #-------------------------------------------------------------------------------

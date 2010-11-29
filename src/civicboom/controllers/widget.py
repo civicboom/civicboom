@@ -6,8 +6,6 @@ The widget is an HTML iFrame that members can place on there own webpages reflec
 # Base controller imports
 from civicboom.lib.base import *
 
-from civicboom.lib.database.etag_manager import gen_cache_key
-from civicboom.lib.database.get_cached   import get_member, get_content
 from civicboom.lib.helpers import url_from_widget
 
 import re
