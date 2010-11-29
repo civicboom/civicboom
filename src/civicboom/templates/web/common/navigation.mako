@@ -27,7 +27,7 @@
 <a class="assignments"  href="${url(controller='profile', action='index')}">${_("assignments")}</a>
 
 <%
-msg_count = len(filter(lambda x: not x.read, c.logged_in_persona.messages_to))
+msg_count = c.logged_in_persona.num_unread_messages
 if msg_count > 0:
 	n = " [%d]" % msg_count
 else:
