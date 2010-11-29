@@ -17,7 +17,7 @@ ${show_messages(d['list'])}
 				<td><a href="${url('message', id=message['id'])}">${message['subject']}</a></td>
 				<td>${message["timestamp"][0:16]}</td>
 				<td>
-					${h.form(url('message', id=message['id']), method="DELETE")}
+					${h.form(url('message', id=message['id'], format='redirect'), method="DELETE")}
 						<input type="submit" value="Delete">
 					${h.end_form()}
 				</td>
