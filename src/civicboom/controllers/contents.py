@@ -209,7 +209,7 @@ class ContentsController(BaseController):
         # Permissions
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
         logged_in_creator = False
-        if 'creator' in kwargs:
+        if 'creator' in kwargs and c.logged_in_persona:
             kwargs['creator'] = _normalize_member(kwargs['creator']) # normalize creator
             if kwargs['creator']==c.logged_in_persona.id or kwargs['creator']==c.logged_in_persona.username:
                 logged_in_creator = True

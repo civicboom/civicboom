@@ -82,10 +82,11 @@ class WidgetController(BaseController):
     #-----------------------------------------------------------------------------
     
     # Signin or sign up
-    @authorize(is_valid_user)
+    @auto_format_output       # the auto format is needed to set the c.format variable for the authorize decorator to take effect
+    @authorize(is_valid_user) # authorisze decorator triggers render of signin widget page
     def signin(self):
         return redirect(url_from_widget(controller='widget', action='main'))
-  
+
     # Main assignments list
     @auto_format_output
     def main(self):

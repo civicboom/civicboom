@@ -6,7 +6,7 @@
 import json
 
 # Height calculations
-size_header        = 70
+size_header        = 55
 size_footer        = 60
 size_action_bar    = 18
 size_flash_message = 0

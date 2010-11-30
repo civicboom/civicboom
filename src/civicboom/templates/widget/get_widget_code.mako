@@ -39,9 +39,9 @@
             widget_username = member,
             widget_theme    ='light',
             widget_title    = _('%s insight: Share your news and opinion' % member),
-            widget_width    = '240', widget_height='370'
+            widget_width    = '240', widget_height='300'
         )}'
-        width='240' height='370' scrolling='no' frameborder='0'>'
+        width='240' height='300' scrolling='no' frameborder='0'>'
     <a href='${h.url(host=app_globals.site_host, controller='members', action='show', id=member)}'>
         ${_('%ss _assigments on _site_name' % member)}
     </a>
@@ -107,7 +107,7 @@
       
       <fieldset><legend>${_("Size")}</legend>
         <label>${_('Width')} </label><input type="text" name="width"  value="240" size="3" /><br/>
-        <label>${_('Height')}</label><input type="text" name="height" value="370" size="3" />
+        <label>${_('Height')}</label><input type="text" name="height" value="300" size="3" />
       </fieldset>
   
       <input type="button" value="Preview Widget" onClick="generate_widget_link();" />

@@ -30,7 +30,8 @@
 </%def>
 
 <%def name="widget_assignment(assignment)">
-    <li class="widget_item_popup">
+    <li>
+        <div class="test">
         <a href="${h.url_from_widget(controller='widget',action='assignment',id=assignment['id'])}">
             <img src="${assignment['thumbnail_url']}"/>
             <span>${assignment['title']}</span>
@@ -40,5 +41,6 @@
             ##  ${widget_assignment_includes.widget_assignment(assignment)}
             ##</div><!--end popup-->
         </a>
+        </div>
       </li>
 </%def>
