@@ -67,9 +67,13 @@ __all__ = [
 #-------------------------------------------------------------------------------
 # Render
 #-------------------------------------------------------------------------------
-def render(*args, **kargs):
-    if app_globals.cache_enabled: return render_mako(*args, **kargs)
-    else                        : return render_mako(*args, **kargs)
+def render(*args, **kwargs):
+    if app_globals.cache_enabled:
+        return render_mako(*args, **kwargs)
+    else:
+        if 'cache_key'    in kwargs: del kwargs['cache_key']
+        if 'cache_expire' in kwargs: del kwargs['cache_expire']
+        return render_mako(*args, **kwargs)
 
 #-------------------------------------------------------------------------------
 # Base Controller

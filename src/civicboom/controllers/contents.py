@@ -168,7 +168,7 @@ search_filters = _init_search_filters()
 
 
 list_filters = {
-    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment') , #.filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null()))
+    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null())) ,
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
     'articles'            : lambda results: results.filter(Content.__type__=='article') ,

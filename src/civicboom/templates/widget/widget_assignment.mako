@@ -1,22 +1,21 @@
 <%inherit file="./widget_content.mako"/>
 
-<% assignment = c.result['data']['content'] %>
-<% responses  = c.result['data']['responses'] %>
 
 <%def name="body()">
-  ##% if assignment:
-    ${widget_assignment(assignment)}
-  ##% else:
-  ##  ${_("Error: Unable to find content")}
-  ##% endif
+    <% assignment = c.result['data']['content'] %>
+    % if assignment:
+        ${widget_assignment(assignment)}
+    % else:
+        ${_("Error: Unable to find content")}
+    % endif
 </%def>
 
 <%def name="widget_assignment(assignment)">
   
-    <a href="${h.url(controller='content',action='view',id=assignment['id'])}" target="_blank">
-        <p class="content_title">${assignment.title}</p>
-        <img src=${assignment.thumbnail_url} class="assignment_thumbnail"/>
-        <p class="assignment_content">${h.truncate(assignment['content_short'], length=180, indicator='...', whole_word=True)} <strong>more</strong></p>
+    <a href="${h.url('content',id=assignment['id'])}" target="_blank">
+        <p class="content_title">${assignment['title']}</p>
+        <img src=${assignment['thumbnail_url']} class="assignment_thumbnail"/>
+        <p class="assignment_content">${h.truncate(assignment['content'], length=180, indicator='...', whole_word=True)} <strong>more</strong></p>
     </a>
     
     <table class="assignment_actions">
@@ -29,7 +28,7 @@
             </td>
             <td class="">
                 ##class="button button_large button_style_1"
-                <a class="action button_style_1" href="${h.url('contents', action='edit', parent_id=assignment['id'])}" target="_blank">
+                <a class="action button_style_1" href="${h.url('new_content', parent_id=assignment['id'])}" target="_blank">
                     ${_("Publish _response")}
                 </a>
             </td>
@@ -46,6 +45,7 @@
         ##${h.format_multiple_prefix(len(assignment.newsarticles),nothing="Be the first to respond to this!")}
     </div>
 
+    <% responses  = c.result['data']['responses'] %>
     % if len(responses) > 0:
     <table class="assignment_responses">
         <tr><th>${_("Approved")}</th><th>${_("_article title")}</th><th colspan="2">${_("_reporter")}</th></tr>

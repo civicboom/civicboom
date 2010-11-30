@@ -92,7 +92,6 @@ class WidgetController(BaseController):
         cache_key = gen_cache_key(member=c.widget_owner.id, member_assignments_active=c.widget_owner.id)
         #c.assignments = c.widget_owner.content_assignments
         c.result = member_list_controller.content(c.widget_owner.id, list='assignments_active')
-        print c.result
         return render(prefix + 'widget_assignments.mako', cache_key=cache_key, cache_expire=template_expire)
     
     # Single assignment display
@@ -101,7 +100,6 @@ class WidgetController(BaseController):
         cache_key = gen_cache_key(member=c.widget_owner.id, content=id)
         c.absolute_links           = True
         c.links_open_in_new_window = True
-        #c.assignment = get_content(id)
         c.result = content_controller.show(id)
         return render(prefix + 'widget_assignment.mako', cache_key=cache_key, cache_expire=template_expire)
 

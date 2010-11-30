@@ -32,7 +32,7 @@
 <%def name="widget_assignment(assignment)">
     <li class="widget_item_popup">
         <a href="${h.url_from_widget(controller='widget',action='assignment',id=assignment['id'])}">
-            <img src="${assignment.thumbnail_url}"/>
+            <img src="${assignment['thumbnail_url']}"/>
             <span>${assignment['title']}</span>
             <div class="clearboth_hack"></div>
             ##&#8220; &#8221;
