@@ -334,33 +334,65 @@ h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: smal
   color: inherit;
 }
 
-/*-------------------------------Theme-------------------------------------*/
+
+#CivicboomWidget .flash_message {background: #ffc7c7; color: #5a0404;}
+
+
+/*-------------------------------Theme Dark-----------------------------------*/
 /* these colours can be overriddern in another css file to provide a new colour theame */
-#CivicboomWidget .widget_border                           {
+
+#CivicboomWidget .theme_dark .widget_border                           {
   color: white;
   background: #3860a4 url('background_gradient_dark.png') repeat-x;
   border: 1px solid #04145a;
 }
 
 
-#CivicboomWidget .action_bar                              {border-color: #04145a;}
-#CivicboomWidget .widget_main                             {border-color: #04145a;}
-#CivicboomWidget .widget_content_assignment_list          {color: white;}
-#CivicboomWidget .widget_content_assignment_list li       {color: white;}
-#CivicboomWidget .widget_content_assignment_list li:hover {color: #04145a; background: transparent url('background_transparent_light.png') repeat;}
+#CivicboomWidget .theme_dark .action_bar                              {border-color: #04145a;}
+#CivicboomWidget .theme_dark .widget_main                             {border-color: #04145a;}
+#CivicboomWidget .theme_dark .widget_content_assignment_list          {color: white;}
+#CivicboomWidget .theme_dark .widget_content_assignment_list li       {color: white;}
+#CivicboomWidget .theme_dark .widget_content_assignment_list li:hover {color: #04145a; background: transparent url('background_transparent_light.png') repeat;}
 
-#CivicboomWidget .widget_content {
+#CivicboomWidget .theme_dark .widget_content {
   /* border: 1px solid #555; */
   background-color: white;
   color:#555;
 }
-#CivicboomWidget .widget_content strong         {color: #04145a;}
-#CivicboomWidget .widget_content .content_title {color: #04145a;}
+#CivicboomWidget .theme_dark .widget_content strong         {color: #04145a;}
+#CivicboomWidget .theme_dark .widget_content .content_title {color: #04145a;}
 
-#CivicboomWidget .widget_content_assignment_list li {border-color: #34458e;}
+#CivicboomWidget .theme_dark .widget_content_assignment_list li {border-color: #34458e;}
 
-.icon_back         {background: transparent url('icons.png') no-repeat scroll 0 -253px;}
-#CivicboomWidget .button_style_1 {background: #04145a; color: white; font-weight: bold;}
-#CivicboomWidget .inverted {background: white; color: #04145a;}
+.theme_dark .icon_back         {background: transparent url('icons.png') no-repeat scroll 0 -253px;}
+#CivicboomWidget .theme_dark.button_style_1 {background: #04145a; color: white; font-weight: bold;}
+#CivicboomWidget .theme_dark.inverted {background: white; color: #04145a;}
 
-#CivicboomWidget .flash_message {background: #ffc7c7; color: #5a0404;}
+
+/*-----------------------------Theme Light------------------------------------*/
+/* these colours can be overriddern in another css file to provide a new colour theame */
+#CivicboomWidget .theme_light .widget_border                           {
+  color: #021179;
+  background: #d2dae9 url('background_gradient_light.png') repeat-x;
+  border: 1px solid #929dbd;
+}
+#CivicboomWidget .theme_light .action_bar                              {border-color: #929dbd;}
+#CivicboomWidget .theme_light .widget_main                             {border-color: #929dbd;}
+#CivicboomWidget .theme_light .widget_content_assignment_list          {color: #021179;}
+#CivicboomWidget .theme_light .widget_content_assignment_list li       {color: #021179;}
+#CivicboomWidget .theme_light .widget_content_assignment_list li:hover {color: white; background: transparent url('background_transparent_dark.png') repeat;}
+
+#CivicboomWidget .widget_content {
+  /* border: 1px solid #555; */
+  background-color: transparent;
+  color: #021179;
+}
+#CivicboomWidget .theme_light .widget_content strong         {}
+#CivicboomWidget .theme_light .widget_content .content_title {color: #021179;}
+
+#CivicboomWidget .theme_light .widget_content_assignment_list li {border-color: #d1d5e3;}
+
+#CivicboomWidget .theme_light .button_style_1 {background: #04145a; color: white; font-weight: bold;}
+.theme_light .icon_back {background: transparent url('icons.png') no-repeat scroll 0 -236px;}
+
+#CivicboomWidget .theme_light .inverted {background: #021179; color: #white;}

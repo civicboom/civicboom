@@ -37,8 +37,8 @@
     
     <div class="assignment_details">
         <div style="display: inline-block;"><strong>${_("Due in")}:      </strong>fix</div>
-        <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>fix</div>
-        <p><strong>${_("Responses:")}   </strong>fix</p>
+        <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>${assignment['num_accepted']} ${_('reporters')}</div>
+        <p                                 ><strong>${_("Responses:")}   </strong>${assignment['num_responses']}</p>
         
         ##${h.time_ago_first_only(assignment.expiryDate)}
         ##${h.format_multiple_prefix(assignment.num_accepted_by_reporters + len(assignment.newsarticles),single=c.terminology['reporter'])}

@@ -439,7 +439,10 @@ class AssignmentContent(UserVisibleContent):
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
     default_response_license_id = Column(Integer(),        ForeignKey('license.id'))
+    #num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
+    
     default_response_license    = relationship("License")
+
     
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
@@ -447,6 +450,7 @@ class AssignmentContent(UserVisibleContent):
             'due_date'              : None ,
             'event_date'            : None ,
             'closed'                : None ,
+            'num_accepted'          : None ,
             'default_response_license': lambda content: content.license.code if content.license else None ,
     }
     __to_dict__['default'     ].update(_extra_assignment_fields)
@@ -515,11 +519,10 @@ class AssignmentContent(UserVisibleContent):
     @property
     def num_accepted(self):
         """
-        TODO
+        AllanC - TODO: Performance!
         To be replaced with derived field with DB trigger or update_assignment call
-        accepted_by is set after the db is setup in civicboom_init
         """
-        return len(accepted_by)
+        return len([a for a in self.assigned_to if a.status=='accepted'])
 
 
 class MemberAssignment(Base):

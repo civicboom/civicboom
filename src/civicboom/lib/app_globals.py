@@ -37,4 +37,4 @@ class Globals(object):
         self.user_defaults.read("user_defaults.ini")
 
         # FIXME: spelling, theame -> theme
-        self.widget_variables = ['widget_theame', 'widget_title', 'widget_username', 'widget_width', 'widget_height']
+        self.widget_variables = ['widget_theme', 'widget_title', 'widget_username', 'widget_width', 'widget_height']
