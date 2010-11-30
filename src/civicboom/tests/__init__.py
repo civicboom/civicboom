@@ -17,6 +17,7 @@ from routes.util import URLGenerator
 # XXX: Paste's TestApp supports app.delete() with params
 #from webtest import TestApp
 from paste.fixture import TestApp
+from civicboom.lib import worker
 
 import pylons.test
 
@@ -73,3 +74,7 @@ class TestController(TestCase):
     def setUp(self):
         # log in by default
         self.log_in()
+
+    def tearDown(self):
+        # wait for the worker to finish its work before reporting "test passed"
+        worker.stop_worker()
