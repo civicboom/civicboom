@@ -103,6 +103,18 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
 #-------------------------------------------------------------------------------
 # Search Filters
 #-------------------------------------------------------------------------------
+
+def _normalize_member(member):
+    if isinstance(member, Member):
+        member = member.id
+    else:
+        try:
+            member = int(member)
+        except:
+            member = member
+    return member
+
+
 def _init_search_filters():
     def append_search_text(query, text):
         return query.filter(or_(Content.title.match(text), Content.content.match(text)))
@@ -129,11 +141,10 @@ def _init_search_filters():
         return query.filter(Content.__type__==type_text)
     
     def append_search_creator(query, creator):
-        if isinstance(creator, Member):
-            creator = creator.id
-        try:
-            return query.filter(Content.creator_id==int(creator))
-        except:
+        creator = _normalize_member(creator)
+        if isinstance(creator, int):
+            return query.filter(Content.creator_id==creator)
+        else:
             return query.filter(Member.username==creator)
     
     def append_search_response_to(query, content_id):
@@ -166,7 +177,8 @@ list_filters = {
 }
 
 
-
+    
+    
 
 #-------------------------------------------------------------------------------
 # Content Controler
@@ -197,8 +209,10 @@ class ContentsController(BaseController):
         # Permissions
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
         logged_in_creator = False
-        if 'creator' in kwargs and (kwargs['creator']==c.logged_in_persona.id or kwargs['creator']==c.logged_in_persona.username or kwargs['creator']==c.logged_in_persona):
-            logged_in_creator = True
+        if 'creator' in kwargs:
+            kwargs['creator'] = _normalize_member(kwargs['creator']) # normalize creator
+            if kwargs['creator']==c.logged_in_persona.id or kwargs['creator']==c.logged_in_persona.username:
+                logged_in_creator = True
         
         # Setup search criteria
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
