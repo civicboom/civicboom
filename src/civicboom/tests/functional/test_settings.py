@@ -7,8 +7,8 @@ class TestSettingsController(TestController):
     def test_need_signin(self):
         self.log_out()
         response = self.app.get(url(controller='settings', action='general', id='unittest'), status=302)
-        # FIXME: follow the redirect, then:
-        # assert "Sign in" in response
+        response.follow()
+        assert "Sign in" in response
 
     def test_general(self):
         # test that with no ID, we get our own user page

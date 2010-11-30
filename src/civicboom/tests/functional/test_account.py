@@ -57,8 +57,8 @@ class TestAccountController(TestController):
             status=302
         )
         assert "Civicboom Internal Error" not in response
-        # FIXME: follow the redirect, then test this
-        #assert "Sign in" in response
+        response.follow()
+        assert "Sign in" in response
 
 
     def test_user_can_log_in_with_any_linked_janrain_account(self):
