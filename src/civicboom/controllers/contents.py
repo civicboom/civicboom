@@ -211,7 +211,7 @@ class ContentsController(BaseController):
         logged_in_creator = False
         if 'creator' in kwargs:
             kwargs['creator'] = _normalize_member(kwargs['creator']) # normalize creator
-            if kwargs['creator']==c.logged_in_persona.id or kwargs['creator']==c.logged_in_persona.username:
+            if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
         
         # Setup search criteria
