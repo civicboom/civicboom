@@ -12,6 +12,7 @@ from pylons import url, config, app_globals, tmpl_context as c, request
 from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
 from webhelpers.html.tags import end_form
+from civicboom.lib.text import strip_html_tags
 
 # use relative import so that "import helpers" works
 #from civicboom.lib.text import scan_for_embedable_view_and_autolink

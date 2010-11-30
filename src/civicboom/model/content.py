@@ -127,7 +127,7 @@ class Content(Base):
             'num_responses': None ,
             'num_comments' : None ,
             'tags'         : lambda content: "implement tags" ,
-            'license'      : lambda content: content.license.code if content.license else None ,
+            'license_id'   : lambda content: content.license.code if content.license else None ,
             'private'      : None ,
             'edit_lock'    : None ,
         },
@@ -149,6 +149,7 @@ class Content(Base):
     del __to_dict__['full']['content_short']
     del __to_dict__['full']['parent_id']
     del __to_dict__['full']['creator_id']
+    del __to_dict__['full']['license_id']
     
     
     
@@ -263,7 +264,11 @@ class Content(Base):
 
     @property
     def content_short(self):
-        return truncate(self.content, length=100)
+        """
+        AllanC TODO: Derived field?
+        """
+        from civicboom.lib.text import strip_html_tags
+        return truncate(strip_html_tags(self.content), length=100)
 
     @property
     def location_string(self):

@@ -1,5 +1,6 @@
 <%inherit file="./widget_content.mako"/>
 
+##<%namespace name="content_list" file="/web/common/content_list.mako"/>
 
 <%def name="body()">
     <% assignment = c.result['data']['content'] %>
@@ -14,8 +15,11 @@
   
     <a href="${h.url('content',id=assignment['id'])}" target="_blank">
         <p class="content_title">${assignment['title']}</p>
+        ##${content_list.content_thumbnail_icons(assignment)}
         <img src=${assignment['thumbnail_url']} class="assignment_thumbnail"/>
-        <p class="assignment_content">${h.truncate(assignment['content'], length=180, indicator='...', whole_word=True)} <strong>more</strong></p>
+        ## AllanC TODO: optimise the need for the template to do this truncating processing
+        ##              propose using content_short
+        <p class="assignment_content">${h.truncate(h.strip_html_tags(assignment['content']), length=180, indicator='...', whole_word=True)} <strong>more</strong></p>
     </a>
     
     <table class="assignment_actions">

@@ -38,12 +38,12 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
     
     <div class="widget_header" style="height:${size_header}px;"><div class="widget_header_footer">
     
-        <div class="widget_reporter_thumbnail">
-            ##<a href="${h.url('member', id=c.widget_owner.username)}" target="_blank">
-            <img src="${c.widget_owner.avatar_url}" />
-            ##</a>
-            <a class="action button_style_1 inverted" href="${h.url(controller='reporter', action='followReporter', id=c.widget_owner.id)}">${_("Follow")}</a>
-        </div>
+	${member.avatar(c.widget_owner.to_dict())}
+        ##<div class="widget_reporter_thumbnail">
+        ##    <img src="${c.widget_owner.avatar_url}" />
+        ##    <a class="action button_style_1 inverted" href="${h.url(controller='reporter', action='followReporter', id=c.widget_owner.id)}">${_("Follow")}</a>
+        ##</div>
+	
         <a class="tooltip_icon" style="float: right;" href="${h.url_from_widget(controller='widget',action='about')}" title="What is this?"></a>
         ##<span class="widget_header_title">
         <a class="widget_header_title" href="${h.url('member', id=c.widget_owner.username)}" target="_blank">

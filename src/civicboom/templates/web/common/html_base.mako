@@ -38,6 +38,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui.stars.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/layout.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/icons_avatar_thumbnails.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/account.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/content_editor.css" />

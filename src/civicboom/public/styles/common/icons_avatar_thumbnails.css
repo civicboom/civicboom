@@ -1,0 +1,127 @@
+
+/*
+ * icons
+ */
+
+/* AllanC
+ *  I wanted the developer to be able to write <span class="icon_large approved"> or <span class="icon_small approved">
+ *  to select the right icon graphic and size
+ *  without the need for nested tags ... is this possible? is the nested tag idea cleaner?
+ */
+
+/*
+ Icons by: pixel-mixer
+ http://pixel-mixer.com/
+ http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
+ http://www.iconarchive.com/category/application/basic-2-icons-by-pixelmixer.html
+*/
+
+/* 16x16 icons */
+.icon {
+	display: inline-block;
+    width  : 16px;
+	height : 16px;
+}
+.icon span {display: none;}
+.icon_approved  {background: transparent url('/styles/web/icons16/licence-icon.png'  ) no-repeat;}
+.icon_edit_lock {background: transparent url('/styles/web/icons16/lock-icon.png'     ) no-repeat;}
+.icon_private   {background: transparent url('/styles/web/icons16/key-icon.png'      ) no-repeat;}
+.icon_seen      {background: transparent url('/styles/web/icons16/tick-icon.png'     ) no-repeat;}
+.icon_follow    {background: transparent url('/styles/web/icons16/right-icon.png'    ) no-repeat;}
+.icon_unfollow  {background: transparent url('/styles/web/icons16/stop-icon.png'     ) no-repeat;}
+.icon_user      {background: transparent url('/styles/web/icons16/user-3-icon.png'   ) no-repeat;}
+.icon_group     {background: transparent url('/styles/web/icons16/network-icon.png'  ) no-repeat;}
+.icon_userid    {background: transparent url('/styles/web/icons16/user-info-icon.png') no-repeat;}
+
+/* 32x32 icons */
+.icon_large {
+	display: inline-block;
+    width  : 32px;
+	height : 32px;
+}
+.icon_large span {display: none;}
+.icon_approved_large  {background: transparent url('/styles/web/icons32/licence-icon.png') no-repeat;}
+.icon_edit_lock_large {background: transparent url('/styles/web/icons32/lock-icon.png'   ) no-repeat;}
+.icon_private_large   {background: transparent url('/styles/web/icons32/key-icon.png'    ) no-repeat;}
+.icon_seen_large      {background: transparent url('/styles/web/icons32/tick-icon.png'   ) no-repeat;}
+
+
+/*
+ * avatars
+ */
+.avatar {
+	margin: auto;
+	text-align: center;
+}
+.avatar .clipper {
+	width: 40px;
+	height: 40px;
+	overflow: hidden;
+	position: relative;
+	border: 1px solid black;
+}
+
+.avatar.large .clipper      {width: 80px; height: 80px;}
+.avatar.large .clipper .img {width: 80px; height: 80px;}
+
+
+.avatar .clipper .type,
+.avatar .clipper .info,
+.avatar .clipper .follow_action {
+	position: absolute;
+}
+.avatar .clipper .type {
+	top: 0px;
+	right: 0px;
+}
+.avatar .clipper .info {
+    bottom: 0px;
+	left  : 2px;
+    opacity: 0;
+}
+.avatar .clipper:hover .info {opacity: 1;}
+.avatar .clipper       .img {opacity: 1   ; height: 40px; width:40px;}
+.avatar .clipper:hover .img {opacity: 0.25 ;}
+.avatar .clipper .follow_action {
+    opacity: 0;
+	bottom :  0px;
+	right  :  2px;
+}
+.avatar .clipper:hover .follow_action {opacity: 1;}
+
+
+
+/*
+ * content thumbnails
+ */
+.thumbnail {
+	margin: auto;
+	text-align: center;
+}
+.thumbnail .clipper {
+	width: 100px;
+	height: 80px;
+	overflow: hidden;
+	position: relative;
+	border: 1px solid black;
+}
+.thumbnail .clipper .img {opacity: 1   ; width:100px; height: 80px;}
+
+.thumbnail.small .clipper      {width: 60px; height: 50px;}
+.thumbnail.small .clipper .img {width: 60px; height: 50px;}
+
+.thumbnail .clipper .icons {
+	position: absolute;
+    display : block;
+	bottom  : 0px;
+	right   : 0px;
+    /* opacity: 0.75; */
+}
+/* AllanC - not sure if I like this transparent rollover effect or not ... */
+/*
+.thumbnail .clipper:hover .icons {
+    opacity: 1;
+}
+*/
+
+

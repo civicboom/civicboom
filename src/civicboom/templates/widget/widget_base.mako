@@ -6,6 +6,7 @@
 
 % if config['development_mode']:
 	<link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/icons_avatar_thumbnails.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/widget/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/widget/widget_size_wide.css" />
 % else:
@@ -25,7 +26,7 @@
     <%
 	theme = "theme_" + c.widget_theme
 	additonal_layout = ""
-	if c.widget_width >= 280:
+	if int(c.widget_width) >= 280:
 	    additonal_layout = "wide"
     %>
     <body id="CivicboomWidget">
