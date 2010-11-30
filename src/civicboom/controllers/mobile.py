@@ -71,17 +71,7 @@ class MobileController(BaseController):
         #    raise action_error(_("You are not the owner of that content"), code=403)
 
         tmp = file("/tmp/upload-"+str(content.id), "a")
-        # base64 string
-        if request.POST.get("encoding") == "base64":
-            import base64
-            tmp.write(base64.b64decode(request.POST["file_data"]))
-        # data string
-        elif type(request.POST["file_data"]) == unicode:
-            #tmp.write(request.POST["file_data"])
-            pass
-        # data blob
-        else:
-            tmp.write(request.POST["file_data"])
+        tmp.write(request.POST["file_data"].value)
         tmp.close()
 
         return action_ok(_("Part appended"), code=201)
