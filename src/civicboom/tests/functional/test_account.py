@@ -57,7 +57,9 @@ class TestAccountController(TestController):
             status=302
         )
         assert "Civicboom Internal Error" not in response
-        # FIXME: follow the redirect, then test this
+        response = response.follow()
+        # FIXME: this doesn't work; on error, login redirects to referrer,
+        # if we re-prompt we lose the referrer... what *should* we do?
         #assert "Sign in" in response
 
 

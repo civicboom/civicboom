@@ -443,9 +443,9 @@ class AssignmentContent(UserVisibleContent):
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
-    default_response_license_id = Column(Integer(),        ForeignKey('license.id'))
+    default_response_license_id = Column(Integer(), ForeignKey('license.id'), nullable=False, default=1)
     #num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
-    
+
     default_response_license    = relationship("License")
 
     
