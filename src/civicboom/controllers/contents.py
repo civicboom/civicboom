@@ -3,7 +3,7 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent
-from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
+from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license
 from civicboom.model.content           import _content_type as content_types
 
 # Other imports
@@ -314,7 +314,7 @@ class ContentsController(BaseController):
         # comments are always owned by the writer; ignore settings
         # and parent preferences
         if type == 'comment':
-            content.license = None
+            content.license = get_license(None)
 
         # Commit to database to get ID field
         # DEPRICATED
