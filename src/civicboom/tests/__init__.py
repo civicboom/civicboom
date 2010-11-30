@@ -70,6 +70,7 @@ class TestController(TestCase):
             )
             self.auth_token   = None
             self.logged_in_as = None
+        self.app.reset()
 
     def setUp(self):
         # log in by default
