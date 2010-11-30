@@ -157,7 +157,7 @@ search_filters = _init_search_filters()
 
 
 list_filters = {
-    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null())) ,
+    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment') , #.filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null()))
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
     'articles'            : lambda results: results.filter(Content.__type__=='article') ,
@@ -194,44 +194,47 @@ class ContentsController(BaseController):
         """
         # url('contents')
         
+        # Permissions
+        # AllanC - to aid cacheing we need permissions to potentially be a decorator
+        logged_in_creator = False
+        if 'creator' in kwargs and (kwargs['creator']==c.logged_in_persona.id or kwargs['creator']==c.logged_in_persona.username or kwargs['creator']==c.logged_in_persona):
+            logged_in_creator = True
+        
+        # Setup search criteria
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20
         if 'offset' not in kwargs:
             kwargs['offset'] = 0
         if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = ",creator"
+            kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = ",creator_id"
+            kwargs['exclude_fields'] = ""
+        if 'creator' not in kwargs:
+            kwargs['include_fields'] += ",creator"
+            kwargs['exclude_fields'] += ",creator_id"
         if 'list_type' not in kwargs:
             #kwargs['list_type'] = 'default'
             if c.format == 'rss':                       # Default RSS to list_with_media
                 kwargs['include_fields'] += ',attachments'
         
-        results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*').
-        results = results.filter(and_(Content.__type__!='comment', Content.visible==True)) #Content.__type__!='draft'
-        
+        # Build Search
+        results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*'). #Content.__type__!='draft'
+        results = results.filter(and_(Content.__type__!='comment', Content.visible==True)) 
+        if 'force_public_only' in kwargs or not logged_in_creator:
+            results = results.filter(Content.private==False)
         if 'creator' in kwargs['include_fields']:
             results = results.options(joinedload('creator'))
-            pass
-        if 'return_public_only' not in kwargs and 'creator' in kwargs and (kwargs['creator']==c.logged_in_persona.id or kwargs['creator']==c.logged_in_persona.username or kwargs['creator']==c.logged_in_persona):
-            # Permissions: creator is logged in, allow private content
-            pass
-        else:
-            # Permissions: Limit to public content only!
-            results = results.filter(Content.private==False)
-        
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
-        
         if 'list' in kwargs:
             if kwargs['list'] in list_filters:
                 results = list_filters[kwargs['list']](results)
             else:
                 raise action_error(_('list %s not supported') % kwargs['list'], code=400)
-        
-        results = results.order_by(Content.id.desc()) # id order is also date created order, we dont need to index the date created field as well        
+        results = results.order_by(Content.id.desc()) # id order is also date created order, we dont need to index the date created field as well
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
+        # Return search results
         return action_ok(
             data = {'list': [content.to_dict(**kwargs) for content in results.all()]} ,
         )

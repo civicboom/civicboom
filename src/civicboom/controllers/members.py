@@ -77,7 +77,7 @@ class MembersController(BaseController):
         """
         member = _get_member(id)
         
-        kwargs['return_public_only'] = True # AllanC - additon to ensure that public profiles return public only content
+        kwargs['force_public_only'] = True # AllanC - additon to ensure that public profiles return public only content
         
         if 'lists' not in kwargs:
             kwargs['lists'] = 'followers, following, assignments_accepted, content, groups, members, actions'
