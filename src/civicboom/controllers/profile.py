@@ -16,7 +16,7 @@ class ProfileController(BaseController):
 
     @auto_format_output
     @authorize(is_valid_user)
-    def index(self):
+    def index(self, **kwargs):
         """
         GET /profile: Get info about the logged in user
 

@@ -12,7 +12,7 @@ class MemberActionsController(BaseController):
     @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
-    def follow(self, id, format="html"):
+    def follow(self, id, **kwargs):
         """
         POST /members/{name}/follow: follow the member
 
@@ -30,7 +30,7 @@ class MemberActionsController(BaseController):
     @auto_format_output
     @authorize(is_valid_user)
     @authenticate_form
-    def unfollow(self, id, format="html"):
+    def unfollow(self, id, **kwargs):
         """
         POST /members/{name}/unfollow: unfollow the member
 

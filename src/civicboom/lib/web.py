@@ -37,13 +37,10 @@ def multidict_to_dict(multidict):
 #-------------------------------------------------------------------------------
 # Redirect Referer
 #-------------------------------------------------------------------------------
-def redirect_to_referer():
-    url_to = request.environ.get('HTTP_REFERER') or '/'
-    if url_to == url.current(): # Detect if we are in a redirection loop and abort
-        log.warning("Redirect loop detected for "+str(url_to))
-        #redirect('/')
-    #print "yay redirecting to %s" % url_to
-    return redirect(url_to)
+
+def current_referer(protocol=None):
+    #AllanC TODO - needs to enforce prosocol change - for login actions
+    return request.environ.get('HTTP_REFERER')
 
 def current_host(protocol=None):
     if not protocol:
@@ -55,6 +52,14 @@ def current_url(protocol=None):
     if 'QUERY_STRING' in request.environ:
         target_url += '?'+request.environ.get('QUERY_STRING')
     return target_url
+
+def redirect_to_referer():
+    url_to = session_remove('login_action_referer') or current_referer() or '/'
+    if url_to == url.current(): # Detect if we are in a redirection loop and abort
+        log.warning("Redirect loop detected for "+str(url_to))
+        #redirect('/')
+    #print "yay redirecting to %s" % url_to
+    return redirect(url_to)
 
 
 #-------------------------------------------------------------------------------

@@ -10,7 +10,7 @@ from civicboom.lib.database.get_cached import get_membership
 from civicboom.model      import User, UserLogin, Member
 from civicboom.model.meta import Session
 
-from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url
+from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url, current_referer
 from civicboom.lib.helpers import url_from_widget
 
 # Other imports
@@ -116,6 +116,7 @@ def authorize(authenticator):
                 json_post = session_remove('login_redirect_post')
                 if json_post:
                     kwargs.update(json.loads(json_post))
+                    print "overlay post"
                     # AllanC - now unneeded - we dont need a user confirm as we can overlay post data over kwargs
                     #post_overlay = json.loads(json_post)
                     #c.target_url = current_url()
@@ -129,16 +130,17 @@ def authorize(authenticator):
 
         # ELSE Unauthorised
         else:
-            # If request was a browser - prompt for login
-            if c.format == "redirect":
-                #TODO
-                raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
-            if c.format == "html":
-                redirect_url = current_url(protocol=protocol_after_login)
-                session_set('login_redirect'     , redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+            # If request was a browser - prompt for login    
+                #raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
+            if c.format=="redirect":
+                session_set('login_action_referer', current_referer(protocol=protocol_after_login), 60 * 10)
+                # The redirect auto formater looked for this and redirects as appropriate
+            if c.format == "html" or c.format == "redirect":
+                session_set('login_redirect', current_url(protocol=protocol_after_login), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
                 # save the the session POST data to be reinstated after the redirect
                 if request.POST:
                     session_set('login_redirect_post', json.dumps(multidict_to_dict(request.POST)), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                    print "saving post"
                 return redirect(url_from_widget(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
 
             # If API request - error unauthorised
