@@ -87,17 +87,19 @@ def is_valid_user(u):
 #          what about the https() decorator on signin paying attention to config['ssl']
 protocol_for_login   = "https"
 protocol_after_login = "https"
-if   config['ssl'] == 'default_when_logged_in':
-    pass
-elif config['ssl'] == 'disabled':
-    protocol_for_login   = "http"
-    protocol_after_login = "http"
-elif config['ssl'] == 'login_process_only':
-    protocol_after_login = "http"
-elif config['ssl'] == 'enforce_when_logged_in':
-    # TODO:
-    # AllanC - this should be equivelent of putting https on the top of every method call, we force logged in users to use https by forcefully redirecting them
-    log.info('config[ssl]=enforce_when_logged_in is set and is currenlty not implemented')
+if 'https' in config:
+    if   config['https'] == 'default_when_logged_in':
+        pass
+    elif config['https'] == 'disabled':
+        protocol_for_login   = "http"
+        protocol_after_login = "http"
+        log.warn('https disabled')
+    elif config['https'] == 'login_process_only':
+        protocol_after_login = "http"
+    elif config['https'] == 'enforce_when_logged_in':
+        # TODO:
+        # AllanC - this should be equivelent of putting https on the top of every method call, we force logged in users to use https by forcefully redirecting them
+        log.info('config[https]=enforce_when_logged_in is set and is currenlty not implemented')
     
 
 def authorize(authenticator):
