@@ -24,12 +24,12 @@ class AccountController(BaseController):
     # while not massively dangerous, posting an image with eg <img src="http://civicboom.com/account/signout">
     # is a common prank, so this needs authenticating
     @authenticate_form
-    def signout(self, format="json"):
+    def signout(self):
         """
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies
         """
         signout_user(c.logged_in_persona)
-        return redirect('/')
+        return redirect(url('/',protocol='http'))
 
 
     #---------------------------------------------------------------------------
@@ -37,7 +37,7 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
 
     @auto_format_output
-    #@https() # redirect to https for transfer of password
+    @https() # redirect to https for transfer of password
     def signin(self):
 
         # If no POST display signin template

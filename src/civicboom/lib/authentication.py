@@ -86,7 +86,19 @@ def is_valid_user(u):
 #          do we always want logged_in users to always use HTTPS?
 #          what about the https() decorator on signin paying attention to config['ssl']
 protocol_for_login   = "https"
-protocol_after_login = "http"
+protocol_after_login = "https"
+if   config['ssl'] == 'default_when_logged_in':
+    pass
+elif config['ssl'] == 'disabled':
+    protocol_for_login   = "http"
+    protocol_after_login = "http"
+elif config['ssl'] == 'login_process_only':
+    protocol_after_login = "http"
+elif config['ssl'] == 'enforce_when_logged_in':
+    # TODO:
+    # AllanC - this should be equivelent of putting https on the top of every method call, we force logged in users to use https by forcefully redirecting them
+    log.info('config[ssl]=enforce_when_logged_in is set and is currenlty not implemented')
+    
 
 def authorize(authenticator):
     """
@@ -103,11 +115,13 @@ def authorize(authenticator):
             if not session_get('login_redirect'):
                 json_post = session_remove('login_redirect_post')
                 if json_post:
-                    post_overlay = json.loads(json_post)
-                    c.target_url = current_url()
-                    c.post_values = post_overlay
-                    from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
-                    return render("web/misc/confirmpost.mako")
+                    kwargs.update(json.loads(json_post))
+                    # AllanC - now unneeded - we dont need a user confirm as we can overlay post data over kwargs
+                    #post_overlay = json.loads(json_post)
+                    #c.target_url = current_url()
+                    #c.post_values = post_overlay
+                    #from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
+                    #return render("web/misc/confirmpost.mako")
 
             # Make original method call
             result = _target(*args, **kwargs)
@@ -120,7 +134,7 @@ def authorize(authenticator):
                 #TODO
                 raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
             if c.format == "html":
-                redirect_url = current_url()
+                redirect_url = current_url(protocol=protocol_after_login)
                 session_set('login_redirect'     , redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
                 # save the the session POST data to be reinstated after the redirect
                 if request.POST:
@@ -149,7 +163,6 @@ def signin_user(user, login_provider=None):
     user_log.info("logged in with %s" % login_provider)   # Log user login
     #session_set('user_id' , user.id      ) # Set server session variable to user.id
     session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
-    #set_persona(user)
     response.set_cookie(
         "civicboom_logged_in", "True",
         int(config["beaker.session.timeout"]),

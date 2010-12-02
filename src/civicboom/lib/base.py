@@ -93,13 +93,12 @@ class BaseController(WSGIController):
         c.action     = current_request.get("action")
         c.id         = current_request.get("id")
         
-        c.format     = None
-        #AllanC - c.format now handled by @auto_format_output in lib
-        
         c.result = {'status':'ok', 'message':'', 'data':{}}
         c.scripts_end = []
-        
-        c.authenticated_form = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
+
+        c.format               = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
+        c.authenticated_form   = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
+        c.web_params_to_kwargs = None
 
 
         # Login - Fetch logged in user from session id (if present)

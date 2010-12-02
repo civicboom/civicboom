@@ -255,9 +255,10 @@ class ContentsController(BaseController):
 
 
     @auto_format_output
+    @web_params_to_kwargs
     @authorize(is_valid_user)
     @authenticate_form
-    def new(self):
+    def new(self, **kwargs):
         """
         GET /contents/new: Form to create a new item
 
@@ -267,7 +268,7 @@ class ContentsController(BaseController):
         #url_for('new_content')
         
         # AllanC TODO - needs restructure - see create
-        content_id = ContentsController().create()['data']['id']
+        content_id = ContentsController().create(**kwargs)['data']['id']
         return redirect(url('edit_content', id=content_id))
 
 
@@ -293,22 +294,22 @@ class ContentsController(BaseController):
         # Create Content Object
         if   type == 'draft':
             content = DraftContent()
-        elif type == "comment":
+        elif type == 'comment':
             content = CommentContent()
-        elif type == "article":
+        elif type == 'article':
             content = ArticleContent()
-        elif type == "assignment":
+        elif type == 'assignment':
             content = AssignmentContent()
         
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
         
         # If a license isn't explicitly set, use the parent's preference
-        parent_id = kwargs.get('parent_id')
+        parent_id  = kwargs.get('parent_id')
         license_id = kwargs.get('license_id')
         if parent_id and not license_id:
             parent = get_content(parent_id)
-            if parent and parent.__type__ == "assignment" and parent.default_response_license:
+            if parent and parent.__type__ == 'assignment' and parent.default_response_license:
                 content.license = parent.default_response_license
 
         # comments are always owned by the writer; ignore settings
@@ -323,7 +324,7 @@ class ContentsController(BaseController):
         # AllanC - if the update fails on validation we do not want a ghost record commited
         
         # Use update behaviour to save and commit object
-        update_response = self.update(id=content) # no need to pass kwargs as these are reaquired from request.params
+        update_response = self.update(id=content, **kwargs)
         if update_response['status'] != 'ok':
             return update_response
         
