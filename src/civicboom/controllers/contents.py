@@ -341,6 +341,9 @@ class ContentsController(BaseController):
         """
         # url('content', id=ID)
         
+        # -- Variables-- -------------------------------------------------------
+        content_redirect = None
+        
         # -- Get Content -------------------------------------------------------
         if isinstance(id, Content):
             content = id
@@ -348,10 +351,6 @@ class ContentsController(BaseController):
             content = _get_content(id, is_editable=True)
         assert content
         
-        # -- Publish Permission-------------------------------------------------
-        # TODO - need to check role in group to see if they have permissions to do this
-        # TODO - Publish Permission for groups (to be part of is editable?)
-        # return 403
 
         # -- Decode Action -----------------------------------------------------
         # AllanC - could this be turned into a validator?
@@ -377,20 +376,38 @@ class ContentsController(BaseController):
         data       = {'content':kwargs}
         data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
         kwargs     = data['content']
+
+        # Normalize 'type'
+        starting_content_type = content.__type__
+        if submit_type == 'publish' and 'type' not in kwargs: # If publishing set 'type' (as this is submitted from the form as 'target_type')
+            if hasattr(content, 'target_type'):
+                kwargs['type'] = content.target_type
+            if 'target_type' in kwargs:
+                kwargs['type'] = kwargs['target_type']
+
+
+        # -- Publish Permission-------------------------------------------------
+        # TODO - need to check role in group to see if they have permissions to do this
+        # TODO - Publish Permission for groups (to be part of is editable?)
+        # return 403
+        # some permissions like permissions['can_publish'] are related to payment, we want to still save the data, but we might not want to go through with the whole publish procedure
+        permissions = {}
+        permissions['can_publish'] = True
+        
+        if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
+            permissions['can_publish'] = False
+            content_redirect = url(controller='misc', action='upgrade_account') #payment url
+
         
         # -- Set Content fields ------------------------------------------------
         
         # TODO: dont allow licence type change after publication - could this be part of validators?
         
         # Morph Content type - if needed (only appropriate for data already in DB)
-        starting_content_type = content.__type__
-        if submit_type == 'publish' and 'type' not in kwargs: # If publishing set 'type' (as this is submitted from the form as 'target_type')
-            if hasattr(content, 'target_type'):
-                kwargs['type'] = content.target_type
-            if 'target_type' in kwargs:
-                kwargs['type'] = kwargs['target_type']                
         if 'type' in kwargs:
-            content = morph_content_to(content, kwargs['type'])
+            #AllanC - logic bug?! with this if statement we cant downgrade content from assignmes to drafts
+            if kwargs['type']!='draft' and permissions['can_publish']:
+                content = morph_content_to(content, kwargs['type'])
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
@@ -420,7 +437,9 @@ class ContentsController(BaseController):
             #Session.add(media) # is this needed as it is appended to content and content is in the session?
         
         # -- Publishing --------------------------------------------------------
-        if submit_type == 'publish':
+        if submit_type == 'publish' and permissions['can_publish']:
+            content_redirect = url('content', id=content.id, prompt_aggregate=True)
+            
             # Profanity Check --------------------------------------------------
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
@@ -456,19 +475,19 @@ class ContentsController(BaseController):
 
 
         # -- Save to Database --------------------------------------------------
-        Session.add(content)     
+        Session.add(content)
         Session.commit()
         update_content(content)  #   Invalidate any cache associated with this content
         user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
         
         # -- Redirect ----------------------------------------------------------
-        content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
+        
         if submit_type == 'preview':
             content_redirect = url('content', id=content.id)
-        if submit_type ==  'publish':
-            content_redirect = url('content', id=content.id, prompt_aggregate=True)
         if submit_type == 'response':
             content_redirect = url('content', id=content.parent_id)
+        if content_redirect == None:
+            content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
         
         if c.format == 'redirect':
             return redirect(content_redirect)

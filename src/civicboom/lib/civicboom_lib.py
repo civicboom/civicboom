@@ -11,7 +11,7 @@ from civicboom.lib.database.get_cached import get_member
 
 from civicboom.lib.communication.email_lib import send_email
 
-from civicboom.model                            import DraftContent, ArticleContent, CommentContent, Media, Tag, FlaggedContent, UserLogin
+from civicboom.model                            import DraftContent, ArticleContent, AssignmentContent, CommentContent, Media, Tag, FlaggedContent, UserLogin
 from civicboom.lib.database.get_cached          import get_content, get_tag
 from civicboom.lib.database.actions             import del_content
 
@@ -30,6 +30,7 @@ from sets import Set # may not be needed in Python 2.7+
 import hashlib
 import random
 import json
+import datetime
 
 import logging
 log      = logging.getLogger(__name__)
@@ -337,3 +338,30 @@ def profanity_filter(content, delay_commit=False):
         #return False
     #return True
 
+#-------------------------------------------------------------------------------
+# Paid for feature: Assignment Limiter
+#-------------------------------------------------------------------------------
+def can_publish_assignment(member):
+    def last_assignment_date(member, limit=3):
+        try:
+            assignments = Session.query(AssignmentContent).filter(AssignmentContent.creator_id == member.id).order_by(AssignmentContent.id.desc()).limit(limit).all()
+            if len(assignments)>=limit:
+                return assignments[-1].creation_date
+            # order_by(AssignmentContent.creation_date.desc())
+        except:
+            pass
+        return None
+    #AllanC - TODO - check member payment level to acertain what the limit is - set limit to this users level
+    # if not member.payment_level:
+    #   limit = 3
+    # if member.payment_level==premium:
+    #   limit = 10
+    # if member.payment_level==corporate:
+    #   limit = 0
+    limit = 3
+    if not limit:
+        return True
+    d = last_assignment_date(member,limit)
+    if d and d > (datetime.datetime.now() - datetime.timedelta(days=30)):
+        return False
+    return True

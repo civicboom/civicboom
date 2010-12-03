@@ -267,6 +267,11 @@ class Member(Base):
     def add_to_interests(self, content):
         from civicboom.lib.database.actions import add_to_interests
         return add_to_interests(self, content)
+        
+    def can_publish_assignment(self):
+        # AllanC - could be replaced with some form of 'get_permission('publish') ??? we could have lots of permissiong related methods ... just a thought
+        from civicboom.lib.civicboom_lib import can_publish_assignment
+        return can_publish_assignment(self)
 
 GeometryDDL(Member.__table__)
 
