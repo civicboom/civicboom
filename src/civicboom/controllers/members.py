@@ -34,8 +34,7 @@ class MembersController(BaseController):
     """
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def index(self, list='all', term=None, **kwargs):
         """
         GET /members: Show a list of members
@@ -61,8 +60,7 @@ class MembersController(BaseController):
         return action_ok(data={"members": [m.to_dict(**kwargs) for m in result]})
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def show(self, id, **kwargs):
         """
         GET /members/{id}: Show a specific item
@@ -106,7 +104,7 @@ class MembersController(BaseController):
 
 
     #@auto_format_output
-    #@authorize(is_valid_user)
+    #@authorize
     #def index(self, list=None):
     #    member_list_name = request.params.get('list', list)
     #    if member_list_name not in index_lists: raise action_error(_('list type %s not supported') % member_list_name)

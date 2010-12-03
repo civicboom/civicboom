@@ -14,8 +14,8 @@ class ProfileController(BaseController):
     @desc a controller which pulls together many odd bits of user-relevant information
     """
 
-    @auto_format_output
-    @authorize(is_valid_user)
+    @web
+    @authorize
     def index(self, **kwargs):
         """
         GET /profile: Get info about the logged in user

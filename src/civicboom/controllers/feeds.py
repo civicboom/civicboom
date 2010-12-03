@@ -42,7 +42,7 @@ class FeedsController(BaseController):
     #     map.resource('feed', 'feeds')
 
     @auto_format_output
-    @authorize(is_valid_user)
+    @authorize
     def index(self, format='html'):
         """GET /feeds: All items in the collection"""
         # url('feeds')
@@ -55,7 +55,7 @@ class FeedsController(BaseController):
         )
 
     @auto_format_output
-    @authorize(is_valid_user)
+    @authorize
     def create(self):
         """POST /feeds: Create a new item"""
         # url('feeds')
@@ -70,14 +70,14 @@ class FeedsController(BaseController):
             raise action_error(_("Error creating feed"), code=500)
 
     @auto_format_output
-    @authorize(is_valid_user)
+    @authorize
     def new(self, format='html'):
         """GET /feeds/new: Form to create a new item"""
         # url('new_feed')
         return action_ok()
 
     @auto_format_output
-    @authorize(is_valid_user)
+    @authorize
     def update(self, id):
         """PUT /feeds/id: Update an existing item"""
         # Forms posted to this method should contain a hidden field:
@@ -97,7 +97,7 @@ class FeedsController(BaseController):
         return action_ok(_("Feed updated"), code=200)
 
     @auto_format_output
-    @authorize(is_valid_user)
+    @authorize
     def delete(self, id):
         """DELETE /feeds/id: Delete an existing item"""
         # Forms posted to this method should contain a hidden field:
@@ -133,7 +133,7 @@ class FeedsController(BaseController):
         )
 
     @auto_format_output
-    @authorize(is_valid_user)
+    @authorize
     def edit(self, id, format='html'):
         """GET /feeds/id/edit: Form to edit an existing item"""
         # url('edit_feed', id=ID)

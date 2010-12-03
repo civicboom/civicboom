@@ -193,10 +193,8 @@ class ContentsController(BaseController):
     # To properly map this controller, ensure your config/routing.py
     # file has a resource setup:
     #     map.resource('content', 'contents')
-
-    @auto_format_output
-    @web_params_to_kwargs
-    #@authorize(is_valid_user)
+    
+    @web
     def index(self, **kwargs):
         """
         GET /contents: All items in the collection
@@ -254,10 +252,8 @@ class ContentsController(BaseController):
         )
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def new(self, **kwargs):
         """
         GET /contents/new: Form to create a new item
@@ -272,10 +268,8 @@ class ContentsController(BaseController):
         return redirect(url('edit_content', id=content_id))
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def create(self, type='draft', **kwargs):
         """
         POST /contents: Create a new item
@@ -331,10 +325,8 @@ class ContentsController(BaseController):
         return action_ok(message=_('_content created ok'), data={'id':content.id}, code=201)
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def update(self, id, **kwargs):
         """
         PUT /contents/{id}: Update an existing item
@@ -484,10 +476,9 @@ class ContentsController(BaseController):
         return action_ok(_("_content updated"))
 
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def delete(self, id):
+    @web
+    @auth
+    def delete(self, id, **kwargs):
         """
         DELETE /contents/{id}: Delete an existing item
 
@@ -503,8 +494,7 @@ class ContentsController(BaseController):
         return action_ok(_("_content deleted"), code=200)
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def show(self, id, **kwargs):
         """
         GET /content/{id}: Show a specific item
@@ -547,9 +537,8 @@ class ContentsController(BaseController):
         return action_ok(data=data)
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
+    @web
+    @authorize
     def edit(self, id, **kwargs):
         """
         GET /contents/{id}/edit: Form to edit an existing item

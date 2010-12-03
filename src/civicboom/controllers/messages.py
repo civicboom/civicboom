@@ -55,9 +55,8 @@ class MessagesController(BaseController):
     @desc REST Controller styled on the Atom Publishing Protocol
     """
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
+    @web
+    @authorize
     def index(self, list='to', **kwargs):
         """
         GET /messages: All items in the collection.
@@ -98,11 +97,9 @@ class MessagesController(BaseController):
         return action_ok(data={'list': messages})
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
-    def create(self, target=None, subject=None, content=None):
+    @web
+    @auth
+    def create(self, target=None, subject=None, content=None, **kwargs):
         """
         POST /messages: Create a new item.
         
@@ -142,8 +139,8 @@ class MessagesController(BaseController):
 
 
 
-    @auto_format_output
-    def new(self, format='html'):
+    @web
+    def new(self, **kwargs):
         """
         GET /messages/new: Form to create a new item.
         """
@@ -151,17 +148,16 @@ class MessagesController(BaseController):
         return action_ok()
 
 
-    @auto_format_output
-    def update(self, id):
+    @web
+    def update(self, id, **kwargs):
         """PUT /messsages/id: Update an existing item."""
         # url('message', id=ID)
         raise action_error(_("Messages cannot be edited"), code=501)
 
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def delete(self, id):
+    @web
+    @auth
+    def delete(self, id, **kwargs):
         """
         DELETE /messages/{id}: Delete an existing item.
 
@@ -183,9 +179,8 @@ class MessagesController(BaseController):
         return action_ok(_("Message deleted"))
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
+    @web
+    @authorize
     def show(self, id, **kwargs):
         """
         GET /messages/{id}: Show a specific item.
@@ -218,8 +213,8 @@ class MessagesController(BaseController):
         return action_ok(data={'message': message.to_dict(**kwargs)})
 
 
-    @auto_format_output
-    def edit(self, id):
+    @web
+    def edit(self, id, **kwargs):
         """GET /messages/id/edit: Form to edit an existing item."""
         # url('edit_message', id=ID)
         raise action_error(_("Messages cannot be edited"), code=501)

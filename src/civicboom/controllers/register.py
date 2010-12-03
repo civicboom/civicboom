@@ -42,8 +42,7 @@ class RegisterController(BaseController):
     #---------------------------------------------------------------------------
     # Register new user
     #---------------------------------------------------------------------------
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def new_user(self, id=None, **kwargs):
         """
         Register new user - look at exisiting user record and identify additioinal required fields to complete upload
@@ -113,8 +112,7 @@ class RegisterController(BaseController):
     #---------------------------------------------------------------------------
     # Register - via email (no janrain)
     #---------------------------------------------------------------------------
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def email(self, **kwargs):
         """
         Register - via email (no janrain)

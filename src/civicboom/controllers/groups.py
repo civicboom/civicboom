@@ -63,9 +63,7 @@ class GroupsController(BaseController):
     @desc REST Controller styled on the Atom Publishing Protocol
     """
     
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
+    @web
     def index(self, **kwargs):
         """
         GET /groups: All groups the current user is a member of
@@ -82,10 +80,8 @@ class GroupsController(BaseController):
 
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def create(self, **kwargs):
         """
         POST /groups: Create a new group
@@ -120,9 +116,10 @@ class GroupsController(BaseController):
         return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)
 
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    def new(self):
+    @web
+    #@auth ? need token?
+    @authorize
+    def new(self, **kwargs):
         """
         GET /groups/new - Form to create a new item
         
@@ -132,10 +129,8 @@ class GroupsController(BaseController):
         return action_ok(template='groups/edit')
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def update(self, id, **kwargs):
         """
         PUT /groups/{id} - Update a groups settings
@@ -169,10 +164,9 @@ class GroupsController(BaseController):
         return action_ok(message=_('group updated ok'), data=data)
 
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def delete(self, id):
+    @web
+    @auth
+    def delete(self, id, **kwargs):
         """
         DELETE /group/{id}: Delete an existing group
         (aka POST /group/{id} with POST[_method] = "DELETE")
@@ -190,8 +184,7 @@ class GroupsController(BaseController):
         return action_ok(_("group deleted"), code=200)
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def show(self, id, **kwargs):
         """
         GET /group/{id}: Show a specific item
@@ -208,9 +201,10 @@ class GroupsController(BaseController):
         return MembersController().show(id, **kwargs)
 
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    def edit(self, id):
+    @web
+    #@auth ? need token
+    @authorize
+    def edit(self, id, **kwargs):
         """
         GET /contents/{id}/edit: Form to edit an existing item
         

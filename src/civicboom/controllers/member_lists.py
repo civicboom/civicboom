@@ -19,8 +19,7 @@ class MemberListsController(BaseController):
     @comment AllanC the id value given to these lists could be str, int or loaded object
     """
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def actions(self, id, **kwargs):
         """
         GET /members/{name}/actions: actions the current user can perform on this member
@@ -38,8 +37,7 @@ class MemberListsController(BaseController):
 
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def followers(self, id, **kwargs):
         """
         GET /members/{name}/followers: get a list of followers
@@ -56,8 +54,7 @@ class MemberListsController(BaseController):
         return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.followers]})
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def following(self, id, **kwargs):
         """
         GET /members/{name}/following: get a list of members the user is following
@@ -74,8 +71,7 @@ class MemberListsController(BaseController):
         return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.following]})
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def content(self, id, **kwargs):
         """
         GET /members/{name}/content: get a list content (including private if current user)
@@ -101,8 +97,7 @@ class MemberListsController(BaseController):
     def _groups_list_dict(self, group_roles, **kwargs):
         return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def groups(self, id, **kwargs):
         member = _get_member(id)
         
@@ -116,8 +111,7 @@ class MemberListsController(BaseController):
 
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def assignments_accepted(self, id, **kwargs):
         member = _get_member(id)
         #if member != c.logged_in_user:
@@ -126,8 +120,7 @@ class MemberListsController(BaseController):
         return action_ok(data={'list': contents})
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def members(self, id, **kwargs):
         """
         groups only

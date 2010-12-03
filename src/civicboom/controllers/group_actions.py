@@ -14,10 +14,9 @@ class GroupActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Join : 
     #---------------------------------------------------------------------------
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def join(self, id):
+    @web
+    @auth
+    def join(self, id, **kwargs):
         """
         Current user join a group
         
@@ -43,10 +42,8 @@ class GroupActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Remove Member : (Admin Action) or self
     #---------------------------------------------------------------------------
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def remove_member(self, id, **kwargs):
         """
         
@@ -68,10 +65,8 @@ class GroupActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Invite Member : (Admin Action)
     #---------------------------------------------------------------------------
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def invite(self, id, **kwargs):
         """
         Invite a member to join this groups
@@ -97,11 +92,9 @@ class GroupActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Set Member Role : (Admin Action)
     #---------------------------------------------------------------------------
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
-    def set_role(self, id, member=None, role=None):
+    @web
+    @auth
+    def set_role(self, id, member=None, role=None, **kwargs):
         """
         (only if current user has admin role in group)
         

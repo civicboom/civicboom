@@ -20,7 +20,7 @@ from civicboom.lib.web                 import redirect_to_referer, set_flash_mes
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
-from civicboom.lib.authentication      import authorize, is_valid_user
+from civicboom.lib.authentication      import authorize
 
 
 import json
@@ -39,11 +39,15 @@ __all__ = [
     "abort", "redirect", "action_ok", "action_error", "render",
 
     # decorators
-    "https", "authenticate_form",
+    "https",
+    "authorize", 
+    "authenticate_form",
     "auto_format_output",
-    "authorize", "is_valid_user",
-    "cacheable",
     "web_params_to_kwargs",
+    "cacheable",
+    "web",
+    "auth",
+    
 
     # i18n
     "_", "ungettext", "set_lang",
@@ -74,6 +78,23 @@ def render(*args, **kwargs):
         if 'cache_key'    in kwargs: del kwargs['cache_key']
         if 'cache_expire' in kwargs: del kwargs['cache_expire']
         return render_mako(*args, **kwargs)
+
+#-------------------------------------------------------------------------------
+# Decorators - Merged
+#-------------------------------------------------------------------------------
+
+# Reference - http://stackoverflow.com/questions/2182858/how-can-i-pack-serveral-decorators-into-one
+
+def chained(*dec_funs):
+    def _inner_chain(f):
+        for dec in reversed(dec_funs):
+            f = dec(f)
+        return f
+    return _inner_chain
+
+web  = chained(auto_format_output, web_params_to_kwargs)
+auth = chained(authorize, authenticate_form)
+
 
 #-------------------------------------------------------------------------------
 # Base Controller

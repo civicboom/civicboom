@@ -36,9 +36,9 @@ class AccountController(BaseController):
     # Janrain Engage - http://www.janrain.com/products/engage
     #---------------------------------------------------------------------------
 
-    @auto_format_output
+    @web
     @https() # redirect to https for transfer of password
-    def signin(self):
+    def signin(self, **kwargs):
 
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':
@@ -51,15 +51,15 @@ class AccountController(BaseController):
         login_provider = None
 
         # Authenticate with Janrain
-        if 'token' in request.POST:
-            c.auth_info = janrain('auth_info', token=request.POST.get('token'))
+        if 'token' in kwargs:
+            c.auth_info = janrain('auth_info', token=kwargs.get('token'))
             if c.auth_info:
                 c.logged_in_user = get_user_from_openid_identifyer(c.auth_info['profile']['identifier']) #Janrain guarntees the identifyer to be set
-                login_provider = c.auth_info['profile']['providerName']
+                login_provider   = c.auth_info['profile']['providerName']
 
         # Authenticate with standard username
-        if 'username' in request.POST and 'password' in request.POST:
-            c.logged_in_user = get_user_and_check_password(request.POST['username'], request.POST['password'])
+        if 'username' in kwargs and 'password' in kwargs:
+            c.logged_in_user = get_user_and_check_password(kwargs['username'], kwargs['password'])
             login_provider = "password"
 
         # If user has existing account: Login
@@ -98,10 +98,9 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
     # Switch Persona
     #---------------------------------------------------------------------------
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def set_persona(self, id):
+    @web
+    @auth
+    def set_persona(self, id, **kwargs):
         if set_persona(id):
             user_log.info("Switched to persona %s" % id)
             return action_ok("switched persona")
@@ -113,8 +112,9 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
     # Link Janrain Account
     #---------------------------------------------------------------------------
-    @authorize(is_valid_user)
-    def link_janrain(self):
+    @web
+    @authorize
+    def link_janrain(self, **kwargs):
         """
         A user can have there account linked to multiple external accounts
         The benefit of this is that all external accounts registered with us will
@@ -127,8 +127,8 @@ class AccountController(BaseController):
         
         c.auth_info = None
         
-        if 'token' in request.POST:
-            c.auth_info = janrain('auth_info', token=request.POST.get('token'))
+        if 'token' in kwargs:
+            c.auth_info = janrain('auth_info', token=kwargs.get('token'))
             
         if c.auth_info:
             associate_janrain_account(c.logged_in_persona, c.auth_info['profile']['providerName'], c.auth_info['profile']['identifier'])
@@ -142,8 +142,6 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
     # Verify Email
     #---------------------------------------------------------------------------
-    #@auto_format_output
-    #@web_params_to_kwargs
     # AllanC - TODO needs to be updated to use web_params and auto format
     def verify_email(self, id):
         """
@@ -161,8 +159,7 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
     # Forgotten Password
     #---------------------------------------------------------------------------
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def forgot_password(self, id=None, **kwargs):
         """
         Users can get new hash link set to there email address

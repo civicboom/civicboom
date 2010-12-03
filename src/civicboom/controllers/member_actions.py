@@ -9,9 +9,8 @@ user_log = logging.getLogger("user")
 
 class MemberActionsController(BaseController):
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def follow(self, id, **kwargs):
         """
         POST /members/{name}/follow: follow the member
@@ -27,9 +26,8 @@ class MemberActionsController(BaseController):
         raise action_error(_('Unable to follow member: %s') % status)
 
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def unfollow(self, id, **kwargs):
         """
         POST /members/{name}/unfollow: unfollow the member

@@ -38,7 +38,7 @@ class TestController(BaseController):
         flash_message("hello session test")
         return redirect('/')
 
-    @authorize(is_valid_user)
+    @authorize
     def logged_in(self):
         return "you are logged in"
 
