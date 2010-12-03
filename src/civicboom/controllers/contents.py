@@ -343,6 +343,7 @@ class ContentsController(BaseController):
         
         # -- Variables-- -------------------------------------------------------
         content_redirect = None
+        error            = None
         
         # -- Get Content -------------------------------------------------------
         if isinstance(id, Content):
@@ -397,6 +398,7 @@ class ContentsController(BaseController):
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
             content_redirect = url(controller='misc', action='upgrade_account') #payment url
+            error = action_error(_('operation requires account upgrade'), code=403)
 
         
         # -- Set Content fields ------------------------------------------------
@@ -438,7 +440,6 @@ class ContentsController(BaseController):
         
         # -- Publishing --------------------------------------------------------
         if submit_type == 'publish' and permissions['can_publish']:
-            content_redirect = url('content', id=content.id, prompt_aggregate=True)
             
             # Profanity Check --------------------------------------------------
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
@@ -472,6 +473,8 @@ class ContentsController(BaseController):
                 user_log.info("updated published Content #%d" % (content.id, ))
             if m:
                 content.creator.send_message_to_followers(m, delay_commit=True)
+                
+
 
 
         # -- Save to Database --------------------------------------------------
@@ -481,18 +484,24 @@ class ContentsController(BaseController):
         user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
         
         # -- Redirect ----------------------------------------------------------
-        
-        if submit_type == 'preview':
-            content_redirect = url('content', id=content.id)
-        if submit_type == 'response':
-            content_redirect = url('content', id=content.parent_id)
-        if content_redirect == None:
+
+        if not content_redirect:
+            if submit_type == 'publish' and permissions['can_publish']:
+                content_redirect = url('content', id=content.id, prompt_aggregate=True)
+            if submit_type == 'preview':
+                content_redirect = url('content', id=content.id)
+            if submit_type == 'response':
+                content_redirect = url('content', id=content.parent_id)
+        if not content_redirect:
             content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
         
         if c.format == 'redirect':
             return redirect(content_redirect)
         
-        return action_ok(_("_content updated"))
+        if error:
+            raise error
+        else:
+            return action_ok(_("_content updated"))
 
 
     @web

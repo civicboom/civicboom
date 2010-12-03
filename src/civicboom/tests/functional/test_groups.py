@@ -61,6 +61,15 @@ class TestGroupsController(TestController):
         self.group_id = int(c['data']['id'])
         assert self.group_id > 0
         
+        response = self.app.get(url('group', id=self.group_id, format='json'))
+        response_json = json.loads(response.body)
+        assert response_json['data']['member']['username']                   == 'test_group'
+        assert response_json['data']['member']['join_mode']                  == 'invite_and_request'
+        assert response_json['data']['member']['default_role']               == 'editor'
+        assert response_json['data']['member']['member_visability']          == 'public'
+        assert response_json['data']['member']['default_content_visability'] == 'public' 
+        
+        
 
     def subtest_create_invalid(self):
         response = self.app.post(

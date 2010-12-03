@@ -23,7 +23,9 @@ class AccountController(BaseController):
     
     # while not massively dangerous, posting an image with eg <img src="http://civicboom.com/account/signout">
     # is a common prank, so this needs authenticating
-    @authenticate_form
+    @web
+    @auth
+    #@authenticate_form
     def signout(self):
         """
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies

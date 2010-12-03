@@ -111,7 +111,7 @@ class GroupsController(BaseController):
         Session.add(group)
         Session.commit()
         
-        self.update(group.id) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
+        self.update(group.id, **kwargs) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
         
         return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)
 
