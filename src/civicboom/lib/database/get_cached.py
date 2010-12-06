@@ -4,7 +4,11 @@ from civicboom.model.media   import Media
 from civicboom.model.message import Message
 from civicboom.model.meta    import Session
 
-from sqlalchemy     import and_, or_, not_
+from sqlalchemy         import and_, or_, not_
+from sqlalchemy.orm.exc import NoResultFound
+
+import logging
+log = logging.getLogger(__name__)
 
 #-------------------------------------------------------------------------------
 # Cashe Management - Part 1
@@ -30,30 +34,36 @@ def get_licenses():
 
 # AllanC - primarly used in setup of test data, not normally used in main site operation
 def get_license(license):
+    license = license or u"Unspecified" # get_license(None) should return the default
+    assert type(license) == unicode
+
     try:
-        return Session.query(License).filter_by(code=unicode(license)).one()
-    except:
-        try:
-            return Session.query(License).filter_by(name=unicode(license)).one()
-        except:
+        return Session.query(License).filter_by(code=license).one()
+    except NoResultFound:
+        # Shish - as far as I can tell, we will never want to find by name; so
+        #         leave the unused code commented out until it is wanted
+        #try:
+        #    return Session.query(License).filter_by(name=unicode(license)).one()
+        #except NoResultFound:
             pass
     return None
 
 def get_member_nocache(member, search_email=False):
     assert type(member) in [int, str, unicode]
-    #if type(member) == int:
-    try:
-        return Session.query(Member).with_polymorphic('*').filter_by(id=int(member)).one()
-    except:
-        #pass
-    #else:
+
+    if type(member) == int or member.isdigit():
         try:
-            return Session.query(Member).with_polymorphic('*').filter_by(username=member).one()   
-        except:
+            return Session.query(Member).with_polymorphic('*').filter_by(id=int(member)).one()
+        except NoResultFound:
+            pass
+    else:
+        try:
+            return Session.query(Member).with_polymorphic('*').filter_by(username=member).one()
+        except NoResultFound:
             if search_email:
                 try:
                     return Session.query(User).filter_by(email=member).one()
-                except:
+                except NoResultFound:
                     pass
     return None
 
@@ -77,6 +87,10 @@ def get_group(group):
 def get_membership(group, member):
     member = get_member(member)
     group  = get_group(group)
+
+    if not (member and group):
+        return None
+
     try:
         return Session.query(GroupMembership).filter(
             and_(
@@ -84,7 +98,7 @@ def get_membership(group, member):
                 GroupMembership.member_id == member.id
             )
         ).one()
-    except:
+    except NoResultFound:
         return None
 
 def get_message(message):
@@ -93,8 +107,10 @@ def get_message(message):
 def get_content_nocache(content_id):
     #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried
     # could use .with_polymorphic([DraftContent, ArticleContent, AssignmentContent]), will see if this is needed
-    try   : return Session.query(Content).with_polymorphic('*').filter_by(id=content_id).one()
-    except: return None
+    try:
+        return Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
+    except NoResultFound:
+        return None
 
 def get_content(content):
     if not content:
@@ -111,13 +127,17 @@ def get_tag(tag):
     If it does not appear in the database then return a new tag object
     If it does exisit in the data then return the database object
     """
-    try   : return Session.query(Tag).filter_by(name=unicode(tag)).one()
-    except: return Tag(unicode(tag))
+    try:
+        return Session.query(Tag).filter_by(name=unicode(tag)).one()
+    except NoResultFound:
+        return Tag(unicode(tag))
 
 
 def get_media_nocache(media_id):
-    try   : return Session.query(Media).filter_by(id=media_id).one()
-    except: return None
+    try:
+        return Session.query(Media).filter_by(id=media_id).one()
+    except NoResultFound:
+        return None
 
 
 #-------------------------------------------------------------------------------
@@ -133,7 +153,8 @@ def update_member(member):
     etag_key_incement("member",member.id)
 
 def update_content(content):
-    if not issubclass(content.__class__,Content): content = get_content_nocache(content)
+    if not issubclass(content.__class__, Content):
+        content = get_content_nocache(content)
     
     etag_key_incement("content",content.id)
     #cache_test.invalidate(get_content, '', content.id)

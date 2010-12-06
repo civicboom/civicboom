@@ -15,11 +15,9 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     # Rate: Article
     #---------------------------------------------------------------------------
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
-    def rate(self, id, rating=None):
+    @web
+    @auth
+    def rate(self, id, rating=None, **kwargs):
         """
         POST /contents/{id}/rate: rate an article
 
@@ -42,10 +40,9 @@ class ContentActionsController(BaseController):
     # Boom: User Visable Content (to all followers)
     #---------------------------------------------------------------------------
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def boom(self, id, format="html"):
+    @web
+    @auth
+    def boom(self, id, **kwargs):
         """
         POST /contents/{id}/boom: alert your followers to an article
 
@@ -72,10 +69,9 @@ class ContentActionsController(BaseController):
     # Approve: Response Content (organisation only)
     #---------------------------------------------------------------------------
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def approve(self, id):
+    @web
+    @auth
+    def approve(self, id, **kwargs):
         """
         POST /contents/{id}/approve: claim an article for publishing
 
@@ -96,10 +92,9 @@ class ContentActionsController(BaseController):
     # Disassociate: Response Content (organistaion only)
     #---------------------------------------------------------------------------
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def disasociate(self, id):
+    @web
+    @auth
+    def disasociate(self, id, **kwargs):
         """
         POST /contents/{id}/disassociate: unlink an article from its parent
 
@@ -122,10 +117,9 @@ class ContentActionsController(BaseController):
     # Seen: Response Content (organisation only)
     #---------------------------------------------------------------------------
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def seen(self, id):
+    @web
+    @auth
+    def seen(self, id, **kwargs):
         """
         POST /contents/{id}/seen: mark response as seen
 
@@ -145,10 +139,9 @@ class ContentActionsController(BaseController):
     # Accept: Assignment
     #---------------------------------------------------------------------------
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def accept(self, id=None):
+    @web
+    @auth
+    def accept(self, id=None, **kwargs):
         """
         POST /contents/{id}/accept: accept an assignment
 
@@ -174,10 +167,9 @@ class ContentActionsController(BaseController):
     # Withdraw: from Assignment
     #---------------------------------------------------------------------------
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def withdraw(self, id=None):
+    @web
+    @auth
+    def withdraw(self, id=None, **kwargs):
         """
         POST /contents/{id}/witdraw: withdraw from an assignment
 
@@ -199,11 +191,9 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     # Flag
     #-----------------------------------------------------------------------------
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
-    def flag(self, id, type='offensive', comment=''):
+    @web
+    @auth
+    def flag(self, id, type='offensive', comment='', **kwargs):
         """
         POST /contents/{id}/flag: Flag this content as being inapproprate of copyright violoation
 
@@ -222,10 +212,9 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     # Add to Interest List
     #-----------------------------------------------------------------------------
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def add_to_interests(self, id):
+    @web
+    @auth
+    def add_to_interests(self, id, **kwargs):
         """
         POST /contents/{id}/add_to_interests: Flag this content as being interesting
         

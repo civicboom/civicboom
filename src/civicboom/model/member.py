@@ -110,12 +110,15 @@ class Member(Base):
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
     name            = Column(Unicode(250),   nullable=False, default=u"")
     join_date       = Column(Date(),         nullable=False, default=func.now())
-    num_followers   = Column(Integer(),      nullable=False, default=0, doc="Controlled by postgres trigger")
     webpage         = Column(Unicode(),      nullable=True,  default=None)
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(Unicode(250),   nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
     location_home   = Golumn(Point(2),       nullable=True)
+
+    num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    num_unread_notifications = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
@@ -134,9 +137,10 @@ class Member(Base):
 
     # Content relation shortcuts
     #content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
-    content_assignments = relationship("AssignmentContent")
-    content_articles    = relationship(   "ArticleContent")
-    content_drafts      = relationship(     "DraftContent")
+    
+    #content_assignments = relationship("AssignmentContent")
+    #content_articles    = relationship(   "ArticleContent")
+    #content_drafts      = relationship(     "DraftContent")
     
     #See civicboom_init.py
     # content
@@ -263,6 +267,11 @@ class Member(Base):
     def add_to_interests(self, content):
         from civicboom.lib.database.actions import add_to_interests
         return add_to_interests(self, content)
+        
+    def can_publish_assignment(self):
+        # AllanC - could be replaced with some form of 'get_permission('publish') ??? we could have lots of permissiong related methods ... just a thought
+        from civicboom.lib.civicboom_lib import can_publish_assignment
+        return can_publish_assignment(self)
 
 GeometryDDL(Member.__table__)
 

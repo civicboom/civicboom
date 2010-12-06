@@ -2,8 +2,8 @@
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent
-from civicboom.lib.database.get_cached import get_content, update_content, get_licenses
+from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent
+from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license
 from civicboom.model.content           import _content_type as content_types
 
 # Other imports
@@ -20,8 +20,9 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
-from sqlalchemy           import or_, and_
-from sqlalchemy.orm       import join
+from sqlalchemy           import or_, and_, null
+from sqlalchemy.orm       import join, joinedload
+import datetime
 
 
 # Logging setup
@@ -51,6 +52,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     # Assignment Fields
     due_date    = formencode.validators.DateConverter(not_empty=False, month_style='dd/mm/yyyy')
     event_date  = formencode.validators.DateConverter(not_empty=False, month_style='dd/mm/yyyy')
+    default_response_license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     # TODO: need date validators to check date is in future (and not too far in future as well)
 
 
@@ -101,6 +103,18 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
 #-------------------------------------------------------------------------------
 # Search Filters
 #-------------------------------------------------------------------------------
+
+def _normalize_member(member):
+    if isinstance(member, Member):
+        member = member.id
+    else:
+        try:
+            member = int(member)
+        except:
+            member = member
+    return member
+
+
 def _init_search_filters():
     def append_search_text(query, text):
         return query.filter(or_(Content.title.match(text), Content.content.match(text)))
@@ -126,14 +140,17 @@ def _init_search_filters():
     def append_search_type(query, type_text):
         return query.filter(Content.__type__==type_text)
     
-    def append_search_creator(query, creator_text):
-        try:
-            return query.filter(Content.creator_id==int(creator_text))
-        except:
-            return query.filter(Member.username==creator_text)
+    def append_search_creator(query, creator):
+        creator = _normalize_member(creator)
+        if isinstance(creator, int):
+            return query.filter(Content.creator_id==creator)
+        else:
+            return query.filter(Member.username==creator)
     
-    def append_search_response_to(query, article_id):
-        return query.filter(Content.parent_id==int(article_id))
+    def append_search_response_to(query, content_id):
+        if isinstance(content_id, Content):
+            content_id = content_id.id
+        return query.filter(Content.parent_id==int(content_id))
 
     
     search_filters = {
@@ -150,6 +167,18 @@ def _init_search_filters():
 search_filters = _init_search_filters()
 
 
+list_filters = {
+    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null())) ,
+    'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
+    'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
+    'articles'            : lambda results: results.filter(Content.__type__=='article') ,
+    'drafts'              : lambda results: results.filter(Content.__type__=='draft') ,
+    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type!='none')),
+}
+
+
+    
+    
 
 #-------------------------------------------------------------------------------
 # Content Controler
@@ -164,10 +193,8 @@ class ContentsController(BaseController):
     # To properly map this controller, ensure your config/routing.py
     # file has a resource setup:
     #     map.resource('content', 'contents')
-
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
+    
+    @web
     def index(self, **kwargs):
         """
         GET /contents: All items in the collection
@@ -177,36 +204,57 @@ class ContentsController(BaseController):
         """
         # url('contents')
         
-        results = Session.query(Content).select_from(join(Content, Member, Content.creator))
-        results = results.filter(and_(Content.__type__!='comment', Content.visible==True, Content.private==False)) #Content.__type__!='draft'
-        results = results.order_by(Content.id.desc()) # Setup base content search query - this is mirroed in the member propery content_public
+        # Permissions
+        # AllanC - to aid cacheing we need permissions to potentially be a decorator
+        logged_in_creator = False
+        if 'creator' in kwargs and c.logged_in_persona:
+            kwargs['creator'] = _normalize_member(kwargs['creator']) # normalize creator
+            if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
+                logged_in_creator = True
         
+        # Setup search criteria
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20
         if 'offset' not in kwargs:
             kwargs['offset'] = 0
         if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = ",creator"
+            kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = ",creator_id"
+            kwargs['exclude_fields'] = ""
+        if 'creator' not in kwargs:
+            kwargs['include_fields'] += ",creator"
+            kwargs['exclude_fields'] += ",creator_id"
         if 'list_type' not in kwargs:
             #kwargs['list_type'] = 'default'
             if c.format == 'rss':                       # Default RSS to list_with_media
                 kwargs['include_fields'] += ',attachments'
         
+        # Build Search
+        results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*'). #Content.__type__!='draft'
+        results = results.filter(and_(Content.__type__!='comment', Content.visible==True)) 
+        if 'force_public_only' in kwargs or not logged_in_creator:
+            results = results.filter(Content.private==False)
+        if 'creator' in kwargs['include_fields']:
+            results = results.options(joinedload('creator'))
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
+        if 'list' in kwargs:
+            if kwargs['list'] in list_filters:
+                results = list_filters[kwargs['list']](results)
+            else:
+                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+        results = results.order_by(Content.id.desc()) # id order is also date created order, we dont need to index the date created field as well
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
+        # Return search results
         return action_ok(
-            data     = {'list': [content.to_dict(**kwargs) for content in results.all()]} ,
-        ) # return dictionaty of content to be formatted
+            data = {'list': [content.to_dict(**kwargs) for content in results.all()]} ,
+        )
 
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def new(self):
+    @web
+    @auth
+    def new(self, **kwargs):
         """
         GET /contents/new: Form to create a new item
 
@@ -216,14 +264,12 @@ class ContentsController(BaseController):
         #url_for('new_content')
         
         # AllanC TODO - needs restructure - see create
-        content_id = ContentsController().create()['data']['id']
+        content_id = ContentsController().create(**kwargs)['data']['id']
         return redirect(url('edit_content', id=content_id))
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def create(self, type='draft', **kwargs):
         """
         POST /contents: Create a new item
@@ -242,16 +288,29 @@ class ContentsController(BaseController):
         # Create Content Object
         if   type == 'draft':
             content = DraftContent()
-        elif type == "comment":
+        elif type == 'comment':
             content = CommentContent()
-        elif type == "article":
+        elif type == 'article':
             content = ArticleContent()
-        elif type == "assignment":
+        elif type == 'assignment':
             content = AssignmentContent()
         
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
         
+        # If a license isn't explicitly set, use the parent's preference
+        parent_id  = kwargs.get('parent_id')
+        license_id = kwargs.get('license_id')
+        if parent_id and not license_id:
+            parent = get_content(parent_id)
+            if parent and parent.__type__ == 'assignment' and parent.default_response_license:
+                content.license = parent.default_response_license
+
+        # comments are always owned by the writer; ignore settings
+        # and parent preferences
+        if type == 'comment':
+            content.license = get_license(None)
+
         # Commit to database to get ID field
         # DEPRICATED
         #Session.add(content)
@@ -259,17 +318,15 @@ class ContentsController(BaseController):
         # AllanC - if the update fails on validation we do not want a ghost record commited
         
         # Use update behaviour to save and commit object
-        update_response = self.update(id=content) # no need to pass kwargs as these are reaquired from request.params
+        update_response = self.update(id=content, **kwargs)
         if update_response['status'] != 'ok':
             return update_response
         
         return action_ok(message=_('_content created ok'), data={'id':content.id}, code=201)
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
-    @authenticate_form
+    @web
+    @auth
     def update(self, id, **kwargs):
         """
         PUT /contents/{id}: Update an existing item
@@ -284,6 +341,10 @@ class ContentsController(BaseController):
         """
         # url('content', id=ID)
         
+        # -- Variables-- -------------------------------------------------------
+        content_redirect = None
+        error            = None
+        
         # -- Get Content -------------------------------------------------------
         if isinstance(id, Content):
             content = id
@@ -291,10 +352,6 @@ class ContentsController(BaseController):
             content = _get_content(id, is_editable=True)
         assert content
         
-        # -- Publish Permission-------------------------------------------------
-        # TODO - need to check role in group to see if they have permissions to do this
-        # TODO - Publish Permission for groups (to be part of is editable?)
-        # return 403
 
         # -- Decode Action -----------------------------------------------------
         # AllanC - could this be turned into a validator?
@@ -320,20 +377,39 @@ class ContentsController(BaseController):
         data       = {'content':kwargs}
         data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
         kwargs     = data['content']
+
+        # Normalize 'type'
+        starting_content_type = content.__type__
+        if submit_type == 'publish' and 'type' not in kwargs: # If publishing set 'type' (as this is submitted from the form as 'target_type')
+            if hasattr(content, 'target_type'):
+                kwargs['type'] = content.target_type
+            if 'target_type' in kwargs:
+                kwargs['type'] = kwargs['target_type']
+
+
+        # -- Publish Permission-------------------------------------------------
+        # TODO - need to check role in group to see if they have permissions to do this
+        # TODO - Publish Permission for groups (to be part of is editable?)
+        # return 403
+        # some permissions like permissions['can_publish'] are related to payment, we want to still save the data, but we might not want to go through with the whole publish procedure
+        permissions = {}
+        permissions['can_publish'] = True
+        
+        if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
+            permissions['can_publish'] = False
+            content_redirect = url(controller='misc', action='upgrade_account') #payment url
+            error = action_error(_('operation requires account upgrade'), code=403)
+
         
         # -- Set Content fields ------------------------------------------------
         
         # TODO: dont allow licence type change after publication - could this be part of validators?
         
         # Morph Content type - if needed (only appropriate for data already in DB)
-        starting_content_type = content.__type__
-        if submit_type == 'publish' and 'type' not in kwargs: # If publishing set 'type' (as this is submitted from the form as 'target_type')
-            if hasattr(content, 'target_type'):
-                kwargs['type'] = content.target_type
-            if 'target_type' in kwargs:
-                kwargs['type'] = kwargs['target_type']                
         if 'type' in kwargs:
-            content = morph_content_to(content, kwargs['type'])
+            #AllanC - logic bug?! with this if statement we cant downgrade content from assignmes to drafts
+            if kwargs['type']!='draft' and permissions['can_publish']:
+                content = morph_content_to(content, kwargs['type'])
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
@@ -363,7 +439,8 @@ class ContentsController(BaseController):
             #Session.add(media) # is this needed as it is appended to content and content is in the session?
         
         # -- Publishing --------------------------------------------------------
-        if submit_type == 'publish':
+        if submit_type == 'publish' and permissions['can_publish']:
+            
             # Profanity Check --------------------------------------------------
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
@@ -396,33 +473,40 @@ class ContentsController(BaseController):
                 user_log.info("updated published Content #%d" % (content.id, ))
             if m:
                 content.creator.send_message_to_followers(m, delay_commit=True)
+                
+
 
 
         # -- Save to Database --------------------------------------------------
-        Session.add(content)     
+        Session.add(content)
         Session.commit()
         update_content(content)  #   Invalidate any cache associated with this content
         user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
         
         # -- Redirect ----------------------------------------------------------
-        content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
-        if submit_type == 'preview':
-            content_redirect = url('content', id=content.id)
-        if submit_type ==  'publish':
-            content_redirect = url('content', id=content.id, prompt_aggregate=True)
-        if submit_type == 'response':
-            content_redirect = url('content', id=content.parent_id)
+
+        if not content_redirect:
+            if submit_type == 'publish' and permissions['can_publish']:
+                content_redirect = url('content', id=content.id, prompt_aggregate=True)
+            if submit_type == 'preview':
+                content_redirect = url('content', id=content.id)
+            if submit_type == 'response':
+                content_redirect = url('content', id=content.parent_id)
+        if not content_redirect:
+            content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
         
         if c.format == 'redirect':
             return redirect(content_redirect)
         
-        return action_ok(_("_content updated"))
+        if error:
+            raise error
+        else:
+            return action_ok(_("_content updated"))
 
 
-    @auto_format_output
-    @authorize(is_valid_user)
-    @authenticate_form
-    def delete(self, id):
+    @web
+    @auth
+    def delete(self, id, **kwargs):
         """
         DELETE /contents/{id}: Delete an existing item
 
@@ -438,8 +522,7 @@ class ContentsController(BaseController):
         return action_ok(_("_content deleted"), code=200)
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def show(self, id, **kwargs):
         """
         GET /content/{id}: Show a specific item
@@ -482,9 +565,8 @@ class ContentsController(BaseController):
         return action_ok(data=data)
 
 
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
+    @web
+    @authorize
     def edit(self, id, **kwargs):
         """
         GET /contents/{id}/edit: Form to edit an existing item

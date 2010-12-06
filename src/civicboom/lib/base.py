@@ -18,8 +18,9 @@ from civicboom.model.meta              import Session
 from civicboom.model                   import meta
 from civicboom.lib.web                 import redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership
+from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
-from civicboom.lib.authentication      import authorize, is_valid_user
+from civicboom.lib.authentication      import authorize
 
 
 import json
@@ -38,11 +39,15 @@ __all__ = [
     "abort", "redirect", "action_ok", "action_error", "render",
 
     # decorators
-    "https", "authenticate_form",
+    "https",
+    "authorize", 
+    "authenticate_form",
     "auto_format_output",
-    "authorize", "is_valid_user",
-    "cacheable",
     "web_params_to_kwargs",
+    "cacheable",
+    "web",
+    "auth",
+    
 
     # i18n
     "_", "ungettext", "set_lang",
@@ -56,16 +61,40 @@ __all__ = [
     "BaseController",
     "authentication_token",
     "redirect_to_referer", #TODO? potential for removal?
-    "get_member", "get_group",
+    "get_member", "get_group", #AllanC - should be used with cuation, we need to be careful about permissions
     "logging",
+    
+    #cache
+    "gen_cache_key"
 ]
 
 #-------------------------------------------------------------------------------
 # Render
 #-------------------------------------------------------------------------------
-def render(*args, **kargs):
-    if app_globals.cache_enabled: return render_mako(*args, **kargs)
-    else                        : return render_mako(*args, **kargs)
+def render(*args, **kwargs):
+    if app_globals.cache_enabled:
+        return render_mako(*args, **kwargs)
+    else:
+        if 'cache_key'    in kwargs: del kwargs['cache_key']
+        if 'cache_expire' in kwargs: del kwargs['cache_expire']
+        return render_mako(*args, **kwargs)
+
+#-------------------------------------------------------------------------------
+# Decorators - Merged
+#-------------------------------------------------------------------------------
+
+# Reference - http://stackoverflow.com/questions/2182858/how-can-i-pack-serveral-decorators-into-one
+
+def chained(*dec_funs):
+    def _inner_chain(f):
+        for dec in reversed(dec_funs):
+            f = dec(f)
+        return f
+    return _inner_chain
+
+web  = chained(auto_format_output, web_params_to_kwargs)
+auth = chained(authorize, authenticate_form)
+
 
 #-------------------------------------------------------------------------------
 # Base Controller
@@ -85,13 +114,12 @@ class BaseController(WSGIController):
         c.action     = current_request.get("action")
         c.id         = current_request.get("id")
         
-        c.format     = None
-        #AllanC - c.format now handled by @auto_format_output in lib
-        
         c.result = {'status':'ok', 'message':'', 'data':{}}
         c.scripts_end = []
-        
-        c.authenticated_form = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
+
+        c.format               = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
+        c.authenticated_form   = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
+        c.web_params_to_kwargs = None
 
 
         # Login - Fetch logged in user from session id (if present)

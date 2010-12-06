@@ -37,11 +37,11 @@
             host=app_globals.site_host, protocol='http',
             controller='widget', action='main',
             widget_username = member,
-            widget_theame   ='light',
+            widget_theme    ='light',
             widget_title    = _('%s insight: Share your news and opinion' % member),
-            widget_width    = '240', widget_height='370'
+            widget_width    = '240', widget_height='300'
         )}'
-        width='240' height='370' scrolling='no' frameborder='0'>'
+        width='240' height='300' scrolling='no' frameborder='0'>'
     <a href='${h.url(host=app_globals.site_host, controller='members', action='show', id=member)}'>
         ${_('%ss _assigments on _site_name' % member)}
     </a>
@@ -107,7 +107,7 @@
       
       <fieldset><legend>${_("Size")}</legend>
         <label>${_('Width')} </label><input type="text" name="width"  value="240" size="3" /><br/>
-        <label>${_('Height')}</label><input type="text" name="height" value="370" size="3" />
+        <label>${_('Height')}</label><input type="text" name="height" value="300" size="3" />
       </fieldset>
   
       <input type="button" value="Preview Widget" onClick="generate_widget_link();" />
@@ -118,8 +118,8 @@
         var link = ""
         link += "<iframe name='${_("_site_name")}' title='${_("_site_name Widget")}' src='http://${app_globals.site_host}/widget/main?";
         link += "widget_username="+Url.encode("${member}")+"&";
-        if (document.widget_customisation.theme[0].checked) {link += "widget_theame=light&";}
-        if (document.widget_customisation.theme[1].checked) {link += "widget_theame=dark&" ;}
+        if (document.widget_customisation.theme[0].checked) {link += "widget_theme=light&";}
+        if (document.widget_customisation.theme[1].checked) {link += "widget_theme=dark&" ;}
         link += "widget_title="+Url.encode(document.widget_customisation.title.value)+"&";
         var width  = document.widget_customisation.width.value
         var height = document.widget_customisation.height.value

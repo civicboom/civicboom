@@ -92,20 +92,21 @@ class Content(Base):
     num_responses   = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
     num_comments    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
     
-    # FIXME: remote_side is confusing, and do we want to cascade to delete replies?
-    # AllanC - see civicboom_init.py for 'responsese'
-    #responses       = relationship("Content",            backref=backref('parent', remote_side=id, order_by=creation_date), primaryjoin=and_("Content.id == Content.parent_id") )  #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content
-                                   #,or_("Content.__type__!='comment'","Content.__type__!='draft'")    # foreign_keys=["Content.id"]
-    
-    parent          = relationship("Content", primaryjoin=parent_id==id, remote_side=id)
-    creator         = relationship("Member" , primaryjoin="Content.creator_id==Member.id")
+    # FIXME: remote_side is confusing?
+    # AllanC - it would be great to just have 'parent', we get a list of responses from API (contnte_lists.repnses)
+    #          however :( without the 'responses' relationship deleting content goes nuts about orphas
+    # Shish  - do we want to cascade to delete replies?
+    # AllanC - we want to cascade deleting of comments, but not full responses. Does the 'comments' cascade below over this?
+    responses       = relationship("Content",  primaryjoin=id==parent_id, backref=backref('parent', remote_side=id, order_by=creation_date))
+    #parent          = relationship("Content", primaryjoin=parent_id==id, remote_side=id)
+    creator         = relationship("Member" , primaryjoin="Content.creator_id==Member.id", backref=backref('content'))
     
     attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
     license         = relationship("License")
 
-    comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id == Content.parent_id") #, cascade="all" AllanC - coulbe be dangerious, may need to consider more carefully delete behaviour for differnt types of content    
+    comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id == Content.parent_id")
     flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
 
     # used by obj_to_dict to create a string dictonary representation of this object
@@ -126,7 +127,7 @@ class Content(Base):
             'num_responses': None ,
             'num_comments' : None ,
             'tags'         : lambda content: "implement tags" ,
-            'license_id'   : None ,
+            'license_id'   : lambda content: content.license.code if content.license else None ,
             'private'      : None ,
             'edit_lock'    : None ,
         },
@@ -147,8 +148,8 @@ class Content(Base):
     })
     del __to_dict__['full']['content_short']
     del __to_dict__['full']['parent_id']
-    del __to_dict__['full']['license_id']
     del __to_dict__['full']['creator_id']
+    del __to_dict__['full']['license_id']
     
     
     
@@ -263,7 +264,11 @@ class Content(Base):
 
     @property
     def content_short(self):
-        return truncate(self.content, length=100)
+        """
+        AllanC TODO: Derived field?
+        """
+        from civicboom.lib.text import strip_html_tags
+        return truncate(strip_html_tags(self.content), length=100)
 
     @property
     def location_string(self):
@@ -438,6 +443,11 @@ class AssignmentContent(UserVisibleContent):
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
+    default_response_license_id = Column(Integer(), ForeignKey('license.id'), nullable=False, default=1)
+    #num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
+
+    default_response_license    = relationship("License")
+
     
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
@@ -445,6 +455,8 @@ class AssignmentContent(UserVisibleContent):
             'due_date'              : None ,
             'event_date'            : None ,
             'closed'                : None ,
+            'num_accepted'          : None ,
+            'default_response_license': lambda content: content.license.code if content.license else None ,
     }
     __to_dict__['default'     ].update(_extra_assignment_fields)
     __to_dict__['full'        ].update(_extra_assignment_fields)
@@ -512,11 +524,10 @@ class AssignmentContent(UserVisibleContent):
     @property
     def num_accepted(self):
         """
-        TODO
+        AllanC - TODO: Performance!
         To be replaced with derived field with DB trigger or update_assignment call
-        accepted_by is set after the db is setup in civicboom_init
         """
-        return len(accepted_by)
+        return len([a for a in self.assigned_to if a.status=='accepted'])
 
 
 class MemberAssignment(Base):

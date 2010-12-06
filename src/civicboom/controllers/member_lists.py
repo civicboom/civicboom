@@ -1,5 +1,7 @@
 from civicboom.lib.base import *
 from civicboom.controllers.members import _get_member
+from civicboom.controllers.contents import ContentsController
+content_search = ContentsController().index
 
 from civicboom.lib.misc import update_dict
 
@@ -7,31 +9,17 @@ log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 
-#-------------------------------------------------------------------------------
-# Constants
-#-------------------------------------------------------------------------------
-
-# AllanC - TODO: these SQLAlchemy links should be deprecated in preference to actual content searches
-content_lists = {
-    'content'             : lambda member: member.content ,
-    'content_public'      : lambda member: member.content_public ,
-    'assignments_active'  : lambda member: member.content_assignments_active ,
-    'assignments_previous': lambda member: member.content_assignments_previous,
-    'assignments'         : lambda member: member.content_assignments ,
-    'articles'            : lambda member: member.content_articles ,
-    'drafts'              : lambda member: member.content_drafts ,
-    #'accepted_assignments': lambda member: member.accepted_assignments ,
-}
-
 
 
 #-------------------------------------------------------------------------------
 # Controller
 #-------------------------------------------------------------------------------
 class MemberListsController(BaseController):
+    """
+    @comment AllanC the id value given to these lists could be str, int or loaded object
+    """
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def actions(self, id, **kwargs):
         """
         GET /members/{name}/actions: actions the current user can perform on this member
@@ -49,8 +37,7 @@ class MemberListsController(BaseController):
 
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def followers(self, id, **kwargs):
         """
         GET /members/{name}/followers: get a list of followers
@@ -67,8 +54,7 @@ class MemberListsController(BaseController):
         return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.followers]})
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def following(self, id, **kwargs):
         """
         GET /members/{name}/following: get a list of members the user is following
@@ -85,8 +71,7 @@ class MemberListsController(BaseController):
         return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.following]})
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def content(self, id, **kwargs):
         """
         GET /members/{name}/content: get a list content (including private if current user)
@@ -106,35 +91,13 @@ class MemberListsController(BaseController):
                 list   array of content objects
         @return 404   member not found
         """
-        if 'list' not in kwargs:
-            kwargs['list'] = 'content'
-        if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = 'creator'
-        
-        member = _get_member(id)
-        
-        # AllanC - I dont like this ...
-        #          we want people to be able to filter the lists from the API ... but as we just call the SQLAlchemy links we cant tell what data is public or private
-        #          we need a more sophisticated method of doing this, maybe leveraging a new search with public=true
-        #          content_lists (above) should be refactored?
-        if member != c.logged_in_persona:
-            kwargs['list'] = 'content_public'
-        
-        list = kwargs['list']
-        if list not in content_lists:
-            raise action_error(_('list type %s not supported') % list, code=400)
-            
-        contents = content_lists[list](member)
-        contents = [content.to_dict(**kwargs) for content in contents]
-        
-        return action_ok(data={'list': contents})
+        return content_search(creator=id, **kwargs)
 
 
     def _groups_list_dict(self, group_roles, **kwargs):
         return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def groups(self, id, **kwargs):
         member = _get_member(id)
         
@@ -148,8 +111,7 @@ class MemberListsController(BaseController):
 
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def assignments_accepted(self, id, **kwargs):
         member = _get_member(id)
         #if member != c.logged_in_user:
@@ -158,8 +120,7 @@ class MemberListsController(BaseController):
         return action_ok(data={'list': contents})
 
 
-    @auto_format_output
-    @web_params_to_kwargs
+    @web
     def members(self, id, **kwargs):
         """
         groups only

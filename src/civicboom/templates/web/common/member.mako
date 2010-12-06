@@ -33,14 +33,14 @@
             
             
             ## TODO - onClick javascript AJAX id card:
-			<a class="info icon icon_userid" href="${h.url('member', id=member['username'])}" title="${_("click for more info about %s" % member['username'])}"><span>more</span></a>
+            <a class="info icon icon_userid" href="${h.url('member', id=member['username'])}" title="${_("click for more info about %s" % member['username'])}"><span>more</span></a>
             
-			% if c.logged_in_persona and c.logged_in_persona.username != member['username']:
-            % if c.logged_in_persona.is_following(member['username']):
-            ${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
-            % else:
-            ${h.secure_link(url('member_action', action='follow'  , id=member['username'], format='redirect'), _(' '), title=_("Follow %s" % member['username']),         css_class="follow_action icon icon_follow"  )}
-            % endif
+            % if not c.logged_in_persona or (c.logged_in_persona and c.logged_in_persona.username != member['username']):
+                % if c.logged_in_persona and c.logged_in_persona.is_following(member['username']):
+                ${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
+                % else:
+                ${h.secure_link(url('member_action', action='follow'  , id=member['username'], format='redirect'), _(' '), title=_("Follow %s" % member['username']),         css_class="follow_action icon icon_follow"  )}
+                % endif
             % endif
 		</div>
 		% endif

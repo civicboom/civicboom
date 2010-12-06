@@ -22,7 +22,7 @@
     ${member_includes.avatar(group , show_name=True, show_follow_button=True, show_join_button=show_join_button)}
     
     % if permission_edit:
-        <a href="${h.url('new_group')}">edit</a>
+        <a href="${h.url('edit_group', id=group['username'])}">edit</a>
     % endif
     
     <h2>details</h2>

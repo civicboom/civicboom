@@ -23,6 +23,9 @@
             ${member_includes.avatar(d['member'] , show_name=True, show_follow_button=True, class_='large')}
         </div>
     
+	<h2>Widget</h2>
+	    <p><a href='${url(controller='misc', action='widget_preview')}'>widget preview</a></p>
+    
         <h2>${_("Following")}</h2>
             <div id="following">
             % if d['following']:

@@ -9,7 +9,7 @@ class MediaController(BaseController):
     #-----------------------------------------------------------------------------
     # Upload Media
     #-----------------------------------------------------------------------------
-    #@authorize(is_valid_user)
+    #@authorize
     def upload_media(self, id=None):
         """
         With javascript/flash additional media can be uploaded individually

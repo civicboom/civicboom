@@ -1,90 +1,273 @@
+# vim: set fileencoding=utf8:
+
 from civicboom.tests import *
+import json
+import warnings
 
 class TestContentsController(TestController):
+    def test_all(self):
+        self.part_setup()
+
+        self.part_index()
+        self.part_index_as_xml()
+        self.part_content_results()
+        self.part_content_results_rss()
+        self.part_content_results_json()
+        self.part_content_no_results()
+        self.part_content_no_query()
+        self.part_content_rss()
+        self.part_content_location()
+        self.part_content_location_radius()
+        self.part_content_type()
+        self.part_content_author()
+        self.part_content_response_to()
+        self.part_can_show_own_article()
+        self.part_can_show_someone_elses_article()
+        self.part_can_show_own_draft()
+        self.part_cant_show_someone_elses_draft()
+        self.part_cant_show_comment_that_doesnt_exist()
+        self.part_cant_show_individual_comment()
+        self.part_show_as_xml()
+
+        self.part_new_redirects_to_edit()
+        self.part_comment_has_no_license()
+        self.part_comment_has_no_license_even_if_specified_and_parent_has_preference()
+        self.part_response_has_parent_preference_license_by_default()
+        self.part_response_has_own_license_if_specified()
+        self.part_cant_create_comment_without_parent()
+        self.part_cant_comment_on_something_that_doesnt_exist()
+        self.part_cant_comment_on_what_cant_be_seen()
+
+        self.part_edit()
+        self.part_edit_as_xml()
+        self.part_edit_no_perm()
+        self.part_edit_no_exist()
+        self.part_can_update_article_owned_by_group_i_am_admin_of()
+        self.part_can_update_article_owned_by_group_i_am_member_of()
+        self.part_can_update_own_article()
+        self.part_cant_update_someone_elses_article()
+        self.part_cant_update_article_that_doesnt_exist()
+
+        self.part_can_delete_own_article()
+        self.part_cant_delete_someone_elses_article()
+        self.part_cant_delete_article_that_doesnt_exist()
+        self.part_can_delete_article_owned_by_group_i_am_admin_of()
+
+
+    def part_setup(self):
+        self.log_in_as("unittest")
+
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test article by the test user",
+                'type': "article",
+                'content': """
+ここにいくつかのテキストです。
+وهنا بعض النص.
+这里是一些文字。
+הנה כמה טקסט.
+εδώ είναι ένα κείμενο.
+यहाँ कुछ पाठ है.
+здесь некий текст.
+여기에 일부 텍스트입니다.
+דאָ איז עטלעכע טעקסט.
+""",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.my_article_id = json.loads(response.body)["data"]["id"]
+
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test draft by the test user",
+                'content': "a test draft",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.my_draft_id = json.loads(response.body)["data"]["id"]
+
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test comment by the test user",
+                'type': 'comment',
+                'parent_id': self.my_article_id,
+                'content': "a test comment",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.my_comment_id = json.loads(response.body)["data"]["id"]
+
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "Assignment for the world to see",
+                'type': 'assignment',
+                'content': "a test assignment",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.my_assignment_id = json.loads(response.body)["data"]["id"]
+
+
+        self.log_in_as("unitfriend")
+
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'type': 'article',
+                'title': "A test article by unitfriend",
+                'content': "Here is some text",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.his_article_id = json.loads(response.body)["data"]["id"]
+
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test draft by the test user",
+                'content': "a test draft",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.his_draft_id = json.loads(response.body)["data"]["id"]
+
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test comment by unitfriend",
+                'type': 'comment',
+                'parent_id': self.my_article_id,
+                'content': "a test comment",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.his_comment_id = json.loads(response.body)["data"]["id"]
+
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "There once was an assignment by unitfriend",
+                'type': 'assignment',
+                'content': "with suggestion of CC-PD",
+                'license': 'CC-PD',
+                'location': "1.0707 51.2999",
+            },
+            status=201
+        )
+        self.my_assignment_id = json.loads(response.body)["data"]["id"]
+
+        self.log_in_as("unittest")
+
 
     ## index -> show #########################################################
 
-    def test_index(self):
+    def part_index(self):
         response = self.app.get(url('formatted_contents', format="json"))
         # Test response...
 
-    def test_index_as_xml(self):
+    def part_index_as_xml(self):
         response = self.app.get(url('formatted_contents', format='xml'))
 
 
-    def test_can_show_own_article(self):
-        response = self.app.get(url('content', id=1))
+    def part_can_show_own_article(self):
+        response = self.app.get(url('content', id=self.my_article_id))
 
-    def test_can_show_someone_elses_article(self):
-        response = self.app.get(url('content', id=1))
+    def part_can_show_someone_elses_article(self):
+        response = self.app.get(url('content', id=self.his_article_id))
 
-    def test_can_show_own_draft(self):
-        response = self.app.get(url('content', id=3))
+    def part_can_show_own_draft(self):
+        response = self.app.get(url('content', id=self.my_draft_id))
 
-    def test_cant_show_someone_elses_draft(self):
-        response = self.app.get(url('content', id=4), status=403)
+    def part_cant_show_someone_elses_draft(self):
+        response = self.app.get(url('content', id=self.his_draft_id), status=403)
 
-    def test_cant_show_comment_that_doesnt_exist(self):
+    def part_cant_show_comment_that_doesnt_exist(self):
         response = self.app.get(url('content', id=0), status=404)
 
-    def test_cant_show_individual_comment(self):
+    def part_cant_show_individual_comment(self):
         # comments should not be shown individually -- or should they? With threaded comments,
         # linking to a subthread may be useful
-        response = self.app.get(url('content', id=5), status=302)
+        response = self.app.get(url('content', id=self.my_comment_id), status=302)
         # AllanC - currently redirects to parent ... could be considered in the future with threaded comments (see Shish's comment)
 
-    def test_show_as_xml(self):
-        response = self.app.get(url('formatted_content', id=1, format='xml'))
+    def part_show_as_xml(self):
+        response = self.app.get(url('formatted_content', id=self.my_article_id, format='xml'))
 
 
     ##########################################################################
     # Content search
     ##########################################################################
 
-    def test_content_results(self):
-        response = self.app.get(url('contents', query='someone'))
-        assert "A test article by someone else" in response
+    def part_content_results(self):
+        response = self.app.get(url('contents', query='test'))
+        assert "A test article by unitfriend" in response
         assert "Friend" in response
         assert "0 responses" in response
 
-    def test_content_results_rss(self):
-        response = self.app.get(url('contents', format="rss", query='someone'))
-        assert "A test article by someone else" in response
+    def part_content_results_rss(self):
+        response = self.app.get(url('contents', format="rss", query='test'))
+        assert "A test article by unitfriend" in response
         assert "Friend" in response
 
-    def test_content_results_json(self):
-        response = self.app.get(url('contents', format="json", query='someone'))
-        assert "A test article by someone else" in response
+    def part_content_results_json(self):
+        response = self.app.get(url('contents', format="json", query='test'))
+        assert "A test article by unitfriend" in response
         assert "Friend" in response
 
-    def test_content_no_results(self):
+    def part_content_no_results(self):
         response = self.app.get(url('contents', query='cake'))
         # FIXME: term is no longer used in output
         #assert "'cake' did not match any articles" in response
 
-    def test_content_no_query(self):
+    def part_content_no_query(self):
         response = self.app.get(url('contents'))
 
-    def test_content_rss(self):
+    def part_content_rss(self):
         response = self.app.get(url('contents', format='xml'))
 
-    def test_content_location(self):
+    def part_content_location(self):
         response = self.app.get(url('contents', location='1,51'))
         assert "Here is some text" in response
 
-    def test_content_location_radius(self):
+    def part_content_location_radius(self):
         response = self.app.get(url('contents', location='1,51,10'))
         assert "Here is some text" in response
 
-    def test_content_type(self):
+    def part_content_type(self):
         response = self.app.get(url('contents', type='assignment'))
         assert "There once was" in response
 
-    def test_content_author(self):
+    def part_content_author(self):
         response = self.app.get(url('contents', author='unittest'))
         assert "Assignment for the world to see" in response
 
-    def test_content_response_to(self):
+    def part_content_response_to(self):
         response = self.app.get(url('contents', response_to=2))
         # FIXME: create a response as test data
         #assert "something" in response
@@ -93,7 +276,7 @@ class TestContentsController(TestController):
     ## new -> create #########################################################
 
     # new requires auth as it creates something
-    def test_new_redirects_to_edit(self):
+    def part_new_redirects_to_edit(self):
         response = self.app.post(
             url('new_content'),
             params={
@@ -102,45 +285,19 @@ class TestContentsController(TestController):
             status=302
         )
 
-    def test_create_comment(self):
-        response = self.app.post(
-            url('contents', format="json"),
-            params={
-                '_authentication_token': self.auth_token,
-                'title': "a response",
-                'parent_id': "1",
-                'type': "comment",
-                'content': 'content of a test comment',
-            },
-            status=201
-        )
+    def part_comment_has_no_license(self):
+        warnings.warn("test not implemented")
 
-    def test_direct_create_draft(self):
-        response = self.app.post(
-            url('contents', format="json"),
-            params={
-                '_authentication_token': self.auth_token,
-                'title': "a response",
-                'parent_id': "1",
-                'type': "draft",
-                'content': 'content of a test draft',
-            },
-            status=201
-        )
+    def part_comment_has_no_license_even_if_specified_and_parent_has_preference(self):
+        warnings.warn("test not implemented")
 
-    def test_direct_create_article(self):
-        response = self.app.post(
-            url('contents', format="json"),
-            params={
-                '_authentication_token': self.auth_token,
-                'title': "a response",
-                'type': "article",
-                'content': 'content of a directly-created article',
-            },
-            status=201
-        )
+    def part_response_has_parent_preference_license_by_default(self):
+        warnings.warn("test not implemented")
 
-    def test_cant_create_comment_without_parent(self):
+    def part_response_has_own_license_if_specified(self):
+        warnings.warn("test not implemented")
+
+    def part_cant_create_comment_without_parent(self):
         response = self.app.post(
             url('contents', format="json"),
             params={
@@ -153,7 +310,7 @@ class TestContentsController(TestController):
         )
         assert 'invalid' in response
 
-    def test_cant_comment_on_something_that_doesnt_exist(self):
+    def part_cant_comment_on_something_that_doesnt_exist(self):
         response = self.app.post(
             url('contents', format="json"),
             params={
@@ -167,68 +324,59 @@ class TestContentsController(TestController):
         )
         assert 'invalid' in response
 
-    def test_cant_comment_on_what_cant_be_seen(self):
+    def part_cant_comment_on_what_cant_be_seen(self):
         response = self.app.post(
             url('contents', format="json"),
             params={
                 '_authentication_token': self.auth_token,
                 'title': "a response",
-                'parent_id': "4",
+                'parent_id': self.his_draft_id,
                 'type': "comment",
                 'content': 'content of a test comment',
             },
             status=400
         )
 
-    def test_can_update_article_owned_by_group_i_am_admin_of(self):
-        pass
+    def part_can_update_article_owned_by_group_i_am_admin_of(self):
+        warnings.warn("test not implemented")
 
-    def test_can_update_article_owned_by_group_i_am_member_of(self):
-        pass
+    def part_can_update_article_owned_by_group_i_am_member_of(self):
+        warnings.warn("test not implemented")
 
 
     ## edit -> update ########################################################
 
-    def test_edit(self):
-        response = self.app.get(url('edit_content', id=1))
+    def part_edit(self):
+        response = self.app.get(url('edit_content', id=self.my_article_id))
 
-    def test_edit_as_xml(self):
-        response = self.app.get(url('formatted_edit_content', id=1, format='xml'))
+    def part_edit_as_xml(self):
+        response = self.app.get(url('formatted_edit_content', id=self.my_article_id, format='xml'))
 
-    def test_edit_no_perm(self):
-        response = self.app.get(url('edit_content', id=2), status=403)
+    def part_edit_no_perm(self):
+        response = self.app.get(url('edit_content', id=self.his_article_id), status=403)
 
-    def test_edit_no_exist(self):
+    def part_edit_no_exist(self):
         response = self.app.get(url('edit_content', id=0), status=404)
 
 
-    def test_can_update_own_article(self):
+    def part_can_update_own_article(self):
         response = self.app.put(
-            url('content', id=1, format='json'),
+            url('content', id=self.my_article_id, format='json'),
             params={
                 '_authentication_token': self.auth_token
             }
         )
 
-    def test_update_browser_fakeout(self):
-        response = self.app.post(
-            url('content', id=1, format='json'),
-            params={
-                "_method": 'put',
-                '_authentication_token': self.auth_token
-            }
-        )
-
-    def test_cant_update_someone_elses_article(self):
+    def part_cant_update_someone_elses_article(self):
         response = self.app.put(
-            url('content', id=2),
+            url('content', id=self.his_article_id),
             params={
                 '_authentication_token': self.auth_token
             },
             status=403
         )
 
-    def test_cant_update_article_that_doesnt_exist(self):
+    def part_cant_update_article_that_doesnt_exist(self):
         response = self.app.put(
             url('content', id=0),
             params={
@@ -240,35 +388,25 @@ class TestContentsController(TestController):
 
     ## delete ################################################################
 
-    def test_can_delete_own_article(self):
+    def part_can_delete_own_article(self):
         response = self.app.delete(
-            url('content', id=8, format="json"),
+            url('content', id=self.my_article_id, format="json"),
             params={
                 '_authentication_token': self.auth_token
             },
             status=200
         )
 
-    def test_delete_browser_fakeout(self):
-        response = self.app.post(
-            url('content', id=9, format="json"),
-            params={
-                "_method": 'delete',
-                '_authentication_token': self.auth_token
-            },
-            status=200
-        )
-
-    def test_cant_delete_someone_elses_article(self):
+    def part_cant_delete_someone_elses_article(self):
         response = self.app.delete(
-            url('content', id=2, format="json"),
+            url('content', id=self.his_article_id, format="json"),
             params={
                 '_authentication_token': self.auth_token
             },
             status=403
         )
 
-    def test_cant_delete_article_that_doesnt_exist(self):
+    def part_cant_delete_article_that_doesnt_exist(self):
         response = self.app.delete(
             url('content', id=0, format="json"),
             params={
@@ -277,5 +415,5 @@ class TestContentsController(TestController):
             status=404
         )
 
-    def test_can_delete_article_owned_by_group_i_am_admin_of(self):
-        pass
+    def part_can_delete_article_owned_by_group_i_am_admin_of(self):
+        warnings.warn("test not implemented")

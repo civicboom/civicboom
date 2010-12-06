@@ -10,7 +10,7 @@ from civicboom.lib.database.get_cached import get_membership
 from civicboom.model      import User, UserLogin, Member
 from civicboom.model.meta import Session
 
-from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url
+from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url, current_referer
 from civicboom.lib.helpers import url_from_widget
 
 # Other imports
@@ -86,52 +86,67 @@ def is_valid_user(u):
 #          do we always want logged_in users to always use HTTPS?
 #          what about the https() decorator on signin paying attention to config['ssl']
 protocol_for_login   = "https"
-protocol_after_login = "http"
+protocol_after_login = "https"
+if 'https' in config:
+    if   config['https'] == 'default_when_logged_in':
+        pass
+    elif config['https'] == 'disabled':
+        protocol_for_login   = "http"
+        protocol_after_login = "http"
+        log.warn('https disabled')
+    elif config['https'] == 'login_process_only':
+        protocol_after_login = "http"
+    elif config['https'] == 'enforce_when_logged_in':
+        # TODO:
+        # AllanC - this should be equivelent of putting https on the top of every method call, we force logged in users to use https by forcefully redirecting them
+        log.info('config[https]=enforce_when_logged_in is set and is currenlty not implemented')
+    
 
-def authorize(authenticator):
+@decorator
+def authorize(_target, *args, **kwargs):
     """
     Check if logged in user has been set
     If not sends you to a login page
     Once you log in, it sends you back to the original url call.
     """
-    @decorator
-    def wrapper(_target, *args, **kwargs):
+    # CHECK Loggin in
+    if c.logged_in_user: #authenticator(
+        # Reinstate any session encoded POST data if this is the first page since the login_redirect
+        if not session_get('login_redirect'):
+            json_post = session_remove('login_redirect_post')
+            if json_post:
+                kwargs.update(json.loads(json_post))
+                print "overlay post"
+                # AllanC - now unneeded - we dont need a user confirm as we can overlay post data over kwargs
+                #post_overlay = json.loads(json_post)
+                #c.target_url = current_url()
+                #c.post_values = post_overlay
+                #from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
+                #return render("web/misc/confirmpost.mako")
 
-        # CHECK Loggin in
-        if authenticator(c.logged_in_user):
-            # Reinstate any session encoded POST data if this is the first page since the login_redirect
-            if not session_get('login_redirect'):
-                json_post = session_remove('login_redirect_post')
-                if json_post:
-                    post_overlay = json.loads(json_post)
-                    c.target_url = current_url()
-                    c.post_values = post_overlay
-                    from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
-                    return render("web/misc/confirmpost.mako")
+        # Make original method call
+        result = _target(*args, **kwargs)
+        return result
 
-            # Make original method call
-            result = _target(*args, **kwargs)
-            return result
+    # ELSE Unauthorised
+    else:
+        # If request was a browser - prompt for login    
+            #raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
+        if c.format=="redirect":
+            session_set('login_action_referer', current_referer(protocol=protocol_after_login), 60 * 10)
+            # The redirect auto formater looked for this and redirects as appropriate
+        if c.format == "html" or c.format == "redirect":
+            session_set('login_redirect', current_url(protocol=protocol_after_login), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+            # save the the session POST data to be reinstated after the redirect
+            if request.POST:
+                session_set('login_redirect_post', json.dumps(multidict_to_dict(request.POST)), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                print "saving post"
+            return redirect(url_from_widget(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
 
-        # ELSE Unauthorised
+        # If API request - error unauthorised
         else:
-            # If request was a browser - prompt for login
-            if c.format == "redirect":
-                #TODO
-                raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
-            if c.format == "html":
-                redirect_url = current_url()
-                session_set('login_redirect'     , redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
-                # save the the session POST data to be reinstated after the redirect
-                if request.POST:
-                    session_set('login_redirect_post', json.dumps(multidict_to_dict(request.POST)), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
-                return redirect(url_from_widget(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
+            raise action_error(message="unauthorised", code=403) #Error to be formared by auto_formatter
 
-            # If API request - error unauthorised
-            else:
-                raise action_error(message="unauthorised", code=403) #Error to be formared by auto_formatter
-
-    return wrapper
 
 def login_redirector():
     """
@@ -149,7 +164,6 @@ def signin_user(user, login_provider=None):
     user_log.info("logged in with %s" % login_provider)   # Log user login
     #session_set('user_id' , user.id      ) # Set server session variable to user.id
     session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
-    #set_persona(user)
     response.set_cookie(
         "civicboom_logged_in", "True",
         int(config["beaker.session.timeout"]),

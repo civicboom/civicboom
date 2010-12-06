@@ -37,22 +37,29 @@ def multidict_to_dict(multidict):
 #-------------------------------------------------------------------------------
 # Redirect Referer
 #-------------------------------------------------------------------------------
+
+def current_referer(protocol=None):
+    #AllanC TODO - needs to enforce prosocol change - for login actions
+    return request.environ.get('HTTP_REFERER')
+
+def current_host(protocol=None):
+    if not protocol:
+        protocol = request.environ.get('HTTP_X_URL_SCHEME', 'http')
+    return  protocol + "://" + request.environ.get('HTTP_HOST')
+
+def current_url(protocol=None):
+    target_url = current_host(protocol) + request.environ.get('PATH_INFO')
+    if 'QUERY_STRING' in request.environ:
+        target_url += '?'+request.environ.get('QUERY_STRING')
+    return target_url
+
 def redirect_to_referer():
-    url_to = request.environ.get('HTTP_REFERER') or '/'
+    url_to = session_remove('login_action_referer') or current_referer() or '/'
     if url_to == url.current(): # Detect if we are in a redirection loop and abort
         log.warning("Redirect loop detected for "+str(url_to))
         #redirect('/')
     #print "yay redirecting to %s" % url_to
     return redirect(url_to)
-
-def current_host():
-    return request.environ.get('HTTP_X_URL_SCHEME', 'http') + "://" + request.environ.get('HTTP_HOST')
-
-def current_url():
-    target_url = current_host() + request.environ.get('PATH_INFO')
-    if 'QUERY_STRING' in request.environ:
-        target_url += '?'+request.environ.get('QUERY_STRING')
-    return target_url
 
 
 #-------------------------------------------------------------------------------
@@ -362,14 +369,15 @@ def auto_format_output(target, *args, **kwargs):
 #-------------------------------------------------------------------------------
 
 @decorator
-def authenticate_form(func, *args, **kwargs):
+def authenticate_form(target, *args, **kwargs):
     """
     slightly hacked version of pylons.decorators.secure.authenticated_form to
     support authenticated PUT and DELETE requests
     """
-    if c.authenticated_form: return func(*args, **kwargs) # If already authenticated, pass through
+    if c.authenticated_form:
+        return target(*args, **kwargs) # If already authenticated, pass through
     
-    request = get_pylons(args).request
+    request  = get_pylons(args).request
     response = get_pylons(args).response
 
     # XXX: Shish - the body is not parsed for PUT or DELETE, so parse it ourselves
@@ -387,11 +395,18 @@ def authenticate_form(func, *args, **kwargs):
         abort(500)
 
     # check for auth token in POST or other  # check params for PUT and DELETE cases
-    if authenticated_form(request.POST) or authenticated_form(param_dict):
-        if authenticated_form(request.POST):
+    if secure_form.token_key in request.POST:
+        param_dict[secure_form.token_key] = request.POST[secure_form.token_key]
+    if secure_form.token_key in kwargs:
+        param_dict[secure_form.token_key] = kwargs[secure_form.token_key]
+    if authenticated_form(param_dict): #authenticated_form(request.POST) or 
+        #if authenticated_form(request.POST):
+        if secure_form.token_key in request.POST:
             del request.POST[secure_form.token_key]
+        if secure_form.token_key in kwargs:
+            del kwargs[secure_form.token_key]
         c.authenticated_form = True
-        return func(*args, **kwargs)
+        return target(*args, **kwargs)
 
     # no token = can't be sure the user really intended to post this, ask them
     else:
@@ -469,6 +484,10 @@ def web_params_to_kwargs(target, *args, **kwargs):
     ->>> print test(1)
     -1 4
     """
+    if c.web_params_to_kwargs:
+        return target(*args, **kwargs) # If already processed, pass through
+    
+    
     arg_names = target.func_code.co_varnames[:target.func_code.co_argcount]
     params = request.params
     new_args = []
@@ -498,4 +517,6 @@ def web_params_to_kwargs(target, *args, **kwargs):
 
     #user_log.info("calling "+target.func_name+", given param names, defaults, kwargs, web params are "+pformat(arg_names)+pformat(args)+pformat(kwargs)+pformat(params))
     #user_log.info("calling "+target.func_name+", now have param values and kwargs "+pformat(new_args)+pformat(new_kwargs))
+    c.web_params_to_kwargs = (new_args, new_kwargs)
     return target(*new_args, **new_kwargs) # Execute the wrapped function
+

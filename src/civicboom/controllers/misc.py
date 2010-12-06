@@ -36,6 +36,11 @@ class MiscController(BaseController):
     def credits(self):
         return action_ok()
 
+    @cacheable(time=600)
+    @auto_format_output
+    def upgrade_account(self):
+        return action_ok()
+
     def widget_preview(self, id=None):
         if not id: id = "unittest"
         c.widget_user_preview = get_member(id)

@@ -1,6 +1,9 @@
 from civicboom.lib.base import _, action_error
 import formencode
 
+import logging
+log = logging.getLogger(__name__)
+
 def validate_dict(data, schema, dict_to_validate_key=None, template_error=None):
     # Prepare dict to validate
     if dict_to_validate_key==None and len(data.keys())==1: #If dict only contains 1 key then validate that one key
@@ -33,6 +36,8 @@ def validate_dict(data, schema, dict_to_validate_key=None, template_error=None):
         #print data
         
         # Raise Validation Error
+        import pprint
+        log.debug("Validation fail:" + pprint.pformat(data))
         raise action_error(
             status   = 'invalid' ,
             code     = 400 ,

@@ -103,14 +103,17 @@ class SettingsController(BaseController):
         """GET /: All items in the collection."""
         return self.show(None)
     
+    @auto_format_output
     def create(self):
         """POST /: Create a new item."""
         raise action_error(_('operation not supported'), code=501)
     
+    @auto_format_output
     def new(self):
         """GET /new: Form to create a new item."""
         raise action_error(_('operation not supported'), code=501)
     
+    @auto_format_output
     def delete(self, id):
         """
         DELETE /id: Delete an existing item.
@@ -127,9 +130,9 @@ class SettingsController(BaseController):
     #---------------------------------------------------------------------------
     # REST Action - EDIT/SHOW
     #---------------------------------------------------------------------------
-    @auto_format_output
-    @authorize(is_valid_user)
-    def edit(self, id):
+    @web
+    @authorize
+    def edit(self, id, **kwargs):
         """GET /id;edit: Form to edit an existing item."""
         
         user = c.logged_in_persona
@@ -155,9 +158,8 @@ class SettingsController(BaseController):
     # REST Action - UPDATE
     #---------------------------------------------------------------------------
     
-    @auto_format_output
-    @web_params_to_kwargs
-    @authorize(is_valid_user)
+    @web
+    @authorize
     def update(self, id, **kwargs):
         """
         PUT /id: Update an existing item.
@@ -227,13 +229,13 @@ class SettingsController(BaseController):
 # Old Settings Reference
 #---------------------------------------------------------------------------
 """
-    @authorize(is_valid_user)
+    @authorize
     def general(self, id=None):
         c.viewing_user = c.logged_in_persona
         return render("web/settings/general.mako")
 
     @https()
-    @authorize(is_valid_user)
+    @authorize
     @authenticate_form
     def save_general(self, id=None, format="html"):
         c.viewing_user = c.logged_in_persona
@@ -285,12 +287,12 @@ class SettingsController(BaseController):
 
         return action_ok(_("Settings saved"))#+", ".join(request.POST.keys())
 
-    @authorize(is_valid_user)
+    @authorize
     def messages(self, id=None):
         c.viewing_user = c.logged_in_persona
         return render("web/settings/messages.mako")
 
-    @authorize(is_valid_user)
+    @authorize
     @authenticate_form
     def save_messages(self, id=None, format="html"):
         c.viewing_user = c.logged_in_persona
@@ -310,12 +312,12 @@ class SettingsController(BaseController):
 
         return action_ok(_("Settings saved"))
 
-    @authorize(is_valid_user)
+    @authorize
     def location(self, id=None):
         c.viewing_user = c.logged_in_persona
         return render("web/settings/location.mako")
 
-    @authorize(is_valid_user)
+    @authorize
     @authenticate_form
     def save_location(self, id=None, format="html"):
         if "location" in request.POST:

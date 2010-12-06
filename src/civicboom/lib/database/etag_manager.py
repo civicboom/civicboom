@@ -57,7 +57,9 @@ def gen_cache_key(**kargs):
         seek_value = str(kargs[key])
         if seek_value in etag_key: cache_key+=str(etag_key[seek_value])+"-"
         else                     : cache_key+=                         "X-"
-    if not app_globals.cache_enabled: log.debug('Cache disabled: eTag hash generated from: %s' % cache_key)
+    if not app_globals.cache_enabled:
+        log.debug('Cache disabled: eTag hash generated from: %s' % cache_key)
     cache_key = hashlib.md5(cache_key).hexdigest()
-    if app_globals.cache_enabled: etag_cache(cache_key)
+    if app_globals.cache_enabled:
+        etag_cache(cache_key)
     return cache_key

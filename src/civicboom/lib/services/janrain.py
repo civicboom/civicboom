@@ -20,8 +20,15 @@ def janrain(method, **kargs):
     """
     kargs['apiKey'] = config['api_key.janrain']
     kargs['format'] = 'json'
-    http_response  = urllib2.urlopen(service_url+method, urllib.urlencode(kargs))
-    janrain_python = json.loads(http_response.read())
+    
+    try:
+        http_response  = urllib2.urlopen(service_url+method, urllib.urlencode(kargs), timeout=10)
+        janrain_python = json.loads(http_response.read())
+        http_response.close()
+    except:
+        log.error('network error')
+        return None
+    
     if janrain_python['stat'] != 'ok':
         log.error(janrain_python['err']['msg'])
         return None

@@ -318,6 +318,23 @@
                 %>
                 <p>${_("Due Date:")}   <input id="datepicker1" type="date" name="due_date"   value="${due_date}"></p>
                 <p>${_("Event Date:")} <input id="datepicker2" type="date" name="event_date" value="${event_date}"></p>
+                <p>${_("Response License:")}
+				<table>
+				<% from civicboom.lib.database.get_cached import get_licenses %>
+				% for license in get_licenses():
+					<tr>
+					<%
+					 license_selected = ''
+					 if c.content.__type__ == "assigment" and c.content.default_response_license and license.id == c.content.default_response_license_id:
+						 license_selected = h.literal('checked="checked"')
+					%>
+					<td><input id="licence_${license.code}" type="radio" name="default_response_license_id" value="${license.code}" ${license_selected} /></td>
+					<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a></td>
+					<td><label for="licence_${license.code}">${license.description}</label></td>
+					</tr>
+					##${popup(_(license.description))}
+				% endfor
+				</table>
             </div>
         </div>
 

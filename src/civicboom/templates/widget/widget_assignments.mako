@@ -1,9 +1,9 @@
 <%inherit file="./widget_border.mako"/>
 
 ##<%namespace name="widget_assignment_includes"   file="widget_assignment.mako"/>
+<% assignments = c.result['data']['list'] %>
 
-
-% if len(c.assignments) == 0:
+% if len(assignments) == 0:
     % if c.widget_owner == c.logged_in_persona:
         <p style="margin: 0.5em;">
             ${_("Set an _assignment to have it appear here on your widget")}
@@ -18,7 +18,7 @@
 % else:
     <div class="widget_content_assignment_list">
         <ul>
-            ${widget_assignments(c.assignments)}
+            ${widget_assignments(assignments)}
         </ul>
     </div>
 % endif
@@ -30,15 +30,17 @@
 </%def>
 
 <%def name="widget_assignment(assignment)">
-    <li class="widget_item_popup">
-        <a href="${h.url_from_widget(controller='widget',action='assignment',id=assignment.id)}">
-            <img src="${assignment.thumbnail_url}"/>
-            <span>${assignment.title}</span>
+    <li>
+        <div class="test">
+        <a href="${h.url_from_widget(controller='widget',action='assignment',id=assignment['id'])}">
+            <img src="${assignment['thumbnail_url']}"/>
+            <span>${assignment['title']}</span>
             <div class="clearboth_hack"></div>
             ##&#8220; &#8221;
             ##<div class="popup_content widget_content">
             ##  ${widget_assignment_includes.widget_assignment(assignment)}
             ##</div><!--end popup-->
         </a>
+        </div>
       </li>
 </%def>
