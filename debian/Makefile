@@ -1,12 +1,12 @@
-all: cb-website.deb cb-website-web.deb cb-website-db.deb python-cbmisc.deb
+all: cb-website.deb cb-website-web.deb cb-website-api.deb cb-website-db.deb python-cbmisc.deb
 
 VERSION := $(shell git describe)
 
 cb-website.deb: $(shell find ../admin_scripts ../docs ../nginx ../selenium ../src -type f)
 	rm -rf fs-website
 	mkdir -p fs-website/DEBIAN/
-	cp control fs-website/DEBIAN/control
-	cp postinst fs-website/DEBIAN/postinst
+	cp api/control fs-website/DEBIAN/control
+	cp api/postinst fs-website/DEBIAN/postinst
 	sed -i s/VERSION/${VERSION}/ fs-website/DEBIAN/control
 	mkdir -p fs-website/opt/cb/bin
 	cp ../admin_scripts/* ./fs-website/opt/cb/bin/
@@ -16,7 +16,7 @@ cb-website.deb: $(shell find ../admin_scripts ../docs ../nginx ../selenium ../sr
 	cp -r ../src/* ./fs-website/opt/cb/share/website/
 	cd ./fs-website/opt/cb/share/website/ && python setup.py compile_catalog
 	mkdir -p fs-website/etc/cron.d
-	cp crontab fs-website/etc/cron.d/cb-website
+	cp api/crontab fs-website/etc/cron.d/cb-website
 	mkdir -p fs-website/etc/init.d
 	cp api/init.d fs-website/etc/init.d/cb-website
 	cd fs-website/opt/cb/share/website/civicboom/public/javascript/ && make
@@ -25,7 +25,30 @@ cb-website.deb: $(shell find ../admin_scripts ../docs ../nginx ../selenium ../sr
 	fakeroot dpkg -b fs-website cb-website_${VERSION}_all.deb 
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
-cb-website-web.deb: $(shell find web ../nginx)
+cb-website-api.deb: $(shell find ../admin_scripts ../docs ../nginx ../selenium ../src -type f)
+	rm -rf fs-api
+	mkdir -p fs-api/DEBIAN/
+	cp api/control fs-api/DEBIAN/control
+	cp api/postinst fs-api/DEBIAN/postinst
+	sed -i s/VERSION/${VERSION}/ fs-api/DEBIAN/control
+	mkdir -p fs-api/opt/cb/bin
+	cp ../admin_scripts/* ./fs-api/opt/cb/bin/
+	mkdir -p fs-api/opt/cb/share/doc/website
+	cp -r ../docs/* ./fs-api/opt/cb/share/doc/website/
+	mkdir -p fs-api/opt/cb/share/website
+	cp -r ../src/* ./fs-api/opt/cb/share/website/
+	cd ./fs-api/opt/cb/share/website/ && python setup.py compile_catalog
+	mkdir -p fs-api/etc/cron.d
+	cp api/crontab fs-api/etc/cron.d/cb-website
+	mkdir -p fs-api/etc/init.d
+	cp api/init.d fs-api/etc/init.d/cb-website
+	cd fs-api/opt/cb/share/website/civicboom/public/javascript/ && make
+	cd fs-api/opt/cb/share/website/civicboom/public/styles/ && make
+	../admin_scripts/site_to_english ../src/civicboom/i18n/en/LC_MESSAGES/civicboom.po
+	fakeroot dpkg -b fs-api cb-website-api_${VERSION}_all.deb 
+	ln -sf cb-website-api_${VERSION}_all.deb cb-website-api.deb
+
+cb-website-web.deb: $(shell find ../nginx)
 	rm -rf fs-web
 	mkdir -p fs-web/DEBIAN
 	cp web/control fs-web/DEBIAN/control
