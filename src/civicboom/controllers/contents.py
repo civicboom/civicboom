@@ -270,7 +270,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
-    def create(self, type='draft', **kwargs):
+    def create(self, **kwargs):
         """
         POST /contents: Create a new item
 
@@ -285,14 +285,18 @@ class ContentsController(BaseController):
         """
         # url('contents') + POST
         
+        # type MUST be passed in kwargs as this is relayed on to the sub calls. If it is missing from the call to update this breaks some of the permissions checks
+        if 'type' not in kwargs:
+            kwargs['type'] = 'draft'
+        
         # Create Content Object
-        if   type == 'draft':
+        if   kwargs['type'] == 'draft':
             content = DraftContent()
-        elif type == 'comment':
+        elif kwargs['type'] == 'comment':
             content = CommentContent()
-        elif type == 'article':
+        elif kwargs['type'] == 'article':
             content = ArticleContent()
-        elif type == 'assignment':
+        elif kwargs['type'] == 'assignment':
             content = AssignmentContent()
         
         # Set create to currently logged in user
@@ -398,7 +402,7 @@ class ContentsController(BaseController):
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
             content_redirect = url(controller='misc', action='upgrade_account') #payment url
-            error = action_error(_('operation requires account upgrade'), code=403)
+            error            = action_error(_('operation requires account upgrade'), code=403)
 
         
         # -- Set Content fields ------------------------------------------------

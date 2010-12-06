@@ -342,26 +342,10 @@ def profanity_filter(content, delay_commit=False):
 # Paid for feature: Assignment Limiter
 #-------------------------------------------------------------------------------
 def can_publish_assignment(member):
-    def last_assignment_date(member, limit=3):
-        try:
-            assignments = Session.query(AssignmentContent).filter(AssignmentContent.creator_id == member.id).order_by(AssignmentContent.id.desc()).limit(limit).all()
-            if len(assignments)>=limit:
-                return assignments[-1].creation_date
-            # order_by(AssignmentContent.creation_date.desc())
-        except:
-            pass
-        return None
-    #AllanC - TODO - check member payment level to acertain what the limit is - set limit to this users level
-    # if not member.payment_level:
-    #   limit = 3
-    # if member.payment_level==premium:
-    #   limit = 10
-    # if member.payment_level==corporate:
-    #   limit = 0
-    limit = 3
-    if not limit:
-        return True
-    d = last_assignment_date(member,limit)
-    if d and d > (datetime.datetime.now() - datetime.timedelta(days=30)):
-        return False
-    return True
+    #def last_assignments_in_days(member, days=30):
+    #    try:
+    #        return Session.query(AssignmentContent).filter(and_(AssignmentContent.creator_id == member.id, AssignmentContent.creation_date > (datetime.datetime.now() - datetime.timedelta(days=days)))).order_by(AssignmentContent.update_date.desc()).all()
+    #    except:
+    #        pass
+    #    return None
+    pass

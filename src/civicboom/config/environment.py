@@ -72,6 +72,12 @@ def load_environment(global_conf, app_conf):
     for varname in boolean_varnames:
         config[varname] = asbool(config[varname])
 
+    # Integers in config file
+    integer_varnames = ['payment.free.assignment_limit',
+                        ]
+    for varname in integer_varnames:
+        config[varname] = int(config[varname].strip())
+    
 
     # worker and websetup.py both try to access pylons.config before it is
     # officially ready -- so make it unofficially ready and pray (HACK)

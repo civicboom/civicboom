@@ -36,6 +36,10 @@ def init():
 
     """
     
+    period_in_days = 30
+    
+    Member.active_assignments_period  = relationship(AssignmentContent, primaryjoin=and_(AssignmentContent.creator_id == Member.id, AssignmentContent.creation_date > (datetime.datetime.now() - datetime.timedelta(days=period_in_days))), order_by=AssignmentContent.update_date.desc())
+    
     Member.interest = dynamic_loader(Content,
                                         primaryjoin=Member.id==Interest.member_id,
                                         secondary=Interest.__table__,
