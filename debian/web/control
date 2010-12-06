@@ -1,0 +1,6 @@
+Package: cb-website-web
+Version: VERSION
+Architecture: all
+Maintainer: Shish <shish@civicboom.com>
+Pre-Depends: nginx(>=0.8)
+Description: The settings for the nginx civicboom front-end

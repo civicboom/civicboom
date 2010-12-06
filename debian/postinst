@@ -1,12 +1,5 @@
 #!/bin/sh
 
-ln -sf /etc/nginx/sites-available/civicboom.com /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
-
-if [ ! -d /var/log/civicboom ] ; then
-	mkdir /var/log/civicboom
-	chown www-data:www-data /var/log/civicboom
-fi
 if [ ! -d /tmp/cb-website-temp ] ; then
 	mkdir /tmp/cb-website-temp
 	chown www-data:www-data /tmp/cb-website-temp
@@ -14,7 +7,6 @@ fi
 
 update-rc.d cb-website defaults
 invoke-rc.d cb-website start
-invoke-rc.d nginx restart
 
 cd /opt/cb/share/website
 find -name "*.pyc" | xargs rm -f

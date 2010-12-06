@@ -13,7 +13,7 @@ server {
 	listen 80;
 	listen 443 default ssl;
 	server_name .civicboom.com localhost _;
-	access_log /var/log/civicboom/nginx.log;
+	access_log /var/log/nginx/civicboom.log;
 	root /opt/cb/share/website/civicboom/public/;
 	error_page 500 502 503 504 /errors/50x.html;
 	client_max_body_size 25m;

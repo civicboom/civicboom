@@ -1,4 +1,4 @@
-all: cb-website.deb python-cbmisc.deb
+all: cb-website.deb cb-website-web.deb python-cbmisc.deb
 
 VERSION := $(shell git describe)
 
@@ -15,19 +15,28 @@ cb-website.deb: $(shell find ../admin_scripts ../docs ../nginx ../selenium ../sr
 	mkdir -p fs-website/opt/cb/share/website
 	cp -r ../src/* ./fs-website/opt/cb/share/website/
 	cd ./fs-website/opt/cb/share/website/ && python setup.py compile_catalog
-	mkdir -p fs-website/etc/nginx/sites-available/
-	cp ../nginx/civicboom.com fs-website/etc/nginx/sites-available/
 	mkdir -p fs-website/etc/cron.d
 	cp crontab fs-website/etc/cron.d/cb-website
 	mkdir -p fs-website/etc/init.d
-	cp init.d fs-website/etc/init.d/cb-website
-	mkdir -p fs-website/opt/cb/etc/ssl
-	cp ../ssl/* fs-website/opt/cb/etc/ssl/
+	cp api/init.d fs-website/etc/init.d/cb-website
 	cd fs-website/opt/cb/share/website/civicboom/public/javascript/ && make
 	cd fs-website/opt/cb/share/website/civicboom/public/styles/ && make
 	../admin_scripts/site_to_english ../src/civicboom/i18n/en/LC_MESSAGES/civicboom.po
 	fakeroot dpkg -b fs-website cb-website_${VERSION}_all.deb 
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
+
+cb-website-web.deb: $(shell find web ../nginx)
+	rm -rf fs-web
+	mkdir -p fs-web/DEBIAN
+	cp web/control fs-web/DEBIAN/control
+	cp web/postinst fs-web/DEBIAN/postinst
+	sed -i s/VERSION/${VERSION}/ fs-web/DEBIAN/control
+	mkdir -p fs-web/etc/nginx/sites-available/
+	cp ../nginx/civicboom.com fs-web/etc/nginx/sites-available/
+	mkdir -p fs-web/opt/cb/etc/ssl
+	cp ../ssl/* fs-web/opt/cb/etc/ssl/
+	fakeroot dpkg -b fs-web cb-website-web_${VERSION}_all.deb 
+	ln -sf cb-website-web_${VERSION}_all.deb cb-website-web.deb
 
 python-cbmisc.deb: ../src/setup.py
 	mkdir -p fs-env/DEBIAN/
