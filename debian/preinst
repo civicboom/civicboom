@@ -1,2 +1,0 @@
-#!/bin/bash
-#(mysqldump -uindiconews -pindiconews indiconews | bzip2 > /root/indiconews-`date +%Y%m%d.%H%M%S`.sql.bz2) || true
