@@ -1,4 +1,4 @@
-all: cb-website.deb cb-website-web.deb python-cbmisc.deb
+all: cb-website.deb cb-website-web.deb cb-website-db.deb python-cbmisc.deb
 
 VERSION := $(shell git describe)
 
@@ -37,6 +37,16 @@ cb-website-web.deb: $(shell find web ../nginx)
 	cp ../ssl/* fs-web/opt/cb/etc/ssl/
 	fakeroot dpkg -b fs-web cb-website-web_${VERSION}_all.deb 
 	ln -sf cb-website-web_${VERSION}_all.deb cb-website-web.deb
+
+cb-website-db.deb: $(shell find db)
+	rm -rf fs-db
+	mkdir -p fs-db/DEBIAN
+	cp db/control fs-db/DEBIAN/control
+	mkdir -p fs-db/etc/cron.d
+	cp db/crontab fs-db/etc/cron.d/cb-website-db
+	sed -i s/VERSION/${VERSION}/ fs-db/DEBIAN/control
+	fakeroot dpkg -b fs-db cb-website-db_${VERSION}_all.deb 
+	ln -sf cb-website-db_${VERSION}_all.deb cb-website-db.deb
 
 python-cbmisc.deb: ../src/setup.py
 	mkdir -p fs-env/DEBIAN/
