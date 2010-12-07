@@ -52,7 +52,7 @@ cb-website-web.deb: $(shell find ../nginx)
 cb-website-db.deb: $(shell find db)
 	rm -rf fs-db
 	mkdir -p fs-db/DEBIAN
-	cp db/control fs-db/DEBIAN/control
+	cp db/* fs-db/DEBIAN/
 	mkdir -p fs-db/etc/cron.d
 	cp db/crontab fs-db/etc/cron.d/cb-website-db
 	sed -i s/VERSION/${VERSION}/ fs-db/DEBIAN/control

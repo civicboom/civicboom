@@ -1,0 +1,12 @@
+#!/bin/sh
+
+. /usr/share/debconf/confmodule
+
+if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
+	db_get cb-website-db/do_backups
+	if [ "$RET" = "false" ] ; then
+		rm -f /etc/cron.d/cb-website-db
+	fi
+fi
+
+db_stop
