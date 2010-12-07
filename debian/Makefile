@@ -12,7 +12,7 @@ cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
 	echo "Depends: cb-website-web, cb-website-api, cb-website-db" >> fs-meta/DEBIAN/control
 	echo "Description: a metapackage to get the whole civicboom server" >> fs-meta/DEBIAN/control
 	echo ================================================ >/dev/null
-	fakeroot dpkg -b fs-meta cb-website_${VERSION}.deb
+	fakeroot dpkg -b fs-meta cb-website_${VERSION}_all.deb
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
 cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -type f)
