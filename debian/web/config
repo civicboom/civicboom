@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+. /usr/share/debconf/confmodule
+
+if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
+  db_input high cb-website-web/backends || true
+  db_go
+fi

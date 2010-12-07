@@ -41,8 +41,7 @@ cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -ty
 cb-website-web.deb: $(shell find ../nginx)
 	rm -rf fs-web
 	mkdir -p fs-web/DEBIAN
-	cp web/control fs-web/DEBIAN/control
-	cp web/postinst fs-web/DEBIAN/postinst
+	cp web/* fs-web/DEBIAN/
 	sed -i s/VERSION/${VERSION}/ fs-web/DEBIAN/control
 	mkdir -p fs-web/etc/nginx/sites-available/
 	cp ../nginx/civicboom.com fs-web/etc/nginx/sites-available/
