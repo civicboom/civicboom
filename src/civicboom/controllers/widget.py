@@ -8,10 +8,10 @@ from civicboom.lib.base import *
 
 from civicboom.lib.helpers import url_from_widget
 
-from civicboom.controllers.contents import ContentsController
-content_controller = ContentsController()
-from civicboom.controllers.member_lists import MemberListsController
-member_list_controller = MemberListsController()
+from civicboom.controllers.contents       import ContentsController
+from civicboom.controllers.member_actions import MemberActionsController
+content_controller        = ContentsController()
+member_actions_controller = MemberActionsController()
 
 import re
 from urllib import quote_plus
@@ -92,7 +92,7 @@ class WidgetController(BaseController):
     def main(self):
         cache_key = gen_cache_key(member=c.widget_owner.id, member_assignments_active=c.widget_owner.id)
         #c.assignments = c.widget_owner.content_assignments
-        c.result = member_list_controller.content(c.widget_owner.id, list='assignments_active')
+        c.result = member_actions_controller.content(c.widget_owner.id, list='assignments_active')
         return render(prefix + 'widget_assignments.mako', cache_key=cache_key, cache_expire=template_expire)
     
     # Single assignment display

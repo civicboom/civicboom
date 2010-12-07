@@ -81,12 +81,14 @@ class MembersController(BaseController):
             kwargs['lists'] = 'followers, following, assignments_accepted, content, groups, members, actions'
         
         data = {'member': member.to_dict(**kwargs)}
+
+        # AllanC - cannot be imported at begining of module because of mutual coupling error
+        from civicboom.controllers.member_actions import MemberActionsController
+        member_actions_controller = MemberActionsController()
         
-        from civicboom.controllers.member_lists import MemberListsController
-        list_controller = MemberListsController()
         for list in [list.strip() for list in kwargs['lists'].split(',')]:
-            if hasattr(list_controller, list):
-                data[list] = getattr(list_controller, list)(member, **kwargs)['data']['list']
+            if hasattr(member_actions_controller, list):
+                data[list] = getattr(member_actions_controller, list)(member, **kwargs)['data']['list']
         
         return action_ok(data=data)
 

@@ -1,11 +1,15 @@
 from civicboom.lib.base import *
 
-from civicboom.controllers.members  import MembersController
-#from civicboom.controllers.contents import ContentsController
-from civicboom.controllers.member_lists import MemberListsController
-from civicboom.controllers.messages import MessagesController
+from civicboom.controllers.members        import MembersController
+from civicboom.controllers.member_actions import MemberActionsController
+from civicboom.controllers.messages       import MessagesController
 #from civicboom.controllers.search   import SearchController
 #from civicboom.controllers.groups   import GroupsController
+#from civicboom.controllers.contents import ContentsController
+
+members_controller        = MembersController()
+member_actions_controller = MemberActionsController()
+messages_controller       = MessagesController()
 
 class ProfileController(BaseController):
     """
@@ -28,13 +32,13 @@ class ProfileController(BaseController):
                 messages a list of messages, split into 'notifications' and 'to'
         """
         # AllanC - contruct an uber dictionary for the template to render built from data from other controller actions
-        data = MembersController().show(id=c.logged_in_persona.id, lists='followers, following, assignments_accepted')['data']
+        data = members_controller.show(id=c.logged_in_persona.id, lists='followers, following, assignments_accepted')['data']
         data.update({
-            'content' : MemberListsController().content(id=c.logged_in_persona.id          )['data']['list']  ,
+            'content' : member_actions_controller.content(id=c.logged_in_persona.id          )['data']['list']  ,
             'messages': {
-                'notifications': MessagesController().index(list='notification')['data']['list'] ,
-                'to'           : MessagesController().index(list='to'          )['data']['list'] ,
+                'notifications': messages_controller.index(list='notification')['data']['list'] ,
+                'to'           : messages_controller.index(list='to'          )['data']['list'] ,
             } ,
-            'groups'  : MemberListsController()._groups_list_dict(c.logged_in_persona.groups_roles) ,
+            'groups'  : member_actions_controller._groups_list_dict(c.logged_in_persona.groups_roles) ,
         })
         return action_ok(data=data)

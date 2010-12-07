@@ -126,7 +126,7 @@ class Member(Base):
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
-    payment_account       = relationship("PaymentAccount")
+    payment_account       = relationship("PaymentAccount", cascade="delete-orphan")
 
     messages_to           = relationship("Message", primaryjoin=and_(Message.source_id!=null(), Message.target_id==id    ), backref=backref('target', order_by=id))
     messages_from         = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id!=null()), backref=backref('source', order_by=id))
@@ -273,7 +273,18 @@ class Member(Base):
     def add_to_interests(self, content):
         from civicboom.lib.database.actions import add_to_interests
         return add_to_interests(self, content)
-        
+    
+    def has_permission(self, required_account_type):
+        member_account_type = 'free'
+        if self.payment_account:
+            member_account_type = self.payment_account.type
+        #AllanC TODO: This may need updating to use something more sophisticated than just monkey if statements
+        #             need > ... we want corp customers to do what the plus customers can do
+        if required_account_type == member_account_type:
+            return True
+        return False
+
+    
     def can_publish_assignment(self):
         # AllanC - could be replaced with some form of 'get_permission('publish') ??? we could have lots of permissiong related methods ... just a thought
         #from civicboom.lib.civicboom_lib import can_publish_assignment
@@ -508,7 +519,7 @@ class MemberSetting(Base):
 class PaymentAccount(Base):
     __tablename__    = "payment_account"
     id          = Column(Integer(), primary_key=True)
-    status      = Column(account_types, nullable=True, default="free")
+    type        = Column(account_types, nullable=True, default="free")
     
     
     

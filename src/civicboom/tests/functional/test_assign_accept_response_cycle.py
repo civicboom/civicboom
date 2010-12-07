@@ -110,17 +110,19 @@ class TestAssignAcceptResponseCycleController(TestController):
             params={'_authentication_token': self.auth_token,},
             status=200
         )
+        
         response = self.app.post(
             url('content_action', action='disasociate', id=self.assignment_response_id_2, format='json'),
             params={'_authentication_token': self.auth_token,},
             status=200
         )
+        
         response = self.app.post(
             url('content_action', action='seen',        id=self.assignment_response_id_3, format='json'),
             params={'_authentication_token': self.auth_token,},
             status=200
         )
-
+        
         
         # Check Approved and Dissassociate -------------------------------------
         

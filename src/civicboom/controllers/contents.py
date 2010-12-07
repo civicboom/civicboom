@@ -16,8 +16,6 @@ import formencode
 import civicboom.lib.form_validators.base
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
-import civicboom.lib.error as error
-
 # Search imports
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
@@ -25,7 +23,6 @@ from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null
 from sqlalchemy.orm       import join, joinedload
 import datetime
-
 
 # Logging setup
 log      = logging.getLogger(__name__)
@@ -404,7 +401,7 @@ class ContentsController(BaseController):
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
             content_redirect = url(controller='misc', action='upgrade_account') #payment url
-            error            = error.account_level
+            error            = errors.account_level
 
         
         # -- Set Content fields ------------------------------------------------
@@ -551,11 +548,13 @@ class ContentsController(BaseController):
         
         data = {'content':content.to_dict(list_type='full', **kwargs)}
         
-        from civicboom.controllers.content_lists import ContentListsController        
-        list_controller = ContentListsController()
+        # AllanC - cant be imported at top of file because that creates a coupling issue
+        from civicboom.controllers.content_actions import ContentActionsController
+        content_actions_controller = ContentActionsController()
+        
         for list in [list.strip() for list in kwargs['lists'].split(',')]:
-            if hasattr(list_controller, list):
-                data[list] = getattr(list_controller, list)(content, **kwargs)['data']['list']
+            if hasattr(content_actions_controller, list):
+                data[list] = getattr(content_actions_controller, list)(content, **kwargs)['data']['list']
         
         # Increase content view count
         if hasattr(content,'views'):

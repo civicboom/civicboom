@@ -333,6 +333,8 @@ def auto_format_output(target, *args, **kwargs):
         if c.format == "python":
             raise
         else:
+            if ae.original_dict.get('code') == 402 and (c.format=="html" or c.format=="redirect"):
+                return redirect(url(controller='misc', action='upgrade_account'))
             result = ae.original_dict
     
     # After

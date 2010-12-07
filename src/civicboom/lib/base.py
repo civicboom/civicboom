@@ -21,7 +21,9 @@ from civicboom.lib.database.get_cached import get_member, get_group, get_members
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize
-
+from civicboom.lib.permissions         import account_type
+#from civicboom.model.member            import account_types
+import civicboom.lib.errors as errors
 
 import json
 
@@ -47,8 +49,12 @@ __all__ = [
     "cacheable",
     "web",
     "auth",
+    "account_type",
+    #"account_types", #types for use with with account_type decorator
     
-
+    #errors
+    "errors",
+    
     # i18n
     "_", "ungettext", "set_lang",
 
