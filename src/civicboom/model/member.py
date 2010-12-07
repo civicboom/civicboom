@@ -18,6 +18,8 @@ import urllib, hashlib, copy
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 
+account_types            = Enum("free", "plus", "corp", "copp_plus", name="account_types")
+
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
 group_member_status      = Enum("active", "invite", "request",                name="group_member_status")
 
@@ -115,12 +117,16 @@ class Member(Base):
     avatar          = Column(Unicode(250),   nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
     location_home   = Golumn(Point(2),       nullable=True)
+    payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
+
 
     num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_notifications = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
+
+    payment_account       = relationship("PaymentAccount")
 
     messages_to           = relationship("Message", primaryjoin=and_(Message.source_id!=null(), Message.target_id==id    ), backref=backref('target', order_by=id))
     messages_from         = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id!=null()), backref=backref('source', order_by=id))
@@ -499,6 +505,13 @@ class MemberSetting(Base):
     member      = relationship("Member", backref=backref('settings', cascade="all,delete-orphan"))
 
 
+class PaymentAccount(Base):
+    __tablename__    = "payment_account"
+    id          = Column(Integer(), primary_key=True)
+    status      = Column(account_types, nullable=True, default="free")
+    
+    
+    
 # FIXME: incomplete
 #class MemberUserSettingsPayment(Base):
 #    memberId

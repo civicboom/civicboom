@@ -16,6 +16,8 @@ import formencode
 import civicboom.lib.form_validators.base
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
+import civicboom.lib.error as error
+
 # Search imports
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
@@ -402,7 +404,7 @@ class ContentsController(BaseController):
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
             content_redirect = url(controller='misc', action='upgrade_account') #payment url
-            error            = action_error(_('operation requires account upgrade'), code=403)
+            error            = error.account_level
 
         
         # -- Set Content fields ------------------------------------------------
