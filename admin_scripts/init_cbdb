@@ -12,7 +12,7 @@ export PGOPTIONS='--client-min-messages=warning'
 echo "Removing old data"
 dropdb civicboom_log
 dropdb civicboom_gis
-dropdb civicboom_ses
+#dropdb civicboom_ses sessions now stored in memcachedb
 dropdb civicboom
 dropuser civicboom
 
@@ -104,7 +104,8 @@ CREATE INDEX events__priority ON events(priority);
 ##############################################################################
 # civicboom_ses
 
-echo "Creating civicboom_ses database"
-createdb -E utf8 -O civicboom civicboom_ses
+# sessions now stored in memcachedb
+#echo "Creating civicboom_ses database"
+#createdb -E utf8 -O civicboom civicboom_ses
 
 exit 0
