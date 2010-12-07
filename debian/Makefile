@@ -68,6 +68,7 @@ python-cbmisc.deb: ../src/setup.py
 	echo "Version: ${VERSION}" >> fs-env/DEBIAN/control
 	echo "Architecture: all" >> fs-env/DEBIAN/control
 	echo "Maintainer: Shish <shish@civicboom.com>" >> fs-env/DEBIAN/control
+	echo "Depends: objdump" >> fs-env/DEBIAN/control
 	echo "Description: a package to install a python virtualenv and easy_install packages into it" >> fs-env/DEBIAN/control
 	echo ================================================ >/dev/null
 	mkdir -p fs-env/opt/cb
