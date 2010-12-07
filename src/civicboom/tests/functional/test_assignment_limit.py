@@ -25,7 +25,12 @@ class TestAssignmentLimitController(TestController):
         created_assignments = []
         for i in range(config['payment.free.assignment_limit']):
             created_assignments.append(self.create_assignment('Assignment Limit %d' % i))
-        response = self.create_assignment('Dont allow this assignment', status=403)
+        response = self.create_assignment('Dont allow this assignment', status=402)
+        
+        #response = self.create_assignment('Dont allow this assignment', status=200)
+        #print response
+        #assert False
+        
 
 
 

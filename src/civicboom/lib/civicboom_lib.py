@@ -245,6 +245,11 @@ def twitter_global(content):
     #    content = content.to_dict('full')
     #content_dict = aggregation_dict(content, safe_strings=True)
 
+    if config['online'] and config['feature.aggregate.twitter_global']:
+        link = tiny_url(content.__link__())
+    else:
+        link = 'http://tinyurl.com/xxxxxxx'
+
     # Create Twitter message with tiny URL
     if len(content.title) > 70:
         title           = truncate(content.title  , length=70)
@@ -254,7 +259,7 @@ def twitter_global(content):
         content_preview = truncate(content.content, length=100-len(content.title))
     
     twitter_post = {}
-    twitter_post['status'] = "%s: %s (%s)" % (title, content_preview, tiny_url(content.__link__()))
+    twitter_post['status'] = "%s: %s (%s)" % (title, content_preview, link)
 
     # Add location if avalable
     if content.location:

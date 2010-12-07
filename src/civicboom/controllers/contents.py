@@ -400,8 +400,15 @@ class ContentsController(BaseController):
         
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
-            content_redirect = url(controller='misc', action='upgrade_account') #payment url
-            error            = errors.account_level
+            #print "set the error"
+            #print errors.account_level
+            # AllanC - ARRRRRRRRRRRRRRRRRRRRR!!!! this reference to this object ... something somewhere is maliciously removing the code from errors.account_level
+            #error = errors.account_level
+            error = action_error(
+                status   = 'error' ,
+                code     = 402 ,
+                message  = _('operation requires account upgrade') ,
+            )
 
         
         # -- Set Content fields ------------------------------------------------
@@ -488,6 +495,11 @@ class ContentsController(BaseController):
         
         # -- Redirect ----------------------------------------------------------
 
+        if error:
+            print "raising the error"
+            print error
+            raise error
+
         if not content_redirect:
             if submit_type == 'publish' and permissions['can_publish']:
                 content_redirect = url('content', id=content.id, prompt_aggregate=True)
@@ -501,10 +513,7 @@ class ContentsController(BaseController):
         if c.format == 'redirect':
             return redirect(content_redirect)
         
-        if error:
-            raise error
-        else:
-            return action_ok(_("_content updated"))
+        return action_ok(_("_content updated"))
 
 
     @web

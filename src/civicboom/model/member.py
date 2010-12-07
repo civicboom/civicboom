@@ -291,11 +291,16 @@ class Member(Base):
         #return can_publish_assignment(self)
         #AllanC - TODO - check member payment level to acertain what the limit is - set limit to this users level
         # if not member.payment_level:
-        limit = 5
+        from pylons import config
+        limit = config['payment.free.assignment_limit']
         # if member.payment_level==premium:
         #   limit = 10
         # if member.payment_level==corporate:
         #   limit = 0
+        #print ""
+        #print "active assignments %d" % len(self.active_assignments_period)
+        #for a in self.active_assignments_period:
+        #    print a.title
         if not limit:
             return True
         i = len(self.active_assignments_period)
