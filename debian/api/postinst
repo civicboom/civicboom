@@ -1,8 +1,17 @@
 #!/bin/sh
 
+. /usr/share/debconf/confmodule
+
 if [ ! -d /tmp/cb-website-temp ] ; then
 	mkdir /tmp/cb-website-temp
 	chown www-data:www-data /tmp/cb-website-temp
+fi
+
+if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
+	db_get cb-website-api/do_timed_tasks
+	if [ "$RET" = "false" ] ; then
+		rm -f /etc/cron.d/cb-website-api
+	fi
 fi
 
 update-rc.d cb-website defaults
@@ -13,3 +22,5 @@ find -name "*.pyc" | xargs rm -f
 
 #echo "Copying static data to S3"
 #/opt/cb/bin/cb-task sync_public_to_warehouse >/dev/null
+
+db_stop

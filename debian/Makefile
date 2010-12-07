@@ -18,8 +18,7 @@ cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
 cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -type f)
 	rm -rf fs-api
 	mkdir -p fs-api/DEBIAN/
-	cp api/control fs-api/DEBIAN/control
-	cp api/postinst fs-api/DEBIAN/postinst
+	cp api/* fs-api/DEBIAN/
 	sed -i s/VERSION/${VERSION}/ fs-api/DEBIAN/control
 	mkdir -p fs-api/opt/cb/bin
 	cp ../admin_scripts/* ./fs-api/opt/cb/bin/
@@ -29,7 +28,7 @@ cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -ty
 	cp -r ../src/* ./fs-api/opt/cb/share/website/
 	cd ./fs-api/opt/cb/share/website/ && python setup.py compile_catalog
 	mkdir -p fs-api/etc/cron.d
-	cp api/crontab fs-api/etc/cron.d/cb-website
+	cp api/crontab fs-api/etc/cron.d/cb-website-api
 	mkdir -p fs-api/etc/init.d
 	cp api/init.d fs-api/etc/init.d/cb-website
 	cd fs-api/opt/cb/share/website/civicboom/public/javascript/ && make

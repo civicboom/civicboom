@@ -1,0 +1,5 @@
+Template: cb-website-api/do_timed_tasks
+Type: boolean
+Default: false
+Description: Should this node handle timed tasks?
+ Only one node in the cluster should run the timed tasks
