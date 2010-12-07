@@ -1,4 +1,4 @@
-Package: cb-website
+Package: cb-website-api
 Version: VERSION
 Architecture: all
 Maintainer: Shish <shish@civicboom.com>
@@ -7,7 +7,6 @@ Pre-Depends: python, python-cbmisc(>=0.3.18-75),
  python-psycopg2, python-imaging, python-boto, python-authkit, python-memcache,
  python-nose, python-coverage, python-dns, python-recaptcha, python-decorator,
  python-lxml, python-pybabel,
- ffmpeg(>=4:0.6), osm2pgsql,
- nginx(>=0.8), memcached,
- postgresql-9.0, postgresql-9.0-postgis
+ ffmpeg(>=4:0.6),
+ memcached
 Description: The code for the main civicboom website rewrite
