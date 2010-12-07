@@ -70,7 +70,7 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
-    @account_type('plus')
+    #@account_type('plus')
     def approve(self, id, **kwargs):
         """
         POST /contents/{id}/approve: claim an article for publishing
@@ -94,7 +94,7 @@ class ContentActionsController(BaseController):
 
     @web
     @auth
-    @account_type('plus')
+    #@account_type('plus')
     def disasociate(self, id, **kwargs):
         """
         POST /contents/{id}/disassociate: unlink an article from its parent
@@ -119,7 +119,7 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
-    @account_type('plus')
+    #@account_type('plus')
     def seen(self, id, **kwargs):
         """
         POST /contents/{id}/seen: mark response as seen
