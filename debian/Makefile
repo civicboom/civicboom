@@ -1,33 +1,65 @@
-all: cb-website.deb python-cbmisc.deb
+all: cb-website.deb cb-website-web.deb cb-website-api.deb cb-website-db.deb python-cbmisc.deb
 
 VERSION := $(shell git describe)
 
-cb-website.deb: $(shell find ../admin_scripts ../docs ../nginx ../selenium ../src -type f)
-	rm -rf fs-website
-	mkdir -p fs-website/DEBIAN/
-	cp control fs-website/DEBIAN/control
-	cp postinst fs-website/DEBIAN/postinst
-	sed -i s/VERSION/${VERSION}/ fs-website/DEBIAN/control
-	mkdir -p fs-website/opt/cb/bin
-	cp ../admin_scripts/* ./fs-website/opt/cb/bin/
-	mkdir -p fs-website/opt/cb/share/doc/website
-	cp -r ../docs/* ./fs-website/opt/cb/share/doc/website/
-	mkdir -p fs-website/opt/cb/share/website
-	cp -r ../src/* ./fs-website/opt/cb/share/website/
-	cd ./fs-website/opt/cb/share/website/ && python setup.py compile_catalog
-	mkdir -p fs-website/etc/nginx/sites-available/
-	cp ../nginx/civicboom.com fs-website/etc/nginx/sites-available/
-	mkdir -p fs-website/etc/cron.d
-	cp crontab fs-website/etc/cron.d/cb-website
-	mkdir -p fs-website/etc/init.d
-	cp init.d fs-website/etc/init.d/cb-website
-	mkdir -p fs-website/opt/cb/etc/ssl
-	cp ../ssl/* fs-website/opt/cb/etc/ssl/
-	cd fs-website/opt/cb/share/website/civicboom/public/javascript/ && make
-	cd fs-website/opt/cb/share/website/civicboom/public/styles/ && make
-	../admin_scripts/site_to_english ../src/civicboom/i18n/en/LC_MESSAGES/civicboom.po
-	fakeroot dpkg -b fs-website cb-website_${VERSION}_all.deb 
+cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
+	mkdir -p fs-meta/DEBIAN/
+	echo ================================================ >/dev/null
+	echo "Package: cb-website" > fs-meta/DEBIAN/control
+	echo "Version: ${VERSION}" >> fs-meta/DEBIAN/control
+	echo "Architecture: all" >> fs-meta/DEBIAN/control
+	echo "Maintainer: Shish <shish@civicboom.com>" >> fs-meta/DEBIAN/control
+	echo "Depends: cb-website-web, cb-website-api, cb-website-db" >> fs-meta/DEBIAN/control
+	echo "Description: a metapackage to get the whole civicboom server" >> fs-meta/DEBIAN/control
+	echo ================================================ >/dev/null
+	fakeroot dpkg -b fs-meta cb-website_${VERSION}.deb
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
+
+cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -type f)
+	rm -rf fs-api
+	mkdir -p fs-api/DEBIAN/
+	cp api/control fs-api/DEBIAN/control
+	cp api/postinst fs-api/DEBIAN/postinst
+	sed -i s/VERSION/${VERSION}/ fs-api/DEBIAN/control
+	mkdir -p fs-api/opt/cb/bin
+	cp ../admin_scripts/* ./fs-api/opt/cb/bin/
+	mkdir -p fs-api/opt/cb/share/doc/website
+	cp -r ../docs/* ./fs-api/opt/cb/share/doc/website/
+	mkdir -p fs-api/opt/cb/share/website
+	cp -r ../src/* ./fs-api/opt/cb/share/website/
+	cd ./fs-api/opt/cb/share/website/ && python setup.py compile_catalog
+	mkdir -p fs-api/etc/cron.d
+	cp api/crontab fs-api/etc/cron.d/cb-website
+	mkdir -p fs-api/etc/init.d
+	cp api/init.d fs-api/etc/init.d/cb-website
+	cd fs-api/opt/cb/share/website/civicboom/public/javascript/ && make
+	cd fs-api/opt/cb/share/website/civicboom/public/styles/ && make
+	../admin_scripts/site_to_english ../src/civicboom/i18n/en/LC_MESSAGES/civicboom.po
+	fakeroot dpkg -b fs-api cb-website-api_${VERSION}_all.deb 
+	ln -sf cb-website-api_${VERSION}_all.deb cb-website-api.deb
+
+cb-website-web.deb: $(shell find ../nginx)
+	rm -rf fs-web
+	mkdir -p fs-web/DEBIAN
+	cp web/control fs-web/DEBIAN/control
+	cp web/postinst fs-web/DEBIAN/postinst
+	sed -i s/VERSION/${VERSION}/ fs-web/DEBIAN/control
+	mkdir -p fs-web/etc/nginx/sites-available/
+	cp ../nginx/civicboom.com fs-web/etc/nginx/sites-available/
+	mkdir -p fs-web/opt/cb/etc/ssl
+	cp ../ssl/* fs-web/opt/cb/etc/ssl/
+	fakeroot dpkg -b fs-web cb-website-web_${VERSION}_all.deb 
+	ln -sf cb-website-web_${VERSION}_all.deb cb-website-web.deb
+
+cb-website-db.deb: $(shell find db)
+	rm -rf fs-db
+	mkdir -p fs-db/DEBIAN
+	cp db/control fs-db/DEBIAN/control
+	mkdir -p fs-db/etc/cron.d
+	cp db/crontab fs-db/etc/cron.d/cb-website-db
+	sed -i s/VERSION/${VERSION}/ fs-db/DEBIAN/control
+	fakeroot dpkg -b fs-db cb-website-db_${VERSION}_all.deb 
+	ln -sf cb-website-db_${VERSION}_all.deb cb-website-db.deb
 
 python-cbmisc.deb: ../src/setup.py
 	mkdir -p fs-env/DEBIAN/
