@@ -2,5 +2,5 @@ Package: cb-website-db
 Version: VERSION
 Architecture: all
 Maintainer: Shish <shish@civicboom.com>
-Pre-Depends: postgresql-9.0, postgresql-9.0-postgis, osm2pgsql
+Pre-Depends: postgresql-9.0, postgresql-9.0-postgis, osm2pgsql, memcached, memcachedb
 Description: The database settings for civicboom
