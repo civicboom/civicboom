@@ -1,4 +1,4 @@
-Package: cb-website
+Package: cb-website-api
 Version: VERSION
 Architecture: all
 Maintainer: Shish <shish@civicboom.com>
