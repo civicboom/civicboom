@@ -4,10 +4,6 @@
 proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:10m;
 proxy_temp_path  /tmp/nginx-temp;
 
-# temp hack to fix error on 64-bit, this should be removed when
-# the upstream packages work without it
-types_hash_max_size 2048;
-
 upstream backends {
 	### START MANAGED BY DEBCONF
 	# debconf will remove anything between the start and end
