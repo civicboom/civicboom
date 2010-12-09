@@ -4,6 +4,16 @@
 proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:10m;
 proxy_temp_path  /tmp/nginx-temp;
 
+upstream backends {
+	### START MANAGED BY DEBCONF
+	# debconf will remove anything between the start and end
+	# markers and replace with the configured list of backend
+	# servers. Here we have a default so that the config file
+	# works without being debconf'ed.
+	server 127.0.0.1:5000;
+	### END MANAGED BY DEBCONF
+}
+
 server {
 	# server stuff
 	listen 80;
@@ -36,7 +46,8 @@ server {
 	if ($http_host !~ "civicboom.com") {set $proxy_port 5000;}
 
 	# for all requests that start with / (ie, all requests), proxy to pylons
-	location / {proxy_pass http://127.0.0.1:$proxy_port$uri$is_args$args;}
+	#location / {proxy_pass http://127.0.0.1:$proxy_port$uri$is_args$args;}
+	location / {proxy_pass http://backends;}
 }
 
 # for demo-mode, we need a local "static" server, because demo avatar
