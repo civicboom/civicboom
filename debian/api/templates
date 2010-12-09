@@ -3,3 +3,28 @@ Type: boolean
 Default: false
 Description: Should this node handle timed tasks?
  Only one node in the cluster should run the timed tasks
+
+Template: cb-website-api/db_main
+Type: string
+Default: postgresql://civicboom:civicboom@localhost/civicboom
+Description: Where is the main database?
+
+Template: cb-website-api/db_geo
+Type: string
+Default: postgresql://civicboom:civicboom@localhost/civicboom_gis
+Description: Where is the GIS database?
+
+Template: cb-website-api/db_log
+Type: string
+Default: postgresql://civicboom:civicboom@localhost/civicboom_log
+Description: Where is the log database?
+
+Template: cb-website-api/mc_session
+Type: string
+Default: 127.0.0.1:21201
+Description: Where is the session cache?
+
+Template: cb-website-api/mc_cache
+Type: string
+Default: 127.0.0.1:11211
+Description: Where is the memcache server?
