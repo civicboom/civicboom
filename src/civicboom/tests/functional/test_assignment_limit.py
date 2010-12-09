@@ -12,7 +12,7 @@ class TestAssignmentLimitController(TestController):
     #---------------------------------------------------------------------------
     # Assignment Limit
     #---------------------------------------------------------------------------
-    def test_open_assignment(self):
+    def test_publish_assignment_limit(self):
         """
         Create new user
         Create 5 assignments
@@ -22,15 +22,30 @@ class TestAssignmentLimitController(TestController):
         # Create Fresh User ----------------------------------------------------
         self.sign_up_as('assign_limit')
         
+        # Set the number of assignments a normal user is limited too
         created_assignments = []
         for i in range(config['payment.free.assignment_limit']):
             created_assignments.append(self.create_assignment('Assignment Limit %d' % i))
+            
+        # Try to set one over the limit
         response = self.create_assignment('Dont allow this assignment', status=402)
         
-        #response = self.create_assignment('Dont allow this assignment', status=200)
-        #print response
-        #assert False
+        # Upgrade account
+        response = self.app.get(url(controller='test', action='upgrade_account', id='assign_limit'))
+        assert 'ok' in response.body
         
+        # Set a now assignment
+        response = self.create_assignment('Assignment Limit > Paid')
+        
+        # Double check that all the assimgments appear in this users content list
+        response = self.app.get(url('member_action', id='assign_limit', action='content', list='assignments',format='json'))
+        response_json = json.loads(response.body)
+        title_check = [] + [str(i) for i in range(config['payment.free.assignment_limit'])] + ['Paid']
+        for assignment in response_json['data']['list']:
+            for title in title_check:
+                if title in assignment['title']:
+                    title_check.remove(title)
+        assert len(title_check) == 0
 
 
 

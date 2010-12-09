@@ -11,7 +11,7 @@ from civicboom.lib.database.get_cached import get_member
 
 from civicboom.lib.communication.email_lib import send_email
 
-from civicboom.model                            import DraftContent, ArticleContent, AssignmentContent, CommentContent, Media, Tag, FlaggedContent, UserLogin
+from civicboom.model                            import DraftContent, ArticleContent, AssignmentContent, CommentContent, Media, Tag, FlaggedContent, UserLogin, PaymentAccount
 from civicboom.lib.database.get_cached          import get_content, get_tag
 from civicboom.lib.database.actions             import del_content
 
@@ -343,14 +343,3 @@ def profanity_filter(content, delay_commit=False):
         #return False
     #return True
 
-#-------------------------------------------------------------------------------
-# Paid for feature: Assignment Limiter
-#-------------------------------------------------------------------------------
-def can_publish_assignment(member):
-    #def last_assignments_in_days(member, days=30):
-    #    try:
-    #        return Session.query(AssignmentContent).filter(and_(AssignmentContent.creator_id == member.id, AssignmentContent.creation_date > (datetime.datetime.now() - datetime.timedelta(days=days)))).order_by(AssignmentContent.update_date.desc()).all()
-    #    except:
-    #        pass
-    #    return None
-    pass

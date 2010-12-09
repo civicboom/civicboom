@@ -496,8 +496,8 @@ class ContentsController(BaseController):
         # -- Redirect ----------------------------------------------------------
 
         if error:
-            print "raising the error"
-            print error
+            #print "raising the error"
+            #print error
             raise error
 
         if not content_redirect:

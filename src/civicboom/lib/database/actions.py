@@ -5,7 +5,7 @@ from pylons.i18n.translation import _
 from civicboom.model.meta import Session
 from civicboom.model         import Rating
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent
-from civicboom.model.member  import GroupMembership, group_member_roles
+from civicboom.model.member  import GroupMembership, group_member_roles, PaymentAccount, account_types
 
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content, update_content, update_accepted_assignment, update_member
@@ -488,4 +488,22 @@ def add_to_interests(member, content, delay_commit=False):
 
     user_log.debug("Added to interests #%d" % (content.id))
     
+    return True
+
+
+#-------------------------------------------------------------------------------
+# Set Payment Account
+#-------------------------------------------------------------------------------
+def set_payment_account(member, value, delay_commit=False):
+    member = get_member(member);
+    account = None
+    if isinstance(value, PaymentAccount):
+        account = value
+    elif value in account_types.enums:
+        account = PaymentAccount()
+        account.type = value
+        Session.add(account)
+    member.payment_account = account
+    if not delay_commit:
+        Session.commit()
     return True

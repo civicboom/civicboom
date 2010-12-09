@@ -161,3 +161,14 @@ class TestController(BaseController):
             c.kwargs['response'] = reponse
         
         return render('/test_post_faker.mako')
+
+    #---------------------------------------------------------------------------
+    # Upgrade Account
+    #---------------------------------------------------------------------------
+    def upgrade_account(self, id):
+        """
+        this is tempory measure for upgrading accounts
+        It is used by the automated tests and should never be triggered by an actual user
+        """
+        get_member(id).set_payment_account('plus')
+        return 'ok'

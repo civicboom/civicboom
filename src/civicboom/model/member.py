@@ -126,7 +126,7 @@ class Member(Base):
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
-    payment_account       = relationship("PaymentAccount", cascade="delete-orphan")
+    payment_account       = relationship("PaymentAccount", cascade="delete,delete-orphan", single_parent=True) #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
 
     messages_to           = relationship("Message", primaryjoin=and_(Message.source_id!=null(), Message.target_id==id    ), backref=backref('target', order_by=id))
     messages_from         = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id!=null()), backref=backref('source', order_by=id))
@@ -275,9 +275,7 @@ class Member(Base):
         return add_to_interests(self, content)
     
     def has_permission(self, required_account_type):
-        member_account_type = 'free'
-        if self.payment_account:
-            member_account_type = self.payment_account.type
+        member_account_type = self.account_type
         #AllanC TODO: This may need updating to use something more sophisticated than just monkey if statements
         #             need > ... we want corp customers to do what the plus customers can do
         if required_account_type == member_account_type:
@@ -291,24 +289,36 @@ class Member(Base):
         #return can_publish_assignment(self)
         #AllanC - TODO - check member payment level to acertain what the limit is - set limit to this users level
         # if not member.payment_level:
+        
+        limit = None
+        account_type = self.account_type
+        
         from pylons import config
-        limit = config['payment.free.assignment_limit']
-        # if member.payment_level==premium:
-        #   limit = 10
-        # if member.payment_level==corporate:
-        #   limit = 0
-        #print ""
-        #print "active assignments %d" % len(self.active_assignments_period)
-        #for a in self.active_assignments_period:
-        #    print a.title
+        if account_type == 'free':
+            limit = config['payment.free.assignment_limit']
+        elif account_type == 'plus':
+            limit = config['payment.plus.assignment_limit']
+            
         if not limit:
             return True
-        i = len(self.active_assignments_period)
-        if i > limit:
+        if len(self.active_assignments_period) > limit:
             return False
         return True
 
-
+    #@property
+    #def payment_account(self):
+    #    return self._payment_account
+    #@payment_account.setter
+    def set_payment_account(self, value, delay_commit=False):
+        #self._payment_account = value
+        from civicboom.lib.database.actions import set_payment_account
+        set_payment_account(self, value, delay_commit)
+    @property
+    def account_type(self):
+        if self.payment_account and self.payment_account.type:
+            return self.payment_account.type
+        return 'free'
+    
 
 GeometryDDL(Member.__table__)
 

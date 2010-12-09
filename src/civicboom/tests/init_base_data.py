@@ -55,6 +55,11 @@ def init_base_data():
         u1_login.type   = "password"
         u1_login.token  = hashlib.sha1("password").hexdigest()
 
+        #u1_account         = PaymentAccount()
+        #u1_account.type    = 'plus'
+        #u1.payment_account = u1_account
+        u1.set_payment_account('plus', delay_commit=True)
+
         Session.add_all([u1, u1_login]); Session.commit();
         assert u1.id == 1
         assert u1.login_details[0].type == "password"

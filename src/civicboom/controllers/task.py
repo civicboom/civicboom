@@ -180,3 +180,4 @@ class TaskController(BaseController):
 
     def test(self):
         return "<task happened>"
+

@@ -6,7 +6,7 @@ from civicboom.model import meta
 from civicboom.model.content import Content, CommentContent, DraftContent, UserVisibleContent, ArticleContent, AssignmentContent, SyndicatedContent, FlaggedContent
 from civicboom.model.content import License, Tag, ContentEditHistory, Media
 from civicboom.model.content import MemberAssignment, Rating
-from civicboom.model.member  import Member, User, UserLogin, Group, GroupMembership, Follow, MemberSetting
+from civicboom.model.member  import Member, User, UserLogin, Group, GroupMembership, Follow, MemberSetting, PaymentAccount, account_types
 from civicboom.model.message import Message
 from civicboom.model.media   import Media
 from civicboom.model.feed    import Feed
