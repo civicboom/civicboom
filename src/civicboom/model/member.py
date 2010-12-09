@@ -119,10 +119,11 @@ class Member(Base):
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
 
-
     num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_notifications = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    # AllanC - TODO - derived field trigger needed
+    #account_type             = Column(account_types, nullable=False, default='free', doc="Controlled by postgres trigger")
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
@@ -167,6 +168,7 @@ class Member(Base):
             'type'              : lambda member: member.__type__ ,
             'location_home'     : lambda content: content.location_home_string ,
             'num_followers'     : None ,
+            'account_type'      : None ,
         },
     })
     
@@ -314,6 +316,7 @@ class Member(Base):
         from civicboom.lib.database.actions import set_payment_account
         set_payment_account(self, value, delay_commit)
     @property
+    # AllanC - TODO this needs to be a derrived field
     def account_type(self):
         if self.payment_account and self.payment_account.type:
             return self.payment_account.type

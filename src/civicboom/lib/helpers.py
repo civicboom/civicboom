@@ -161,7 +161,9 @@ icon_type_descriptions = {
     'seen'        : _('parent owner has seen this content') ,
     'edit_lock'   : _('edit lock') ,
     'dissacociate': _('parent owner has disassociated this content') ,
-    'group'       : _('group')
+    'group'       : _('group') ,
+    'account_plus': _('plus account') ,
+    'account_corp': _('corporate account') ,
 }
 def icon(icon_type, description=None, class_=''):
     if not description and icon_type in icon_type_descriptions:

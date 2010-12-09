@@ -32,6 +32,8 @@
 .icon_user      {background: transparent url('/styles/web/icons16/user-3-icon.png'   ) no-repeat;}
 .icon_group     {background: transparent url('/styles/web/icons16/network-icon.png'  ) no-repeat;}
 .icon_userid    {background: transparent url('/styles/web/icons16/user-info-icon.png') no-repeat;}
+.icon_account_type_plus {background: transparent url('/styles/web/icons16/plus-icon.png') no-repeat;}
+
 
 /* 32x32 icons */
 .icon_large {

@@ -367,7 +367,7 @@ class UserVisibleContent(Content):
 
     def action_list_for(self, member):
         action_list = Content.action_list_for(self, member)
-        if self.is_parent_owner(member):
+        if self.is_parent_owner(member) and member.has_permission('plus'):
             if self.response_type == 'none':
                 action_list.append('approve')
                 action_list.append('seen')

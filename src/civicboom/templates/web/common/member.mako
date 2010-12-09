@@ -30,6 +30,9 @@
                 ##<div class="type icon icon_group" title="group"></div>
                 ${h.icon('group', class_="type")}
             % endif
+            % if 'account_type' in member and member['account_type']!='free':
+                ${h.icon('account_type_'+member['account_type'], class_="type")}
+            % endif
             
             
             ## TODO - onClick javascript AJAX id card:
