@@ -9,7 +9,7 @@ cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
 	echo "Version: ${VERSION}" >> fs-meta/DEBIAN/control
 	echo "Architecture: all" >> fs-meta/DEBIAN/control
 	echo "Maintainer: Shish <shish@civicboom.com>" >> fs-meta/DEBIAN/control
-	echo "Depends: cb-website-web, cb-website-api, cb-website-db" >> fs-meta/DEBIAN/control
+	echo "Depends: cb-website-web(>=0.3.34-3), cb-website-api(>=0.3.34-7), cb-website-db(>=0.3.34-6)" >> fs-meta/DEBIAN/control
 	echo "Description: a metapackage to get the whole civicboom server" >> fs-meta/DEBIAN/control
 	echo ================================================ >/dev/null
 	fakeroot dpkg -b fs-meta cb-website_${VERSION}_all.deb
