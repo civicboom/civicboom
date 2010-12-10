@@ -19,7 +19,10 @@ class AdminControllerBase(BaseController):
     forms = forms # module containing FormAlchemy fieldsets definitions
     template = "/admin/restfieldset.mako"
 
-    # Uncomment this to impose an authentication requirement
+    # logged in user should = https, and we check for logged in user,
+    # but double check here in case we ever need to degrade the main
+    # site security
+    @https()
     def __before__(self):
         BaseController.__before__(self)
         if pylons.test.pylonsapp:
