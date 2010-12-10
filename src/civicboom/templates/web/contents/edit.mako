@@ -194,7 +194,7 @@
             <li>
                 <div class="file_type_overlay icon_${media.type}"></div>
                 <a href="${media.original_url}">
-                    <img id="media_thumbnail_${media.id}" class="media_preview" src="${media.thumbnail_url}" alt="${media.caption}"/>
+                    <img id="media_thumbnail_${media.id}" class="media_preview" src="${media.thumbnail_url}" alt="${media.caption}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/>
                     
                     % if app_globals.memcache.get(str("media_processing_"+media.hash)):
                         <!-- Media still undergoing proceccesing -->
