@@ -23,18 +23,19 @@ class TestBoomController(TestController):
         
         self.log_in_as('unitfriend')
         
-        # View the content as unitfriend
+        # View the unittests profile as unitfriend
         response = self.app.get(url('member', id='unittest', format='json'), status=200)
         response_json = json.loads(response.body)
         assert 'unittest'         in response
         assert 'Content to BOOM!' in response
-        boom_count = int(response_json['data']['content']['boom_count'])
         
         # Does unitfriend have the 'boom' action
         response = self.app.get(url('content', id=content_id, format='json'), status=200)
         response_json = json.loads(response.body)
         assert 'boomed by unitfriend'
         assert 'boom' in response_json['data']['actions']
+        boom_count = int(response_json['data']['content']['boom_count'])
+
         
         # Boom unittest's content as unitfriend
         response = self.app.post(
@@ -46,15 +47,19 @@ class TestBoomController(TestController):
         )
         response_json = json.loads(response.body)
         
+        response = self.app.get(url('member_action', action='boomed_content', id='unitfriend', format='json'), status=200)
+        response_json = json.loads(response.body)
+        assert 'Content to BOOM!' in response
+        
         # Check that the content appears in unitfriends profile
         response = self.app.get(url('member', id='unitfriend', format='json'), status=200)
         response_json = json.loads(response.body)
         assert 'Content to BOOM!' in response
         
         # Check the boom count has been incremented
-        response = self.app.get(url('member', id='unittest', format='json'), status=200)
+        response = self.app.get(url('content', id=content_id, format='json'), status=200)
         response_json = json.loads(response.body)
-        assert 'unittest'         in response
-        assert 'Content to BOOM!' in response
+        assert 'boomed by unitfriend'
+        assert 'boom' in response_json['data']['actions']
         assert  int(response_json['data']['content']['boom_count']) == boom_count + 1
         

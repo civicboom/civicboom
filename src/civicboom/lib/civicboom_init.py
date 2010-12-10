@@ -58,4 +58,4 @@ def init():
                                                 backref='assignments_accepted'
                                     )
     
-    boomed_content       = relationship("Content", primaryjoin='Member.id==Boom.member_id', secondaryjoin='Boom.content_id==Content.id', secondary=Boom.__table__) #  #, , secondaryjoin='map_booms.member_id'
+    Member.boomed_content       = relationship("Content", primaryjoin='Member.id==Boom.member_id', secondaryjoin='Boom.content_id==Content.id', secondary=Boom.__table__) #  #, , secondaryjoin='map_booms.member_id'

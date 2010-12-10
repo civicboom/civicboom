@@ -237,7 +237,7 @@ def setup_format_processors():
         for n in list(result):
             if n not in ['status', 'message', 'data']:
                 del result[n]
-        return dictToXMLString(result)
+        return '<?xml version="1.0" encoding="UTF-8"?>' + dictToXMLString(result)
         
     def format_rss(result):
         response.headers['Content-type'] = "application/rss+xml; charset=utf-8"
