@@ -161,6 +161,7 @@ def signin_user(user, login_provider=None):
     """
     Perform the sigin for a user
     """
+    session.invalidate()
     user_log.info("logged in with %s" % login_provider)   # Log user login
     #session_set('user_id' , user.id      ) # Set server session variable to user.id
     session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
