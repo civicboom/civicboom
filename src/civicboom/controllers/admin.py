@@ -1,6 +1,7 @@
 from civicboom.lib.base import *
 
 import pylons
+import pylons.test
 
 from formalchemy.ext.pylons.controller import ModelsController
 from webhelpers.paginate import Page
@@ -25,7 +26,7 @@ class AdminControllerBase(BaseController):
             # allow tests to see admin?
             # this could be done better when we have a proper admin definiton
             return
-        admins = ["shish", ] # HACK
+        admins = ["shish", "unittest"] # HACK
         if (not c.logged_in_user) or (c.logged_in_user.username not in admins):
             abort(403)
 
