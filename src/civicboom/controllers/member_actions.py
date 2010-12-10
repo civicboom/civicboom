@@ -147,7 +147,7 @@ class MemberActionsController(BaseController):
     @web
     def boomed_content(self, id, **kwargs):
         """
-        GET /members/{name}/boomed: get a list content this user has boomed
+        GET /members/{name}/boomed_content: get a list content this user has boomed
         
         @api members 1.0 (WIP)
         
@@ -155,9 +155,9 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         @return 404   member not found
         """
-        #return content_search(boomed_by=id, **kwargs)
-        member = _get_member(id)
-        return action_ok(data={'list': [content.to_dict("full") for content in member.boomed_content]})
+        return content_search(boomed_by=id, **kwargs)
+        #member = _get_member(id)
+        #return action_ok(data={'list': [content.to_dict(**kwargs) for content in member.boomed_content]})
 
 
 

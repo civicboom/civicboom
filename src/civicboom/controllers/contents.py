@@ -2,7 +2,7 @@
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent
+from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license
 from civicboom.model.content           import _content_type as content_types
 
@@ -154,8 +154,9 @@ def _init_search_filters():
         return query.filter(Content.parent_id==int(content_id))
 
     def append_search_boomed_by(query, member):
-        member = _normalize_member(member, always_return_id)
-        return query.join(Boom).filter(Boom.member_id==member_id)
+        member = _normalize_member(member, always_return_id=True)
+        return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
+        
 
     
     search_filters = {
