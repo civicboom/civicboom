@@ -167,10 +167,11 @@ def signin_user(user, login_provider=None):
     session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
     response.set_cookie(
         "civicboom_logged_in", "True",
-        int(config["beaker.session.timeout"]),
-        secure=(request.environ['wsgi.url_scheme']=="https"),
-        httponly=True
+        int(config["beaker.session.timeout"])
     )
+    # SecurifyCookiesMiddleware will set these
+    #    secure=(request.environ['wsgi.url_scheme']=="https"),
+    #    httponly=True
 
 def signin_user_and_redirect(user, login_provider=None):
     """
