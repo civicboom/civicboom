@@ -35,10 +35,11 @@ class MediaController(BaseController):
     #-----------------------------------------------------------------------------
     # Get Processing Status
     #-----------------------------------------------------------------------------
+    @web
     def get_media_processing_staus(self, id):
         """
         Javascript can poll this method to get progress updates on the media processing
         Currently only return a flag to state if processing it taking place,
         but could be improved to return aditional progress info.
         """
-        return action_ok(data=app_globals.memcache.get(str("media_processing_"+id)))
+        return action_ok(data={"status":app_globals.memcache.get(str("media_processing_"+id))})

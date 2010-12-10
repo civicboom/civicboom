@@ -194,7 +194,7 @@
             <li>
                 <div class="file_type_overlay icon_${media.type}"></div>
                 <a href="${media.original_url}">
-                    <img id="media_thumbnail_${media.id}" class="media_preview" src="${media.thumbnail_url}" alt="${media.caption}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/>
+                    <img id="media_thumbnail_${media.id}" class="media_preview" src="${media.thumbnail_url}?0" alt="${media.caption}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/>
                     
                     % if app_globals.memcache.get(str("media_processing_"+media.hash)):
                         <!-- Media still undergoing proceccesing -->
@@ -205,25 +205,29 @@
                         <script type="text/javascript">
 							function updateMedia${media.id}() {
                             	$.getJSON(
-									"${url(controller='content', action='get_media_processing_staus', id=media.hash)}",
+									"${url(controller='media', action='get_media_processing_staus', id=media.hash, format='json')}",
 									processingStatus${media.id}
 								);
 							}
                             function processingStatus${media.id}(data) {
-                                YAHOO.log("Status got = "+data.data);
-                                if(!data.data) {
+								_status = data.data.status;
+                                /*alert("Status got = "+_status);*/
+                                if(!_status) {
                                     clearInterval(media_thumbnail_timer_${media.id});
-                                    YAHOO.log("processing complete reload the image!!!");
-									var mt = $("#media_thumbnail_${media.id}");
-									mt.src = mt.src + "?" + (new Date().getTime());
+                                    /*alert("processing complete reload the image!!!");*/
+									$("#media_thumbnail_${media.id}").src = "${media.thumbnail_url}" + "?" + (new Date().getTime());
+									$("#media_status_${media.id}").text("");
                                 }
+								else {
+									$("#media_status_${media.id}").text(_status);
+								}
                             }
-                            var media_thumbnail_timer_${media.id} = setInterval('updateMedia${media.id}()', 10000);
+                            var media_thumbnail_timer_${media.id} = setInterval('updateMedia${media.id}()', 5000);
                         </script>
                         <!-- End media still undergoing proceccesing -->
                     % endif
-                    
                 </a>
+				<span id="media_status_${media.id}" style="display: none">(status)</span>
                 
                 <div class="media_fields">
                     <p><label for="media_file_${media.id}"   >${_("File")}       </label><input id="media_file_${media.id}"    name="media_file_${media.id}"    type="text" disabled="true" value="${media.name}"   /><input type="submit" name="file_remove_${media.id}" value="Remove" class="file_remove"/></p>
