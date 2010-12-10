@@ -80,7 +80,7 @@ class MembersController(BaseController):
         if 'lists' not in kwargs:
             kwargs['lists'] = 'followers, following, assignments_accepted, content, groups, members, actions'
         
-        data = {'member': member.to_dict(**kwargs)}
+        data = {'member': member.to_dict(list_type='full', **kwargs)}
 
         # AllanC - cannot be imported at begining of module because of mutual coupling error
         from civicboom.controllers.member_actions import MemberActionsController
