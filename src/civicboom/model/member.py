@@ -142,6 +142,7 @@ class Member(Base):
     flags                = relationship("FlaggedContent"  , backref=backref('member'), cascade="all,delete-orphan")
     feeds                = relationship("Feed"            , backref=backref('member'), cascade="all,delete-orphan")
 
+
     # Content relation shortcuts
     #content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
     
@@ -155,6 +156,7 @@ class Member(Base):
     # content_assignments_previous
     # assignments_accepted = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
     #interests = relationship("")
+
 
     _config = None
 
