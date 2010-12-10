@@ -87,7 +87,7 @@ def _update_media_length(hash, length):
 
 def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     import memcache
-    m               = memcache.Client([config['service.memcache.server']], debug=0)
+    m               = memcache.Client(config['service.memcache.server'].split(), debug=0)
     memcache_key    = str("media_processing_"+file_hash)
     memcache_expire = int(config['media.processing.expire_memcache_time'])
     

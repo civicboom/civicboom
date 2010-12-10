@@ -31,7 +31,7 @@ class Globals(object):
         self.cache         = CacheManager(**parse_cache_config_options(config))
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
 
-        self.memcache      = memcache.Client([config['service.memcache.server']], debug=0)
+        self.memcache      = memcache.Client(config['service.memcache.server'].split(), debug=0)
 
         self.user_defaults = SafeConfigParser()
         self.user_defaults.read("user_defaults.ini")
