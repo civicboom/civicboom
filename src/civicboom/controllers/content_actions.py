@@ -50,19 +50,20 @@ class ContentActionsController(BaseController):
 
         @return 200   boomed successfully
         """
+        # AllanC: Depricated
         # FIXME: add entry to booms table, and look that up rather than the session variable
-        boomkey = 'boom%s' % id
-        if boomkey in session:
-            raise action_error(_('already boomed this'), code=400)
-        session[boomkey] = True
+        #boomkey = 'boom%s' % id
+        #if boomkey in session:
+        #    raise action_error(_('already boomed this'), code=400)
+        #session[boomkey] = True
 
         content = _get_content(id)
         if content.creator == c.logged_in_persona:
-            raise action_error(_('You can not boom your own content, all your followers were already notified when you uploaded this content'))
-        content.boom_to_all_followers(c.logged_in_persona)
+            raise action_error(_('You can not boom your own content'))
+        content.boom_content(c.logged_in_persona)
 
-        user_log.debug("Boomed Content #%d" % int(id))
-        return action_ok(_("All your followers have been informed about this content"))
+        user_log.debug("Boomed Content #%d" % content.id)
+        return action_ok(_("Content has been Boomed"))
 
 
     #---------------------------------------------------------------------------

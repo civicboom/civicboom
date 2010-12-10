@@ -8,7 +8,7 @@ def init():
     I'm unsure as to wether the problem was with the version of SQLAlchemy but with the string method it was not possible to specify multiple conditions under the primary join param even though the SQL created was correct
     In the future it may be possible to intigrate these with the main class defentions
     """
-    from civicboom.model.content import Content, AssignmentContent, MemberAssignment, Interest
+    from civicboom.model.content import Content, AssignmentContent, MemberAssignment, Interest, Boom
     from civicboom.model.member  import Member
     
     from sqlalchemy     import and_, or_, not_
@@ -57,3 +57,5 @@ def init():
                                                 foreign_keys=[MemberAssignment.content_id,MemberAssignment.member_id],
                                                 backref='assignments_accepted'
                                     )
+    
+    boomed_content       = relationship("Content", primaryjoin='Member.id==Boom.member_id', secondaryjoin='Boom.content_id==Content.id', secondary=Boom.__table__) #  #, , secondaryjoin='map_booms.member_id'
