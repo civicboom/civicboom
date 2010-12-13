@@ -12,7 +12,7 @@ def init():
     from civicboom.model.member  import Member
     
     from sqlalchemy     import and_, or_, not_
-    from sqlalchemy.orm import mapper, dynamic_loader, relationship
+    from sqlalchemy.orm import mapper, dynamic_loader, relationship, backref
 
     import datetime
     
@@ -58,4 +58,10 @@ def init():
                                                 backref='assignments_accepted'
                                     )
     
-    Member.boomed_content       = relationship("Content", primaryjoin='Member.id==Boom.member_id', secondaryjoin='Boom.content_id==Content.id', secondary=Boom.__table__) #  #, , secondaryjoin='map_booms.member_id'
+    Member.boomed_content       = relationship("Content",
+                                               primaryjoin   = Member.id==Boom.member_id,
+                                               secondary     = Boom.__table__,
+                                               secondaryjoin = Boom.content_id==Content.id,
+                                               backref       = backref('boomed_by'),
+                                               #cascade="all,delete-orphan",
+                                               )

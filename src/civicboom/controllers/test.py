@@ -160,7 +160,11 @@ class TestController(BaseController):
             )
             c.kwargs['response'] = reponse
         
-        return render('/test_post_faker.mako')
+        return render('/test/test_recaptha.mako')
+
+    def frag(self, **kwargs):
+        return render('/test/test_frag.mako')
+    
 
     #---------------------------------------------------------------------------
     # Upgrade Account
