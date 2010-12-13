@@ -10,8 +10,12 @@ Only the form fields that are sent are validated and saved
 """
 
 from civicboom.lib.base import *
+import civicboom.lib.services.warehouse as wh
 import hashlib
 import copy
+import tempfile
+import Image
+
 
 
 from   civicboom.lib.form_validators.validator_factory import build_schema
@@ -44,8 +48,8 @@ add_setting('twitter_username'       , _('Twitter username')    , group='aggrega
 add_setting('twitter_auth_key'       , _('Twitter authkey' )    , group='aggregation')
 add_setting('broadcast_instant_news' , _('Twitter instant news'), group='aggregation', type='boolean')
 add_setting('broadcast_content_posts', _('Twitter content' )    , group='aggregation', type='boolean')
-add_setting('avatar'                 , _('Avatar' )             , group='avatar'     , info='leave blank to use a gravatar')
-add_setting('location'               , _('Home Location' )      , group='location'   , info='type in your town name or select a locaiton from the map')
+add_setting('avatar'                 , _('Avatar' )             , group='avatar'     , type='file')
+add_setting('home_location'          , _('Home Location' )      , group='location'   , type='location', info='type in your town name or select a locaiton from the map')
 
 
 
@@ -76,9 +80,10 @@ settings_validators = dict(
     broadcast_instant_news  = formencode.validators.StringBool(if_missing=False),
     broadcast_content_posts = formencode.validators.StringBool(if_missing=False),
     
-    avatar = formencode.validators.URL(),
+    avatar = formencode.validators.FieldStorageUploadConverter(),
     
     #location =
+    home_location = formencode.validators.UnicodeString(),
 )
 
     
@@ -195,11 +200,36 @@ class SettingsController(BaseController):
         
         # Save special properties that need special processing
         # (counld have a dictionary of special processors here rather than having this code cludge this controller action up)
+        if 'avatar' in settings:
+            with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
+                a = settings['avatar']
+                wh.copy_cgi_file(a, original.name)
+                h = wh.hash_file(original.name)
+                wh.copy_to_warehouse(original.name, "avatars-original", h, a.filename)
+
+                with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
+                    size = (160, 160)
+                    im = Image.open(original.name)
+                    if im.mode != "RGB":
+                        im = im.convert("RGB")
+                    im.thumbnail(size, Image.ANTIALIAS)
+                    im.save(processed.name, "JPEG")
+                    wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
+
+            user.avatar = "%s/avatars/%s" % (config['warehouse_url'], h)
+            del settings['avatar']
+
+        if 'home_location' in settings:
+            print "home loc: %s" % settings['home_location']
+            del settings['home_location']
+
         if 'password_new' in settings:
             # OLD: We could put this in settings.py manager, have a dictionarys with special cases and functions to process/save them, therefor the code is transparent in the background. an idea?
-            set_password(user,settings['password_new'], delay_commit=True)
+            set_password(user, settings['password_new'], delay_commit=True)
             del settings['password_new'        ] # We dont want these saved
+        if 'password_new_confirm' in settings:
             del settings['password_new_confirm']
+        if 'password_current' in settings:
             del settings['password_current'    ]
         
         # Save all remaining properties

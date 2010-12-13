@@ -42,6 +42,7 @@
         <li><a href="#" class="top_parent">${_("Manage")}</a>
         <ul>
             <li><a href="/profile" class="sub_option">${_("My Profile")}</a></li>
+            <li><a href="/settings" class="sub_option">${_("My Settings")}</a></li>
             <li><a href="/profile" class="sub_option">${_("My Content")}</a></li>
             <li><a href="/profile" class="sub_option">${_("My Assignments")}</a></li>
             <li><a href="/profile" class="sub_option">${_("My Groups")}</a></li>
