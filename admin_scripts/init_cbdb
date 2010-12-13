@@ -54,7 +54,7 @@ echo "  Granting extra permissions"
 echo "grant all on spatial_ref_sys to civicboom;"  | psql -q -d civicboom_gis
 echo "grant all on geometry_columns to civicboom;" | psql -q -d civicboom_gis
 
-PLACES=`dirname $0`/kent.osm.bz2
+PLACES="`dirname $0`/*.osm.bz2"
 if [ -f $PLACES ] ; then
 	echo "  Found $PLACES, populating location tables"
 	osm2pgsql \
