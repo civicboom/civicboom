@@ -78,7 +78,7 @@ class MembersController(BaseController):
         kwargs['force_public_only'] = True # AllanC - additon to ensure that public profiles return public only content
         
         if 'lists' not in kwargs:
-            kwargs['lists'] = 'followers, following, assignments_accepted, content, groups, members, actions'
+            kwargs['lists'] = 'followers, following, assignments_accepted, content, groups, members, actions, boomed_content'
         
         data = {'member': member.to_dict(list_type='full', **kwargs)}
 

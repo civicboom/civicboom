@@ -141,6 +141,26 @@ class MemberActionsController(BaseController):
         return content_search(creator=id, **kwargs)
 
 
+    #---------------------------------------------------------------------------
+    # List - Boomed Content
+    #---------------------------------------------------------------------------
+    @web
+    def boomed_content(self, id, **kwargs):
+        """
+        GET /members/{name}/boomed_content: get a list content this user has boomed
+        
+        @api members 1.0 (WIP)
+        
+        @return 200    list generated ok
+                list   array of content objects
+        @return 404   member not found
+        """
+        return content_search(boomed_by=id, **kwargs)
+        #member = _get_member(id)
+        #return action_ok(data={'list': [content.to_dict(**kwargs) for content in member.boomed_content]})
+
+
+
     def _groups_list_dict(self, group_roles, **kwargs):
         return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
 

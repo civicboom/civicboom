@@ -2,7 +2,7 @@
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent
+from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license
 from civicboom.model.content           import _content_type as content_types
 
@@ -103,7 +103,7 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
 # Search Filters
 #-------------------------------------------------------------------------------
 
-def _normalize_member(member):
+def _normalize_member(member, always_return_id=False):
     if isinstance(member, Member):
         member = member.id
     else:
@@ -111,6 +111,8 @@ def _normalize_member(member):
             member = int(member)
         except:
             member = member
+            if always_return_id:
+                member = get_member(member).id
     return member
 
 
@@ -151,6 +153,11 @@ def _init_search_filters():
             content_id = content_id.id
         return query.filter(Content.parent_id==int(content_id))
 
+    def append_search_boomed_by(query, member):
+        member = _normalize_member(member, always_return_id=True)
+        return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
+        
+
     
     search_filters = {
         'id'         : append_search_id ,
@@ -159,6 +166,7 @@ def _init_search_filters():
         'location'   : append_search_location ,
         'type'       : append_search_type ,
         'response_to': append_search_response_to ,
+        'boomed_by'  : append_search_boomed_by ,
     }
     
     return search_filters
@@ -242,7 +250,7 @@ class ContentsController(BaseController):
                 results = list_filters[kwargs['list']](results)
             else:
                 raise action_error(_('list %s not supported') % kwargs['list'], code=400)
-        results = results.order_by(Content.id.desc()) # id order is also date created order, we dont need to index the date created field as well
+        results = results.order_by(Content.update_date.desc())
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
         # Return search results

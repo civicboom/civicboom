@@ -37,6 +37,7 @@ class Boom(Base):
     __tablename__ = "map_booms"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
+    timestamp     = Column(DateTime(),   nullable=False, default=func.now())
 
 class Rating(Base):
     __tablename__ = "map_ratings"
@@ -108,6 +109,7 @@ class Content(Base):
 
     comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id == Content.parent_id")
     flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
+    
 
     # used by obj_to_dict to create a string dictonary representation of this object
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
@@ -351,15 +353,17 @@ class CommentContent(Content):
 class UserVisibleContent(Content):
     "Abstract class"
     __tablename__ = "content_user_visible"
-    id            = Column(Integer(), ForeignKey('content.id'), primary_key=True)
-    views         = Column(Integer(), nullable=False, default=0)
-    boom_count    = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    id            = Column(Integer() , ForeignKey('content.id'), primary_key=True)
+    views         = Column(Integer() , nullable=False, default=0)
+    publish_date  = Column(DateTime(), nullable=False, default=func.now())
+    boom_count    = Column(Integer() , nullable=False, default=0, doc="Controlled by postgres trigger")
 
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(Content.__to_dict__)
     _extra_user_visible_fields = {
             'views'        : None ,
             'boom_count'   : None ,
+            'publish_date' : None ,
     }
     __to_dict__['default'     ].update(_extra_user_visible_fields)
     __to_dict__['full'        ].update(_extra_user_visible_fields)
@@ -372,6 +376,8 @@ class UserVisibleContent(Content):
                 action_list.append('approve')
                 action_list.append('seen')
                 action_list.append('dissasociate')
+        #if has not boomed before:
+        action_list.append('boom')
         return action_list
 
     def is_parent_owner(self, member):
@@ -381,9 +387,9 @@ class UserVisibleContent(Content):
             return self.parent.editable_by(member)
         return False
 
-    def boom_to_all_followers(self, member):
-        from civicboom.lib.database.actions import boom_to_all_followers
-        return boom_to_all_followers(self, member)
+    def boom_content(self, member):
+        from civicboom.lib.database.actions import boom_content
+        return boom_content(self, member)
 
 
 class ArticleContent(UserVisibleContent):
@@ -633,6 +639,8 @@ class FlaggedContent(Base):
 
     def __str__(self):
         return "%s - %s (%s)" % (self.member.username, self.comment, self.type)
+
+
 
 
 GeometryDDL(Content.__table__)

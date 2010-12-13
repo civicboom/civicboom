@@ -61,6 +61,10 @@
 	    <li>${h.secure_link(h.url('content_action', action='withdraw', format='redirect', id=d['content']['id']), _('Withdraw'), css_class="button_small button_small_style_2")}</li>
 	% endif
     
+	% if 'boom' in d['actions']:
+		<li>${h.secure_link(h.url('content_action', action='boom'    , format='redirect', id=d['content']['id']), _('Boom')    , css_class="button_small button_small_style_2")}</li>
+	% endif
+	
 	## Parent Content Owner Actions
 	## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
 	##% if content.actions:

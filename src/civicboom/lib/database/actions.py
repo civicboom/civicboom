@@ -4,7 +4,7 @@ from pylons.i18n.translation import _
 
 from civicboom.model.meta import Session
 from civicboom.model         import Rating
-from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent
+from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent, Boom
 from civicboom.model.member  import GroupMembership, group_member_roles, PaymentAccount, account_types
 
 
@@ -370,12 +370,22 @@ def flag_content(content, member=None, type="automated", comment=None):
                content_text="%s flagged %s as %s" % (member_username, url(controller='content', action='view', id=content.id), type)
                )
 
-def boom_to_all_followers(content, member):
-    if   content.__type__ == 'article':
-        member.send_message_to_followers(messages.boom_article(   member=member, article   =content), delay_commit=True)
-    elif content.__type__ == 'assignment':
-        member.send_message_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
-    Session.commit()
+def boom_content(content, member, delay_commit=False):
+    #if   content.__type__ == 'article':
+    #    member.send_message_to_followers(messages.boom_article(   member=member, article   =content), delay_commit=True)
+    #elif content.__type__ == 'assignment':
+    #    member.send_message_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
+    
+    #AllanC - TODO: check content already boomed? raise error
+    #               check content is PUBLIC or raise error
+    
+    boom = Boom()
+    boom.content_id = content.id
+    boom.member_id  = member.id
+    Session.add(boom)
+    
+    if not delay_commit:
+        Session.commit()
 
 def parent_seen(content, delay_commit=False):
     content.edit_lock     = "parent_owner"
