@@ -15,7 +15,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-    ${h.form(h.url('setting', id='None'), method='put')}
+    ${h.form(h.url('setting', id='None'), method='PUT', multipart=True)}
     <%
         # Setup Settings groups
         setting_groups = {}
