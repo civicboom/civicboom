@@ -44,8 +44,8 @@ add_setting('twitter_username'       , _('Twitter username')    , group='aggrega
 add_setting('twitter_auth_key'       , _('Twitter authkey' )    , group='aggregation')
 add_setting('broadcast_instant_news' , _('Twitter instant news'), group='aggregation', type='boolean')
 add_setting('broadcast_content_posts', _('Twitter content' )    , group='aggregation', type='boolean')
-add_setting('avatar'                 , _('Avatar' )             , group='avatar'     , info='leave blank to use a gravatar')
-add_setting('location'               , _('Home Location' )      , group='location'   , info='type in your town name or select a locaiton from the map')
+add_setting('avatar'                 , _('Avatar' )             , group='avatar'     , type='file')
+add_setting('location'               , _('Home Location' )      , group='location'   , type='location', info='type in your town name or select a locaiton from the map')
 
 
 

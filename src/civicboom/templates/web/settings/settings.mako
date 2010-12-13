@@ -1,6 +1,7 @@
 <%inherit file="/web/common/html_base.mako"/>
 
 <%namespace name="private_profile" file="/web/profile/index.mako"/>
+<%namespace name="loc" file="/web/common/location.mako"/>
 
 ##------------------------------------------------------------------------------
 ## Side Col
@@ -25,11 +26,12 @@
                 setting_groups[setting_meta['group']] = []
             setting_groups[setting_meta['group']].append(setting_meta['name'])
     %>
-    
+
     % for group_name in setting_groups.keys():
         <fieldset><legend>${group_name.capitalize()}</legend>
+			<table>
             % for setting_name in setting_groups[group_name]:
-                <p>
+                <tr>
                     <%
                         setting_meta  = d['settings_meta'][setting_name]
                         setting_type  = None
@@ -40,8 +42,9 @@
                             setting_value = d['settings'][setting_name]
                     %>
 
-                    ${setting_meta['description']}:
+                    <td class='descr'>${setting_meta['description']}</td>
                     
+					<td>
                     % if not setting_type:
                         <input name="${setting_name}" value="${setting_value}">
                     % elif setting_type == 'boolean':
@@ -52,13 +55,20 @@
                         <input name="${setting_name}" value="True" type='checkbox' ${checked}>
                     % elif setting_type == 'password':
                         <input name="${setting_name}" type="password" />
+                    % elif setting_type == 'file':
+                        <input name="${setting_name}" type="file" />
+                    % elif setting_type == 'location':
+						</tr><tr><td colspan="2">
+						${loc.location_picker(field_name=setting_name, width='100%', height='300px', always_show_map=True)}
                     % endif
+					</td>
 
                     % if 'invalid' in d and setting_name in d['invalid']:
-                        <span class="error-message">${d['invalid'][setting_name]}</span>
+                        <td><span class="error-message">${d['invalid'][setting_name]}</span></td>
                     % endif
-                </p>
+                </tr>
             % endfor
+			</table>
         </fieldset>
     % endfor
     <input type="submit" name="submit" value="${_('Save settings')}"/>
