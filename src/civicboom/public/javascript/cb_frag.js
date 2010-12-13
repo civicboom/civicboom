@@ -2,29 +2,11 @@
 // Civicboom Fragment AJAX Mangment
 //------------------------------------------------------------------------------
 
-//-------------
-// Variables
-//-------------
+// Example: <a href="http://localhost:5000/test/frag" onclick="cb_frag($(this), 'http://localhost:5000/test/frag'); return false;">Link of AJAX</a>
+
 var fragment_container_id   = '#frag_container';
 var fragment_div_loading_placeholder = '<p>loading</p>';
 
-//----------------------
-// Support Functions
-//----------------------
-
-function scroll_right() {
-	
-	// Scroll (smoothly) to the right max
-	// This should be acomplished AFTER the .load operation has completed
-	// http://flesler.blogspot.com/2007/10/jqueryscrollto.html
-	// $.scrollTo.max;
-	Y.log('scrolling right', "info",  "cb_frag");
-}
-
-
-//---------------------
-// Master Call
-//---------------------
 
 // current_element = JQuery element object
 // url             = String
@@ -50,4 +32,13 @@ function cb_frag(current_element ,url) {
 	
 	// AJAX load html fragment
 	frag_div_next.load(url, scroll_right);
+}
+
+
+function scroll_right() {	
+	// Scroll (smoothly) to the right max
+	// This should be acomplished AFTER the .load operation has completed
+	// http://flesler.blogspot.com/2007/10/jqueryscrollto.html
+	// $.scrollTo.max;
+	Y.log('scrolling right', "info",  "cb_frag");
 }
