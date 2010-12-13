@@ -250,7 +250,7 @@ def frag_link(id, frag_url, value, title='', css_class=''):
         href    = url.current(**url_kwargs) ,
         class_  = css_class ,
         title   = title ,
-        onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); document.getElementById('%(id)s').innerHTML='<img src=\\\'/images/media_placeholder.gif\\\'>'; $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,
+        onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); $('#%(id)s').html('<img src=\\\'/images/media_placeholder.gif\\\'>'); $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,
     )
     
     return static_link #HTML.span(static_link, class_="frag_link")
