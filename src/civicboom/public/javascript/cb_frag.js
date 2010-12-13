@@ -11,9 +11,6 @@ var fragment_div_loading_placeholder = '<p>loading</p>';
 //----------------------
 // Support Functions
 //----------------------
-function ajax_analytics(url) {
-	//trigger Google analitics for this AJAX call
-}
 
 function scroll_right() {
 	
@@ -31,11 +28,11 @@ function scroll_right() {
 
 // current_element = JQuery element object
 // url             = String
-function cb_frag(current_element ,url) {
-	function l(msg) {Y.log(msg, "info",  "cb_frag");}
+function cb_frag(current_element ,url) {	
 	// Register this page view with Google analytics.
-	ajax_analytics(url);
-	
+	// http://code.google.com/apis/analytics/docs/tracking/asyncMigrationExamples.html#VirtualPageviews
+	_gaq.push(['_trackPageview', url]);
+
 	// Get this parent fragment name
 	var frag_div    = current_element.parents('.frag') // go up the chain looking for '.frag' class to id the master parent
 	var frag_div_id = frag_div.attr('id');

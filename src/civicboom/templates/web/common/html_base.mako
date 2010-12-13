@@ -94,6 +94,18 @@ ${self.head_links()}
     </style>
 % endif
 
+##----------------------------------------------------------------------------
+## Google Analitics - ASync array setup
+##----------------------------------------------------------------------------
+## http://code.google.com/apis/analytics/docs/tracking/asyncUsageGuide.html#SplitSnippet
+## As this is just an array there is no harm in declaring it here
+	<!-- Google Analytics -->
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', '${config['api_key.google.analytics']}']);
+		_gaq.push(['_trackPageview']);
+	</script>
+
 
 ##----------------------------------------------------------------------------
 ## Development Javascript Debug Console Output

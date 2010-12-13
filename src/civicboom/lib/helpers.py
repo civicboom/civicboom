@@ -269,3 +269,12 @@ def frag_div(id, default_frag_url=None):
     if frag_url:
         frag_contents = literal('<!--#include file="%s"-->' % frag_url)
     return HTML.div(frag_contents, id=id)
+
+
+#-------------------------------------------------------------------------------
+# Civicboom Fragment Object HTML Block
+#-------------------------------------------------------------------------------
+
+def cb_frag_link(*args, **kwargs):
+    kwargs['onclick'] = "cb_frag($(this), '%s'); return false;"  % kwargs['href']
+    return HTML.a(*args, **kwargs)
