@@ -63,6 +63,7 @@
 	<script src="/javascript/jquery-1.4.2.js"></script>
 	<script src="/javascript/jquery.ui.js"></script>
 	<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+	<script src="/javascript/jquery.scrollTo.js"></script>
 	<script src="/javascript/jquery.html5-0.0.1.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
