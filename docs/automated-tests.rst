@@ -4,6 +4,7 @@ Automated Test Framework
 tl;dr: How to write a test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Standard pylons test framework is used
+- run "nosetests" from the $REPO/src/ folder to run manually
 
 
 Behind the scenes, how it is automated
