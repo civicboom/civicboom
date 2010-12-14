@@ -11,25 +11,37 @@
 
 #frag_containers .frag_container .action_bar {
   background-color: green;
-  height: 30px;
+  height: 40px;
   overflow: hidden;
 }
 
-#frag_containers .frag_container .frag_content {
+#frag_containers .frag_container .frag_data {
   background-color: #888;
   overflow-x: none;
   overflow-y: scroll;
   height:350px;
 }
 
+/*-------------------------- Frag Content ------------------------------------*/
 #frag_containers .frag_container .frag_content .frag_left_col {
   background-color: yellow;
   width: 290px;
   float: left;
 }
-
 #frag_containers .frag_container .frag_content .frag_right_col {
   background-color: red;
+  width: 190px;
+  float: right;
+}
+
+/*-------------------------- Frag Member -------------------------------------*/
+#frag_containers .frag_container .frag_member .frag_left_col {
+  background-color: green;
+  width: 290px;
+  float: left;
+}
+#frag_containers .frag_container .frag_member .frag_right_col {
+  background-color: blue;
   width: 190px;
   float: right;
 }

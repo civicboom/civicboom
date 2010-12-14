@@ -28,7 +28,7 @@
 		
 		## Method 2: Create the div manually and render from the template
 		<div id="frag_" class="frag_container">
-			${frag_content.content_frag(d)}
+			${frag_content.frag_content(d)}
 		</div>
 		
 		## Disscussion

@@ -8,20 +8,20 @@
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
-${content_frag(d)}
+${frag_content(d)}
 </%def>
 
 ##------------------------------------------------------------------------------
 ## Content Fragment
 ##------------------------------------------------------------------------------
-<%def name="content_frag(d)">
+<%def name="frag_content(d)">
     <% content = d['content'] %>
     
     <div class="action_bar">
         ${action_bar(d['actions'])}
     </div>
     
-    <div class="frag_content">
+    <div class="frag_data frag_content">
         <div class="frag_left_col">
             ${content_details( content)}
             ${content_media(   content)}
