@@ -13,11 +13,13 @@ var fragment_div_loading_placeholder = '<p>loading</p>';
 // url             = String
 function cb_frag(current_element, url) {
 	// Take the url from the current <A> element
-	if (url==undefined || url==null) {url = current_element.attr('href');}
+	var url_a = current_element.attr('href');
+	if (url_a==undefined || url_a==null) {return;}
+	if (url  ==undefined || url  ==null) {url = url_a;}
 	
 	// Register this page view with Google analytics.
 	// http://code.google.com/apis/analytics/docs/tracking/asyncMigrationExamples.html#VirtualPageviews
-	_gaq.push(['_trackPageview', url]);
+	_gaq.push(['_trackPageview', url_a]);
 
 	// Get this parent fragment name
 	var frag_div    = current_element.parents('.'+fragment_container_class) // go up the chain looking for '.frag' class to id the master parent
