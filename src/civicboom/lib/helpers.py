@@ -255,7 +255,7 @@ def frag_link(id, frag_url, value, title='', css_class=''):
     
     return static_link #HTML.span(static_link, class_="frag_link")
 
-def frag_div(id, default_frag_url=None):
+def frag_div(id, default_frag_url=None, class_=None):
     """
     Create an HTML div linked to a fragment
     Look in request query sting to populate the div with a fragment (if viewed staticly)
@@ -268,7 +268,7 @@ def frag_div(id, default_frag_url=None):
         frag_url = request.GET[id]
     if frag_url:
         frag_contents = literal('<!--#include file="%s"-->' % frag_url)
-    return HTML.div(frag_contents, id=id)
+    return HTML.div(frag_contents, id=id, class_=class_)
 
 
 #-------------------------------------------------------------------------------

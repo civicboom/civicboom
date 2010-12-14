@@ -49,6 +49,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/fragments.css" />
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif
