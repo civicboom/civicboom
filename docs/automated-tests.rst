@@ -16,8 +16,6 @@ Buildbot will automatically build / install / test for every git push, making us
   - installs the packages from buildmaster and runs a server
 - test-client
   - runs browser-based tests against the server
-- alpha-server, beta-server, live-server
-  - similar to test-server, for manual testing
 
 details
 ~~~~~~~
