@@ -7,7 +7,7 @@
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
-${h.form(h.url('setting', id='None'), method='PUT', multipart=True)}
+${h.form(h.url('setting', id='messages'), method='PUT')}
 <%
 from civicboom.lib.communication.messages import generators
 

@@ -180,6 +180,34 @@ class SettingsController(BaseController):
         - Saves update
         - Returns written object
         """
+
+        # special case for generators
+        if id == "messages":
+            from civicboom.lib.communication.messages import generators
+            for gen in generators:
+                route_name = "route_"+gen[0]
+
+                # setting = eg "ne", "c", "nec"
+                setting = "".join([
+                    request.POST.get(gen[0]+"_n", ""),
+                    request.POST.get(gen[0]+"_e", ""),
+                    request.POST.get(gen[0]+"_c", ""),
+                ])
+
+                # if setting = default, delete the key
+                if setting == gen[1]:
+                    if route_name in c.logged_in_persona.config:
+                        del c.logged_in_persona.config[route_name]
+                # if setting is non-default, set it
+                else:
+                    c.logged_in_persona.config[route_name] = setting
+
+            Session.commit()
+            return action_ok(
+                message = _('settings updated') ,
+                template='settings/messages' ,
+            )
+
         data        = self.edit(id=id)['data']
         settings    = data['settings']
         
