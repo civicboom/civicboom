@@ -7,6 +7,7 @@
 var fragment_containers_id            = '#frag_containers';
 var fragment_container_class          = 'frag_container';
 var fragment_div_loading_placeholder = '<p>loading</p>';
+var scroll_duration = 400;
 
 
 // current_element = JQuery element object
@@ -25,6 +26,12 @@ function cb_frag(current_element, url) {
 	var frag_div    = current_element.parents('.'+fragment_container_class) // go up the chain looking for '.frag' class to id the master parent
 	var frag_div_id = frag_div.attr('id');
 
+	//
+	if (frag_div.next().length > 0) {
+		//Y.log('scroll back');
+		//$(fragment_containers_id).scrollTo(frag_div, {duration: scroll_duration});
+	}
+
 	// Remove all element inserted after this element
 	frag_div.nextAll().remove(); 
 	
@@ -38,11 +45,12 @@ function cb_frag(current_element, url) {
 	
 	// AJAX load html fragment
 	frag_div_next.load(url, scroll_fragment_containers_right);
+	scroll_fragment_containers_right();
 }
 
 function scroll_fragment_containers_right() {
 	// Scroll (smoothly) to the right max
 	// http://plugins.jquery.com/project/ScrollTo
 	// http://demos.flesler.com/jquery/scrollTo/
-	$(fragment_containers_id).scrollTo('100%', 0 , {duration:400});
+	$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});
 }

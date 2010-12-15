@@ -14,7 +14,8 @@ ${frag_member(d)}
 ## Member Fragment
 ##------------------------------------------------------------------------------
 <%def name="frag_member(d)">
-    <% member = d['member'] %>
+    <% member = d['member']  %>
+    <% id     = member['id'] %>
     
     <div class="action_bar">
         ${action_bar(d['actions'])}
@@ -28,10 +29,13 @@ ${frag_member(d)}
         </div>
         <div class="frag_right_col">
             ## Member Content
-            ${frag_list.member_list( d['following']           , _('Following')             )}
-            ${frag_list.member_list( d['followers']           , _('Followers')             )}
-            ${frag_list.content_list(d['assignments_accepted'], _('Accepted _assignments') )}
-            ${frag_list.content_list(d['content']             , _('Content')               )}
+            ${frag_list.member_list( d['following']           , _('Following')            , url('member_actions', id=id, action='following')            )}
+            ${frag_list.member_list( d['followers']           , _('Followers')            , url('member_actions', id=id, action='followers')            )}
+            ${frag_list.content_list(d['assignments_accepted'], _('Accepted _assignments'), url('member_actions', id=id, action='assignments_accepted') )}
+            ${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
+            % if member['type']=='group':
+            ${frag_list.group_members_list(d['members']       , _('Members')              , url('member_actions', id=id, action='members')              )}
+            % endif
         </div>
     </div>
 </%def>
@@ -51,7 +55,7 @@ ${frag_member(d)}
 ## Map
 ##------------------------------------------------------------------------------
 <%def name="member_map(member)">
-
+    <p>implement map</p>
 </%def>
 
 
