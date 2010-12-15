@@ -107,11 +107,22 @@ HEADER #search .search_button {
 
 HEADER .menuh-container {
 	position: absolute;
-	top: 40px;
-	left: 300px;
+	top: 50px;
+	left: 270px;
+}
+HEADER .menuh>UL {
+	margin-left: 16px;
+}
+HEADER .menuh a {
+	font-family: sans;
+	border-radius: 5px 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
 }
 HEADER .menuh a.top_parent, #menuh a.top_parent:hover {
-	font-size: 2em;
+	font-weight: bold;
 }
 HEADER .menuh INPUT {
 	width: 100%;
