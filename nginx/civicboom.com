@@ -1,7 +1,11 @@
 # vim:ft=conf
 
+# more brokenness on 64-bit, needs to be fixed upstream
+server_names_hash_bucket_size 64;
+
 # cache_path needs to be set globally, it doesn't work per-server :(
-proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:10m;
+proxy_cache_path /tmp/osm-cache   levels=2:2 keys_zone=osm:1g inactive=30d;
+proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:50m inactive=3m;
 proxy_temp_path  /tmp/nginx-temp;
 
 upstream backends {
@@ -35,19 +39,28 @@ server {
 	gzip_types text/plain text/css application/javascript; # text/html is implied
 
 	# proxy settings
-	proxy_cache "cb";
-	proxy_cache_key  "$scheme://$host$request_uri-cookie:$cookie_civicboom_logged_in";
 	proxy_pass_header Set-Cookie;
 	proxy_set_header Host $host;
 	proxy_set_header X-Real-IP $remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Url-Scheme $scheme;
-	if ($http_host ~  "civicboom.com") {set $proxy_port 5080;}
-	if ($http_host !~ "civicboom.com") {set $proxy_port 5000;}
 
-	# for all requests that start with / (ie, all requests), proxy to pylons
-	#location / {proxy_pass http://127.0.0.1:$proxy_port$uri$is_args$args;}
-	location / {proxy_pass http://backends;}
+	# by default, proxy to pylons
+	location / {
+		proxy_cache "cb";
+		proxy_cache_key "$scheme://$host$request_uri-cookie:$cookie_civicboom_logged_in";
+		proxy_pass http://backends;
+	}
+
+	# for tiles, proxy to openstreetmap
+	# (this allows HTTPS, and caching for offline demos)
+	location /misc/tiles/ {
+		expires 30d;
+		proxy_cache "osm";
+		proxy_cache_key "$request_uri";
+		proxy_set_header Host tile.openstreetmap.org;
+		proxy_pass http://tile.openstreetmap.org/;
+	}
 }
 
 # for demo-mode, we need a local "static" server, because demo avatar

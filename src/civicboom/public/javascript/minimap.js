@@ -22,9 +22,10 @@ function minimap(div_name, options, feeds) {
 		var map = new OpenLayers.Map(div_name, {maxResolution:'auto', theme:null, controls:[new OpenLayers.Control.Attribution()]});
 	}
 	map.addLayer(new OpenLayers.Layer.OSM("OpenLayers OSM", [
-		"http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
-		"http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
-		"http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+		"/misc/tiles/${z}/${x}/${y}.png"
+		//"http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+		//"http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+		//"http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
 	]));
 	if(options.lonlat) {
 		map.setCenter(

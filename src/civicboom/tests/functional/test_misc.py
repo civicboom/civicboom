@@ -28,6 +28,9 @@ class TestMiscController(TestController):
     def test_widget_preview(self):
         response = self.app.get(url(controller='misc', action='widget_preview'))
 
+    def test_upgrade_account(self):
+        response = self.app.get(url(controller='misc', action='upgrade_account'))
+
     def test_close_popup(self):
         response = self.app.get(url(controller='misc', action='close_popup'))
         assert "self.close()" in response
