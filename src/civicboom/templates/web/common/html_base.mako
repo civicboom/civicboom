@@ -49,6 +49,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/fragments.css" />
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif
@@ -63,11 +64,13 @@
 	<script src="/javascript/jquery-1.4.2.js"></script>
 	<script src="/javascript/jquery.ui.js"></script>
 	<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+	<script src="/javascript/jquery.scrollTo.js"></script>
 	<script src="/javascript/jquery.html5-0.0.1.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/toggle_div.js"></script>
+	<script src="/javascript/cb_frag.js"></script>
 % else:
 	<script src="/javascript/_combined.common.js"></script>
 % endif
@@ -92,6 +95,18 @@ ${self.head_links()}
     ${next.styleOverides()}
     </style>
 % endif
+
+##----------------------------------------------------------------------------
+## Google Analitics - ASync array setup
+##----------------------------------------------------------------------------
+## http://code.google.com/apis/analytics/docs/tracking/asyncUsageGuide.html#SplitSnippet
+## As this is just an array there is no harm in declaring it here
+	<!-- Google Analytics -->
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', '${config['api_key.google.analytics']}']);
+		_gaq.push(['_trackPageview']);
+	</script>
 
 
 ##----------------------------------------------------------------------------

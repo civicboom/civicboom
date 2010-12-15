@@ -231,6 +231,8 @@ class ContentsController(BaseController):
         if 'creator' not in kwargs:
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
+        
+        # AllanC - WARNING! this breaks casheability! need to consider the use case for RSS with media to be added manually with the request
         if 'list_type' not in kwargs:
             #kwargs['list_type'] = 'default'
             if c.format == 'rss':                       # Default RSS to list_with_media

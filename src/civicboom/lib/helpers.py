@@ -250,12 +250,12 @@ def frag_link(id, frag_url, value, title='', css_class=''):
         href    = url.current(**url_kwargs) ,
         class_  = css_class ,
         title   = title ,
-        onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); document.getElementById('%(id)s').innerHTML='<img src=\\\'/images/media_placeholder.gif\\\'>'; $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,
+        onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); $('#%(id)s').html('<img src=\\\'/images/media_placeholder.gif\\\'>'); $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,
     )
     
     return static_link #HTML.span(static_link, class_="frag_link")
 
-def frag_div(id, default_frag_url=None):
+def frag_div(id, default_frag_url=None, class_=None):
     """
     Create an HTML div linked to a fragment
     Look in request query sting to populate the div with a fragment (if viewed staticly)
@@ -268,4 +268,13 @@ def frag_div(id, default_frag_url=None):
         frag_url = request.GET[id]
     if frag_url:
         frag_contents = literal('<!--#include file="%s"-->' % frag_url)
-    return HTML.div(frag_contents, id=id)
+    return HTML.div(frag_contents, id=id, class_=class_)
+
+
+#-------------------------------------------------------------------------------
+# Civicboom Fragment Object HTML Block
+#-------------------------------------------------------------------------------
+
+def cb_frag_link(*args, **kwargs):
+    kwargs['onclick'] = "cb_frag($(this), '%s'); return false;"  % kwargs['href']
+    return HTML.a(*args, **kwargs)
