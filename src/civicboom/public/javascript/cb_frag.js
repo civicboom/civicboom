@@ -32,34 +32,34 @@ function cb_frag(current_element, url) {
 	
 	// Flag elements after this one for removal
 	frags_to_remove = frag_div.nextAll();
+	frags_to_remove.remove(); frags_to_remove = null;
 	//frags_to_remove.animate({width: 'toggle', opacity: 'toggle'}, 500, function(){frags_to_remove.remove(); frags_to_remove = null;});
-	frags_to_remove.fadeOut(scroll_duration, function(){frags_to_remove.remove(); frags_to_remove = null;});
+	//frags_to_remove.fadeOut(scroll_duration/2, function(){frags_to_remove.remove(); frags_to_remove = null;});
 	
 	// Generate new div name
 	var frag_div_id_next = frag_id_name + frag_count++; //frag_div_id+'1'; // AllanC - I know this only appends one to the end, but it works
 	
 	// Create new div with loading placeholder
-	$(fragment_containers_id).append('<div id="'+frag_div_id_next+'">'+fragment_div_loading_placeholder+'</div>'); // Append new '.frag' div populated with with load placeholder data
-	var frag_div_next = $('#'+frag_div_id_next);
-	frag_div_next.addClass(fragment_container_class);
+	frag_div.after('<div id="'+frag_div_id_next+'" class="'+fragment_container_class+'">'+fragment_div_loading_placeholder+'</div>'); // Append new '.frag' div populated with with load placeholder data //$(fragment_containers_id).append 
+	frag_loading = $('#'+frag_div_id_next);
 	
-	frag_loading = frag_div_next;
-	$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});
+	// Start scrolling to new element
+	// Scroll (smoothly)
+	//  - http://plugins.jquery.com/project/ScrollTo
+	//  - http://demos.flesler.com/jquery/scrollTo/
+	$(fragment_containers_id).scrollTo(frag_loading, {duration: scroll_duration});
 	
 	// AJAX load html fragment
-	frag_div_next.load(url, scroll_fragment_containers_right);
-}
-
-function scroll_fragment_containers_right() {	
-	// Scroll (smoothly) to the right max
-	// http://plugins.jquery.com/project/ScrollTo
-	// http://demos.flesler.com/jquery/scrollTo/
-	if (frag_loading) {
-		frag_loading.hide();
-		//frag_loading.width(0);
-		//frag_loading.animate({width: 'toggle', opacity: 'toggle'}, scroll_duration);
-		frag_loading.fadeIn(scroll_duration);
-		frag_loading = null;
-	}
-	$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});
+	frag_loading.load(url,
+		function(){ // When AJAX load complete
+			// Fade in loaded segment
+			if (frag_loading) {
+				frag_loading.hide();
+				//frag_loading.width(0);
+				//frag_loading.animate({width: 'toggle', opacity: 'toggle'}, scroll_duration);
+				frag_loading.fadeIn(scroll_duration);
+				frag_loading = null;
+				//$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});
+			}
+	});
 }
