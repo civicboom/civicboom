@@ -60,7 +60,16 @@
 	height: 40px;
 	overflow: hidden;
 	position: relative;
-	border: 1px solid black;
+	border: 1px solid gray;
+
+	border-radius: 8px 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+}
+.avatar .clipper .img {
+	border-radius: 8px 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
 }
 
 .avatar.large .clipper      {width: 80px; height: 80px;}
