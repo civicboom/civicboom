@@ -7,6 +7,9 @@ if [ ! -d /tmp/cb-website-temp ] ; then
 	chown www-data:www-data /tmp/cb-website-temp
 fi
 
+touch /var/log/civicboom-pylons.log
+chown www-data:www-data /var/log/civicboom-pylons.log
+
 if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
 	db_get cb-website-api/do_timed_tasks
 	if [ "$RET" = "false" ] ; then
