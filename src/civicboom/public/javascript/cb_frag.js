@@ -33,6 +33,7 @@ function cb_frag(current_element, url) {
 	// Flag elements after this one for removal
 	frags_to_remove = frag_div.nextAll();
 	frags_to_remove.remove(); frags_to_remove = null;
+	// AllanC - we want to keep the old elements taking there space for a while to allow the client browser to scroll to the correct position then remove the unneeded elements
 	//frags_to_remove.animate({width: 'toggle', opacity: 'toggle'}, 500, function(){frags_to_remove.remove(); frags_to_remove = null;});
 	//frags_to_remove.fadeOut(scroll_duration/2, function(){frags_to_remove.remove(); frags_to_remove = null;});
 	
