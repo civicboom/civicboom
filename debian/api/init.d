@@ -13,7 +13,7 @@
 APP=/opt/cb/share/website
 UID="--user www-data --group www-data"
 # FIXME /tmp should be /var/run
-DAE="--daemon --pid-file=/tmp/cb-website.pid --log-file=/var/log/civicboom/pylons.log"
+DAE="--daemon --pid-file=/tmp/cb-website.pid --log-file=/var/log/civicboom-pylons.log"
 
 cd $APP
 

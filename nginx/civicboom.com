@@ -1,5 +1,8 @@
 # vim:ft=conf
 
+# more brokenness on 64-bit, needs to be fixed upstream
+server_names_hash_bucket_size 64;
+
 # cache_path needs to be set globally, it doesn't work per-server :(
 proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:10m;
 proxy_temp_path  /tmp/nginx-temp;
