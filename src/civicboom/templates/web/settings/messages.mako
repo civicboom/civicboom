@@ -1,19 +1,19 @@
 <%inherit file="/web/common/html_base.mako"/>
-<%namespace name="prof" file="/web/common/profile.mako"/>
-<%def name="col_left()">${prof.sidebar()}</%def>
+
+<%namespace name="prof" file="/web/profile/index.mako"/>
+<%def name="col_left()">${prof.col_left()}</%def>
 
 ##------------------------------------------------------------------------------
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
-<form action="${url.current(action='save_messages', id=c.viewing_user.username)}" method="POST">
-	<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
+${h.form(h.url('setting', id='messages'), method='PUT')}
 <%
 from civicboom.lib.communication.messages import generators
 
 def check(name, tech, default):
-	if "route_"+name in c.viewing_user.config:
-		route = c.viewing_user.config["route_"+name]
+	if "route_"+name in c.logged_in_persona.config:
+		route = c.logged_in_persona.config["route_"+name]
 	else:
 		route = default
 
@@ -22,7 +22,7 @@ def check(name, tech, default):
 	else:
 		return ""
 %>
-	<table>
+	<table class="zebra" style="width: 50%">
 		<tr>
 			<th>Message</th>
 			<th>Notification</th>
@@ -39,5 +39,5 @@ def check(name, tech, default):
 	% endfor
 		<tr><td colspan="4"><input type="submit" value="Save" style="width: 100%"></td></tr>
 	</table>
-</form>
+${h.end_form()}
 </%def>
