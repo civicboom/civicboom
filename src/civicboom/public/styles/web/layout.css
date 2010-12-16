@@ -164,13 +164,16 @@ BODY>DIV#app {
  * and a footer (not actually in the new design -- do we need one?)
  */
 FOOTER {
-	clear: both;
-	background: url("/styles/web/userbarbk.png");
-	text-align: center;
-	color: #CCC;
+    background: white;
+    bottom: 0;
+    height: 20px;
+    position: fixed;
+    width: 100%;
+    font-size: 10px;
+    padding-top: 0.5em;
+    border-top: 1px solid #CCC;
 }
 FOOTER A {
-	color: #CCC;
 }
 
 /*

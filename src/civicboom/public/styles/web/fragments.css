@@ -1,20 +1,26 @@
 #frag_containers {
   /*overflow-x : scroll;*/
   white-space: nowrap;
+  top: 0;
+  bottom:0;
 }
 
 #frag_containers .frag_container {
   display    : inline-block;
+  vertical-align: top;
+
+
+
   white-space: normal;
   width      : 500px;
   margin    : 0.2em;
   
-  background-image: url('/styles/common/gradients/vertical_grey_to_transparent.png');
+  /* background-image: url('/styles/common/gradients/vertical_grey_to_transparent.png'); */
   
   border     : 0.1em solid #4a73b8;
-  border-radius        : 0 0 0.5em 0.5em;
-  -moz-border-radius   : 0 0 0.5em 0.5em;
-  -webkit-border-radius: 0 0 0.5em 0.5em;
+  border-radius        : 0.5em;
+  -moz-border-radius   : 0.5em;
+  -webkit-border-radius: 0.5em;
   
   box-shadow        : 0.2em 0.2em 0.2em #888;
   -moz-box-shadow   : 0.2em 0.2em 0.2em #888;
@@ -26,26 +32,42 @@
 }
 
 #frag_containers .frag_container .action_bar {
-  height: 40px;
+  height: 2em;
   overflow: hidden;
-}
-
-#frag_containers .frag_container .frag_data {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  height:320px;
+  color: white;
+  
+  border-bottom: 0.1em solid #4a73b8; /* to match .frag_container */
   
   background: -webkit-gradient(
     linear,
     left bottom,
     left top,
-    color-stop(0, rgb(255,255,255)),
-    color-stop(0.66, rgb(173,173,173))
+    color-stop( 33, rgb(73,116,184)),
+    color-stop(0.1, rgb(58,74,151))
   );
   background: -moz-linear-gradient(
     center bottom,
-    rgb(255,255,255) 0%,
-    rgb(173,173,173) 66%
+    rgb(73,116,184)  33%,
+    rgb(58, 74,151) 100%
+  );
+
+}
+
+#frag_containers .frag_container .frag_data {
+  overflow-y: scroll;
+  /* height:320px; */
+  
+  background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(33 , rgb(180,180,180)),
+    color-stop(0.1, rgb(255,255,255))
+  );
+  background: -moz-linear-gradient(
+    center bottom,
+    rgb(255,255,255)  33%,
+    rgb(180,180,180) 100%
   );
   /*
     http://www.webdesignerwall.com/tutorials/cross-browser-css-gradient/
