@@ -70,16 +70,16 @@ NAV .persona_select ul {
 HEADER {
 	clear: both;
 	background: url("/styles/web/headerbk.png");
-	position: absolute;
+	position: fixed;
 	left: 0px;
 	right: 0px;
-	height: 122px;
+	height: 64px;
 	z-index: 1;
 }
 .u-anon HEADER {top: 0px;}
 .u-user HEADER {top: 17px;}
 
-HEADER #logo IMG {padding: 32px;}
+HEADER #logo IMG {padding: 16px;}
 HEADER #logo SPAN {display: none;}
 
 HEADER #search {
@@ -107,17 +107,17 @@ HEADER #search .search_button {
 
 HEADER .menuh-container {
 	position: absolute;
-	top: 50px;
-	left: 270px;
+	top: 21px;
+	left: 160px;
 }
 HEADER .menuh>UL {
 	margin-left: 16px;
 }
 HEADER .menuh a {
 	font-family: sans;
-	border-radius: 5px 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
+	border-radius: 10px 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 	border-bottom: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 }
