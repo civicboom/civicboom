@@ -1,47 +1,74 @@
 #frag_containers {
-  overflow-x : scroll;
-  white-space: nowrap;  
+  /*overflow-x : scroll;*/
+  white-space: nowrap;
 }
 
 #frag_containers .frag_container {
   display    : inline-block;
   white-space: normal;
   width      : 500px;
+  margin    : 0.2em;
+  
+  background-image: url('/styles/common/gradients/vertical_grey_to_transparent.png');
+  
+  border     : 0.1em solid #4a73b8;
+  border-radius        : 0 0 0.5em 0.5em;
+  -moz-border-radius   : 0 0 0.5em 0.5em;
+  -webkit-border-radius: 0 0 0.5em 0.5em;
+  
+  box-shadow        : 0.2em 0.2em 0.2em #888;
+  -moz-box-shadow   : 0.2em 0.2em 0.2em #888;
+  -webkit-box-shadow: 0.2em 0.2em 0.2em #888;
+
+  /*
+    http://www.css3.info/preview/box-shadow/
+  */
 }
 
 #frag_containers .frag_container .action_bar {
-  background-color: green;
   height: 40px;
   overflow: hidden;
 }
 
 #frag_containers .frag_container .frag_data {
-  background-color: #888;
-  overflow-x: none;
+  overflow-x: hidden;
   overflow-y: scroll;
-  height:350px;
+  height:320px;
+  
+  background: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(255,255,255)),
+    color-stop(0.66, rgb(173,173,173))
+  );
+  background: -moz-linear-gradient(
+    center bottom,
+    rgb(255,255,255) 0%,
+    rgb(173,173,173) 66%
+  );
+  /*
+    http://www.webdesignerwall.com/tutorials/cross-browser-css-gradient/
+    http://gradients.glrzad.com/
+  */
 }
 
 /*-------------------------- Frag Content ------------------------------------*/
 #frag_containers .frag_container .frag_content .frag_left_col {
-  background-color: yellow;
   width: 290px;
   float: left;
 }
 #frag_containers .frag_container .frag_content .frag_right_col {
-  background-color: red;
   width: 190px;
   float: right;
 }
 
 /*-------------------------- Frag Member -------------------------------------*/
 #frag_containers .frag_container .frag_member .frag_left_col {
-  background-color: green;
   width: 290px;
   float: left;
 }
 #frag_containers .frag_container .frag_member .frag_right_col {
-  background-color: blue;
   width: 190px;
   float: right;
 }

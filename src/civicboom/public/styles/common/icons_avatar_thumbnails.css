@@ -11,7 +11,10 @@
 	overflow: hidden;
 	position: relative;
 
-
+	/*
+	  http://clagnut.com/blog/2273/
+	  http://www.the-art-of-web.com/css/border-radius/
+	*/
 	border: 0.25em solid #888;
     border-radius        : 1em;
 	-moz-border-radius   : 1em;

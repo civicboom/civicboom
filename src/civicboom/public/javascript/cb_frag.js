@@ -8,7 +8,7 @@ var frag_id_name                      = 'frag_';
 var fragment_containers_id            = '#frag_containers';
 var fragment_container_class          = 'frag_container';
 var fragment_div_loading_placeholder = '<p>loading</p>';
-var scroll_duration = 1000;
+var scroll_duration = 500;
 
 var frag_count      = 0;
 var frag_loading    = null;
@@ -29,14 +29,7 @@ function cb_frag(current_element, url) {
 	// Get this parent fragment name
 	var frag_div    = current_element.parents('.'+fragment_container_class) // go up the chain looking for '.frag' class to id the master parent
 	var frag_div_id = frag_div.attr('id');
-	
-	// Flag elements after this one for removal
-	frags_to_remove = frag_div.nextAll();
-	frags_to_remove.remove(); frags_to_remove = null;
-	// AllanC - we want to keep the old elements taking there space for a while to allow the client browser to scroll to the correct position then remove the unneeded elements
-	//frags_to_remove.animate({width: 'toggle', opacity: 'toggle'}, 500, function(){frags_to_remove.remove(); frags_to_remove = null;});
-	//frags_to_remove.fadeOut(scroll_duration/2, function(){frags_to_remove.remove(); frags_to_remove = null;});
-	
+		
 	// Generate new div name
 	var frag_div_id_next = frag_id_name + frag_count++; //frag_div_id+'1'; // AllanC - I know this only appends one to the end, but it works
 	
@@ -48,19 +41,28 @@ function cb_frag(current_element, url) {
 	// Scroll (smoothly)
 	//  - http://plugins.jquery.com/project/ScrollTo
 	//  - http://demos.flesler.com/jquery/scrollTo/
-	$(fragment_containers_id).scrollTo(frag_loading, {duration: scroll_duration});
+	$.scrollTo(frag_loading, {duration: scroll_duration}); //(fragment_containers_id)
+	//$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});
 	
 	// AJAX load html fragment
 	frag_loading.load(url,
 		function(){ // When AJAX load complete
 			// Fade in loaded segment
 			if (frag_loading) {
-				frag_loading.hide();
+				//frag_loading.hide();
 				//frag_loading.width(0);
 				//frag_loading.animate({width: 'toggle', opacity: 'toggle'}, scroll_duration);
-				frag_loading.fadeIn(scroll_duration);
+				//frag_loading.fadeIn(scroll_duration);
+				
+				// Flag elements after this one for removal
+				// AllanC - we want to keep the old elements taking there space for a while to allow the client browser to scroll to the correct position then remove the unneeded elements
+				//frags_to_remove.animate({width: 'toggle', opacity: 'toggle'}, 500, function(){frags_to_remove.remove(); frags_to_remove = null;});
+				//frags_to_remove.fadeOut(scroll_duration/2, function(){frags_to_remove.remove(); frags_to_remove = null;});
+				
+				frag_loading.nextAll().remove();
+				
 				frag_loading = null;
-				//$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});
+				$.scrollTo(frag_loading, {duration: scroll_duration}); //(fragment_containers_id)
 			}
 	});
 }
