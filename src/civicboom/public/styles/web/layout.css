@@ -115,14 +115,46 @@ HEADER .menuh>UL {
 }
 HEADER .menuh a {
 	font-family: sans;
+	background: white;
+}
+HEADER .menuh a.top_parent {
 	border-radius: 10px 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
+	/* set border to 1px something so it doesn't wobble
+	 * when changed to 1px black on hover */
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
 	border-bottom: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 }
-HEADER .menuh a.top_parent, #menuh a.top_parent:hover {
+HEADER .menuh a.top_parent {
 	font-weight: bold;
+}
+HEADER .menuh LI:hover a.top_parent {
+	border-bottom-left-radius: 0px;
+	-moz-border-bottom-left-radius: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+	-moz-border-bottom-right-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	border-top: 1px solid #555;
+	border-left: 1px solid #555;
+	border-right: 1px solid #555;
+}
+HEADER .menuh a.sub_option {
+	border-left: 1px solid #555;
+	border-right: 1px solid #555;
+	border-bottom: 1px solid #ddd;
+}
+HEADER .menuh LI:last-child>a.sub_option {
+	border-bottom: 1px solid #555;
+	border-bottom-left-radius: 10px;
+	-moz-border-bottom-left-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	-moz-border-bottom-right-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
 }
 HEADER .menuh INPUT {
 	width: 100%;
