@@ -13,7 +13,7 @@
 
 <%def name="col_left()">
 
-    ${public_profile.col_left()}
+##    ${public_profile.col_left()}
 
 	<h2>${_("Tools")}</h2>
          <a href="${url('member', id=c.logged_in_persona.username)}">${_("Public Profile")}</a>
@@ -83,6 +83,6 @@ from civicboom.model.meta import Session
 <%def name="body()">
     ## reminder that new relationships have been setup as -
     ##   content_assignments_active and content_assignments_previous
-    ${public_profile.content_list(d['content'], type_filters=["draft", "article", "assignment", "syndicate"], show_actions=True)}
-    ${public_profile.content_list_group(d['assignments_accepted'], "assignments accepted")}
+##    ${public_profile.content_list(d['content'], type_filters=["draft", "article", "assignment", "syndicate"], show_actions=True)}
+##    ${public_profile.content_list_group(d['assignments_accepted'], "assignments accepted")}
 </%def>
