@@ -166,6 +166,7 @@ HEADER .menuh INPUT {
 BODY>DIV#app {
 	clear: both;
 	z-index: 0;
+	margin-bottom: 2em;
 }
 .u-anon #app {margin-top: 122px;}
 .u-user #app {margin-top: 139px;}
