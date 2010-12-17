@@ -16,6 +16,7 @@ if (not config['development_mode']) and config['online']:
   })();
 </script>
 	""")
+    
 %>
 ${"\n".join(c.scripts_end)|n}
 

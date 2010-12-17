@@ -77,7 +77,7 @@ function cb_frag(current_element, url) {
 }
 
 function cb_frag_remove(jquery_element) {
-	var parent    = jquery_element.parents('.'+fragment_container_class); // find parent
+	var parent = jquery_element.parents('.'+fragment_container_class); // find parent
 	parent.toggle(scroll_duration, function(){parent.remove()});
 	cb_frag_remove_sibblings(parent);
 }

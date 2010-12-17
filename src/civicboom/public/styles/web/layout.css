@@ -193,6 +193,9 @@ BODY>DIV#app {
 #col_left  ~ #col_main { margin-left:  296px; }
 #col_right ~ #col_main { margin-right: 296px; }
 
+
+
+
 /*
  * and a footer (not actually in the new design -- do we need one?)
  */

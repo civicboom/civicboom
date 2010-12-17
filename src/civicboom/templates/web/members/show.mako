@@ -30,4 +30,15 @@
 		</div>
 		
     </div>
+
+    <%
+	c.scripts_end.append("""
+		<script type="text/javascript">
+				var height = $('footer').offset().top - $('#app').offset().top;
+				//Y.log(height);
+				createCSS(".frag_data", "height: "+(height-70)+"px !important;");
+		</script>
+    """)
+	%>
+
 </%def>

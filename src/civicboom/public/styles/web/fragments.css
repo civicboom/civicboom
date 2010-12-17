@@ -1,7 +1,8 @@
 #frag_containers {
   /*overflow-x : scroll;*/
   white-space: nowrap;
-  top: 0;
+  display: block;
+  top:0;
   bottom:0;
   
 }
@@ -58,7 +59,7 @@
 #frag_containers .frag_container .frag_data {
   overflow-y: scroll;
   overflow-x: hidden;
-  height:320px;
+  height:80px;
   
   background: -webkit-gradient(
     linear,
