@@ -168,8 +168,8 @@ BODY>DIV#app {
 	z-index: 0;
 	margin-bottom: 2em;
 }
-.u-anon #app {margin-top: 122px;}
-.u-user #app {margin-top: 139px;}
+.u-anon #app {margin-top: 64px;}
+.u-user #app {margin-top: 96px;}
 
 /*
  * sometimes the main page is columned
