@@ -29,13 +29,3 @@ BODY.c-misc.a-titlepage SECTION.signup {
 BODY.c-misc.a-titlepage SECTION.mobile {float: left;}
 BODY.c-misc.a-titlepage SECTION.signup {float: right;}
 
-A.button {
-	display: block;
-	text-align: center;
-	color: white;
-	background: #4974b8;
-	border-radius: 8px;
-	-moz-border-radius: 8px;
-	border: 1px solid #3964a8;
-	text-decoration: none;
-}
