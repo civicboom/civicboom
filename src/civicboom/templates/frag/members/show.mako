@@ -65,6 +65,7 @@ ${frag_member(d)}
 ##------------------------------------------------------------------------------
 <%def name="action_bar(actions)">
     <p><a href='${url(controller='misc', action='widget_preview')}'>widget preview</a></p>
+    <a href='#' onclick="cb_frag_remove($(this)); return false;">close</a>
 </%def>
 
 

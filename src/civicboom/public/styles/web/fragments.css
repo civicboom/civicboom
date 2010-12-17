@@ -3,17 +3,19 @@
   white-space: nowrap;
   top: 0;
   bottom:0;
+  
 }
 
+
 #frag_containers .frag_container {
-  display    : inline-block;
   vertical-align: top;
-
-
-
+  display : inline-block !important;
+  overflow: auto !important; /* the important property is needed because JQuery sets the style="" element to block and overflow */
   white-space: normal;
+  
   width      : 500px;
-  margin    : 0.2em;
+  
+  margin     : 0.2em;
   
   /* background-image: url('/styles/common/gradients/vertical_grey_to_transparent.png'); */
   
@@ -22,9 +24,9 @@
   -moz-border-radius   : 0.5em;
   -webkit-border-radius: 0.5em;
   
-  box-shadow        : 0.2em 0.2em 0.2em #888;
-  -moz-box-shadow   : 0.2em 0.2em 0.2em #888;
-  -webkit-box-shadow: 0.2em 0.2em 0.2em #888;
+  box-shadow        : 0.3em 0.3em 0.3em #AAA;
+  -moz-box-shadow   : 0.3em 0.3em 0.3em #AAA;
+  -webkit-box-shadow: 0.3em 0.3em 0.3em #AAA;
 
   /*
     http://www.css3.info/preview/box-shadow/
@@ -55,7 +57,8 @@
 
 #frag_containers .frag_container .frag_data {
   overflow-y: scroll;
-  /* height:320px; */
+  overflow-x: hidden;
+  height:320px;
   
   background: -webkit-gradient(
     linear,
