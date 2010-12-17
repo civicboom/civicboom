@@ -141,7 +141,7 @@ ${frag_content(d)}
 			${comment['content']}
 			<b style="float: right;">
 				${comment['creator']['name']}
-				${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
+				##${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
 				${str(comment['creation_date'])[0:19]}
 			</b>
 		</td>
