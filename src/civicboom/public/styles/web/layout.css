@@ -2,7 +2,7 @@
  * the body is then broken down into the navigation bar at the top
  */
 NAV {
-	position: absolute;
+	position: fixed;
 	top: 0px;
 	left: 0px;
 	right: 0px;
@@ -70,22 +70,22 @@ NAV .persona_select ul {
 HEADER {
 	clear: both;
 	background: url("/styles/web/headerbk.png");
-	position: absolute;
+	position: fixed;
 	left: 0px;
 	right: 0px;
-	height: 122px;
+	height: 64px;
 	z-index: 1;
 }
 .u-anon HEADER {top: 0px;}
 .u-user HEADER {top: 17px;}
 
-HEADER #logo IMG {padding: 32px;}
+HEADER #logo IMG {padding: 16px;}
 HEADER #logo SPAN {display: none;}
 
 HEADER #search {
 	position: absolute;
-	top: 32px;
-	right: 32px;
+	top: 2px;
+	right: 128px;
 	background: url("/styles/web/searchbk.png");
 	width: 165px;
 	height: 58px;
@@ -107,22 +107,54 @@ HEADER #search .search_button {
 
 HEADER .menuh-container {
 	position: absolute;
-	top: 50px;
-	left: 270px;
+	top: 21px;
+	left: 160px;
 }
 HEADER .menuh>UL {
 	margin-left: 16px;
 }
 HEADER .menuh a {
 	font-family: sans;
-	border-radius: 5px 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
+	background: white;
+}
+HEADER .menuh a.top_parent {
+	border-radius: 10px 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	/* set border to 1px something so it doesn't wobble
+	 * when changed to 1px black on hover */
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
 	border-bottom: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 }
-HEADER .menuh a.top_parent, #menuh a.top_parent:hover {
+HEADER .menuh a.top_parent {
 	font-weight: bold;
+}
+HEADER .menuh LI:hover a.top_parent {
+	border-bottom-left-radius: 0px;
+	-moz-border-bottom-left-radius: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+	-moz-border-bottom-right-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	border-top: 1px solid #555;
+	border-left: 1px solid #555;
+	border-right: 1px solid #555;
+}
+HEADER .menuh a.sub_option {
+	border-left: 1px solid #555;
+	border-right: 1px solid #555;
+	border-bottom: 1px solid #ddd;
+}
+HEADER .menuh LI:last-child>a.sub_option {
+	border-bottom: 1px solid #555;
+	border-bottom-left-radius: 10px;
+	-moz-border-bottom-left-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	-moz-border-bottom-right-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
 }
 HEADER .menuh INPUT {
 	width: 100%;
@@ -134,9 +166,10 @@ HEADER .menuh INPUT {
 BODY>DIV#app {
 	clear: both;
 	z-index: 0;
+	margin-bottom: 2em;
 }
-.u-anon #app {margin-top: 122px;}
-.u-user #app {margin-top: 139px;}
+.u-anon #app {margin-top: 64px;}
+.u-user #app {margin-top: 96px;}
 
 /*
  * sometimes the main page is columned
