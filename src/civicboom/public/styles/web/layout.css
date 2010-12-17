@@ -84,8 +84,8 @@ HEADER #logo SPAN {display: none;}
 
 HEADER #search {
 	position: absolute;
-	top: 32px;
-	right: 32px;
+	top: 2px;
+	right: 128px;
 	background: url("/styles/web/searchbk.png");
 	width: 165px;
 	height: 58px;
