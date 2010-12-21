@@ -45,12 +45,14 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/content_editor.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/messages.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/menuh.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/simplemodal.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/fragments.css" />
+	
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif
@@ -66,11 +68,29 @@
 	<script src="/javascript/jquery.ui.js"></script>
 	<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
 	<script src="/javascript/jquery.scrollTo.js"></script>
+	<script src="/javascript/jquery.simplemodal.1.4.1.min.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
+	<script type="text/javascript">
+		$.extend($.modal.defaults, {
+			closeClass: "modalClose" ,
+			closeHTML : "<a href='#'>Close</a>" ,
+			opacity   : 60 ,
+			onOpen: function (dialog) {
+				dialog.overlay.fadeIn('slow');
+				dialog.container.fadeIn('slow');
+				dialog.data.fadeIn('slow');
+			} ,
+			onClose: function (dialog) {
+				dialog.overlay.fadeOut('slow');
+				dialog.container.fadeOut('slow');
+				dialog.data.fadeOut('slow', function () {$.modal.close();});
+			},
+		});
+	</script>
 	<script src="/javascript/jquery.html5-0.0.1.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
-	<script src="/javascript/toggle_div.js"></script>
+	<script src="/javascript/toggle_div.js"></script> <!-- marked for deprication -->
 	<script src="/javascript/cb_frag.js"></script>
 % else:
 	<script src="/javascript/_combined.common.js"></script>

@@ -72,12 +72,13 @@ ${frag_member(d)}
             description = d['member'].get('description') or '' ,
         )}
         
-        <a href='${url('formatted_member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon icon_rss"  ><span>Close</span></a>
-        <a href='' onclick="cb_frag_remove($(this)); return false;"                    title='Close ${d['member']['type']}'       class="icon icon_close"><span>RSS</span></a>
+        <a href='${url('formatted_member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon icon_rss"  ><span>RSS</span></a>
+        <a href='' onclick="cb_frag_remove($(this)); return false;"                    title='Close ${d['member']['type']}'       class="icon icon_close"><span>Close</span></a>
     </div>
+
     <div class="type_actions">
         <p><a href='${url(controller='misc', action='widget_preview')}'>widget preview</a></p>
-    </div>    
+    </div>
 </%def>
 
 

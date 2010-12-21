@@ -1,3 +1,7 @@
+<%namespace name="frag_list" file="/frag/common/frag_lists.mako"/>
+<%namespace name="share"     file="/frag/common/share.mako"     />
+
+## for deprication
 <%namespace name="loc"              file="/web/common/location.mako"     />
 <%namespace name="member_includes"  file="/web/common/member.mako"       />
 <%namespace name="content_includes" file="/web/common/content_list.mako" />
@@ -98,6 +102,10 @@ ${frag_content(d)}
     % endfor
     </ul>
 
+
+    ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
+    ${flag_form()}
+
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -120,7 +128,7 @@ ${frag_content(d)}
             ]
         )}
         </p>
-    % endif  
+    % endif
 </%def>
 
 
@@ -223,7 +231,20 @@ ${frag_content(d)}
 
     <% id = d['content']['id'] %>
     
-	<h2>${_("Actions")}</h2>
+    <div class="common_actions">
+        ${share.share(
+            url         = url('content', id=d['content']['id'], host=app_globals.site_host, protocol='http'),
+            title       = d['content']['title'] ,
+        )}
+        
+        <a href='${url('formatted_content', id=id, format='rss')}'  title='RSS'   class="icon icon_rss"  ><span>RSS  </span></a>
+        <a href='' onclick="cb_frag_remove($(this)); return false;" title='Close' class="icon icon_close"><span>Close</span></a>
+    </div>
+
+    <div class="type_actions">
+        <a href='' onclick="$('#flag_content').modal(); return false;" titlte='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
+    </div>
+
     
 	<ul>
         <li>
@@ -270,6 +291,29 @@ ${frag_content(d)}
         % endif
     </ul>
     
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Flag Form
+##------------------------------------------------------------------------------
+
+<%def name="flag_form()">
+    <div id="flag_content" class="hideable">
+      <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
+      ${h.form(url(controller='content_actions', action='flag', id=d['content']['id'], format='redirect'))}
+          <select name="type">
+              <% from civicboom.model.content import FlaggedContent %>
+              % for type in [type for type in FlaggedContent._flag_type.enums if type!="automated"]:
+              <option value="${type}">${_(type.capitalize())}</option>
+              % endfor
+          </select>
+          <p class="form_instructions">${_('Comment (optional)')}</p>
+          <textarea name="comment" style="width:90%; height:3em;"></textarea>
+          <input type="submit" name="flagit" value="Flag it" class=""/>
+          ##<a class="simplemodal-close">${_("Cancel")}</a>
+      ${h.end_form()}
+    </div>
 </%def>
 
 

@@ -8,12 +8,13 @@
     ${ShareThis(*args,**kwargs)}
 </%def>
 
+## TODO: need to support mutiple share buttons
 
 ##------------------------------------------------------------------------------
 ## AddThis
 ##------------------------------------------------------------------------------
 ## http://www.addthis.com/help/api-overview - registered to admin@civicboom.com
-<%def name="AddThisToolbox(url=None, title=None, description=None)">
+<%def name="AddThis(url=None, title=None, description=None)">
     <!-- AddThis Button BEGIN -->
     <div class="addthis_toolbox addthis_default_style " style="display: inline-block;"
     % if url:
@@ -70,4 +71,6 @@
             % endif
         });
     </script>
+    
+    ## http://forums.sharethis.com/topic.php?id=261
 </%def>
