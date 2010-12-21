@@ -2,6 +2,7 @@
 ##<%namespace name="content_includes" file="/web/common/content_list.mako"/>
 
 <%namespace name="frag_list" file="/frag/common/frag_lists.mako"/>
+<%namespace name="share"     file="/frag/common/share.mako"     />
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -64,8 +65,19 @@ ${frag_member(d)}
 ## Action Bar
 ##------------------------------------------------------------------------------
 <%def name="action_bar(actions)">
-    <p><a href='${url(controller='misc', action='widget_preview')}'>widget preview</a></p>
-    <a href='#' onclick="cb_frag_remove($(this)); return false;">close</a>
+    <div class="common_actions">
+        ${share.share(
+            url         = url('member', id=d['member']['username'], host=app_globals.site_host, protocol='http'),
+            title       = _('%s on _site_name' % d['member']['name']) ,
+            description = d['member'].get('description') or '' ,
+        )}
+        
+        <a href='${url('formatted_member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon icon_rss"  ><span>Close</span></a>
+        <a href='' onclick="cb_frag_remove($(this)); return false;"                    title='Close ${d['member']['type']}'       class="icon icon_close"><span>RSS</span></a>
+    </div>
+    <div class="type_actions">
+        <p><a href='${url(controller='misc', action='widget_preview')}'>widget preview</a></p>
+    </div>    
 </%def>
 
 

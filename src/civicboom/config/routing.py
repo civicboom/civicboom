@@ -25,7 +25,7 @@ def cb_resource(mapper, single, plural, **kwargs):
     mapper.connect('new_'+single, '/'+plural+'/new',                           controller=plural, action='new',    conditions=dict(method=['GET']))
 
     mapper.connect('formatted_'+single, '/'+plural+'/{id}.{format}',           controller=plural, action='show',   conditions=dict(method=['GET']))
-    mapper.connect(single, '/'+plural+'/{id}',                                 controller=plural, action='show',   conditions=dict(method=['GET']))
+    mapper.connect(single, '/'+plural+'/{id}',                                 controller=plural, action='show',  conditions=dict(method=['GET']))
 
     mapper.connect('/'+plural+'/{id}.{format}',                                controller=plural, action='update', conditions=dict(method=['PUT']))
     mapper.connect('/'+plural+'/{id}',                                         controller=plural, action='update', conditions=dict(method=['PUT']))

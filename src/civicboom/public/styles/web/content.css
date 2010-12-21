@@ -2,3 +2,23 @@
     font-size: 200%;
     font-weight: bold;
 }
+
+
+
+/*----------------------------------------------------------------------------*/
+/* Comments, coloured by relationship                                         */
+/*----------------------------------------------------------------------------*/
+.comment TD {
+	border-top   : 1px solid gray;
+	border-bottom: 1px solid gray;
+	padding: 8px;
+}
+.other_comment TD {
+	background: #FDF;
+}
+.self_comment TD {
+	background: #FFD;
+}
+.author_comment TD {
+	background: #DFD;
+}

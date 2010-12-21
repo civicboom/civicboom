@@ -30,6 +30,9 @@ HTML, BODY {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/* Table - Zebra Colours                                                      */
+/*----------------------------------------------------------------------------*/
 .zebra {
 	width: 100%;
 	border: 1px solid black;
@@ -50,6 +53,9 @@ HTML, BODY {
 	padding: 2px;
 }
 
+/*----------------------------------------------------------------------------*/
+/* Forms                                                                      */
+/*----------------------------------------------------------------------------*/
 .form TH {
 	font-weight: bold;
 	text-align: center;
@@ -62,7 +68,10 @@ HTML, BODY {
 }
 
 
+/*----------------------------------------------------------------------------*/
+/* Tooltip Hover                                                              */
 /* from http://psacake.com/web/jl.asp */
+/*----------------------------------------------------------------------------*/
 .tooltip {
 	position:relative; /*this is the key*/
 	z-index:24; background-color:#ccc;
@@ -78,12 +87,12 @@ HTML, BODY {
 }
 .tooltip span {
 	display: none;
-	border-radius: 5px 5px;
-	-moz-border-radius: 5px;
+	border-radius        : 5px 5px;
+	-moz-border-radius   : 5px;
 	-webkit-border-radius: 5px;
-	box-shadow: 0.2em 0.2em 0.2em rgba(0, 0, 0, 0.1);
+	box-shadow        : 0.2em 0.2em 0.2em rgba(0, 0, 0, 0.1);
 	-webkit-box-shadow: 0.2em 0.2em rgba(0, 0, 0, 0.1);
-	-moz-box-shadow: 0.2em 0.2em rgba(0, 0, 0, 0.1);
+	-moz-box-shadow   : 0.2em 0.2em rgba(0, 0, 0, 0.1);
 }
 .tooltip:hover span{ /*the span will display just on :hover state*/
 	display:block;
@@ -96,10 +105,9 @@ HTML, BODY {
 }
 
 
-/*
- * flash message
- */
-
+/*----------------------------------------------------------------------------*/
+/* Flash Message                                                              */
+/*----------------------------------------------------------------------------*/
 #flash_message {
 	position: fixed;
 	top: 17px;
@@ -124,10 +132,10 @@ HTML.no-js #flash_message {
 
 
 
+/*----------------------------------------------------------------------------*/
+/* openlayers overrides                                                       */
+/*----------------------------------------------------------------------------*/
 
-/*
- * openlayers overrides
- */
 .olMap {
 	border: 2px solid gray;
 	border-radius: 8px 8px;
@@ -156,23 +164,6 @@ HTML.no-js #flash_message {
 }
 
 
-/*
- * Article comments, coloured by relationship
- */
-.comment TD {
-	border-top: 1px solid gray;
-	border-bottom: 1px solid gray;
-	padding: 8px;
-}
-.other_comment TD {
-	background: #FDF;
-}
-.self_comment TD {
-	background: #FFD;
-}
-.author_comment TD {
-	background: #DFD;
-}
 
 
 .button {
@@ -186,15 +177,3 @@ HTML.no-js #flash_message {
 	border: 1px solid #2a3a87;
 	text-decoration: none;
 }	
-.gradient {
-	background: #4974b8; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4974b8', endColorstr='#3a4a97'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #4974b8), color-stop(0.81, #3a4a97)); /* for webkit browsers */
-	background: -moz-linear-gradient(top, #4974b8, #3a4a97 81%); /* for firefox 3.6+ */
-}
-.gradient:active {
-	background: #4974b8; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3a4a97', endColorstr='#4974b8'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, #3a4a97), color-stop(1.0, #4974b8)); /* for webkit browsers */
-	background: -moz-linear-gradient(top, #3a4a97 19%, #4974b8); /* for firefox 3.6+ */
-}

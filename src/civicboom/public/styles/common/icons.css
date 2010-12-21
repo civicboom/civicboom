@@ -31,6 +31,10 @@
 .icon_user      {background: transparent url('/styles/web/icons16/user-3-icon.png'   ) no-repeat;}
 .icon_group     {background: transparent url('/styles/web/icons16/network-icon.png'  ) no-repeat;}
 .icon_userid    {background: transparent url('/styles/web/icons16/user-info-icon.png') no-repeat;}
+.icon_close     {background: transparent url('/styles/web/icons16/delete-icon.png'   ) no-repeat;}
+.icon_rss       {background: transparent url('/styles/web/icons16/rss-icon.png'      ) no-repeat;}
+.icon_flag      {background: transparent url('/styles/web/icons16/flag-icon.png'     ) no-repeat;}
+.icon_share     {background: transparent url('/styles/web/icons16/share-icon.png'    ) no-repeat;}
 .icon_account_type_plus {background: transparent url('/styles/web/icons16/plus-icon.png') no-repeat;}
 
 
