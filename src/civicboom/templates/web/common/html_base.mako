@@ -76,7 +76,7 @@
 	<script src="/javascript/_combined.common.js"></script>
 % endif
 <!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
-<!--[if lt IE 9]>
+<!--[if lt IE 7]>
 	<script src="/javascript/IE9.js"></script>
 <![endif]-->
 
