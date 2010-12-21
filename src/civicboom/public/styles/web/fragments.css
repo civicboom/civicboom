@@ -34,8 +34,11 @@
   */
 }
 
+/*----------------------------------------------------------------------------*/
+/* Action Bar
+/*----------------------------------------------------------------------------*/
 #frag_containers .frag_container .action_bar {
-  height: 2em;
+  height: 1.5em;
   overflow: hidden;
   color: white;
   
@@ -52,7 +55,26 @@
   float: left;
 }
 
+/*------------------------Content actions bar --------------------------------*/
+#frag_containers .frag_container .action_bar_content {
+  height: 1.5em;
+  overflow: hidden;
+  color: black;
+  
+  background-color: #CCC;
+}
 
+#frag_containers .frag_container .action_bar_content a {
+  color: inherit;
+  text-decoration: inherit;
+}
+#frag_containers .frag_container .action_bar_content li {
+  display: inline;
+}
+
+/*----------------------------------------------------------------------------*/
+/* Fragment Data
+/*----------------------------------------------------------------------------*/
 #frag_containers .frag_container .frag_data {
   overflow-y: scroll;
   overflow-x: hidden;
@@ -76,7 +98,7 @@
   */
 }
 
-/*-------------------------- Frag Content ------------------------------------*/
+/*-------------------------- Frag Content Cols--------------------------------*/
 #frag_containers .frag_container .frag_content .frag_left_col {
   width: 290px;
   float: left;
@@ -86,7 +108,7 @@
   float: right;
 }
 
-/*-------------------------- Frag Member -------------------------------------*/
+/*-------------------------- Frag Member Cols---------------------------------*/
 #frag_containers .frag_container .frag_member .frag_left_col {
   width: 290px;
   float: left;

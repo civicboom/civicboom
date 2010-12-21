@@ -24,6 +24,9 @@ ${frag_content(d)}
     <div class="action_bar">
         ${action_bar(d['actions'])}
     </div>
+    <div class="action_bar_content">
+        ${action_bar_content(d['actions'])}
+    </div>
     
     <div class="frag_data frag_content">
         <div class="frag_left_col">
@@ -245,7 +248,10 @@ ${frag_content(d)}
         <a href='' onclick="$('#flag_content').modal(); return false;" titlte='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
     </div>
 
+</%def>
     
+<%def name="action_bar_content(actions)">
+    <% id = d['content']['id'] %>
 	<ul>
         <li>
             ${h.secure_link(url('new_content', parent_id=id), value=_("Respond to this"))}
