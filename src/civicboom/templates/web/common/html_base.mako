@@ -153,13 +153,19 @@ ${self.head_links()}
 ## See "Definitive Guide to Pylons" pg 191 for details
 <%def name="flash_message()">
     <div id="flash_message" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
-% if c.result['message'] != "":
+    % if c.result['message'] != "":
 	<!-- if we have a flash message in the session, activate it -->
 	<script type="text/javascript">
 		<% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
 		$(function() {flash_message(${json_message|n});});
     </script>
-% endif
+    % endif
+	<!-- redirect all AJAX errors to use the flash message system -->
+    <script type="text/javascript">
+		$('body').ajaxError(function(event, request, settings, exception) {
+			flash_message(jQuery.parseJSON(request.responseText));
+		});
+	</script>
 </%def>
 
 ##------------------------------------------------------------------------------

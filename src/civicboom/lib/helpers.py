@@ -257,8 +257,8 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
                                 if (data.status == 'ok') {
                                     %(javascript_json_complete_actions)s
                                 }
-                            }//,
-                            //'json'
+                            },
+                            'json'
                         );
                     });
                 });
