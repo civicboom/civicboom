@@ -52,7 +52,6 @@
 	<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/fragments.css" />
-	
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif
@@ -69,23 +68,6 @@
 	<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
 	<script src="/javascript/jquery.scrollTo.js"></script>
 	<script src="/javascript/jquery.simplemodal.1.4.1.min.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
-	<script type="text/javascript">
-		$.extend($.modal.defaults, {
-			closeClass: "modalClose" ,
-			closeHTML : "<a href='#'>Close</a>" ,
-			opacity   : 60 ,
-			onOpen: function (dialog) {
-				dialog.overlay.fadeIn('slow');
-				dialog.container.fadeIn('slow');
-				dialog.data.fadeIn('slow');
-			} ,
-			onClose: function (dialog) {
-				dialog.overlay.fadeOut('slow');
-				dialog.container.fadeOut('slow');
-				dialog.data.fadeOut('slow', function () {$.modal.close();});
-			},
-		});
-	</script>
 	<script src="/javascript/jquery.html5-0.0.1.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
@@ -112,9 +94,9 @@ ${self.head_links()}
 ## Style Overrides
 ##-------------------
 % if hasattr(next, 'styleOverides'):
-    <style type="text/css" >
-    ${next.styleOverides()}
-    </style>
+	<style type="text/css" >
+	${next.styleOverides()}
+	</style>
 % endif
 
 ##----------------------------------------------------------------------------
@@ -129,19 +111,38 @@ ${self.head_links()}
 		_gaq.push(['_trackPageview']);
 	</script>
 
+##----------------------------------------------------------------------------
+## JQuery SimpleModel Setup
+##----------------------------------------------------------------------------
+## http://www.ericmmartin.com/projects/simplemodal/
+	<script type="text/javascript">
+		$.extend($.modal.defaults, {
+			closeClass: "modalClose" ,
+			closeHTML : "<a href='#'>Close</a>" ,
+			opacity   : 60 ,
+			onOpen: function (dialog) {
+				dialog.overlay.fadeIn('slow');
+				dialog.container.fadeIn('slow');
+				dialog.data.fadeIn('slow');
+			} ,
+			onClose: function (dialog) {
+				dialog.overlay.fadeOut('slow');
+				dialog.container.fadeOut('slow');
+				dialog.data.fadeOut('slow', function () {$.modal.close();});
+			},
+		});
+	</script>
 
 ##----------------------------------------------------------------------------
 ## Development Javascript Debug Console Output
 ##----------------------------------------------------------------------------
 % if config['development_mode']:
 	<!-- Development Mode - Enabale Console Logging in client browser (recomend firebug) but could instate YUI log console here -->
-    
-	## YUI 3
-    <script src="/javascript/yui-min.js"></script>
-    <script>
-        Y = new YUI({ debug : true }); //var 
-        Y.log("YUI Debugger Enabled", "info",  "civicboom");
-    </script>
+	<script src="/javascript/yui-min.js"></script>
+	<script>
+		Y = new YUI({ debug : true }); //var 
+		Y.log("YUI Debugger Enabled", "info",  "civicboom");
+	</script>
 % endif
 </head>
 
@@ -152,21 +153,22 @@ ${self.head_links()}
 ## This displays the message and then removes it from the session once it is displayed the first time
 ## See "Definitive Guide to Pylons" pg 191 for details
 <%def name="flash_message()">
-    <div id="flash_message" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
-    % if c.result['message'] != "":
+	<div id="flash_message" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
+	% if c.result['message'] != "":
 	<!-- if we have a flash message in the session, activate it -->
 	<script type="text/javascript">
 		<% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
 		$(function() {flash_message(${json_message|n});});
-    </script>
-    % endif
+	</script>
+	% endif
 	<!-- redirect all AJAX errors to use the flash message system -->
-    <script type="text/javascript">
+	<script type="text/javascript">
 		$('body').ajaxError(function(event, request, settings, exception) {
 			flash_message(jQuery.parseJSON(request.responseText));
 		});
 	</script>
 </%def>
+
 
 ##------------------------------------------------------------------------------
 ## HTML Body
