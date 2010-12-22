@@ -35,10 +35,10 @@
 }
 
 /*----------------------------------------------------------------------------*/
-/* Action Bar
+/* Action Bar                                                                 */
 /*----------------------------------------------------------------------------*/
 #frag_containers .frag_container .action_bar {
-  height: 1.5em;
+  /* height: 1.5em; */
   overflow: hidden;
   color: white;
   
@@ -57,7 +57,7 @@
 
 /*------------------------Content actions bar --------------------------------*/
 #frag_containers .frag_container .action_bar_content {
-  height: 1.5em;
+  /* height: 1.5em; */
   overflow: hidden;
   color: black;
   

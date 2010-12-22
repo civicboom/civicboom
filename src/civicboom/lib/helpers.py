@@ -175,7 +175,7 @@ def icon(icon_type, description=None, class_=''):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST'):
+def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST', href_json=None, json_actions=''):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -183,29 +183,49 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
 
     Then use javascript to hide the form and show the pretty link
     """
+    # Setup Vars -------
+    
+    # Keep track of number of secure links created so they can all have unique hash's
     if not hasattr(c, 'secure_link_count'):
         c.secure_link_count = 0
     c.secure_link_count = c.secure_link_count + 1
     hhash = hashlib.md5(str([href, value, vals, c.secure_link_count])).hexdigest()[0:6]
 
-    # form version
+    form_onsubmit      = '' # is JSON url present, prevent this form from ever actually being submitted
+    json_submit_script = '' # set if href_json present otherwise left black
+    
+    # If HREF is a dict then generate two URL's from it
+    #  1.) the original compatable call
+    #  2.) a json formatted version for the AJAX call
+    if isinstance(href, dict):
+        href_kwargs = href
+        href      = url(**href_kwargs)
+        href_kwargs['format'] = 'json'
+        href_json = url(**href_kwargs)
+        
+    if href_json:
+        form_onsubmit = 'return false;'
+
+    # Create Form --------
     values = ''
     for k, v in vals:
         values = values + HTML.input(type="hidden", name=k, value=v)
     hf = HTML.span(
-        form(href, id="form_"+hhash, method=method) +
+        form(href, id="form_"+hhash, method=method, onsubmit=form_onsubmit) +
             values +
             HTML.input(type="submit", value=value) +
         end_form(),
         id='span_'+hhash)
 
-    # link version
+    # Confirm JS -------
     ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
     if confirm_text:
         confirm_text = "confirm('%s')" % confirm_text
     else:
         confirm_text = "true"
-    
+
+    # Styled submit link ------
+    # A standard <A> tag that submits the compatable form (typically used with format='redirect')
     hl = HTML.a(
         value,
         id="link_"+hhash,
@@ -216,10 +236,34 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         onClick="if("+confirm_text+") {$('#form_"+hhash+"').submit();} return false;"
     )
 
-    # form vs link switcher
+    # if JSON url provided
+    #  Bind an AJAX submit link that submits the form to a URL that returns JSON and displays a flash message
+    # Reference - http://www.ajaxlines.com/ajax/stuff/article/how_to_submit_a_form_with_ajax_in_jquery.php
+    if href_json:
+        json_submit_script = HTML.script(
+            literal("""
+                $(document).ready(function(){ 
+                    $('#form_%(hhash)s').submit(function(){ 
+                        $.post(
+                            "%(href_json)s" ,
+                            $("#form_%(hhash)s").serialize() ,
+                            function(data){
+                                flash_message(data);
+                                if (data.status == 'ok') {
+                                    %(json_actions)s
+                                }
+                            }
+                        );
+                    });
+                });
+            """ % dict(href_json=href_json, hhash=hhash, json_actions=json_actions)
+            )
+        )
+    
+    # form vs link switcher (hide the compatable form)
     hs = HTML.script(literal('$("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))
-
-    return HTML.span(hf+hl+hs, class_="secure_link")
+    
+    return HTML.span(hf+hl+hs+json_submit_script, class_="secure_link")
 
 
 #-------------------------------------------------------------------------------
