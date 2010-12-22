@@ -169,13 +169,13 @@ BODY>DIV#app {
 	margin-bottom: 2em;
 }
 .u-anon #app {margin-top: 64px;}
-.u-user #app {margin-top: 96px;}
+.u-user #app {margin-top: 80px;}
 
 /*
  * sometimes the main page is columned
  */
 #col_left, #col_main, #col_right {
-	padding: 8px;
+	padding: 0.25em;
 }
 #col_left {
 	float: left;
@@ -221,7 +221,6 @@ FOOTER .copyright {
  * individual elements
  */
 H2 {
-	font-size: 2em;
-	border-bottom: 1px solid black;
-	margin-top: 1em;
+    font-weight: bold;
+    margin: 0.25em 0em;
 }

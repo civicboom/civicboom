@@ -1,0 +1,25 @@
+
+.avatar {
+	border: 0.05em solid #888;
+    border-radius        : 0.1em;
+	-moz-border-radius   : 0.1em;
+	-webkit-border-radius: 0.1em;
+    
+    font-size: 40px;
+    widlth: 1em;
+    height: 1em;
+    /*display: inline-block;*/
+    vertical-align: top;
+}
+
+
+.avatar_large {
+    font-size: 80px;
+}
+
+.avatar .img {widlth: 1em; height: 1em;}
+
+/*
+.avatar .avatar_small .img {widlth: 1em; height: 1em;}
+.avatar .avatar_large .img {widlth: 4em; height: 4em;}
+*/

@@ -30,15 +30,19 @@ ${frag_content(d)}
     
     <div class="frag_data frag_content">
         <div class="frag_left_col">
+            <div class="frag_col">
             ${content_details( content)}
             ${content_media(   content)}
             ${content_map(     content)}
             ${content_comments(d['comments'])}
+            </div>
         </div>
         <div class="frag_right_col">
+            <div class="frag_col">
             ${creator(  content)}
             ${parent(   content)}
             ${responses(d['responses'])}
+            </div>
         </div>
     </div>
 </%def>
@@ -139,41 +143,42 @@ ${frag_content(d)}
 ## Comments
 ##------------------------------------------------------------------------------
 <%def name="content_comments(comments)">
-    <h1>${_("Comments")}</h1>
+    <h2>${_("Comments")}</h2>
 
-    <table>
-    % for comment in comments:
-	##${relation(comment['creator']['username'], c.logged_in_persona.username, content['creator']['username'], 'tr')}
+    <table class="comments">
+        <tr style="display: none;"><th>${_('Member')}</th><th>${_('Comment')}</th></tr>
+        % for comment in comments:
         <tr>
-		<td class="avatar">
-			${member_includes.avatar(comment['creator'])}
-		</td>
-		<td class="comment">
-			${comment['content']}
-			<b style="float: right;">
-				${comment['creator']['name']}
-				##${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
-				${str(comment['creation_date'])[0:19]}
-			</b>
-		</td>
-	</tr>
-    % endfor
-	<tr class="self_comment" style="background: #FFA;">
-		<td class="avatar">
-			% if c.logged_in_persona:
-			<img class='avatar' src="${c.logged_in_persona.avatar_url}"><br>
-			% endif
-		</td>
-		<td class="comment">
-			${h.form(url('contents', format='redirect'))}
-				<input type="hidden" name="parent_id" value="${d['content']['id']}">
-				<input type="hidden" name="title" value="Re: ${d['content']['title']}">
-				<input type="hidden" name="type" value="comment">
-				<textarea name="content" style="width: 100%; height: 100px;"></textarea>
-				<br><!--<input type="submit" name="submit_preview" value="Preview">--><input type="submit" name="submit_response" value="Post">
-			${h.end_form()}
-  		</td>
-  	</tr>
+            <td class="comment_avatar">
+                ${member_includes.avatar(comment['creator'])}
+            </td>
+            <td class="comment">
+                ${comment['content']}
+                ##<b style="float: right;">
+                ##	${comment['creator']['name']}
+                    ##${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
+                ##	${str(comment['creation_date'])[0:19]}
+                ##</b>
+            </td>
+        </tr>
+        % endfor
+        <tr>
+            <td class="comment_avatar">
+                % if c.logged_in_persona:
+                ${member_includes.avatar(c.logged_in_persona.to_dict())}
+                %endif
+            </td>
+            <td class="comment">
+                ${h.form(url('contents', format='redirect'))}
+                    <input type="hidden" name="parent_id" value="${d['content']['id']}">
+                    <input type="hidden" name="title" value="Re: ${d['content']['title']}">
+                    <input type="hidden" name="type" value="comment">
+                    <textarea name="content" class="comment_textarea"></textarea>
+                    <br><!--<input type="submit" name="submit_preview" value="Preview">-->
+                    <input type="submit" name="submit_response" value="${_('Comment')}">
+                ${h.end_form()}
+            </td>
+        </tr>
     </table>
 </%def>
 

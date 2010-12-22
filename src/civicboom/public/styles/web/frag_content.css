@@ -1,0 +1,29 @@
+/*-------------------------- Frag Content Cols--------------------------------*/
+#frag_containers .frag_container .frag_content .frag_left_col {
+  width: 60%;
+  float: left;
+}
+#frag_containers .frag_container .frag_content .frag_right_col {
+  width: 40%;
+  float: right;
+}
+
+
+#frag_containers .frag_container .frag_content{
+    font-size: smaller;
+}
+
+#frag_containers .frag_container .frag_content .comments td {
+    vertical-align: top;
+}
+
+#frag_containers .frag_container .frag_content .comments .comment_textarea {
+    width: 100%;
+}
+
+#frag_containers .frag_container .frag_content .comment_avatar {
+
+}
+#frag_containers .frag_container .frag_content .comment {
+    
+}

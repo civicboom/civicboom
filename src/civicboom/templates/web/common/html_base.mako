@@ -38,7 +38,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui.stars.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/layout.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/icons_avatar_thumbnails.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/avatars.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/icons.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/account.css" />
@@ -51,7 +51,9 @@
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/fragments.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/frags.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/frag_content.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/frag_member.css" />
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif

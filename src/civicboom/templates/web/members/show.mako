@@ -1,4 +1,4 @@
-<%inherit file="/web/common/html_base.mako"/>
+<%inherit file="/web/common/frag_container.mako"/>
 
 <%namespace name="frag_member" file="/frag/members/show.mako"/>
 
@@ -22,28 +22,5 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-    <div id='frag_containers'>
-		## AllanC - see /web/contents/show.mako for more details about this call
-		
-		<div id="frag_" class="frag_container">
-			${frag_member.frag_member(d)}
-		</div>
-		
-    </div>
-
-    <%
-	c.scripts_end.append("""
-		
-		<script type="text/javascript">
-			function refresh_fragment_height() {
-				var height = $('footer').offset().top - $('#app').offset().top;
-				//Y.log(height);
-				createCSS(".frag_data", "height: "+(height-70)+"px !important;");
-			}
-			refresh_fragment_height();
-			$(window).resize(refresh_fragment_height);
-		</script>
-    """)
-	%>
-
+	${frag_member.frag_member(d)}
 </%def>

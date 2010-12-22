@@ -24,11 +24,14 @@ ${frag_member(d)}
     
     <div class="frag_data frag_member">
         <div class="frag_left_col">
+            <div class="frag_col">
             ## Member Details
             ${member_avatar(member)}
             ${member_map(  member)}
+            </div>
         </div>
         <div class="frag_right_col">
+            <div class="frag_col">
             ## Member Content
             ${frag_list.member_list( d['following']           , _('Following')            , url('member_actions', id=id, action='following')            )}
             ${frag_list.member_list( d['followers']           , _('Followers')            , url('member_actions', id=id, action='followers')            )}
@@ -37,6 +40,7 @@ ${frag_member(d)}
             % if member['type']=='group':
             ${frag_list.group_members_list(d['members']       , _('Members')              , url('member_actions', id=id, action='members')              )}
             % endif
+            </div>
         </div>
     </div>
 </%def>
