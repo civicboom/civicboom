@@ -14,6 +14,8 @@ from webhelpers.text import truncate
 from webhelpers.html.tags import end_form
 from civicboom.lib.text import strip_html_tags
 
+from civicboom.lib.misc import args_to_tuple
+
 # use relative import so that "import helpers" works
 #from civicboom.lib.text import scan_for_embedable_view_and_autolink
 from text import scan_for_embedable_view_and_autolink
@@ -175,7 +177,7 @@ def icon(icon_type, description=None, class_=''):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST', href_json=None, json_actions=''):
+def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST', href_json=None, javascript_json_complete_actions=''):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -197,11 +199,12 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     # If HREF is a dict then generate two URL's from it
     #  1.) the original compatable call
     #  2.) a json formatted version for the AJAX call
-    if isinstance(href, dict):
-        href_kwargs = href
-        href      = url(**href_kwargs)
+    if isinstance(href, tuple):
+        href_args   = href[0]
+        href_kwargs = href[1]
+        href      = url(*href_args, **href_kwargs)
         href_kwargs['format'] = 'json'
-        href_json = url(**href_kwargs)
+        href_json = url(*href_args, **href_kwargs)
         
     if href_json:
         form_onsubmit = 'return false;'
@@ -250,13 +253,13 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
                             function(data){
                                 flash_message(data);
                                 if (data.status == 'ok') {
-                                    %(json_actions)s
+                                    %(javascript_json_complete_actions)s
                                 }
                             }
                         );
                     });
                 });
-            """ % dict(href_json=href_json, hhash=hhash, json_actions=json_actions)
+            """ % dict(href_json=href_json, hhash=hhash, javascript_json_complete_actions=javascript_json_complete_actions)
             )
         )
     

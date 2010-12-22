@@ -269,14 +269,14 @@ ${frag_content(d)}
         
         ## Assignment Accept and Withdraw
         % if 'accept' in actions:
-            <li>${h.secure_link(h.url('content_action', action='accept'  , format='redirect', id=id), _('Accept')  , css_class="button_small button_small_style_2")}</li>
+            <li>${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), _('Accept')  , css_class="button_small button_small_style_2")}</li>
         % endif
         % if 'withdraw' in d['actions']:
-            <li>${h.secure_link(h.url('content_action', action='withdraw', format='redirect', id=id), _('Withdraw'), css_class="button_small button_small_style_2")}</li>
+            <li>${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=id), _('Withdraw'), css_class="button_small button_small_style_2")}</li>
         % endif
         
         % if 'boom' in actions:
-            <li>${h.secure_link(h.url('content_action', action='boom'    , format='redirect', id=id), _('Boom')    , css_class="button_small button_small_style_2")}</li>
+            <li>${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=id), _('Boom')    , css_class="button_small button_small_style_2")}</li>
         % endif
         
         ## Parent Content Owner Actions
