@@ -216,7 +216,7 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     hf = HTML.span(
         form(href, id="form_"+hhash, method=method, onsubmit=form_onsubmit) +
             values +
-            HTML.input(type="submit", value=value) +
+            HTML.input(type="submit", value=value, name="submit") + #AllanC: without the name attribute here the AJAX/JSON does not function, WTF! took me ages to track down :(
         end_form(),
         id='span_'+hhash)
 
@@ -236,7 +236,7 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         href=href,
         class_=css_class,
         title=title,
-        onClick="if("+confirm_text+") {$('#form_"+hhash+"').submit();} return false;"
+        onClick="if (%(confirm_text)s) {$('#form_%(hhash)s').submit();} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
 
     # if JSON url provided
@@ -245,17 +245,20 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     if href_json:
         json_submit_script = HTML.script(
             literal("""
-                $(document).ready(function(){ 
-                    $('#form_%(hhash)s').submit(function(){ 
+                $(document).ready(function(){
+                    $('#form_%(hhash)s').submit(function(){
                         $.post(
-                            "%(href_json)s" ,
-                            $("#form_%(hhash)s").serialize() ,
-                            function(data){
+                            '%(href_json)s' ,
+                            $('#form_%(hhash)s').serialize() ,
+                            function(data) {
+                                alert('json returned');
+                                Y.log(data);
                                 flash_message(data);
                                 if (data.status == 'ok') {
                                     %(javascript_json_complete_actions)s
                                 }
-                            }
+                            }//,
+                            //'json'
                         );
                     });
                 });
