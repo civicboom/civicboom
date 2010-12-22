@@ -233,6 +233,12 @@ ${frag_content(d)}
 <%def name="action_bar(actions)">
 
     <% id = d['content']['id'] %>
+
+    <div class="type_actions">
+        <% type = d['content']['type'] %>
+        <span class="icon icon_${type}"></span><span class="title">${type.capitalize()}</span>
+        <a href='' onclick="$('#flag_content').modal(); return false;" titlte='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
+    </div>
     
     <div class="common_actions">
         ${share.share(
@@ -244,9 +250,7 @@ ${frag_content(d)}
         <a href='' onclick="cb_frag_remove($(this)); return false;" title='Close' class="icon icon_close"><span>Close</span></a>
     </div>
 
-    <div class="type_actions">
-        <a href='' onclick="$('#flag_content').modal(); return false;" titlte='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
-    </div>
+
 
 </%def>
     
@@ -259,24 +263,20 @@ ${frag_content(d)}
         
         ## Content Owner Actions
         % if 'edit' in actions:
-            <li>
-            <a class="button_small button_small_style_2" href="${h.url('edit_content', id=id)}">${_("Edit")}</a>
-            </li>
-            <li>
-            ${h.secure_link(url('content', id=id, format='redirect'), method="DELETE", value=_("Delete"), css_class="button_small button_small_style_2", confirm_text=_("Are your sure you want to delete this content?") )}
-            </li>
+            <li><a href="${h.url('edit_content', id=id)}" class="">${_("Edit")}</a></li>
+            <li>${h.secure_link(url('content', id=id, format='redirect'), method="DELETE", value=_("Delete"), css_class="button_small button_small_style_2", confirm_text=_("Are your sure you want to delete this content?") )}</li>
         % endif
         
         ## Assignment Accept and Withdraw
         % if 'accept' in actions:
-            <li>${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), _('Accept')  , css_class="button_small button_small_style_2")}</li>
+            <li>${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), _('Accept')  , css_class="")}</li>
         % endif
         % if 'withdraw' in d['actions']:
-            <li>${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=id), _('Withdraw'), css_class="button_small button_small_style_2")}</li>
+            <li>${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=id), _('Withdraw'), css_class="")}</li>
         % endif
         
         % if 'boom' in actions:
-            <li>${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=id), _('Boom')    , css_class="button_small button_small_style_2")}</li>
+            <li>${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=id), _('Boom')    , css_class="")}</li>
         % endif
         
         ## Parent Content Owner Actions
@@ -287,13 +287,13 @@ ${frag_content(d)}
         ##    </a>
         
         % if 'approve' in actions:
-            <li class="approve"     >${h.secure_link(h.url('content_action', action='approve'    , format='redirect', id=id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}</li>
+            <li class="approve"     >${h.secure_link(h.args_to_tuple('content_action', action='approve'    , format='redirect', id=id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}</li>
         % endif
         % if 'seen' in actions:
-            <li class="seen"        >${h.secure_link(h.url('content_action', action='seen'       , format='redirect', id=id), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="button_small button_small_style_2" )}</li>
+            <li class="seen"        >${h.secure_link(h.args_to_tuple('content_action', action='seen'       , format='redirect', id=id), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="button_small button_small_style_2" )}</li>
         % endif
         % if 'dissasociate' in actions:
-            <li class="dissasociate">${h.secure_link(h.url('content_action', action='disasociate', format='redirect', id=id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}</li>
+            <li class="dissasociate">${h.secure_link(h.args_to_tuple('content_action', action='disasociate', format='redirect', id=id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}</li>
         % endif
     </ul>
     

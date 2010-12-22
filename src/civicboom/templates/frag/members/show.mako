@@ -65,6 +65,13 @@ ${frag_member(d)}
 ## Action Bar
 ##------------------------------------------------------------------------------
 <%def name="action_bar(actions)">
+
+    <div class="type_actions">
+        <% type = d['member']['type'] %>
+        <span class="icon icon_${type}"></span><span class="title">${type.capitalize()}</span>
+        <p><a href='${url(controller='misc', action='widget_preview')}'>widget preview</a></p>
+    </div>
+
     <div class="common_actions">
         ${share.share(
             url         = url('member', id=d['member']['username'], host=app_globals.site_host, protocol='http'),
@@ -76,9 +83,7 @@ ${frag_member(d)}
         <a href='' onclick="cb_frag_remove($(this)); return false;"                    title='Close ${d['member']['type']}'       class="icon icon_close"><span>Close</span></a>
     </div>
 
-    <div class="type_actions">
-        <p><a href='${url(controller='misc', action='widget_preview')}'>widget preview</a></p>
-    </div>
+
 </%def>
 
 

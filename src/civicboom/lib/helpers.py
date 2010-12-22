@@ -182,7 +182,11 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
       - An invisible pretty-looking plain-text link which calls form.submit()
-
+    
+    @param href      - can be supplied as a string or a tuple in the format (args, kwargs), this tuple will then be used to automatically create href_json
+    @param href_json - an optional JSON url to post to can be provided, this will then activate an AJAX call, this is normally set automatically by providing a tuple for href (see above)
+    @param javascript_json_complete_actions - a string of javascript that is activated on a successful AJAX call. Normally used to refresh parts of the page that have been updated from the successful AJAX call.
+    
     Then use javascript to hide the form and show the pretty link
     """
     # Setup Vars -------

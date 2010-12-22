@@ -5,8 +5,8 @@
 ##------------------------------------------------------------------------------
 ## RSS
 ##------------------------------------------------------------------------------
-<%def name="rss()">${self.rss_header_link()}</%def>
-<%def name="rss_url()">${url(controller='search', action='content', creator=d['member']['username'], format='rss')}</%def>
+<%def name="rss()"      >${self.rss_header_link()}</%def>
+<%def name="rss_url()"  >${url(controller='search', action='content', creator=d['member']['username'], format='rss')}</%def>
 <%def name="rss_title()">Articles by ${d['member']['username']}</%def>
 
 

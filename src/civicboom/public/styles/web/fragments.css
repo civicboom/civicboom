@@ -54,6 +54,9 @@
 #frag_containers .frag_container .action_bar .type_actions   {
   float: left;
 }
+#frag_containers .frag_container .action_bar .type_actions .title  {
+  font-weight: bold;
+}
 
 /*------------------------Content actions bar --------------------------------*/
 #frag_containers .frag_container .action_bar_content {
@@ -70,6 +73,7 @@
 }
 #frag_containers .frag_container .action_bar_content li {
   display: inline;
+  border-left: 1px solid blue;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -84,13 +88,13 @@
     linear,
     left bottom,
     left top,
-    color-stop(33 , rgb(200,200,200)),
+    color-stop(33 , rgb(230,230,230)),
     color-stop(0.1, rgb(255,255,255))
   );
   background: -moz-linear-gradient(
     center bottom,
     rgb(255,255,255)  33%,
-    rgb(200,200,200) 100%
+    rgb(230,230,230) 100%
   );
   /*
     http://www.webdesignerwall.com/tutorials/cross-browser-css-gradient/
