@@ -153,7 +153,10 @@ ${frag_content(d)}
                 ${member_includes.avatar(comment['creator'])}
             </td>
             <td class="comment">
-                ${comment['content']}
+                <p class="comment_by"     >${comment['creator']['name'] or comment['creator']['username']}</p>
+                
+                <p class="comment_content">${comment['content']}</p>
+                
                 ##<b style="float: right;">
                 ##	${comment['creator']['name']}
                     ##${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
