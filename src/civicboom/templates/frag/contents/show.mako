@@ -237,10 +237,11 @@ ${frag_content(d)}
     <div class="type_actions">
         <% type = d['content']['type'] %>
         <span class="icon icon_${type}"></span><span class="title">${type.capitalize()}</span>
-        <a href='' onclick="$('#flag_content').modal(); return false;" titlte='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
     </div>
     
     <div class="common_actions">
+        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
+
         ${share.share(
             url         = url('content', id=d['content']['id'], host=app_globals.site_host, protocol='http'),
             title       = d['content']['title'] ,

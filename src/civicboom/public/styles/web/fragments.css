@@ -46,6 +46,8 @@
   
   background: -webkit-gradient(linear, left bottom, left top, color-stop( 33, rgb(73,116,184)), color-stop(0.1, rgb(58,74,151)));
   background: -moz-linear-gradient(center bottom, rgb(73,116,184)  33%, rgb(58, 74,151) 100%);
+
+  padding: 0.25em;
 }
 
 #frag_containers .frag_container .action_bar .common_actions {
@@ -56,6 +58,7 @@
 }
 #frag_containers .frag_container .action_bar .type_actions .title  {
   font-weight: bold;
+  padding-left: 0.25em;
 }
 
 /*------------------------Content actions bar --------------------------------*/
