@@ -263,46 +263,45 @@ ${frag_content(d)}
     
 <%def name="action_bar(actions)">
     <% id = d['content']['id'] %>
-	<ul>
-        <li>
-            ${h.secure_link(url('new_content', parent_id=id), value=_("Respond to this"))}
-        </li>
+
+    <div class="object_actions_specific">
+        ${h.secure_link(url('new_content', parent_id=id), value=_("Respond to this"))}
         
-        ## Content Owner Actions
-        % if 'edit' in actions:
-            <li><a href="${h.url('edit_content', id=id)}" class="">${_("Edit")}</a></li>
-            <li>${h.secure_link(url('content', id=id, format='redirect'), method="DELETE", value=_("Delete"), css_class="button_small button_small_style_2", confirm_text=_("Are your sure you want to delete this content?") )}</li>
-        % endif
-        
-        ## Assignment Accept and Withdraw
         % if 'accept' in actions:
-            <li>${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), _('Accept')  , css_class="")}</li>
+            ${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), title=_('Accept')  , css_class="icon icon_accept")}
         % endif
         % if 'withdraw' in d['actions']:
-            <li>${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=id), _('Withdraw'), css_class="")}</li>
+            ${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=id), title=_('Withdraw'), css_class="icon icon_withdraw")}
         % endif
         
         % if 'boom' in actions:
-            <li>${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=id), _('Boom')    , css_class="")}</li>
+            ${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=id), title=_('Boom')    , css_class="icon icon_boom")}
         % endif
-        
-        ## Parent Content Owner Actions
-        ## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
-        ##% if content.actions:
-        ##    <a href="" class="button_small button_small_style_2">
-        ##        Email Resorces
-        ##    </a>
-        
+    </div>
+    
+    <div class="object_actions_common">
+        % if 'edit' in actions:
+            <a href="${h.url('edit_content', id=id)}" class="icon icon_edit" title='${_("Edit")}'><span>${_("Edit")}</span></a>
+            ${h.secure_link(url('content', id=id, format='redirect'), method="DELETE", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
+        % endif
+
         % if 'approve' in actions:
-            <li class="approve"     >${h.secure_link(h.args_to_tuple('content_action', action='approve'    , format='redirect', id=id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="button_small button_small_style_2", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}</li>
+            ${h.secure_link(h.args_to_tuple('content_action', action='approve'    , format='redirect', id=id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="icon icon_approve", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
         % endif
         % if 'seen' in actions:
-            <li class="seen"        >${h.secure_link(h.args_to_tuple('content_action', action='seen'       , format='redirect', id=id), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="button_small button_small_style_2" )}</li>
+            ${h.secure_link(h.args_to_tuple('content_action', action='seen'       , format='redirect', id=id), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="icon icon_seen" )}
         % endif
         % if 'dissasociate' in actions:
-            <li class="dissasociate">${h.secure_link(h.args_to_tuple('content_action', action='disasociate', format='redirect', id=id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="button_small button_small_style_2", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}</li>
+            ${h.secure_link(h.args_to_tuple('content_action', action='disasociate', format='redirect', id=id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="icon icon_dissasociate", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
         % endif
-    </ul>
+    </div>
+    
+    ## Parent Content Owner Actions
+    ## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
+    ##% if content.actions:
+    ##    <a href="" class="button_small button_small_style_2">
+    ##        Email Resorces
+    ##    </a>
     
 </%def>
 

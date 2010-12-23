@@ -72,14 +72,26 @@
   padding: 0.25em;
 }
 
+#frag_containers .frag_container .action_bar .object_actions_common {
+    float: right;
+}
+
+#frag_containers .frag_container .action_bar .object_actions_specific {
+    float: left;
+}
+
+
 #frag_containers .frag_container .action_bar a {
   color: inherit;
   text-decoration: inherit;
 }
+
+/* 
 #frag_containers .frag_container .action_bar li {
   display: inline;
   border-left: 1px solid blue;
 }
+*/
 
 /*----------------------------------------------------------------------------*/
 /* Fragment Data
