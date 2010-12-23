@@ -16,7 +16,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="avatar(member, class_='', js_link_to_frag=True, **kwargs)">
-    <div class="avatar ${class_}">
+    <div class="thumbnail ${class_}">
         <%
             if js_link_to_frag:
                 js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('member', id=member['username'], format='frag'))

@@ -18,6 +18,9 @@ ${frag_member(d)}
     <% member = d['member']  %>
     <% id     = member['id'] %>
     
+    <div class="title_bar">
+        ${title_bar(d['actions'])}
+    </div>
     <div class="action_bar">
         ${action_bar(d['actions'])}
     </div>
@@ -49,9 +52,7 @@ ${frag_member(d)}
 ## Avatar
 ##------------------------------------------------------------------------------
 <%def name="member_avatar(member)">
-    <div class="avatar">
-        ${member_includes.avatar(member, class_='avatar_large')}
-    </div>
+    ${member_includes.avatar(member, class_='thumbnail_large')}
 </%def>
 
 
@@ -66,14 +67,12 @@ ${frag_member(d)}
 
 
 ##------------------------------------------------------------------------------
-## Action Bar
+## Action/Title Bar
 ##------------------------------------------------------------------------------
-<%def name="action_bar(actions)">
-
-    <div class="type_actions">
+<%def name="title_bar(actions)">
+    <div class="title">
         <% type = d['member']['type'] %>
-        <span class="icon icon_${type}"></span><span class="title">${type.capitalize()}</span>
-        <p><a href='${url(controller='misc', action='widget_preview')}'>widget preview</a></p>
+        <span class="icon icon_${type}"></span><span class="title_text">${type.capitalize()}</span>
     </div>
 
     <div class="common_actions">
@@ -86,11 +85,13 @@ ${frag_member(d)}
         <a href='${url('formatted_member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon icon_rss"  ><span>RSS</span></a>
         <a href='' onclick="cb_frag_remove($(this)); return false;"                    title='Close ${d['member']['type']}'       class="icon icon_close"><span>Close</span></a>
     </div>
-
-
 </%def>
 
-
+<%def name="action_bar(actions)">
+    <a href='${url(controller='misc', action='widget_preview')}'>widget preview</a>
+    <span>follow</span>
+    <span>invite</span>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## 

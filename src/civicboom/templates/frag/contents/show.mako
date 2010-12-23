@@ -21,11 +21,11 @@ ${frag_content(d)}
 <%def name="frag_content(d)">
     <% content = d['content'] %>
     
+    <div class="title_bar">
+        ${title_bar(d['actions'])}
+    </div>
     <div class="action_bar">
         ${action_bar(d['actions'])}
-    </div>
-    <div class="action_bar_content">
-        ${action_bar_content(d['actions'])}
     </div>
     
     <div class="frag_data frag_content">
@@ -234,15 +234,15 @@ ${frag_content(d)}
 </%def>
 
 ##------------------------------------------------------------------------------
-## Action Bar
+## Action/Title Bar
 ##------------------------------------------------------------------------------
-<%def name="action_bar(actions)">
+<%def name="title_bar(actions)">
 
     <% id = d['content']['id'] %>
 
-    <div class="type_actions">
+    <div class="title">
         <% type = d['content']['type'] %>
-        <span class="icon icon_${type}"></span><span class="title">${type.capitalize()}</span>
+        <span class="icon icon_${type}"></span><span class="title_text">${type.capitalize()}</span>
     </div>
     
     <div class="common_actions">
@@ -261,7 +261,7 @@ ${frag_content(d)}
 
 </%def>
     
-<%def name="action_bar_content(actions)">
+<%def name="action_bar(actions)">
     <% id = d['content']['id'] %>
 	<ul>
         <li>

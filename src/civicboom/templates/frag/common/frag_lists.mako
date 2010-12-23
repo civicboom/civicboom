@@ -6,6 +6,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="member_list(*args, **kwargs)">
+    <% kwargs['max'] = 20 %>
     ${frag_list(render_item_function=render_item_member , type=('ul','li')   , *args, **kwargs)}
 </%def>
 
@@ -52,7 +53,7 @@
         % endfor
     </${type[0]}>
     % if url_more and max > 0 and len(items) > max:
-    <a href="${url_more}">more</a>
+    <a href="${url_more}" class="link_more">more</a>
     % endif
     </div>
 </%def>
@@ -64,7 +65,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_member(member)">   
-    ${member_includes.avatar(member)}
+    ${member_includes.avatar(member, class_="thumbnail_small")}
 </%def>
 
 

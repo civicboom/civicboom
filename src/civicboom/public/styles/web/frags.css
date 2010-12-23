@@ -34,9 +34,9 @@
 }
 
 /*----------------------------------------------------------------------------*/
-/* Action Bar                                                                 */
+/* Action/Title Bar                                                                 */
 /*----------------------------------------------------------------------------*/
-#frag_containers .frag_container .action_bar {
+#frag_containers .frag_container .title_bar {
   /* height: 1.5em; */
   overflow: hidden;
   color: white;
@@ -49,31 +49,34 @@
   padding: 0.25em;
 }
 
-#frag_containers .frag_container .action_bar .common_actions {
+#frag_containers .frag_container .title_bar .common_actions {
   float: right;
 }
-#frag_containers .frag_container .action_bar .type_actions   {
+#frag_containers .frag_container .title_bar .title   {
   float: left;
 }
-#frag_containers .frag_container .action_bar .type_actions .title  {
+#frag_containers .frag_container .title_bar .title .title_text  {
   font-weight: bold;
   padding-left: 0.25em;
 }
 
-/*------------------------Content actions bar --------------------------------*/
-#frag_containers .frag_container .action_bar_content {
+/*-----------------------------Action bar -----------------------------------*/
+#frag_containers .frag_container .action_bar {
   /* height: 1.5em; */
   overflow: hidden;
   color: black;
   
+  border-bottom: 0.1em solid #888; /* to match .frag_container */
+  
   background-color: #CCC;
+  padding: 0.25em;
 }
 
-#frag_containers .frag_container .action_bar_content a {
+#frag_containers .frag_container .action_bar a {
   color: inherit;
   text-decoration: inherit;
 }
-#frag_containers .frag_container .action_bar_content li {
+#frag_containers .frag_container .action_bar li {
   display: inline;
   border-left: 1px solid blue;
 }
@@ -109,6 +112,10 @@
   margin: 1em;
   font-size: 88%;
 }
+#frag_containers .frag_container .frag_data .frag_col h2 {
+    margin-top: 1em;
+    clear: right;
+}
 
 
 /*----------------------------------------------------------------------------*/
@@ -123,6 +130,9 @@
 #frag_containers .frag_container .frag_data .frag_list li {
     display: inline;
 }
-#frag_containers .frag_container .frag_data .frag_list li .avatar {
-    font-size: 20px;
+
+#frag_containers .frag_container .frag_data .frag_list .link_more {
+    float: right;
 }
+
+/* #frag_containers .frag_container .frag_data .frag_list li .avatar {font-size: 20px;} */
