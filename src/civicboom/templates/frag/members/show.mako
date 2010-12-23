@@ -88,9 +88,27 @@ ${frag_member(d)}
 </%def>
 
 <%def name="action_bar(actions)">
-    <a href='${url(controller='misc', action='widget_preview')}'>widget preview</a>
-    <span>follow</span>
-    <span>invite</span>
+    <a class="icon icon_widget" href='${url(controller='misc', action='widget_preview')}' title='${_('Widget Preview')}'><span>${_('Widget Preview')}</span></a>
+    
+    <% member = d['member'] %>
+    
+    % if c.logged_in_persona and c.logged_in_persona.username != member['username']:
+        % if c.logged_in_persona and c.logged_in_persona.is_following(member['username']):
+        ${h.secure_link(h.args_to_tuple('member_action', action='unfollow'  , id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']),         css_class="icon icon_unfollow")}
+        ##${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
+        % else:
+        ${h.secure_link(h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect'), _(' '), title=_("Follow %s" % member['username']),         css_class="icon icon_follow")}
+        % endif
+    % endif
+
+    % if 'join' in actions:
+        ${h.secure_link(h.args_to_tuple('group_action', action='join'  , id=member['id']          , member=c.logged_in_persona.username, format='redirect'), _('Join this _group')                                                          , css_class="icon icon_join"  )}
+    % endif
+    
+    % if 'invite' in actions: ##and c.logged_in_persona and c.logged_in_persona.__type__=='group':
+        ${h.secure_link(h.args_to_tuple('group_action', action='invite', id=c.logged_in_persona.id, member=member['username']          , format='redirect'), _('Invite %s to join %s' % (member['name'], c.logged_in_persona['name']))      , css_class="icon icon_invite")}
+    % endif
+
 </%def>
 
 ##------------------------------------------------------------------------------

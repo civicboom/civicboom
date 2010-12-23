@@ -255,8 +255,6 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
                             '%(href_json)s' ,
                             $('#form_%(hhash)s').serialize() ,
                             function(data) {
-                                alert('json returned');
-                                Y.log(data);
                                 flash_message(data);
                                 if (data.status == 'ok') {
                                     %(javascript_json_complete_actions)s

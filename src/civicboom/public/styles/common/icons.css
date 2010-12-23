@@ -27,14 +27,16 @@
 .icon_edit_lock {background: transparent url('/styles/web/icons16/lock-icon.png'     ) no-repeat;}
 .icon_private   {background: transparent url('/styles/web/icons16/key-icon.png'      ) no-repeat;}
 .icon_seen      {background: transparent url('/styles/web/icons16/tick-icon.png'     ) no-repeat;}
-.icon_follow    {background: transparent url('/styles/web/icons16/right-icon.png'    ) no-repeat;}
-.icon_unfollow  {background: transparent url('/styles/web/icons16/stop-icon.png'     ) no-repeat;}
+.icon_follow    {background: transparent url('/styles/web/icons16/cb_follow-icon.png') no-repeat;}
+.icon_unfollow  {background: transparent url('/styles/web/icons16/cb_unfollow-icon.png') no-repeat;}
+.icon_widget    {background: transparent url('/styles/web/icons16/cb_widget-icon.png') no-repeat;}
 .icon_user      {background: transparent url('/styles/web/icons16/user-icon.png'     ) no-repeat;}
 .icon_group     {background: transparent url('/styles/web/icons16/network-icon.png'  ) no-repeat;}
 .icon_userid    {background: transparent url('/styles/web/icons16/user-info-icon.png') no-repeat;}
 .icon_close     {background: transparent url('/styles/web/icons16/delete-icon.png'   ) no-repeat;}
 .icon_article   {background: transparent url('/styles/web/icons16/document-icon.png' ) no-repeat;}
 .icon_assignment{background: transparent url('/styles/web/icons16/bubble-icon.png'   ) no-repeat;}
+.icon_response  {background: transparent url('/styles/web/icons16/document-icon.png' ) no-repeat;}
 .icon_rss       {background: transparent url('/styles/web/icons16/rss-icon.png'      ) no-repeat;} /* http://ava7.com/2006/11/rss-graphics.html */
 .icon_flag      {background: transparent url('/styles/web/icons16/flag-icon.png'     ) no-repeat;}
 .icon_share     {background: transparent url('/styles/web/icons16/share-icon.png'    ) no-repeat;}
