@@ -44,6 +44,10 @@
 .icon_share     {background: transparent url('/styles/web/icons16/share-icon.png'    ) no-repeat;}
 .icon_message   {background: transparent url('/styles/web/icons16/letter-icon.png'   ) no-repeat;}
 .icon_edit      {background: transparent url('/styles/web/icons16/pencil-icon.png'   ) no-repeat;}
+.icon_boom      {background: transparent url('/styles/web/icons16/megaphone-icon.png'   ) no-repeat;}
+.icon_accept    {background: transparent url('/styles/web/icons16/tick-icon.png'   ) no-repeat;}
+.icon_withdraw  {background: transparent url('/styles/web/icons16/delete-icon.png'   ) no-repeat;}
+.icon_respond   {background: transparent url('/styles/web/icons16/document-pencil-icon.png'   ) no-repeat;}
 .icon_account_type_plus {background: transparent url('/styles/web/icons16/plus-icon.png') no-repeat;}
 
 

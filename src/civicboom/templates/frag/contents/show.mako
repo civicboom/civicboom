@@ -246,7 +246,6 @@ ${frag_content(d)}
     </div>
     
     <div class="common_actions">
-        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
 
         ${share.share(
             url         = url('content', id=d['content']['id'], host=app_globals.site_host, protocol='http'),
@@ -265,24 +264,24 @@ ${frag_content(d)}
     <% id = d['content']['id'] %>
 
     <div class="object_actions_specific">
-        ${h.secure_link(url('new_content', parent_id=id), value=_("Respond to this"))}
+        ${h.secure_link(url('new_content', parent_id=id), value="", title=_("Respond to this"), css_class="icon icon_respond")}
         
         % if 'accept' in actions:
-            ${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), title=_('Accept')  , css_class="icon icon_accept")}
+            ${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value="", title=_('Accept')  , css_class="icon icon_accept")}
         % endif
         % if 'withdraw' in d['actions']:
-            ${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=id), title=_('Withdraw'), css_class="icon icon_withdraw")}
+            ${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=id), value="", title=_('Withdraw'), css_class="icon icon_withdraw")}
         % endif
         
         % if 'boom' in actions:
-            ${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=id), title=_('Boom')    , css_class="icon icon_boom")}
+            ${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=id), value="", title=_('Boom')    , css_class="icon icon_boom")}
         % endif
     </div>
     
     <div class="object_actions_common">
         % if 'edit' in actions:
             <a href="${h.url('edit_content', id=id)}" class="icon icon_edit" title='${_("Edit")}'><span>${_("Edit")}</span></a>
-            ${h.secure_link(url('content', id=id, format='redirect'), method="DELETE", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
+            ${h.secure_link(url('content', id=id, format='redirect'), method="DELETE", value="", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
         % endif
 
         % if 'approve' in actions:
@@ -293,6 +292,10 @@ ${frag_content(d)}
         % endif
         % if 'dissasociate' in actions:
             ${h.secure_link(h.args_to_tuple('content_action', action='disasociate', format='redirect', id=id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="icon icon_dissasociate", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+        % endif
+        
+        % if 'flag' in actions:
+            <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
         % endif
     </div>
     

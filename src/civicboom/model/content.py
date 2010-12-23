@@ -188,6 +188,8 @@ class Content(Base):
             action_list.append('edit')
         if self.viewable_by(member):
             action_list.append('view')
+        if self.private==False and self.creator != member:
+            action_list.append('flag')
         return action_list
 
     def editable_by(self, member):
@@ -378,8 +380,9 @@ class UserVisibleContent(Content):
                 action_list.append('approve')
                 action_list.append('seen')
                 action_list.append('dissasociate')
-        #if has not boomed before:
-        action_list.append('boom')
+        #AllanC: TODO - if has not boomed before - check boom list:
+        if self.creator != member:
+            action_list.append('boom')
         return action_list
 
     def is_parent_owner(self, member):

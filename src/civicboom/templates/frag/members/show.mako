@@ -90,14 +90,15 @@ ${frag_member(d)}
 <%def name="action_bar(actions)">
 
     <% member = d['member'] %>
+    <% name   = d['member'].get('name') or d['member'].get('username') %>
 
     <div class="object_actions_specific">
         % if c.logged_in_persona and c.logged_in_persona.username != member['username']:
             % if c.logged_in_persona and c.logged_in_persona.is_following(member['username']):
-            ${h.secure_link(h.args_to_tuple('member_action', action='unfollow'  , id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']),         css_class="icon icon_unfollow")}
+            ${h.secure_link(h.args_to_tuple('member_action', action='unfollow'  , id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % name),         css_class="icon icon_unfollow")}
             ##${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
             % else:
-            ${h.secure_link(h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect'), _(' '), title=_("Follow %s" % member['username']),         css_class="icon icon_follow")}
+            ${h.secure_link(h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect'), _(' '), title=_("Follow %s" % name),         css_class="icon icon_follow")}
             % endif
         % endif
     
@@ -112,7 +113,10 @@ ${frag_member(d)}
     </div>
 
     <div class="object_actions_common">
-        <a class="icon icon_widget" href='${url(controller='misc', action='widget_preview')}' title='${_('Widget Preview')}'><span>${_('Widget Preview')}</span></a>
+        % if 'message' in actions:
+            <a class="icon icon_message" href="#" title="${_('Send %s a message') % name}"><span>${_('Message')}</span></a>
+        % endif
+        <a class="icon icon_widget"  href="${url(controller='misc', action='widget_preview')}" title="${_('Widget Preview')}"><span>${_('Widget Preview')}</span></a>
     </div>
 
     
