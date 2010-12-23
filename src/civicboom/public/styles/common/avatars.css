@@ -1,6 +1,6 @@
 
 .avatar {
-    /*display: inline-block;*/
+    display: inline-block;
 	border: 0.03em solid #888;
     border-radius        : 0.1em;
 	-moz-border-radius   : 0.1em;
@@ -14,9 +14,8 @@
 }
 
 
-.avatar_large {
-    font-size: 80px;
-}
+.avatar_small {font-size: 20px;}
+.avatar_large {font-size: 80px;}
 
 .avatar .img {
     widlth: 1em;

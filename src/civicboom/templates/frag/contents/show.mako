@@ -35,6 +35,8 @@ ${frag_content(d)}
             ${content_media(   content)}
             ${content_map(     content)}
             ${content_comments(d['comments'])}
+            ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
+            ${flag_form()}
             </div>
         </div>
         <div class="frag_right_col">
@@ -106,10 +108,6 @@ ${frag_content(d)}
         </li>
     % endfor
     </ul>
-
-
-    ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
-    ${flag_form()}
 
 </%def>
 
@@ -215,21 +213,21 @@ ${frag_content(d)}
 ##------------------------------------------------------------------------------
 ## Accepted by
 ##------------------------------------------------------------------------------
-<%def name="accepted_by()">
+<%def name="accepted_status()">
     % if 'accepted_status' in d:
-        <h2>${_("Assignment")}</h2>
+        
         % if 'accepted' in d['content']:
-            <h3>${_("accepted by: %d") % len(d['accepted_status']['accepted'])}</h3>
+            <h2>${_("Accepted by")} <span>${len(d['accepted_status']['accepted'])}</span></h2>
             ${member_includes.member_list(d['accepted_status']['accepted'] , show_avatar=True, class_="avatar_thumbnail_list")}
         % endif
         
         % if 'invited' in d['content']:
-            <h3>${_("awaiting reply: %d") % len(d['accepted_status']['invited'])}</h3>
+            <h2>${_("Invited")} <span>${len(d['accepted_status']['invited'])}</span></h2>
             ${member_includes.member_list(d['accepted_status']['invited']  , show_avatar=True, class_="avatar_thumbnail_list")}
         % endif
         
         % if 'withdrawn' in d['content']:
-            <h3>${_("withdrawn members: %d") % len(d['content']['withdrawn'])}</h3>
+            <h2>${_("Withdrawn")} <span>${len(d['accepted_status']['withdrawn'])}</span></h2>
             ${member_includes.member_list(d['accepted_status']['withdrawn'], show_avatar=True, class_="avatar_thumbnail_list")}
         % endif
     % endif

@@ -7,7 +7,6 @@
   
 }
 
-
 #frag_containers .frag_container {
   vertical-align: top;
   display : inline-block !important;
@@ -109,4 +108,21 @@
 #frag_containers .frag_container .frag_data .frag_col {
   margin: 1em;
   font-size: 88%;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/* Fragment Lists
+/*----------------------------------------------------------------------------*/
+
+#frag_containers .frag_container .frag_data .frag_list a {
+    text-decoration: none;
+    color: inherit;
+}
+
+#frag_containers .frag_container .frag_data .frag_list li {
+    display: inline;
+}
+#frag_containers .frag_container .frag_data .frag_list li .avatar {
+    font-size: 20px;
 }

@@ -1,17 +1,20 @@
+
+<%namespace name="member_includes"  file="/web/common/member.mako"       />
+
 ##------------------------------------------------------------------------------
 ## Public Methods - Content and Memeber lists
 ##------------------------------------------------------------------------------
 
 <%def name="member_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_member, *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_member , type=('ul','li')   , *args, **kwargs)}
 </%def>
 
 <%def name="content_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_content, *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_content, type=('table','tr'), *args, **kwargs)}
 </%def>
 
 <%def name="group_members_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_group_members, *args, **kwargs)}
+    ##${frag_list(render_item_function=render_item_group_members, *args, **kwargs)}
 </%def>
 
 
@@ -19,33 +22,49 @@
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(items, title, url_more, max=3, show_count=True, render_item_function=None)">
-    <% if not isinstance(items, list): items=[items]; show_count=False %>
-    <% if max==None: max=-1 %>
-    <h2><a href="${url_more}">${title}</a></h2>
-    <table>
+
+<%def name="frag_list(items, title, url_more=None, max=3, show_count=True, type=('ul','li'), render_item_function=None)">
+    <div class='frag_list'>
+    <%
+        if not isinstance(items, list):
+            items=[items]
+            show_count=False
+        if max==None:
+            max=-1
+        if isinstance(show_count, bool) and show_count:
+            show_count = len(items)
+    %>
+    <h2>
+        % if url_more:
+        <a href="${url_more}">${title}</a>
+        % else:
+        ${title}
+        % endif
+        % if show_count:
+        <span class="count">${show_count}</span>
+        % endif
+    </h2>
+    <${type[0]}>
         % for item in items[0:max]:
-        <tr>
+        <${type[1]}>
             ${render_item_function(item)}
-        </tr>
+        </${type[1]}>
         % endfor
-    </table>
-    % if max > 0 and len(items) > max:
+    </${type[0]}>
+    % if url_more and max > 0 and len(items) > max:
     <a href="${url_more}">more</a>
     % endif
+    </div>
 </%def>
+
 
 
 ##------------------------------------------------------------------------------
 ## Member Item
 ##------------------------------------------------------------------------------
 
-<%def name="render_item_member(member)">
-    <td>
-        <a href="${h.url('member', id=member['id'])}" onclick="cb_frag($(this), '${h.url('member', id=member['id'], format='frag')}'); return false;">
-            ${member['username']}
-        </a>
-    </td>
+<%def name="render_item_member(member)">   
+    ${member_includes.avatar(member)}
 </%def>
 
 

@@ -50,7 +50,7 @@ ${frag_member(d)}
 ##------------------------------------------------------------------------------
 <%def name="member_avatar(member)">
     <div class="avatar">
-        ${member_includes.avatar(member , show_name=True, show_follow_button=True, class_='large')}
+        ${member_includes.avatar(member, class_='avatar_large')}
     </div>
 </%def>
 
