@@ -265,14 +265,16 @@ ${frag_content(d)}
 
     <div class="object_actions_specific">
         ${h.secure_link(url('new_content', parent_id=id), value="", title=_("Respond to this"), css_class="icon icon_respond")}
-        
+        <span class="separtor"></span>
         % if 'accept' in actions:
-            ${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value="", title=_('Accept')  , css_class="icon icon_accept")}
+            ${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=h.literal("<span class='icon icon_accept'?</span>%s") % _('Accept') ) }
+            ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
         % endif
+        <span class="separtor"></span>
         % if 'withdraw' in d['actions']:
             ${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=id), value="", title=_('Withdraw'), css_class="icon icon_withdraw")}
         % endif
-        
+        <span class="separtor"></span>
         % if 'boom' in actions:
             ${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=id), value="", title=_('Boom')    , css_class="icon icon_boom")}
         % endif

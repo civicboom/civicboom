@@ -1,3 +1,8 @@
+HTML {
+    overflow-x: scroll;
+    /* overflow-y: hidden; */
+}
+
 /*
  * the body is then broken down into the navigation bar at the top
  */

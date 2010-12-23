@@ -86,6 +86,13 @@
   text-decoration: inherit;
 }
 
+#frag_containers .frag_container .action_bar .separtor {
+  border-left: 1px solid #AAA;
+  position: absolute;
+  height: 1.75em;
+  margin-top: -0.25em;
+}
+
 /* 
 #frag_containers .frag_container .action_bar li {
   display: inline;
