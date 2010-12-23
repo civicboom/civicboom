@@ -1,15 +1,21 @@
 /*-------------------------- Frag Content Cols--------------------------------*/
 #frag_containers .frag_container .frag_content .frag_left_col {
-  width: 60%;
+  width: 66%;
   float: left;
 }
 #frag_containers .frag_container .frag_content .frag_right_col {
-  width: 40%;
+  width: 33%;
   float: right;
 }
 
+/*-------------------------- Content -----------------------------------------*/
 
-#frag_containers .frag_container .frag_content {
+
+
+/*----------------------------Content Comments--------------------------------*/
+
+#frag_containers .frag_container .frag_content .comments h2 {
+    font-size: 150%;
 }
 
 #frag_containers .frag_container .frag_content .comments td {
@@ -32,6 +38,6 @@
     font-weight: bold;
     margin-bottom: 0.25em;
 }
-#frag_containers .frag_container .frag_content .comment .comment_content        {font-size: 86%; line-height: 1em;}
+#frag_containers .frag_container .frag_content .comment .comment_content        {font-size: 88%; line-height: 1em;}
 #frag_containers .frag_container .frag_content .comment .comment_content:before {content: open-quote;}
 #frag_containers .frag_container .frag_content .comment .comment_content:after  {content: close-quote;}

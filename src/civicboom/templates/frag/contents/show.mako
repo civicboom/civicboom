@@ -57,8 +57,6 @@ ${frag_content(d)}
     <h1>${content['title']}</h1>
 
     <div class="details">
-        ##----Type----
-        <p>Type: ${content['type']}</p>
         
         ##----Details----
         % if hasattr(content,'views'):
@@ -143,9 +141,10 @@ ${frag_content(d)}
 ## Comments
 ##------------------------------------------------------------------------------
 <%def name="content_comments(comments)">
+<div class="comments">
     <h2>${_("Comments")}</h2>
 
-    <table class="comments">
+    <table>
         <tr style="display: none;"><th>${_('Member')}</th><th>${_('Comment')}</th></tr>
         % for comment in comments:
         <tr>
@@ -183,6 +182,7 @@ ${frag_content(d)}
             </td>
         </tr>
     </table>
+</div>
 </%def>
 
 

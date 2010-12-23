@@ -220,7 +220,10 @@ FOOTER .copyright {
 /*
  * individual elements
  */
-H2 {
+H1,H2,H3,H4 {
     font-weight: bold;
     margin: 0.25em 0em;
+}
+H1 {
+    font-size: 150%;
 }
