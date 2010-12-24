@@ -119,9 +119,9 @@ ${self.head_links()}
 ## http://www.ericmmartin.com/projects/simplemodal/
 	<script type="text/javascript">
 		$.extend($.modal.defaults, {
-			closeClass: "modalClose" ,
-			closeHTML : "<a href='#' class='icon icon_close' style='float: right;' title='Close'></a>" ,
-			opacity   : 60 ,
+			closeClass: "simplemodalClose" ,
+			##closeHTML : "<a href='#' class='icon icon_close' style='float: right;' title='Close'></a>" ,
+			##opacity   : 60 ,
 			onOpen: function (dialog) {
 				dialog.overlay.fadeIn('slow');
 				dialog.container.fadeIn('slow');

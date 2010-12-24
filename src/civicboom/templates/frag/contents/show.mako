@@ -1,5 +1,6 @@
 <%namespace name="frag_lists" file="/frag/common/frag_lists.mako"/>
-<%namespace name="share"     file="/frag/common/share.mako"     />
+<%namespace name="share"      file="/frag/common/share.mako"     />
+<%namespace name="popup"      file="/web/common/popup_base.mako" />
 
 ## for deprication
 <%namespace name="loc"              file="/web/common/location.mako"     />
@@ -36,7 +37,7 @@ ${frag_content(d)}
             ${content_map(     content)}
             ${content_comments(d['comments'])}
             ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
-            ${flag_form()}
+            ${popup.popup('flag_content', _('Flag content'), flag_form)}
             </div>
         </div>
         <div class="frag_right_col">
@@ -314,7 +315,7 @@ ${frag_content(d)}
 ##------------------------------------------------------------------------------
 
 <%def name="flag_form()">
-    <div id="flag_content" class="hideable">
+    ##<div id="flag_content" class="hideable">
       <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
       ${h.form(url(controller='content_actions', action='flag', id=d['content']['id'], format='redirect'))}
           <select name="type">
@@ -328,7 +329,7 @@ ${frag_content(d)}
           <input type="submit" name="flagit" value="Flag it" class=""/>
           ##<a class="simplemodal-close">${_("Cancel")}</a>
       ${h.end_form()}
-    </div>
+    ##</div>
 </%def>
 
 

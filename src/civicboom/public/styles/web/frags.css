@@ -36,13 +36,15 @@
 #frag_containers .frag_bridge {
   width: 250px;
 }
-    
+
 /*----------------------------------------------------------------------------*/
-/* Action/Title Bar                                                                 */
+/* Action/Title Bar                                                           */
 /*----------------------------------------------------------------------------*/
-#frag_containers .frag_container .title_bar {
+/* #frag_containers .frag_container - used in popups*/
+.title_bar {
   /* height: 1.5em; */
   overflow: hidden;
+  
   color: white;
   
   border-bottom: 0.1em solid #4a73b8; /* to match .frag_container */
@@ -53,13 +55,13 @@
   padding: 0.25em;
 }
 
-#frag_containers .frag_container .title_bar .common_actions {
+.title_bar .common_actions {
   float: right;
 }
-#frag_containers .frag_container .title_bar .title   {
+.title_bar .title   {
   float: left;
 }
-#frag_containers .frag_container .title_bar .title .title_text  {
+.title_bar .title .title_text  {
   font-weight: bold;
   padding-left: 0.25em;
 }
