@@ -1,10 +1,10 @@
-<%namespace name="frag_list" file="/frag/common/frag_lists.mako"/>
+<%namespace name="frag_lists" file="/frag/common/frag_lists.mako"/>
 <%namespace name="share"     file="/frag/common/share.mako"     />
 
 ## for deprication
 <%namespace name="loc"              file="/web/common/location.mako"     />
 <%namespace name="member_includes"  file="/web/common/member.mako"       />
-<%namespace name="content_includes" file="/web/common/content_list.mako" />
+##<%namespace name="content_includes" file="/web/common/content_list.mako" />
 
 
 
@@ -197,8 +197,7 @@ ${frag_content(d)}
 ##------------------------------------------------------------------------------
 <%def name="parent(content)">
     % if content['parent']:
-    <h2>${_("Parent content")}</h2>
-    ${content_includes.content_list([content['parent']], mode="mini", class_="content_list_mini")}
+    ${frag_lists.content_list(content['parent'], _("Parent content"), creator=True)}
     % endif
 </%def>
 
@@ -206,10 +205,9 @@ ${frag_content(d)}
 ## Responses
 ##------------------------------------------------------------------------------
 <%def name="responses(responses)">
-    <h2>${_("Responses")}</h2>
-    ${content_includes.content_list(responses, mode="mini", class_="content_list_mini")}
+    ${frag_lists.content_list(responses, _("Responses"), creator=True)}
 </%def>
-    
+
 ##------------------------------------------------------------------------------
 ## Accepted by
 ##------------------------------------------------------------------------------
@@ -287,7 +285,7 @@ ${frag_content(d)}
         % endif
 
         % if 'approve' in actions:
-            ${h.secure_link(h.args_to_tuple('content_action', action='approve'    , format='redirect', id=id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="icon icon_approve", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
+            ${h.secure_link(h.args_to_tuple('content_action', action='approve'    , format='redirect', id=id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="icon icon_approved", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
         % endif
         % if 'seen' in actions:
             ${h.secure_link(h.args_to_tuple('content_action', action='seen'       , format='redirect', id=id), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="icon icon_seen" )}

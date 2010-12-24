@@ -120,7 +120,7 @@ ${self.head_links()}
 	<script type="text/javascript">
 		$.extend($.modal.defaults, {
 			closeClass: "modalClose" ,
-			closeHTML : "<a href='#'>Close</a>" ,
+			closeHTML : "<a href='#' class='icon icon_close' style='float: right;' title='Close'></a>" ,
 			opacity   : 60 ,
 			onOpen: function (dialog) {
 				dialog.overlay.fadeIn('slow');

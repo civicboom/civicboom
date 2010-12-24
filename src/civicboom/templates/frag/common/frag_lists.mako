@@ -24,7 +24,7 @@
 ##------------------------------------------------------------------------------
 
 
-<%def name="frag_list(items, title, url_more=None, max=3, show_count=True, type=('ul','li'), render_item_function=None)">
+<%def name="frag_list(items, title, url_more=None, max=3, show_count=True, type=('ul','li'), render_item_function=None, *args, **kwargs)">
     <div class='frag_list'>
     <%
         if not isinstance(items, list):
@@ -48,7 +48,7 @@
     <${type[0]}>
         % for item in items[0:max]:
         <${type[1]}>
-            ${render_item_function(item)}
+            ${render_item_function(item, *args, **kwargs)}
         </${type[1]}>
         % endfor
     </${type[0]}>
@@ -81,15 +81,27 @@
 ## Content Item
 ##------------------------------------------------------------------------------
 
-<%def name="render_item_content(content, location=False)">
-    <td class="thumbnail small">
-        <div class="clipper">
+<%def name="render_item_content(content, location=False, stats=False, creator=False)">
+
+    <%
+        id = content['id']
+    
+        js_link_to_frag = True
+        if js_link_to_frag:
+            js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('content', id=id, format='frag'))
+        else:
+            js_link_to_frag = ''
+    %>
+
+    <td class="thumbnail">
+        <a href="${h.url('content', id=id)}" ${js_link_to_frag}>
             ${content_thumbnail_icons(content)}
-            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
-        </div>
+            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
+        </a>
     </td>
-    <td>
-        <a href="${h.url('content', id=content['id'])}" onclick="cb_frag($(this), '${h.url('content', id=content['id'], format='frag')}'); return false;">
+    
+    <td class="title">
+        <a href="${h.url('content', id=id)}" ${js_link_to_frag}>
             <p class="content_title">${content['title']}</p>
         </a>
     </td>
@@ -98,12 +110,16 @@
         flag
     </td>
     % endif
+    % if stats:
     <td>
         rating <br/> comments
     </td>
-    <td>
-        ##${member_includes.avatar(content['creator'], show_name=False, class_="content_creator_thumbnail")}
+    % endif
+    % if creator:
+    <td class="creator">
+        ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
     </td>
+    % endif
 </%def>
 
 ## Content Thumbnail Icons
