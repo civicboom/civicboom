@@ -24,20 +24,30 @@
 ##------------------------------------------------------------------------------
 
 
-<%def name="frag_list(items, title, url_more=None, max=3, show_count=True, type=('ul','li'), render_item_function=None, *args, **kwargs)">
-    <div class='frag_list'>
+<%def name="frag_list(items, title, href=None, max=3, show_count=True, type=('ul','li'), render_item_function=None, *args, **kwargs)">
     <%
         if not isinstance(items, list):
-            items=[items]
-            show_count=False
-        if max==None:
-            max=-1
+            items      = [items]
+            show_count = False
         if isinstance(show_count, bool) and show_count:
             show_count = len(items)
+        
+        # If HREF is a dict then generate two URL's from it
+        #  1.) the original compatable call
+        #  2.) a json formatted version for the AJAX call
+        js_link_to_frag_bridge = ''
+        if isinstance(href, tuple):
+            href_args   = href[0]
+            href_kwargs = href[1]
+            href      = url(*href_args, **href_kwargs)
+            href_kwargs['format'] = 'frag'
+            href_frag = url(*href_args, **href_kwargs)
+            js_link_to_frag_bridge = h.literal("""onclick="cb_frag($(this), '%s', 'bridge'); return false;" """ % href_frag)
     %>
+    <div class='frag_list'>
     <h2>
-        % if url_more:
-        <a href="${url_more}">${title}</a>
+        % if href:
+        <a href="${href}" ${js_link_to_frag_bridge}>${title}</a>
         % else:
         ${title}
         % endif
@@ -52,8 +62,8 @@
         </${type[1]}>
         % endfor
     </${type[0]}>
-    % if url_more and max > 0 and len(items) > max:
-    <a href="${url_more}" class="link_more">more</a>
+    % if href and max > 0 and len(items) > max:
+    <a href="${href}" ${js_link_to_frag_bridge} class="link_more">more</a>
     % endif
     </div>
 </%def>
@@ -125,14 +135,14 @@
 ## Content Thumbnail Icons
 <%def name="content_thumbnail_icons(content)">
     <div class="icons">
-        % if content['private']:
+        % if content.get('private'):
             ${h.icon('private')}
         % endif
-        % if content['edit_lock']:
+        % if content.get('edit_lock'):
             ${h.icon('edit_lock')}
         % endif
-        % if 'response_type' in content:
-            ${h.icon(content['response_type'])}
+        % if content.get('response_type'):
+            ${h.icon(content.get('response_type'))}
         % endif
     </div>
 </%def>

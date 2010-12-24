@@ -205,7 +205,7 @@ ${frag_content(d)}
 ## Responses
 ##------------------------------------------------------------------------------
 <%def name="responses(responses)">
-    ${frag_lists.content_list(responses, _("Responses"), creator=True)}
+    ${frag_lists.content_list(responses, _("Responses"), href=h.args_to_tuple('content_action', action='responses', id=d['content']['id'], format='html'), creator=True)}
 </%def>
 
 ##------------------------------------------------------------------------------
