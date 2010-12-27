@@ -1,10 +1,37 @@
-
 <%namespace name="member_includes"  file="/web/common/member.mako"       />
+
+##------------------------------------------------------------------------------
+## Frag List Template
+##------------------------------------------------------------------------------
+## For frag_containers that only display a list (lists bridge they are sometimes refererd too)
+## Consistant title bar and styling for list fragments
+
+<%def name="body()">
+    <div class="title_bar">
+        <div class="title">
+            <span class="icon icon_popup"></span><span class="title_text">${next.title()}</span>
+        </div>
+        <div class="common_actions">
+            <a href='${url.current(format='rss')}' title='RSS' class="icon icon_rss"  ><span>RSS</span></a>
+            <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
+        </div>
+    </div>
+
+    <div class="action_bar">
+
+    </div>
+
+    <div class="frag_data">
+        ${next.frag_list_call()}
+    </div>
+</%def>
+
+
 
 ##------------------------------------------------------------------------------
 ## Public Methods - Content and Memeber lists
 ##------------------------------------------------------------------------------
-
+## When imported, these are the main methods of use
 <%def name="member_list(*args, **kwargs)">
     <% kwargs['max'] = 20 %>
     ${frag_list(render_item_function=render_item_member , type=('ul','li')   , *args, **kwargs)}
@@ -19,10 +46,10 @@
 </%def>
 
 
+
 ##------------------------------------------------------------------------------
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
-
 
 <%def name="frag_list(items, title, href=None, max=3, show_count=True, type=('ul','li'), render_item_function=None, *args, **kwargs)">
     <%

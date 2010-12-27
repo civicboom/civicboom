@@ -158,7 +158,6 @@ def _init_search_filters():
         return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
         
 
-    
     search_filters = {
         'id'         : append_search_id ,
         'creator'    : append_search_creator ,
@@ -178,8 +177,8 @@ list_filters = {
     'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null())) ,
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
-    'articles'            : lambda results: results.filter(Content.__type__=='article') ,
     'drafts'              : lambda results: results.filter(Content.__type__=='draft') ,
+    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type=='none')),
     'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type!='none')),
 }
 

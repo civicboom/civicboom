@@ -63,11 +63,13 @@
             % if url:
             st_url     : '${url}' ,
             % endif
+            ## the .replace is to stop ' in javascript breaking things
+            ## can be depricated when validator removes ' from names
             % if title:
-            st_title   : '${title}' ,
+            st_title   : '${title.replace("'","")}' ,
             % endif
             % if description:
-            displayText: '${description}',
+            displayText: '${description.replace("'","")}',
             % endif
         });
     </script>

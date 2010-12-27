@@ -112,7 +112,6 @@
 #frag_containers .frag_container .frag_data {
   overflow-y: scroll;
   overflow-x: hidden;
-  height:80px;
   
   background: -webkit-gradient(
     linear,

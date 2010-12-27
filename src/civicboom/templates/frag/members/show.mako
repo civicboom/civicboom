@@ -39,9 +39,52 @@ ${frag_member(d)}
             ${frag_list.member_list( d['following']           , _('Following')            , url('member_actions', id=id, action='following')            )}
             ${frag_list.member_list( d['followers']           , _('Followers')            , url('member_actions', id=id, action='followers')            )}
             ${frag_list.content_list(d['assignments_accepted'], _('Accepted _assignments'), url('member_actions', id=id, action='assignments_accepted') )}
-            ${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
+            ##${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
+            
+            <% import datetime %>
+            
+            ${frag_list.content_list(
+                [c for c in d['content'] if c['type']=='draft'] ,
+                _('Drafts') ,
+                h.args_to_tuple('contents', creator=id, list='draft') , ##format='html'),
+            )}
+            
+            ${frag_list.content_list(
+                [c for c in d['content'] if c['type']=='assignment' and (c['due_date']==None or c['due_date']>=datetime.datetime.now()) ] ,
+                _('Assignments Active') ,
+                h.args_to_tuple('contents', creator=id, list='assignments_active') ,
+            )}
+            
+            ${frag_list.content_list(
+                [c for c in d['content'] if c['type']=='assignment' and (c['due_date']!=None and c['due_date']<=datetime.datetime.now()) ] ,
+                _('Assignments Previous') ,
+                h.args_to_tuple('contents', creator=id, list='assignments_previous') ,
+            )}
+            
+            ${frag_list.content_list(
+                [c for c in d['content'] if c['type']=='article' and c['response_type']!='none' ] ,
+                _('Responses') ,
+                h.args_to_tuple('contents', creator=id, list='responses') ,
+            )}
+            
+            ${frag_list.content_list(
+                [c for c in d['content'] if c['type']=='article' and c['response_type']=='none' ] ,
+                _('Articles') ,
+                h.args_to_tuple('contents', creator=id, list='articles') ,
+            )}
+
+            ${frag_list.content_list(
+                d['boomed_content'],
+                _('Boomed content'),
+                h.args_to_tuple('member_actions', id=id, action='boomed_content') ,
+            )}
+            
             % if member['type']=='group':
-            ${frag_list.group_members_list(d['members']       , _('Members')              , url('member_actions', id=id, action='members')              )}
+            ${frag_list.group_members_list(
+                d['members'],
+                _('Members'),
+                h.args_to_tuple('member_actions', id=id, action='members')
+            )}
             % endif
             </div>
         </div>
@@ -82,8 +125,9 @@ ${frag_member(d)}
             description = d['member'].get('description') or '' ,
         )}
         
-        <a href='${url('formatted_member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon icon_rss"  ><span>RSS</span></a>
-        <a href='' onclick="cb_frag_remove($(this)); return false;"                    title='Close ${d['member']['type']}'       class="icon icon_close"><span>Close</span></a>
+        ##<a href='${url('formatted_member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon icon_rss"  ><span>RSS</span></a>
+        <a href='${url.current(format='rss')}' title='RSS' class="icon icon_rss"><span>RSS</span></a>
+        <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
     </div>
 </%def>
 

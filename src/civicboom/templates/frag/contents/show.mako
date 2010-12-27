@@ -42,9 +42,21 @@ ${frag_content(d)}
         </div>
         <div class="frag_right_col">
             <div class="frag_col">
-            ${creator(  content)}
-            ${parent(   content)}
-            ${responses(d['responses'])}
+            
+            <h2>${_("Content by")}</h2>
+            ${member_includes.avatar(content['creator'], show_name=True, show_follow_button=True, class_="large")}
+            ##${frag_lists.member_list(content['creator'], _("Creator"))}
+            
+            % if content['parent']:
+                ${frag_lists.content_list(content['parent'], _("Parent content"), creator=True)}
+            % endif
+            
+            ${frag_lists.content_list(
+                d['responses'],
+                _("Responses"),
+                href=h.args_to_tuple('contents', response_to=d['content']['id']),
+                creator=True
+            )}
             </div>
         </div>
     </div>
@@ -185,29 +197,7 @@ ${frag_content(d)}
 </%def>
 
 
-##------------------------------------------------------------------------------
-## Creator
-##------------------------------------------------------------------------------
-<%def name="creator(content)">
-    <h2>${_("Content by")}</h2>
-    ${member_includes.avatar(content['creator'], show_name=True, show_follow_button=True, class_="large")}
-</%def>
 
-##------------------------------------------------------------------------------
-## Parent
-##------------------------------------------------------------------------------
-<%def name="parent(content)">
-    % if content['parent']:
-    ${frag_lists.content_list(content['parent'], _("Parent content"), creator=True)}
-    % endif
-</%def>
-
-##------------------------------------------------------------------------------
-## Responses
-##------------------------------------------------------------------------------
-<%def name="responses(responses)">
-    ${frag_lists.content_list(responses, _("Responses"), href=h.args_to_tuple('content_action', action='responses', id=d['content']['id'], format='html'), creator=True)}
-</%def>
 
 ##------------------------------------------------------------------------------
 ## Accepted by
@@ -251,12 +241,10 @@ ${frag_content(d)}
             title       = d['content']['title'] ,
         )}
         
-        <a href='${url('formatted_content', id=id, format='rss')}'  title='RSS'   class="icon icon_rss"  ><span>RSS  </span></a>
-        <a href='' onclick="cb_frag_remove($(this)); return false;" title='Close' class="icon icon_close"><span>Close</span></a>
+        ##<a href='${url('formatted_content', id=id, format='rss')}'  title='RSS'   class="icon icon_rss"  ><span>RSS  </span></a>
+        <a href='${url.current(format='rss')}' title='RSS' class="icon icon_rss"><span>RSS</span></a>
+        <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
     </div>
-
-
-
 </%def>
     
 <%def name="action_bar(actions)">
