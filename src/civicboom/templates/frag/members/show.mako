@@ -36,9 +36,9 @@ ${frag_member(d)}
         <div class="frag_right_col">
             <div class="frag_col">
             ## Member Content
-            ${frag_list.member_list( d['following']           , _('Following')            , url('member_actions', id=id, action='following')            )}
-            ${frag_list.member_list( d['followers']           , _('Followers')            , url('member_actions', id=id, action='followers')            )}
-            ${frag_list.content_list(d['assignments_accepted'], _('Accepted _assignments'), url('member_actions', id=id, action='assignments_accepted') )}
+            ${frag_list.member_list( d['following']           , _('Following')            , h.args_to_tuple('member_action', id=id, action='following')            )}
+            ${frag_list.member_list( d['followers']           , _('Followers')            , h.args_to_tuple('member_action', id=id, action='followers')            )}
+            ${frag_list.content_list(d['assignments_accepted'], _('Accepted _assignments'), h.args_to_tuple('member_action', id=id, action='assignments_accepted') )}
             ##${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
             
             <% import datetime %>
@@ -46,7 +46,7 @@ ${frag_member(d)}
             ${frag_list.content_list(
                 [c for c in d['content'] if c['type']=='draft'] ,
                 _('Drafts') ,
-                h.args_to_tuple('contents', creator=id, list='draft') , ##format='html'),
+                h.args_to_tuple('contents', creator=id, list='drafts') , ##format='html'),
             )}
             
             ${frag_list.content_list(
@@ -76,14 +76,14 @@ ${frag_member(d)}
             ${frag_list.content_list(
                 d['boomed_content'],
                 _('Boomed content'),
-                h.args_to_tuple('member_actions', id=id, action='boomed_content') ,
+                h.args_to_tuple('member_action', id=id, action='boomed_content') ,
             )}
             
             % if member['type']=='group':
             ${frag_list.group_members_list(
                 d['members'],
                 _('Members'),
-                h.args_to_tuple('member_actions', id=id, action='members')
+                h.args_to_tuple('member_action', id=id, action='members')
             )}
             % endif
             </div>

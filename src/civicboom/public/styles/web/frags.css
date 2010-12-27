@@ -42,7 +42,7 @@
 /*----------------------------------------------------------------------------*/
 /* #frag_containers .frag_container - used in popups*/
 .title_bar {
-  /* height: 1.5em; */
+  height: 1.25em;
   overflow: hidden;
   
   color: white;
@@ -68,7 +68,7 @@
 
 /*-----------------------------Action bar -----------------------------------*/
 #frag_containers .frag_container .action_bar {
-  /* height: 1.5em; */
+  height: 1.25em;
   overflow: hidden;
   color: black;
   

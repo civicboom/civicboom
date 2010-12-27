@@ -18,6 +18,9 @@
         creator = True
         if 'creator' in kwargs:
             creator = False
+        list_title = 'List'
+        if 'list' in kwargs:
+            list_title = kwargs['list'].capitalize()
     %>
-    ${parent.content_list(d['list'], title(), max=None, creator=creator)}
+    ${parent.content_list(d['list'], None, max=None, creator=creator)}
 </%def>

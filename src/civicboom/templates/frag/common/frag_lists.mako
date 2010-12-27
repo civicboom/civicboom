@@ -12,7 +12,8 @@
             <span class="icon icon_popup"></span><span class="title_text">${next.title()}</span>
         </div>
         <div class="common_actions">
-            <a href='${url.current(format='rss')}' title='RSS' class="icon icon_rss"  ><span>RSS</span></a>
+            <% args, kwargs = c.web_params_to_kwargs; kwargs['format']='rss' %>
+            <a href='${url.current(**kwargs)}' title='RSS' class="icon icon_rss"  ><span>RSS</span></a>
             <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
         </div>
     </div>
@@ -22,7 +23,9 @@
     </div>
 
     <div class="frag_data">
+        <div class="frag_col">
         ${next.frag_list_call()}
+        </div>
     </div>
 </%def>
 
@@ -58,6 +61,8 @@
             show_count = False
         if isinstance(show_count, bool) and show_count:
             show_count = len(items)
+        if not title:
+            show_count = False
         
         # If HREF is a dict then generate two URL's from it
         #  1.) the original compatable call
