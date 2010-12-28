@@ -7,6 +7,8 @@
 ## Consistant title bar and styling for list fragments
 
 <%def name="body()">
+    <a class="frag_source" style="display: none;" href="${url.current(format='frag')}">frag source</a>
+
     <div class="title_bar">
         <div class="title">
             <span class="icon icon_list"></span><span class="title_text">
@@ -15,6 +17,11 @@
             </span>
         </div>
         <div class="common_actions">
+            
+            % if config['development_mode']:
+                <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
+            % endif
+            
             <% args, kwargs = c.web_params_to_kwargs; kwargs['format']='rss' %>
             <a href='${url.current(**kwargs)}' title='RSS' class="icon icon_rss"  ><span>RSS</span></a>
             <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>

@@ -8,6 +8,7 @@ var frag_id_name                      = 'frag_';
 var fragment_containers_id            = '#frag_containers';
 var fragment_container_class          = 'frag_container';  // container for a full JSON object 500px
 var fragment_bridge_class             = 'frag_bridge';     // container for a bridge list 250px (half width)
+var fragment_source_class             = 'frag_source';
 var fragment_div_loading_placeholder  = '<p class="loading_placeholder">loading</p>';
 var scroll_duration = 600;
 
@@ -84,4 +85,14 @@ function cb_frag_remove(jquery_element) {
 function cb_frag_remove_sibblings(jquery_element) {
 	var parent_siblings = jquery_element.nextAll();
 	parent_siblings.toggle(scroll_duration, function(){parent_siblings.remove()});
+}
+
+function cb_frag_reload(jquery_element) {
+	// Move up the chain from this element
+	//   grab the href of the A frag_source
+	//   and use that the .load the parent_frag container
+	var container_element = jquery_element.parents('.'+fragment_container_class)
+	var frag_source_element = container_element.children('.'+fragment_source_class)
+	var frag_source_href    = frag_source_element.attr('href');
+	jquery_element.parents('.'+fragment_container_class).load(frag_source_href);
 }

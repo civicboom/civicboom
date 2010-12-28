@@ -22,6 +22,8 @@ ${frag_content(d)}
 <%def name="frag_content(d)">
     <% content = d['content'] %>
     
+    <a class="frag_source" href="${url.current(format='frag')}" style="display: none;">frag source</a>
+    
     <div class="title_bar">
         ${title_bar(d['actions'])}
     </div>
@@ -236,6 +238,11 @@ ${frag_content(d)}
     
     <div class="common_actions">
 
+        % if config['development_mode']:
+            <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
+        % endif
+
+
         ${share.share(
             url         = url('content', id=d['content']['id'], host=app_globals.site_host, protocol='http'),
             title       = d['content']['title'] ,
@@ -275,15 +282,10 @@ ${frag_content(d)}
         % if 'dissasociate' in actions:
             ${h.secure_link(h.args_to_tuple('content_action', action='disasociate', format='redirect', id=id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="icon icon_dissasociate", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
         % endif
-
         
     </div>
     
-    <div class="object_actions_common">
-        % if config['development_mode']:
-            <a href='' class="icon icon_reload" title='Reload Fragment'><span>Reload Fragment</span></a>
-        % endif
-        
+    <div class="object_actions_common">        
         % if 'edit' in actions:
             <a href="${h.url('edit_content', id=id)}" class="icon icon_edit" title='${_("Edit")}'><span>${_("Edit")}</span></a>
             ${h.secure_link(url('content', id=id, format='redirect'), method="DELETE", value="", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}

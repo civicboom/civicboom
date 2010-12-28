@@ -18,6 +18,8 @@ ${frag_member(d)}
     <% member = d['member']  %>
     <% id     = member['id'] %>
     
+    <a class="frag_source" style="display: none;" href="${url.current(format='frag')}">frag source</a>
+    
     <div class="title_bar">
         ${title_bar(d['actions'])}
     </div>
@@ -135,6 +137,12 @@ ${frag_member(d)}
     </div>
 
     <div class="common_actions">
+        
+        % if config['development_mode']:
+            <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
+        % endif
+
+        
         ${share.share(
             url         = url('member', id=d['member']['username'], host=app_globals.site_host, protocol='http'),
             title       = _('%s on _site_name' % d['member']['name']) ,
