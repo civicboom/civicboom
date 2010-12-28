@@ -9,7 +9,10 @@
 <%def name="body()">
     <div class="title_bar">
         <div class="title">
-            <span class="icon icon_list"></span><span class="title_text">${next.title()}</span>
+            <span class="icon icon_list"></span><span class="title_text">
+                ##${next.title()}
+                ${_('List')}
+            </span>
         </div>
         <div class="common_actions">
             <% args, kwargs = c.web_params_to_kwargs; kwargs['format']='rss' %>

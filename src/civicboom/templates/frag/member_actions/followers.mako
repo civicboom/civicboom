@@ -7,5 +7,5 @@
 </%def>
 
 <%def name="frag_list_call()">
-    ${parent.member_list(d['list'], None,  max=None)}
+    ${parent.member_list(d['list'], _('Followers'),  max=None)}
 </%def>

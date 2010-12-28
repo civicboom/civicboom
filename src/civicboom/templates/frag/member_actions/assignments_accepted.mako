@@ -7,5 +7,5 @@
 </%def>
 
 <%def name="frag_list_call()">
-    ${parent.content_list(d['list'], None, max=None, creator=True)}
+    ${parent.content_list(d['list'], _('Accepted Assignments'), max=None, creator=True)}
 </%def>

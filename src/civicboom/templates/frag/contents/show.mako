@@ -265,14 +265,7 @@ ${frag_content(d)}
         % if 'boom' in actions:
             ${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=id), value="", title=_('Boom')    , css_class="icon icon_boom")}
         % endif
-    </div>
-    
-    <div class="object_actions_common">
-        % if 'edit' in actions:
-            <a href="${h.url('edit_content', id=id)}" class="icon icon_edit" title='${_("Edit")}'><span>${_("Edit")}</span></a>
-            ${h.secure_link(url('content', id=id, format='redirect'), method="DELETE", value="", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
-        % endif
-
+        
         % if 'approve' in actions:
             ${h.secure_link(h.args_to_tuple('content_action', action='approve'    , format='redirect', id=id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="icon icon_approved", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
         % endif
@@ -281,6 +274,23 @@ ${frag_content(d)}
         % endif
         % if 'dissasociate' in actions:
             ${h.secure_link(h.args_to_tuple('content_action', action='disasociate', format='redirect', id=id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="icon icon_dissasociate", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+        % endif
+
+        
+    </div>
+    
+    <div class="object_actions_common">
+        % if config['development_mode']:
+            <a href='' class="icon icon_reload" title='Reload Fragment'><span>Reload Fragment</span></a>
+        % endif
+        
+        % if 'edit' in actions:
+            <a href="${h.url('edit_content', id=id)}" class="icon icon_edit" title='${_("Edit")}'><span>${_("Edit")}</span></a>
+            ${h.secure_link(url('content', id=id, format='redirect'), method="DELETE", value="", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
+        % endif
+
+        % if 'aggregate' in actions:
+            <a href='' class="icon icon_boom"><span>Aggregate</span></a>
         % endif
         
         % if 'flag' in actions:
