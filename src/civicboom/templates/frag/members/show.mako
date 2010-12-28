@@ -36,9 +36,23 @@ ${frag_member(d)}
         <div class="frag_right_col">
             <div class="frag_col">
             ## Member Content
-            ${frag_list.member_list( d['following']           , _('Following')            , h.args_to_tuple('member_action', id=id, action='following')            )}
-            ${frag_list.member_list( d['followers']           , _('Followers')            , h.args_to_tuple('member_action', id=id, action='followers')            )}
-            ${frag_list.content_list(d['assignments_accepted'], _('Accepted _assignments'), h.args_to_tuple('member_action', id=id, action='assignments_accepted') )}
+            ${frag_list.member_list(
+                d['following'],
+                _('Following'),
+                h.args_to_tuple('member_action', id=id, action='following'),
+            )}
+            ${frag_list.member_list(
+                d['followers'] ,
+                _('Followers') ,
+                h.args_to_tuple('member_action', id=id, action='followers') ,
+            )}
+            
+            ${frag_list.content_list(
+                d['assignments_accepted'],
+                _('Accepted _assignments'),
+                h.args_to_tuple('member_action', id=id, action='assignments_accepted'),
+                creator = True,
+            )}
             ##${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
             
             <% import datetime %>
@@ -77,6 +91,8 @@ ${frag_member(d)}
                 d['boomed_content'],
                 _('Boomed content'),
                 h.args_to_tuple('member_action', id=id, action='boomed_content') ,
+                #h.args_to_tuple('contents', boomed_by=id) ,
+                creator = True ,
             )}
             
             % if member['type']=='group':

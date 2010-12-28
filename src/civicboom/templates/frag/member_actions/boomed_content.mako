@@ -3,9 +3,9 @@
 <%def name="body()"></%def>
 
 <%def name="title()">
-    ${_('Following')}
+    ${_('Boomed Content')}
 </%def>
 
 <%def name="frag_list_call()">
-    ${parent.member_list(d['list'], None, max=None)}
+    ${parent.content_list(d['list'], None, max=None, creator=True)}
 </%def>
