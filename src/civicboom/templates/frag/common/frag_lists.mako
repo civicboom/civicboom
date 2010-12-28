@@ -7,7 +7,9 @@
 ## Consistant title bar and styling for list fragments
 
 <%def name="body()">
-    <a class="frag_source" style="display: none;" href="${url.current(format='frag')}">frag source</a>
+    <% args, kwargs = c.web_params_to_kwargs %>
+
+    <a class="frag_source" href="${h.current_url()}" style="display: none;">frag source</a>
 
     <div class="title_bar">
         <div class="title">
@@ -22,7 +24,7 @@
                 <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
             % endif
             
-            <% args, kwargs = c.web_params_to_kwargs; kwargs['format']='rss' %>
+            <% kwargs['format']='rss' %>
             <a href='${url.current(**kwargs)}' title='RSS' class="icon icon_rss"  ><span>RSS</span></a>
             <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
         </div>
@@ -46,16 +48,19 @@
 ##------------------------------------------------------------------------------
 ## When imported, these are the main methods of use
 <%def name="member_list(*args, **kwargs)">
-    <% kwargs['max'] = 20 %>
-    ${frag_list(render_item_function=render_item_member , type=('ul','li')   , *args, **kwargs)}
+    <%
+        if 'max' not in kwargs:
+            kwargs['max'] = 20
+    %>
+    ${frag_list(render_item_function=render_item_member       , type=('ul','li')   , *args, **kwargs)}
 </%def>
 
 <%def name="content_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_content, type=('table','tr'), *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_content      , type=('table','tr'), *args, **kwargs)}
 </%def>
 
 <%def name="group_members_list(*args, **kwargs)">
-    ##${frag_list(render_item_function=render_item_group_members, *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_group_members, type=('table','tr'), *args, **kwargs)}
 </%def>
 
 
@@ -64,7 +69,7 @@
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(items, title, href=None, max=3, show_count=True, type=('ul','li'), render_item_function=None, *args, **kwargs)">
+<%def name="frag_list(items, title, href=None, max=3, show_count=True, hide_if_empty=True, type=('ul','li'), render_item_function=None, *args, **kwargs)">
     <%
         if not isinstance(items, list):
             items      = [items]
@@ -86,28 +91,32 @@
             href_frag = url(*href_args, **href_kwargs)
             js_link_to_frag_bridge = h.literal("""onclick="cb_frag($(this), '%s', 'bridge'); return false;" """ % href_frag)
     %>
-    <div class='frag_list'>
-    <h2>
-        % if href:
-        <a href="${href}" ${js_link_to_frag_bridge}>${title}</a>
-        % else:
-        ${title}
+    % if hide_if_empty and len(items)==0:
+        
+    % else:
+        <div class='frag_list'>
+        <h2>
+            % if href:
+            <a href="${href}" ${js_link_to_frag_bridge}>${title}</a>
+            % else:
+            ${title}
+            % endif
+            % if show_count:
+            <span class="count">${show_count}</span>
+            % endif
+        </h2>
+        <${type[0]}>
+            % for item in items[0:max]:
+            <${type[1]}>
+                ${render_item_function(item, *args, **kwargs)}
+            </${type[1]}>
+            % endfor
+        </${type[0]}>
+        % if href and max > 0 and len(items) > max:
+        <a href="${href}" ${js_link_to_frag_bridge} class="link_more">more</a>
         % endif
-        % if show_count:
-        <span class="count">${show_count}</span>
-        % endif
-    </h2>
-    <${type[0]}>
-        % for item in items[0:max]:
-        <${type[1]}>
-            ${render_item_function(item, *args, **kwargs)}
-        </${type[1]}>
-        % endfor
-    </${type[0]}>
-    % if href and max > 0 and len(items) > max:
-    <a href="${href}" ${js_link_to_frag_bridge} class="link_more">more</a>
-    % endif
-    </div>
+        </div>
+    %endif
 </%def>
 
 
@@ -125,7 +134,10 @@
 ## Group Members Item
 ##------------------------------------------------------------------------------
 
-<%def name="render_item_group_members(members)">
+<%def name="render_item_group_members(member)">
+    <td>${member_includes.avatar(member, class_="thumbnail_small")}</td>
+    <td>${member['name']}</td>
+    <td>${member['role']}</td>
 </%def>
 
 

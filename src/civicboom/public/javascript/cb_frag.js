@@ -87,12 +87,25 @@ function cb_frag_remove_sibblings(jquery_element) {
 	parent_siblings.toggle(scroll_duration, function(){parent_siblings.remove()});
 }
 
-function cb_frag_reload(jquery_element) {
+function cb_frag_reload(param) {
+	
+
 	// Move up the chain from this element
 	//   grab the href of the A frag_source
 	//   and use that the .load the parent_frag container
-	var container_element = jquery_element.parents('.'+fragment_container_class)
-	var frag_source_element = container_element.children('.'+fragment_source_class)
-	var frag_source_href    = frag_source_element.attr('href');
-	jquery_element.parents('.'+fragment_container_class).load(frag_source_href);
+	function reload_element(jquery_element) {
+		var container_element = jquery_element.parents('.'+fragment_container_class)
+		var frag_source_element = container_element.children('.'+fragment_source_class)
+		var frag_source_href    = frag_source_element.attr('href');
+		jquery_element.parents('.'+fragment_container_class).load(frag_source_href);
+	}
+	
+	if (typeof param == 'string') {
+		Y.log('passed a string - finding all occurancs of '+param+' and marking them for a reload');
+		$(fragment_containers_id).find(":contains('"+param+"')");
+	}
+	else {
+		reload_element(param);
+	}
+
 }

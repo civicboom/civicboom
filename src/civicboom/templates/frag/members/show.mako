@@ -16,9 +16,10 @@ ${frag_member(d)}
 ##------------------------------------------------------------------------------
 <%def name="frag_member(d)">
     <% member = d['member']  %>
-    <% id     = member['id'] %>
+    <% id     = member['username'] %>
     
-    <a class="frag_source" style="display: none;" href="${url.current(format='frag')}">frag source</a>
+    <a class="frag_source" href="${h.current_url()}" style="display: none;">frag source</a>
+    ##url.current(format='frag')
     
     <div class="title_bar">
         ${title_bar(d['actions'])}
@@ -48,6 +49,13 @@ ${frag_member(d)}
                 _('Followers') ,
                 h.args_to_tuple('member_action', id=id, action='followers') ,
             )}
+
+            ${frag_list.member_list(
+                d['groups'] ,
+                _('Groups') ,
+                h.args_to_tuple('member_action', id=id, action='groups') ,
+            )}
+
             
             ${frag_list.content_list(
                 d['assignments_accepted'],
@@ -98,7 +106,7 @@ ${frag_member(d)}
             )}
             
             % if member['type']=='group':
-            ${frag_list.group_members_list(
+            ${frag_list.member_list(
                 d['members'],
                 _('Members'),
                 h.args_to_tuple('member_action', id=id, action='members')
@@ -158,24 +166,31 @@ ${frag_member(d)}
 <%def name="action_bar(actions)">
 
     <% member = d['member'] %>
+    <% id     = d['member']['username'] %>
     <% name   = d['member'].get('name') or d['member'].get('username') %>
 
     <div class="object_actions_specific">
-        % if c.logged_in_persona and c.logged_in_persona.username != member['username']:
-            % if c.logged_in_persona and c.logged_in_persona.is_following(member['username']):
-            ${h.secure_link(h.args_to_tuple('member_action', action='unfollow'  , id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % name),         css_class="icon icon_unfollow")}
+        ##% if c.logged_in_persona and c.logged_in_persona.username != member['username']:
+        ##    % if c.logged_in_persona and c.logged_in_persona.is_following(member['username']):
             ##${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
-            % else:
-            ${h.secure_link(h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect'), _(' '), title=_("Follow %s" % name),         css_class="icon icon_follow")}
-            % endif
+            ##% else:  
+            ##% endif
+        ##% endif
+
+        % if 'follow' in actions:
+            ${h.secure_link(h.args_to_tuple('member_action', action='follow'    , id=id, format='redirect'), _(' '), title=_("Follow %s" % name),         css_class="icon icon_follow")}
+        % endif
+
+        % if 'unfollow' in actions:
+            ${h.secure_link(h.args_to_tuple('member_action', action='unfollow'  , id=id, format='redirect'), _(' '), title=_("Stop following %s" % name), css_class="icon icon_unfollow")}
         % endif
     
         % if 'join' in actions:
-            ${h.secure_link(h.args_to_tuple('group_action', action='join'  , id=member['id']          , member=c.logged_in_persona.username, format='redirect'), _('Join this _group')                                                          , css_class="icon icon_join"  )}
+            ${h.secure_link(h.args_to_tuple('group_action', action='join'       , id=id, member=c.logged_in_persona.username, format='redirect'), _('Join this _group'), css_class="icon icon_join"  )}
         % endif
         
         % if 'invite' in actions: ##and c.logged_in_persona and c.logged_in_persona.__type__=='group':
-            ${h.secure_link(h.args_to_tuple('group_action', action='invite', id=c.logged_in_persona.id, member=member['username']          , format='redirect'), _('Invite %s to join %s' % (member['name'], c.logged_in_persona['name']))      , css_class="icon icon_invite")}
+            ##${h.secure_link(h.args_to_tuple('group_action', action='invite', id=c.logged_in_persona.id, member=id , format='redirect'), _('Invite %s to join %s' % (member['name'], c.logged_in_persona['name']))      , css_class="icon icon_invite")}
         % endif
 
     </div>

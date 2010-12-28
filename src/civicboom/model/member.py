@@ -223,7 +223,8 @@ class Member(Base):
         if self.is_follower(member):
             action_list.append('unfollow')
         else:
-            action_list.append('follow')
+            if self != member:
+                action_list.append('follow')
         if self != member:
             action_list.append('message')
         return action_list

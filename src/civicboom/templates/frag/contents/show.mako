@@ -22,7 +22,8 @@ ${frag_content(d)}
 <%def name="frag_content(d)">
     <% content = d['content'] %>
     
-    <a class="frag_source" href="${url.current(format='frag')}" style="display: none;">frag source</a>
+    <a class="frag_source" href="${h.current_url()}" style="display: none;">frag source</a>
+    ##url.current(format='frag')
     
     <div class="title_bar">
         ${title_bar(d['actions'])}
