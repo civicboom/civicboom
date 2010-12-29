@@ -7,7 +7,10 @@
     share_description   = ''
     
     frag_data_css_class = ''
+    auto_georss_link    = False
 %>
+
+
 
 <%namespace name="share" file="/frag/common/share.mako"/>
 
@@ -43,10 +46,11 @@
             % endif
             
             ## RSS
-            % if c.format=='frag':
+            % if c.format=='frag' and c.web_params_to_kwargs:
                 <%
+                    import copy
                     args, kwargs = c.web_params_to_kwargs
-                    rss_kwargs = dict(kwargs)
+                    rss_kwargs = copy.copy(kwargs)
                     rss_kwargs['format'] = 'rss'
                 %>
                 <a href='${url.current(**rss_kwargs)}' title='RSS' class="icon icon_rss"><span>RSS</span></a>
@@ -70,10 +74,39 @@
             % if hasattr(next, 'actions_common'):
             ${next.actions_common()}
             % endif
+
+            % if self.attr.auto_georss_link:
+                ${georss_link()}
+            % endif
         </div>        
     </div>
     
     <div class="frag_data ${self.attr.frag_data_css_class}">
         ${next.body()}
     </div>
+</%def>
+
+<%def name="georss_link(georss_url=None)">
+    <%
+        import copy
+        
+        feed = url.current(
+            format='rss',
+            query=request.params.get('query'),
+            location=request.params.get('location')
+        )
+        
+        georss_url = dict(
+            controller = 'misc',
+            action     = 'georss',
+            location   = request.params.get('location'),
+            feed       = feed
+        )
+        georss_url_frag = copy.copy(georss_url)
+        georss_url_frag['format'] = 'frag'
+        
+        georss_url      = url(**georss_url)
+        georss_url_frag = url(**georss_url_frag)
+    %>
+    <a href="${georss_url}" title="${_('View on map')}" class="icon icon_map" onclick="cb_frag($(this), '${georss_url_frag}'); return false;"><span>${_('View on map')}</span></a>
 </%def>

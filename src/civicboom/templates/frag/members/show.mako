@@ -21,7 +21,8 @@
         
         self.attr.frag_data_css_class = 'frag_member'
         
-        self.attr.share_url = '' #url.current() #format='html'
+        self.attr.share_url        = '' #url.current() #format='html'
+        self.attr.auto_georss_link = True
     %>
 </%def>
 

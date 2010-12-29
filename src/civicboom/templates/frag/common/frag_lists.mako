@@ -1,6 +1,6 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<%namespace name="member_includes"  file="/web/common/member.mako"       />
+<%namespace name="member_includes" file="/web/common/member.mako" />
 
 ##------------------------------------------------------------------------------
 ## Frag List Template
@@ -10,10 +10,10 @@
 
 <%def name="init_vars()">
     <%        
-        self.attr.share_url = url.current() #format='html'
+        self.attr.share_url        = url.current() #format='html'
+        self.attr.auto_georss_link = True
     %>
 </%def>
-
 <%def name="body()">
     <div class="frag_col">
     ${next.body()}
