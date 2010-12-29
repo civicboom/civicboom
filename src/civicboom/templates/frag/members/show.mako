@@ -146,7 +146,7 @@ ${frag_member(d)}
 
     <div class="common_actions">
         
-        % if config['development_mode']:
+        % if config['development_mode'] and c.format=='frag':
             <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
         % endif
 
@@ -190,7 +190,7 @@ ${frag_member(d)}
         % endif
         
         % if 'invite' in actions: ##and c.logged_in_persona and c.logged_in_persona.__type__=='group':
-            ##${h.secure_link(h.args_to_tuple('group_action', action='invite', id=c.logged_in_persona.id, member=id , format='redirect'), _('Invite %s to join %s' % (member['name'], c.logged_in_persona['name']))      , css_class="icon icon_invite")}
+            ${h.secure_link(h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=id, format='redirect'), _('Invite %s to join %s' % (member['name'], c.logged_in_persona['name']))      , css_class="icon icon_invite")}
         % endif
 
     </div>

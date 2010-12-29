@@ -239,7 +239,7 @@ ${frag_content(d)}
     
     <div class="common_actions">
 
-        % if config['development_mode']:
+        % if config['development_mode'] and c.format=='frag':
             <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
         % endif
 

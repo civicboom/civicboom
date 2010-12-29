@@ -455,7 +455,7 @@ class Group(Member):
         action_list = Member.action_list_for(self, member)
         membership = self.get_membership(member)
         join = self.can_join(member, membership)
-        if join=="join" or join=="request":
+        if member and (join=="join" or join=="request"):
             action_list.append(join)
         else:
             if self.is_admin(member, membership):

@@ -113,18 +113,20 @@
   overflow-y: scroll;
   overflow-x: hidden;
   
+  
   background: -webkit-gradient(
     linear,
     left bottom,
     left top,
-    color-stop(33 , rgb(230,230,230)),
+    color-stop(33 , rgb(240,240,240)),
     color-stop(0.1, rgb(255,255,255))
   );
   background: -moz-linear-gradient(
     center bottom,
     rgb(255,255,255)  33%,
-    rgb(230,230,230) 100%
+    rgb(240,240,240) 100%
   );
+  
   /*
     http://www.webdesignerwall.com/tutorials/cross-browser-css-gradient/
     http://gradients.glrzad.com/
