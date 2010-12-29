@@ -22,8 +22,8 @@ function cb_frag(current_element, url, list_type) {
 	// Take the url from the current <A> element (hence the name url_a)
 	var url_a = current_element.attr('href');
 	
-	if (url_a==undefined || url_a==null) {return;}
 	if (url  ==undefined || url  ==null) {url = url_a;}
+	if (url  ==undefined || url  ==null) {return;}
 	
 	// Set the class for this new fragment (bridge list or full container)
 	var new_fragment_class = fragment_container_class;

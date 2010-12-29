@@ -53,7 +53,9 @@
             % endif
             
             ## Close
-            <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
+            % if c.format=='frag':
+                <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
+            % endif
         </div>
     </div>
     
