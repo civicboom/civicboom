@@ -8,6 +8,12 @@
 ## For frag_containers that only display a list (lists bridge they are sometimes refererd too)
 ## Consistant title bar and styling for list fragments
 
+<%def name="init_vars()">
+    <%        
+        self.attr.share_url = url.current() #format='html'
+    %>
+</%def>
+
 <%def name="body()">
     <div class="frag_col">
     ${next.body()}

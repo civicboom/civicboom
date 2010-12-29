@@ -1,7 +1,7 @@
 <%inherit file="/frag/common/frag.mako"/>
 
 <%namespace name="frag_lists" file="/frag/common/frag_lists.mako"/>
-<%namespace name="member_includes"  file="/web/common/member.mako"       />
+<%namespace name="member_includes"  file="/web/common/member.mako"/>
 
 <%namespace name="popup"      file="/web/common/popup_base.mako" />
 
@@ -26,6 +26,8 @@
         self.attr.icon_type = self.content['type']
         
         self.attr.frag_data_css_class = 'frag_content'
+        
+        self.attr.share_url = '' #url.current() #format='html'
     %>
 </%def>
 

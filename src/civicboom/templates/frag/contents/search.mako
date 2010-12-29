@@ -1,20 +1,24 @@
-<%inherit file="/web/common/frag_container.mako"/>
+<%inherit file="/frag/common/frag.mako"/>
 
-<%!
-    frag_container_css_class = 'frag_bridge' # bit of a hack here to get the search box half width to start with
-%>
+##------------------------------------------------------------------------------
+## Variables
+##------------------------------------------------------------------------------
+
+<%def name="init_vars()">
+    <%
+        self.attr.title     = _('Search')
+        self.attr.icon_type = 'search'
+        
+        self.attr.frag_data_css_class = 'frag_search'
+    %>
+</%def>
 
 
 ##------------------------------------------------------------------------------
-## Title - Override
+## Content Fragment
 ##------------------------------------------------------------------------------
-
-<%def name="title()">${_('Search')}</%def>
-
-##------------------------------------------------------------------------------
-## Body
-##------------------------------------------------------------------------------
-
 <%def name="body()">
-	<%include file="/frag/contents/search.mako"/>
+    <div class="frag_col">
+        hello :)
+    </div>
 </%def>

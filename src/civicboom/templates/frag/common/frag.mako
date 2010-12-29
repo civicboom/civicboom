@@ -34,15 +34,13 @@
             % endif
             
             ## Share
-            <%
-                if not self.attr.share_url:
-                    self.attr.share_url = url.current() #format='html'
-            %>
-            ${share.share(
-                url         = self.attr.share_url ,
-                title       = self.attr.share_title ,
-                description = self.attr.share_description ,
-            )}
+            % if self.attr.share_url:
+                ${share.share(
+                    url         = self.attr.share_url ,
+                    title       = self.attr.share_title ,
+                    description = self.attr.share_description ,
+                )}
+            % endif
             
             ## RSS
             % if c.format=='frag':
@@ -64,7 +62,7 @@
             % if hasattr(next, 'actions_specific'):
             ${next.actions_specific()}
             % endif
-        </div>'
+        </div>
         
         <div class="object_actions_common">
             % if hasattr(next, 'actions_common'):
