@@ -1,75 +1,94 @@
+<%inherit file="/frag/common/frag.mako"/>
+
 <%namespace name="frag_lists" file="/frag/common/frag_lists.mako"/>
-<%namespace name="share"      file="/frag/common/share.mako"     />
+<%namespace name="member_includes"  file="/web/common/member.mako"       />
+
 <%namespace name="popup"      file="/web/common/popup_base.mako" />
+
 
 ## for deprication
 <%namespace name="loc"              file="/web/common/location.mako"     />
-<%namespace name="member_includes"  file="/web/common/member.mako"       />
+
+##<%namespace name="share"      file="/frag/common/share.mako"     />
 ##<%namespace name="content_includes" file="/web/common/content_list.mako" />
 
-
-
 ##------------------------------------------------------------------------------
-## Body
+## Variables
 ##------------------------------------------------------------------------------
-<%def name="body()">
-${frag_content(d)}
+
+<%def name="init_vars()">
+    <%
+        self.content   = d['content']
+        self.id        = self.content['id']
+        self.actions   = d['actions']
+        
+        self.attr.title     = self.content['type'].capitalize()
+        self.attr.icon_type = self.content['type']
+        
+        self.attr.frag_data_css_class = 'frag_content'
+    %>
 </%def>
+
 
 ##------------------------------------------------------------------------------
 ## Content Fragment
 ##------------------------------------------------------------------------------
-<%def name="frag_content(d)">
-    <% content = d['content'] %>
-    
-    <a class="frag_source" href="${h.current_url()}" style="display: none;">frag source</a>
-    ##url.current(format='frag')
-    
-    <div class="title_bar">
-        ${title_bar(d['actions'])}
-    </div>
-    <div class="action_bar">
-        ${action_bar(d['actions'])}
-    </div>
-    
-    <div class="frag_data frag_content">
-        <div class="frag_left_col">
-            <div class="frag_col">
-            ${content_details( content)}
-            ${content_media(   content)}
-            ${content_map(     content)}
-            ${content_comments(d['comments'])}
-            ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
-            ${popup.popup('flag_content', _('Flag content'), flag_form)}
-            </div>
+<%def name="body()">
+
+    <div class="frag_left_col">
+        <div class="frag_col">
+        ${content_details()}
+        ${content_media()}
+        ${content_map()}
+        ${content_comments()}
+        ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
+        ${popup.popup('flag_content', _('Flag content'), flag_form)}
         </div>
-        <div class="frag_right_col">
-            <div class="frag_col">
-            
-            <h2>${_("Content by")}</h2>
-            ${member_includes.avatar(content['creator'], show_name=True, show_follow_button=True, class_="large")}
-            ##${frag_lists.member_list(content['creator'], _("Creator"))}
-            
-            % if content['parent']:
-                ${frag_lists.content_list(content['parent'], _("Parent content"), creator=True)}
-            % endif
-            
-            ${frag_lists.content_list(
-                d['responses'],
-                _("Responses"),
-                href=h.args_to_tuple('contents', response_to=d['content']['id']),
-                creator=True
+    </div>
+    <div class="frag_right_col">
+        <div class="frag_col">
+        
+        <h2>${_("Content by")}</h2>
+        ${member_includes.avatar(self.content['creator'], show_name=True, show_follow_button=True, class_="large")}
+        ##${frag_lists.member_list(content['creator'], _("Creator"))}
+        
+        % if self.content['parent']:
+            ${frag_lists.content_list(self.content['parent'], _("Parent content"), creator=True)}
+        % endif
+        
+        ${frag_lists.content_list(
+            d['responses'],
+            _("Responses"),
+            href=h.args_to_tuple('contents', response_to=self.id),
+            creator=True
+        )}
+        
+        % if 'accepted_status' in d:
+            ${frag_lists.member_list(
+                d['accepted_status']['accepted'],
+                _("Accepted by"),
             )}
-            </div>
+            ${frag_lists.member_list(
+                d['accepted_status']['invited'],
+                _("Invited"),
+            )}
+            ${frag_lists.member_list(
+                d['accepted_status']['withdrawn'],
+                _("Withdrawn"),
+            )}
+        % endif
+        
         </div>
     </div>
+
 </%def>
 
 
 ##------------------------------------------------------------------------------
 ## Content Details
 ##------------------------------------------------------------------------------
-<%def name="content_details(content)">
+<%def name="content_details()">
+    <% content = self.content %>
 
     ##----Title----
     <h1>${content['title']}</h1>
@@ -99,7 +118,8 @@ ${frag_content(d)}
 ##------------------------------------------------------------------------------
 ## Media
 ##------------------------------------------------------------------------------
-<%def name="content_media(content)">
+<%def name="content_media()">
+    <% content = self.content %>
 
     <ul class="media">
     % for media in content['attachments']:
@@ -130,7 +150,8 @@ ${frag_content(d)}
 ##------------------------------------------------------------------------------
 ## Map
 ##------------------------------------------------------------------------------
-<%def name="content_map(content)">
+<%def name="content_map()">
+    <% content = self.content %>
     % if content.get('location'):
         <%
         lat = content['location'].split(' ')[0]
@@ -154,7 +175,11 @@ ${frag_content(d)}
 ##------------------------------------------------------------------------------
 ## Comments
 ##------------------------------------------------------------------------------
-<%def name="content_comments(comments)">
+<%def name="content_comments()">
+<%
+    content  = self.content
+    comments = d['comments']
+%>
 <div class="comments">
     <h2>${_("Comments")}</h2>
 
@@ -202,112 +227,68 @@ ${frag_content(d)}
 
 
 
-##------------------------------------------------------------------------------
-## Accepted by
-##------------------------------------------------------------------------------
-<%def name="accepted_status()">
-    % if 'accepted_status' in d:
-        
-        % if 'accepted' in d['content']:
-            <h2>${_("Accepted by")} <span>${len(d['accepted_status']['accepted'])}</span></h2>
-            ${member_includes.member_list(d['accepted_status']['accepted'] , show_avatar=True, class_="avatar_thumbnail_list")}
-        % endif
-        
-        % if 'invited' in d['content']:
-            <h2>${_("Invited")} <span>${len(d['accepted_status']['invited'])}</span></h2>
-            ${member_includes.member_list(d['accepted_status']['invited']  , show_avatar=True, class_="avatar_thumbnail_list")}
-        % endif
-        
-        % if 'withdrawn' in d['content']:
-            <h2>${_("Withdrawn")} <span>${len(d['accepted_status']['withdrawn'])}</span></h2>
-            ${member_includes.member_list(d['accepted_status']['withdrawn'], show_avatar=True, class_="avatar_thumbnail_list")}
-        % endif
-    % endif
-</%def>
 
 ##------------------------------------------------------------------------------
-## Action/Title Bar
+## Actions
 ##------------------------------------------------------------------------------
-<%def name="title_bar(actions)">
 
-    <% id = d['content']['id'] %>
-
-    <div class="title">
-        <% type = d['content']['type'] %>
-        <span class="icon icon_${type}"></span><span class="title_text">${type.capitalize()}</span>
-    </div>
-    
-    <div class="common_actions">
-
-        % if config['development_mode'] and c.format=='frag':
-            <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
-        % endif
-
-
+<%doc>
         ${share.share(
             url         = url('content', id=d['content']['id'], host=app_globals.site_host, protocol='http'),
             title       = d['content']['title'] ,
         )}
         
-        ##<a href='${url('formatted_content', id=id, format='rss')}'  title='RSS'   class="icon icon_rss"  ><span>RSS  </span></a>
-        <a href='${url.current(format='rss')}' title='RSS' class="icon icon_rss"><span>RSS</span></a>
-        <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
-    </div>
-</%def>
-    
-<%def name="action_bar(actions)">
-    <% id = d['content']['id'] %>
-
-    <div class="object_actions_specific">
-        ${h.secure_link(url('new_content', parent_id=id), value="", title=_("Respond to this"), css_class="icon icon_respond")}
-        <span class="separtor"></span>
-        % if 'accept' in actions:
-            ${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=h.literal("<span class='icon icon_accept'?</span>%s") % _('Accept') ) }
-            ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
-        % endif
-        <span class="separtor"></span>
-        % if 'withdraw' in d['actions']:
-            ${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=id), value="", title=_('Withdraw'), css_class="icon icon_withdraw")}
-        % endif
-        <span class="separtor"></span>
-        % if 'boom' in actions:
-            ${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=id), value="", title=_('Boom')    , css_class="icon icon_boom")}
-        % endif
         
-        % if 'approve' in actions:
-            ${h.secure_link(h.args_to_tuple('content_action', action='approve'    , format='redirect', id=id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="icon icon_approved", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
-        % endif
-        % if 'seen' in actions:
-            ${h.secure_link(h.args_to_tuple('content_action', action='seen'       , format='redirect', id=id), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="icon icon_seen" )}
-        % endif
-        % if 'dissasociate' in actions:
-            ${h.secure_link(h.args_to_tuple('content_action', action='disasociate', format='redirect', id=id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="icon icon_dissasociate", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
-        % endif
-        
-    </div>
-    
-    <div class="object_actions_common">        
-        % if 'edit' in actions:
-            <a href="${h.url('edit_content', id=id)}" class="icon icon_edit" title='${_("Edit")}'><span>${_("Edit")}</span></a>
-            ${h.secure_link(url('content', id=id, format='redirect'), method="DELETE", value="", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
-        % endif
-
-        % if 'aggregate' in actions:
-            <a href='' class="icon icon_boom"><span>Aggregate</span></a>
-        % endif
-        
-        % if 'flag' in actions:
-            <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
-        % endif
-    </div>
-    
     ## Parent Content Owner Actions
     ## TODO needs to be some check to see if user is an organisation and has paid for the power to do this
     ##% if content.actions:
     ##    <a href="" class="button_small button_small_style_2">
     ##        Email Resorces
     ##    </a>
+</%doc>
     
+<%def name="actions_specific()">
+    ${h.secure_link(url('new_content', parent_id=self.id), value="", title=_("Respond to this"), css_class="icon icon_respond")}
+    <span class="separtor"></span>
+    % if 'accept' in self.actions:
+        ${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id), value=h.literal("<span class='icon icon_accept'?</span>%s") % _('Accept') ) }
+        ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
+    % endif
+    <span class="separtor"></span>
+    % if 'withdraw' in self.actions:
+        ${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id), value="", title=_('Withdraw'), css_class="icon icon_withdraw")}
+    % endif
+    <span class="separtor"></span>
+    % if 'boom' in self.actions:
+        ${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=self.id), value="", title=_('Boom')    , css_class="icon icon_boom")}
+    % endif
+    
+    % if 'approve' in self.actions:
+        ${h.secure_link(h.args_to_tuple('content_action', action='approve'    , format='redirect', id=self.id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="icon icon_approved", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
+    % endif
+    % if 'seen' in self.actions:
+        ${h.secure_link(h.args_to_tuple('content_action', action='seen'       , format='redirect', id=self.id), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="icon icon_seen" )}
+    % endif
+    % if 'dissasociate' in self.actions:
+        ${h.secure_link(h.args_to_tuple('content_action', action='disasociate', format='redirect', id=self.id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="icon icon_dissasociate", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+    % endif
+</%def>        
+
+    
+<%def name="actions_common()">
+    
+    % if 'edit' in self.actions:
+        <a href="${h.url('edit_content', id=id)}" class="icon icon_edit" title='${_("Edit")}'><span>${_("Edit")}</span></a>
+        ${h.secure_link(url('content', id=self.id, format='redirect'), method="DELETE", value="", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
+    % endif
+
+    % if 'aggregate' in self.actions:
+        <a href='' class="icon icon_boom"><span>Aggregate</span></a>
+    % endif
+    
+    % if 'flag' in self.actions:
+        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
+    % endif    
 </%def>
 
 

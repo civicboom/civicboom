@@ -200,6 +200,9 @@ class ContentsController(BaseController):
     # file has a resource setup:
     #     map.resource('content', 'contents')
     
+    def search(self, **kwargs):
+        pass
+    
     @web
     def index(self, **kwargs):
         """

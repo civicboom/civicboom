@@ -1,3 +1,5 @@
+<%inherit file="/frag/common/frag.mako"/>
+
 <%namespace name="member_includes"  file="/web/common/member.mako"       />
 
 ##------------------------------------------------------------------------------
@@ -7,37 +9,8 @@
 ## Consistant title bar and styling for list fragments
 
 <%def name="body()">
-    <% args, kwargs = c.web_params_to_kwargs %>
-
-    <a class="frag_source" href="${h.current_url()}" style="display: none;">frag source</a>
-
-    <div class="title_bar">
-        <div class="title">
-            <span class="icon icon_list"></span><span class="title_text">
-                ##${next.title()}
-                ${_('List')}
-            </span>
-        </div>
-        <div class="common_actions">
-            
-            % if config['development_mode'] and c.format=='frag':
-                <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
-            % endif
-            
-            <% kwargs['format']='rss' %>
-            <a href='${url.current(**kwargs)}' title='RSS' class="icon icon_rss"  ><span>RSS</span></a>
-            <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
-        </div>
-    </div>
-
-    <div class="action_bar">
-
-    </div>
-
-    <div class="frag_data">
-        <div class="frag_col">
-        ${next.frag_list_call()}
-        </div>
+    <div class="frag_col">
+    ${next.body()}
     </div>
 </%def>
 

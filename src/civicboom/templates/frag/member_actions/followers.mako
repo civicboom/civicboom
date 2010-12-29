@@ -1,11 +1,5 @@
 <%inherit file="/frag/common/frag_lists.mako"/>
 
-<%def name="body()"></%def>
-
-<%def name="title()">
-    ${_('Followers')}
-</%def>
-
-<%def name="frag_list_call()">
+<%def name="body()">
     ${parent.member_list(d['list'], _('Followers'),  max=None)}
 </%def>

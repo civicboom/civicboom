@@ -1,127 +1,167 @@
-<%namespace name="member_includes"  file="/web/common/member.mako"  />
-##<%namespace name="content_includes" file="/web/common/content_list.mako"/>
+<%inherit file="/frag/common/frag.mako"/>
 
-<%namespace name="frag_list" file="/frag/common/frag_lists.mako"/>
-<%namespace name="share"     file="/frag/common/share.mako"     />
+<% import datetime %>
+
+<%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
+<%namespace name="member_includes" file="/web/common/member.mako"     />
 
 ##------------------------------------------------------------------------------
-## Body
+## Variables
 ##------------------------------------------------------------------------------
-<%def name="body()">
-${frag_member(d)}
+
+<%def name="init_vars()">
+    <%
+        self.member    = d['member']
+        self.id        = self.member['username']
+        self.name      = self.member.get('name') or self.member.get('username')
+        self.actions   = d['actions']
+        
+        self.attr.title     = self.member['type'].capitalize()
+        self.attr.icon_type = self.member['type']
+        
+        self.attr.frag_data_css_class = 'frag_member'
+    %>
 </%def>
 
 ##------------------------------------------------------------------------------
 ## Member Fragment
 ##------------------------------------------------------------------------------
-<%def name="frag_member(d)">
-    <% member = d['member']  %>
-    <% id     = member['username'] %>
+<%def name="body()">
     
-    <a class="frag_source" href="${h.current_url()}" style="display: none;">frag source</a>
-    ##url.current(format='frag')
-    
-    <div class="title_bar">
-        ${title_bar(d['actions'])}
-    </div>
-    <div class="action_bar">
-        ${action_bar(d['actions'])}
-    </div>
-    
-    <div class="frag_data frag_member">
-        <div class="frag_left_col">
-            <div class="frag_col">
-            ## Member Details
-            ${member_avatar(member)}
-            ${member_map(  member)}
-            </div>
-        </div>
-        <div class="frag_right_col">
-            <div class="frag_col">
-            ## Member Content
-            ${frag_list.member_list(
-                d['following'],
-                _('Following'),
-                h.args_to_tuple('member_action', id=id, action='following'),
-            )}
-            ${frag_list.member_list(
-                d['followers'] ,
-                _('Followers') ,
-                h.args_to_tuple('member_action', id=id, action='followers') ,
-            )}
-
-            ${frag_list.member_list(
-                d['groups'] ,
-                _('Groups') ,
-                h.args_to_tuple('member_action', id=id, action='groups') ,
-            )}
-
-            
-            ${frag_list.content_list(
-                d['assignments_accepted'],
-                _('Accepted _assignments'),
-                h.args_to_tuple('member_action', id=id, action='assignments_accepted'),
-                creator = True,
-            )}
-            ##${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
-            
-            <% import datetime %>
-            
-            ${frag_list.content_list(
-                [c for c in d['content'] if c['type']=='draft'] ,
-                _('Drafts') ,
-                h.args_to_tuple('contents', creator=id, list='drafts') , ##format='html'),
-            )}
-            
-            ${frag_list.content_list(
-                [c for c in d['content'] if c['type']=='assignment' and (c['due_date']==None or c['due_date']>=datetime.datetime.now()) ] ,
-                _('Assignments Active') ,
-                h.args_to_tuple('contents', creator=id, list='assignments_active') ,
-            )}
-            
-            ${frag_list.content_list(
-                [c for c in d['content'] if c['type']=='assignment' and (c['due_date']!=None and c['due_date']<=datetime.datetime.now()) ] ,
-                _('Assignments Previous') ,
-                h.args_to_tuple('contents', creator=id, list='assignments_previous') ,
-            )}
-            
-            ${frag_list.content_list(
-                [c for c in d['content'] if c['type']=='article' and c['response_type']!='none' ] ,
-                _('Responses') ,
-                h.args_to_tuple('contents', creator=id, list='responses') ,
-            )}
-            
-            ${frag_list.content_list(
-                [c for c in d['content'] if c['type']=='article' and c['response_type']=='none' ] ,
-                _('Articles') ,
-                h.args_to_tuple('contents', creator=id, list='articles') ,
-            )}
-
-            ${frag_list.content_list(
-                d['boomed_content'],
-                _('Boomed content'),
-                h.args_to_tuple('member_action', id=id, action='boomed_content') ,
-                #h.args_to_tuple('contents', boomed_by=id) ,
-                creator = True ,
-            )}
-            
-            % if member['type']=='group':
-            ${frag_list.member_list(
-                d['members'],
-                _('Members'),
-                h.args_to_tuple('member_action', id=id, action='members')
-            )}
-            % endif
-            </div>
+    <div class="frag_left_col">
+        <div class="frag_col">
+        ## Member Details
+        ${member_avatar()}
+        ${member_map()}
         </div>
     </div>
+    
+    <div class="frag_right_col">
+        <div class="frag_col">
+        ## Member Content
+        ${frag_list.member_list(
+            d['following'],
+            _('Following'),
+            h.args_to_tuple('member_action', id=self.id, action='following'),
+        )}
+        ${frag_list.member_list(
+            d['followers'] ,
+            _('Followers') ,
+            h.args_to_tuple('member_action', id=self.id, action='followers') ,
+        )}
+
+        ${frag_list.member_list(
+            d['groups'] ,
+            _('Groups') ,
+            h.args_to_tuple('member_action', id=self.id, action='groups') ,
+        )}
+
+        
+        ${frag_list.content_list(
+            d['assignments_accepted'],
+            _('Accepted _assignments'),
+            h.args_to_tuple('member_action', id=self.id, action='assignments_accepted'),
+            creator = True,
+        )}
+        ##${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
+        
+
+        
+        ${frag_list.content_list(
+            [c for c in d['content'] if c['type']=='draft'] ,
+            _('Drafts') ,
+            h.args_to_tuple('contents', creator=self.id, list='drafts') , ##format='html'),
+        )}
+        
+        ${frag_list.content_list(
+            [c for c in d['content'] if c['type']=='assignment' and (c['due_date']==None or c['due_date']>=datetime.datetime.now()) ] ,
+            _('Assignments Active') ,
+            h.args_to_tuple('contents', creator=self.id, list='assignments_active') ,
+        )}
+        
+        ${frag_list.content_list(
+            [c for c in d['content'] if c['type']=='assignment' and (c['due_date']!=None and c['due_date']<=datetime.datetime.now()) ] ,
+            _('Assignments Previous') ,
+            h.args_to_tuple('contents', creator=self.id, list='assignments_previous') ,
+        )}
+        
+        ${frag_list.content_list(
+            [c for c in d['content'] if c['type']=='article' and c['response_type']!='none' ] ,
+            _('Responses') ,
+            h.args_to_tuple('contents', creator=self.id, list='responses') ,
+        )}
+        
+        ${frag_list.content_list(
+            [c for c in d['content'] if c['type']=='article' and c['response_type']=='none' ] ,
+            _('Articles') ,
+            h.args_to_tuple('contents', creator=self.id, list='articles') ,
+        )}
+
+        ${frag_list.content_list(
+            d['boomed_content'],
+            _('Boomed content'),
+            h.args_to_tuple('member_action', id=self.id, action='boomed_content') ,
+            #h.args_to_tuple('contents', boomed_by=id) ,
+            creator = True ,
+        )}
+        
+        % if self.member['type']=='group':
+        ${frag_list.member_list(
+            d['members'],
+            _('Members'),
+            h.args_to_tuple('member_action', id=self.id, action='members')
+        )}
+        % endif
+        </div>
+    </div>
+
 </%def>
+
+
+##------------------------------------------------------------------------------
+## Actions
+##------------------------------------------------------------------------------
+
+<%def name="actions_specific()">
+    ##% if c.logged_in_persona and c.logged_in_persona.username != member['username']:
+    ##    % if c.logged_in_persona and c.logged_in_persona.is_following(member['username']):
+        ##${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
+        ##% else:  
+        ##% endif
+    ##% endif
+
+    % if 'follow' in self.actions:
+        ${h.secure_link(h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect'), _(' '), title=_("Follow %s" % self.name),         css_class="icon icon_follow")}
+    % endif
+
+    % if 'unfollow' in self.actions:
+        ${h.secure_link(h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect'), _(' '), title=_("Stop following %s" % self.name), css_class="icon icon_unfollow")}
+    % endif
+
+    % if 'join' in self.actions:
+        ${h.secure_link(h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect'), _('Join this _group'), css_class="icon icon_join"  )}
+    % endif
+    
+    % if 'invite' in self.actions: ##and c.logged_in_persona and c.logged_in_persona.__type__=='group':
+        ${h.secure_link(h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect'), _('Invite %s to join %s' % (self.name, c.logged_in_persona['name']))      , css_class="icon icon_invite")}
+    % endif
+</%def>
+
+
+<%def name="actions_common()">
+    % if 'message' in self.actions:
+        <a class="icon icon_message" href="#" title="${_('Send %s a message') % self.name}"><span>${_('Message')}</span></a>
+    % endif
+    <a class="icon icon_widget"  href="${url(controller='misc', action='widget_preview')}" title="${_('Widget Preview')}"><span>${_('Widget Preview')}</span></a>
+</%def>
+
+
 
 ##------------------------------------------------------------------------------
 ## Avatar
 ##------------------------------------------------------------------------------
-<%def name="member_avatar(member)">
-    ${member_includes.avatar(member, class_='thumbnail_large')}
+<%def name="member_avatar()">
+    ${member_includes.avatar(self.member, class_='thumbnail_large')}
 </%def>
 
 
@@ -129,28 +169,15 @@ ${frag_member(d)}
 ##------------------------------------------------------------------------------
 ## Map
 ##------------------------------------------------------------------------------
-<%def name="member_map(member)">
+<%def name="member_map()">
     <p>implement map</p>
 </%def>
 
 
-
 ##------------------------------------------------------------------------------
-## Action/Title Bar
+## Share
 ##------------------------------------------------------------------------------
-<%def name="title_bar(actions)">
-    <div class="title">
-        <% type = d['member']['type'] %>
-        <span class="icon icon_${type}"></span><span class="title_text">${type.capitalize()}</span>
-    </div>
-
-    <div class="common_actions">
-        
-        % if config['development_mode'] and c.format=='frag':
-            <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
-        % endif
-
-        
+<%doc>
         ${share.share(
             url         = url('member', id=d['member']['username'], host=app_globals.site_host, protocol='http'),
             title       = _('%s on _site_name' % d['member']['name']) ,
@@ -161,58 +188,5 @@ ${frag_member(d)}
         <a href='${url.current(format='rss')}' title='RSS' class="icon icon_rss"><span>RSS</span></a>
         <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
     </div>
-</%def>
-
-<%def name="action_bar(actions)">
-
-    <% member = d['member'] %>
-    <% id     = d['member']['username'] %>
-    <% name   = d['member'].get('name') or d['member'].get('username') %>
-
-    <div class="object_actions_specific">
-        ##% if c.logged_in_persona and c.logged_in_persona.username != member['username']:
-        ##    % if c.logged_in_persona and c.logged_in_persona.is_following(member['username']):
-            ##${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
-            ##% else:  
-            ##% endif
-        ##% endif
-
-        % if 'follow' in actions:
-            ${h.secure_link(h.args_to_tuple('member_action', action='follow'    , id=id, format='redirect'), _(' '), title=_("Follow %s" % name),         css_class="icon icon_follow")}
-        % endif
-
-        % if 'unfollow' in actions:
-            ${h.secure_link(h.args_to_tuple('member_action', action='unfollow'  , id=id, format='redirect'), _(' '), title=_("Stop following %s" % name), css_class="icon icon_unfollow")}
-        % endif
-    
-        % if 'join' in actions:
-            ${h.secure_link(h.args_to_tuple('group_action', action='join'       , id=id, member=c.logged_in_persona.username, format='redirect'), _('Join this _group'), css_class="icon icon_join"  )}
-        % endif
-        
-        % if 'invite' in actions: ##and c.logged_in_persona and c.logged_in_persona.__type__=='group':
-            ${h.secure_link(h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=id, format='redirect'), _('Invite %s to join %s' % (member['name'], c.logged_in_persona['name']))      , css_class="icon icon_invite")}
-        % endif
-
-    </div>
-
-    <div class="object_actions_common">
-        % if 'message' in actions:
-            <a class="icon icon_message" href="#" title="${_('Send %s a message') % name}"><span>${_('Message')}</span></a>
-        % endif
-        <a class="icon icon_widget"  href="${url(controller='misc', action='widget_preview')}" title="${_('Widget Preview')}"><span>${_('Widget Preview')}</span></a>
-    </div>
-
-    
-    
-    
-    
-
-</%def>
-
-##------------------------------------------------------------------------------
-## 
-##------------------------------------------------------------------------------
-<%def name="member_(member)">
-
-</%def>
+</%doc>
 
