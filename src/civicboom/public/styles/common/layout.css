@@ -11,6 +11,11 @@ HTML.js .popup {
 	top: 50px;
 }
 
+/* for browsers without JS hide sections of the page */
+HTML.no-js .hide_without_js {
+	display: none;
+}
+
 /*
  * layout for the web page, starting with the body to cover everything
  *

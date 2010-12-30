@@ -207,6 +207,7 @@ class ContentsController(BaseController):
         @param * (see common list return controls)
         @param limit
         @param offset
+        @param include_fields "attachments" for media
         """
         # url('contents')
         
@@ -231,11 +232,12 @@ class ContentsController(BaseController):
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
         
+        # RSS feeds now need to specifically request attachments
         # AllanC - WARNING! this breaks casheability! need to consider the use case for RSS with media to be added manually with the request
-        if 'list_type' not in kwargs:
+        #if 'list_type' not in kwargs:
             #kwargs['list_type'] = 'default'
-            if c.format == 'rss':                       # Default RSS to list_with_media
-                kwargs['include_fields'] += ',attachments'
+        #    if c.format == 'rss':                       # Default RSS to list_with_media
+        #        kwargs['include_fields'] += ',attachments'
         
         # Build Search
         results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*'). #Content.__type__!='draft'
@@ -244,6 +246,8 @@ class ContentsController(BaseController):
             results = results.filter(Content.private==False)
         if 'creator' in kwargs['include_fields']:
             results = results.options(joinedload('creator'))
+        if 'attachments' in kwargs['include_fields']:
+            results = results.options(joinedload('attachments'))
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
         if 'list' in kwargs:

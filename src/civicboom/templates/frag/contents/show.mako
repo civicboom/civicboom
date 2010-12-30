@@ -282,7 +282,7 @@
     
     % if 'edit' in self.actions:
         <a href="${h.url('edit_content', id=id)}" class="icon icon_edit" title='${_("Edit")}'><span>${_("Edit")}</span></a>
-        ${h.secure_link(url('content', id=self.id, format='redirect'), method="DELETE", value="", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
+        ${h.secure_link(h.args_to_tuple('content', id=self.id, format='redirect'), method="DELETE", value="", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
     % endif
 
     % if 'aggregate' in self.actions:

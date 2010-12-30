@@ -94,9 +94,10 @@
         import copy
         
         feed = url.current(
-            format='rss',
-            query=request.params.get('query'),
-            location=request.params.get('location')
+            format         ='rss' ,
+            query          =request.params.get('query') ,
+            location       =request.params.get('location') ,
+            include_fields = 'attachments' ,
         )
         
         georss_url = dict(
