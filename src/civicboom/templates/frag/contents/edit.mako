@@ -1,5 +1,7 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%namespace name="loc" file="/web/common/location.mako" />
+
 <%!
     share_url        = False
     rss_url          = False
@@ -30,16 +32,16 @@
     <div class="frag_col">
         
         % if 'parent' in self.content:
-            <p>${_("Responding to: %s") % self.content['parent']['title']}</p>'
+            <p>${_("Responding to: %s") % self.content['parent']['title']}</p>
         % endif
         
         ## AllanC - TODO need to update h.form() to accept url as a tuple for AJAX submission
         ${h.form(url('content', id=c.content.id, format="redirect"), method='PUT', multipart=True, name="content")}
             ${base_content()}
             ${media()}
-            ##${content_type()}
-            ##${location()}
-            ##${license()}
+            ${content_type()}
+            ${location()}
+            ${license()}
 			${submit_buttons()}
         ${h.end_form()}
     </div>
@@ -252,6 +254,174 @@
         
     </fieldset>
 
+</%def>
+
+##------------------------------------------------------------------------------
+## Content Type
+##------------------------------------------------------------------------------
+<%def name="content_type()">
+    <fieldset><legend>${_("Publish Type")}</legend>
+        ${form_instruction(_("What do you want to do with your content?"))}
+        
+        <%
+            type          = self.content['type']
+            selected_type = type
+            if self.content['type'] == 'draft':
+                selected_type = self.content['target_type']
+            
+            types = [
+                #("draft"     , _("description of draft content")   ),
+                ("article"   , _("description of _article")        ),
+                ("assignment", _("description of _assignemnt")     ),
+                ("syndicate" , _("description of syndicated stuff")),
+            ]
+        %>
+        
+        <%def name="type_option(type, description)">
+            <%
+                selected = ""
+                if selected_type == type:
+                    selected = h.literal('checked="checked"')
+            %>
+            <td id="type_${type}" onClick="highlightType('${type}');" class="section_selectable">
+              <input class="hideable" type="radio" name="target_type" value="${type}" ${selected}/>
+              <label for="type_${type}">${type}</label>
+              <p class="type_description">${description}</p>
+            </td>
+        </%def>
+        
+        % if type == "draft":
+            <table id="type_selection"><tr>
+            % for type in types:
+                ${type_option(type[0],type[1])}
+            % endfor
+            <tr></table>
+        % else:
+            ${type}
+        % endif
+
+        <div id="content_type_additional_fields">
+            ## See CSS for "active" class
+            <div id="type_assignment_extras" class="hideable">
+                <script>
+                    $(function() {$( "#datepicker1" ).datepicker();});
+                    $(function() {$( "#datepicker2" ).datepicker();});
+                </script>
+                <%
+                    due_date   = self.content.get('due_date')
+                    event_date = self.content.get('event_date')
+                %>
+                <p>${_("Due Date:")}   <input id="datepicker1" type="date" name="due_date"   value="${due_date}"></p>
+                <p>${_("Event Date:")} <input id="datepicker2" type="date" name="event_date" value="${event_date}"></p>
+                <p>${_("Response License:")}
+				<table>
+				<% from civicboom.lib.database.get_cached import get_licenses %>
+				% for license in get_licenses():
+					<tr>
+					<%
+					    license_selected = ''
+                        # AllanC - TODO - investigate .. this may not work as we are using licence codes for ID's not integers
+					    if type == "assigment" and 'default_response_license' in self.content and license.id == self.content['default_response_license_id']:
+						    license_selected = h.literal('checked="checked"')
+					%>
+					<td><input id="licence_${license.code}" type="radio" name="default_response_license_id" value="${license.code}" ${license_selected} /></td>
+					<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a></td>
+					<td><label for="licence_${license.code}">${license.description}</label></td>
+					</tr>
+					##${popup(_(license.description))}
+				% endfor
+				</table>
+            </div>
+        </div>
+
+
+        <script type="text/javascript">
+            // Reference: http://www.somacon.com/p143.php
+            // set the radio button with the given value as being checked
+            // do nothing if there are no radio buttons
+            // if the given value does not exist, all the radio buttons are reset to unchecked
+            function setCheckedValue(radioObj, newValue) {
+                if(!radioObj) return;
+                var radioLength = radioObj.length;
+                if(radioLength == undefined) {
+                    radioObj.checked = (radioObj.value == newValue.toString());
+                    return;
+                }
+                for(var i = 0; i < radioLength; i++) {
+                    radioObj[i].checked = false;
+                    if(radioObj[i].value == newValue.toString()) {
+                        radioObj[i].checked = true;
+                    }
+                }
+            }
+
+            function highlightType(type) {
+                // Select radio button
+                setCheckedValue(document.forms['content'].elements['target_type'], type);
+                // reset all radio buttons to unselected
+                setSingleCSSClass(document.getElementById('type_'+type          ), 'section_selected', 'type_selection'                );
+                setSingleCSSClass(document.getElementById('type_'+type+'_extras'), 'active'          , 'content_type_additional_fields');
+            }
+
+            highlightType('${selected_type}'); //Set the default highlighted item to be the content type
+        </script>
+
+        <div style="float: right;">
+            % if type == "draft":
+            <input type="submit" name="submit_publish" value="${_("Publish")}"      />
+            % else:
+            <input type="submit" name="submit_publish" value="${_("Publish Update")}"/>
+            % endif
+        </div>
+    </fieldset>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Location
+##------------------------------------------------------------------------------
+<%def name="location()">
+    <!-- Licence -->
+    <fieldset><legend><span onclick="toggle(this);">${_("Location (optional)")}</span></legend>
+        <div class="hideable">
+            ${form_instruction(_("why give us this..."))}
+            stuff!!
+        </div>
+        ##<div style="height:400px;">
+        ${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
+        ##</div>
+    </fieldset>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## License
+##------------------------------------------------------------------------------
+<%def name="license()">
+    % if self.content['type'] == 'draft':
+    <% from civicboom.lib.database.get_cached import get_licenses %>
+    <!-- Licence -->
+    <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
+        <div class="hideable">
+            ${form_instruction(_("What is licensing explanation"))}
+			<table>
+            % for license in get_licenses():
+				<tr>
+                <%
+                  license_selected = ''
+                  if 'license_id' in self.content and license.id == self.content['license_id']:
+                      license_selected = h.literal('checked="checked"')
+                %>
+                <td><input id="licence_${license.id}" type="radio" name="licence" value="${license.id}" ${license_selected} /></td>
+				<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a></td>
+                <td><label for="licence_${license.id}">${license.description}</label></td>
+				</tr>
+                ##${popup(_(license.description))}
+            % endfor
+			</table>
+        </div>
+    </fieldset>
+    % endif
 </%def>
 
 

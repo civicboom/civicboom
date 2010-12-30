@@ -331,6 +331,13 @@ class DraftContent(Content):
     target_type     = Column(_content_type, nullable=True, default=None)
     #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
 
+    __to_dict__ = copy.deepcopy(Content.__to_dict__)
+    _extra_draft_fields = {
+            'target_type'     : None ,
+    }
+    __to_dict__['default'     ].update(_extra_draft_fields)
+    __to_dict__['full'        ].update(_extra_draft_fields)
+
     def __init__(self):
         self.private = True
 
