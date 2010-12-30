@@ -25,6 +25,11 @@
 </div>
 
 <div>
+<span>Rich Text Editor</span>
+<a href="http://tinymce.moxiecode.com/">TinyMCE</a> (GNU)
+</div>
+
+<div>
 <span>Feature detection:</span>
 <a href="http://www.modernizr.com/">Modernizr</a> (MIT)
 </div>
