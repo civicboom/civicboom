@@ -17,12 +17,11 @@
 		<div id="frag_" class="frag_container ${self.attr.frag_container_css_class}">
 			${next.body()}
 		</div>
-
+        
         ## Some templates need to specify more than one starting fragment
+        ##   Note that those that override body2 must create there own frag container div
         % if hasattr(next, 'body2'):
-        <div id="frag__" class="frag_container ${self.attr.frag_container_css_class2}">
             ${next.body2()}
-        </div>
         % endif
 		
 		## Disscussion

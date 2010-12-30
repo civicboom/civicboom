@@ -2,7 +2,6 @@
 
 <%!
     frag_container_css_class  = 'frag_bridge' # bit of a hack here to get the search box half width to start with
-    frag_container_css_class2 = 'frag_bridge'
 %>
 
 
@@ -21,5 +20,7 @@
 </%def>
 
 <%def name="body2()">
+    <div id="frag__" class="frag_container frag_bridge">
     <%include file="/frag/contents/index.mako"/>
+    </div>
 </%def>

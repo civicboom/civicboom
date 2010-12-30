@@ -6,6 +6,8 @@
     share_title         = ''
     share_description   = ''
     
+    rss_url             = True
+    
     frag_data_css_class = ''
     auto_georss_link    = False
 %>
@@ -46,7 +48,7 @@
             % endif
             
             ## RSS
-            % if c.web_params_to_kwargs:
+            % if self.attr.rss_url:
                 ##c.format=='frag' and 
                 <%
                     import copy

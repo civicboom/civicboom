@@ -601,5 +601,4 @@ class ContentsController(BaseController):
         #c.content                  = form_to_content(kwargs, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
-        return action_ok() # Automatically finds edit template
-
+        return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template

@@ -9,7 +9,7 @@
 ## Consistant title bar and styling for list fragments
 
 <%def name="init_vars()">
-    <%        
+    <%
         self.attr.share_url        = url.current() #format='html'
         self.attr.auto_georss_link = True
     %>
