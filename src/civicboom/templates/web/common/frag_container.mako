@@ -17,6 +17,13 @@
 		<div id="frag_" class="frag_container ${self.attr.frag_container_css_class}">
 			${next.body()}
 		</div>
+
+        ## Some templates need to specify more than one starting fragment
+        % if hasattr(next, 'body2'):
+        <div id="frag__" class="frag_container ${self.attr.frag_container_css_class2}">
+            ${next.body2()}
+        </div>
+        % endif
 		
 		## Disscussion
 		## Method 1 relys on a second call to the server, most of the time this will be cached, but it is still a second call
