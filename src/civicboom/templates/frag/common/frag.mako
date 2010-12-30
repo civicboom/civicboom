@@ -46,7 +46,8 @@
             % endif
             
             ## RSS
-            % if c.format=='frag' and c.web_params_to_kwargs:
+            % if c.web_params_to_kwargs:
+                ##c.format=='frag' and 
                 <%
                     import copy
                     args, kwargs = c.web_params_to_kwargs

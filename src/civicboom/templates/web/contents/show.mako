@@ -1,6 +1,6 @@
 <%inherit file="/web/common/frag_container.mako"/>
 
-<%namespace name="frag_content" file="/frag/contents/show.mako"/>
+##<%namespace name="frag_content" file="/frag/contents/show.mako"/>
 
 ##------------------------------------------------------------------------------
 ## RSS
@@ -23,5 +23,5 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-		${frag_content.frag_content(d)}
+		<%include file="/frag/contents/show.mako"/>
 </%def>
