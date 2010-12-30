@@ -85,8 +85,9 @@
         <script type="text/javascript" src ="/javascript/tiny_mce/tiny_mce.js"></script>
 		<script type="text/javascript">
 		tinyMCE.init({
-			mode : "textareas",
-			theme : "advanced",
+			mode     : "exact" ,
+            elements : "content" ,
+			theme    : "advanced" ,
 			theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
 			theme_advanced_buttons2 : "",
 			theme_advanced_buttons3 : "",
@@ -217,7 +218,7 @@
                     <span id="media_status_${id}" style="display: none">(status)</span>
                     
                     <div class="media_fields">
-                        <p><label for="media_file_${id}"   >${_("File")}       </label><input id="media_file_${id}"    name="media_file_${id}"    type="text" disabled="true" value="${media['name']}"   /><input type="submit" name="file_remove_${id}" value="Remove" class="file_remove"/></p>
+                        <p><label for="media_file_${id}"   >${_("File")}       </label><input id="media_file_${id}"    name="media_file_${id}"    type="text" disabled="true" value="${media['name']}"   /><input type="submit" name="file_remove_${id}" value="Remove" class="file_remove icon icon_delete"/></p>
                         <p><label for="media_caption_${id}">${_("Caption")}    </label><input id="media_caption_${id}" name="media_caption_${id}" type="text"                 value="${media['caption']}"/></p>
                         <p><label for="media_credit_${id}" >${_("Credited to")}</label><input id="media_credit_${id}"  name="media_credit_${id}"  type="text"                 value="${media['credit']}" /></p>
                     </div>
