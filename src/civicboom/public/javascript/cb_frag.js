@@ -88,6 +88,9 @@ function cb_frag_remove_sibblings(jquery_element) {
 }
 
 function cb_frag_reload(param) {
+	// Can be passed a JQuery object or a String
+	//  JQuery - find frag_container parent - find hidden source link for that frag - reload
+	//  String - find hidden source link for all frags - dose source href contain param - reload
 	
 	// Move up the chain from this element
 	//   grab the href of the A frag_source

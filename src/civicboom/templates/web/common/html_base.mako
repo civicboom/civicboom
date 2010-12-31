@@ -65,7 +65,7 @@
 	<!-- Browser bug fixes -->
 	<script src="/javascript/Modernizr.js"></script>
 	<!-- jQuery -->
-	<script src="/javascript/jquery-1.4.2.js"></script>
+	<script src="/javascript/jquery-1.4.4.js"></script>
 	<script src="/javascript/jquery.ui.js"></script>
 	<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
 	<script src="/javascript/jquery.scrollTo.js"></script>
