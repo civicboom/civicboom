@@ -31,7 +31,7 @@
 
     <div class="frag_col">
         
-        % if 'parent' in self.content:
+        % if self.content.get('parent'):
             <p>${_("Responding to: %s") % self.content['parent']['title']}</p>
         % endif
         

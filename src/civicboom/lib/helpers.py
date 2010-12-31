@@ -158,16 +158,16 @@ def get_data_value(field_name, sub_dict_name=None, default_value=''):
 # cant have it8n in helpers ... ****!
 # so I created a dumby _ method ... this needs considering
 # Could be moved to common.mako template?
-def _(s):
-    return s
+#def _(s):
+#    return s
 icon_type_descriptions = {
-    'approved'    : _('approved by parent owner') ,
-    'seen'        : _('parent owner has seen this content') ,
-    'edit_lock'   : _('edit lock') ,
-    'dissacociate': _('parent owner has disassociated this content') ,
-    'group'       : _('group') ,
-    'account_plus': _('plus account') ,
-    'account_corp': _('corporate account') ,
+#    'approved'    : _('approved by parent owner') ,
+#    'seen'        : _('parent owner has seen this content') ,
+#    'edit_lock'   : _('edit lock') ,
+#    'dissacociate': _('parent owner has disassociated this content') ,
+#    'group'       : _('group') ,
+#    'account_plus': _('plus account') ,
+#    'account_corp': _('corporate account') ,
 }
 def icon(icon_type, description=None, class_=''):
     if not description and icon_type in icon_type_descriptions:
@@ -180,6 +180,9 @@ def icon(icon_type, description=None, class_=''):
 # If the form is given it's first href arg as a tuple then we can create the URL from the tuple for both JSON and Standard URL's
 def form(*args, **kwargs):
     href_tuple = None
+    
+    json_form_complete_actions = kwargs.pop('json_form_complete_actions', '')
+    
     # Look for href as a tuple in the form (args,kwargs)
     if len(args)>0 and isinstance(args[0], tuple):
         href_tuple = args[0]
@@ -196,7 +199,6 @@ def form(*args, **kwargs):
         # generate json URL and attach onsubmit event
         href_kwargs['format']      = 'json'
         href_json                  = url(*href_args, **href_kwargs)
-        json_form_complete_actions = kwargs.pop('json_form_complete_actions', '')
         kwargs['onsubmit'] = literal("""
             $.post(
                 '%(href_json)s',
@@ -226,7 +228,7 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST', href_json=None, javascript_json_complete_actions=''):
+def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST', json_form_complete_actions=''):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -238,36 +240,27 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     
     Then use javascript to hide the form and show the pretty link
     """
-    # Setup Vars -------
-    
+
+    # Setup Get string href ----
+    # the href could be passed a a tuple of (args,kwargs) for form() to create a JSON version to submit to
+    # we need a text compatable href reguardless
+    href_original = href
+    if isinstance(href, tuple):
+        href = url(*href[0], **href[1])
+        
+
     # Keep track of number of secure links created so they can all have unique hash's
     if not hasattr(c, 'secure_link_count'):
         c.secure_link_count = 0
     c.secure_link_count = c.secure_link_count + 1
     hhash = hashlib.md5(str([href, value, vals, c.secure_link_count])).hexdigest()[0:6]
 
-    form_onsubmit      = '' # is JSON url present, prevent this form from ever actually being submitted
-    json_submit_script = '' # set if href_json present otherwise left black
-    
-    # If HREF is a dict then generate two URL's from it
-    #  1.) the original compatable call
-    #  2.) a json formatted version for the AJAX call
-    if isinstance(href, tuple):
-        href_args   = href[0]
-        href_kwargs = href[1]
-        href      = url(*href_args, **href_kwargs)
-        href_kwargs['format'] = 'json'
-        href_json = url(*href_args, **href_kwargs)
-        
-    if href_json:
-        form_onsubmit = 'return false;'
-
     # Create Form --------
     values = ''
     for k, v in vals:
         values = values + HTML.input(type="hidden", name=k, value=v)
     hf = HTML.span(
-        form(href, id="form_"+hhash, method=method, onsubmit=form_onsubmit) +
+        form(href_original, id="form_"+hhash, method=method, json_form_complete_actions=json_form_complete_actions) +
             values +
             HTML.input(type="submit", value=value, name="submit") + #AllanC: without the name attribute here the AJAX/JSON does not function, WTF! took me ages to track down :(
         end_form(),
@@ -291,36 +284,11 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         title=title,
         onClick="if (%(confirm_text)s) {$('#form_%(hhash)s').submit();} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
-
-    # if JSON url provided
-    #  Bind an AJAX submit link that submits the form to a URL that returns JSON and displays a flash message
-    # Reference - http://www.ajaxlines.com/ajax/stuff/article/how_to_submit_a_form_with_ajax_in_jquery.php
-    if href_json:
-        json_submit_script = HTML.script(
-            literal("""
-                $(document).ready(function(){
-                    $('#form_%(hhash)s').submit(function(){
-                        $.post(
-                            '%(href_json)s' ,
-                            $('#form_%(hhash)s').serialize() ,
-                            function(data) {
-                                flash_message(data);
-                                if (data.status == 'ok') {
-                                    %(javascript_json_complete_actions)s
-                                }
-                            },
-                            'json'
-                        );
-                    });
-                });
-            """ % dict(href_json=href_json, hhash=hhash, javascript_json_complete_actions=javascript_json_complete_actions)
-            )
-        )
     
     # form vs link switcher (hide the compatable form)
     hs = HTML.script(literal('$("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))
     
-    return HTML.span(hf+hl+hs+json_submit_script, class_="secure_link")
+    return HTML.span(hf+hl+hs, class_="secure_link") #+json_submit_script
 
 
 #-------------------------------------------------------------------------------
