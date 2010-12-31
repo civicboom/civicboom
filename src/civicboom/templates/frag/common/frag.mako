@@ -18,13 +18,22 @@
 
 <%def name="body()">
 
+    <%
+        import copy
+        args, kwargs = c.web_params_to_kwargs
+    %>
+
     % if hasattr(next, 'init_vars'):
     ${next.init_vars()}
     % endif
 
     ## AJAX Fragment refresh (not visable to user)
-    <a class="frag_source" href="${h.current_url()}" style="display: none;">frag source</a>
-    ##url.current(format='frag')
+    <%
+        kwargs_frag = copy.copy(kwargs)
+        kwargs_frag['format'] = 'frag'
+    %>
+    <a class="frag_source" href="${h.url.current(**kwargs_frag)}" style="display: none;">frag source</a>
+    ##.current_url()##
     
     <div class="title_bar">
         <div class="title">
@@ -34,7 +43,8 @@
 
         <div class="common_actions">
             ## Reload
-            % if c.format=='frag' and config['development_mode']:
+            % if config['development_mode']:
+                ##c.format=='frag' and 
                 <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
             % endif
             
@@ -51,8 +61,6 @@
             % if self.attr.rss_url:
                 ##c.format=='frag' and 
                 <%
-                    import copy
-                    args, kwargs = c.web_params_to_kwargs
                     rss_kwargs = copy.copy(kwargs)
                     rss_kwargs['format'] = 'rss'
                 %>
