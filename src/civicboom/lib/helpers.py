@@ -196,7 +196,7 @@ def form(*args, **kwargs):
         # generate json URL and attach onsubmit event
         href_kwargs['format']      = 'json'
         href_json                  = url(*href_args, **href_kwargs)
-        json_form_complete_actions = kwargs.get('json_form_complete_actions', '')
+        json_form_complete_actions = kwargs.pop('json_form_complete_actions', '')
         kwargs['onsubmit'] = literal("""
             $.post(
                 '%(href_json)s',

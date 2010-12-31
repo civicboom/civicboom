@@ -213,7 +213,7 @@
                 %endif
             </td>
             <td class="comment">
-                ${h.form(url('contents', format='redirect'))}
+                ${h.form(h.args_to_tuple('contents', format='redirect'), json_form_complete_actions="cb_frag_reload('%s');" % url("content",id=d['content']['id']) )}
                     <input type="hidden" name="parent_id" value="${d['content']['id']}">
                     <input type="hidden" name="title" value="Re: ${d['content']['title']}">
                     <input type="hidden" name="type" value="comment">
@@ -224,6 +224,7 @@
             </td>
         </tr>
     </table>
+    
 </div>
 </%def>
 
