@@ -5,7 +5,7 @@ available to Controllers. This module is available to templates as 'h'.
 """
 
 #from webhelpers.html.tags import checkbox, password
-from webhelpers.pylonslib.secure_form import authentication_token, secure_form as form
+from webhelpers.pylonslib.secure_form import authentication_token, secure_form
 
 from pylons import url, config, app_globals, tmpl_context as c, request
 #from pylons.i18n.translation import _
@@ -29,6 +29,7 @@ import re
 import urllib
 import hashlib
 import json
+import copy
 
 def get_captcha(lang='en', theme='red'):
     """
@@ -173,6 +174,53 @@ def icon(icon_type, description=None, class_=''):
         description = icon_type_descriptions[icon_type]
     return HTML.div(HTML.span(description), class_=class_+" icon icon_"+icon_type, title=description)
 
+#-------------------------------------------------------------------------------
+# Secure Form
+#-------------------------------------------------------------------------------
+# If the form is given it's first href arg as a tuple then we can create the URL from the tuple for both JSON and Standard URL's
+def form(*args, **kwargs):
+    href_tuple = None
+    # Look for href as a tuple in the form (args,kwargs)
+    if len(args)>0 and isinstance(args[0], tuple):
+        href_tuple = args[0]
+    if isinstance(kwargs.get('href'), tuple):
+        href_tuple = kwargs['href']
+
+    # if href=tuple then generate 2 URL's from tuple 1.) Standard  2.) JSON    
+    if href_tuple:
+        # generate standard URL
+        href_args   = copy.copy(href_tuple[0])
+        href_kwargs = copy.copy(href_tuple[1])
+        href      = url(*href_args, **href_kwargs)
+        
+        # generate json URL and attach onsubmit event
+        href_kwargs['format']      = 'json'
+        href_json                  = url(*href_args, **href_kwargs)
+        json_form_complete_actions = kwargs.get('json_form_complete_actions', '')
+        kwargs['onsubmit'] = literal("""
+            $.post(
+                '%(href_json)s',
+                $(this).serialize() ,
+                function(data) {
+                    flash_message(data);
+                    if (data.status == 'ok') {
+                        %(json_form_complete_actions)s
+                    }
+                },
+                'json'
+            );
+            return false;
+        """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions)
+        )
+
+    # put the href generated url back in the right place
+    if len(args)>0 and isinstance(args[0], tuple):
+        args = list(args)
+        args[0] = href
+    if isinstance(kwargs.get('href'), tuple):
+        kwargs['href'] = href
+    
+    return secure_form(*args, **kwargs)
 
 #-------------------------------------------------------------------------------
 # Secure Link - Form Submit or Styled link (for JS browsers)

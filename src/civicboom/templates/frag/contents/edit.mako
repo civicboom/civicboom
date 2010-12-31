@@ -73,13 +73,13 @@
 <%def name="base_content()">
     <fieldset><legend>${_("Content")}</legend>
         ${form_instruction(_("Got an opinion? want to ask a question?"))}
-
+        
         <p>
             <label for="title">${_("Title")}</label>
             <input id="title" name="title" type="text" value="${self.content['title']}" style="width:80%;"/>
             ${popup(_("extra info"))}
         </p>
-  
+        
         ##${YUI.richtext(c.content.content, width='100%', height='300px')}
 		<textarea name="content" id="content" style="width:100%; height:300px;">${self.content['content']}</textarea>'
         <!-- http://tinymce.moxiecode.com/ -->
