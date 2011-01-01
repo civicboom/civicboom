@@ -46,6 +46,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/messages.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/menuh.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/simplemodal.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/gradients.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
