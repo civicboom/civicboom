@@ -42,11 +42,13 @@
 ## Share This
 ##------------------------------------------------------------------------------
 ## http://help.sharethis.com/customization/customization-overview - registered to admin@civicboom.com
-<%def name="ShareThis(url=None, title=None, description=None)">
-    
+<%def name="ShareThis(*args, **kwargs)">
+
+
+    <%doc>
     ##<span class="st_email"></span>
-    ##<span class="st_facebook"></span>
-    ##<span class="st_twitter"></span>
+    <span class="st_facebook"></span>
+    <span class="st_twitter"></span>
     
     ##<span class="st_facebook_custom"></span>
     ##<span class="st_twitter_custom"></span>
@@ -73,6 +75,44 @@
             % endif
         });
     </script>
+    </%doc>
     
+    ##<span class="st_email"></span>
+    ##<span class="st_facebook"></span>
+    ##<span class="st_twitter"></span>
+    ##<span class="st_sharethis" displayText="ShareThis"></span>
+    
+    <span class="st_email_custom     icon icon_email"   ></span>
+    <span class="st_facebook_custom  icon icon_facebook"></span>
+    <span class="st_twitter_custom   icon icon_twitter" ></span>
+    <span class="st_sharethis_custom icon icon_share" title="ShareThis"
+        % for k,v in kwargs.iteritems():
+            st_${k}='${v.replace("'","")}'
+        % endfor
+    ></span>
+    <script type="text/javascript">
+        stButtons.makeButtons();
+        stWidget.init();
+    </script>
+    ##http://forums.sharethis.com/topic.php?id=3277&replies=1#post-6679
+    
+    <%doc>
+    ## Old depricated ShareThis API - waste of my time!
+    ## http://sharethis.com/developers/api - hidden API examples
+    ## http://forums.sharethis.com/topic.php?id=147
     ## http://forums.sharethis.com/topic.php?id=261
+    <span id="share2" class="icon icon_share" title="ShareThis"></span>
+    <script language="javascript" type="text/javascript">
+        var st_entry = SHARETHIS.addEntry({
+                % for k,v in kwargs.iteritems():
+                ${k}:'${v.replace("'","")}',
+                % endfor
+            } ,
+            {button:false}
+        );
+        st_entry.attachButton(document.getElementByID("share2"));
+    </script>
+    </%doc>
+
+
 </%def>

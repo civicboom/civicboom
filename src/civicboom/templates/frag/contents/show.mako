@@ -27,7 +27,16 @@
         
         self.attr.frag_data_css_class = 'frag_content'
         
-        self.attr.share_url        = '' #url.current() #format='html'
+        self.attr.share_kwargs = {
+            'url'      : self.attr.html_url ,
+            'title'    : self.content['title'] ,
+            'summary'  : self.content['content_short'] ,
+            'image'    : self.content['thumbnail_url'] ,
+            'published': self.content['publish_date'] ,
+            'updated'  : self.content['update_date'] ,
+            'author'   : self.content['creator']['name'] ,
+        }
+        
         self.attr.auto_georss_link = True
     %>
 </%def>

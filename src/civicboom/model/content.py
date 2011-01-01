@@ -127,6 +127,7 @@ class Content(Base):
             'url'          : None ,
             'thumbnail_url': None ,
             'creation_date': None ,
+            'update_date'  : None ,
             'location'     : lambda content: content.location_string ,
             'num_responses': None ,
             'num_comments' : None ,
@@ -150,7 +151,7 @@ class Content(Base):
             #'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
             'license'           : lambda content: content.license.to_dict() , 
     })
-    del __to_dict__['full']['content_short']
+    #del __to_dict__['full']['content_short'] # This is still useful for aggrigation so it stays in by default
     del __to_dict__['full']['parent_id']
     del __to_dict__['full']['creator_id']
     del __to_dict__['full']['license_id']

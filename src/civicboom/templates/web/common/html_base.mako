@@ -84,6 +84,16 @@
 	<script src="/javascript/IE9.js"></script>
 <![endif]-->
 
+	<!-- sharethis -->
+	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+	<script type="text/javascript">
+		stLight.options({
+			publisher:'${config['api_key.sharethis']}' ,
+			onhover  : false ,
+			embeds   : true ,
+		});
+	</script>
+
 
 ##--------------------------------------------------------
 ## Head Links - child templates can add scripts & styles
