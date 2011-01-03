@@ -65,10 +65,10 @@ BODY.c-misc.a-credits #app {
 	margin-right: auto;
 	max-width: 1000px;
 	padding: 16px;
-	-moz-column-width: 300px;
+	-moz-column-width: 450px;
 	-moz-column-gap: 1em;
 	-moz-column-rule: 1px solid black;
-	-webkit-column-width: 300px;
+	-webkit-column-width: 450px;
 	-webkit-column-gap: 1em;
 	-webkit-column-rule: 1px solid black;
 }
