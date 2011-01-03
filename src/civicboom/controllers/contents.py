@@ -213,6 +213,7 @@ class ContentsController(BaseController):
         
         # Permissions
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
+        #          TODO: we need maybe a separte call, or something to identify a private call
         logged_in_creator = False
         if 'creator' in kwargs and c.logged_in_persona:
             kwargs['creator'] = _normalize_member(kwargs['creator']) # normalize creator

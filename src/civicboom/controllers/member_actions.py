@@ -160,13 +160,13 @@ class MemberActionsController(BaseController):
         #return action_ok(data={'list': [content.to_dict(**kwargs) for content in member.boomed_content]})
 
 
-
-    def _groups_list_dict(self, group_roles, **kwargs):
-        return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
-
     #---------------------------------------------------------------------------
     # List - Group Membership
     #---------------------------------------------------------------------------
+    
+    def _groups_list_dict(self, group_roles, **kwargs):
+        return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
+
     @web
     def groups(self, id, **kwargs):
         member = _get_member(id)

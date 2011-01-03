@@ -14,7 +14,7 @@
         self.member    = d['member']
         self.id        = self.member['username']
         self.name      = self.member.get('name') or self.member.get('username')
-        self.actions   = d['actions']
+        self.actions   = d['actions'] if 'actions' in d else [] 
         
         self.attr.title     = self.member['type'].capitalize()
         self.attr.icon_type = self.member['type']
