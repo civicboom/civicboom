@@ -27,16 +27,15 @@
         
         self.attr.frag_data_css_class = 'frag_content'
         
-        
         if self.content['private'] == False:
             self.attr.share_kwargs = {
                 'url'      : self.attr.html_url ,
-                'title'    : self.content['title'] ,
-                'summary'  : self.content['content_short'] ,
-                'image'    : self.content['thumbnail_url'] ,
-                'published': self.content['publish_date'] ,
-                'updated'  : self.content['update_date'] ,
-                'author'   : self.content['creator']['name'] ,
+                'title'    : self.content.get('title') ,
+                'summary'  : self.content.get('content_short') ,
+                'image'    : self.content.get('thumbnail_url') ,
+                'published': self.content.get('publish_date') ,
+                'updated'  : self.content.get('update_date') ,
+                'author'   : self.content.get('creator']['name') ,
             }
         
         self.attr.auto_georss_link = True
