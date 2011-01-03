@@ -37,16 +37,10 @@
 ##------------------------------------------------------------------------------
 ## http://help.sharethis.com/customization/customization-overview - registered to admin@civicboom.com
 <%def name="ShareThis(*args, **kwargs)">
-
     
-    ##<span class="st_email"></span>
-    ##<span class="st_facebook"></span>
-    ##<span class="st_twitter"></span>
-    ##<span class="st_sharethis" displayText="ShareThis"></span>
-    
-    <span class="st_email_custom     icon icon_email"   ></span>
-    <span class="st_facebook_custom  icon icon_facebook"></span>
-    <span class="st_twitter_custom   icon icon_twitter" ></span>
+    ##<span class="st_email_custom     icon icon_email"   ></span>
+    ##<span class="st_facebook_custom  icon icon_facebook"></span>
+    ##<span class="st_twitter_custom   icon icon_twitter" ></span>
     <span class="st_sharethis_custom icon icon_share" title="ShareThis"
         % for k,v in kwargs.iteritems():
             st_${k}='${v.replace("'","")}'
@@ -62,7 +56,7 @@
     <%doc>
     ## Single share this link
     
-    ##<span class="st_email"></span>
+    <span class="st_email"></span>
     <span class="st_facebook"></span>
     <span class="st_twitter"></span>
     

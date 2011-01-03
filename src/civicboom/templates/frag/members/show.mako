@@ -19,6 +19,11 @@
         self.attr.title     = self.member['type'].capitalize()
         self.attr.icon_type = self.member['type']
         
+        if c.logged_in_persona and self.member['username'] == c.logged_in_persona.username:
+            self.attr.title     = 'Current User'
+            self.attr.icon_type = 'current_user'
+            
+        
         self.attr.frag_data_css_class = 'frag_member'
         
         self.attr.share_kwargs = {
@@ -163,7 +168,10 @@
 
 <%def name="actions_common()">
     % if 'message' in self.actions:
-        <a class="icon icon_message" href="#" title="${_('Send %s a message') % self.name}"><span>${_('Message')}</span></a>
+        <a class="icon icon_message" href="" title="${_('Send %s a message') % self.name}"><span>${_('Message')}</span></a>
+    % endif
+    % if 'settings' in self.actions:
+        <a class="icon icon_settings" href="${url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>
     % endif
     <a class="icon icon_widget"  href="${url(controller='misc', action='widget_preview')}" title="${_('Widget Preview')}"><span>${_('Widget Preview')}</span></a>
 </%def>

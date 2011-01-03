@@ -81,6 +81,8 @@
             ## Close
             % if c.format=='frag':
                 <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
+            % else:
+                <span class="icon"></span>
             % endif
         </div>
     </div>
