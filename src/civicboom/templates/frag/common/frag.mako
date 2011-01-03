@@ -21,26 +21,29 @@
     <%
         # Default creation of URLS - these can be overridden by init_vars()
         import copy
-        args, kwargs = c.web_params_to_kwargs
+        if c.web_params_to_kwargs:
+            args, kwargs = c.web_params_to_kwargs
+            args   = copy.copy(args)
+            kwargs = copy.copy(kwargs)
+        else:
+            args   = []
+            kwargs = {}
         
         # Gen frag URL
         if self.attr.frag_url == True:
-            kwargs_frag = copy.copy(kwargs)
-            kwargs_frag['format'] = 'frag'
-            self.attr.frag_url = url.current(**kwargs_frag)
+            kwargs['format'] = 'frag'
+            self.attr.frag_url = url.current(**kwargs)
         
         # Gen html URL
         if self.attr.html_url == True:
-            kwargs_html = copy.copy(kwargs)
-            if 'format' in kwargs_html:
-                del kwargs_html['format']
-            self.attr.html_url = url.current(host=app_globals.site_host, **kwargs_html)
+            if 'format' in kwargs:
+                del kwargs['format']
+            self.attr.html_url = url.current(host=app_globals.site_host, **kwargs)
         
         # Gen RSS URL
         if self.attr.rss_url == True:
-            kwargs_rss = copy.copy(kwargs)
-            kwargs_rss['format'] = 'rss'
-            self.attr.rss_url = url.current(**kwargs_rss)
+            kwargs['format'] = 'rss'
+            self.attr.rss_url = url.current(**kwargs)
     %>
 
     % if hasattr(next, 'init_vars'):
