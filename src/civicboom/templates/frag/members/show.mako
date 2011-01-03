@@ -14,7 +14,7 @@
         self.member    = d['member']
         self.id        = self.member['username']
         self.name      = self.member.get('name') or self.member.get('username')
-        self.actions   = d['actions'] if 'actions' in d else [] 
+        self.actions   = d.get('actions', [])
         
         self.attr.title     = self.member['type'].capitalize()
         self.attr.icon_type = self.member['type']
@@ -40,13 +40,9 @@
         <div class="frag_col">
         ## Member Details
         ${member_avatar()}
-        ${member_map()}
-        </div>
-    </div>
-    
-    <div class="frag_right_col">
-        <div class="frag_col">
-        ## Member Content
+        
+        ## Comunity ----------------------------------------
+        
         ${frag_list.member_list(
             d['following'],
             _('Following'),
@@ -63,7 +59,21 @@
             _('Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
         )}
-
+        
+        % if self.member['type']=='group':
+        ${frag_list.member_list(
+            d['members'],
+            _('Members'),
+            h.args_to_tuple('member_action', id=self.id, action='members')
+        )}
+        % endif
+        
+        ${member_map()}
+        </div>
+    </div>
+    
+    <div class="frag_right_col">
+        <div class="frag_col">
         
         ${frag_list.content_list(
             d['assignments_accepted'],
@@ -71,9 +81,11 @@
             h.args_to_tuple('member_action', id=self.id, action='assignments_accepted'),
             creator = True,
         )}
-        ##${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
         
-
+        ## Content --------------------------------------------
+        
+        ## All content for development
+        ##${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='draft'] ,
@@ -104,7 +116,7 @@
             _('Articles') ,
             h.args_to_tuple('contents', creator=self.id, list='articles') ,
         )}
-
+        
         ${frag_list.content_list(
             d['boomed_content'],
             _('Boomed content'),
@@ -113,13 +125,6 @@
             creator = True ,
         )}
         
-        % if self.member['type']=='group':
-        ${frag_list.member_list(
-            d['members'],
-            _('Members'),
-            h.args_to_tuple('member_action', id=self.id, action='members')
-        )}
-        % endif
         </div>
     </div>
 
