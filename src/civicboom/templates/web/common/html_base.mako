@@ -85,6 +85,7 @@
 	<script src="/javascript/IE9.js"></script>
 <![endif]-->
 
+	<%doc>
 	<!-- sharethis -->
 	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 	<script type="text/javascript">
@@ -94,7 +95,7 @@
 			embeds   : true ,
 		});
 	</script>
-
+	</%doc>
 
 ##--------------------------------------------------------
 ## Head Links - child templates can add scripts & styles

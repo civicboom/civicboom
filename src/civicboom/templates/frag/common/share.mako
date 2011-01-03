@@ -47,8 +47,8 @@
         % endfor
     ></span>
     <script type="text/javascript">
-        stButtons.makeButtons();
-        stWidget.init();
+        ##stButtons.makeButtons();
+        ##stWidget.init();
     </script>
     ##http://forums.sharethis.com/topic.php?id=3277&replies=1#post-6679
     

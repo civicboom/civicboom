@@ -10,9 +10,9 @@
     <ul>
         <li><a href="#" class="top_parent">${_("Create")}</a>
         <ul>
-            <li>${h.secure_link("/contents/new?target_type=assignment", _("Assignment"), css_class="sub_option")}</li>
-            <li>${h.secure_link("/contents/new?target_type=article", _("Article"), css_class="sub_option")}</li>
-            <li><a href="/groups/new" class="sub_option">${_("Group")}</a></li>
+            <li>${h.secure_link(h.url('new_content', target_type='assignment'), _("_assignment").capitalize(), css_class="sub_option")}</li>
+            <li>${h.secure_link(h.url('new_content', target_type='article'   ), _("_article").capitalize()   , css_class="sub_option")}</li>
+            <li><a href="${h.url('new_group')}" class="sub_option">${_("Group")}</a></li>
         </ul>
         </li>
     </ul>

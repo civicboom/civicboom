@@ -262,7 +262,7 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     hf = HTML.span(
         form(href_original, id="form_"+hhash, method=method, json_form_complete_actions=json_form_complete_actions) +
             values +
-            HTML.input(type="submit", value=value, name="submit") + #AllanC: without the name attribute here the AJAX/JSON does not function, WTF! took me ages to track down :(
+            HTML.input(type="submit", value=value, name=value) + #AllanC: without the name attribute here the AJAX/JSON does not function, WTF! took me ages to track down :( NOTE: if the name="submit" jQuery wont submit! a known problem!?
         end_form(),
         id='span_'+hhash)
 
