@@ -12,9 +12,8 @@ HTML.js .popup {
 }
 
 /* for browsers without JS hide sections of the page */
-HTML.no-js .hide_without_js {
-	display: none;
-}
+HTML.no-js .hide_if_nojs {display: none;}
+HTML.js    .hide_if_js   {display: none;}
 
 /*
  * layout for the web page, starting with the body to cover everything

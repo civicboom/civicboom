@@ -14,18 +14,12 @@
 ## AddThis
 ##------------------------------------------------------------------------------
 ## http://www.addthis.com/help/api-overview - registered to admin@civicboom.com
-<%def name="AddThis(url=None, title=None, description=None)">
+<%def name="AddThis(*args, **kwargs)">
     <!-- AddThis Button BEGIN -->
     <div class="addthis_toolbox addthis_default_style " style="display: inline-block;"
-    % if url:
-        addthis:url         = "${url}"
-    % endif
-    % if title:
-        addthis:title       = "${title}"
-    % endif
-    % if description:
-        addthis:description = "${description}"
-    % endif
+        % for k,v in kwargs.iteritems():
+            addthis:${k}="${v.replace('"','')}"
+        % endfor
     >
     <a class="addthis_button_preferred_1"></a>
     <a class="addthis_button_preferred_2"></a>
@@ -42,11 +36,29 @@
 ## Share This
 ##------------------------------------------------------------------------------
 ## http://help.sharethis.com/customization/customization-overview - registered to admin@civicboom.com
-<%def name="ShareThis(url=None, title=None, description=None)">
+<%def name="ShareThis(*args, **kwargs)">
     
-    ##<span class="st_email"></span>
-    ##<span class="st_facebook"></span>
-    ##<span class="st_twitter"></span>
+    ##<span class="st_email_custom     icon icon_email"   ></span>
+    ##<span class="st_facebook_custom  icon icon_facebook"></span>
+    ##<span class="st_twitter_custom   icon icon_twitter" ></span>
+    <span class="st_sharethis_custom icon icon_share" title="ShareThis"
+        % for k,v in kwargs.iteritems():
+            st_${k}='${v.replace("'","")}'
+        % endfor
+    ></span>
+    <script type="text/javascript">
+        ##stButtons.makeButtons();
+        ##stWidget.init();
+    </script>
+    ##http://forums.sharethis.com/topic.php?id=3277&replies=1#post-6679
+    
+
+    <%doc>
+    ## Single share this link
+    
+    <span class="st_email"></span>
+    <span class="st_facebook"></span>
+    <span class="st_twitter"></span>
     
     ##<span class="st_facebook_custom"></span>
     ##<span class="st_twitter_custom"></span>
@@ -60,19 +72,31 @@
         stLight.options({
             publisher  : '${config['api_key.sharethis']}' ,
             onhover    : false ,
-            % if url:
             st_url     : '${url}' ,
-            % endif
-            ## the .replace is to stop ' in javascript breaking things
-            ## can be depricated when validator removes ' from names
-            % if title:
+            ## the .replace is to stop ' in javascript breaking things, can be depricated when validator removes ' from names
             st_title   : '${title.replace("'","")}' ,
-            % endif
-            % if description:
             displayText: '${description.replace("'","")}',
-            % endif
         });
     </script>
+    </%doc>
     
+    <%doc>
+    ## Old depricated ShareThis API - waste of my time!
+    ## http://sharethis.com/developers/api - hidden API examples
+    ## http://forums.sharethis.com/topic.php?id=147
     ## http://forums.sharethis.com/topic.php?id=261
+    <span id="share2" class="icon icon_share" title="ShareThis"></span>
+    <script language="javascript" type="text/javascript">
+        var st_entry = SHARETHIS.addEntry({
+                % for k,v in kwargs.iteritems():
+                ${k}:'${v.replace("'","")}',
+                % endfor
+            } ,
+            {button:false}
+        );
+        st_entry.attachButton(document.getElementByID("share2"));
+    </script>
+    </%doc>
+
+
 </%def>

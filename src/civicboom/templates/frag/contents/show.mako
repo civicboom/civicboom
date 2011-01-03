@@ -27,7 +27,17 @@
         
         self.attr.frag_data_css_class = 'frag_content'
         
-        self.attr.share_url        = '' #url.current() #format='html'
+        if self.content['private'] == False:
+            self.attr.share_kwargs = {
+                'url'      : self.attr.html_url ,
+                'title'    : self.content.get('title') ,
+                'summary'  : self.content.get('content_short') ,
+                'image'    : self.content.get('thumbnail_url') ,
+                'published': self.content.get('publish_date') ,
+                'updated'  : self.content.get('update_date') ,
+                'author'   : self.content['creator']['name'] ,
+            }
+        
         self.attr.auto_georss_link = True
     %>
 </%def>
@@ -284,8 +294,21 @@
 <%def name="actions_common()">
     
     % if 'edit' in self.actions:
-        <a href="${h.url('edit_content', id=self.id)}" class="icon icon_edit" title='${_("Edit")}'><span>${_("Edit")}</span></a>
-        ${h.secure_link(h.args_to_tuple('content', id=self.id, format='redirect'), method="DELETE", value="", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
+        <a href="${h.url('edit_content', id=self.id)}"
+           class="icon icon_edit"
+           title="${_('Edit')}"
+           onclick="cb_frag_load($(this), '${h.url('edit_content', id=self.id, format='frag')}'); return false;"
+        ><span>${_("Edit")}</span></a>
+        
+        ${h.secure_link(
+            h.args_to_tuple('content', id=self.id, format='redirect'),
+            method="DELETE",
+            value="",
+            title=_("Delete"),
+            css_class="icon icon_delete",
+            confirm_text=_("Are your sure you want to delete this content?"),
+            json_form_complete_actions = "cb_frag_remove($(this));" ,
+        )}
     % endif
 
     % if 'aggregate' in self.actions:

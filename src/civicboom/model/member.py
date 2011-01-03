@@ -220,6 +220,9 @@ class Member(Base):
         action_list = []
         #if self.can_message(member):
         #    action_list.append('editable')
+        if self == member:
+            action_list.append('settings')
+            action_list.append('logout')
         if self.is_follower(member):
             action_list.append('unfollow')
         else:

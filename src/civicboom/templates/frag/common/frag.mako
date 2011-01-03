@@ -2,14 +2,14 @@
     title               = 'List'
     icon_type           = 'list'
     
-    share_url           = ''
-    share_title         = ''
-    share_description   = ''
+    share_kwargs        = None
     
+    frag_url            = True
+    html_url            = True
     rss_url             = True
+    auto_georss_link    = False
     
     frag_data_css_class = ''
-    auto_georss_link    = False
 %>
 
 
@@ -19,8 +19,31 @@
 <%def name="body()">
 
     <%
+        # Default creation of URLS - these can be overridden by init_vars()
         import copy
-        args, kwargs = c.web_params_to_kwargs
+        if c.web_params_to_kwargs:
+            args, kwargs = c.web_params_to_kwargs
+            args   = copy.copy(args)
+            kwargs = copy.copy(kwargs)
+        else:
+            args   = []
+            kwargs = {}
+        
+        # Gen frag URL
+        if self.attr.frag_url == True:
+            kwargs['format'] = 'frag'
+            self.attr.frag_url = url.current(**kwargs)
+        
+        # Gen html URL
+        if self.attr.html_url == True:
+            if 'format' in kwargs:
+                del kwargs['format']
+            self.attr.html_url = url.current(host=app_globals.site_host, **kwargs)
+        
+        # Gen RSS URL
+        if self.attr.rss_url == True:
+            kwargs['format'] = 'rss'
+            self.attr.rss_url = url.current(**kwargs)
     %>
 
     % if hasattr(next, 'init_vars'):
@@ -28,11 +51,8 @@
     % endif
 
     ## AJAX Fragment refresh (not visable to user)
-    <%
-        kwargs_frag = copy.copy(kwargs)
-        kwargs_frag['format'] = 'frag'
-    %>
-    <a class="frag_source" href="${h.url.current(**kwargs_frag)}" style="display: none;">frag source</a>
+
+    <a class="frag_source" href="${self.attr.frag_url}" style="display: none;">frag source</a>
     ##.current_url()##
     
     <div class="title_bar">
@@ -49,27 +69,20 @@
             % endif
             
             ## Share
-            % if self.attr.share_url:
-                ${share.share(
-                    url         = self.attr.share_url ,
-                    title       = self.attr.share_title ,
-                    description = self.attr.share_description ,
-                )}
+            % if self.attr.share_kwargs:
+                ${share.share(**self.attr.share_kwargs)}
             % endif
             
             ## RSS
             % if self.attr.rss_url:
-                ##c.format=='frag' and 
-                <%
-                    rss_kwargs = copy.copy(kwargs)
-                    rss_kwargs['format'] = 'rss'
-                %>
-                <a href='${url.current(**rss_kwargs)}' title='RSS' class="icon icon_rss"><span>RSS</span></a>
+                <a href='${self.attr.rss_url}' title='RSS' class="icon icon_rss"><span>RSS</span></a>
             % endif
             
             ## Close
             % if c.format=='frag':
                 <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
+            % else:
+                <span class="icon"></span>
             % endif
         </div>
     </div>

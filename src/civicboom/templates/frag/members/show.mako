@@ -14,14 +14,24 @@
         self.member    = d['member']
         self.id        = self.member['username']
         self.name      = self.member.get('name') or self.member.get('username')
-        self.actions   = d['actions']
+        self.actions   = d.get('actions', [])
         
         self.attr.title     = self.member['type'].capitalize()
         self.attr.icon_type = self.member['type']
         
+        if c.logged_in_persona and self.member['username'] == c.logged_in_persona.username:
+            self.attr.title     = 'Current User'
+            self.attr.icon_type = 'current_user'
+            
+        
         self.attr.frag_data_css_class = 'frag_member'
         
-        self.attr.share_url        = '' #url.current() #format='html'
+        self.attr.share_kwargs = {
+            'url'      : self.attr.html_url ,
+            'title'    : self.name ,
+            'image'    : self.member['avatar_url'] ,
+        }
+
         self.attr.auto_georss_link = True
     %>
 </%def>
@@ -35,13 +45,9 @@
         <div class="frag_col">
         ## Member Details
         ${member_avatar()}
-        ${member_map()}
-        </div>
-    </div>
-    
-    <div class="frag_right_col">
-        <div class="frag_col">
-        ## Member Content
+        
+        ## Comunity ----------------------------------------
+        
         ${frag_list.member_list(
             d['following'],
             _('Following'),
@@ -58,7 +64,21 @@
             _('Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
         )}
-
+        
+        % if self.member['type']=='group':
+        ${frag_list.member_list(
+            d['members'],
+            _('Members'),
+            h.args_to_tuple('member_action', id=self.id, action='members')
+        )}
+        % endif
+        
+        ${member_map()}
+        </div>
+    </div>
+    
+    <div class="frag_right_col">
+        <div class="frag_col">
         
         ${frag_list.content_list(
             d['assignments_accepted'],
@@ -66,9 +86,11 @@
             h.args_to_tuple('member_action', id=self.id, action='assignments_accepted'),
             creator = True,
         )}
-        ##${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
         
-
+        ## Content --------------------------------------------
+        
+        ## All content for development
+        ##${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='draft'] ,
@@ -99,7 +121,7 @@
             _('Articles') ,
             h.args_to_tuple('contents', creator=self.id, list='articles') ,
         )}
-
+        
         ${frag_list.content_list(
             d['boomed_content'],
             _('Boomed content'),
@@ -108,13 +130,6 @@
             creator = True ,
         )}
         
-        % if self.member['type']=='group':
-        ${frag_list.member_list(
-            d['members'],
-            _('Members'),
-            h.args_to_tuple('member_action', id=self.id, action='members')
-        )}
-        % endif
         </div>
     </div>
 
@@ -145,7 +160,7 @@
         ${h.secure_link(h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect'), _('Join this _group'), css_class="icon icon_join"  )}
     % endif
     
-    % if 'invite' in self.actions: ##and c.logged_in_persona and c.logged_in_persona.__type__=='group':
+    % if 'invite' in self.actions and c.logged_in_persona and c.logged_in_persona.__type__=='group':
         ${h.secure_link(h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect'), _('Invite %s to join %s' % (self.name, c.logged_in_persona['name']))      , css_class="icon icon_invite")}
     % endif
 </%def>
@@ -153,7 +168,10 @@
 
 <%def name="actions_common()">
     % if 'message' in self.actions:
-        <a class="icon icon_message" href="#" title="${_('Send %s a message') % self.name}"><span>${_('Message')}</span></a>
+        <a class="icon icon_message" href="" title="${_('Send %s a message') % self.name}"><span>${_('Message')}</span></a>
+    % endif
+    % if 'settings' in self.actions:
+        <a class="icon icon_settings" href="${url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>
     % endif
     <a class="icon icon_widget"  href="${url(controller='misc', action='widget_preview')}" title="${_('Widget Preview')}"><span>${_('Widget Preview')}</span></a>
 </%def>

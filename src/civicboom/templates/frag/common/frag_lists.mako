@@ -116,7 +116,44 @@
 <%def name="render_item_group_members(member)">
     <td>${member_includes.avatar(member, class_="thumbnail_small")}</td>
     <td>${member['name']}</td>
+    
+    ## AllanC - FIXME!
+    ##          a lame botch for meet the KM deadline - could be much cleaner!
+    ##          importing on every item!? inefficent
+    ##          forcing group and actions to be in d[] (see /frag/member_actions/member_list.mako for the sibbling hack to go along with this)
+    <%
+        id = d['group']['id']
+        permission_set_role    = 'set_role'    in d['actions']
+        permission_remove      = 'remove'      in d['actions']
+        permission_remove_self = 'remove_self' in d['actions']
+    %>
+    
+    % if not permission_set_role:
     <td>${member['role']}</td>
+    % else:
+    <td>
+        <% from civicboom.model.member import group_member_roles, group_join_mode, group_member_visability, group_content_visability %>
+        ## Set Role
+        ${h.form(h.args_to_tuple('group_action', id=id, action='set_role', format='redirect'), method='post')}
+            <input type="hidden" name="member" value="${member['username']}"/>
+            % if member['status']=='active':
+                    ${h.html.select('role', member['role'], group_member_roles.enums)}
+                    <input type="submit" name="submit" value="${_('Set role')}"/>
+            % elif member['status']=='request':
+                    <input type="hidden" name="role"   value=""/>
+                    <input type="submit" name="submit" value="${_('Accept join request')}"/>
+            % endif
+        ${h.end_form()}
+        
+        ## Remove
+        % if c.logged_in_persona and ((c.logged_in_persona.username == member['username'] and permission_remove_self) or (c.logged_in_persona.username != member['username'] and permission_remove)):
+            ${h.form(h.args_to_tuple('group_action', id=id, action='remove_member', format='redirect'), method='post')}
+                <input type="hidden" name="member" value="${member['username']}"/>
+                <input type="submit" name="submit" value="${_('Remove')}"/>
+            ${h.end_form()}
+        % endif
+    </td>
+    % endif
 </%def>
 
 
