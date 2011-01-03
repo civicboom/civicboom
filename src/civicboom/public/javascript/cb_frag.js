@@ -77,6 +77,11 @@ function cb_frag(current_element, url, list_type) {
 	);
 }
 
+function cb_frag_load(jquery_element, url) {
+	var frag_container = jquery_element.parents('.'+fragment_container_class)
+	frag_container.load(url);
+}
+
 function cb_frag_remove(jquery_element) {
 	var parent = jquery_element.parents('.'+fragment_container_class); // find parent
 	parent.toggle(scroll_duration, function(){parent.remove()});

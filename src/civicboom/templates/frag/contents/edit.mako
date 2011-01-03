@@ -36,7 +36,7 @@
         % endif
         
         ## AllanC - TODO need to update h.form() to accept url as a tuple for AJAX submission
-        ${h.form(url('content', id=c.content.id, format="redirect"), method='PUT', multipart=True, name="content")}
+        ${h.form(h.args_to_tuple('content', id=self.id, format="redirect"), id='edit_%s'%self.id, method='PUT', multipart=True, name="content")}
             ${base_content()}
             ${media()}
             ${content_type()}
@@ -50,9 +50,29 @@
 ##------------------------------------------------------------------------------
 ## Actions
 ##------------------------------------------------------------------------------
+
+<%def name="actions_specific()">
+    <a href='' class="icon icon_save"    onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save')}"            ><span>${_('Save')}            </span></a>
+    <a href='' class="icon icon_preview" onclick="                                                  return false;" title="${_('Save and Preview')}"><span>${_('Save and Preview')}</span></a>
+</%def>
+
 <%def name="actions_common()">
-    % if d['content'].get('id'):
-        ${h.secure_link(h.args_to_tuple('content', id=d['content'].get('id'), format='redirect'), method="DELETE", value="", title=_("Delete"), css_class="icon icon_delete", confirm_text=_("Are your sure you want to delete this content?") )}
+    % if self.id:
+        <a href="${h.url('content', id=self.id)}"
+           class="icon icon_close_edit"
+           title="${_('Discard Changes and view')}"
+           onclick="cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}'); return false;"
+        ><span>${_("Discard Changes and view")}</span></a>
+        
+        ${h.secure_link(
+            h.args_to_tuple('content', id=self.id, format='redirect'),
+            method="DELETE" ,
+            value="" ,
+            title=_("Delete") ,
+            css_class="icon icon_delete" ,
+            confirm_text=_("Are your sure you want to delete this content?") ,
+            json_form_complete_actions = "cb_frag_remove($(this));" ,
+        )}
     % endif
 </%def>
 
@@ -230,7 +250,7 @@
             <!-- Add media -->
             
             <!-- Add media javascript - visable to JS enabled borwsers -->
-            <li class="hide_without_js">
+            <li class="hide_if_nojs">
                 Javascript/Flash uploader goes here
                 ##% if c.content.id:
                 ##<li>
@@ -240,7 +260,7 @@
             </li>
             
             <!-- Add media non javascript version - hidden if JS enabled -->
-            <li class="hideable">
+            <li class="hide_if_js">
                 <div class="media_preview">
                     <div class="media_preview_none">${_("Select a file to upload")}</div>
                 </div>
@@ -434,8 +454,9 @@
     <div style="text-align: right;">
     
         % if self.content['type'] == "draft":
-        <input type="submit" name="submit_preview" value="${_("Preview Draft")}"/>
-        <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   />
+        ## AllanC - note the class selectors are used by jQuery to simulate clicks
+        <input type="submit" name="submit_preview" class="submit_preview" value="${_("Preview Draft")}"/>
+        <input type="submit" name="submit_draft"   class="submit_draft"   value="${_("Save Draft")}"   />
         % else:
         <a href="${h.url('content', id=self.id)}">${_("View Content")}</a>
         % endif
