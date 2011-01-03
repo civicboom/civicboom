@@ -15,6 +15,10 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
+
+    <a href="${url(controller='settings', action='messages')}">${_("Edit Notifications")}</a>
+    <br/>
+
     ${h.form(h.url('setting', id='None'), method='PUT', multipart=True)}
     <%
         # Setup Settings groups

@@ -1,7 +1,7 @@
 <%inherit file="/web/common/html_base.mako"/>
 
-<%namespace name="prof" file="/web/profile/index.mako"/>
-<%def name="col_left()">${prof.col_left()}</%def>
+##<%namespace name="prof" file="/web/profile/index.mako"/>
+##<%def name="col_left()">${prof.col_left()}</%def>
 
 ##------------------------------------------------------------------------------
 ## Body
