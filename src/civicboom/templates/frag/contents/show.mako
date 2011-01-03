@@ -35,7 +35,7 @@
                 'image'    : self.content.get('thumbnail_url') ,
                 'published': self.content.get('publish_date') ,
                 'updated'  : self.content.get('update_date') ,
-                'author'   : self.content.get('creator']['name') ,
+                'author'   : self.content['creator']['name'] ,
             }
         
         self.attr.auto_georss_link = True
