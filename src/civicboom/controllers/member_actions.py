@@ -217,6 +217,10 @@ class MemberActionsController(BaseController):
         """
         group = _get_member(id)
         
+        # FIXME!!!!!
+        # AllanC - HACK ALERT - I needed actions for a member list, so I left c.group so the frag template could look at it - horrible!!!
+        c.group = group
+        
         if hasattr(group, 'member_visability'):
             if group.member_visability=="public" or group.get_membership(c.logged_in_persona):
                 return action_ok(data={'list':

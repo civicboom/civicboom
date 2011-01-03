@@ -14,18 +14,12 @@
 ## AddThis
 ##------------------------------------------------------------------------------
 ## http://www.addthis.com/help/api-overview - registered to admin@civicboom.com
-<%def name="AddThis(url=None, title=None, description=None)">
+<%def name="AddThis(*args, **kwargs)">
     <!-- AddThis Button BEGIN -->
     <div class="addthis_toolbox addthis_default_style " style="display: inline-block;"
-    % if url:
-        addthis:url         = "${url}"
-    % endif
-    % if title:
-        addthis:title       = "${title}"
-    % endif
-    % if description:
-        addthis:description = "${description}"
-    % endif
+        % for k,v in kwargs.iteritems():
+            addthis:${k}="${v.replace('"','')}"
+        % endfor
     >
     <a class="addthis_button_preferred_1"></a>
     <a class="addthis_button_preferred_2"></a>
@@ -44,38 +38,6 @@
 ## http://help.sharethis.com/customization/customization-overview - registered to admin@civicboom.com
 <%def name="ShareThis(*args, **kwargs)">
 
-
-    <%doc>
-    ##<span class="st_email"></span>
-    <span class="st_facebook"></span>
-    <span class="st_twitter"></span>
-    
-    ##<span class="st_facebook_custom"></span>
-    ##<span class="st_twitter_custom"></span>
-
-    ##<span class="st_sharethis" displayText="ShareThis"></span>
-    <span class="st_sharethis_custom icon icon_share" title="ShareThis"></span>
-    ##<img src="/styles/web/icons16/share-icon.png"> 
-
-    <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-    <script type="text/javascript">
-        stLight.options({
-            publisher  : '${config['api_key.sharethis']}' ,
-            onhover    : false ,
-            % if url:
-            st_url     : '${url}' ,
-            % endif
-            ## the .replace is to stop ' in javascript breaking things
-            ## can be depricated when validator removes ' from names
-            % if title:
-            st_title   : '${title.replace("'","")}' ,
-            % endif
-            % if description:
-            displayText: '${description.replace("'","")}',
-            % endif
-        });
-    </script>
-    </%doc>
     
     ##<span class="st_email"></span>
     ##<span class="st_facebook"></span>
@@ -95,6 +57,34 @@
         stWidget.init();
     </script>
     ##http://forums.sharethis.com/topic.php?id=3277&replies=1#post-6679
+    
+
+    <%doc>
+    ## Single share this link
+    
+    ##<span class="st_email"></span>
+    <span class="st_facebook"></span>
+    <span class="st_twitter"></span>
+    
+    ##<span class="st_facebook_custom"></span>
+    ##<span class="st_twitter_custom"></span>
+
+    ##<span class="st_sharethis" displayText="ShareThis"></span>
+    <span class="st_sharethis_custom icon icon_share" title="ShareThis"></span>
+    ##<img src="/styles/web/icons16/share-icon.png"> 
+
+    <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript">
+        stLight.options({
+            publisher  : '${config['api_key.sharethis']}' ,
+            onhover    : false ,
+            st_url     : '${url}' ,
+            ## the .replace is to stop ' in javascript breaking things, can be depricated when validator removes ' from names
+            st_title   : '${title.replace("'","")}' ,
+            displayText: '${description.replace("'","")}',
+        });
+    </script>
+    </%doc>
     
     <%doc>
     ## Old depricated ShareThis API - waste of my time!

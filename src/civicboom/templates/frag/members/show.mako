@@ -150,7 +150,7 @@
         ${h.secure_link(h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect'), _('Join this _group'), css_class="icon icon_join"  )}
     % endif
     
-    % if 'invite' in self.actions: ##and c.logged_in_persona and c.logged_in_persona.__type__=='group':
+    % if 'invite' in self.actions and c.logged_in_persona and c.logged_in_persona.__type__=='group':
         ${h.secure_link(h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect'), _('Invite %s to join %s' % (self.name, c.logged_in_persona['name']))      , css_class="icon icon_invite")}
     % endif
 </%def>
