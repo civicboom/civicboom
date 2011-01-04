@@ -77,8 +77,14 @@
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/toggle_div.js"></script> <!-- marked for deprication -->
 	<script src="/javascript/cb_frag.js"></script>
+	<!-- Maps (should be loaded on-demand, but frags confuse that -->
+	<script src="/javascript/gears_init.js"></script>
+	<script src="/javascript/geo.js"></script>
+	<script src="/javascript/OpenLayers.js"></script>
+	<script src="/javascript/minimap.js"></script>
 % else:
 	<script src="/javascript/_combined.common.js"></script>
+	<script src="/javascript/_combined.maps.js"></script>
 % endif
 <!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
 <!--[if lt IE 7]>
