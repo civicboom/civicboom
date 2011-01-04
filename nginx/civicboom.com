@@ -30,8 +30,8 @@ server {
 	ssi on;
 
 	# ssl
-	ssl_certificate      /opt/cb/etc/ssl/civicboom.com.crt;
-	ssl_certificate_key  /opt/cb/etc/ssl/civicboom.com.key;
+	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.crt;
+	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
 
 	# gzip
 	gzip on;
