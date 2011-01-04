@@ -4,21 +4,11 @@
 <article>
 
 <div>
-<span>Mapping:</span>
-
-<p>Map data -
-	<a href="http://www.openstreetmap.org/">OpenStreetMap</a> -
-	CC-By-SA -
-	&copy; OSM Contributors
-
-<p>Map interaction - 
-	<a href="http://www.openlayers.org/">OpenLayers</a> -
-	BSD -
-	&copy; 2005-2010 OpenLayers Contributors.
-</div>
-
-<div>
 <span>Front End:</span>
+
+<p>Web server / cache -
+	<a href="http://nginx.org/">nginx</a> -
+	BSD
 
 <p>Media Player -
 	<a href="http://flv-player.net/players/maxi/">FLV Player Maxi</a> -
@@ -31,11 +21,75 @@
 
 <p>Rich Text Editor -
 	<a href="http://tinymce.moxiecode.com/">TinyMCE</a> -
-	LGPL
+	LGPLv2
 
 <p>Feature detection -
 	<a href="http://www.modernizr.com/">Modernizr</a> -
 	MIT
+</div>
+
+<div>
+<span>Back End:</span>
+
+<p>Web Framework -
+	<a href="http://pylonshq.com/">Pylons</a> -
+	BSD -
+	&copy; Ben Bangert, James Gardner, Philip Jenvey and contributors.
+<!--
+python-webhelpers - BSD
+python-imaging    - BSD-like?
+python-boto       - BSD-like? + amazon disclaimer
+python-authkit    - MIT
+python-memcache   - python v2
+python-nose       - LGPLv2  [aggregated]
+python-coverage   - BSDv2   [aggregated]
+python-dns        - CNRI OPEN SOURCE GPL-COMPATIBLE LICENSE AGREEMENT
+python-recaptcha  - MIT
+python-decorator  - 2-clause BSD
+python-lxml       - BSD + Python (plus some other bits which are explicitly marked as aggregated not linked)
+python-pybabel    - BSD-like?
+-->
+
+<p>DB Framework -
+	<a href="http://pylonshq.com/">SQLAlchemy</a> -
+	BSD -
+	&copy; Michael Bayer and contributors.
+<!--
+python-psycopg2   - GPL + exception that proprietary use is allowed as long as
+                    we only use the published psycopg API and don't touch the
+					internals
+-->
+
+<p>Database -
+	<a href="http://www.postgresql.org/">PostgreSQL</a> -
+	<a href="http://www.postgresql.org/about/licence">PostgreSQL License</a> [MIT/BSD-like] -
+	&copy; The PostgreSQL Global Development Group
+
+<p>Cache -
+	<a href="http://www.memcache.org/">Memcache</a> / <a href="http://memcachedb.org/">MemcacheDB</a> -
+	BSD
+
+</div>
+
+<div>
+<span>Mapping:</span>
+
+<p>Map data -
+	<a href="http://www.openstreetmap.org/">OpenStreetMap</a> -
+	CC-By-SA -
+	&copy; OSM Contributors
+
+<p>Map interaction -
+	<a href="http://www.openlayers.org/">OpenLayers</a> -
+	BSD -
+	&copy; OpenLayers Contributors.
+
+<!-- only used internally, our codebases are separate
+<p>Map data loading -
+	<a href="http://www.openlayers.org/">osm2pgsql</a> -
+	GPLv2 -
+	&copy; Jon Burgess, Artem Pavlenko
+-->
 </div>
 
 <div>
