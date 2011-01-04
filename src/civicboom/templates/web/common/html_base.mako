@@ -38,17 +38,23 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui.stars.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/layout.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/icons_avatar_thumbnails.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/avatars.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/icons.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/account.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/content_editor.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/messages.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/menuh.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/simplemodal.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/gradients.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/frags.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/frag_content.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/frag_member.css" />
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif
@@ -63,19 +69,33 @@
 	<script src="/javascript/jquery-1.4.2.js"></script>
 	<script src="/javascript/jquery.ui.js"></script>
 	<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+	<script src="/javascript/jquery.scrollTo.js"></script>
+	<script src="/javascript/jquery.simplemodal.1.4.1.min.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
 	<script src="/javascript/jquery.html5-0.0.1.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
-	<script src="/javascript/toggle_div.js"></script>
+	<script src="/javascript/toggle_div.js"></script> <!-- marked for deprication -->
+	<script src="/javascript/cb_frag.js"></script>
 % else:
 	<script src="/javascript/_combined.common.js"></script>
 % endif
 <!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
-<!--[if lt IE 9]>
+<!--[if lt IE 7]>
 	<script src="/javascript/IE9.js"></script>
 <![endif]-->
 
+	<%doc>
+	<!-- sharethis -->
+	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+	<script type="text/javascript">
+		stLight.options({
+			publisher:'${config['api_key.sharethis']}' ,
+			onhover  : false ,
+			embeds   : true ,
+		});
+	</script>
+	</%doc>
 
 ##--------------------------------------------------------
 ## Head Links - child templates can add scripts & styles
@@ -88,24 +108,55 @@ ${self.head_links()}
 ## Style Overrides
 ##-------------------
 % if hasattr(next, 'styleOverides'):
-    <style type="text/css" >
-    ${next.styleOverides()}
-    </style>
+	<style type="text/css" >
+	${next.styleOverides()}
+	</style>
 % endif
 
+##----------------------------------------------------------------------------
+## Google Analitics - ASync array setup
+##----------------------------------------------------------------------------
+## http://code.google.com/apis/analytics/docs/tracking/asyncUsageGuide.html#SplitSnippet
+## As this is just an array there is no harm in declaring it here
+	<!-- Google Analytics -->
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', '${config['api_key.google.analytics']}']);
+		_gaq.push(['_trackPageview']);
+	</script>
+
+##----------------------------------------------------------------------------
+## JQuery SimpleModel Setup
+##----------------------------------------------------------------------------
+## http://www.ericmmartin.com/projects/simplemodal/
+	<script type="text/javascript">
+		$.extend($.modal.defaults, {
+			closeClass: "simplemodalClose" ,
+			##closeHTML : "<a href='#' class='icon icon_close' style='float: right;' title='Close'></a>" ,
+			##opacity   : 60 ,
+			onOpen: function (dialog) {
+				dialog.overlay.fadeIn('slow');
+				dialog.container.fadeIn('slow');
+				dialog.data.fadeIn('slow');
+			} ,
+			onClose: function (dialog) {
+				dialog.overlay.fadeOut('slow');
+				dialog.container.fadeOut('slow');
+				dialog.data.fadeOut('slow', function () {$.modal.close();});
+			},
+		});
+	</script>
 
 ##----------------------------------------------------------------------------
 ## Development Javascript Debug Console Output
 ##----------------------------------------------------------------------------
 % if config['development_mode']:
 	<!-- Development Mode - Enabale Console Logging in client browser (recomend firebug) but could instate YUI log console here -->
-    
-	## YUI 3
-    <script src="/javascript/yui-min.js"></script>
-    <script>
-        Y = new YUI({ debug : true }); //var 
-        Y.log("YUI Debugger Enabled", "info",  "civicboom");
-    </script>
+	<script src="/javascript/yui-min.js"></script>
+	<script>
+		Y = new YUI({ debug : true }); //var 
+		Y.log("YUI Debugger Enabled", "info",  "civicboom");
+	</script>
 % endif
 </head>
 
@@ -116,15 +167,22 @@ ${self.head_links()}
 ## This displays the message and then removes it from the session once it is displayed the first time
 ## See "Definitive Guide to Pylons" pg 191 for details
 <%def name="flash_message()">
-    <div id="flash_message" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
-% if c.result['message'] != "":
+	<div id="flash_message" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
+	% if c.result['message'] != "":
 	<!-- if we have a flash message in the session, activate it -->
 	<script type="text/javascript">
 		<% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
 		$(function() {flash_message(${json_message|n});});
-    </script>
-% endif
+	</script>
+	% endif
+	<!-- redirect all AJAX errors to use the flash message system -->
+	<script type="text/javascript">
+		$('body').ajaxError(function(event, request, settings, exception) {
+			flash_message(jQuery.parseJSON(request.responseText));
+		});
+	</script>
 </%def>
+
 
 ##------------------------------------------------------------------------------
 ## HTML Body

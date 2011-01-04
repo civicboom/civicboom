@@ -2,35 +2,28 @@
 /* Content                                                                    */
 /*----------------------------------------------------------------------------*/
 
-.content_form {
-  width: 450px;
-  /*border: 1px solid black;
-  padding: 1em;
-  margin: 1em;*/
-  font-size: 86%;
-  background-color: white;
-}
-.content_form .form_instuctions {
+
+.frag_content_edit .form_instuctions {
   font-size: 86%;
   color: #555;
 }
 
-.content_form fieldset        {
+.frag_content_edit fieldset        {
   border-top: 1px solid #888;
   margin-top: 1em;
 }
-.content_form fieldset legend {
+.frag_content_edit fieldset legend {
   font-size: 120%;
   font-weight: bold;
   color: #666;
   margin-bottom: 0.5em;
 }
 
-.content_form fieldset fieldset        {
+.frag_content_edit fieldset fieldset {
   border-top: 1px solid #aaa;
   margin-top: 0.5em;
 }
-.content_form fieldset fieldset legend {
+.frag_content_edit fieldset fieldset legend {
   font-size: 110%;
   color: #999;
   margin-bottom: 0.25em;
@@ -42,11 +35,11 @@
 /* Media                                                                      */
 /*----------------------------------------------------------------------------*/
  
-.media_files li {
+.frag_content_edit .media_files li {
   padding: 0.5em;
 }
 
-.media_preview {
+.frag_content_edit .media_preview {
   display: inline-block;
   vertical-align: top;
   /* float: left; */
@@ -60,15 +53,15 @@
   border: 1px solid #666;
 }
 
-.media_preview_none {
+.frag_content_edit .media_preview_none {
   text-align: center;
 }
 
-.media_fields {
+.frag_content_edit .media_fields {
   display: inline-block;
   width: 350px;
 }
-.media_fields input {
+.frag_content_edit .media_fields input {
   width: 65%;
   vertical-align: top;
 }
@@ -79,24 +72,23 @@
 }
 */
 
-.media_fields label {
+.frag_content_edit .media_fields label {
   display: inline-block;
   width: 19%;
   overflow: hidden;
 }
 
-.media_actions {
+.frag_content_edit .media_actions {
   display: inline-block;
   vertical-align: top;
 }
 
-.media_fields .form_file_remove {
-  background: #798fa3 url('../design09/icons.png') no-repeat scroll 0 -180px;
+.frag_content_edit .media_fields .file_remove {
   width: 16px;
   height: 16px;
   border: 0;
   color: transparent;
 }
-.media_fields .form_file_upload {
+.frag_content_edit .media_fields .form_file_upload {
   width: auto;
 }
