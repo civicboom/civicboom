@@ -50,7 +50,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />
+	<!--<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />-->
 	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/frags.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/frag_content.css" />
