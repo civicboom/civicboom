@@ -264,7 +264,14 @@
 </%doc>
     
 <%def name="actions_specific()">
-    ${h.secure_link(url('new_content', parent_id=self.id), value="", title=_("Respond to this"), css_class="icon icon_respond")}
+    ${h.secure_link(
+        h.args_to_tuple('new_content', parent_id=self.id) ,
+        value="" ,
+        title=_("Respond to this") ,
+        css_class="icon icon_respond" ,
+        json_form_complete_actions = h.literal("""Y.log(data); alert('stop');""")  , #cb_frag($(this), '/contents//edit.frag');
+    )}
+    
     <span class="separtor"></span>
     % if 'accept' in self.actions:
         ${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id), value=h.literal("<span class='icon icon_accept'?</span>%s") % _('Accept') ) }
