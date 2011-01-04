@@ -17,13 +17,28 @@
     overflow: hidden;
 
     vertical-align: top;
+
+	position: relative;
 }
 
 .thumbnail_small {font-size: 20px;}
 .thumbnail_large {font-size: 80px;}
 
 .thumbnail .img {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+
     widlth: 1em;
     height: 1em;
-}
 
+	/*
+	 * an image inside a div can overflow the div's rounded corners;
+	 * as a hack, give the image rounded corners too (works in chrome,
+	 * at least; FF3.6 doesn't support images with rounded corners,
+	 * FF4 does, not sure about other browsers)
+	 */
+	border-radius        : 0.075em;
+	-moz-border-radius   : 0.075em;
+	-webkit-border-radius: 0.075em;
+}
