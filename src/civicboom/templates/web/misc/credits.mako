@@ -4,48 +4,113 @@
 <article>
 
 <div>
-<span>Map data:</span>
-<a href="http://www.openstreetmap.org/">OpenStreetMap</a> (CC-By-SA OSM Contributors)
+<span>Front End:</span>
+
+<p>Web server / cache -
+	<a href="http://nginx.org/">nginx</a> -
+	BSD
+
+<p>Media Player -
+	<a href="http://flv-player.net/players/maxi/">FLV Player Maxi</a> -
+	CC-By-SA -
+	&copy; Neolao
+
+<p>Javascript niceness -
+	<a href="http://jquery.com/">jQuery</a> -
+	MIT
+
+<p>Rich Text Editor -
+	<a href="http://tinymce.moxiecode.com/">TinyMCE</a> -
+	LGPLv2
+
+<p>Feature detection -
+	<a href="http://www.modernizr.com/">Modernizr</a> -
+	MIT
 </div>
 
 <div>
-<span>Map interaction:</span>
-<a href="http://www.openlayers.org/">OpenLayers</a> (BSD)
-<p>&copy; 2005-2010 OpenLayers Contributors.
+<span>Back End:</span>
+
+<p>Web Framework -
+	<a href="http://pylonshq.com/">Pylons</a> -
+	BSD -
+	&copy; Ben Bangert, James Gardner, Philip Jenvey and contributors.
+<!--
+python-webhelpers - BSD
+python-imaging    - BSD-like?
+python-boto       - BSD-like? + amazon disclaimer
+python-authkit    - MIT
+python-memcache   - python v2
+python-nose       - LGPLv2  [aggregated]
+python-coverage   - BSDv2   [aggregated]
+python-dns        - CNRI OPEN SOURCE GPL-COMPATIBLE LICENSE AGREEMENT
+python-recaptcha  - MIT
+python-decorator  - 2-clause BSD
+python-lxml       - BSD + Python (plus some other bits which are explicitly marked as aggregated not linked)
+python-pybabel    - BSD-like?
+-->
+
+<p>DB Framework -
+	<a href="http://pylonshq.com/">SQLAlchemy</a> -
+	BSD -
+	&copy; Michael Bayer and contributors.
+<!--
+python-psycopg2   - GPL + exception that proprietary use is allowed as long as
+                    we only use the published psycopg API and don't touch the
+					internals
+					Newer versions are standard LGPLv3
+-->
+
+<p>Database -
+	<a href="http://www.postgresql.org/">PostgreSQL</a> -
+	<a href="http://www.postgresql.org/about/licence">PostgreSQL License</a> [MIT/BSD-like] -
+	&copy; The PostgreSQL Global Development Group
+
+<p>Cache -
+	<a href="http://www.memcache.org/">Memcache</a> / <a href="http://memcachedb.org/">MemcacheDB</a> -
+	BSD
+
 </div>
 
 <div>
-<span>Media Player:</span>
-<a href="http://flv-player.net/players/maxi/">FLV Player Maxi</a> (CC-By-SA Neolao)
-</div>
+<span>Mapping:</span>
 
-<div>
-<span>Javascript niceness:</span>
-<a href="http://jquery.com/">jQuery</a> (MIT)
-</div>
+<p>Map data -
+	<a href="http://www.openstreetmap.org/">OpenStreetMap</a> -
+	CC-By-SA -
+	&copy; OSM Contributors
 
-<div>
-<span>Rich Text Editor</span>
-<a href="http://tinymce.moxiecode.com/">TinyMCE</a> (GNU)
-</div>
+<p>Map interaction -
+	<a href="http://www.openlayers.org/">OpenLayers</a> -
+	BSD -
+	&copy; OpenLayers Contributors.
 
-<div>
-<span>Feature detection:</span>
-<a href="http://www.modernizr.com/">Modernizr</a> (MIT)
+<!-- only used internally, our codebases are separate
+<p>Map data loading -
+	<a href="http://www.openlayers.org/">osm2pgsql</a> -
+	GPLv2 -
+	&copy; Jon Burgess, Artem Pavlenko
+-->
 </div>
 
 <div>
 <span>Images:</span>
-KM Avatar <a href="">Kent Messanger Group</a> (&copy;, fair use)
-<br>Mobiletest Avatar <a href="http://www.flickr.com/photos/johnkarakatsanis/4805593861/">John.Karakatsanis</a> (CC-BY-SA)
+
+<p>KM Avatar -
+	<a href="">Kent Messanger Group</a> -
+	&copy;, fair use
+
+<p>Mobiletest Avatar -
+	<a href="http://www.flickr.com/photos/johnkarakatsanis/4805593861/">John.Karakatsanis</a> -
+	CC-BY-SA
 </div>
 
 <div>
 <span>Icons:</span>
-pixel-mixer
- <a href="http://pixel-mixer.com/">pixel-mixer.com</a>
- http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html
- http://www.iconarchive.com/category/application/basic-2-icons-by-pixelmixer.html
+
+<p><a href="http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html">Set 1</a>, <a href="http://www.iconarchive.com/category/application/basic-2-icons-by-pixelmixer.html">Set 2</a> -
+	<a href="http://pixel-mixer.com/">pixel-mixer</a> -
+	Commercial use allowed with link to pixel-mixer.com
 </div>
 
 

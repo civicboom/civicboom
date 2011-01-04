@@ -4,7 +4,7 @@
 server_names_hash_bucket_size 64;
 
 # cache_path needs to be set globally, it doesn't work per-server :(
-proxy_cache_path /tmp/osm-cache   levels=2:2 keys_zone=osm:1g inactive=30d;
+proxy_cache_path /tmp/osm-cache   levels=2:2 keys_zone=osm:500m inactive=30d;
 proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:50m inactive=3m;
 proxy_temp_path  /tmp/nginx-temp;
 
@@ -30,8 +30,8 @@ server {
 	ssi on;
 
 	# ssl
-	ssl_certificate      /opt/cb/etc/ssl/civicboom.com.crt;
-	ssl_certificate_key  /opt/cb/etc/ssl/civicboom.com.key;
+	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.crt;
+	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
 
 	# gzip
 	gzip on;
