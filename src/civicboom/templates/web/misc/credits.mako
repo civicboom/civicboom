@@ -58,6 +58,7 @@ python-pybabel    - BSD-like?
 python-psycopg2   - GPL + exception that proprietary use is allowed as long as
                     we only use the published psycopg API and don't touch the
 					internals
+					Newer versions are standard LGPLv3
 -->
 
 <p>Database -
