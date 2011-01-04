@@ -7,5 +7,5 @@
 <a href="${h.url(controller='misc', action='credits')}">${_("Credits")}</a>
 
 <span class="copyright">
-	${_("Website & 2009-2011 (c) Indiconews Ltd, articles (c) their respective authors")}
+	${_(u"Website © 2009-2011 Indiconews Ltd, articles © their respective authors")}
 </span>
