@@ -104,7 +104,6 @@ HEADER #search .search_input {
 	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
-	padding-left: 4px;
 }
 HEADER #search .button {
 	position: absolute;
@@ -112,6 +111,9 @@ HEADER #search .button {
 	right: 0px;
 	width: 30px;
 	height: 100%;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 }
 
 HEADER .menuh-container {

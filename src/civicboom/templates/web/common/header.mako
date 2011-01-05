@@ -1,6 +1,6 @@
 <div id="search">
 	<form action="${h.url('contents')}" method='GET'>
-		<input type="search" class="search_input" name="query" placeholder="${_("Search")}" />
+		<input type="search" class="search_input" name="query" placeholder=" ${_("Search")}" />
 		<input type="submit" class="button gradient" value="GO">
 	</form>
 </div>
