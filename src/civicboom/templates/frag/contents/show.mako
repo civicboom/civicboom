@@ -172,6 +172,7 @@
         %>
         <p>
         ${loc.minimap(
+            name=h.uniqueish_id("map", content['id']),
             width="100%", height="200px",
             lat = lat,
             lon = lon,
