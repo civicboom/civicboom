@@ -142,11 +142,10 @@ HEADER .menuh a.top_parent {
 }
 HEADER .menuh LI:hover a.top_parent {
 	border-bottom-left-radius: 0px;
-	-moz-border-bottom-left-radius: 0px;
 	-webkit-border-bottom-left-radius: 0px;
 	border-bottom-right-radius: 0px;
-	-moz-border-bottom-right-radius: 0px;
 	-webkit-border-bottom-right-radius: 0px;
+	-moz-border-radius: 10px 10px 0px 0px;
 	border-top: 1px solid #555;
 	border-left: 1px solid #555;
 	border-right: 1px solid #555;
@@ -159,11 +158,10 @@ HEADER .menuh a.sub_option {
 HEADER .menuh LI:last-child>a.sub_option {
 	border-bottom: 1px solid #555;
 	border-bottom-left-radius: 10px;
-	-moz-border-bottom-left-radius: 10px;
 	-webkit-border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
-	-moz-border-bottom-right-radius: 10px;
 	-webkit-border-bottom-right-radius: 10px;
+	-moz-border-radius: 0px 0px 10px 10px;
 }
 HEADER .menuh INPUT {
 	width: 100%;
