@@ -84,7 +84,7 @@ HEADER {
 .u-anon HEADER {top: 0px;}
 .u-user HEADER {top: 17px;}
 
-HEADER #logo IMG {padding: 16px;}
+HEADER #logo IMG {padding: 16px; padding-top: 12px;}
 HEADER #logo SPAN {display: none;}
 
 HEADER #search {
@@ -123,6 +123,7 @@ HEADER .menuh-container {
 }
 HEADER .menuh>UL {
 	margin-left: 16px;
+	height: 20px;
 }
 HEADER .menuh a {
 	font-family: sans;
