@@ -30,6 +30,7 @@ import urllib
 import hashlib
 import json
 import copy
+import time
 
 def get_captcha(lang='en', theme='red'):
     """
@@ -118,6 +119,16 @@ def url_from_widget(*args, **kargs):
             #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
             #    kargs[var] = getattr(c,var)
     return url(*args,**kargs)
+
+def uniqueish_id(*args):
+    """
+    A unique ID for use in HTML, for example giving two minimap()s different IDs
+
+    For a better unique ID, use python's UUID/GUID libraries
+    """
+    largs = list(args)
+    largs.append(str(int(time.time() * 1e9)))
+    return "_".join([str(a) for a in largs])
 
 def objs_to_linked_formatted_dict(**kargs):
     """
