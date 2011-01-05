@@ -84,6 +84,9 @@ function cb_frag(current_element, url, list_type) {
 				//frag_loading.toggle(scroll_duration);
 				
 				cb_frag_remove_sibblings(frag_loading);
+
+				// remove the "opacity" setting, as IE doesn't antialias filtered stuff
+				frag_loading.animate({opacity: null}, 0);
 				
 				frag_loading = null;
 				
