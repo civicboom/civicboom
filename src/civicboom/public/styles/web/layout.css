@@ -54,7 +54,7 @@ NAV .settings {
 
 NAV .login, NAV .logout {
 	position: absolute;
-	right: 32px;
+	right: 16px;
 	width: 68px;
 	height: 15px;
 }
@@ -89,25 +89,29 @@ HEADER #logo SPAN {display: none;}
 
 HEADER #search {
 	position: absolute;
-	top: 2px;
-	right: 128px;
-	background: url("/styles/web/searchbk.png");
-	width: 165px;
-	height: 58px;
+	top: 22px;
+	right: 16px;
+	width: 150px;
+	height: 20px;
 }
 HEADER #search .search_input {
 	position: absolute;
-	top: 23px;
-	left: 5px;
-	width: 103px;
-	height: 13px;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
 	border: none;
-	font-size: 12px;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	padding-left: 4px;
 }
-HEADER #search .search_button {
+HEADER #search .button {
 	position: absolute;
-	top: 6px;
-	left: 111px;
+	top: 0px;
+	right: 0px;
+	width: 30px;
+	height: 100%;
 }
 
 HEADER .menuh-container {
