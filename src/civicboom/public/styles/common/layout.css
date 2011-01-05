@@ -25,14 +25,6 @@ HTML, BODY {
 	/* background: #DDD; */
 }
 
-/*
- * common styles
- */
-.gradscroll {
-	overflow: scroll;
-	background: url("/styles/web/grad-top.png") repeat-x top left, url("/styles/web/grad-bottom.png") repeat-x bottom left;
-}
-
 
 /*----------------------------------------------------------------------------*/
 /* Table - Zebra Colours                                                      */
