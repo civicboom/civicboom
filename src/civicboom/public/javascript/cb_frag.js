@@ -9,7 +9,9 @@ var fragment_containers_id            = '#frag_containers';
 var fragment_container_class          = 'frag_container';  // container for a full JSON object 500px
 var fragment_bridge_class             = 'frag_bridge';     // container for a bridge list 250px (half width)
 var fragment_source_class             = 'frag_source';
-var fragment_div_loading_placeholder  = '<p class="loading_placeholder">loading</p>';
+var fragment_div_loading_placeholder  = '<div class="title_bar gradient">Loading...</div>'+
+                                        '<div class="action_bar"></div>'+
+                                        '<p class="loading_placeholder">loading</p>';
 var scroll_duration = 600;
 
 var frag_count      = 0;
