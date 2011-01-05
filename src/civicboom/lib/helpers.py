@@ -262,10 +262,7 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         
 
     # Keep track of number of secure links created so they can all have unique hash's
-    if not hasattr(c, 'secure_link_count'):
-        c.secure_link_count = 0
-    c.secure_link_count = c.secure_link_count + 1
-    hhash = hashlib.md5(str([href, value, vals, c.secure_link_count])).hexdigest()[0:6]
+    hhash = hashlib.md5(uniqueish_id(href, value, vals)).hexdigest()[0:6]
 
     # Create Form --------
     values = ''
