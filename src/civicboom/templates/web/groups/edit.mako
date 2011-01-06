@@ -37,12 +37,18 @@
 
 
     
-    <fieldset><legend>Group</legend>
+    <fieldset>
+		<!--<legend>Group</legend>-->
         
-		<table class='form'>
+		<table class='form formpage border'>
+			<tr class='gradient'>
+				<th colspan="2">
+					Group Settings
+				</th>
+			</tr>
 			<tr>
 				<td>
-        Groupname:
+        Groupname
 				</td>
 				<td>
         % if d['action'] == "create":
@@ -55,7 +61,7 @@
 			</tr>
 			<tr>
 				<td>
-        Full Name:
+        Full Name
 				</td>
 				<td>
 		<input type="text" name="name" value="${get_param('name')}"/>
@@ -64,7 +70,7 @@
 			</tr>
 			<tr>
 				<td>
-        Description:
+        Description
 				</td>
 				<td>
 		<input type="text" name="description" value="${get_param('description')}"/>
@@ -73,7 +79,7 @@
 			</tr>
 			<tr>
 				<td>
-        ${_("default member role")}
+        ${_("Default member role")}
 				</td>
 				<td>
         ${h.html.select('default_role', get_param('default_role'), group_member_roles.enums)}
@@ -109,7 +115,11 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<input type="submit" name="submit" value="${_('Submit')}"/>
+				% if d['action']=='edit':
+					<input type="submit" name="submit" value="${_('Save Group')}" class="button gradient" />
+				% else:
+					<input type="submit" name="submit" value="${_('Create Group')}" class="button gradient" />
+				% endif
 				</td>
 			</tr>
         </table>

@@ -3,10 +3,18 @@
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4974b8', endColorstr='#3a4a97'); /* for IE */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #4974b8), color-stop(0.81, #3a4a97)); /* for webkit browsers */
 	background: -moz-linear-gradient(top, #4974b8, #3a4a97 81%); /* for firefox 3.6+ */
+	color: white;
 }
-.button.gradient:active {
+.gradient.button:active {
 	background: #4974b8; /* for non-css3 browsers */
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3a4a97', endColorstr='#4974b8'); /* for IE */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, #3a4a97), color-stop(1.0, #4974b8)); /* for webkit browsers */
 	background: -moz-linear-gradient(top, #3a4a97 19%, #4974b8); /* for firefox 3.6+ */
+}
+.border {
+	border: 0.2em solid #4A73B8;
+	border-top: none;
+	border-radius        : 0.25em;
+	-moz-border-radius   : 0.25em;
+	-webkit-border-radius: 0.25em;
 }
