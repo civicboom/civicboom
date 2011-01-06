@@ -57,7 +57,7 @@ class MembersController(BaseController):
         if term:
             result = result.filter(or_(Member.name.ilike("%"+term+"%"), Member.username.ilike("%"+term+"%")))
     
-        return action_ok(data={"members": [m.to_dict(**kwargs) for m in result]})
+        return action_ok(data={"list": [m.to_dict(**kwargs) for m in result]})
 
 
     @web
