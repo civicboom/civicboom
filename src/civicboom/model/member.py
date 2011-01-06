@@ -4,7 +4,7 @@ from civicboom.model.message import Message
 from civicboom.lib.misc import update_dict
 
 from sqlalchemy import Column, ForeignKey
-from sqlalchemy import Unicode, UnicodeText, String
+from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
@@ -102,6 +102,10 @@ CREATE TRIGGER update_follower_count
 """).execute_at('after-create', Follow.__table__)
 
 
+def _generate_salt():
+    import os
+    return os.urandom(256)
+
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
@@ -118,6 +122,7 @@ class Member(Base):
     utc_offset      = Column(Integer(),      nullable=False, default=0)
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
+    salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
 
     num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
@@ -329,7 +334,48 @@ class Member(Base):
         if self.payment_account and self.payment_account.type:
             return self.payment_account.type
         return 'free'
-    
+
+    def check_action_key(self, action, key):
+        """
+        Check that this member was the one who generated the key to
+        the specified action.
+        """
+        return (key == self.get_action_key(action))
+
+    def get_action_key(self, action):
+        """
+        Generate a key, anyone with this key is allowed to perform
+        $action on behalf of this member.
+
+        The key is the hash of (member.id, action, member.salt).
+        Member.id is included because while the salt *should* be
+        unique, the ID *is* unique by definition.
+
+        The salt should be kept secret by the server, not even shown
+        to the user who owns it -- thus when presented with a key,
+        we can guarantee that this server is the one who generated
+        it. If the key for a user/action pair is only given to that
+        user after they've authenticated, then we can guarantee that
+        anyone with that key has been given it by the user.
+
+
+        Usage:
+        ~~~~~~
+        Alice:
+            key = alice.get_action_key('read article 42')
+            bob.send_message("Hey bob, if you want to read article 42, "+
+                             "tell the system I gave you this key: "+key)
+
+        Bob:
+            api.content.show(42, auth=(alice, key))
+
+        System:
+            wanted_content = get_content(42)
+            claimed_user = get_member(alice)
+            if key == claimed_user.get_action_key('read article '+wanted_content.id):
+                print wanted_content
+        """
+        return hashlib.sha1(str(self.id)+action+self.salt).hexdigest()
 
 GeometryDDL(Member.__table__)
 

@@ -1,8 +1,9 @@
 COMMON=\
-	Modernizr.js \
+	Modernizr.js swfobject.js \
 	jquery-1.4.2.js jquery.ui.js \
 	jquery.html5-0.0.1.js jquery.ui.stars-3.0.1.js \
-	misc.js toggle_div.js url_encode.js
+	jquery.scrollTo.js jquery.simplemodal.1.4.1.min.js jquery.uploadify.v2.1.4.js \
+	misc.js toggle_div.js url_encode.js cb_frag.js
 
 MAPS=\
 	gears_init.js geo.js \

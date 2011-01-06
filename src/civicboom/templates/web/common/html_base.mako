@@ -47,6 +47,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/menuh.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/simplemodal.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/gradients.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/uploadify.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
@@ -65,6 +66,7 @@
 % if config['development_mode']:
 	<!-- Browser bug fixes -->
 	<script src="/javascript/Modernizr.js"></script>
+	<script src="/javascript/swfobject.js"></script>
 	<!-- jQuery -->
 	<script src="/javascript/jquery-1.4.2.js"></script>
 	<script src="/javascript/jquery.ui.js"></script>
@@ -72,19 +74,14 @@
 	<script src="/javascript/jquery.scrollTo.js"></script>
 	<script src="/javascript/jquery.simplemodal.1.4.1.min.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
 	<script src="/javascript/jquery.html5-0.0.1.js"></script>
+	<script src="/javascript/jquery.uploadify.v2.1.4.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/toggle_div.js"></script> <!-- marked for deprication -->
 	<script src="/javascript/cb_frag.js"></script>
-	<!-- Maps (should be loaded on-demand, but frags confuse that -->
-	<script src="/javascript/gears_init.js"></script>
-	<script src="/javascript/geo.js"></script>
-	<script src="/javascript/OpenLayers.js"></script>
-	<script src="/javascript/minimap.js"></script>
 % else:
 	<script src="/javascript/_combined.common.js"></script>
-	<script src="/javascript/_combined.maps.js"></script>
 % endif
 <!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
 <!--[if lt IE 7]>

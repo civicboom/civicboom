@@ -15,6 +15,11 @@
 	CC-By-SA -
 	&copy; Neolao
 
+<p>File Uploader -
+	<a href="http://www.uploadify.com">Uploadify</a> -
+	MIT -
+	&copy; Ronnie Garcia, Travis Nickels
+
 <p>Javascript niceness -
 	<a href="http://jquery.com/">jQuery</a> -
 	MIT

@@ -251,12 +251,31 @@
             
             <!-- Add media javascript - visible to JS enabled borwsers -->
             <li class="hide_if_nojs">
-                Javascript/Flash uploader goes here
-                ##% if c.content.id:
-                ##<li>
-                    ##${YUI.file_uploader()}
-                ##</li>
-                ##% endif
+				<input id="file_upload" name="file_upload" type="file" />
+				<script type="text/javascript">
+				$(document).ready(function() {
+						$('#file_upload').uploadify({
+							'uploader'   : '/flash/uploadify.swf',
+							'script'     : '/media/upload_media',
+							'scriptData' : {
+								'content_id': ${self.id},
+								'member_id' : ${c.logged_in_persona.id},
+								'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % c.content.id)}'
+							},
+							'cancelImg'  : '/images/cancel.png',
+							'folder'     : '/uploads',
+							'multi'      : true,
+							'auto'       : true,
+							'fileDataName':'file_data',
+							'removeCompleted' : false,
+							'onComplete'  : function(event, ID, fileObj, response, data) {
+								//alert('There are ' + data.fileCount + ' files remaining in the queue.');
+								// refresh the file list
+								Y.log("refresh the list now");
+							}
+							});
+						});
+				</script>
             </li>
             
             <!-- Add media non javascript version - hidden if JS enabled -->
