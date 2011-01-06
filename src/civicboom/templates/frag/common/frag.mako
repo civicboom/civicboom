@@ -99,9 +99,9 @@
             ${next.actions_common()}
             % endif
 
-            % if self.attr.auto_georss_link:
-                ${georss_link()}
-            % endif
+            ##% if self.attr.auto_georss_link:
+            ##    ${georss_link()}
+            ##% endif
         </div>        
     </div>
     

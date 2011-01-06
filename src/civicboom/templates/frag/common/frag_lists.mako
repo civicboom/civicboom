@@ -65,6 +65,7 @@
         if isinstance(href, tuple):
             href_args   = href[0]
             href_kwargs = href[1]
+            href_kwargs['private'] = True # AllanC - short term hack - infuture this will only be needed on private profile pages, it may help caching if it's not included every time, future investigation needed as private=true may disabled the public cache
             href      = url(*href_args, **href_kwargs)
             href_kwargs['format'] = 'frag'
             href_frag = url(*href_args, **href_kwargs)

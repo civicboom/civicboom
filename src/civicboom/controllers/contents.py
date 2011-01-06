@@ -216,7 +216,7 @@ class ContentsController(BaseController):
         #          TODO: we need maybe a separte call, or something to identify a private call
         logged_in_creator = False
         if 'creator' in kwargs and c.logged_in_persona:
-            kwargs['creator'] = _normalize_member(kwargs['creator']) # normalize creator
+            kwargs['creator'] = _normalize_member(kwargs['creator'], always_return_id=True) # normalize creator
             if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
         
@@ -242,9 +242,11 @@ class ContentsController(BaseController):
         
         # Build Search
         results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*'). #Content.__type__!='draft'
-        results = results.filter(and_(Content.__type__!='comment', Content.visible==True)) 
-        if 'force_public_only' in kwargs or not logged_in_creator:
-            results = results.filter(Content.private==False)
+        results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
+        if 'private' in kwargs and logged_in_creator:
+            pass # allow private content
+        else:
+            results = results.filter(Content.private==False) # public content only
         if 'creator' in kwargs['include_fields']:
             results = results.options(joinedload('creator'))
         if 'attachments' in kwargs['include_fields']:

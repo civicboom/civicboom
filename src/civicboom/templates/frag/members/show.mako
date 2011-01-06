@@ -174,6 +174,10 @@
         <a class="icon icon_settings" href="${url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>
     % endif
     <a class="icon icon_widget"  href="${url(controller='misc', action='widget_preview')}" title="${_('Widget Preview')}"><span>${_('Widget Preview')}</span></a>
+    
+    % if self.member.get('location_current') or self.member.get('location_home'):
+        ${parent.georss_link()}
+    % endif
 </%def>
 
 
