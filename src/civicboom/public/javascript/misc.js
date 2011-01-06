@@ -19,6 +19,7 @@ function getHTML(url, get_complete_function) {
 }
 
 // Requires toggle_div.js functions
+// MARKED FOR DEPRICATION
 function setSingleCSSClass(element_to_style, class_to_set, parent_id) {
     try {
         // Find all occurances of this class

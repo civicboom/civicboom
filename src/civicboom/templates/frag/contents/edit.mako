@@ -343,7 +343,7 @@
 
         <div id="content_type_additional_fields">
             ## See CSS for "active" class
-            <div id="type_assignment_extras" class="hideable">
+            <div id="type_assignment_extras" class="hideable, additional_fields">
                 <script>
                     $(function() {$( "#datepicker1" ).datepicker();});
                     $(function() {$( "#datepicker2" ).datepicker();});
@@ -395,15 +395,17 @@
                     }
                 }
             }
-
+            
             function highlightType(type) {
-                // Select radio button
-                setCheckedValue(document.forms['content'].elements['target_type'], type);
-                // reset all radio buttons to unselected
-                setSingleCSSClass(document.getElementById('type_'+type          ), 'section_selected', 'type_selection'                );
-                setSingleCSSClass(document.getElementById('type_'+type+'_extras'), 'active'          , 'content_type_additional_fields');
+                setCheckedValue(document.forms['content'].elements['target_type'], type); // Select radio button
+                
+                $('#type_selection .section_selectable').removeClass('section_selected');
+                $('#type_'+type                        ).addClass(   'section_selected');
+                
+                $('#content_type_additional_fields .additional_fields').hide();
+                $('#type_'+type+'_extras').show();
             }
-
+            
             highlightType('${selected_type}'); //Set the default highlighted item to be the content type
         </script>
 

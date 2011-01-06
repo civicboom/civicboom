@@ -268,6 +268,7 @@
     
 <%def name="actions_specific()">
 
+    % if self.content['type'] != 'draft':
     ${h.secure_link(
         h.args_to_tuple('new_content', parent_id=self.id) ,
         value="" ,
@@ -275,6 +276,7 @@
         css_class="icon icon_respond" ,
         json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
     )}
+    % endif
     
     <span class="separtor"></span>
     % if 'accept' in self.actions:
