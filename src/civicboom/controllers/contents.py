@@ -275,10 +275,13 @@ class ContentsController(BaseController):
         we create a blank object and redirect to "edit-existing" mode
         """
         #url_for('new_content')
+        create_ = ContentsController().create(**kwargs)
         
         # AllanC TODO - needs restructure - see create
-        content_id = ContentsController().create(**kwargs)['data']['id']
-        return redirect(url('edit_content', id=content_id))
+        if c.format=='html' or c.format=='redirect':
+            return redirect(url('edit_content', id=create_['data']['id']))
+        
+        return create_
 
 
     @web
@@ -524,7 +527,7 @@ class ContentsController(BaseController):
         if not content_redirect:
             content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
         
-        if c.format == 'redirect':
+        if c.format == 'redirect' or c.format == 'html':
             return redirect(content_redirect)
         
         return action_ok(_("_content updated"))

@@ -1,5 +1,5 @@
 from pylons import session, url, request, response, config, tmpl_context as c
-from pylons.controllers.util import redirect
+from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
 from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
 #from civicboom.lib.base import *
@@ -37,6 +37,12 @@ def multidict_to_dict(multidict):
 #-------------------------------------------------------------------------------
 # Redirect Referer
 #-------------------------------------------------------------------------------
+
+def redirect(*args, **kwargs):
+    if c.format == "html" or c.format == "redirect":
+        redirect_pylons(*args, **kwargs)
+    else:
+        raise Exception('unable to perform redirect with format=%s' % c.format)
 
 def current_referer(protocol=None):
     #AllanC TODO - needs to enforce prosocol change - for login actions
