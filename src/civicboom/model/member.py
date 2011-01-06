@@ -220,10 +220,16 @@ class Member(Base):
         action_list = []
         #if self.can_message(member):
         #    action_list.append('editable')
+        if self == member:
+            action_list.append('settings')
+            action_list.append('logout')
         if self.is_follower(member):
             action_list.append('unfollow')
         else:
-            action_list.append('follow')
+            if self != member:
+                action_list.append('follow')
+        if self != member:
+            action_list.append('message')
         return action_list
 
     def send_message(self, m, delay_commit=False):
@@ -452,7 +458,7 @@ class Group(Member):
         action_list = Member.action_list_for(self, member)
         membership = self.get_membership(member)
         join = self.can_join(member, membership)
-        if join=="join" or join=="request":
+        if member and (join=="join" or join=="request"):
             action_list.append(join)
         else:
             if self.is_admin(member, membership):

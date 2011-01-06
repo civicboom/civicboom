@@ -25,7 +25,7 @@ def cb_resource(mapper, single, plural, **kwargs):
     mapper.connect('new_'+single, '/'+plural+'/new',                           controller=plural, action='new',    conditions=dict(method=['GET']))
 
     mapper.connect('formatted_'+single, '/'+plural+'/{id}.{format}',           controller=plural, action='show',   conditions=dict(method=['GET']))
-    mapper.connect(single, '/'+plural+'/{id}',                                 controller=plural, action='show',   conditions=dict(method=['GET']))
+    mapper.connect(single, '/'+plural+'/{id}',                                 controller=plural, action='show',  conditions=dict(method=['GET']))
 
     mapper.connect('/'+plural+'/{id}.{format}',                                controller=plural, action='update', conditions=dict(method=['PUT']))
     mapper.connect('/'+plural+'/{id}',                                         controller=plural, action='update', conditions=dict(method=['PUT']))
@@ -41,6 +41,7 @@ def cb_resource(mapper, single, plural, **kwargs):
     # civicboom extra: foo_actions controller for separate /foo/42/activate methods
     #mapper.connect('formatted_'+single+'_action', '/'+plural+'/{id}/{action}.{format}',  controller=single+'_actions')
     mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions') #, conditions=dict(method=['POST'])
+    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}'         ,     controller=single+'_actions')
     #mapper.connect(single+'_list',   '/'+plural+'/{id}/{action}.{format}',     controller=single+'_lists',   format="html") #, conditions=dict(method=['GET'])
 
 

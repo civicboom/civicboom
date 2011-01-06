@@ -1,68 +1,26 @@
-<%inherit file="/web/common/html_base.mako"/>
-<%namespace name="cl" file="/web/common/content_list.mako"/>
-<%namespace name="loc" file="../common/location.mako"/>
+<%inherit file="/web/common/frag_container.mako"/>
+
+<%!
+    frag_container_css_class  = 'frag_bridge' # bit of a hack here to get the search box half width to start with
+%>
+
 
 ##------------------------------------------------------------------------------
 ## Title - Override
 ##------------------------------------------------------------------------------
-<%def name="title()">${_("Search")}</%def>
 
-##------------------------------------------------------------------------------
-## Style Overrides
-##------------------------------------------------------------------------------
-<%def name="styleOverides()">
-#content_list {
-	margin: auto;
-}
-#content_list TD {
-	border: 1px solid black;
-	padding: 4px;
-	vertical-align: top;
-}
-TD.avatar {
-	text-align: center;
-	width: 80px;
-}
-IMG.avatar {
-	border: 1px solid #888;
-}
-</%def>
-
+<%def name="title()">${_('Search')}</%def>
 
 ##------------------------------------------------------------------------------
 ## Body
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	<form action="${url('contents')}" method="GET">
-		<fieldset>
-			<legend>Search</legend>
-			<br>Text: <input type="text" name="query">
-			<br>Location: ${loc.location_picker()}
-			<br><input type="submit" value="Search">
-		</fieldset>
-	</form>
+	<%include file="/frag/contents/search.mako"/>
+</%def>
 
-	% if len(d['list']) > 0:
-		<br><a href="${url.current(
-			format='rss',
-			query=request.params.get('query'),
-			location=request.params.get('location')
-		)}">${_("RSS feed of results")}</a>
-
-		<br><a href="${url(
-			controller='misc',
-			action='georss',
-			location=request.params.get('location'),
-			feed=url.current(
-				format='rss',
-				query=request.params.get('query'),
-				location=request.params.get('location')
-			)
-		)}">${_("View results on map")}</a>
-
-		<p>${cl.content_list(d['list'])}
-	% else:
-		##'${d['term']}' did not match any articles
-	% endif
+<%def name="body2()">
+    <div id="frag__" class="frag_container frag_bridge">
+    <%include file="/frag/contents/index.mako"/>
+    </div>
 </%def>

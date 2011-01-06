@@ -1,13 +1,13 @@
 <%inherit file="/web/common/html_base.mako"/>
 
-<%namespace name="private_profile" file="/web/profile/index.mako"/>
+##<%namespace name="private_profile" file="/web/profile/index.mako"/>
 <%namespace name="loc" file="/web/common/location.mako"/>
 
 ##------------------------------------------------------------------------------
 ## Side Col
 ##------------------------------------------------------------------------------
 
-<%def name="col_left()">${private_profile.col_left()}</%def>
+##<%def name="col_left()">${private_profile.col_left()}</%def>
 
 
 ##------------------------------------------------------------------------------
@@ -15,6 +15,10 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
+
+    <a href="${url(controller='settings', action='messages')}">${_("Edit Notifications")}</a>
+    <br/>
+
     ${h.form(h.url('setting', id='None'), method='PUT', multipart=True)}
     <%
         # Setup Settings groups

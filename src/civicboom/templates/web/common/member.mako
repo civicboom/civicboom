@@ -15,7 +15,23 @@
 ## Member Avatar - display a member as text/image + link to profile + follow actions
 ##------------------------------------------------------------------------------
 
-<%def name="avatar(member, show_avatar=True, show_name=False, show_follow_button=False, show_join_button=False, show_invite_button=False, class_=None)">
+<%def name="avatar(member, class_='', js_link_to_frag=True, **kwargs)">
+    <div class="thumbnail ${class_}">
+        <%
+            if js_link_to_frag:
+                js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('member', id=member['username'], format='frag'))
+            else:
+                js_link_to_frag = ''
+        %>
+        <a href="${h.url('member', id=member['username'])}" title="${member['name']}" ${js_link_to_frag}>
+          <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+        </a>
+    </div>
+</%def>
+
+## Old Avatar render for refence
+<%doc>
+ <%def name="avatar(member, show_avatar=True, show_name=False, show_follow_button=False, show_join_button=False, show_invite_button=False, class_=None)">
     <div class="${class_} avatar">
 		% if show_avatar:
 		<div class="clipper">
@@ -68,7 +84,7 @@
         % endif
     </div>
 </%def>
-
+</%doc>
 
 ##------------------------------------------------------------------------------
 ## Member List

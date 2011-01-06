@@ -1,0 +1,46 @@
+/*-------------------------- Frag Content Cols--------------------------------*/
+#frag_containers .frag_container .frag_content .frag_left_col {
+  width: 66%;
+  float: left;
+}
+#frag_containers .frag_container .frag_content .frag_right_col {
+  width: 33%;
+  float: right;
+}
+
+/*-------------------------- Content -----------------------------------------*/
+
+
+
+/*----------------------------Content Comments--------------------------------*/
+
+#frag_containers .frag_container .frag_content .comments h2 {
+    font-size: 150%;
+}
+
+#frag_containers .frag_container .frag_content .comments td {
+    vertical-align: top;
+    color: #444;
+    padding-bottom: 1em;
+}
+
+#frag_containers .frag_container .frag_content .comments .comment_textarea {
+    width: 100%;
+}
+
+#frag_containers .frag_container .frag_content .comment_avatar {
+
+}
+#frag_containers .frag_container .frag_content .comment {
+    padding-left  : 1em;
+}
+#frag_containers .frag_container .frag_content .comment .comment_by {
+    font-weight: bold;
+    margin-bottom: 0.25em;
+}
+#frag_containers .frag_container .frag_content .comment .comment_content        {font-size:  88%; line-height: 1em;}
+/*
+ could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
+#frag_containers .frag_container .frag_content .comment .comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
+#frag_containers .frag_container .frag_content .comment .comment_content:after  {font-size: 120%; font-weight: bold; content: close-quote;}
+*/

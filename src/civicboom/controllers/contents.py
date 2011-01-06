@@ -158,7 +158,6 @@ def _init_search_filters():
         return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
         
 
-    
     search_filters = {
         'id'         : append_search_id ,
         'creator'    : append_search_creator ,
@@ -178,8 +177,8 @@ list_filters = {
     'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null())) ,
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
-    'articles'            : lambda results: results.filter(Content.__type__=='article') ,
     'drafts'              : lambda results: results.filter(Content.__type__=='draft') ,
+    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type=='none')),
     'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type!='none')),
 }
 
@@ -208,11 +207,13 @@ class ContentsController(BaseController):
         @param * (see common list return controls)
         @param limit
         @param offset
+        @param include_fields "attachments" for media
         """
         # url('contents')
         
         # Permissions
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
+        #          TODO: we need maybe a separte call, or something to identify a private call
         logged_in_creator = False
         if 'creator' in kwargs and c.logged_in_persona:
             kwargs['creator'] = _normalize_member(kwargs['creator']) # normalize creator
@@ -231,10 +232,13 @@ class ContentsController(BaseController):
         if 'creator' not in kwargs:
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
-        if 'list_type' not in kwargs:
+        
+        # RSS feeds now need to specifically request attachments
+        # AllanC - WARNING! this breaks casheability! need to consider the use case for RSS with media to be added manually with the request
+        #if 'list_type' not in kwargs:
             #kwargs['list_type'] = 'default'
-            if c.format == 'rss':                       # Default RSS to list_with_media
-                kwargs['include_fields'] += ',attachments'
+        #    if c.format == 'rss':                       # Default RSS to list_with_media
+        #        kwargs['include_fields'] += ',attachments'
         
         # Build Search
         results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*'). #Content.__type__!='draft'
@@ -243,6 +247,8 @@ class ContentsController(BaseController):
             results = results.filter(Content.private==False)
         if 'creator' in kwargs['include_fields']:
             results = results.options(joinedload('creator'))
+        if 'attachments' in kwargs['include_fields']:
+            results = results.options(joinedload('attachments'))
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
         if 'list' in kwargs:
@@ -600,5 +606,4 @@ class ContentsController(BaseController):
         #c.content                  = form_to_content(kwargs, c.content)
         c.content_media_upload_key = get_content_media_upload_key(c.content)
         
-        return action_ok() # Automatically finds edit template
-
+        return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template

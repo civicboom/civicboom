@@ -45,6 +45,7 @@ class Media(Base):
             'original_url' : None ,
             'thumbnail_url': None ,
             'filesize'     : None ,
+            'hash'         : None ,
         },
     })
     __to_dict__.update({

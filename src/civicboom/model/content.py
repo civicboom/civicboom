@@ -38,6 +38,8 @@ class Boom(Base):
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
     timestamp     = Column(DateTime(),   nullable=False, default=func.now())
+    #member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
+    #content       = relationship("Content", primaryjoin='Content.id==Boom.content_id')
 
 class Rating(Base):
     __tablename__ = "map_ratings"
@@ -125,6 +127,7 @@ class Content(Base):
             'url'          : None ,
             'thumbnail_url': None ,
             'creation_date': None ,
+            'update_date'  : None ,
             'location'     : lambda content: content.location_string ,
             'num_responses': None ,
             'num_comments' : None ,
@@ -148,7 +151,7 @@ class Content(Base):
             #'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
             'license'           : lambda content: content.license.to_dict() , 
     })
-    del __to_dict__['full']['content_short']
+    #del __to_dict__['full']['content_short'] # This is still useful for aggrigation so it stays in by default
     del __to_dict__['full']['parent_id']
     del __to_dict__['full']['creator_id']
     del __to_dict__['full']['license_id']
@@ -186,6 +189,8 @@ class Content(Base):
             action_list.append('edit')
         if self.viewable_by(member):
             action_list.append('view')
+        if self.private==False and self.creator != member:
+            action_list.append('flag')
         return action_list
 
     def editable_by(self, member):
@@ -327,6 +332,13 @@ class DraftContent(Content):
     target_type     = Column(_content_type, nullable=True, default=None)
     #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
 
+    __to_dict__ = copy.deepcopy(Content.__to_dict__)
+    _extra_draft_fields = {
+            'target_type'     : None ,
+    }
+    __to_dict__['default'     ].update(_extra_draft_fields)
+    __to_dict__['full'        ].update(_extra_draft_fields)
+
     def __init__(self):
         self.private = True
 
@@ -376,8 +388,9 @@ class UserVisibleContent(Content):
                 action_list.append('approve')
                 action_list.append('seen')
                 action_list.append('dissasociate')
-        #if has not boomed before:
-        action_list.append('boom')
+        #AllanC: TODO - if has not boomed before - check boom list:
+        if self.creator != member:
+            action_list.append('boom')
         return action_list
 
     def is_parent_owner(self, member):

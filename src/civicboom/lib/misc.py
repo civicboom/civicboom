@@ -61,6 +61,8 @@ def obj_to_dict(obj, dict_fields):
         d[field_name] = field_value
     return d
 
+def args_to_tuple(*args, **kwargs):
+    return (args, kwargs)
 
 
 

@@ -10,9 +10,9 @@
     <ul>
         <li><a href="#" class="top_parent">${_("Create")}</a>
         <ul>
-            <li>${h.secure_link("/contents/new?target_type=assignment", _("Assignment"), css_class="sub_option")}</li>
-            <li>${h.secure_link("/contents/new?target_type=article", _("Article"), css_class="sub_option")}</li>
-            <li><a href="/groups/new" class="sub_option">${_("Group")}</a></li>
+            <li>${h.secure_link(h.url('new_content', target_type='assignment'), _("_assignment").capitalize(), css_class="sub_option")}</li>
+            <li>${h.secure_link(h.url('new_content', target_type='article'   ), _("_article").capitalize()   , css_class="sub_option")}</li>
+            <li><a href="${h.url('new_group')}" class="sub_option">${_("Group")}</a></li>
         </ul>
         </li>
     </ul>
@@ -20,7 +20,7 @@
     <ul>
         <li><a href="#" class="top_parent">${_("Explore")}</a>
         <ul>
-            <li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="${_("Quick Search")}"></form></li>
+            <!--<li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="${_("Quick Search")}"></form></li>-->
             <li><a href="/contents" class="sub_option">${_("Advanced Search")}</a></li>
 % if c.logged_in_persona:
             <li><a href="/feeds" class="parent">${_("News Feeds")}</a>
@@ -55,7 +55,7 @@
 
 <h1 id="logo">
 	<a href='/'>
-		<img src='/styles/web/logo.png' alt='${_("_site_name")}' width="217" height="58"/>
+		<img src='/styles/web/logo.png' alt='${_("_site_name")}' height="32" width="128" />
 		<span>${_("_site_name")}</span>
 	</a>
 </h1>

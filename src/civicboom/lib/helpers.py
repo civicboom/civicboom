@@ -5,7 +5,7 @@ available to Controllers. This module is available to templates as 'h'.
 """
 
 #from webhelpers.html.tags import checkbox, password
-from webhelpers.pylonslib.secure_form import authentication_token, secure_form as form
+from webhelpers.pylonslib.secure_form import authentication_token, secure_form
 
 from pylons import url, config, app_globals, tmpl_context as c, request
 #from pylons.i18n.translation import _
@@ -14,9 +14,12 @@ from webhelpers.text import truncate
 from webhelpers.html.tags import end_form
 from civicboom.lib.text import strip_html_tags
 
+from civicboom.lib.misc import args_to_tuple
+
 # use relative import so that "import helpers" works
 #from civicboom.lib.text import scan_for_embedable_view_and_autolink
 from text import scan_for_embedable_view_and_autolink
+from web import current_url
 
 import webhelpers.html.tags as html
 
@@ -26,6 +29,7 @@ import re
 import urllib
 import hashlib
 import json
+import copy
 
 def get_captcha(lang='en', theme='red'):
     """
@@ -154,58 +158,123 @@ def get_data_value(field_name, sub_dict_name=None, default_value=''):
 # cant have it8n in helpers ... ****!
 # so I created a dumby _ method ... this needs considering
 # Could be moved to common.mako template?
-def _(s):
-    return s
+#def _(s):
+#    return s
 icon_type_descriptions = {
-    'approved'    : _('approved by parent owner') ,
-    'seen'        : _('parent owner has seen this content') ,
-    'edit_lock'   : _('edit lock') ,
-    'dissacociate': _('parent owner has disassociated this content') ,
-    'group'       : _('group') ,
-    'account_plus': _('plus account') ,
-    'account_corp': _('corporate account') ,
+#    'approved'    : _('approved by parent owner') ,
+#    'seen'        : _('parent owner has seen this content') ,
+#    'edit_lock'   : _('edit lock') ,
+#    'dissacociate': _('parent owner has disassociated this content') ,
+#    'group'       : _('group') ,
+#    'account_plus': _('plus account') ,
+#    'account_corp': _('corporate account') ,
 }
 def icon(icon_type, description=None, class_=''):
     if not description and icon_type in icon_type_descriptions:
         description = icon_type_descriptions[icon_type]
     return HTML.div(HTML.span(description), class_=class_+" icon icon_"+icon_type, title=description)
 
+#-------------------------------------------------------------------------------
+# Secure Form
+#-------------------------------------------------------------------------------
+# If the form is given it's first href arg as a tuple then we can create the URL from the tuple for both JSON and Standard URL's
+def form(*args, **kwargs):
+    href_tuple = None
+    
+    json_form_complete_actions = kwargs.pop('json_form_complete_actions', '')
+    
+    # Look for href as a tuple in the form (args,kwargs)
+    if len(args)>0 and isinstance(args[0], tuple):
+        href_tuple = args[0]
+    if isinstance(kwargs.get('href'), tuple):
+        href_tuple = kwargs['href']
+
+    # if href=tuple then generate 2 URL's from tuple 1.) Standard  2.) JSON    
+    if href_tuple:
+        # generate standard URL
+        href_args   = copy.copy(href_tuple[0])
+        href_kwargs = copy.copy(href_tuple[1])
+        href      = url(*href_args, **href_kwargs)
+        
+        # generate json URL and attach onsubmit event
+        href_kwargs['format']      = 'json'
+        href_json                  = url(*href_args, **href_kwargs)
+        kwargs['onsubmit'] = literal("""
+            $.post(
+                '%(href_json)s',
+                $(this).serialize() ,
+                function(data) {
+                    flash_message(data);
+                    if (data.status == 'ok') {
+                        %(json_form_complete_actions)s
+                    }
+                },
+                'json'
+            );
+            return false;
+        """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions)
+        )
+
+    # put the href generated url back in the right place
+    if len(args)>0 and isinstance(args[0], tuple):
+        args = list(args)
+        args[0] = href
+    if isinstance(kwargs.get('href'), tuple):
+        kwargs['href'] = href
+    
+    return secure_form(*args, **kwargs)
 
 #-------------------------------------------------------------------------------
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST'):
+def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST', json_form_complete_actions=''):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
       - An invisible pretty-looking plain-text link which calls form.submit()
-
+    
+    @param href      - can be supplied as a string or a tuple in the format (args, kwargs), this tuple will then be used to automatically create href_json
+    @param href_json - an optional JSON url to post to can be provided, this will then activate an AJAX call, this is normally set automatically by providing a tuple for href (see above)
+    @param javascript_json_complete_actions - a string of javascript that is activated on a successful AJAX call. Normally used to refresh parts of the page that have been updated from the successful AJAX call.
+    
     Then use javascript to hide the form and show the pretty link
     """
+
+    # Setup Get string href ----
+    # the href could be passed a a tuple of (args,kwargs) for form() to create a JSON version to submit to
+    # we need a text compatable href reguardless
+    href_original = href
+    if isinstance(href, tuple):
+        href = url(*href[0], **href[1])
+        
+
+    # Keep track of number of secure links created so they can all have unique hash's
     if not hasattr(c, 'secure_link_count'):
         c.secure_link_count = 0
     c.secure_link_count = c.secure_link_count + 1
     hhash = hashlib.md5(str([href, value, vals, c.secure_link_count])).hexdigest()[0:6]
 
-    # form version
+    # Create Form --------
     values = ''
     for k, v in vals:
         values = values + HTML.input(type="hidden", name=k, value=v)
     hf = HTML.span(
-        form(href, id="form_"+hhash, method=method) +
+        form(href_original, id="form_"+hhash, method=method, json_form_complete_actions=json_form_complete_actions) +
             values +
-            HTML.input(type="submit", value=value) +
+            HTML.input(type="submit", value=value, name=value) + #AllanC: without the name attribute here the AJAX/JSON does not function, WTF! took me ages to track down :( NOTE: if the name="submit" jQuery wont submit! a known problem!?
         end_form(),
         id='span_'+hhash)
 
-    # link version
+    # Confirm JS -------
     ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
     if confirm_text:
         confirm_text = "confirm('%s')" % confirm_text
     else:
         confirm_text = "true"
-    
+
+    # Styled submit link ------
+    # A standard <A> tag that submits the compatable form (typically used with format='redirect')
     hl = HTML.a(
         value,
         id="link_"+hhash,
@@ -213,13 +282,13 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         href=href,
         class_=css_class,
         title=title,
-        onClick="if("+confirm_text+") {$('#form_"+hhash+"').submit();} return false;"
+        onClick="if (%(confirm_text)s) {$('#form_%(hhash)s').submit();} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
-
-    # form vs link switcher
+    
+    # form vs link switcher (hide the compatable form)
     hs = HTML.script(literal('$("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))
-
-    return HTML.span(hf+hl+hs, class_="secure_link")
+    
+    return HTML.span(hf+hl+hs, class_="secure_link") #+json_submit_script
 
 
 #-------------------------------------------------------------------------------
@@ -250,12 +319,12 @@ def frag_link(id, frag_url, value, title='', css_class=''):
         href    = url.current(**url_kwargs) ,
         class_  = css_class ,
         title   = title ,
-        onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); document.getElementById('%(id)s').innerHTML='<img src=\\\'/images/media_placeholder.gif\\\'>'; $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,
+        onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); $('#%(id)s').html('<img src=\\\'/images/media_placeholder.gif\\\'>'); $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,
     )
     
     return static_link #HTML.span(static_link, class_="frag_link")
 
-def frag_div(id, default_frag_url=None):
+def frag_div(id, default_frag_url=None, class_=None):
     """
     Create an HTML div linked to a fragment
     Look in request query sting to populate the div with a fragment (if viewed staticly)
@@ -268,4 +337,13 @@ def frag_div(id, default_frag_url=None):
         frag_url = request.GET[id]
     if frag_url:
         frag_contents = literal('<!--#include file="%s"-->' % frag_url)
-    return HTML.div(frag_contents, id=id)
+    return HTML.div(frag_contents, id=id, class_=class_)
+
+
+#-------------------------------------------------------------------------------
+# Civicboom Fragment Object HTML Block
+#-------------------------------------------------------------------------------
+
+def cb_frag_link(*args, **kwargs):
+    kwargs['onclick'] = "cb_frag($(this), '%s'); return false;"  % kwargs['href']
+    return HTML.a(*args, **kwargs)

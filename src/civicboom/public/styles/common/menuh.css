@@ -23,13 +23,12 @@
 
 .menuh a.sub_option
 	{
-	border: 1px solid #555;
+	/*border: 1px solid #555;*/
 	}
 		
 .menuh a
 	{
 	text-align: center;
-	background: #FFF;
 	display:block;
 	white-space:nowrap;
 	margin:0;
@@ -59,7 +58,6 @@
 	{
 	/*background-image: url(nav_white.gif);*/
 	background-position: right center;
-	border: 1px solid #555;
 	background-repeat: no-repeat;
 	}
 
