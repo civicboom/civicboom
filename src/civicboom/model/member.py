@@ -4,7 +4,7 @@ from civicboom.model.message import Message
 from civicboom.lib.misc import update_dict
 
 from sqlalchemy import Column, ForeignKey
-from sqlalchemy import Unicode, UnicodeText, String
+from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
@@ -102,6 +102,10 @@ CREATE TRIGGER update_follower_count
 """).execute_at('after-create', Follow.__table__)
 
 
+def _generate_salt():
+    import os
+    return os.urandom(256)
+
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
@@ -118,6 +122,7 @@ class Member(Base):
     utc_offset      = Column(Integer(),      nullable=False, default=0)
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
+    salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
 
     num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
