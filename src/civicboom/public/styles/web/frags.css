@@ -49,9 +49,6 @@
   
   border-bottom: 0.1em solid #4a73b8; /* to match .frag_container */
   
-  background: -webkit-gradient(linear, left bottom, left top, color-stop( 33, rgb(73,116,184)), color-stop(0.1, rgb(58,74,151)));
-  background: -moz-linear-gradient(center bottom, rgb(73,116,184)  33%, rgb(58, 74,151) 100%);
-
   padding: 0.25em;
 }
 

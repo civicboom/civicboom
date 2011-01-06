@@ -55,7 +55,7 @@
     <a class="frag_source" href="${self.attr.frag_url}" style="display: none;">frag source</a>
     ##.current_url()##
     
-    <div class="title_bar">
+    <div class="title_bar gradient">
         <div class="title">
             ## Title
             <span class="icon icon_${self.attr.icon_type}"></span><span class="title_text">${self.attr.title}</span>

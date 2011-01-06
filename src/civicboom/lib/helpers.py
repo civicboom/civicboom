@@ -30,6 +30,7 @@ import urllib
 import hashlib
 import json
 import copy
+import time
 
 def get_captcha(lang='en', theme='red'):
     """
@@ -118,6 +119,16 @@ def url_from_widget(*args, **kargs):
             #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
             #    kargs[var] = getattr(c,var)
     return url(*args,**kargs)
+
+def uniqueish_id(*args):
+    """
+    A unique ID for use in HTML, for example giving two minimap()s different IDs
+
+    For a better unique ID, use python's UUID/GUID libraries
+    """
+    largs = list(args)
+    largs.append(str(int(time.time() * 1e9)))
+    return "_".join([str(a) for a in largs])
 
 def objs_to_linked_formatted_dict(**kargs):
     """
@@ -251,10 +262,7 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         
 
     # Keep track of number of secure links created so they can all have unique hash's
-    if not hasattr(c, 'secure_link_count'):
-        c.secure_link_count = 0
-    c.secure_link_count = c.secure_link_count + 1
-    hhash = hashlib.md5(str([href, value, vals, c.secure_link_count])).hexdigest()[0:6]
+    hhash = hashlib.md5(uniqueish_id(href, value, vals)).hexdigest()[0:6]
 
     # Create Form --------
     values = ''

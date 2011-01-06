@@ -35,7 +35,7 @@
                 <br/>
                 Location: ${loc.location_picker()}
                 <br/>
-                <input type="submit" value="Search"/>
+                <input type="submit" value="Search" class="button gradient"/>
             </fieldset>
         </form>
     </div>
