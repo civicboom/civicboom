@@ -21,8 +21,8 @@
         <li><a href="#" class="top_parent">${_("Explore")}</a>
         <ul>
             <!--<li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="${_("Quick Search")}"></form></li>-->
-            <li><a href="/contents" class="sub_option">${_("Advanced Search")}</a></li>
 % if c.logged_in_persona:
+<!--
             <li><a href="/feeds" class="parent">${_("News Feeds")}</a>
 				<ul>
 					% for f in c.logged_in_persona.feeds:
@@ -31,9 +31,12 @@
 					<li><a href="/feeds/new" class="sub_option">${_("Create New Feed")}</a></li>
 				</ul>
 			</li>
+-->
 % endif
-            <li><a href="/members" class="sub_option">${_("Find People")}</a></li>
-            <li><a href="/groups" class="sub_option">${_("Find Groups")}</a></li>
+            <li><a href="/contents?list=assignments_active" class="sub_option">${_("_Assignments")}</a></li>
+            <li><a href="/contents?list=articles" class="sub_option">${_("_Articles")}</a></li>
+            <li><a href="/members?list=users" class="sub_option">${_("People")}</a></li>
+            <li><a href="/members?list=groups" class="sub_option">${_("Groups")}</a></li>
         </ul>
         </li>
     </ul>
@@ -41,11 +44,11 @@
     <ul>
         <li><a href="#" class="top_parent">${_("Manage")}</a>
         <ul>
-            <li><a href="/profile" class="sub_option">${_("My Profile")}</a></li>
-            <li><a href="/settings" class="sub_option">${_("My Settings")}</a></li>
-            <li><a href="/profile" class="sub_option">${_("My Content")}</a></li>
-            <li><a href="/profile" class="sub_option">${_("My Assignments")}</a></li>
-            <li><a href="/profile" class="sub_option">${_("My Groups")}</a></li>
+            <li><a href="/profile" class="sub_option">${_("Profile")}</a></li>
+            <li><a href="/settings" class="sub_option">${_("Settings")}</a></li>
+            <li><a href="/profile" class="sub_option">${_("Content")}</a></li>
+            <li><a href="/profile" class="sub_option">${_("Assignments")}</a></li>
+            <li><a href="/profile" class="sub_option">${_("Groups")}</a></li>
         </ul>
         </li>
     </ul>

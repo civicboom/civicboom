@@ -201,7 +201,7 @@ else:
 %>
 <body class="c-${c.controller} a-${c.action} u-${u}">
 	${flash_message()}
-	<nav><%include file="navigation.mako"/></nav>
+	<nav class='gradient'><%include file="navigation.mako"/></nav>
 	<header><%include file="header.mako"/></header>
 	<div id="app">
 % if hasattr(next, 'col_left'):

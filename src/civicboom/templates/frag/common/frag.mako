@@ -50,7 +50,7 @@
     ${next.init_vars()}
     % endif
 
-    ## AJAX Fragment refresh (not visable to user)
+    ## AJAX Fragment refresh (not visible to user)
 
     <a class="frag_source" href="${self.attr.frag_url}" style="display: none;">frag source</a>
     ##.current_url()##

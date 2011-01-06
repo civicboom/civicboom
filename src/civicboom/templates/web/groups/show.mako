@@ -7,7 +7,7 @@
 <%def name="body()">
 
     <%
-        from civicboom.model.member import group_member_roles, group_join_mode, group_member_visability, group_content_visability
+        from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
         
         permission_edit        = 'edit'        in d['actions']
         permission_set_role    = 'set_role'    in d['actions']
@@ -28,14 +28,14 @@
     <h2>details</h2>
     <p>full name ${group['name']}</p>
     <p>default_role ${group['default_role']}</p>
-    <p>member_visability ${group['member_visability']}</p>
-    <p>default_content_visability ${group['default_content_visability']}</p>
+    <p>member_visibility ${group['member_visibility']}</p>
+    <p>default_content_visibility ${group['default_content_visibility']}</p>
     <p>join_mode ${group['join_mode']}</p>
     
     
     <h2>Members</h2>
     
-    % if group['member_visability']=="private" and not d['members']:
+    % if group['member_visibility']=="private" and not d['members']:
         <p>members are private</p>
     % else:
         ## members are public
