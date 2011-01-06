@@ -17,32 +17,38 @@ NAV {
 .u-user NAV {height: 16px;}
 
 NAV A {
-	background: url("/styles/web/userbartab.png");
+	background: #EEE;
 	text-align: center;
 	color: black;
 	text-decoration: none;
 
 	position: absolute;
-	top: 0px;
+	top: 1px;
 
 	display: block;
-	width: 71px;
-	height: 16px;
+	width: 92px;
+	height: 14px;
 	font-size: 0.75em;
+
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
 }
 NAV A SPAN {
 	display: none;
 }
 
 NAV .name {left: 32px;}
-NAV .role {left: 103px;}
+NAV .role {left: 128px;}
 
-NAV .messages {left: 192px;}
+NAV .messages {left: 256px;}
 
 NAV .login, NAV .logout {
 	position: absolute;
 	right: 16px;
 	width: 68px;
+}
+NAV .login {
 	height: 15px;
 }
 /*NAV .logout {top: 16px;}*/
