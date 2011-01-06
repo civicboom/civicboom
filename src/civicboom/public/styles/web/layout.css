@@ -11,11 +11,10 @@ NAV {
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	background: url("/styles/web/userbarbk.png");
 	z-index: 2;
 }
 .u-anon NAV {height: 0px;}
-.u-user NAV {height: 17px;}
+.u-user NAV {height: 16px;}
 
 NAV A {
 	background: url("/styles/web/userbartab.png");
@@ -28,7 +27,7 @@ NAV A {
 
 	display: block;
 	width: 71px;
-	height: 17px;
+	height: 16px;
 	font-size: 0.75em;
 }
 NAV A SPAN {
@@ -36,21 +35,9 @@ NAV A SPAN {
 }
 
 NAV .name {left: 32px;}
-NAV .clock {left: 103px;}
-NAV .role {left: 174px;}
+NAV .role {left: 103px;}
 
-NAV .profile {left: 277px;}
-NAV .groups {left: 348px;}
-NAV .assignments {left: 419px;}
-
-NAV .messages {left: 520px;}
-
-NAV .settings {
-	right: 32px;
-
-	width: 68px;
-	background: url("/styles/web/userbarsettings.png");
-}
+NAV .messages {left: 192px;}
 
 NAV .login, NAV .logout {
 	position: absolute;
@@ -58,7 +45,7 @@ NAV .login, NAV .logout {
 	width: 68px;
 	height: 15px;
 }
-NAV .logout {top: 17px;}
+/*NAV .logout {top: 16px;}*/
 
 NAV .persona_select img {
     max-width: 40px;
@@ -82,7 +69,7 @@ HEADER {
 	z-index: 1;
 }
 .u-anon HEADER {top: 0px;}
-.u-user HEADER {top: 17px;}
+.u-user HEADER {top: 16px;}
 
 HEADER #logo IMG {padding: 16px; padding-top: 12px;}
 HEADER #logo SPAN {display: none;}
@@ -153,7 +140,8 @@ HEADER .menuh LI:hover a.top_parent {
 	border-left: 1px solid #555;
 	border-right: 1px solid #555;
 }
-HEADER .menuh a.sub_option {
+HEADER .menuh a.sub_option,
+HEADER .menuh a.parent {
 	border-left: 1px solid #555;
 	border-right: 1px solid #555;
 	border-bottom: 1px solid #ddd;

@@ -1,5 +1,4 @@
 % if c.logged_in_persona:
-<a class="settings" href="${url('settings')}"><span>${_("settings")}</span></a>
 
 <div class="persona_select menuh">
     <ul><li>
@@ -19,12 +18,7 @@
     </li><ul>
 </div>
 
-<a class="clock">[Clock]</a>'
 <a class="role">${c.logged_in_persona_role}</a>
-
-<a class="profile" href="${url(controller='profile', action='index')}">${_("profile")}</a>
-<a class="groups"  href="${url(controller='groups', action='index')}">${_("groups")}</a>
-<a class="assignments"  href="${url(controller='profile', action='index')}">${_("assignments")}</a>
 
 <%
 msg_count = c.logged_in_persona.num_unread_messages

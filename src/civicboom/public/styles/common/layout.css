@@ -60,15 +60,18 @@ HTML, BODY {
 .form TD {
 	padding: 2px;
 }
+.form TD INPUT[type="text"],
 .form TD INPUT[type="submit"],
 .form TD SELECT {
 	width: 100%;
 }
-.form TD INPUT[type="text"] {
-	width: 95%;
-}
 .form TD:first-child {
 	text-align: right;
+}
+
+/* HACK because for some reason, input fields in TDs overflow :/  */
+.form.border TD INPUT[type='text'] {
+	width: 97%;
 }
 
 .formpage {
