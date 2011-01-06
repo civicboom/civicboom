@@ -78,7 +78,8 @@ HEADER {
 	position: fixed;
 	left: 0px;
 	right: 0px;
-	height: 64px;
+	/* height: 64px; */
+    height: 48px;
 	z-index: 1;
 }
 .u-anon HEADER {top: 0px;}
@@ -178,14 +179,14 @@ BODY>DIV#app {
 	z-index: 0;
 	margin-bottom: 2em;
 }
-.u-anon #app {margin-top: 64px;}
-.u-user #app {margin-top: 80px;}
+.u-anon #app {margin-top: 48px;}
+.u-user #app {margin-top: 64px;}
 
 /*
  * sometimes the main page is columned
  */
 #col_left, #col_main, #col_right {
-	padding: 0.25em;
+	/* padding: 0.25em; */
 }
 #col_left {
 	float: left;
