@@ -37,7 +37,7 @@ function setSingleCSSClass(element_to_style, class_to_set, parent_id) {
 
 function flash_message(json_message) {
 	if (typeof(json_message) == "string") {json_message = {status:'ok', message:json_message};}
-	if (json_message.message != "") {
+	if (json_message && json_message.message != "") {
 		$("#flash_message").removeClass("status_error").removeClass("status_ok").addClass("status_"+json_message.status);
 		$("#flash_message").text(json_message.message).fadeIn("slow").delay(5000).fadeOut("slow");
 	}

@@ -15,14 +15,16 @@
   
   width      : 500px;
   
-  margin     : 0.25em;
+  /* margin     : 0.25em;*/
   
   /* background-image: url('/styles/common/gradients/vertical_grey_to_transparent.png'); */
   
   border: 0.2em solid #4a73b8;
+  /*
   border-radius        : 0.25em;
   -moz-border-radius   : 0.25em;
   -webkit-border-radius: 0.25em;
+  */
   /*
   box-shadow        : 0.3em 0.3em 0.3em #AAA;
   -moz-box-shadow   : 0.3em 0.3em 0.3em #AAA;
