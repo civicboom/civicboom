@@ -177,6 +177,8 @@ class BaseController(WSGIController):
             try:               overlay_status_message(c.result, json.loads(flash_message_session))
             except ValueError: overlay_status_message(c.result,            flash_message_session )
 
+    def print_controller_status(self):
+        print c
 
     def __call__(self, environ, start_response):
         """Invoke the Controller"""

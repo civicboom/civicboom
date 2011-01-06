@@ -211,7 +211,9 @@ def form(*args, **kwargs):
         # generate json URL and attach onsubmit event
         href_kwargs['format']      = 'json'
         href_json                  = url(*href_args, **href_kwargs)
+        # AllanC - bizzare workaround this one ... current_element=$(this) is needed here because if it is used inside function(data) it does not work ? dont know why.
         kwargs['onsubmit'] = literal("""
+            var current_element = $(this);
             $.post(
                 '%(href_json)s',
                 $(this).serialize() ,
@@ -291,8 +293,9 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         href=href,
         class_=css_class,
         title=title,
-        onClick="if (%(confirm_text)s) {$('#form_%(hhash)s').submit();} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        onClick="if (%(confirm_text)s) {document.getElementById('form_%(hhash)s').onsubmit();} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
+    # $('#form_%(hhash)s').onsubmit();
     
     # form vs link switcher (hide the compatable form)
     hs = HTML.script(literal('$("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))
