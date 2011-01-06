@@ -251,12 +251,22 @@
             
             <!-- Add media javascript - visible to JS enabled borwsers -->
             <li class="hide_if_nojs">
-                Javascript/Flash uploader goes here
-                ##% if c.content.id:
-                ##<li>
-                    ##${YUI.file_uploader()}
-                ##</li>
-                ##% endif
+				<input id="file_upload" name="file_upload" type="file" />
+				<script type="text/javascript">
+				$(document).ready(function() {
+						$('#file_upload').uploadify({
+							'uploader'   : '/flash/uploadify.swf',
+							'script'     : '/media/upload_media',
+							'scriptData' : {'content_id': ${self.id}},
+							'cancelImg'  : '/images/cancel.png',
+							'folder'     : '/uploads',
+							'multi'      : true,
+							'auto'       : true,
+							'fileDataName':'file_data',
+							'removeCompleted' : false
+							});
+						});
+				</script>
             </li>
             
             <!-- Add media non javascript version - hidden if JS enabled -->

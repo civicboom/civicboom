@@ -2,6 +2,13 @@ from civicboom.lib.base import *
 from civicboom.model import Media
 
 from civicboom.lib.civicboom_lib import get_content_media_upload_key
+from civicboom.lib.database.get_cached import get_content
+
+import pprint
+
+# Logging setup
+log      = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 
 
 class MediaController(BaseController):
@@ -10,27 +17,24 @@ class MediaController(BaseController):
     # Upload Media
     #-----------------------------------------------------------------------------
     #@authorize
-    def upload_media(self, id=None):
+    def upload_media(self):
         """
         With javascript/flash additional media can be uploaded individually
-        There is no need to enforce session or cookie for identification because the media upload key should be provided in the URL to identify the user/content
         """
-        
-        if request.environ['REQUEST_METHOD']!='POST': return
-        id = app_globals.memcache.get(str(id))
-        if not id: return
-        
+        user_log.debug("User is attempting to upload media:" + pprint.pformat(request.POST))
         form = request.POST
-        if 'Filedata' in form and form['Filedata'] != "":
-            form_file = form["Filedata"]
+        if 'file_data' in form and 'content_id' in form:
+            form_file = form["file_data"]
+            content = get_content(int(form['content_id']))
+            # FIXME: check content
             media = Media()
             media.load_from_file(tmp_file=form_file, original_name=form_file.filename)
-            #media.content_id = id # This does not work because the database complains about orphan records :(, it feels unnessisary to 
-            get_content(id).attachments.append(media)
-            #Session.add(media) # unneeded with attachments.append(media)
+            content.attachments.append(media)
             Session.commit()
-            update_content(id)
-            #user_log.info("media appended to content #%d" % (id, )) # Update user log # err no user identifyable here
+            user_log.info("Media #%d appended to Content #%d" % (media.id, content.id))
+            return "ok"
+        else:
+            return "missing file_data or content_id"
 
     #-----------------------------------------------------------------------------
     # Get Processing Status
