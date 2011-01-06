@@ -24,8 +24,8 @@ group_member_roles       = Enum("admin", "editor", "contributor", "observer", na
 group_member_status      = Enum("active", "invite", "request",                name="group_member_status")
 
 group_join_mode          = Enum("public", "invite" , "invite_and_request",    name="group_join_mode")
-group_member_visability  = Enum("public", "private",                          name="group_member_visability" )
-group_content_visability = Enum("public", "private",                          name="group_content_visability")
+group_member_visibility  = Enum("public", "private",                          name="group_member_visibility" )
+group_content_visibility = Enum("public", "private",                          name="group_content_visibility")
 
 
 
@@ -187,7 +187,7 @@ class Member(Base):
             #'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
             #'assignments_accepted': lambda member: [a.to_dict() for a in member.assignments_accepted if a.private==False] ,
             #'content_public'      : lambda member: [c.to_dict() for c in member.content_public       ] ,
-            #'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] ,  #AllanC - also duplicated in members_actions.groups ... can this be unifyed
+            #'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visibility=="public"] ,  #AllanC - also duplicated in members_actions.groups ... can this be unifyed
     })
     
 
@@ -415,8 +415,8 @@ class Group(Member):
     __mapper_args__    = {'polymorphic_identity': 'group'}
     id                         = Column(Integer(), ForeignKey('member.id'), primary_key=True)    
     join_mode                  = Column(group_join_mode         , nullable=False, default="invite")
-    member_visability          = Column(group_member_visability , nullable=False, default="public")
-    default_content_visability = Column(group_content_visability, nullable=False, default="public")
+    member_visibility          = Column(group_member_visibility , nullable=False, default="public")
+    default_content_visibility = Column(group_content_visibility, nullable=False, default="public")
     #behaviour                  = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
     default_role               = Column(group_member_roles, nullable=False, default="contributor")
     # AllanC: TODO - num_mumbers postgress trigger needs updating, we only want to show GroupMembership.status=="active" in the count
@@ -436,10 +436,10 @@ class Group(Member):
     __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_group_fields = {
         'join_mode'                 : None ,
-        'member_visability'         : None ,
-        'default_content_visability': None ,
+        'member_visibility'         : None ,
+        'default_content_visibility': None ,
         'default_role'              : None ,
-        'num_members'               : lambda group: group.num_members if group.member_visability=="public" else None ,
+        'num_members'               : lambda group: group.num_members if group.member_visibility=="public" else None ,
     }
     __to_dict__['default'].update(_extra_group_fields)
     __to_dict__['full'   ].update(_extra_group_fields)

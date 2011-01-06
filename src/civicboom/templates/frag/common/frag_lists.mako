@@ -132,7 +132,7 @@
     <td>${member['role']}</td>
     % else:
     <td>
-        <% from civicboom.model.member import group_member_roles, group_join_mode, group_member_visability, group_content_visability %>
+        <% from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility %>
         ## Set Role
         ${h.form(h.args_to_tuple('group_action', id=id, action='set_role', format='redirect'), method='post')}
             <input type="hidden" name="member" value="${member['username']}"/>

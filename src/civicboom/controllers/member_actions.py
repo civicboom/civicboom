@@ -174,7 +174,7 @@ class MemberActionsController(BaseController):
         #if member == c.logged_in_persona:
         #    group_roles = member.groups_roles
         #else: # Else only show public groups
-        group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
+        group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visibility=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
         groups      = self._groups_list_dict(group_roles, **kwargs)
         
         return action_ok(data={'list': groups})
@@ -221,8 +221,8 @@ class MemberActionsController(BaseController):
         # AllanC - HACK ALERT - I needed actions for a member list, so I left c.group so the frag template could look at it - horrible!!!
         c.group = group
         
-        if hasattr(group, 'member_visability'):
-            if group.member_visability=="public" or group.get_membership(c.logged_in_persona):
+        if hasattr(group, 'member_visibility'):
+            if group.member_visibility=="public" or group.get_membership(c.logged_in_persona):
                 return action_ok(data={'list':
                     [update_dict(mr.member.to_dict(),{'role':mr.role, 'status':mr.status}) for mr in group.members_roles]
                 })

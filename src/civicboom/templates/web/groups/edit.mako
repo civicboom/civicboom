@@ -6,7 +6,7 @@
 <%def name="body()">
 
     <%
-        from civicboom.model.member import group_member_roles, group_join_mode, group_member_visability, group_content_visability
+        from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
         
         def get_param(name):
             if 'group' in d and name in d['group']:
@@ -94,8 +94,8 @@
         ${_("Member visibility")}
 				</td>
 				<td>
-        ${h.html.select('member_visability', get_param('member_visability'), group_member_visability.enums)}
-        ${show_error('member_visability')}
+        ${h.html.select('member_visibility', get_param('member_visibility'), group_member_visibility.enums)}
+        ${show_error('member_visibility')}
 				</td>
 			</tr>
 			<tr>
@@ -103,8 +103,8 @@
         ${_("Default content visibility")}
 				</td>
 				<td>
-        ${h.html.select('default_content_visability', get_param('default_content_visability'), group_content_visability.enums)}
-        ${show_error('default_content_visability')}
+        ${h.html.select('default_content_visibility', get_param('default_content_visibility'), group_content_visibility.enums)}
+        ${show_error('default_content_visibility')}
 				</td>
 			</tr>
 			<tr>
