@@ -2,7 +2,7 @@ from civicboom.lib.base import *
 from civicboom.model import Media
 
 from civicboom.lib.civicboom_lib import get_content_media_upload_key
-from civicboom.lib.database.get_cached import get_content
+from civicboom.lib.database.get_cached import get_content, get_member
 
 import pprint
 
@@ -23,10 +23,14 @@ class MediaController(BaseController):
         """
         user_log.debug("User is attempting to upload media:" + pprint.pformat(request.POST))
         form = request.POST
-        if 'file_data' in form and 'content_id' in form:
+        if 'file_data' in form and 'content_id' in form and 'member_id' in form and 'key' in form:
             form_file = form["file_data"]
             content = get_content(int(form['content_id']))
-            # FIXME: check content
+            member  = get_member(int(form['member_id']))
+            if not member.check_action_key("attach to %d" % content.id, form['key']):
+                return "invalid action key"
+            if not content.editable_by(member):
+                return "can't edit this article"
             media = Media()
             media.load_from_file(tmp_file=form_file, original_name=form_file.filename)
             content.attachments.append(media)

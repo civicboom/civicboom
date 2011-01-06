@@ -257,7 +257,11 @@
 						$('#file_upload').uploadify({
 							'uploader'   : '/flash/uploadify.swf',
 							'script'     : '/media/upload_media',
-							'scriptData' : {'content_id': ${self.id}},
+							'scriptData' : {
+								'content_id': ${self.id},
+								'member_id' : ${c.logged_in_persona.id},
+								'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % c.content.id)}'
+							},
 							'cancelImg'  : '/images/cancel.png',
 							'folder'     : '/uploads',
 							'multi'      : true,
