@@ -392,7 +392,7 @@ class User(Member):
     email            = Column(Unicode(250), nullable=True)
     email_unverifyed = Column(Unicode(250), nullable=True)
 
-    login_details    = relationship("UserLogin"       , backref=('user'), cascade="all,delete-orphan")
+    login_details    = relationship("UserLogin", backref=('user'), cascade="all,delete-orphan")
 
     __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_user_fields = {
@@ -572,7 +572,7 @@ class Group(Member):
 class UserLogin(Base):
     __tablename__    = "member_user_login"
     id          = Column(Integer(),    primary_key=True)
-    member_id   = Column(Integer(),    ForeignKey('member.id'))
+    member_id   = Column(Integer(),    ForeignKey('member.id'), index=True)
     # FIXME: need full list; facebook, google, yahoo?
     #type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
     type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time    
@@ -581,7 +581,7 @@ class UserLogin(Base):
 
 class MemberSetting(Base):
     __tablename__    = "member_setting"
-    member_id   = Column(Integer(),     ForeignKey('member.id'), primary_key=True)
+    member_id   = Column(Integer(),     ForeignKey('member.id'), primary_key=True, index=True)
     name        = Column(String(250),   primary_key=True)
     value       = Column(UnicodeText(), nullable=False)
 
