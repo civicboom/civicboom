@@ -21,7 +21,6 @@
         <li><a href="#" class="top_parent">${_("Explore")}</a>
         <ul>
             <!--<li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="${_("Quick Search")}"></form></li>-->
-            <li><a href="/contents" class="sub_option">${_("Advanced Search")}</a></li>
 % if c.logged_in_persona:
             <li><a href="/feeds" class="parent">${_("News Feeds")}</a>
 				<ul>
@@ -32,6 +31,8 @@
 				</ul>
 			</li>
 % endif
+            <li><a href="/contents?list=assignments_active" class="sub_option">${_("Find _Assignments")}</a></li>
+            <li><a href="/contents?list=articles" class="sub_option">${_("Find _Articles")}</a></li>
             <li><a href="/members" class="sub_option">${_("Find People")}</a></li>
             <li><a href="/groups" class="sub_option">${_("Find Groups")}</a></li>
         </ul>
