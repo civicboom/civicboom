@@ -267,7 +267,12 @@
 							'multi'      : true,
 							'auto'       : true,
 							'fileDataName':'file_data',
-							'removeCompleted' : false
+							'removeCompleted' : false,
+							'onComplete'  : function(event, ID, fileObj, response, data) {
+								//alert('There are ' + data.fileCount + ' files remaining in the queue.');
+								// refresh the file list
+								Y.log("refresh the list now");
+							}
 							});
 						});
 				</script>
