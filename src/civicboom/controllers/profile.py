@@ -34,7 +34,7 @@ class ProfileController(BaseController):
         # AllanC - contruct an uber dictionary for the template to render built from data from other controller actions
         data = members_controller.show(id=c.logged_in_persona.id, lists='followers, following, assignments_accepted, boomed_content, members, actions')['data']
         data.update({
-            'content' : member_actions_controller.content(id=c.logged_in_persona.id, limit=None)['data']['list']  ,
+            'content' : member_actions_controller.content(id=c.logged_in_persona.id, limit=None, private=True)['data']['list']  ,
             #'messages': {
             #    'notifications': messages_controller.index(list='notification')['data']['list'] ,
             #    'to'           : messages_controller.index(list='to'          )['data']['list'] ,
