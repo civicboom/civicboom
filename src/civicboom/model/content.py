@@ -651,7 +651,7 @@ class FlaggedContent(Base):
     comment       = Column(UnicodeText(), nullable=True, doc="optional should the user want to add additional details")
 
     def __str__(self):
-        return "%s - %s (%s)" % (self.member.username, self.comment, self.type)
+        return "%s - %s (%s)" % (self.member.username if self.member else "System", self.comment, self.type)
 
 
 
