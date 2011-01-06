@@ -275,12 +275,11 @@ class ContentsController(BaseController):
         we create a blank object and redirect to "edit-existing" mode
         """
         #url_for('new_content')
+        self.print_controller_status()
         create_ = ContentsController().create(**kwargs)
-        
         # AllanC TODO - needs restructure - see create
         if c.format=='html' or c.format=='redirect':
             return redirect(url('edit_content', id=create_['data']['id']))
-        
         return create_
 
 
@@ -338,7 +337,9 @@ class ContentsController(BaseController):
         # AllanC - if the update fails on validation we do not want a ghost record commited
         
         # Use update behaviour to save and commit object
+        
         update_response = self.update(id=content, **kwargs)
+        
         if update_response['status'] != 'ok':
             return update_response
         

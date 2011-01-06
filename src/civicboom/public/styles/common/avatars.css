@@ -43,5 +43,10 @@
 	-webkit-border-radius: 0.075em;
 }
 
+.thumbnail .icons {
+    position: absolute;
+    z-index: 2;
+}
+
 HTML.ie .thumbnail {border: 1px solid #888;}
 HTML.ie .thumbnail.thumbnail_large {border: 2px solid #888;}

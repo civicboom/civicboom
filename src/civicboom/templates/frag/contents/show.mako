@@ -265,37 +265,69 @@
 </%doc>
     
 <%def name="actions_specific()">
+
     ${h.secure_link(
         h.args_to_tuple('new_content', parent_id=self.id) ,
         value="" ,
         title=_("Respond to this") ,
         css_class="icon icon_respond" ,
-        json_form_complete_actions = h.literal("""Y.log(data); alert('stop');""")  , #cb_frag($(this), '/contents//edit.frag');
+        json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
     )}
     
     <span class="separtor"></span>
     % if 'accept' in self.actions:
-        ${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id), value=h.literal("<span class='icon icon_accept'?</span>%s") % _('Accept') ) }
+        ${h.secure_link(
+            h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id),
+            value = h.literal("<span class='icon icon_accept'?</span>%s") % _('Accept')
+        )}
         ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
     % endif
     <span class="separtor"></span>
     % if 'withdraw' in self.actions:
-        ${h.secure_link(h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id), value="", title=_('Withdraw'), css_class="icon icon_withdraw")}
+        ${h.secure_link(
+            h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id),
+            value="",
+            title=_('Withdraw'),
+            css_class="icon icon_withdraw",
+        )}
     % endif
     <span class="separtor"></span>
     % if 'boom' in self.actions:
-        ${h.secure_link(h.args_to_tuple('content_action', action='boom'    , format='redirect', id=self.id), value="", title=_('Boom')    , css_class="icon icon_boom")}
+        ${h.secure_link(
+            h.args_to_tuple('content_action', action='boom'    , format='redirect', id=self.id),
+            value="",
+            title=_('Boom'),
+            css_class="icon icon_boom"
+        )}
     % endif
     
     % if 'approve' in self.actions:
-        ${h.secure_link(h.args_to_tuple('content_action', action='approve'    , format='redirect', id=self.id), _('Approve & Lock'), title=_("Approve and lock this content so no further editing is possible"), css_class="icon icon_approved", confirm_text=_('Once approved this article will be locked and no further changes can be made') )}
+        ${h.secure_link(
+            h.args_to_tuple('content_action', action='approve'    , format='redirect', id=self.id),
+            _('Approve & Lock'),
+            title        = _("Approve and lock this content so no further editing is possible"),
+            css_class    = "icon icon_approved",
+            confirm_text = _('Once approved this article will be locked and no further changes can be made'),
+        )}
     % endif
     % if 'seen' in self.actions:
-        ${h.secure_link(h.args_to_tuple('content_action', action='seen'       , format='redirect', id=self.id), _('Seen, like it')   , title=_("Seen it, like it"),                                              css_class="icon icon_seen" )}
+        ${h.secure_link(
+            h.args_to_tuple('content_action', action='seen'       , format='redirect', id=self.id),
+            _('Seen, like it') ,
+            title=_("Seen it, like it") ,
+            css_class="icon icon_seen" ,
+        )}
     % endif
     % if 'dissasociate' in self.actions:
-        ${h.secure_link(h.args_to_tuple('content_action', action='disasociate', format='redirect', id=self.id), _('Disasociate')   , title=_("Dissacociate your content from this response"),                    css_class="icon icon_dissasociate", confirm_text=_('This content with no longer be associated with your content, are you sure?')   )}
+        ${h.secure_link(
+            h.args_to_tuple('content_action', action='disasociate', format='redirect', id=self.id),
+            _('Disasociate') ,
+            title        = _("Dissacociate your content from this response") ,
+            css_class    = "icon icon_dissasociate" ,
+            confirm_text = _('This content with no longer be associated with your content, are you sure?') ,
+        )}
     % endif
+    
 </%def>        
 
     
@@ -315,7 +347,7 @@
             title=_("Delete"),
             css_class="icon icon_delete",
             confirm_text=_("Are your sure you want to delete this content?"),
-            json_form_complete_actions = "cb_frag_remove($(this));" ,
+            json_form_complete_actions = "cb_frag_remove(current_element);" ,
         )}
     % endif
 
@@ -325,7 +357,7 @@
     
     % if 'flag' in self.actions:
         <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
-    % endif    
+    % endif
 </%def>
 
 
