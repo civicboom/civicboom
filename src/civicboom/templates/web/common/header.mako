@@ -35,8 +35,8 @@
 % endif
             <li><a href="/contents?list=assignments_active" class="sub_option">${_("_Assignments")}</a></li>
             <li><a href="/contents?list=articles" class="sub_option">${_("_Articles")}</a></li>
-            <li><a href="/members" class="sub_option">${_("People")}</a></li>
-            <li><a href="/groups" class="sub_option">${_("Groups")}</a></li>
+            <li><a href="/members?list=users" class="sub_option">${_("People")}</a></li>
+            <li><a href="/members?list=groups" class="sub_option">${_("Groups")}</a></li>
         </ul>
         </li>
     </ul>
