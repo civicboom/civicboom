@@ -1,2 +1,2 @@
-<%namespace name="member_includes"  file="/web/design09/includes/member.mako"/>
+<%namespace name="member_includes"  file="/web/common/member.mako"/>
 ${member_includes.member_list(d['list'])}
