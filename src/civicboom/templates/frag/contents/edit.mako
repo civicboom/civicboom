@@ -61,7 +61,7 @@
         <a href="${h.url('content', id=self.id)}"
            class="icon icon_close_edit"
            title="${_('Discard Changes and view')}"
-           onclick="cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}'); return false;"
+           onclick="if (confirm('${_('View _content without saving your changes?')}')) {cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');} return false;"
         ><span>${_("Discard Changes and view")}</span></a>
         
         ${h.secure_link(

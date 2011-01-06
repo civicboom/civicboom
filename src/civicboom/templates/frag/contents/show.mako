@@ -224,9 +224,11 @@
                 %endif
             </td>
             <td class="comment">
-                ${h.form(h.args_to_tuple('contents', format='redirect'), json_form_complete_actions="cb_frag_reload('%s');" % url("content",id=d['content']['id']))}
+                ${h.form(h.args_to_tuple('contents', format='redirect'), json_form_complete_actions="cb_frag_reload(current_element);" )}
+                    ##% url("content",id=d['content']['id'])
                     ## AllanC: RAAAAAAAAAAAAR!!! cb_frag_reload($(this)); does not work, because $(this) for forms is not a jQuery object?! so we cant use .parents() etc .. WTF!!!
                     ##         so to get round this I just submit a string to the reload ... not happy!
+                    ##         workaround - turns up higher up $(this) works ... so I put it in a variable called current_element that is accessible
                     <input type="hidden" name="parent_id" value="${d['content']['id']}">
                     <input type="hidden" name="title" value="Re: ${d['content']['title']}">
                     <input type="hidden" name="type" value="comment">
@@ -358,6 +360,12 @@
     % if 'flag' in self.actions:
         <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
     % endif
+    
+    % if self.content.get('location'):
+        ${parent.georss_link()}
+    % endif
+
+    
 </%def>
 
 
