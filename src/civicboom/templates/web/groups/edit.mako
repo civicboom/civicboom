@@ -39,47 +39,82 @@
     
     <fieldset><legend>Group</legend>
         
+		<table class='form'>
+			<tr>
+				<td>
         Groupname:
+				</td>
+				<td>
         % if d['action'] == "create":
             <input type="text" name="username" value="${get_param('username')}"/>
             ${show_error('username')}
         % else:
             ${get_param('username')}
         % endif
-        
-        Full Name:<input type="text" name="name" value="${get_param('name')}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+        Full Name:
+				</td>
+				<td>
+		<input type="text" name="name" value="${get_param('name')}"/>
         ${show_error('name')}
-        
-        Description:<input type="text" name="description" value="${get_param('description')}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+        Description:
+				</td>
+				<td>
+		<input type="text" name="description" value="${get_param('description')}"/>
         ${show_error('description')}
-        
-        <br/>
-        
+				</td>
+			</tr>
+			<tr>
+				<td>
         ${_("default member role")}
+				</td>
+				<td>
         ${h.html.select('default_role', get_param('default_role'), group_member_roles.enums)}
         ${show_error('default_role')}
-        
-        <br/>
-        
-        ${_("join mode")}
+				</td>
+			</tr>
+			<tr>
+				<td>
+        ${_("Join mode")}
+				</td>
+				<td>
         ${h.html.select('join_mode', get_param('join_mode'), group_join_mode.enums)}
         ${show_error('join_mode')}
-        
-        <br/>
-        
-        ${_("member visability")}
+				</td>
+			</tr>
+			<tr>
+				<td>
+        ${_("Member visibility")}
+				</td>
+				<td>
         ${h.html.select('member_visability', get_param('member_visability'), group_member_visability.enums)}
         ${show_error('member_visability')}
-        
-        <br/>
-        
-        ${_("default content visability")}
+				</td>
+			</tr>
+			<tr>
+				<td>
+        ${_("Default content visibility")}
+				</td>
+				<td>
         ${h.html.select('default_content_visability', get_param('default_content_visability'), group_content_visability.enums)}
         ${show_error('default_content_visability')}
-        
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="submit" name="submit" value="${_('Submit')}"/>
+				</td>
+			</tr>
+        </table>
     </fieldset>
     
-    <input type="submit" name="submit" value="${_('Submit')}"/>
     ${h.end_form()}
 </%def>
 

@@ -59,7 +59,9 @@ HTML, BODY {
 .form TD {
 	padding: 2px;
 }
-.form TD INPUT[type="submit"] {
+.form TD INPUT[type="submit"],
+.form TD INPUT[type="text"],
+.form TD SELECT {
 	width: 100%;
 }
 
