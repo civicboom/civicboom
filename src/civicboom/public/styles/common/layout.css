@@ -55,12 +55,25 @@ HTML, BODY {
 .form TH {
 	font-weight: bold;
 	text-align: center;
+	padding: 2px;
 }
 .form TD {
 	padding: 2px;
 }
-.form TD INPUT[type="submit"] {
+.form TD INPUT[type="submit"],
+.form TD SELECT {
 	width: 100%;
+}
+.form TD INPUT[type="text"] {
+	width: 95%;
+}
+.form TD:first-child {
+	text-align: right;
+}
+
+.formpage {
+	margin: auto;
+	margin-top: 8px;
 }
 
 

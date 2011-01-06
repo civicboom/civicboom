@@ -249,7 +249,7 @@
             
             <!-- Add media -->
             
-            <!-- Add media javascript - visable to JS enabled borwsers -->
+            <!-- Add media javascript - visible to JS enabled borwsers -->
             <li class="hide_if_nojs">
                 Javascript/Flash uploader goes here
                 ##% if c.content.id:
