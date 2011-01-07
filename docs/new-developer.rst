@@ -1,21 +1,27 @@
 Setting up a developer laptop / desktop / a new server
 ======================================================
 
+Things for a sysadmin to do
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Add unix user to dev server, and add to developers group
+    adduser <username>
+    adduser <username> developers
+- Give them access to the dev website
+    htpasswd /home/code/htpasswd <username>
+- Give them access to redmine
+    https://dev.civicboom.com/redmine/users/new
+
 
 Packages
 ~~~~~~~~
 - packages are in a debian repository https://dev.civicboom.com/packages/
-- cb-repo package will set this up (it will add the repository to apt
-  sources, and add the encryption keys to stop warnings about unsigned
-  packages)
-  - needs installing by hand
-  - download the latest cb-repo*.deb from https://dev.civicboom.com/packages/
-  - for gui, double click; for command line, "gdebi cb-repo*.deb"
-  - apt-get update to fetch the new data
+- go there, download the latest version of cb-repo, install it by hand
 - once the repository has been installed, civicboom packages will be usable
   like any others
+  - "apt-get update" to fetch the latest package list
   - "apt-get install cb-website" will get the code and dependencies
   - "apt-get install cb-devkit" will get things necessary to build packages
+  - "apt-get upgrade" to upgrade all installed parts
 - once the website and dependencies are installed, a developer can clone
   the repository into their home folder and work on it there, running the
   development setup on port 5000
@@ -23,8 +29,8 @@ Packages
 
 Code Repositories
 ~~~~~~~~~~~~~~~~~
-repositories in dev-utils:/home/code/git, symlinked as /git, so they can
-be accessed as ssh://dev.civicboom.com/git/*reponame*
+repositories are in dev:/home/code/git, symlinked as /git, so they can be
+accessed as ssh://dev.civicboom.com/git/*reponame*
 
 - **website**
   - source for the cb-website-* packages
@@ -40,35 +46,31 @@ be accessed as ssh://dev.civicboom.com/git/*reponame*
   - source for the cb-devkit package
 - **buildmaster**
   - buildmaster config files
-- **puppet**
-  - puppet config files
-- **old-website**
-  - the SVN repository, converted to Git, contains all the old stuff for
-    reference
-- **old-android**
-  - the android app, including Eclipse bloat
 
 
 Database schema
 ~~~~~~~~~~~~~~~
-- A blank database needs to be created that the civicboom user has permission
-  to write to
-- ./admin_scripts/init_cbdb takes care of this
-  - it will destroy any existing data
+- A skeleton database needs to be created
+  - in admin_scripts, "./init_cbdb"
+- To populate the database with the base data
+  - in src, "paster setup-app development.ini"
+- To add example data, by testing the system
+  - in src, "nosetests"
+
 
 
 Geolocation data (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - fetch an openstreetmap data file, eg
-  - http://ftp.heanet.ie/mirrors/openstreetmap.org/planet-latest.osm.bz2
-    - full planet, 10GB, decompresses to ~200GB
-  - http://downloads.cloudmade.com/europe/united_kingdom/united_kingdom.osm.bz2
-    - UK only, 350MB
   - http://download.geofabrik.de/osm/europe/great_britain/england/kent.osm.bz2
     - Kent only, 10MB, good for testing
+  - http://downloads.cloudmade.com/europe/united_kingdom/united_kingdom.osm.bz2
+    - UK only, 350MB
+  - http://ftp.heanet.ie/mirrors/openstreetmap.org/planet-latest.osm.bz2
+    - full planet, 10GB, decompresses to ~200GB and takes several days to load
 - place the .osm.bz2 file in admin_scripts/
-- init_cbdb will then notice the data file and load it when it creates
-  the database schema
+- init_cbdb will then notice the data file and load it when it creates the
+  base databases
 
 
 Git Setup
@@ -100,8 +102,6 @@ Recommended tweaks to $REPO/.git/config:
      ui = auto
 
  # Turn off fast-forward merging, so that full history is preserved:
- [branch "master"]
-     mergeoptions = --no-ff
  [branch "develop"]
      mergeoptions = --no-ff
 
