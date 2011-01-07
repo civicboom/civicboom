@@ -282,7 +282,7 @@
     % if 'accept' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id),
-            value = h.literal("<span class='icon icon_accept'?</span>%s") % _('Accept')
+            value = h.literal("<span class='icon icon_accept'></span>%s") % _('Accept')
         )}
         ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
     % endif
