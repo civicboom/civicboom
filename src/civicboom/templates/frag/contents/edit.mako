@@ -104,7 +104,7 @@
 		<%
 		area_id = h.uniqueish_id("content")
 		%>
-		<textarea name="${area_id}" id="${area_id}" style="width:100%; height:300px;">${self.content['content']}</textarea>'
+		<textarea name="${area_id}" id="${area_id}" style="width:100%; height:300px;">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
         <script type="text/javascript" src ="/javascript/tiny_mce/tiny_mce.js"></script>
 		<script type="text/javascript">
