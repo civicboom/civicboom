@@ -15,7 +15,8 @@ Things for a sysadmin to do
 Packages
 ~~~~~~~~
 - packages are in a debian repository https://dev.civicboom.com/packages/
-- go there, download the latest version of cb-repo, install it by hand
+- go there, download the latest cb-repo package, install it by hand, it
+  will take care of the rest of the repository setup
 - once the repository has been installed, civicboom packages will be usable
   like any others
   - "apt-get update" to fetch the latest package list
