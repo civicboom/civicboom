@@ -135,9 +135,9 @@
                     },
                 });
             }
-            ##% if self.content['type'] == "draft":
-            ##var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
-            ##% endif
+            % if self.content['type'] == "draft":
+            var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
+            % endif
 		</script>
 
         % if self.content['type'] == "draft":

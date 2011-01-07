@@ -362,9 +362,9 @@ class ContentsController(BaseController):
         @comment Shish paramaters need filling out
         """
         # url('content', id=ID)
-        print "--KWARGS--"
-        print kwargs
-        print ""
+        #print "--KWARGS--"
+        #print kwargs
+        #print ""
         
         # -- Variables-- -------------------------------------------------------
         content_redirect = None
