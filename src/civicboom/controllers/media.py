@@ -21,7 +21,7 @@ class MediaController(BaseController):
         """
         With javascript/flash additional media can be uploaded individually
         """
-        user_log.debug("User is attempting to upload media:" + pprint.pformat(request.POST))
+        #user_log.debug("User is attempting to upload media:" + pprint.pformat(request.POST))
         form = request.POST
         if 'file_data' in form and 'content_id' in form and 'member_id' in form and 'key' in form:
             form_file = form["file_data"]
@@ -35,7 +35,7 @@ class MediaController(BaseController):
             media.load_from_file(tmp_file=form_file, original_name=form_file.filename)
             content.attachments.append(media)
             Session.commit()
-            user_log.info("Media #%d appended to Content #%d" % (media.id, content.id))
+            user_log.info("Media #%d appended to Content #%d using a key from Member #%d" % (media.id, content.id, member.id))
             return "ok"
         else:
             return "missing file_data or content_id"

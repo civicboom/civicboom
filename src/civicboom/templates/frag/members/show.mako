@@ -44,7 +44,8 @@
     <div class="frag_left_col">
         <div class="frag_col">
         ## Member Details
-        ${member_avatar()}
+		<h1>${self.member['name']} (${self.member['username']})</h1>
+        <br>${member_avatar()}
         
         ## Comunity ----------------------------------------
         

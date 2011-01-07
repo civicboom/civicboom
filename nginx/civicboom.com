@@ -20,8 +20,8 @@ upstream backends {
 
 server {
 	# server stuff
-	listen 80;
-	listen 443 default ssl;
+	listen [::]:80;
+	listen [::]:443 default ssl;
 	server_name .civicboom.com localhost _;
 	access_log /var/log/nginx/civicboom.log;
 	root /opt/cb/share/website/civicboom/public/;
@@ -66,8 +66,8 @@ server {
 # for demo-mode, we need a local "static" server, because demo avatar
 # URLs are hardcoded as http://static.civicboom.com/public/blahblah.png
 server {
-	listen 80;
-	listen 443 ssl;
+	listen [::]:80;
+	listen [::]:443 ssl;
 	server_name static.civicboom.com civicboom-static.s3.amazonaws.com civicboom-static-test.s3.amazonaws.com;
 	root /tmp/warehouse/;
 	location /public/ {
