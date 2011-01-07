@@ -174,6 +174,7 @@
         
         
         ## Tags
+		<!--
         <p>
             <label for="tags">${_("Tags")}</label>
             <%
@@ -184,7 +185,7 @@
             <input id="tags" name="tags" type="text" value="${tag_string}"/>
             ${popup(_("extra_info"))}
         </p>
-
+		-->
     </fieldset>
 </%def>
 
