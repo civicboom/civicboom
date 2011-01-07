@@ -7,7 +7,7 @@ from civicboom.lib.database.get_cached import get_content, update_content, get_l
 from civicboom.model.content           import _content_type as content_types
 
 # Other imports
-from civicboom.lib.civicboom_lib import get_content_media_upload_key, profanity_filter, twitter_global
+from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
 
@@ -216,7 +216,7 @@ class ContentsController(BaseController):
         #          TODO: we need maybe a separte call, or something to identify a private call
         logged_in_creator = False
         if 'creator' in kwargs and c.logged_in_persona:
-            kwargs['creator'] = _normalize_member(kwargs['creator']) # normalize creator
+            kwargs['creator'] = _normalize_member(kwargs['creator'], always_return_id=True) # normalize creator
             if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
         
@@ -242,9 +242,11 @@ class ContentsController(BaseController):
         
         # Build Search
         results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*'). #Content.__type__!='draft'
-        results = results.filter(and_(Content.__type__!='comment', Content.visible==True)) 
-        if 'force_public_only' in kwargs or not logged_in_creator:
-            results = results.filter(Content.private==False)
+        results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
+        if 'private' in kwargs and logged_in_creator:
+            pass # allow private content
+        else:
+            results = results.filter(Content.private==False) # public content only
         if 'creator' in kwargs['include_fields']:
             results = results.options(joinedload('creator'))
         if 'attachments' in kwargs['include_fields']:
@@ -275,10 +277,11 @@ class ContentsController(BaseController):
         we create a blank object and redirect to "edit-existing" mode
         """
         #url_for('new_content')
-        
+        create_ = ContentsController().create(**kwargs)
         # AllanC TODO - needs restructure - see create
-        content_id = ContentsController().create(**kwargs)['data']['id']
-        return redirect(url('edit_content', id=content_id))
+        if c.format=='html' or c.format=='redirect':
+            return redirect(url('edit_content', id=create_['data']['id']))
+        return create_
 
 
     @web
@@ -335,7 +338,9 @@ class ContentsController(BaseController):
         # AllanC - if the update fails on validation we do not want a ghost record commited
         
         # Use update behaviour to save and commit object
+        
         update_response = self.update(id=content, **kwargs)
+        
         if update_response['status'] != 'ok':
             return update_response
         
@@ -357,6 +362,9 @@ class ContentsController(BaseController):
         @comment Shish paramaters need filling out
         """
         # url('content', id=ID)
+        #print "--KWARGS--"
+        #print kwargs
+        #print ""
         
         # -- Variables-- -------------------------------------------------------
         content_redirect = None
@@ -524,7 +532,7 @@ class ContentsController(BaseController):
         if not content_redirect:
             content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
         
-        if c.format == 'redirect':
+        if c.format == 'redirect' or c.format == 'html':
             return redirect(content_redirect)
         
         return action_ok(_("_content updated"))
@@ -604,6 +612,5 @@ class ContentsController(BaseController):
         c.content = _get_content(id, is_editable=True)
         
         #c.content                  = form_to_content(kwargs, c.content)
-        c.content_media_upload_key = get_content_media_upload_key(c.content)
         
         return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template

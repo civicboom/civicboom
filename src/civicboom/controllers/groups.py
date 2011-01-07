@@ -1,6 +1,6 @@
 from civicboom.lib.base import *
 
-from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visability, group_content_visability
+from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
 
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
@@ -27,8 +27,8 @@ class GroupSchema(DefaultSchema):
     description                = formencode.validators.String(max=255, min=2               , not_empty=False)
     default_role               = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
     join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
-    member_visability          = formencode.validators.OneOf(group_member_visability.enums , not_empty=False)
-    default_content_visability = formencode.validators.OneOf(group_content_visability.enums, not_empty=False)
+    member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
+    default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
 
 class CreateGroupSchema(GroupSchema):
     username                   = UniqueUsernameValidator()
@@ -153,8 +153,8 @@ class GroupsController(BaseController):
         group.description                = group_dict['description']
         group.default_role               = group_dict['default_role']
         group.join_mode                  = group_dict['join_mode']
-        group.member_visability          = group_dict['member_visability']
-        group.default_content_visability = group_dict['default_content_visability']
+        group.member_visibility          = group_dict['member_visibility']
+        group.default_content_visibility = group_dict['default_content_visibility']
         
         Session.commit()
         

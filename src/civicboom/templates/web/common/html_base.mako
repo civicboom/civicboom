@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
-<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
-<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
-<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
-<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie ie9"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -38,7 +38,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui.stars.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/layout.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/avatars.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/thumbnails.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/icons.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/account.css" />
@@ -47,10 +47,11 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/menuh.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/simplemodal.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/gradients.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/uploadify.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />
+	<!--<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />-->
 	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/frags.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/frag_content.css" />
@@ -65,6 +66,7 @@
 % if config['development_mode']:
 	<!-- Browser bug fixes -->
 	<script src="/javascript/Modernizr.js"></script>
+	<script src="/javascript/swfobject.js"></script>
 	<!-- jQuery -->
 	<script src="/javascript/jquery-1.4.2.js"></script>
 	<script src="/javascript/jquery.ui.js"></script>
@@ -72,6 +74,7 @@
 	<script src="/javascript/jquery.scrollTo.js"></script>
 	<script src="/javascript/jquery.simplemodal.1.4.1.min.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
 	<script src="/javascript/jquery.html5-0.0.1.js"></script>
+	<script src="/javascript/jquery.uploadify.v2.1.4.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
@@ -195,7 +198,7 @@ else:
 %>
 <body class="c-${c.controller} a-${c.action} u-${u}">
 	${flash_message()}
-	<nav><%include file="navigation.mako"/></nav>
+	##<nav class='gradient'><%include file="navigation.mako"/></nav>
 	<header><%include file="header.mako"/></header>
 	<div id="app">
 % if hasattr(next, 'col_left'):

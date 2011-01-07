@@ -74,15 +74,15 @@ class Content(Base):
     (FIXME: is this correct?)
     """
     __tablename__   = "content"
-    __type__        = Column(_content_type, nullable=False)
+    __type__        = Column(_content_type, nullable=False, index=True)
     __mapper_args__ = {'polymorphic_on': __type__}
     #_visiability = Enum("pending", "show", name="content_")
     _edit_lock   = Enum("parent_owner", "group", "system", name="edit_lock_level")
     id              = Column(Integer(),        primary_key=True)
     title           = Column(Unicode(250),     nullable=False, default=u"Untitled")
     content         = Column(UnicodeText(),    nullable=False, default=u"", doc="The body of text")
-    creator_id      = Column(Integer(),        ForeignKey('member.id'), nullable=False)
-    parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True)
+    creator_id      = Column(Integer(),        ForeignKey('member.id'),  nullable=False, index=True)
+    parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True,  index=True)
     location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)
     creation_date   = Column(DateTime(),       nullable=False, default=func.now())
     update_date     = Column(DateTime(),       nullable=False, default=func.now(), doc="Controlled by postgres trigger")
@@ -323,6 +323,7 @@ CREATE TRIGGER update_response_count
     AFTER INSERT OR UPDATE OR DELETE ON content
     FOR EACH ROW EXECUTE PROCEDURE update_response_count();
 """).execute_at('after-create', Content.__table__)
+GeometryDDL(Content.__table__)
 
 
 class DraftContent(Content):
@@ -608,9 +609,9 @@ class Tag(Base):
     """
     __tablename__ = "tag"
     id            = Column(Integer(),    primary_key=True)
-    name          = Column(Unicode(250), nullable=False) # FIXME: should be unique within its category
+    name          = Column(Unicode(250), nullable=False, index=True) # FIXME: should be unique within its category
     #type          = Column(Unicode(250), nullable=False, default=u"Topic")
-    parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True)
+    parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True, index=True)
     children      = relationship("Tag", backref=backref('parent', remote_side=id))
 
     def __init__(self, name=None, parent=None):
@@ -633,8 +634,8 @@ class Tag(Base):
 class ContentEditHistory(Base):
     __tablename__ = "content_edit_history"
     id            = Column(Integer(),     primary_key=True)
-    content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False)
-    member_id     = Column(Integer(),     ForeignKey('member.id'), nullable=False)
+    content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
+    member_id     = Column(Integer(),     ForeignKey('member.id'),  nullable=False, index=True)
     timestamp     = Column(DateTime(),    nullable=False, default=func.now())
     source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
     text_change   = Column(UnicodeText(), nullable=False)
@@ -644,16 +645,12 @@ class FlaggedContent(Base):
     __tablename__ = "flagged_content"
     _flag_type = Enum("offensive", "spam", "copyright", "automated", "other", name="flag_type")
     id            = Column(Integer(),     primary_key=True)
-    content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False)
+    content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
     member_id     = Column(Integer(),     ForeignKey('member.id') , nullable=True )
     timestamp     = Column(DateTime(),    nullable=False, default=func.now())
     type          = Column(_flag_type,    nullable=False)
-    comment       = Column(UnicodeText(), nullable=True, doc="optional should the user want to add additional details")
+    comment       = Column(UnicodeText(), nullable=False, default="", doc="optional should the user want to add additional details")
 
     def __str__(self):
-        return "%s - %s (%s)" % (self.member.username, self.comment, self.type)
+        return "%s - %s (%s)" % (self.member.username if self.member else "System", self.comment, self.type)
 
-
-
-
-GeometryDDL(Content.__table__)

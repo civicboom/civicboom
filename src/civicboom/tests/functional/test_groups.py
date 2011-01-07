@@ -51,8 +51,8 @@ class TestGroupsController(TestController):
                 'description'  : 'This group should not be visible once the tests have completed because it will be removed' ,
                 'default_role' : 'editor' ,
                 'join_mode'    : 'invite_and_request' ,
-                'member_visability'         : 'public' , #required to test join request later
-                'default_content_visability': 'public' ,
+                'member_visibility'         : 'public' , #required to test join request later
+                'default_content_visibility': 'public' ,
             },
             status=201
         )
@@ -66,8 +66,8 @@ class TestGroupsController(TestController):
         assert response_json['data']['member']['username']                   == 'test_group'
         assert response_json['data']['member']['join_mode']                  == 'invite_and_request'
         assert response_json['data']['member']['default_role']               == 'editor'
-        assert response_json['data']['member']['member_visability']          == 'public'
-        assert response_json['data']['member']['default_content_visability'] == 'public' 
+        assert response_json['data']['member']['member_visibility']          == 'public'
+        assert response_json['data']['member']['default_content_visibility'] == 'public' 
         
         
 
@@ -80,8 +80,8 @@ class TestGroupsController(TestController):
                 'name'         : 'p' ,
                 'default_role' : 'fail_group' ,
                 'join_mode'    : 'fail_group' ,
-                'member_visability'         : 'fail_group' ,
-                'default_content_visability': 'fail_group' ,
+                'member_visibility'         : 'fail_group' ,
+                'default_content_visibility': 'fail_group' ,
             },
             status=400
         )
@@ -89,8 +89,8 @@ class TestGroupsController(TestController):
         assert 'name'         in response
         assert 'default_role' in response
         assert 'join_mode'    in response
-        assert 'member_visability' in response
-        assert 'default_content_visability' in response
+        assert 'member_visibility' in response
+        assert 'default_content_visibility' in response
 
 
 
@@ -195,7 +195,7 @@ class TestGroupsController(TestController):
         self.log_out()
         
         # check member is actually part of group
-        #   - member visability is public so the join request should be visible even when viewed by a logged_out user
+        #   - member visibility is public so the join request should be visible even when viewed by a logged_out user
         response = self.app.get(url('group', id=self.group_id, format='json'))
         response_json = json.loads(response.body)
         found = False

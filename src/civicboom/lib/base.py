@@ -8,7 +8,7 @@ controllers can do "from civicboom.lib.base import *"
 """
 from pylons.controllers       import WSGIController
 from pylons                   import request, response, app_globals, tmpl_context as c, url, config, session
-from pylons.controllers.util  import abort, redirect
+from pylons.controllers.util  import abort
 from pylons.templating        import render_mako
 from pylons.i18n.translation  import _, ungettext, set_lang
 from pylons.decorators.secure import https
@@ -16,7 +16,7 @@ from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta
-from civicboom.lib.web                 import redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
+from civicboom.lib.web                 import redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
@@ -121,7 +121,6 @@ class BaseController(WSGIController):
         c.id         = current_request.get("id")
         
         c.result = {'status':'ok', 'message':'', 'data':{}}
-        c.scripts_end = []
 
         c.format               = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
         c.authenticated_form   = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
@@ -178,6 +177,8 @@ class BaseController(WSGIController):
             try:               overlay_status_message(c.result, json.loads(flash_message_session))
             except ValueError: overlay_status_message(c.result,            flash_message_session )
 
+    def print_controller_status(self):
+        print c
 
     def __call__(self, environ, start_response):
         """Invoke the Controller"""

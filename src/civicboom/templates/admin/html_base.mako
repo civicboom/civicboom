@@ -6,9 +6,9 @@ from pylons import url
 	<head>
 		<title>${self.title()}</title>
 		<link rel="stylesheet" type="text/css" href="${url('fa_static', path_info='/admin.css')}" />
-		<link rel="stylesheet" type="text/css" href="/styles/jquery.ui-1.8.4.css" />
+		<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
 		<script type="text/javascript" src="/javascript/jquery-1.4.2.js"></script>
-		<script type="text/javascript" src="/javascript/jquery.ui-1.8.4.js"></script>
+		<script type="text/javascript" src="/javascript/jquery.ui.js"></script>
 		<style>
 TABLE.outer {width: 90%; margin: auto;}
 TABLE.outer > TBODY > TR > TD {border: none; width: 50%;}

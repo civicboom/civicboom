@@ -25,14 +25,6 @@ HTML, BODY {
 	/* background: #DDD; */
 }
 
-/*
- * common styles
- */
-.gradscroll {
-	overflow: scroll;
-	background: url("/styles/web/grad-top.png") repeat-x top left, url("/styles/web/grad-bottom.png") repeat-x bottom left;
-}
-
 
 /*----------------------------------------------------------------------------*/
 /* Table - Zebra Colours                                                      */
@@ -63,12 +55,28 @@ HTML, BODY {
 .form TH {
 	font-weight: bold;
 	text-align: center;
+	padding: 2px;
 }
 .form TD {
 	padding: 2px;
 }
-.form TD INPUT[type="submit"] {
+.form TD INPUT[type="text"],
+.form TD INPUT[type="submit"],
+.form TD SELECT {
 	width: 100%;
+}
+.form TD:first-child {
+	text-align: right;
+}
+
+/* HACK because for some reason, input fields in TDs overflow :/  */
+.form.border TD INPUT[type='text'] {
+	width: 97%;
+}
+
+.formpage {
+	margin: auto;
+	margin-top: 8px;
 }
 
 
@@ -180,4 +188,5 @@ HTML.no-js #flash_message {
 	-webkit-border-radius: 8px;
 	border: 1px solid #2a3a87;
 	text-decoration: none;
+	font-weight: bold;
 }	

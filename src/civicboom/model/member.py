@@ -4,7 +4,7 @@ from civicboom.model.message import Message
 from civicboom.lib.misc import update_dict
 
 from sqlalchemy import Column, ForeignKey
-from sqlalchemy import Unicode, UnicodeText, String
+from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
@@ -24,8 +24,8 @@ group_member_roles       = Enum("admin", "editor", "contributor", "observer", na
 group_member_status      = Enum("active", "invite", "request",                name="group_member_status")
 
 group_join_mode          = Enum("public", "invite" , "invite_and_request",    name="group_join_mode")
-group_member_visability  = Enum("public", "private",                          name="group_member_visability" )
-group_content_visability = Enum("public", "private",                          name="group_content_visability")
+group_member_visibility  = Enum("public", "private",                          name="group_member_visibility" )
+group_content_visibility = Enum("public", "private",                          name="group_content_visibility")
 
 
 
@@ -102,6 +102,10 @@ CREATE TRIGGER update_follower_count
 """).execute_at('after-create', Follow.__table__)
 
 
+def _generate_salt():
+    import os
+    return os.urandom(256)
+
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
@@ -118,6 +122,7 @@ class Member(Base):
     utc_offset      = Column(Integer(),      nullable=False, default=0)
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
+    salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
 
     num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
@@ -187,7 +192,7 @@ class Member(Base):
             #'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
             #'assignments_accepted': lambda member: [a.to_dict() for a in member.assignments_accepted if a.private==False] ,
             #'content_public'      : lambda member: [c.to_dict() for c in member.content_public       ] ,
-            #'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visability=="public"] ,  #AllanC - also duplicated in members_actions.groups ... can this be unifyed
+            #'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visibility=="public"] ,  #AllanC - also duplicated in members_actions.groups ... can this be unifyed
     })
     
 
@@ -329,7 +334,48 @@ class Member(Base):
         if self.payment_account and self.payment_account.type:
             return self.payment_account.type
         return 'free'
-    
+
+    def check_action_key(self, action, key):
+        """
+        Check that this member was the one who generated the key to
+        the specified action.
+        """
+        return (key == self.get_action_key(action))
+
+    def get_action_key(self, action):
+        """
+        Generate a key, anyone with this key is allowed to perform
+        $action on behalf of this member.
+
+        The key is the hash of (member.id, action, member.salt).
+        Member.id is included because while the salt *should* be
+        unique, the ID *is* unique by definition.
+
+        The salt should be kept secret by the server, not even shown
+        to the user who owns it -- thus when presented with a key,
+        we can guarantee that this server is the one who generated
+        it. If the key for a user/action pair is only given to that
+        user after they've authenticated, then we can guarantee that
+        anyone with that key has been given it by the user.
+
+
+        Usage:
+        ~~~~~~
+        Alice:
+            key = alice.get_action_key('read article 42')
+            bob.send_message("Hey bob, if you want to read article 42, "+
+                             "tell the system I gave you this key: "+key)
+
+        Bob:
+            api.content.show(42, auth=(alice, key))
+
+        System:
+            wanted_content = get_content(42)
+            claimed_user = get_member(alice)
+            if key == claimed_user.get_action_key('read article '+wanted_content.id):
+                print wanted_content
+        """
+        return hashlib.sha1(str(self.id)+action+self.salt).hexdigest()
 
 GeometryDDL(Member.__table__)
 
@@ -346,11 +392,11 @@ class User(Member):
     email            = Column(Unicode(250), nullable=True)
     email_unverifyed = Column(Unicode(250), nullable=True)
 
-    login_details    = relationship("UserLogin"       , backref=('user'), cascade="all,delete-orphan")
+    login_details    = relationship("UserLogin", backref=('user'), cascade="all,delete-orphan")
 
     __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_user_fields = {
-        'location_current' : lambda member: 'not implemented yet' ,
+        'location_current' : None , #lambda member: ''
         'location_updated' : None ,
     }
     __to_dict__['default'     ].update(_extra_user_fields)
@@ -415,8 +461,8 @@ class Group(Member):
     __mapper_args__    = {'polymorphic_identity': 'group'}
     id                         = Column(Integer(), ForeignKey('member.id'), primary_key=True)    
     join_mode                  = Column(group_join_mode         , nullable=False, default="invite")
-    member_visability          = Column(group_member_visability , nullable=False, default="public")
-    default_content_visability = Column(group_content_visability, nullable=False, default="public")
+    member_visibility          = Column(group_member_visibility , nullable=False, default="public")
+    default_content_visibility = Column(group_content_visibility, nullable=False, default="public")
     #behaviour                  = Column(Enum("normal", "education", "organisation", name="group_behaviours"), nullable=False, default="normal") # FIXME: document this
     default_role               = Column(group_member_roles, nullable=False, default="contributor")
     # AllanC: TODO - num_mumbers postgress trigger needs updating, we only want to show GroupMembership.status=="active" in the count
@@ -436,10 +482,10 @@ class Group(Member):
     __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_group_fields = {
         'join_mode'                 : None ,
-        'member_visability'         : None ,
-        'default_content_visability': None ,
+        'member_visibility'         : None ,
+        'default_content_visibility': None ,
         'default_role'              : None ,
-        'num_members'               : lambda group: group.num_members if group.member_visability=="public" else None ,
+        'num_members'               : lambda group: group.num_members if group.member_visibility=="public" else None ,
     }
     __to_dict__['default'].update(_extra_group_fields)
     __to_dict__['full'   ].update(_extra_group_fields)
@@ -526,7 +572,7 @@ class Group(Member):
 class UserLogin(Base):
     __tablename__    = "member_user_login"
     id          = Column(Integer(),    primary_key=True)
-    member_id   = Column(Integer(),    ForeignKey('member.id'))
+    member_id   = Column(Integer(),    ForeignKey('member.id'), index=True)
     # FIXME: need full list; facebook, google, yahoo?
     #type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
     type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time    
@@ -535,7 +581,7 @@ class UserLogin(Base):
 
 class MemberSetting(Base):
     __tablename__    = "member_setting"
-    member_id   = Column(Integer(),     ForeignKey('member.id'), primary_key=True)
+    member_id   = Column(Integer(),     ForeignKey('member.id'), primary_key=True, index=True)
     name        = Column(String(250),   primary_key=True)
     value       = Column(UnicodeText(), nullable=False)
 

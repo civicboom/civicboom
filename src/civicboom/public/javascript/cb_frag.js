@@ -9,7 +9,9 @@ var fragment_containers_id            = '#frag_containers';
 var fragment_container_class          = 'frag_container';  // container for a full JSON object 500px
 var fragment_bridge_class             = 'frag_bridge';     // container for a bridge list 250px (half width)
 var fragment_source_class             = 'frag_source';
-var fragment_div_loading_placeholder  = '<p class="loading_placeholder">loading</p>';
+var fragment_div_loading_placeholder  = '<div class="title_bar gradient">Loading...</div>'+
+                                        '<div class="action_bar"></div>'+
+                                        '<p class="loading_placeholder">loading</p>';
 var scroll_duration = 600;
 
 var frag_count      = 0;
@@ -52,6 +54,24 @@ function cb_frag(current_element, url, list_type) {
 	//$(window)._scrollable().scrollTo('100%',0, {duration: scroll_duration});
 	//$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});
 	
+	// update the URL bar to point at the latest block, and
+	// store previous blocks in the history state object
+	if(Modernizr.history && false) {
+		// FIXME: save the actual state of the app; this is just an
+		// example of how I imagine it would work, with a list of
+		// currently loaded blocks and their states.
+		// Note: this object is limited to 640k (which ought to be
+		// enough for anyone) when saved in the browser history file
+		var stateObj = {
+			blocks: [
+				{ url: "/contents/1", scrollpos: 50 },
+				{ url: "/members/2", blockmode: "pie" },
+				{ url: "/members/2/followers" }
+			]
+		};
+		history.pushState(stateObj, "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
+	}
+
 	// AJAX load html fragment
 	frag_loading.load(url,
 		function(){ // When AJAX load complete
@@ -64,6 +84,9 @@ function cb_frag(current_element, url, list_type) {
 				//frag_loading.toggle(scroll_duration);
 				
 				cb_frag_remove_sibblings(frag_loading);
+
+				// remove the "opacity" setting, as IE doesn't antialias filtered stuff
+				frag_loading.animate({opacity: null}, 0);
 				
 				frag_loading = null;
 				
@@ -121,3 +144,12 @@ function cb_frag_reload(param) {
 
 }
 
+if(Modernizr.history && false) {
+	// FIXME: jQuery-ise this, rather than using the raw window.blah
+	window.onpopstate = function(popstate) {
+		if(popstate.state) {
+			// go through $state, make sure that each block in
+			// the current page matches $state['blocks'][n]['url']
+		}
+	}
+}

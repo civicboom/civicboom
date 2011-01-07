@@ -57,7 +57,7 @@ class MembersController(BaseController):
         if term:
             result = result.filter(or_(Member.name.ilike("%"+term+"%"), Member.username.ilike("%"+term+"%")))
     
-        return action_ok(data={"members": [m.to_dict(**kwargs) for m in result]})
+        return action_ok(data={"list": [m.to_dict(**kwargs) for m in result]})
 
 
     @web
@@ -74,8 +74,6 @@ class MembersController(BaseController):
         @return 404      member not found
         """
         member = _get_member(id)
-        
-        kwargs['force_public_only'] = True # AllanC - additon to ensure that public profiles return public only content
         
         if 'lists' not in kwargs:
             kwargs['lists'] = 'followers, following, assignments_accepted, content, groups, members, actions, boomed_content'

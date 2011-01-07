@@ -30,6 +30,7 @@ import urllib
 import hashlib
 import json
 import copy
+import time
 
 def get_captcha(lang='en', theme='red'):
     """
@@ -53,8 +54,9 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
         query_params += karg+"="+str(kargs[karg])
     if query_params != "":
         query_params = urllib.quote_plus("?"+query_params)
+    scheme = request.environ.get('HTTP_X_URL_SCHEME', 'http')
     return literal(
-        """<iframe src="http://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (return_url+query_params,lang)
+        """<iframe src="%s://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (scheme, return_url+query_params, lang)
     )
 
 
@@ -117,6 +119,16 @@ def url_from_widget(*args, **kargs):
             #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
             #    kargs[var] = getattr(c,var)
     return url(*args,**kargs)
+
+def uniqueish_id(*args):
+    """
+    A unique ID for use in HTML, for example giving two minimap()s different IDs
+
+    For a better unique ID, use python's UUID/GUID libraries
+    """
+    largs = list(args)
+    largs.append(str(int(time.time() * 1e9)))
+    return "_".join([str(a) for a in largs])
 
 def objs_to_linked_formatted_dict(**kargs):
     """
@@ -182,6 +194,7 @@ def form(*args, **kwargs):
     href_tuple = None
     
     json_form_complete_actions = kwargs.pop('json_form_complete_actions', '')
+    pre_onsubmit               = kwargs.pop('pre_onsubmit', '')
     
     # Look for href as a tuple in the form (args,kwargs)
     if len(args)>0 and isinstance(args[0], tuple):
@@ -199,7 +212,10 @@ def form(*args, **kwargs):
         # generate json URL and attach onsubmit event
         href_kwargs['format']      = 'json'
         href_json                  = url(*href_args, **href_kwargs)
+        # AllanC - bizzare workaround this one ... current_element=$(this) is needed here because if it is used inside function(data) it does not work ? dont know why.
         kwargs['onsubmit'] = literal("""
+            %(pre_onsubmit)s
+            var current_element = $(this);
             $.post(
                 '%(href_json)s',
                 $(this).serialize() ,
@@ -212,7 +228,7 @@ def form(*args, **kwargs):
                 'json'
             );
             return false;
-        """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions)
+        """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions, pre_onsubmit=pre_onsubmit)
         )
 
     # put the href generated url back in the right place
@@ -250,10 +266,7 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         
 
     # Keep track of number of secure links created so they can all have unique hash's
-    if not hasattr(c, 'secure_link_count'):
-        c.secure_link_count = 0
-    c.secure_link_count = c.secure_link_count + 1
-    hhash = hashlib.md5(str([href, value, vals, c.secure_link_count])).hexdigest()[0:6]
+    hhash = hashlib.md5(uniqueish_id(href, value, vals)).hexdigest()[0:6]
 
     # Create Form --------
     values = ''
@@ -282,8 +295,9 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         href=href,
         class_=css_class,
         title=title,
-        onClick="if (%(confirm_text)s) {$('#form_%(hhash)s').submit();} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        onClick="if (%(confirm_text)s) {var e = document.getElementById('form_%(hhash)s'); if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} } return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
+    # $('#form_%(hhash)s').onsubmit();
     
     # form vs link switcher (hide the compatable form)
     hs = HTML.script(literal('$("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))

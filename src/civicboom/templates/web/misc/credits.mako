@@ -15,6 +15,11 @@
 	CC-By-SA -
 	&copy; Neolao
 
+<p>File Uploader -
+	<a href="http://www.uploadify.com">Uploadify</a> -
+	MIT -
+	&copy; Ronnie Garcia, Travis Nickels
+
 <p>Javascript niceness -
 	<a href="http://jquery.com/">jQuery</a> -
 	MIT
@@ -58,6 +63,7 @@ python-pybabel    - BSD-like?
 python-psycopg2   - GPL + exception that proprietary use is allowed as long as
                     we only use the published psycopg API and don't touch the
 					internals
+					Newer versions are standard LGPLv3
 -->
 
 <p>Database -

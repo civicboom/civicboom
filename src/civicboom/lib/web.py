@@ -1,5 +1,5 @@
 from pylons import session, url, request, response, config, tmpl_context as c
-from pylons.controllers.util import redirect
+from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
 from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
 #from civicboom.lib.base import *
@@ -37,6 +37,12 @@ def multidict_to_dict(multidict):
 #-------------------------------------------------------------------------------
 # Redirect Referer
 #-------------------------------------------------------------------------------
+
+def redirect(*args, **kwargs):
+    if c.format == "html" or c.format == "redirect":
+        redirect_pylons(*args, **kwargs)
+    else:
+        raise Exception('unable to perform redirect with format=%s' % c.format)
 
 def current_referer(protocol=None):
     #AllanC TODO - needs to enforce prosocol change - for login actions
@@ -344,8 +350,8 @@ def auto_format_output(target, *args, **kwargs):
     # Is result a dict with data?
     if auto_format_output_flag and hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
         
-        if c.format=='html' and not _find_template(result):
-            log.warning("Format HTML with no template for %s/%s" % (c.controller, c.action))
+        if c.format in ['html', 'rss', 'frag', 'mobile'] and not _find_template(result, c.format):
+            log.warning("Format %s with no template for %s/%s" % (c.format, c.controller, c.action))
             c.format='xml' #If format HTML and no template supplied fall back to XML
         
         # set the HTTP status code

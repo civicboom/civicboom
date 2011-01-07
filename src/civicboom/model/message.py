@@ -14,7 +14,7 @@ class Message(Base):
     __tablename__ = "message"
     id          = Column(Integer(),     primary_key=True)
     source_id   = Column(Integer(),     ForeignKey('member.id'), nullable=True)
-    target_id   = Column(Integer(),     ForeignKey('member.id'), nullable=True)
+    target_id   = Column(Integer(),     ForeignKey('member.id'), nullable=True, index=True)
     timestamp   = Column(DateTime(),    nullable=False, default=func.now())
     subject     = Column(Unicode(),     nullable=False)
     content     = Column(UnicodeText(), nullable=False)
