@@ -130,7 +130,6 @@
 					"content": ed.getContent(),
 					"mode"        : 'autosave',
                     "_authentication_token": '${h.authentication_token()}'
-                    ##"upload_key": '${c.content_media_upload_key}',
 				},
 				success: function(data) {
 					ed.setProgressState(0);
