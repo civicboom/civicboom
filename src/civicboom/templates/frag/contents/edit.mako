@@ -102,13 +102,16 @@
         </p>
         
         ##${YUI.richtext(c.content.content, width='100%', height='300px')}
-		<textarea name="content" id="content" style="width:100%; height:300px;">${self.content['content']}</textarea>
+		<%
+		area_id = h.uniqueish_id("content")
+		%>
+		<textarea name="${area_id}" id="${area_id}" style="width:100%; height:300px;">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
         
 		<script type="text/javascript">
             tinyMCE.init({
                 mode     : "exact" ,
-                elements : "content" ,
+                elements : "${area_id}" ,
                 theme    : "advanced" ,
                 theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
                 theme_advanced_buttons2 : "",
@@ -117,7 +120,7 @@
                 theme_advanced_toolbar_align    : "left",
             });
             function ajaxSave() {
-                var ed = tinyMCE.get('content');
+                var ed = tinyMCE.get('${area_id}');
                 ed.setProgressState(1); // Show progress spinner
                 $.ajax({
                     type    : 'POST',
@@ -128,7 +131,6 @@
                         "content": ed.getContent(),
                         "mode"   : 'autosave',
                         "_authentication_token": '${h.authentication_token()}'
-                        ##"upload_key": '${c.content_media_upload_key}',
                     },
                     success: function(data) {
                         ed.setProgressState(0);
@@ -173,6 +175,7 @@
         
         
         ## Tags
+		<!--
         <p>
             <label for="tags">${_("Tags")}</label>
             <%
@@ -183,7 +186,7 @@
             <input id="tags" name="tags" type="text" value="${tag_string}"/>
             ${popup(_("extra_info"))}
         </p>
-
+		-->
     </fieldset>
 </%def>
 
@@ -428,12 +431,9 @@
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Location (optional)")}</span></legend>
         <div class="hideable">
-            ${form_instruction(_("why give us this..."))}
-            stuff!!
+            ##${form_instruction(_("why give us this..."))}
+			${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
         </div>
-        ##<div style="height:400px;">
-        ${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
-        ##</div>
     </fieldset>
 </%def>
 

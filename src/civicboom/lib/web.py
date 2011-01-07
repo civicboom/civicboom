@@ -350,8 +350,8 @@ def auto_format_output(target, *args, **kwargs):
     # Is result a dict with data?
     if auto_format_output_flag and hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
         
-        if c.format=='html' and not _find_template(result):
-            log.warning("Format HTML with no template for %s/%s" % (c.controller, c.action))
+        if c.format in ['html', 'rss', 'frag', 'mobile'] and not _find_template(result, c.format):
+            log.warning("Format %s with no template for %s/%s" % (c.format, c.controller, c.action))
             c.format='xml' #If format HTML and no template supplied fall back to XML
         
         # set the HTTP status code

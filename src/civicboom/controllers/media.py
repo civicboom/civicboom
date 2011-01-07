@@ -1,7 +1,6 @@
 from civicboom.lib.base import *
 from civicboom.model import Media
 
-from civicboom.lib.civicboom_lib import get_content_media_upload_key
 from civicboom.lib.database.get_cached import get_content, get_member
 
 import pprint

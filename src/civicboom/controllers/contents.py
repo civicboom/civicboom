@@ -7,7 +7,7 @@ from civicboom.lib.database.get_cached import get_content, update_content, get_l
 from civicboom.model.content           import _content_type as content_types
 
 # Other imports
-from civicboom.lib.civicboom_lib import get_content_media_upload_key, profanity_filter, twitter_global
+from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
 
@@ -612,6 +612,5 @@ class ContentsController(BaseController):
         c.content = _get_content(id, is_editable=True)
         
         #c.content                  = form_to_content(kwargs, c.content)
-        c.content_media_upload_key = get_content_media_upload_key(c.content)
         
         return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template

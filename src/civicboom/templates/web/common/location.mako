@@ -23,6 +23,9 @@ $(function() {
 		'${field_name}_div',
 		{
 			controls: true,
+			// default UK
+			//lonlat: {lon:-4, lat:54},
+			//zoom: 4,
 		}
 	);
 

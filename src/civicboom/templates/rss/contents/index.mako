@@ -1,4 +1,5 @@
 <%inherit file="/rss/rss_base.mako"/>
+<%def name="title()">${_("_site_name Search Results")}</%def>
 <%
 from datetime import datetime
 %>

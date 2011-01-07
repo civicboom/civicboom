@@ -281,33 +281,6 @@ def twitter_global(content):
 # Content Management
 #-------------------------------------------------------------------------------
 
-  
-
-
-#---------------------------------------
-# Generate and Store Content Upload Key
-#---------------------------------------
-# Generate tempory content unique key in memcache for additional media appends from flash or javascript
-def get_content_media_upload_key(content):
-    """
-    Generate/Get a tempory key associated with this content
-    The tempory key stays active for "x" minuets in memcache (so page reloads can refer to the same key)
-    The key is used for file uploads from sources that cannot send the authentication cookie each time
-    
-    Suggestion: This could be persisted in the database? Maybe a separate database JUST for tempory stuff like this
-    """
-    if not content or content.id == None:
-        return ""
-    content_id_key  = "content_upload_%d" % content.id
-    memcache_expire = 60*60 # memcache expire time in seconds 60*60 = 1 Hour
-    mc              = app_globals.memcache
-    key             = mc.get(content_id_key)
-    if not key:
-        key = hashlib.md5(str(random.random())).hexdigest()
-        mc.set(content_id_key,             key, time=memcache_expire)
-        mc.set(key           , str(content.id), time=memcache_expire)
-    return key
-
 
 #------------------------------
 # Profanity Check
