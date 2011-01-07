@@ -18,11 +18,9 @@ class Email:
         self.content_html = content_html
 
 def email_log(email_to, subject, content_text, content_html):
-    log.info("--Email Send Disabled-- \n"
-              "To: %s Subject: %s" % (email_to, subject) +"\n"
-              "Message (content_text): %s" % content_text +"\n"
-            #+ "Message (content_html): %s" % content_html +"\n"
-              "\n")
+    log.info("--Email Send Disabled-- To: %s Subject: %s" % (email_to, subject))
+    log.debug("Message (content_text): %s" % content_text)
+    #log.debug("Message (content_html): %s" % content_html)
     
     if config['test_mode']:
         emails.append(Email(email_to, subject, content_text, content_html))
