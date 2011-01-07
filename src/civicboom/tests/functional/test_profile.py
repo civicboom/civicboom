@@ -7,5 +7,5 @@ class TestUserProfileController(TestController):
         response = self.app.get(url(controller='profile', action='index', format="json"), status=403)
 
     def test_index(self):
-        response = self.app.get(url(controller='profile', action='index'))
+        response = self.app.get(url(controller='profile', action='index', format="frag"))
         assert "Mr U. Test (unittest)" in response
