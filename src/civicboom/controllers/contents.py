@@ -277,7 +277,6 @@ class ContentsController(BaseController):
         we create a blank object and redirect to "edit-existing" mode
         """
         #url_for('new_content')
-        self.print_controller_status()
         create_ = ContentsController().create(**kwargs)
         # AllanC TODO - needs restructure - see create
         if c.format=='html' or c.format=='redirect':
@@ -363,6 +362,9 @@ class ContentsController(BaseController):
         @comment Shish paramaters need filling out
         """
         # url('content', id=ID)
+        print "--KWARGS--"
+        print kwargs
+        print ""
         
         # -- Variables-- -------------------------------------------------------
         content_redirect = None

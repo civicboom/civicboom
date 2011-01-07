@@ -43,3 +43,15 @@ function flash_message(json_message) {
 		$("#flash_message").text(json_message.message).fadeIn("slow").delay(5000).fadeOut("slow");
 	}
 }
+
+// submit buttons triggered by onclick dont submit the submit buttons name or value in the form
+// we can fake that here by using jQuery to temporerally create these as hidden form fields
+// Example:
+//   <input type="submit" name="submit_draft"   value="Save Draft" onclick="add_onclick_submit_field($(this));" />
+//   will add the field as <input type="hidden"/>
+function add_onclick_submit_field(current_element) {
+	$('.fake_submit').remove(); //remove all fake fields inserted by previous submits
+	var field_name  = current_element.attr('name');
+	var field_value = current_element.attr('value');
+	current_element.closest('form').append('<input type="hidden" name="'+field_name+'" value="'+field_value+'" class="fake_submit"/>');
+}

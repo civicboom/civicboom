@@ -101,47 +101,47 @@
         </p>
         
         ##${YUI.richtext(c.content.content, width='100%', height='300px')}
-		<textarea name="content" id="content" style="width:100%; height:300px;">${self.content['content']}</textarea>'
+		<textarea name="content" id="content" style="width:100%; height:300px;">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
-        <script type="text/javascript" src ="/javascript/tiny_mce/tiny_mce.js"></script>
+        
 		<script type="text/javascript">
-		tinyMCE.init({
-			mode     : "exact" ,
-            elements : "content" ,
-			theme    : "advanced" ,
-			theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
-			theme_advanced_buttons2 : "",
-			theme_advanced_buttons3 : "",
-			theme_advanced_toolbar_location : "top",
-			theme_advanced_toolbar_align : "left",
-		});
-		function ajaxSave() {
-			var ed = tinyMCE.get('content');
-			ed.setProgressState(1); // Show progress spinner
-			$.ajax({
-				type    : 'POST',
-				dataType: 'json',
-				url     : "${url('formatted_content', id=c.content.id, format='json')}",
-				data    : {
-                    "_method"     : 'PUT',
-					"content": ed.getContent(),
-					"mode"        : 'autosave',
-                    "_authentication_token": '${h.authentication_token()}'
-                    ##"upload_key": '${c.content_media_upload_key}',
-				},
-				success: function(data) {
-					ed.setProgressState(0);
-					flash_message(data);
-				},
-			});
-		}
-        % if self.content['type'] == "draft":
-		var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
-        % endif
+            tinyMCE.init({
+                mode     : "exact" ,
+                elements : "content" ,
+                theme    : "advanced" ,
+                theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
+                theme_advanced_buttons2 : "",
+                theme_advanced_buttons3 : "",
+                theme_advanced_toolbar_location : "top",
+                theme_advanced_toolbar_align    : "left",
+            });
+            function ajaxSave() {
+                var ed = tinyMCE.get('content');
+                ed.setProgressState(1); // Show progress spinner
+                $.ajax({
+                    type    : 'POST',
+                    dataType: 'json',
+                    url     : "${url('formatted_content', id=self.id, format='json')}",
+                    data    : {
+                        "_method": 'PUT',
+                        "content": ed.getContent(),
+                        "mode"   : 'autosave',
+                        "_authentication_token": '${h.authentication_token()}'
+                        ##"upload_key": '${c.content_media_upload_key}',
+                    },
+                    success: function(data) {
+                        ed.setProgressState(0);
+                        flash_message(data);
+                    },
+                });
+            }
+            ##% if self.content['type'] == "draft":
+            ##var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
+            ##% endif
 		</script>
 
         % if self.content['type'] == "draft":
-            <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   style="float: right;"/>
+            <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   style="float: right;" onclick="add_onclick_submit_field($(this));" />
         % endif
 
         ## Owner
@@ -411,9 +411,9 @@
 
         <div style="float: right;">
             % if type == "draft":
-            <input type="submit" name="submit_publish" value="${_("Publish")}"      />
+            <input type="submit" name="submit_publish" value="${_("Publish")}"        onclick="add_onclick_submit_field($(this));"/>
             % else:
-            <input type="submit" name="submit_publish" value="${_("Publish Update")}"/>
+            <input type="submit" name="submit_publish" value="${_("Publish Update")}" onclick="add_onclick_submit_field($(this));"/>
             % endif
         </div>
     </fieldset>
@@ -476,8 +476,8 @@
     
         % if self.content['type'] == "draft":
         ## AllanC - note the class selectors are used by jQuery to simulate clicks
-        <input type="submit" name="submit_preview" class="submit_preview" value="${_("Preview Draft")}"/>
-        <input type="submit" name="submit_draft"   class="submit_draft"   value="${_("Save Draft")}"   />
+        <input type="submit" name="submit_preview" class="submit_preview" value="${_("Preview Draft")}" onclick="add_onclick_submit_field($(this));"/>
+        <input type="submit" name="submit_draft"   class="submit_draft"   value="${_("Save Draft")}"    onclick="add_onclick_submit_field($(this));"/>
         % else:
         <a href="${h.url('content', id=self.id)}">${_("View Content")}</a>
         % endif
