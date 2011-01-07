@@ -35,8 +35,9 @@
             <p>${_("Responding to: %s") % self.content['parent']['title']}</p>
         % endif
         
-        ## AllanC - TODO need to update h.form() to accept url as a tuple for AJAX submission
-        ${h.form(h.args_to_tuple('content', id=self.id, format="redirect"), id='edit_%s'%self.id, method='PUT', multipart=True, name="content")}
+        ## pre_onsubmit is needed to save the contents of the TinyMCE component back to the text area
+        ##  reference - http://www.dreamincode.net/forums/topic/52581-textarea-value-not-updating/
+        ${h.form(h.args_to_tuple('content', id=self.id, format="redirect"), id='edit_%s'%self.id, method='PUT', multipart=True, name="content", pre_onsubmit="tinyMCE.triggerSave(true,true);")}
             ${base_content()}
             ${media()}
             ${content_type()}
