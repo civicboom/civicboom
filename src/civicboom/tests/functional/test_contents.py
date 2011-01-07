@@ -228,7 +228,7 @@ class TestContentsController(TestController):
         response = self.app.get(url('contents', query='test'))
         assert "A test article by unitfriend" in response
         assert "Friend" in response
-        assert "0 responses" in response
+        #assert "0 responses" in response
 
     def part_content_results_rss(self):
         response = self.app.get(url('contents', format="rss", query='test'))
