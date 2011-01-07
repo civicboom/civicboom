@@ -20,12 +20,15 @@ Packages
 - once the repository has been installed, civicboom packages will be usable
   like any others
   - "apt-get update" to fetch the latest package list
-  - "apt-get install cb-website" will get the code and dependencies
-  - "apt-get install cb-devkit" will get things necessary to build packages
+  - "apt-get install cb-website" will get the code and dependencies and set
+    up a server running locally
+  - "apt-get install cb-devkit" will get the things that are not necessary
+    to run the site, but are used when building packages
   - "apt-get upgrade" to upgrade all installed parts
 - once the website and dependencies are installed, a developer can clone
   the repository into their home folder and work on it there, running the
   development setup on port 5000
+  - in src, "paster serve --reload development.ini"
 
 
 Code Repositories
