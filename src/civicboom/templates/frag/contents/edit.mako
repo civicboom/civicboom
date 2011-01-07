@@ -429,12 +429,9 @@
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Location (optional)")}</span></legend>
         <div class="hideable">
-            ${form_instruction(_("why give us this..."))}
-            stuff!!
+            ##${form_instruction(_("why give us this..."))}
+			${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
         </div>
-        ##<div style="height:400px;">
-        ${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
-        ##</div>
     </fieldset>
 </%def>
 
