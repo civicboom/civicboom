@@ -293,7 +293,7 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         href=href,
         class_=css_class,
         title=title,
-        onClick="if (%(confirm_text)s) {document.getElementById('form_%(hhash)s').onsubmit();} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        onClick="if (%(confirm_text)s) {var e = document.getElementById('form_%(hhash)s'); if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} } return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
     # $('#form_%(hhash)s').onsubmit();
     

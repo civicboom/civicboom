@@ -333,8 +333,8 @@
         
         % if type == "draft":
             <table id="type_selection"><tr>
-            % for type in types:
-                ${type_option(type[0],type[1])}
+            % for t in types:
+                ${type_option(t[0],t[1])}
             % endfor
             <tr></table>
         % else:

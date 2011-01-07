@@ -6,6 +6,7 @@ HTML {
 /*
  * the body is then broken down into the navigation bar at the top
  */
+/*
 NAV {
 	position: fixed;
 	top: 0px;
@@ -51,7 +52,7 @@ NAV .login, NAV .logout {
 NAV .login {
 	height: 15px;
 }
-/*NAV .logout {top: 16px;}*/
+
 
 NAV .persona_select img {
     max-width: 40px;
@@ -62,29 +63,160 @@ NAV .persona_select ul {
     background-color: #888;
 }
 
-/*
- * the header, with logo and search box
- */
+*/
+
+/*NAV .logout {top: 16px;}*/
+
+
+/*----------------------------------------------------------------------------*/
+/*                                 Header                                     */
+/*----------------------------------------------------------------------------*/
+
 HEADER {
 	clear: both;
 	background: url("/styles/web/headerbk.png") 0 -10px;
 	position: fixed;
-	left: 0px;
+    top  : 0px;
+	left : 0px;
 	right: 0px;
 	/* height: 64px; */
     height: 42px;
 	z-index: 1;
 }
+
+BODY>DIV#app {
+	/* clear: both;
+	z-index: 0; */
+	margin-bottom: 2em;
+    margin-top: 44px;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                             Persona Select                                 */
+/*----------------------------------------------------------------------------*/
+
+HEADER #persona_select {
+    position: absolute;
+    top : 1px;
+    left: 16px;
+}
+
+HEADER #persona_select img {
+    width : 32px;
+    height: 32px;
+    border: 1px solid #888;
+    border-radius        : 0.1em;
+	-moz-border-radius   : 0.1em;
+	-webkit-border-radius: 0.1em;
+}
+
+HEADER #persona_select li li {
+    background-color: #ccc;
+}
+
+
+/*
 .u-anon HEADER {top: 0px;}
 .u-user HEADER {top: 16px;}
+*/
 
-HEADER #logo IMG  {position: relative; left: 18px; top: 4px;}
+/*
+.u-anon #app {margin-top: 48px;}
+.u-user #app {margin-top: 60px;}
+*/
+
+/*----------------------------------------------------------------------------*/
+/*                                Logo                                        */
+/*----------------------------------------------------------------------------*/
+
+HEADER #logo IMG  {position: absolute; left: 64px; top: 6px;}
 HEADER #logo SPAN {display: none;}
+
+
+/*----------------------------------------------------------------------------*/
+/*                                  Home                                      */
+/*----------------------------------------------------------------------------*/
+
+HEADER #home_link {
+    position: absolute;
+    top : -2px;
+    left: -24px;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                                Navigation                                  */
+/*----------------------------------------------------------------------------*/
+
+HEADER .menuh-container {
+	position: absolute;
+	top: 11px;
+	left: 220px;
+}
+
+NAV .menuh>UL {
+	margin-left: 16px;
+	height: 20px;
+}
+NAV .menuh ul {
+    width:9em;	/* width of all menu boxes */
+}
+NAV .menuh a {
+	font-family: sans;
+	background: white;
+}
+NAV .menuh a.top_parent {
+	border-radius: 10px 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	/* set border to 1px something so it doesn't wobble
+	 * when changed to 1px black on hover */
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+NAV .menuh a.top_parent {
+	font-weight: bold;
+}
+NAV .menuh LI:hover a.top_parent {
+	border-bottom-left-radius: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	-moz-border-radius: 10px 10px 0px 0px;
+	border-top: 1px solid #555;
+	border-left: 1px solid #555;
+	border-right: 1px solid #555;
+}
+NAV .menuh a.sub_option,
+NAV .menuh a.parent {
+	border-left: 1px solid #555;
+	border-right: 1px solid #555;
+	border-bottom: 1px solid #ddd;
+}
+NAV .menuh LI:last-child>a.sub_option {
+	border-bottom: 1px solid #555;
+	border-bottom-left-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
+	-moz-border-radius: 0px 0px 10px 10px;
+}
+NAV .menuh INPUT {
+	width: 100%;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                                Search                                      */
+/*----------------------------------------------------------------------------*/
 
 HEADER #search {
 	position: absolute;
 	top: 10px;
-	right: 16px;
+	right: 72px;
 	width: 150px;
 	height: 20px;
 }
@@ -110,71 +242,32 @@ HEADER #search .button {
 	-webkit-border-radius: 10px;
 }
 
-HEADER .menuh-container {
-	position: absolute;
-	top: 11px;
-	left: 160px;
-}
-HEADER .menuh>UL {
-	margin-left: 16px;
-	height: 20px;
-}
-HEADER .menuh a {
-	font-family: sans;
-	background: white;
-}
-HEADER .menuh a.top_parent {
-	border-radius: 10px 10px;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	/* set border to 1px something so it doesn't wobble
-	 * when changed to 1px black on hover */
-	border-top: 1px solid #fff;
-	border-left: 1px solid #fff;
-	border-bottom: 1px solid #ddd;
-	border-right: 1px solid #ddd;
-}
-HEADER .menuh a.top_parent {
-	font-weight: bold;
-}
-HEADER .menuh LI:hover a.top_parent {
-	border-bottom-left-radius: 0px;
-	-webkit-border-bottom-left-radius: 0px;
-	border-bottom-right-radius: 0px;
-	-webkit-border-bottom-right-radius: 0px;
-	-moz-border-radius: 10px 10px 0px 0px;
-	border-top: 1px solid #555;
-	border-left: 1px solid #555;
-	border-right: 1px solid #555;
-}
-HEADER .menuh a.sub_option,
-HEADER .menuh a.parent {
-	border-left: 1px solid #555;
-	border-right: 1px solid #555;
-	border-bottom: 1px solid #ddd;
-}
-HEADER .menuh LI:last-child>a.sub_option {
-	border-bottom: 1px solid #555;
-	border-bottom-left-radius: 10px;
-	-webkit-border-bottom-left-radius: 10px;
-	border-bottom-right-radius: 10px;
-	-webkit-border-bottom-right-radius: 10px;
-	-moz-border-radius: 0px 0px 10px 10px;
-}
-HEADER .menuh INPUT {
-	width: 100%;
+/*----------------------------------------------------------------------------*/
+/*                             Login / Logout                                 */
+/*----------------------------------------------------------------------------*/
+
+HEADER #login {
+    position: absolute;
+    top: 9px;
+    right: 8px;
+    width: 54px;
+    height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #eee;
+    border: 1px solid #ccc;
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+    
 }
 
-/*
- * the bulk of the page in the middle
- */
-BODY>DIV#app {
-	clear: both;
-	z-index: 0;
-	margin-bottom: 2em;
-}
-.u-anon #app {margin-top: 48px;}
-.u-user #app {margin-top: 60px;}
+
+
+
+/*----------------------------------------------------------------------------*/
+/*                                Col Body                                    */
+/*----------------------------------------------------------------------------*/
 
 /*
  * sometimes the main page is columned
@@ -202,9 +295,10 @@ BODY>DIV#app {
 
 
 
-/*
- * and a footer (not actually in the new design -- do we need one?)
- */
+/*----------------------------------------------------------------------------*/
+/*                                  Footer                                    */
+/*----------------------------------------------------------------------------*/
+
 FOOTER {
 	background: white;
 	position: fixed;
@@ -223,9 +317,10 @@ FOOTER .copyright {
 	float: right;
 }
 
-/*
- * individual elements
- */
+/*----------------------------------------------------------------------------*/
+/*                                Title Styles                                */
+/*----------------------------------------------------------------------------*/
+
 H1,H2,H3,H4 {
     font-weight: bold;
     margin: 0.25em 0em;
