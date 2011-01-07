@@ -194,6 +194,7 @@ def form(*args, **kwargs):
     href_tuple = None
     
     json_form_complete_actions = kwargs.pop('json_form_complete_actions', '')
+    pre_onsubmit               = kwargs.pop('pre_onsubmit', '')
     
     # Look for href as a tuple in the form (args,kwargs)
     if len(args)>0 and isinstance(args[0], tuple):
@@ -213,6 +214,7 @@ def form(*args, **kwargs):
         href_json                  = url(*href_args, **href_kwargs)
         # AllanC - bizzare workaround this one ... current_element=$(this) is needed here because if it is used inside function(data) it does not work ? dont know why.
         kwargs['onsubmit'] = literal("""
+            %(pre_onsubmit)s
             var current_element = $(this);
             $.post(
                 '%(href_json)s',
@@ -226,7 +228,7 @@ def form(*args, **kwargs):
                 'json'
             );
             return false;
-        """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions)
+        """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions, pre_onsubmit=pre_onsubmit)
         )
 
     # put the href generated url back in the right place
