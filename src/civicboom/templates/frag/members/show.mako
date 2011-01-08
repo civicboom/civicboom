@@ -100,13 +100,13 @@
         )}
         
         ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='assignment' and (c['due_date']==None or c['due_date']>=datetime.datetime.now()) ] ,
+            [c for c in d['content'] if c['type']=='assignment' and ('due_date' not in c or c['due_date']==None or c['due_date']>=datetime.datetime.now()) ] ,
             _('Assignments Active') ,
             h.args_to_tuple('contents', creator=self.id, list='assignments_active') ,
         )}
         
         ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='assignment' and (c['due_date']!=None and c['due_date']<=datetime.datetime.now()) ] ,
+            [c for c in d['content'] if c['type']=='assignment' and ('due_date' in c and c['due_date']!=None and c['due_date']<=datetime.datetime.now()) ] ,
             _('Assignments Previous') ,
             h.args_to_tuple('contents', creator=self.id, list='assignments_previous') ,
         )}
