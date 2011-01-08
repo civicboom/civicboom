@@ -1,4 +1,14 @@
-from civicboom.model.meta import Base, Session, LegacySession
+#!/usr/bin/python
+
+import optparse
+
+import pylons
+from paste.deploy import appconfig
+
+from civicboom.config.environment import load_environment
+
+
+from civicboom.model.meta import Base, Session
 
 from civicboom.model import License, Tag, Rating
 from civicboom.model import User, UserLogin
@@ -18,11 +28,17 @@ import Image
 import tempfile
 import hashlib
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+
 import logging
 log = logging.getLogger(__name__)
 
 
-def convert_legacy_database(): # pragma: no cover - this should only be run as a one-off
+def convert_legacy_database(url): # pragma: no cover - this should only be run as a one-off
+        LegacySession = scoped_session(sessionmaker())
+        LegacySession.configure(bind=create_engine(url))
+
         log.info("Converting from legacy database") # {{{
         leg_sess = LegacySession()
         leg_conn = leg_sess.connection()
@@ -347,3 +363,20 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
         # }}}
 
         # }}}
+
+if __name__ == '__main__':
+    option_parser = optparse.OptionParser()
+    option_parser.add_option('--ini',
+        help='INI file to use for pylons settings',
+        type='str', default='development.ini')
+    option_parser.add_option('--url',
+        help='legacy database URL',
+        type='str', default='mysql://indiconews:indiconews@127.0.0.1/indiconews')
+    options, args = option_parser.parse_args()
+
+    # Initialize the Pylons app
+    conf = appconfig('config:' + options.ini, relative_to='.')
+    load_environment(conf.global_conf, conf.local_conf)
+
+    # Now code can be run, the SQLalchemy Session can be used, etc.
+    convert_legacy_database(options.url)

@@ -3,15 +3,13 @@ from sqlalchemy import MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
 import copy
 
-__all__ = ['Session', 'LegacySession', 'engine', 'metadata', 'Base']
+__all__ = ['Session', 'engine', 'metadata', 'Base']
 
 # SQLAlchemy database engine. Updated by model.init_model()
 engine = None
-legacy_engine = None
 
 # SQLAlchemy session manager. Updated by model.init_model()
 Session = scoped_session(sessionmaker())
-LegacySession = scoped_session(sessionmaker())
 
 # Global metadata. If you have multiple databases with overlapping table
 # names, you'll need a metadata for each database
