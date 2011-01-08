@@ -3,70 +3,6 @@ HTML {
     /* overflow-y: hidden; */
 }
 
-/*
- * the body is then broken down into the navigation bar at the top
- */
-/*
-NAV {
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	z-index: 2;
-}
-.u-anon NAV {height: 0px;}
-.u-user NAV {height: 16px;}
-
-NAV A {
-	background: #EEE;
-	text-align: center;
-	color: black;
-	text-decoration: none;
-
-	position: absolute;
-	top: 1px;
-
-	display: block;
-	width: 92px;
-	height: 14px;
-	font-size: 0.75em;
-
-	border-radius: 4px;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-}
-NAV A SPAN {
-	display: none;
-}
-
-NAV .name {left: 32px;}
-NAV .role {left: 128px;}
-
-NAV .messages {left: 256px;}
-
-NAV .login, NAV .logout {
-	position: absolute;
-	right: 16px;
-	width: 68px;
-}
-NAV .login {
-	height: 15px;
-}
-
-
-NAV .persona_select img {
-    max-width: 40px;
-}
-NAV .persona_select ul {
-    top: 32px;
-    left: 32px;
-    background-color: #888;
-}
-
-*/
-
-/*NAV .logout {top: 16px;}*/
-
 
 /*----------------------------------------------------------------------------*/
 /*                                 Header                                     */
@@ -215,7 +151,7 @@ NAV .menuh INPUT {
 
 HEADER #search {
 	position: absolute;
-	top: 10px;
+	top: 11px;
 	right: 72px;
 	width: 150px;
 	height: 20px;
@@ -248,10 +184,10 @@ HEADER #search .button {
 
 HEADER #login {
     position: absolute;
-    top: 9px;
+    top: 11px;
     right: 8px;
     width: 54px;
-    height: 20px;
+    height: 18px; /* +2px border */
     text-align: center;
     vertical-align: middle;
     background-color: #eee;
@@ -259,10 +195,7 @@ HEADER #login {
 	border-radius        : 0.5em;
 	-moz-border-radius   : 0.5em;
 	-webkit-border-radius: 0.5em;
-    
 }
-
-
 
 
 /*----------------------------------------------------------------------------*/
