@@ -20,8 +20,8 @@ class Message(Base):
     content     = Column(UnicodeText(), nullable=False)
     read        = Column(Boolean(),     nullable=False, default=False)
 
-    target                = relationship("Member", primaryjoin="Message.target_id==Member.id")
-    source                = relationship("Member", primaryjoin="Message.source_id==Member.id")
+    target      = relationship("Member", primaryjoin="Message.target_id==Member.id", backref=backref('messages_to'  , cascade="all, delete-orphan"))
+    source      = relationship("Member", primaryjoin="Message.source_id==Member.id", backref=backref('messages_from', cascade="all, delete-orphan"))
 
 
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
