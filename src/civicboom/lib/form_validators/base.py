@@ -156,3 +156,25 @@ class PasswordValidator(validators.FancyValidator):
             raise formencode.Invalid(self.message("non_letter", state, non_letter=self.non_letter), value, state)
         return encode_plain_text_password(value)
 
+
+# http://osdir.com/ml/python.formencode/2008-09/msg00003.html
+class IsoFormatDateConverter(validators.DateConverter):
+    """
+    Like formencode.validators.DateConverter, but accepts ISO 8601 YYYY-mm-dd
+    """
+    month_style = 'dd/mm/yyyy'
+    regex = re.compile('\d{8,8}')
+
+    def _to_python(self, value, state):
+        # Transform from extended to basic format (yyyymmdd...)
+        value = value.replace('-', '')
+        try:
+            value = value[:8]
+            assert self.regex.match(value)
+        except:
+            raise Invalid(("Input must be ISO 8601 format, not %s" % value), value, state)
+        # Transform to 'dd/mm/yyyy'
+        value = '/'.join((value[6:8], value[4:6], value[:4]))
+        # Run superclass validation on preprocessed value
+        return super(IsoFormatDateConverter, self)._to_python(value, state)
+

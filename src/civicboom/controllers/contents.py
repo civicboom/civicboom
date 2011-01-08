@@ -49,8 +49,8 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     # Draft Fields
     target_type = formencode.validators.OneOf(content_types.enums, not_empty=False)
     # Assignment Fields
-    due_date    = formencode.validators.DateConverter(not_empty=False, month_style='dd/mm/yyyy')
-    event_date  = formencode.validators.DateConverter(not_empty=False, month_style='dd/mm/yyyy')
+    due_date    = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
+    event_date  = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
     default_response_license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     # TODO: need date validators to check date is in future (and not too far in future as well)
 
