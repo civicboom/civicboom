@@ -575,7 +575,7 @@ class ContentsController(BaseController):
         content = _get_content(id, is_viewable=True)
         
         if 'lists' not in kwargs:
-            kwargs['lists'] = 'comments, responses, contributors, actions'
+            kwargs['lists'] = 'comments, responses, contributors, actions, accepted_status'
         
         data = {'content':content.to_dict(list_type='full', **kwargs)}
         
