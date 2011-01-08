@@ -150,8 +150,8 @@ def scan_for_embedable_view_and_autolink(text, remove=False):
             text = re.sub(regex_youtube  , '', text)
             text = re.sub(regex_googlevid, '', text)
         else:
-            text = re.sub(regex_youtube  , r'<object width="500" height="308"><param name="movie" value="http://www.youtube.com/v/\1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/\1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="500" height="308"></embed></object>\2', text)
-            text = re.sub(regex_googlevid, r'<embed id=VideoPlayback src=http://video.google.com/googleplayer.swf?docid=\1&fs=true style=width:400px;height:326px allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash></embed>\2', text)
+            text = re.sub(regex_youtube  , r'<object width="250" height="188"><param name="movie" value="http://www.youtube.com/v/\1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/\1" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="250" height="188"></embed></object>\2', text)
+            text = re.sub(regex_googlevid, r'<embed id=VideoPlayback src=http://video.google.com/googleplayer.swf?docid=\1&fs=true style=width:250px;height:188px allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash></embed>\2', text)
     except:
         pass
     return text
