@@ -150,11 +150,23 @@
     ##% endif
 
     % if 'follow' in self.actions:
-        ${h.secure_link(h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect'), _(' '), title=_("Follow %s" % self.name),         css_class="icon icon_follow")}
+        ${h.secure_link(
+            h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
+            _(' ') ,
+            title     = _("Follow %s" % self.name) ,
+            css_class = "icon icon_follow" ,
+            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+        )}
     % endif
 
     % if 'unfollow' in self.actions:
-        ${h.secure_link(h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect'), _(' '), title=_("Stop following %s" % self.name), css_class="icon icon_unfollow")}
+        ${h.secure_link(
+            h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
+            _(' ') ,
+            title=_("Stop following %s" % self.name) ,
+            css_class="icon icon_unfollow" ,
+            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+        )}
     % endif
 
     % if 'join' in self.actions:
