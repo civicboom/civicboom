@@ -4,7 +4,7 @@ Base Formencode Validators
 
 # Formencode Imports
 import formencode
-from formencode import validators, compound
+from formencode import validators, compound, Invalid
 
 from pylons.i18n.translation import _
 
