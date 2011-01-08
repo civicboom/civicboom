@@ -353,8 +353,8 @@
                     $(function() {$( "#datepicker2" ).datepicker({ dateFormat: 'yy-mm-dd' });});
                 </script>
                 <%
-                    due_date   = self.content.get('due_date')
-                    event_date = self.content.get('event_date')
+                    due_date   = str(self.content.get('due_date'))[:10]
+                    event_date = str(self.content.get('event_date'))[:10]
                 %>
                 <p>${_("Due Date:")}   <input id="datepicker1" type="date" name="due_date"   value="${due_date}"></p>
                 <p>${_("Event Date:")} <input id="datepicker2" type="date" name="event_date" value="${event_date}"></p>
