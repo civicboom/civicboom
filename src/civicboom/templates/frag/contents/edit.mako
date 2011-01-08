@@ -109,6 +109,7 @@
         <!-- http://tinymce.moxiecode.com/ -->
         
 		<script type="text/javascript">
+			$(function() {
             tinyMCE.init({
                 mode     : "exact" ,
                 elements : "${area_id}" ,
@@ -119,6 +120,7 @@
                 theme_advanced_toolbar_location : "top",
                 theme_advanced_toolbar_align    : "left",
             });
+			});
             function ajaxSave() {
                 var ed = tinyMCE.get('${area_id}');
                 ed.setProgressState(1); // Show progress spinner
