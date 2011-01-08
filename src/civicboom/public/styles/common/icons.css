@@ -23,44 +23,44 @@
     vertical-align: top;
 }
 .icon span {display: none;}
-.icon_popup      {background: transparent url('/styles/web/icons16/bubble2-icon.png'  ) no-repeat;}
-.icon_list       {background: transparent url('/styles/web/icons16/document2-icon.png') no-repeat;}
-.icon_approved   {background: transparent url('/styles/web/icons16/licence-icon.png'  ) no-repeat;}
-.icon_seen       {background: transparent url('/styles/web/icons16/tick-icon.png'     ) no-repeat;}
-.icon_disasociate{background: transparent url('/styles/web/icons16/delete-icon.png'  ) no-repeat;}
-.icon_edit_lock {background: transparent url('/styles/web/icons16/lock-icon.png'     ) no-repeat;}
-.icon_private   {background: transparent url('/styles/web/icons16/key-icon.png'      ) no-repeat;}
-.icon_follow    {background: transparent url('/styles/web/icons16/cb_follow-icon.png') no-repeat;}
-.icon_unfollow  {background: transparent url('/styles/web/icons16/cb_unfollow-icon.png') no-repeat;}
-.icon_widget    {background: transparent url('/styles/web/icons16/cb_widget-icon.png') no-repeat;}
-.icon_invite    {background: transparent url('/styles/web/icons16/cb_invite-icon.png') no-repeat;}
-.icon_user      {background: transparent url('/styles/web/icons16/user-icon.png'     ) no-repeat;}
-.icon_current_user {background: transparent url('/styles/web/icons16/user-3-icon.png') no-repeat;}
-.icon_group     {background: transparent url('/styles/web/icons16/network-icon.png'  ) no-repeat;}
-.icon_userid    {background: transparent url('/styles/web/icons16/user-info-icon.png') no-repeat;}
-.icon_delete    {background: transparent url('/styles/web/icons16/delete-icon.png'   ) no-repeat;}
-.icon_save      {background: transparent url('/styles/web/icons16/save-icon.png'     ) no-repeat;}
-.icon_preview   {background: transparent url('/styles/web/icons16/document2-icon.png') no-repeat;}
-.icon_close     {background: transparent url('/styles/web/icons16/close-icon.png'    ) no-repeat;}
-.icon_close_edit{background: transparent url('/styles/web/icons16/document2-icon.png' ) no-repeat;}
-.icon_draft     {background: transparent url('/styles/web/icons16/document-icon.png' ) no-repeat;}
-.icon_article   {background: transparent url('/styles/web/icons16/document-icon.png' ) no-repeat;}
-.icon_assignment{background: transparent url('/styles/web/icons16/bubble-icon.png'   ) no-repeat;}
-.icon_response  {background: transparent url('/styles/web/icons16/document-icon.png' ) no-repeat;}
-.icon_rss       {background: transparent url('/styles/web/icons16/rss-icon.png'      ) no-repeat;} /* http://ava7.com/2006/11/rss-graphics.html */
-.icon_flag      {background: transparent url('/styles/web/icons16/flag-icon.png'     ) no-repeat;}
-.icon_settings  {background: transparent url('/styles/web/icons16/gear-icon.png' ) no-repeat;}
-.icon_share     {background: transparent url('/styles/web/icons16/share-icon.png'    ) no-repeat;}
-.icon_message   {background: transparent url('/styles/web/icons16/letter-icon.png'   ) no-repeat;}
-.icon_edit      {background: transparent url('/styles/web/icons16/pencil-icon.png'   ) no-repeat;}
-.icon_boom      {background: transparent url('/styles/web/icons16/megaphone-icon.png') no-repeat;}
-.icon_accept    {background: transparent url('/styles/web/icons16/tick-icon.png'   ) no-repeat;}
-.icon_withdraw  {background: transparent url('/styles/web/icons16/delete-icon.png'   ) no-repeat;}
-.icon_respond   {background: transparent url('/styles/web/icons16/document-pencil-icon.png'   ) no-repeat;}
-.icon_reload    {background: transparent url('/styles/web/icons16/reload-icon.png'   ) no-repeat;}
-.icon_search    {background: transparent url('/styles/web/icons16/address-icon.png'   ) no-repeat;}
-.icon_map       {background: transparent url('/styles/web/icons16/globe-icon.png'   ) no-repeat;}
-.icon_account_type_plus {background: transparent url('/styles/web/icons16/plus-icon.png') no-repeat;}
+.icon_popup      {background: transparent url('/styles/common/icons16/bubble2-icon.png'  ) no-repeat;}
+.icon_list       {background: transparent url('/styles/common/icons16/document2-icon.png') no-repeat;}
+.icon_approved   {background: transparent url('/styles/common/icons16/licence-icon.png'  ) no-repeat;}
+.icon_seen       {background: transparent url('/styles/common/icons16/tick-icon.png'     ) no-repeat;}
+.icon_disasociate{background: transparent url('/styles/common/icons16/delete-icon.png'  ) no-repeat;}
+.icon_edit_lock {background: transparent url('/styles/common/icons16/lock-icon.png'     ) no-repeat;}
+.icon_private   {background: transparent url('/styles/common/icons16/key-icon.png'      ) no-repeat;}
+.icon_follow    {background: transparent url('/styles/common/icons16/cb_follow-icon.png') no-repeat;}
+.icon_unfollow  {background: transparent url('/styles/common/icons16/cb_unfollow-icon.png') no-repeat;}
+.icon_widget    {background: transparent url('/styles/common/icons16/cb_widget-icon.png') no-repeat;}
+.icon_invite    {background: transparent url('/styles/common/icons16/cb_invite-icon.png') no-repeat;}
+.icon_user      {background: transparent url('/styles/common/icons16/user-icon.png'     ) no-repeat;}
+.icon_current_user {background: transparent url('/styles/common/icons16/user-3-icon.png') no-repeat;}
+.icon_group     {background: transparent url('/styles/common/icons16/network-icon.png'  ) no-repeat;}
+.icon_userid    {background: transparent url('/styles/common/icons16/user-info-icon.png') no-repeat;}
+.icon_delete    {background: transparent url('/styles/common/icons16/delete-icon.png'   ) no-repeat;}
+.icon_save      {background: transparent url('/styles/common/icons16/save-icon.png'     ) no-repeat;}
+.icon_preview   {background: transparent url('/styles/common/icons16/document2-icon.png') no-repeat;}
+.icon_close     {background: transparent url('/styles/common/icons16/close-icon.png'    ) no-repeat;}
+.icon_close_edit{background: transparent url('/styles/common/icons16/document2-icon.png' ) no-repeat;}
+.icon_draft     {background: transparent url('/styles/common/icons16/document-icon.png' ) no-repeat;}
+.icon_article   {background: transparent url('/styles/common/icons16/document-icon.png' ) no-repeat;}
+.icon_assignment{background: transparent url('/styles/common/icons16/bubble-icon.png'   ) no-repeat;}
+.icon_response  {background: transparent url('/styles/common/icons16/document-icon.png' ) no-repeat;}
+.icon_rss       {background: transparent url('/styles/common/icons16/rss-icon.png'      ) no-repeat;} /* http://ava7.com/2006/11/rss-graphics.html */
+.icon_flag      {background: transparent url('/styles/common/icons16/flag-icon.png'     ) no-repeat;}
+.icon_settings  {background: transparent url('/styles/common/icons16/gear-icon.png' ) no-repeat;}
+.icon_share     {background: transparent url('/styles/common/icons16/share-icon.png'    ) no-repeat;}
+.icon_message   {background: transparent url('/styles/common/icons16/letter-icon.png'   ) no-repeat;}
+.icon_edit      {background: transparent url('/styles/common/icons16/pencil-icon.png'   ) no-repeat;}
+.icon_boom      {background: transparent url('/styles/common/icons16/megaphone-icon.png') no-repeat;}
+.icon_accept    {background: transparent url('/styles/common/icons16/tick-icon.png'   ) no-repeat;}
+.icon_withdraw  {background: transparent url('/styles/common/icons16/delete-icon.png'   ) no-repeat;}
+.icon_respond   {background: transparent url('/styles/common/icons16/document-pencil-icon.png'   ) no-repeat;}
+.icon_reload    {background: transparent url('/styles/common/icons16/reload-icon.png'   ) no-repeat;}
+.icon_search    {background: transparent url('/styles/common/icons16/address-icon.png'   ) no-repeat;}
+.icon_map       {background: transparent url('/styles/common/icons16/globe-icon.png'   ) no-repeat;}
+.icon_account_type_plus {background: transparent url('/styles/common/icons16/plus-icon.png') no-repeat;}
 
 
 /* 32x32 icons */
@@ -70,7 +70,7 @@
 	height : 32px;
 }
 .icon_large span {display: none;}
-.icon_approved_large  {background: transparent url('/styles/web/icons32/licence-icon.png') no-repeat;}
-.icon_edit_lock_large {background: transparent url('/styles/web/icons32/lock-icon.png'   ) no-repeat;}
-.icon_private_large   {background: transparent url('/styles/web/icons32/key-icon.png'    ) no-repeat;}
-.icon_seen_large      {background: transparent url('/styles/web/icons32/tick-icon.png'   ) no-repeat;}
+.icon_approved_large  {background: transparent url('/styles/common/icons32/licence-icon.png') no-repeat;}
+.icon_edit_lock_large {background: transparent url('/styles/common/icons32/lock-icon.png'   ) no-repeat;}
+.icon_private_large   {background: transparent url('/styles/common/icons32/key-icon.png'    ) no-repeat;}
+.icon_seen_large      {background: transparent url('/styles/common/icons32/tick-icon.png'   ) no-repeat;}
