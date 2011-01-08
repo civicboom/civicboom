@@ -11,7 +11,7 @@ from civicboom.model.message import Message
 from civicboom.model.media   import Media
 from civicboom.model.feed    import Feed
 
-def init_model(main_engine, legacy_engine=None):
+def init_model(main_engine):
     """Call me before using any of the tables or classes in the model"""
     ## Reflected tables must be defined and mapped here
     #global reflected_table
@@ -20,10 +20,5 @@ def init_model(main_engine, legacy_engine=None):
     #orm.mapper(Reflected, reflected_table)
     #
     meta.Session.configure(bind=main_engine)
-    if legacy_engine: # pragma: no cover -- legacy should be removed
-        meta.LegacySession.configure(bind=legacy_engine)
-
     meta.engine = main_engine
-    meta.legacy_engine = legacy_engine
-
 
