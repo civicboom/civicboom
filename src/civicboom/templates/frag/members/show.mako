@@ -196,9 +196,17 @@
     % if 'settings' in self.actions:
         <a class="icon icon_settings" href="${url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>
         
-        <a class="icon icon_message" href="${url('messages')}" title="${_('Messages')}"
-           onclick="cb_frag($(this), '${url('messages', format='frag')}', 'bridge'); return false;"
+        <a class   = "icon icon_message"
+           href    = "${url('messages',list='to')}"
+           title   = "${_('Messages')}"
+           onclick = "cb_frag($(this), '${url('messages', list='to'          , format='frag')}', 'bridge'); return false;"
         ><span>${_('Messages')}</span></a>
+        
+        <a class   = "icon icon_notification"
+           href    = "${url('messages', list='notification')}"
+           title   = "${_('Notifications')}"
+           onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'bridge'); return false;"
+        ><span>${_('Notifications')}</span></a>
     % endif
     <a class="icon icon_widget"  href="${url(controller='misc', action='widget_preview')}" title="${_('Widget Preview')}"><span>${_('Widget Preview')}</span></a>
     

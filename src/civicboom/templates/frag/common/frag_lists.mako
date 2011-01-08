@@ -229,7 +229,7 @@
 
 <%def name="render_item_message(message)">
     ##<a href="${url('message', id=message['id'])}">
-    % if 'source' in message:
+    % if message.get('source'):
     <td>${member_includes.avatar(message['source'], class_="thumbnail_small")}</td>
     % endif
     <td>${message['subject']}</td>
