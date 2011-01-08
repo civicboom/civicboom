@@ -16,6 +16,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="avatar(member, class_='', js_link_to_frag=True, **kwargs)">
+    % if member:
     <div class="thumbnail ${class_}">
         <%
             if js_link_to_frag:
@@ -27,6 +28,7 @@
           <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
         </a>
     </div>
+    % endif
 </%def>
 
 ## Old Avatar render for refence

@@ -52,6 +52,7 @@
 .icon_settings  {background: transparent url('/styles/common/icons16/gear-icon.png' ) no-repeat;}
 .icon_share     {background: transparent url('/styles/common/icons16/share-icon.png'    ) no-repeat;}
 .icon_message   {background: transparent url('/styles/common/icons16/letter-icon.png'   ) no-repeat;}
+.icon_notification {background: transparent url('/styles/common/icons16/warning-icon.png'   ) no-repeat;}
 .icon_edit      {background: transparent url('/styles/common/icons16/pencil-icon.png'   ) no-repeat;}
 .icon_boom      {background: transparent url('/styles/common/icons16/megaphone-icon.png') no-repeat;}
 .icon_accept    {background: transparent url('/styles/common/icons16/tick-icon.png'   ) no-repeat;}

@@ -1,7 +1,13 @@
 <%inherit file="/frag/common/frag_lists.mako"/>
 
 <%def name="body()">
-    ${parent.message_list(d['list'], _('Messages'), max=None)}
+    <%
+        args, kwargs = c.web_params_to_kwargs
+        list = _('Message ')
+        if 'list' in kwargs:
+            list += kwargs.get('list')
+    %>
+    ${parent.message_list(d['list'], list, max=None)}
 </%def>
 
 
