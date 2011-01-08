@@ -1,8 +1,18 @@
+<%inherit file="/frag/common/frag.mako"/>
 
+<%namespace name="member_includes" file="/web/common/member.mako" />
 
+<%!
+    title               = 'Message'
+    icon_type           = 'message'
 
-<%doc>
-${show_message(c.result['data']['message'])}
+    rss_url             = False
+%>
+
+<%def name="body()">
+    ${show_message(c.result['data']['message'])}    
+</%def>
+
 
 <%def name="show_message(message)">
 <table>
@@ -12,7 +22,7 @@ ${show_message(c.result['data']['message'])}
 		<th>${_("Date")}</th>
 	</tr>
 	<tr>
-		<td>${str(message["source"])}</td>
+		<td>${member_includes.avatar(message["source"])}</td>
 		<td>${message["subject"]}</td>
 		<td>${message["timestamp"][0:16]}</td>
 	</tr>
@@ -21,4 +31,3 @@ ${show_message(c.result['data']['message'])}
 	</tr>
 </table>
 </%def>
-</%doc>

@@ -232,7 +232,13 @@
     % if message.get('source'):
     <td>${member_includes.avatar(message['source'], class_="thumbnail_small")}</td>
     % endif
-    <td>${message['subject']}</td>
+    <td>
+        <a href    = "${url('message', id=message['id'])}"
+           onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'bridge'); return false;"
+        >
+            ${message['subject']}
+        </a>
+    </td>
     <td>${message["timestamp"][0:16]}</td>
     <td>
         ${h.secure_link(
