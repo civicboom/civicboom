@@ -20,14 +20,20 @@ class Message(Base):
     content     = Column(UnicodeText(), nullable=False)
     read        = Column(Boolean(),     nullable=False, default=False)
 
+    target                = relationship("Member", primaryjoin="Message.target_id==Member.id")
+    source                = relationship("Member", primaryjoin="Message.source_id==Member.id")
+
+
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'default': {
             'id'           : None ,
             'source_id'    : None ,
-            'source'       : lambda m: str(m.source) ,
+            'source'       : lambda message: message.source.to_dict() ,
+            'source_name'  : lambda message: str(message.source),
             'target_id'    : None ,
-            'target'       : lambda m: str(m.target) ,
+            'target'       : lambda message: message.target.to_dict() ,
+            'target_name'  : lambda message: str(message.target),
             'timestamp'    : None ,
             'subject'      : None ,
             'content'      : None ,

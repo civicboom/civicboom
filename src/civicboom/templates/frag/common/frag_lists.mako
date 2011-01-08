@@ -42,6 +42,10 @@
     ${frag_list(render_item_function=render_item_group_members, type=('table','tr'), *args, **kwargs)}
 </%def>
 
+<%def name="message_list(*args, **kwargs)">
+    ${frag_list(render_item_function=render_item_message, type=('table','tr'), *args, **kwargs)}
+</%def>
+
 
 
 ##------------------------------------------------------------------------------
@@ -216,4 +220,28 @@
             ${h.icon(content.get('response_type'))}
         % endif
     </div>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Message Item
+##------------------------------------------------------------------------------
+
+<%def name="render_item_message(message)">
+    ##<a href="${url('message', id=message['id'])}">
+    % if 'source' in message:
+    <td>${member_includes.avatar(message['source'], class_="thumbnail_small")}</td>
+    % endif
+    <td>${message['subject']}</td>
+    <td>${message["timestamp"][0:16]}</td>
+    <td>
+        ${h.secure_link(
+            h.args_to_tuple('message', id=message['id'], format='redirect') ,
+            method="DELETE",
+            value="",
+            title=_("Delete"),
+            css_class="icon icon_delete",
+            json_form_complete_actions = "cb_frag_reload(current_element);" ,
+        )}
+    </td>
 </%def>

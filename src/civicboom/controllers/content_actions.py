@@ -262,6 +262,7 @@ class ContentActionsController(BaseController):
         content = _get_content(id, is_viewable=True)
         return action_ok(data={'list': [c.to_dict() for c in content.comments]})
 
+
     #-----------------------------------------------------------------------------
     # List - Accepted status
     #-----------------------------------------------------------------------------
@@ -275,14 +276,6 @@ class ContentActionsController(BaseController):
             })
         
         return action_ok(data={'list':[]})
-        
-        # AllanC - depricated return - wanted to keep consistant with the way members are returned
-        #accepted_status = {
-        #    'accepted' : [a.member.to_dict() for a in content.assigned_to if a.status=="accepted" ],
-        #    'pending'  : [a.member.to_dict() for a in content.assigned_to if a.status=="pending"  ],
-        #    'withdrawn': [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"],
-        #}
-        #return action_ok(data={'accepted_status': accepted_status})
 
 
 
