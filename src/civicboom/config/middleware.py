@@ -5,6 +5,7 @@ from paste.registry import RegistryManager
 from paste.urlparser import StaticURLParser
 from paste.fileapp import FileApp
 from paste.deploy.converters import asbool
+from paste.deploy.config import PrefixMiddleware
 from pylons.middleware import ErrorHandler, StatusCodeRedirect
 from pylons.wsgiapp import PylonsApp
 from routes.middleware import RoutesMiddleware
@@ -64,6 +65,7 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     app = HttpsDetectionMiddleware(app)
     app = NoCookiesForStaticMiddleware(app)
     app = SecurifyCookiesMiddleware(app)
+    app = PrefixMiddleware(app)
 
 
     if asbool(full_stack):

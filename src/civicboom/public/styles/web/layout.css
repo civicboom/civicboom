@@ -6,59 +6,53 @@ HTML {
 /*
  * the body is then broken down into the navigation bar at the top
  */
+/*
 NAV {
 	position: fixed;
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	background: url("/styles/web/userbarbk.png");
 	z-index: 2;
 }
 .u-anon NAV {height: 0px;}
-.u-user NAV {height: 17px;}
+.u-user NAV {height: 16px;}
 
 NAV A {
-	background: url("/styles/web/userbartab.png");
+	background: #EEE;
 	text-align: center;
 	color: black;
 	text-decoration: none;
 
 	position: absolute;
-	top: 0px;
+	top: 1px;
 
 	display: block;
-	width: 71px;
-	height: 17px;
+	width: 92px;
+	height: 14px;
 	font-size: 0.75em;
+
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
 }
 NAV A SPAN {
 	display: none;
 }
 
 NAV .name {left: 32px;}
-NAV .clock {left: 103px;}
-NAV .role {left: 174px;}
+NAV .role {left: 128px;}
 
-NAV .profile {left: 277px;}
-NAV .groups {left: 348px;}
-NAV .assignments {left: 419px;}
-
-NAV .messages {left: 520px;}
-
-NAV .settings {
-	right: 32px;
-
-	width: 68px;
-	background: url("/styles/web/userbarsettings.png");
-}
+NAV .messages {left: 256px;}
 
 NAV .login, NAV .logout {
 	position: absolute;
-	right: 32px;
+	right: 16px;
 	width: 68px;
+}
+NAV .login {
 	height: 15px;
 }
-NAV .logout {top: 17px;}
+
 
 NAV .persona_select img {
     max-width: 40px;
@@ -69,60 +63,110 @@ NAV .persona_select ul {
     background-color: #888;
 }
 
-/*
- * the header, with logo and search box
- */
+*/
+
+/*NAV .logout {top: 16px;}*/
+
+
+/*----------------------------------------------------------------------------*/
+/*                                 Header                                     */
+/*----------------------------------------------------------------------------*/
+
 HEADER {
 	clear: both;
-	background: url("/styles/web/headerbk.png");
+	background: url("/styles/web/headerbk.png") 0 -10px;
 	position: fixed;
-	left: 0px;
+    top  : 0px;
+	left : 0px;
 	right: 0px;
-	height: 64px;
+	/* height: 64px; */
+    height: 42px;
 	z-index: 1;
 }
-.u-anon HEADER {top: 0px;}
-.u-user HEADER {top: 17px;}
 
-HEADER #logo IMG {padding: 16px;}
+BODY>DIV#app {
+	/* clear: both;
+	z-index: 0; */
+	margin-bottom: 2em;
+    margin-top: 44px;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                             Persona Select                                 */
+/*----------------------------------------------------------------------------*/
+
+HEADER #persona_select {
+    position: absolute;
+    top : 1px;
+    left: 16px;
+}
+
+HEADER #persona_select img {
+    width : 32px;
+    height: 32px;
+    border: 1px solid #888;
+    border-radius        : 0.1em;
+	-moz-border-radius   : 0.1em;
+	-webkit-border-radius: 0.1em;
+}
+
+HEADER #persona_select li li {
+    background-color: #ccc;
+}
+
+
+/*
+.u-anon HEADER {top: 0px;}
+.u-user HEADER {top: 16px;}
+*/
+
+/*
+.u-anon #app {margin-top: 48px;}
+.u-user #app {margin-top: 60px;}
+*/
+
+/*----------------------------------------------------------------------------*/
+/*                                Logo                                        */
+/*----------------------------------------------------------------------------*/
+
+HEADER #logo IMG  {position: absolute; left: 64px; top: 6px;}
 HEADER #logo SPAN {display: none;}
 
-HEADER #search {
-	position: absolute;
-	top: 2px;
-	right: 128px;
-	background: url("/styles/web/searchbk.png");
-	width: 165px;
-	height: 58px;
+
+/*----------------------------------------------------------------------------*/
+/*                                  Home                                      */
+/*----------------------------------------------------------------------------*/
+
+HEADER #home_link {
+    position: absolute;
+    top : -2px;
+    left: -24px;
 }
-HEADER #search .search_input {
-	position: absolute;
-	top: 23px;
-	left: 5px;
-	width: 103px;
-	height: 13px;
-	border: none;
-	font-size: 12px;
-}
-HEADER #search .search_button {
-	position: absolute;
-	top: 6px;
-	left: 111px;
-}
+
+
+/*----------------------------------------------------------------------------*/
+/*                                Navigation                                  */
+/*----------------------------------------------------------------------------*/
 
 HEADER .menuh-container {
 	position: absolute;
-	top: 21px;
-	left: 160px;
+	top: 11px;
+	left: 220px;
 }
-HEADER .menuh>UL {
+
+NAV .menuh>UL {
 	margin-left: 16px;
+	height: 20px;
 }
-HEADER .menuh a {
+NAV .menuh ul {
+    width:9em;	/* width of all menu boxes */
+}
+NAV .menuh a {
 	font-family: sans;
 	background: white;
 }
-HEADER .menuh a.top_parent {
+NAV .menuh a.top_parent {
 	border-radius: 10px 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
@@ -133,54 +177,104 @@ HEADER .menuh a.top_parent {
 	border-bottom: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 }
-HEADER .menuh a.top_parent {
+NAV .menuh a.top_parent {
 	font-weight: bold;
 }
-HEADER .menuh LI:hover a.top_parent {
+NAV .menuh LI:hover a.top_parent {
 	border-bottom-left-radius: 0px;
-	-moz-border-bottom-left-radius: 0px;
 	-webkit-border-bottom-left-radius: 0px;
 	border-bottom-right-radius: 0px;
-	-moz-border-bottom-right-radius: 0px;
 	-webkit-border-bottom-right-radius: 0px;
+	-moz-border-radius: 10px 10px 0px 0px;
 	border-top: 1px solid #555;
 	border-left: 1px solid #555;
 	border-right: 1px solid #555;
 }
-HEADER .menuh a.sub_option {
+NAV .menuh a.sub_option,
+NAV .menuh a.parent {
 	border-left: 1px solid #555;
 	border-right: 1px solid #555;
 	border-bottom: 1px solid #ddd;
 }
-HEADER .menuh LI:last-child>a.sub_option {
+NAV .menuh LI:last-child>a.sub_option {
 	border-bottom: 1px solid #555;
 	border-bottom-left-radius: 10px;
-	-moz-border-bottom-left-radius: 10px;
 	-webkit-border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
-	-moz-border-bottom-right-radius: 10px;
 	-webkit-border-bottom-right-radius: 10px;
+	-moz-border-radius: 0px 0px 10px 10px;
 }
-HEADER .menuh INPUT {
+NAV .menuh INPUT {
 	width: 100%;
 }
 
-/*
- * the bulk of the page in the middle
- */
-BODY>DIV#app {
-	clear: both;
-	z-index: 0;
-	margin-bottom: 2em;
+
+/*----------------------------------------------------------------------------*/
+/*                                Search                                      */
+/*----------------------------------------------------------------------------*/
+
+HEADER #search {
+	position: absolute;
+	top: 10px;
+	right: 72px;
+	width: 150px;
+	height: 20px;
 }
-.u-anon #app {margin-top: 64px;}
-.u-user #app {margin-top: 80px;}
+HEADER #search .search_input {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	border: none;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+HEADER #search .button {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 30px;
+	height: 100%;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+
+/*----------------------------------------------------------------------------*/
+/*                             Login / Logout                                 */
+/*----------------------------------------------------------------------------*/
+
+HEADER #login {
+    position: absolute;
+    top: 9px;
+    right: 8px;
+    width: 54px;
+    height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #eee;
+    border: 1px solid #ccc;
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+    
+}
+
+
+
+
+/*----------------------------------------------------------------------------*/
+/*                                Col Body                                    */
+/*----------------------------------------------------------------------------*/
 
 /*
  * sometimes the main page is columned
  */
 #col_left, #col_main, #col_right {
-	padding: 0.25em;
+	/* padding: 0.25em; */
+    /* margin-left: 0.2em; */
 }
 #col_left {
 	float: left;
@@ -201,9 +295,10 @@ BODY>DIV#app {
 
 
 
-/*
- * and a footer (not actually in the new design -- do we need one?)
- */
+/*----------------------------------------------------------------------------*/
+/*                                  Footer                                    */
+/*----------------------------------------------------------------------------*/
+
 FOOTER {
 	background: white;
 	position: fixed;
@@ -222,9 +317,10 @@ FOOTER .copyright {
 	float: right;
 }
 
-/*
- * individual elements
- */
+/*----------------------------------------------------------------------------*/
+/*                                Title Styles                                */
+/*----------------------------------------------------------------------------*/
+
 H1,H2,H3,H4 {
     font-weight: bold;
     margin: 0.25em 0em;

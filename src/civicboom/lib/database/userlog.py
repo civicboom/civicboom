@@ -5,7 +5,9 @@ from pylons import request, response, session, tmpl_context as c, url
 from sqlalchemy import engine_from_config
 from sqlalchemy.sql import text
 
+from uuid import uuid1 as uuid
 import logging
+import platform
 
 log_engine = None
 
@@ -19,6 +21,8 @@ class UserLogHandler(logging.Handler):
     def emit(self, record):
         db_engine = get_engine()
 
+        id = uuid()
+        node = platform.node()
         username = "None"
         persona = "None"
         if c.logged_in_user:
@@ -34,9 +38,9 @@ class UserLogHandler(logging.Handler):
 
         connection = db_engine.connect()
         connection.execute(text("""
-            INSERT INTO events(module, line_num, username, persona, url, address, priority, message)
-            VALUES(:module, :line_num, :username, :persona, :url, :address, :priority, :message)
-        """), module=module, line_num=line_num, username=username, persona=persona, url=url, address=addr, priority=priority, message=message)
+            INSERT INTO events(id, node, module, line_num, username, persona, url, address, priority, message)
+            VALUES(:id, :node, :module, :line_num, :username, :persona, :url, :address, :priority, :message)
+        """), id=str(id), node=node, module=module, line_num=line_num, username=username, persona=persona, url=url, address=addr, priority=priority, message=message)
         # connection.commit()
         connection.close()
 

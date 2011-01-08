@@ -17,6 +17,7 @@
 <%def name="body()">
 
     <a href="${url(controller='settings', action='messages')}">${_("Edit Notifications")}</a>
+    <a href="${url(controller='account' , action='link_janrain')}">${_("Link Addtional Accounts")}</a>
     <br/>
 
     ${h.form(h.url('setting', id='None'), method='PUT', multipart=True)}

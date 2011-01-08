@@ -35,8 +35,9 @@
             <p>${_("Responding to: %s") % self.content['parent']['title']}</p>
         % endif
         
-        ## AllanC - TODO need to update h.form() to accept url as a tuple for AJAX submission
-        ${h.form(h.args_to_tuple('content', id=self.id, format="redirect"), id='edit_%s'%self.id, method='PUT', multipart=True, name="content")}
+        ## pre_onsubmit is needed to save the contents of the TinyMCE component back to the text area
+        ##  reference - http://www.dreamincode.net/forums/topic/52581-textarea-value-not-updating/
+        ${h.form(h.args_to_tuple('content', id=self.id, format="redirect"), id='edit_%s'%self.id, method='PUT', multipart=True, name="content", pre_onsubmit="tinyMCE.triggerSave(true,true);")}
             ${base_content()}
             ${media()}
             ${content_type()}
@@ -61,7 +62,7 @@
         <a href="${h.url('content', id=self.id)}"
            class="icon icon_close_edit"
            title="${_('Discard Changes and view')}"
-           onclick="cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}'); return false;"
+           onclick="if (confirm('${_('View _content without saving your changes?')}')) {cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');} return false;"
         ><span>${_("Discard Changes and view")}</span></a>
         
         ${h.secure_link(
@@ -101,47 +102,49 @@
         </p>
         
         ##${YUI.richtext(c.content.content, width='100%', height='300px')}
-		<textarea name="content" id="content" style="width:100%; height:300px;">${self.content['content']}</textarea>'
+		<%
+		area_id = h.uniqueish_id("content")
+		%>
+		<textarea name="${area_id}" id="${area_id}" style="width:100%; height:300px;">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
-        <script type="text/javascript" src ="/javascript/tiny_mce/tiny_mce.js"></script>
+        
 		<script type="text/javascript">
-		tinyMCE.init({
-			mode     : "exact" ,
-            elements : "content" ,
-			theme    : "advanced" ,
-			theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
-			theme_advanced_buttons2 : "",
-			theme_advanced_buttons3 : "",
-			theme_advanced_toolbar_location : "top",
-			theme_advanced_toolbar_align : "left",
-		});
-		function ajaxSave() {
-			var ed = tinyMCE.get('content');
-			ed.setProgressState(1); // Show progress spinner
-			$.ajax({
-				type    : 'POST',
-				dataType: 'json',
-				url     : "${url('formatted_content', id=c.content.id, format='json')}",
-				data    : {
-                    "_method"     : 'PUT',
-					"content": ed.getContent(),
-					"mode"        : 'autosave',
-                    "_authentication_token": '${h.authentication_token()}'
-                    ##"upload_key": '${c.content_media_upload_key}',
-				},
-				success: function(data) {
-					ed.setProgressState(0);
-					flash_message(data);
-				},
-			});
-		}
-        % if self.content['type'] == "draft":
-		var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
-        % endif
+            tinyMCE.init({
+                mode     : "exact" ,
+                elements : "${area_id}" ,
+                theme    : "advanced" ,
+                theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
+                theme_advanced_buttons2 : "",
+                theme_advanced_buttons3 : "",
+                theme_advanced_toolbar_location : "top",
+                theme_advanced_toolbar_align    : "left",
+            });
+            function ajaxSave() {
+                var ed = tinyMCE.get('${area_id}');
+                ed.setProgressState(1); // Show progress spinner
+                $.ajax({
+                    type    : 'POST',
+                    dataType: 'json',
+                    url     : "${url('formatted_content', id=self.id, format='json')}",
+                    data    : {
+                        "_method": 'PUT',
+                        "content": ed.getContent(),
+                        "mode"   : 'autosave',
+                        "_authentication_token": '${h.authentication_token()}'
+                    },
+                    success: function(data) {
+                        ed.setProgressState(0);
+                        flash_message(data);
+                    },
+                });
+            }
+            % if self.content['type'] == "draft":
+            var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
+            % endif
 		</script>
 
         % if self.content['type'] == "draft":
-            <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   style="float: right;"/>
+            <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   style="float: right;" onclick="add_onclick_submit_field($(this));" />
         % endif
 
         ## Owner
@@ -172,6 +175,7 @@
         
         
         ## Tags
+		<!--
         <p>
             <label for="tags">${_("Tags")}</label>
             <%
@@ -182,7 +186,7 @@
             <input id="tags" name="tags" type="text" value="${tag_string}"/>
             ${popup(_("extra_info"))}
         </p>
-
+		-->
     </fieldset>
 </%def>
 
@@ -249,14 +253,33 @@
             
             <!-- Add media -->
             
-            <!-- Add media javascript - visable to JS enabled borwsers -->
+            <!-- Add media javascript - visible to JS enabled borwsers -->
             <li class="hide_if_nojs">
-                Javascript/Flash uploader goes here
-                ##% if c.content.id:
-                ##<li>
-                    ##${YUI.file_uploader()}
-                ##</li>
-                ##% endif
+				<input id="file_upload" name="file_upload" type="file" />
+				<script type="text/javascript">
+				$(document).ready(function() {
+						$('#file_upload').uploadify({
+							'uploader'   : '/flash/uploadify.swf',
+							'script'     : '/media/upload_media',
+							'scriptData' : {
+								'content_id': ${self.id},
+								'member_id' : ${c.logged_in_persona.id},
+								'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % c.content.id)}'
+							},
+							'cancelImg'  : '/images/cancel.png',
+							'folder'     : '/uploads',
+							'multi'      : true,
+							'auto'       : true,
+							'fileDataName':'file_data',
+							'removeCompleted' : false,
+							'onComplete'  : function(event, ID, fileObj, response, data) {
+								//alert('There are ' + data.fileCount + ' files remaining in the queue.');
+								// refresh the file list
+								Y.log("refresh the list now");
+							}
+							});
+						});
+				</script>
             </li>
             
             <!-- Add media non javascript version - hidden if JS enabled -->
@@ -314,8 +337,8 @@
         
         % if type == "draft":
             <table id="type_selection"><tr>
-            % for type in types:
-                ${type_option(type[0],type[1])}
+            % for t in types:
+                ${type_option(t[0],t[1])}
             % endfor
             <tr></table>
         % else:
@@ -324,7 +347,7 @@
 
         <div id="content_type_additional_fields">
             ## See CSS for "active" class
-            <div id="type_assignment_extras" class="hideable">
+            <div id="type_assignment_extras" class="hideable, additional_fields">
                 <script>
                     $(function() {$( "#datepicker1" ).datepicker();});
                     $(function() {$( "#datepicker2" ).datepicker();});
@@ -376,23 +399,25 @@
                     }
                 }
             }
-
+            
             function highlightType(type) {
-                // Select radio button
-                setCheckedValue(document.forms['content'].elements['target_type'], type);
-                // reset all radio buttons to unselected
-                setSingleCSSClass(document.getElementById('type_'+type          ), 'section_selected', 'type_selection'                );
-                setSingleCSSClass(document.getElementById('type_'+type+'_extras'), 'active'          , 'content_type_additional_fields');
+                setCheckedValue(document.forms['content'].elements['target_type'], type); // Select radio button
+                
+                $('#type_selection .section_selectable').removeClass('section_selected');
+                $('#type_'+type                        ).addClass(   'section_selected');
+                
+                $('#content_type_additional_fields .additional_fields').hide();
+                $('#type_'+type+'_extras').show();
             }
-
+            
             highlightType('${selected_type}'); //Set the default highlighted item to be the content type
         </script>
 
         <div style="float: right;">
             % if type == "draft":
-            <input type="submit" name="submit_publish" value="${_("Publish")}"      />
+            <input type="submit" name="submit_publish" value="${_("Publish")}"        onclick="add_onclick_submit_field($(this));"/>
             % else:
-            <input type="submit" name="submit_publish" value="${_("Publish Update")}"/>
+            <input type="submit" name="submit_publish" value="${_("Publish Update")}" onclick="add_onclick_submit_field($(this));"/>
             % endif
         </div>
     </fieldset>
@@ -406,12 +431,9 @@
     <!-- Licence -->
     <fieldset><legend><span onclick="toggle(this);">${_("Location (optional)")}</span></legend>
         <div class="hideable">
-            ${form_instruction(_("why give us this..."))}
-            stuff!!
+            ##${form_instruction(_("why give us this..."))}
+			${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
         </div>
-        ##<div style="height:400px;">
-        ${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
-        ##</div>
     </fieldset>
 </%def>
 
@@ -455,8 +477,8 @@
     
         % if self.content['type'] == "draft":
         ## AllanC - note the class selectors are used by jQuery to simulate clicks
-        <input type="submit" name="submit_preview" class="submit_preview" value="${_("Preview Draft")}"/>
-        <input type="submit" name="submit_draft"   class="submit_draft"   value="${_("Save Draft")}"   />
+        <input type="submit" name="submit_preview" class="submit_preview" value="${_("Preview Draft")}" onclick="add_onclick_submit_field($(this));"/>
+        <input type="submit" name="submit_draft"   class="submit_draft"   value="${_("Save Draft")}"    onclick="add_onclick_submit_field($(this));"/>
         % else:
         <a href="${h.url('content', id=self.id)}">${_("View Content")}</a>
         % endif

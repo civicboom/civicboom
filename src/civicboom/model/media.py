@@ -22,7 +22,7 @@ class Media(Base):
     __tablename__ = "media"
     _media_types  = Enum("application", "audio", "example", "image", "message", "model", "multipart", "text", "video", name="media_types")
     id            = Column(Integer(),        primary_key=True)
-    content_id    = Column(Integer(),        ForeignKey('content.id'), nullable=False)
+    content_id    = Column(Integer(),        ForeignKey('content.id'), nullable=False, index=True)
     name          = Column(Unicode(250),     nullable=False)
     type          = Column(_media_types,     nullable=False, doc="MIME type, eg 'text', 'video'")
     subtype       = Column(String(32),       nullable=False, doc="MIME subtype, eg 'jpeg', '3gpp'")

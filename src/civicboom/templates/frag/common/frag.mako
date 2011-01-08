@@ -50,12 +50,12 @@
     ${next.init_vars()}
     % endif
 
-    ## AJAX Fragment refresh (not visable to user)
+    ## AJAX Fragment refresh (not visible to user)
 
     <a class="frag_source" href="${self.attr.frag_url}" style="display: none;">frag source</a>
     ##.current_url()##
     
-    <div class="title_bar">
+    <div class="title_bar gradient">
         <div class="title">
             ## Title
             <span class="icon icon_${self.attr.icon_type}"></span><span class="title_text">${self.attr.title}</span>
@@ -99,9 +99,9 @@
             ${next.actions_common()}
             % endif
 
-            % if self.attr.auto_georss_link:
-                ${georss_link()}
-            % endif
+            ##% if self.attr.auto_georss_link:
+            ##    ${georss_link()}
+            ##% endif
         </div>        
     </div>
     

@@ -17,25 +17,15 @@ if not always_show_map:
 	style = style + " display: none; position: absolute; -webkit-box-shadow: 3px 3px 3px #666;"
 %>
 <div style="width: ${width}; height: ${height}; border: 1px solid black; ${style}" id="${field_name}_div"></div>
-<%
-if config['development_mode']:
-	c.scripts_end.extend([
-		'<script src="/javascript/OpenLayers.js"></script>',
-		'<script src="/javascript/gears_init.js"></script>',
-		'<script src="/javascript/geo.js"></script>',
-		'<script src="/javascript/minimap.js"></script>',
-	])
-else:
-	c.scripts_end.append(
-		'<script src="/javascript/_combined.maps.js"></script>'
-	)
-%>
 <script type="text/javascript">
 $(function() {
 	map = minimap(
 		'${field_name}_div',
 		{
 			controls: true,
+			// default UK
+			//lonlat: {lon:-4, lat:54},
+			//zoom: 4,
 		}
 	);
 
@@ -114,18 +104,6 @@ $(function() {
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 <%
 import json
-
-if config['development_mode']:
-	c.scripts_end.extend([
-		'<script src="/javascript/OpenLayers.js"></script>',
-		'<script src="/javascript/gears_init.js"></script>',
-		'<script src="/javascript/geo.js"></script>',
-		'<script src="/javascript/minimap.js"></script>',
-	])
-else:
-	c.scripts_end.append(
-		'<script src="/javascript/_combined.maps.js"></script>'
-	)
 %>
 <script type="text/javascript">
 $(function() {

@@ -4,7 +4,7 @@
 server_names_hash_bucket_size 64;
 
 # cache_path needs to be set globally, it doesn't work per-server :(
-proxy_cache_path /tmp/osm-cache   levels=2:2 keys_zone=osm:500m inactive=30d;
+proxy_cache_path /tmp/osm-cache   levels=2:2 keys_zone=osm:200m inactive=30d;
 proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:50m inactive=3m;
 proxy_temp_path  /tmp/nginx-temp;
 
@@ -20,8 +20,8 @@ upstream backends {
 
 server {
 	# server stuff
-	listen 80;
-	listen 443 default ssl;
+	listen [::]:80;
+	listen [::]:443 default ssl;
 	server_name .civicboom.com localhost _;
 	access_log /var/log/nginx/civicboom.log;
 	root /opt/cb/share/website/civicboom/public/;
@@ -30,7 +30,7 @@ server {
 	ssi on;
 
 	# ssl
-	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.crt;
+	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
 	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
 
 	# gzip
@@ -66,8 +66,8 @@ server {
 # for demo-mode, we need a local "static" server, because demo avatar
 # URLs are hardcoded as http://static.civicboom.com/public/blahblah.png
 server {
-	listen 80;
-	listen 443 ssl;
+	listen [::]:80;
+	listen [::]:443 ssl;
 	server_name static.civicboom.com civicboom-static.s3.amazonaws.com civicboom-static-test.s3.amazonaws.com;
 	root /tmp/warehouse/;
 	location /public/ {

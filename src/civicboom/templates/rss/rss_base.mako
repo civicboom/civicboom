@@ -15,7 +15,7 @@
 from datetime import datetime
 %>
 <channel>
-	<title        >? [${_('_site_name Search Results')}]</title>
+	<title        >${next.title()}</title>
 	<link         >${url.current(host=app_globals.site_host)}</link>
 	<description  >${_("News and articles from _site_name")}</description>
 	<pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
