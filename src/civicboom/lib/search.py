@@ -75,16 +75,10 @@ Filter()
 """
 
 def html(o):
-    if hasattr(o, "__html__"):
-        return o.__html__()
-    else:
-        return str(o)
+    return o.__html__()
 
 def sql(o):
-    if hasattr(o, "__sql__"):
-        return o.__sql__()
-    else:
-        return str(o)
+    return o.__sql__()
 
 
 class Filter(object):
