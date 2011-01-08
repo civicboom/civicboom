@@ -349,8 +349,8 @@
             ## See CSS for "active" class
             <div id="type_assignment_extras" class="hideable, additional_fields">
                 <script>
-                    $(function() {$( "#datepicker1" ).datepicker({ dateFormat: 'yyyy-mm-dd' });});
-                    $(function() {$( "#datepicker2" ).datepicker({ dateFormat: 'yyyy-mm-dd' });});
+                    $(function() {$( "#datepicker1" ).datepicker({ dateFormat: 'yy-mm-dd' });});
+                    $(function() {$( "#datepicker2" ).datepicker({ dateFormat: 'yy-mm-dd' });});
                 </script>
                 <%
                     due_date   = self.content.get('due_date')
