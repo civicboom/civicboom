@@ -23,6 +23,7 @@ HTML.js    .hide_if_js   {display: none;}
  */
 HTML, BODY {
 	/* background: #DDD; */
+	font-family: "Helvetica", "Arial", sans-serif;
 }
 
 
