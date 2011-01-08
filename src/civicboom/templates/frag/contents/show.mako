@@ -132,21 +132,25 @@
 ## Media
 ##------------------------------------------------------------------------------
 <%def name="content_media()">
-    <% content = self.content %>
+    <%
+        content = self.content
+        media_width  = config['media.display.video.width' ]
+        media_height = config['media.display.video.height']
+    %>
 
     <ul class="media">
     % for media in content['attachments']:
         <li>
         % if media['type'] == "image":
-            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}"/></a>
+            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}" style="width: ; "/></a>
         % elif media['type'] == "audio":
-            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="320" height="30">
+            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="30">
                 <param name="movie" value="/flash/player_flv_maxi.swf" />
                 <param name="allowFullScreen" value="true" />
                 <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
             </object>
         % elif media['type'] == "video":
-            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="320" height="240">
+            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="${media_height}">
                 <param name="movie" value="/flash/player_flv_maxi.swf" />
                 <param name="allowFullScreen" value="true" />
                 <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;startimage=${media['thumbnail_url']}&amp;showvolume=1&amp;showfullscreen=1" />
@@ -426,25 +430,7 @@
           <img src="/images/licenses/${d['content']['license']['code']}.png" alt="${d['content']['license']['name']}" />
         </a>
   
-    ##-----Copyright/Inapropriate?-------
-    <h2>${_("Content issues?")}</h2>
-      <a href="" class="button_small button_small_style_1" onclick="swap('flag_content'); return false;">${_("Inappropriate Content?")}</a>
-    
-      <div id="flag_content" class="hideable">
-        <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
-        ${h.form(url(controller='content_actions', action='flag', id=d['content']['id'], format='redirect'))}
-            <select name="type">
-                <% from civicboom.model.content import FlaggedContent %>
-                % for type in [type for type in FlaggedContent._flag_type.enums if type!="automated"]:
-                <option value="${type}">${_(type.capitalize())}</option>
-                % endfor
-            </select>
-            <p class="form_instructions">${_('Comment (optional)')}</p>
-            <textarea name="comment" style="width:90%; height:3em;"></textarea>
-            <input type="submit" name="flagit" value="Flag it" class="button_small button_small_style_tiny "/>
-            <span class="button_small button_small_style_tiny " onclick="swap('flag_content'); return false;">${_("Cancel")}</span>
-        ${h.end_form()}
-      </div>
+
 </%def>
 
 

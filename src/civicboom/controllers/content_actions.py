@@ -269,9 +269,12 @@ class ContentActionsController(BaseController):
     def accepted_status(self, id, **kwargs):
         content = _get_content(id, is_viewable=True)
         
-        return action_ok(data={'list':
-            [update_dict(a.member.to_dict(),{'status':a.status}) for a in content.assigned_to]
-        })
+        if hasattr(content, 'assigned_to'):
+            return action_ok(data={'list':
+                [update_dict(a.member.to_dict(),{'status':a.status}) for a in content.assigned_to]
+            })
+        
+        return action_ok(data={'list':[]})
         
         # AllanC - depricated return - wanted to keep consistant with the way members are returned
         #accepted_status = {
