@@ -21,10 +21,7 @@
 	margin-top: 0px;
 	}
 
-.menuh a.sub_option
-	{
-	/*border: 1px solid #555;*/
-	}
+.menuh a.sub_option	{}
 		
 .menuh a
 	{
@@ -38,15 +35,10 @@
 	
 .menuh a, .menuh a:visited	/* menu at rest */
 	{
-	/* format-specific
-	 * color: #000000;*/
 	text-decoration:none;
 	}
 	
-.menuh a:hover	/* menu at mouse-over  */
-	{
-	color: #000000;
-	}	
+.menuh a:hover {}	/* menu at mouse-over  */
 			
 .menuh a.top_parent, .menuh a.top_parent:hover  /* attaches down-arrow to all top-parents */
 	{
