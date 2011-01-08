@@ -8,7 +8,7 @@ from datetime import datetime
 	<title>${content['title']}</title> 
 	<link>${content['url']}</link> 
 	<description>${content['content_short']}</description> 
-	<pubDate>${datetime.strptime(content['creation_date'][0:19], "%Y-%m-%d %H:%M:%S").strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate> 
+	<pubDate>${h.datetime_to_rss(h.api_datestr_to_datetime(content['creation_date']))}</pubDate> 
 	<guid isPermaLink="false">Civicboom Content #${content['id']}</guid>
 	<category>${content['tags']}</category>
 	<dc:creator>${content['creator']['name']} (${content['creator']['username']})</dc:creator>

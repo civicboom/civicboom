@@ -1,5 +1,6 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%! import datetime %>
 
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
 <%namespace name="member_includes" file="/web/common/member.mako"     />
@@ -39,8 +40,6 @@
 ## Member Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-
-    <% import datetime %>
     
     <div class="frag_left_col">
         <div class="frag_col">
@@ -101,13 +100,13 @@
         )}
         
         ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='assignment' and ('due_date' not in c or c['due_date']==None or c['due_date']>=datetime.datetime.now()) ] ,
+            [c for c in d['content'] if c['type']=='assignment' and ('due_date' not in c or c['due_date']==None or h.api_datestr_to_datetime(c['due_date'])>=datetime.datetime.now()) ] ,
             _('Assignments Active') ,
             h.args_to_tuple('contents', creator=self.id, list='assignments_active') ,
         )}
         
         ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='assignment' and ('due_date' in c and c['due_date']!=None and c['due_date']<=datetime.datetime.now()) ] ,
+            [c for c in d['content'] if c['type']=='assignment' and ('due_date' in c and c['due_date']!=None and h.api_datestr_to_datetime(c['due_date'])<=datetime.datetime.now()) ] ,
             _('Assignments Previous') ,
             h.args_to_tuple('contents', creator=self.id, list='assignments_previous') ,
         )}

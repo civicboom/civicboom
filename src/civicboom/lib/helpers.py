@@ -31,6 +31,7 @@ import hashlib
 import json
 import copy
 import time
+import datetime
 
 def get_captcha(lang='en', theme='red'):
     """
@@ -152,6 +153,8 @@ def objs_to_linked_formatted_dict(**kargs):
     return links
 
 
+
+
 # AllanC - not happy with this ... see register template for example ...
 # htmlfill does not support HTML5 - so I created a cusom way of getting invalid data into the template
 # in the future when htmlfill is fixed then we can swich back to it
@@ -185,6 +188,18 @@ def icon(icon_type, description=None, class_=''):
     if not description and icon_type in icon_type_descriptions:
         description = icon_type_descriptions[icon_type]
     return HTML.div(HTML.span(description), class_=class_+" icon icon_"+icon_type, title=description)
+
+
+#-------------------------------------------------------------------------------
+# Date Management
+#-------------------------------------------------------------------------------
+
+def api_datestr_to_datetime(date_str):
+    return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
+    
+def datetime_to_rss(date):
+	return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
+
 
 #-------------------------------------------------------------------------------
 # Secure Form
