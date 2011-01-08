@@ -1,3 +1,13 @@
+#!/usr/bin/python
+
+import optparse
+
+import pylons
+from paste.deploy import appconfig
+
+from civicboom.config.environment import load_environment
+
+
 from civicboom.model.meta import Base, Session, LegacySession
 
 from civicboom.model import License, Tag, Rating
@@ -347,3 +357,18 @@ def convert_legacy_database(): # pragma: no cover - this should only be run as a
         # }}}
 
         # }}}
+
+if __name__ == '__main__':
+    option_parser = optparse.OptionParser()
+    option_parser.add_option('--ini',
+        help='INI file to use for pylons settings',
+        type='str',
+        default='development.ini')
+    options, args = option_parser.parse_args()
+
+    # Initialize the Pylons app
+    conf = appconfig('config:' + options.ini, relative_to='.')
+    load_environment(conf.global_conf, conf.local_conf)
+
+    # Now code can be run, the SQLalchemy Session can be used, etc.
+    convert_legacy_database()

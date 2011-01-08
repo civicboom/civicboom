@@ -211,15 +211,10 @@ CREATE TRIGGER update_content
     Session.commit()
     # }}}
     ###################################################################
-    if meta.legacy_engine: # pragma: no cover -- legacy should be removed
-        from civicboom.convert_legacy import convert_legacy_database
-        convert_legacy_database()
-    ###################################################################
-    
+
     if pylons.test.pylonsapp: # only populate when in test mode?
         from civicboom.tests.init_base_data import init_base_data
         init_base_data()
-
 
 
     log.info("Successfully set up tables")
@@ -227,4 +222,3 @@ CREATE TRIGGER update_content
     worker.stop_worker()
     
     log.info("Setup complete")
-    
