@@ -128,7 +128,7 @@ HTML, BODY {
 	z-index: 3;
 	padding: 8px;
 	display: none;
-	border: 1px solid black;
+	border-bottom: 1px solid black;
     background: #FFA;
     opacity: 0.90;
 }
