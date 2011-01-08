@@ -46,12 +46,10 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/messages.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/menuh.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/simplemodal.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/gradients.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/uploadify.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
-	<!--<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />-->
 	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/frags.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/frag_content.css" />
@@ -198,7 +196,7 @@ else:
 %>
 <body class="c-${c.controller} a-${c.action} u-${u}">
 	${flash_message()}
-	##<nav class='gradient'><%include file="navigation.mako"/></nav>
+	##<nav><%include file="navigation.mako"/></nav>
 	<header><%include file="header.mako"/></header>
 	<div id="app">
 % if hasattr(next, 'col_left'):

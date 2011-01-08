@@ -5,7 +5,7 @@
     ## ${popup.popup('flag_content', _('Flag content'), flag_form)}
     ## involke with <a href='' onclick="$('#flag_content').modal(); return false;">
     <div id="${id}" class="hideable">
-        <div class="title_bar gradient">
+        <div class="title_bar">
             <div class="title">
                 <span class="icon icon_popup"></span><span class="title_text">${title}</span>
             </div>
