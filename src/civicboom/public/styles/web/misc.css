@@ -6,6 +6,7 @@ BODY.c-misc.a-titlepage DIV#app {
 	font-weight: bold;
 	font-family: sans;
 	text-align: center;
+	padding-bottom: 32px;
 }
 BODY.c-misc.a-titlepage SECTION.blurb {
 	display: block;
@@ -29,3 +30,4 @@ BODY.c-misc.a-titlepage SECTION.signup {
 BODY.c-misc.a-titlepage SECTION.mobile {float: left;}
 BODY.c-misc.a-titlepage SECTION.signup {float: right;}
 
+BODY.c-misc.a-titlepage DIV#app .button {display: block; font-size: 1em;}

@@ -47,12 +47,12 @@
     % else:
     <a id="home_link" href="/">
     % endif
-        <img src="/styles/web/icons32/home-icon.png" alt="${_('Home')}"/>
+        <img src="/styles/common/icons32/home-icon.png" alt="${_('Home')}"/>
     </a>
     
 <div class="menuh">
     <ul>
-        <li><a href="#" class="top_parent">${_("Create")}</a>
+        <li><a href="#" class="top_parent button">${_("Create")}</a>
         <ul>
             <li>${h.secure_link(h.url('new_content', target_type='assignment'), _("_assignment").capitalize(), css_class="sub_option")}</li>
             <li>${h.secure_link(h.url('new_content', target_type='article'   ), _("_article").capitalize()   , css_class="sub_option")}</li>
@@ -62,7 +62,7 @@
     </ul>
 
     <ul>
-        <li><a href="#" class="top_parent">${_("Explore")}</a>
+        <li><a href="#" class="top_parent button">${_("Explore")}</a>
         <ul>
             <!--<li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="${_("Quick Search")}"></form></li>-->
 % if c.logged_in_persona:
@@ -86,7 +86,7 @@
     </ul>
 
     <ul>
-        <li><a href="#" class="top_parent">${_("Manage")}</a>
+        <li><a href="#" class="top_parent button">${_("Manage")}</a>
         <ul>
             <li><a href="/profile" class="sub_option">${_("Profile")}</a></li>
             <li><a href="/settings" class="sub_option">${_("Settings")}</a></li>
@@ -106,7 +106,7 @@
 <div id="search">
 	<form action="${h.url('contents')}" method='GET'>
 		<input type="search" class="search_input" name="query" placeholder=" ${_("Search")}" />
-		<input type="submit" class="button gradient" value="GO">
+		<input type="submit" class="button" value="GO">
 	</form>
 </div>
 

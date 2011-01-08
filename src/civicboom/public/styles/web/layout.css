@@ -1,3 +1,8 @@
+/*----------------------------------------------------------------------------*/
+/*                                Top Level                                   */
+/*                         There is one HTML / BODY                           */
+/*----------------------------------------------------------------------------*/
+
 HTML {
     overflow-x: scroll;
     /* overflow-y: hidden; */
@@ -5,7 +10,8 @@ HTML {
 
 
 /*----------------------------------------------------------------------------*/
-/*                                 Header                                     */
+/*                                Main Level                                  */
+/*                   Three big blocks - header, app, footer                   */
 /*----------------------------------------------------------------------------*/
 
 HEADER {
@@ -27,8 +33,20 @@ BODY>DIV#app {
     margin-top: 44px;
 }
 
+FOOTER {
+	background: white;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	font-size: 10px;
+	padding: 0.5em;
+	border-top: 1px solid #CCC;
+}
+
 
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                             Persona Select                                 */
 /*----------------------------------------------------------------------------*/
 
@@ -52,17 +70,8 @@ HEADER #persona_select li li {
 }
 
 
-/*
-.u-anon HEADER {top: 0px;}
-.u-user HEADER {top: 16px;}
-*/
-
-/*
-.u-anon #app {margin-top: 48px;}
-.u-user #app {margin-top: 60px;}
-*/
-
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                                Logo                                        */
 /*----------------------------------------------------------------------------*/
 
@@ -71,6 +80,7 @@ HEADER #logo SPAN {display: none;}
 
 
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                                  Home                                      */
 /*----------------------------------------------------------------------------*/
 
@@ -82,10 +92,11 @@ HEADER #home_link {
 
 
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                                Navigation                                  */
 /*----------------------------------------------------------------------------*/
 
-HEADER .menuh-container {
+NAV {
 	position: absolute;
 	top: 11px;
 	left: 220px;
@@ -98,24 +109,6 @@ NAV .menuh>UL {
 NAV .menuh ul {
     width:9em;	/* width of all menu boxes */
 }
-NAV .menuh a {
-	font-family: sans;
-	background: white;
-}
-NAV .menuh a.top_parent {
-	border-radius: 10px 10px;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	/* set border to 1px something so it doesn't wobble
-	 * when changed to 1px black on hover */
-	border-top: 1px solid #fff;
-	border-left: 1px solid #fff;
-	border-bottom: 1px solid #ddd;
-	border-right: 1px solid #ddd;
-}
-NAV .menuh a.top_parent {
-	font-weight: bold;
-}
 NAV .menuh LI:hover a.top_parent {
 	border-bottom-left-radius: 0px;
 	-webkit-border-bottom-left-radius: 0px;
@@ -127,7 +120,10 @@ NAV .menuh LI:hover a.top_parent {
 	border-right: 1px solid #555;
 }
 NAV .menuh a.sub_option,
+NAV .menuh a.sub_option:visited,
 NAV .menuh a.parent {
+	background: white;
+	color: black;
 	border-left: 1px solid #555;
 	border-right: 1px solid #555;
 	border-bottom: 1px solid #ddd;
@@ -146,6 +142,7 @@ NAV .menuh INPUT {
 
 
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                                Search                                      */
 /*----------------------------------------------------------------------------*/
 
@@ -179,6 +176,7 @@ HEADER #search .button {
 }
 
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                             Login / Logout                                 */
 /*----------------------------------------------------------------------------*/
 
@@ -199,6 +197,7 @@ HEADER #login {
 
 
 /*----------------------------------------------------------------------------*/
+/*                               App detail:                                  */
 /*                                Col Body                                    */
 /*----------------------------------------------------------------------------*/
 
@@ -229,19 +228,10 @@ HEADER #login {
 
 
 /*----------------------------------------------------------------------------*/
-/*                                  Footer                                    */
+/*                             Footer detail:                                 */
+/*                            Links & copyright                               */
 /*----------------------------------------------------------------------------*/
 
-FOOTER {
-	background: white;
-	position: fixed;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-	font-size: 10px;
-	padding: 0.5em;
-	border-top: 1px solid #CCC;
-}
 FOOTER A {
 	text-decoration: none;
 	margin-right: 8px;
@@ -249,6 +239,7 @@ FOOTER A {
 FOOTER .copyright {
 	float: right;
 }
+
 
 /*----------------------------------------------------------------------------*/
 /*                                Title Styles                                */

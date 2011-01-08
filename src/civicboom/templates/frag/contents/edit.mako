@@ -109,6 +109,7 @@
         <!-- http://tinymce.moxiecode.com/ -->
         
 		<script type="text/javascript">
+			$(function() {
             tinyMCE.init({
                 mode     : "exact" ,
                 elements : "${area_id}" ,
@@ -119,6 +120,7 @@
                 theme_advanced_toolbar_location : "top",
                 theme_advanced_toolbar_align    : "left",
             });
+			});
             function ajaxSave() {
                 var ed = tinyMCE.get('${area_id}');
                 ed.setProgressState(1); // Show progress spinner
@@ -142,10 +144,6 @@
             var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
             % endif
 		</script>
-
-        % if self.content['type'] == "draft":
-            <input type="submit" name="submit_draft"   value="${_("Save Draft")}"   style="float: right;" onclick="add_onclick_submit_field($(this));" />
-        % endif
 
         ## Owner
         <%doc>
@@ -195,8 +193,8 @@
 ##------------------------------------------------------------------------------
 
 <%def name="media()">
-
-    <fieldset><legend>${_("Attach Media (optional)")}</legend>      
+    <fieldset><legend><span onclick="toggle(this);">${_("Attach Media (optional)")}</span></legend>
+        <div class="hideable">
         ${form_instruction(_("Add any relevent pictures, videos, sounds, links to your content"))}
         
         <ul class="media_files">
@@ -296,16 +294,16 @@
             <!-- End Add media -->
 
         </ul>
-        
+        </div>
     </fieldset>
-
 </%def>
 
 ##------------------------------------------------------------------------------
 ## Content Type
 ##------------------------------------------------------------------------------
 <%def name="content_type()">
-    <fieldset><legend>${_("Publish Type")}</legend>
+    <fieldset><legend><span onclick="toggle(this);">${_("Publish Type")}</span></legend>
+        <div class="hideable">
         ${form_instruction(_("What do you want to do with your content?"))}
         
         <%
@@ -353,8 +351,8 @@
                     $(function() {$( "#datepicker2" ).datepicker({ dateFormat: 'yy-mm-dd' });});
                 </script>
                 <%
-                    due_date   = self.content.get('due_date')
-                    event_date = self.content.get('event_date')
+                    due_date   = str(self.content.get('due_date') or '')[:10]
+                    event_date = str(self.content.get('event_date') or '')[:10]
                 %>
                 <p>${_("Due Date:")}   <input id="datepicker1" type="date" name="due_date"   value="${due_date}"></p>
                 <p>${_("Event Date:")} <input id="datepicker2" type="date" name="event_date" value="${event_date}"></p>
@@ -412,14 +410,7 @@
             
             highlightType('${selected_type}'); //Set the default highlighted item to be the content type
         </script>
-
-        <div style="float: right;">
-            % if type == "draft":
-            <input type="submit" name="submit_publish" value="${_("Publish")}"        onclick="add_onclick_submit_field($(this));"/>
-            % else:
-            <input type="submit" name="submit_publish" value="${_("Publish Update")}" onclick="add_onclick_submit_field($(this));"/>
-            % endif
-        </div>
+		</div>
     </fieldset>
 </%def>
 
@@ -474,13 +465,14 @@
 ##------------------------------------------------------------------------------
 <%def name="submit_buttons()">
     <div style="text-align: right;">
-    
         % if self.content['type'] == "draft":
-        ## AllanC - note the class selectors are used by jQuery to simulate clicks
-        <input type="submit" name="submit_preview" class="submit_preview" value="${_("Preview Draft")}" onclick="add_onclick_submit_field($(this));"/>
-        <input type="submit" name="submit_draft"   class="submit_draft"   value="${_("Save Draft")}"    onclick="add_onclick_submit_field($(this));"/>
+			## AllanC - note the class selectors are used by jQuery to simulate clicks
+			<input type="submit" name="submit_draft"   class="button submit_draft"   value="${_("Save")}"     onclick="add_onclick_submit_field($(this));"/>
+			<input type="submit" name="submit_preview" class="button submit_preview" value="${_("Preview")}"  onclick="add_onclick_submit_field($(this));"/>
+            <input type="submit" name="submit_publish" class="button"                value="${_("Publish")}"  onclick="add_onclick_submit_field($(this));"/>
         % else:
-        <a href="${h.url('content', id=self.id)}">${_("View Content")}</a>
+            <input type="submit" name="submit_publish" class="button"                value="${_("Update")}"   onclick="add_onclick_submit_field($(this));"/>
+			<a class="button" href="${h.url('content', id=self.id)}">${_("View Content")}</a>
         % endif
     
     </div>
