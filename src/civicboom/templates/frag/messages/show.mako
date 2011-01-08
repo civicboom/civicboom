@@ -1,3 +1,7 @@
+
+
+
+<%doc>
 ${show_message(c.result['data']['message'])}
 
 <%def name="show_message(message)">
@@ -17,3 +21,4 @@ ${show_message(c.result['data']['message'])}
 	</tr>
 </table>
 </%def>
+</%doc>

@@ -167,7 +167,9 @@ def send_message(member, message_data, delay_commit=False):
             m = Message()
             m.subject = message_data.subject
             m.content = message_data.content
-            member.messages_to.append(m)
+            m.target  = member
+            Session.add(m)
+            #member.messages_to.append(m)
             update_member_messages(member)
             if not delay_commit:
                 Session.commit()

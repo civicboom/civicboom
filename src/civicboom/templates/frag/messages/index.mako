@@ -1,3 +1,11 @@
+<%inherit file="/frag/common/frag_lists.mako"/>
+
+<%def name="body()">
+    ${parent.message_list(d['list'], _('Messages'), max=None)}
+</%def>
+
+
+<%doc>
 ${show_messages(d['list'])}
 
 <%def name="show_messages(messages)">
@@ -26,3 +34,4 @@ ${show_messages(d['list'])}
 		</tbody>
     </table>
 </%def>
+</%doc>
