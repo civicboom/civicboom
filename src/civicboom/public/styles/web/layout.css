@@ -110,11 +110,6 @@ NAV .menuh ul {
     width:9em;	/* width of all menu boxes */
 }
 NAV .menuh LI:hover a.top_parent {
-	border-bottom-left-radius: 0px;
-	-webkit-border-bottom-left-radius: 0px;
-	border-bottom-right-radius: 0px;
-	-webkit-border-bottom-right-radius: 0px;
-	-moz-border-radius: 10px 10px 0px 0px;
 	border-top: 1px solid #555;
 	border-left: 1px solid #555;
 	border-right: 1px solid #555;
