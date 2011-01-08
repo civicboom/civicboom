@@ -1,6 +1,5 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<% import datetime %>
 
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
 <%namespace name="member_includes" file="/web/common/member.mako"     />
@@ -40,6 +39,8 @@
 ## Member Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
+
+    <% import datetime %>
     
     <div class="frag_left_col">
         <div class="frag_col">
