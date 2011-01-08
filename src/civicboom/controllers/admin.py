@@ -29,12 +29,8 @@ class AdminControllerBase(BaseController):
             # allow tests to see admin?
             # this could be done better when we have a proper admin definiton
             return
-        admins = ["shish", "unittest"] # HACK
-        if (not c.logged_in_user) or (c.logged_in_user.username not in admins):
+        if (not c.logged_in_user) or (c.logged_in_user.username not in ["shish", "unittest"]): # pragma: no cover - tests take the shortcut above
             abort(403)
-
-    def Session(self): # Session factory
-        return meta.Session
 
     ## customize the query for a model listing
     #def get_page(self):
@@ -42,7 +38,7 @@ class AdminControllerBase(BaseController):
     #        return Page(meta.Session.query(model.Foo).order_by(model.Foo.bar)
     #    return super(AdminControllerBase, self).get_page()
     def get_page(self, **kwargs):
-        S = self.Session()
+        S = meta.Session
         q = S.query(self.get_model())
 
         # FIXME: SQL injection; regex whitelist *should* stop it
