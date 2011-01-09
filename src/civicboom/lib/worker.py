@@ -10,6 +10,7 @@ from time import sleep
 import tempfile
 import Image
 import os
+import os.path
 import subprocess
 import civicboom.lib.services.warehouse as wh
 
@@ -85,6 +86,9 @@ def _update_media_length(hash, length):
     #import database actions
     # update the record in db
 
+def _reformed(name, ext):
+    return os.path.splitext(name)[0] + "." + ext
+
 def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     import memcache
     m               = memcache.Client(config['service.memcache.server'].split(), debug=0)
@@ -104,13 +108,13 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         im.thumbnail(size, Image.ANTIALIAS)
         im.save(processed.name, "JPEG")
         m.set(memcache_key, "copying image", memcache_expire)
-        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
+        wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "jpg"))
         processed.close()
     elif file_type == "audio":
         processed = tempfile.NamedTemporaryFile(suffix=".ogg")
         _ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
         m.set(memcache_key, "copying audio", memcache_expire)
-        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
+        wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "ogg"))
         processed.close()
     elif file_type == "video":
         log.debug("encoding video to flv")
@@ -125,9 +129,9 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
             processed.name
         ])
         m.set(memcache_key, "copying video", memcache_expire)
-        log.debug("START copying processed video to warehouse %s:%s (%dKB)" % (file_name, processed.name, os.path.getsize(processed.name)/1024))
-        wh.copy_to_warehouse(processed.name, "media", file_hash, file_name)
-        log.debug("END   copying processed video to warehouse %s:%s" % (file_name, processed.name))
+        #log.debug("START copying processed video to warehouse %s:%s (%dKB)" % (file_name, processed.name, os.path.getsize(processed.name)/1024))
+        wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "flv"))
+        #log.debug("END   copying processed video to warehouse %s:%s" % (file_name, processed.name))
         # TODO:
         # for RSS 2.0 'enclosure' we need to know the length of the processed file in bytes
         # We should include here a call to database to update the length field
@@ -139,9 +143,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
         size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
-        #log.info('Opening image.') # FIXME: image.open() blocks while running setup-app from nosetests, but not from paster. wtf. See bug #45
         im = Image.open(tmp_file)
-        #log.info('Checking mode.')
         if im.mode != "RGB":
             im = im.convert("RGB")
         im.thumbnail(size, Image.ANTIALIAS)
@@ -165,11 +167,11 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         processed.close()
 
 
-    # leist important, the original
-    log.debug("START copying original media to warehouse %s:%s (%dKB)" % (file_name, tmp_file, os.path.getsize(tmp_file)/1024) )
+    # least important, the original
+    #log.debug("START copying original media to warehouse %s:%s (%dKB)" % (file_name, tmp_file, os.path.getsize(tmp_file)/1024) )
     m.set(memcache_key, "copying original video", memcache_expire)
     wh.copy_to_warehouse(tmp_file, "media-original", file_hash, file_name)
-    log.debug("END   copying original media to warehouse %s:%s" % (file_name, tmp_file) )
+    #log.debug("END   copying original media to warehouse %s:%s" % (file_name, tmp_file) )
 
 
     if delete_tmp:
