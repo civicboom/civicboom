@@ -47,13 +47,13 @@ def convert_legacy_database(url): # pragma: no cover - this should only be run a
         # functions to convert from old data {{{
         licenses_by_old_id = [
             None, # l_id is 1-based, there is no zero
-            get_license("Unspecified"),
-            get_license("CC-BY"),
-            get_license("CC-BY-ND"),
-            get_license("CC-BY-NC-ND"),
-            get_license("CC-BY-NC"),
-            get_license("CC-BY-NC-SA"),
-            get_license("CC-BY-SA"),
+            get_license(u"Unspecified"),
+            get_license(u"CC-BY"),
+            get_license(u"CC-BY-ND"),
+            get_license(u"CC-BY-NC-ND"),
+            get_license(u"CC-BY-NC"),
+            get_license(u"CC-BY-NC-SA"),
+            get_license(u"CC-BY-SA"),
         ]
 
         def get_description(row):
@@ -306,7 +306,7 @@ def convert_legacy_database(url): # pragma: no cover - this should only be run a
                 c.content       = row["contents"].decode("utf-8")
                 c.creator       = reporters_by_old_id[row["ReporterId"]]
                 c.creation_date = row["creation_time"]
-                c.license_id    = get_license("Unspecified").id
+                c.license_id    = get_license(u"Unspecified").id
                 # `status` enum('display','pending','deleted') NOT NULL default 'display',
                 log.debug("   |- %3d - %s" % (row["id"], c.title, ))
                 Session.add(c)
