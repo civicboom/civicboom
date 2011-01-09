@@ -92,6 +92,8 @@ class MessagesController(BaseController):
         # url('messages')
         
         # Setup search criteria
+        if 'list' not in kwargs:
+            kwargs['list'] = 'to'
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20
         if 'offset' not in kwargs:
@@ -100,8 +102,9 @@ class MessagesController(BaseController):
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
             kwargs['exclude_fields'] = "content, target, target_name, source_name"
-        if 'list' not in kwargs:
-            kwargs['list'] = 'to'
+            if kwargs.get('list')=='from':
+                kwargs['exclude_fields'] = "content, target_name, source_name, source"
+        
         
         results = Session.query(Message)
         if 'list' in kwargs:
