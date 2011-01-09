@@ -40,7 +40,7 @@
     <%
         if text==None:
             text = h.literal("<span>%s</span>" % title)
-        url_json = None
+        url_frag = None
         if isinstance(url, tuple):
             print url
             url, url_frag = h.url_pair(gen_format='frag', *url[0], **url[1])

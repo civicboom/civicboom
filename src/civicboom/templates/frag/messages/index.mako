@@ -7,7 +7,7 @@
         if 'list' in kwargs:
             list += kwargs.get('list')
     %>
-    ${parent.message_list(d['list'], list, max=None)}
+    ${parent.message_list(d['list'], list, max=None, list=kwargs.get('list'))}
 </%def>
 
 

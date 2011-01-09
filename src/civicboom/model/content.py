@@ -355,6 +355,7 @@ class CommentContent(Content):
 
     __to_dict__ = {} #Content.__to_dict__.copy()
     __to_dict__['default'] = {
+        'id'           : None ,
         'creator'      : lambda content: content.creator.to_dict('default') ,
         'content'      : None ,
         'creation_date': None ,

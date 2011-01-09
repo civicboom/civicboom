@@ -187,7 +187,7 @@ def overlay_status_message(master_message, new_message):
 #-------------------------------------------------------------------------------
 
 def _find_template(result, type='html'):
-    
+
     type_fallback = {
         'web'   : None  ,
         'mobile': 'web' ,
@@ -209,7 +209,7 @@ def _find_template(result, type='html'):
         template_part = result.get('template')               # Attempt to get template named in result
     else:
         template_part = '%s/%s' % (c.controller, c.action)   # Else fallback to controller/action
-    
+
     def template_file_exisits(template_file):
         return os.path.exists(os.path.join(config['path.templates'], template_file))
 
@@ -220,7 +220,6 @@ def _find_template(result, type='html'):
         if not template_file_exisits(template):
             template = None
             type     = type_fallback[type]
-
     return template
 
 
