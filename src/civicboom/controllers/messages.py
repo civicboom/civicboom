@@ -101,10 +101,12 @@ class MessagesController(BaseController):
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = "content, target, target_name, source_name"
+            if kwargs.get('list')=='to':
+                kwargs['exclude_fields'] = "content, target, target_name, source_name"
             if kwargs.get('list')=='from':
-                kwargs['exclude_fields'] = "content, target_name, source_name, source"
-        
+                kwargs['exclude_fields'] = "content, source, target_name, source_name"
+            if kwargs.get('list')=='notification':
+                kwargs['exclude_fields'] = "target ,target_name, source, source_name"
         
         results = Session.query(Message)
         if 'list' in kwargs:
