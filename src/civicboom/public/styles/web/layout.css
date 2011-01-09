@@ -1,75 +1,17 @@
+/*----------------------------------------------------------------------------*/
+/*                                Top Level                                   */
+/*                         There is one HTML / BODY                           */
+/*----------------------------------------------------------------------------*/
+
 HTML {
     overflow-x: scroll;
     /* overflow-y: hidden; */
 }
 
-/*
- * the body is then broken down into the navigation bar at the top
- */
-/*
-NAV {
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	z-index: 2;
-}
-.u-anon NAV {height: 0px;}
-.u-user NAV {height: 16px;}
-
-NAV A {
-	background: #EEE;
-	text-align: center;
-	color: black;
-	text-decoration: none;
-
-	position: absolute;
-	top: 1px;
-
-	display: block;
-	width: 92px;
-	height: 14px;
-	font-size: 0.75em;
-
-	border-radius: 4px;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-}
-NAV A SPAN {
-	display: none;
-}
-
-NAV .name {left: 32px;}
-NAV .role {left: 128px;}
-
-NAV .messages {left: 256px;}
-
-NAV .login, NAV .logout {
-	position: absolute;
-	right: 16px;
-	width: 68px;
-}
-NAV .login {
-	height: 15px;
-}
-
-
-NAV .persona_select img {
-    max-width: 40px;
-}
-NAV .persona_select ul {
-    top: 32px;
-    left: 32px;
-    background-color: #888;
-}
-
-*/
-
-/*NAV .logout {top: 16px;}*/
-
 
 /*----------------------------------------------------------------------------*/
-/*                                 Header                                     */
+/*                                Main Level                                  */
+/*                   Three big blocks - header, app, footer                   */
 /*----------------------------------------------------------------------------*/
 
 HEADER {
@@ -85,14 +27,26 @@ HEADER {
 }
 
 BODY>DIV#app {
-	/* clear: both;
-	z-index: 0; */
+	/* clear: both; */
+	z-index: 0;
 	margin-bottom: 2em;
     margin-top: 44px;
 }
 
+FOOTER {
+	background: white;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	font-size: 10px;
+	padding: 0.5em;
+	border-top: 1px solid #CCC;
+}
+
 
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                             Persona Select                                 */
 /*----------------------------------------------------------------------------*/
 
@@ -116,17 +70,8 @@ HEADER #persona_select li li {
 }
 
 
-/*
-.u-anon HEADER {top: 0px;}
-.u-user HEADER {top: 16px;}
-*/
-
-/*
-.u-anon #app {margin-top: 48px;}
-.u-user #app {margin-top: 60px;}
-*/
-
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                                Logo                                        */
 /*----------------------------------------------------------------------------*/
 
@@ -135,6 +80,7 @@ HEADER #logo SPAN {display: none;}
 
 
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                                  Home                                      */
 /*----------------------------------------------------------------------------*/
 
@@ -146,10 +92,11 @@ HEADER #home_link {
 
 
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                                Navigation                                  */
 /*----------------------------------------------------------------------------*/
 
-HEADER .menuh-container {
+NAV {
 	position: absolute;
 	top: 11px;
 	left: 220px;
@@ -162,36 +109,16 @@ NAV .menuh>UL {
 NAV .menuh ul {
     width:9em;	/* width of all menu boxes */
 }
-NAV .menuh a {
-	font-family: sans;
-	background: white;
-}
-NAV .menuh a.top_parent {
-	border-radius: 10px 10px;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	/* set border to 1px something so it doesn't wobble
-	 * when changed to 1px black on hover */
-	border-top: 1px solid #fff;
-	border-left: 1px solid #fff;
-	border-bottom: 1px solid #ddd;
-	border-right: 1px solid #ddd;
-}
-NAV .menuh a.top_parent {
-	font-weight: bold;
-}
 NAV .menuh LI:hover a.top_parent {
-	border-bottom-left-radius: 0px;
-	-webkit-border-bottom-left-radius: 0px;
-	border-bottom-right-radius: 0px;
-	-webkit-border-bottom-right-radius: 0px;
-	-moz-border-radius: 10px 10px 0px 0px;
 	border-top: 1px solid #555;
 	border-left: 1px solid #555;
 	border-right: 1px solid #555;
 }
 NAV .menuh a.sub_option,
+NAV .menuh a.sub_option:visited,
 NAV .menuh a.parent {
+	background: white;
+	color: black;
 	border-left: 1px solid #555;
 	border-right: 1px solid #555;
 	border-bottom: 1px solid #ddd;
@@ -210,12 +137,13 @@ NAV .menuh INPUT {
 
 
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                                Search                                      */
 /*----------------------------------------------------------------------------*/
 
 HEADER #search {
 	position: absolute;
-	top: 10px;
+	top: 11px;
 	right: 72px;
 	width: 150px;
 	height: 20px;
@@ -243,15 +171,16 @@ HEADER #search .button {
 }
 
 /*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                             Login / Logout                                 */
 /*----------------------------------------------------------------------------*/
 
 HEADER #login {
     position: absolute;
-    top: 9px;
+    top: 11px;
     right: 8px;
     width: 54px;
-    height: 20px;
+    height: 18px; /* +2px border */
     text-align: center;
     vertical-align: middle;
     background-color: #eee;
@@ -259,13 +188,11 @@ HEADER #login {
 	border-radius        : 0.5em;
 	-moz-border-radius   : 0.5em;
 	-webkit-border-radius: 0.5em;
-    
 }
 
 
-
-
 /*----------------------------------------------------------------------------*/
+/*                               App detail:                                  */
 /*                                Col Body                                    */
 /*----------------------------------------------------------------------------*/
 
@@ -296,19 +223,10 @@ HEADER #login {
 
 
 /*----------------------------------------------------------------------------*/
-/*                                  Footer                                    */
+/*                             Footer detail:                                 */
+/*                            Links & copyright                               */
 /*----------------------------------------------------------------------------*/
 
-FOOTER {
-	background: white;
-	position: fixed;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-	font-size: 10px;
-	padding: 0.5em;
-	border-top: 1px solid #CCC;
-}
 FOOTER A {
 	text-decoration: none;
 	margin-right: 8px;
@@ -316,6 +234,7 @@ FOOTER A {
 FOOTER .copyright {
 	float: right;
 }
+
 
 /*----------------------------------------------------------------------------*/
 /*                                Title Styles                                */

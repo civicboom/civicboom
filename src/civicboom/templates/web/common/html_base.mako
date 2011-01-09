@@ -46,12 +46,10 @@
 	<link rel="stylesheet" type="text/css" href="/styles/common/messages.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/menuh.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/simplemodal.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/gradients.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/common/uploadify.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
-	<!--<link rel="stylesheet" type="text/css" href="/styles/web/content.css" />-->
 	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/frags.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/frag_content.css" />
@@ -186,6 +184,13 @@ ${self.head_links()}
 	</script>
 </%def>
 
+##------------------------------------------------------------------------------
+## Popup - Dynamic AJAX populated framework
+##------------------------------------------------------------------------------
+<%def name="popup_frame()">
+	<%include file="popup_base.mako"/>
+</%def>
+
 
 ##------------------------------------------------------------------------------
 ## HTML Body
@@ -198,7 +203,7 @@ else:
 %>
 <body class="c-${c.controller} a-${c.action} u-${u}">
 	${flash_message()}
-	##<nav class='gradient'><%include file="navigation.mako"/></nav>
+	##<nav><%include file="navigation.mako"/></nav>
 	<header><%include file="header.mako"/></header>
 	<div id="app">
 % if hasattr(next, 'col_left'):
@@ -210,6 +215,7 @@ else:
 		<div id="col_main">${next.body()}</div>
 	</div>
 	<footer><%include file="footer.mako"/></footer>
+	${popup_frame()}
 	<%include file="scripts_end.mako"/>
 </body>
 </html>

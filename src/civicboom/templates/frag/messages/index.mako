@@ -1,3 +1,17 @@
+<%inherit file="/frag/common/frag_lists.mako"/>
+
+<%def name="body()">
+    <%
+        args, kwargs = c.web_params_to_kwargs
+        list = _('Message ')
+        if 'list' in kwargs:
+            list += kwargs.get('list')
+    %>
+    ${parent.message_list(d['list'], list, max=None)}
+</%def>
+
+
+<%doc>
 ${show_messages(d['list'])}
 
 <%def name="show_messages(messages)">
@@ -26,3 +40,4 @@ ${show_messages(d['list'])}
 		</tbody>
     </table>
 </%def>
+</%doc>

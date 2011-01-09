@@ -18,22 +18,7 @@
   /* margin     : 0.25em;*/
   margin-left: 0.2em;
   
-  /* background-image: url('/styles/common/gradients/vertical_grey_to_transparent.png'); */
-  
   border: 0.2em solid #4a73b8;
-  /*
-  border-radius        : 0.25em;
-  -moz-border-radius   : 0.25em;
-  -webkit-border-radius: 0.25em;
-  */
-  /*
-  box-shadow        : 0.3em 0.3em 0.3em #AAA;
-  -moz-box-shadow   : 0.3em 0.3em 0.3em #AAA;
-  -webkit-box-shadow: 0.3em 0.3em 0.3em #AAA;
-  */
-  /*
-    http://www.css3.info/preview/box-shadow/
-  */
 }
 
 #frag_containers .frag_bridge {
@@ -114,6 +99,7 @@
   overflow-x: hidden;
   
   
+  /*
   background: -webkit-gradient(
     linear,
     left bottom,
@@ -126,6 +112,7 @@
     rgb(255,255,255)  33%,
     rgb(240,240,240) 100%
   );
+  */
   
   /*
     http://www.webdesignerwall.com/tutorials/cross-browser-css-gradient/

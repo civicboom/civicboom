@@ -31,6 +31,7 @@ import hashlib
 import json
 import copy
 import time
+import datetime
 
 def get_captcha(lang='en', theme='red'):
     """
@@ -152,6 +153,8 @@ def objs_to_linked_formatted_dict(**kargs):
     return links
 
 
+
+
 # AllanC - not happy with this ... see register template for example ...
 # htmlfill does not support HTML5 - so I created a cusom way of getting invalid data into the template
 # in the future when htmlfill is fixed then we can swich back to it
@@ -186,6 +189,34 @@ def icon(icon_type, description=None, class_=''):
         description = icon_type_descriptions[icon_type]
     return HTML.div(HTML.span(description), class_=class_+" icon icon_"+icon_type, title=description)
 
+
+#-------------------------------------------------------------------------------
+# Date Management
+#-------------------------------------------------------------------------------
+
+def api_datestr_to_datetime(date_str):
+    return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
+    
+def datetime_to_rss(date):
+	return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
+
+
+#-------------------------------------------------------------------------------
+# Standard and JSON URL generation
+#-------------------------------------------------------------------------------
+def url_pair(*args, **kwargs):
+    # Defensive copying
+    #args   = copy.copy(args)
+    #kwargs = copy.copy(kwargs)
+    gen_format = kwargs.pop('gen_format')
+
+    href             = url(*args, **kwargs)
+    kwargs['format'] = gen_format
+    href_json        = url(*args, **kwargs)
+    
+    return (href, href_json)
+
+
 #-------------------------------------------------------------------------------
 # Secure Form
 #-------------------------------------------------------------------------------
@@ -204,14 +235,17 @@ def form(*args, **kwargs):
 
     # if href=tuple then generate 2 URL's from tuple 1.) Standard  2.) JSON    
     if href_tuple:
-        # generate standard URL
-        href_args   = copy.copy(href_tuple[0])
-        href_kwargs = copy.copy(href_tuple[1])
-        href      = url(*href_args, **href_kwargs)
+        href, href_json = url_pair(gen_format='json', *href_tuple[0], **href_tuple[1]) # generate standard and JSON URL's
         
+        # generate standard URL
+        #href_args   = copy.copy(href_tuple[0])
+        #href_kwargs = copy.copy(href_tuple[1])
+        #href      = url(*href_args, **href_kwargs)
+
         # generate json URL and attach onsubmit event
-        href_kwargs['format']      = 'json'
-        href_json                  = url(*href_args, **href_kwargs)
+        #href_kwargs['format']      = 'json'
+        #href_json                  = url(*href_args, **href_kwargs)
+
         # AllanC - bizzare workaround this one ... current_element=$(this) is needed here because if it is used inside function(data) it does not work ? dont know why.
         kwargs['onsubmit'] = literal("""
             %(pre_onsubmit)s

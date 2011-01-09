@@ -3,6 +3,8 @@ from civicboom.lib.database.get_cached import get_message
 from civicboom.model import Message
 import json
 
+from sqlalchemy           import or_, and_, null
+
 from civicboom.lib.form_validators.base import DefaultSchema, MemberValidator
 import formencode
 
@@ -10,16 +12,7 @@ log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 
-#-------------------------------------------------------------------------------
-# Constants
-#-------------------------------------------------------------------------------
 
-index_lists = {
-    'to'          : lambda member: member.messages_to ,
-    'from'        : lambda member: member.messages_from ,
-    'public'      : lambda member: member.messages_public ,    
-    'notification': lambda member: member.messages_notification ,
-}
 
 #-------------------------------------------------------------------------------
 # Form Schema
@@ -35,13 +28,27 @@ class NewMessageSchema(DefaultSchema):
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_message(message, is_target=False):
+def _get_message(message, is_target=False, is_target_or_source=False):
     message = get_message(message)
     if not message:
         raise action_error(_("Message does not exist"), code=404)
     if is_target and message.target != c.logged_in_persona:
         raise action_error(_("You are not the target of this message"), code=403)
+    if is_target_or_source and c.logged_in_persona and not (message.target==c.logged_in_persona or message.source==c.logged_in_persona):
+        raise action_error(_("You are not the target or source of this message"), code=403)
     return message
+
+#-------------------------------------------------------------------------------
+# Search Filters
+#-------------------------------------------------------------------------------
+
+list_filters = {
+    'to'          : lambda results: results.filter(and_(Message.source_id!=null()                 , Message.target_id==c.logged_in_persona.id     )) ,
+    'from'        : lambda results: results.filter(and_(Message.source_id==c.logged_in_persona.id , Message.target_id!=null()                     )) ,
+    'public'      : lambda results: results.filter(and_(Message.source_id==c.logged_in_persona.id , Message.target_id==null()                     )) ,
+    'notification': lambda results: results.filter(and_(Message.source_id==null()                 , Message.target_id==c.logged_in_persona.id     )) ,
+}
+
 
 
 #-------------------------------------------------------------------------------
@@ -57,7 +64,7 @@ class MessagesController(BaseController):
 
     @web
     @authorize
-    def index(self, list='to', **kwargs):
+    def index(self, **kwargs):
         """
         GET /messages: All items in the collection.
         
@@ -84,17 +91,31 @@ class MessagesController(BaseController):
         """
         # url('messages')
         
-        #if 'list' not in kwargs:
-        #    kwargs['list'] = 'to'
-        #list = kwargs['list']
+        # Setup search criteria
+        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
+            kwargs['limit'] = 20
+        if 'offset' not in kwargs:
+            kwargs['offset'] = 0
+        if 'include_fields' not in kwargs:
+            kwargs['include_fields'] = ""
+        if 'exclude_fields' not in kwargs:
+            kwargs['exclude_fields'] = "content, target, target_name, source_name"
+        if 'list' not in kwargs:
+            kwargs['list'] = 'to'
         
-        if list not in index_lists:
-            raise action_error(_('list %s not supported') % list, code=400)
+        results = Session.query(Message)
+        if 'list' in kwargs:
+            if kwargs['list'] in list_filters:
+                results = list_filters[kwargs['list']](results)
+            else:
+                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+        results = results.order_by(Message.timestamp.desc())
+        results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
-        messages = index_lists[list](c.logged_in_persona)
-        messages = [message.to_dict(**kwargs) for message in messages]
-        
-        return action_ok(data={'list': messages})
+        # Return search results
+        return action_ok(
+            data = {'list': [message.to_dict(**kwargs) for message in results.all()]} ,
+        )
 
 
     @web
@@ -206,7 +227,7 @@ class MessagesController(BaseController):
         
         #c.viewing_user = c.logged_in_persona - swiching persona will mean that logged_in_user is group
         
-        message = _get_message(id, is_target=True)
+        message = _get_message(id, is_target_or_source=True)
         if not message.read:
             message.read = True
             Session.commit()

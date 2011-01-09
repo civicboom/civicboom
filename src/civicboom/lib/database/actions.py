@@ -389,7 +389,7 @@ def boom_content(content, member, delay_commit=False):
 
 def parent_seen(content, delay_commit=False):
     content.edit_lock     = "parent_owner"
-    content.response_type = "seen"
+    content.approval = "seen"
     
     # AllanC - TODO generate notification
     #content.creator.send_message(???, delay_commit=True)
@@ -402,7 +402,7 @@ def parent_seen(content, delay_commit=False):
 def parent_approve(content, delay_commit=False):
 
     content.edit_lock     = "parent_owner"
-    content.response_type = "approved"
+    content.approval = "approved"
 
     from pylons import tmpl_context as c # Needed for passing varibles to templates
     c.content = content
@@ -431,7 +431,7 @@ def parent_disasociate(content, delay_commit=False):
     content.creator.send_message(messages.article_disasociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent), delay_commit=True)
     
     content.parent = None
-    content.response_type = "dissassociated"
+    content.approval = "dissassociated"
     
     if not delay_commit:
         Session.commit()

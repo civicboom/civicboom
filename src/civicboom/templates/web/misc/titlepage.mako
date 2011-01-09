@@ -6,7 +6,7 @@ Already have a social media account?
 <br>&nbsp;
 <br><img src="/images/misc/socmed-signup.png">
 <br>&nbsp;
-<br><a href="/account/signin" class="gradient button">Signup</a>
+<br><a href="/account/signin" class="button">Signup</a>
 </section>
 
 <section class="mobile">

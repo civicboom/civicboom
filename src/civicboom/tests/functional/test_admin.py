@@ -1,25 +1,22 @@
 from civicboom.tests import *
 
 class TestAdminController(TestController):
-
-    pass
-
     #AllanC - when isignificantly changed the model so that some of the SQLAlchemy links were no longer needed, this totally broke the admin pannel
     #       - we can decide if we need to re-instate these links if nessisary, but I would prefer that as many calls as possible used the API, but I know the admin interface is a very differnt kettle of fish
 
     def test_admin(self):
         response = self.app.get(url(controller='admin', action='models')) # "models" is the admin index
 
-    #def test_event_log(self):
-    #    response = self.app.get(url(controller='test', action='fill_log'))
-    #    response = self.app.get(url(controller='admin', action='event_log'))
-    #    assert "debug" in response
-    #    # test searching
-    #    response = self.app.get(url(controller='admin', action='event_log', module='civicboom/controllers/test.py'))
-    #    response = self.app.get(url(controller='admin', action='event_log', line_num='20'))
-    #    response = self.app.get(url(controller='admin', action='event_log', username='None'))
-    #    response = self.app.get(url(controller='admin', action='event_log', address='127.0.0.1'))
-    #    response = self.app.get(url(controller='admin', action='event_log', url='http://waffle.com'))
+    def test_event_log(self):
+        response = self.app.get(url(controller='test', action='fill_log'))
+        response = self.app.get(url(controller='admin', action='event_log'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        assert "debug" in response
+        # test searching
+        response = self.app.get(url(controller='admin', action='event_log', module='civicboom/controllers/test.py'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', line_num='20'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', username='None'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', address='127.0.0.1'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', url='http://waffle.com'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
 
     def test_user_list(self):
         response = self.app.get("/admin/User/models")

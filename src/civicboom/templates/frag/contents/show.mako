@@ -55,7 +55,7 @@
         ${content_map()}
         ${content_comments()}
         ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
-        ${popup.popup('flag_content', _('Flag content'), flag_form)}
+        ${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
         </div>
     </div>
     <div class="frag_right_col">
@@ -78,15 +78,15 @@
         
         % if 'accepted_status' in d:
             ${frag_lists.member_list(
-                d['accepted_status']['accepted'],
+                [m for m in d['accepted_status'] if m['status']=='accepted'],
                 _("Accepted by"),
             )}
             ${frag_lists.member_list(
-                d['accepted_status']['invited'],
+                [m for m in d['accepted_status'] if m['status']=='invited'],
                 _("Invited"),
             )}
             ${frag_lists.member_list(
-                d['accepted_status']['withdrawn'],
+                [m for m in d['accepted_status'] if m['status']=='withdrawn'],
                 _("Withdrawn"),
             )}
         % endif
@@ -115,7 +115,7 @@
         
         
         <ul class="status">
-            % if 'response_type' in content and content['response_type']=='approved':
+            % if 'approval' in content and content['approval']=='approved':
             <li><div class="icon_large icon_approved_large" title="approved content"></div>${_("approved content")}</li>
             % endif
         </ul>
@@ -132,21 +132,25 @@
 ## Media
 ##------------------------------------------------------------------------------
 <%def name="content_media()">
-    <% content = self.content %>
+    <%
+        content = self.content
+        media_width  = config['media.display.video.width' ]
+        media_height = config['media.display.video.height']
+    %>
 
     <ul class="media">
     % for media in content['attachments']:
         <li>
         % if media['type'] == "image":
-            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}"/></a>
+            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}" style="width: ; "/></a>
         % elif media['type'] == "audio":
-            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="320" height="30">
+            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="30">
                 <param name="movie" value="/flash/player_flv_maxi.swf" />
                 <param name="allowFullScreen" value="true" />
                 <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
             </object>
         % elif media['type'] == "video":
-            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="320" height="240">
+            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="${media_height}">
                 <param name="movie" value="/flash/player_flv_maxi.swf" />
                 <param name="allowFullScreen" value="true" />
                 <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;startimage=${media['thumbnail_url']}&amp;showvolume=1&amp;showfullscreen=1" />
@@ -269,49 +273,58 @@
 <%def name="actions_specific()">
 
     % if self.content['type'] != 'draft':
-    ${h.secure_link(
-        h.args_to_tuple('new_content', parent_id=self.id) ,
-        value="" ,
-        title=_("Respond to this") ,
-        css_class="icon icon_respond" ,
-        json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
-    )}
+        ${h.secure_link(
+            h.args_to_tuple('new_content', parent_id=self.id) ,
+            value="" ,
+            title=_("Respond to this") ,
+            css_class="icon icon_respond" ,
+            json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+        )}
+        <span class="separtor"></span>
     % endif
     
-    <span class="separtor"></span>
+    
     % if 'accept' in self.actions:
         ${h.secure_link(
-            h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id),
-            value = h.literal("<span class='icon icon_accept'></span>%s") % _('Accept')
+            h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
+            value = h.literal("<span class='icon icon_accept'></span>%s") % _('Accept') ,
+            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
+        <span class="separtor"></span>
     % endif
-    <span class="separtor"></span>
+    
+    
     % if 'withdraw' in self.actions:
         ${h.secure_link(
-            h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id),
-            value="",
-            title=_('Withdraw'),
-            css_class="icon icon_withdraw",
+            h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
+            value="" ,
+            title=_('Withdraw') ,
+            css_class="icon icon_withdraw" ,
+            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
+        <span class="separtor"></span>
     % endif
-    <span class="separtor"></span>
+    
     % if 'boom' in self.actions:
         ${h.secure_link(
-            h.args_to_tuple('content_action', action='boom'    , format='redirect', id=self.id),
-            value="",
-            title=_('Boom'),
-            css_class="icon icon_boom"
+            h.args_to_tuple('content_action', action='boom', format='redirect', id=self.id) ,
+            value="" ,
+            title=_('Boom') ,
+            css_class="icon icon_boom" ,
+            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
     % endif
     
     % if 'approve' in self.actions:
         ${h.secure_link(
-            h.args_to_tuple('content_action', action='approve'    , format='redirect', id=self.id),
+            h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
             _('Approve & Lock'),
             title        = _("Approve and lock this content so no further editing is possible"),
             css_class    = "icon icon_approved",
             confirm_text = _('Once approved this article will be locked and no further changes can be made'),
+            json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            
         )}
     % endif
     % if 'seen' in self.actions:
@@ -320,6 +333,7 @@
             _('Seen, like it') ,
             title=_("Seen it, like it") ,
             css_class="icon icon_seen" ,
+            json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
         )}
     % endif
     % if 'dissasociate' in self.actions:
@@ -329,6 +343,7 @@
             title        = _("Dissacociate your content from this response") ,
             css_class    = "icon icon_dissasociate" ,
             confirm_text = _('This content with no longer be associated with your content, are you sure?') ,
+            json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
         )}
     % endif
     
@@ -415,25 +430,7 @@
           <img src="/images/licenses/${d['content']['license']['code']}.png" alt="${d['content']['license']['name']}" />
         </a>
   
-    ##-----Copyright/Inapropriate?-------
-    <h2>${_("Content issues?")}</h2>
-      <a href="" class="button_small button_small_style_1" onclick="swap('flag_content'); return false;">${_("Inappropriate Content?")}</a>
-    
-      <div id="flag_content" class="hideable">
-        <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
-        ${h.form(url(controller='content_actions', action='flag', id=d['content']['id'], format='redirect'))}
-            <select name="type">
-                <% from civicboom.model.content import FlaggedContent %>
-                % for type in [type for type in FlaggedContent._flag_type.enums if type!="automated"]:
-                <option value="${type}">${_(type.capitalize())}</option>
-                % endfor
-            </select>
-            <p class="form_instructions">${_('Comment (optional)')}</p>
-            <textarea name="comment" style="width:90%; height:3em;"></textarea>
-            <input type="submit" name="flagit" value="Flag it" class="button_small button_small_style_tiny "/>
-            <span class="button_small button_small_style_tiny " onclick="swap('flag_content'); return false;">${_("Cancel")}</span>
-        ${h.end_form()}
-      </div>
+
 </%def>
 
 

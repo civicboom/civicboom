@@ -1,6 +1,7 @@
 from civicboom.lib.base import *
 from civicboom.controllers.contents import _get_content, ContentsController
 from civicboom.lib.communication    import messages
+from civicboom.lib.misc import update_dict
 
 content_search = ContentsController().index
 
@@ -261,18 +262,21 @@ class ContentActionsController(BaseController):
         content = _get_content(id, is_viewable=True)
         return action_ok(data={'list': [c.to_dict() for c in content.comments]})
 
+
     #-----------------------------------------------------------------------------
     # List - Accepted status
     #-----------------------------------------------------------------------------
     @web
     def accepted_status(self, id, **kwargs):
         content = _get_content(id, is_viewable=True)
-        accepted_status = {
-            'accepted' : [a.member.to_dict() for a in content.assigned_to if a.status=="accepted" ],
-            'pending'  : [a.member.to_dict() for a in content.assigned_to if a.status=="pending"  ],
-            'withdrawn': [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"],
-        }
-        return action_ok(data={'accepted_status': accepted_status})
+        
+        if hasattr(content, 'assigned_to'):
+            return action_ok(data={'list':
+                [update_dict(a.member.to_dict(),{'status':a.status}) for a in content.assigned_to]
+            })
+        
+        return action_ok(data={'list':[]})
+
 
 
     #-----------------------------------------------------------------------------

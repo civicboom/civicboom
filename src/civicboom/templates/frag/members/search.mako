@@ -35,7 +35,7 @@
                 <% args, kwargs = c.web_params_to_kwargs %>
                 Name: <input type="text" name="query" value="${kwargs.get('query')}"/>
                 <br/>
-                <input type="submit" value="Search" class="button gradient"/>
+                <input type="submit" value="Search" class="button"/>
             </fieldset>
         </form>
     </div>

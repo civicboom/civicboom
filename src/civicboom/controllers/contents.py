@@ -49,8 +49,8 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     # Draft Fields
     target_type = formencode.validators.OneOf(content_types.enums, not_empty=False)
     # Assignment Fields
-    due_date    = formencode.validators.DateConverter(not_empty=False, month_style='dd/mm/yyyy')
-    event_date  = formencode.validators.DateConverter(not_empty=False, month_style='dd/mm/yyyy')
+    due_date    = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
+    event_date  = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
     default_response_license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     # TODO: need date validators to check date is in future (and not too far in future as well)
 
@@ -178,8 +178,8 @@ list_filters = {
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
     'drafts'              : lambda results: results.filter(Content.__type__=='draft') ,
-    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type=='none')),
-    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type!='none')),
+    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval=='none')),
+    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval!='none')),
 }
 
 
@@ -575,7 +575,7 @@ class ContentsController(BaseController):
         content = _get_content(id, is_viewable=True)
         
         if 'lists' not in kwargs:
-            kwargs['lists'] = 'comments, responses, contributors, actions'
+            kwargs['lists'] = 'comments, responses, contributors, actions, accepted_status'
         
         data = {'content':content.to_dict(list_type='full', **kwargs)}
         

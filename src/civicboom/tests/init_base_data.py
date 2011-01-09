@@ -89,6 +89,11 @@ def init_base_data():
         u3.email         = u"AmyMAnderson@example.com"
         u3.avatar        = u"https://civicboom-static.s3.amazonaws.com/public/images/test/avatar_kitten.jpg"
 
+        u3_login = UserLogin()
+        u3_login.user   = u3
+        u3_login.type   = "password"
+        u3_login.token  = hashlib.sha1("password").hexdigest()
+
         u4 = User()
         u4.username      = u"puppy"
         u4.name          = u"Jamie L. Puppy"
@@ -103,7 +108,7 @@ def init_base_data():
         u5.email         = u""
         u5.avatar        = u"https://civicboom-static.s3.amazonaws.com/public/images/test/avatar_bunny.jpg"
 
-        Session.add_all([u3, u4, u5]); Session.commit()
+        Session.add_all([u3, u3_login, u4, u5]); Session.commit()
 
 
         # test data for kent messenger demo

@@ -26,6 +26,28 @@ function flash_message(json_message) {
 	}
 }
 
+function popup(title, url) {
+	// AllanC - TODO: need some indication to the user that this AJAX request is happening
+	$('#popup .title_text'   ).html(title);
+	$('#popup .popup_content').load(url,function(){
+		$('#popup').modal();
+	});
+
+	// AllanC - loading feedback could be:
+	//           displaying the popup
+	//			 adding a loading placeholder
+	//           investigate jsmodal.js and find call to re-init the size and position of the window when JS load complete
+	/*
+	{
+	onShow: function (dialog) {
+		$(".popup_content", dialog.data).load(url, function(){
+			Y.log('loaded: '+url);
+		});
+	}
+	}
+	*/
+}
+
 // submit buttons triggered by onclick dont submit the submit buttons name or value in the form
 // we can fake that here by using jQuery to temporerally create these as hidden form fields
 // Example:

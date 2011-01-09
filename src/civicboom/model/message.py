@@ -20,14 +20,20 @@ class Message(Base):
     content     = Column(UnicodeText(), nullable=False)
     read        = Column(Boolean(),     nullable=False, default=False)
 
+    target      = relationship("Member", primaryjoin="Message.target_id==Member.id", backref=backref('messages_to'  , cascade="all, delete-orphan"))
+    source      = relationship("Member", primaryjoin="Message.source_id==Member.id", backref=backref('messages_from', cascade="all, delete-orphan"))
+
+
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'default': {
             'id'           : None ,
             'source_id'    : None ,
-            'source'       : lambda m: str(m.source) ,
+            'source'       : lambda message: message.source.to_dict() if message.source!=None else None ,
+            'source_name'  : lambda message: str(message.source),
             'target_id'    : None ,
-            'target'       : lambda m: str(m.target) ,
+            'target'       : lambda message: message.target.to_dict() if message.target!=None else None ,
+            'target_name'  : lambda message: str(message.target),
             'timestamp'    : None ,
             'subject'      : None ,
             'content'      : None ,
@@ -45,7 +51,18 @@ class Message(Base):
 DDL('DROP TRIGGER IF EXISTS update_num_unread ON message').execute_at('before-drop', Message.__table__)
 DDL("""
 CREATE OR REPLACE FUNCTION update_num_unread() RETURNS TRIGGER AS $$
+    DECLARE
+        tmp_target_id integer;
     BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            tmp_target_id := NEW.target_id;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            -- FIXME: check that the target_id hasn't changed
+            tmp_target_id := NEW.target_id;
+        ELSIF (TG_OP = 'DELETE') THEN
+            tmp_target_id := OLD.target_id;
+        END IF;
+
         UPDATE member SET num_unread_messages = (
             SELECT COUNT(message.id)
             FROM message
@@ -53,7 +70,7 @@ CREATE OR REPLACE FUNCTION update_num_unread() RETURNS TRIGGER AS $$
                 message.target_id=member.id AND
                 message.source_id IS NOT NULL AND
                 NOT message.read
-        );
+        ) WHERE member.id = tmp_target_id;
         UPDATE member SET num_unread_notifications = (
             SELECT COUNT(message.id)
             FROM message
@@ -61,7 +78,7 @@ CREATE OR REPLACE FUNCTION update_num_unread() RETURNS TRIGGER AS $$
                 message.target_id=member.id AND
                 message.source_id IS NOT NULL AND
                 NOT message.read
-        );
+        ) WHERE member.id = tmp_target_id;
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;

@@ -14,6 +14,22 @@ log = logging.getLogger(__name__)
 
 random_symbols = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 def random_string(length=8):
+    """
+    Generate a random string of a-z A-Z 0-9
+
+    >>> a = random_string()
+    >>> len(a)
+    8
+    >>> b = random_string(10)
+    >>> len(b)
+    10
+
+    If random, it should compress pretty badly:
+
+    >>> import zlib
+    >>> len(zlib.compress(random_string(100))) > 50
+    True
+    """
     r = ''
     for i in range(length):
         r += random_symbols[random.randint(0,len(random_symbols)-1)]
@@ -24,6 +40,17 @@ def calculate_age(born):
     """
     Calculate the age of a user.
     http://www.fabent.co.uk/blog/2007/08/04/calculating-age-in-python/
+
+    >>> today = date.today()
+    >>> ten_ago = date(today.year-10, today.month, today.day)
+    >>> calculate_age(ten_ago)
+    10
+    >>> born_yesterday = date(today.year, today.month, today.day-1)
+    >>> calculate_age(born_yesterday)
+    0
+    >>> born_odd = date(2000, 2, 29)
+    >>> calculate_age(born_odd) > 0
+    True
     """
     today = date.today()
     

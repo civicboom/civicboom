@@ -109,6 +109,8 @@ function cb_frag_remove(jquery_element) {
 	var parent = jquery_element.parents('.'+fragment_container_class); // find parent
 	parent.toggle(scroll_duration, function(){parent.remove()});
 	cb_frag_remove_sibblings(parent);
+	
+	$.modal.close(); // Aditionaly, if this is in a popup then close the popup
 }
 function cb_frag_remove_sibblings(jquery_element) {
 	var parent_siblings = jquery_element.nextAll();
@@ -120,23 +122,50 @@ function cb_frag_reload(param) {
 	//  JQuery - find frag_container parent - find hidden source link for that frag - reload
 	//  String - find hidden source link for all frags - dose source href contain param - reload
 	
+	function get_parent_container_element_source(jquery_element) {
+		var container_element   = jquery_element.parents('.'+fragment_container_class);
+		var frag_source_element = container_element.children('.'+fragment_source_class);
+		var frag_source_href    = frag_source_element.attr('href');
+		return [container_element, frag_source_href];
+	}
+	
 	// Move up the chain from this element
 	//   grab the href of the A frag_source
 	//   and use that the .load the parent_frag container
 	function reload_element(jquery_element) {
-		var container_element   = jquery_element.parents('.'+fragment_container_class)
-		var frag_source_element = container_element.children('.'+fragment_source_class)
-		var frag_source_href    = frag_source_element.attr('href');
-		container_element.load(frag_source_href);
-		Y.log('sent '+frag_source_href);
+		var elem_source_pair = get_parent_container_element_source(jquery_element);
+		var frag_element = elem_source_pair[0];
+		var frag_source  = elem_source_pair[1];
+		frag_element.load(frag_source);
 	}
-	
+
 	if (typeof param == 'string') {
+		// Look through all <A> tags in every frgament for the string
+		// if the link contains this string
+		// add the <A>'s parent frag to a refresh list (preventing duplicates)
+		// go through the frag list refreshing
+		
+		var frags_to_refresh = {};
+		$(fragment_containers_id+' a').each(function(index) {
+			var link_element = $(this);
+			if (link_element.attr('href').indexOf(param) != -1) {
+				var elem_source_pair = get_parent_container_element_source(link_element);
+				var frag_element = elem_source_pair[0];
+				var frag_source  = elem_source_pair[1];
+				frags_to_refresh[frag_source] = frag_element;
+			}
+		});
+		for (var key in frags_to_refresh) {
+			frags_to_refresh[key].load(key);
+		}
+		
+		/*
 		$(fragment_containers_id).children('.'+fragment_container_class).children('.'+fragment_source_class).each(function(index){
 			if ($(this).attr('href').indexOf(param) != -1) {
 				cb_frag_reload($(this));
 			}
 		});
+		*/
 	}
 	else {
 		reload_element(param);

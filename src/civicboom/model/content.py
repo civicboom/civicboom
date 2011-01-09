@@ -260,7 +260,7 @@ class Content(Base):
 
         from civicboom.lib.helpers import wh_public
         thumbnail_type = self.__type__
-        if thumbnail_type=='article' and self.response_type != None:
+        if thumbnail_type=='article' and self.approval != None:
             thumbnail_type = 'response'
         return wh_public("images/default_thumbnail_%s.png" % thumbnail_type)
 
@@ -385,7 +385,7 @@ class UserVisibleContent(Content):
     def action_list_for(self, member):
         action_list = Content.action_list_for(self, member)
         if self.is_parent_owner(member) and member.has_permission('plus'):
-            if self.response_type == 'none':
+            if self.approval == 'none':
                 action_list.append('approve')
                 action_list.append('seen')
                 action_list.append('dissasociate')
@@ -409,11 +409,11 @@ class UserVisibleContent(Content):
 class ArticleContent(UserVisibleContent):
     __tablename__   = "content_article"
     __mapper_args__ = {'polymorphic_identity': 'article'}
-    _response_type  = Enum("none", "approved", "seen", "dissassociated", name="response_type")
+    _approval  = Enum("none", "approved", "seen", "dissassociated", name="approval")
     id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
     rating          = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
     ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
-    response_type   = Column(_response_type, nullable=False, default="none")
+    approval   = Column(_approval, nullable=False, default="none")
 
     # AllanC TODO:
     # Could have derived fields for count="20" min="1" max="10"
@@ -424,7 +424,7 @@ class ArticleContent(UserVisibleContent):
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_article_fields = {
         'rating'        : None ,
-        'response_type' : None ,
+        'approval' : None ,
     }
     __to_dict__['default'     ].update(_extra_article_fields)
     __to_dict__['full'        ].update(_extra_article_fields)
