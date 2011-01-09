@@ -230,29 +230,40 @@
 <%def name="render_item_message(message, list='to')">
     ##<a href="${url('message', id=message['id'])}">
     % if message.get('source') and list!='from':
-    <td>${member_includes.avatar(message['source'], class_="thumbnail_small")}</td>
+        <td>${member_includes.avatar(message['source'], class_="thumbnail_small")}</td>
     % endif
+    
     % if message.get('target') and list=='from':
-    <td>${member_includes.avatar(message['target'], class_="thumbnail_small")}</td>    
+        <td>${member_includes.avatar(message['target'], class_="thumbnail_small")}</td>    
     % endif
-    <td>
-        <a href    = "${url('message', id=message['id'])}"
-           onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'bridge'); return false;"
-        >
-            ${message['subject']}
-        </a>
-    </td>
+    
+    % if 'content' in message:
+        <td>
+            <p>${message['subject']}</p>
+            <p>${message['content']}</p>
+        </td>
+    % else:
+        <td>
+            <a href    = "${url('message', id=message['id'])}"
+               onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'bridge'); return false;"
+            >
+                ${message['subject']}
+            </a>
+        </td>
+    % endif
+    
     <td>${message["timestamp"][0:16]}</td>
+    
     % if list!='from':
-    <td>
-        ${h.secure_link(
-            h.args_to_tuple('message', id=message['id'], format='redirect') ,
-            method="DELETE",
-            value="",
-            title=_("Delete"),
-            css_class="icon icon_delete",
-            json_form_complete_actions = "cb_frag_reload(current_element);" ,
-        )}
-    </td>
+        <td>
+            ${h.secure_link(
+                h.args_to_tuple('message', id=message['id'], format='redirect') ,
+                method="DELETE",
+                value="",
+                title=_("Delete"),
+                css_class="icon icon_delete",
+                json_form_complete_actions = "cb_frag_reload(current_element);" ,
+            )}
+        </td>
     % endif
 </%def>
