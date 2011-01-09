@@ -57,7 +57,8 @@ CREATE OR REPLACE FUNCTION update_num_unread() RETURNS TRIGGER AS $$
         IF (TG_OP = 'INSERT') THEN
             tmp_target_id := NEW.target_id;
         ELSIF (TG_OP = 'UPDATE') THEN
-            RAISE EXCEPTION 'Can only add or remove messages, not alter';
+            -- FIXME: check that the target_id hasn't changed
+            tmp_target_id := NEW.target_id;
         ELSIF (TG_OP = 'DELETE') THEN
             tmp_target_id := OLD.target_id;
         END IF;
