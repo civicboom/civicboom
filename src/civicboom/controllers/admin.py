@@ -29,8 +29,12 @@ class AdminControllerBase(BaseController):
             # allow tests to see admin?
             # this could be done better when we have a proper admin definiton
             return
-        if (not c.logged_in_user) or (c.logged_in_user.username not in ["shish", "unittest"]): # pragma: no cover - tests take the shortcut above
+        if (not c.logged_in_user) or (c.logged_in_user.username not in ["Shish", "unittest"]): # pragma: no cover - tests take the shortcut above
             abort(403)
+
+    # this is used by the superclass somehow
+    def Session(self):
+        return meta.Session
 
     ## customize the query for a model listing
     #def get_page(self):
