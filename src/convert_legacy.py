@@ -33,7 +33,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level   = logging.INFO,
+    format  = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
+    datefmt = "%H:%M:%S"
+)
 log = logging.getLogger(__name__)
 
 
