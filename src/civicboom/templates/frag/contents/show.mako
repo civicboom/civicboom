@@ -115,7 +115,7 @@
         
         
         <ul class="status">
-            % if 'response_type' in content and content['response_type']=='approved':
+            % if 'approval' in content and content['approval']=='approved':
             <li><div class="icon_large icon_approved_large" title="approved content"></div>${_("approved content")}</li>
             % endif
         </ul>

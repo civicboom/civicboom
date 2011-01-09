@@ -56,8 +56,8 @@
         % for response in responses:
             <%
                 response_class = ""
-                if response['response_type']:
-                    response_class = response['response_type']
+                if response['approval']:
+                    response_class = response['approval']
             %>
             <tr class="${response_class}>
                 <td class="${response_class}"></td>

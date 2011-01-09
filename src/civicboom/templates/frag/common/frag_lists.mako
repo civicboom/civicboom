@@ -216,8 +216,8 @@
         % if content.get('edit_lock'):
             ${h.icon('edit_lock')}
         % endif
-        % if content.get('response_type'):
-            ${h.icon(content.get('response_type'))}
+        % if content.get('approval'):
+            ${h.icon(content.get('approval'))}
         % endif
     </div>
 </%def>

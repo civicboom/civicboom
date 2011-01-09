@@ -34,6 +34,8 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
     (eg S3:cb-wh:media/cade1361, ./civicboom/public/warehouse/media/ca/de/cade1361)
     """
 
+    log.info("Copying %s/%s (%s) to %s warehouse" % (warehouse, hash, filename, config["warehouse"]))
+
     if config["warehouse"] == "local" or not config['online']:
         dest = "/tmp/warehouse/%s/%s" % (warehouse, hash)
         if not os.path.exists(os.path.dirname(dest)):
@@ -41,7 +43,6 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
         shutil.copy(src, dest)
 
     elif config["warehouse"] == "s3":
-        log.info("Copying %s/%s (%s) to S3 warehouse" % (warehouse, hash, filename))
         connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
         bucket = connection.get_bucket(config["s3_bucket_name"])
         key = Key(bucket)
@@ -57,13 +58,12 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
         key.set_acl('public-read')
 
     elif config["warehouse"] == "ssh":
-        log.info("Copying %s/%s (%s) to SSH warehouse" % (warehouse, hash, filename))
         log.error("SSH warehouse not implemented")
         #scp = SCPClient(SSHTransport("static.civicboom.com"))
         #scp.put(src, "~/staticdata/%s/%s/%s/%s" % (warehouse, hash[0:1], hash[2:3], hash))
 
     elif config["warehouse"] == "null":
-        log.info("Copying %s/%s (%s) to Null warehouse" % (warehouse, hash, filename))
+        pass
 
     else:
         log.warning("Unknown warehouse type: "+config["warehouse"])

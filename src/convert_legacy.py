@@ -32,6 +32,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import logging
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
@@ -46,13 +47,13 @@ def convert_legacy_database(url): # pragma: no cover - this should only be run a
         # functions to convert from old data {{{
         licenses_by_old_id = [
             None, # l_id is 1-based, there is no zero
-            get_license("Unspecified"),
-            get_license("CC-BY"),
-            get_license("CC-BY-ND"),
-            get_license("CC-BY-NC-ND"),
-            get_license("CC-BY-NC"),
-            get_license("CC-BY-NC-SA"),
-            get_license("CC-BY-SA"),
+            get_license(u"Unspecified"),
+            get_license(u"CC-BY"),
+            get_license(u"CC-BY-ND"),
+            get_license(u"CC-BY-NC-ND"),
+            get_license(u"CC-BY-NC"),
+            get_license(u"CC-BY-NC-SA"),
+            get_license(u"CC-BY-SA"),
         ]
 
         def get_description(row):
@@ -112,12 +113,13 @@ def convert_legacy_database(url): # pragma: no cover - this should only be run a
                 string_tags = string_tags + row["tag"] + " "
             if "Tags" in row:
                 string_tags = string_tags + row["Tags"] + " "
-            tags = [get_tag(n) for n in re.split("[, ]", string_tags)]
+            tags = [get_tag(n) for n in re.split("[^a-zA-Z0-9\-]", string_tags) if len(n) > 0]
 
             if "catId" in row:
                 a.tags.append(get_tag_by_old_category_id(row["catId"]))
             if "CatId" in row:
                 a.tags.append(get_tag_by_old_category_id(row["CatId"]))
+
             return list(set(tags))
 
         def get_content(row):
@@ -305,7 +307,7 @@ def convert_legacy_database(url): # pragma: no cover - this should only be run a
                 c.content       = row["contents"].decode("utf-8")
                 c.creator       = reporters_by_old_id[row["ReporterId"]]
                 c.creation_date = row["creation_time"]
-                c.license_id    = get_license("Unspecified").id
+                c.license_id    = get_license(u"Unspecified").id
                 # `status` enum('display','pending','deleted') NOT NULL default 'display',
                 log.debug("   |- %3d - %s" % (row["id"], c.title, ))
                 Session.add(c)
