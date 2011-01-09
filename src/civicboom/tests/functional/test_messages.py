@@ -166,7 +166,9 @@ class TestMessagesController(TestController):
         assert "truncation" in response
 
     def part_show_someone_elses(self):
+        self.log_in_as('kitten')
         response = self.app.get(url('message', id=self.m1_id), status=403)
+        self.log_in()
 
     def part_show_non_exist(self):
         response = self.app.get(url('message', id=0), status=404)
