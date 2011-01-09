@@ -19,7 +19,7 @@ from pylons import config
 import logging
 log = logging.getLogger(__name__)
 
-_worker = None
+_workers = []
 _media_queue = Queue()
 
 
@@ -42,25 +42,27 @@ class MediaThread(Thread):
             _media_queue.task_done()
             sleep(3)
 
-def start_worker():
-    log.info('Starting worker thread.')
-    global _worker
-    _worker = MediaThread()
-    _worker.daemon = True
-    _worker.name = "Worker"
-    _worker.start()
+def start_worker(count=3):
+    log.info('Starting worker threads.')
+    for n in range(count):
+        worker = MediaThread()
+        worker.daemon = True
+        worker.name = "Worker %d" % (len(_workers)+1)
+        worker.start()
+        _workers.append(worker)
 
 def stop_worker():
-    log.info('Stopping worker thread.')
-    global _worker
-    if _worker:
-        add_job({"task": "die"})
-        _worker.join()
-        _worker = None
+    log.info('Stopping worker threads.')
+    if _workers:
+        for worker in _workers:
+            add_job({"task": "die"})
+        for worker in _workers:
+            worker.join()
+            _workers.remove(worker)
 
 def add_job(job):
     log.info('Adding job to worker queue: %s' % job["task"])
-    if not _worker:
+    if not _workers:
         start_worker()
     _media_queue.put(job)
 
