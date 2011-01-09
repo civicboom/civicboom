@@ -129,8 +129,10 @@ def get_tag(tag):
     """
     try:
         return Session.query(Tag).filter_by(name=unicode(tag)).one()
-    except NoResultFound:
-        return Tag(unicode(tag))
+    except NoResultFound as nrf:
+        t = Tag(unicode(tag))
+        Session.add(t)
+        return t
 
 
 def get_media_nocache(media_id):
