@@ -202,6 +202,22 @@ def datetime_to_rss(date):
 
 
 #-------------------------------------------------------------------------------
+# Standard and JSON URL generation
+#-------------------------------------------------------------------------------
+def url_pair(*args, **kwargs):
+    # Defensive copying
+    #args   = copy.copy(args)
+    #kwargs = copy.copy(kwargs)
+    gen_format = kwargs.pop('gen_format')
+
+    href             = url(*args, **kwargs)
+    kwargs['format'] = gen_format
+    href_json        = url(*args, **kwargs)
+    
+    return (href, href_json)
+
+
+#-------------------------------------------------------------------------------
 # Secure Form
 #-------------------------------------------------------------------------------
 # If the form is given it's first href arg as a tuple then we can create the URL from the tuple for both JSON and Standard URL's
@@ -219,14 +235,17 @@ def form(*args, **kwargs):
 
     # if href=tuple then generate 2 URL's from tuple 1.) Standard  2.) JSON    
     if href_tuple:
-        # generate standard URL
-        href_args   = copy.copy(href_tuple[0])
-        href_kwargs = copy.copy(href_tuple[1])
-        href      = url(*href_args, **href_kwargs)
+        href, href_json = url_pair(gen_format='json', *href_tuple[0], **href_tuple[1]) # generate standard and JSON URL's
         
+        # generate standard URL
+        #href_args   = copy.copy(href_tuple[0])
+        #href_kwargs = copy.copy(href_tuple[1])
+        #href      = url(*href_args, **href_kwargs)
+
         # generate json URL and attach onsubmit event
-        href_kwargs['format']      = 'json'
-        href_json                  = url(*href_args, **href_kwargs)
+        #href_kwargs['format']      = 'json'
+        #href_json                  = url(*href_args, **href_kwargs)
+
         # AllanC - bizzare workaround this one ... current_element=$(this) is needed here because if it is used inside function(data) it does not work ? dont know why.
         kwargs['onsubmit'] = literal("""
             %(pre_onsubmit)s

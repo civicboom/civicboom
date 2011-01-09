@@ -28,12 +28,14 @@ class NewMessageSchema(DefaultSchema):
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_message(message, is_target=False):
+def _get_message(message, is_target=False, is_target_or_source=False):
     message = get_message(message)
     if not message:
         raise action_error(_("Message does not exist"), code=404)
     if is_target and message.target != c.logged_in_persona:
         raise action_error(_("You are not the target of this message"), code=403)
+    if is_target_or_source and c.logged_in_persona and not (message.target==c.logged_in_persona or message.source==c.logged_in_persona):
+        raise action_error(_("You are not the target or source of this message"), code=403)
     return message
 
 #-------------------------------------------------------------------------------
@@ -225,7 +227,7 @@ class MessagesController(BaseController):
         
         #c.viewing_user = c.logged_in_persona - swiching persona will mean that logged_in_user is group
         
-        message = _get_message(id, is_target=True)
+        message = _get_message(id, is_target_or_source=True)
         if not message.read:
             message.read = True
             Session.commit()

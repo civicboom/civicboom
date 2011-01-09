@@ -10,7 +10,16 @@
 %>
 
 <%def name="body()">
-    ${show_message(c.result['data']['message'])}    
+    <%
+        message = c.result['data']['message']
+    %>
+    
+    ${show_message(message)}
+    
+    % if message.get('source_id') and not (message['source_id']==str(c.logged_in_persona.id) or message['source_id']==c.logged_in_persona.username):
+    <p>${_('Reply')}</p>
+    <!--#include file="${url('new_message', format='frag', target=message.get('source_id'), subject='Re: '+message.get('subject'))}"-->
+    % endif
 </%def>
 
 

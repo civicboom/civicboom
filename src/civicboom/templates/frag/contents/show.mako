@@ -55,7 +55,7 @@
         ${content_map()}
         ${content_comments()}
         ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
-        ${popup.popup('flag_content', _('Flag content'), flag_form)}
+        ${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
         </div>
     </div>
     <div class="frag_right_col">

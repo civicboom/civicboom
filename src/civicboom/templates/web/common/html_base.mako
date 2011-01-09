@@ -184,6 +184,13 @@ ${self.head_links()}
 	</script>
 </%def>
 
+##------------------------------------------------------------------------------
+## Popup - Dynamic AJAX populated framework
+##------------------------------------------------------------------------------
+<%def name="popup_frame()">
+	<%include file="popup_base.mako"/>
+</%def>
+
 
 ##------------------------------------------------------------------------------
 ## HTML Body
@@ -208,6 +215,7 @@ else:
 		<div id="col_main">${next.body()}</div>
 	</div>
 	<footer><%include file="footer.mako"/></footer>
+	${popup_frame()}
 	<%include file="scripts_end.mako"/>
 </body>
 </html>

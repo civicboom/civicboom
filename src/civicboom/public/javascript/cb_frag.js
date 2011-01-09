@@ -109,6 +109,8 @@ function cb_frag_remove(jquery_element) {
 	var parent = jquery_element.parents('.'+fragment_container_class); // find parent
 	parent.toggle(scroll_duration, function(){parent.remove()});
 	cb_frag_remove_sibblings(parent);
+	
+	$.modal.close(); // Aditionaly, if this is in a popup then close the popup
 }
 function cb_frag_remove_sibblings(jquery_element) {
 	var parent_siblings = jquery_element.nextAll();
