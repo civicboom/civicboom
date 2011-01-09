@@ -32,6 +32,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import logging
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
