@@ -1,6 +1,7 @@
 <%inherit file="/frag/common/frag.mako"/>
 
 <%namespace name="frag_lists" file="/frag/common/frag_lists.mako"/>
+<%namespace name="flag" file="/frag/content_actions/flag.mako"/>
 <%namespace name="member_includes"  file="/web/common/member.mako"/>
 
 <%namespace name="popup"      file="/web/common/popup_base.mako" />
@@ -55,6 +56,9 @@
         ${content_map()}
         ${content_comments()}
         ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
+        <%def name="flag_form()">
+            ${flag.flag_form(self.id)}
+        </%def>
         ${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
         </div>
     </div>
@@ -219,6 +223,9 @@
                 ##	${str(comment['creation_date'])[0:19]}
                 ##</b>
             </td>
+            <td>
+                ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as offensive/spam') , class_='icon icon_flag')}
+            </td>
         </tr>
         % endfor
         <tr>
@@ -240,6 +247,9 @@
                     <br><!--<input type="submit" name="submit_preview" value="Preview">-->
                     <input type="submit" name="submit_response" value="${_('Comment')}">
                 ${h.end_form()}
+            </td>
+            <td>
+                ##padding col for flag actions
             </td>
         </tr>
     </table>
@@ -385,28 +395,6 @@
     
 </%def>
 
-
-##------------------------------------------------------------------------------
-## Flag Form
-##------------------------------------------------------------------------------
-
-<%def name="flag_form()">
-    ##<div id="flag_content" class="hideable">
-      <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
-      ${h.form(h.args_to_tuple(controller='content_actions', action='flag', id=d['content']['id'], format='redirect'), json_form_complete_actions="$.modal.close();")}
-          <select name="type">
-              <% from civicboom.model.content import FlaggedContent %>
-              % for type in [type for type in FlaggedContent._flag_type.enums if type!="automated"]:
-              <option value="${type}">${_(type.capitalize())}</option>
-              % endfor
-          </select>
-          <p class="form_instructions">${_('Comment (optional)')}</p>
-          <textarea name="comment" style="width:90%; height:3em;"></textarea>
-          <input type="submit" name="flagit" value="Flag it" class=""/>
-          ##<a class="simplemodal-close">${_("Cancel")}</a>
-      ${h.end_form()}
-    ##</div>
-</%def>
 
 
 ##------------------------------------------------------------------------------
