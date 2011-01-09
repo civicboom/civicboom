@@ -50,12 +50,12 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
         if key.exists():
             log.warning("%s/%s already exists" % (warehouse, hash))
             return
+        key.set_contents_from_filename(src)
         key.set_metadata('Content-Type', magic.from_file(src, mime=True))
         key.set_metadata('Cache-Control', 'no-cache' if placeholder else 'public')
         if filename:
             key.set_metadata('Content-Disposition', 'inline; filename='+__http_escape(filename))
         key.set_acl('public-read')
-        key.set_contents_from_filename(src)
 
     elif config["warehouse"] == "ssh":
         log.error("SSH warehouse not implemented")
