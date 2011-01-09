@@ -31,7 +31,7 @@ class MediaThread(Thread):
             task = _media_queue.get()
             try:
                 task_type = task.pop("task")
-                log.info('Starting task: %s (%s)' % (task_type, str(task)))
+                log.info('Starting task: %s (%s) [approx %d left]' % (task_type, str(task), _media_queue.qsize()))
                 if task_type == "process_media":
                     process_media(**task)
                 if task_type == "die":
