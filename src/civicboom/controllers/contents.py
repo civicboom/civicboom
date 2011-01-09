@@ -178,8 +178,8 @@ list_filters = {
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
     'drafts'              : lambda results: results.filter(Content.__type__=='draft') ,
-    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type=='none')),
-    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.response_type!='none')),
+    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval=='none')),
+    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval!='none')),
 }
 
 

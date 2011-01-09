@@ -112,13 +112,13 @@
         )}
         
         ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='article' and c['response_type']!='none' ] ,
+            [c for c in d['content'] if c['type']=='article' and c['approval']!='none' ] ,
             _('Responses') ,
             h.args_to_tuple('contents', creator=self.id, list='responses') ,
         )}
         
         ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='article' and c['response_type']=='none' ] ,
+            [c for c in d['content'] if c['type']=='article' and c['approval']=='none' ] ,
             _('Articles') ,
             h.args_to_tuple('contents', creator=self.id, list='articles') ,
         )}
