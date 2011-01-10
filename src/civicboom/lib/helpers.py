@@ -401,19 +401,17 @@ def cb_frag_link(*args, **kwargs):
 # Notification "Links" to "Frag Links"
 #-------------------------------------------------------------------------------
 
+
+
+regex_content_links = re.compile(r'<a(?:[^<>]*?)href="(?:[^<>]*?)/contents/(.*?)[/&?#\n. "](?:[^<>]*?)>(.*?)</a>') # \1 = content id \2 = text
+regex_member_links  = re.compile(r'<a(?:[^<>]*?)href="(?:[^<>]*?)/members/(.*?)[/&?#\n. "](?:[^<>]*?)>(.*?)</a>') # \1 = member id \2 = text
+
 def links_to_frag_links(content):
     """
     Notification messages have content and members linked to as <a href="http://www.civicboom.com/contents/17>THING</a>"
     These would break the fragment flow.
     Identifying these links and replacing them with the correct JS relative links
     """
-
-    #print ""
-    #print "-in-"
-    #print content
-
-    regex_content_links = r'<a(?:.*?)href="(?:.*?)/contents/(.*?)[/&?#\n. "](?:.*?)>(.*?)</a>' # \1 = content id \2 = text
-    regex_member_links  = r'<a(?:.*?)href="(?:.*?)/members/(.*?)[/&?#\n. "](?:.*?)>(.*?)</a>' # \1 = member id \2 = text
     
     def replace_content_link(matchobj):
         return """<a href="%(url)s" onclick="cb_frag($(this), '%(url_frag)s'); return false;">%(text)s</a>""" % {\
@@ -429,12 +427,7 @@ def links_to_frag_links(content):
             'text'    : matchobj.group(2) ,
         }
 
-    #content = re.sub(regex_content_links, replace_content_link, content)
+    content = re.sub(regex_content_links, replace_content_link, content)
     content = re.sub(regex_member_links , replace_member_link , content)
 
-    
-    #print "-out-"
-    #print content
-    
     return content
-    
