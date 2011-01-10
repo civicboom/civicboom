@@ -9,3 +9,5 @@
 <a href="${h.url(controller='misc', action='terms'  )}">${_("Terms and Conditions")}</a>
 <a href="${h.url(controller='misc', action='privacy')}">${_("Privacy policy")}</a>
 <a href="${h.url(controller='misc', action='credits')}">${_("Credits")}</a>
+
+<a class="icon icon_twitter" href="http://twitter.com/civicboom"><span>twitter</span></a>

@@ -40,7 +40,9 @@ FOOTER {
 	left: 0px;
 	right: 0px;
 	font-size: 10px;
-	padding: 0.5em;
+	padding       : 0.50em;
+    padding-top   : 0.25em;
+    padding-bottom: 0.00em;
 	border-top: 1px solid #CCC;
 }
 
@@ -228,6 +230,7 @@ HEADER #login {
 /*----------------------------------------------------------------------------*/
 
 FOOTER A {
+    vertical-align : middle;
 	text-decoration: none;
 	margin-right: 8px;
 }
