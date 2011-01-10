@@ -3,23 +3,8 @@ from civicboom.lib.base import *
 class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
-    def about(self):
-        return action_ok()
-
-    @cacheable(time=600)
-    @auto_format_output
-    def press(self):
-        return action_ok()
-
-    @cacheable(time=600)
-    @auto_format_output
-    def terms(self):
-        return action_ok()
-
-    @cacheable(time=600)
-    @auto_format_output
-    def privacy(self):
-        return action_ok()
+    def about(self, id):
+        return action_ok(template="about/"+id)
 
     @cacheable(time=60)
     @auto_format_output
@@ -29,11 +14,6 @@ class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
     def georss(self):
-        return action_ok()
-
-    @cacheable(time=600)
-    @auto_format_output
-    def credits(self):
         return action_ok()
 
     @cacheable(time=600)
