@@ -40,6 +40,9 @@ OL LI {
 	margin-left: 3em;
 	list-style: decimal;
 }
+OL OL LI {
+	/*list-style-type: lower-alpha;*/
+}
 
 
 /*----------------------------------------------------------------------------*/

@@ -4,7 +4,7 @@ class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
     def about(self, id):
-        return action_ok(template="misc/"+id)
+        return action_ok(template="about/"+id)
 
     @cacheable(time=60)
     @auto_format_output

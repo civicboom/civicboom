@@ -4,7 +4,7 @@
 
 <a href="mailto:feedback@civicboom.com">${_("Please send us your Feedback")}</a>
 
-<a href="${h.url(controller='misc', action='about', id='about'  )}">${_("About")}</a>
+<a href="${h.url(controller='misc', action='about', id='civicboom')}">${_("About")}</a>
 <!--<a href="${h.url(controller='misc', action='about', id='press'  )}">${_("Press")}</a>-->
 <a href="${h.url(controller='misc', action='about', id='terms'  )}">${_("Terms")}</a>
 <a href="${h.url(controller='misc', action='about', id='privacy')}">${_("Privacy")}</a>
