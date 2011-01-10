@@ -1,6 +1,12 @@
 <%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Press coverage and external relations")}</%def>
   
+<article class='col'>
+
+<%include file="toc.mako" />
+
+<h1>Press</h1>
+
 <article>
 	<time pubdate datetime="2010-04-09">9th April 2010</time>
 	<a href="http://www.journalism.co.uk/2/articles/538220.php">
@@ -24,4 +30,6 @@
 	<a href="http://www.ejc.net/media_news/citizen_news_network_relaunched_as_tool_for_news_organisations/">
 	<img src="http://www.ejc.net/assets/images/logo.gif" alt="www.ejc.net"/>
 	Citizen news network relaunched as tool for news organisations</a>
+</article>
+
 </article>

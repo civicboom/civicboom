@@ -1,8 +1,11 @@
 <%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Credits")}</%def>
 
-<article class='open-source cols'>
+<article class='open-source col'>
 
+<%include file="toc.mako" />
+
+<h1>Open Source &amp; Credits</h1>
 <div>
 <span>Front End:</span>
 
@@ -53,6 +56,13 @@ python-recaptcha  - MIT
 python-decorator  - 2-clause BSD
 python-lxml       - BSD + Python (plus some other bits which are explicitly marked as aggregated not linked)
 python-pybabel    - BSD-like?
+
+mako              - MIT
+formalchemy       - MIT
+python-magic      - PSF
+GeoAlchemy        - MIT
+GeoFormAlchemy    - MIT
+twitter           - MIT
 -->
 
 <p>DB Framework -
