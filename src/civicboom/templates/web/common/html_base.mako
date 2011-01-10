@@ -54,6 +54,7 @@
 	<link rel="stylesheet" type="text/css" href="/styles/web/frags.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/frag_content.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/web/frag_member.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/web/frag_lists.css" />
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif

@@ -31,19 +31,19 @@
         if 'max' not in kwargs:
             kwargs['max'] = 20
     %>
-    ${frag_list(render_item_function=render_item_member       , type=('ul','li')   , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_member       , type=('ul','li')   , list_class='member'        , *args, **kwargs)}
 </%def>
 
 <%def name="content_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_content      , type=('table','tr'), *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_content      , type=('table','tr'), list_class='content'       , *args, **kwargs)}
 </%def>
 
 <%def name="group_members_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_group_members, type=('table','tr'), *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_group_members, type=('table','tr'), list_class='group_members' , *args, **kwargs)}
 </%def>
 
 <%def name="message_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_message, type=('table','tr'), *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_message      , type=('ul','li')   , list_class='messages'      , *args, **kwargs)}
 </%def>
 
 
@@ -52,7 +52,7 @@
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(items, title, href=None, max=3, show_count=True, hide_if_empty=True, type=('ul','li'), render_item_function=None, *args, **kwargs)">
+<%def name="frag_list(items, title, href=None, max=3, show_count=True, hide_if_empty=True, type=('ul','li'), list_class='', render_item_function=None, *args, **kwargs)">
     <%
         if not isinstance(items, list):
             items      = [items]
@@ -89,11 +89,11 @@
             <span class="count">${show_count}</span>
             % endif
         </h2>
-        <${type[0]}>
+        <${type[0]} class="${list_class}">
             % for item in items[0:max]:
-            <${type[1]}>
+            ##<${type[1]}>
                 ${render_item_function(item, *args, **kwargs)}
-            </${type[1]}>
+            ##</${type[1]}>
             % endfor
         </${type[0]}>
         % if href and max > 0 and len(items) > max:
@@ -109,8 +109,10 @@
 ## Member Item
 ##------------------------------------------------------------------------------
 
-<%def name="render_item_member(member)">   
+<%def name="render_item_member(member)">
+<li>
     ${member_includes.avatar(member, class_="thumbnail_small")}
+</li>
 </%def>
 
 
@@ -119,6 +121,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_group_members(member)">
+<tr>
     <td>${member_includes.avatar(member, class_="thumbnail_small")}</td>
     <td>${member['name']}</td>
     
@@ -159,6 +162,7 @@
         % endif
     </td>
     % endif
+</tr>
 </%def>
 
 
@@ -167,7 +171,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_content(content, location=False, stats=False, creator=False)">
-
+<tr>
     <%
         id = content['id']
     
@@ -205,6 +209,7 @@
         ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
     </td>
     % endif
+</tr>
 </%def>
 
 ## Content Thumbnail Icons
@@ -228,50 +233,55 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_message(message, list='to')">
+<%
+    read_status = ''
+    if 'read' in message:
+        if not message['read']:
+            read_status = 'unread'
+%>
+<li class="${read_status}">
     ##<a href="${url('message', id=message['id'])}">
+    
+    % if list!='sent':
+        ${h.secure_link(
+            h.args_to_tuple('message', id=message['id'], format='redirect') ,
+            method="DELETE",
+            value="",
+            title=_("Delete"),
+            css_class="icon icon_delete",
+            json_form_complete_actions = "cb_frag_reload(current_element);" ,
+        )}
+    % endif
+    
     % if message.get('source') and list!='sent':
-        <td>${member_includes.avatar(message['source'], class_="thumbnail_small")}</td>
+        ${member_includes.avatar(message['source'], class_="thumbnail_small source")}
     % endif
     
     % if message.get('target') and list=='sent':
-        <td>${member_includes.avatar(message['target'], class_="thumbnail_small")}</td>    
+        ${member_includes.avatar(message['target'], class_="thumbnail_small target")}
     % endif
     
     % if 'content' in message:
-        <td>
-            <p>${message['subject']}</p>
-            <p>${message['content']}</p>
-        </td>
-    % else:
-        <td>
-            <a href    = "${url('message', id=message['id'])}"
-               onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'bridge'); return false;"
-            >
-                ${message['subject']}
-            </a>
-        </td>
-    % endif
-    
-    <td>${message["timestamp"][0:16]}</td>
-    
-    % if 'read' in message:
-        % if message['read']:
-        <td>seen</td>
+
+        <p class="subject">${message['subject']}</p>
+        % if list=='notification':
+        ## It is safe to use literal here as notifications only come from the system
+        <p class="content">${h.literal(h.links_to_frag_links(message['content']))}</p>
         % else:
-        <td>unread</td>
+        <p class="content">${message['content']}</p>
         % endif
+
+    % else:
+        
+        <a href    = "${url('message', id=message['id'])}"
+           onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'bridge'); return false;"
+        >
+            <p class="subject">${message['subject']}</p>
+        </a>
     % endif
     
-    % if list!='sent':
-        <td>
-            ${h.secure_link(
-                h.args_to_tuple('message', id=message['id'], format='redirect') ,
-                method="DELETE",
-                value="",
-                title=_("Delete"),
-                css_class="icon icon_delete",
-                json_form_complete_actions = "cb_frag_reload(current_element);" ,
-            )}
-        </td>
-    % endif
+    <p class="timestamp">${message["timestamp"][0:16]}</p>
+    
+    
+</li>
 </%def>
