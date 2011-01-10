@@ -1,7 +1,7 @@
 <%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Credits")}</%def>
 
-<article>
+<article class='open-source cols'>
 
 <div>
 <span>Front End:</span>
@@ -117,6 +117,5 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 	<a href="http://pixel-mixer.com/">pixel-mixer</a> -
 	Commercial use allowed with link to pixel-mixer.com
 </div>
-
 
 </article>
