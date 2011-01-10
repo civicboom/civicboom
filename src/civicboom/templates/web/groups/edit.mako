@@ -1,10 +1,25 @@
 <%inherit file="/web/common/frag_container.mako"/>
 
+<%namespace name="frag" file="/frag/common/frag.mako"/>
+
+##------------------------------------------------------------------------------
+## Body
+##------------------------------------------------------------------------------
+
 <%def name="body()">
     <% self.attr.frags = [group, quick_group] %>
 </%def>
 
+
+##------------------------------------------------------------------------------
+## new/edit group
+##------------------------------------------------------------------------------
+
 <%def name="group()">
+    ${frag.frag_basic(title=_('%s group') % c.action.capitalize(), icon='group', frag_content=group_content)}
+    ##
+</%def>
+<%def name="group_content()">
     <%
         from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
         
@@ -112,10 +127,22 @@
     ${h.end_form()}
 </%def>
 
-<%def name="quick_group()">
 
+##------------------------------------------------------------------------------
+## Quick group
+##------------------------------------------------------------------------------
+
+<%def name="quick_group()">
+    ${frag.frag_basic(title=_('Quick group'), icon='group', frag_content=quick_group_content)}
+</%def>
+<%def name="quick_group_content()">
+    hello
 </%def>
 
+
+##------------------------------------------------------------------------------
+## Deprication
+##------------------------------------------------------------------------------
 
 <%doc>
     Radio button temp example
