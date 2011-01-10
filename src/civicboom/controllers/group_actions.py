@@ -86,7 +86,7 @@ class GroupActionsController(BaseController):
         
         group = _get_group(id, is_admin=True)
         if group.invite(member, role):
-            return action_ok(_('%{member}s has been invited to join %{group}s' % {'member':member, 'group':group.name}))
+            return action_ok(_('%(member)s has been invited to join %(group)s' % {'member':member, 'group':group.name}))
         raise action_error('unable to invite member', code=500)
     
     
