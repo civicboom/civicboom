@@ -408,9 +408,9 @@ def links_to_frag_links(content):
     Identifying these links and replacing them with the correct JS relative links
     """
 
-    print ""
-    print "-in-"
-    print content
+    #print ""
+    #print "-in-"
+    #print content
 
     regex_content_links = r'<a(?:.*?)href="(?:.*?)/contents/(.*?)[/&?#\n. "](?:.*?)>(.*?)</a>' # \1 = content id \2 = text
     regex_member_links  = r'<a(?:.*?)href="(?:.*?)/members/(.*?)[/&?#\n. "](?:.*?)>(.*?)</a>' # \1 = member id \2 = text
@@ -433,8 +433,8 @@ def links_to_frag_links(content):
     content = re.sub(regex_member_links , replace_member_link , content)
 
     
-    print "-out-"
-    print content
+    #print "-out-"
+    #print content
     
     return content
     

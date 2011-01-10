@@ -91,9 +91,9 @@
         </h2>
         <${type[0]} class="${list_class}">
             % for item in items[0:max]:
-            <${type[1]}>
+            ##<${type[1]}>
                 ${render_item_function(item, *args, **kwargs)}
-            </${type[1]}>
+            ##</${type[1]}>
             % endfor
         </${type[0]}>
         % if href and max > 0 and len(items) > max:
@@ -109,8 +109,10 @@
 ## Member Item
 ##------------------------------------------------------------------------------
 
-<%def name="render_item_member(member)">   
+<%def name="render_item_member(member)">
+<li>
     ${member_includes.avatar(member, class_="thumbnail_small")}
+</li>
 </%def>
 
 
@@ -119,6 +121,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_group_members(member)">
+<tr>
     <td>${member_includes.avatar(member, class_="thumbnail_small")}</td>
     <td>${member['name']}</td>
     
@@ -159,6 +162,7 @@
         % endif
     </td>
     % endif
+</tr>
 </%def>
 
 
@@ -167,7 +171,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_content(content, location=False, stats=False, creator=False)">
-
+<tr>
     <%
         id = content['id']
     
@@ -205,6 +209,7 @@
         ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
     </td>
     % endif
+</tr>
 </%def>
 
 ## Content Thumbnail Icons
@@ -228,6 +233,13 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_message(message, list='to')">
+<%
+    read_status = ''
+    if 'read' in message:
+        if not message['read']:
+            read_status = 'unread'
+%>
+<li class="${read_status}">
     ##<a href="${url('message', id=message['id'])}">
     
     % if list!='sent':
@@ -260,23 +272,16 @@
         % endif
 
     % else:
+        
         <a href    = "${url('message', id=message['id'])}"
            onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'bridge'); return false;"
-           class   = "subject"
         >
-            ${message['subject']}
+            <p class="subject">${message['subject']}</p>
         </a>
     % endif
     
     <p class="timestamp">${message["timestamp"][0:16]}</p>
     
-    % if 'read' in message:
-        % if message['read']:
-        <span>seen</span>
-        % else:
-        <span>unread</span>
-        % endif
-    % endif
     
-
+</li>
 </%def>

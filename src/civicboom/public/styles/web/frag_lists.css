@@ -40,10 +40,14 @@
 
 /*----------------------------- Messages -------------------------------------*/
 
-.frag_list .messages li           {margin-bottom: 1em; border-bottom: 1px solid #ccc;}
+.frag_list .messages li {
+    margin-bottom: 0.5em;
+    /*border-bottom: 1px solid #ccc;*/
+}
+.frag_list .messages .unread      {background-color: #eee;}
 .frag_list .messages .source      {float: left;}
 .frag_list .messages .target      {float: left;}
-.frag_list .messages .subject     {font-weight: bold;}
+.frag_list .messages .subject     {font-weight: bold; background-color: #ccc;}
 .frag_list .messages .content a   {font-weight: bold;}
 .frag_list .messages .icon_delete {float: right;}
 
