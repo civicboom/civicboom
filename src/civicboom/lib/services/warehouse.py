@@ -48,9 +48,9 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
         key = Key(bucket)
         key.key = warehouse+"/"+hash
         if key.exists():
-            log.warning("%s/%s already exists" % (warehouse, hash))
-            return
-        key.set_contents_from_filename(src)
+            log.warning("%s/%s already exists; updating metadata only" % (warehouse, hash))
+        else:
+            key.set_contents_from_filename(src)
         key.set_metadata('Content-Type', magic.from_file(src, mime=True))
         key.set_metadata('Cache-Control', 'no-cache' if placeholder else 'public')
         if filename:

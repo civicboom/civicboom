@@ -21,7 +21,7 @@ dropuser civicboom
 # user
 
 echo "Creating civicboom user"
-export PGPASSWORD=civicboom
+if [ "$PGPASSWORD" == "" ] ; then export PGPASSWORD=civicboom ; fi
 echo "create user civicboom with password '$PGPASSWORD';" | psql -q
 
 
