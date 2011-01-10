@@ -47,7 +47,7 @@
     % else:
     <a id="home_link" href="/">
     % endif
-        <img src="/styles/common/icons32/home-icon.png" alt="${_('Home')}"/>
+        <img src="/styles/common/icons32/home-icon.png" alt="${_('Home')}" width="32" height="24" />
     </a>
     
 <div class="menuh">
