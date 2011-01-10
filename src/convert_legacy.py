@@ -19,6 +19,7 @@ from civicboom.model import Message
 from civicboom.lib.services import warehouse as wh
 from civicboom.lib.database.get_cached import get_tag, get_license
 from civicboom.lib.database.gis import get_location_by_name
+from civicboom.lib import worker
 
 import datetime
 from glob import glob
@@ -32,7 +33,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level   = logging.INFO,
+    format  = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
+    datefmt = "%H:%M:%S"
+)
 log = logging.getLogger(__name__)
 
 
@@ -40,7 +45,7 @@ def convert_legacy_database(url): # pragma: no cover - this should only be run a
         LegacySession = scoped_session(sessionmaker())
         LegacySession.configure(bind=create_engine(url))
 
-        log.info("Converting from legacy database") # {{{
+        log.info("Converting from legacy database")
         leg_sess = LegacySession()
         leg_conn = leg_sess.connection()
 
@@ -364,7 +369,7 @@ def convert_legacy_database(url): # pragma: no cover - this should only be run a
         Session.commit()
         # }}}
 
-        # }}}
+        worker.stop_worker()
 
 if __name__ == '__main__':
     option_parser = optparse.OptionParser()

@@ -7,8 +7,8 @@
 <!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="shortcut icon" href="${h.wh_public("images/civicboom.ico")}" />
-	<link rel="apple-touch-icon" href="${h.wh_public("images/civicboom.png")}">
+	<link rel="shortcut icon" href="/images/civicboom.ico" />
+	<link rel="apple-touch-icon" href="/images/civicboom.png" />
 
 ##----------------------------------------------------------------------------
 ## Meta Text
