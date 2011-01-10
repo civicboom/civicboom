@@ -5,11 +5,6 @@
 ln -sf /etc/nginx/sites-available/civicboom.com /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
-if [ ! -d /var/log/civicboom ] ; then
-	mkdir /var/log/civicboom
-	chown www-data:www-data /var/log/civicboom
-fi
-
 if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
 	db_get cb-website-web/backends && backends=$RET
 	cat >/tmp/update_backends <<EOD
