@@ -33,6 +33,7 @@
         % endif
         </div>
 
+        <div style="clear: both;">&nbsp;</div>
     </div>
 </%def>
 

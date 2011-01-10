@@ -68,6 +68,7 @@
             ##</div>
     
             <% frag_counter += '_' %>
+            
         % endfor
     </div>
 </%def>
