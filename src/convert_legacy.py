@@ -42,6 +42,8 @@ log = logging.getLogger(__name__)
 
 
 def convert_legacy_database(url): # pragma: no cover - this should only be run as a one-off
+        worker.start_worker(8)
+
         LegacySession = scoped_session(sessionmaker())
         LegacySession.configure(bind=create_engine(url))
 
