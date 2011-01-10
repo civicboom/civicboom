@@ -205,11 +205,11 @@ HTML.no-js #flash_message {
 .button {
 	display: block;
 	background: #4974b8;
-	/*
-	border-radius: 8px;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
-	*/
+
+	border-radius        : 0.2em;
+	-moz-border-radius   : 0.2em;
+	-webkit-border-radius: 0.2em;
+
 	border: 1px solid #2a3a87;
 
 	color: white;

@@ -1,4 +1,6 @@
 <%!
+    import types
+
     title               = 'List'
     icon_type           = 'list'
     
@@ -15,6 +17,44 @@
 
 
 <%namespace name="share" file="/frag/common/share.mako"/>
+
+##------------------------------------------------------------------------------
+## Frag Basic
+##------------------------------------------------------------------------------
+
+## What a hack ... I quickly needed a way of putting content in the title frag div's
+## This could be refactored and integrated into body below so we dont have the duplication of this
+<%def name="frag_basic(title='', icon='', frag_content=None)">
+    <div class="title_bar">
+        <div class="title">
+            <span class="icon icon_${icon}"></span><span class="title_text">${title}</span>
+        </div>
+        <div class="common_actions">
+        </div>
+    </div>
+    
+    <div class="action_bar">
+        <div class="object_actions_specific">
+        </div>        
+        <div class="object_actions_common">
+        </div>        
+    </div>
+    
+    <div class="frag_data ${self.attr.frag_data_css_class}">
+        <div class="frag_col">
+            % if isinstance(frag_content, types.FunctionType):
+                ${frag_content()}
+            % else:
+                ${frag_content}
+            % endif
+        </div>
+    </div>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Body
+##------------------------------------------------------------------------------
 
 <%def name="body()">
 
