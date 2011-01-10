@@ -83,6 +83,7 @@ HEADER #persona_select table {
     position: relative;
     left: -0.5em;
     font-size: 88%;
+    background-color: white;
 }
 HEADER #persona_select:hover table {display: block;}
 HEADER #persona_select .current_persona {background-color: #e9e9e9;}
@@ -91,6 +92,9 @@ HEADER #persona_select .name {font-weight: bold;}
 HEADER #persona_select table td {
     padding: 0.5em;
     vertical-align: top;
+}
+HEADER #persona_select .info {
+    font-size: 88%;
 }
 
 HEADER #persona_select .selectable:hover {

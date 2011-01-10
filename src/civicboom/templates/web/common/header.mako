@@ -33,7 +33,6 @@
                     onclick = "$(this).find('form').submit();"
                 % endif
             >
-            
                 <td>
                     <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
                 </td>
@@ -41,7 +40,7 @@
                     <p class="name">${member.name or member.username}</p>
                     % for k,v in kwargs.iteritems():
                         % if v:
-                        <p>${k.capitalize()}: ${v.capitalize()}</p>
+                        <p class="info">${k.capitalize()}: ${v.capitalize()}</p>
                         % endif
                     % endfor
                 </td>
@@ -64,7 +63,7 @@
         ##${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, num_members=num_members)}
         ${persona_select(c.logged_in_user)}
         % for membership in [membership for membership in c.logged_in_user.groups_roles if membership.status=="active"]:
-            ${persona_select(membership.group, role=membership.role)}
+            ${persona_select(membership.group, role=membership.role, members=str(membership.group.num_members))}
         % endfor
     </table>
 
