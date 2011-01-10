@@ -204,9 +204,9 @@
         ><span>${_('Messages')}</span></a>
 
         <a class   = "icon icon_message"
-           href    = "${url('messages',list='from')}"
+           href    = "${url('messages',list='sent')}"
            title   = "${_('Messages Sent')}"
-           onclick = "cb_frag($(this), '${url('messages', list='from'        , format='frag')}', 'bridge'); return false;"
+           onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'bridge'); return false;"
         ><span>${_('Messages')}</span></a>
         
         <a class   = "icon icon_notification"

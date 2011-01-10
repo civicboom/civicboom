@@ -229,11 +229,11 @@
 
 <%def name="render_item_message(message, list='to')">
     ##<a href="${url('message', id=message['id'])}">
-    % if message.get('source') and list!='from':
+    % if message.get('source') and list!='sent':
         <td>${member_includes.avatar(message['source'], class_="thumbnail_small")}</td>
     % endif
     
-    % if message.get('target') and list=='from':
+    % if message.get('target') and list=='sent':
         <td>${member_includes.avatar(message['target'], class_="thumbnail_small")}</td>    
     % endif
     
@@ -254,7 +254,15 @@
     
     <td>${message["timestamp"][0:16]}</td>
     
-    % if list!='from':
+    % if 'read' in message:
+        % if message['read']:
+        <td>seen</td>
+        % else:
+        <td>unread</td>
+        % endif
+    % endif
+    
+    % if list!='sent':
         <td>
             ${h.secure_link(
                 h.args_to_tuple('message', id=message['id'], format='redirect') ,
