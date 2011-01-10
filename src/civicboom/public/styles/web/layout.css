@@ -29,7 +29,6 @@ HEADER {
 BODY>DIV#app {
 	/* clear: both; */
 	z-index: 0;
-	margin-bottom: 2em;
     margin-top: 44px;
 }
 
