@@ -7,7 +7,11 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-    <% self.attr.frags = [group, quick_group] %>
+    <%
+        self.attr.frags = group
+        if c.action == 'new':
+            self.attr.frags = [group, quick_group]
+    %>
 </%def>
 
 
@@ -17,7 +21,6 @@
 
 <%def name="group()">
     ${frag.frag_basic(title=_('%s group') % c.action.capitalize(), icon='group', frag_content=group_content)}
-    ##
 </%def>
 <%def name="group_content()">
     <%
@@ -136,7 +139,7 @@
     ${frag.frag_basic(title=_('Quick group'), icon='group', frag_content=quick_group_content)}
 </%def>
 <%def name="quick_group_content()">
-    hello
+
 </%def>
 
 
