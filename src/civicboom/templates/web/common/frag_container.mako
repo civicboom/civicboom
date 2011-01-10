@@ -34,7 +34,7 @@
     ##% endif
 </%def>
 
-<%def name="frag_containers(frags)">
+<%def name="frag_containers(frags='')">
     <%
         if not isinstance(frags, list):
             frags = [frags]
@@ -52,7 +52,7 @@
             <div id="frag_${frag_counter}" class="frag_container ${self.attr.frag_container_css_class}">
                 % if isinstance(frag, types.FunctionType):
                     ${frag()}
-                % else:
+                % elif frag:
                     ${frag}
                 % endif
             </div>
