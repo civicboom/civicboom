@@ -31,8 +31,9 @@
 ##------------------------------------------------------------------------------
 <h1 id="logo">
 	<a href='/'>
-		<img src='/styles/web/logo.png' alt='${_("_site_name")}' height="32" width="128" />
-		<span>${_("_site_name")}</span>
+		<img  class='logo_img'     src='/styles/web/logo.png'              alt='${_("_site_name")}' />
+        <img  class='beta_overlay' src='/styles/web/logo_beta_overlay.png' alt='${_("Beta")}'       />
+		<span class='logo_text'>${_("_site_name")}</span>
 	</a>
 </h1>
 
