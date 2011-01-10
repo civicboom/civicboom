@@ -41,10 +41,12 @@ class MiscController(BaseController):
     def upgrade_account(self):
         return action_ok()
 
-    def widget_preview(self, id=None):
-        if not id: id = "unittest"
+    @web
+    def get_widget(self, id=None):
+        if not id:
+            id = "unittest"
         c.widget_user_preview = get_member(id)
-        return render("/widget/get_widget_code.mako")
+        return action_ok()
 
     @cacheable(time=600)
     def close_popup(self):

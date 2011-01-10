@@ -1,24 +1,3 @@
-<%inherit file="/web/common/html_base.mako"/>
-
-
-##------------------------------------------------------------------------------
-## Title - Override
-##------------------------------------------------------------------------------
-<%def name="title()">${_("Widget Preview")}</%def>
-
-##------------------------------------------------------------------------------
-## Body
-##------------------------------------------------------------------------------
-
-<%def name="body()">
-  <div class="misc_page_border widget_preview">
-    <h1>${_('Widget test drive')}</h1>
-    <p>${_('This widget is a preview of the widget for %s' % c.widget_user_preview.username)}</p>
-    ${get_widget_code(c.widget_user_preview)}
-  </div>
-</%def>
-
-
 
 ##------------------------------------------------------------------------------
 ## Widget Code
@@ -109,7 +88,7 @@
         <label>${_('Width')} </label><input type="text" name="width"  value="240" size="3" /><br/>
         <label>${_('Height')}</label><input type="text" name="height" value="300" size="3" />
       </fieldset>
-  
+      
       <input type="button" value="Preview Widget" onClick="generate_widget_link();" />
     </form>
     

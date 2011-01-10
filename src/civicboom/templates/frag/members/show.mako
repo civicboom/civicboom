@@ -215,7 +215,7 @@
            onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'bridge'); return false;"
         ><span>${_('Notifications')}</span></a>
     % endif
-    <a class="icon icon_widget"  href="${url(controller='misc', action='widget_preview')}" title="${_('Widget Preview')}"><span>${_('Widget Preview')}</span></a>
+    ${popup.link(h.args_to_tuple(controller='misc', action='get_widget', id=self.id), title=_('Get widget'), class_='icon icon_widget')}
     
     % if self.member.get('location_current') or self.member.get('location_home'):
         ${parent.georss_link()}
