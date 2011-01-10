@@ -6,11 +6,13 @@ BODY.c-misc.a-about P {
 }
 BODY.c-misc.a-about ARTICLE {
 	margin: 32px;
+	padding-top: 32px;
+	padding-bottom: 32px;
 }
 BODY.c-misc.a-about ARTICLE TIME {
-	display: block;
+	/*display: block;*/
 	border-bottom: 1px solid black;
-	font-size: 1.5em;
+	/*font-size: 1.5em;*/
 	margin-bottom: 0.5em;
 }
 BODY.c-misc.a-about ARTICLE IMG {
@@ -19,6 +21,10 @@ BODY.c-misc.a-about ARTICLE IMG {
 	max-width: 100%;
 }
 
+BODY.c-misc.a-about ARTICLE.col {
+	max-width: 1000px;
+	margin: auto;
+}
 BODY.c-misc.a-about ARTICLE.cols {
 	max-width: 1000px;
 	margin: auto;
@@ -30,16 +36,38 @@ BODY.c-misc.a-about ARTICLE.cols {
 	-webkit-column-rule: 1px solid black;
 }
 
-BODY.c-misc.a-about ARTICLE.legal {
+BODY.c-misc.a-about ARTICLE.legal OL {
 	font-size: 0.75em;
+}
+BODY.c-misc.a-about ARTICLE.legal OL OL {
+	font-size: 1em;
 }
 
 BODY.c-misc.a-about ARTICLE.open-source DIV {
-	margin-bottom: 2em;
+	/*margin-bottom: 2em;*/
 }
 BODY.c-misc.a-about ARTICLE.open-source DIV SPAN {
-	display: block;
+	/*display: block;*/
 	border-bottom: 1px solid black;
-	font-size: 1.5em;
+	/*font-size: 1.5em;*/
 	margin-bottom: 0.5em;
+	font-weight: bold;
+}
+
+.toc {
+	float: right;
+	text-align: center;
+}
+.toc LI A {
+	display: block;
+	padding: 4px;
+	width: 128px;
+	border: 1px solid #888;
+	margin: 4px;
+}
+.toc LI A:hover {
+	border: 1px solid #000;
+}
+.toc A {
+	color: black;
 }

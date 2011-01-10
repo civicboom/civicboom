@@ -1,7 +1,11 @@
 <%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Terms and conditions")}</%def>
 
-<article class='cols legal'>
+<article class='col legal'>
+
+<%include file="toc.mako" />
+
+<h1>Terms and Conditions</h1>
 
 <ol>
 

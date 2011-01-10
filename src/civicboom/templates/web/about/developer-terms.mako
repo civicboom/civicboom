@@ -3,6 +3,8 @@
 
 <article class='cols legal'>
 
+<%include file="toc.mako" />
+
 <b>Developer Terms and Conditions for API (Application Programming Interface):</b>
 <p>If you are a developer or operator of a Platform application or website, the following additional terms apply to you:
 <p>You are responsible for your application and its content and all uses you make of this API. This includes ensuring your application or use of Platform meets our Developer Terms and Conditions as set out here.
