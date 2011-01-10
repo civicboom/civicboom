@@ -32,6 +32,15 @@ HTML, BODY, INPUT {
 	font-family: "Helvetica", "Arial", sans-serif !important;
 }
 
+/*
+ * YUI grids turns off numbering of ordered lists
+ */
+OL LI {
+	display: list-item;
+	margin-left: 3em;
+	list-style: decimal;
+}
+
 
 /*----------------------------------------------------------------------------*/
 /* Table - Zebra Colours                                                      */
