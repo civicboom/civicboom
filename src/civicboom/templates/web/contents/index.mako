@@ -15,12 +15,15 @@
 ## Body
 ##------------------------------------------------------------------------------
 
+
+
 <%def name="body()">
-	<%include file="/frag/contents/search.mako"/>
+    <% self.attr.frags = [search, list] %>
 </%def>
 
-<%def name="body2()">
-    <div id="frag__" class="frag_container frag_bridge">
+<%def name="search()">
+	<%include file="/frag/contents/search.mako"/>
+</%def>
+<%def name="list()">
     <%include file="/frag/contents/index.mako"/>
-    </div>
 </%def>

@@ -1,3 +1,5 @@
+<%! import types %>
+
 <%def name="body()">
     ## See companion JS misc.js:popup to populate this div
     ${popup_static(_('Dialog'), "", "popup", display_none=True)}
@@ -24,7 +26,6 @@
         % if next:
             ${next.body()}
         % endif
-        <% import types %>
         % if isinstance(content, types.FunctionType):
             ${content()}
         % else:

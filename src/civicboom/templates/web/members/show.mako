@@ -21,5 +21,9 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
+	<% self.attr.frags = member %>
+</%def>
+
+<%def name="member()">
 	<%include file="/frag/members/show.mako"/>
 </%def>

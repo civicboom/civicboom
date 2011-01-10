@@ -47,7 +47,7 @@
     %>
 
     % if hasattr(next, 'init_vars'):
-    ${next.init_vars()}
+        ${next.init_vars()}
     % endif
 
     ## AJAX Fragment refresh (not visible to user)

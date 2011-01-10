@@ -4,23 +4,16 @@
     frag_container_css_class  = 'frag_bridge' # bit of a hack here to get the search box half width to start with
 %>
 
-
-##------------------------------------------------------------------------------
-## Title - Override
-##------------------------------------------------------------------------------
-
-<%def name="title()">${_('Search')}</%def>
-
-##------------------------------------------------------------------------------
-## Body
-##------------------------------------------------------------------------------
+<%def name="title()">${_('Search _members')}</%def>
 
 <%def name="body()">
+    <% self.attr.frags = [show, list] %>
+</%def>
+
+<%def name="search()">
 	<%include file="/frag/members/search.mako"/>
 </%def>
 
-<%def name="body2()">
-    <div id="frag__" class="frag_container frag_bridge">
+<%def name="list()">
     <%include file="/frag/members/index.mako"/>
-    </div>
 </%def>

@@ -1,10 +1,10 @@
-<%inherit file="/web/common/html_base.mako"/>
-
-
-
+<%inherit file="/web/common/frag_container.mako"/>
 
 <%def name="body()">
+    <% self.attr.frags = [group, quick_group] %>
+</%def>
 
+<%def name="group()">
     <%
         from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
         
@@ -110,6 +110,10 @@
     </fieldset>
     
     ${h.end_form()}
+</%def>
+
+<%def name="quick_group()">
+
 </%def>
 
 

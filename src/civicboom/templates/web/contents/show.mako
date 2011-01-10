@@ -23,5 +23,9 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-		<%include file="/frag/contents/show.mako"/>
+    <% self.attr.frags = content %>
+</%def>
+
+<%def name="content()">
+    <%include file="/frag/contents/show.mako"/>
 </%def>

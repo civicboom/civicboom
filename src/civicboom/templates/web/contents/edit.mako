@@ -2,16 +2,21 @@
 
 <%def name="title()">${_('Edit')}</%def>
 
-## If the content being edited has a parent, place the parent beside it for reference
 
 <%def name="body()">
+	<%
+		if d['content']['parent']:
+			self.attr.frags = [content_edit, parent]  # If the content being edited has a parent, place the parent beside it for reference
+		else:
+			self.attr.frags =  content_edit
+	%>
+</%def>
+
+
+<%def name="content_edit()">
 	<%include file="/frag/contents/edit.mako"/>
 </%def>
 
-<%def name="body2()">
-	% if d['content']['parent']:
-		<div id="frag__" class="frag_container">
-			<!--#include file="${url('content', id=d['content']['parent']['id'], format='frag')}"-->
-		</div>
-	% endif
+<%def name="parent()">
+	<!--#include file="${url('content', id=d['content']['parent']['id'], format='frag')}"-->
 </%def>
