@@ -39,9 +39,23 @@
         if not isinstance(frags, list):
             frags = [frags]
     %>
-    <div id='frag_containers'>
+    <div id='frag_containers'><!--
         <% frag_counter = '' %>
         % for frag in frags:
+            --><div id="frag_${frag_counter}" class="frag_container ${self.attr.frag_container_css_class}">
+                % if isinstance(frag, types.FunctionType):
+                    ${frag()}
+                % elif frag:
+                    ${frag}
+                % endif
+            </div><!--    
+            <% frag_counter += '_' %>
+        % endfor
+        -->
+    </div>
+</%def>
+
+<%doc>
             ## AllanC - Methods 1 and 2 have the same outcome
             
             ## Method 1: Use SSI to get the fragment
@@ -49,14 +63,7 @@
             ##${h.frag_div("frag_", frag_url, class_="frag_container")}
             
             ## Method 2: Create the div manually and render from the template
-            <div id="frag_${frag_counter}" class="frag_container ${self.attr.frag_container_css_class}">
-                % if isinstance(frag, types.FunctionType):
-                    ${frag()}
-                % elif frag:
-                    ${frag}
-                % endif
-            </div>
-            
+
             ## Disscussion
             ## Method 1 relys on a second call to the server, most of the time this will be cached, but it is still a second call
             ## Method 2 The query and formatting to a dictionary have already happened and are avalable, so we can just give them to the template
@@ -66,9 +73,5 @@
                 ##<p>hello all</p>
                 ##<a href="${url("content", id=1, format='frag')}" onclick="cb_frag($(this)); return false;">Link of AJAX</a>
             ##</div>
-    
-            <% frag_counter += '_' %>
-            
-        % endfor
-    </div>
-</%def>
+
+</%doc>

@@ -127,7 +127,7 @@
         </ul>
         </li>
     </ul>
-
+% if c.logged_in_persona:
     <ul>
         <li><a href="#" class="top_parent button">${_("Manage")}</a>
         <ul>
@@ -139,6 +139,7 @@
         </ul>
         </li>
     </ul>
+% endif
 
 </div>
 </nav>
