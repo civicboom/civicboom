@@ -18,9 +18,6 @@ class TestMiscController(TestController):
         response = self.app.get(url(controller='misc', action='titlepage'))
         # FIXME: test that generated-but-static content has cache headers set
 
-    def test_widget_preview(self):
-        response = self.app.get(url(controller='misc', action='widget_preview'))
-
     def test_upgrade_account(self):
         response = self.app.get(url(controller='misc', action='upgrade_account'))
 
@@ -44,10 +41,10 @@ class TestMiscController(TestController):
         # FIXME: test that "Cache-Control: public" is set
 
     def test_semi_static(self):
-        response = self.app.get("/misc/about")
+        response = self.app.get("/about/titlepage")
         # FIXME: test that "Cache-Control: public" is NOT set (for logged in user)
         self.log_out()
-        response = self.app.get("/misc/about")
+        response = self.app.get("/about/titlepage")
         # FIXME: test that "Cache-Control: public" IS set for anonymous
 
 
