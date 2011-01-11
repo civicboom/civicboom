@@ -235,7 +235,7 @@ class Member(Base):
                 action_list.append('follow')
         if self != member:
             action_list.append('message')
-            if member.__type__ == 'group'  and not member.get_membership(self):
+            if member and member.__type__ == 'group'  and not member.get_membership(self):
                 action_list.append('invite')
         return action_list
 
