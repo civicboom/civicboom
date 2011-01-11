@@ -29,19 +29,22 @@ class Message(Base):
         'default': {
             'id'           : None ,
             'source_id'    : None ,
-            'source'       : lambda message: message.source.to_dict() if message.source!=None else None ,
-            'source_name'  : lambda message: str(message.source),
             'target_id'    : None ,
-            'target'       : lambda message: message.target.to_dict() if message.target!=None else None ,
-            'target_name'  : lambda message: str(message.target),
             'timestamp'    : None ,
             'subject'      : None ,
             'content'      : None ,
+            'read'         : None ,
         },
     })
     __to_dict__.update({
-        'full'        : copy.deepcopy(__to_dict__['default']) , 
+        'full'         : copy.deepcopy(__to_dict__['default']) , 
         #'full+actions': copy.deepcopy(__to_dict__['default']) , 
+    })
+    __to_dict__['full'].update({
+            'source'       : lambda message: message.source.to_dict() if message.source!=None else None ,
+            'source_name'  : lambda message: str(message.source),
+            'target'       : lambda message: message.target.to_dict() if message.target!=None else None ,
+            'target_name'  : lambda message: str(message.target),
     })
 
     def delete(self):

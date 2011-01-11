@@ -1,3 +1,5 @@
+<%! import types %>
+
 <%def name="body()">
     ## See companion JS misc.js:popup to populate this div
     ${popup_static(_('Dialog'), "", "popup", display_none=True)}
@@ -24,7 +26,6 @@
         % if next:
             ${next.body()}
         % endif
-        <% import types %>
         % if isinstance(content, types.FunctionType):
             ${content()}
         % else:
@@ -32,6 +33,7 @@
         % endif
         </div>
 
+        <div style="clear: both;">&nbsp;</div>
     </div>
 </%def>
 
@@ -40,9 +42,8 @@
     <%
         if text==None:
             text = h.literal("<span>%s</span>" % title)
-        url_json = None
+        url_frag = None
         if isinstance(url, tuple):
-            print url
             url, url_frag = h.url_pair(gen_format='frag', *url[0], **url[1])
     %>
     <a href="${url}" class="${class_}" title="${title}"

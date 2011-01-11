@@ -87,7 +87,7 @@ class Media(Base):
         log.debug("set media memcache %s:%s")
         # FIXME: key does not exist in production mode?
         # app_globals.memcache.set(memcache_key, memcache_val, time=int(config['media.processing.expire_memcache_time'])) # Flag memcache to indicate this media is being processed
-        app_globals.memcache.set(memcache_key, memcache_val)
+        #app_globals.memcache.set(memcache_key, memcache_val)
 
         worker.add_job({
             "task": "process_media",

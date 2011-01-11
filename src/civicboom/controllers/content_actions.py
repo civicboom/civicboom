@@ -193,8 +193,7 @@ class ContentActionsController(BaseController):
     # Action - Flag
     #-----------------------------------------------------------------------------
     @web
-    @auth
-    def flag(self, id, type='offensive', comment='', **kwargs):
+    def flag(self, id, **kwargs):
         """
         POST /contents/{id}/flag: Flag this content as being inapproprate of copyright violoation
 
@@ -203,10 +202,18 @@ class ContentActionsController(BaseController):
         @param type      ?
         @param comment   ?
         """
-        _get_content(id).flag(member=c.logged_in_persona, type=type, comment=comment)
-        user_log.debug("Flagged Content #%d as %s" % (int(id), type))
-        return action_ok(_("An administrator has been alerted to this content"))
-        #raise action_error(_("Error flaging content, please email us"))
+        @auth
+        def flag_action(id, type='offensive', comment='', **kwargs):
+            _get_content(id).flag(member=c.logged_in_persona, type=type, comment=comment)
+            user_log.debug("Flagged Content #%d as %s" % (int(id), type))
+            return action_ok(_("An administrator has been alerted to this content"))
+            #raise action_error(_("Error flaging content, please email us"))
+        
+        # AllanC - as this is a special case we can render templates if the user trys to GET data
+        if request.environ['REQUEST_METHOD'] == 'GET':
+            return action_ok() # This will then trigger the auto-formatter to auto select the appropiate template for the format specifyed
+        else:
+            return flag_action(id, **kwargs)
 
 
 

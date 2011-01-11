@@ -2,8 +2,13 @@ from civicboom.tests import *
 
 class TestMiscController(TestController):
 
+    # about is mapped to /about/*, and loads the template from /web/about/$id.mako
+
     def test_about(self):
-        response = self.app.get(url(controller='misc', action='about'))
+        response = self.app.get(url(controller='misc', action='about', id='civicboom'))
+
+
+    # actual misc actions
 
     def test_titlepage(self):
         response = self.app.get(url(controller='misc', action='titlepage'))
@@ -13,21 +18,6 @@ class TestMiscController(TestController):
         response = self.app.get(url(controller='misc', action='titlepage'))
         # FIXME: test that generated-but-static content has cache headers set
 
-    def test_credits(self):
-        response = self.app.get(url(controller='misc', action='credits'))
-
-    def test_terms(self):
-        response = self.app.get(url(controller='misc', action='terms'))
-
-    def test_press(self):
-        response = self.app.get(url(controller='misc', action='press'))
-
-    def test_privacy(self):
-        response = self.app.get(url(controller='misc', action='privacy'))
-
-    def test_widget_preview(self):
-        response = self.app.get(url(controller='misc', action='widget_preview'))
-
     def test_upgrade_account(self):
         response = self.app.get(url(controller='misc', action='upgrade_account'))
 
@@ -35,24 +25,27 @@ class TestMiscController(TestController):
         response = self.app.get(url(controller='misc', action='close_popup'))
         assert "self.close()" in response
 
-    def test_static(self):
-        # test that static content is cachable
-        response = self.app.get("/robots.txt")
-        # FIXME: test that "Cache-Control: public" is set
-
-    def test_semi_static(self):
-        response = self.app.get("/misc/about")
-        # FIXME: test that "Cache-Control: public" is NOT set (for logged in user)
-        self.log_out()
-        response = self.app.get("/misc/about")
-        # FIXME: test that "Cache-Control: public" IS set for anonymous
-
     def test_georss(self):
         response = self.app.get(url(controller='misc', action='georss'))
         response = self.app.get(url(controller='misc', action='georss', feed='/search/content.xml'))
         response = self.app.get(url(controller='misc', action='georss', feed='invalid'))
         response = self.app.get(url(controller='misc', action='georss', location='0,0'))
         response = self.app.get(url(controller='misc', action='georss', location='invalid'))
+
+
+    # other misc bits that aren't part of the misc controller, but are just misc
+
+    def test_static(self):
+        # test that static content is cachable
+        response = self.app.get("/robots.txt")
+        # FIXME: test that "Cache-Control: public" is set
+
+    def test_semi_static(self):
+        response = self.app.get("/about/titlepage")
+        # FIXME: test that "Cache-Control: public" is NOT set (for logged in user)
+        self.log_out()
+        response = self.app.get("/about/titlepage")
+        # FIXME: test that "Cache-Control: public" IS set for anonymous
 
 
     def test_mobile_detection(self):

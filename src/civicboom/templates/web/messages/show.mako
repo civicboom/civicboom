@@ -4,10 +4,12 @@
     frag_container_css_class  = 'frag_bridge'
 %>
 
-##------------------------------------------------------------------------------
-## Body
-##------------------------------------------------------------------------------
 <%def name="body()">
+    <% self.attr.frags = message %>
+</%def>
+
+
+<%def name="message()">
     <%include file="/frag/messages/show.mako"/>
     ##<%include file="/frag/messages/index.mako"/>
 

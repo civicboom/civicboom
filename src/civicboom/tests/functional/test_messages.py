@@ -29,6 +29,13 @@ class TestMessagesController(TestController):
         self.part_delete_notification()
         self.part_delete_someone_elses()
         self.part_delete_non_exist()
+        
+        #TODO
+        # view sent messages
+        #  try delete sent
+        # view notifications
+        # view recived
+        # set read
 
 
     def part_setup(self):
@@ -151,6 +158,8 @@ class TestMessagesController(TestController):
     def part_index_lists(self):
         response = self.app.get(url('formatted_messages', format="json", list="notification"))
         response = self.app.get(url('formatted_messages', format="json", list="to"))
+        response = self.app.get(url('formatted_messages', format="json", list="sent"))
+        # TODO: need asserts here to check is actual messages are included
         response = self.app.get(url('formatted_messages', format="json", list="whgarbl"), status=400)
 
     def part_index_as_json(self):
@@ -159,6 +168,7 @@ class TestMessagesController(TestController):
 
     def part_show(self):
         response = self.app.get(url('formatted_message', id=self.m2_id, format="frag"))
+        # TODO - check read status after viewing
         assert "truncation" in response
 
     def part_show_as_json(self):

@@ -235,6 +235,8 @@ class Member(Base):
                 action_list.append('follow')
         if self != member:
             action_list.append('message')
+            if member and member.__type__ == 'group'  and not member.get_membership(self):
+                action_list.append('invite')
         return action_list
 
     def send_message(self, m, delay_commit=False):
@@ -508,7 +510,6 @@ class Group(Member):
             action_list.append(join)
         else:
             if self.is_admin(member, membership):
-                action_list.append('invite')
                 action_list.append('remove')
                 action_list.append('set_role')
                 action_list.append('edit')
@@ -532,6 +533,8 @@ class Group(Member):
         return False
 
     def can_join(self, member, membership=None):
+        if member==self:
+            return False
         if not membership:
             membership = self.get_membership(member)
         if not membership:

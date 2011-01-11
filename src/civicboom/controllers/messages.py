@@ -3,6 +3,7 @@ from civicboom.lib.database.get_cached import get_message
 from civicboom.model import Message
 import json
 
+from sqlalchemy.orm       import join, joinedload
 from sqlalchemy           import or_, and_, null
 
 from civicboom.lib.form_validators.base import DefaultSchema, MemberValidator
@@ -44,7 +45,7 @@ def _get_message(message, is_target=False, is_target_or_source=False):
 
 list_filters = {
     'to'          : lambda results: results.filter(and_(Message.source_id!=null()                 , Message.target_id==c.logged_in_persona.id     )) ,
-    'from'        : lambda results: results.filter(and_(Message.source_id==c.logged_in_persona.id , Message.target_id!=null()                     )) ,
+    'sent'        : lambda results: results.filter(and_(Message.source_id==c.logged_in_persona.id , Message.target_id!=null()                     )) ,
     'public'      : lambda results: results.filter(and_(Message.source_id==c.logged_in_persona.id , Message.target_id==null()                     )) ,
     'notification': lambda results: results.filter(and_(Message.source_id==null()                 , Message.target_id==c.logged_in_persona.id     )) ,
 }
@@ -92,18 +93,36 @@ class MessagesController(BaseController):
         # url('messages')
         
         # Setup search criteria
+        if 'list' not in kwargs:
+            kwargs['list'] = 'to'
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
             kwargs['limit'] = 20
         if 'offset' not in kwargs:
             kwargs['offset'] = 0
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
+            if kwargs.get('list')=='to':
+                kwargs['include_fields'] = "source, source_name"
+            if kwargs.get('list')=='sent':
+                kwargs['include_fields'] = "target, target_name"
         if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = "content, target, target_name, source_name"
-        if 'list' not in kwargs:
-            kwargs['list'] = 'to'
+            kwargs['exclude_fields'] = ""
+            if kwargs.get('list')=='to':
+                kwargs['exclude_fields'] = "content"
+            if kwargs.get('list')=='sent':
+                kwargs['exclude_fields'] = "content, read"
         
         results = Session.query(Message)
+        
+        # Eager loading of linked fields
+        #  this could be generifyed and use in members/index and contents/index
+        #  the code is simple, but repreative and could be condenced in a sensible way
+        if 'source' in kwargs['include_fields'] or 'source' not in kwargs['exclude_fields']:
+            results = results.options(joinedload('source'))
+        if 'target' in kwargs['include_fields'] or 'target' not in kwargs['exclude_fields']:
+            results = results.options(joinedload('target'))
+        
+        
         if 'list' in kwargs:
             if kwargs['list'] in list_filters:
                 results = list_filters[kwargs['list']](results)
@@ -228,9 +247,11 @@ class MessagesController(BaseController):
         #c.viewing_user = c.logged_in_persona - swiching persona will mean that logged_in_user is group
         
         message = _get_message(id, is_target_or_source=True)
-        if not message.read:
+        if not message.read and message.target_id==c.logged_in_persona.id:
             message.read = True
             Session.commit()
+        
+        kwargs['list_type']='full'
         return action_ok(data={'message': message.to_dict(**kwargs)})
 
 

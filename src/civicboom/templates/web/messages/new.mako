@@ -5,5 +5,10 @@
 %>
 
 <%def name="body()">
+    <% self.attr.frags = new %>
+</%def>
+
+<%def name="new()">
     <%include file="/frag/messages/new.mako"/>
 </%def>
+

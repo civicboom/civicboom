@@ -4,6 +4,7 @@ from civicboom.model.media   import Media
 from civicboom.model.message import Message
 from civicboom.model.meta    import Session
 
+from sqlalchemy.orm     import join, joinedload
 from sqlalchemy         import and_, or_, not_
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -102,7 +103,7 @@ def get_membership(group, member):
         return None
 
 def get_message(message):
-    return Session.query(Message).filter(Message.id==int(message)).first()
+    return Session.query(Message).filter(Message.id==int(message)).options(joinedload('source')).options(joinedload('target')).first()
 
 def get_content_nocache(content_id):
     #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried

@@ -21,7 +21,7 @@ dropuser civicboom
 # user
 
 echo "Creating civicboom user"
-export PGPASSWORD=civicboom
+if [ "$PGPASSWORD" == "" ] ; then export PGPASSWORD=civicboom ; fi
 echo "create user civicboom with password '$PGPASSWORD';" | psql -q
 
 
@@ -71,7 +71,7 @@ else
 	osm2pgsql \
 		--database civicboom_gis --host localhost \
 		--username civicboom \
-		--latlong --prefix osm \
+		--slim --latlong --prefix osm \
 		/tmp/min.osm 2>/dev/null
 	rm -f /tmp/min.osm
 fi

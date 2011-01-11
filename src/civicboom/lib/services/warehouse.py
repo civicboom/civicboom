@@ -47,14 +47,14 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
         bucket = connection.get_bucket(config["s3_bucket_name"])
         key = Key(bucket)
         key.key = warehouse+"/"+hash
+        if key.exists():
+            log.warning("%s/%s already exists; updating metadata only" % (warehouse, hash))
+        else:
+            key.set_contents_from_filename(src)
         key.set_metadata('Content-Type', magic.from_file(src, mime=True))
+        key.set_metadata('Cache-Control', 'no-cache' if placeholder else 'public')
         if filename:
             key.set_metadata('Content-Disposition', 'inline; filename='+__http_escape(filename))
-        if placeholder:
-            key.set_metadata('Cache-Control', 'no-cache')
-        else:
-            key.set_metadata('Cache-Control', 'public')
-        key.set_contents_from_filename(src)
         key.set_acl('public-read')
 
     elif config["warehouse"] == "ssh":

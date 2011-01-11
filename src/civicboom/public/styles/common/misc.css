@@ -1,54 +1,33 @@
 /*
  * about page, lots of text with a couple of custom bits
  */
-BODY.c-misc.a-about .cols {
-	-moz-column-count: 2;
-	-moz-column-gap: 1em;
-	-moz-column-rule: 1px solid black;
-	-webkit-column-count: 2;
-	-webkit-column-gap: 1em;
-	-webkit-column-rule: 1px solid black;
+BODY.c-misc.a-about P {
+	margin: 1em 0px;
 }
-
-/*
- * press page, a list of articles each containing TIME, A, BLOCKQUOTE
- */
-BODY.c-misc.a-press #app {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 1000px;
-	padding: 16px;
-	-moz-column-width: 450px;
-	-moz-column-gap: 1em;
-	-moz-column-rule: 1px solid black;
-	-webkit-column-width: 450px;
-	-webkit-column-gap: 1em;
-	-webkit-column-rule: 1px solid black;
-}
-BODY.c-misc.a-press ARTICLE {
+BODY.c-misc.a-about ARTICLE {
 	margin: 32px;
+	padding-top: 32px;
+	padding-bottom: 32px;
 }
-BODY.c-misc.a-press ARTICLE TIME {
-	display: block;
+BODY.c-misc.a-about ARTICLE TIME {
+	/*display: block;*/
 	border-bottom: 1px solid black;
-	font-size: 1.5em;
+	/*font-size: 1.5em;*/
 	margin-bottom: 0.5em;
 }
-BODY.c-misc.a-press ARTICLE IMG {
+BODY.c-misc.a-about ARTICLE IMG {
 	display: block;
 	margin: auto;
 	max-width: 100%;
 }
 
-/*
- * terms & conditions / privacy policy are both WALL OF TEXT
- */
-BODY.c-misc.a-terms #app, BODY.c-misc.a-privacy #app {
-	margin-left: auto;
-	font-size: 0.75em;
-	margin-right: auto;
+BODY.c-misc.a-about ARTICLE.col {
 	max-width: 1000px;
-	padding: 16px;
+	margin: auto;
+}
+BODY.c-misc.a-about ARTICLE.cols {
+	max-width: 1000px;
+	margin: auto;
 	-moz-column-width: 450px;
 	-moz-column-gap: 1em;
 	-moz-column-rule: 1px solid black;
@@ -57,27 +36,38 @@ BODY.c-misc.a-terms #app, BODY.c-misc.a-privacy #app {
 	-webkit-column-rule: 1px solid black;
 }
 
-/*
- * credits, a list of Ps with HRs between them
- */
-BODY.c-misc.a-credits #app {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 1000px;
-	padding: 16px;
-	-moz-column-width: 450px;
-	-moz-column-gap: 1em;
-	-moz-column-rule: 1px solid black;
-	-webkit-column-width: 450px;
-	-webkit-column-gap: 1em;
-	-webkit-column-rule: 1px solid black;
+BODY.c-misc.a-about ARTICLE.legal OL {
+	font-size: 0.75em;
 }
-BODY.c-misc.a-credits ARTICLE DIV {
-	margin-bottom: 2em;
+BODY.c-misc.a-about ARTICLE.legal OL OL {
+	font-size: 1em;
 }
-BODY.c-misc.a-credits ARTICLE DIV SPAN {
-	display: block;
+
+BODY.c-misc.a-about ARTICLE.open-source DIV {
+	/*margin-bottom: 2em;*/
+}
+BODY.c-misc.a-about ARTICLE.open-source DIV SPAN {
+	/*display: block;*/
 	border-bottom: 1px solid black;
-	font-size: 1.5em;
+	/*font-size: 1.5em;*/
 	margin-bottom: 0.5em;
+	font-weight: bold;
+}
+
+.toc {
+	float: right;
+	text-align: center;
+}
+.toc LI A {
+	display: block;
+	padding: 4px;
+	width: 128px;
+	border: 1px solid #888;
+	margin: 4px;
+}
+.toc LI A:hover {
+	border: 1px solid #000;
+}
+.toc A {
+	color: black;
 }

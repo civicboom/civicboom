@@ -69,7 +69,7 @@ class TestAssignmentLimitController(TestController):
             response_json = json.loads(response.body)
             id = int(response_json['data']['id'])
             assert id > 0
-            print('created assignment %d' % id)
+            ##print('created assignment %d' % id)
             return id
         return response
 

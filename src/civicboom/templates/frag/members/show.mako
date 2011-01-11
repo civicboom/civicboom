@@ -60,19 +60,32 @@
             _('Followers') ,
             h.args_to_tuple('member_action', id=self.id, action='followers') ,
         )}
-
+        
         ${frag_list.member_list(
-            d['groups'] ,
+            [m for m in d['groups'] if m['status']=='active'],
             _('Groups') ,
+            h.args_to_tuple('member_action', id=self.id, action='groups') ,
+        )}
+        
+        ${frag_list.member_list(
+            [m for m in d['groups'] if m['status']=='invite'] ,
+            _('Pending group invitations') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
         )}
         
         % if self.member['type']=='group':
         ${frag_list.member_list(
-            d['members'],
+            [m for m in d['members'] if m['status']=='active'],
             _('Members'),
             h.args_to_tuple('member_action', id=self.id, action='members')
         )}
+        
+        ${frag_list.member_list(
+            [m for m in d['members'] if m['status']=='invite'],
+            _('Invited Members'),
+            h.args_to_tuple('member_action', id=self.id, action='members')
+        )}
+
         % endif
         
         ${member_map()}
@@ -179,10 +192,12 @@
         )}
     % endif
     
-    % if 'invite' in self.actions and c.logged_in_persona and c.logged_in_persona.__type__=='group':
+    % if 'invite' in self.actions: #and c.logged_in_persona and c.logged_in_persona.__type__=='group':
+        <% invite_text = _('Invite %s to join %s' % (self.name, c.logged_in_persona.name or c.logged_in_persona.username)) %>
         ${h.secure_link(
             h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect') ,
-            _('Invite %s to join %s' % (self.name, c.logged_in_persona['name'])) ,
+            h.HTML.span(invite_text) ,
+            title = invite_text , 
             css_class="icon icon_invite" ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -204,9 +219,9 @@
         ><span>${_('Messages')}</span></a>
 
         <a class   = "icon icon_message"
-           href    = "${url('messages',list='from')}"
+           href    = "${url('messages',list='sent')}"
            title   = "${_('Messages Sent')}"
-           onclick = "cb_frag($(this), '${url('messages', list='from'        , format='frag')}', 'bridge'); return false;"
+           onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'bridge'); return false;"
         ><span>${_('Messages')}</span></a>
         
         <a class   = "icon icon_notification"
@@ -215,7 +230,7 @@
            onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'bridge'); return false;"
         ><span>${_('Notifications')}</span></a>
     % endif
-    <a class="icon icon_widget"  href="${url(controller='misc', action='widget_preview')}" title="${_('Widget Preview')}"><span>${_('Widget Preview')}</span></a>
+    ${popup.link(h.args_to_tuple(controller='misc', action='get_widget', id=self.id), title=_('Get widget'), class_='icon icon_widget')}
     
     % if self.member.get('location_current') or self.member.get('location_home'):
         ${parent.georss_link()}
