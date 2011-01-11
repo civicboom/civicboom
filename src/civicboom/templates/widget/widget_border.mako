@@ -2,8 +2,9 @@
 
 <%namespace name="member" file="/web/common/member.mako"/>
 
+<%! import json %>
+
 <%
-import json
 
 # Height calculations
 size_header        = 55
@@ -12,14 +13,8 @@ size_action_bar    = 18
 size_flash_message = 0
 size_content       = 0
 
-if session.has_key('flash_message'):
+if c.result.get('message'):
 	size_flash_message = 30;
-	try:
-		msg = json.loads(session.get('flash_message'))
-	except ValueError:
-		msg = {"status": "error", "message": session.get('flash_message')}
-	msg_status = msg["status"]
-	msg_msg = msg["message"]
 if c.widget_height:
 	size_content       = int(c.widget_height) - (size_header + size_footer + size_action_bar + size_flash_message) - 5 #borders mount up the 13 is the number of pixels of all the borders combined
 
@@ -32,39 +27,38 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
 
 <div class="widget_border">
 
+	<% id = c.widget_owner.username %>
+
     ##----------------------------------------
     ## Header
     ##----------------------------------------
     
+	<!--widget_header-->
     <div class="widget_header" style="height:${size_header}px;"><div class="widget_header_footer">
-    
-	${member.avatar(c.widget_owner.to_dict())}
-        ##<div class="widget_reporter_thumbnail">
-        ##    <img src="${c.widget_owner.avatar_url}" />
-        ##    <a class="action button_style_1 inverted" href="${h.url(controller='reporter', action='followReporter', id=c.widget_owner.id)}">${_("Follow")}</a>
-        ##</div>
-	
-        <a class="tooltip_icon" style="float: right;" href="${h.url_from_widget(controller='widget',action='about')}" title="What is this?"></a>
-        ##<span class="widget_header_title">
-        <a class="widget_header_title" href="${h.url('member', id=c.widget_owner.username)}" target="_blank">
-        ##${reporter_includes.reporter_full(c.widget_owner,class_="widget_reporter_thumbnail")}
-        % if c.widget_title:
-            ${c.widget_title}
-        % else:
-            ${c.widget_owner.username}
-            ##insight: Share your news and opinion
-        % endif
-        ##</span>
-        </a>
-        ##<a class="button button_style_1 inverted" href="${h.url_from_widget(controller='reporter', action='followReporter', id=c.widget_owner.id)}">Follow</a>
-
-        <div class="clearboth_hack"></div>
-    </div></div><!--end widget_header-->
+		## Floating about icon
+		<a class="tooltip_icon" style="float: right;" href="${h.url_from_widget(controller='widget',action='about')}" title="${_('What is this?')}"></a>
+		## Tables just work, CSS layouts are ****ing anoying ... 
+		<table><tr>
+			<td>${member.avatar(c.widget_owner.to_dict(), new_window=True)}</td>
+			<td class="title">	
+				<a href="${h.url('member', id=id)}" target="_blank">
+				% if c.widget_title:
+					${c.widget_title}
+				% else:
+					${c.widget_owner.name}
+					##insight: Share your news and opinion
+				% endif
+				</a>
+			</td>
+        </tr></table>
+    </div></div>
+	<!--end widget_header-->
     
     ##----------------------------------------
     ## Action Bar
     ##----------------------------------------
     
+	<!--action_bar-->
     <div class="action_bar" style="height:${size_action_bar}px;">
           ##----------------------------------------
           ## Overrideable (normally back)
@@ -80,22 +74,30 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
           ##----------------------------------------
           <div class="action_bar_element" style="float:right;">
           % if c.logged_in_persona:
-              <p>${_("Logged in")} <a href="${h.url_from_widget(controller='reporter', action='myhome')}" target="_blank">
-              ${c.logged_in_persona.username}
-              <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;"/>
-              </a></p>
+              <a href="${h.url(controller='profile', action='index')}" target="_blank">
+				${c.logged_in_persona.username}
+				<img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+              </a>
           % else:
-              <a href="${h.url_from_widget(controller='widget', action='signin')}">${_("Sign up or Sign in to")} <img src="/design09/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/></a>
+              <a href="${h.url_from_widget(controller='widget', action='signin')}">
+				${_("Sign up or Sign in to")}
+				<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
+			  </a>
           % endif
           </div>
           <div class="clearboth_hack"></div>
     </div>
+	<!--end action_bar-->
     
     ##----------------------------------------
-    ## Session messages
+    ## Flash Message
     ##----------------------------------------
     % if c.result['message'] != "":
-        <div class="flash_message" style="height: ${size_flash_message}px" class="status_${c.result['status']}"><div style="padding: 0.25em;">${c.result['message']}</div></div>
+        <div class="flash_message" style="height: ${size_flash_message}px" class="status_${c.result['status']}">
+			<div style="padding: 0.25em;">
+				${c.result['message']}
+			</div>
+		</div>
     % endif
     
     ##----------------------------------------
@@ -113,9 +115,10 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
     ## Footer
     ##----------------------------------------
     
+	<!--widget_footer-->
     <div class="widget_footer" style="height:${size_footer}px;"><div class="widget_header_footer">
         <div class="powered_by">
-            ${_('Powered by')} <br/><a href="/" target="_blank"><img src="/styles/design09/logo.png" alt="${_('_site_name')} Logo" style="max-height: 1em;"/><span style="display: none;">${_('_site_name')}</span></a>
+            ${_('Powered by')} <br/><a href="/" target="_blank"><img src="/images/logo.png" alt="${_('_site_name')} Logo" style="max-height: 1em;"/><span style="display: none;">${_('_site_name')}</span></a>
         </div>
       
       
@@ -141,7 +144,7 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
         % if c.widget_owner:
         <ul class="widget_icon_list">
             ##<li><%include file="/design09/gadget/get_gadget_link_button.mako"/></li>
-            <li><a target="_blank" class="icon icon_rss" href="${h.url(controller='rss',action='reporter',id=c.widget_owner.username)}" title="${c.widget_owner.username} RSS Feed"><span>RSS</span></a></li>
+            <li><a target="_blank" class="icon icon_rss" href="${h.url('member', id=id, format='rss')}" title="${c.widget_owner.username} RSS Feed"><span>RSS</span></a></li>
             ##% if c.widget_owner.twitter_username:
             ##  <li><a target="_blank" class="icon icon_twitter" href="http://twitter.com/${c.widget_owner.twitter_username}" title="${c.widget_owner.username} on twitter"><span>twitter</span></a></li>
             ##% endif

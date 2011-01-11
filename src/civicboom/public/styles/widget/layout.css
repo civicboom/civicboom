@@ -106,15 +106,15 @@ h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: smal
   margin-left: 0.5em;
 }
 
+#CivicboomWidget .powered_by a img {vertical-align: middle;}
 #CivicboomWidget .powered_by a {
   display: block;
   background: white;
-  -moz-border-radius: 0.25em;
+  border-radius        : 0.25em;
+  -moz-border-radius   : 0.25em;
   -webkit-border-radius: 0.25em;
-  border-radius: 0.25em;
-  padding: 0.25em;
-  padding-top:    0.3em;
-  padding-bottom: 0em;
+  
+  padding: 0em, 0.25em;
   font-size: 150%;
 }
 
@@ -156,17 +156,8 @@ h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: smal
 
 /*-------------------------Header content-------------------------------------*/
 
-#CivicboomWidget .widget_header_title {
-  font-size: 125%;
-  font-weight: bold;
-  /* margin-top: 0.25em; */
-}
-
-#CivicboomWidget .avatar {
-  float: left;
-  /*margin: 0.25em;*/
-  margin-right: 0.5em;
-}
+#CivicboomWidget .widget_header table td {vertical-align: top;}
+#CivicboomWidget .widget_header .title {font-size: 118%; font-weight: bold; padding-left:0.5em;} 
 
 
 
@@ -291,7 +282,7 @@ h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: smal
 
 /*-----------------------------Get widget code--------------------------------*/
 
-#CivicboomWidget .link_widget_form_field {
+#CivicboomWidget .widget_link_form_field {
   width: 98%;
   height: 6em;
   margin-bottom: 0.5em;

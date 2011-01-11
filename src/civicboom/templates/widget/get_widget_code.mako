@@ -2,25 +2,29 @@
 ##------------------------------------------------------------------------------
 ## Widget Code
 ##------------------------------------------------------------------------------
-
+## The defaults here should match the defaults in the HTML javascript generator to ensure the IFRAME here is the same an the initial settings
 <%def name="widget_code(member=None)">
 <%
     if hasattr(member, 'username'):
         member = member.username
     
-    # Todo - if c.widget_variables are setup then use these as defaults for the code base so the widget can be cloned
+    width  = c.widget_width  or config['widget.default.width']
+    height = c.widget_height or config['widget.default.height']
+    theme  = c.widget_theme  or config['widget.default.theme']
+    title  = c.widget_title  or _('%s insight: Share your news and opinion' % member)
 %>
 <iframe name ='${_("_site_name")}'
         title='${_("_site_name Widget")}'
         src  ='${h.url(
             host=app_globals.site_host, protocol='http',
             controller='widget', action='main',
-            widget_username = member,
-            widget_theme    ='light',
-            widget_title    = _('%s insight: Share your news and opinion' % member),
-            widget_width    = '240', widget_height='300'
+            widget_username = c.widget_username or member,
+            widget_theme    = theme ,
+            widget_title    = title ,
+            widget_width    = width ,
+            widget_height   = height,
         )}'
-        width='240' height='300' scrolling='no' frameborder='0'>'
+        width='${width}' height='${height}' scrolling='no' frameborder='0'>'
     <a href='${h.url(host=app_globals.site_host, controller='members', action='show', id=member)}'>
         ${_('%ss _assigments on _site_name' % member)}
     </a>

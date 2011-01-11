@@ -33,7 +33,7 @@
                 <br/>
 				-->
                 <% args, kwargs = c.web_params_to_kwargs %>
-                Text: <input type="text" name="query" value="${kwargs.get('query')}"/>
+                Text: <input type="text" name="term" value="${kwargs.get('term')}"/>
                 <br/>
                 Location: ${loc.location_picker()}
                 <br/>

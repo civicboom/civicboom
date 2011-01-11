@@ -15,7 +15,7 @@
 ## Member Avatar - display a member as text/image + link to profile + follow actions
 ##------------------------------------------------------------------------------
 
-<%def name="avatar(member, class_='', js_link_to_frag=True, **kwargs)">
+<%def name="avatar(member, class_='', js_link_to_frag=True, new_window=False,**kwargs)">
     % if member:
     <div class="thumbnail ${class_}">
         <%
@@ -23,8 +23,13 @@
                 js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('member', id=member['username'], format='frag'))
             else:
                 js_link_to_frag = ''
+                
+            if new_window:
+                new_window = 'target="_blank"'
+            else:
+                new_window = ''
         %>
-        <a href="${h.url('member', id=member['username'])}" title="${member['name']}" ${js_link_to_frag}>
+        <a href="${h.url('member', id=member['username'])}" title="${member['name']}" ${js_link_to_frag} ${new_window}>
           <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
         </a>
     </div>

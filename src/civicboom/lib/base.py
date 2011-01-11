@@ -69,6 +69,7 @@ __all__ = [
     "redirect_to_referer", #TODO? potential for removal?
     "get_member", "get_group", #AllanC - should be used with cuation, we need to be careful about permissions
     "logging",
+    "overlay_status_message",
     
     #cache
     "gen_cache_key"
@@ -126,6 +127,12 @@ class BaseController(WSGIController):
         c.authenticated_form   = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs = None
 
+        c.widget_username = None
+        c.widget_width  = None #or config['widget.default.width']
+        c.widget_height = None #or config['widget.default.height']
+        c.widget_theme  = None #or config['widget.default.theme']
+        c.widget_title  = None
+
 
         # Login - Fetch logged in user from session id (if present)
         username                 = session_get('username')
@@ -159,10 +166,8 @@ class BaseController(WSGIController):
         #
         # TODO - yeah, we really need a STARTUP method that gets called to init these
         if not hasattr(app_globals,'site_url'):
-            app_globals.site_host = request.environ['SERVER_NAME']
-            if config['debug']:
-                app_globals.site_host = request.environ['HTTP_HOST']
-            app_globals.site_url           = "http://" + app_globals.site_host
+            app_globals.site_host = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
+            ##app_globals.site_url  = "http://" + app_globals.site_host
             #import urllib
             #app_globals.janrain_signin_url = urllib.quote_plus(url(controller='account', action='signin', host=app_globals.site_host, protocol='https'))
 

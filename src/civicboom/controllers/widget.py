@@ -58,6 +58,10 @@ def setup_widget_env():
     get_widget_varibles_from_env()
     c.widget_query_string = construct_widget_query_string() #construct a new query string based on current widget global variables (this is needed for intercepted signin pages to pass the variables on see widget_signin.mako FORM_ACTION)
     c.widget_owner        = get_member(c.widget_username)
+    # Set defaults from config if not set
+    c.widget_theme        = c.widget_theme  or config['widget.default.theme']
+    c.widget_width        = c.widget_width  or config['widget.default.width']
+    c.widget_height       = c.widget_height or config['widget.default.height']
 
 
 #-------------------------------------------------------------------------------
@@ -76,7 +80,7 @@ class WidgetController(BaseController):
         setup_widget_env() #this sets c.widget_owner and takes c.widget_ variables from url
         if not c.widget_owner: # a widget must be owned by someone
             abort(400)
-    
+
     #-----------------------------------------------------------------------------
     # Widget Pages
     #-----------------------------------------------------------------------------
@@ -101,7 +105,7 @@ class WidgetController(BaseController):
         cache_key = gen_cache_key(member=c.widget_owner.id, content=id)
         c.absolute_links           = True
         c.links_open_in_new_window = True
-        c.result = content_controller.show(id)
+        overlay_status_message(c.result, content_controller.show(id))
         return render(prefix + 'widget_assignment.mako', cache_key=cache_key, cache_expire=template_expire)
 
 
