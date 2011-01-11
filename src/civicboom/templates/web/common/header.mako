@@ -3,7 +3,7 @@
 ##------------------------------------------------------------------------------
 <h1 id="logo">
 	<a href='/'>
-		<img  class='logo_img'     src='/styles/web/logo.png'              alt='${_("_site_name")}' />
+		<img  class='logo_img'     src='/images/logo.png'                  alt='${_("_site_name")}' />
         <img  class='beta_overlay' src='/styles/web/logo_beta_overlay.png' alt='${_("Beta")}'       />
 		<span class='logo_text'>${_("_site_name")}</span>
 	</a>

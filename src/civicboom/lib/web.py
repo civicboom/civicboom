@@ -106,7 +106,7 @@ def session_get(key):
 #-------------------------------------------------------------------------------
 # Action Message System
 #-------------------------------------------------------------------------------
-def set_flash_message(new_message):
+def set_flash_message(new_message):    
     flash_message = None
     flash_message_string = session_get('flash_message')
     if flash_message_string:

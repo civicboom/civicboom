@@ -76,7 +76,7 @@ class WidgetController(BaseController):
         setup_widget_env() #this sets c.widget_owner and takes c.widget_ variables from url
         if not c.widget_owner: # a widget must be owned by someone
             abort(400)
-    
+
     #-----------------------------------------------------------------------------
     # Widget Pages
     #-----------------------------------------------------------------------------
@@ -101,7 +101,7 @@ class WidgetController(BaseController):
         cache_key = gen_cache_key(member=c.widget_owner.id, content=id)
         c.absolute_links           = True
         c.links_open_in_new_window = True
-        c.result = content_controller.show(id)
+        overlay_status_message(c.result, content_controller.show(id))
         return render(prefix + 'widget_assignment.mako', cache_key=cache_key, cache_expire=template_expire)
 
 
