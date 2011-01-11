@@ -37,7 +37,7 @@
     <%
 	theme = "theme_" + c.widget_theme
 	additonal_layout = ""
-	if int(c.widget_width) >= 280:
+	if isinstance(c.widget_width, basestring) and int(c.widget_width) >= 280:
 	    additonal_layout = "wide"
     %>
     <body id="CivicboomWidget">
