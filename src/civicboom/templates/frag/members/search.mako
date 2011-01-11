@@ -33,7 +33,7 @@
                 <br/>
 				-->
                 <% args, kwargs = c.web_params_to_kwargs %>
-                Name: <input type="text" name="query" value="${kwargs.get('query')}"/>
+                Name: <input type="text" name="term" value="${kwargs.get('term')}"/>
                 <br/>
                 <input type="submit" value="Search" class="button"/>
             </fieldset>

@@ -61,6 +61,15 @@ server {
 		proxy_set_header Host tile.openstreetmap.org;
 		proxy_pass http://tile.openstreetmap.org/;
 	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log   off;
+		allow 127.0.0.1;
+		allow 212.110.185.0/24;
+		allow 129.12.0.0/16;
+		deny all;
+	}
 }
 
 server {
