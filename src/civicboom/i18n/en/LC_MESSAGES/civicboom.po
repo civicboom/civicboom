@@ -220,9 +220,11 @@ msgstr "join request sent"
 msgid "unable to join %s"
 msgstr "unable to join %s"
 
+# | msgid "%{member}s has been invited to join %{group}smember"
 #: civicboom/controllers/group_actions.py:89
-msgid "%{member}s has been invited to join %{group}smember"
-msgstr "%{member}s has been invited to join %{group}smember"
+#, fuzzy, python-format
+msgid "%(member)s has been invited to join %(group)smember"
+msgstr "%(member)s has been invited to join %(group)smember"
 
 #: civicboom/controllers/group_actions.py:110
 msgid "role set successfully"
@@ -291,7 +293,6 @@ msgstr "Message does not exist"
 msgid "You are not the target of this message"
 msgstr "You are not the target of this message"
 
-# | msgid "You are not the target of this message"
 #: civicboom/controllers/messages.py:39
 #, fuzzy
 msgid "You are not the target or source of this message"
@@ -509,8 +510,8 @@ msgstr "Accept request"
 #: civicboom/lib/communication/email_lib.py:55
 #: civicboom/templates/email/base_email.mako:1
 #: civicboom/templates/rss/rss_base.mako:26
-#: civicboom/templates/web/common/header.mako:34
-#: civicboom/templates/web/common/header.mako:36
+#: civicboom/templates/web/common/header.mako:6
+#: civicboom/templates/web/common/header.mako:8
 #: civicboom/templates/web/common/html_base.mako:28
 #: civicboom/templates/widget/get_widget_code.mako:13
 #: civicboom/templates/widget/get_widget_code.mako:96
@@ -1246,7 +1247,7 @@ msgstr "General"
 #: civicboom/templates/admin/classes/message.mako:6
 #: civicboom/templates/admin/classes/tag.mako:6
 #: civicboom/templates/frag/contents/edit.mako:95
-#: civicboom/templates/web/common/header.mako:94
+#: civicboom/templates/web/common/header.mako:136
 msgid "Content"
 msgstr "Content"
 
@@ -1667,7 +1668,7 @@ msgstr "View Content"
 
 #: civicboom/templates/frag/contents/search.mako:15
 #: civicboom/templates/frag/members/search.mako:15
-#: civicboom/templates/web/common/header.mako:109
+#: civicboom/templates/web/common/header.mako:152
 #: civicboom/templates/web/contents/index.mako:12
 #: civicboom/templates/web/search/location.mako:7
 #: civicboom/templates/web/search/member.mako:7
@@ -1689,7 +1690,7 @@ msgid "Parent content"
 msgstr "Parent content"
 
 #: civicboom/templates/frag/contents/show.mako:78
-#: civicboom/templates/frag/members/show.mako:117
+#: civicboom/templates/frag/members/show.mako:130
 #, fuzzy
 msgid "Responses"
 msgstr "Responses"
@@ -1829,111 +1830,117 @@ msgstr "Following"
 
 #: civicboom/templates/frag/member_actions/groups.mako:4
 #: civicboom/templates/frag/members/show.mako:66
-#: civicboom/templates/web/common/header.mako:84
-#: civicboom/templates/web/common/header.mako:96
+#: civicboom/templates/web/common/header.mako:126
+#: civicboom/templates/web/common/header.mako:138
 #, fuzzy
 msgid "Groups"
 msgstr "Groups"
 
 #: civicboom/templates/frag/member_actions/members.mako:10
-#: civicboom/templates/frag/members/show.mako:73
+#: civicboom/templates/frag/members/show.mako:79
 msgid "Members"
 msgstr "Members"
 
-#: civicboom/templates/frag/members/show.mako:87
+# | msgid "_group invitation"
+#: civicboom/templates/frag/members/show.mako:72
+#, fuzzy
+msgid "Pending group invitations"
+msgstr "Pending group invitations"
+
+# | msgid "Search _members"
+#: civicboom/templates/frag/members/show.mako:85
+#, fuzzy
+msgid "Invited Members"
+msgstr "Invited Members"
+
+#: civicboom/templates/frag/members/show.mako:100
 #, fuzzy
 msgid "Accepted _assignments"
 msgstr "Accepted requests"
 
-#: civicboom/templates/frag/members/show.mako:99
+#: civicboom/templates/frag/members/show.mako:112
 msgid "Drafts"
 msgstr "Drafts"
 
-#: civicboom/templates/frag/members/show.mako:105
+#: civicboom/templates/frag/members/show.mako:118
 #, fuzzy
 msgid "Assignments Active"
 msgstr "Assignments Active"
 
-#: civicboom/templates/frag/members/show.mako:111
+#: civicboom/templates/frag/members/show.mako:124
 #, fuzzy
 msgid "Assignments Previous"
 msgstr "Assignments Previous"
 
-#: civicboom/templates/frag/members/show.mako:123
+#: civicboom/templates/frag/members/show.mako:136
 #, fuzzy
 msgid "Articles"
 msgstr "Articles"
 
-#: civicboom/templates/frag/members/show.mako:129
+#: civicboom/templates/frag/members/show.mako:142
 #, fuzzy
 msgid "Boomed content"
 msgstr "Boomed content"
 
-#: civicboom/templates/frag/members/show.mako:156
-#: civicboom/templates/frag/members/show.mako:166
+#: civicboom/templates/frag/members/show.mako:169
+#: civicboom/templates/frag/members/show.mako:179
 msgid " "
 msgstr " "
 
-#: civicboom/templates/frag/members/show.mako:157
+#: civicboom/templates/frag/members/show.mako:170
 #, fuzzy, python-format
 msgid "Follow %s"
 msgstr "Follow %s"
 
-#: civicboom/templates/frag/members/show.mako:167
+#: civicboom/templates/frag/members/show.mako:180
 #, fuzzy, python-format
 msgid "Stop following %s"
 msgstr "Stop following %s"
 
-#: civicboom/templates/frag/members/show.mako:176
+#: civicboom/templates/frag/members/show.mako:189
 msgid "Join this _group"
 msgstr "Join this _group"
 
-#: civicboom/templates/frag/members/show.mako:185
+#: civicboom/templates/frag/members/show.mako:196
 #, python-format
 msgid "Invite %s to join %s"
 msgstr "Invite %s to join %s"
 
-# | msgid "Send %s a message"
-#: civicboom/templates/frag/members/show.mako:195
+#: civicboom/templates/frag/members/show.mako:210
 #, fuzzy
 msgid "Send message"
 msgstr "Send message"
 
-#: civicboom/templates/frag/members/show.mako:198
-#: civicboom/templates/web/common/header.mako:93
+#: civicboom/templates/frag/members/show.mako:213
+#: civicboom/templates/web/common/header.mako:135
 #, fuzzy
 msgid "Settings"
 msgstr "Settings"
 
-# | msgid "messages"
-#: civicboom/templates/frag/members/show.mako:202
-#: civicboom/templates/frag/members/show.mako:204
-#: civicboom/templates/frag/members/show.mako:210
+#: civicboom/templates/frag/members/show.mako:217
+#: civicboom/templates/frag/members/show.mako:219
+#: civicboom/templates/frag/members/show.mako:225
 #: civicboom/templates/web/messages/index.mako:7
 #, fuzzy
 msgid "Messages"
 msgstr "Messages"
 
-# | msgid "Message sent"
-#: civicboom/templates/frag/members/show.mako:208
+#: civicboom/templates/frag/members/show.mako:223
 #, fuzzy
 msgid "Messages Sent"
 msgstr "Messages Sent"
 
-# | msgid "Edit Notifications"
-#: civicboom/templates/frag/members/show.mako:214
-#: civicboom/templates/frag/members/show.mako:216
+#: civicboom/templates/frag/members/show.mako:229
+#: civicboom/templates/frag/members/show.mako:231
 #, fuzzy
 msgid "Notifications"
 msgstr "Notifications"
 
-# | msgid "Embed this widget"
-#: civicboom/templates/frag/members/show.mako:218
+#: civicboom/templates/frag/members/show.mako:233
 #, fuzzy
 msgid "Get widget"
 msgstr "Get widget"
 
-# | msgid "messages"
 #: civicboom/templates/frag/messages/index.mako:6
 #, fuzzy
 msgid "Message "
@@ -1994,7 +2001,6 @@ msgstr "Responses to %s"
 msgid "About _site_name & FAQ"
 msgstr "About Civicboom & FAQ"
 
-# | msgid "Terms and conditions"
 #: civicboom/templates/web/about/developer-terms.mako:2
 #, fuzzy
 msgid "Developer Terms and Conditions for API"
@@ -2017,7 +2023,6 @@ msgstr "Press coverage and external relations"
 msgid "Privacy and cookies policy"
 msgstr "Privacy and cookies policy"
 
-# | msgid "_site_name team."
 #: civicboom/templates/web/about/team.mako:2
 #, fuzzy
 msgid "The _site_name Team"
@@ -2051,7 +2056,6 @@ msgstr "Developers"
 msgid "Open Source"
 msgstr "Open Source"
 
-# | msgid "users"
 #: civicboom/templates/web/about/toc.mako:10
 #: civicboom/templates/web/common/footer.mako:9
 #, fuzzy
@@ -2180,88 +2184,84 @@ msgstr "Website © Indiconews Ltd, articles © their respective authors"
 msgid "Please send us your Feedback"
 msgstr "Please send us your Feedback"
 
-#: civicboom/templates/web/common/header.mako:35
+#: civicboom/templates/web/common/header.mako:7
 msgid "Beta"
 msgstr "Beta"
 
-#: civicboom/templates/web/common/header.mako:51
-msgid "Home"
-msgstr "Home"
-
-#: civicboom/templates/web/common/header.mako:56
+#: civicboom/templates/web/common/header.mako:98
 #, fuzzy
 msgid "Create"
 msgstr "Create"
 
-#: civicboom/templates/web/common/header.mako:58
+#: civicboom/templates/web/common/header.mako:100
 #, fuzzy
 msgid "_assignment"
 msgstr "request"
 
-#: civicboom/templates/web/common/header.mako:59
+#: civicboom/templates/web/common/header.mako:101
 #, fuzzy
 msgid "_article"
 msgstr "content"
 
-#: civicboom/templates/web/common/header.mako:60
+#: civicboom/templates/web/common/header.mako:102
 #: civicboom/templates/web/groups/edit.mako:59
 #, fuzzy
 msgid "Group"
 msgstr "Group"
 
-#: civicboom/templates/web/common/header.mako:66
+#: civicboom/templates/web/common/header.mako:108
 #, fuzzy
 msgid "Explore"
 msgstr "Explore"
 
-#: civicboom/templates/web/common/header.mako:68
+#: civicboom/templates/web/common/header.mako:110
 msgid "Quick Search"
 msgstr "Quick Search"
 
-#: civicboom/templates/web/common/header.mako:71
+#: civicboom/templates/web/common/header.mako:113
 #, fuzzy
 msgid "News Feeds"
 msgstr "News Feeds"
 
-#: civicboom/templates/web/common/header.mako:76
+#: civicboom/templates/web/common/header.mako:118
 #, fuzzy
 msgid "Create New Feed"
 msgstr "Create New Feed"
 
-#: civicboom/templates/web/common/header.mako:81
+#: civicboom/templates/web/common/header.mako:123
 #, fuzzy
 msgid "_assignments"
 msgstr "requests"
 
-#: civicboom/templates/web/common/header.mako:82
+#: civicboom/templates/web/common/header.mako:124
 #, fuzzy
 msgid "_articles"
 msgstr "contents"
 
-#: civicboom/templates/web/common/header.mako:83
+#: civicboom/templates/web/common/header.mako:125
 #, fuzzy
 msgid "People"
 msgstr "People"
 
-#: civicboom/templates/web/common/header.mako:90
+#: civicboom/templates/web/common/header.mako:132
 msgid "Manage"
 msgstr "Manage"
 
-#: civicboom/templates/web/common/header.mako:92
+#: civicboom/templates/web/common/header.mako:134
 #, fuzzy
 msgid "Profile"
 msgstr "Profile"
 
-#: civicboom/templates/web/common/header.mako:95
+#: civicboom/templates/web/common/header.mako:137
 #, fuzzy
 msgid "Assignments"
 msgstr "Assignments"
 
-#: civicboom/templates/web/common/header.mako:122
+#: civicboom/templates/web/common/header.mako:165
 msgid "Log out"
 msgstr "Log out"
 
-#: civicboom/templates/web/common/header.mako:128
+#: civicboom/templates/web/common/header.mako:171
 #: civicboom/templates/web/common/navigation.mako:34
 #, fuzzy
 msgid "Log in"
@@ -2324,7 +2324,6 @@ msgstr "New Feed"
 msgid "Feeds: "
 msgstr "Feeds: "
 
-# | msgid "groups"
 #: civicboom/templates/web/groups/edit.mako:23
 #, fuzzy, python-format
 msgid "%s group"
@@ -2626,90 +2625,6 @@ msgstr "Click here and get started"
 msgid "Sign in to _site_name"
 msgstr "Sign in to Civicboom"
 
-#~ msgid "Action"
-#~ msgstr "Action"
-
-#~ msgid "Press Coverage"
-#~ msgstr "Press Coverage"
-
-#~ msgid "Terms and Conditions"
-#~ msgstr "Terms and Conditions"
-
-#~ msgid "Privacy policy"
-#~ msgstr "Privacy policy"
-
-#~ msgid "refresh messages"
-#~ msgstr "refresh messages"
-
-#~ msgid "_site_name is a tool that makes building a story easier."
-#~ msgstr "Civicboom is a tool that makes building a story easier."
-
-#~ msgid "It connects people with news and insight with people who need it."
-#~ msgstr "It connects people with news and insight with people who need it."
-
-#~ msgid ""
-#~ msgstr ""
-
-#~ msgid "Get relevant content from your audience"
-#~ msgstr "Get relevant content from your audience"
-
-#~ msgid "Connect more deeply with your audience"
-#~ msgstr "Connect more deeply with your audience"
-
-#~ msgid "Respond directly to _assignments by uploading relevant news and insight"
-#~ msgstr "Respond directly to requests by uploading relevant news and insight"
-
-#~ msgid "Participate directly in issues you care about"
-#~ msgstr "Participate directly in issues you care about"
-
-#~ msgid "Get recognised as a credible news source"
-#~ msgstr "Get recognised as a credible news source"
-
-#~ msgid "_site_name for the individual"
-#~ msgstr "Civicboom for the individual"
-
-#~ msgid "Provide insight on issues, ideas, news and opinion."
-#~ msgstr "Provide insight on issues, ideas, news and opinion."
-
-#~ msgid "Become a trusted contributor and get recognition."
-#~ msgstr "Become a trusted contributor and get recognition."
-
-#~ msgid "Participate in the news agenda at the local level."
-#~ msgstr "Participate in the news agenda at the local level."
-
-#~ msgid "_site_name works in 3 ways"
-#~ msgstr "Civicboom works in 3 ways"
-
-#~ msgid "_site_name for organisations"
-#~ msgstr "Civicboom for organisations"
-
-#~ msgid "Plan and create news features or research"
-#~ msgstr "Plan and create news features or research"
-
-#~ msgid "Improve your connection with and understanding of your community"
-#~ msgstr "Improve your connection with and understanding of your community"
-
-#~ msgid "How?"
-#~ msgstr "How?"
-
-#~ msgid "_site_name works by enabling you to:"
-#~ msgstr "Civicboom works by enabling you to:"
-
-#~ msgid "What is \"approved\" content?"
-#~ msgstr "What is \"approved\" content?"
-
-#~ msgid "What is a \"closed\" _assignment**?"
-#~ msgstr "What is a \"closed\" request**?"
-
-#~ msgid "What if I change my mind once I've agreed to contribute?"
-#~ msgstr "What if I change my mind once I've agreed to contribute?"
-
-#~ msgid "Why do I need a profile?"
-#~ msgstr "Why do I need a profile?"
-
-#~ msgid "How can I protect my content?"
-#~ msgstr "How can I protect my content?"
-
-#~ msgid "What about copyright?"
-#~ msgstr "What about copyright?"
+#~ msgid "Home"
+#~ msgstr "Home"
 

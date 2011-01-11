@@ -6,10 +6,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: civicboom 0.4.6-124-g50d9f3d\n"
+"Project-Id-Version: civicboom 0.4.6-138-gc27ede1\n"
 "\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-01-11 11:40+0000\n"
+"POT-Creation-Date: 2011-01-11 12:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -205,7 +205,8 @@ msgid "unable to join %s"
 msgstr ""
 
 #: civicboom/controllers/group_actions.py:89
-msgid "%{member}s has been invited to join %{group}smember"
+#, python-format
+msgid "%(member)s has been invited to join %(group)smember"
 msgstr ""
 
 #: civicboom/controllers/group_actions.py:110
@@ -463,8 +464,8 @@ msgstr ""
 #: civicboom/lib/communication/email_lib.py:55
 #: civicboom/templates/email/base_email.mako:1
 #: civicboom/templates/rss/rss_base.mako:26
-#: civicboom/templates/web/common/header.mako:34
-#: civicboom/templates/web/common/header.mako:36
+#: civicboom/templates/web/common/header.mako:6
+#: civicboom/templates/web/common/header.mako:8
 #: civicboom/templates/web/common/html_base.mako:28
 #: civicboom/templates/widget/get_widget_code.mako:13
 #: civicboom/templates/widget/get_widget_code.mako:96
@@ -1149,7 +1150,7 @@ msgstr ""
 #: civicboom/templates/admin/classes/message.mako:6
 #: civicboom/templates/admin/classes/tag.mako:6
 #: civicboom/templates/frag/contents/edit.mako:95
-#: civicboom/templates/web/common/header.mako:94
+#: civicboom/templates/web/common/header.mako:136
 msgid "Content"
 msgstr ""
 
@@ -1524,7 +1525,7 @@ msgstr ""
 
 #: civicboom/templates/frag/contents/search.mako:15
 #: civicboom/templates/frag/members/search.mako:15
-#: civicboom/templates/web/common/header.mako:109
+#: civicboom/templates/web/common/header.mako:152
 #: civicboom/templates/web/contents/index.mako:12
 #: civicboom/templates/web/search/location.mako:7
 #: civicboom/templates/web/search/member.mako:7
@@ -1544,7 +1545,7 @@ msgid "Parent content"
 msgstr ""
 
 #: civicboom/templates/frag/contents/show.mako:78
-#: civicboom/templates/frag/members/show.mako:117
+#: civicboom/templates/frag/members/show.mako:130
 msgid "Responses"
 msgstr ""
 
@@ -1672,90 +1673,98 @@ msgstr ""
 
 #: civicboom/templates/frag/member_actions/groups.mako:4
 #: civicboom/templates/frag/members/show.mako:66
-#: civicboom/templates/web/common/header.mako:84
-#: civicboom/templates/web/common/header.mako:96
+#: civicboom/templates/web/common/header.mako:126
+#: civicboom/templates/web/common/header.mako:138
 msgid "Groups"
 msgstr ""
 
 #: civicboom/templates/frag/member_actions/members.mako:10
-#: civicboom/templates/frag/members/show.mako:73
+#: civicboom/templates/frag/members/show.mako:79
 msgid "Members"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:87
+#: civicboom/templates/frag/members/show.mako:72
+msgid "Pending group invitations"
+msgstr ""
+
+#: civicboom/templates/frag/members/show.mako:85
+msgid "Invited Members"
+msgstr ""
+
+#: civicboom/templates/frag/members/show.mako:100
 msgid "Accepted _assignments"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:99
+#: civicboom/templates/frag/members/show.mako:112
 msgid "Drafts"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:105
+#: civicboom/templates/frag/members/show.mako:118
 msgid "Assignments Active"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:111
+#: civicboom/templates/frag/members/show.mako:124
 msgid "Assignments Previous"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:123
+#: civicboom/templates/frag/members/show.mako:136
 msgid "Articles"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:129
+#: civicboom/templates/frag/members/show.mako:142
 msgid "Boomed content"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:156
-#: civicboom/templates/frag/members/show.mako:166
+#: civicboom/templates/frag/members/show.mako:169
+#: civicboom/templates/frag/members/show.mako:179
 msgid " "
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:157
+#: civicboom/templates/frag/members/show.mako:170
 #, python-format
 msgid "Follow %s"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:167
+#: civicboom/templates/frag/members/show.mako:180
 #, python-format
 msgid "Stop following %s"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:176
+#: civicboom/templates/frag/members/show.mako:189
 msgid "Join this _group"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:185
+#: civicboom/templates/frag/members/show.mako:196
 #, python-format
 msgid "Invite %s to join %s"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:195
+#: civicboom/templates/frag/members/show.mako:210
 msgid "Send message"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:198
-#: civicboom/templates/web/common/header.mako:93
+#: civicboom/templates/frag/members/show.mako:213
+#: civicboom/templates/web/common/header.mako:135
 msgid "Settings"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:202
-#: civicboom/templates/frag/members/show.mako:204
-#: civicboom/templates/frag/members/show.mako:210
+#: civicboom/templates/frag/members/show.mako:217
+#: civicboom/templates/frag/members/show.mako:219
+#: civicboom/templates/frag/members/show.mako:225
 #: civicboom/templates/web/messages/index.mako:7
 msgid "Messages"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:208
+#: civicboom/templates/frag/members/show.mako:223
 msgid "Messages Sent"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:214
-#: civicboom/templates/frag/members/show.mako:216
+#: civicboom/templates/frag/members/show.mako:229
+#: civicboom/templates/frag/members/show.mako:231
 msgid "Notifications"
 msgstr ""
 
-#: civicboom/templates/frag/members/show.mako:218
+#: civicboom/templates/frag/members/show.mako:233
 msgid "Get widget"
 msgstr ""
 
@@ -1986,76 +1995,72 @@ msgstr ""
 msgid "Please send us your Feedback"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:35
+#: civicboom/templates/web/common/header.mako:7
 msgid "Beta"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:51
-msgid "Home"
-msgstr ""
-
-#: civicboom/templates/web/common/header.mako:56
+#: civicboom/templates/web/common/header.mako:98
 msgid "Create"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:58
+#: civicboom/templates/web/common/header.mako:100
 msgid "_assignment"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:59
+#: civicboom/templates/web/common/header.mako:101
 msgid "_article"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:60
+#: civicboom/templates/web/common/header.mako:102
 #: civicboom/templates/web/groups/edit.mako:59
 msgid "Group"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:66
+#: civicboom/templates/web/common/header.mako:108
 msgid "Explore"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:68
+#: civicboom/templates/web/common/header.mako:110
 msgid "Quick Search"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:71
+#: civicboom/templates/web/common/header.mako:113
 msgid "News Feeds"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:76
+#: civicboom/templates/web/common/header.mako:118
 msgid "Create New Feed"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:81
+#: civicboom/templates/web/common/header.mako:123
 msgid "_assignments"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:82
+#: civicboom/templates/web/common/header.mako:124
 msgid "_articles"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:83
+#: civicboom/templates/web/common/header.mako:125
 msgid "People"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:90
+#: civicboom/templates/web/common/header.mako:132
 msgid "Manage"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:92
+#: civicboom/templates/web/common/header.mako:134
 msgid "Profile"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:95
+#: civicboom/templates/web/common/header.mako:137
 msgid "Assignments"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:122
+#: civicboom/templates/web/common/header.mako:165
 msgid "Log out"
 msgstr ""
 
-#: civicboom/templates/web/common/header.mako:128
+#: civicboom/templates/web/common/header.mako:171
 #: civicboom/templates/web/common/navigation.mako:34
 msgid "Log in"
 msgstr ""
