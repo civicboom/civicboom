@@ -39,7 +39,7 @@
                     <p class="name">${member.name or member.username}</p>
                     % for k,v in kwargs.iteritems():
                         % if v:
-                        <p class="info">${k.capitalize()}: ${v.capitalize()}</p>
+                        <p class="info">${k.capitalize()}: ${str(v).capitalize()}</p>
                         % endif
                     % endfor
                 </td>
@@ -60,12 +60,12 @@
                 num_members = c.logged_in_persona.num_members
         %>
         
-        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, num_members=str(num_members))}
+        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, num_members=num_members)}
         % if c.logged_in_user!=c.logged_in_persona:
             ${persona_select(c.logged_in_user)}
         % endif
         % for membership in [membership for membership in c.logged_in_user.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona]:
-            ${persona_select(membership.group, role=membership.role, members=str(membership.group.num_members))}
+            ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
         % endfor
     </table>
 
