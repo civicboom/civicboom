@@ -2,7 +2,7 @@ all: cb-website.deb cb-website-web.deb cb-website-api.deb cb-website-db.deb pyth
 
 VERSION := $(shell git describe)
 
-mdcp   = mkdir -p $(2) && cp -r $(1) $(2)
+mdcp   = mkdir -p $(2) && cp -r $(1) $(2)$(3)
 getver = dpkg-deb --info cb-website-$(1).deb | grep "Version: " | cut -d " " -f 3
 
 cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
@@ -24,8 +24,8 @@ cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -ty
 	cd ../src/ && $(MAKE)
 	rm -rf fs-api
 	$(call mdcp, api/*              , fs-api/DEBIAN/                   )
-	$(call mdcp, api/crontab        , fs-api/etc/cron.d/               )
-	$(call mdcp, api/init.d         , fs-api/etc/init.d/               )
+	$(call mdcp, api/crontab        , fs-api/etc/cron.d/,cb-website-web )
+	$(call mdcp, api/init.d         , fs-api/etc/init.d/,cb-website     )
 	$(call mdcp, ../admin_scripts/* , fs-api/opt/cb/bin/               )
 	$(call mdcp, ../docs/*          , fs-api/opt/cb/share/doc/website/ )
 	$(call mdcp, ../src/*           , fs-api/opt/cb/share/website/     )
@@ -45,8 +45,8 @@ cb-website-web.deb: $(shell find ../nginx)
 
 cb-website-db.deb: $(shell find db)
 	rm -rf fs-db
-	$(call mdcp, db/*                         , fs-db/DEBIAN/                    )
-	$(call mdcp, db/crontab                   , fs-db/etc/cron.d/cb-website-db   )
+	$(call mdcp, db/*       , fs-db/DEBIAN/                    )
+	$(call mdcp, db/crontab , fs-db/etc/cron.d/,cb-website-db  )
 	sed -i s/VERSION/${VERSION}/ fs-db/DEBIAN/control
 	fakeroot dpkg -b fs-db cb-website-db_${VERSION}_all.deb 
 	ln -sf cb-website-db_${VERSION}_all.deb cb-website-db.deb
