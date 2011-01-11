@@ -155,6 +155,8 @@ def login_redirector():
     login_redirect = session_remove('login_redirect')
     if login_redirect:
         return redirect(login_redirect)
+    if 'widget_username' in request.params:
+        return redirect(url_from_widget(controller='widget', action='main'))
 
 
 def signin_user(user, login_provider=None):
