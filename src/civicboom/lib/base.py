@@ -160,10 +160,8 @@ class BaseController(WSGIController):
         #
         # TODO - yeah, we really need a STARTUP method that gets called to init these
         if not hasattr(app_globals,'site_url'):
-            app_globals.site_host = request.environ['SERVER_NAME']
-            if config['debug']:
-                app_globals.site_host = request.environ['HTTP_HOST']
-            app_globals.site_url           = "http://" + app_globals.site_host
+            app_globals.site_host = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
+            ##app_globals.site_url  = "http://" + app_globals.site_host
             #import urllib
             #app_globals.janrain_signin_url = urllib.quote_plus(url(controller='account', action='signin', host=app_globals.site_host, protocol='https'))
 

@@ -156,7 +156,8 @@ def login_redirector():
     if login_redirect:
         return redirect(login_redirect)
     if 'widget_username' in request.params:
-        return redirect(url_from_widget(controller='widget', action='main'))
+        # if the request has come from a widget - redirect back to widget
+        return redirect(url_from_widget(controller='widget', action='main')) #, protocol='http'
 
 
 def signin_user(user, login_provider=None):
