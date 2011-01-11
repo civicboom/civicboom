@@ -146,7 +146,7 @@ NAV .menuh LI:hover a.top_parent {
 	-webkit-border-bottom-left-radius: 0px;
 	border-bottom-right-radius: 0px;
 	-webkit-border-bottom-right-radius: 0px;
-	-moz-border-radius: 10px 10px 0px 0px;
+	-moz-border-radius: 0.2em 0.2em 0px 0px;
 }
 NAV .menuh a.sub_option,
 NAV .menuh a.sub_option:visited,
