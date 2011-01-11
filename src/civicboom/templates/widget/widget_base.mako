@@ -6,7 +6,7 @@
 
 % if config['development_mode']:
 	<link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-grids-min.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/icons_avatar_thumbnails.css" />
+	<link rel="stylesheet" type="text/css" href="/styles/common/thumbnails.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/widget/layout.css" />
 	<link rel="stylesheet" type="text/css" href="/styles/widget/widget_size_wide.css" />
 % else:
@@ -34,5 +34,7 @@
             ${next.body()}
         </div>
     </body>
-    <%include file="/web/common/scripts_end.mako"/>
+    
+	<%namespace name="scripts_end" file="/web/common/scripts_end.mako"/>
+	${scripts_end.google_analytics()}
 </html>
