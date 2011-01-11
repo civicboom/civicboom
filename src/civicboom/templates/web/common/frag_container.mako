@@ -7,31 +7,20 @@
 
 
 <%def name="body()">
-    ##<% self.attr.frags = body %>
-    ## overriding body methods should be blank - they should set self.attr.frags
-    
+
+    ## How To Use: Overriding body methods should be blank - they should set self.attr.frags
     <%
         frags_assigned_before = None
         if hasattr(self.attr, 'frags'):
             frags_assigned_before = True
     %>
+    
     ${next.body()}
 
     % if frags_assigned_before==None and hasattr(self.attr, 'frags'):
         ${frag_containers(self.attr.frags)}
     % endif
-    ##% if hasattr(next, 'init_vars'):
-    ##    ${next.init_vars()}
-    ##% endif
 
-
-
-    ## Some templates need to specify more than one starting fragment
-    ##% self.attr.num_frags > 1:
-    ##    ${frag_containers([next.body,next.body2]}
-    ##% else:
-    ##    ${frag_containers(next.body)}
-    ##% endif
 </%def>
 
 <%def name="frag_containers(frags='')">

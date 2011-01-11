@@ -1,3 +1,4 @@
+<%namespace name="scripts_end" file="/web/common/scripts_end.mako"/>
 <!DOCTYPE html>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie ie6"> <![endif]-->
@@ -87,7 +88,10 @@
 	<script src="/javascript/IE9.js"></script>
 <![endif]-->
 
-	<%doc>
+##----------------------------------------------------------------------------
+## Share This
+##----------------------------------------------------------------------------
+<%doc>
 	<!-- sharethis -->
 	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 	<script type="text/javascript">
@@ -97,35 +101,12 @@
 			embeds   : true ,
 		});
 	</script>
-	</%doc>
-
-##--------------------------------------------------------
-## Head Links - child templates can add scripts & styles
-##--------------------------------------------------------
-<%def name="head_links()"></%def>
-${self.head_links()}
-
-
-##-------------------
-## Style Overrides
-##-------------------
-% if hasattr(next, 'styleOverides'):
-	<style type="text/css" >
-	${next.styleOverides()}
-	</style>
-% endif
+</%doc>
 
 ##----------------------------------------------------------------------------
-## Google Analitics - ASync array setup
+## Google Analitics (async setup, see scripts_end for more)
 ##----------------------------------------------------------------------------
-## http://code.google.com/apis/analytics/docs/tracking/asyncUsageGuide.html#SplitSnippet
-## As this is just an array there is no harm in declaring it here
-	<!-- Google Analytics -->
-	<script type="text/javascript">
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', '${config['api_key.google.analytics']}']);
-		_gaq.push(['_trackPageview']);
-	</script>
+	${scripts_end.google_analytics_head()}
 
 ##----------------------------------------------------------------------------
 ## JQuery SimpleModel Setup
@@ -160,6 +141,25 @@ ${self.head_links()}
 		Y.log("YUI Debugger Enabled", "info",  "civicboom");
 	</script>
 % endif
+
+
+##------------------------------------------------------------------------------
+## Additional Head Links - child templates can add scripts & styles
+##------------------------------------------------------------------------------
+<%def name="head_links()"></%def>
+${self.head_links()}
+
+
+##-------------------
+## Style Overrides
+##-------------------
+% if hasattr(next, 'styleOverides'):
+	<style type="text/css" >
+	${next.styleOverides()}
+	</style>
+% endif
+
+
 </head>
 
 ##------------------------------------------------------------------------------
@@ -217,6 +217,7 @@ else:
 	</div>
 	<footer><%include file="footer.mako"/></footer>
 	${popup_frame()}
-	<%include file="scripts_end.mako"/>
+	##<%include file="scripts_end.mako"/>
+	${scripts_end.body()}
 </body>
 </html>
