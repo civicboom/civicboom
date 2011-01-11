@@ -60,19 +60,32 @@
             _('Followers') ,
             h.args_to_tuple('member_action', id=self.id, action='followers') ,
         )}
-
+        
         ${frag_list.member_list(
-            d['groups'] ,
+            [m for m in d['groups'] if m['status']=='active'],
             _('Groups') ,
+            h.args_to_tuple('member_action', id=self.id, action='groups') ,
+        )}
+        
+        ${frag_list.member_list(
+            [m for m in d['groups'] if m['status']=='invite'] ,
+            _('Pending group invitations') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
         )}
         
         % if self.member['type']=='group':
         ${frag_list.member_list(
-            d['members'],
+            [m for m in d['members'] if m['status']=='active'],
             _('Members'),
             h.args_to_tuple('member_action', id=self.id, action='members')
         )}
+        
+        ${frag_list.member_list(
+            [m for m in d['members'] if m['status']=='invite'],
+            _('Invited Members'),
+            h.args_to_tuple('member_action', id=self.id, action='members')
+        )}
+
         % endif
         
         ${member_map()}
@@ -179,10 +192,12 @@
         )}
     % endif
     
-    % if 'invite' in self.actions and c.logged_in_persona and c.logged_in_persona.__type__=='group':
+    % if 'invite' in self.actions: #and c.logged_in_persona and c.logged_in_persona.__type__=='group':
+        <% invite_text = _('Invite %s to join %s' % (self.name, c.logged_in_persona.name or c.logged_in_persona.username)) %>
         ${h.secure_link(
             h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect') ,
-            _('Invite %s to join %s' % (self.name, c.logged_in_persona['name'])) ,
+            h.HTML.span(invite_text) ,
+            title = invite_text , 
             css_class="icon icon_invite" ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}

@@ -7,7 +7,7 @@
 <%def name="title()">${_('Search _members')}</%def>
 
 <%def name="body()">
-    <% self.attr.frags = [show, list] %>
+    <% self.attr.frags = [search, list] %>
 </%def>
 
 <%def name="search()">

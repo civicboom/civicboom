@@ -43,7 +43,7 @@ def reCAPTCHA(method, **kwargs):
     global lazy_private_key
     if not lazy_private_key: lazy_private_key = config['api_key.reCAPTCHA.private']
     kwargs['privatekey'] = lazy_private_key
-    print kwargs
+    
     try:
         http_response        = urllib2.urlopen(service_url+method, urllib.urlencode(kwargs), timeout=10)
         reCAPTCHA_response   = http_response.read().splitlines()

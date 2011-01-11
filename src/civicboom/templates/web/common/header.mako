@@ -1,32 +1,4 @@
 ##------------------------------------------------------------------------------
-## Persona Switching
-##------------------------------------------------------------------------------
-% if c.logged_in_persona:
-<div id="persona_select" class="menuh">
-    <ul><li>
-        <a class="name" href="${url(controller='profile', action='index')}">
-            <img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
-            <span class="role">${c.logged_in_persona_role}</span>
-        </a>
-        <ul>
-            <li>
-                <img src="${c.logged_in_user.avatar_url}"/>
-                ${h.secure_link(url(controller='account', action='set_persona', id=c.logged_in_user.username, format='redirect'), "%s" % (c.logged_in_user.username))}
-            </li>
-            % for membership in [membership for membership in c.logged_in_user.groups_roles if membership.status=="active"]:
-            <li>
-                <img src="${membership.group.avatar_url}" alt="${membership.group.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
-                ${h.secure_link(url(controller='account', action='set_persona', id=membership.group.username, format='redirect'), "%s:%s" % (membership.group.name, membership.role))}
-            </li>
-            % endfor
-        </ul>
-    </li><ul>
-</div>
-
-
-% endif
-
-##------------------------------------------------------------------------------
 ## Logo
 ##------------------------------------------------------------------------------
 <h1 id="logo">
@@ -38,18 +10,88 @@
 </h1>
 
 
+##------------------------------------------------------------------------------
+## Persona Switching
+##------------------------------------------------------------------------------
+% if c.logged_in_persona:
+<div id="persona_select">
+
+    <a class="name" href="${url(controller='profile', action='index')}">
+        <img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+    </a>
+    <table>
+        <%def name="persona_select(member, **kwargs)">
+            <%
+                current_persona = member==c.logged_in_persona
+            %>
+            <tr
+                % if current_persona:
+                    class   = "current_persona"
+                % else:
+                    class   = "selectable"
+                    onclick = "$(this).find('form').submit();"
+                % endif
+            >
+                <td>
+                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+                </td>
+                <td>
+                    <p class="name">${member.name or member.username}</p>
+                    % for k,v in kwargs.iteritems():
+                        % if v:
+                        <p class="info">${k.capitalize()}: ${str(v).capitalize()}</p>
+                        % endif
+                    % endfor
+                </td>
+                <td class="hide_if_js">
+                    % if not current_persona:
+                    ${h.secure_link(
+                        url(controller='account', action='set_persona', id=member.username, format='redirect') ,
+                        'swtich user',
+                    )}
+                    % endif
+                </td>
+            </tr>
+        </%def>
+        
+        <%
+            num_members = None
+            if hasattr(c.logged_in_persona, 'num_members'):
+                num_members = c.logged_in_persona.num_members
+        %>
+        
+        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, num_members=num_members)}
+        % if c.logged_in_user!=c.logged_in_persona:
+            ${persona_select(c.logged_in_user)}
+        % endif
+        % for membership in [membership for membership in c.logged_in_user.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona]:
+            ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
+        % endfor
+    </table>
+
+</div>
+
+
+% endif
+
+##------------------------------------------------------------------------------
+## Home Link
+##------------------------------------------------------------------------------
+
+<%doc>
+% if c.logged_in_persona:
+<a id="home_link" href="${url(controller='profile', action='index')}">
+% else:
+<a id="home_link" href="/">
+% endif
+    <img src="/styles/common/icons32/home-icon.png" alt="${_('Home')}" width="32" height="24" />
+</a>
+</%doc>
 
 ##------------------------------------------------------------------------------
 ## Menu
 ##------------------------------------------------------------------------------
 <nav class="menuh-container">
-    % if c.logged_in_persona:
-    <a id="home_link" href="${url(controller='profile', action='index')}">
-    % else:
-    <a id="home_link" href="/">
-    % endif
-        <img src="/styles/common/icons32/home-icon.png" alt="${_('Home')}" width="32" height="24" />
-    </a>
     
 <div class="menuh">
     <ul>
@@ -85,7 +127,7 @@
         </ul>
         </li>
     </ul>
-
+% if c.logged_in_persona:
     <ul>
         <li><a href="#" class="top_parent button">${_("Manage")}</a>
         <ul>
@@ -97,6 +139,7 @@
         </ul>
         </li>
     </ul>
+% endif
 
 </div>
 </nav>
