@@ -23,7 +23,6 @@
         <%def name="persona_select(member, **kwargs)">
             <%
                 current_persona = member==c.logged_in_persona
-                print current_persona
             %>
             <tr
                 % if current_persona:
@@ -60,9 +59,12 @@
             if hasattr(c.logged_in_persona, 'num_members'):
                 num_members = c.logged_in_persona.num_members
         %>
-        ##${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, num_members=num_members)}
-        ${persona_select(c.logged_in_user)}
-        % for membership in [membership for membership in c.logged_in_user.groups_roles if membership.status=="active"]:
+        
+        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, num_members=str(num_members))}
+        % if c.logged_in_user!=c.logged_in_persona:
+            ${persona_select(c.logged_in_user)}
+        % endif
+        % for membership in [membership for membership in c.logged_in_user.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona]:
             ${persona_select(membership.group, role=membership.role, members=str(membership.group.num_members))}
         % endfor
     </table>
@@ -76,6 +78,7 @@
 ## Home Link
 ##------------------------------------------------------------------------------
 
+<%doc>
 % if c.logged_in_persona:
 <a id="home_link" href="${url(controller='profile', action='index')}">
 % else:
@@ -83,6 +86,7 @@
 % endif
     <img src="/styles/common/icons32/home-icon.png" alt="${_('Home')}" width="32" height="24" />
 </a>
+</%doc>
 
 ##------------------------------------------------------------------------------
 ## Menu

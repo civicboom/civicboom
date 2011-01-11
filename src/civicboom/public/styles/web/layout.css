@@ -64,7 +64,7 @@ HEADER #logo .logo_text    {display: none;}
 
 HEADER #persona_select {
     position: absolute;
-    top : 6px;
+    top : 8px;
     left: 155px;
 }
 
@@ -83,7 +83,6 @@ HEADER #persona_select table {
     border-top: none;
     position: relative;
     left: -0.5em;
-    top: 0.25em;
     font-size: 88%;
     background-color: white;
 }
@@ -126,7 +125,7 @@ HEADER #home_link {
 NAV {
 	position: absolute;
 	top: 11px;
-	left: 220px;
+	left: 185px;
 }
 
 NAV .menuh>UL {
