@@ -166,8 +166,7 @@ ${self.head_links()}
 ## Flash Message Area
 ##------------------------------------------------------------------------------
 ## Some form functions will need to return a status to inform users the operation completed
-## This displays the message and then removes it from the session once it is displayed the first time
-## See "Definitive Guide to Pylons" pg 191 for details
+
 <%def name="flash_message()">
 	<div id="flash_message" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
 	% if c.result['message'] != "":

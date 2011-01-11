@@ -162,7 +162,7 @@ class ContentActionsController(BaseController):
             user_log.debug("Accepted Content #%d" % int(id))
             return action_ok(_("_assignment accepted"))
         #elif isinstance(status,str):
-        raise action_error(_('Error accepting _assignment'), code=400)
+        raise action_error(_('Unable to accept _assignment'), code=400)
 
 
     #---------------------------------------------------------------------------

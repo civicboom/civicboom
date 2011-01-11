@@ -12,8 +12,9 @@
 </%def>
 
 <%def name="widget_assignment(assignment)">
+    <% id = assignment['id'] %>
   
-    <a href="${h.url('content',id=assignment['id'])}" target="_blank">
+    <a href="${h.url('content',id=id)}" target="_blank">
         <p class="content_title">${assignment['title']}</p>
         ##${content_list.content_thumbnail_icons(assignment)}
         <img src=${assignment['thumbnail_url']} class="assignment_thumbnail"/>
@@ -25,15 +26,16 @@
     <table class="assignment_actions">
         <tr>
             <td class="">
-                ##class="button button_large button_style_1"
-                <a class="action button_style_1" href="${h.url_from_widget('content_actions',action='accept',id=assignment['id'])}">
-                    ${_("Accept _assignment")}
-                </a>
+                ${h.secure_link(
+                    h.args_to_tuple('content_action', action='accept', format='redirect', id=id),
+                    _("Accept _assignment") ,
+                    title        = _("Accept _assignment") ,
+                    css_class    = "action button_style_1" ,
+                )}
             </td>
             <td class="">
-                ##class="button button_large button_style_1"
-                <a class="action button_style_1" href="${h.url('new_content', parent_id=assignment['id'])}" target="_blank">
-                    ${_("Publish _response")}
+                <a class="action button_style_1" href="${h.url('new_content', parent_id=id)}" target="_blank">
+                    ${_("Respond now!")}
                 </a>
             </td>
         </tr>
