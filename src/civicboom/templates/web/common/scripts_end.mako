@@ -1,7 +1,7 @@
 <%def name="body()">
 
     ${set_frag_height()}
-    ${google_analytics()}
+    ${google_analytics_end()}
 
     ## Maps (should be loaded on-demand, but frags confuse that
     % if config['development_mode']:
@@ -16,10 +16,24 @@
 
 </%def>
 
-<%def name="google_analytics()">
+##----------------------------------------------------------------------------
+## Google Analitics
+##----------------------------------------------------------------------------
+<%def name="google_analytics_head()">
+    ## --Google Analitics - ASync array setup ----------------------------------
+    ## http://code.google.com/apis/analytics/docs/tracking/asyncUsageGuide.html#SplitSnippet
+    ## As this is just an array there is no harm in declaring it here
+	<!-- Google Analytics -->
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', '${config['api_key.google.analytics']}']);
+		_gaq.push(['_trackPageview']);
+	</script>
+</%def>
+
+<%def name="google_analytics_end()">
     ## civicboom@googlemail.com - https://www.google.com/analytics/settings/home?scid=19962566
     ##
-    ## This code has been split with the header - see html_base.mako and the reference below
     ## http://code.google.com/apis/analytics/docs/tracking/asyncUsageGuide.html#SplitSnippet
     % if (not config['development_mode']) and config['online']:
         <!-- Google Analytics -->
@@ -32,6 +46,11 @@
         </script>
     % endif
 </%def>
+
+
+##----------------------------------------------------------------------------
+## Frag Height
+##----------------------------------------------------------------------------
 
 <%def name="set_frag_height()">
     <script type="text/javascript">
