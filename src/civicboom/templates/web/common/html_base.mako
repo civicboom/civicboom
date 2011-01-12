@@ -73,7 +73,7 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 	<script src="/javascript/_combined.common.js"></script>
 % endif
 <!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
-<!--[if lt IE 8]>
+<!--[if lt IE 7]>
 	<script src="/javascript/IE8.js"></script>
 <![endif]-->
 
