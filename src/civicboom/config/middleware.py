@@ -23,7 +23,7 @@ class HeaderURLParser(StaticURLParser):
         # set headers so that static content can be cached
         headers = [
             ("Cache-Control", "public,max-age=%d" % int(60 * 60 * 24 * 365)),
-            ("Vary:", "Accept-Encoding"),
+            ("Vary", "Accept-Encoding"),
         ]
         return FileApp(filename, headers)#, content_type='application/octetstream')
 
