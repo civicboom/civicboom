@@ -140,19 +140,9 @@
             cd = aggregation_dict(content, safe_strings=True)
             
             def clean(s):
-                if s:
+                if isinstance(s, basestring):
                     return s.replace("'", "\'")
                 return ''
-                
-                # AllanC: sorry, I implemented this the ape way ... 
-                #return_string = None
-                #if   len(args)==1 and args[0] in content_dict:
-                #    return_string = content_dict[args[0]]
-                #elif len(args)==2 and args[0] in content_dict and args[1] in content_dict[args[0]]:
-                #    return content_dict[args[0]][args[1]]
-            print ""
-            print ""
-            print cd
         %>
         
         var activity = new RPXNOW.Social.Activity('${clean(share_display      or cd.get('action')      )}',
@@ -189,12 +179,12 @@
         
         ## ?? the auto aggregate JSON does not have support for video? but the widget does? hu?
         ## AllanC - because the janrain social widget and the janrain json aggregator dont agree, I have added video here directly form the content obj
-        %for video in [media for media in content.get('attachments',{}) if media.get('type')=='video']:
+        %for video in [media for media in content.get('attachments',dict()) if media.get('type')=='video']:
             var video_item = new RPXNOW.Social.VideoMediaItem(
-                '${clean(video['original_url'] )}' ,
-                '${clean(video['thumbnail_url'])}'
+                '${clean(video.get('original_url') )}' ,
+                '${clean(video.get('thumbnail_url'))}'
             );
-            video_item.setVideoTitle('${clean(video['caption'])}');
+            video_item.setVideoTitle('${clean(video.get('caption'))}');
             activity.setMediaItem(video_item);
         % endfor
         

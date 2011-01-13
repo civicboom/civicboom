@@ -11,7 +11,7 @@ from datetime import datetime
 	<pubDate>${h.datetime_to_rss(h.api_datestr_to_datetime(content['creation_date']))}</pubDate> 
 	<guid isPermaLink="false">Civicboom Content #${content['id']}</guid>
 	<category>${content['tags']}</category>
-	<dc:creator>${content['creator']['name']} (${content['creator']['username']})</dc:creator>
+	<dc:creator>${content.get('creator',dict()).get('name')} (${content.get('creator',dict()).get('username')})</dc:creator>
 	<wfw:commentRss>${url(host=app_globals.site_host, controller='content_actions', id=content['id'], action='comments', format='rss')}</wfw:commentRss>
 	<!-- <creativeCommons:license>license url here</creativeCommons:license> -->
 ##

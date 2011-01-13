@@ -136,6 +136,8 @@
 <%def name="content_media()">
     <%
         content = self.content
+    %>
+    <%
         media_width  = config['media.display.video.width' ]
         media_height = config['media.display.video.height']
     %>
@@ -144,7 +146,7 @@
     % for media in content['attachments']:
         <li>
         % if media['type'] == "image":
-            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}" style="width: ; "/></a>
+            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}" style="max-width: ${media_width}px; max-height: ${media_height}px;"/></a>
         % elif media['type'] == "audio":
             <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="30">
                 <param name="movie" value="/flash/player_flv_maxi.swf" />
