@@ -20,7 +20,9 @@
         self.attr.title     = self.member['type'].capitalize()
         self.attr.icon_type = self.member['type']
         
-        if c.logged_in_persona and self.member['username'] == c.logged_in_persona.username:
+        self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
+        
+        if current_user:
             self.attr.title     = 'Current User'
             self.attr.icon_type = 'current_user'
             
@@ -101,6 +103,10 @@
     
     <div class="frag_right_col">
         <div class="frag_col">
+        
+        % if self.current_user:
+            
+        % endif
         
         ${frag_list.content_list(
             d['assignments_accepted'] ,

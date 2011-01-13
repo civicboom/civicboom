@@ -146,7 +146,8 @@ def _init_search_filters():
         if isinstance(creator, int):
             return query.filter(Content.creator_id==creator)
         else:
-            return query.filter(Member.username==creator)
+            # AllanC - WARNING this is untested ... all creators should be normalized - I dont think this is ever called
+            return query.select_from(join(Content, Member, Content.creator)).filter(Member.username==creator)
     
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
@@ -241,7 +242,7 @@ class ContentsController(BaseController):
         #        kwargs['include_fields'] += ',attachments'
         
         # Build Search
-        results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*'). #Content.__type__!='draft'
+        results = Session.query(Content).with_polymorphic('*')
         results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
         if 'private' in kwargs and logged_in_creator:
             pass # allow private content

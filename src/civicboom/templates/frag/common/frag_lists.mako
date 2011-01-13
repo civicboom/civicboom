@@ -29,7 +29,7 @@
 <%def name="member_list(*args, **kwargs)">
     <%
         if 'max' not in kwargs:
-            kwargs['max'] = 20
+            kwargs['max'] = 24
     %>
     ${frag_list(render_item_function=render_item_member       , type=('ul','li')   , list_class='member'        , *args, **kwargs)}
 </%def>

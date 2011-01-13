@@ -411,9 +411,9 @@ class ArticleContent(UserVisibleContent):
     __tablename__   = "content_article"
     __mapper_args__ = {'polymorphic_identity': 'article'}
     _approval  = Enum("none", "approved", "seen", "dissassociated", name="approval")
-    id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
-    rating          = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
-    ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
+    id         = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
+    rating     = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    ratings    = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
     approval   = Column(_approval, nullable=False, default="none")
 
     # AllanC TODO:

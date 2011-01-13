@@ -60,13 +60,11 @@
 #frag_containers .frag_container .frag_data .frag_list .link_more {
     float: right;
     background: #ccc;
-    font-weight: bold;
     
     padding: 0.2em;
     
-    
     position: relative;
-    top: -0.5em;
+    top: -0.75em;
     
     border-radius        : 0.2em;
     -moz-border-radius   : 0.2em;
