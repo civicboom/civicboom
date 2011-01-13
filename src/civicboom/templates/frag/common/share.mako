@@ -108,6 +108,7 @@
 ## Janrain Social Widget - User prompt to aggregate this content
 ##------------------------------------------------------------------------------
 
+
 ## https://rpxnow.com/docs/social_publish_activity
 ## https://rpxnow.com/relying_parties/civicboom/social_publishing_1
 
@@ -140,7 +141,7 @@
             
             def clean(s):
                 if s:
-                    return str(s).replace("'", "\'")
+                    return s.replace("'", "\'")
                 return ''
                 
                 # AllanC: sorry, I implemented this the ape way ... 
@@ -205,26 +206,28 @@
         var finished = function(results) {
           // Process results of publishing.
         }
-        
+        <%! import hashlib, hmac, base64, time %>        
         <%
             # Generate signiture
             # Reference - https://rpxnow.com/docs/social_publish_activity#OptionsParameter
             #           - http://stackoverflow.com/questions/1306550/calculating-a-sha-hash-with-a-string-secret-key-in-python
-            import hashlib, hmac, base64, time
-            apiKey     = config['api_key.janrain']
-            timestamp  = int(time.time())
-            primaryKey = c.logged_in_persona.id
-            message    = '%s|%s' % (timestamp,primaryKey)
-            signature  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
+            if c.logged_in_persona:
+                apiKey     = config['api_key.janrain']
+                timestamp  = int(time.time())
+                primaryKey = c.logged_in_persona.id
+                message    = '%s|%s' % (timestamp,primaryKey)
+                signature  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
         %>
         
         var options = {
                         finishCallback: finished,
                         ##exclusionList: ["facebook", "yahoo"],
                         urlShortening: true,
+                        % if c.logged_in_persona:
                         primaryKey: '${primaryKey}',
                         timestamp :  ${timestamp}  ,
                         signature : '${signature}'
+                        % endif
                        }
         
         RPXNOW.Social.publishActivity(activity, options);

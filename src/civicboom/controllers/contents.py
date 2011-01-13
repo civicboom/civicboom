@@ -147,7 +147,7 @@ def _init_search_filters():
             return query.filter(Content.creator_id==creator)
         else:
             # AllanC - WARNING this is untested ... all creators should be normalized - I dont think this is ever called
-            return query.select_from(join(Content, Member, Content.creator)).filter(Member.username==creator)
+            return query.filter(Member.username==creator) #select_from(join(Content, Member, Content.creator)).
     
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
@@ -216,7 +216,7 @@ class ContentsController(BaseController):
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
         #          TODO: we need maybe a separte call, or something to identify a private call
         logged_in_creator = False
-        if 'creator' in kwargs and c.logged_in_persona:
+        if 'creator' in kwargs:
             kwargs['creator'] = _normalize_member(kwargs['creator'], always_return_id=True) # normalize creator
             if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
