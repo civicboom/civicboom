@@ -1,17 +1,15 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<%namespace name="frag_lists" file="/frag/common/frag_lists.mako"/>
-<%namespace name="flag" file="/frag/content_actions/flag.mako"/>
-<%namespace name="member_includes"  file="/web/common/member.mako"/>
-
-<%namespace name="popup"      file="/web/common/popup_base.mako" />
+<%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"   />
+<%namespace name="flag"            file="/frag/content_actions/flag.mako"/>
+<%namespace name="share"           file="/frag/common/share.mako"        />
+<%namespace name="popup"           file="/web/common/popup_base.mako"    />
+<%namespace name="member_includes" file="/web/common/member.mako"        />
 
 
 ## for deprication
 <%namespace name="loc"              file="/web/common/location.mako"     />
 
-##<%namespace name="share"      file="/frag/common/share.mako"     />
-##<%namespace name="content_includes" file="/web/common/content_list.mako" />
 
 ##------------------------------------------------------------------------------
 ## Variables
@@ -392,6 +390,7 @@
         ${parent.georss_link()}
     % endif
 
+    ${share.janrain_social(self.content, 'janrain', class_='icon icon_share')}
     
 </%def>
 

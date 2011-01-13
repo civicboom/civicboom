@@ -275,7 +275,7 @@ class Content(Base):
         AllanC TODO: Derived field?
         """
         from civicboom.lib.text import strip_html_tags
-        return truncate(strip_html_tags(self.content), length=100)
+        return truncate(strip_html_tags(self.content), length=100, indicator='...', whole_word=True)
 
     @property
     def location_string(self):

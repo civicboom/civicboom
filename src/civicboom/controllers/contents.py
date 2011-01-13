@@ -244,6 +244,7 @@ class ContentsController(BaseController):
         # Build Search
         results = Session.query(Content).with_polymorphic('*')
         results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
+        # TODO: exculude fetch of content field in this query return. lazyload it?
         if 'private' in kwargs and logged_in_creator:
             pass # allow private content
         else:
