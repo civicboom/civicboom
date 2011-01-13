@@ -52,27 +52,27 @@
         
         ## Comunity ----------------------------------------
         
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             d['following'],
             _('Following'),
             h.args_to_tuple('member_action', id=self.id, action='following'),
             icon =  'follow'
         )}
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             d['followers'] ,
             _('Followers') ,
             h.args_to_tuple('member_action', id=self.id, action='followers') ,
             icon =  'follow'
         )}
         
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             [m for m in d['groups'] if m['status']=='active'],
             _('Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
             icon = 'group' ,
         )}
         
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             [m for m in d['groups'] if m['status']=='invite'] ,
             _('Pending group invitations') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
@@ -80,7 +80,7 @@
         )}
         
         % if self.member['type']=='group':
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             [m for m in d['members'] if m['status']=='active'],
             _('Members'),
             h.args_to_tuple('member_action', id=self.id, action='members') ,
@@ -88,7 +88,7 @@
             
         )}
         
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             [m for m in d['members'] if m['status']=='invite'],
             _('Invited Members'),
             h.args_to_tuple('member_action', id=self.id, action='members') ,

@@ -81,15 +81,15 @@
         )}
         
         % if 'accepted_status' in d:
-            ${frag_lists.member_list(
+            ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status'] if m['status']=='accepted'],
                 _("Accepted by"),
             )}
-            ${frag_lists.member_list(
+            ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status'] if m['status']=='invited'],
                 _("Invited"),
             )}
-            ${frag_lists.member_list(
+            ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status'] if m['status']=='withdrawn'],
                 _("Withdrawn"),
             )}
