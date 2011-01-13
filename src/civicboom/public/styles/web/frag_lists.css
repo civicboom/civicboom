@@ -20,8 +20,6 @@
 }
 
 #frag_containers .frag_container .frag_data .frag_list .icon {
-    position: relative;
-    top: -0.5em;
 
 }
 
@@ -30,14 +28,17 @@
     padding-bottom: 0em; /* see rule below for each element adding there own bottom padding */
 }
 .frag_list_contents td,
-.frag_list_contents li {
+.frag_list_contents li,
+.frag_list_contents ul {
     padding-bottom: 0.5em;
 }
+
 
 #frag_containers .frag_container .frag_data .frag_list h2 {
     margin: 0em;
     background-color: #ccc;
-    padding-left: 0.5em;
+    padding : 0.25em;
+
 }
 #frag_containers .frag_container .frag_data .frag_list h2 .count {
     padding: 0.25em;
@@ -85,7 +86,7 @@
 
 /*------------------------------ Members -------------------------------------*/
 
-.frag_list .members li {
+.frag_list .member li {
     display: inline;
 }
 
