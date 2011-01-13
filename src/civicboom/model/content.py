@@ -557,6 +557,8 @@ class MemberAssignment(Base):
     content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')            , nullable=False, primary_key=True)
     status        = Column(_assignment_status,  nullable=False)
+    #update_date   = Column(DateTime(),   nullable=False, default=func.now(), doc="Controlled by postgres trigger")
+    # AllanC - TODO - implement member assignment update date postgress trigger
 
     member       = relationship("Member")
 
