@@ -1,7 +1,7 @@
 
 .thumbnail {
     display: inline-block;
-	border: 0.03em solid #888;
+	border: 0.04em solid #ccc;
     border-radius        : 0.1em;
 	-moz-border-radius   : 0.1em;
 	-webkit-border-radius: 0.1em;

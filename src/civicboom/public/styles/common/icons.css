@@ -20,7 +20,7 @@
 	display: inline-block;
     width  : 16px;
 	height : 16px;
-    vertical-align: top;
+    vertical-align: middle;
 }
 .icon span {display: none;}
 .icon_popup      {background: transparent url('/styles/common/icons16/bubble2-icon.png'  ) no-repeat;}
