@@ -52,7 +52,7 @@
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(items, title, href=None, max=3, show_count=True, hide_if_empty=True, type=('ul','li'), list_class='', render_item_function=None, *args, **kwargs)">
+<%def name="frag_list(items, title, href=None, max=3, show_count=True, hide_if_empty=True, type=('ul','li'), list_class='', icon='', render_item_function=None, *args, **kwargs)">
     <%
         if not isinstance(items, list):
             items      = [items]
@@ -79,26 +79,32 @@
         
     % else:
         <div class='frag_list'>
-        <h2>
-            % if href:
-            <a href="${href}" ${js_link_to_frag_bridge}>${title}</a>
-            % else:
-            ${title}
+            <h2>
+                % if icon:
+                <span class="icon icon_${icon}"><span>${icon}</span></span>
+                % endif
+                % if href:
+                <a href="${href}" ${js_link_to_frag_bridge}>${title}</a>
+                % else:
+                ${title}
+                % endif
+                % if show_count:
+                <span class="count">${show_count}</span>
+                % endif
+            </h2>
+            <div class="frag_list_contents">
+            <${type[0]} class="${list_class}">
+                % for item in items[0:max]:
+                ##<${type[1]}>
+                    ${render_item_function(item, *args, **kwargs)}
+                ##</${type[1]}>
+                % endfor
+            </${type[0]}>
+            % if href and max > 0 and len(items) > max:
+            <a href="${href}" ${js_link_to_frag_bridge} class="link_more">${len(items)-max} more</a>
             % endif
-            % if show_count:
-            <span class="count">${show_count}</span>
-            % endif
-        </h2>
-        <${type[0]} class="${list_class}">
-            % for item in items[0:max]:
-            ##<${type[1]}>
-                ${render_item_function(item, *args, **kwargs)}
-            ##</${type[1]}>
-            % endfor
-        </${type[0]}>
-        % if href and max > 0 and len(items) > max:
-        <a href="${href}" ${js_link_to_frag_bridge} class="link_more">more</a>
-        % endif
+            </div>
+            ##<div style="clear: both;"></div>
         </div>
     %endif
 </%def>
@@ -182,14 +188,14 @@
             js_link_to_frag = ''
     %>
 
-    <td class="thumbnail">
-        <a href="${h.url('content', id=id)}" ${js_link_to_frag}>
+    <td>
+        <a class="thumbnail" href="${h.url('content', id=id)}" ${js_link_to_frag}>
             ${content_thumbnail_icons(content)}
             <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
         </a>
     </td>
     
-    <td class="title">
+    <td style="width:100%;">
         <a href="${h.url('content', id=id)}" ${js_link_to_frag}>
             <p class="content_title">${content['title']}</p>
         </a>

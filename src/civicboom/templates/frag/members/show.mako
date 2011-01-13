@@ -54,36 +54,43 @@
             d['following'],
             _('Following'),
             h.args_to_tuple('member_action', id=self.id, action='following'),
+            icon =  'follow'
         )}
         ${frag_list.member_list(
             d['followers'] ,
             _('Followers') ,
             h.args_to_tuple('member_action', id=self.id, action='followers') ,
+            icon =  'follow'
         )}
         
         ${frag_list.member_list(
             [m for m in d['groups'] if m['status']=='active'],
             _('Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
+            icon = 'group' ,
         )}
         
         ${frag_list.member_list(
             [m for m in d['groups'] if m['status']=='invite'] ,
             _('Pending group invitations') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
+            icon = 'group' ,
         )}
         
         % if self.member['type']=='group':
         ${frag_list.member_list(
             [m for m in d['members'] if m['status']=='active'],
             _('Members'),
-            h.args_to_tuple('member_action', id=self.id, action='members')
+            h.args_to_tuple('member_action', id=self.id, action='members') ,
+            icon = 'user' ,
+            
         )}
         
         ${frag_list.member_list(
             [m for m in d['members'] if m['status']=='invite'],
             _('Invited Members'),
-            h.args_to_tuple('member_action', id=self.id, action='members')
+            h.args_to_tuple('member_action', id=self.id, action='members') ,
+            icon = 'invite' ,
         )}
 
         % endif
@@ -96,10 +103,11 @@
         <div class="frag_col">
         
         ${frag_list.content_list(
-            d['assignments_accepted'],
-            _('Accepted _assignments'),
-            h.args_to_tuple('member_action', id=self.id, action='assignments_accepted'),
-            creator = True,
+            d['assignments_accepted'] ,
+            _('Accepted _assignments') ,
+            h.args_to_tuple('member_action', id=self.id, action='assignments_accepted') ,
+            creator = True ,
+            icon = 'assignment' ,
         )}
         
         ## Content --------------------------------------------
@@ -111,30 +119,35 @@
             [c for c in d['content'] if c['type']=='draft'] ,
             _('Drafts') ,
             h.args_to_tuple('contents', creator=self.id, list='drafts') , ##format='html'),
+            icon = 'draft' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='assignment' and ('due_date' not in c or c['due_date']==None or h.api_datestr_to_datetime(c['due_date'])>=datetime.datetime.now()) ] ,
             _('Assignments Active') ,
             h.args_to_tuple('contents', creator=self.id, list='assignments_active') ,
+            icon = 'assignment' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='assignment' and ('due_date' in c and c['due_date']!=None and h.api_datestr_to_datetime(c['due_date'])<=datetime.datetime.now()) ] ,
             _('Assignments Previous') ,
             h.args_to_tuple('contents', creator=self.id, list='assignments_previous') ,
+            icon = 'assignment' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='article' and c['approval']!='none' ] ,
             _('Responses') ,
             h.args_to_tuple('contents', creator=self.id, list='responses') ,
+            icon = 'response' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='article' and c['approval']=='none' ] ,
             _('Articles') ,
             h.args_to_tuple('contents', creator=self.id, list='articles') ,
+            icon = 'article' ,
         )}
         
         ${frag_list.content_list(
@@ -143,6 +156,7 @@
             h.args_to_tuple('member_action', id=self.id, action='boomed_content') ,
             #h.args_to_tuple('contents', boomed_by=id) ,
             creator = True ,
+            icon = 'boom' ,
         )}
         
         </div>
