@@ -87,7 +87,7 @@ def init_base_data():
         u3.name          = u"Amy M. Kitten"
         u3.status        = "active"
         u3.email         = u"AmyMAnderson@example.com"
-        u3.avatar        = u"https://civicboom-static.s3.amazonaws.com/public/images/test/avatar_kitten.jpg"
+        u3.avatar        = u"https://civicboom.com/images/test/avatar_kitten.jpg"
 
         u3_login = UserLogin()
         u3_login.user   = u3
@@ -99,14 +99,14 @@ def init_base_data():
         u4.name          = u"Jamie L. Puppy"
         u4.status        = "active"
         u4.email         = u"waffleking@example.com"
-        u4.avatar        = u"https://civicboom-static.s3.amazonaws.com/public/images/test/avatar_puppy.jpg"
+        u4.avatar        = u"https://civicboom.com/images/test/avatar_puppy.jpg"
 
         u5 = User()
         u5.username      = u"bunny"
         u5.name          = u"David O. Bunny"
         u5.status        = "active"
         u5.email         = u""
-        u5.avatar        = u"https://civicboom-static.s3.amazonaws.com/public/images/test/avatar_bunny.jpg"
+        u5.avatar        = u"https://civicboom.com/images/test/avatar_bunny.jpg"
 
         Session.add_all([u3, u3_login, u4, u5]); Session.commit()
 
@@ -117,7 +117,7 @@ def init_base_data():
         u6.name          = u"Kent Messenger"
         u6.status        = "active"
         u6.email         = u"admin@civicboom.com"
-        u6.avatar        = u"https://civicboom-static.s3.amazonaws.com/public/images/test/avatar_km.png"
+        u6.avatar        = u"https://civicboom.com/images/test/avatar_km.png"
 
         u6_login = UserLogin()
         u6_login.user   = u6
@@ -129,7 +129,7 @@ def init_base_data():
         u7.name          = u"Mr. Mobile User"
         u7.status        = "active"
         u7.email         = u"admin@civicboom.com"
-        u7.avatar        = u"https://civicboom-static.s3.amazonaws.com/public/images/test/avatar_mobiletest.jpg"
+        u7.avatar        = u"https://civicboom.com/images/test/avatar_mobiletest.jpg"
 
         u7_login = UserLogin()
         u7_login.user   = u7
@@ -150,7 +150,7 @@ def init_base_data():
         u8.name          = u"Commercial First"
         u8.status        = "active"
         u8.email         = u"admin@civicboom.com"
-        u8.avatar        = u"https://civicboom-static.s3.amazonaws.com/public/images/test/cfirst.png"
+        u8.avatar        = u"https://civicboom.com/images/test/cfirst.png"
 
         u8_login = UserLogin()
         u8_login.user   = u8

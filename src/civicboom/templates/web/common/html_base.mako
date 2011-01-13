@@ -35,27 +35,16 @@
 ## CSS Style Sheets
 ##-------------------
 % if config['development_mode']:
-	<link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-grids-min.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui-1.8.4.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/jquery.ui.stars.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/layout.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/thumbnails.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/icons.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/misc.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/account.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/content_editor.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/messages.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/menuh.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/simplemodal.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/common/uploadify.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/layout.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/misc.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/member_includes.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/settings.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/frags.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/frag_content.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/frag_member.css" />
-	<link rel="stylesheet" type="text/css" href="/styles/web/frag_lists.css" />
+<%
+from glob import glob
+css_common = glob("civicboom/public/styles/common/*.css")
+css_web    = glob("civicboom/public/styles/web/*.css")
+css_all    = css_common + css_web
+css_all    = [n[len("civicboom/public"):] for n in css_all]
+%>
+% for css in css_all:
+	<link rel="stylesheet" type="text/css" href="${css}" />
+% endfor
 % else:
 	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
 % endif
@@ -85,7 +74,7 @@
 % endif
 <!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
 <!--[if lt IE 7]>
-	<script src="/javascript/IE9.js"></script>
+	<script src="/javascript/IE8.js"></script>
 <![endif]-->
 
 ##----------------------------------------------------------------------------
