@@ -12,7 +12,7 @@ function minimap(div_name, options, feeds) {
 		round: function(a, b){},
 		reRound: function(a, b){},
 		changeColor: function(a, b){a.parentElement.style.background=b;},
-		changeOpacity: function(a, b){},
+		changeOpacity: function(a, b){}
 	}};
 
 	if(options.controls) {
