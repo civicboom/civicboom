@@ -14,7 +14,7 @@ to limit the use of that data and the procedures that we have in place to safegu
 is registered with the Information Commissioner’s Office in the United Kingdom. You should read this policy
 in its entirety.
 <ol>
-<li>Personal Information
+<li><b>Personal Information</b>
 <ol>
 <li>Account Activity
 <br>When you initially visit the Civicboom Website, you are required to register as a member (“Member”) before
@@ -31,7 +31,7 @@ will be archived and kept for seven years.
 <br>Users of the Website who wish only to read news articles or reports do not need to register as a Member (“User”);
 however, such Users are not allowed to upload content to the Website, flag articles or post commentary.
 </ol>
-<li>Company Use and Disclosure
+<li><b>Company Use and Disclosure</b>
 <ol>
 <li>If you submit personal information to the Company, we may use the information and relevant statistical data to
 monitor the Website’s usage by Members and to help us develop the Website and our services from time to time. These
@@ -60,7 +60,7 @@ eval(unescape('%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%61%20%68%72%6
 //]]>
 </script>
 </ol>
-<li>Third Party Advertisements
+<li><b>Third Party Advertisements</b>
 <br>Civicboom may allow other companies called “third-party ad servers” or “ad networks” to serve advertisements
 within this Website.  These third-parties may use technology to send, directly to your browser, the advertisements
 and links that appear on this Website.  They will automatically receive your IP address when this happens and they
@@ -69,7 +69,7 @@ Any Data received from a third party ad server in relation to your account will 
 Privacy Policy.
 <br>Civicboom will not provide your personal information to third party ad servers without your consent, except as
 a part of a Website feature which you as a Member will have the option to opt out of before such disclosure.
-<li>Use of cookies
+<li><b>Use of cookies</b>
 <br>The use of cookies is common in the computer industry. A cookie is data sent to your computer by a Web server
 that records your actions on a certain Web site. When you visit the site again after being sent the cookie, the site
 will load certain pages according to the information stored in the cookie. We use cookies in two ways:
@@ -85,18 +85,18 @@ operate correctly.  For further details on cookies we recommend that you visit w
 <br>Cookies relating to this Website will be stored on your computer. Unless otherwise indicated, auto logon cookies
 will be stored on Members’ computers for a period of one month.
 </ol>
-<li>Sale or Merger of Business
+<li><b>Sale or Merger of Business</b>
 <br>If the Company is sold or integrated with another business, your Data may be disclosed to our advisers and any
 prospective purchasers, their advisers and new owners of the business.  We will handle the transfer of your data securely
 in accordance with this Privacy Policy.
-<li>Protecting Your Information
+<li><b>Protecting Your Information</b>
 <br>Internet security is not absolute; therefore, security controls are built into the Website to offer you a greater
 degree of protection. We also keep your Data confidential subject to the purposes for which the details were collected.
 The internal procedures of the Data Controller cover the storage, access and disclosure of your data.
-<li>Updating Personal Information
+<li><b>Updating Personal Information</b>
 <br>You may update or correct your personal profile information by accessing your private user profile on www.civicboom.com
 for amending your settings, updating your profile and changing your password.
-<li>Your consent
+<li><b>Your consent</b>
 <br>By submitting your Data you consent to the use of your Data as set out in this Privacy Policy and as set out in the
 Website Terms and Conditions.  If we change our Privacy Policy we will post the changes on this page, and may place
 notices on other pages of this Website, so that you may be kept informed of the Data we collect and how we use it at
