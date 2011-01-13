@@ -1,6 +1,7 @@
 <%! from datetime import datetime %>
 
-<%def name="title()">${_('_site_name RSS')}</%def>
+<%def name="title()"      >${_('_site_name RSS')}</%def>
+<%def name="description()">${_("News and articles from _site_name")}</%def>
 
 ##------------------------------------------------------------------------------
 ## RSS Base
@@ -21,9 +22,9 @@
 >
 
 <channel>
-	<title        >${next.title()}</title>
+	<title        >${self.title()}</title>
 	<link         >${url.current(host=app_globals.site_host)}</link>
-	<description  >${_("News and articles from _site_name")}</description>
+	<description  >${self.description()}</description>
 	<pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
 	<lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
 	<generator    >http://www.civicboom.com/</generator>
