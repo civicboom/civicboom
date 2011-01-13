@@ -105,7 +105,23 @@
         <div class="frag_col">
         
         % if self.current_user:
+            <a class   = "icon icon_message"
+               href    = "${url('messages',list='to')}"
+               title   = "${_('Messages')}"
+               onclick = "cb_frag($(this), '${url('messages', list='to'          , format='frag')}', 'bridge'); return false;"
+            ><span>${_('Messages')}</span></a>
+    
+            <a class   = "icon icon_message"
+               href    = "${url('messages',list='sent')}"
+               title   = "${_('Messages Sent')}"
+               onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'bridge'); return false;"
+            ><span>${_('Messages')}</span></a>
             
+            <a class   = "icon icon_notification"
+               href    = "${url('messages', list='notification')}"
+               title   = "${_('Notifications')}"
+               onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'bridge'); return false;"
+            ><span>${_('Notifications')}</span></a>
         % endif
         
         ${frag_list.content_list(
@@ -230,25 +246,7 @@
         ${popup.link(h.args_to_tuple('new_message', target=self.id), title=_('Send message') , class_='icon icon_message')}
     % endif
     % if 'settings' in self.actions:
-        <a class="icon icon_settings" href="${url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>
-        
-        <a class   = "icon icon_message"
-           href    = "${url('messages',list='to')}"
-           title   = "${_('Messages')}"
-           onclick = "cb_frag($(this), '${url('messages', list='to'          , format='frag')}', 'bridge'); return false;"
-        ><span>${_('Messages')}</span></a>
-
-        <a class   = "icon icon_message"
-           href    = "${url('messages',list='sent')}"
-           title   = "${_('Messages Sent')}"
-           onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'bridge'); return false;"
-        ><span>${_('Messages')}</span></a>
-        
-        <a class   = "icon icon_notification"
-           href    = "${url('messages', list='notification')}"
-           title   = "${_('Notifications')}"
-           onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'bridge'); return false;"
-        ><span>${_('Notifications')}</span></a>
+        <a class="icon icon_settings" href="${url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>        
     % endif
     ${popup.link(h.args_to_tuple(controller='misc', action='get_widget', id=self.id), title=_('Get widget'), class_='icon icon_widget')}
     
