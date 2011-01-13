@@ -13,7 +13,7 @@
     <item> 
         <title>${message.get('subject')}</title> 
         <link>${h.url('message', id=message['id'])}</link>
-        <description>${message['content']}</description> 
+        <description>${message.get('content')}</description> 
         <pubDate>${h.date_to_rss(message.get('timestamp'))}</pubDate> 
         <guid isPermaLink="false">Civicboom Message #${message['id']}</guid>
         ##<category>${list}</category>
