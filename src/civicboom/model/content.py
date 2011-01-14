@@ -275,7 +275,7 @@ class Content(Base):
         AllanC TODO: Derived field?
         """
         from civicboom.lib.text import strip_html_tags
-        return truncate(strip_html_tags(self.content), length=100)
+        return truncate(strip_html_tags(self.content), length=100, indicator='...', whole_word=True)
 
     @property
     def location_string(self):
@@ -411,9 +411,9 @@ class ArticleContent(UserVisibleContent):
     __tablename__   = "content_article"
     __mapper_args__ = {'polymorphic_identity': 'article'}
     _approval  = Enum("none", "approved", "seen", "dissassociated", name="approval")
-    id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
-    rating          = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
-    ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
+    id         = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
+    rating     = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    ratings    = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
     approval   = Column(_approval, nullable=False, default="none")
 
     # AllanC TODO:
@@ -557,6 +557,8 @@ class MemberAssignment(Base):
     content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')            , nullable=False, primary_key=True)
     status        = Column(_assignment_status,  nullable=False)
+    #update_date   = Column(DateTime(),   nullable=False, default=func.now(), doc="Controlled by postgres trigger")
+    # AllanC - TODO - implement member assignment update date postgress trigger
 
     member       = relationship("Member")
 

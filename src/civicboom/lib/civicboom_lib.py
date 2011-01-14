@@ -160,28 +160,34 @@ def aggregation_dict(content, safe_strings=True):
     
     content_preview = {}
     
-    content_url = url(host=app_globals.site_host, controller='content', action='view', id=content['id'])
+    content_url          = url('content', id=content['id'], host=app_globals.site_host)
+    content_creator_name = content.get('creator',{}).get('name', '')
 
     def action(content):
-        if   content.get('type'  ) == "assignment": return _("Set an _assignment")
-        elif content.get('parent')                : return _("Wrote a response")
-        elif content.get('type'  ) == "article"   : return _("Wrote an _article")
+        if   content.get('type'  ) == "assignment": return content_creator_name + _(" Set an _assignment")
+        elif content.get('parent')                : return content_creator_name + _(" Wrote a response"  )
+        elif content.get('type'  ) == "article"   : return content_creator_name + _(" Wrote an _article" )
     
     def description(content):
         return "%s: %s" % (action(content), content.get('title'))
 
     def action_links(content):
         action_links = []
-        action_links.append({'href':url(host=app_globals.site_host, controller='content_actions', action='edit'  , parent_id=content['id']), 'text':_('Write a response')  })
+        action_links.append(    {'href':url('new_content'   , parent_id=content['id'], host=app_globals.site_host), 'text':_('Write a response')  })
         if content.get('type') == "assignment":
-            action_links.append({'href':url(host=app_globals.site_host, controller='content_actions', action='accept', id     =content['id']), 'text':_('Accept _assignment')})
+            action_links.append({'href':url('content_action', action='accept', id       =content['id'], host=app_globals.site_host), 'text':_('Accept _assignment')})
         return action_links
     
     def media(content):
         media_list = []
-        for media in content.get('attachments'):
-            if   media.get('type')    == "image": media_list.append({'href':content_url, 'type':"image", 'src':media.get('thumbnail_url')})
-            elif media.get('subtype') == "mp3"  : media_list.append({'href':content_url, 'type':"mp3"  , 'src':media.get('media_url')    })
+        if not content.get('attachments'):
+            media_list.append({'href':content_url, 'type':"image", 'src':content.get('thumbnail_url')})
+        else:
+            for media in content.get('attachments'):
+                if media.get('type')=="image":
+                    media_list.append({'href':content_url, 'type':"image", 'src':media.get('thumbnail_url')})
+                if media.get('subtype')=="mp3":
+                    media_list.append({'href':content_url, 'type':"mp3"  , 'src':media.get('media_url')    })
         return media_list
     
     def properties(content):
@@ -199,7 +205,7 @@ def aggregation_dict(content, safe_strings=True):
     content_preview['title']                  = content.get('title')
     content_preview['action']                 = action(content)
     content_preview['description']            = description(content)
-    content_preview['user_generated_content'] = truncate(safe_python_strings(strip_html_tags(content['content'])))
+    content_preview['user_generated_content'] = truncate(safe_python_strings(strip_html_tags(content['content'])), length=100, indicator=_('... read more'), whole_word=True)
     content_preview['action_links']           = action_links(content)
     content_preview['media']                  = media(content)
     content_preview['properties']             = properties(content)

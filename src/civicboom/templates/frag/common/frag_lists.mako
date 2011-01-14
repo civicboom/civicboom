@@ -26,12 +26,20 @@
 ## Public Methods - Content and Memeber lists
 ##------------------------------------------------------------------------------
 ## When imported, these are the main methods of use
+<%def name="member_list_thumbnails(*args, **kwargs)">
+    <%
+        if 'max' not in kwargs:
+            kwargs['max'] = 24
+    %>
+    ${frag_list(render_item_function=render_item_member_thumbnail, type=('ul','li'), list_class='member'        , *args, **kwargs)}
+</%def>
+
 <%def name="member_list(*args, **kwargs)">
     <%
         if 'max' not in kwargs:
-            kwargs['max'] = 20
+            kwargs['max'] = 24
     %>
-    ${frag_list(render_item_function=render_item_member       , type=('ul','li')   , list_class='member'        , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_member       , type=('table','tr'), list_class='member'        , *args, **kwargs)}
 </%def>
 
 <%def name="content_list(*args, **kwargs)">
@@ -112,14 +120,30 @@
 
 
 ##------------------------------------------------------------------------------
-## Member Item
+## Member Item Thumbnail
 ##------------------------------------------------------------------------------
 
-<%def name="render_item_member(member)">
+<%def name="render_item_member_thumbnail(member)">
 <li>
     ${member_includes.avatar(member, class_="thumbnail_small")}
 </li>
 </%def>
+
+##------------------------------------------------------------------------------
+## Member Item
+##------------------------------------------------------------------------------
+
+<%def name="render_item_member(member)">
+<tr>
+    <td>
+        ${member_includes.avatar(member, class_="thumbnail_small")}
+    </td>
+    <td>
+        ${member.get('name')}
+    </td>
+</tr>
+</%def>
+
 
 
 ##------------------------------------------------------------------------------

@@ -1,17 +1,15 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<%namespace name="frag_lists" file="/frag/common/frag_lists.mako"/>
-<%namespace name="flag" file="/frag/content_actions/flag.mako"/>
-<%namespace name="member_includes"  file="/web/common/member.mako"/>
-
-<%namespace name="popup"      file="/web/common/popup_base.mako" />
+<%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"   />
+<%namespace name="flag"            file="/frag/content_actions/flag.mako"/>
+<%namespace name="share"           file="/frag/common/share.mako"        />
+<%namespace name="popup"           file="/web/common/popup_base.mako"    />
+<%namespace name="member_includes" file="/web/common/member.mako"        />
 
 
 ## for deprication
 <%namespace name="loc"              file="/web/common/location.mako"     />
 
-##<%namespace name="share"      file="/frag/common/share.mako"     />
-##<%namespace name="content_includes" file="/web/common/content_list.mako" />
 
 ##------------------------------------------------------------------------------
 ## Variables
@@ -81,15 +79,15 @@
         )}
         
         % if 'accepted_status' in d:
-            ${frag_lists.member_list(
+            ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status'] if m['status']=='accepted'],
                 _("Accepted by"),
             )}
-            ${frag_lists.member_list(
+            ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status'] if m['status']=='invited'],
                 _("Invited"),
             )}
-            ${frag_lists.member_list(
+            ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status'] if m['status']=='withdrawn'],
                 _("Withdrawn"),
             )}
@@ -138,6 +136,8 @@
 <%def name="content_media()">
     <%
         content = self.content
+    %>
+    <%
         media_width  = config['media.display.video.width' ]
         media_height = config['media.display.video.height']
     %>
@@ -146,7 +146,7 @@
     % for media in content['attachments']:
         <li>
         % if media['type'] == "image":
-            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}" style="width: ; "/></a>
+            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}" style="max-width: ${media_width}px; max-height: ${media_height}px;"/></a>
         % elif media['type'] == "audio":
             <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="30">
                 <param name="movie" value="/flash/player_flv_maxi.swf" />
@@ -392,6 +392,7 @@
         ${parent.georss_link()}
     % endif
 
+    ${share.janrain_social(self.content, 'janrain', class_='icon icon_share')}
     
 </%def>
 

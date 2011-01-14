@@ -196,10 +196,11 @@ def icon(icon_type, description=None, class_=''):
 
 def api_datestr_to_datetime(date_str):
     return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
-    
-def datetime_to_rss(date):
-	return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
 
+def date_to_rss(date):
+    if isinstance(date, basestring):
+        date = api_datestr_to_datetime(date)
+    return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
 
 #-------------------------------------------------------------------------------
 # Standard and JSON URL generation

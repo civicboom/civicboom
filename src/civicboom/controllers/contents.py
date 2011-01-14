@@ -146,7 +146,8 @@ def _init_search_filters():
         if isinstance(creator, int):
             return query.filter(Content.creator_id==creator)
         else:
-            return query.filter(Member.username==creator)
+            # AllanC - WARNING this is untested ... all creators should be normalized - I dont think this is ever called
+            return query.filter(Member.username==creator) #select_from(join(Content, Member, Content.creator)).
     
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
@@ -215,7 +216,7 @@ class ContentsController(BaseController):
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
         #          TODO: we need maybe a separte call, or something to identify a private call
         logged_in_creator = False
-        if 'creator' in kwargs and c.logged_in_persona:
+        if 'creator' in kwargs:
             kwargs['creator'] = _normalize_member(kwargs['creator'], always_return_id=True) # normalize creator
             if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
@@ -241,8 +242,9 @@ class ContentsController(BaseController):
         #        kwargs['include_fields'] += ',attachments'
         
         # Build Search
-        results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*'). #Content.__type__!='draft'
+        results = Session.query(Content).with_polymorphic('*')
         results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
+        # TODO: exculude fetch of content field in this query return. lazyload it?
         if 'private' in kwargs and logged_in_creator:
             pass # allow private content
         else:
