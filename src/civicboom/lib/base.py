@@ -127,12 +127,13 @@ class BaseController(WSGIController):
         c.authenticated_form   = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs = None
 
-        c.widget_username = None
-        c.widget_width    = config['widget.default.width']
-        c.widget_height   = config['widget.default.height']
-        c.widget_theme    = config['widget.default.theme']
-        c.widget_title    = None
-
+        #c.widget = dict(
+        #    theme    = 'light' ,
+        #    width    = 240 ,
+        #    height   = 320 ,
+        #    title    = '' ,
+        #    username = '' ,
+        #)
 
         # Login - Fetch logged in user from session id (if present)
         username                 = session_get('username')

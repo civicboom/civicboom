@@ -155,10 +155,9 @@ def login_redirector():
     login_redirect = session_remove('login_redirect')
     if login_redirect:
         return redirect(login_redirect)
-    # AllanC - to be removed
-    #if 'widget_username' in request.params:
+    if 'widget_username' in request.params:
         # if the request has come from a widget - redirect back to widget
-        #return redirect(url_from_widget(controller='widget', action='main')) #, protocol='http'
+        return redirect(url_from_widget(controller='widget', action='main')) #, protocol='http'
 
 
 def signin_user(user, login_provider=None):

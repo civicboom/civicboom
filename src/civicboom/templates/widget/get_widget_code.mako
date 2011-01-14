@@ -8,17 +8,22 @@
     if hasattr(member, 'username'):
         member = member.username
     
-    width  = c.widget_width  or config['widget.default.width']
-    height = c.widget_height or config['widget.default.height']
-    theme  = c.widget_theme  or config['widget.default.theme']
-    title  = c.widget_title  or _('%s insight: Share your news and opinion' % member)
+    def c_(key):
+      if hasattr(c,key):
+        return getattr(c,key)
+      return None
+    
+    width  = c_('widget_width')  or 240
+    height = c_('widget_height') or 320
+    theme  = c_('widget_theme')  or 'light'
+    title  = c_('widget_title')  or member
 %>
 <iframe name ='${_("_site_name")}'
         title='${_("_site_name Widget")}'
         src  ='${h.url(
             host=app_globals.site_host, protocol='http',
             controller='widget', action='main',
-            widget_username = c.widget_username or member,
+            widget_username = c_('widget_username') or member,
             widget_theme    = theme ,
             widget_title    = title ,
             widget_width    = width ,
