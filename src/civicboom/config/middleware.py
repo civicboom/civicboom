@@ -14,7 +14,7 @@ from routes.middleware import RoutesMiddleware
 from civicboom.config.environment import load_environment
 
 from civicboom.middleware.MobileDetectionMiddleware import MobileDetectionMiddleware
-from civicboom.middleware.HttpsDetectionMiddleware import HttpsDetectionMiddleware
+from civicboom.middleware.EnvironMiddleware import EnvironMiddleware
 from civicboom.middleware.NoCookiesForStaticMiddleware import NoCookiesForStaticMiddleware
 from civicboom.middleware.SecurifyCookiesMiddleware import SecurifyCookiesMiddleware
 
@@ -63,10 +63,9 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
 
     # CUSTOM MIDDLEWARE HERE (filtered by error handling middlewares)
     app = MobileDetectionMiddleware(app)
-    app = HttpsDetectionMiddleware(app)
+    app = EnvironMiddleware(app)
     app = NoCookiesForStaticMiddleware(app)
     app = SecurifyCookiesMiddleware(app)
-    app = PrefixMiddleware(app)
 
 
     if asbool(full_stack):
