@@ -18,6 +18,10 @@ var frag_count      = 0;
 var frag_loading    = null;
 var frags_to_remove = null;
 
+//------------------------------------------------------------------------------
+//                               Create Frag
+//------------------------------------------------------------------------------
+
 // current_element = JQuery element object
 // url             = String
 function cb_frag(current_element, url, list_type) {
@@ -100,10 +104,20 @@ function cb_frag(current_element, url, list_type) {
 	);
 }
 
+//------------------------------------------------------------------------------
+//                               Load Frag
+//------------------------------------------------------------------------------
+
+
 function cb_frag_load(jquery_element, url) {
 	var frag_container = jquery_element.parents('.'+fragment_container_class)
 	frag_container.load(url);
 }
+
+
+//------------------------------------------------------------------------------
+//                               Remove Frag
+//------------------------------------------------------------------------------
 
 function cb_frag_remove(jquery_element) {
 	var parent = jquery_element.parents('.'+fragment_container_class); // find parent
@@ -117,17 +131,16 @@ function cb_frag_remove(jquery_element) {
 	cb_frag_remove_sibblings(parent);
 	
 	$.modal.close(); // Aditionaly, if this is in a popup then close the popup
-	
-	
-
-
-	
 }
 
 function cb_frag_remove_sibblings(jquery_element) {
 	var parent_siblings = jquery_element.nextAll();
 	parent_siblings.toggle(scroll_duration, function(){parent_siblings.remove()});
 }
+
+//------------------------------------------------------------------------------
+//                               Reload Frag
+//------------------------------------------------------------------------------
 
 function cb_frag_reload(param) {
 	// Can be passed a JQuery object or a String
@@ -184,6 +197,11 @@ function cb_frag_reload(param) {
 	}
 
 }
+
+
+//------------------------------------------------------------------------------
+//                            Browser URL updating
+//------------------------------------------------------------------------------
 
 if(Modernizr.history && false) {
 	// FIXME: jQuery-ise this, rather than using the raw window.blah

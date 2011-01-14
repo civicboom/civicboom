@@ -2,6 +2,7 @@
 
 // Requires toggle_div.js functions
 // MARKED FOR DEPRICATION
+/*
 function setSingleCSSClass(element_to_style, class_to_set, parent_id) {
     try {
         // Find all occurances of this class
@@ -17,6 +18,7 @@ function setSingleCSSClass(element_to_style, class_to_set, parent_id) {
         Y.log("setSingleCSS failed", "warn", "misc")
     }
 }
+*/
 
 function flash_message(json_message) {
 	if (typeof(json_message) == "string") {json_message = {status:'ok', message:json_message};}
@@ -59,3 +61,4 @@ function add_onclick_submit_field(current_element) {
 	var field_value = current_element.attr('value');
 	current_element.closest('form').append('<input type="hidden" name="'+field_name+'" value="'+field_value+'" class="fake_submit"/>');
 }
+

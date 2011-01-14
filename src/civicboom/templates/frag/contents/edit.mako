@@ -37,7 +37,26 @@
         
         ## pre_onsubmit is needed to save the contents of the TinyMCE component back to the text area
         ##  reference - http://www.dreamincode.net/forums/topic/52581-textarea-value-not-updating/
-        ${h.form(h.args_to_tuple('content', id=self.id, format="redirect"), id='edit_%s'%self.id, method='PUT', multipart=True, name="content", pre_onsubmit="tinyMCE.triggerSave(true,true);")}
+        ${h.form(
+            h.args_to_tuple('content', id=self.id, format="redirect"),
+            id           = 'edit_%s' % self.id,
+            name         = "content",
+            method       = 'PUT',
+            multipart    = True,
+            pre_onsubmit = "tinyMCE.triggerSave(true,true);",
+            json_form_complete_actions = "json_submit_complete_for_%s();" % self.id
+        )}
+            ## AllanC - whenthe AJAX submit it complete it will call the function below
+            ##          The onclick event of the actual submit buttons can set a variable to direct the fragment refresh
+            <script type="text/javascript">
+                submit_complete_${self.id}_url = null;
+                function json_submit_complete_for_${self.id}() {
+                    if (submit_complete_${self.id}_url) {
+                        cb_frag_load($('#edit_${self.id}'), submit_complete_${self.id}_url);
+                        submit_complete_${self.id}_url = null;
+                    }
+                }
+            </script>
             ${base_content()}
             ${media()}
             ${content_type()}
@@ -53,8 +72,9 @@
 ##------------------------------------------------------------------------------
 
 <%def name="actions_specific()">
-    <a href='' class="icon icon_save"    onclick="$('#edit_${self.id} input.submit_draft').click();                                                                          return false;" title="${_('Save')}"            ><span>${_('Save')}            </span></a>
-    <a href='' class="icon icon_preview" onclick="$('#edit_${self.id} input.submit_draft').click(); cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}'); return false;" title="${_('Save and Preview')}"><span>${_('Save and Preview')}</span></a>
+    <a href='' class="icon icon_save"    onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save')}"            ><span>${_('Save')}            </span></a>
+    <a href='' class="icon icon_preview" onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save and Preview')}"><span>${_('Save and Preview')}</span></a>
+    ##cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');
 </%def>
 
 <%def name="actions_common()">
@@ -141,6 +161,7 @@
                 });
             }
             % if self.content['type'] == "draft":
+            clearInterval(autoSaveDraftTimer);
             var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
             % endif
 		</script>
@@ -467,14 +488,37 @@
     <div style="text-align: right;">
         % if self.content['type'] == "draft":
 			## AllanC - note the class selectors are used by jQuery to simulate clicks
-			<input type="submit" name="submit_draft"   class="button submit_draft"   value="${_("Save")}"     onclick="add_onclick_submit_field($(this));"/>
-			<input type="submit" name="submit_preview" class="button submit_preview" value="${_("Preview")}"  onclick="add_onclick_submit_field($(this));"/>
-            <input type="submit" name="submit_publish" class="button"                value="${_("Publish")}"  onclick="add_onclick_submit_field($(this));"/>
+			<input
+                type    = "submit"
+                name    = "submit_draft"
+                class   = "button submit_draft"
+                value   = "${_("Save")}"
+                onclick = "add_onclick_submit_field($(this));"
+            />
+			<input
+                type    = "submit"
+                name    = "submit_preview"
+                class   = "button submit_preview"
+                value   = "${_("Preview")}"
+                onclick = "add_onclick_submit_field($(this)); submit_complete_${self.id}_url='${url('content', id=self.id, format='frag')}';"
+            />            
+            <input
+                type    = "submit"
+                name    = "submit_publish"
+                class   = "button"
+                value   = "${_("Publish")}"
+                onclick = "add_onclick_submit_field($(this)); submit_complete_${self.id}_url='${url('content', id=self.id, format='frag')}';"
+            />
         % else:
-            <input type="submit" name="submit_publish" class="button"                value="${_("Update")}"   onclick="add_onclick_submit_field($(this));"/>
-			<a class="button" href="${h.url('content', id=self.id)}">${_("View Content")}</a>
+            <input
+                type    = "submit"
+                name    = "submit_publish"
+                class   = "button"
+                value   = "${_("Update")}"
+                onclick = "add_onclick_submit_field($(this)); submit_complete_${self.id}_url='${url('content', id=self.id, format='frag')}';"
+            />
+			<a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
         % endif
-    
     </div>
 </%def>
 
