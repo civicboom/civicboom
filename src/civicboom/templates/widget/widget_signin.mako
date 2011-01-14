@@ -1,7 +1,6 @@
 <%inherit file="./widget_content.mako"/>
 
 
-
 ##------------------------------------------------------------------------------
 ## Janrain Login
 ##------------------------------------------------------------------------------
@@ -86,9 +85,9 @@ ${popup(h.literal("hello"), javascript_function_name='test', title=_('Test'), he
 <%def name="popup(popup_content, javascript_function_name='popup', title='popup', height=200, width=150)">
     ## Reference inspriation: http://www.quirksmode.org/js/popup.html
     <script language="javascript" type="text/javascript">
-    
         function ${javascript_function_name}() {
-            var newwindow=window.open('','${title}','height=${height}, width=${width}, left=400, top=200, status=False, location=False');
+            var newwindow = window.open('','${title}','height=${height}, width=${width}, left=400, top=200, status=False, location=False');
+            ##newwindow.parent = window;
             var d = newwindow.document;
             d.write('<html><head><title>${title}</title>');
             d.write('</head><body>');
@@ -97,12 +96,19 @@ ${popup(h.literal("hello"), javascript_function_name='test', title=_('Test'), he
             d.close();
             ## On close focus back on the parent frame and reload it
             newwindow.onunload = function(){
+                ##alert('perform refresh to ${url(controller='account', action='login_redirect')}');
                 ##focus();
                 ##location.reload(true);
                 ##history.go(0);
-                ##alert('perform refresh to ${url(controller='account', action='login_redirect')}');
-                window.location.href = "${url(controller='account', action='login_redirect')}";
-            };
+                ##window.parent.location.href = "${url(controller='account', action='login_redirect')}";
+                ##window.parent.document.getElementById('CivicboomWidget').contentDocument.location.reload(true);
+                ##alert(window.location.href);
+                window.location.href = window.location.href+'&';
+                ##window.location.reload(true);
+                ##window.frames['frameNameOrIndex'].location.reload();
+                ##alert(window.location.href);
+                ##parent.CivicboomWidget.location.href = 'wwww.google.com';
+            }
         }
     </script>
 </%def>

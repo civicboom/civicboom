@@ -40,7 +40,7 @@ log      = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 # Users in pending status are forced to complete the registration process.
 #   some urls have to be made avalable to pending users (such as signout, etc)
-pending_user_allowed_list = ['register/new_user','account/','widget/', 'misc/']
+pending_user_allowed_list = ['register/new_user','account/','widget/', 'misc/', '/accept']
 def deny_pending_user(url_to_check):
     for url_safe in pending_user_allowed_list:
         if url_to_check.find(url_safe)>=0:

@@ -6,6 +6,7 @@ The widget is an HTML iFrame that members can place on there own webpages reflec
 # Base controller imports
 from civicboom.lib.base import *
 
+from civicboom.lib.web     import current_referer
 from civicboom.lib.helpers import url_from_widget
 
 from civicboom.controllers.contents       import ContentsController
@@ -14,7 +15,7 @@ content_controller        = ContentsController()
 member_actions_controller = MemberActionsController()
 
 import re
-from urllib import quote_plus
+from urllib import quote_plus, unquote_plus
 
 # Logging setup
 log      = logging.getLogger(__name__)
@@ -34,6 +35,9 @@ def setup_widget_env():
     """
     Take QUERY_STRING params and setup widget globals for widget templates
     """
+    referer = current_referer()
+    if referer:
+        referer = unquote_plus(referer)+'&'
     def get_widget_varibles_from_env():
         def get_env_from_referer(var_name):
             try:
@@ -41,13 +45,13 @@ def setup_widget_env():
                 #          in this case we may need to get the widget details from the referer
                 #          this regex seeks a variable in the http_referer
                 #          as a botch the variables are delimted by '&' and I have appended one to the end [because /b was not working in the regex :( ]
-                return re.search(var_name+r'=(.+?)&',unquote_plus(c.http_referer)+'&').group(1).encode('utf-8')
+                return re.search(var_name+r'=(.+?)&',referer).group(1).encode('utf-8')
             except:
                 return None
         for var in app_globals.widget_variables:
             if var in request.params:
                 setattr(c, var, request.params[var].encode('utf-8')) #Get variable from current request (override refferer if exist)
-            else:
+            elif referer:
                 setattr(c, var, get_env_from_referer(var)) # Get varible from referer
     def construct_widget_query_string():
         query_string = "?"
@@ -59,9 +63,12 @@ def setup_widget_env():
     c.widget_query_string = construct_widget_query_string() #construct a new query string based on current widget global variables (this is needed for intercepted signin pages to pass the variables on see widget_signin.mako FORM_ACTION)
     c.widget_owner        = get_member(c.widget_username)
     # Set defaults from config if not set
-    c.widget_theme        = c.widget_theme  or config['widget.default.theme']
-    c.widget_width        = c.widget_width  or config['widget.default.width']
-    c.widget_height       = c.widget_height or config['widget.default.height']
+    c.widget_theme        = c.widget_theme  or 'light'
+    try:
+        c.widget_width  = int(c.widget_width ) or 240
+        c.widget_height = int(c.widget_height) or 320
+    except:
+        pass
 
 
 #-------------------------------------------------------------------------------

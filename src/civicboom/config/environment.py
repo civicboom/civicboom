@@ -63,6 +63,7 @@ def load_environment(global_conf, app_conf):
                         'feature.aggregate.janrain',
                         'feature.aggregate.twitter_global',
                         'feature.profanity_filter',
+                        'security.disallow_https_cookie_in_http',
                         'online',
                         'test_mode',
                         ]
