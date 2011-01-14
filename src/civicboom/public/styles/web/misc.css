@@ -1,6 +1,77 @@
 /*
  * front page, a blurb and a signup box
  */
+
+BODY.c-misc.a-titlepage DIV#app {
+    text-align: center;
+}
+
+BODY.c-misc.a-titlepage SECTION.mobile {
+    display: block;
+    padding: 1em;
+        
+}
+
+BODY.c-misc.a-titlepage SECTION.description h1 {
+    margin: 0em;
+    padding-bottom: 0.5em;
+}
+
+BODY.c-misc.a-titlepage SECTION.description {
+    display: block;
+    width: 600px;
+    text-align: left;
+}
+
+BODY.c-misc.a-titlepage SECTION.description .description_container {
+    clear: both;
+    display: block;
+	background-color: #eee;
+    
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+    
+    padding: 1em;
+    padding-top: 0.5em;
+    
+    margin-bottom: 1em;
+}
+
+BODY.c-misc.a-titlepage SECTION.description .description_container .steps_container {
+	background-color: white;
+    
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+    
+    width: 100%;
+}
+
+BODY.c-misc.a-titlepage SECTION.description .description_container .steps_container .step_current {
+    padding: 0.5em;
+}
+BODY.c-misc.a-titlepage SECTION.description .description_container .steps_container .step_back {
+    position: absolute;
+    bottom: -0.5em;
+    left  : -0.5em;
+    border: 1px solid #ccc;
+}
+BODY.c-misc.a-titlepage SECTION.description .description_container .steps_container .step_next {
+    position: absolute;
+    bottom: -0.5em;
+    right : -0.5em;
+    border: 1px solid #ccc;
+}
+BODY.c-misc.a-titlepage SECTION.description .description_container .steps_container .step_description {
+    vertical-align: top;
+    border-left: 1px solid #ccc;
+    width: 33%;
+    padding: 0.5em;
+    
+}
+
+/*
 BODY.c-misc.a-titlepage DIV#app {
 	font-size: 1.2em;
 	font-weight: bold;
@@ -20,14 +91,9 @@ BODY.c-misc.a-titlepage SECTION.signup {
 	width: 200px;
 	padding: 16px;
 	margin: 50px;
-	/*
-	background: white;
-	border-radius: 8px;
-	-moz-border-radius: 8px;
-	border: 1px solid #AAA;
-	*/
 }
 BODY.c-misc.a-titlepage SECTION.mobile {float: left;}
 BODY.c-misc.a-titlepage SECTION.signup {float: right;}
 
 BODY.c-misc.a-titlepage DIV#app .button {display: block; font-size: 1em;}
+*/
