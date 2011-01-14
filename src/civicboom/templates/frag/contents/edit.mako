@@ -44,7 +44,7 @@
             method       = 'PUT',
             multipart    = True,
             pre_onsubmit = "tinyMCE.triggerSave(true,true);",
-            json_form_complete_actions = "json_submit_complete_for_%s();" % self.id
+            json_form_complete_actions = "json_submit_complete_for_%(id)s();" % dict(id=self.id)
         )}
             ## AllanC - whenthe AJAX submit it complete it will call the function below
             ##          The onclick event of the actual submit buttons can set a variable to direct the fragment refresh
@@ -52,8 +52,10 @@
                 submit_complete_${self.id}_url = null;
                 function json_submit_complete_for_${self.id}() {
                     if (submit_complete_${self.id}_url) {
-                        cb_frag_load($('#edit_${self.id}'), submit_complete_${self.id}_url);
+                        ##cb_frag_load($('#edit_${self.id}'), submit_complete_${self.id}_url); ## Why update just this frag, if we set the frag source then it will be reloaded along with the reload of other frags with this content id
+                        cb_frag_set_source($('#edit_${self.id}'), submit_complete_${self.id}_url);
                         submit_complete_${self.id}_url = null;
+                        cb_frag_reload('contents/${self.id}');
                     }
                 }
             </script>
