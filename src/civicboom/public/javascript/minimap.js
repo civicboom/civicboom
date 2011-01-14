@@ -5,7 +5,7 @@ function minimap(div_name, options, feeds) {
 		lonlat: null,
 		zoom: 13
 	};
-	for(var d in defaults) {if(!options[d]) options[d] = defaults[d];}
+	for(var d in defaults) {if(options[d] === undefined) options[d] = defaults[d];}
 
 	OpenLayers.ImgPath = "/images/map-icons/";
 	OpenLayers.Rico = {Corner: {
