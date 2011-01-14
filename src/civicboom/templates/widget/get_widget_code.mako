@@ -1,35 +1,39 @@
+<%def name="get_widget_vars(member=None)"><%
+      if hasattr(member, 'username'):
+          member = member.username
+      
+      def c_(key):
+        if hasattr(c,key):
+          return getattr(c,key)
+        return None
+      
+      self.width    = c_('widget_width')    or 240
+      self.height   = c_('widget_height')   or 320
+      self.theme    = c_('widget_theme')    or 'light'
+      self.title    = c_('widget_title')    or member
+      self.username = c_('widget_username') or member
+%></%def>
+
 
 ##------------------------------------------------------------------------------
 ## Widget Code
 ##------------------------------------------------------------------------------
 ## The defaults here should match the defaults in the HTML javascript generator to ensure the IFRAME here is the same an the initial settings
 <%def name="widget_code(member=None)">
-<%
-    if hasattr(member, 'username'):
-        member = member.username
-    
-    def c_(key):
-      if hasattr(c,key):
-        return getattr(c,key)
-      return None
-    
-    width  = c_('widget_width')  or 240
-    height = c_('widget_height') or 320
-    theme  = c_('widget_theme')  or 'light'
-    title  = c_('widget_title')  or member
-%>
-<iframe name ='${_("_site_name")}'
-        title='${_("_site_name Widget")}'
-        src  ='${h.url(
+<% get_widget_vars(member) %>
+<iframe name  = '${_("_site_name")}'
+        id    = 'CivicboomWidget'
+        title = '${_("_site_name Widget")}'
+        src   = '${h.url(
             host=app_globals.site_host, protocol='http',
             controller='widget', action='main',
-            widget_username = c_('widget_username') or member,
-            widget_theme    = theme ,
-            widget_title    = title ,
-            widget_width    = width ,
-            widget_height   = height,
+            widget_username = self.username,
+            widget_theme    = self.theme ,
+            widget_title    = self.title ,
+            widget_width    = self.width ,
+            widget_height   = self.height,
         )}'
-        width='${width}' height='${height}' scrolling='no' frameborder='0'>'
+        width='${self.width}' height='${self.height}' scrolling='no' frameborder='0'>'
     <a href='${h.url(host=app_globals.site_host, controller='members', action='show', id=member)}'>
         ${_('%ss _assigments on _site_name' % member)}
     </a>
@@ -51,6 +55,7 @@
 
 
 <%def name="get_widget_code(member=None, preview=True, instructions=True, customisation_controls=True)">
+  <% get_widget_vars(member) %>
   <%
     if hasattr(member, 'username'):
       member = member.username
@@ -84,7 +89,7 @@
         
         <form name="widget_customisation" action="">
           <fieldset><legend>${_("Title")}</legend>
-            <input type="text"   name="title" value="${_('%s insight: Share your news and opinion' % member)}" size="60"/><br/>
+            <input type="text"   name="title" value="${self.title}" size="60"/><br/>
           </fieldset>
           <fieldset><legend>${_("Theme")}</legend>
             <label>${_('Light')}</label><input type="radio" name="theme" value="light" checked/><br/>
@@ -92,8 +97,8 @@
           </fieldset>
           
           <fieldset><legend>${_("Size")}</legend>
-            <label>${_('Width')} </label><input type="text" name="width"  value="240" size="3" /><br/>
-            <label>${_('Height')}</label><input type="text" name="height" value="300" size="3" />
+            <label>${_('Width')} </label><input type="text" name="width"  value="${self.width}"  size="3" /><br/>
+            <label>${_('Height')}</label><input type="text" name="height" value="${self.height}" size="3" />
           </fieldset>
           
           <input type="button" value="Preview Widget" onClick="generate_widget_link();" />

@@ -88,18 +88,18 @@ def is_valid_user(u):
 protocol_for_login   = "https"
 protocol_after_login = "https"
 if 'https' in config:
-    if   config['https'] == 'default_when_logged_in':
+    if   config['security.https'] == 'default_when_logged_in':
         pass
-    elif config['https'] == 'disabled':
+    elif config['security.https'] == 'disabled':
         protocol_for_login   = "http"
         protocol_after_login = "http"
         log.warn('https disabled')
-    elif config['https'] == 'login_process_only':
+    elif config['security.https'] == 'login_process_only':
         protocol_after_login = "http"
-    elif config['https'] == 'enforce_when_logged_in':
+    elif config['security.https'] == 'enforce_when_logged_in':
         # TODO:
         # AllanC - this should be equivelent of putting https on the top of every method call, we force logged in users to use https by forcefully redirecting them
-        log.info('config[https]=enforce_when_logged_in is set and is currenlty not implemented')
+        log.info('config[security.https]=enforce_when_logged_in is set and is currenlty not implemented')
     
 
 @decorator
@@ -116,14 +116,14 @@ def authorize(_target, *args, **kwargs):
             json_post = session_remove('login_redirect_post')
             if json_post:
                 kwargs.update(json.loads(json_post))
-                print "overlay post"
+                #print "overlay post"
                 # AllanC - now unneeded - we dont need a user confirm as we can overlay post data over kwargs
                 #post_overlay = json.loads(json_post)
                 #c.target_url = current_url()
                 #c.post_values = post_overlay
                 #from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
                 #return render("web/misc/confirmpost.mako")
-
+            
         # Make original method call
         result = _target(*args, **kwargs)
         return result
@@ -140,9 +140,8 @@ def authorize(_target, *args, **kwargs):
             # save the the session POST data to be reinstated after the redirect
             if request.POST:
                 session_set('login_redirect_post', json.dumps(multidict_to_dict(request.POST)), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
-                print "saving post"
             return redirect(url_from_widget(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
-
+        
         # If API request - error unauthorised
         else:
             raise action_error(message="unauthorised", code=403) #Error to be formared by auto_formatter
@@ -155,7 +154,7 @@ def login_redirector():
     login_redirect = session_remove('login_redirect')
     if login_redirect:
         return redirect(login_redirect)
-    if 'widget_username' in request.params:
+    if getattr(c,'widget_username',None): #'widget_username' in request.params:
         # if the request has come from a widget - redirect back to widget
         return redirect(url_from_widget(controller='widget', action='main')) #, protocol='http'
 

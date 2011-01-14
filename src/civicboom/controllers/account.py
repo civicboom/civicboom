@@ -44,9 +44,9 @@ class AccountController(BaseController):
     def signin(self, **kwargs):
 
         # If no POST display signin template
-        if request.environ['REQUEST_METHOD'] == 'GET':
-            if 'widget_username' in request.params:
-                setup_widget_env()
+        if request.environ['REQUEST_METHOD'] == 'GET':            
+            setup_widget_env()
+            if c.widget_username: #'widget_username' in request.params:
                 return render("/widget/widget_signin.mako")
             return render("/web/account/signin.mako")
         

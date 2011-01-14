@@ -184,6 +184,9 @@ class BaseController(WSGIController):
             except ValueError: overlay_status_message(c.result,            flash_message_session )
 
     def print_controller_status(self):
+        from civicboom.lib.web import current_referer, current_url
+        print "current_referer: %s" % current_referer()
+        print "current_url    : %s" % current_url()
         print c
 
     def __call__(self, environ, start_response):
