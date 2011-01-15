@@ -22,6 +22,10 @@
   border-radius        : 0.2em;
   -webkit-border-radius: 0.2em;
   -moz-border-radius   : 0.2em;
+  
+  /*bottom: 0em;
+  position: relative;
+  */
 }
 
 #frag_containers .frag_bridge {

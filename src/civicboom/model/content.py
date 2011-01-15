@@ -191,6 +191,8 @@ class Content(Base):
             action_list.append('view')
         if self.private==False and self.creator != member:
             action_list.append('flag')
+        if self.private==False:
+            action_list.append('aggregate')
         return action_list
 
     def editable_by(self, member):

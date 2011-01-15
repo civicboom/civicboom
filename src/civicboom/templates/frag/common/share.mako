@@ -5,7 +5,8 @@
 ## Share (using default method)
 ##------------------------------------------------------------------------------
 <%def name="share(*args, **kwargs)">
-    ##${ShareThis(*args,**kwargs)}
+    ${ShareThis(*args,**kwargs)}
+
 </%def>
 
 ## TODO: need to support mutiple share buttons
@@ -36,14 +37,33 @@
 ## Share This
 ##------------------------------------------------------------------------------
 ## http://help.sharethis.com/customization/customization-overview - registered to admin@civicboom.com
+
+
+<%def name="share_this_js()">
+	<!-- ShareThis -->
+	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+	<script type="text/javascript">
+		stLight.options({
+			publisher:'${config['api_key.sharethis']}' ,
+			onhover  : false ,
+			embeds   : true ,
+		});
+	</script>
+</%def>
+
+
 <%def name="ShareThis(*args, **kwargs)">
     
-    <span class="st_email_custom     icon icon_email"   ></span>
-    <span class="st_facebook_custom  icon icon_facebook"></span>
-    <span class="st_twitter_custom   icon icon_twitter" ></span>
+    <%def name="share_this_icon(service)">
+        <span class="st_${service}_custom icon icon_${service}" title="${_('Share This via ')}${service}"><span>${service}</span></span>
+    </%def>
+    
+    % for service in ['email', 'facebook', 'twitter', 'linkedin']:
+        ${share_this_icon(service)}
+    % endfor
     <span class="st_sharethis_custom icon icon_share" title="ShareThis"
         % for k,v in kwargs.iteritems():
-            st_${k}='${v.replace("'","\'")}'
+            st_${k}='${v.replace("'","")}'
         % endfor
     ></span>
     <script type="text/javascript">

@@ -134,4 +134,8 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 	Commercial use allowed with link to pixel-mixer.com
 </div>
 
+<p>Social Network Icon Pack by Komodo Media, Rogie King is licensed under a Creative Commons Attribution-Share Alike 3.0 Unported License.</p>
+<a href="http://www.komodomedia.com/download/#social-network-icon-pack">komodomedia.com</a>
+Creative Commons License
+
 </article>

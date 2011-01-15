@@ -77,20 +77,6 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 	<script src="/javascript/IE8.js"></script>
 <![endif]-->
 
-##----------------------------------------------------------------------------
-## Share This
-##----------------------------------------------------------------------------
-<%doc>
-	<!-- sharethis -->
-	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-	<script type="text/javascript">
-		stLight.options({
-			publisher:'${config['api_key.sharethis']}' ,
-			onhover  : false ,
-			embeds   : true ,
-		});
-	</script>
-</%doc>
 
 ##----------------------------------------------------------------------------
 ## Google Analitics (async setup, see scripts_end for more)

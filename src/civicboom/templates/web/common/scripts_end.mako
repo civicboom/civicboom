@@ -5,6 +5,7 @@
     ${set_frag_height()}
     ${google_analytics_end()}
     ${share.init_janrain_social()}
+    ${share.share_this_js()}
 
     ## Maps (should be loaded on-demand, but frags confuse that
     % if config['development_mode']:

@@ -381,7 +381,8 @@
     % endif
 
     % if 'aggregate' in self.actions:
-        <a href='' class="icon icon_boom"><span>Aggregate</span></a>
+        ##<a href='' class="icon icon_boom"><span>Aggregate</span></a>
+        ${share.janrain_social(self.content, 'janrain', class_='icon icon_share')}
     % endif
     
     % if 'flag' in self.actions:
@@ -392,7 +393,7 @@
         ${parent.georss_link()}
     % endif
 
-    ${share.janrain_social(self.content, 'janrain', class_='icon icon_share')}
+    
     
 </%def>
 

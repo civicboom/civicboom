@@ -203,7 +203,7 @@ HTML.no-js #flash_message {
 /*----------------------------------------------------------------------------*/
 
 .button {
-	display: block;
+	display: inline-block;
 	background: #4974b8;
 
 	border-radius        : 0.2em;
