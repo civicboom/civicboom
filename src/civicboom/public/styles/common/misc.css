@@ -15,18 +15,20 @@ BODY.c-misc.a-about ARTICLE TIME {
 	/*font-size: 1.5em;*/
 	margin-bottom: 0.5em;
 }
+/*
 BODY.c-misc.a-about ARTICLE IMG {
 	display: block;
 	margin: auto;
 	max-width: 100%;
 }
+*/
 
 BODY.c-misc.a-about ARTICLE.col {
-	max-width: 1000px;
+	max-width: 940px;
 	margin: auto;
 }
 BODY.c-misc.a-about ARTICLE.cols {
-	max-width: 1000px;
+	max-width: 940px;
 	margin: auto;
 	-moz-column-width: 450px;
 	-moz-column-gap: 1em;
