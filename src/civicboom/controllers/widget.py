@@ -56,14 +56,14 @@ def setup_widget_env():
     def construct_widget_query_string():
         query_string = "?"
         for var in app_globals.widget_variables:
-            if getattr(c,var) != None:
+            if getattr(c,var,None) != None:
                 query_string += var+'='+quote_plus(getattr(c,var))+'&'
         return query_string
     get_widget_varibles_from_env()
     c.widget_query_string = construct_widget_query_string() #construct a new query string based on current widget global variables (this is needed for intercepted signin pages to pass the variables on see widget_signin.mako FORM_ACTION)
-    c.widget_owner        = get_member(c.widget_username)
+    c.widget_owner        = get_member(getattr(c,'widget_username',None))
     # Set defaults from config if not set
-    c.widget_theme        = c.widget_theme  or 'light'
+    c.widget_theme        = getattr(c,'widget_theme',None) or 'light'
     try:
         c.widget_width  = int(c.widget_width ) or 240
         c.widget_height = int(c.widget_height) or 320

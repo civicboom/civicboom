@@ -131,6 +131,7 @@ function cb_frag_remove(jquery_element) {
 	cb_frag_remove_sibblings(parent);
 	
 	$.modal.close(); // Aditionaly, if this is in a popup then close the popup
+	clearInterval(autoSaveDraftTimer);
 }
 
 function cb_frag_remove_sibblings(jquery_element) {
