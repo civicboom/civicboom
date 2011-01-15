@@ -12,6 +12,10 @@ whenever we fix bugs or add features, the scripts and tools that we write intern
 but can be used as standalone programs are available from
 <a href="https://github.com/civicboom">our github page</a>.
 
+<!--
+bugs reported in other people's trackers:
+http://code.google.com/p/page-speed/issues/detail?id=448
+-->
 <div>
 <span>Front End:</span>
 
