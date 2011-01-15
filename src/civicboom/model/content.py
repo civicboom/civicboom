@@ -122,7 +122,7 @@ class Content(Base):
             #'status'       : None ,
             'parent_id'    : None ,
             'title'        : None ,
-            'content_short': None ,
+            'content_short': lambda content: "implement content_short postgress trigger" ,
             'creator_id'   : None , 
             'url'          : None ,
             'thumbnail_url': None ,
@@ -274,7 +274,7 @@ class Content(Base):
     @property
     def content_short(self):
         """
-        AllanC TODO: Derived field?
+        AllanC TODO: Derived field - Postgress trigger needed
         """
         from civicboom.lib.text import strip_html_tags
         return truncate(strip_html_tags(self.content), length=100, indicator='...', whole_word=True)

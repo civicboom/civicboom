@@ -21,7 +21,7 @@ from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null
-from sqlalchemy.orm       import join, joinedload
+from sqlalchemy.orm       import join, joinedload, defer
 import datetime
 
 # Logging setup
@@ -156,7 +156,8 @@ def _init_search_filters():
 
     def append_search_boomed_by(query, member):
         member = _normalize_member(member, always_return_id=True)
-        return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
+        #return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
+        return query.filter(Content.id.in_( Session.query(Boom.content_id).filter(Boom.member_id==member) ))
         
 
     search_filters = {
@@ -243,6 +244,7 @@ class ContentsController(BaseController):
         
         # Build Search
         results = Session.query(Content).with_polymorphic('*')
+        results = results.options(defer('content'))
         results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
         # TODO: exculude fetch of content field in this query return. lazyload it?
         if 'private' in kwargs and logged_in_creator:
