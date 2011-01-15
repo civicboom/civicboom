@@ -125,7 +125,7 @@ function cb_frag_remove(jquery_element) {
 		parent.remove();
 		// If no fragments on screen redirect to default page
 		if ($('.'+fragment_container_class).length == 0) {
-			window.location.replace("/");
+			window.location.replace("/profile/index");
 		}
 	});
 	cb_frag_remove_sibblings(parent);
