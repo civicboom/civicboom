@@ -21,19 +21,24 @@
         self.attr.icon_type = self.member['type']
         
         self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
-        
-        if current_user:
-            self.attr.title     = 'Current User'
-            self.attr.icon_type = 'current_user'
-            
-        
-        self.attr.frag_data_css_class = 'frag_member'
-        
+
         self.attr.share_kwargs = {
             'url'      : self.attr.html_url ,
             'title'    : self.name ,
             'image'    : self.member['avatar_url'] ,
         }
+        
+        if self.current_user:
+            self.attr.title     = 'Current User'
+            self.attr.icon_type = 'current_user'
+            
+            self.attr.share_kwargs.update({
+                'url'  : h.url('member', id=self.id, host=app_globals.site_host, protocol='http') ,
+            })
+        
+        self.attr.frag_data_css_class = 'frag_member'
+        
+        
 
         self.attr.auto_georss_link = True
     %>

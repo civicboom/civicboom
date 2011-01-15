@@ -106,11 +106,14 @@
             % if config['development_mode']:
                 ##c.format=='frag' and 
                 <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
+                <span class="icon"></span>
             % endif
             
             ## Share
             % if self.attr.share_kwargs:
                 ${share.share(**self.attr.share_kwargs)}
+                ## padding
+                <span class="icon"></span>
             % endif
             
             ## RSS

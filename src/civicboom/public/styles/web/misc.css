@@ -1,15 +1,18 @@
-/*
- * front page, a blurb and a signup box
- */
+/*----------------------------------------------------------------------------*/
+/*                                 Titlepage                                  */
+/*----------------------------------------------------------------------------*/
 
 BODY.c-misc.a-titlepage DIV#app {
     text-align: center;
 }
 
+BODY.c-misc.a-titlepage DIV#app .button {
+    width: 8em;
+}
+
 BODY.c-misc.a-titlepage SECTION.mobile {
     display: block;
     padding: 1em;
-        
 }
 
 BODY.c-misc.a-titlepage SECTION.description h1 {
@@ -18,8 +21,8 @@ BODY.c-misc.a-titlepage SECTION.description h1 {
 }
 
 BODY.c-misc.a-titlepage SECTION.description {
-    display: block;
-    width: 600px;
+    padding-top: 1em;
+    display: inline-block;
     text-align: left;
 }
 
@@ -46,54 +49,26 @@ BODY.c-misc.a-titlepage SECTION.description .description_container .steps_contai
 	-webkit-border-radius: 0.5em;
     
     width: 100%;
-}
-
-BODY.c-misc.a-titlepage SECTION.description .description_container .steps_container .step_current {
-    padding: 0.5em;
-}
-BODY.c-misc.a-titlepage SECTION.description .description_container .steps_container .step_back {
-    position: absolute;
-    bottom: -0.5em;
-    left  : -0.5em;
-    border: 1px solid #ccc;
-}
-BODY.c-misc.a-titlepage SECTION.description .description_container .steps_container .step_next {
-    position: absolute;
-    bottom: -0.5em;
-    right : -0.5em;
-    border: 1px solid #ccc;
-}
-BODY.c-misc.a-titlepage SECTION.description .description_container .steps_container .step_description {
-    vertical-align: top;
-    border-left: 1px solid #ccc;
-    width: 33%;
-    padding: 0.5em;
     
+    position: relative;
+    top:0em;
 }
 
-/*
-BODY.c-misc.a-titlepage DIV#app {
-	font-size: 1.2em;
-	font-weight: bold;
-	font-family: sans;
-	text-align: center;
-	padding-bottom: 32px;
-}
-BODY.c-misc.a-titlepage SECTION.blurb {
-	display: block;
-	font-style: italic;
-	margin-left: 350px;
-	margin-right: 350px;
-	margin-top: 100px;
-}
-BODY.c-misc.a-titlepage SECTION.mobile,
-BODY.c-misc.a-titlepage SECTION.signup {
-	width: 200px;
-	padding: 16px;
-	margin: 50px;
-}
-BODY.c-misc.a-titlepage SECTION.mobile {float: left;}
-BODY.c-misc.a-titlepage SECTION.signup {float: right;}
+#step_container                   {              width: 600px; height: 300px;}
+#step_container .step_main        {float: left;  width: 399px; height: 300px; border-right: 1px solid #ccc;}
+#step_container .step_description {float: right; width: 200px; height: 300px;}
+#step_container .step_padding     {padding: 0.5em;}
+HTML.js #step_container .step  {position: absolute;}
 
-BODY.c-misc.a-titlepage DIV#app .button {display: block; font-size: 1em;}
-*/
+.steps_container .step_back {
+    position: absolute;
+    bottom: 4px;
+    left  : 4px;
+    border: 1px solid #ccc;
+}
+.steps_container .step_next {
+    position: absolute;
+    bottom: 4px;
+    right : 204px;
+    border: 1px solid #ccc;
+}

@@ -63,7 +63,7 @@
     % endfor
     <span class="st_sharethis_custom icon icon_share" title="ShareThis"
         % for k,v in kwargs.iteritems():
-            st_${k}='${v.replace("'","")}'
+            st_${k}='${v.replace("'","").replace('"','')}'
         % endfor
     ></span>
     <script type="text/javascript">

@@ -2,6 +2,9 @@
 
 <%def name="title()">${_("Welcome")}</%def>
 
+
+
+
 ##------------------------------------------------------------------------------
 ## Body
 ##------------------------------------------------------------------------------
@@ -27,38 +30,63 @@
         
         <div class='description_container'>
             <h1>${_('What is _site_name?')}</h1>
-            <table class="steps_container"><tr>
-                <td class="step_current">
-                    <div style="position: relative; top:0em;">
-                    <div class="step_back">
-                        left
-                    </div>
-                    <div class="step_next">
-                        right
-                    </div>
-                    
-                    <p>current plan</p>
-                    <p>figro</p>
-                    <p>iewnf</p>
-                    <p>rgrg</p>
-                    </div>
-                </td>
-                <td class="step_description">
-                    description
-                </td>
-                <div style="clear: both;"></div>
-            </tr></table>
+            <div class="steps_container">
+                <div id="step_container">
+                    <ul>
+                        ${steps()}
+                    </ul>
+                </div>
+                
+                <a class="step_back" onclick="step_back(); return false;">
+                    left
+                </a>
+                <a class="step_next" onclick="step_next(); return false;">
+                    right
+                </a>
+                
+                <script type="text/javascript">
+                    var class_current = 'current';
+                    function step_remove_current() {
+                        var container = $('#step_container');
+                        var current = container.find('.'+class_current);
+                        current.removeClass(class_current);
+                        current.fadeOut();
+                        return current;
+                    }
+                    function step_next() {
+                        var current = step_remove_current();
+                        var next    = current.next();
+                        if (!next.length) {next = $('#step_container ul li:first-child');}
+                        next.addClass(class_current);
+                        next.fadeIn();
+                    }
+                    function step_back() {
+                        var current = step_remove_current();
+                        var prev    = current.prev();
+                        if (!prev.length) {prev = $('#step_container ul li:last-child');}
+                        prev.addClass(class_current);
+                        prev.fadeIn();
+                    }
+                    $('.step_next').click();
+                </script>
+                
+                ##<div style="clear:both"></div>
+            </div>
         </div>
         
         <a style="float:right;" class="button" href="${url(controller='misc', action='about')}">${_('Learn More')}</a>
-        <p>${_('Dont just read it, feed it')}</p>
+        <p style="font-size: x-large; font-weight: bold;">${_('Dont just read it, feed it')}</p>
         
         <div style="clear: both; padding: 0.5em;"></div>
         
         <a style="float:right; color: black; background: none;" class="button" href="${url(controller='misc', action='about')}">${_('Get in touch')}</a>
-        <p>${_('Are you an organisation? Do you want to know how Civicboom can help you')}</p>
+        <p style="font-weight: bold;">${_('Are you an organisation? Do you want to know how Civicboom can help you')}</p>
     </section>
 </%def>
+
+
+
+
 
 ##------------------------------------------------------------------------------
 ## Mobile
@@ -77,6 +105,49 @@
 </%def>
 
 
+##------------------------------------------------------------------------------
+## Steps
+##------------------------------------------------------------------------------
+
+<%def name="step()">
+    ##% for s in range(3):
+    <li class="step hideable">
+        <div class="step_main">
+            <div class="step_padding">
+                ${caller.main()}
+            </div>
+        </div>
+        <div class="step_description">
+            <div class="step_padding">
+                ${caller.description()}
+            </div>
+        </div>
+    </li>
+    ##% endfor
+</%def>
+
+
+<%def name="steps()">
+
+    <%self:step arg>
+        <%def name="main()">
+            I am the main
+        </%def>
+        <%def name="description()">
+            description
+        </%def>
+    </%self:step>
+
+    <%self:step>
+        <%def name="main()">
+            I am the main 2
+        </%def>
+        <%def name="description()">
+            description 2
+        </%def>
+    </%self:step>    
+    
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Old

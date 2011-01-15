@@ -10,4 +10,5 @@
 <a href="${h.url(controller='misc', action='about', id='privacy')}">${_("Privacy")}</a>
 <a href="${h.url(controller='misc', action='about', id='developers')}">${_("Developers")}</a>
 
-<a class="icon icon_twitter" href="http://twitter.com/civicboom"><span>twitter</span></a>
+<a class="icon icon_twitter"  href="http://twitter.com/civicboom"                                      ><span>twitter</span></a>
+<a class="icon icon_facebook" href="http://www.facebook.com/home.php#!/pages/Civicboom/141877465841094"><span>Facebook</span></a>
