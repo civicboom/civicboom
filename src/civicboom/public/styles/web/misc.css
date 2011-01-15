@@ -22,7 +22,7 @@ BODY.c-misc.a-titlepage SECTION.description h1 {
 
 BODY.c-misc.a-titlepage SECTION.description {
     padding-top: 1em;
-    display: inline-block;
+    display: block;
     text-align: left;
 }
 
@@ -60,15 +60,21 @@ BODY.c-misc.a-titlepage SECTION.description .description_container .steps_contai
 #step_container .step_padding     {padding: 0.5em;}
 HTML.js #step_container .step  {position: absolute;}
 
-.steps_container .step_back {
+.steps_container .step_nav {
+    vertical-align: middle;
+    font-size: 2em;
+
+    padding    : 0.2em 0.5em;
+    padding-top: 0em;
+
+	border-radius        : 0.2em;
+	-moz-border-radius   : 0.2em;
+	-webkit-border-radius: 0.2em;
+    
+    border: 1px solid #ccc;
+    cursor: pointer;
     position: absolute;
     bottom: 4px;
-    left  : 4px;
-    border: 1px solid #ccc;
 }
-.steps_container .step_next {
-    position: absolute;
-    bottom: 4px;
-    right : 204px;
-    border: 1px solid #ccc;
-}
+.steps_container .step_back {left  :   4px;}
+.steps_container .step_next {right : 204px;}

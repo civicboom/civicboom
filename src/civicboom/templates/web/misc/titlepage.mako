@@ -37,12 +37,8 @@
                     </ul>
                 </div>
                 
-                <a class="step_back" onclick="step_back(); return false;">
-                    left
-                </a>
-                <a class="step_next" onclick="step_next(); return false;">
-                    right
-                </a>
+                <a class="step_nav step_back" onclick="step_back(); return false;">&lt;</a>
+                <a class="step_nav step_next" onclick="step_next(); return false;">&gt;</a>
                 
                 <script type="text/javascript">
                     var class_current = 'current';
@@ -94,13 +90,17 @@
 
 <%def name="mobile()">
     <section class="mobile">
+        
         <h2>${_('Grab the _site_name app')}</h2>
-        <img src="/images/misc/mobile_nonpreview.png">
+        <a href="${url(controller='misc', action='mobile')}">
+            <img src="/images/misc/mobile_android.png">
+        </a>
         <p>${_('Comming soon:')}</p>
         <ul>
             <li>Blackberry</li>
             <li>iPhone</li>
         </ul>
+        
     </section>
 </%def>
 
