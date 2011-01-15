@@ -11,13 +11,16 @@
 <%def name="init_vars()">
     <%
         self.attr.share_url        = url.current() #format='html'
-        self.attr.auto_georss_link = True
+        #self.attr.auto_georss_link = True
     %>
 </%def>
 <%def name="body()">
     <div class="frag_col">
     ${next.body()}
     </div>
+</%def>
+<%def name="actions_common()">
+    ${georss_link()}
 </%def>
 
 

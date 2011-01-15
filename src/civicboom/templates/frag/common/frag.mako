@@ -9,7 +9,7 @@
     frag_url            = True
     html_url            = True
     rss_url             = True
-    auto_georss_link    = False
+    ##auto_georss_link    = False
     
     frag_data_css_class = ''
 %>
