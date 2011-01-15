@@ -55,13 +55,13 @@
 <%def name="ShareThis(*args, **kwargs)">
     
     <%def name="share_this_icon(service)">
-        <span class="st_${service}_custom icon icon_${service}" title="${_('Share This via ')}${service}"><span>${service}</span></span>
+        <span class="st_${service}_custom icon icon_${service} link_pointer" title="${_('Share This via ')}${service}"><span>${service}</span></span>
     </%def>
     
     % for service in ['email', 'facebook', 'twitter', 'linkedin']:
         ${share_this_icon(service)}
     % endfor
-    <span class="st_sharethis_custom icon icon_share" title="ShareThis"
+    <span class="st_sharethis_custom icon icon_share link_pointer" title="ShareThis"
         % for k,v in kwargs.iteritems():
             st_${k}='${v.replace("'","").replace('"','')}'
         % endfor
