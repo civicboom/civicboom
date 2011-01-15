@@ -12,6 +12,12 @@ whenever we fix bugs or add features, the scripts and tools that we write intern
 but can be used as standalone programs are available from
 <a href="https://github.com/civicboom">our github page</a>.
 
+<!--
+bugs reported in other people's trackers:
+http://code.google.com/p/page-speed/issues/detail?id=448 - png optimisation
+https://bitbucket.org/bbangert/beaker/issue/62/some-way-to-set-httponly-cookies
+https://bitbucket.org/bbangert/beaker/issue/63/secure-auto-cookie-setting
+-->
 <div>
 <span>Front End:</span>
 
