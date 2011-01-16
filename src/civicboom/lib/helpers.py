@@ -325,12 +325,12 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     # A standard <A> tag that submits the compatable form (typically used with format='redirect')
     hl = HTML.a(
         value,
-        id="link_"+hhash,
-        style="display: none;",
-        href=href,
-        class_=css_class,
-        title=title,
-        onClick="if (%(confirm_text)s) {var e = document.getElementById('form_%(hhash)s'); if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} } return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        id      = "link_"+hhash,
+        style   = "display: none;",
+        href    = href,
+        class_  = css_class,
+        title   = title,
+        onClick = "if (%(confirm_text)s) {var e = document.getElementById('form_%(hhash)s'); if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} } return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
     # $('#form_%(hhash)s').onsubmit();
     

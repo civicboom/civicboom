@@ -29,8 +29,12 @@
         }
         
         if self.current_user:
-            self.attr.title     = 'Current User'
-            self.attr.icon_type = 'current_user'
+            if self.member['type'] == 'group':
+                self.attr.title     = _('Current Group Persona')
+                self.attr.icon_type = 'group'
+            else:
+                self.attr.title     = _('Current User')
+                self.attr.icon_type = 'current_user'
             
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, host=app_globals.site_host, protocol='http') ,

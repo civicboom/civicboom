@@ -106,6 +106,10 @@ class AccountController(BaseController):
     def set_persona(self, id, **kwargs):
         if set_persona(id):
             user_log.info("Switched to persona %s" % id)
+            # AllanC - not a sutable solution - I wanted an AJAX working version
+            #          I have put a hack in here to force html requests to be redirected
+            if c.format=='html':
+                return redirect(url(controller='profile', action='index'))
             return action_ok("switched persona")
         else:
             user_log.info("Failed to switch to persona %s" % id)
