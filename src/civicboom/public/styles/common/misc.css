@@ -40,6 +40,7 @@ BODY.c-misc.a-about ARTICLE.cols {
 
 BODY.c-misc.a-about ARTICLE.legal OL {
 	font-size: 0.75em;
+	max-width: 780px;
 }
 BODY.c-misc.a-about ARTICLE.legal OL OL {
 	font-size: 1em;
