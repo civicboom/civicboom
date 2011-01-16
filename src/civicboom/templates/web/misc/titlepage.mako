@@ -95,7 +95,7 @@
         <a href="${url(controller='misc', action='mobile')}">
             <img src="/images/misc/mobile_android.png">
         </a>
-        <p>${_('Comming soon:')}</p>
+        <p>${_('Coming soon:')}</p>
         <ul>
             <li>Blackberry</li>
             <li>iPhone</li>
