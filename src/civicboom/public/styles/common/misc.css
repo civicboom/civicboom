@@ -62,14 +62,9 @@ BODY.c-misc.a-about ARTICLE.open-source DIV SPAN {
 }
 .toc LI A {
 	display: block;
-	padding: 4px;
 	width: 128px;
-	border: 1px solid #888;
 	margin: 4px;
 }
-.toc LI A:hover {
-	border: 1px solid #000;
-}
 .toc A {
-	color: black;
+	color: white;
 }
