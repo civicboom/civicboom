@@ -155,28 +155,28 @@
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='assignment' and ('due_date' not in c or c['due_date']==None or h.api_datestr_to_datetime(c['due_date'])>=datetime.datetime.now()) ] ,
-            _('Assignments Active') ,
+            _('_assignments active').capitalize() ,
             h.args_to_tuple('contents', creator=self.id, list='assignments_active') ,
             icon = 'assignment' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='assignment' and ('due_date' in c and c['due_date']!=None and h.api_datestr_to_datetime(c['due_date'])<=datetime.datetime.now()) ] ,
-            _('Assignments Previous') ,
+            _('_assignments previous').capitalize() ,
             h.args_to_tuple('contents', creator=self.id, list='assignments_previous') ,
             icon = 'assignment' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='article' and c['approval']!='none' ] ,
-            _('Responses') ,
+            _('Responses').capitalize() ,
             h.args_to_tuple('contents', creator=self.id, list='responses') ,
             icon = 'response' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='article' and c['approval']=='none' ] ,
-            _('Articles') ,
+            _('_articles').capitalize() ,
             h.args_to_tuple('contents', creator=self.id, list='articles') ,
             icon = 'article' ,
         )}
