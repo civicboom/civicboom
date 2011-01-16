@@ -62,3 +62,19 @@ function add_onclick_submit_field(current_element) {
 	current_element.closest('form').append('<input type="hidden" name="'+field_name+'" value="'+field_value+'" class="fake_submit"/>');
 }
 
+
+
+// http://bonta-kun.net/wp/2007/07/05/javascript-typeof-with-array-support/
+function typeOf(obj) {
+	if ( typeof(obj) == 'object' ) {
+		if (obj.length) {return 'array';}
+		else            {return 'object';}
+	}
+	else {
+		return typeof(obj);
+	}
+}
+// Other solutions could include
+// http://joncom.be/code/realtypeof/
+// http://snipplr.com/view/1996/typeof--a-more-specific-typeof/
+// jQuery does not appear to have a nice base call for this

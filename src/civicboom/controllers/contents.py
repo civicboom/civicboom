@@ -418,7 +418,7 @@ class ContentsController(BaseController):
         if submit_type == 'publish' and 'type' not in kwargs: # If publishing set 'type' (as this is submitted from the form as 'target_type')
             if hasattr(content, 'target_type'):
                 kwargs['type'] = content.target_type
-            if 'target_type' in kwargs:
+            if kwargs.get('target_type'):
                 kwargs['type'] = kwargs['target_type']
 
 

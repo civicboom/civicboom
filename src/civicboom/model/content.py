@@ -332,7 +332,7 @@ class DraftContent(Content):
     __tablename__   = "content_draft"
     __mapper_args__ = {'polymorphic_identity': 'draft'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
-    target_type     = Column(_content_type, nullable=True, default=None)
+    target_type     = Column(_content_type, nullable=True, default='article')
     #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
 
     __to_dict__ = copy.deepcopy(Content.__to_dict__)

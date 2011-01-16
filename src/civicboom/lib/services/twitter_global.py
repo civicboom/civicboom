@@ -16,7 +16,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-
+"""
 t = Twitter(
     auth=OAuth(
         config['api_key.twitter.oauth_token'],
@@ -28,10 +28,12 @@ t = Twitter(
     api_version='1',
     domain='api.twitter.com'
 )
+"""
 
 def status(**kargs):
     kargs['status'] = kargs['status'].encode('utf8', 'replace')
-    t.statuses.update(**kargs)
+    log.warn('global twitter disabled')
+    ##t.statuses.update(**kargs)
 
 # Old custom ideas
 """

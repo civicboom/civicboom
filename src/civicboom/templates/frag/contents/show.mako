@@ -320,9 +320,8 @@
     % if 'boom' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='boom', format='redirect', id=self.id) ,
-            value="" ,
-            title=_('Boom') ,
-            css_class="icon icon_boom" ,
+            value = _('Boom') ,
+            value_formatted = h.literal("<span class='icon icon_boom'></span>%s") % _('Boom'),
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
     % endif

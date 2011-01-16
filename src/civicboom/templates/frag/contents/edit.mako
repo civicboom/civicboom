@@ -79,7 +79,11 @@
                         ##cb_frag_load($('#edit_${self.id}'), submit_complete_${self.id}_url); ## Why update just this frag, if we set the frag source then it will be reloaded along with the reload of other frags with this content id
                         cb_frag_set_source($('#edit_${self.id}'), submit_complete_${self.id}_url);
                         submit_complete_${self.id}_url = null;
+                        % if self.content.get('parent'):
+                        cb_frag_reload(['contents/${self.id}','contents/${self.content['parent']['id']}']);
+                        % else:
                         cb_frag_reload('contents/${self.id}');
+                        % endif
                     }
                 }
             </script>

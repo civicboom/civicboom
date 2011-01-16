@@ -164,7 +164,7 @@ function cb_frag_reload(param) {
 		frag_element.load(frag_source);
 	}
 
-	if (typeof param == 'string') {
+	function reload_frags_containing(array_of_urls) {
 		// Look through all <A> tags in every frgament for the string
 		// if the link contains this string
 		// add the <A>'s parent frag to a refresh list (preventing duplicates)
@@ -173,28 +173,25 @@ function cb_frag_reload(param) {
 		var frags_to_refresh = {};
 		$(fragment_containers_id+' a').each(function(index) {
 			var link_element = $(this);
-			if (link_element.attr('href').indexOf(param) != -1) {
-				var elem_source_pair = get_parent_container_element_source(link_element);
-				var frag_element = elem_source_pair[0];
-				var frag_source  = elem_source_pair[1];
-				frags_to_refresh[frag_source] = frag_element;
+			for (var url_part in array_of_urls) {
+				url_part = array_of_urls[url_part];
+				if (link_element.attr('href').indexOf(url_part) != -1) {
+					var elem_source_pair = get_parent_container_element_source(link_element);
+					var frag_element = elem_source_pair[0];
+					var frag_source  = elem_source_pair[1];
+					frags_to_refresh[frag_source] = frag_element;
+				}
 			}
 		});
+		// Go though all frags found reloading them
 		for (var key in frags_to_refresh) {
 			frags_to_refresh[key].load(key);
 		}
-		
-		/*
-		$(fragment_containers_id).children('.'+fragment_container_class).children('.'+fragment_source_class).each(function(index){
-			if ($(this).attr('href').indexOf(param) != -1) {
-				cb_frag_reload($(this));
-			}
-		});
-		*/
 	}
-	else {
-		reload_element(param);
-	}
+
+	if      (typeof param == 'string') {reload_frags_containing([param]);}
+	else if (typeOf(param) == 'array') {reload_frags_containing( param );}
+	else                               {reload_element(param);}
 
 }
 
