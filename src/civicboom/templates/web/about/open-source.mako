@@ -120,6 +120,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 -->
 </div>
 
+<!-- these only appear in our internal test data
 <div>
 <span>Images:</span>
 
@@ -131,6 +132,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 	<a href="http://www.flickr.com/photos/johnkarakatsanis/4805593861/">John.Karakatsanis</a> -
 	CC-BY-SA
 </div>
+-->
 
 <div>
 <span>Icons:</span>

@@ -40,6 +40,7 @@ BODY.c-misc.a-about ARTICLE.cols {
 
 BODY.c-misc.a-about ARTICLE.legal OL {
 	font-size: 0.75em;
+	max-width: 780px;
 }
 BODY.c-misc.a-about ARTICLE.legal OL OL {
 	font-size: 1em;
@@ -62,14 +63,9 @@ BODY.c-misc.a-about ARTICLE.open-source DIV SPAN {
 }
 .toc LI A {
 	display: block;
-	padding: 4px;
 	width: 128px;
-	border: 1px solid #888;
 	margin: 4px;
 }
-.toc LI A:hover {
-	border: 1px solid #000;
-}
 .toc A {
-	color: black;
+	color: white;
 }

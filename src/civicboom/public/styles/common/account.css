@@ -4,11 +4,30 @@
 BODY.c-account.a-signin .signin {
 	text-align: center;
 	margin: auto;
+	width: 940px;
 }
-BODY.c-account.a-signin .signin TD.block {
-	padding: 16px;
-	width: 50%;
-}
-BODY.c-account.a-signin .signin TABLE {
+BODY.c-account.a-signin TABLE {
 	margin: auto;
+}
+BODY.c-account.a-signin FORM {
+	background: #ddd;
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+}
+
+BODY.c-account.a-signin H1 {
+	text-align: left;
+	margin-bottom: 16px;
+}
+BODY.c-account.a-signin FORM,
+BODY.c-account.a-signin FORM TD {
+	padding: 8px;
+}
+BODY.c-account.a-signin FORM TABLE,
+BODY.c-account.a-signin FORM TABLE TBODY {
+	width: 100%;
+}
+BODY.c-account.a-signin FORM TD INPUT {
+	border-width: 1px;
 }

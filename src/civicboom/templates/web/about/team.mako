@@ -31,7 +31,7 @@
 			a big fan of the great outdoors... when work allows.
 			<p><a href="#"><img src="/images/about/civicboom.png"></a>
 			   <a href="#"><img src="/images/about/twitter.png"></a>
-			   <a href="http://www.linkedin.com/profile/view?id=24462121&authType=name&authToken=E3z4&goback=.nmp_*1_*1_*1_*1_*1_*1&trk=NUS_UNIU_SHARE-prfl"><img src="/images/about/linkedin.png"></a>
+			   <a href="http://uk.linkedin.com/in/elizabethhodgson"><img src="/images/about/linkedin.png"></a>
 		</td>
 	</tr>
 	<tr>
@@ -41,7 +41,7 @@
 			<b>Builds Civicboom.</b> Responsible for the technical
 			implementation and direction of Civicboom. When not
 			locked away as a code monkey, Allan likes to rock out.
-			<p><a href="http://www.linkedin.com/profile/view?id=52803166&authType=name&authToken=46ld&goback=.nmp_*1_*1_*1_*1_*1_*1&trk=nus_variable_vname"><img src="/images/about/linkedin.png"></a>
+			<p><a href="http://www.linkedin.com/pub/allan-callaghan/15/825/47a"><img src="/images/about/linkedin.png"></a>
 		</td>
 	</tr>
 	<tr>
@@ -52,7 +52,7 @@
 			smoothly, making sure it doesn't crash from the load when
 			a massive story breaks. Ever practical, Shish spends his
 			spare time adding useful features to his clothes...
-			<p><a href="http://www.linkedin.com/profile/view?id=97070386&authType=name&authToken=b03B&goback=.nmp_*1_*1_*1_*1_*1_*1&trk=nus_variable_vname"><img src="/images/about/linkedin.png"></a>
+			<p><a href="http://uk.linkedin.com/pub/chris-girling/28/612/baa"><img src="/images/about/linkedin.png"></a>
 		</td>
 	</tr>
 	<tr>
