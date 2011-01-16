@@ -87,7 +87,7 @@ class Content(Base):
     creation_date   = Column(DateTime(),       nullable=False, default=func.now())
     update_date     = Column(DateTime(),       nullable=False, default=func.now(), doc="Controlled by postgres trigger")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
-    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
+    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=2)
     
     visible         = Column(Boolean(),        nullable=False, default=True)
     edit_lock       = Column(_edit_lock,       nullable=True , default=None)
@@ -466,7 +466,7 @@ class AssignmentContent(UserVisibleContent):
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
-    default_response_license_id = Column(Integer(), ForeignKey('license.id'), nullable=False, default=1)
+    default_response_license_id = Column(Integer(), ForeignKey('license.id'), nullable=False, default=2)
     #num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
 
     default_response_license    = relationship("License")

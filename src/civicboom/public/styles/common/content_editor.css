@@ -2,7 +2,15 @@
 /* Content                                                                    */
 /*----------------------------------------------------------------------------*/
 
+.frag_content_edit fieldset legend {
+  font-size: 120%;
+  font-weight: bold;
+  color: #666;
+  cursor: pointer;
+}
 
+
+/*
 .frag_content_edit .form_instuctions {
   font-size: 86%;
   color: #555;
@@ -11,12 +19,6 @@
 .frag_content_edit fieldset        {
   border-top: 1px solid #888;
   margin-top: 1em;
-}
-.frag_content_edit fieldset legend {
-  font-size: 120%;
-  font-weight: bold;
-  color: #666;
-  margin-bottom: 0.5em;
 }
 
 .frag_content_edit fieldset fieldset {
@@ -28,7 +30,7 @@
   color: #999;
   margin-bottom: 0.25em;
 }
-
+*/
 
 
 /*----------------------------------------------------------------------------*/
