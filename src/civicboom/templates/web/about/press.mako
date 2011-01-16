@@ -1,9 +1,9 @@
 <%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Press coverage and external relations")}</%def>
   
-<article class='col'>
-
 <%include file="toc.mako" />
+
+<article class='col'>
 
 <h1>Press</h1>
 
