@@ -51,7 +51,7 @@ what will be built - but that's the fun part: we hope to see some interesting cr
 on Developers link to the right for API documentation then create, collaborate and bring
 Civicboom to life for yourself.
 
-<p><h1><a class="button" style="float:right;"> Sign Up </a></h1>
+<p><h1><a href="/account/signin" class="button" style="float:right;"> Sign Up </a></h1>
 <h1>Don't just read it. Feed it.</h1>
 
 
