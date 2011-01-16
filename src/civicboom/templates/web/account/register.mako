@@ -36,11 +36,11 @@
 			<tr>
 				<td>Agree to <a href="/about/terms" target="_blank">terms</a></td>
 				<td><input type="checkbox" name="terms" value="checked" /></td>
+        		<td>${invalid('terms')}</td>
 			</tr>
 			<tr>
 				<td></td>
 				<td><input type="submit" name="submit" class="button" value="${_("Register")}"/></td>
-        		<td>${invalid('terms')}</td>
 			</td>
 		</table>
     </form>

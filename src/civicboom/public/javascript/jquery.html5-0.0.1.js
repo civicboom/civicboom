@@ -30,6 +30,6 @@ if (!Modernizr.input.placeholder){
 }
 
 // date picker
-$(function() {$("input[type='date']").datepicker();});
+$(function() {$("input[type='date']").datepicker({ dateFormat: 'yy-mm-dd' });});
 
 });

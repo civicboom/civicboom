@@ -408,16 +408,12 @@
         <div id="content_type_additional_fields">
             ## See CSS for "active" class
             <div id="type_assignment_extras" class="hideable, additional_fields">
-                <script>
-                    $(function() {$( "#datepicker1" ).datepicker({ dateFormat: 'yy-mm-dd' });});
-                    $(function() {$( "#datepicker2" ).datepicker({ dateFormat: 'yy-mm-dd' });});
-                </script>
                 <%
                     due_date   = str(self.content.get('due_date') or '')[:10]
                     event_date = str(self.content.get('event_date') or '')[:10]
                 %>
-                <p>${_("Due Date:")}   <input id="datepicker1" type="date" name="due_date"   value="${due_date}"></p>
-                <p>${_("Event Date:")} <input id="datepicker2" type="date" name="event_date" value="${event_date}"></p>
+                <p>${_("Due Date:")}   <input type="date" name="due_date"   value="${due_date}"></p>
+                <p>${_("Event Date:")} <input type="date" name="event_date" value="${event_date}"></p>
                 <%doc>
                 <p>${_("Response License:")}
 				<table>
