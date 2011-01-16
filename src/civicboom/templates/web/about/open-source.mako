@@ -1,9 +1,9 @@
 <%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Credits")}</%def>
 
-<article class='open-source col'>
-
 <%include file="toc.mako" />
+
+<article class='open-source col'>
 
 <h1>Open Source &amp; Credits</h1>
 
