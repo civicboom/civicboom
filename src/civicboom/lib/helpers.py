@@ -279,7 +279,7 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST', json_form_complete_actions=''):
+def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title='', confirm_text=None, method='POST', json_form_complete_actions=''):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -291,6 +291,12 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     
     Then use javascript to hide the form and show the pretty link
     """
+    if not title:
+        title = value
+    if not value_formatted:
+        value_formatted = value
+
+
 
     # Setup Get string href ----
     # the href could be passed a a tuple of (args,kwargs) for form() to create a JSON version to submit to
@@ -298,7 +304,6 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     href_original = href
     if isinstance(href, tuple):
         href = url(*href[0], **href[1])
-        
 
     # Keep track of number of secure links created so they can all have unique hash's
     hhash = hashlib.md5(uniqueish_id(href, value, vals)).hexdigest()[0:6]
@@ -322,9 +327,9 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         confirm_text = "true"
 
     # Styled submit link ------
-    # A standard <A> tag that submits the compatable form (typically used with format='redirect')
+    # A standard <A> tag that submits the compatable form (typically used with format='redirect')    
     hl = HTML.a(
-        value,
+        value_formatted ,
         id      = "link_"+hhash,
         style   = "display: none;",
         href    = href,

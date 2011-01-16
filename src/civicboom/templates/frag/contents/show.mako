@@ -297,7 +297,8 @@
     % if 'accept' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
-            value = h.literal("<span class='icon icon_accept'></span>%s") % _('Accept') ,
+            value = _('Accept'),
+            value_formatted = h.literal("<span class='icon icon_accept'></span>%s") % _('Accept') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
@@ -308,9 +309,9 @@
     % if 'withdraw' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
-            value="" ,
-            title=_('Withdraw') ,
-            css_class="icon icon_withdraw" ,
+            value = _('Withdraw') ,
+            value_formatted = h.literal("<span class='icon icon_withdraw'></span>%s") % _('Withdraw'),
+            ##css_class="" ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         <span class="separtor"></span>
