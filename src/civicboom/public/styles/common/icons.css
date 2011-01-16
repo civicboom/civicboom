@@ -68,6 +68,10 @@
 .icon_email     {background: transparent url('/styles/common/icons16/social/email_16.png') no-repeat;}
 .icon_linkedin  {background: transparent url('/styles/common/icons16/social/linkedin_16.png') no-repeat;}
 
+.icon_plus      {background: transparent url('/styles/common/icons16/plus-icon.png') no-repeat;}
+.icon_up        {background: transparent url('/styles/common/icons16/up-icon.png') no-repeat;}
+.icon_down      {background: transparent url('/styles/common/icons16/down-icon.png') no-repeat;}
+
 /* 32x32 icons */
 .icon_large {
 	display: inline-block;

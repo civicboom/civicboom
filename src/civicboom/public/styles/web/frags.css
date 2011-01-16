@@ -5,6 +5,7 @@
   top:0;
   bottom:0;
   /* white-space-collapse: discard; /* http://www.w3.org/TR/css3-text/#white-space-collapsing */
+  margin-left: 0.5em;
 }
 
 #frag_containers .frag_container {

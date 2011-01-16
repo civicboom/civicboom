@@ -16,11 +16,17 @@
 
 <%def name="init_vars()">
     <%
-        self.attr.title     = _('Edit')
-        self.attr.icon_type = 'edit'
-        
         self.content = d['content']
         self.id      = d['content']['id']
+        
+        self.type          = self.content['type']
+        self.selected_type = type
+        if self.type == 'draft':
+            self.selected_type = self.content.get('target_type')
+        
+        self.attr.title     = _('Edit _%s' % self.selected_type)
+        self.attr.icon_type = 'edit'
+
     %>
 </%def>
 
@@ -30,6 +36,24 @@
 <%def name="body()">
 
     <div class="frag_col">
+        
+        <!-- Toggle Section -->
+        <script type="text/javascript">
+            var icon_more = 'icon_plus';
+            var icon_less = 'icon_down';
+            function toggle_edit_section(jquery_element) {
+                $(jquery_element).next().slideToggle();
+                var icon = $(jquery_element).find('.icon');
+                if (icon.hasClass('icon_plus')) {
+                    icon.removeClass(icon_more);
+                    icon.addClass(icon_less);
+                }
+                else if (icon.hasClass(icon_less)) {
+                    icon.removeClass(icon_less);
+                    icon.addClass(icon_more);
+                }
+            }
+        </script>
         
         % if self.content.get('parent'):
             <p>${_("Responding to: %s") % self.content['parent']['title']}</p>
@@ -114,34 +138,34 @@
 ## Base Form Text Content
 ##------------------------------------------------------------------------------
 <%def name="base_content()">
-    <fieldset><legend>${_("Content")}</legend>
-        ${form_instruction(_("Got an opinion? want to ask a question?"))}
+    <fieldset>
+        ##<legend>${_("Content")}</legend>
+        ##${form_instruction(_("Got an opinion? want to ask a question?"))}
         
-        <p>
-            <label for="title">${_("Title")}</label>
-            <input id="title" name="title" type="text" value="${self.content['title']}" style="width:80%;"/>
-            ${popup(_("extra info"))}
-        </p>
+        ##<p>
+            <lable for="title_${self.id}">${_('Title')}:</lable><input id="title_${self.id}" name="title" type="text" value="${self.content['title']}" style="width:80%;" placeholder="${_('Enter a title')}"/>
+            ##${popup(_("extra info"))}
+        ##</p>
         
         ##${YUI.richtext(c.content.content, width='100%', height='300px')}
 		<%
 		area_id = h.uniqueish_id("content")
 		%>
-		<textarea name="content" id="${area_id}" style="width:100%; height:300px;">${self.content['content']}</textarea>
+		<textarea name="content" id="${area_id}" style="width:100%; height:250px;">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
         
 		<script type="text/javascript">
 			$(function() {
-            tinyMCE.init({
-                mode     : "exact" ,
-                elements : "${area_id}" ,
-                theme    : "advanced" ,
-                theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
-                theme_advanced_buttons2 : "",
-                theme_advanced_buttons3 : "",
-                theme_advanced_toolbar_location : "top",
-                theme_advanced_toolbar_align    : "left",
-            });
+                tinyMCE.init({
+                    mode     : "exact" ,
+                    elements : "${area_id}" ,
+                    theme    : "advanced" ,
+                    theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
+                    theme_advanced_buttons2 : "",
+                    theme_advanced_buttons3 : "",
+                    theme_advanced_toolbar_location : "top",
+                    theme_advanced_toolbar_align    : "left",
+                });
 			});
             function ajaxSave() {
                 var ed = tinyMCE.get('${area_id}');
@@ -163,7 +187,9 @@
                 });
             }
             % if self.content['type'] == "draft":
-            clearInterval(autoSaveDraftTimer);
+            if (typeof autoSaveDraftTimer != "undefined") {
+                clearInterval(autoSaveDraftTimer);
+            }
             var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
             % endif
 		</script>
@@ -196,18 +222,25 @@
         
         
         ## Tags
-		<!--
+
         <p>
-            <label for="tags">${_("Tags")}</label>
+            <label for="tags_${self.id}">${_("Tags")}</label>
             <%
-            tag_string = u""
-            for tag in [tag.name for tag in c.content.tags]:
-                tag_string += tag + u" "
+            tags = []
+            separator = config['setting.content.tag_string_separator']
+            if   isinstance(self.content['tags'], list):
+                tags = self.content['tags']
+            elif isinstance(self.content['tags'], basestring):
+                tags = self.content['tags'].split(separator)
+                
+            tags_string = u""
+            for tag in tags:
+                tags_string += tag + separator
             %>
-            <input id="tags" name="tags" type="text" value="${tag_string}"/>
-            ${popup(_("extra_info"))}
+            <input id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
+            ##${popup(_("extra_info"))}
         </p>
-		-->
+
     </fieldset>
 </%def>
 
@@ -216,9 +249,10 @@
 ##------------------------------------------------------------------------------
 
 <%def name="media()">
-    <fieldset><legend><span onclick="toggle(this);">${_("Attach Media (optional)")}</span></legend>
+    <fieldset>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("Media")}</legend>
         <div class="hideable">
-        ${form_instruction(_("Add any relevent pictures, videos, sounds, links to your content"))}
+        ##${form_instruction(_("Add any relevent pictures, videos, sounds, links to your content"))}
         
         <ul class="media_files">
             
@@ -325,15 +359,14 @@
 ## Content Type
 ##------------------------------------------------------------------------------
 <%def name="content_type()">
-    <fieldset><legend><span onclick="toggle(this);">${_("Publish Type")}</span></legend>
+    <fieldset>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("_%s Extras" % self.selected_type)}</legend>
         <div class="hideable">
-        ${form_instruction(_("What do you want to do with your content?"))}
+        ##${form_instruction(_("What do you want to do with your content?"))}
         
         <%
-            type          = self.content['type']
-            selected_type = type
-            if self.content['type'] == 'draft':
-                selected_type = self.content['target_type']
+            type          = self.type
+            selected_type = self.selected_type
             
             types = [
                 #("draft"     , _("description of draft content")   ),
@@ -356,6 +389,7 @@
             </td>
         </%def>
         
+        <%doc>
         % if type == "draft":
             <table id="type_selection"><tr>
             % for t in types:
@@ -365,6 +399,7 @@
         % else:
             ${type}
         % endif
+        </%doc>
 
         <div id="content_type_additional_fields">
             ## See CSS for "active" class
@@ -379,6 +414,7 @@
                 %>
                 <p>${_("Due Date:")}   <input id="datepicker1" type="date" name="due_date"   value="${due_date}"></p>
                 <p>${_("Event Date:")} <input id="datepicker2" type="date" name="event_date" value="${event_date}"></p>
+                <%doc>
                 <p>${_("Response License:")}
 				<table>
 				<% from civicboom.lib.database.get_cached import get_licenses %>
@@ -396,7 +432,8 @@
 					</tr>
 					##${popup(_(license.description))}
 				% endfor
-				</table>
+                </table>
+                </%doc>
             </div>
         </div>
 
@@ -443,7 +480,8 @@
 ##------------------------------------------------------------------------------
 <%def name="location()">
     <!-- Licence -->
-    <fieldset><legend><span onclick="toggle(this);">${_("Location (optional)")}</span></legend>
+    <fieldset>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("Location")}</legend>
         <div class="hideable">
             ##${form_instruction(_("why give us this..."))}
 			${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
@@ -456,11 +494,14 @@
 ## License
 ##------------------------------------------------------------------------------
 <%def name="license()">
+
     % if self.content['type'] == 'draft':
     <% from civicboom.lib.database.get_cached import get_licenses %>
     <!-- Licence -->
-    <fieldset><legend><span onclick="toggle(this);">${_("Licence (optional)")}</span></legend>
+    <fieldset>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("Licence selection")}</legend>
         <div class="hideable">
+            <%doc>
             ${form_instruction(_("What is licensing explanation"))}
 			<table>
             % for license in get_licenses():
@@ -477,9 +518,16 @@
                 ##${popup(_(license.description))}
             % endfor
 			</table>
+            </%doc>
+        
+            <p>This content will be published under the Creative Commons Attributed licence</p>
+            <a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution"><img src="/images/licenses/CC-BY.png" alt="Creative Commons Attribution"/></a>
         </div>
     </fieldset>
     % endif
+
+    
+
 </%def>
 
 
