@@ -143,7 +143,7 @@
         ##${form_instruction(_("Got an opinion? want to ask a question?"))}
         
         ##<p>
-            <input id="title" name="title" type="text" value="${self.content['title']}" style="width:99%;" placeholder="${_('Enter a title')}"/>
+            <lable for="title_${self.id}">${_('Title')}:</lable><input id="title_${self.id}" name="title" type="text" value="${self.content['title']}" style="width:80%;" placeholder="${_('Enter a title')}"/>
             ##${popup(_("extra info"))}
         ##</p>
         
@@ -222,18 +222,25 @@
         
         
         ## Tags
-		<!--
+
         <p>
-            <label for="tags">${_("Tags")}</label>
+            <label for="tags_${self.id}">${_("Tags")}</label>
             <%
-            tag_string = u""
-            for tag in [tag.name for tag in c.content.tags]:
-                tag_string += tag + u" "
+            tags = []
+            separator = config['setting.content.tag_string_separator']
+            if   isinstance(self.content['tags'], list):
+                tags = self.content['tags']
+            elif isinstance(self.content['tags'], basestring):
+                tags = self.content['tags'].split(separator)
+                
+            tags_string = u""
+            for tag in tags:
+                tags_string += tag + separator
             %>
-            <input id="tags" name="tags" type="text" value="${tag_string}"/>
-            ${popup(_("extra_info"))}
+            <input id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
+            ##${popup(_("extra_info"))}
         </p>
-		-->
+
     </fieldset>
 </%def>
 
@@ -243,7 +250,7 @@
 
 <%def name="media()">
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("Media (optional)")}</legend>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("Media")}</legend>
         <div class="hideable">
         ##${form_instruction(_("Add any relevent pictures, videos, sounds, links to your content"))}
         
@@ -474,7 +481,7 @@
 <%def name="location()">
     <!-- Licence -->
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("Location (optional)")}</legend>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("Location")}</legend>
         <div class="hideable">
             ##${form_instruction(_("why give us this..."))}
 			${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
@@ -492,7 +499,7 @@
     <% from civicboom.lib.database.get_cached import get_licenses %>
     <!-- Licence -->
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("Licence (optional)")}</legend>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("Licence selection")}</legend>
         <div class="hideable">
             <%doc>
             ${form_instruction(_("What is licensing explanation"))}

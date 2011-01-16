@@ -131,7 +131,7 @@ class Content(Base):
             'location'     : lambda content: content.location_string ,
             'num_responses': None ,
             'num_comments' : None ,
-            'tags'         : lambda content: "implement tags" ,
+            'tags'         : lambda content: [tag.name for tag in content.tags] ,
             'license_id'   : lambda content: content.license.code if content.license else None ,
             'private'      : None ,
             'edit_lock'    : None ,
