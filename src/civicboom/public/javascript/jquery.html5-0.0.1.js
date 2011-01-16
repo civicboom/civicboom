@@ -1,7 +1,8 @@
 // HTML5 feature emulation for older browsers
 
-// http://borderstylo.com/posts/213-html5-feature-detection-and-adding-support-for-the-placeholder-attribute
 $(function() {
+
+// http://borderstylo.com/posts/213-html5-feature-detection-and-adding-support-for-the-placeholder-attribute
 if (!Modernizr.input.placeholder){
   $('input').each(function(i){
     $(this).val($(this).attr('placeholder'));
@@ -27,4 +28,8 @@ if (!Modernizr.input.placeholder){
     });
   });
 }
+
+// date picker
+$(function() {$("input[type='date']").datepicker();});
+
 });

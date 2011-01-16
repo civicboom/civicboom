@@ -1,35 +1,9 @@
 <%inherit file="/web/common/html_base.mako"/>
 
-<%namespace name="YUI" file="/web/common/YUI_components.mako" />
-
-##------------------------------------------------------------------------------
-## Additional CSS and Javascripts
-##------------------------------------------------------------------------------
-##<%def name="head_links()">
-##    ${parent.head_links()}
-  
-    <!-- Additional YUI imports-->
-    ##<link   type="text/css"        href="http://yui.yahooapis.com/2.8.1/build/calendar/assets/skins/sam/calendar.css" rel="stylesheet" />
-    ##<script type="text/javascript" src ="http://yui.yahooapis.com/2.8.1/build/calendar/calendar-min.js"></script>
-
-    ##<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/button/assets/skins/sam/button.css" />
-    ##<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/container/container_core-min.js"></script>
-    ##<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/button/button-min.js"></script>
-##</%def>
-
 ##------------------------------------------------------------------------------
 ## Title - Override
 ##------------------------------------------------------------------------------
 <%def name="title()">${_("Register")}</%def>
-
-
-##------------------------------------------------------------------------------
-## Style Overrides
-##------------------------------------------------------------------------------
-##<%def name="styleOverides()">
-##</%def>
-
-
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -43,6 +17,7 @@
     % endif
 
     <form action="" method="post">
+		<table class="form">
         % for field in c.required_fields:
             % if field=='username':
               ${username()}
@@ -57,12 +32,17 @@
               ${password()}
             % endif
             ##${eval(field)} wanted to just eval the field name but mako defs use differnt python names :( it's going to have to be a set of IF's
-            
-
         % endfor
-        <input type="checkbox" name="terms" value="checked" />${_("Agree to terms")}
-        ${invalid('terms')}
-        <input type="submit" name="submit" value="${_("Register")}"/>
+			<tr>
+				<td>Agree to <a href="/about/terms" target="_blank">terms</a></td>
+				<td><input type="checkbox" name="terms" value="checked" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><input type="submit" name="submit" class="button" value="${_("Register")}"/></td>
+        		<td>${invalid('terms')}</td>
+			</td>
+		</table>
     </form>
 
 </%def>
@@ -81,32 +61,45 @@
 
 <%def name="username()">
     <p>could not allocate your prefered username as it has already been taken, if you are xxx then you can link accounts</p>
-    Username<input type="text" name="username" value="${h.get_data_value('username','register',c.logged_in_persona.username)}" />
-    ${invalid('username')}
+	<tr>
+		<td>Username</td>
+		<td><input type="text" name="username" value="${h.get_data_value('username','register',c.logged_in_persona.username)}" /></td>
+		<td>${invalid('username')}</td>
+	</tr>
 </%def>
 
 <%def name="email()">
-    email<input type="text" name="email" value="${h.get_data_value('email','register',c.logged_in_persona.email)}" />
-    ${invalid('email')}
+	<tr>
+		<td>Email Address</td>
+		<td><input type="text" name="email" value="${h.get_data_value('email','register',c.logged_in_persona.email)}" /></td>
+		<td>${invalid('email')}</td>
+	</tr>
 </%def>
 
 <%def name="dob()">
-    <script>
-        $(function() {$( "#datepicker" ).datepicker();});
-    </script>
-    <p>Date of Birth:<input id="datepicker" type="date" name="dob"   value="${h.get_data_value('dob','register' ,c.logged_in_persona.config['dob'])}"></p>
-    ${invalid('dob')}
-    ##${YUI.calendar(form_field_name='dob')}
+    <tr>
+		<td>Date of Birth</td>
+		<td><input id="datepicker" type="date" name="dob"   value="${h.get_data_value('dob','register' ,c.logged_in_persona.config['dob'])}"></td>
+		<td>${invalid('dob')}</td>
+	</tr>
 </%def>
 
 <%def name="password()">
-  ${h.get_captcha(c.lang, 'white')}
-  ${invalid('recaptcha_response_field')}
+    <tr>
+		<td>${h.get_captcha(c.lang, 'white')}</td>
+		<td>${invalid('recaptcha_response_field')}</td>
+    <tr>
   
-  password<input type="password" name="password"         value="" />
-  password confirm<input type="password" name="password_confirm" value="" />
-  ${invalid('password')}
-  ${invalid('password_confirm')}
+    <tr>
+		<td>Password</td>
+		<td><input type="password" name="password"         value="" /></td>
+		<td>${invalid('password')}</td>
+    <tr>
+    <tr>
+		<td>Password Confirm</td>
+		<td><input type="password" name="password_confirm" value="" /></td>
+		<td>${invalid('password_confirm')}</td>
+    <tr>
 </%def>
 
 
