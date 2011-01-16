@@ -20,7 +20,7 @@
     </div>
 </%def>
 <%def name="actions_common()">
-    ${georss_link()}
+    ${self.georss_link()}
 </%def>
 
 
