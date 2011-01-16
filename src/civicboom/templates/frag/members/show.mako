@@ -211,41 +211,45 @@
     % if 'follow' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
-            _(' ') ,
-            title     = _("Follow %s" % self.name) ,
-            css_class = "icon icon_follow" ,
+            value           = _('Follow') ,
+            value_formatted = h.literal("<span class='icon icon_follow'></span>%s") % _('Follow'),
+            title           = _("Follow %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
 
     % if 'unfollow' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
-            _(' ') ,
-            title=_("Stop following %s" % self.name) ,
-            css_class="icon icon_unfollow" ,
+            value           = _('Unfollow') ,
+            value_formatted = h.literal("<span class='icon icon_unfollow'></span>%s") % _('Stop Following'),
+            title           = _("Stop following %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
 
     % if 'join' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
-            _('Join this _group') ,
-            css_class="icon icon_join" ,
+            value           = _('Join _group') ,
+            value_formatted = h.literal("<span class='icon icon_join'></span>%s") % _('Join Group'),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
     
     % if 'invite' in self.actions: #and c.logged_in_persona and c.logged_in_persona.__type__=='group':
         <% invite_text = _('Invite %s to join %s' % (self.name, c.logged_in_persona.name or c.logged_in_persona.username)) %>
         ${h.secure_link(
             h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect') ,
-            h.HTML.span(invite_text) ,
-            title = invite_text , 
-            css_class="icon icon_invite" ,
+            value           = _('Invite') ,
+            value_formatted = h.literal("<span class='icon icon_invite'></span>%s") % _('Invite') ,
+            title           = invite_text , 
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
 </%def>
 
@@ -255,7 +259,7 @@
         ${popup.link(h.args_to_tuple('new_message', target=self.id), title=_('Send message') , class_='icon icon_message')}
     % endif
     % if 'settings' in self.actions:
-        <a class="icon icon_settings" href="${url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>        
+        <a class="icon icon_settings" href="${url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>
     % endif
     ${popup.link(h.args_to_tuple(controller='misc', action='get_widget', id=self.id), title=_('Get widget'), class_='icon icon_widget')}
     

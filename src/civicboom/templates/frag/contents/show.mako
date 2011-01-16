@@ -285,9 +285,8 @@
     % if self.content['type'] != 'draft':
         ${h.secure_link(
             h.args_to_tuple('new_content', parent_id=self.id) ,
-            value="" ,
-            title=_("Respond to this") ,
-            css_class="icon icon_respond" ,
+            value=_("Respond") ,
+            value_formatted = h.literal("<span class='icon icon_respond'></span>%s") % _('Respond') ,
             json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
         )}
         <span class="separtor"></span>
@@ -324,37 +323,40 @@
             value_formatted = h.literal("<span class='icon icon_boom'></span>%s") % _('Boom'),
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
+        <span class="separtor"></span>
     % endif
     
     % if 'approve' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
-            _('Approve & Lock'),
-            title        = _("Approve and lock this content so no further editing is possible"),
-            css_class    = "icon icon_approved",
-            confirm_text = _('Once approved this article will be locked and no further changes can be made'),
+            value           = _('Approve & Lock'),
+            value_formatted = h.literal("<span class='icon icon_approve'></span>%s") % _('Approve & Lock'),
+            title           = _("Approve and lock this content so no further editing is possible"),
+            confirm_text    = _('Once approved this article will be locked and no further changes can be made'),
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
-            
         )}
+        <span class="separtor"></span>
     % endif
     % if 'seen' in self.actions:
         ${h.secure_link(
-            h.args_to_tuple('content_action', action='seen'       , format='redirect', id=self.id),
-            _('Seen, like it') ,
-            title=_("Seen it, like it") ,
-            css_class="icon icon_seen" ,
+            h.args_to_tuple('content_action', action='seen'   , format='redirect', id=self.id),
+            value           = _('Viewed') ,
+            value_formatted = h.literal("<span class='icon icon_seen'></span>%s") % _('Viewed'),
+            title           = _("Mark this content as viewed") ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
     % if 'dissasociate' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='disasociate', format='redirect', id=self.id),
-            _('Disasociate') ,
-            title        = _("Dissacociate your content from this response") ,
-            css_class    = "icon icon_dissasociate" ,
-            confirm_text = _('This content with no longer be associated with your content, are you sure?') ,
+            value           = _('Disasociate') ,
+            value_formatted = h.literal("<span class='icon icon_dissasociate'></span>%s") % _('Disasociate'),
+            title           = _("Dissacociate your content from this response") ,
+            confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
     
 </%def>        
@@ -367,17 +369,18 @@
            class="icon icon_edit"
            title="${_('Edit')}"
            onclick="cb_frag_load($(this), '${h.url('edit_content', id=self.id, format='frag')}'); return false;"
-        ><span>${_("Edit")}</span></a>
+        ></a>${_("Edit")}
+        <span class="separtor"></span>
         
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
-            method="DELETE",
-            value="",
-            title=_("Delete"),
-            css_class="icon icon_delete",
-            confirm_text=_("Are your sure you want to delete this content?"),
+            method = "DELETE",
+            value           = _("Delete"),
+            value_formatted = h.literal("<span class='icon icon_delete'></span>%s") % _('Delete'),
+            confirm_text    = _("Are your sure you want to delete this content?"),
             json_form_complete_actions = "cb_frag_remove(current_element);" ,
         )}
+        <span class="separtor"></span>
     % endif
 
     % if 'aggregate' in self.actions:
