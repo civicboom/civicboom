@@ -2,41 +2,16 @@
 <%def name="title()">${_("Sign in")}</%def>
 
 <style>
-TABLE.signin {
-	width: 940px;
-}
-BODY.c-account.a-signin FORM {
-	background: #ddd;
-	border-radius        : 0.5em;
-	-moz-border-radius   : 0.5em;
-	-webkit-border-radius: 0.5em;
-}
-
-BODY.c-account.a-signin H1 {
-	text-align: left;
-	margin-bottom: 16px;
-}
-BODY.c-account.a-signin FORM,
-BODY.c-account.a-signin FORM TD {
-	padding: 8px;
-}
-BODY.c-account.a-signin FORM TABLE,
-BODY.c-account.a-signin FORM TABLE TBODY {
-	width: 100%;
-}
-BODY.c-account.a-signin FORM TD INPUT {
-	border-width: 1px;
-}
 </style>
 <table class="signin">
 	<tr>
-		<td class="block">
+		<td width="45%">
 			${signin()}
 		</td>
-		<td class="block" rowspan="3">
-			or
+		<td width="10%" rowspan="3">
+			<b>or &rarr;</b>
 		</td>
-		<td class="block" rowspan="3">
+		<td width="45%" rowspan="3">
 			${janrain()}
 		</td>
 	</tr>
@@ -111,15 +86,14 @@ BODY.c-account.a-signin FORM TD INPUT {
 </%def>
 
 <%def name="forgot()">
-<!--
 <section>
-	<form action="${h.url(controller='account', action='forgot_password', format='redirect')}" method="post">
+	<a class="button" style="float: right; margin: 16px;" href="#" onclick="$('#reminder').show('slow');">Forgotten your password?</a>
+	
+	<div id="reminder" class="hideable">
+	<form action="${h.url(controller='account', action='forgot_password', format='redirect')}" method="post" style="clear:both">
 		<table class="form">
 			<tr>
-				<th colspan="2">${_("Forgotten Password?")}</th>
-			</tr>
-			<tr>
-				<td><label for="username_forgotten">${_("Username")}</label></td>
+				<td width="50"><label for="username_forgotten">${_("Username")}</label></td>
 				<td><input type="text"  id="username_forgotten" name="username" placeholder="e.g. dave43"/></td>
 			</tr>
 			<tr>
@@ -130,10 +104,11 @@ BODY.c-account.a-signin FORM TD INPUT {
 				<td><input type="email" id="email_forgotten" name="email" placeholder="e.g. dave@coolnews.net"/></td>
 			</tr>
 			<tr>
-				<td colspan="2"><input type="submit" name="submit" value="${_("Send password reminder")}"/></td>
+				<td></td>
+				<td><input class="button" type="submit" name="submit" value="${_("Send password reminder")}"/></td>
 			</tr>
 		</table>
 	</form>
+	</div>
 </section>
--->
 </%def>
