@@ -2,6 +2,9 @@
 <%def name="title()">${_("Sign in")}</%def>
 
 <style>
+TABLE.signin {
+	width: 940px;
+}
 BODY.c-account.a-signin FORM {
 	background: #ddd;
 	border-radius        : 0.5em;
@@ -13,15 +16,16 @@ BODY.c-account.a-signin H1 {
 	text-align: left;
 	margin-bottom: 16px;
 }
+BODY.c-account.a-signin FORM,
 BODY.c-account.a-signin FORM TD {
 	padding: 8px;
 }
-BODY.c-account.a-signin TABLE,
-BODY.c-account.a-signin TABLE TBODY {
+BODY.c-account.a-signin FORM TABLE,
+BODY.c-account.a-signin FORM TABLE TBODY {
 	width: 100%;
 }
 BODY.c-account.a-signin FORM TD INPUT {
-	border: none;
+	border-width: 1px;
 }
 </style>
 <table class="signin">
