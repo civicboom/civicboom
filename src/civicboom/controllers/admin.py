@@ -46,7 +46,7 @@ class AdminControllerBase(BaseController):
         q = S.query(self.get_model())
 
         # FIXME: SQL injection; regex whitelist *should* stop it
-        for name in request.GET.keys():
+        for name in [n for n in request.GET.keys() if "--" in n]:
             col_name = name[name.find("--")+2:]
             value = request.GET[name];
             if re.match("^[a-zA-Z0-9_]+$", col_name) and re.match("^[a-zA-Z0-9_]+$", value):
