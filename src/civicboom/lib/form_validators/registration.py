@@ -2,7 +2,7 @@
 import formencode
 from formencode import validators, compound
 
-from base import DefaultSchema
+from base import DefaultSchema, IsoFormatDateConverter
 
 # Pylons Imports
 from pylons.i18n.translation import _
@@ -63,22 +63,38 @@ class UniqueEmailValidator(validators.Email):
         return value
 
 
-class MinimumAgeValidator(validators.FancyValidator):
+#class MinimumAgeValidator(validators.FancyValidator):
+#    """Checks that date is ok and doesn't allow under 16"""
+#    age_min = 16
+#    messages = {
+#        'empty'       : _('Please enter a date of birth'),
+#    }
+#
+#    def _to_python(self, value, state):
+#         try:
+#             date = datetime.datetime.strptime(value, '%d/%m/%Y')
+#         except ValueError:
+#              raise formencode.Invalid(_("Please enter your date of birth with the format DD/MM/YYYY"), value, state)
+#         if calculate_age(date) < self.age_min:
+#              raise formencode.Invalid(_("Sorry, you have to be over %d to use this site") % self.age_min, value, state)
+#         return date
+
+class MinimumAgeValidator(IsoFormatDateConverter):
     """Checks that date is ok and doesn't allow under 16"""
     age_min = 16
     messages = {
-        'empty'       : _('Please enter a date of birth'),
+        'empty'        : _('Please enter a date of birth') ,
+        'date_format'  : _("Please enter your date of birth with the format DD/MM/YYYY") ,
+        'under_min_age': _("Sorry, you have to be over %d to use this site") % age_min,
     }
-
     def _to_python(self, value, state):
          try:
              date = datetime.datetime.strptime(value, '%d/%m/%Y')
          except ValueError:
-              raise formencode.Invalid(_("Please enter your date of birth with the format DD/MM/YYYY"), value, state)
+              raise formencode.Invalid(self.message('date_format'  , state), value, state)
          if calculate_age(date) < self.age_min:
-              raise formencode.Invalid(_("Sorry, you have to be over %d to use this site") % self.age_min, value, state)
+              raise formencode.Invalid(self.message('under_min_age', state), value, state)
          return date
-
 
 class ReCaptchaValidator(validators.FancyValidator):
     """    

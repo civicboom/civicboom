@@ -70,7 +70,7 @@
             </div>
         </div>
         
-        <a style="float:right;" class="button" href="${url(controller='misc', action='about')}">${_('Learn More')}</a>
+        <a style="float:right;" class="button" href="${url(controller='misc', action='about')}">${_('Learn more')}</a>
         <p style="font-size: x-large; font-weight: bold;">${_('Dont just read it, feed it')}</p>
         
         <div style="clear: both; padding: 0.5em;"></div>

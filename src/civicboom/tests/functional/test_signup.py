@@ -71,7 +71,7 @@ class TestSignup(TestController):
             params={
                 'password'        : u'password',
                 'password_confirm': u'password2',
-                'dob'             : u'1/1/1980',
+                'dob'             : u'1980-01-01',
                 'terms'           : u'checked'
             },
             status=400
@@ -82,7 +82,7 @@ class TestSignup(TestController):
             params={
                 'password'        : u'password',
                 'password_confirm': u'password',
-                'dob'             : u'1/1/2009',
+                'dob'             : u'2009-01-01',
                 'terms'           : u'checked'
             },
             status=400
@@ -93,7 +93,7 @@ class TestSignup(TestController):
             params={
                 'password'        : u'password',
                 'password_confirm': u'password',
-                'dob'             : u'1/1/1980',
+                'dob'             : u'1980-01-01',
             },
             status=400
         )
@@ -104,7 +104,7 @@ class TestSignup(TestController):
             params={
                 'password'        : u'password',
                 'password_confirm': u'password',
-                'dob'             : u'1/1/1980',
+                'dob'             : u'1980-01-01',
                 'terms'           : u'checked'
             },
         )

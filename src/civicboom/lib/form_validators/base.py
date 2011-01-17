@@ -163,18 +163,23 @@ class IsoFormatDateConverter(validators.DateConverter):
     Like formencode.validators.DateConverter, but accepts ISO 8601 YYYY-mm-dd
     """
     month_style = 'dd/mm/yyyy'
-    regex = re.compile('\d{8,8}')
 
     def _to_python(self, value, state):
-        # Transform from extended to basic format (yyyymmdd...)
-        value = value.replace('-', '')
-        try:
-            value = value[:8]
-            assert self.regex.match(value)
-        except:
-            raise Invalid(("Input must be ISO 8601 format, not %s" % value), value, state)
-        # Transform to 'dd/mm/yyyy'
-        value = '/'.join((value[6:8], value[4:6], value[:4]))
-        # Run superclass validation on preprocessed value
-        return super(IsoFormatDateConverter, self)._to_python(value, state)
 
+        def split_date_by(value, split_value):
+            try:
+                date_sections = [int(date_section.strip()) for date_section in value.split(split_value)]
+            except:
+                date_sections = []
+            if len(date_sections)==3:
+                if date_sections[0]>date_sections[2]: # Reverse if in the format d m y to make y m d
+                    date_sections.reverse()
+                # AllanC - may have to enfoce multiple didgets e.g 1 converts to string 01 etc
+                return '/'.join([str(d) for d in date_sections])
+            return None
+
+        date_strings = [split_date_by(value,split_value) for split_value in ['-','/','\\',' ']] # 
+        date_strings = [date_string for date_string in date_strings if date_string != None]     # Filter null entries
+        if len(date_strings)>=1:
+            value = date_strings[0]
+        return super(IsoFormatDateConverter, self)._to_python(value, state)
