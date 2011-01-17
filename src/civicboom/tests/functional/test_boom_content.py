@@ -4,7 +4,11 @@ import json
 class TestBoomController(TestController):
     
     def test_all(self):
-
+        
+        #-----------------------------------------------------------------------
+        
+        self.log_in_as('unittest')
+        
         # Create publis content as unittest
         response = self.app.post(
             url('contents', format='json'),
@@ -35,7 +39,6 @@ class TestBoomController(TestController):
         assert 'boomed by unitfriend'
         assert 'boom' in response_json['data']['actions']
         boom_count = int(response_json['data']['content']['boom_count'])
-
         
         # Boom unittest's content as unitfriend
         response = self.app.post(
@@ -63,3 +66,25 @@ class TestBoomController(TestController):
         assert 'boom' in response_json['data']['actions']
         assert  int(response_json['data']['content']['boom_count']) == boom_count + 1
         
+        #-----------------------------------------------------------------------
+        
+        # Ensure boomed content for other is unaffected after boom - login and get boom count
+        # Logged as issue 231
+        self.log_in_as('kitten')
+        
+        response      = self.app.get(url('member', id='kitten', format='json'), status=200)
+        response_json = json.loads(response.body)
+        assert len(response_json['data']['boomed_content']) == 0
+        
+        response = self.app.post(
+            url('content_action', action='boom', id=content_id, format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+            },
+            status=200
+        )
+        response_json = json.loads(response.body)
+        
+        response      = self.app.get(url('member', id='kitten', format='json'), status=200)
+        response_json = json.loads(response.body)
+        assert len(response_json['data']['boomed_content']) == 1

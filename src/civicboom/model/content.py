@@ -87,7 +87,7 @@ class Content(Base):
     creation_date   = Column(DateTime(),       nullable=False, default=func.now())
     update_date     = Column(DateTime(),       nullable=False, default=func.now(), doc="Controlled by postgres trigger")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
-    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=1)
+    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=2)
     
     visible         = Column(Boolean(),        nullable=False, default=True)
     edit_lock       = Column(_edit_lock,       nullable=True , default=None)
@@ -122,7 +122,7 @@ class Content(Base):
             #'status'       : None ,
             'parent_id'    : None ,
             'title'        : None ,
-            'content_short': None ,
+            'content_short': lambda content: "implement content_short postgress trigger" ,
             'creator_id'   : None , 
             'url'          : None ,
             'thumbnail_url': None ,
@@ -131,7 +131,6 @@ class Content(Base):
             'location'     : lambda content: content.location_string ,
             'num_responses': None ,
             'num_comments' : None ,
-            'tags'         : lambda content: "implement tags" ,
             'license_id'   : lambda content: content.license.code if content.license else None ,
             'private'      : None ,
             'edit_lock'    : None ,
@@ -143,13 +142,14 @@ class Content(Base):
         'full': copy.deepcopy(__to_dict__['default'])
     })
     __to_dict__['full'].update({
-            'content'           : None ,
-            'parent'            : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
-            'creator'           : lambda content: content.creator.to_dict() ,
-            'attachments'       : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
-            #'responses'         : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
-            #'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
-            'license'           : lambda content: content.license.to_dict() , 
+            'content'     : None ,
+            'parent'      : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
+            'creator'     : lambda content: content.creator.to_dict() ,
+            'attachments' : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
+            #'responses'   : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
+            #'comments'    : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
+            'license'     : lambda content: content.license.to_dict() ,
+            'tags'        : lambda content: [tag.name for tag in content.tags] ,
     })
     #del __to_dict__['full']['content_short'] # This is still useful for aggrigation so it stays in by default
     del __to_dict__['full']['parent_id']
@@ -191,6 +191,8 @@ class Content(Base):
             action_list.append('view')
         if self.private==False and self.creator != member:
             action_list.append('flag')
+        if self.private==False:
+            action_list.append('aggregate')
         return action_list
 
     def editable_by(self, member):
@@ -272,10 +274,10 @@ class Content(Base):
     @property
     def content_short(self):
         """
-        AllanC TODO: Derived field?
+        AllanC TODO: Derived field - Postgress trigger needed
         """
         from civicboom.lib.text import strip_html_tags
-        return truncate(strip_html_tags(self.content), length=100)
+        return truncate(strip_html_tags(self.content), length=100, indicator='...', whole_word=True)
 
     @property
     def location_string(self):
@@ -330,7 +332,7 @@ class DraftContent(Content):
     __tablename__   = "content_draft"
     __mapper_args__ = {'polymorphic_identity': 'draft'}
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
-    target_type     = Column(_content_type, nullable=True, default=None)
+    target_type     = Column(_content_type, nullable=True, default='article')
     #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
 
     __to_dict__ = copy.deepcopy(Content.__to_dict__)
@@ -411,9 +413,9 @@ class ArticleContent(UserVisibleContent):
     __tablename__   = "content_article"
     __mapper_args__ = {'polymorphic_identity': 'article'}
     _approval  = Enum("none", "approved", "seen", "dissassociated", name="approval")
-    id              = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
-    rating          = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
-    ratings         = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
+    id         = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
+    rating     = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    ratings    = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
     approval   = Column(_approval, nullable=False, default="none")
 
     # AllanC TODO:
@@ -464,7 +466,7 @@ class AssignmentContent(UserVisibleContent):
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
-    default_response_license_id = Column(Integer(), ForeignKey('license.id'), nullable=False, default=1)
+    default_response_license_id = Column(Integer(), ForeignKey('license.id'), nullable=False, default=2)
     #num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
 
     default_response_license    = relationship("License")
@@ -557,6 +559,8 @@ class MemberAssignment(Base):
     content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')            , nullable=False, primary_key=True)
     status        = Column(_assignment_status,  nullable=False)
+    #update_date   = Column(DateTime(),   nullable=False, default=func.now(), doc="Controlled by postgres trigger")
+    # AllanC - TODO - implement member assignment update date postgress trigger
 
     member       = relationship("Member")
 

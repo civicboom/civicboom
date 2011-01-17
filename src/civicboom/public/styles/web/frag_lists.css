@@ -3,8 +3,48 @@
 /*----------------------------------------------------------------------------*/
 
 #frag_containers .frag_container .frag_data .frag_list {
-  font-size: 88%;
+    font-size: 88%;
+
+    border: 0.1em solid #ccc;
+    border-radius        : 0.2em;
+    -moz-border-radius   : 0.2em;
+    -webkit-border-radius: 0.2em;
+    
+    margin-top: 1em;
+
+    background: #eee; /* for non-css3 browsers */
+	filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, #eee), color-stop(1.0, #fff)); /* for webkit browsers */
+	background: -moz-linear-gradient(top, #eee 19%, #fff); /* for firefox 3.6+ */
+
 }
+
+#frag_containers .frag_container .frag_data .frag_list .icon {
+
+}
+
+#frag_containers .frag_container .frag_data .frag_list .frag_list_contents {
+    padding       : 0.5em;
+    padding-bottom: 0em; /* see rule below for each element adding there own bottom padding */
+}
+.frag_list_contents td,
+.frag_list_contents li,
+.frag_list_contents ul {
+    padding-bottom: 0.5em;
+}
+
+
+#frag_containers .frag_container .frag_data .frag_list h2 {
+    margin: 0em;
+    background-color: #ccc;
+    padding : 0.25em;
+
+}
+#frag_containers .frag_container .frag_data .frag_list h2 .count {
+    padding: 0.25em;
+    float: right;
+}
+
 
 #frag_containers .frag_container .frag_data .frag_list a {
     text-decoration: none;
@@ -16,23 +56,35 @@
     vertical-align: top;
 }
 
-#frag_containers .frag_container .frag_data .frag_list .title {
-    padding: 0em 0.5em;
-}
 
 #frag_containers .frag_container .frag_data .frag_list .link_more {
     float: right;
+    background: #ccc;
+    
+    padding: 0.2em;
+    
+    position: relative;
+    top: -0.75em;
+    
+    border-radius        : 0.2em;
+    -moz-border-radius   : 0.2em;
+    -webkit-border-radius: 0.2em;
+
 }
 
 /* #frag_containers .frag_container .frag_data .frag_list li .avatar {font-size: 20px;} */
 
 
 /*------------------------------ Content -------------------------------------*/
+.frag_list .content .content_title {
+    padding-left: 0.25em;
+    padding-top : 0.25em;
+}
 
 
 /*------------------------------ Members -------------------------------------*/
 
-.frag_list .members li {
+.frag_list .member li {
     display: inline;
 }
 

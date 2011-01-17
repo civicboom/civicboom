@@ -18,6 +18,10 @@ var frag_count      = 0;
 var frag_loading    = null;
 var frags_to_remove = null;
 
+//------------------------------------------------------------------------------
+//                               Create Frag
+//------------------------------------------------------------------------------
+
 // current_element = JQuery element object
 // url             = String
 function cb_frag(current_element, url, list_type) {
@@ -100,10 +104,20 @@ function cb_frag(current_element, url, list_type) {
 	);
 }
 
+//------------------------------------------------------------------------------
+//                               Load Frag
+//------------------------------------------------------------------------------
+
+
 function cb_frag_load(jquery_element, url) {
 	var frag_container = jquery_element.parents('.'+fragment_container_class)
 	frag_container.load(url);
 }
+
+
+//------------------------------------------------------------------------------
+//                               Remove Frag
+//------------------------------------------------------------------------------
 
 function cb_frag_remove(jquery_element) {
 	var parent = jquery_element.parents('.'+fragment_container_class); // find parent
@@ -111,23 +125,22 @@ function cb_frag_remove(jquery_element) {
 		parent.remove();
 		// If no fragments on screen redirect to default page
 		if ($('.'+fragment_container_class).length == 0) {
-			window.location.replace("/");
+			window.location.replace("/profile/index");
 		}
 	});
 	cb_frag_remove_sibblings(parent);
 	
 	$.modal.close(); // Aditionaly, if this is in a popup then close the popup
-	
-	
-
-
-	
 }
 
 function cb_frag_remove_sibblings(jquery_element) {
 	var parent_siblings = jquery_element.nextAll();
 	parent_siblings.toggle(scroll_duration, function(){parent_siblings.remove()});
 }
+
+//------------------------------------------------------------------------------
+//                               Reload Frag
+//------------------------------------------------------------------------------
 
 function cb_frag_reload(param) {
 	// Can be passed a JQuery object or a String
@@ -151,7 +164,7 @@ function cb_frag_reload(param) {
 		frag_element.load(frag_source);
 	}
 
-	if (typeof param == 'string') {
+	function reload_frags_containing(array_of_urls) {
 		// Look through all <A> tags in every frgament for the string
 		// if the link contains this string
 		// add the <A>'s parent frag to a refresh list (preventing duplicates)
@@ -160,30 +173,35 @@ function cb_frag_reload(param) {
 		var frags_to_refresh = {};
 		$(fragment_containers_id+' a').each(function(index) {
 			var link_element = $(this);
-			if (link_element.attr('href').indexOf(param) != -1) {
-				var elem_source_pair = get_parent_container_element_source(link_element);
-				var frag_element = elem_source_pair[0];
-				var frag_source  = elem_source_pair[1];
-				frags_to_refresh[frag_source] = frag_element;
+			for (var url_part in array_of_urls) {
+				url_part = array_of_urls[url_part];
+				if (link_element.attr('href').indexOf(url_part) != -1) {
+					var elem_source_pair = get_parent_container_element_source(link_element);
+					var frag_element = elem_source_pair[0];
+					var frag_source  = elem_source_pair[1];
+					frags_to_refresh[frag_source] = frag_element;
+				}
 			}
 		});
+		// Go though all frags found reloading them
 		for (var key in frags_to_refresh) {
 			frags_to_refresh[key].load(key);
 		}
-		
-		/*
-		$(fragment_containers_id).children('.'+fragment_container_class).children('.'+fragment_source_class).each(function(index){
-			if ($(this).attr('href').indexOf(param) != -1) {
-				cb_frag_reload($(this));
-			}
-		});
-		*/
-	}
-	else {
-		reload_element(param);
 	}
 
+	if      (typeof param == 'string') {reload_frags_containing([param]);}
+	else if (typeOf(param) == 'array') {reload_frags_containing( param );}
+	else                               {reload_element(param);}
+
 }
+
+function cb_frag_set_source(jquery_element, url) {
+	jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href', url);
+}
+
+//------------------------------------------------------------------------------
+//                            Browser URL updating
+//------------------------------------------------------------------------------
 
 if(Modernizr.history && false) {
 	// FIXME: jQuery-ise this, rather than using the raw window.blah

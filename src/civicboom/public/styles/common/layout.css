@@ -84,6 +84,8 @@ OL OL LI {
 }
 .form TD INPUT[type="text"],
 .form TD INPUT[type="submit"],
+.form TD INPUT[type="email"],
+.form TD INPUT[type="password"],
 .form TD SELECT {
 	width: 100%;
 }
@@ -203,7 +205,7 @@ HTML.no-js #flash_message {
 /*----------------------------------------------------------------------------*/
 
 .button {
-	display: block;
+	display: inline-block;
 	background: #4974b8;
 
 	border-radius        : 0.2em;
@@ -217,10 +219,10 @@ HTML.no-js #flash_message {
 	text-decoration: none;
 	font-weight: bold;
 }	
+
 DIV#app .button {
-	font-size: 1.5em;
 	padding: 0.25em 0.5em;
-	display: inline-block;
+	/* display: inline-block; */
 }
 
 .button,
@@ -243,3 +245,6 @@ DIV#app .button {
 	border-top: none;
 }
 
+.link_pointer {
+	cursor: pointer;
+}

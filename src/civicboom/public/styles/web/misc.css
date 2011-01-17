@@ -1,33 +1,80 @@
-/*
- * front page, a blurb and a signup box
- */
-BODY.c-misc.a-titlepage DIV#app {
-	font-size: 1.2em;
-	font-weight: bold;
-	font-family: sans;
-	text-align: center;
-	padding-bottom: 32px;
-}
-BODY.c-misc.a-titlepage SECTION.blurb {
-	display: block;
-	font-style: italic;
-	margin-left: 350px;
-	margin-right: 350px;
-	margin-top: 100px;
-}
-BODY.c-misc.a-titlepage SECTION.mobile,
-BODY.c-misc.a-titlepage SECTION.signup {
-	width: 200px;
-	padding: 16px;
-	margin: 50px;
-	/*
-	background: white;
-	border-radius: 8px;
-	-moz-border-radius: 8px;
-	border: 1px solid #AAA;
-	*/
-}
-BODY.c-misc.a-titlepage SECTION.mobile {float: left;}
-BODY.c-misc.a-titlepage SECTION.signup {float: right;}
+/*----------------------------------------------------------------------------*/
+/*                                 Titlepage                                  */
+/*----------------------------------------------------------------------------*/
 
-BODY.c-misc.a-titlepage DIV#app .button {display: block; font-size: 1em;}
+BODY.c-misc.a-titlepage DIV#app {
+    text-align: center;
+}
+
+BODY.c-misc.a-titlepage DIV#app .button {
+    width: 8em;
+}
+
+BODY.c-misc.a-titlepage SECTION.mobile {
+    display: block;
+    padding: 1em;
+}
+
+BODY.c-misc.a-titlepage SECTION.description h1 {
+    margin: 0em;
+    padding-bottom: 0.5em;
+}
+
+BODY.c-misc.a-titlepage SECTION.description {
+    padding-top: 1em;
+    display: block;
+    text-align: left;
+}
+
+BODY.c-misc.a-titlepage SECTION.description .description_container {
+    clear: both;
+    display: block;
+	background-color: #eee;
+    
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+    
+    padding: 1em;
+    padding-top: 0.5em;
+    
+    margin-bottom: 1em;
+}
+
+BODY.c-misc.a-titlepage SECTION.description .description_container .steps_container {
+	background-color: white;
+    
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+    
+    width: 100%;
+    
+    position: relative;
+    top:0em;
+}
+
+#step_container                   {              width: 600px; height: 300px;}
+#step_container .step_main        {float: left;  width: 399px; height: 300px; border-right: 1px solid #ccc;}
+#step_container .step_description {float: right; width: 200px; height: 300px;}
+#step_container .step_padding     {padding: 0.5em;}
+HTML.js #step_container .step  {position: absolute;}
+
+.steps_container .step_nav {
+    vertical-align: middle;
+    font-size: 2em;
+
+    padding    : 0.2em 0.5em;
+    padding-top: 0em;
+
+	border-radius        : 0.2em;
+	-moz-border-radius   : 0.2em;
+	-webkit-border-radius: 0.2em;
+    
+    border: 1px solid #ccc;
+    cursor: pointer;
+    position: absolute;
+    bottom: 4px;
+}
+.steps_container .step_back {left  :   4px;}
+.steps_container .step_next {right : 204px;}

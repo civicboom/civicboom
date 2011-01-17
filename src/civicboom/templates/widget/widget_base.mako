@@ -32,6 +32,13 @@
 			Y.log("YUI Debugger Enabled", "info",  "civicboom");
 		</script>
 		% endif
+		
+		<%doc>
+			## debug
+		<meta http-Equiv="Cache-Control" Content="no-cache">
+		<meta http-Equiv="Pragma" Content="no-cache">
+		<meta http-Equiv="Expires" Content="0">
+		</%doc>
     </head>
     
     <%

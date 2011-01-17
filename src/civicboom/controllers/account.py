@@ -1,4 +1,5 @@
 from civicboom.lib.base import *
+from civicboom.lib.misc import make_username
 
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
@@ -44,9 +45,9 @@ class AccountController(BaseController):
     def signin(self, **kwargs):
 
         # If no POST display signin template
-        if request.environ['REQUEST_METHOD'] == 'GET':
-            if 'widget_username' in request.params:
-                setup_widget_env()
+        if request.environ['REQUEST_METHOD'] == 'GET':            
+            setup_widget_env()
+            if getattr(c,'widget_username',None): #'widget_username' in request.params:
                 return render("/widget/widget_signin.mako")
             return render("/web/account/signin.mako")
         
@@ -62,7 +63,7 @@ class AccountController(BaseController):
 
         # Authenticate with standard username
         if 'username' in kwargs and 'password' in kwargs:
-            c.logged_in_user = get_user_and_check_password(kwargs['username'], kwargs['password'])
+            c.logged_in_user = get_user_and_check_password(make_username(kwargs['username']), kwargs['password'])
             login_provider = "password"
 
         # If user has existing account: Login
@@ -106,6 +107,10 @@ class AccountController(BaseController):
     def set_persona(self, id, **kwargs):
         if set_persona(id):
             user_log.info("Switched to persona %s" % id)
+            # AllanC - not a sutable solution - I wanted an AJAX working version
+            #          I have put a hack in here to force html requests to be redirected
+            if c.format=='html':
+                return redirect(url(controller='profile', action='index'))
             return action_ok("switched persona")
         else:
             user_log.info("Failed to switch to persona %s" % id)

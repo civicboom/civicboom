@@ -1,9 +1,9 @@
 <%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Credits")}</%def>
 
-<article class='open-source col'>
-
 <%include file="toc.mako" />
+
+<article class='open-source col'>
 
 <h1>Open Source &amp; Credits</h1>
 
@@ -12,6 +12,12 @@ whenever we fix bugs or add features, the scripts and tools that we write intern
 but can be used as standalone programs are available from
 <a href="https://github.com/civicboom">our github page</a>.
 
+<!--
+bugs reported in other people's trackers:
+http://code.google.com/p/page-speed/issues/detail?id=448 - png optimisation
+https://bitbucket.org/bbangert/beaker/issue/62/some-way-to-set-httponly-cookies
+https://bitbucket.org/bbangert/beaker/issue/63/secure-auto-cookie-setting
+-->
 <div>
 <span>Front End:</span>
 
@@ -114,6 +120,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 -->
 </div>
 
+<!-- these only appear in our internal test data
 <div>
 <span>Images:</span>
 
@@ -125,6 +132,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 	<a href="http://www.flickr.com/photos/johnkarakatsanis/4805593861/">John.Karakatsanis</a> -
 	CC-BY-SA
 </div>
+-->
 
 <div>
 <span>Icons:</span>
@@ -133,5 +141,9 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 	<a href="http://pixel-mixer.com/">pixel-mixer</a> -
 	Commercial use allowed with link to pixel-mixer.com
 </div>
+
+<p>Social Network Icon Pack by Komodo Media, Rogie King is licensed under a Creative Commons Attribution-Share Alike 3.0 Unported License.</p>
+<a href="http://www.komodomedia.com/download/#social-network-icon-pack">komodomedia.com</a>
+Creative Commons License
 
 </article>

@@ -196,10 +196,11 @@ def icon(icon_type, description=None, class_=''):
 
 def api_datestr_to_datetime(date_str):
     return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
-    
-def datetime_to_rss(date):
-	return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
 
+def date_to_rss(date):
+    if isinstance(date, basestring):
+        date = api_datestr_to_datetime(date)
+    return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
 
 #-------------------------------------------------------------------------------
 # Standard and JSON URL generation
@@ -278,7 +279,7 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_text=None, method='POST', json_form_complete_actions=''):
+def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title='', confirm_text=None, method='POST', json_form_complete_actions=''):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -290,6 +291,12 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     
     Then use javascript to hide the form and show the pretty link
     """
+    if not title:
+        title = value
+    if not value_formatted:
+        value_formatted = value
+
+
 
     # Setup Get string href ----
     # the href could be passed a a tuple of (args,kwargs) for form() to create a JSON version to submit to
@@ -297,7 +304,6 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
     href_original = href
     if isinstance(href, tuple):
         href = url(*href[0], **href[1])
-        
 
     # Keep track of number of secure links created so they can all have unique hash's
     hhash = hashlib.md5(uniqueish_id(href, value, vals)).hexdigest()[0:6]
@@ -321,15 +327,15 @@ def secure_link(href, value='Submit', vals=[], css_class='', title='', confirm_t
         confirm_text = "true"
 
     # Styled submit link ------
-    # A standard <A> tag that submits the compatable form (typically used with format='redirect')
+    # A standard <A> tag that submits the compatable form (typically used with format='redirect')    
     hl = HTML.a(
-        value,
-        id="link_"+hhash,
-        style="display: none;",
-        href=href,
-        class_=css_class,
-        title=title,
-        onClick="if (%(confirm_text)s) {var e = document.getElementById('form_%(hhash)s'); if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} } return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        value_formatted ,
+        id      = "link_"+hhash,
+        style   = "display: none;",
+        href    = href,
+        class_  = css_class,
+        title   = title,
+        onClick = "if (%(confirm_text)s) {var e = document.getElementById('form_%(hhash)s'); if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} } return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
     # $('#form_%(hhash)s').onsubmit();
     

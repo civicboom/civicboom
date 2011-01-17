@@ -1,17 +1,15 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<%namespace name="frag_lists" file="/frag/common/frag_lists.mako"/>
-<%namespace name="flag" file="/frag/content_actions/flag.mako"/>
-<%namespace name="member_includes"  file="/web/common/member.mako"/>
-
-<%namespace name="popup"      file="/web/common/popup_base.mako" />
+<%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"   />
+<%namespace name="flag"            file="/frag/content_actions/flag.mako"/>
+<%namespace name="share"           file="/frag/common/share.mako"        />
+<%namespace name="popup"           file="/web/common/popup_base.mako"    />
+<%namespace name="member_includes" file="/web/common/member.mako"        />
 
 
 ## for deprication
 <%namespace name="loc"              file="/web/common/location.mako"     />
 
-##<%namespace name="share"      file="/frag/common/share.mako"     />
-##<%namespace name="content_includes" file="/web/common/content_list.mako" />
 
 ##------------------------------------------------------------------------------
 ## Variables
@@ -36,7 +34,7 @@
                 'image'    : self.content.get('thumbnail_url') ,
                 'published': self.content.get('publish_date') ,
                 'updated'  : self.content.get('update_date') ,
-                'author'   : self.content['creator']['name'] ,
+                'author'   : self.content.get('creator', dict()).get('name') ,
             }
         
         self.attr.auto_georss_link = True
@@ -81,15 +79,15 @@
         )}
         
         % if 'accepted_status' in d:
-            ${frag_lists.member_list(
+            ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status'] if m['status']=='accepted'],
                 _("Accepted by"),
             )}
-            ${frag_lists.member_list(
+            ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status'] if m['status']=='invited'],
                 _("Invited"),
             )}
-            ${frag_lists.member_list(
+            ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status'] if m['status']=='withdrawn'],
                 _("Withdrawn"),
             )}
@@ -138,6 +136,8 @@
 <%def name="content_media()">
     <%
         content = self.content
+    %>
+    <%
         media_width  = config['media.display.video.width' ]
         media_height = config['media.display.video.height']
     %>
@@ -146,7 +146,7 @@
     % for media in content['attachments']:
         <li>
         % if media['type'] == "image":
-            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}" style="width: ; "/></a>
+            <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}" style="max-width: ${media_width}px; max-height: ${media_height}px;"/></a>
         % elif media['type'] == "audio":
             <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="30">
                 <param name="movie" value="/flash/player_flv_maxi.swf" />
@@ -285,9 +285,8 @@
     % if self.content['type'] != 'draft':
         ${h.secure_link(
             h.args_to_tuple('new_content', parent_id=self.id) ,
-            value="" ,
-            title=_("Respond to this") ,
-            css_class="icon icon_respond" ,
+            value=_("Respond") ,
+            value_formatted = h.literal("<span class='icon icon_respond'></span>%s") % _('Respond') ,
             json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
         )}
         <span class="separtor"></span>
@@ -297,7 +296,8 @@
     % if 'accept' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
-            value = h.literal("<span class='icon icon_accept'></span>%s") % _('Accept') ,
+            value = _('Accept'),
+            value_formatted = h.literal("<span class='icon icon_accept'></span>%s") % _('Accept') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
@@ -308,9 +308,9 @@
     % if 'withdraw' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
-            value="" ,
-            title=_('Withdraw') ,
-            css_class="icon icon_withdraw" ,
+            value = _('Withdraw') ,
+            value_formatted = h.literal("<span class='icon icon_withdraw'></span>%s") % _('Withdraw'),
+            ##css_class="" ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         <span class="separtor"></span>
@@ -319,42 +319,44 @@
     % if 'boom' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='boom', format='redirect', id=self.id) ,
-            value="" ,
-            title=_('Boom') ,
-            css_class="icon icon_boom" ,
+            value = _('Boom') ,
+            value_formatted = h.literal("<span class='icon icon_boom'></span>%s") % _('Boom'),
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
+        <span class="separtor"></span>
     % endif
     
     % if 'approve' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
-            _('Approve & Lock'),
-            title        = _("Approve and lock this content so no further editing is possible"),
-            css_class    = "icon icon_approved",
-            confirm_text = _('Once approved this article will be locked and no further changes can be made'),
+            value           = _('Approve & Lock'),
+            value_formatted = h.literal("<span class='icon icon_approve'></span>%s") % _('Approve & Lock'),
+            title           = _("Approve and lock this content so no further editing is possible"),
+            confirm_text    = _('Once approved this article will be locked and no further changes can be made'),
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
-            
         )}
+        <span class="separtor"></span>
     % endif
     % if 'seen' in self.actions:
         ${h.secure_link(
-            h.args_to_tuple('content_action', action='seen'       , format='redirect', id=self.id),
-            _('Seen, like it') ,
-            title=_("Seen it, like it") ,
-            css_class="icon icon_seen" ,
+            h.args_to_tuple('content_action', action='seen'   , format='redirect', id=self.id),
+            value           = _('Viewed') ,
+            value_formatted = h.literal("<span class='icon icon_seen'></span>%s") % _('Viewed'),
+            title           = _("Mark this content as viewed") ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
     % if 'dissasociate' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='disasociate', format='redirect', id=self.id),
-            _('Disasociate') ,
-            title        = _("Dissacociate your content from this response") ,
-            css_class    = "icon icon_dissasociate" ,
-            confirm_text = _('This content with no longer be associated with your content, are you sure?') ,
+            value           = _('Disasociate') ,
+            value_formatted = h.literal("<span class='icon icon_dissasociate'></span>%s") % _('Disasociate'),
+            title           = _("Dissacociate your content from this response") ,
+            confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
     
 </%def>        
@@ -367,21 +369,23 @@
            class="icon icon_edit"
            title="${_('Edit')}"
            onclick="cb_frag_load($(this), '${h.url('edit_content', id=self.id, format='frag')}'); return false;"
-        ><span>${_("Edit")}</span></a>
+        ></a>${_("Edit")}
+        <span class="separtor"></span>
         
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
-            method="DELETE",
-            value="",
-            title=_("Delete"),
-            css_class="icon icon_delete",
-            confirm_text=_("Are your sure you want to delete this content?"),
+            method = "DELETE",
+            value           = _("Delete"),
+            value_formatted = h.literal("<span class='icon icon_delete'></span>%s") % _('Delete'),
+            confirm_text    = _("Are your sure you want to delete this content?"),
             json_form_complete_actions = "cb_frag_remove(current_element);" ,
         )}
+        <span class="separtor"></span>
     % endif
 
     % if 'aggregate' in self.actions:
-        <a href='' class="icon icon_boom"><span>Aggregate</span></a>
+        ##<a href='' class="icon icon_boom"><span>Aggregate</span></a>
+        ${share.janrain_social(self.content, 'janrain', class_='icon icon_share')}
     % endif
     
     % if 'flag' in self.actions:
@@ -392,6 +396,7 @@
         ${parent.georss_link()}
     % endif
 
+    
     
 </%def>
 

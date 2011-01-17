@@ -20,18 +20,29 @@
         self.attr.title     = self.member['type'].capitalize()
         self.attr.icon_type = self.member['type']
         
-        if c.logged_in_persona and self.member['username'] == c.logged_in_persona.username:
-            self.attr.title     = 'Current User'
-            self.attr.icon_type = 'current_user'
-            
-        
-        self.attr.frag_data_css_class = 'frag_member'
-        
+        self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
+
         self.attr.share_kwargs = {
             'url'      : self.attr.html_url ,
             'title'    : self.name ,
             'image'    : self.member['avatar_url'] ,
         }
+        
+        if self.current_user:
+            if self.member['type'] == 'group':
+                self.attr.title     = _('Current Group Persona')
+                self.attr.icon_type = 'group'
+            else:
+                self.attr.title     = _('Current User')
+                self.attr.icon_type = 'current_user'
+            
+            self.attr.share_kwargs.update({
+                'url'  : h.url('member', id=self.id, host=app_globals.site_host, protocol='http') ,
+            })
+        
+        self.attr.frag_data_css_class = 'frag_member'
+        
+        
 
         self.attr.auto_georss_link = True
     %>
@@ -50,40 +61,47 @@
         
         ## Comunity ----------------------------------------
         
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             d['following'],
             _('Following'),
             h.args_to_tuple('member_action', id=self.id, action='following'),
+            icon =  'follow'
         )}
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             d['followers'] ,
             _('Followers') ,
             h.args_to_tuple('member_action', id=self.id, action='followers') ,
+            icon =  'follow'
         )}
         
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             [m for m in d['groups'] if m['status']=='active'],
             _('Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
+            icon = 'group' ,
         )}
         
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             [m for m in d['groups'] if m['status']=='invite'] ,
             _('Pending group invitations') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
+            icon = 'group' ,
         )}
         
         % if self.member['type']=='group':
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             [m for m in d['members'] if m['status']=='active'],
             _('Members'),
-            h.args_to_tuple('member_action', id=self.id, action='members')
+            h.args_to_tuple('member_action', id=self.id, action='members') ,
+            icon = 'user' ,
+            
         )}
         
-        ${frag_list.member_list(
+        ${frag_list.member_list_thumbnails(
             [m for m in d['members'] if m['status']=='invite'],
             _('Invited Members'),
-            h.args_to_tuple('member_action', id=self.id, action='members')
+            h.args_to_tuple('member_action', id=self.id, action='members') ,
+            icon = 'invite' ,
         )}
 
         % endif
@@ -95,11 +113,32 @@
     <div class="frag_right_col">
         <div class="frag_col">
         
+        % if self.current_user:
+            <a class   = "icon icon_message"
+               href    = "${url('messages',list='to')}"
+               title   = "${_('Messages')}"
+               onclick = "cb_frag($(this), '${url('messages', list='to'          , format='frag')}', 'bridge'); return false;"
+            ><span>${_('Messages')}</span></a>
+    
+            <a class   = "icon icon_message"
+               href    = "${url('messages',list='sent')}"
+               title   = "${_('Messages Sent')}"
+               onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'bridge'); return false;"
+            ><span>${_('Messages')}</span></a>
+            
+            <a class   = "icon icon_notification"
+               href    = "${url('messages', list='notification')}"
+               title   = "${_('Notifications')}"
+               onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'bridge'); return false;"
+            ><span>${_('Notifications')}</span></a>
+        % endif
+        
         ${frag_list.content_list(
-            d['assignments_accepted'],
-            _('Accepted _assignments'),
-            h.args_to_tuple('member_action', id=self.id, action='assignments_accepted'),
-            creator = True,
+            d['assignments_accepted'] ,
+            _('Accepted _assignments') ,
+            h.args_to_tuple('member_action', id=self.id, action='assignments_accepted') ,
+            creator = True ,
+            icon = 'assignment' ,
         )}
         
         ## Content --------------------------------------------
@@ -111,30 +150,35 @@
             [c for c in d['content'] if c['type']=='draft'] ,
             _('Drafts') ,
             h.args_to_tuple('contents', creator=self.id, list='drafts') , ##format='html'),
+            icon = 'draft' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='assignment' and ('due_date' not in c or c['due_date']==None or h.api_datestr_to_datetime(c['due_date'])>=datetime.datetime.now()) ] ,
-            _('Assignments Active') ,
+            _('_assignments active').capitalize() ,
             h.args_to_tuple('contents', creator=self.id, list='assignments_active') ,
+            icon = 'assignment' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='assignment' and ('due_date' in c and c['due_date']!=None and h.api_datestr_to_datetime(c['due_date'])<=datetime.datetime.now()) ] ,
-            _('Assignments Previous') ,
+            _('_assignments previous').capitalize() ,
             h.args_to_tuple('contents', creator=self.id, list='assignments_previous') ,
+            icon = 'assignment' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='article' and c['approval']!='none' ] ,
-            _('Responses') ,
+            _('Responses').capitalize() ,
             h.args_to_tuple('contents', creator=self.id, list='responses') ,
+            icon = 'response' ,
         )}
         
         ${frag_list.content_list(
             [c for c in d['content'] if c['type']=='article' and c['approval']=='none' ] ,
-            _('Articles') ,
+            _('_articles').capitalize() ,
             h.args_to_tuple('contents', creator=self.id, list='articles') ,
+            icon = 'article' ,
         )}
         
         ${frag_list.content_list(
@@ -143,6 +187,7 @@
             h.args_to_tuple('member_action', id=self.id, action='boomed_content') ,
             #h.args_to_tuple('contents', boomed_by=id) ,
             creator = True ,
+            icon = 'boom' ,
         )}
         
         </div>
@@ -166,41 +211,45 @@
     % if 'follow' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
-            _(' ') ,
-            title     = _("Follow %s" % self.name) ,
-            css_class = "icon icon_follow" ,
+            value           = _('Follow') ,
+            value_formatted = h.literal("<span class='icon icon_follow'></span>%s") % _('Follow'),
+            title           = _("Follow %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
 
     % if 'unfollow' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
-            _(' ') ,
-            title=_("Stop following %s" % self.name) ,
-            css_class="icon icon_unfollow" ,
+            value           = _('Unfollow') ,
+            value_formatted = h.literal("<span class='icon icon_unfollow'></span>%s") % _('Stop Following'),
+            title           = _("Stop following %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
 
     % if 'join' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
-            _('Join this _group') ,
-            css_class="icon icon_join" ,
+            value           = _('Join _group') ,
+            value_formatted = h.literal("<span class='icon icon_join'></span>%s") % _('Join Group'),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
     
     % if 'invite' in self.actions: #and c.logged_in_persona and c.logged_in_persona.__type__=='group':
         <% invite_text = _('Invite %s to join %s' % (self.name, c.logged_in_persona.name or c.logged_in_persona.username)) %>
         ${h.secure_link(
             h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect') ,
-            h.HTML.span(invite_text) ,
-            title = invite_text , 
-            css_class="icon icon_invite" ,
+            value           = _('Invite') ,
+            value_formatted = h.literal("<span class='icon icon_invite'></span>%s") % _('Invite') ,
+            title           = invite_text , 
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
+        <span class="separtor"></span>
     % endif
 </%def>
 
@@ -211,24 +260,6 @@
     % endif
     % if 'settings' in self.actions:
         <a class="icon icon_settings" href="${url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>
-        
-        <a class   = "icon icon_message"
-           href    = "${url('messages',list='to')}"
-           title   = "${_('Messages')}"
-           onclick = "cb_frag($(this), '${url('messages', list='to'          , format='frag')}', 'bridge'); return false;"
-        ><span>${_('Messages')}</span></a>
-
-        <a class   = "icon icon_message"
-           href    = "${url('messages',list='sent')}"
-           title   = "${_('Messages Sent')}"
-           onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'bridge'); return false;"
-        ><span>${_('Messages')}</span></a>
-        
-        <a class   = "icon icon_notification"
-           href    = "${url('messages', list='notification')}"
-           title   = "${_('Notifications')}"
-           onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'bridge'); return false;"
-        ><span>${_('Notifications')}</span></a>
     % endif
     ${popup.link(h.args_to_tuple(controller='misc', action='get_widget', id=self.id), title=_('Get widget'), class_='icon icon_widget')}
     

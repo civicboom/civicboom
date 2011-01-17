@@ -15,25 +15,12 @@ BODY.c-misc.a-about ARTICLE TIME {
 	/*font-size: 1.5em;*/
 	margin-bottom: 0.5em;
 }
-BODY.c-misc.a-about ARTICLE IMG {
-	display: block;
-	margin: auto;
-	max-width: 100%;
-}
 
 BODY.c-misc.a-about ARTICLE.col {
-	max-width: 1000px;
-	margin: auto;
-}
-BODY.c-misc.a-about ARTICLE.cols {
-	max-width: 1000px;
-	margin: auto;
-	-moz-column-width: 450px;
-	-moz-column-gap: 1em;
-	-moz-column-rule: 1px solid black;
-	-webkit-column-width: 450px;
-	-webkit-column-gap: 1em;
-	-webkit-column-rule: 1px solid black;
+	/*max-width: 940px;
+	margin: auto;*/
+	margin-left: 256px;
+	margin-right: 256px;
 }
 
 BODY.c-misc.a-about ARTICLE.legal OL {
@@ -55,19 +42,16 @@ BODY.c-misc.a-about ARTICLE.open-source DIV SPAN {
 }
 
 .toc {
-	float: right;
+	position: absolute;
+	top: 128px;
+	right: 64px;
 	text-align: center;
 }
 .toc LI A {
 	display: block;
-	padding: 4px;
 	width: 128px;
-	border: 1px solid #888;
 	margin: 4px;
 }
-.toc LI A:hover {
-	border: 1px solid #000;
-}
 .toc A {
-	color: black;
+	color: white;
 }

@@ -63,18 +63,7 @@
 				<th colspan="2">${_("Group Settings")}</th>
 			</tr>
 			<tr>
-				<td>${_("Groupname")}</td>
-				<td>
-        % if d['action'] == "create":
-            <input type="text" name="username" value="${get_param('username')}"/>
-            ${show_error('username')}
-        % else:
-            ${get_param('username')}
-        % endif
-				</td>
-			</tr>
-			<tr>
-				<td>${_("Full Name")}</td>
+				<td>${_("Group Name")}</td>
 				<td>
 		<input type="text" name="name" value="${get_param('name')}"/>
         ${show_error('name')}

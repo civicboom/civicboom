@@ -279,7 +279,7 @@ class ContentActionsController(BaseController):
         
         if hasattr(content, 'assigned_to'):
             return action_ok(data={'list':
-                [update_dict(a.member.to_dict(),{'status':a.status}) for a in content.assigned_to]
+                [update_dict(a.member.to_dict(),{'status':a.status}) for a in content.assigned_to] ##, 'update_date':a.update_date
             })
         
         return action_ok(data={'list':[]})

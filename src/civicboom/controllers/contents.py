@@ -3,7 +3,7 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom
-from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license
+from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license, get_tag
 from civicboom.model.content           import _content_type as content_types
 
 # Other imports
@@ -21,8 +21,12 @@ from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null
-from sqlalchemy.orm       import join, joinedload
+from sqlalchemy.orm       import join, joinedload, defer
 import datetime
+
+# Other imports
+from sets import Set # may not be needed in Python 2.7+
+
 
 # Logging setup
 log      = logging.getLogger(__name__)
@@ -146,7 +150,8 @@ def _init_search_filters():
         if isinstance(creator, int):
             return query.filter(Content.creator_id==creator)
         else:
-            return query.filter(Member.username==creator)
+            # AllanC - WARNING this is untested ... all creators should be normalized - I dont think this is ever called
+            return query.filter(Member.username==creator) #select_from(join(Content, Member, Content.creator)).
     
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
@@ -155,7 +160,8 @@ def _init_search_filters():
 
     def append_search_boomed_by(query, member):
         member = _normalize_member(member, always_return_id=True)
-        return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
+        #return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
+        return query.filter(Content.id.in_( Session.query(Boom.content_id).filter(Boom.member_id==member) ))
         
 
     search_filters = {
@@ -215,7 +221,7 @@ class ContentsController(BaseController):
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
         #          TODO: we need maybe a separte call, or something to identify a private call
         logged_in_creator = False
-        if 'creator' in kwargs and c.logged_in_persona:
+        if 'creator' in kwargs:
             kwargs['creator'] = _normalize_member(kwargs['creator'], always_return_id=True) # normalize creator
             if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
@@ -241,8 +247,10 @@ class ContentsController(BaseController):
         #        kwargs['include_fields'] += ',attachments'
         
         # Build Search
-        results = Session.query(Content).select_from(join(Content, Member, Content.creator)) #with_polymorphic('*'). #Content.__type__!='draft'
+        results = Session.query(Content).with_polymorphic('*')
+        results = results.options(defer(Content.content))
         results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
+        # TODO: exculude fetch of content field in this query return. lazyload it?
         if 'private' in kwargs and logged_in_creator:
             pass # allow private content
         else:
@@ -251,6 +259,8 @@ class ContentsController(BaseController):
             results = results.options(joinedload('creator'))
         if 'attachments' in kwargs['include_fields']:
             results = results.options(joinedload('attachments'))
+        if 'tags' in kwargs['include_fields']:
+            results = results.options(joinedload('tags'))
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
         if 'list' in kwargs:
@@ -408,7 +418,7 @@ class ContentsController(BaseController):
         if submit_type == 'publish' and 'type' not in kwargs: # If publishing set 'type' (as this is submitted from the form as 'target_type')
             if hasattr(content, 'target_type'):
                 kwargs['type'] = content.target_type
-            if 'target_type' in kwargs:
+            if kwargs.get('target_type'):
                 kwargs['type'] = kwargs['target_type']
 
 
@@ -469,6 +479,18 @@ class ContentsController(BaseController):
             media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=kwargs["media_caption"], credit=kwargs["media_credit"])
             content.attachments.append(media)
             #Session.add(media) # is this needed as it is appended to content and content is in the session?
+
+        # Tags
+        if 'tags_string' in kwargs:
+            separator = config['setting.content.tag_string_separator']
+            tags_new     = [tag.strip() for tag in kwargs['tags_string'].split(separator) if tag!=""] # Get tags from form removing any empty strings
+            tags_current = [tag.name for tag in content.tags] # Get tags form current content object
+            # Add any new tag objects
+            for tag in Set(tags_new).difference(tags_current):
+                content.tags.append(get_tag(tag))
+            # Remove any missing tag objects
+            content.tags = [tag for tag in content.tags if tag.name in tags_new]
+        
         
         # -- Publishing --------------------------------------------------------
         if submit_type == 'publish' and permissions['can_publish']:

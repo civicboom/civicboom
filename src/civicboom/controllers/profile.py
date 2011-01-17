@@ -31,6 +31,8 @@ class ProfileController(BaseController):
                 content  a list of the member's contents
                 messages a list of messages, split into 'notifications' and 'to'
         """
+        # NOTE: if this method is refactored or renamed please update cb_frag.js (as it is outside pylons and has a hard coded url to '/profile/index')
+        
         # AllanC - contruct an uber dictionary for the template to render built from data from other controller actions
         data = members_controller.show(id=c.logged_in_persona.id, lists='followers, following, assignments_accepted, boomed_content, members, actions')['data']
         data.update({

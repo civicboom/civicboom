@@ -1,9 +1,9 @@
 <%inherit file="/web/common/html_base.mako"/>
 <%def name="title()">${_("Civicboom Developers")}</%def>
 
-<article class="col">
-
 <%include file="toc.mako" />
+
+<article class="col">
 
 <h1>Civicboom Developers</h1>
 <ul>
