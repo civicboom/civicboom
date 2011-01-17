@@ -97,7 +97,7 @@ def make_username(title):
     turn a display name into a username
 
     >>> make_username("Bob's Cake Factory")
-    'bobscakefactory'
+    'bob-s-cake-factory'
     """
-    return re.sub("[^\w]", "", title.lower())
+    return re.sub("[^\w-]", "-", title.lower())
 
