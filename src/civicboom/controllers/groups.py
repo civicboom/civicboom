@@ -163,7 +163,8 @@ class GroupsController(BaseController):
         Session.commit()
         
         if c.format == 'html':
-            return redirect(url('group', id=group.id))
+            #return redirect(url('group', id=group.id))
+            return redirect(url('members', id=group.username))
         
         return action_ok(message=_('group updated ok'), data=data)
 
