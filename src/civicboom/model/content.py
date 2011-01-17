@@ -87,7 +87,7 @@ class Content(Base):
     creation_date   = Column(DateTime(),       nullable=False, default=func.now())
     update_date     = Column(DateTime(),       nullable=False, default=func.now(), doc="Controlled by postgres trigger")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
-    license_id      = Column(Integer(),        ForeignKey('license.id'), nullable=False, default=2)
+    license_id      = Column(Unicode(32),      ForeignKey('license.id'), nullable=False, default="CC-BY")
     
     visible         = Column(Boolean(),        nullable=False, default=True)
     edit_lock       = Column(_edit_lock,       nullable=True , default=None)
@@ -131,7 +131,7 @@ class Content(Base):
             'location'     : lambda content: content.location_string ,
             'num_responses': None ,
             'num_comments' : None ,
-            'license_id'   : lambda content: content.license.code if content.license else None ,
+            'license_id'   : None ,
             'private'      : None ,
             'edit_lock'    : None ,
         },
@@ -466,7 +466,7 @@ class AssignmentContent(UserVisibleContent):
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
-    default_response_license_id = Column(Integer(), ForeignKey('license.id'), nullable=False, default=2)
+    default_response_license_id = Column(Unicode(32), ForeignKey('license.id'), nullable=False, default="CC-BY")
     #num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
 
     default_response_license    = relationship("License")
@@ -479,7 +479,7 @@ class AssignmentContent(UserVisibleContent):
             'event_date'            : None ,
             'closed'                : None ,
             'num_accepted'          : None ,
-            'default_response_license': lambda content: content.license.code if content.license else None ,
+            'default_response_license': None ,
     }
     __to_dict__['default'     ].update(_extra_assignment_fields)
     __to_dict__['full'        ].update(_extra_assignment_fields)
@@ -566,8 +566,7 @@ class MemberAssignment(Base):
 
 class License(Base):
     __tablename__ = "license"
-    id            = Column(Integer(),     primary_key=True)
-    code          = Column(Unicode(32),   nullable=False, unique=True)
+    id            = Column(Unicode(32),   nullable=False, primary_key=True)
     name          = Column(Unicode(250),  nullable=False, unique=True)
     url           = Column(Unicode(250),  nullable=False)
     description   = Column(UnicodeText(), nullable=False)
@@ -577,7 +576,6 @@ class License(Base):
     __to_dict__.update({
         'default': {
             'id'           : None ,
-            'code'         : None ,
             'name'         : None ,
             'url'          : None ,
             'description'  : None ,
@@ -588,14 +586,14 @@ class License(Base):
     })
 
 
-    def __init__(self, code=None, name=None, description=None, url=None):
-        self.code = code
+    def __init__(self, id=None, name=None, description=None, url=None):
+        self.id = id
         self.name = name
         self.description = description
         self.url = url
 
     def __unicode__(self):
-        return self.code
+        return self.id
 
 
 # "type" was added so that "artist_name:red_box" and "photo_of:red_box" could

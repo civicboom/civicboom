@@ -332,7 +332,7 @@ MessageGrid.configure(include=[
 
 LicenseGrid = Grid(model.License)
 LicenseGrid.configure(include=[
-        LicenseGrid.code,
+        LicenseGrid.id,
         LicenseGrid.name,
         ])
 
