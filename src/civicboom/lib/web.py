@@ -39,7 +39,7 @@ def multidict_to_dict(multidict):
 #-------------------------------------------------------------------------------
 
 def redirect(*args, **kwargs):
-    if c.format==None or c.format == "html" or c.format == "redirect":
+    if not c.format or c.format == "html" or c.format == "redirect":
         redirect_pylons(*args, **kwargs)
     else:
         raise Exception('unable to perform redirect with format=%s' % c.format)
