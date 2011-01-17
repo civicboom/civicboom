@@ -131,7 +131,6 @@ class Content(Base):
             'location'     : lambda content: content.location_string ,
             'num_responses': None ,
             'num_comments' : None ,
-            'tags'         : lambda content: [tag.name for tag in content.tags] ,
             'license_id'   : lambda content: content.license.code if content.license else None ,
             'private'      : None ,
             'edit_lock'    : None ,
@@ -143,13 +142,14 @@ class Content(Base):
         'full': copy.deepcopy(__to_dict__['default'])
     })
     __to_dict__['full'].update({
-            'content'           : None ,
-            'parent'            : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
-            'creator'           : lambda content: content.creator.to_dict() ,
-            'attachments'       : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
-            #'responses'         : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
-            #'comments'          : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
-            'license'           : lambda content: content.license.to_dict() , 
+            'content'     : None ,
+            'parent'      : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
+            'creator'     : lambda content: content.creator.to_dict() ,
+            'attachments' : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
+            #'responses'   : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
+            #'comments'    : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
+            'license'     : lambda content: content.license.to_dict() ,
+            'tags'        : lambda content: [tag.name for tag in content.tags] ,
     })
     #del __to_dict__['full']['content_short'] # This is still useful for aggrigation so it stays in by default
     del __to_dict__['full']['parent_id']
