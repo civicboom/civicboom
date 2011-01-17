@@ -185,7 +185,6 @@ def register_new_janrain_user(profile):
     except: pass
     
     u.name          = profile.get('name').get('formatted')
-    u.webpage       = profile.get('url')
     u.status        = "pending"
     u.avatar        = profile.get('photo') # AllanC - disabled because we cant guarantee https - we need our server to auto copy this and upload it to our own S3 store
     #u.location      = get_location_from_json(profile.get('address'))
@@ -201,8 +200,9 @@ def register_new_janrain_user(profile):
     
     #Session.commit() # unneeded as associate_janrain_account has a commit in to map accounts
     
-    u.config['dob'] = profile.get('birthday') #Config vars? auto commiting?
-    #u.config['url']  = profile.get('url')
+    u.config['dob']     = profile.get('birthday') #Config vars? auto commiting?
+    u.config['website'] = profile.get('url')
+
     
     # Future addition and enhancements
     #   with janrain we could get a list of friends/contnact and automatically follow them?

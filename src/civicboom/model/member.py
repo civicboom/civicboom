@@ -116,7 +116,6 @@ class Member(Base):
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
     name            = Column(Unicode(250),   nullable=False, default=u"")
     join_date       = Column(Date(),         nullable=False, default=func.now())
-    webpage         = Column(Unicode(),      nullable=True,  default=None)
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(Unicode(250),   nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
@@ -184,9 +183,9 @@ class Member(Base):
     })
     __to_dict__['full'].update({
             'num_followers'       : None ,
-            'webpage'             : None ,
             'utc_offset'          : None ,
             'join_date'           : None ,
+            'website'             : None ,
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
             #'following'           : lambda member: [m.to_dict() for m in member.following            ] ,
             #'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
