@@ -192,15 +192,13 @@ class MemberActionsController(BaseController):
         return action_ok(data={'list': contents})
 
     @web
-    def assignments(self, id, **kwargs):
-        """
-        deprecated, but used by mobile
-        """
+    def assignments_unaccepted(self, id, **kwargs):
         member = _get_member(id)
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
-        contents = [content.to_dict("full") for content in member.assignments_accepted]
+        contents = [content.to_dict("full") for content in member.assignments_unaccepted]
         return action_ok(data={'list': contents})
+
 
 
     #---------------------------------------------------------------------------
