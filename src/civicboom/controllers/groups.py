@@ -96,6 +96,10 @@ class GroupsController(BaseController):
         @return 301 - if format redirect specifyed will redirect to show group
         """
         # url('groups') + POST
+        # if only display name is specified, generate a user name
+        if "username" not in kwargs:
+            import re
+            kwargs["username"] = re.sub("[^\w]", "", kwargs["name"])
         
         data       = {'group':kwargs, 'action':'create'}
         data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
