@@ -131,19 +131,19 @@
 
     <%self:step arg>
         <%def name="main()">
-            I am the main
+            <div style="text-align: center; margin-top: 3em;"><img src="/images/civicboom.png" alt="Civicboom Logo" style="width: 50%;"/></div>
         </%def>
         <%def name="description()">
-            description
+            <p style="font-weight: bold; font-size: 120%;">Civicboom empowers you connect, create and collaborate on what matters to you. </p>
         </%def>
     </%self:step>
 
     <%self:step>
         <%def name="main()">
-            I am the main 2
+            more steps
         </%def>
         <%def name="description()">
-            description 2
+            more steps
         </%def>
     </%self:step>    
     
