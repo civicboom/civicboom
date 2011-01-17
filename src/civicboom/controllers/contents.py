@@ -114,9 +114,10 @@ def _normalize_member(member, always_return_id=False):
         try:
             member = int(member)
         except:
-            member = member
             if always_return_id:
-                member = get_member(member).id
+                member = get_member(member)
+                if member:
+                    member = member.id
     return member
 
 

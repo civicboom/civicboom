@@ -373,7 +373,6 @@
     
     % if 'edit' in self.actions:
         <a href="${h.url('edit_content', id=self.id)}"
-           title="${_('Edit')}"
            onclick="cb_frag_load($(this), '${h.url('edit_content', id=self.id, format='frag')}'); return false;"
         ><span class="icon icon_edit"></span>${_("Edit")}</a>
         <span class="separtor"></span>
