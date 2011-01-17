@@ -75,7 +75,7 @@
         
         <div style="clear: both; padding: 0.5em;"></div>
         
-        <a style="float:right; color: black; background: none;" class="button" href="${url(controller='misc', action='about')}">${_('Get in touch')}</a>
+        <a style="float:right; color: black; background: none;" class="button" href="mailto:contact@civicboom.com">${_('Get in touch')}</a>
         <p style="font-weight: bold;">${_('Are you an organisation? Do you want to know how Civicboom can help you')}</p>
     </section>
 </%def>
