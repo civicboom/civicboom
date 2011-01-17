@@ -42,7 +42,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
     def _to_python(self, value, state):
         value = unicode(value.strip())
         # TODO: Strip or alert any characters that make it non URL safe, see feature #54
-        if not re.search("^[\w]*$", value):
+        if not re.search("^[\w-]*$", value):
             raise formencode.Invalid(self.message("illegal_chars", state,), value, state)
         if len(value) <= self.min:
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
