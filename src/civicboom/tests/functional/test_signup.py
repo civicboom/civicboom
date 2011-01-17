@@ -21,7 +21,6 @@ class TestSignup(TestController):
         """
         self.log_out()
         
-        
         # Request new user email for user that already exisits - reject
         response = self.app.post(
             url(controller='register', action='email'),
@@ -114,3 +113,6 @@ class TestSignup(TestController):
         #assert 'civicboom' in email_response.content_text
         
         self.log_in_as('test_signup', 'password')
+        
+        # Test lowercase normalisation
+        self.log_in_as('TeSt_SiGnUp', 'password')
