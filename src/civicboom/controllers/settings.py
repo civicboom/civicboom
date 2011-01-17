@@ -37,10 +37,10 @@ def add_setting(name, description, value='', group=None, **kwargs):
     setting = dict(name=name, description=description, value=value, group=group, **kwargs)
     settings_base[setting['name']]=setting
     
-add_setting('name'                   , _('Display name' )       , group='general')
-add_setting('description'            , _('Description'  )       , group='general')
-add_setting('website'                , _('Website'      )       , group='general')
-add_setting('email'                  , _('Email Address')       , group='contact')
+add_setting('name'                   , _('Display name' )       , group='general'                     )
+add_setting('description'            , _('Description'  )       , group='general'    , type='textarea')
+add_setting('website'                , _('Website'      )       , group='general'                     )
+add_setting('email'                  , _('Email Address')       , group='contact'                     )
 add_setting('password_new'           , _('New password')        , group='password'   , type='password')
 add_setting('password_new_confirm'   , _('New password again')  , group='password'   , type='password')
 add_setting('password_current'       , _('Current password')    , group='password'   , type='password')
