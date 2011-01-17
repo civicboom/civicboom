@@ -282,21 +282,26 @@
     
 <%def name="actions_specific()">
 
+    ## --- Respond -------------------------------------------------------------
+
     % if self.content['type'] != 'draft':
         ${h.secure_link(
             h.args_to_tuple('new_content', parent_id=self.id) ,
-            value=_("Respond") ,
+            value           = _("Respond") ,
             value_formatted = h.literal("<span class='icon icon_respond'></span>%s") % _('Respond') ,
             json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
         )}
+        ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
+        ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
         <span class="separtor"></span>
     % endif
     
+    ## --- Accept / Withdraw ---------------------------------------------------
     
     % if 'accept' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
-            value = _('Accept'),
+            value           = _('Accept') ,
             value_formatted = h.literal("<span class='icon icon_accept'></span>%s") % _('Accept') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
@@ -304,27 +309,29 @@
         <span class="separtor"></span>
     % endif
     
-    
     % if 'withdraw' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
-            value = _('Withdraw') ,
+            value           = _('Withdraw') ,
             value_formatted = h.literal("<span class='icon icon_withdraw'></span>%s") % _('Withdraw'),
-            ##css_class="" ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         <span class="separtor"></span>
     % endif
+    
+    ## --- Boom ----------------------------------------------------------------
     
     % if 'boom' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='boom', format='redirect', id=self.id) ,
-            value = _('Boom') ,
-            value_formatted = h.literal("<span class='icon icon_boom'></span>%s") % _('Boom'),
+            value           = _('Boom') ,
+            value_formatted = h.literal("<span class='icon icon_boom'></span>%s") % _('Boom') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         <span class="separtor"></span>
     % endif
+    
+    ## --- Approve/Viewed/Dissacocite ------------------------------------------
     
     % if 'approve' in self.actions:
         ${h.secure_link(
@@ -366,10 +373,9 @@
     
     % if 'edit' in self.actions:
         <a href="${h.url('edit_content', id=self.id)}"
-           class="icon icon_edit"
            title="${_('Edit')}"
            onclick="cb_frag_load($(this), '${h.url('edit_content', id=self.id, format='frag')}'); return false;"
-        ></a>${_("Edit")}
+        ><span class="icon icon_edit"></span>${_("Edit")}</a>
         <span class="separtor"></span>
         
         ${h.secure_link(
@@ -396,8 +402,6 @@
         ${parent.georss_link()}
     % endif
 
-    
-    
 </%def>
 
 
