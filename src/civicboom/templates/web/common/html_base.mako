@@ -67,7 +67,6 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
-	<script src="/javascript/toggle_div.js"></script> <!-- marked for deprication -->
 	<script src="/javascript/cb_frag.js"></script>
 % else:
 	<script src="/javascript/_combined.common.js"></script>

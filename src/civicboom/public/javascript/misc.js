@@ -82,6 +82,7 @@ function typeOf(obj) {
 
 
 
+
 /* http://snippets.dzone.com/posts/show/3817 */
 /* NOTE: the following code was extracted from the UFO source and extensively reworked/simplified */
 /* Unobtrusive Flash Objects (UFO) v3.20 <http://www.bobbyvandersluis.com/ufo/>
