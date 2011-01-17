@@ -8,6 +8,7 @@ import types
 import random
 from datetime import date
 import pprint
+import re
 
 import logging
 log = logging.getLogger(__name__)
@@ -91,5 +92,6 @@ def obj_to_dict(obj, dict_fields):
 def args_to_tuple(*args, **kwargs):
     return (args, kwargs)
 
-
+def make_username(title):
+    return re.sub("[^\w]", "", title.lower())
 

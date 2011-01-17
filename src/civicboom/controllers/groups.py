@@ -1,4 +1,5 @@
 from civicboom.lib.base import *
+from civicboom.lib.misc import make_username
 
 from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
 
@@ -98,8 +99,7 @@ class GroupsController(BaseController):
         # url('groups') + POST
         # if only display name is specified, generate a user name
         if "username" not in kwargs:
-            import re
-            kwargs["username"] = re.sub("[^\w]", "", kwargs["name"])
+            kwargs["username"] = make_username(kwargs["name"])
         
         data       = {'group':kwargs, 'action':'create'}
         data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
