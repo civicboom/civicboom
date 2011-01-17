@@ -58,14 +58,14 @@ def send_verifiy_email(user, controller='account', action='verify_email', messag
     Session.refresh(user)
     validation_link = url(controller=controller, action=action, id=user.id, host=app_globals.site_host, hash=user.hash())
     message         = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
-    send_email(user.email_unverifyed, subject=_('verify e-mail address'), content_text=message)
+    send_email(user.email_unverified, subject=_('verify e-mail address'), content_text=message)
 
 def verify_email(user, hash, commit=False):
     user = get_member(user)
     if user and user.hash() == hash:
-        if user.email_unverifyed:
-            user.email            = user.email_unverifyed
-            user.email_unverifyed = None
+        if user.email_unverified:
+            user.email            = user.email_unverified
+            user.email_unverified = None
         if commit:
             Session.commit()
         return True

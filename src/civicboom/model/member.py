@@ -392,7 +392,7 @@ class User(Member):
     location_updated = Column(DateTime(), nullable=False,   default=func.now())
     #dob              = Column(DateTime(), nullable=True) # Needs to be stored in user settings but not nesiserally in the main db record
     email            = Column(Unicode(250), nullable=True)
-    email_unverifyed = Column(Unicode(250), nullable=True)
+    email_unverified = Column(Unicode(250), nullable=True)
 
     login_details    = relationship("UserLogin", backref=('user'), cascade="all,delete-orphan")
 
@@ -430,7 +430,7 @@ class User(Member):
     def avatar_url(self, size=80):
         if self.avatar:
             return self.avatar
-        email = self.email or self.email_unverifyed
+        email = self.email or self.email_unverified
         if email:
             hash    = hashlib.md5(email.lower()).hexdigest()
             default = "identicon"
