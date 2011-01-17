@@ -93,5 +93,11 @@ def args_to_tuple(*args, **kwargs):
     return (args, kwargs)
 
 def make_username(title):
+    """
+    turn a display name into a username
+
+    >>> make_username("Bob's Cake Factory")
+    'bobscakefactory'
+    """
     return re.sub("[^\w]", "", title.lower())
 
