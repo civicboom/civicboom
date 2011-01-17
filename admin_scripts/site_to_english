@@ -13,6 +13,7 @@ def trans(text):
     text = text.replace("_content", "content")
     text = text.replace("_tipoff", "tipoff")
     text = text.replace("_report", "content")
+    text = text.replace("_group", "group")
     return text
 
 
