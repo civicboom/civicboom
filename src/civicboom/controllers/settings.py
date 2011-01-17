@@ -261,7 +261,7 @@ class SettingsController(BaseController):
                 raise action_error(_("Unable to understand location '%s'" % str(request.POST["location"])))
             user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
             del settings['home_location']
-        elif "home_location_name" in request.POST:
+        elif "home_location_name" in settings:
             (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_name"]), see Feature #47
             user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
             del settings['home_location_name']

@@ -1,4 +1,5 @@
 from civicboom.lib.base import *
+from civicboom.lib.misc import make_username
 
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
@@ -62,7 +63,7 @@ class AccountController(BaseController):
 
         # Authenticate with standard username
         if 'username' in kwargs and 'password' in kwargs:
-            c.logged_in_user = get_user_and_check_password(kwargs['username'], kwargs['password'])
+            c.logged_in_user = get_user_and_check_password(make_username(kwargs['username']), kwargs['password'])
             login_provider = "password"
 
         # If user has existing account: Login

@@ -29,7 +29,7 @@
     <a class="addthis_button_compact"></a>
     </div>
     <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
-    <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
+    <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
     <!-- AddThis Button END -->
 </%def>
 
@@ -41,7 +41,7 @@
 
 <%def name="share_this_js()">
 	<!-- ShareThis -->
-	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+	<script type="text/javascript" src="//w.sharethis.com/button/buttons.js"></script>
 	<script type="text/javascript">
 		stLight.options({
 			publisher:'${config['api_key.sharethis']}' ,
