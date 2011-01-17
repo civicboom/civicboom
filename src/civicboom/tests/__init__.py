@@ -60,6 +60,7 @@ class TestController(TestCase):
                 }
             )
             response = self.app.get(url(controller='profile', action='index')) # get an auth token
+            assert '_authentication_token' in response.session # If this failed the login was unsuccessful
             self.auth_token   = response.session['_authentication_token']
             self.logged_in_as = username
 
