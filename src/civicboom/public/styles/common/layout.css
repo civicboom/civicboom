@@ -86,11 +86,13 @@ OL OL LI {
 .form TD INPUT[type="submit"],
 .form TD INPUT[type="email"],
 .form TD INPUT[type="password"],
-.form TD SELECT {
+.form TD SELECT,
+.form TD TEXTAREA {
 	width: 100%;
 }
 .form TD:first-child {
 	text-align: right;
+	vertical-align: top;
 }
 
 /* HACK because for some reason, input fields in TDs overflow :/  */

@@ -48,6 +48,8 @@
                             if setting_value and setting_value!='': checked="checked='%s'" % setting_value
                         %>
                         <input name="${setting_name}" value="True" type='checkbox' ${checked}>
+                    % elif setting_type == 'textarea':
+                        <textarea name="${setting_name}" rows="4">${setting_value}</textarea>
                     % elif setting_type == 'password':
                         <input name="${setting_name}" type="password" />
                     % elif setting_type == 'file':
