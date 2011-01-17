@@ -84,17 +84,14 @@ class MinimumAgeValidator(IsoFormatDateConverter):
     age_min = 16
     messages = {
         'empty'        : _('Please enter a date of birth') ,
-        'date_format'  : _("Please enter your date of birth with the format DD/MM/YYYY") ,
         'under_min_age': _("Sorry, you have to be over %d to use this site") % age_min,
     }
     def _to_python(self, value, state):
-         try:
-             date = datetime.datetime.strptime(value, '%d/%m/%Y')
-         except ValueError:
-              raise formencode.Invalid(self.message('date_format'  , state), value, state)
-         if calculate_age(date) < self.age_min:
-              raise formencode.Invalid(self.message('under_min_age', state), value, state)
-         return date
+        date = super(MinimumAgeValidator, self)._to_python(value, state)
+        #log.debug("date %s - type %s" % (date,type(date)))
+        if calculate_age(date) < self.age_min:
+            raise formencode.Invalid(self.message('under_min_age', state), value, state)
+        return date
 
 class ReCaptchaValidator(validators.FancyValidator):
     """    
