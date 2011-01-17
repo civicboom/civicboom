@@ -50,7 +50,13 @@
         <description>${content['content_short']}</description> 
         <pubDate>${h.date_to_rss(content.get('creation_date'))}</pubDate> 
         <guid isPermaLink="false">Civicboom Content #${content['id']}</guid>
-        <category>${content['tags']}</category>
+        % if 'tags' in content:
+        <category>
+            % for tag in content['tags']:
+            ${tag}, 
+            % endfor
+        </category>
+        % endif
         <dc:creator>${content.get('creator',dict()).get('name')} (${content.get('creator',dict()).get('username')})</dc:creator>
         ## Comments - http://wellformedweb.org/news/wfw_namespace_elements/
         ##<wfw:comment   >${url('contents', parent_id=content['id'], type='comment', format='rss', host=app_globals.site_host)}</wfw:comment>

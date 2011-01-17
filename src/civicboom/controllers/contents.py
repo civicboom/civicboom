@@ -259,7 +259,7 @@ class ContentsController(BaseController):
             results = results.options(joinedload('creator'))
         if 'attachments' in kwargs['include_fields']:
             results = results.options(joinedload('attachments'))
-        if 'tags' not in kwargs['exclude_fields']:
+        if 'tags' in kwargs['include_fields']:
             results = results.options(joinedload('tags'))
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
