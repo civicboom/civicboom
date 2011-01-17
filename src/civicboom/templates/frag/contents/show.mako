@@ -423,7 +423,7 @@
     ##-------- Licence----------
     <h2>${_("Licence")}</h2>
         <a href="${d['content']['license']['url']}" target="_blank" title="${d['content']['license']['name']}">
-          <img src="/images/licenses/${d['content']['license']['code']}.png" alt="${d['content']['license']['name']}" />
+          <img src="/images/licenses/${d['content']['license']['id']}.png" alt="${d['content']['license']['name']}" />
         </a>
   
 
