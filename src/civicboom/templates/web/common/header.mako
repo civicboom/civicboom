@@ -168,10 +168,10 @@
     ${h.secure_link(
         url(controller='account', action='signout'),
         _('Sign out'),
-        css_class="signout"
+        css_class="button"
     )}
 % else:
-    <a class="signin" href="${url(controller='account', action='signin')}">
+    <a class="button" href="${url(controller='account', action='signin')}">
         ##<img src="/styles/web/login.png" alt="${_("Log in")}" width="68" height="17">
         ${_('Sign in')}
     </a>

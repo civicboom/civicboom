@@ -179,8 +179,8 @@ NAV .menuh INPUT {
 
 HEADER #search {
 	position: absolute;
-	top: 11px;
-	right: 72px;
+	top: 12px;
+	right: 86px;
 	width: 150px;
 	height: 20px;
 }
@@ -215,8 +215,10 @@ HEADER #signin {
     position: absolute;
     top: 11px;
     right: 8px;
+
+    /*
     width: 54px;
-    height: 18px; /* +2px border */
+    height: 18px; /* +2px border 
     text-align: center;
     vertical-align: middle;
     background-color: #eee;
@@ -224,8 +226,13 @@ HEADER #signin {
 	border-radius        : 0.5em;
 	-moz-border-radius   : 0.5em;
 	-webkit-border-radius: 0.5em;
+    */
 }
 
+HEADER #signin .button {
+	padding: 0.2em;
+    width: 64px;
+}
 
 /*----------------------------------------------------------------------------*/
 /*                               App detail:                                  */
