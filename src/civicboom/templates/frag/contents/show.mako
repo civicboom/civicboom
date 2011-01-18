@@ -360,7 +360,7 @@
             value           = _('Approve & Lock'),
             value_formatted = h.literal("<span class='icon icon_approve'></span>%s") % _('Approve & Lock'),
             title           = _("Approve and lock this content so no further editing is possible"),
-            confirm_text    = _('Once approved this article will be locked and no further changes can be made'),
+            confirm_text    = _('Click OK to approve this. Once approved, no further changes can be made by the creator, and further details will be sent to your inbox.'),
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
         )}
         <span class="separtor"></span>

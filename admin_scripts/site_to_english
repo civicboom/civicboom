@@ -7,13 +7,19 @@ def trans(text):
     text = text.replace("_site_name", "Civicboom")
     text = text.replace("_tagline", "News. Don't just read it. Feed it.")
     text = text.replace("_site_description", "Building the world's first true community and audience assignment system")
-    text = text.replace("_assignment", "request")
-    text = text.replace("_article", "content")
-    text = text.replace("_reporter", "user")
-    text = text.replace("_content", "content")
-    text = text.replace("_tipoff", "tipoff")
-    text = text.replace("_report", "content")
-    text = text.replace("_group", "group")
+
+    words = [
+        ("assignment", "request"),
+        ("article",    "content"),
+        ("reporter",   "user"),
+        ("report",     "content"),
+        ("group",      "group"),
+    ]
+    for w, r in words:
+        text = text.replace("_"+w, r)
+        text = text.replace("_"+w.capitalize(), r.capitalize())
+        text = text.replace("_"+w.upper(), r.upper())
+
     return text
 
 

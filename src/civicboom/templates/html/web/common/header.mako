@@ -139,7 +139,7 @@
             <li><a href="/profile" class="sub_option">${_("Profile")}</a></li>
             <li><a href="/settings" class="sub_option">${_("Settings")}</a></li>
             <li><a href="/profile" class="sub_option">${_("Content")}</a></li>
-            <li><a href="/profile" class="sub_option">${_("Assignments")}</a></li>
+            <li><a href="/profile" class="sub_option">${_("_Assignments")}</a></li>
             <li><a href="/profile" class="sub_option">${_("Groups")}</a></li>
         </ul>
         </li>
