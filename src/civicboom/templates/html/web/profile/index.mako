@@ -1,1 +1,1 @@
-<%include file="/web/members/show.mako"/>
+<%include file="/html/web/members/show.mako"/>
