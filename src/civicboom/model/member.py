@@ -2,6 +2,7 @@
 from civicboom.model.meta import Base
 from civicboom.model.message import Message
 from civicboom.lib.misc import update_dict
+from civicboom.lib.helpers import wh_url
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
@@ -117,7 +118,7 @@ class Member(Base):
     name            = Column(Unicode(250),   nullable=False, default=u"")
     join_date       = Column(Date(),         nullable=False, default=func.now())
     status          = Column(_member_status, nullable=False, default="pending")
-    avatar          = Column(Unicode(250),   nullable=True)
+    avatar          = Column(String(40),     nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
@@ -274,9 +275,9 @@ class Member(Base):
 
     @property
     def avatar_url(self, size=80):
-        if self.avatar: # and self.avatar!='':
-            return self.avatar
-        return "https://civicboom-static.s3.amazonaws.com/public/images/default_avatar.png"
+        if self.avatar:
+            return wh_url("avatars", self.avatar)
+        return "https://static.civicboom.com/images/default_avatar.png"
 
     @property
     def location_home_string(self):
@@ -391,7 +392,7 @@ class User(Member):
     location_updated = Column(DateTime(), nullable=False,   default=func.now())
     #dob              = Column(DateTime(), nullable=True) # Needs to be stored in user settings but not nesiserally in the main db record
     email            = Column(Unicode(250), nullable=True)
-    email_unverifyed = Column(Unicode(250), nullable=True)
+    email_unverified = Column(Unicode(250), nullable=True)
 
     login_details    = relationship("UserLogin", backref=('user'), cascade="all,delete-orphan")
 
@@ -428,8 +429,8 @@ class User(Member):
     @property
     def avatar_url(self, size=80):
         if self.avatar:
-            return self.avatar
-        email = self.email or self.email_unverifyed
+            return wh_url("avatars", self.avatar)
+        email = self.email or self.email_unverified
         if email:
             hash    = hashlib.md5(email.lower()).hexdigest()
             default = "identicon"

@@ -27,7 +27,7 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
     
     # User object passed, get email address
     #  else the email_to is assumed to be a CSV list of email address's
-    if hasattr(email_to, 'email_unverifyed') and email_to.email_unverifyed!=None: email_to = email_to.email_unverifyed
+    if hasattr(email_to, 'email_unverified') and email_to.email_unverified!=None: email_to = email_to.email_unverified
     if hasattr(email_to, 'email'           ) and email_to.email           !=None: email_to = email_to.email
     email_to = str(email_to)
     

@@ -57,6 +57,15 @@ def init():
                                                 foreign_keys=[MemberAssignment.content_id,MemberAssignment.member_id],
                                                 backref='assignments_accepted'
                                     )
+    AssignmentContent.unaccepted_by = dynamic_loader(Member,
+                                                primaryjoin=and_(AssignmentContent.id==MemberAssignment.content_id,
+                                                                 MemberAssignment.status=="pending",
+                                                ),
+                                                secondary=MemberAssignment.__table__,
+                                                secondaryjoin=MemberAssignment.member_id==Member.id,
+                                                foreign_keys=[MemberAssignment.content_id,MemberAssignment.member_id],
+                                                backref='assignments_unaccepted'
+                                    )
     
     Member.boomed_content       = relationship("Content",
                                                primaryjoin   = Member.id==Boom.member_id,

@@ -109,8 +109,21 @@ def link_to_objects(text):
         output = output + HTML.literal(prev_word)
     return output
 
-def wh_public(filename):
-    return config["warehouse_url"]+"/public/"+filename
+def wh_url(folder, filename):
+    # pylons' "public" folder is updated pretty frequently, and is associated
+    # with the specific version of the code -- so while we are small and doing
+    # lots of updates, serve the public folder locally
+    if folder == "public":
+        if config['debug']:
+            # in development,  serve locally
+            return "/"+filename
+        else:
+            # in production, serve from a domain without cookies
+            return "//static.civicboom.com/"+filename
+    # all other folders (media, avatars) are served from our beefy-but-slow-to
+    # update warehouse (currently amazon S3)
+    else:
+        return config["warehouse_url"]+"/"+folder+"/"+filename
 
 def url_from_widget(*args, **kargs):
     if hasattr(app_globals,'widget_variables'):
