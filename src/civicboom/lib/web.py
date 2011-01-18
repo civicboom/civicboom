@@ -190,51 +190,42 @@ def overlay_status_message(master_message, new_message):
 #-------------------------------------------------------------------------------
 
 def _find_subformat():
-    domain = request.environ.get("HTTP_HOST")
+    domain = request.environ.get("HTTP_HOST", "")
     if domain.startswith("mobile.") or domain.startswith("m.") or request.environ['is_mobile']:
         return "mobile"
     if domain.startswith("widget.") or domain.startswith("w."):
         return "widget"
     return "web"
 
-def _find_template(result, type='html'):
-
-    type_fallback = {
-        'web'   : None  ,
-        'mobile': 'web' ,
-        'rss'   : None  ,
-        'frag'  : 'web' ,
-        'widget': 'web' ,
-    }
-    
-    # Convert the type into the base folder structure
-    if type=='html':
-        type = _find_subformat()
-
+def _find_template(result, type):
     #If the result status is not OK then use the template for that status
     if result.get('status', 'ok') == 'error':
-        result['template'] = result['status']
+        template_part = "error"
+    else:
+        # if template file is specified use it, else default to type/controller/action.mako
+        template_part = result.get('template', '%s/%s' % (c.controller, c.action))
 
-    # if template file is specified use it, else default to type/controller/action.mako
-    template_part = result.get('template', '%s/%s' % (c.controller, c.action))
+    # html is a meta-format -- if we are asked for a html template,
+    # redirect to web, mobile or widget depending on the environment
+    if type == "html":
+        subformat = _find_subformat()
+        paths = [
+            os.path.join("html", subformat, template_part),
+            os.path.join("html", "web",     template_part),
+        ]
+    else:
+        paths = [
+            os.path.join(type, template_part),
+        ]
 
-    def template_file_exists(template_file):
-        return os.path.exists(os.path.join(config['path.templates'], "html", template_file))
+    for path in paths:
+        if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
+            return path+".mako"
 
-    # Iterate through all possible templates using differnt fallback types
-    template = None
-    fbtype = type
-    while template==None and fbtype!=None:
-        template = "%s/%s.mako" % (fbtype, template_part)
-        if not template_file_exists(template):
-            template = None
-            fbtype     = type_fallback[fbtype]
-    return ("html/"+template or "html/"+type+"/default.mako")
-
+    raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
 
 def setup_format_processors():
-    
     def render_template(result, type):
         overlay_status_message(c.result, result)
         return render_mako(_find_template(result, type), extra_vars={"d": c.result['data']} )
