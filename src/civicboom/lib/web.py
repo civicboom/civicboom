@@ -120,13 +120,15 @@ def action_ok(message=None, data={}, code=200, template=None):
     assert not message or isinstance(message, basestring)
     assert isinstance(data, dict)
     assert isinstance(code, int)
-    return {
+    d = {
         "status" : "ok",
         "message": message,
         "data"   : data,
         "code"   : code,
-        "template": template,
     }
+    if template:
+        d["template"] = template
+    return d
 
 class action_error(Exception):
     def __init__(self, message=None, data={}, code=500, template=None, status='error'):
@@ -138,8 +140,9 @@ class action_error(Exception):
             "message": message,
             "data"   : data,
             "code"   : code,
-            "template": template,
         }
+        if template:
+            self.original_dict["template"] = template
     def __str__( self ):
         return str(self.original_dict)
 
@@ -186,46 +189,43 @@ def overlay_status_message(master_message, new_message):
 # Auto Format Output
 #-------------------------------------------------------------------------------
 
-def _find_template(result, type='html'):
+def _find_subformat():
+    domain = request.environ.get("HTTP_HOST", "")
+    if domain.startswith("mobile.") or domain.startswith("m.") or request.environ['is_mobile']:
+        return "mobile"
+    if domain.startswith("widget.") or domain.startswith("w."):
+        return "widget"
+    return "web"
 
-    type_fallback = {
-        'web'   : None  ,
-        'mobile': 'web' ,
-        'rss'   : None  ,
-        'frag'  : 'web' ,
-    }
-    
-    # Convert the type into the base folder structure
-    if type=='html':
-        type = 'web'
-        if request.environ['is_mobile']:
-            type = 'mobile'
-
+def _find_template(result, type):
     #If the result status is not OK then use the template for that status
     if result.get('status', 'ok') == 'error':
-        result['template'] = "%s" % result['status']
-
-    if result.get('template'):
-        template_part = result.get('template')               # Attempt to get template named in result
+        template_part = "error"
     else:
-        template_part = '%s/%s' % (c.controller, c.action)   # Else fallback to controller/action
+        # if template file is specified use it, else default to type/controller/action.mako
+        template_part = result.get('template', '%s/%s' % (c.controller, c.action))
 
-    def template_file_exisits(template_file):
-        return os.path.exists(os.path.join(config['path.templates'], template_file))
+    # html is a meta-format -- if we are asked for a html template,
+    # redirect to web, mobile or widget depending on the environment
+    if type == "html":
+        subformat = _find_subformat()
+        paths = [
+            os.path.join("html", subformat, template_part),
+            os.path.join("html", "web",     template_part),
+        ]
+    else:
+        paths = [
+            os.path.join(type, template_part),
+        ]
 
-    # Iterate through all possible templates using differnt fallback types
-    template = None
-    while template==None and type!=None:
-        template = "%s/%s.mako" % (type, template_part)
-        if not template_file_exisits(template):
-            template = None
-            type     = type_fallback[type]
-    return template
+    for path in paths:
+        if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
+            return path+".mako"
 
+    raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
 
 def setup_format_processors():
-    
     def render_template(result, type):
         overlay_status_message(c.result, result)
         return render_mako(_find_template(result, type), extra_vars={"d": c.result['data']} )
@@ -324,9 +324,9 @@ def auto_format_output(target, *args, **kwargs):
         }
     """
 
-    # If no format has been set, then this is the first time this dfecorator has been called
+    # If no format has been set, then this is the first time this decorator has been called
     # We only format the output on the 'first master call' through this decorator
-    # This allows us to freely call controler actions internallay without haveing to worry about specifying a format because they will always return python dictionarys
+    # This allows us to freely call controler actions internally without haveing to worry about specifying a format because they will always return python dictionarys
     auto_format_output_flag = False
     if not c.format:
         current_request = request.environ.get("pylons.routes_dict")
@@ -348,11 +348,6 @@ def auto_format_output(target, *args, **kwargs):
     # After
     # Is result a dict with data?
     if auto_format_output_flag and hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
-        
-        if c.format in ['html', 'rss', 'frag', 'mobile'] and not _find_template(result, c.format):
-            log.warning("Format %s with no template for %s/%s" % (c.format, c.controller, c.action))
-            c.format='xml' #If format HTML and no template supplied fall back to XML
-        
         # set the HTTP status code
         if 'code' in result:
             response.status = int(result['code'])
@@ -432,7 +427,7 @@ def authenticate_form(target, *args, **kwargs):
         if format in ['html','redirect']:
             c.target_url = current_url()
             c.post_values = param_dict
-            return render_mako("web/misc/confirmpost.mako")
+            return render_mako("html/web/misc/confirmpost.mako")
         else:
             raise action_error(message="Cross-site request forgery detected, request denied: include a valid authentication_token in your form POST")
 

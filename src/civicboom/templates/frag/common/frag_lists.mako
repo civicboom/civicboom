@@ -1,6 +1,6 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<%namespace name="member_includes" file="/web/common/member.mako" />
+<%namespace name="member_includes" file="/html/web/common/member.mako" />
 
 ##------------------------------------------------------------------------------
 ## Frag List Template

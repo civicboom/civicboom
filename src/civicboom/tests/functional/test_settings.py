@@ -117,4 +117,8 @@ class TestSettingsController(TestController):
         #)
         # FIXME: test
 
+    def test_avatar():
+        upload avatar
+        upload invalid image
+        upload None
         """

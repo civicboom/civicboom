@@ -23,7 +23,7 @@ class TestSignup(TestController):
         
         # Request new user email for user that already exisits - reject
         response = self.app.post(
-            url(controller='register', action='email'),
+            url(controller='register', action='email', format="json"),
             params={
                 'username': u'unittest',
             },
@@ -31,7 +31,7 @@ class TestSignup(TestController):
         )
         
         response = self.app.post(
-            url(controller='register', action='email'),
+            url(controller='register', action='email', format="json"),
             params={
                 'username': u'unittest2',
                 'email'   : u'bob@bobcorp.com'
@@ -43,7 +43,7 @@ class TestSignup(TestController):
         
         # Request new user email for new user
         response = self.app.post(
-            url(controller='register', action='email'),
+            url(controller='register', action='email', format="json"),
             params={
                 'username': u'test_signup',
                 'email'   : u'test@moose.com',

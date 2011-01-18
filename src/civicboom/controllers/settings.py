@@ -299,7 +299,7 @@ class SettingsController(BaseController):
     @authorize
     def messages(self, id=None):
         c.viewing_user = c.logged_in_persona
-        return render("web/settings/messages.mako")
+        return render("html/web/settings/messages.mako")
 
     @authorize
     @authenticate_form

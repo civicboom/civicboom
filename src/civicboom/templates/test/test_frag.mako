@@ -1,4 +1,4 @@
-<%inherit file="/web/common/html_base.mako"/>
+<%inherit file="/html/web/common/html_base.mako"/>
 
 <%namespace name="frag_content" file="/frag/contents/show.mako"/>
 

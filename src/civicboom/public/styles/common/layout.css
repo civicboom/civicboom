@@ -220,6 +220,8 @@ HTML.no-js #flash_message {
 	text-align: center;
 	text-decoration: none;
 	font-weight: bold;
+
+	cursor: pointer;
 }	
 
 DIV#app .button {
@@ -233,6 +235,13 @@ DIV#app .button {
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4974b8', endColorstr='#3a4a97'); /* for IE */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #4974b8), color-stop(0.81, #3a4a97)); /* for webkit browsers */
 	background: -moz-linear-gradient(top, #4974b8, #3a4a97 81%); /* for firefox 3.6+ */
+	color: white;
+}
+.button:hover {
+	background: #5984c8; /* for non-css3 browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5984c8', endColorstr='#4a5aa7'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #5984c8), color-stop(0.81, #4a5aa7)); /* for webkit browsers */
+	background: -moz-linear-gradient(top, #5984c8, #4a5aa7 81%); /* for firefox 3.6+ */
 	color: white;
 }
 .button:active {

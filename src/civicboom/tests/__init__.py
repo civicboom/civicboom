@@ -85,7 +85,7 @@ class TestController(TestCase):
         
         # Request new user email for new user
         response = self.app.post(
-            url(controller='register', action='email'),
+            url(controller='register', action='email', format="json"),
             params={
                 'username': username,
                 'email'   : username+'@moose.com',

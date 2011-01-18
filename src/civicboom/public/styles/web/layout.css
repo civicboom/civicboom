@@ -24,6 +24,13 @@ HEADER {
 	/* height: 64px; */
     height: 42px;
 	z-index: 1;
+	/*
+	 * really, the minimum width is 830px; but on an
+	 * 800px screen, overlapping is slightly less bad
+	 * than the Sign In button going off the edge of
+	 * the screen
+	 */
+	min-width: 780px;
 }
 
 BODY>DIV#app {

@@ -1,6 +1,6 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<%namespace name="loc" file="/web/common/location.mako" />
+<%namespace name="loc" file="/html/web/common/location.mako" />
 
 <%!
     share_url        = False

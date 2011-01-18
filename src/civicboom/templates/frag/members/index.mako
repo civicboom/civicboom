@@ -1,4 +1,4 @@
-##<%namespace name="member_includes"  file="/web/common/member.mako"/>
+##<%namespace name="member_includes"  file="/html/web/common/member.mako"/>
 ##${member_includes.member_list(d['list'])}
 <%inherit file="/frag/common/frag_lists.mako"/>
 

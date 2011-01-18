@@ -1,6 +1,6 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<%namespace name="loc" file="/web/common/location.mako"/>
+<%namespace name="loc" file="/html/web/common/location.mako"/>
 
 <%def name="body()">
     <a href="${url(controller='settings', action='messages')}">${_("Edit Notifications")}</a>

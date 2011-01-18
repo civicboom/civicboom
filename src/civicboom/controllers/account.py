@@ -48,8 +48,8 @@ class AccountController(BaseController):
         if request.environ['REQUEST_METHOD'] == 'GET':            
             setup_widget_env()
             if getattr(c,'widget_username',None): #'widget_username' in request.params:
-                return render("/widget/widget_signin.mako")
-            return render("/web/account/signin.mako")
+                return render("/html/widget/widget_signin.mako")
+            return render("/html/web/account/signin.mako")
         
         c.auth_info    = None
         login_provider = None
@@ -131,7 +131,7 @@ class AccountController(BaseController):
         Only currently logged in users can add additional janrain accounts
         """
         if request.environ['REQUEST_METHOD'] == 'GET':
-            return render("/web/account/link_janrain.mako")
+            return render("/html/web/account/link_janrain.mako")
         
         c.auth_info = None
         
@@ -189,7 +189,7 @@ class AccountController(BaseController):
         # Step 2: User identifed with hash, show form to enter new password
         if request.environ['REQUEST_METHOD'] == 'GET':
             # form to enter new password
-            return render("/web/account/forgot_password.mako")
+            return render("/html/web/account/forgot_password.mako")
         
         # Step 3: Validate new password and set
         else:

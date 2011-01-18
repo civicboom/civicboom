@@ -3,12 +3,12 @@
 <%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"   />
 <%namespace name="flag"            file="/frag/content_actions/flag.mako"/>
 <%namespace name="share"           file="/frag/common/share.mako"        />
-<%namespace name="popup"           file="/web/common/popup_base.mako"    />
-<%namespace name="member_includes" file="/web/common/member.mako"        />
+<%namespace name="popup"           file="/html/web/common/popup_base.mako"    />
+<%namespace name="member_includes" file="/html/web/common/member.mako"        />
 
 
 ## for deprication
-<%namespace name="loc"              file="/web/common/location.mako"     />
+<%namespace name="loc"              file="/html/web/common/location.mako"     />
 
 
 ##------------------------------------------------------------------------------

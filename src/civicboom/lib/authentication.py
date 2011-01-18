@@ -122,7 +122,7 @@ def authorize(_target, *args, **kwargs):
                 #c.target_url = current_url()
                 #c.post_values = post_overlay
                 #from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
-                #return render("web/misc/confirmpost.mako")
+                #return render("html/web/misc/confirmpost.mako")
             
         # Make original method call
         result = _target(*args, **kwargs)
