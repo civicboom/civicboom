@@ -1,9 +1,5 @@
-<%inherit file="/html/web/common/html_base.mako"/>
+<%inherit file="base.mako"/>
 <%def name="title()">${_("Press coverage and external relations")}</%def>
-  
-<%include file="toc.mako" />
-
-<article class='col'>
 
 <h1>Press</h1>
 
@@ -30,6 +26,4 @@
 	<a href="http://www.ejc.net/media_news/citizen_news_network_relaunched_as_tool_for_news_organisations/">
 	<img src="http://www.ejc.net/assets/images/logo.gif" alt="www.ejc.net"/>
 	Citizen news network relaunched as tool for news organisations</a>
-</article>
-
 </article>

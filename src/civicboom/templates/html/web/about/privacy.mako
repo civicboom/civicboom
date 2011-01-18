@@ -1,9 +1,5 @@
-<%inherit file="/html/web/common/html_base.mako"/>
+<%inherit file="base.mako"/>
 <%def name="title()">${_("Privacy and cookies policy")}</%def>
-
-<%include file="toc.mako" />
-
-<article class='col legal'>
 
 <h1>Privacy Policy</h1>
 
@@ -37,5 +33,3 @@
 </ol>
 
 <p>Last updated January 2011.
-
-</article>

@@ -1,9 +1,5 @@
-<%inherit file="/html/web/common/html_base.mako"/>
+<%inherit file="base.mako"/>
 <%def name="title()">${_("About _site_name & FAQ")}</%def>
-
-<%include file="toc.mako" />
-
-<article class="col">
 
 <img src="/images/civicboom.png" style="float:right;">
 <h1>Civicboom empowers you connect, create
@@ -54,5 +50,3 @@ Civicboom to life for yourself.
 <p><h1><a href="/account/signin" class="button" style="float:right;"> Sign up </a></h1>
 <h1>Don't just read it. Feed it.</h1>
 
-
-</article>

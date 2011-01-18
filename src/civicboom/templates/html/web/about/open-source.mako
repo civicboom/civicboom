@@ -1,9 +1,5 @@
-<%inherit file="/html/web/common/html_base.mako"/>
+<%inherit file="base.mako"/>
 <%def name="title()">${_("Credits")}</%def>
-
-<%include file="toc.mako" />
-
-<article class='open-source col'>
 
 <h1>Open Source &amp; Credits</h1>
 
@@ -19,7 +15,7 @@ https://bitbucket.org/bbangert/beaker/issue/62/some-way-to-set-httponly-cookies
 https://bitbucket.org/bbangert/beaker/issue/63/secure-auto-cookie-setting
 -->
 <div>
-<span>Front End:</span>
+<b>Front End:</b>
 
 <p>Web server / cache -
 	<a href="http://nginx.org/">nginx</a> -
@@ -49,7 +45,7 @@ https://bitbucket.org/bbangert/beaker/issue/63/secure-auto-cookie-setting
 </div>
 
 <div>
-<span>Back End:</span>
+<b>Back End:</b>
 
 <p>Web Framework -
 	<a href="http://pylonshq.com/">Pylons</a> -
@@ -100,7 +96,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 </div>
 
 <div>
-<span>Mapping:</span>
+<b>Mapping:</b>
 
 <p>Map data -
 	<a href="http://www.openstreetmap.org/">OpenStreetMap</a> -
@@ -122,7 +118,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 
 <!-- these only appear in our internal test data
 <div>
-<span>Images:</span>
+<b>Images:</b>
 
 <p>KM Avatar -
 	<a href="">Kent Messanger Group</a> -
@@ -135,7 +131,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 -->
 
 <div>
-<span>Icons:</span>
+<b>Icons:</b>
 
 <p><a href="http://www.iconarchive.com/category/application/basic-icons-by-pixelmixer.html">Set 1</a>, <a href="http://www.iconarchive.com/category/application/basic-2-icons-by-pixelmixer.html">Set 2</a> -
 	<a href="http://pixel-mixer.com/">pixel-mixer</a> -
@@ -145,5 +141,3 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 <p>Social Network Icon Pack by Komodo Media, Rogie King is licensed under a Creative Commons Attribution-Share Alike 3.0 Unported License.</p>
 <a href="http://www.komodomedia.com/download/#social-network-icon-pack">komodomedia.com</a>
 Creative Commons License
-
-</article>

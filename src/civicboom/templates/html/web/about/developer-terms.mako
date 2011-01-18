@@ -1,9 +1,5 @@
-<%inherit file="/html/web/common/html_base.mako"/>
+<%inherit file="base.mako"/>
 <%def name="title()">${_("Developer Terms and Conditions for API")}</%def>
-
-<%include file="toc.mako" />
-
-<article class='cols legal'>
 
 <b>Developer Terms and Conditions for API (Application Programming Interface):</b>
 <p>If you are a developer or operator of a Platform application or website, the following additional terms apply to you:
@@ -35,5 +31,3 @@
 </ol>
 
 <p>Last updated January 2011.
-
-</article>

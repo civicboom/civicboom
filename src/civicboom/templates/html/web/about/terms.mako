@@ -1,9 +1,5 @@
-<%inherit file="/html/web/common/html_base.mako"/>
+<%inherit file="base.mako"/>
 <%def name="title()">${_("Terms and conditions")}</%def>
-
-<%include file="toc.mako" />
-
-<article class='col legal'>
 
 <h1>Terms and Conditions</h1>
 
@@ -199,5 +195,3 @@
 <p>v0.2 - Date of latest amendment January 2011
 <p>The Service Limited registered office: 37 Warren Street, London, W1T 6AD
 <p>Company Number: 06045754.
-
-</article>
