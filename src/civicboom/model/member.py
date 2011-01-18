@@ -18,7 +18,7 @@ import urllib, hashlib, copy
 
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
-
+member_type              = Enum("user", "group",                     name="member_type"  )
 account_types            = Enum("free", "plus", "corp", "copp_plus", name="account_types")
 
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
@@ -110,7 +110,7 @@ def _generate_salt():
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
-    __type__        = Column(Enum("user", "group", name="member_type"))
+    __type__        = Column(member_type)
     __mapper_args__ = {'polymorphic_on': __type__}
     _member_status  = Enum("pending", "active", "suspended", name="member_status")
     id              = Column(Integer(),      primary_key=True)
@@ -134,18 +134,14 @@ class Member(Base):
 
     payment_account       = relationship("PaymentAccount", cascade="delete,delete-orphan", single_parent=True) #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
 
-    #messages_to           = relationship("Message", primaryjoin=and_(Message.source_id!=null(), Message.target_id==id    ), backref=backref('target', order_by=id))
-    #messages_from         = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id!=null()), backref=backref('source', order_by=id))
-    #messages_public       = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id==null()) )
-    #messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id    ) )
-
-    #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
     groups_roles         = relationship("GroupMembership" , backref="member", cascade="all,delete-orphan", lazy='joined') #AllanC- TODO: needs eagerload group? does lazy=joined do it?
-    followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
-    following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
     flags                = relationship("FlaggedContent"  , backref=backref('member'), cascade="all,delete-orphan")
     feeds                = relationship("Feed"            , backref=backref('member'), cascade="all,delete-orphan")
+
+    # AllanC - I wanted to remove these but they are still used by actions.py because they are needed to setup the base test data
+    followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
+    following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
 
 
     # Content relation shortcuts
@@ -162,6 +158,13 @@ class Member(Base):
     # assignments_accepted = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
     #interests = relationship("")
 
+    #messages_to           = relationship("Message", primaryjoin=and_(Message.source_id!=null(), Message.target_id==id    ), backref=backref('target', order_by=id))
+    #messages_from         = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id!=null()), backref=backref('source', order_by=id))
+    #messages_public       = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id==null()) )
+    #messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id    ) )
+
+    #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
+
 
     _config = None
 
@@ -173,7 +176,7 @@ class Member(Base):
             'username'          : None ,
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
-            'location_home'     : lambda content: content.location_home_string ,
+            'location_home'     : lambda member: member.location_home_string ,
             'num_followers'     : None ,
             'account_type'      : None ,
         },
@@ -228,7 +231,7 @@ class Member(Base):
         if self == member:
             action_list.append('settings')
             action_list.append('logout')
-        if self.is_follower(member):
+        if member and member.is_following(self):
             action_list.append('unfollow')
         else:
             if self != member:
@@ -260,18 +263,18 @@ class Member(Base):
         return unfollow(self, member)
 
     def is_follower(self, member):
-        if isinstance(member, basestring):
-            follower_list = [m.username for m in self.followers]
-        else:
-            follower_list = self.followers
-        return member in follower_list
+        if not member:
+            return False
+        from civicboom.controllers.members import MembersController
+        member_search = MembersController().index
+        return bool(member_search(member=self, followed_by=member)['data']['list'])
     
     def is_following(self, member):
-        if isinstance(member, basestring):
-            following_list = [m.username for m in self.following]
-        else:
-            following_list = self.following
-        return member in following_list
+        if not member:
+            return False
+        from civicboom.controllers.members import MembersController
+        member_search = MembersController().index
+        return bool(member_search(member=self, follower_of=member)['data']['list'])
 
     @property
     def avatar_url(self, size=80):

@@ -126,9 +126,9 @@
 -->
 % endif
             <li><a href="/contents?list=assignments_active" class="sub_option">${_("_assignments").capitalize()}</a></li>
-            <li><a href="/contents?list=articles" class="sub_option">${_("_articles").capitalize()}</a></li>
-            <li><a href="/members?list=users" class="sub_option">${_("People")}</a></li>
-            <li><a href="/members?list=groups" class="sub_option">${_("Groups")}</a></li>
+            <li><a href="/contents?list=articles"           class="sub_option">${_("_articles").capitalize()}</a></li>
+            <li><a href="/members?type=user"                class="sub_option">${_("_users").capitalize()}</a></li>
+            <li><a href="/members?type=group"               class="sub_option">${_("_groups").capitalize()}</a></li>
         </ul>
         </li>
     </ul>
@@ -136,11 +136,11 @@
     <ul>
         <li><a href="#" class="top_parent button">${_("Manage")}</a>
         <ul>
-            <li><a href="/profile" class="sub_option">${_("Profile")}</a></li>
+            <li><a href="/profile"  class="sub_option">${_("Profile")}</a></li>
             <li><a href="/settings" class="sub_option">${_("Settings")}</a></li>
-            <li><a href="/profile" class="sub_option">${_("Content")}</a></li>
-            <li><a href="/profile" class="sub_option">${_("Assignments")}</a></li>
-            <li><a href="/profile" class="sub_option">${_("Groups")}</a></li>
+            ##<li><a href="/profile"  class="sub_option">${_("Content")}</a></li>
+            ##<li><a href="/profile"  class="sub_option">${_("Assignments")}</a></li>
+            ##<li><a href="${url('member_action', id=c.logged_in_persona.username, action='groups')}"  class="sub_option">${_("My Groups")}</a></li>
         </ul>
         </li>
     </ul>

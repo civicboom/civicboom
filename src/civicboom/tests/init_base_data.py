@@ -137,10 +137,10 @@ def init_base_data():
         u7_login.token  = hashlib.sha1("password").hexdigest()
 
         Session.add_all([u6, u6_login, u7, u7_login]);
-        u6.followers.append(u7)
-        u6.followers.append(u3)
-        u6.followers.append(u4)
-        u6.followers.append(u5)
+        u6.follow(u7)
+        u6.follow(u3)
+        u6.follow(u4)
+        u6.follow(u5)
         Session.commit();
 
 
@@ -158,10 +158,10 @@ def init_base_data():
         u8_login.token  = hashlib.sha1("password").hexdigest()
 
         Session.add_all([u8, u8_login]);
-        u8.followers.append(u7)
-        u8.followers.append(u3)
-        u8.followers.append(u4)
-        u8.followers.append(u5)
+        u8.follow(u7)
+        u8.follow(u3)
+        u8.follow(u4)
+        u8.follow(u5)
         Session.commit();
 
 
