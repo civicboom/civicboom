@@ -220,6 +220,8 @@ HTML.no-js #flash_message {
 	text-align: center;
 	text-decoration: none;
 	font-weight: bold;
+
+	cursor: pointer;
 }	
 
 DIV#app .button {
