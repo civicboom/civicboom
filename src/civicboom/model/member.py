@@ -206,7 +206,7 @@ class Member(Base):
         return self._config
 
     def __unicode__(self):
-        return self.name + " ("+self.username+")"
+        return self.name # + " ("+self.username+")"
 
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
@@ -407,7 +407,7 @@ class User(Member):
 
 
     def __unicode__(self):
-        return self.name + " ("+self.username+") (User)"
+        return self.name # + " ("+self.username+") (User)"
 
     def hash(self):
         h = hashlib.md5(Member.hash(self))
@@ -474,7 +474,7 @@ class Group(Member):
     
 
     def __unicode__(self):
-        return self.name + " ("+self.username+") (Group)"
+        return self.name # + " ("+self.username+") (Group)"
 
     @property
     def num_admins(self):

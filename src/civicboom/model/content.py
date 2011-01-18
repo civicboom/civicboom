@@ -159,7 +159,7 @@ class Content(Base):
     
     
     def __unicode__(self):
-        return self.title + u" (" + self.__type__ + u")"
+        return self.title # + u" (" + self.__type__ + u")"
 
     def __link__(self):
         from pylons import url, app_globals
