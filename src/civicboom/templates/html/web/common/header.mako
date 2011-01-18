@@ -163,17 +163,17 @@
 ##------------------------------------------------------------------------------
 ## Logout
 ##------------------------------------------------------------------------------
-<div id="login">
+<div id="signin">
 % if c.logged_in_persona:
     ${h.secure_link(
         url(controller='account', action='signout'),
-        _('Log out'),
-        css_class="logout"
+        _('Sign out'),
+        css_class="button"
     )}
 % else:
-    <a class="login" href="${url(controller='account', action='signin')}">
+    <a class="button" href="${url(controller='account', action='signin')}">
         ##<img src="/styles/web/login.png" alt="${_("Log in")}" width="68" height="17">
-        ${_('Log in')}
+        ${_('Sign in')}
     </a>
 % endif
 </div>

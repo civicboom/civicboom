@@ -50,6 +50,7 @@
     <div class="frag_left_col">
         <div class="frag_col">
         ${content_details()}
+        ${content_content()}
         ${content_media()}
         ${content_map()}
         ${content_comments()}
@@ -110,11 +111,22 @@
 
     <div class="details">
         
-        ##----Details----
-        % if hasattr(content,'views'):
-        <p>${_("views: %d") % content['views']}</p>
-        % endif
+        <%def name="detail(field_name)">
+            % if content.get(field_name):
+            <p>${field_name}: ${content[field_name]}</p>
+            % endif
+        </%def>
         
+        % for field_name in ['views', 'boom_count', 'due_date', 'event_date', 'private', 'closed', 'creation_date', 'update_date', 'publish_date', 'edit_lock']:
+            ${detail(field_name)}
+        % endfor
+        
+        % if 'license' in content:
+        <% license = content['license'] %>
+        <a href="${license['url']}" target="_blank" title="${license['description']}">
+          <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
+        </a>
+        % endif        
         
         <ul class="status">
             % if 'approval' in content and content['approval']=='approved':
@@ -123,12 +135,21 @@
         </ul>
     </div>
 
-    ##----Content----
-    <div class="content_text">
-      ${h.literal(h.scan_for_embedable_view_and_autolink(content['content']))}
-    </div>
 
 </%def>
+
+
+##------------------------------------------------------------------------------
+## Content
+##------------------------------------------------------------------------------
+
+<%def name="content_content()">
+
+    <div class="content_text">
+      ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content']))}
+    </div>
+</%def>
+
 
 ##------------------------------------------------------------------------------
 ## Media

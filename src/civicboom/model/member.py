@@ -437,7 +437,7 @@ class User(Member):
             #default = "http://www.civicboom.com/images/default_avatar.jpg"
             args    = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
             return "https://secure.gravatar.com/avatar/%s?%s" % (hash, args)
-        return Member.avatar_url(self)
+        return Member.avatar_url
 
 DDL('DROP TRIGGER IF EXISTS update_location_time ON member_user').execute_at('before-drop', User.__table__)
 GeometryDDL(User.__table__)

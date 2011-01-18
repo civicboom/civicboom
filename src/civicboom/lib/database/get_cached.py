@@ -110,7 +110,7 @@ def get_content_nocache(content_id):
     # could use .with_polymorphic([DraftContent, ArticleContent, AssignmentContent]), will see if this is needed
     try:
         return Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
-    except NoResultFound:
+    except: # used to have NoResultFound but didnt want a 500 error raised, the caller code can detect NONE and just say "not found" neatly
         return None
 
 def get_content(content):
