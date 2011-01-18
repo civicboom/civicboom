@@ -58,6 +58,9 @@ class UniqueEmailValidator(validators.Email):
         validators.Email.__init__(self, *args, **kwargs)
     def _to_python(self, value, state):
         value = unicode(value)
+        from pylons import tmpl_context as c
+        if c.logged_in_persona and c.logged_in_persona.email == value: # If the current user has this email then bypass the validator
+            return value
         if Session.query(User).filter(User.email==value).count() > 0:
             raise formencode.Invalid(_('This email address is already registered with us. Please use a different address, or retrieve your password using the password recovery link.'), value, state)
         return value
