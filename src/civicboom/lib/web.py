@@ -219,16 +219,17 @@ def _find_template(result, type='html'):
     template_part = result.get('template', '%s/%s' % (c.controller, c.action))
 
     def template_file_exists(template_file):
-        return os.path.exists(os.path.join(config['path.templates'], template_file))
+        return os.path.exists(os.path.join(config['path.templates'], "html", template_file))
 
     # Iterate through all possible templates using differnt fallback types
     template = None
-    while template==None and type!=None:
-        template = "%s/%s.mako" % (type, template_part)
+    fbtype = type
+    while template==None and fbtype!=None:
+        template = "%s/%s.mako" % (fbtype, template_part)
         if not template_file_exists(template):
             template = None
-            type     = type_fallback[type]
-    return (template or type+"/default.mako")
+            fbtype     = type_fallback[fbtype]
+    return ("html/"+template or "html/"+type+"/default.mako")
 
 
 
