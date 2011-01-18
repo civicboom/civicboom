@@ -208,10 +208,10 @@ HEADER #search .button {
 
 /*----------------------------------------------------------------------------*/
 /*                             Header detail:                                 */
-/*                             Login / Logout                                 */
+/*                             Signin / Signout                               */
 /*----------------------------------------------------------------------------*/
 
-HEADER #login {
+HEADER #signin {
     position: absolute;
     top: 11px;
     right: 8px;
