@@ -48,6 +48,10 @@ class UniqueUsernameValidator(validators.FancyValidator):
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
         if len(value) >= self.max:
             raise formencode.Invalid(self.message("too_long", state, max=self.max), value, state)
+            
+        from pylons import tmpl_context as c
+        if c.logged_in_persona and c.logged_in_persona.username == value: # If the current user has this username then bypass the validator
+            return value
         if Session.query(Member).filter(Member.username==value).count() > 0:
             raise formencode.Invalid(self.message("username_taken", state, name=value), value, state)
         return value
