@@ -25,7 +25,7 @@ template_expire = 1800 # 30 min in seconds
 
 widget_default_reporter_name = "widget demo"
 
-prefix = '/widget/'
+prefix = '/html/widget/'
 
 #-------------------------------------------------------------------------------
 # Setup Widget Env - from query string

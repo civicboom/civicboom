@@ -436,7 +436,7 @@ def authenticate_form(target, *args, **kwargs):
         if format in ['html','redirect']:
             c.target_url = current_url()
             c.post_values = param_dict
-            return render_mako("web/misc/confirmpost.mako")
+            return render_mako("html/web/misc/confirmpost.mako")
         else:
             raise action_error(message="Cross-site request forgery detected, request denied: include a valid authentication_token in your form POST")
 
