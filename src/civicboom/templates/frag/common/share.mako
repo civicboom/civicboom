@@ -41,7 +41,7 @@
 
 <%def name="share_this_js()">
 	<!-- ShareThis -->
-	<script type="text/javascript" src="//w.sharethis.com/button/buttons.js"></script>
+	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 	<script type="text/javascript">
 	$(function() {
 		stLight.options({
