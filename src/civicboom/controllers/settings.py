@@ -37,10 +37,10 @@ def add_setting(name, description, value='', group=None, **kwargs):
     setting = dict(name=name, description=description, value=value, group=group, **kwargs)
     settings_base[setting['name']]=setting
     
-add_setting('name'                   , _('Display name' )       , group='general')
-add_setting('description'            , _('Description'  )       , group='general')
-add_setting('home_page'              , _('Home page'    )       , group='general')
-add_setting('email'                  , _('Email Address')       , group='contact')
+add_setting('name'                   , _('Display name' )       , group='general'                     )
+add_setting('description'            , _('Description'  )       , group='general'    , type='textarea')
+add_setting('website'                , _('Website'      )       , group='general'                     )
+add_setting('email'                  , _('Email Address')       , group='contact'                     )
 add_setting('password_new'           , _('New password')        , group='password'   , type='password')
 add_setting('password_new_confirm'   , _('New password again')  , group='password'   , type='password')
 add_setting('password_current'       , _('Current password')    , group='password'   , type='password')
@@ -67,7 +67,7 @@ import civicboom.lib.form_validators.registration
 settings_validators = dict(
     name        = formencode.validators.UnicodeString(),
     description = formencode.validators.UnicodeString(),
-    home_page   = formencode.validators.URL(),
+    website     = formencode.validators.URL(),
     
     email       = civicboom.lib.form_validators.registration.UniqueEmailValidator(),
     
@@ -75,10 +75,10 @@ settings_validators = dict(
     password_new_confirm = civicboom.lib.form_validators.base.PasswordValidator(),
     password_current     = civicboom.lib.form_validators.base.CurrentUserPasswordValidator(),
     
-    twitter_username        = formencode.validators.UnicodeString(),
-    twitter_auth_key        = formencode.validators.UnicodeString(),
-    broadcast_instant_news  = formencode.validators.StringBool(if_missing=False),
-    broadcast_content_posts = formencode.validators.StringBool(if_missing=False),
+    #twitter_username        = formencode.validators.UnicodeString(),
+    #twitter_auth_key        = formencode.validators.UnicodeString(),
+    #broadcast_instant_news  = formencode.validators.StringBool(if_missing=False),
+    #broadcast_content_posts = formencode.validators.StringBool(if_missing=False),
     
     avatar = formencode.validators.FieldStorageUploadConverter(),
     
@@ -277,7 +277,7 @@ class SettingsController(BaseController):
         
         # Save all remaining properties
         for setting_name in settings.keys():
-            print "saving setting %s" % setting_name
+            log.debug("saving setting %s" % setting_name)
             user.config[setting_name] = settings[setting_name]
             
         Session.commit()
@@ -299,7 +299,7 @@ class SettingsController(BaseController):
     @authorize
     def messages(self, id=None):
         c.viewing_user = c.logged_in_persona
-        return render("web/settings/messages.mako")
+        return render("html/web/settings/messages.mako")
 
     @authorize
     @authenticate_form

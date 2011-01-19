@@ -5,7 +5,7 @@ from pylons.i18n.translation import _
 from civicboom.model.meta import Session
 from civicboom.model         import Rating
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent, Boom
-from civicboom.model.member  import GroupMembership, group_member_roles, PaymentAccount, account_types
+from civicboom.model.member  import GroupMembership, group_member_roles, PaymentAccount, account_types, Follow
 
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content, update_content, update_accepted_assignment, update_member
@@ -52,10 +52,17 @@ def follow(follower, followed, delay_commit=False):
     if follower == followed:
         raise action_error(_('may not follow yourself'), code=400)
     if followed in follower.following:
+    #if follower.is_following(followed):
         raise action_error(_('already following'), code=400)
     
+    # AllanC - I wanted to use is_following and remove the following reference - but as this code is run by base test populator before the site is running it cant be
+    
     follower.following.append(followed)
-        
+    #follow = Follow()
+    #follow.member_id   = followed.id
+    #follow.follower_id = follower.id
+    #Session.add(follow)
+    
     followed.send_message(messages.followed_by(reporter=follower), delay_commit=True)
     
     if not delay_commit:
@@ -66,7 +73,7 @@ def follow(follower, followed, delay_commit=False):
 
     return True
 
-def unfollow(follower,followed, delay_commit=False):
+def unfollow(follower, followed, delay_commit=False):
     followed = get_member(followed)
     follower = get_member(follower)
     
@@ -75,9 +82,12 @@ def unfollow(follower,followed, delay_commit=False):
     if not follower:
         raise action_error(_('unable to find follower'), code=404)
     if followed not in follower.following:
+    #if not follower.is_following(followed):
         raise action_error(_('not currently following'), code=400)
     
     follower.following.remove(followed)
+    #follow = Session.query(Follow).filter(Follow.member_id==followed.id).filter(Follow.follower_id==follower.id).one()
+    #Session.delete(follow)
         
     followed.send_message(messages.follow_stop(reporter=follower), delay_commit=True)
     

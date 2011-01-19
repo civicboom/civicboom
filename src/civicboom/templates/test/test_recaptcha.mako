@@ -1,4 +1,4 @@
-<%inherit file="/web/common/html_base.mako"/>
+<%inherit file="/html/web/common/html_base.mako"/>
 
 ##<h1>Comment Post Faker</h2>
 ##${h.form(url('contents', format='redirect'))}

@@ -47,7 +47,7 @@ class RegisterController(BaseController):
         """
         Register new user - look at exisiting user record and identify additioinal required fields to complete upload
         """
-        registration_template = "/web/account/register.mako"
+        registration_template = "/html/web/account/register.mako"
         
         c.new_user = get_member(id)
         
@@ -91,7 +91,7 @@ class RegisterController(BaseController):
         # then the data is fine - save the new user data
         if 'username' in form: c.logged_in_persona.username         = form['username']
         if 'dob'      in form: c.logged_in_persona.config['dob']    = form['dob']
-        if 'email'    in form: c.logged_in_persona.email_unverifyed = form['email']
+        if 'email'    in form: c.logged_in_persona.email_unverified = form['email']
         if 'password' in form:
             set_password(c.logged_in_persona, form['password'], delay_commit=True)
         c.logged_in_persona.status = "active"
@@ -99,7 +99,7 @@ class RegisterController(BaseController):
         Session.add(c.logged_in_persona) #AllanC - is this needed? Already in session?
         Session.commit()
         
-        if c.logged_in_persona.email_unverifyed:
+        if c.logged_in_persona.email_unverified:
             send_verifiy_email(c.logged_in_persona)
             set_flash_message(_('Please check your email to validate your email address'))
         
@@ -130,7 +130,7 @@ class RegisterController(BaseController):
         # Create new user
         u = User()
         u.username         = kwargs['username']
-        u.email_unverifyed = kwargs['email']
+        u.email_unverified = kwargs['email']
         Session.add(u)
         Session.commit()
         
@@ -181,13 +181,12 @@ def register_new_janrain_user(profile):
     try   : u.email            = UniqueEmailValidator().to_python(profile.get('verifiedEmail'))
     except: pass
     
-    try   : u.email_unverifyed = UniqueEmailValidator().to_python(profile.get('email'))
+    try   : u.email_unverified = UniqueEmailValidator().to_python(profile.get('email'))
     except: pass
     
     u.name          = profile.get('name').get('formatted')
-    u.webpage       = profile.get('url')
     u.status        = "pending"
-    u.avatar        = profile.get('photo') # AllanC - disabled because we cant guarantee https - we need our server to auto copy this and upload it to our own S3 store
+    #u.avatar        = profile.get('photo') # AllanC - disabled because we cant guarantee https - we need our server to auto copy this and upload it to our own S3 store
     #u.location      = get_location_from_json(profile.get('address'))
     
     Session.add(u)
@@ -201,8 +200,9 @@ def register_new_janrain_user(profile):
     
     #Session.commit() # unneeded as associate_janrain_account has a commit in to map accounts
     
-    u.config['dob'] = profile.get('birthday') #Config vars? auto commiting?
-    #u.config['url']  = profile.get('url')
+    u.config['dob']     = profile.get('birthday') #Config vars? auto commiting?
+    u.config['website'] = profile.get('url')
+
     
     # Future addition and enhancements
     #   with janrain we could get a list of friends/contnact and automatically follow them?

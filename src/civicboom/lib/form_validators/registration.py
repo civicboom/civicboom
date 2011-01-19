@@ -2,7 +2,7 @@
 import formencode
 from formencode import validators, compound
 
-from base import DefaultSchema
+from base import DefaultSchema, IsoFormatDateConverter
 
 # Pylons Imports
 from pylons.i18n.translation import _
@@ -42,12 +42,16 @@ class UniqueUsernameValidator(validators.FancyValidator):
     def _to_python(self, value, state):
         value = unicode(value.strip())
         # TODO: Strip or alert any characters that make it non URL safe, see feature #54
-        if not re.search("^[\w]*$", value):
+        if not re.search("^[\w-]*$", value):
             raise formencode.Invalid(self.message("illegal_chars", state,), value, state)
         if len(value) <= self.min:
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
         if len(value) >= self.max:
             raise formencode.Invalid(self.message("too_long", state, max=self.max), value, state)
+            
+        from pylons import tmpl_context as c
+        if c.logged_in_persona and c.logged_in_persona.username == value: # If the current user has this username then bypass the validator
+            return value
         if Session.query(Member).filter(Member.username==value).count() > 0:
             raise formencode.Invalid(self.message("username_taken", state, name=value), value, state)
         return value
@@ -58,27 +62,43 @@ class UniqueEmailValidator(validators.Email):
         validators.Email.__init__(self, *args, **kwargs)
     def _to_python(self, value, state):
         value = unicode(value)
+        from pylons import tmpl_context as c
+        if c.logged_in_persona and c.logged_in_persona.email == value: # If the current user has this email then bypass the validator
+            return value
         if Session.query(User).filter(User.email==value).count() > 0:
             raise formencode.Invalid(_('This email address is already registered with us. Please use a different address, or retrieve your password using the password recovery link.'), value, state)
         return value
 
 
-class MinimumAgeValidator(validators.FancyValidator):
+#class MinimumAgeValidator(validators.FancyValidator):
+#    """Checks that date is ok and doesn't allow under 16"""
+#    age_min = 16
+#    messages = {
+#        'empty'       : _('Please enter a date of birth'),
+#    }
+#
+#    def _to_python(self, value, state):
+#         try:
+#             date = datetime.datetime.strptime(value, '%d/%m/%Y')
+#         except ValueError:
+#              raise formencode.Invalid(_("Please enter your date of birth with the format DD/MM/YYYY"), value, state)
+#         if calculate_age(date) < self.age_min:
+#              raise formencode.Invalid(_("Sorry, you have to be over %d to use this site") % self.age_min, value, state)
+#         return date
+
+class MinimumAgeValidator(IsoFormatDateConverter):
     """Checks that date is ok and doesn't allow under 16"""
     age_min = 16
     messages = {
-        'empty'       : _('Please enter a date of birth'),
+        'empty'        : _('Please enter a date of birth') ,
+        'under_min_age': _("Sorry, you have to be over %d to use this site") % age_min,
     }
-
     def _to_python(self, value, state):
-         try:
-             date = datetime.datetime.strptime(value, '%d/%m/%Y')
-         except ValueError:
-              raise formencode.Invalid(_("Please enter your date of birth with the format DD/MM/YYYY"), value, state)
-         if calculate_age(date) < self.age_min:
-              raise formencode.Invalid(_("Sorry, you have to be over %d to use this site") % self.age_min, value, state)
-         return date
-
+        date = super(MinimumAgeValidator, self)._to_python(value, state)
+        #log.debug("date %s - type %s" % (date,type(date)))
+        if calculate_age(date) < self.age_min:
+            raise formencode.Invalid(self.message('under_min_age', state), value, state)
+        return date
 
 class ReCaptchaValidator(validators.FancyValidator):
     """    

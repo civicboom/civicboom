@@ -60,6 +60,7 @@ class TestController(TestCase):
                 }
             )
             response = self.app.get(url(controller='profile', action='index')) # get an auth token
+            assert '_authentication_token' in response.session # If this failed the login was unsuccessful
             self.auth_token   = response.session['_authentication_token']
             self.logged_in_as = username
 
@@ -84,7 +85,7 @@ class TestController(TestCase):
         
         # Request new user email for new user
         response = self.app.post(
-            url(controller='register', action='email'),
+            url(controller='register', action='email', format="json"),
             params={
                 'username': username,
                 'email'   : username+'@moose.com',

@@ -87,7 +87,7 @@ def init_base_data():
         u3.name          = u"Amy M. Kitten"
         u3.status        = "active"
         u3.email         = u"AmyMAnderson@example.com"
-        u3.avatar        = u"https://civicboom.com/images/test/avatar_kitten.jpg"
+        u3.avatar        = u"f86c68ccab304eb232102ac27ba5da061559fde5"
 
         u3_login = UserLogin()
         u3_login.user   = u3
@@ -99,14 +99,14 @@ def init_base_data():
         u4.name          = u"Jamie L. Puppy"
         u4.status        = "active"
         u4.email         = u"waffleking@example.com"
-        u4.avatar        = u"https://civicboom.com/images/test/avatar_puppy.jpg"
+        u4.avatar        = u"64387ac53e446d1c93d11eec777cc7fbf4413f63"
 
         u5 = User()
         u5.username      = u"bunny"
         u5.name          = u"David O. Bunny"
         u5.status        = "active"
         u5.email         = u""
-        u5.avatar        = u"https://civicboom.com/images/test/avatar_bunny.jpg"
+        u5.avatar        = u"2ca1c359d090e6a9a68dac6b3cc7a14d195ef4d8"
 
         Session.add_all([u3, u3_login, u4, u5]); Session.commit()
 
@@ -117,7 +117,7 @@ def init_base_data():
         u6.name          = u"Kent Messenger"
         u6.status        = "active"
         u6.email         = u"admin@civicboom.com"
-        u6.avatar        = u"https://civicboom.com/images/test/avatar_km.png"
+        u6.avatar        = u"c6de15ac51375c845b275229b9666afff96bebe8"
 
         u6_login = UserLogin()
         u6_login.user   = u6
@@ -129,7 +129,7 @@ def init_base_data():
         u7.name          = u"Mr. Mobile User"
         u7.status        = "active"
         u7.email         = u"admin@civicboom.com"
-        u7.avatar        = u"https://civicboom.com/images/test/avatar_mobiletest.jpg"
+        u7.avatar        = u"585c9c9f719fe5e09fe656e7b8212f8ac32e17ba"
 
         u7_login = UserLogin()
         u7_login.user   = u7
@@ -137,10 +137,10 @@ def init_base_data():
         u7_login.token  = hashlib.sha1("password").hexdigest()
 
         Session.add_all([u6, u6_login, u7, u7_login]);
-        u6.followers.append(u7)
-        u6.followers.append(u3)
-        u6.followers.append(u4)
-        u6.followers.append(u5)
+        u6.follow(u7)
+        u6.follow(u3)
+        u6.follow(u4)
+        u6.follow(u5)
         Session.commit();
 
 
@@ -150,7 +150,7 @@ def init_base_data():
         u8.name          = u"Commercial First"
         u8.status        = "active"
         u8.email         = u"admin@civicboom.com"
-        u8.avatar        = u"https://civicboom.com/images/test/cfirst.png"
+        u8.avatar        = u"a1763e442301d1434304fa10b0af986445d697c9"
 
         u8_login = UserLogin()
         u8_login.user   = u8
@@ -158,10 +158,10 @@ def init_base_data():
         u8_login.token  = hashlib.sha1("password").hexdigest()
 
         Session.add_all([u8, u8_login]);
-        u8.followers.append(u7)
-        u8.followers.append(u3)
-        u8.followers.append(u4)
-        u8.followers.append(u5)
+        u8.follow(u7)
+        u8.follow(u3)
+        u8.follow(u4)
+        u8.follow(u5)
         Session.commit();
 
 

@@ -3,8 +3,8 @@
 <%! import datetime %>
 
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
-<%namespace name="member_includes" file="/web/common/member.mako"     />
-<%namespace name="popup"           file="/web/common/popup_base.mako" />
+<%namespace name="member_includes" file="/html/web/common/member.mako"     />
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 
 ##------------------------------------------------------------------------------
 ## Variables

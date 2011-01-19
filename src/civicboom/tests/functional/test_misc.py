@@ -41,10 +41,10 @@ class TestMiscController(TestController):
         # FIXME: test that "Cache-Control: public" is set
 
     def test_semi_static(self):
-        response = self.app.get("/about/titlepage")
+        response = self.app.get("/misc/titlepage")
         # FIXME: test that "Cache-Control: public" is NOT set (for logged in user)
         self.log_out()
-        response = self.app.get("/about/titlepage")
+        response = self.app.get("/misc/titlepage")
         # FIXME: test that "Cache-Control: public" IS set for anonymous
 
 

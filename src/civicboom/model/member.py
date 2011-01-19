@@ -2,6 +2,7 @@
 from civicboom.model.meta import Base
 from civicboom.model.message import Message
 from civicboom.lib.misc import update_dict
+from civicboom.lib.helpers import wh_url
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
@@ -17,7 +18,7 @@ import urllib, hashlib, copy
 
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
-
+member_type              = Enum("user", "group",                     name="member_type"  )
 account_types            = Enum("free", "plus", "corp", "copp_plus", name="account_types")
 
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
@@ -109,16 +110,15 @@ def _generate_salt():
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
-    __type__        = Column(Enum("user", "group", name="member_type"))
+    __type__        = Column(member_type)
     __mapper_args__ = {'polymorphic_on': __type__}
     _member_status  = Enum("pending", "active", "suspended", name="member_status")
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
     name            = Column(Unicode(250),   nullable=False, default=u"")
     join_date       = Column(Date(),         nullable=False, default=func.now())
-    webpage         = Column(Unicode(),      nullable=True,  default=None)
     status          = Column(_member_status, nullable=False, default="pending")
-    avatar          = Column(Unicode(250),   nullable=True)
+    avatar          = Column(String(40),     nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
@@ -134,18 +134,14 @@ class Member(Base):
 
     payment_account       = relationship("PaymentAccount", cascade="delete,delete-orphan", single_parent=True) #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
 
-    #messages_to           = relationship("Message", primaryjoin=and_(Message.source_id!=null(), Message.target_id==id    ), backref=backref('target', order_by=id))
-    #messages_from         = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id!=null()), backref=backref('source', order_by=id))
-    #messages_public       = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id==null()) )
-    #messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id    ) )
-
-    #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
     groups_roles         = relationship("GroupMembership" , backref="member", cascade="all,delete-orphan", lazy='joined') #AllanC- TODO: needs eagerload group? does lazy=joined do it?
-    followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
-    following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
     flags                = relationship("FlaggedContent"  , backref=backref('member'), cascade="all,delete-orphan")
     feeds                = relationship("Feed"            , backref=backref('member'), cascade="all,delete-orphan")
+
+    # AllanC - I wanted to remove these but they are still used by actions.py because they are needed to setup the base test data
+    followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
+    following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
 
 
     # Content relation shortcuts
@@ -162,6 +158,13 @@ class Member(Base):
     # assignments_accepted = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
     #interests = relationship("")
 
+    #messages_to           = relationship("Message", primaryjoin=and_(Message.source_id!=null(), Message.target_id==id    ), backref=backref('target', order_by=id))
+    #messages_from         = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id!=null()), backref=backref('source', order_by=id))
+    #messages_public       = relationship("Message", primaryjoin=and_(Message.source_id==id    , Message.target_id==null()) )
+    #messages_notification = relationship("Message", primaryjoin=and_(Message.source_id==null(), Message.target_id==id    ) )
+
+    #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
+
 
     _config = None
 
@@ -173,7 +176,7 @@ class Member(Base):
             'username'          : None ,
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
-            'location_home'     : lambda content: content.location_home_string ,
+            'location_home'     : lambda member: member.location_home_string ,
             'num_followers'     : None ,
             'account_type'      : None ,
         },
@@ -184,9 +187,9 @@ class Member(Base):
     })
     __to_dict__['full'].update({
             'num_followers'       : None ,
-            'webpage'             : None ,
             'utc_offset'          : None ,
             'join_date'           : None ,
+            'website'             : None ,
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
             #'following'           : lambda member: [m.to_dict() for m in member.following            ] ,
             #'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
@@ -206,7 +209,7 @@ class Member(Base):
         return self._config
 
     def __unicode__(self):
-        return self.name + " ("+self.username+")"
+        return self.name # + " ("+self.username+")"
 
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
@@ -228,7 +231,7 @@ class Member(Base):
         if self == member:
             action_list.append('settings')
             action_list.append('logout')
-        if self.is_follower(member):
+        if member and member.is_following(self):
             action_list.append('unfollow')
         else:
             if self != member:
@@ -260,24 +263,24 @@ class Member(Base):
         return unfollow(self, member)
 
     def is_follower(self, member):
-        if isinstance(member, basestring):
-            follower_list = [m.username for m in self.followers]
-        else:
-            follower_list = self.followers
-        return member in follower_list
+        if not member:
+            return False
+        from civicboom.controllers.members import MembersController
+        member_search = MembersController().index
+        return bool(member_search(member=self, followed_by=member)['data']['list'])
     
     def is_following(self, member):
-        if isinstance(member, basestring):
-            following_list = [m.username for m in self.following]
-        else:
-            following_list = self.following
-        return member in following_list
+        if not member:
+            return False
+        from civicboom.controllers.members import MembersController
+        member_search = MembersController().index
+        return bool(member_search(member=self, follower_of=member)['data']['list'])
 
     @property
     def avatar_url(self, size=80):
-        if self.avatar: # and self.avatar!='':
-            return self.avatar
-        return "https://civicboom-static.s3.amazonaws.com/public/images/default_avatar.png"
+        if self.avatar:
+            return wh_url("avatars", self.avatar)
+        return "https://static.civicboom.com/images/default_avatar.png"
 
     @property
     def location_home_string(self):
@@ -392,7 +395,7 @@ class User(Member):
     location_updated = Column(DateTime(), nullable=False,   default=func.now())
     #dob              = Column(DateTime(), nullable=True) # Needs to be stored in user settings but not nesiserally in the main db record
     email            = Column(Unicode(250), nullable=True)
-    email_unverifyed = Column(Unicode(250), nullable=True)
+    email_unverified = Column(Unicode(250), nullable=True)
 
     login_details    = relationship("UserLogin", backref=('user'), cascade="all,delete-orphan")
 
@@ -407,7 +410,7 @@ class User(Member):
 
 
     def __unicode__(self):
-        return self.name + " ("+self.username+") (User)"
+        return self.name # + " ("+self.username+") (User)"
 
     def hash(self):
         h = hashlib.md5(Member.hash(self))
@@ -429,15 +432,15 @@ class User(Member):
     @property
     def avatar_url(self, size=80):
         if self.avatar:
-            return self.avatar
-        email = self.email or self.email_unverifyed
+            return wh_url("avatars", self.avatar)
+        email = self.email or self.email_unverified
         if email:
             hash    = hashlib.md5(email.lower()).hexdigest()
             default = "identicon"
             #default = "http://www.civicboom.com/images/default_avatar.jpg"
             args    = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
             return "https://secure.gravatar.com/avatar/%s?%s" % (hash, args)
-        return Member.avatar_url(self)
+        return Member.avatar_url
 
 DDL('DROP TRIGGER IF EXISTS update_location_time ON member_user').execute_at('before-drop', User.__table__)
 GeometryDDL(User.__table__)
@@ -474,7 +477,7 @@ class Group(Member):
     
 
     def __unicode__(self):
-        return self.name + " ("+self.username+") (Group)"
+        return self.name # + " ("+self.username+") (Group)"
 
     @property
     def num_admins(self):

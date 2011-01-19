@@ -1,6 +1,6 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<%namespace name="loc" file="/web/common/location.mako" />
+<%namespace name="loc" file="/html/web/common/location.mako" />
 
 <%!
     share_url        = False
@@ -422,13 +422,12 @@
 					<tr>
 					<%
 					    license_selected = ''
-                        # AllanC - TODO - investigate .. this may not work as we are using licence codes for ID's not integers
 					    if type == "assigment" and 'default_response_license' in self.content and license.id == self.content['default_response_license_id']:
 						    license_selected = h.literal('checked="checked"')
 					%>
-					<td><input id="licence_${license.code}" type="radio" name="default_response_license_id" value="${license.code}" ${license_selected} /></td>
-					<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a></td>
-					<td><label for="licence_${license.code}">${license.description}</label></td>
+					<td><input id="licence_${license.id}" type="radio" name="default_response_license_id" value="${license.id" ${license_selected} /></td>
+					<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.id}.png" alt="${_(license.name)}"/></a></td>
+					<td><label for="licence_${license.id}">${license.description}</label></td>
 					</tr>
 					##${popup(_(license.description))}
 				% endfor
@@ -512,7 +511,7 @@
                       license_selected = h.literal('checked="checked"')
                 %>
                 <td><input id="licence_${license.id}" type="radio" name="licence" value="${license.id}" ${license_selected} /></td>
-				<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.code}.png" alt="${_(license.name)}"/></a></td>
+				<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.id}.png" alt="${_(license.name)}"/></a></td>
                 <td><label for="licence_${license.id}">${license.description}</label></td>
 				</tr>
                 ##${popup(_(license.description))}

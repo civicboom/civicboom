@@ -1,9 +1,10 @@
 from civicboom.lib.base import *
-from civicboom.controllers.members import _get_member
+from civicboom.controllers.members  import MembersController , _get_member
 from civicboom.controllers.contents import ContentsController
 from civicboom.lib.misc import update_dict
 
 content_search = ContentsController().index
+member_search  = MembersController().index
 
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -91,8 +92,9 @@ class MemberActionsController(BaseController):
                 list  the list
         @return 404   not found
         """
-        member = _get_member(id)
-        return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.followers]})
+        #member = _get_member(id)
+        #return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.followers]})
+        return member_search(follower_of=id, limit=None, **kwargs)
 
 
     #---------------------------------------------------------------------------
@@ -111,8 +113,9 @@ class MemberActionsController(BaseController):
                 list  the list
         @return 404   not found
         """
-        member = _get_member(id)
-        return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.following]})
+        #member = _get_member(id)
+        #return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.following]})
+        return member_search(followed_by=id, limit=None, **kwargs)
 
 
     #---------------------------------------------------------------------------
@@ -192,15 +195,13 @@ class MemberActionsController(BaseController):
         return action_ok(data={'list': contents})
 
     @web
-    def assignments(self, id, **kwargs):
-        """
-        deprecated, but used by mobile
-        """
+    def assignments_unaccepted(self, id, **kwargs):
         member = _get_member(id)
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
-        contents = [content.to_dict("full") for content in member.assignments_accepted]
+        contents = [content.to_dict("full") for content in member.assignments_unaccepted]
         return action_ok(data={'list': contents})
+
 
 
     #---------------------------------------------------------------------------

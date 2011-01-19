@@ -21,10 +21,9 @@ class TestSignup(TestController):
         """
         self.log_out()
         
-        
         # Request new user email for user that already exisits - reject
         response = self.app.post(
-            url(controller='register', action='email'),
+            url(controller='register', action='email', format="json"),
             params={
                 'username': u'unittest',
             },
@@ -32,7 +31,7 @@ class TestSignup(TestController):
         )
         
         response = self.app.post(
-            url(controller='register', action='email'),
+            url(controller='register', action='email', format="json"),
             params={
                 'username': u'unittest2',
                 'email'   : u'bob@bobcorp.com'
@@ -44,7 +43,7 @@ class TestSignup(TestController):
         
         # Request new user email for new user
         response = self.app.post(
-            url(controller='register', action='email'),
+            url(controller='register', action='email', format="json"),
             params={
                 'username': u'test_signup',
                 'email'   : u'test@moose.com',
@@ -71,8 +70,8 @@ class TestSignup(TestController):
             link,
             params={
                 'password'        : u'password',
-                'password_confirm': u'password2',
-                'dob'             : u'1/1/1980',
+                'password_confirm': u'password2', # Passwords dont match
+                'dob'             : u'1980-01-01',
                 'terms'           : u'checked'
             },
             status=400
@@ -83,7 +82,7 @@ class TestSignup(TestController):
             params={
                 'password'        : u'password',
                 'password_confirm': u'password',
-                'dob'             : u'1/1/2009',
+                'dob'             : u'2009-01-01', # Too young
                 'terms'           : u'checked'
             },
             status=400
@@ -94,7 +93,8 @@ class TestSignup(TestController):
             params={
                 'password'        : u'password',
                 'password_confirm': u'password',
-                'dob'             : u'1/1/1980',
+                'dob'             : u'1980-01-01',
+                                                   # No terms checked
             },
             status=400
         )
@@ -105,12 +105,15 @@ class TestSignup(TestController):
             params={
                 'password'        : u'password',
                 'password_confirm': u'password',
-                'dob'             : u'1/1/1980',
+                'dob'             : u'1980-01-01',
                 'terms'           : u'checked'
             },
         )
-        assert getNumEmails() == num_emails + 1
+        assert getNumEmails() == num_emails + 1 # Check welcome email sent
         #email_response = getLastEmail()
         #assert 'civicboom' in email_response.content_text
         
         self.log_in_as('test_signup', 'password')
+        
+        # Test lowercase normalisation
+        self.log_in_as('TeSt_SiGnUp', 'password')

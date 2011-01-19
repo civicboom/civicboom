@@ -81,8 +81,10 @@ def obj_to_dict(obj, dict_fields):
             field_value = getattr(obj,field_name,'')
         elif type(field_processor)==types.FunctionType:
             field_value = field_processor(obj)
-        if field_value: #or type(field_value)==types.IntType
+        if field_value:
             if hasattr(field_value,'keys') or hasattr(field_value, '__iter__'):
+                pass
+            elif type(field_value)==types.IntType:
                 pass
             else:
                 field_value = unicode(field_value)
@@ -97,7 +99,7 @@ def make_username(title):
     turn a display name into a username
 
     >>> make_username("Bob's Cake Factory")
-    'bobscakefactory'
+    'bob-s-cake-factory'
     """
-    return re.sub("[^\w]", "", title.lower())
+    return re.sub("[^\w-]", "-", title.lower())
 
