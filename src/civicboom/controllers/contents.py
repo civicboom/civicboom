@@ -229,7 +229,7 @@ class ContentsController(BaseController):
         
         # Setup search criteria
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = 20
+            kwargs['limit'] = config['search.default.limit']
         if 'offset' not in kwargs:
             kwargs['offset'] = 0
         if 'include_fields' not in kwargs:
@@ -248,7 +248,8 @@ class ContentsController(BaseController):
         #        kwargs['include_fields'] += ',attachments'
         
         # Build Search
-        results = Session.query(Content).with_polymorphic('*')
+        results = Session.query(Content)
+        results = results.with_polymorphic('*')
         results = results.options(defer(Content.content))
         results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
         # TODO: exculude fetch of content field in this query return. lazyload it?
