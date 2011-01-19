@@ -8,6 +8,8 @@ from sqlalchemy.orm     import join, joinedload
 from sqlalchemy         import and_, or_, not_
 from sqlalchemy.orm.exc import NoResultFound
 
+from civicboom.lib.misc import make_username
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -59,7 +61,7 @@ def get_member_nocache(member, search_email=False):
             pass
     else:
         try:
-            return Session.query(Member).with_polymorphic('*').filter_by(username=member).one()
+            return Session.query(Member).with_polymorphic('*').filter_by(username=make_username(member)).one()
         except NoResultFound:
             if search_email:
                 try:
