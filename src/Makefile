@@ -18,3 +18,7 @@ init-db:
 	../admin_scripts/init_cbdb
 	paster setup-app development.ini
 	nosetests
+
+pull-data:
+	ssh -C civicboom.com /opt/cb/bin/dump_db > live-data.sql
+	PGPASSWORD=civicboom psql -U civicboom -h localhost < live-data.sql
