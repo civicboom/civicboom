@@ -17,7 +17,7 @@
         <script src="/javascript/_combined.maps.js"></script>
     % endif
 
-	# tinymce, should also be loaded on demand
+	## tinymce, should also be loaded on demand
 	<script src="/javascript/tiny_mce/tiny_mce.js"></script>
 </%def>
 
