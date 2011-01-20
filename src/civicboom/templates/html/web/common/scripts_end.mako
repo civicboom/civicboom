@@ -1,6 +1,7 @@
 <%namespace name="share" file="/frag/common/share.mako"     />
 
 <%def name="body()">
+	${refresh_fragment_height()}
     ${google_analytics_end()}
     ${share.init_janrain_social()}
     ${share.share_this_js()}
@@ -58,3 +59,18 @@
     % endif
 </%def>
 
+<%def name="refresh_fragment_height()">
+## this only works properly if it is the first of the footer scripts and
+## included in the HTML -- if it is in the header bundle or footer bundle,
+## or if it is in the footer but after the external scripts, then there
+## is a flash of wrong-heighted content
+<script>
+function refresh_fragment_height() {
+	var height = $('footer').offset().top - $('#app').offset().top;
+	//Y.log(height);
+	createCSS(".frag_data", "height: "+(height-52)+"px !important;");
+}
+refresh_fragment_height();
+$(window).resize(refresh_fragment_height);
+</script>
+</%def>
