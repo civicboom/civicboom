@@ -111,3 +111,4 @@ function createCSS(selector, declaration) {
 		if (typeof(last_style_node.addRule) == "object") last_style_node.addRule(selector, declaration);
 	}
 }
+

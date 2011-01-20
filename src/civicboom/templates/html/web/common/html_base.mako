@@ -58,18 +58,12 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 	<script src="/javascript/swfobject.js"></script>
 	<!-- jQuery -->
 	<script src="/javascript/jquery-1.4.2.js"></script>
-	<script src="/javascript/jquery.ui.js"></script>
-	<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
-	<script src="/javascript/jquery.scrollTo.js"></script>
-	<script src="/javascript/jquery.simplemodal.1.4.1.min.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
-	<script src="/javascript/jquery.html5-0.0.1.js"></script>
-	<script src="/javascript/jquery.uploadify.v2.1.4.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
 % else:
-	<script src="/javascript/_combined.common.js"></script>
+	<script src="/javascript/_combined.head.js"></script>
 % endif
 <!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
 <!--[if lt IE 7]>

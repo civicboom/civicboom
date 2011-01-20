@@ -36,7 +36,7 @@ class TaskController(BaseController):
         if not (
                 'REMOTE_ADDR' not in request.environ or
                 request.environ['REMOTE_ADDR'] == "127.0.0.1" or
-                request.environ['REMOTE_ADDR'] == request.environ['SERVER_ADDR']
+                request.environ['REMOTE_ADDR'] == request.environ.get('SERVER_ADDR', '0.0.0.0')
             ):
             return abort(403)
         BaseController.__before__(self)
