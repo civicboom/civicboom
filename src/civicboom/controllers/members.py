@@ -58,6 +58,7 @@ def _init_search_filters():
         member_id = _normalize_member(member, always_return_id=True)
         return query.filter(Member.id.in_( Session.query(Follow.follower_id).filter(Follow.member_id  ==member_id) ))
 
+
     search_filters = {
         'member'       : append_search_member      ,
         'name'         : append_search_name        ,
