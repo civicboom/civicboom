@@ -31,7 +31,7 @@ class TestRoutes(TestController):
     def test_rest_formats(self):
         self.assertEqual(
             url('member_action', id='shish', action='follow'),
-            "/members/shish/follow.redirect"
+            "/members/shish/follow.html"
         )
 
         # with a specified format, it should be .format

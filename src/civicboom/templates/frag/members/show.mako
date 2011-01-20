@@ -186,8 +186,8 @@
         ${frag_list.content_list(
             d['boomed_content'],
             _('Boomed content'),
-            h.args_to_tuple('member_action', id=self.id, action='boomed_content') ,
-            #h.args_to_tuple('contents', boomed_by=id) ,
+            #h.args_to_tuple('member_action', id=self.id, action='boomed_content') ,
+            h.args_to_tuple('contents', boomed_by=self.id) ,
             creator = True ,
             icon = 'boom' ,
         )}
