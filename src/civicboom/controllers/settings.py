@@ -234,7 +234,7 @@ class SettingsController(BaseController):
         
         # Save special properties that need special processing
         # (counld have a dictionary of special processors here rather than having this code cludge this controller action up)
-        if 'avatar' in settings:
+        if settings.get('avatar'):
             with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
                 a = settings['avatar']
                 wh.copy_cgi_file(a, original.name)
@@ -253,7 +253,7 @@ class SettingsController(BaseController):
             user.avatar = "%s/avatars/%s" % (config['warehouse_url'], h)
             del settings['avatar']
 
-        if 'home_location' in settings:
+        if settings.get('home_location'):
             try:
                 (lon, lat) = [float(n) for n in request.POST["home_location"].split(",")]
             except Exception, e:
@@ -261,7 +261,7 @@ class SettingsController(BaseController):
                 raise action_error(_("Unable to understand location '%s'" % str(request.POST["location"])))
             user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
             del settings['home_location']
-        elif "home_location_name" in settings:
+        elif settings.get("home_location_name"):
             (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_name"]), see Feature #47
             user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
             del settings['home_location_name']
