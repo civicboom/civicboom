@@ -300,7 +300,8 @@ class Member(Base):
         #             need > ... we want corp customers to do what the plus customers can do
         if required_account_type == member_account_type:
             return True
-        return False
+        #return False
+        return True # lizze needs to demo plus features on a newly created account...
 
     
     def can_publish_assignment(self):
