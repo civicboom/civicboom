@@ -124,7 +124,6 @@ class Content(Base):
             'title'        : None ,
             'content_short': lambda content: "implement content_short postgress trigger" ,
             'creator_id'   : None , 
-            'url'          : None ,
             'thumbnail_url': None ,
             'creation_date': None ,
             'update_date'  : None ,
@@ -150,6 +149,7 @@ class Content(Base):
             #'comments'    : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
             'license'     : lambda content: content.license.to_dict() ,
             'tags'        : lambda content: [tag.name for tag in content.tags] ,
+            #'url'         : None ,
     })
     #del __to_dict__['full']['content_short'] # This is still useful for aggrigation so it stays in by default
     del __to_dict__['full']['parent_id']

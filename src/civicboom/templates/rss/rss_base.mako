@@ -20,22 +20,21 @@
 	xmlns:woe="http://where.yahooapis.com/v1/schema.rng"
 	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
 >
-
-<channel>
-	<title        >${self.title()}</title>
-	<link         >${url.current(host=app_globals.site_host)}</link>
-	<description  >${self.description()}</description>
-	<pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
-	<lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
-	<generator    >http://www.civicboom.com/</generator>
-	<image url  ="/images/rss_large.png"
-		   link ="${url.current(host=app_globals.site_host)}"
-		   title="${_('_site_name')}"
-	/>
-	
-	${next.body()}
+    <channel>
+        <title        >${self.title()}</title>
+        <link         >${url.current(host=app_globals.site_host)}</link>
+        <description  >${self.description()}</description>
+        <pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
+        <lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
+        <generator    >http://www.civicboom.com/</generator>
+        <image url  ="/images/rss_large.png"
+               link ="${url.current(host=app_globals.site_host)}"
+               title="${_('_site_name')}"
+        />
         
-	</channel>
+        ${next.body()}
+        
+    </channel>
 </rss>
 </%def>
 
@@ -46,7 +45,7 @@
 <%def name="rss_content_item(content)">
     <item> 
         <title>${content['title']}</title> 
-        <link>${content['url']}</link> 
+        <link>${url('content', host=app_globals.site_host, id=content['id'])}</link> 
         <description>${content['content_short']}</description> 
         <pubDate>${h.date_to_rss(content.get('creation_date'))}</pubDate> 
         <guid isPermaLink="false">Civicboom Content #${content['id']}</guid>
@@ -105,5 +104,24 @@
         <georss:point>${lat} ${lon}</georss:point>
         <geo:lat>${lat}</geo:lat><geo:long>${lon}</geo:long>
     % endif
+    </item>
+</%def>
+
+##------------------------------------------------------------------------------
+## RSS Member Item
+##------------------------------------------------------------------------------
+
+<%def name="rss_member_item(member)">
+    <item> 
+        <title>${member['name'] or member['username']}</title> 
+        <link>${url('member', host=app_globals.site_host, id=member['username'])}</link>
+        <category>${member['type']}</category>
+        % if 'description' in member:
+        <description>${member['description']}</description>
+        % endif
+        ##<pubDate>${h.datetime_to_rss(h.api_datestr_to_datetime(content['creation_date']))}</pubDate> 
+        <guid isPermaLink="false">Civicboom Member #${member['id']}</guid>
+        
+        ## locaiton?
     </item>
 </%def>
