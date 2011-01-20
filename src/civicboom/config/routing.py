@@ -46,7 +46,8 @@ def cb_resource(mapper, single, plural, **kwargs):
     mapper.connect('edit_'+single, '/'+plural+'/{id}/edit',                    controller=plural, action='edit',   conditions=dict(method=['GET']))
 
     # /foo/42/activate
-    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions', format='redirect')
+    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions', format='redirect', conditions=dict(method=['POST','PUT','DELETE']))
+    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions', format='html'    , conditions=dict(method=['GET']))
     mapper.connect('/'+plural+'/{id}/{action}',                                controller=single+'_actions', format='html')
 
 
