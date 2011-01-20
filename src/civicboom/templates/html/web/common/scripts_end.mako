@@ -13,11 +13,12 @@
         <script src="/javascript/geo.js"></script>
         <script src="/javascript/OpenLayers.js"></script>
         <script src="/javascript/minimap.js"></script>
-        <script src="/javascript/tiny_mce/tiny_mce.js"></script>
     % else:
         <script src="/javascript/_combined.maps.js"></script>
     % endif
 
+	## tinymce, should also be loaded on demand
+	<script src="/javascript/tiny_mce/tiny_mce.js"></script>
 </%def>
 
 ##----------------------------------------------------------------------------

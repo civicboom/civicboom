@@ -41,13 +41,15 @@
 
 <%def name="share_this_js()">
 	<!-- ShareThis -->
-	<script type="text/javascript" src="//w.sharethis.com/button/buttons.js"></script>
+	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 	<script type="text/javascript">
+	$(function() {
 		stLight.options({
 			publisher:'${config['api_key.sharethis']}' ,
 			onhover  : false ,
 			embeds   : true ,
 		});
+	});
 	</script>
 </%def>
 
@@ -67,9 +69,11 @@
         % endfor
     ></span>
     <script type="text/javascript">
-        stButtons.locateElements();
-        ##stButtons.makeButtons();
-        ##stWidget.init();
+		$(function() {
+			stButtons.locateElements();
+			##stButtons.makeButtons();
+			##stWidget.init();
+		});
     </script>
     ##http://forums.sharethis.com/topic.php?id=3277&replies=1#post-6679
     
@@ -90,6 +94,7 @@
 
     <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
     <script type="text/javascript">
+	$(function() {
         stLight.options({
             publisher  : '${config['api_key.sharethis']}' ,
             onhover    : false ,
@@ -98,6 +103,7 @@
             st_title   : '${title.replace("'","")}' ,
             displayText: '${description.replace("'","")}',
         });
+	});
     </script>
     </%doc>
     

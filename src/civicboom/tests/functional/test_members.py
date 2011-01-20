@@ -21,6 +21,9 @@ class TestMembersController(TestController):
     def test_member_show(self):
         response = self.app.get(url('member', id='unittest', format='json'))
 
+        # case shouldn't matter
+        response = self.app.get(url('member', id='UnitTest', format='json'))
+
         # non-existent members should 404
         response = self.app.get(url('member', id='mrdoesnotexist', format='json'), status=404)
 
