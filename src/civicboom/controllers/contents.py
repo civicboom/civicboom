@@ -215,6 +215,7 @@ class ContentsController(BaseController):
         @param limit
         @param offset
         @param include_fields "attachments" for media
+        @param sort - comma separted list of col names e.g rating,creator,-update_date (- denotes alternate sorting)
         """
         # url('contents')
         

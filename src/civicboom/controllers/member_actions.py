@@ -177,9 +177,9 @@ class MemberActionsController(BaseController):
         #if member == c.logged_in_persona:
         #    group_roles = member.groups_roles
         #else: # Else only show public groups
+        
         group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visibility=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
         groups      = self._groups_list_dict(group_roles, **kwargs)
-        
         return action_ok(data={'list': groups})
 
 
