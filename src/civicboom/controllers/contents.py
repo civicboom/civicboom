@@ -339,6 +339,13 @@ class ContentsController(BaseController):
             if parent and parent.__type__ == 'assignment' and parent.default_response_license:
                 content.license = parent.default_response_license
 
+        # if a title isn't set but we have a parent, title = "Re: parent title"
+        title = kwargs.get('title')
+        if parent_id and not title:
+            parent = get_content(parent_id)
+            if parent and parent.title:
+                content.title = "Re: "+parent.title
+
         # comments are always owned by the writer; ignore settings
         # and parent preferences
         if type == 'comment':
