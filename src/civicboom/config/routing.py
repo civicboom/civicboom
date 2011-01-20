@@ -12,20 +12,24 @@ def cb_resource(mapper, single, plural, **kwargs):
     #if kwargs:
     #    return mapper.resource(single, plural, **kwargs)
 
-    # list actions
+    # lists
+    # GET /foo.json
     mapper.connect('formatted_'+plural, '/'+plural+'.{format}',                controller=plural, action='index',  conditions=dict(method=['GET']))
     mapper.connect(plural, '/'+plural,                                         controller=plural, action='index',  conditions=dict(method=['GET']))
 
+    # POST /foo.json
     mapper.connect('formatted_'+plural, '/'+plural+'.{format}',                controller=plural, action='create', conditions=dict(method=['POST']))
     mapper.connect('/'+plural,                                                 controller=plural, action='create', conditions=dict(method=['POST']))
 
-    # item actions
-    # /foo/new needs to be before /foo/{id}
+    # list actions (needs to come before items, as /foo/new needs to be before /foo/{id})
+    # /foo/new.json
     mapper.connect('formatted_new_'+single, '/'+plural+'/new.{format}',        controller=plural, action='new',    conditions=dict(method=['GET']))
     mapper.connect('new_'+single, '/'+plural+'/new',                           controller=plural, action='new',    conditions=dict(method=['GET']))
 
+    # items
+    # GET/PUT/DELETE for /foo/42.json, /foo/42
     mapper.connect('formatted_'+single, '/'+plural+'/{id}.{format}',           controller=plural, action='show',   conditions=dict(method=['GET']))
-    mapper.connect(single, '/'+plural+'/{id}',                                 controller=plural, action='show',  conditions=dict(method=['GET']))
+    mapper.connect(single, '/'+plural+'/{id}',                                 controller=plural, action='show',   conditions=dict(method=['GET']))
 
     mapper.connect('/'+plural+'/{id}.{format}',                                controller=plural, action='update', conditions=dict(method=['PUT']))
     mapper.connect('/'+plural+'/{id}',                                         controller=plural, action='update', conditions=dict(method=['PUT']))
@@ -33,16 +37,17 @@ def cb_resource(mapper, single, plural, **kwargs):
     mapper.connect('/'+plural+'/{id}.{format}',                                controller=plural, action='delete', conditions=dict(method=['DELETE']))
     mapper.connect('/'+plural+'/{id}',                                         controller=plural, action='delete', conditions=dict(method=['DELETE']))
 
-    # item extra actions
-    # /foo/{id}/edit is part of the main controller by tradition, but do we want it there?
+    # item actions
+    # /foo/{id}/edit
+    # - part of the main controller by tradition, but do we want it there?
+    # - if we put edit into foo_actions, then lots of controllers that currently only have edit as their
+    #   one action would need to be split into two files
     mapper.connect('formatted_edit_'+single, '/'+plural+'/{id}/edit.{format}', controller=plural, action='edit',   conditions=dict(method=['GET']))
     mapper.connect('edit_'+single, '/'+plural+'/{id}/edit',                    controller=plural, action='edit',   conditions=dict(method=['GET']))
 
-    # civicboom extra: foo_actions controller for separate /foo/42/activate methods
-    #mapper.connect('formatted_'+single+'_action', '/'+plural+'/{id}/{action}.{format}',  controller=single+'_actions')
-    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions') #, conditions=dict(method=['POST'])
-    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}'         ,     controller=single+'_actions')
-    #mapper.connect(single+'_list',   '/'+plural+'/{id}/{action}.{format}',     controller=single+'_lists',   format="html") #, conditions=dict(method=['GET'])
+    # /foo/42/activate
+    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions', format='redirect')
+    mapper.connect('/'+plural+'/{id}/{action}',                                controller=single+'_actions', format='html')
 
 
 def make_map(config):
@@ -83,12 +88,5 @@ def make_map(config):
     map.connect('/{controller}/{action}.{format}')       # CAF
     map.connect('/{controller}/{action}')                # CA
     map.connect('/{controller}' , action="index")        # C
-
-    # actually, routes with slashes aren't used at all...
-    #map.connect('/{controller}/{action}.{format}/{id}/') # CAFI/
-    #map.connect('/{controller}/{action}/{id}/')          # CAI/
-    #map.connect('/{controller}/{action}.{format}/')      # CAF/
-    #map.connect('/{controller}/{action}/')               # CA/
-    #map.connect('/{controller}/', action="index")        # C/
 
     return map
