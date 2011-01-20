@@ -111,3 +111,13 @@ function createCSS(selector, declaration) {
 		if (typeof(last_style_node.addRule) == "object") last_style_node.addRule(selector, declaration);
 	}
 }
+
+$(function() {
+	function refresh_fragment_height() {
+		var height = $('footer').offset().top - $('#app').offset().top;
+		//Y.log(height);
+		createCSS(".frag_data", "height: "+(height-52)+"px !important;");
+	}
+	refresh_fragment_height();
+	$(window).resize(refresh_fragment_height);
+});

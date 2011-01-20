@@ -1,20 +1,26 @@
 <%namespace name="share" file="/frag/common/share.mako"     />
 
 <%def name="body()">
-
-    ${set_frag_height()}
     ${google_analytics_end()}
     ${share.init_janrain_social()}
     ${share.share_this_js()}
 
     ## Maps (should be loaded on-demand, but frags confuse that
     % if config['development_mode']:
+		<!-- non-urgent bits -->
+		<script src="/javascript/jquery.ui.js"></script>
+		<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+		<script src="/javascript/jquery.scrollTo.js"></script>
+		<script src="/javascript/jquery.simplemodal.1.4.1.min.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
+		<script src="/javascript/jquery.html5-0.0.1.js"></script>
+		<script src="/javascript/jquery.uploadify.v2.1.4.js"></script>
+		<!-- maps -->
         <script src="/javascript/gears_init.js"></script>
         <script src="/javascript/geo.js"></script>
         <script src="/javascript/OpenLayers.js"></script>
         <script src="/javascript/minimap.js"></script>
     % else:
-        <script src="/javascript/_combined.maps.js"></script>
+        <script src="/javascript/_combined.foot.js"></script>
     % endif
 
 	## tinymce, should also be loaded on demand
@@ -50,22 +56,5 @@
           })();
         </script>
     % endif
-</%def>
-
-
-##----------------------------------------------------------------------------
-## Frag Height
-##----------------------------------------------------------------------------
-
-<%def name="set_frag_height()">
-    <script type="text/javascript">
-        function refresh_fragment_height() {
-            var height = $('footer').offset().top - $('#app').offset().top;
-            //Y.log(height);
-            createCSS(".frag_data", "height: "+(height-52)+"px !important;");
-        }
-        refresh_fragment_height();
-        $(window).resize(refresh_fragment_height);
-    </script>
 </%def>
 
