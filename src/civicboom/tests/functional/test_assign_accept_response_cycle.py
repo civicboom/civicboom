@@ -3,6 +3,8 @@ from civicboom.tests import *
 import json
 import datetime
 
+import logging
+log = logging.getLogger(__name__)
 
 
 class TestAssignAcceptResponseCycleController(TestController):
@@ -18,6 +20,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         """
         
         # Create assignment ----------------------------------------------------
+        #   unittest creates
         
         response = self.app.post(
             url('contents', format='json'),
@@ -37,6 +40,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         assert self.assignment_id > 0
         
         # Responses ------------------------------------------------------------
+        #  unitfirend to respond 3 times
         
         self.log_in_as('unitfriend')
         
@@ -91,7 +95,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         self.assignment_response_id_3 = int(response_json['data']['id'])
         assert self.assignment_response_id_3 > 0
         
-        # Check Response -------------------------------------------------------
+        # Check Responses ------------------------------------------------------
         
         self.log_in_as('unittest')
         
@@ -103,13 +107,27 @@ class TestAssignAcceptResponseCycleController(TestController):
         assert 'to seen'        in response
         assert len(response_json['data']['responses']) == 3
         
-        # Approve and Dissassociate --------------------------------------------
+        # Approve --------------------------------------------------------------
+        
+        num_emails = getNumEmails()
         
         response = self.app.post(
             url('content_action', action='approve'    , id=self.assignment_response_id_1, format='json'),
             params={'_authentication_token': self.auth_token,},
             status=200
         )
+        
+        # Check that the emails have been generated and sent to the correct users once approved
+        assert getNumEmails() == num_emails + 2
+        emails_sent_when_approved = [
+            emails[len(emails)-1],
+            emails[len(emails)-2],
+        ]
+        emails_to = [email.email_to for email in emails_sent_when_approved]
+        assert 'unittest@test.com'   in emails_to
+        assert 'unitfriend@test.com' in emails_to
+        
+        # Dissassociate --------------------------------------------------------
         
         response = self.app.post(
             url('content_action', action='disasociate', id=self.assignment_response_id_2, format='json'),

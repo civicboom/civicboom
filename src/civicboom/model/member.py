@@ -190,6 +190,8 @@ class Member(Base):
             'utc_offset'          : None ,
             'join_date'           : None ,
             'website'             : None ,
+            #'url'                 : None ,
+            
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
             #'following'           : lambda member: [m.to_dict() for m in member.following            ] ,
             #'messages_public'     : lambda member: [m.to_dict() for m in member.messages_public[:5]  ] ,
@@ -209,7 +211,7 @@ class Member(Base):
         return self._config
 
     def __unicode__(self):
-        return self.name # + " ("+self.username+")"
+        return self.name or self.username
 
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
@@ -275,6 +277,11 @@ class Member(Base):
         from civicboom.controllers.members import MembersController
         member_search = MembersController().index
         return bool(member_search(member=self, follower_of=member)['data']['list'])
+
+    @property
+    def url(self):
+        from pylons import url, app_globals
+        return url('member', host=app_globals.site_host, id=self.username)
 
     @property
     def avatar_url(self, size=80):
@@ -411,7 +418,7 @@ class User(Member):
 
 
     def __unicode__(self):
-        return self.name # + " ("+self.username+") (User)"
+        return self.name or self.username
 
     def hash(self):
         h = hashlib.md5(Member.hash(self))
@@ -478,7 +485,7 @@ class Group(Member):
     
 
     def __unicode__(self):
-        return self.name # + " ("+self.username+") (Group)"
+        return self.name or self.username
 
     @property
     def num_admins(self):

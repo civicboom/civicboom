@@ -19,13 +19,15 @@ from routes.util import URLGenerator
 from paste.fixture import TestApp
 from civicboom.lib import worker
 
-from civicboom.lib.communication.email_log import getLastEmail, getNumEmails
+from civicboom.lib.communication.email_log import getLastEmail, getNumEmails, emails
 import re
 
 
 import pylons.test
 
-__all__ = ['environ', 'url', 'TestController']
+__all__ = ['environ', 'url', 'TestController',
+           # Email Log
+           'getLastEmail', 'getNumEmails', 'emails']
 
 # Invoke websetup with the current config file
 SetupCommand('setup-app').run([pylons.test.pylonsapp.config['__file__']])

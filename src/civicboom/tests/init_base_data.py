@@ -20,6 +20,16 @@ def init_base_data():
         from pylons import config
         config['feature.notifications'] = False
 
+        # AllanC - the follow action requires members/index controller call - this isnt active for the base setup
+        #          Here is an alternate way of adding followers without needing the site active
+        def follow(follower,followed):
+                follow = Follow()
+                follow.member_id   = followed.id
+                follow.follower_id = follower.id
+                assert follow.member_id
+                assert follow.follower_id
+                Session.add(follow)
+
 
         ###############################################################
         log.debug("Tags")
@@ -46,7 +56,7 @@ def init_base_data():
         u1.name          = u"Mr U. Test"
         u1.join_date     = datetime.datetime.now()
         u1.status        = "active"
-        u1.email         = u"bob@bobcorp.com"
+        u1.email         = u"unittest@test.com"
         u1.config['home_location'] = u"The Moon"
         u1.config['description']   = u"A user for automated tests to log in as"
 
@@ -71,7 +81,7 @@ def init_base_data():
         u2.username      = u"unitfriend"
         u2.name          = u"Mr U's Friend"
         u2.status        = "active"
-        u2.email         = u"spam@example.com"
+        u2.email         = u"unitfriend@test.com"
 
         u2_login = UserLogin()
         u2_login.user   = u2
@@ -81,6 +91,10 @@ def init_base_data():
         Session.add_all([u2, u2_login]); Session.commit();
         assert u2.id == 2
 
+        follow(u1,u2)
+        follow(u2,u1)
+        
+        
 
         u3 = User()
         u3.username      = u"kitten"
@@ -137,11 +151,16 @@ def init_base_data():
         u7_login.token  = hashlib.sha1("password").hexdigest()
 
         Session.add_all([u6, u6_login, u7, u7_login]);
-        u6.follow(u7)
-        u6.follow(u3)
-        u6.follow(u4)
-        u6.follow(u5)
+        #u6.follow(u7)
+        #u6.follow(u3)
+        #u6.follow(u4)
+        #u6.follow(u5)
         Session.commit();
+
+        follow(u6,u7)
+        follow(u6,u3)
+        follow(u6,u4)
+        follow(u6,u5)
 
 
         # test data for commercial first demo
@@ -158,17 +177,28 @@ def init_base_data():
         u8_login.token  = hashlib.sha1("password").hexdigest()
 
         Session.add_all([u8, u8_login]);
-        u8.follow(u7)
-        u8.follow(u3)
-        u8.follow(u4)
-        u8.follow(u5)
+        
+        #u8.follow(u7)
+        #u8.follow(u3)
+        #u8.follow(u4)
+        #u8.follow(u5)
         Session.commit();
 
+        follow(u8,u7)
+        follow(u8,u3)
+        follow(u8,u4)
+        follow(u8,u5)
+
+        Session.commit();
 
         assert list(Session.query(User).filter(User.id==0)) == []
         assert list(Session.query(User).filter(User.username=="MrNotExists")) == []
 
         ###############################################################
         
-        u1.follow(u2)
-        u2.follow(u1)
+        
+        #u1.follow(u2)
+        #u2.follow(u1)
+        
+
+        

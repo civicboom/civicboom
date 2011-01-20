@@ -64,13 +64,15 @@
         ${frag_list.member_list_thumbnails(
             d['following'],
             _('Following'),
-            h.args_to_tuple('member_action', id=self.id, action='following'),
+            #h.args_to_tuple('member_action', id=self.id, action='following'),
+            h.args_to_tuple('members', followed_by=self.id),
             icon =  'follow'
         )}
         ${frag_list.member_list_thumbnails(
             d['followers'] ,
             _('Followers') ,
-            h.args_to_tuple('member_action', id=self.id, action='followers') ,
+            #h.args_to_tuple('member_action', id=self.id, action='followers') ,
+            h.args_to_tuple('members', follower_of=self.id),
             icon =  'follow'
         )}
         
