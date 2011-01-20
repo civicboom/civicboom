@@ -3,6 +3,8 @@ from civicboom.lib.misc import make_username
 
 from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
 
+from civicboom.controllers.contents import _normalize_member
+
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 import formencode
@@ -54,6 +56,11 @@ def _get_group(id, is_admin=False, is_member=False):
 
 
 #-------------------------------------------------------------------------------
+# Member Search
+#-------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
 # Group Controler
 #-------------------------------------------------------------------------------
 
@@ -79,7 +86,52 @@ class GroupsController(BaseController):
         
         pass
 
+    def members(self, **kwargs):
+        # AllanC: this was created for two calls
+        #         member -> whats groups they were members of and there roles
+        #         group  -> list members and there roles
+        #
+        # this had complications because of:
+        #   permissions of the viewing user
+        #   permissions of the group
+        #   the roles need returning (so cant be part of members/index neatly)
+        #
+        # UNFINISHED!!!!!!!!!!!! AND BROKEN!
+        
+        
+        # Setup search criteria
+        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
+            kwargs['limit'] = config['search.default.limit']
+        if 'offset' not in kwargs:
+            kwargs['offset'] = 0
+        if 'include_fields' not in kwargs:
+            kwargs['include_fields'] = ""
+        if 'exclude_fields' not in kwargs:
+            kwargs['exclude_fields'] = ""
+        
+        #if 'status' not in kwargs:
+        #    kwargs['status']
+            
+        
+        results = Session.query(Member).join(Group, Member, Group.members_roles)
+        
+        if 'group' in kwargs:
+            group   = _normalize_member(kwargs['group'], always_return_id=True)    
+            results = results.filter(Group.id==group)
+        
+        if 'member' in kwargs:
+            member   = _normalize_member(kwargs['member'], always_return_id=True)    
+            results = results.filter(Member.id==member)
+        
+        #results = results.filter(Member.status=='active')
 
+        results = results.order_by(Member.name.asc())
+        results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
+        
+        # Return search results
+        return action_ok(
+            data = {'list': [member.to_dict(**kwargs) for member in results.all()]} ,
+        )
 
     @web
     @auth

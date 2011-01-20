@@ -51,17 +51,17 @@ def follow(follower, followed, delay_commit=False):
         raise action_error(_('unable to find follower'), code=404)
     if follower == followed:
         raise action_error(_('may not follow yourself'), code=400)
-    if followed in follower.following:
-    #if follower.is_following(followed):
+    #if followed in follower.following:
+    if follower.is_following(followed):
         raise action_error(_('already following'), code=400)
     
     # AllanC - I wanted to use is_following and remove the following reference - but as this code is run by base test populator before the site is running it cant be
     
-    follower.following.append(followed)
-    #follow = Follow()
-    #follow.member_id   = followed.id
-    #follow.follower_id = follower.id
-    #Session.add(follow)
+    #follower.following.append(followed)
+    follow = Follow()
+    follow.member_id   = followed.id
+    follow.follower_id = follower.id
+    Session.add(follow)
     
     followed.send_message(messages.followed_by(reporter=follower), delay_commit=True)
     
@@ -81,13 +81,13 @@ def unfollow(follower, followed, delay_commit=False):
         raise action_error(_('unable to find followed'), code=404)
     if not follower:
         raise action_error(_('unable to find follower'), code=404)
-    if followed not in follower.following:
-    #if not follower.is_following(followed):
+    #if followed not in follower.following:
+    if not follower.is_following(followed):
         raise action_error(_('not currently following'), code=400)
     
-    follower.following.remove(followed)
-    #follow = Session.query(Follow).filter(Follow.member_id==followed.id).filter(Follow.follower_id==follower.id).one()
-    #Session.delete(follow)
+    #follower.following.remove(followed)
+    follow = Session.query(Follow).filter(Follow.member_id==followed.id).filter(Follow.follower_id==follower.id).one()
+    Session.delete(follow)
         
     followed.send_message(messages.follow_stop(reporter=follower), delay_commit=True)
     

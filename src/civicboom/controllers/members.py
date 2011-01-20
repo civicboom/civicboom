@@ -36,9 +36,12 @@ def _init_search_filters():
         if isinstance(member, Member):
             member = member.id
         try:
-            return query.filter(Member.id==int(member))
+            return query.filter(Member.id       == int(member))
         except:
-            return query.filter(or_(Member.name.ilike("%"+member+"%"), Member.username.ilike("%"+member+"%")))
+            return query.filter(Member.username == member     )
+
+    def append_search_name(query, name):
+        return query.filter(or_(Member.name.ilike("%"+name+"%"), Member.username.ilike("%"+name+"%")))
     
     def append_search_type(query, type_text):
         return query.filter(Member.__type__==type_text)
@@ -55,10 +58,12 @@ def _init_search_filters():
         member_id = _normalize_member(member, always_return_id=True)
         return query.filter(Member.id.in_( Session.query(Follow.follower_id).filter(Follow.member_id  ==member_id) ))
 
+
     search_filters = {
-        'member'       : append_search_member    ,
-        'type'         : append_search_type      ,
-        'location'     : append_search_location  ,
+        'member'       : append_search_member      ,
+        'name'         : append_search_name        ,
+        'type'         : append_search_type        ,
+        'location'     : append_search_location    ,
         'followed_by'  : append_search_followed_by ,
         'follower_of'  : append_search_follower_of ,
     }
@@ -104,7 +109,7 @@ class MembersController(BaseController):
         
         # Autocomplete uses term not name - for ease of migration term is copyed to name if name not present
         if 'term' in kwargs and 'name' not in kwargs:
-            kwargs['member'] =  kwargs['term']
+            kwargs['name'] =  kwargs['term']
         
         # Setup search criteria
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)

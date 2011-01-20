@@ -34,7 +34,7 @@ class TestAssignmentLimitController(TestController):
         response = self.app.get(url(controller='test', action='upgrade_account', id='assign_limit'))
         assert 'ok' in response.body
         
-        # Set a now assignment
+        # Set a new assignment
         response = self.create_assignment('Assignment Limit > Paid')
         
         # Double check that all the assimgments appear in this users content list

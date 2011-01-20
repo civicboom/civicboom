@@ -5,9 +5,7 @@
 <%def name="body()">
     <%
         args, kwargs = c.web_params_to_kwargs
-        creator = True
-        if 'creator' in kwargs:
-            creator = False
+        
         list_title = 'List'
         if 'list' in kwargs:
             list_title = kwargs['list'].capitalize()

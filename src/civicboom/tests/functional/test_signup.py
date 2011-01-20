@@ -1,6 +1,6 @@
 from civicboom.tests import *
 
-from civicboom.lib.communication.email_log import getLastEmail, getNumEmails
+#from civicboom.lib.communication.email_log import getLastEmail, getNumEmails
 
 import re
 
@@ -34,7 +34,7 @@ class TestSignup(TestController):
             url(controller='register', action='email', format="json"),
             params={
                 'username': u'unittest2',
-                'email'   : u'bob@bobcorp.com'
+                'email'   : u'unittest@test.com'
             },
             status=400,
         )
