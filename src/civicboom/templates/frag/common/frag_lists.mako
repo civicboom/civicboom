@@ -12,6 +12,10 @@
     <%
         self.attr.share_url        = url.current() #format='html'
         #self.attr.auto_georss_link = True
+        
+        args, kwargs = c.web_params_to_kwargs
+        self.attr.title     = "%s (%s)" % (kwargs.get('list'), d['list']['count'] )
+        self.attr.icon_type = app_globals.contents_list_names.get(kwargs.get('list'))
     %>
 </%def>
 <%def name="body()">
@@ -30,18 +34,10 @@
 ##------------------------------------------------------------------------------
 ## When imported, these are the main methods of use
 <%def name="member_list_thumbnails(*args, **kwargs)">
-    <%
-        #if 'limit' not in kwargs:
-        #    kwargs['limit'] = 24
-    %>
     ${frag_list(render_item_function=render_item_member_thumbnail, type=('ul','li'), list_class='member'        , *args, **kwargs)}
 </%def>
 
 <%def name="member_list(*args, **kwargs)">
-    <%
-        #if 'limit' not in kwargs:
-        #    kwargs['limit'] = 24
-    %>
     ${frag_list(render_item_function=render_item_member       , type=('table','tr'), list_class='member'        , *args, **kwargs)}
 </%def>
 
@@ -63,7 +59,7 @@
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(cb_list, title, href=None, limit=None, show_count=True, hide_if_empty=True, type=('ul','li'), list_class='', icon='', render_item_function=None, *args, **kwargs)">
+<%def name="frag_list(cb_list, title, href=None, show_heading=True, hide_if_empty=True, type=('ul','li'), list_class='', icon='', render_item_function=None, *args, **kwargs)">
     <%
         count = None
         if isinstance(cb_list, dict) and 'items' in cb_list:
@@ -97,6 +93,7 @@
     % if hide_if_empty and not count:
         
     % else:
+        % if show_heading:
         <div class='frag_list'>
             <h2>
                 % if icon:
@@ -107,24 +104,28 @@
                 % else:
                 ${title}
                 % endif
-                % if show_count:
+                ##% if show_count:
                 <span class="count">${count}</span>
-                % endif
+                ##% endif
             </h2>
+        % endif
             <div class="frag_list_contents">
             <${type[0]} class="${list_class}">
-                % for item in items[0:limit]:
+                ##% for item in items[0:limit]:
+                % for item in items:
                 ##<${type[1]}>
                     ${render_item_function(item, *args, **kwargs)}
                 ##</${type[1]}>
                 % endfor
             </${type[0]}>
-            % if href and limit > 0 and len(items) > limit:
-            <a href="${href}" ${js_link_to_frag_bridge} class="link_more">${count-limit} more</a>
+            % if href and show_heading and len(items) < count:
+            <a href="${href}" ${js_link_to_frag_bridge} class="link_more">${count-len(items)} more</a>
             % endif
             </div>
             ##<div style="clear: both;"></div>
+        % if show_heading:
         </div>
+        % endif
     %endif
 </%def>
 

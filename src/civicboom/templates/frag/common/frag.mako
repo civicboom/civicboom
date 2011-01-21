@@ -86,8 +86,8 @@
             self.attr.rss_url = url.current(**kwargs)
     %>
 
-    % if hasattr(next, 'init_vars'):
-        ${next.init_vars()}
+    % if hasattr(self, 'init_vars'):
+        ${self.init_vars()}
     % endif
 
     ## AJAX Fragment refresh (not visible to user)

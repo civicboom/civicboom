@@ -113,7 +113,7 @@ class MembersController(BaseController):
         
         # Setup search criteria
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = config['search.default.limit']
+            kwargs['limit'] = config['search.default.limit.members']
         if 'offset' not in kwargs:
             kwargs['offset'] = 0
         if 'include_fields' not in kwargs:
@@ -204,7 +204,7 @@ class MembersController(BaseController):
         
         # Content Lists
         for list in [list for list in lists if list in list_filters.keys()]:
-            data[list] = contents_controller.index(creator=member.username, list=list, limit=config['search.default.list_group_limit'], **kwargs)['data']['list']
+            data[list] = contents_controller.index(creator=member.username, list=list, limit=config['search.default.limit.sub_list'], **kwargs)['data']['list']
         
         # Member Lists
         for list in [list for list in lists if hasattr(member_actions_controller, list)]:

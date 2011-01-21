@@ -148,20 +148,10 @@
         
         ## Memers Content --------------------------------------------
         
-        <%
-            contents_list_names = [
-                ('drafts'              , 'draft'      , _('Drafts')                             ) ,
-                ('assignments_active'  , 'assignemnt' , _('_assignments active').capitalize()   ) ,
-                ('assignments_previous', 'assignment' , _('_assignments previous').capitalize() ) ,
-                ('responses'           , 'response'   , _('Responses').capitalize()             ) ,
-                ('articles'            , 'article'    , _('_article').capitalize()              ) ,
-            ]
-        %>
-        
-        % for list, icon, list_name in contents_list_names:
+        % for list, icon in app_globals.contents_list_names.iteritems():
             ${frag_list.content_list(
                 d[list] ,
-                list_name ,
+                list ,
                 h.args_to_tuple('contents', creator=self.id, list=list), 
                 icon = icon ,
             )}

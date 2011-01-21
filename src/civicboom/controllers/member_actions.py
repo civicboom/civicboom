@@ -94,7 +94,7 @@ class MemberActionsController(BaseController):
         """
         #member = _get_member(id)
         #return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.followers]})
-        return member_search(follower_of=id, limit=None, **kwargs)
+        return member_search(follower_of=id, **kwargs)
 
 
     #---------------------------------------------------------------------------
@@ -115,7 +115,7 @@ class MemberActionsController(BaseController):
         """
         #member = _get_member(id)
         #return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.following]})
-        return member_search(followed_by=id, limit=None, **kwargs)
+        return member_search(followed_by=id, **kwargs)
 
 
     #---------------------------------------------------------------------------

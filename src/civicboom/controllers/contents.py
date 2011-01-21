@@ -230,7 +230,7 @@ class ContentsController(BaseController):
         
         # Setup search criteria
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = config['search.default.limit']
+            kwargs['limit'] = config['search.default.limit.contents']
         if 'offset' not in kwargs:
             kwargs['offset'] = 0
         if 'include_fields' not in kwargs:

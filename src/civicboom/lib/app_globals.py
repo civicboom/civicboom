@@ -6,6 +6,7 @@ from beaker.util import parse_cache_config_options
 
 from pylons import config
 
+
 from paste.deploy.converters import asbool
 
 import memcache
@@ -38,3 +39,12 @@ class Globals(object):
 
         # FIXME: spelling, theame -> theme
         self.widget_variables = ['widget_theme', 'widget_title', 'widget_username', 'widget_width', 'widget_height']
+
+        # in the form list_name, icon, display_text
+        self.contents_list_names = {
+            'drafts'              : 'draft'      ,
+            'assignments_active'  : 'assignemnt' ,
+            'assignments_previous': 'assignment' ,
+            'responses'           : 'response'   ,
+            'articles'            : 'article'    ,
+        }
