@@ -7,5 +7,5 @@
         d['actions'] = c.group.action_list_for(c.logged_in_persona)
         d['group']   = {'id':c.group.id}
     %>
-    ${parent.group_members_list(d['list'], _('Members'),  max=None)}
+    ${parent.group_members_list(d['list']['items'], _('Members'),  max=None)}
 </%def>

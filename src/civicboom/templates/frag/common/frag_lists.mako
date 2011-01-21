@@ -31,16 +31,16 @@
 ## When imported, these are the main methods of use
 <%def name="member_list_thumbnails(*args, **kwargs)">
     <%
-        if 'max' not in kwargs:
-            kwargs['max'] = 24
+        #if 'limit' not in kwargs:
+        #    kwargs['limit'] = 24
     %>
     ${frag_list(render_item_function=render_item_member_thumbnail, type=('ul','li'), list_class='member'        , *args, **kwargs)}
 </%def>
 
 <%def name="member_list(*args, **kwargs)">
     <%
-        if 'max' not in kwargs:
-            kwargs['max'] = 24
+        #if 'limit' not in kwargs:
+        #    kwargs['limit'] = 24
     %>
     ${frag_list(render_item_function=render_item_member       , type=('table','tr'), list_class='member'        , *args, **kwargs)}
 </%def>
@@ -63,15 +63,23 @@
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(items, title, href=None, max=3, show_count=True, hide_if_empty=True, type=('ul','li'), list_class='', icon='', render_item_function=None, *args, **kwargs)">
+<%def name="frag_list(cb_list, title, href=None, limit=None, show_count=True, hide_if_empty=True, type=('ul','li'), list_class='', icon='', render_item_function=None, *args, **kwargs)">
     <%
+        count = None
+        if isinstance(cb_list, dict) and 'items' in cb_list:
+            items = cb_list.get('items')
+            count = cb_list.get('count')
+        else:
+            items = cb_list
+
         if not isinstance(items, list):
             items      = [items]
             show_count = False
-        if isinstance(show_count, bool) and show_count:
-            show_count = len(items)
+        
         if not title:
             show_count = False
+        if not count:
+            count = len(items)
         
         # If HREF is a dict then generate two URL's from it
         #  1.) the original compatable call
@@ -86,7 +94,7 @@
             href_frag = url(*href_args, **href_kwargs)
             js_link_to_frag_bridge = h.literal("""onclick="cb_frag($(this), '%s', 'bridge'); return false;" """ % href_frag)
     %>
-    % if hide_if_empty and len(items)==0:
+    % if hide_if_empty and not count:
         
     % else:
         <div class='frag_list'>
@@ -100,19 +108,19 @@
                 ${title}
                 % endif
                 % if show_count:
-                <span class="count">${show_count}</span>
+                <span class="count">${count}</span>
                 % endif
             </h2>
             <div class="frag_list_contents">
             <${type[0]} class="${list_class}">
-                % for item in items[0:max]:
+                % for item in items[0:limit]:
                 ##<${type[1]}>
                     ${render_item_function(item, *args, **kwargs)}
                 ##</${type[1]}>
                 % endfor
             </${type[0]}>
-            % if href and max > 0 and len(items) > max:
-            <a href="${href}" ${js_link_to_frag_bridge} class="link_more">${len(items)-max} more</a>
+            % if href and limit > 0 and len(items) > limit:
+            <a href="${href}" ${js_link_to_frag_bridge} class="link_more">${count-limit} more</a>
             % endif
             </div>
             ##<div style="clear: both;"></div>

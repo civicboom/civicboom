@@ -159,8 +159,6 @@ class MemberActionsController(BaseController):
         @return 404   member not found
         """
         return content_search(boomed_by=id, **kwargs)
-        #member = _get_member(id)
-        #return action_ok(data={'list': [content.to_dict(**kwargs) for content in member.boomed_content]})
 
 
     #---------------------------------------------------------------------------
@@ -174,14 +172,13 @@ class MemberActionsController(BaseController):
     def groups(self, id, **kwargs):
         member = _get_member(id)
         
-        #if member == c.logged_in_persona:
-        #    group_roles = member.groups_roles
-        #else: # Else only show public groups
+        if member == c.logged_in_persona and kwargs.get('private'):
+            group_roles = member.groups_roles #self._groups_list_dict(
+        else:
+            group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visibility=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
         
-        group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visibility=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
         groups      = self._groups_list_dict(group_roles, **kwargs)
-        return action_ok(data={'list': groups})
-
+        return action_ok_list(groups)
 
     #---------------------------------------------------------------------------
     # List - Accepted Assignemnts
@@ -192,7 +189,8 @@ class MemberActionsController(BaseController):
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_accepted]
-        return action_ok(data={'list': contents})
+        return action_ok_list(contents)
+
 
     @web
     def assignments_unaccepted(self, id, **kwargs):
@@ -200,7 +198,7 @@ class MemberActionsController(BaseController):
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_unaccepted]
-        return action_ok(data={'list': contents})
+        return action_ok_list(contents)
 
 
 
@@ -224,8 +222,6 @@ class MemberActionsController(BaseController):
         
         if hasattr(group, 'member_visibility'):
             if group.member_visibility=="public" or group.get_membership(c.logged_in_persona):
-                return action_ok(data={'list':
-                    [update_dict(mr.member.to_dict(),{'role':mr.role, 'status':mr.status}) for mr in group.members_roles]
-                })
-        
-        return action_ok(data={'list': []})
+                members = [update_dict(mr.member.to_dict(),{'role':mr.role, 'status':mr.status}) for mr in group.members_roles]
+                return action_ok_list(members)
+        return action_ok_list([])

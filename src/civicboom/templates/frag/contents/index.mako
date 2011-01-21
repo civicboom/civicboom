@@ -10,5 +10,5 @@
         if 'list' in kwargs:
             list_title = kwargs['list'].capitalize()
     %>
-    ${parent.content_list(d['list'], list_title, icon=kwargs.get('list'), max=None, creator=creator)}
+    ${parent.content_list(d['list'], list_title, icon=kwargs.get('list'), creator=creator)}
 </%def>

@@ -1,7 +1,7 @@
 <%inherit file="./widget_border.mako"/>
 
 ##<%namespace name="widget_assignment_includes"   file="widget_assignment.mako"/>
-<% assignments = c.result['data']['list'] %>
+<% assignments = c.result['data']['list']['items'] %>
 
 % if len(assignments) == 0:
     % if c.widget_owner == c.logged_in_persona:

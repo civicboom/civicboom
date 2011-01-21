@@ -81,15 +81,15 @@
         
         % if 'accepted_status' in d:
             ${frag_lists.member_list_thumbnails(
-                [m for m in d['accepted_status'] if m['status']=='accepted'],
+                [m for m in d['accepted_status']['items'] if m['status']=='accepted'],
                 _("Accepted by"),
             )}
             ${frag_lists.member_list_thumbnails(
-                [m for m in d['accepted_status'] if m['status']=='invited'],
+                [m for m in d['accepted_status']['items'] if m['status']=='invited'],
                 _("Invited"),
             )}
             ${frag_lists.member_list_thumbnails(
-                [m for m in d['accepted_status'] if m['status']=='withdrawn'],
+                [m for m in d['accepted_status']['items'] if m['status']=='withdrawn'],
                 _("Withdrawn"),
             )}
         % endif
@@ -221,7 +221,7 @@
 <%def name="content_comments()">
 <%
     content  = self.content
-    comments = d['comments']
+    comments = d['comments']['items']
 %>
 <div class="comments">
     <h2>${_("Comments")}</h2>

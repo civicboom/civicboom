@@ -41,7 +41,7 @@ class TestAssignmentLimitController(TestController):
         response = self.app.get(url('member_action', id='assign_limit', action='content', list='assignments',format='json'))
         response_json = json.loads(response.body)
         title_check = [] + [str(i) for i in range(config['payment.free.assignment_limit'])] + ['Paid']
-        for assignment in response_json['data']['list']:
+        for assignment in response_json['data']['list']['items']:
             for title in title_check:
                 if title in assignment['title']:
                     title_check.remove(title)

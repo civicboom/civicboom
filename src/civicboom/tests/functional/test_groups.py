@@ -199,7 +199,7 @@ class TestGroupsController(TestController):
         response = self.app.get(url('group', id=self.group_id, format='json'))
         response_json = json.loads(response.body)
         found = False
-        for member in response_json['data']['members']:
+        for member in response_json['data']['members']['items']:
             if member['username'] == 'unitfriend' and member['status']=='request':
                 found = True
         assert found
@@ -226,7 +226,7 @@ class TestGroupsController(TestController):
         response = self.app.get(url('group', id=self.group_id, format='json'))
         response_json = json.loads(response.body)
         found = False
-        for member in response_json['data']['members']:
+        for member in response_json['data']['members']['items']:
             if member['username'] == 'unitfriend' and member['status']=='active':
                 found = True
         assert found

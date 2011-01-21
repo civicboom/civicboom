@@ -96,7 +96,7 @@ class MessagesController(BaseController):
         if 'list' not in kwargs:
             kwargs['list'] = 'to'
         if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = 20
+            kwargs['limit'] = config['search.default.limit']
         if 'offset' not in kwargs:
             kwargs['offset'] = 0
         if 'include_fields' not in kwargs:
@@ -128,14 +128,26 @@ class MessagesController(BaseController):
                 results = list_filters[kwargs['list']](results)
             else:
                 raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+                
+        # Sort        
         results = results.order_by(Message.timestamp.desc())
+        
+        # Count
+        count = results.count()
+        
+        # Limit & Offset
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
         # Return search results
         return action_ok(
-            data = {'list': [message.to_dict(**kwargs) for message in results.all()]} ,
+            data = {'list': {
+                'items' : [message.to_dict(**kwargs) for message in results.all()] ,
+                'count' : count ,
+                'limit' : kwargs['limit'] ,
+                'offest': kwargs['offset'] ,
+                }
+            }
         )
-
 
     @web
     @auth

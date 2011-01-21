@@ -71,9 +71,10 @@ def load_environment(global_conf, app_conf):
         config[varname] = asbool(config[varname])
 
     # Integers in config file
-    integer_varnames = ['payment.free.assignment_limit',
-                        'payment.plus.assignment_limit',
-                        'search.default.limit'         ,
+    integer_varnames = ['payment.free.assignment_limit'  ,
+                        'payment.plus.assignment_limit'  ,
+                        'search.default.limit'           ,
+                        'search.default.list_group_limit',
                         ]
     for varname in integer_varnames:
         config[varname] = int(config[varname].strip())

@@ -130,6 +130,17 @@ def action_ok(message=None, data={}, code=200, template=None):
         d["template"] = template
     return d
 
+# AllanC - convenicen metod for returning lists
+def action_ok_list(list, **kwargs):
+    return action_ok(data={'list': {
+            'items' : list     ,
+            'count' : len(list),
+            'limit' : None     ,
+            'offset': 0        ,
+        }
+    }, **kwargs)
+
+
 class action_error(Exception):
     def __init__(self, message=None, data={}, code=500, template=None, status='error'):
         assert not message or isinstance(message, basestring)

@@ -251,7 +251,8 @@ class ContentActionsController(BaseController):
         @return 404   not found
         """
         content = _get_content(id, is_viewable=True)
-        return action_ok(data={"list": content.action_list_for(c.logged_in_persona)})
+        actions = content.action_list_for(c.logged_in_persona)
+        return action_ok(data={'list':actions})
 
 
     #-----------------------------------------------------------------------------
@@ -267,7 +268,8 @@ class ContentActionsController(BaseController):
         @return list  the list of comments
         """
         content = _get_content(id, is_viewable=True)
-        return action_ok(data={'list': [c.to_dict() for c in content.comments]})
+        comments = [c.to_dict() for c in content.comments]
+        return action_ok_list(comments)
 
 
     #-----------------------------------------------------------------------------
@@ -278,11 +280,9 @@ class ContentActionsController(BaseController):
         content = _get_content(id, is_viewable=True)
         
         if hasattr(content, 'assigned_to'):
-            return action_ok(data={'list':
-                [update_dict(a.member.to_dict(),{'status':a.status}) for a in content.assigned_to] ##, 'update_date':a.update_date
-            })
-        
-        return action_ok(data={'list':[]})
+            assigned_to = [update_dict(a.member.to_dict(),{'status':a.status}) for a in content.assigned_to] ##, 'update_date':a.update_date
+            return action_ok_list(assigned_to)
+        return action_ok_list([])
 
 
 
@@ -304,4 +304,4 @@ class ContentActionsController(BaseController):
     @web
     def contributors(self, id, **kwargs):
         content = _get_content(id, is_viewable=True)
-        return action_ok(data={'list': []})
+        return action_ok_list([])

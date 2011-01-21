@@ -269,14 +269,14 @@ class Member(Base):
             return False
         from civicboom.controllers.members import MembersController
         member_search = MembersController().index
-        return bool(member_search(member=self, followed_by=member)['data']['list'])
+        return bool(member_search(member=self, followed_by=member)['data']['list']['count'])
     
     def is_following(self, member):
         if not member:
             return False
         from civicboom.controllers.members import MembersController
         member_search = MembersController().index
-        return bool(member_search(member=self, follower_of=member)['data']['list'])
+        return bool(member_search(member=self, follower_of=member)['data']['list']['count'])
 
     @property
     def url(self):

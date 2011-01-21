@@ -272,18 +272,27 @@ class ContentsController(BaseController):
             else:
                 raise action_error(_('list %s not supported') % kwargs['list'], code=400)
         
-        # Build sort
+        # Sort
+        if 'sort' not in kwargs:
+            sort = 'update_date'
         # TODO: use kwargs['sort']
         results = results.order_by(Content.update_date.desc())
         
+        # Count
+        count = results.count()
         
+        # Limit & Offset
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
-        
-        #print results.count()
         
         # Return search results
         return action_ok(
-            data = {'list': [content.to_dict(**kwargs) for content in results.all()]} ,
+            data = {'list': {
+                'items' : [content.to_dict(**kwargs) for content in results.all()] ,
+                'count' : count ,
+                'limit' : kwargs['limit'] ,
+                'offest': kwargs['offset'] ,
+                }
+            }
         )
 
 

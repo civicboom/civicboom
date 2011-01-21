@@ -1,7 +1,5 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<%! import datetime %>
-
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
@@ -77,14 +75,14 @@
         )}
         
         ${frag_list.member_list_thumbnails(
-            [m for m in d['groups'] if m['status']=='active'],
+            [m for m in d['groups']['items'] if m['status']=='active'],
             _('Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
             icon = 'group' ,
         )}
         
         ${frag_list.member_list_thumbnails(
-            [m for m in d['groups'] if m['status']=='invite'] ,
+            [m for m in d['groups']['items'] if m['status']=='invite'] ,
             _('Pending group invitations') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
             icon = 'group' ,
@@ -92,7 +90,7 @@
         
         % if self.member['type']=='group':
         ${frag_list.member_list_thumbnails(
-            [m for m in d['members'] if m['status']=='active'],
+            [m for m in d['members']['items'] if m['status']=='active'],
             _('Members'),
             h.args_to_tuple('member_action', id=self.id, action='members') ,
             icon = 'user' ,
@@ -100,7 +98,7 @@
         )}
         
         ${frag_list.member_list_thumbnails(
-            [m for m in d['members'] if m['status']=='invite'],
+            [m for m in d['members']['items'] if m['status']=='invite'],
             _('Invited Members'),
             h.args_to_tuple('member_action', id=self.id, action='members') ,
             icon = 'invite' ,
@@ -135,6 +133,10 @@
             ><span>${_('Notifications')}</span></a>
         % endif
         
+        
+        
+        ## Accepted Assignments --------------------------------------
+        
         ${frag_list.content_list(
             d['assignments_accepted'] ,
             _('Accepted _assignments') ,
@@ -143,45 +145,30 @@
             icon = 'assignment' ,
         )}
         
-        ## Content --------------------------------------------
         
-        ## All content for development
-        ##${frag_list.content_list(d['content']             , _('Content')              , url('member_actions', id=id, action='content')              )}
+        ## Memers Content --------------------------------------------
         
-        ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='draft'] ,
-            _('Drafts') ,
-            h.args_to_tuple('contents', creator=self.id, list='drafts') , ##format='html'),
-            icon = 'draft' ,
-        )}
+        <%
+            contents_list_names = [
+                ('drafts'              , 'draft'      , _('Drafts')                             ) ,
+                ('assignments_active'  , 'assignemnt' , _('_assignments active').capitalize()   ) ,
+                ('assignments_previous', 'assignment' , _('_assignments previous').capitalize() ) ,
+                ('responses'           , 'response'   , _('Responses').capitalize()             ) ,
+                ('articles'            , 'article'    , _('_article').capitalize()              ) ,
+            ]
+        %>
         
-        ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='assignment' and ('due_date' not in c or c['due_date']==None or h.api_datestr_to_datetime(c['due_date'])>=datetime.datetime.now()) ] ,
-            _('_assignments active').capitalize() ,
-            h.args_to_tuple('contents', creator=self.id, list='assignments_active') ,
-            icon = 'assignment' ,
-        )}
+        % for list, icon, list_name in contents_list_names:
+            ${frag_list.content_list(
+                d[list] ,
+                list_name ,
+                h.args_to_tuple('contents', creator=self.id, list=list), 
+                icon = icon ,
+            )}
+        % endfor
         
-        ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='assignment' and ('due_date' in c and c['due_date']!=None and h.api_datestr_to_datetime(c['due_date'])<=datetime.datetime.now()) ] ,
-            _('_assignments previous').capitalize() ,
-            h.args_to_tuple('contents', creator=self.id, list='assignments_previous') ,
-            icon = 'assignment' ,
-        )}
         
-        ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='article' and c['approval']!='none' ] ,
-            _('Responses').capitalize() ,
-            h.args_to_tuple('contents', creator=self.id, list='responses') ,
-            icon = 'response' ,
-        )}
-        
-        ${frag_list.content_list(
-            [c for c in d['content'] if c['type']=='article' and c['approval']=='none' ] ,
-            _('_articles').capitalize() ,
-            h.args_to_tuple('contents', creator=self.id, list='articles') ,
-            icon = 'article' ,
-        )}
+        ## Boomed Content --------------------------------------------
         
         ${frag_list.content_list(
             d['boomed_content'],
@@ -285,7 +272,7 @@
 ## Map
 ##------------------------------------------------------------------------------
 <%def name="member_map()">
-    <p>implement map</p>
+    ##<p>implement map</p>
 </%def>
 
 

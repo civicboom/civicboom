@@ -130,20 +130,7 @@ class TestController(TestCase):
         
         self.log_in_as(username, password)
     
-    def get_following_count(self):
-        response      = self.app.get(url('member_action', action='following', id=self.logged_in_as, format='json'), status=200)
-        response_json = json.loads(response.body)
-        return len(response_json['data']['list'])
-    
-    def get_follower_count(self):
-        response      = self.app.get(url('member_action', action='followers', id=self.logged_in_as, format='json'), status=200)
-        response_json = json.loads(response.body)
-        return len(response_json['data']['list'])
-    
-    def check_follow(self, following, followers, username='follow_test'):
-        assert self.get_follower_count()  == followers
-        assert self.get_following_count() == following
-    
+
     def follow(self, username):
         response = self.app.post(
             url('member_action', action='follow', id=username, format='json'),
