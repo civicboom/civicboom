@@ -264,7 +264,8 @@ class Content(Base):
         if thumbnail_type=='article' and self.approval != None:
             thumbnail_type = 'response'
 
-        return "/images/default_thumbnail_%s.png" % thumbnail_type
+        from civicboom.lib.helpers import wh_url
+        return wh_url("public", "images/default_thumbnail_%s.png" % thumbnail_type)
 
     @property
     def url(self):
