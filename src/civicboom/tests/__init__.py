@@ -21,6 +21,7 @@ from civicboom.lib import worker
 
 from civicboom.lib.communication.email_log import getLastEmail, getNumEmails, emails
 import re
+import json
 
 
 import pylons.test
@@ -46,6 +47,18 @@ class TestController(TestCase):
         self.app = TestApp(wsgiapp, extra_environ={'REMOTE_ADDR': '0.0.0.0'})
         url._push_object(URLGenerator(config['routes.map'], environ))
         TestCase.__init__(self, *args, **kwargs)
+
+    def setUp(self):
+        # log in by default
+        self.log_in()
+
+    def tearDown(self):
+        # wait for the worker to finish its work before reporting "test passed"
+        worker.stop_worker()
+
+    #---------------------------------------------------------------------------
+    # Common functions for all test
+    #---------------------------------------------------------------------------
 
     def log_in(self):
         self.log_in_as('unittest')
@@ -116,11 +129,35 @@ class TestController(TestCase):
         assert getNumEmails() == num_emails + 1
         
         self.log_in_as(username, password)
-
-    def setUp(self):
-        # log in by default
-        self.log_in()
-
-    def tearDown(self):
-        # wait for the worker to finish its work before reporting "test passed"
-        worker.stop_worker()
+    
+    def get_following_count(self):
+        response      = self.app.get(url('member_action', action='following', id=self.logged_in_as, format='json'), status=200)
+        response_json = json.loads(response.body)
+        return len(response_json['data']['list'])
+    
+    def get_follower_count(self):
+        response      = self.app.get(url('member_action', action='followers', id=self.logged_in_as, format='json'), status=200)
+        response_json = json.loads(response.body)
+        return len(response_json['data']['list'])
+    
+    def check_follow(self, following, followers, username='follow_test'):
+        assert self.get_follower_count()  == followers
+        assert self.get_following_count() == following
+    
+    def follow(self, username):
+        response = self.app.post(
+            url('member_action', action='follow', id=username, format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=200
+        )
+    
+    def unfollow(self, username):
+        response = self.app.post(
+            url('member_action', action='unfollow', id=username, format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=200
+        )

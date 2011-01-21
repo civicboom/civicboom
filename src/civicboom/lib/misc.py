@@ -87,7 +87,10 @@ def obj_to_dict(obj, dict_fields):
             elif type(field_value)==types.IntType:
                 pass
             else:
-                field_value = unicode(field_value)
+                try:
+                    field_value = unicode(field_value)
+                except:
+                    raise Exception('Object types are not allowed in object dictionarys %s %s' % (field_name,field_value))
         d[field_name] = field_value
     return d
 

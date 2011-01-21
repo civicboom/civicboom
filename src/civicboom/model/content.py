@@ -143,7 +143,7 @@ class Content(Base):
     __to_dict__['full'].update({
             'content'     : None ,
             'parent'      : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
-            'creator'     : lambda content: content.creator.to_dict() ,
+            'creator'     : lambda content: content.creator.to_dict() if content.creator else None ,
             'attachments' : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
             #'responses'   : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
             #'comments'    : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
@@ -475,11 +475,11 @@ class AssignmentContent(UserVisibleContent):
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_assignment_fields = {
-            'due_date'              : None ,
-            'event_date'            : None ,
-            'closed'                : None ,
-            'num_accepted'          : None ,
-            'default_response_license': None ,
+            'due_date'                : None ,
+            'event_date'              : None ,
+            'closed'                  : None ,
+            'num_accepted'            : None ,
+            'default_response_license': lambda content: content.license.to_dict() ,
     }
     __to_dict__['default'     ].update(_extra_assignment_fields)
     __to_dict__['full'        ].update(_extra_assignment_fields)

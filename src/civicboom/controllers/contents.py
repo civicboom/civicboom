@@ -271,8 +271,15 @@ class ContentsController(BaseController):
                 results = list_filters[kwargs['list']](results)
             else:
                 raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+        
+        # Build sort
+        # TODO: use kwargs['sort']
         results = results.order_by(Content.update_date.desc())
+        
+        
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
+        
+        #print results.count()
         
         # Return search results
         return action_ok(
