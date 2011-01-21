@@ -287,7 +287,7 @@ class Member(Base):
     def avatar_url(self, size=80):
         if self.avatar:
             return wh_url("avatars", self.avatar)
-        return "https://static.civicboom.com/images/default_avatar.png"
+        return wh_url("public", "images/default_avatar.png")
 
     @property
     def location_home_string(self):
