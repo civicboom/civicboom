@@ -176,9 +176,9 @@ HTML.no-js #flash_message {
 
 .olMap {
 	border: 2px solid gray;
-	border-radius: 8px 8px;
+	/*border-radius: 8px 8px;
 	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
+	-webkit-border-radius: 8px;*/
 }
 .olControlAttribution {
 	bottom: 0em !important;

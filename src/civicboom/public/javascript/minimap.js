@@ -65,3 +65,85 @@ function minimap(div_name, options, feeds) {
 
 	return map;
 }
+
+function map_picker(field_name) {
+	var map = minimap(
+		field_name+'_div',
+		{
+			controls: true,
+			// default UK
+			//lonlat: {lon:-4, lat:54},
+			//zoom: 4,
+		}
+	);
+
+	OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
+		defaultHandlerOptions: {
+			'single': true,
+			'double': false,
+			'pixelTolerance': 0,
+			'stopSingle': false,
+			'stopDouble': false
+		},
+
+		initialize: function(options) {
+			this.handlerOptions = OpenLayers.Util.extend({}, this.defaultHandlerOptions);
+			OpenLayers.Control.prototype.initialize.apply(this, arguments);
+			this.handler = new OpenLayers.Handler.Click(
+				this, {
+					'click': this.trigger
+				}, this.handlerOptions
+			);
+		},
+
+		trigger: function(e) {
+			 var p = map.getLonLatFromViewPortPx(e.xy);
+			 p = new OpenLayers.LonLat(p.lon, p.lat).transform(
+				 map.getProjectionObject(),
+				 new OpenLayers.Projection("EPSG:4326")
+			 );
+
+			 namebox = document.getElementById(field_name+"_name");
+			 if(namebox.value == "" || namebox.value.match(/^[\d\., ]+$/)) {
+				 namebox.value = Math.round(p.lon*10000)/10000+", "+Math.round(p.lat*10000)/10000;
+			 }
+		 }
+	});
+
+	var click = new OpenLayers.Control.Click();
+	map.addControl(click);
+	click.activate();
+
+
+	$('#'+field_name+'_name').autocomplete({
+		source: function(req, respond) {
+			$.getJSON("/search/location.json?", req, function(response) {
+				// translate from CB-API formatted data ('response')
+				// to jQueryUI formatted ('suggestions')
+				var suggestions = [];
+				$.each(response.data.locations, function(i, val) {
+					suggestions.push({"label": val.name, "value": val.location});
+				});
+				respond(suggestions);
+			});
+		},
+		select: function(event, ui) {
+			var typelonlat = ui.item.value.split(/[ ()]/);
+			var lon = typelonlat[1];
+			var lat = typelonlat[2];
+
+			$('#'+field_name+'').val(lon+","+lat);
+			$('#'+field_name+'_name').val(ui.item.label);
+			map.setCenter(
+				new OpenLayers.LonLat(Number(lon), Number(lat)).transform(
+					new OpenLayers.Projection("EPSG:4326"),
+					map.getProjectionObject()
+				),
+				13
+			);
+			return false;
+		}
+	});
+
+	return map;
+}

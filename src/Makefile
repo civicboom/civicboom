@@ -33,10 +33,11 @@ test-db: skel-db
 	nosetests
 
 data/live-data.sql:
+	mkdir -p data
 	ssh -C civicboom.com /opt/cb/bin/dump_db > data/live-data.sql
 
 live-db: skel-db data/live-data.sql
-	sudo -u postgres psql < data/live-data.sql
+	sudo -u postgres psql -q -f data/live-data.sql
 
 run:
 	paster serve --reload development.ini

@@ -10,10 +10,9 @@ export PGOPTIONS='--client-min-messages=warning'
 # clear
 
 echo "Removing old data"
-dropdb civicboom_log
-dropdb civicboom_gis
-#dropdb civicboom_ses sessions now stored in memcachedb
-dropdb civicboom
+echo "DROP OWNED BY civicboom CASCADE" | psql -q
+dropdb civicboom     # civicboom doesn't completely own these databases,
+dropdb civicboom_gis # postgres owns the GIS metadata
 dropuser civicboom
 
 
