@@ -22,10 +22,10 @@ setup(
         "python_magic",
         "GeoAlchemy",
         "GeoFormAlchemy",
-        "SQLAlchemy>=0.6.5",
         "twitter>=1.4.2",
     ] + [
-        "Pylons>=1.0.0",
+        "SQLAlchemy>=0.6.5", # debian experimental has 0.6.6
+        "Pylons>=1.0.0",     # debian experimental
         "FormAlchemy",
         #"recaptcha-client", #AllanC - I wrote our own one out of frustration, turned out to be the validator triggering twice :(
         "pyDNS",
