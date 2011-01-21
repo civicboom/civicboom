@@ -1,5 +1,16 @@
 
-all: i18n js css
+help:
+	# Usage: make <target>, where target is
+	# site       -- i18n + js + css  (this should be done after git clone)
+	# i18n       -- compile the translations
+	# js         -- compress javascript into _combined.head.js and foot.js
+	# css        -- compress folders of css into single files
+	# test-db    -- create a blank database and fill it with test data
+	# live-db    -- create a blank database and fill it with live data
+	# run        -- run the site in development mode
+	# clean      -- reset the folder to clean git checkout
+
+site: i18n js css
 
 i18n:
 	python setup.py extract_messages
@@ -14,11 +25,21 @@ js:
 css:
 	cd civicboom/public/styles && $(MAKE)
 
-init-db:
+skel-db:
 	../admin_scripts/init_cbdb
+
+test-db: skel-db
 	paster setup-app development.ini
 	nosetests
 
-pull-data:
-	ssh -C civicboom.com /opt/cb/bin/dump_db > live-data.sql
-	PGPASSWORD=civicboom psql -U civicboom -h localhost < live-data.sql
+data/live-data.sql:
+	ssh -C civicboom.com /opt/cb/bin/dump_db > data/live-data.sql
+
+live-db: skel-db data/live-data.sql
+	sudo -u postgres psql < data/live-data.sql
+
+run:
+	paster serve --reload development.ini
+
+clean:
+	git clean -d -f -x
