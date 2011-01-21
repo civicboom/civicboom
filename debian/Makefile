@@ -21,7 +21,7 @@ cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
 cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -type f)
-	cd ../src/ && $(MAKE)
+	cd ../src/ && $(MAKE) site
 	rm -rf fs-api
 	$(call mdcp, api/*              , fs-api/DEBIAN/                   )
 	$(call mdcp, api/crontab        , fs-api/etc/cron.d/,cb-website-web )
