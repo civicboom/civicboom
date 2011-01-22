@@ -36,10 +36,10 @@ class TestListsController(TestController):
         
         # Create LOTS Users with 1 peice of content each
         #  create as many as the normal serach limit and then one more to test pagination
-        for count in range( config['search.default.limit'] + 1):
+        for count in range( config['search.default.limit.contents'] + 1):
             create_content('unit_content_%s' % count)
         
-        for count in range( config['search.default.limit'] + 1):
+        for count in range( config['search.default.limit.members'] + 1):
             create_member('list_member_%s' % count)
             create_content('list_content_%s' % count)
         

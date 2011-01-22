@@ -24,8 +24,20 @@ class TestFollowController(TestController):
             return response_json['data']['list']['count']
         
         def check_follow(following, followers, username='follow_test'):
+            # Get follow and follower lists and check correct number of items
             assert get_follower_count()  == followers
-            assert get_following_count() == following    
+            assert get_following_count() == following
+            
+            # Check postgresql triggers
+            response      = self.app.get(url('member', id=self.logged_in_as, format='json'), status=200)
+            response_json = json.loads(response.body)
+            
+            assert response_json['data']['followers']['count'] == response_json['data']['member']['num_followers']
+            assert response_json['data']['followers']['count'] == followers
+            
+            assert response_json['data']['following']['count'] == response_json['data']['member']['num_following']
+            assert response_json['data']['following']['count'] == following
+            
         
         self.log_in_as('unittest')
         num_unittest_followers = get_follower_count()
