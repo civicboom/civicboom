@@ -160,6 +160,8 @@ class ContentActionsController(BaseController):
         if status == True:
             assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
             user_log.debug("Accepted Content #%d" % int(id))
+            if c.logged_in_persona.num_following == 0:
+                c.logged_in_persona.follow(assignment.creator)
             return action_ok(_("_assignment accepted"))
         #elif isinstance(status,str):
         raise action_error(_('Unable to accept _assignment'), code=400)
