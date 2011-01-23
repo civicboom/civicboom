@@ -151,7 +151,9 @@
         ${member_includes.avatar(member, class_="thumbnail_small")}
     </td>
     <td>
-        ${member.get('name')}
+        <a href="h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">
+        ${member.get('name') or member.get('username')}
+        </a>
     </td>
 </tr>
 </%def>
