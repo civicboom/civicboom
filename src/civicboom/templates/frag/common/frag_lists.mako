@@ -1,5 +1,9 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%!
+    import copy
+%>
+
 <%namespace name="member_includes" file="/html/web/common/member.mako" />
 
 ##------------------------------------------------------------------------------
@@ -26,7 +30,27 @@
 <%def name="actions_common()">
     ${self.georss_link()}
 </%def>
-
+<%def name="actions_specific()">
+    <%
+        args, kwargs = c.web_params_to_kwargs
+        kwargs = copy.copy(kwargs)
+        if 'format' in kwargs:
+            del kwargs['format']
+        offset = d['list']['offset']
+        limit  = d['list']['limit']
+        count  = d['list']['count']
+        items  = len(d['list']['items'])
+    %>
+    % if offset + items < count:
+        <% kwargs['offset'] = limit %>
+        <a href="${url.current(format='html', **kwargs)}" onclick="cb_frag_load($(this), '${url.current(format='frag', **kwargs)}'); return false;">next</a>
+    % endif
+    
+    % if offset >0 :
+        <% kwargs['offset'] = offset-limit %>
+        <a href="${url.current(format='html', **kwargs)}" onclick="cb_frag_load($(this), '${url.current(format='frag', **kwargs)}'); return false;">prev</a>
+    % endif
+</%def>
 
 
 ##------------------------------------------------------------------------------

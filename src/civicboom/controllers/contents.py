@@ -7,9 +7,11 @@ from civicboom.lib.database.get_cached import get_content, update_content, get_l
 from civicboom.model.content           import _content_type as content_types
 
 # Other imports
+from civicboom.lib.misc import str_to_int
 from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
+
 
 # Validation
 import formencode
@@ -229,10 +231,8 @@ class ContentsController(BaseController):
                 logged_in_creator = True
         
         # Setup search criteria
-        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = config['search.default.limit.contents']
-        if 'offset' not in kwargs:
-            kwargs['offset'] = 0
+        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
+        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
@@ -290,7 +290,7 @@ class ContentsController(BaseController):
                 'items' : [content.to_dict(**kwargs) for content in results.all()] ,
                 'count' : count ,
                 'limit' : kwargs['limit'] ,
-                'offest': kwargs['offset'] ,
+                'offset': kwargs['offset'] ,
                 }
             }
         )

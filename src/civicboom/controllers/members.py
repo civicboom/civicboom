@@ -1,5 +1,7 @@
 from civicboom.lib.base import *
 
+from civicboom.lib.misc import str_to_int
+
 from civicboom.controllers.contents import _normalize_member
 
 
@@ -112,10 +114,8 @@ class MembersController(BaseController):
             kwargs['name'] =  kwargs['term']
         
         # Setup search criteria
-        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = config['search.default.limit.members']
-        if 'offset' not in kwargs:
-            kwargs['offset'] = 0
+        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.members'])
+        kwargs['offset'] = str_to_int(kwargs.get('offset')                                       )
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
@@ -148,7 +148,7 @@ class MembersController(BaseController):
                 'items' : [content.to_dict(**kwargs) for content in results.all()] ,
                 'count' : count ,
                 'limit' : kwargs['limit'] ,
-                'offest': kwargs['offset'] ,
+                'offset': kwargs['offset'] ,
                 }
             }
         )

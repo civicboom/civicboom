@@ -36,6 +36,12 @@ def random_string(length=8):
         r += random_symbols[random.randint(0,len(random_symbols)-1)]
     return r
 
+def str_to_int(text, default=0):
+    try:
+        return int(text)
+    except:
+        pass
+    return default
 
 def calculate_age(born):
     """
