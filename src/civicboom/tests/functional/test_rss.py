@@ -21,8 +21,6 @@ class TestRSSController(TestController):
             assert id > 0
             return id
         
-        
-        
         #response      = self.app.get(url('member', id='unittest', format='json'), status=200)
         #response_json = json.loads(response.body)
         
