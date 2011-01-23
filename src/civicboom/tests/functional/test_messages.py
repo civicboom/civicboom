@@ -1,7 +1,7 @@
 from civicboom.tests import *
 from civicboom.model.meta import Session
 from civicboom.model import Message, Member
-import json
+#import json
 
 class TestMessagesController(TestController):
     def test_all(self):

@@ -2,7 +2,7 @@ from civicboom.tests import *
 
 from civicboom.lib.communication.email_log import getLastEmail, getNumEmails
 
-import re
+#import re
 
 
 

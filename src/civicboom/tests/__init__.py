@@ -28,7 +28,10 @@ import pylons.test
 
 __all__ = ['environ', 'url', 'TestController',
            # Email Log
-           'getLastEmail', 'getNumEmails', 'emails']
+           'getLastEmail', 'getNumEmails', 'emails',
+           # libs
+           'json', 're'
+           ]
 
 # Invoke websetup with the current config file
 SetupCommand('setup-app').run([pylons.test.pylonsapp.config['__file__']])

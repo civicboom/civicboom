@@ -145,6 +145,7 @@ class MessagesController(BaseController):
                 'count' : count ,
                 'limit' : kwargs['limit'] ,
                 'offset': kwargs['offset'] ,
+                'type'  : 'message' ,
                 }
             }
         )

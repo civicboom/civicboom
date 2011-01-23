@@ -1,6 +1,6 @@
 from civicboom.tests import *
 
-import json
+#import json
 import warnings
 
 #self.group_id = 0

@@ -149,6 +149,7 @@ class MembersController(BaseController):
                 'count' : count ,
                 'limit' : kwargs['limit'] ,
                 'offset': kwargs['offset'] ,
+                'type'  : 'member' ,
                 }
             }
         )

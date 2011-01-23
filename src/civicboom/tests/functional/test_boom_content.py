@@ -1,5 +1,5 @@
 from civicboom.tests import *
-import json
+#import json
 
 class TestBoomController(TestController):
     

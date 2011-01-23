@@ -2,7 +2,8 @@
 <%def name="title()">${d['member']['name']}</%def>
 
 <%def name="body()">
-    % for content in d['content']:
-        ${self.rss_content_item(content)}
-    % endfor
+    please use ${url('contents', creator=d['member']['username'], format='rss')}
+    ##% for content in d['content']['items']:
+    ##    ${self.rss_content_item(content)}
+    ##% endfor
 </%def>

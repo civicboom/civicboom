@@ -40,8 +40,8 @@
         
         self.attr.frag_data_css_class = 'frag_member'
         
+        self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
-
         self.attr.auto_georss_link = True
     %>
 </%def>

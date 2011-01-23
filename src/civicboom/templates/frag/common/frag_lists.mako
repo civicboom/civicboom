@@ -31,6 +31,7 @@
     ${self.georss_link()}
 </%def>
 <%def name="actions_specific()">
+    ## Pagination
     <%
         args, kwargs = c.web_params_to_kwargs
         kwargs = copy.copy(kwargs)
@@ -41,14 +42,13 @@
         count  = d['list']['count']
         items  = len(d['list']['items'])
     %>
-    % if offset + items < count:
-        <% kwargs['offset'] = limit %>
-        <a href="${url.current(format='html', **kwargs)}" onclick="cb_frag_load($(this), '${url.current(format='frag', **kwargs)}'); return false;">next</a>
-    % endif
-    
-    % if offset >0 :
-        <% kwargs['offset'] = offset-limit %>
+    % if offset > 0:
+        <% kwargs['offset'] = offset - limit %>
         <a href="${url.current(format='html', **kwargs)}" onclick="cb_frag_load($(this), '${url.current(format='frag', **kwargs)}'); return false;">prev</a>
+    % endif
+    % if offset + items < count:
+        <% kwargs['offset'] = offset + limit %>
+        <a href="${url.current(format='html', **kwargs)}" onclick="cb_frag_load($(this), '${url.current(format='frag', **kwargs)}'); return false;">next</a>
     % endif
 </%def>
 

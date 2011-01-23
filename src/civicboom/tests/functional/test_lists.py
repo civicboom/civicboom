@@ -1,7 +1,7 @@
 from civicboom.tests import *
 from pylons import config
 
-import json
+#import json
 
 
 class TestListsController(TestController):
@@ -28,7 +28,9 @@ class TestListsController(TestController):
                 status=201
             )
             response_json = json.loads(response.body)
-            assert int(response_json['data']['id']) > 0
+            id = int(response_json['data']['id'])
+            assert id > 0
+            return id
         
         def create_member(name):
             self.sign_up_as(name)
