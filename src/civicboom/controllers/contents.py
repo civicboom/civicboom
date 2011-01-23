@@ -3,7 +3,7 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom
-from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license, get_tag
+from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license, get_tag, get_assigned_to
 from civicboom.model.content           import _content_type as content_types
 
 # Other imports
@@ -646,6 +646,13 @@ class ContentsController(BaseController):
                 # AllanC - invalidating the content on EVERY view does not make scence
                 #        - a cron should invalidate this OR the templates should expire after X time
                 #update_content(content)
+        
+        # Corporate plus customers want to be able to see what members have looked at an assignment
+        if content.__type__=='assignment' and content.closed==True:
+            member_assignment = get_assigned_to(content, member)
+            if not member_assignment.member_viewed:
+                member_assignment.member_viewed = True
+                Session.commit()
         
         return action_ok(data=data)
 

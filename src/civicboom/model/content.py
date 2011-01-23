@@ -464,14 +464,14 @@ class AssignmentContent(UserVisibleContent):
     id              = Column(Integer(),        ForeignKey('content_user_visible.id'), primary_key=True)
     event_date      = Column(DateTime(),       nullable=True)
     due_date        = Column(DateTime(),       nullable=True)
-    assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
-    #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
     default_response_license_id = Column(Unicode(32), ForeignKey('license.id'), nullable=False, default="CC-BY")
     #num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
 
     default_response_license    = relationship("License")
 
+    assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
+    #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
@@ -560,10 +560,12 @@ class MemberAssignment(Base):
     content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')            , nullable=False, primary_key=True)
     status        = Column(_assignment_status,  nullable=False)
+    member_viewed = Column(Boolean(),    nullable=False, default=False, doc="a flag to keep track to see if the member invited has actually viewed this page")
     #update_date   = Column(DateTime(),   nullable=False, default=func.now(), doc="Controlled by postgres trigger")
     # AllanC - TODO - implement member assignment update date postgress trigger
 
     member       = relationship("Member")
+    #content      = relationship("AssignmentContent")
 
 class License(Base):
     __tablename__ = "license"

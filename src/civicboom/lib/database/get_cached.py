@@ -104,6 +104,23 @@ def get_membership(group, member):
     except NoResultFound:
         return None
 
+def get_assigned_to(content, member):
+    content = get_group(content)
+    member  = get_member(member)
+
+    if not (content and member):
+        return None
+    try:
+        return Session.query(MemberAssignment).filter(
+            and_(
+                MemberAssignment.content_id  == content.id,
+                MemberAssignment.member_id   == member.id
+            )
+        ).one()
+    except NoResultFound:
+        return None
+
+
 def get_message(message):
     return Session.query(Message).filter(Message.id==int(message)).options(joinedload('source')).options(joinedload('target')).first()
 
