@@ -47,7 +47,7 @@
         <title>${content['title']}</title> 
         <link>${url('content', host=app_globals.site_host, id=content['id'])}</link> 
         <description>${content['content_short']}</description> 
-        <pubDate>${h.date_to_rss(content.get('creation_date'))}</pubDate> 
+        <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate> 
         <guid isPermaLink="false">Civicboom Content #${content['id']}</guid>
         % if 'tags' in content:
         <category>
@@ -61,6 +61,14 @@
         ##<wfw:comment   >${url('contents', parent_id=content['id'], type='comment', format='rss', host=app_globals.site_host)}</wfw:comment>
         <wfw:commentRss>${url('content_actions', action='comments', id=content['id'], format='rss', host=app_globals.site_host)}</wfw:commentRss>
         <!-- <creativeCommons:license>license url here</creativeCommons:license> -->
+
+    ##% if 'thumbnail_url' in content:
+        ## AllanC :( Broken  .. WHY!!! WHY!!!
+        ## With this line enabled ... it wont show up in firefox .. the entire entry is not displayed
+        ##<enclosure url="${content['thumbnail_url']}" length="0" type="image/png"/>
+        ## cant guaranete that it's a jpeg because placeholders are pngs :(
+    ##% endif
+    
         
     % if 'attachments' in content:
         % for media in content['attachments']:
@@ -121,6 +129,10 @@
         % endif
         ##<pubDate>${h.datetime_to_rss(h.api_datestr_to_datetime(content['creation_date']))}</pubDate> 
         <guid isPermaLink="false">Civicboom Member #${member['id']}</guid>
+
+    ##% if 'thumbnail_url' in member:
+    ##    <enclosure url="${member['thumbnail_url']}" type="image/jpeg" />
+    ##% endif
         
         ## locaiton?
     </item>

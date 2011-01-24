@@ -40,7 +40,9 @@
         
         self.attr.frag_data_css_class = 'frag_member'
         
-        self.attr.rss_url = url('contents', creator=self.id, format='rss')
+        # Contents index was sorted by date. it was awkward to get a single list from the multiple lists of a member object
+        #  but shish said that clients will sort the RSS by date so it was all ok
+        #self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
         self.attr.auto_georss_link = True
     %>

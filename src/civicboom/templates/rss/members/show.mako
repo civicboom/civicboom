@@ -2,8 +2,15 @@
 <%def name="title()">${d['member']['name']}</%def>
 
 <%def name="body()">
-    please use ${url('contents', creator=d['member']['username'], format='rss')}
+    ##please use ${url('contents', creator=d['member']['username'], format='rss')}
+    
     ##% for content in d['content']['items']:
     ##    ${self.rss_content_item(content)}
     ##% endfor
+    
+    % for list in [cb_list['items'] for cb_list in d.values() if isinstance(cb_list, dict) and cb_list.get('type')=='content']:
+        % for content in list:
+            ${self.rss_content_item(content)}
+        % endfor
+    % endfor
 </%def>
