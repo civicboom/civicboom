@@ -3,13 +3,15 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom
-from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license, get_tag
+from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license, get_tag, get_assigned_to
 from civicboom.model.content           import _content_type as content_types
 
 # Other imports
+from civicboom.lib.misc import str_to_int
 from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
+
 
 # Validation
 import formencode
@@ -229,10 +231,8 @@ class ContentsController(BaseController):
                 logged_in_creator = True
         
         # Setup search criteria
-        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = config['search.default.limit']
-        if 'offset' not in kwargs:
-            kwargs['offset'] = 0
+        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
+        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
@@ -271,12 +271,29 @@ class ContentsController(BaseController):
                 results = list_filters[kwargs['list']](results)
             else:
                 raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+        
+        # Sort
+        if 'sort' not in kwargs:
+            sort = 'update_date'
+        # TODO: use kwargs['sort']
         results = results.order_by(Content.update_date.desc())
+        
+        # Count
+        count = results.count()
+        
+        # Limit & Offset
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
         # Return search results
         return action_ok(
-            data = {'list': [content.to_dict(**kwargs) for content in results.all()]} ,
+            data = {'list': {
+                'items' : [content.to_dict(**kwargs) for content in results.all()] ,
+                'count' : count ,
+                'limit' : kwargs['limit'] ,
+                'offset': kwargs['offset'] ,
+                'type'  : 'content' ,
+                }
+            }
         )
 
 
@@ -338,6 +355,13 @@ class ContentsController(BaseController):
             parent = get_content(parent_id)
             if parent and parent.__type__ == 'assignment' and parent.default_response_license:
                 content.license = parent.default_response_license
+
+        # if a title isn't set but we have a parent, title = "Re: parent title"
+        title = kwargs.get('title')
+        if parent_id and not title:
+            parent = get_content(parent_id)
+            if parent and parent.title:
+                content.title = "Re: "+parent.title
 
         # comments are always owned by the writer; ignore settings
         # and parent preferences
@@ -622,6 +646,13 @@ class ContentsController(BaseController):
                 # AllanC - invalidating the content on EVERY view does not make scence
                 #        - a cron should invalidate this OR the templates should expire after X time
                 #update_content(content)
+        
+        # Corporate plus customers want to be able to see what members have looked at an assignment
+        if content.__type__=='assignment' and content.closed==True:
+            member_assignment = get_assigned_to(content, member)
+            if not member_assignment.member_viewed:
+                member_assignment.member_viewed = True
+                Session.commit()
         
         return action_ok(data=data)
 

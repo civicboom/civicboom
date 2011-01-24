@@ -2,6 +2,27 @@
 ##${member_includes.member_list(d['list'])}
 <%inherit file="/frag/common/frag_lists.mako"/>
 
+<%def name="init_vars()">
+    ${parent.init_vars()}
+    <%        
+        args, kwargs = c.web_params_to_kwargs
+        
+        title = 'Members'
+        icon  = 'user'
+        
+        if 'followed_by' in kwargs:
+            title = _('Following')
+            icon  = 'follow'
+        if 'follower_of' in kwargs:
+            title = _('Followers')
+            icon  = 'follow'
+        
+        self.attr.title     = "%s (%s)" % (title, d['list']['count'] )
+        self.attr.icon_type = icon
+    %>
+</%def>
+
+
 <%def name="body()">
     <%
         args, kwargs = c.web_params_to_kwargs
@@ -10,5 +31,5 @@
         if 'list' in kwargs:
             list_title = kwargs['list'].capitalize()
     %>
-    ${parent.member_list(d['list'], list_title, icon=kwargs.get('list'), max=None)}
+    ${parent.member_list(d['list'], list_title, show_heading=False, icon=kwargs.get('list'))}
 </%def>

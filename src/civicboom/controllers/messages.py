@@ -3,6 +3,8 @@ from civicboom.lib.database.get_cached import get_message
 from civicboom.model import Message
 import json
 
+from civicboom.lib.misc import str_to_int
+
 from sqlalchemy.orm       import join, joinedload
 from sqlalchemy           import or_, and_, null
 
@@ -94,11 +96,9 @@ class MessagesController(BaseController):
         
         # Setup search criteria
         if 'list' not in kwargs:
-            kwargs['list'] = 'to'
-        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = 20
-        if 'offset' not in kwargs:
-            kwargs['offset'] = 0
+            kwargs['list'] = 'to'            
+        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.messages'])
+        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
             if kwargs.get('list')=='to':
@@ -128,14 +128,27 @@ class MessagesController(BaseController):
                 results = list_filters[kwargs['list']](results)
             else:
                 raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+                
+        # Sort        
         results = results.order_by(Message.timestamp.desc())
+        
+        # Count
+        count = results.count()
+        
+        # Limit & Offset
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
         # Return search results
         return action_ok(
-            data = {'list': [message.to_dict(**kwargs) for message in results.all()]} ,
+            data = {'list': {
+                'items' : [message.to_dict(**kwargs) for message in results.all()] ,
+                'count' : count ,
+                'limit' : kwargs['limit'] ,
+                'offset': kwargs['offset'] ,
+                'type'  : 'message' ,
+                }
+            }
         )
-
 
     @web
     @auth

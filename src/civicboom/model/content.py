@@ -108,8 +108,8 @@ class Content(Base):
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
     license         = relationship("License")
-
-    comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id == Content.parent_id")
+    
+    comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id==Content.parent_id") # TODO: need Content.visible==True
     flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
     
 
@@ -143,7 +143,7 @@ class Content(Base):
     __to_dict__['full'].update({
             'content'     : None ,
             'parent'      : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
-            'creator'     : lambda content: content.creator.to_dict() ,
+            'creator'     : lambda content: content.creator.to_dict() if content.creator else None ,
             'attachments' : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
             #'responses'   : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
             #'comments'    : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
@@ -264,7 +264,8 @@ class Content(Base):
         if thumbnail_type=='article' and self.approval != None:
             thumbnail_type = 'response'
 
-        return "/images/default_thumbnail_%s.png" % thumbnail_type
+        from civicboom.lib.helpers import wh_url
+        return wh_url("public", "images/default_thumbnail_%s.png" % thumbnail_type)
 
     @property
     def url(self):
@@ -463,23 +464,23 @@ class AssignmentContent(UserVisibleContent):
     id              = Column(Integer(),        ForeignKey('content_user_visible.id'), primary_key=True)
     event_date      = Column(DateTime(),       nullable=True)
     due_date        = Column(DateTime(),       nullable=True)
-    assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
-    #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
     default_response_license_id = Column(Unicode(32), ForeignKey('license.id'), nullable=False, default="CC-BY")
     #num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
 
     default_response_license    = relationship("License")
 
+    assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
+    #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
     
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_assignment_fields = {
-            'due_date'              : None ,
-            'event_date'            : None ,
-            'closed'                : None ,
-            'num_accepted'          : None ,
-            'default_response_license': None ,
+            'due_date'                : None ,
+            'event_date'              : None ,
+            'closed'                  : None ,
+            'num_accepted'            : None ,
+            'default_response_license': lambda content: content.license.to_dict() ,
     }
     __to_dict__['default'     ].update(_extra_assignment_fields)
     __to_dict__['full'        ].update(_extra_assignment_fields)
@@ -559,10 +560,12 @@ class MemberAssignment(Base):
     content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')            , nullable=False, primary_key=True)
     status        = Column(_assignment_status,  nullable=False)
+    member_viewed = Column(Boolean(),    nullable=False, default=False, doc="a flag to keep track to see if the member invited has actually viewed this page")
     #update_date   = Column(DateTime(),   nullable=False, default=func.now(), doc="Controlled by postgres trigger")
     # AllanC - TODO - implement member assignment update date postgress trigger
 
     member       = relationship("Member")
+    #content      = relationship("AssignmentContent")
 
 class License(Base):
     __tablename__ = "license"

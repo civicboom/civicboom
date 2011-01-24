@@ -19,18 +19,16 @@
 
 }
 
-#frag_containers .frag_container .frag_data .frag_list .icon {
+/* --------------------------
+   Frag list Headings (for lists in content and member frags)
+   -------------------------- */
 
+#frag_containers .frag_container .frag_data .frag_list .icon {
 }
 
 #frag_containers .frag_container .frag_data .frag_list .frag_list_contents {
     padding       : 0.5em;
     padding-bottom: 0em; /* see rule below for each element adding there own bottom padding */
-}
-.frag_list_contents td,
-.frag_list_contents li,
-.frag_list_contents ul {
-    padding-bottom: 0.5em;
 }
 
 
@@ -45,19 +43,30 @@
     float: right;
 }
 
+/* --------------------------
+   Frag list contents
+   -------------------------- */
 
-#frag_containers .frag_container .frag_data .frag_list a {
+.frag_list_contents td,
+.frag_list_contents li,
+.frag_list_contents ul {
+    padding-bottom: 0.5em;
+}
+
+
+#frag_containers .frag_container .frag_data .frag_list          a ,
+#frag_containers .frag_container .frag_data .frag_list_contents a {
     text-decoration: none;
     color: inherit;
 }
 
 
-#frag_containers .frag_container .frag_data .frag_list td {
+#frag_containers .frag_container .frag_data .frag_list_contents td {
     vertical-align: top;
 }
 
 
-#frag_containers .frag_container .frag_data .frag_list .link_more {
+#frag_containers .frag_container .frag_data .frag_list_contents .link_more {
     float: right;
     background: #ccc;
     
@@ -76,7 +85,7 @@
 
 
 /*------------------------------ Content -------------------------------------*/
-.frag_list .content .content_title {
+.frag_list_contents .content .content_title {
     padding-left: 0.25em;
     padding-top : 0.25em;
 }
@@ -84,7 +93,7 @@
 
 /*------------------------------ Members -------------------------------------*/
 
-.frag_list .member li {
+.frag_list_contents .member li {
     display: inline;
 }
 
@@ -92,16 +101,16 @@
 
 /*----------------------------- Messages -------------------------------------*/
 
-.frag_list .messages li {
+.frag_list_contents .messages li {
     margin-bottom: 0.5em;
     /*border-bottom: 1px solid #ccc;*/
 }
-.frag_list .messages .unread      {background-color: #eee;}
-.frag_list .messages .source      {float: left;}
-.frag_list .messages .target      {float: left;}
-.frag_list .messages .subject     {font-weight: bold; background-color: #ccc;}
-.frag_list .messages .content a   {font-weight: bold;}
-.frag_list .messages .icon_delete {float: right;}
+.frag_list_contents .messages .unread      {background-color: #eee;}
+.frag_list_contents .messages .source      {float: left;}
+.frag_list_contents .messages .target      {float: left;}
+.frag_list_contents .messages .subject     {font-weight: bold; background-color: #ccc;}
+.frag_list_contents .messages .content a   {font-weight: bold;}
+.frag_list_contents .messages .icon_delete {float: right;}
 
 
 

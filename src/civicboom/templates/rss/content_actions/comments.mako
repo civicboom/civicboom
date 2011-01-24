@@ -1,7 +1,7 @@
 <%inherit file="/rss/rss_base.mako"/>
 
 <%def name="body()">
-    % for content in d['list']:
+    % for content in d['list']['items']:
     <item> 
         <description>${content['content']}</description>
         <pubDate>${h.date_to_rss(content.get('creation_date'))}</pubDate>

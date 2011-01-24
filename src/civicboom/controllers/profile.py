@@ -1,15 +1,18 @@
 from civicboom.lib.base import *
 
+#from civicboom.controllers.contents       import ContentsController, list_filters as content_list_filters
 from civicboom.controllers.members        import MembersController
-from civicboom.controllers.member_actions import MemberActionsController
-from civicboom.controllers.messages       import MessagesController
+#from civicboom.controllers.member_actions import MemberActionsController
+#from civicboom.controllers.messages       import MessagesController
 #from civicboom.controllers.search   import SearchController
 #from civicboom.controllers.groups   import GroupsController
 #from civicboom.controllers.contents import ContentsController
 
+#contents_controller       = ContentsController()
 members_controller        = MembersController()
-member_actions_controller = MemberActionsController()
-messages_controller       = MessagesController()
+#member_actions_controller = MemberActionsController()
+#messages_controller       = MessagesController()
+#content_list_names        = content_list_filters.keys()
 
 class ProfileController(BaseController):
     """
@@ -33,15 +36,4 @@ class ProfileController(BaseController):
         """
         # NOTE: if this method is refactored or renamed please update cb_frag.js (as it is outside pylons and has a hard coded url to '/profile/index')
         
-        # AllanC - contruct an uber dictionary for the template to render built from data from other controller actions
-        data = members_controller.show(id=c.logged_in_persona.id, lists='followers, following, assignments_accepted, boomed_content, members, actions')['data']
-        data.update({
-            'content' : member_actions_controller.content(id=c.logged_in_persona.id, limit=None, private=True)['data']['list']  ,
-            #'messages': {
-            #    'notifications': messages_controller.index(list='notification')['data']['list'] ,
-            #    'to'           : messages_controller.index(list='to'          )['data']['list'] ,
-            #} ,
-            'groups'  : member_actions_controller._groups_list_dict(c.logged_in_persona.groups_roles) ,
-        })
-        
-        return action_ok(data=data)
+        return members_controller.show(id=c.logged_in_persona.username, private=True)

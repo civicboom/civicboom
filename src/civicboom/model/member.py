@@ -79,13 +79,16 @@ DDL("""
 CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
     DECLARE
         tmp_member_id integer;
+        tmp_follower_id integer;
     BEGIN
         IF (TG_OP = 'INSERT') THEN
-            tmp_member_id := NEW.member_id;
+            tmp_member_id   := NEW.member_id;
+            tmp_follower_id := NEW.follower_id;
         ELSIF (TG_OP = 'UPDATE') THEN
             RAISE EXCEPTION 'Can''t alter follows, only add or remove';
         ELSIF (TG_OP = 'DELETE') THEN
-            tmp_member_id := OLD.member_id;
+            tmp_member_id   := OLD.member_id;
+            tmp_follower_id := OLD.follower_id;
         END IF;
 
         UPDATE member SET num_followers = (
@@ -93,6 +96,13 @@ CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
             FROM map_member_to_follower
             WHERE member_id=tmp_member_id
         ) WHERE id=tmp_member_id;
+        
+        UPDATE member SET num_following = (
+            SELECT count(*)
+            FROM map_member_to_follower
+            WHERE follower_id=tmp_follower_id
+        ) WHERE id=tmp_follower_id;
+        
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;
@@ -124,6 +134,7 @@ class Member(Base):
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
 
+    num_following            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_notifications = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
@@ -178,6 +189,7 @@ class Member(Base):
             'type'              : lambda member: member.__type__ ,
             'location_home'     : lambda member: member.location_home_string ,
             'num_followers'     : None ,
+            'num_following'     : None ,
             'account_type'      : None ,
         },
     })
@@ -269,14 +281,14 @@ class Member(Base):
             return False
         from civicboom.controllers.members import MembersController
         member_search = MembersController().index
-        return bool(member_search(member=self, followed_by=member)['data']['list'])
+        return bool(member_search(member=self, followed_by=member)['data']['list']['count'])
     
     def is_following(self, member):
         if not member:
             return False
         from civicboom.controllers.members import MembersController
         member_search = MembersController().index
-        return bool(member_search(member=self, follower_of=member)['data']['list'])
+        return bool(member_search(member=self, follower_of=member)['data']['list']['count'])
 
     @property
     def url(self):
@@ -287,7 +299,7 @@ class Member(Base):
     def avatar_url(self, size=80):
         if self.avatar:
             return wh_url("avatars", self.avatar)
-        return "https://static.civicboom.com/images/default_avatar.png"
+        return wh_url("public", "images/default_avatar.png")
 
     @property
     def location_home_string(self):

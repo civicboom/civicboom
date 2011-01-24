@@ -1,7 +1,7 @@
 # vim: set fileencoding=utf8:
 
 from civicboom.tests import *
-import json
+#import json
 import warnings
 
 class TestContentsController(TestController):

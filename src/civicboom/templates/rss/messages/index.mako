@@ -4,7 +4,7 @@
 <%def name="description()">Messages</%def>
 
 <%def name="body()">
-    % for message in d['list']:
+    % for message in d['list']['items']:
         ${message_item(message)}
     % endfor
 </%def>

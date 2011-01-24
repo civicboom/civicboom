@@ -2,7 +2,7 @@
 <%def name="title()">${_("Responses to %s") % d.get('content',dict()).get('title')}</%def>
 
 <%def name="body()">
-    % for content in d['responses']:
+    % for content in d['responses']['items']:
         ${self.rss_content_item(content)}
     % endfor
 </%def>

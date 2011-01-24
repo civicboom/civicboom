@@ -119,7 +119,7 @@ def wh_url(folder, filename):
             return "/"+filename
         else:
             # in production, serve from a domain without cookies
-            return "//static.civicboom.com/"+filename
+            return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+filename
     # all other folders (media, avatars) are served from our beefy-but-slow-to
     # update warehouse (currently amazon S3)
     else:

@@ -1,6 +1,6 @@
 from civicboom.tests import *
 
-import json
+#import json
 import datetime
 
 import logging
@@ -105,7 +105,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         assert 'to approve'     in response
         assert 'to disasociate' in response
         assert 'to seen'        in response
-        assert len(response_json['data']['responses']) == 3
+        assert len(response_json['data']['responses']['items']) == 3
         
         # Approve --------------------------------------------------------------
         
@@ -150,7 +150,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         assert 'to approve'         in response
         assert 'to disasociate' not in response
         assert 'to seen'            in response
-        assert len(response_json['data']['responses']) == 2
+        assert len(response_json['data']['responses']['items']) == 2
         
         # Delete Assignment ----------------------------------------------------
         
@@ -238,7 +238,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         # record number of currently accepted assignments - to compare at end
         response      = self.app.get(url('member', id='unitfriend', format='json'), status=200)
         response_json = json.loads(response.body)
-        num_accepted  = len(response_json['data']['assignments_accepted'])
+        num_accepted  = len(response_json['data']['assignments_accepted']['items'])
         
         # Withdraw before accepting (should error)
         response = self.app.post(
@@ -276,7 +276,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         # record number of currently accepted assignments - to compare at end
         response = self.app.get(url('member', id='unitfriend', format='json'), status=200)
         response_json = json.loads(response.body)
-        assert num_accepted == len(response_json['data']['assignments_accepted'])
+        assert num_accepted == len(response_json['data']['assignments_accepted']['items'])
         
         # Cleanup --------------------------------------------------------------
         

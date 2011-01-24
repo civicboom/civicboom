@@ -1,5 +1,5 @@
 from civicboom.tests import *
-import json
+#import json
 
 class TestBoomController(TestController):
     
@@ -74,7 +74,7 @@ class TestBoomController(TestController):
         
         response      = self.app.get(url('member', id='kitten', format='json'), status=200)
         response_json = json.loads(response.body)
-        assert len(response_json['data']['boomed_content']) == 0
+        assert len(response_json['data']['boomed_content']['items']) == 0
         
         response = self.app.post(
             url('content_action', action='boom', id=content_id, format='json'),
@@ -87,4 +87,4 @@ class TestBoomController(TestController):
         
         response      = self.app.get(url('member', id='kitten', format='json'), status=200)
         response_json = json.loads(response.body)
-        assert len(response_json['data']['boomed_content']) == 1
+        assert len(response_json['data']['boomed_content']['items']) == 1

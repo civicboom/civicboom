@@ -1,5 +1,7 @@
 from civicboom.lib.base import *
 
+from civicboom.lib.misc import str_to_int
+
 from civicboom.controllers.contents import _normalize_member
 
 
@@ -112,10 +114,8 @@ class MembersController(BaseController):
             kwargs['name'] =  kwargs['term']
         
         # Setup search criteria
-        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = config['search.default.limit']
-        if 'offset' not in kwargs:
-            kwargs['offset'] = 0
+        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.members'])
+        kwargs['offset'] = str_to_int(kwargs.get('offset')                                       )
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
@@ -129,13 +129,31 @@ class MembersController(BaseController):
         for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
             results = search_filters[key](results, kwargs[key])
         
+        # Sort
+        if 'sort' not in kwargs:
+            sort = 'name'
+        # TODO: use kwargs['sort']
         results = results.order_by(Member.name.asc())
+        
+        # Count
+        count = results.count()
+        
+        # Limit & Offset
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
         # Return search results
+        # Return search results
         return action_ok(
-            data = {'list': [member.to_dict(**kwargs) for member in results.all()]} ,
+            data = {'list': {
+                'items' : [content.to_dict(**kwargs) for content in results.all()] ,
+                'count' : count ,
+                'limit' : kwargs['limit'] ,
+                'offset': kwargs['offset'] ,
+                'type'  : 'member' ,
+                }
+            }
         )
+
 
 
     @web
@@ -153,40 +171,44 @@ class MembersController(BaseController):
         """
         member = _get_member(id)
         
-        if 'lists' not in kwargs:
-            kwargs['lists'] = 'followers, following, assignments_accepted, content, groups, members, actions, boomed_content'
+        if 'lists' in kwargs:
+            lists = [list.strip() for list in kwargs['lists'].split(',')]
+        else:
+            lists = [
+                # Comunity
+                'followers',
+                'following',
+                'groups',
+                'members', # if a group and public
+                
+                # Content
+                'drafts',
+                'assignments_active',
+                'assignments_previous',
+                'articles',
+                'responses',
+                
+                # Other
+                'assignments_accepted',
+                'actions',
+                'boomed_content' ,
+            ]
         
         data = {'member': member.to_dict(list_type='full', **kwargs)}
-
+        
+        # Imports
         # AllanC - cannot be imported at begining of module because of mutual coupling error
+        from civicboom.controllers.contents       import ContentsController, list_filters
         from civicboom.controllers.member_actions import MemberActionsController
+        contents_controller       = ContentsController()
         member_actions_controller = MemberActionsController()
         
-        for list in [list.strip() for list in kwargs['lists'].split(',')]:
-            if hasattr(member_actions_controller, list):
-                data[list] = getattr(member_actions_controller, list)(member, **kwargs)['data']['list']
+        # Content Lists
+        for list in [list for list in lists if list in list_filters.keys()]:
+            data[list] = contents_controller.index(creator=member.username, list=list, limit=config['search.default.limit.sub_list'], **kwargs)['data']['list']
+        
+        # Member Lists
+        for list in [list for list in lists if hasattr(member_actions_controller, list)]:
+            data[list] = getattr(member_actions_controller, list)(member, **kwargs)['data']['list']
         
         return action_ok(data=data)
-
-
-
-
-
-# AllanC - Depricated old stuff?
-
-#index_lists = {
-#    'following'             : lambda member: member.following ,
-#    'followers'             : lambda member: member.followers ,
-#     'assignments_accepted': lambda member: member.assignments_accepted , 
-#}
-
-
-    #@auto_format_output
-    #@authorize
-    #def index(self, list=None):
-    #    member_list_name = request.params.get('list', list)
-    #    if member_list_name not in index_lists: raise action_error(_('list type %s not supported') % member_list_name)
-    #    members = index_lists[member_list_name](c.logged_in_persona)
-    #    members = [member.to_dict('default_list') for member in members]
-    #    
-    #    return {'data': {'list': members}}

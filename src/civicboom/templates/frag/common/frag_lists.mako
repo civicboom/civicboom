@@ -1,5 +1,9 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%!
+    import copy
+%>
+
 <%namespace name="member_includes" file="/html/web/common/member.mako" />
 
 ##------------------------------------------------------------------------------
@@ -12,6 +16,10 @@
     <%
         self.attr.share_url        = url.current() #format='html'
         #self.attr.auto_georss_link = True
+        
+        args, kwargs = c.web_params_to_kwargs
+        self.attr.title     = "%s (%s)" % (kwargs.get('list'), d['list']['count'] )
+        self.attr.icon_type = app_globals.contents_list_names.get(kwargs.get('list'))
     %>
 </%def>
 <%def name="body()">
@@ -22,7 +30,27 @@
 <%def name="actions_common()">
     ${self.georss_link()}
 </%def>
-
+<%def name="actions_specific()">
+    ## Pagination
+    <%
+        args, kwargs = c.web_params_to_kwargs
+        kwargs = copy.copy(kwargs)
+        if 'format' in kwargs:
+            del kwargs['format']
+        offset = d['list']['offset']
+        limit  = d['list']['limit']
+        count  = d['list']['count']
+        items  = len(d['list']['items'])
+    %>
+    % if offset > 0:
+        <% kwargs['offset'] = offset - limit %>
+        <a href="${url.current(format='html', **kwargs)}" onclick="cb_frag_load($(this), '${url.current(format='frag', **kwargs)}'); return false;">prev</a>
+    % endif
+    % if offset + items < count:
+        <% kwargs['offset'] = offset + limit %>
+        <a href="${url.current(format='html', **kwargs)}" onclick="cb_frag_load($(this), '${url.current(format='frag', **kwargs)}'); return false;">next</a>
+    % endif
+</%def>
 
 
 ##------------------------------------------------------------------------------
@@ -30,18 +58,10 @@
 ##------------------------------------------------------------------------------
 ## When imported, these are the main methods of use
 <%def name="member_list_thumbnails(*args, **kwargs)">
-    <%
-        if 'max' not in kwargs:
-            kwargs['max'] = 24
-    %>
     ${frag_list(render_item_function=render_item_member_thumbnail, type=('ul','li'), list_class='member'        , *args, **kwargs)}
 </%def>
 
 <%def name="member_list(*args, **kwargs)">
-    <%
-        if 'max' not in kwargs:
-            kwargs['max'] = 24
-    %>
     ${frag_list(render_item_function=render_item_member       , type=('table','tr'), list_class='member'        , *args, **kwargs)}
 </%def>
 
@@ -63,15 +83,23 @@
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(items, title, href=None, max=3, show_count=True, hide_if_empty=True, type=('ul','li'), list_class='', icon='', render_item_function=None, *args, **kwargs)">
+<%def name="frag_list(cb_list, title, href=None, show_heading=True, hide_if_empty=True, type=('ul','li'), list_class='', icon='', render_item_function=None, *args, **kwargs)">
     <%
+        count = None
+        if isinstance(cb_list, dict) and 'items' in cb_list:
+            items = cb_list.get('items')
+            count = cb_list.get('count')
+        else:
+            items = cb_list
+
         if not isinstance(items, list):
             items      = [items]
             show_count = False
-        if isinstance(show_count, bool) and show_count:
-            show_count = len(items)
+        
         if not title:
             show_count = False
+        if not count:
+            count = len(items)
         
         # If HREF is a dict then generate two URL's from it
         #  1.) the original compatable call
@@ -86,9 +114,10 @@
             href_frag = url(*href_args, **href_kwargs)
             js_link_to_frag_bridge = h.literal("""onclick="cb_frag($(this), '%s', 'bridge'); return false;" """ % href_frag)
     %>
-    % if hide_if_empty and len(items)==0:
+    % if hide_if_empty and not count:
         
     % else:
+        % if show_heading:
         <div class='frag_list'>
             <h2>
                 % if icon:
@@ -99,24 +128,28 @@
                 % else:
                 ${title}
                 % endif
-                % if show_count:
-                <span class="count">${show_count}</span>
-                % endif
+                ##% if show_count:
+                <span class="count">${count}</span>
+                ##% endif
             </h2>
+        % endif
             <div class="frag_list_contents">
             <${type[0]} class="${list_class}">
-                % for item in items[0:max]:
+                ##% for item in items[0:limit]:
+                % for item in items:
                 ##<${type[1]}>
                     ${render_item_function(item, *args, **kwargs)}
                 ##</${type[1]}>
                 % endfor
             </${type[0]}>
-            % if href and max > 0 and len(items) > max:
-            <a href="${href}" ${js_link_to_frag_bridge} class="link_more">${len(items)-max} more</a>
+            % if href and show_heading and len(items) < count:
+            <a href="${href}" ${js_link_to_frag_bridge} class="link_more">${count-len(items)} more</a>
             % endif
             </div>
             ##<div style="clear: both;"></div>
+        % if show_heading:
         </div>
+        % endif
     %endif
 </%def>
 
@@ -142,7 +175,9 @@
         ${member_includes.avatar(member, class_="thumbnail_small")}
     </td>
     <td>
-        ${member.get('name')}
+        <a href="h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">
+        ${member.get('name') or member.get('username')}
+        </a>
     </td>
 </tr>
 </%def>
