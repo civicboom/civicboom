@@ -1,5 +1,10 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%!
+    rss_url   = False
+    help_frag = 'message_routes'
+%>
+
 <%def name="body()">
 ${h.form(h.url('setting', id='messages'), method='PUT')}
 <%

@@ -8,6 +8,11 @@ class MiscController(BaseController):
 
     @cacheable(time=600)
     @auto_format_output
+    def help(self, id="civicboom"):
+        return action_ok(template="help/"+id)
+
+    @cacheable(time=600)
+    @auto_format_output
     def echo(self):
         return action_ok(data={
             "GET": request.GET.dict_of_lists(),

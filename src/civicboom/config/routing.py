@@ -60,6 +60,7 @@ def make_map(config):
     # CUSTOM ROUTES HERE
     map.connect('/', controller='misc', action='titlepage')
     map.connect('/about/{id}' , controller='misc', action="about")
+    map.connect('/help/{id}'  , controller='misc', action="help", format="frag")
     
     cb_resource(map, 'content', 'contents')
     cb_resource(map, 'message', 'messages')
