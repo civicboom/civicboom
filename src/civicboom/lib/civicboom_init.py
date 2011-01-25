@@ -72,5 +72,6 @@ def init():
                                                secondary     = Boom.__table__,
                                                secondaryjoin = Boom.content_id==Content.id,
                                                backref       = backref('boomed_by'),
+                                               foreign_keys  = [Boom.member_id, Boom.content_id],
                                                #cascade="all,delete-orphan",
                                                )
