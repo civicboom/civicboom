@@ -43,11 +43,13 @@
 ##------------------------------------------------------------------------------
 
 <%def name="rss_content_item(content)">
-    <item> 
-        <title>${content['title']}</title> 
+    <item>
+        
+
+        <title>${content['title']}</title>
         <link>${url('content', host=app_globals.site_host, id=content['id'])}</link> 
         <description>${content['content_short']}</description> 
-        <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate> 
+        <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate>
         <guid isPermaLink="false">Civicboom Content #${content['id']}</guid>
         % if 'tags' in content:
         <category>
@@ -61,59 +63,76 @@
         ##<wfw:comment   >${url('contents', parent_id=content['id'], type='comment', format='rss', host=app_globals.site_host)}</wfw:comment>
         <wfw:commentRss>${url('content_actions', action='comments', id=content['id'], format='rss', host=app_globals.site_host)}</wfw:commentRss>
         <!-- <creativeCommons:license>license url here</creativeCommons:license> -->
-
-    ##% if 'thumbnail_url' in content:
-        ## AllanC :( Broken  .. WHY!!! WHY!!!
-        ## With this line enabled ... it wont show up in firefox .. the entire entry is not displayed
-        ##<enclosure url="${content['thumbnail_url']}" length="0" type="image/png"/>
-        ## cant guaranete that it's a jpeg because placeholders are pngs :(
-    ##% endif
-    
         
-    % if 'attachments' in content:
-        % for media in content['attachments']:
-        <%doc>
-        <!-- having both types of attachment means that it shows up twice in RSS readers; do we need both? -->
-        <!--
-        ## http://video.search.yahoo.com/mrss
-        <media:content url="${media['media_url']}" fileSize="${media['filesize']}" type="${media['type']}/${media['subtype']}" expression="full">
-            <media:thumbnail url="${media['thumbnail_url']}" />
-            <media:title     type="plain"                 >${media['caption']}</media:title>
-            <media:credit    role="owner" scheme="urn:yvs">${media['credit'] }</media:credit>
-            <media:community>
-                % if 'rating' in content:
-                <media:starRating average="${content['rating']}" />
-                % endif
-                % if 'views' in content:
-                <media:statistics views="${content.get('rating')}" favorites="${content.get('boom_count')}" />
-                % endif
-                ##<media:tags>news: 5, abc:3, reuters </media:tags>
-            </media:community>
-        % if content['location']:
-            <media:location>
-                <georss:where>
-                    <gml:Point>
-                        <gml:pos>${content['location']}</gml:pos>
-                    </gml:Point>
-                </georss:where>
-            </media:location>
+        ##% if 'thumbnail_url' in content:
+            ## AllanC :( Broken  .. WHY!!! WHY!!!
+            ## With this line enabled ... it wont show up in firefox .. the entire entry is not displayed
+            ##<enclosure url="${content['thumbnail_url']}" length="0" type="image/png"/>
+            ## cant guaranete that it's a jpeg because placeholders are pngs :(
+        ##% endif
+        
+        % if 'attachments' in content:
+            % for media in content['attachments']:
+            <%doc>
+            <!-- having both types of attachment means that it shows up twice in RSS readers; do we need both? -->
+            <!--
+            ## http://video.search.yahoo.com/mrss
+            <media:content url="${media['media_url']}" fileSize="${media['filesize']}" type="${media['type']}/${media['subtype']}" expression="full">
+                <media:thumbnail url="${media['thumbnail_url']}" />
+                <media:title     type="plain"                 >${media['caption']}</media:title>
+                <media:credit    role="owner" scheme="urn:yvs">${media['credit'] }</media:credit>
+                <media:community>
+                    % if 'rating' in content:
+                    <media:starRating average="${content['rating']}" />
+                    % endif
+                    % if 'views' in content:
+                    <media:statistics views="${content.get('rating')}" favorites="${content.get('boom_count')}" />
+                    % endif
+                    ##<media:tags>news: 5, abc:3, reuters </media:tags>
+                </media:community>
+            % if content['location']:
+                <media:location>
+                    <georss:where>
+                        <gml:Point>
+                            <gml:pos>${content['location']}</gml:pos>
+                        </gml:Point>
+                    </georss:where>
+                </media:location>
+            % endif
+            </media:content>
+            -->
+            </%doc>
+            ##
+            ## Standard RSS 2.0 Media enclosure
+            <enclosure url="${media['media_url']}" length="${media['filesize']}" type="${media['type']}/${media['subtype']}" />
+            % endfor
         % endif
-        </media:content>
-        -->
-        </%doc>
-        ##
-        ## Standard RSS 2.0 Media enclosure
-        <enclosure url="${media['media_url']}" length="${media['filesize']}" type="${media['type']}/${media['subtype']}" />
-        % endfor
-    % endif
-    ##
-    % if content['location']:
+        
+        % if content['location']:
         <% lat, lon = content['location'].split(' ') %>
         <georss:point>${lat} ${lon}</georss:point>
         <geo:lat>${lat}</geo:lat><geo:long>${lon}</geo:long>
-    % endif
+        % endif
+    
     </item>
 </%def>
+
+##------------------------------------------------------------------------------
+## RSS Member Item
+##------------------------------------------------------------------------------
+
+<%def name="rss_comment_item(comment)">
+<item>
+    ##% if content['type'] == 'comment':
+    <% name = comment.get('creator', dict()).get('name') or comment.get('creator', dict()).get('username') %>
+    <title>${_('Comment by')}: ${name} - ${h.truncate(comment['content'], length=50, whole_word=True, indicator='...')}</title>
+    <description>${comment['content']}</description>
+    <pubDate>${h.date_to_rss(comment.get('creation_date'))}</pubDate>
+    ## ${datetime.strptime(content['creation_date'][0:19], "%Y-%m-%d %H:%M:%S").strftime("%a, %d %b %Y %H:%M:%S +0000")}
+    <dc:creator>${name}</dc:creator>
+</item>
+</%def>
+
 
 ##------------------------------------------------------------------------------
 ## RSS Member Item

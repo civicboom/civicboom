@@ -110,6 +110,10 @@ function cb_frag(current_element, url, list_type) {
 
 
 function cb_frag_load(jquery_element, url) {
+	// Register this page view with Google analytics. - see cb_frag() for more info
+	// AllanC - this is not ideal as it will have the.frag and not record the actual pageview ... but it's better than nothing for now
+	_gaq.push(['_trackPageview', url]);
+	
 	var frag_container = jquery_element.parents('.'+fragment_container_class)
 	frag_container.load(url);
 }
