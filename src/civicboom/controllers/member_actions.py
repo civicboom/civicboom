@@ -189,7 +189,7 @@ class MemberActionsController(BaseController):
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_accepted]
-        return action_ok_list(contents)
+        return action_ok_list(contents, obj_type='content')
 
 
     @web
@@ -198,7 +198,7 @@ class MemberActionsController(BaseController):
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_unaccepted]
-        return action_ok_list(contents)
+        return action_ok_list(contents, obj_type='content')
 
 
 

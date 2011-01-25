@@ -272,7 +272,7 @@
         rating <br/> comments
     </td>
     % endif
-    % if creator:
+    % if creator and 'creator' in content:
     <td class="creator">
         ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
     </td>

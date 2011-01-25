@@ -219,8 +219,8 @@ def _find_template(result, type):
 
     # html is a meta-format -- if we are asked for a html template,
     # redirect to web, mobile or widget depending on the environment
+    subformat = _find_subformat()
     if type == "html":
-        subformat = _find_subformat()
         paths = [
             os.path.join("html", subformat, template_part),
             os.path.join("html", "web",     template_part),
@@ -230,10 +230,28 @@ def _find_template(result, type):
             os.path.join(type, template_part),
         ]
 
+    # So far we may have been unable to find a template file for this action
+    # It may be a 'list' with an 'object type'. we can add the default list renderer for the list as a last ditch effort
+    if 'data' in result and 'list' in result['data'] and 'type' in result['data']['list']:
+        list_type = result['data']['list']['type']
+        list_part = None
+        if   list_type == 'content':
+            list_part = 'contents/index'
+        elif list_type == 'member':
+            list_part = 'members/index'
+        elif list_type == 'message':
+            list_part = 'messages/index'
+        if list_part:
+            paths = paths + [
+                os.path.join(type, list_part)              ,
+                os.path.join("html", subformat, list_part) ,
+                os.path.join("html", "web"    , list_part) ,
+            ]
+    
     for path in paths:
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
             return path+".mako"
-
+    
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
 
