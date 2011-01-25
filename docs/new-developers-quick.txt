@@ -27,3 +27,13 @@ Civicboom Site:
   signup with site
   see console for email debug printouts to get validation url
 
+
+# enable subdomain forwarding
+sudo gedit /etc/hosts
+#edit the line to 
+127.0.0.1	localhost.localdomain	localhost   widget.localhost mobile.localhost m.localhost
+
+# disable nginx cache
+sudo gedit /etc/nginx/sites-enabled/civicboom.com 
+	#proxy_cache "cb";
+	#proxy_cache_key "$scheme://$host$request_uri-cookie:$cookie_civicboom_logged_in";

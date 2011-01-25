@@ -181,7 +181,7 @@ class MemberActionsController(BaseController):
         return action_ok_list(groups)
 
     #---------------------------------------------------------------------------
-    # List - Accepted Assignemnts
+    # List shortcuts
     #---------------------------------------------------------------------------
     @web
     def assignments_accepted(self, id, **kwargs):
@@ -199,6 +199,10 @@ class MemberActionsController(BaseController):
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_unaccepted]
         return action_ok_list(contents, obj_type='content')
+
+    @web
+    def assignments_active(self, id, **kwargs):
+        return content_search(creator=id, list='assignments_active',**kwargs)
 
 
 
