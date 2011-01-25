@@ -11,6 +11,8 @@
     rss_url             = True
     ##auto_georss_link    = False
     
+    help_frag           = None # This can be set to a string name to activate '/misc/help/HELP_FRAG' to render '/frag/help/HELP_FRAG.mako'
+    
     frag_data_css_class = ''
 %>
 
@@ -114,6 +116,12 @@
                 ${share.share(**self.attr.share_kwargs)}
                 ## padding
                 <span class="icon"></span>
+            % endif
+            
+            ## Help
+            % if self.attr.help_frag:
+                <% help_url = '/help/' + self.attr.help_frag %>
+                <a href="${help_url}" onclick="cb_frag($(this), '${help_url}', 'bridge'); return false;" class="icon icon_help" title="${_('Help')}"><span>${_('Help')}</span></a>
             % endif
             
             ## RSS

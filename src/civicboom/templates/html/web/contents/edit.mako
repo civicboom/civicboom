@@ -6,9 +6,9 @@
 <%def name="body()">
 	<%
 		if d['content']['parent']:
-			self.attr.frags = [content_edit, parent]  # If the content being edited has a parent, place the parent beside it for reference
+			self.attr.frags = [content_edit, parent, help]  # If the content being edited has a parent, place the parent beside it for reference
 		else:
-			self.attr.frags =  content_edit
+			self.attr.frags = [content_edit, help]
 	%>
 </%def>
 
@@ -19,4 +19,8 @@
 
 <%def name="parent()">
 	<!--#include file="${url('content', id=d['content']['parent']['id'], format='frag')}"-->
+</%def>
+
+<%def name="help()">
+	<!--#include file="/help/create_assignment"-->
 </%def>

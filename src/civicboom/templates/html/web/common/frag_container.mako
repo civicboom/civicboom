@@ -9,6 +9,7 @@
 <%def name="body()">
 
     ## How To Use: Overriding body methods should be blank - they should set self.attr.frags
+    ##             the overriding body method can have content, just dont set self.attr.frags
     <%
         frags_assigned_before = None
         if hasattr(self.attr, 'frags'):

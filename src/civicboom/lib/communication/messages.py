@@ -83,7 +83,7 @@ generators = [
     ["assignment_due_1day",                  "ne", _("_assignment due tomorrow"),    _("The _assignment you accepted %(assignment)s is due tomorrow")],
 
     # Response Actions
-    ["article_disasociated_from_assignment", "n",  _("_article dissasociated from _assignment"), _("%(member)s dissasociated your _article %(article)s from the _assignment %(assignment)s")],
+    ["article_disasociated_from_assignment", "n",  _("_article disassociated from _assignment"), _("%(member)s disassociated your _article %(article)s from the _assignment %(assignment)s")],
     ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved your _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
       # TODO: response seen
 
@@ -96,8 +96,8 @@ generators = [
     # Groups to members
     ["group_deleted",                        "ne", _("_group deleted"),              _("The _group %(group)s has been deleted by %(admin)s")],
     ["group_invite",                         "ne", _("_group invitation"),           _("%(admin)s invited you to join %(group)s as a %(role)s")],
-    ["group_request_declined",               "n" , _("_group membership request decelined"), _("your membership request to join %(group)s was declined")],
-    ["group_invitation_declined",            ""  , _("_group membership inviation declined"), _("%(member)s declined the invitaion to join %(group)s")],
+    ["group_request_declined",               "n" , _("_group membership request declined"), _("your membership request to join %(group)s was declined")],
+    ["group_invitation_declined",            ""  , _("_group membership invitation declined"), _("%(member)s declined the invitation to join %(group)s")],
     ["group_request_accepted",               "n" , _("_group request accepted"),     _("%(admin)s accepted your _group membership request. You are now a member of %(group)s")],
     ["group_remove_member_to_member",        "ne", _("removed from _group"),         _("%(admin)s removed your membership to %(group)s")],
     
