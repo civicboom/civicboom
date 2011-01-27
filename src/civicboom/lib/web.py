@@ -225,6 +225,10 @@ def _find_template(result, type):
             os.path.join("html", subformat, template_part),
             os.path.join("html", "web",     template_part),
         ]
+        ## AllanC: TODO
+        ## if there is no web template but there is a frag for this template part
+        ## wrap the fragment in a frag_container.mako
+        ## WIP see web/frag.mako
     else:
         paths = [
             os.path.join(type, template_part),
