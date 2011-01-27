@@ -2,23 +2,35 @@
 
 <%namespace name="member" file="/html/web/common/member.mako"/>
 
-<%! import json %>
 
 <%
-
-# Height calculations
-size_header        = 55
-size_footer        = 60
-size_action_bar    = 18
-size_flash_message = 0
-size_content       = 0
-
-if c.result.get('message'):
-	size_flash_message = 30;
-if c.widget_height:
-	size_content       = int(c.widget_height) - (size_header + size_footer + size_action_bar + size_flash_message) - 5 #borders mount up the 13 is the number of pixels of all the borders combined
-
-c.widget_height_content = size_content - 8 #Used for the QR Code to ensure correct size (the -8 is a hack because the padding is gets in the way)
+    # Height calculations
+    size_header        = 55
+    size_footer        = 60
+    size_action_bar    = 18
+    size_flash_message = 0
+    size_content       = 0
+    
+    if c.result.get('message'):
+        size_flash_message = 30;
+    
+    size_content       = int(c.widget['height']) - (size_header + size_footer + size_action_bar + size_flash_message) - 5 #borders mount up the 13 is the number of pixels of all the borders combined
+    
+    c.widget_height_content = size_content - 8 #Used for the QR Code to ensure correct size (the -8 is a hack because the padding is gets in the way)
+    
+    
+    #id    = c.id
+    title = c.widget['title']
+    
+    owner = d.get('content',dict()).get('creator')
+    if not owner:
+        owner = d.get('member')
+    if not owner:
+        from civicboom.lib.database.get_cached import get_member
+        owner_obj = get_member(c.id)
+        if owner_obj:
+            owner = owner_obj.to_dict()
+    c.owner = owner # for child templates to use
 %>
 
 ##------------------------------------------------------------------------------
@@ -26,8 +38,6 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
 ##------------------------------------------------------------------------------
 
 <div class="widget_border">
-
-	<% id = c.widget_owner.username %>
 
     ##----------------------------------------
     ## Header
@@ -37,20 +47,22 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
     <div class="widget_header" style="height:${size_header}px;"><div class="widget_header_footer">
 		## Floating about icon
 		<a class="tooltip_icon" style="float: right;" href="${h.url_from_widget(controller='widget',action='about')}" title="${_('What is this?')}"></a>
-		## Tables just work, CSS layouts are ****ing anoying ... 
+		## Tables just work, CSS layouts are ****ing anoying ...
+        % if owner:
 		<table><tr>
-			<td>${member.avatar(c.widget_owner.to_dict(), new_window=True)}</td>
+			<td>${member.avatar(owner, new_window=True)}</td>
 			<td class="title">	
-				<a href="${h.url('member', id=id)}" target="_blank">
-				% if c.widget_title:
-					${c.widget_title}
+				<a href="${h.url('member', id=owner['username'])}" target="_blank">
+				% if title:
+					${title}
 				% else:
-					${c.widget_owner.name}
+					${owner['name']}
 					##insight: Share your news and opinion
 				% endif
 				</a>
 			</td>
         </tr></table>
+        % endif
     </div></div>
 	<!--end widget_header-->
     
@@ -128,7 +140,7 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
                 ${_('Mobile reporting')}
             </a>
           </li>
-          % if c.widget_owner:
+          % if owner:
           <li class="widget_item_popup">
             <a href="${h.url_from_widget(controller='widget', action='get_widget')}">
                 ${_('Embed this widget')}
@@ -141,10 +153,10 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
         ## Feeds links
         ##----------------------------------------
         
-        % if c.widget_owner:
+        % if owner:
         <ul class="widget_icon_list">
             ##<li><%include file="/design09/gadget/get_gadget_link_button.mako"/></li>
-            <li><a target="_blank" class="icon icon_rss" href="${h.url('member', id=id, format='rss')}" title="${c.widget_owner.username} RSS Feed"><span>RSS</span></a></li>
+            <li><a target="_blank" class="icon icon_rss" href="${h.url('member', id=owner['username'], format='rss')}" title="${owner['username']} RSS Feed"><span>RSS</span></a></li>
             ##% if c.widget_owner.twitter_username:
             ##  <li><a target="_blank" class="icon icon_twitter" href="http://twitter.com/${c.widget_owner.twitter_username}" title="${c.widget_owner.username} on twitter"><span>twitter</span></a></li>
             ##% endif

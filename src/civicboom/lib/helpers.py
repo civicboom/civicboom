@@ -7,7 +7,7 @@ available to Controllers. This module is available to templates as 'h'.
 #from webhelpers.html.tags import checkbox, password
 from webhelpers.pylonslib.secure_form import authentication_token, secure_form
 
-from pylons import url, config, app_globals, tmpl_context as c, request
+from pylons import url as url_pylons, config, app_globals, tmpl_context as c, request
 #from pylons.i18n.translation import _
 from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
@@ -133,6 +133,32 @@ def url_from_widget(*args, **kargs):
             #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
             #    kargs[var] = getattr(c,var)
     return url(*args,**kargs)
+
+def url(*args, **kwargs):
+    """
+    Passthough for Pylons URL generator with a few new features
+    """
+
+    # shortcut for absolute URL
+    if 'absolute' in kwargs:
+        kwargs['host'] = app_globals.site_host
+        
+    # Moving between subdomains
+    #  remove all known subdomains from URL and instate the new provided one
+    if 'subdomain' in kwargs:
+        subdomain = kwargs.pop('subdomain')
+        assert subdomain in app_globals.subdomains
+        if subdomain:
+            subdomain += '.'
+        host = app_globals.site_host
+        for possible_subdomain in app_globals.subdomains:
+            if possible_subdomain:
+                host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
+        kwargs['host'] = subdomain + host
+        
+
+    return url_pylons(*args, **kwargs)
+
 
 def uniqueish_id(*args):
     """
