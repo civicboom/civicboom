@@ -26,7 +26,7 @@
 <%def name="body()">
     <div class="frag_col">
         <form id="form_search" action="${url('members')}" method="GET"
-              onsubmit="cb_frag($(this), '/members.frag?' + $('#form_search').serialize(), 'bridge'); return false;">
+              onsubmit="cb_frag($(this), '/members.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
             <fieldset>
 				<!--
                 <legend>Search</legend>

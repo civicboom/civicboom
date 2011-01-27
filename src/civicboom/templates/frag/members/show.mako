@@ -119,19 +119,19 @@
             <a class   = "icon icon_message"
                href    = "${url('messages',list='to')}"
                title   = "${_('Messages')}"
-               onclick = "cb_frag($(this), '${url('messages', list='to'          , format='frag')}', 'bridge'); return false;"
+               onclick = "cb_frag($(this), '${url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Messages')}</span></a>
     
             <a class   = "icon icon_message"
                href    = "${url('messages',list='sent')}"
                title   = "${_('Messages Sent')}"
-               onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'bridge'); return false;"
+               onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Messages')}</span></a>
             
             <a class   = "icon icon_notification"
                href    = "${url('messages', list='notification')}"
                title   = "${_('Notifications')}"
-               onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'bridge'); return false;"
+               onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Notifications')}</span></a>
         % endif
         

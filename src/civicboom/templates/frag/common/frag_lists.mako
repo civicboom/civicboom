@@ -9,7 +9,7 @@
 ##------------------------------------------------------------------------------
 ## Frag List Template
 ##------------------------------------------------------------------------------
-## For frag_containers that only display a list (lists bridge they are sometimes refererd too)
+## For frag_containers that only display a list (frag_col_1)
 ## Consistant title bar and styling for list fragments
 
 <%def name="init_vars()">
@@ -104,7 +104,7 @@
         # If HREF is a dict then generate two URL's from it
         #  1.) the original compatable call
         #  2.) a json formatted version for the AJAX call
-        js_link_to_frag_bridge = ''
+        js_link_to_frag_list = ''
         if isinstance(href, tuple):
             href_args   = href[0]
             href_kwargs = href[1]
@@ -112,7 +112,7 @@
             href      = url(*href_args, **href_kwargs)
             href_kwargs['format'] = 'frag'
             href_frag = url(*href_args, **href_kwargs)
-            js_link_to_frag_bridge = h.literal("""onclick="cb_frag($(this), '%s', 'bridge'); return false;" """ % href_frag)
+            js_link_to_frag_list = h.literal("""onclick="cb_frag($(this), '%s', 'frag_col_1'); return false;" """ % href_frag)
     %>
     % if hide_if_empty and not count:
         
@@ -124,7 +124,7 @@
                 <span class="icon icon_${icon}"><span>${icon}</span></span>
                 % endif
                 % if href:
-                <a href="${href}" ${js_link_to_frag_bridge}>${title}</a>
+                <a href="${href}" ${js_link_to_frag_list}>${title}</a>
                 % else:
                 ${title}
                 % endif
@@ -143,7 +143,7 @@
                 % endfor
             </${type[0]}>
             % if href and show_heading and len(items) < count:
-            <a href="${href}" ${js_link_to_frag_bridge} class="link_more">${count-len(items)} more</a>
+            <a href="${href}" ${js_link_to_frag_list} class="link_more">${count-len(items)} more</a>
             % endif
             </div>
             ##<div style="clear: both;"></div>
@@ -342,7 +342,7 @@
     % else:
         
         <a href    = "${url('message', id=message['id'])}"
-           onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'bridge'); return false;"
+           onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
         >
             <p class="subject">${message['subject']}</p>
         </a>

@@ -121,7 +121,7 @@
             ## Help
             % if self.attr.help_frag:
                 <% help_url = '/help/' + self.attr.help_frag %>
-                <a href="${help_url}" onclick="cb_frag($(this), '${help_url}', 'bridge'); return false;" class="icon icon_help" title="${_('Help')}"><span>${_('Help')}</span></a>
+                <a href="${help_url}" onclick="cb_frag($(this), '${help_url}', 'frag_col_1'); return false;" class="icon icon_help" title="${_('Help')}"><span>${_('Help')}</span></a>
             % endif
             
             ## RSS
