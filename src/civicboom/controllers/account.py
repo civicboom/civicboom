@@ -144,7 +144,7 @@ class AccountController(BaseController):
         else:
             set_flash_message(action_error("Error linking accounts"))
             
-        redirect(url.current())
+        redirect(url('current'))
 
 
     #---------------------------------------------------------------------------

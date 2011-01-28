@@ -22,13 +22,13 @@
 >
     <channel>
         <title        >${self.title()}</title>
-        <link         >${url.current(host=app_globals.site_host)}</link>
+        <link         >${h.url('current', subdomain='www')}</link>
         <description  >${self.description()}</description>
         <pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
         <lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
         <generator    >http://www.civicboom.com/</generator>
         <image url  ="/images/rss_large.png"
-               link ="${url.current(host=app_globals.site_host)}"
+               link ="${h.url('current', subdomain='www')}"
                title="${_('_site_name')}"
         />
         
@@ -47,7 +47,7 @@
         
 
         <title>${content['title']}</title>
-        <link>${url('content', host=app_globals.site_host, id=content['id'])}</link> 
+        <link>${url('content', id=content['id'], subdomain='www')}</link> 
         <description>${content['content_short']}</description> 
         <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate>
         <guid isPermaLink="false">Civicboom Content #${content['id']}</guid>
@@ -61,7 +61,7 @@
         <dc:creator>${content.get('creator',dict()).get('name')} (${content.get('creator',dict()).get('username')})</dc:creator>
         ## Comments - http://wellformedweb.org/news/wfw_namespace_elements/
         ##<wfw:comment   >${url('contents', parent_id=content['id'], type='comment', format='rss', host=app_globals.site_host)}</wfw:comment>
-        <wfw:commentRss>${url('content_actions', action='comments', id=content['id'], format='rss', host=app_globals.site_host)}</wfw:commentRss>
+        <wfw:commentRss>${url('content_actions', action='comments', id=content['id'], format='rss', subdomain='www')}</wfw:commentRss>
         <!-- <creativeCommons:license>license url here</creativeCommons:license> -->
         
         ##% if 'thumbnail_url' in content:
@@ -141,7 +141,7 @@
 <%def name="rss_member_item(member)">
     <item> 
         <title>${member['name'] or member['username']}</title> 
-        <link>${url('member', host=app_globals.site_host, id=member['username'])}</link>
+        <link>${url('member', id=member['username'], subdomain='www')}</link>
         <category>${member['type']}</category>
         % if 'description' in member:
         <description>${member['description']}</description>

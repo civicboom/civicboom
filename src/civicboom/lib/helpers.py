@@ -49,7 +49,7 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
     Generate Janrain IFRAME component
     """
     if not return_url:
-        return_url = urllib.quote_plus(url.current(host=app_globals.site_host, protocol='https')) #controller='account', action='signin',
+        return_url = urllib.quote_plus(url('current', host=c.host, protocol='https')) #controller='account', action='signin',
     query_params = ""
     for karg in kargs:
         query_params += karg+"="+str(kargs[karg])
@@ -138,10 +138,9 @@ def url(*args, **kwargs):
     """
     Passthough for Pylons URL generator with a few new features
     """
-
     # shortcut for absolute URL
     if 'absolute' in kwargs:
-        kwargs['host'] = app_globals.site_host
+        kwargs['host'] = c.host
         
     # Moving between subdomains
     #  remove all known subdomains from URL and instate the new provided one
@@ -150,14 +149,17 @@ def url(*args, **kwargs):
         assert subdomain in app_globals.subdomains
         if subdomain:
             subdomain += '.'
-        host = app_globals.site_host
+        host = c.host
         for possible_subdomain in app_globals.subdomains:
             if possible_subdomain:
                 host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
         kwargs['host'] = subdomain + host
-        
-
-    return url_pylons(*args, **kwargs)
+    args = list(args)
+    if 'current' in args:
+        args.remove('current')
+        return url_pylons.current(*args, **kwargs)
+    else:
+        return url_pylons(*args, **kwargs)
 
 
 def uniqueish_id(*args):
@@ -409,7 +411,7 @@ def frag_link(id, frag_url, value, title='', css_class=''):
     # If javascript is disabled the link functionas as normal
     static_link = HTML.a(
         value ,
-        href    = url.current(**url_kwargs) ,
+        href    = url('current', **url_kwargs) ,
         class_  = css_class ,
         title   = title ,
         onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); $('#%(id)s').html('<img src=\\\'/images/media_placeholder.gif\\\'>'); $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,

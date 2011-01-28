@@ -14,7 +14,7 @@
 
 <%def name="init_vars()">
     <%
-        self.attr.share_url        = url.current() #format='html'
+        self.attr.share_url        = url('current') #format='html'
         #self.attr.auto_georss_link = True
         
         args, kwargs = c.web_params_to_kwargs
@@ -44,11 +44,11 @@
     %>
     % if offset > 0:
         <% kwargs['offset'] = offset - limit %>
-        <a href="${url.current(format='html', **kwargs)}" onclick="cb_frag_load($(this), '${url.current(format='frag', **kwargs)}'); return false;">prev</a>
+        <a href="${h.url('current', format='html', **kwargs)}" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">prev</a>
     % endif
     % if offset + items < count:
         <% kwargs['offset'] = offset + limit %>
-        <a href="${url.current(format='html', **kwargs)}" onclick="cb_frag_load($(this), '${url.current(format='frag', **kwargs)}'); return false;">next</a>
+        <a href="${h.url('current', format='html', **kwargs)}" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">next</a>
     % endif
 </%def>
 

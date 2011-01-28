@@ -35,7 +35,7 @@
                 self.attr.icon_type = 'current_user'
             
             self.attr.share_kwargs.update({
-                'url'  : h.url('member', id=self.id, host=app_globals.site_host, protocol='http') ,
+                'url'  : h.url('member', id=self.id, protocol='http', subdomain='www') ,
             })
         
         self.attr.frag_data_css_class = 'frag_member'

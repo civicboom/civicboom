@@ -16,9 +16,9 @@
 
     <body>
         ## TODO: line below needs testing on live server
-        <% site_url = url('/', host=app_globals.site_host, protocol='http') %>
+        <% site_url = url('/', protocol='http', subdomain='www') %>
         <a href="${site_url}">
-            <img src="${site_url}/styles/design09/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
+            <img src="${site_url}/images/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
         </a>
         <br/>
       

@@ -7,12 +7,15 @@ Lots of stuff is imported here (eg controller action decorators) so that other
 controllers can do "from civicboom.lib.base import *"
 """
 from pylons.controllers       import WSGIController
-from pylons                   import request, response, app_globals, tmpl_context as c, url, config, session
+from pylons                   import request, response, app_globals, tmpl_context as c, config, session, url
 from pylons.controllers.util  import abort
 from pylons.templating        import render_mako
 from pylons.i18n.translation  import _, ungettext, set_lang
 from pylons.decorators.secure import https
 from webhelpers.pylonslib.secure_form import authentication_token
+#from pylons import url as url_pylons
+#url_current = url.current
+from civicboom.lib.helpers import url
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta
@@ -22,6 +25,7 @@ from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize
 from civicboom.lib.permissions         import account_type
+
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
 
@@ -32,7 +36,7 @@ log = logging.getLogger(__name__)
 
 __all__ = [
     # pylons environment
-    "request", "response", "app_globals", "c", "url", "config",
+    "request", "response", "app_globals", "c", "url","config",
 
     # sqlalchemy environment
     "Session", "meta",
@@ -158,7 +162,7 @@ class BaseController(WSGIController):
         else                         :  self._set_lang(        config['lang']) # Default lang in config file
 
         # User pending regisration? - redirect to complete registration process
-        if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url.current()):
+        if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url('current')):
             set_flash_message(_('Please complete the regisration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 
@@ -167,8 +171,8 @@ class BaseController(WSGIController):
         #          For development this is sufficent, but should not be used in a production env.
         #
         # TODO - yeah, we really need a STARTUP method that gets called to init these
-        if not hasattr(app_globals,'site_url'):
-            app_globals.site_host = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
+        #if not hasattr(app_globals,'site_url'):
+        c.host = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
             ##app_globals.site_url  = "http://" + app_globals.site_host
             #import urllib
             #app_globals.janrain_signin_url = urllib.quote_plus(url(controller='account', action='signin', host=app_globals.site_host, protocol='https'))

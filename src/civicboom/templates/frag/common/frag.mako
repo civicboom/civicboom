@@ -1,5 +1,6 @@
 <%!
     import types
+    import copy
 
     title               = 'List'
     icon_type           = 'list'
@@ -74,18 +75,18 @@
         # Gen frag URL
         if self.attr.frag_url == True:
             kwargs['format'] = 'frag'
-            self.attr.frag_url = url.current(**kwargs)
+            self.attr.frag_url = h.url('current',**kwargs)
         
         # Gen html URL
         if self.attr.html_url == True:
             if 'format' in kwargs:
                 del kwargs['format']
-            self.attr.html_url = url.current(host=app_globals.site_host, **kwargs)
+            self.attr.html_url = h.url('current', subdomain='www', **kwargs)
         
         # Gen RSS URL
         if self.attr.rss_url == True:
             kwargs['format'] = 'rss'
-            self.attr.rss_url = url.current(**kwargs)
+            self.attr.rss_url = h.url('current', **kwargs)
     %>
 
     % if hasattr(self, 'init_vars'):
@@ -162,10 +163,9 @@
 </%def>
 
 <%def name="georss_link(georss_url=None)">
-    <%
-        import copy
-        
-        feed = url.current(
+    <%  
+        feed = h.url(
+            'current',
             format         ='rss' ,
             query          =request.params.get('query') ,
             location       =request.params.get('location') ,
@@ -181,8 +181,8 @@
         georss_url_frag = copy.copy(georss_url)
         georss_url_frag['format'] = 'frag'
         
-        georss_url      = url(**georss_url)
-        georss_url_frag = url(**georss_url_frag)
+        georss_url      = h.url(**georss_url)
+        georss_url_frag = h.url(**georss_url_frag)
     %>
     <a href="${georss_url}" title="${_('View on map')}" class="icon icon_map" onclick="cb_frag($(this), '${georss_url_frag}'); return false;"><span>${_('View on map')}</span></a>
 </%def>

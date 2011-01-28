@@ -10,7 +10,7 @@
 </%def>
 
 
-    <form action="${url.current(hash=c.hash)}" method="post">
+    <form action="${h.url('current', hash=c.hash)}" method="post">
             <table class="form">
                     <tr>
                             <th colspan="3">${_("Forgot Password")}</th>
