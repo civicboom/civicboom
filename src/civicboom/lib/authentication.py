@@ -10,8 +10,9 @@ from civicboom.lib.database.get_cached import get_membership
 from civicboom.model      import User, UserLogin, Member
 from civicboom.model.meta import Session
 
-from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url, current_referer
+from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url, current_referer, cookie_set, cookie_remove, cookie_get, cookie_delete
 from civicboom.lib.helpers import url_from_widget
+
 
 # Other imports
 from sqlalchemy.orm import join
@@ -112,34 +113,35 @@ def authorize(_target, *args, **kwargs):
     # CHECK Loggin in
     if c.logged_in_user: #authenticator(
         # Reinstate any session encoded POST data if this is the first page since the login_redirect
-        if not session_get('login_redirect'):
-            json_post = session_remove('login_redirect_post')
+        # AllanC - THIS IS BROKEN
+        #          the reason is that when the user log's in securely then the session cookie is destroyed
+        #          currently no redirect actions work
+        #          this could be fixed by putting the data in the client's cookie instead - consider creating a cookie_remove and a cookie_set cookie_get
+        if not cookie_get('login_redirect'):
+            json_post = cookie_remove('login_redirect_action')
             if json_post:
                 kwargs.update(json.loads(json_post))
-                #print "overlay post"
-                # AllanC - now unneeded - we dont need a user confirm as we can overlay post data over kwargs
-                #post_overlay = json.loads(json_post)
-                #c.target_url = current_url()
-                #c.post_values = post_overlay
-                #from pylons.templating import render_mako as render # FIXME: how is this not imported from base? :/
-                #return render("html/web/misc/confirmpost.mako")
+                c.authenticated_form = True # AllanC - the user has had to sign in - therefor they are aware they are performing an action - only our site can set the cookies
             
         # Make original method call
         result = _target(*args, **kwargs)
         return result
 
-    # ELSE Unauthorised
+    # ELSE: not logged in
     else:
         # If request was a browser - prompt for login    
             #raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
         if c.format=="redirect":
-            session_set('login_action_referer', current_referer(protocol=protocol_after_login), 60 * 10)
+            cookie_set('login_action_referer', current_referer(protocol=protocol_after_login), 60 * 10)
             # The redirect auto formater looked for this and redirects as appropriate
         if c.format == "html" or c.format == "redirect":
-            session_set('login_redirect', current_url(protocol=protocol_after_login), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+            cookie_set('login_redirect', current_url(protocol=protocol_after_login), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
             # save the the session POST data to be reinstated after the redirect
             if request.POST:
-                session_set('login_redirect_post', json.dumps(multidict_to_dict(request.POST)), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                login_redirect_action = json.dumps(multidict_to_dict(request.POST))
+            else:
+                login_redirect_action = json.dumps(dict())
+            cookie_set('login_redirect_action', login_redirect_action , 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
             return redirect(url_from_widget(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
         
         # If API request - error unauthorised
@@ -151,7 +153,7 @@ def login_redirector():
     """
     If this method returns (rather than aborting with a redirect) then there is no login_redirector
     """
-    login_redirect = session_remove('login_redirect')
+    login_redirect = cookie_remove('login_redirect')
     if login_redirect:
         return redirect(login_redirect)
     if getattr(c,'widget_username',None): #'widget_username' in request.params:
@@ -167,10 +169,11 @@ def signin_user(user, login_provider=None):
     user_log.info("logged in with %s" % login_provider)   # Log user login
     #session_set('user_id' , user.id      ) # Set server session variable to user.id
     session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
-    response.set_cookie(
-        "civicboom_logged_in", "True",
-        int(config["beaker.session.timeout"])
-    )
+    cookie_set("civicboom_logged_in", "True", int(config["beaker.session.timeout"]))
+    #response.set_cookie(
+    #    "civicboom_logged_in", "True",
+    #    int(config["beaker.session.timeout"])
+    #)
     # SecurifyCookiesMiddleware will set these
     #    secure=(request.environ['wsgi.url_scheme']=="https"),
     #    httponly=True
@@ -194,7 +197,8 @@ def signin_user_and_redirect(user, login_provider=None):
 def signout_user(user):
     user_log.info("logged out")
     session.clear()
-    response.delete_cookie("civicboom_logged_in")
+    cookie_delete("civicboom_logged_in")
+    #response.delete_cookie("civicboom_logged_in")
     #session.save()
     #flash_message("Successfully signed out!")
 

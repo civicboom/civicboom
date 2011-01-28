@@ -46,7 +46,7 @@
 	#    additonal_layout = "wide"
     %>
     <body id="CivicboomWidget">
-        <div class="theme_${c.widget['theme']} ${additonal_layout}">
+        <div class="theme_${c.widget['theme']} ${additonal_layout}" style="width:${c.widget['width']}px;">
             ${next.body()}
         </div>
     </body>

@@ -45,10 +45,11 @@
     
 	<!--widget_header-->
     <div class="widget_header" style="height:${size_header}px;"><div class="widget_header_footer">
-		## Floating about icon
-		<a class="tooltip_icon" style="float: right;" href="${h.url_from_widget(controller='widget',action='about')}" title="${_('What is this?')}"></a>
-		## Tables just work, CSS layouts are ****ing anoying ...
         % if owner:
+		## Floating about icon
+		<a class="tooltip_icon" style="float: right;" href="${h.url_from_widget(controller='misc',action='about')}" title="${_('What is this?')}"></a>
+		## Tables just work, CSS layouts are ****ing anoying ...
+        
 		<table><tr>
 			<td>${member.avatar(owner, new_window=True)}</td>
 			<td class="title">	
@@ -130,19 +131,19 @@
 	<!--widget_footer-->
     <div class="widget_footer" style="height:${size_footer}px;"><div class="widget_header_footer">
         <div class="powered_by">
-            ${_('Powered by')} <br/><a href="/" target="_blank"><img src="/images/logo.png" alt="${_('_site_name')} Logo" style="max-height: 1em;"/><span style="display: none;">${_('_site_name')}</span></a>
+            ${_('Powered by')} <br/><a href="${h.url('/',subdomain='')}" target="_blank"><img src="/images/logo.png" alt="${_('_site_name')} Logo" style="max-height: 1em;"/><span style="display: none;">${_('_site_name')}</span></a>
         </div>
       
-      
+        % if owner:
         <ul>
           <li class="widget_item_popup">
-            <a class="icon icon_mobile" href="${h.url_from_widget(controller='widget', action='get_mobile')}">
+            <a class="icon icon_mobile" href="${h.url_from_widget(controller='misc', action='get_mobile')}">
                 ${_('Mobile reporting')}
             </a>
           </li>
           % if owner:
           <li class="widget_item_popup">
-            <a href="${h.url_from_widget(controller='widget', action='get_widget')}">
+            <a href="${h.url_from_widget(controller='misc', action='get_widget')}">
                 ${_('Embed this widget')}
             </a>
           </li>
@@ -153,7 +154,6 @@
         ## Feeds links
         ##----------------------------------------
         
-        % if owner:
         <ul class="widget_icon_list">
             ##<li><%include file="/design09/gadget/get_gadget_link_button.mako"/></li>
             <li><a target="_blank" class="icon icon_rss" href="${h.url('member', id=owner['username'], format='rss')}" title="${owner['username']} RSS Feed"><span>RSS</span></a></li>

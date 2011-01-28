@@ -4,7 +4,7 @@ class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
     def about(self, id="civicboom"):
-        return action_ok(template="about/"+id)
+        return action_ok(template="misc/about/"+id)
 
     @cacheable(time=600)
     @auto_format_output
@@ -40,6 +40,11 @@ class MiscController(BaseController):
             id = "unittest"
         c.widget_user_preview = get_member(id)
         return action_ok()
+
+    @web
+    def get_mobile(self, id=None):
+        return action_ok()
+
 
     @cacheable(time=600)
     def close_popup(self):

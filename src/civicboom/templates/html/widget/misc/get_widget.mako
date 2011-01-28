@@ -1,4 +1,5 @@
-<%inherit file="./widget_content.mako"/>
+<%inherit file="/html/widget/common/widget_content.mako"/>
+
 <%namespace name="get_widget_code"  file="get_widget_code.mako"/>
 
 <p class="content_title">${_("Embed this widget on your website")}</p>

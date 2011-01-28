@@ -102,6 +102,43 @@ def session_get(key):
     return None
 
 
+#-------------------------------------------------------------------------------
+# Cookie Timed Keys Management
+#-------------------------------------------------------------------------------
+# cookies can be given a key pair with an expiry time
+# a fetch with session_get will get the session value, but will return None if it's _exipre pair has expired
+
+# http://pythonpaste.org/webob/reference.html#id5
+
+
+def cookie_delete(key):
+    #log.debug("delete %s" % key)
+    try:
+        response.unset_cookie(key)
+    except:
+        pass
+    try:
+        response.delete_cookie(key)
+    except:
+        pass
+
+def cookie_remove(key):
+    value = cookie_get(key)
+    cookie_delete(key)
+    return value
+
+def cookie_set(key, value, duration=None):
+    """
+    duration in seconds
+    """
+    #log.debug("setting %s:%s" %(key, value))
+    response.set_cookie(key, value, max_age=duration, secure=True) #path='/', domain='example.org',
+
+def cookie_get(key):
+    #log.debug("getting %s:%s" %(key, request.cookies.get(key)))
+    return request.cookies.get(key)
+
+
 
 #-------------------------------------------------------------------------------
 # Action Message System
@@ -116,7 +153,7 @@ def set_flash_message(new_message):
     overlay_status_message(c.result, flash_message)
 
 
-def action_ok(message=None, data={}, code=200, template=None):
+def action_ok(message=None, data={}, code=200, **kwargs):
     assert not message or isinstance(message, basestring)
     assert isinstance(data, dict)
     assert isinstance(code, int)
@@ -126,8 +163,9 @@ def action_ok(message=None, data={}, code=200, template=None):
         "data"   : data,
         "code"   : code,
     }
-    if template:
-        d["template"] = template
+    #if template:
+    #    d["template"] = template
+    d.update(kwargs)
     return d
 
 # AllanC - convenicen metod for returning lists
@@ -381,7 +419,7 @@ def auto_format_output(target, *args, **kwargs):
     
     # After
     # Is result a dict with data?
-    if auto_format_output_flag and hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
+    if auto_format_output_flag and isinstance(result,dict): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
         # set the HTTP status code
         if 'code' in result:
             response.status = int(result['code'])
@@ -391,6 +429,14 @@ def auto_format_output(target, *args, **kwargs):
             # a new call to error/document is made from scratch, this sets the default format to html again! if the format is in the query string this overrides it, but in the url path it gets lost
             # Verifyed as calling error/document.html/None
             #del result['code']
+        
+        # AllanC - if we perform an HTML action but have not come from our site and used format='redirect' then we want the redirect to the html object that the action has been performed on rather than displaying an error
+        if 'html_action_redirect_url' in result:
+            html_action_redirect_url = result['html_action_redirect_url']
+            del result['html_action_redirect_url']
+            if c.format == 'html':
+                set_flash_message(result)
+                redirect(html_action_redirect_url)
         
         # Render to format
         if c.format in format_processors:
@@ -413,6 +459,9 @@ def authenticate_form(target, *args, **kwargs):
     slightly hacked version of pylons.decorators.secure.authenticated_form to
     support authenticated PUT and DELETE requests
     """
+    
+    print "secure form check"
+    
     if c.authenticated_form:
         return target(*args, **kwargs) # If already authenticated, pass through
     
