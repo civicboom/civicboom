@@ -81,7 +81,7 @@
         if self.attr.html_url == True:
             if 'format' in kwargs:
                 del kwargs['format']
-            self.attr.html_url = h.url('current', subdomain='www', **kwargs)
+            self.attr.html_url = h.url('current', subdomain='', **kwargs)
         
         # Gen RSS URL
         if self.attr.rss_url == True:

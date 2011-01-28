@@ -30,7 +30,7 @@
             subdomain='widget', protocol='http',
         )}'
         width='${self.width}' height='${self.height}' scrolling='no' frameborder='0'>'
-    <a href='${h.url('member', id=self.username, subdomain='www')}'>
+    <a href='${h.url('member', id=self.username, subdomain='')}'>
         ${_('%ss _assigments on _site_name' % member)}
     </a>
 </iframe>

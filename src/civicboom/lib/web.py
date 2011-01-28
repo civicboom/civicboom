@@ -459,9 +459,6 @@ def authenticate_form(target, *args, **kwargs):
     slightly hacked version of pylons.decorators.secure.authenticated_form to
     support authenticated PUT and DELETE requests
     """
-    
-    print "secure form check"
-    
     if c.authenticated_form:
         return target(*args, **kwargs) # If already authenticated, pass through
     
