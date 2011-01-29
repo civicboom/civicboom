@@ -5,6 +5,7 @@ from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_
 from civicboom.lib.services.janrain import janrain
 #from civicboom.controllers.widget   import setup_widget_env
 #from civicboom.lib.helpers          import url_from_widget
+from civicboom.lib.web import cookie_get
 
 # Import other controller actions
 from civicboom.controllers.register import register_new_janrain_user
@@ -45,7 +46,9 @@ class AccountController(BaseController):
     def signin(self, **kwargs):
 
         # If no POST display signin template
-        if request.environ['REQUEST_METHOD'] == 'GET':            
+        if request.environ['REQUEST_METHOD'] == 'GET':
+            if '/accept' in cookie_get('login_redirect'):
+                return render("/html/web/account/signin_frag.mako")
             #setup_widget_env()
             #if getattr(c,'widget_username',None): #'widget_username' in request.params:
             #    return render("/html/widget/widget_signin.mako")

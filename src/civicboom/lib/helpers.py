@@ -414,11 +414,29 @@ def cb_frag_link(*args, **kwargs):
     return HTML.a(*args, **kwargs)
 
 
+
+#-------------------------------------------------------------------------------
+# Get object from Civicboom URL 
+#-------------------------------------------------------------------------------
+regex_content_url = re.compile(r'/contents/(.*?)[/&?#\n. "]')
+regex_member_url  = re.compile(r'/members/(.*?)[/&?#\n. "]')
+def get_object_from_action_url(action_url):
+    print ""
+    print "finding"
+    print action_url
+    m = re.match(regex_content_url, action_url)
+    if m:
+        print "contnt"
+        return ( ('content'), dict(id=m.group(1)) )
+    m = re.match(regex_member_url, action_url)
+    if m:
+        print "member"
+        return ( ('member'), dict(id=m.group(1)) )
+    return (None,None)
+
 #-------------------------------------------------------------------------------
 # Notification "Links" to "Frag Links"
 #-------------------------------------------------------------------------------
-
-
 
 regex_content_links = re.compile(r'<a(?:[^<>]*?)href="(?:[^<>]*?)/contents/(.*?)[/&?#\n. "](?:[^<>]*?)>(.*?)</a>') # \1 = content id \2 = text
 regex_member_links  = re.compile(r'<a(?:[^<>]*?)href="(?:[^<>]*?)/members/(.*?)[/&?#\n. "](?:[^<>]*?)>(.*?)</a>') # \1 = member id \2 = text
