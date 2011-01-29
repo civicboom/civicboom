@@ -16,21 +16,21 @@ ${widget_preview(c.widget_user_preview)}
         member = member.to_dict()
 %>\
 <iframe \
- name='${_("_site_name")}' \
- id='CivicboomWidget' \
- title='${_("_site_name Widget")}' \
+ name='${_("_site_name")}'\
+ id='CivicboomWidget'\
+ title='${_("_site_name Widget")}'\
 % if c.widget['base_list']:
- src='${h.url('member_action', id=member['username'], action=c.widget['base_list'], subdomain='widget', protocol='http')}' \
+ src='${h.url('member_action', id=member['username'], action=c.widget['base_list'], subdomain='widget', protocol='http')}'\
 % else:
- src='${h.url('member'       , id=member['username'],                               subdomain='widget', protocol='http')}' \
+ src='${h.url('member'       , id=member['username'],                               subdomain='widget', protocol='http')}'\
 % endif
- width='${c.widget['width']}' \
- height='${c.widget['height']}' \
- scrolling='no' \
- frameborder='0' \
+ width='${c.widget['width']}'\
+ height='${c.widget['height']}'\
+ scrolling='no'\
+ frameborder='0'\
 >\
-<a href='${h.url('member', id=member['username'], subdomain='')}'>${_('%s on _site_name' % member['username'])}</a> \
-</iframe> \
+<a href='${h.url('member', id=member['username'], subdomain='')}'>${_('%s on _site_name' % member['username'])}</a>\
+</iframe>\
 </%def>
 
 
@@ -130,7 +130,5 @@ ${widget_preview(c.widget_user_preview)}
         ${widget_iframe(member)}
     </td>
 
-
   </tr></table>
-
 </%def>
