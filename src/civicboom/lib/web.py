@@ -2,24 +2,18 @@ from pylons import url as url_pylons, session, request, response, config, tmpl_c
 from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
 from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
-#from civicboom.lib.base import *
 
+from civicboom.lib.xml_utils import dictToXMLString
 
 
 from webhelpers.html import literal
-
-from civicboom.lib.xml_utils import dictToXMLString
-#from civicboom.lib.misc import DictAsObj
-
 import formencode
-
 import os
 import time
 import json
 from decorator import decorator
 from pprint import pformat
 import logging
-import os
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -61,8 +55,6 @@ def url(*args, **kwargs):
         kwargs['host'] = c.host
 
     # Encode current widget state into URL if in widget mode
-    print kwargs
-    print c.format
     if kwargs.get('subdomain')=='widget' or (get_subdomain_format()=='widget' and 'subdomain' not in kwargs): # If widget and not linking to new subdomain
         widget_var_prefix = config["setting.widget.var_prefix"]
         for key, value in c.widget.iteritems():

@@ -3,7 +3,7 @@ from civicboom.lib.misc import make_username
 
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
-from civicboom.controllers.widget   import setup_widget_env
+#from civicboom.controllers.widget   import setup_widget_env
 #from civicboom.lib.helpers          import url_from_widget
 
 # Import other controller actions
@@ -46,9 +46,9 @@ class AccountController(BaseController):
 
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':            
-            setup_widget_env()
-            if getattr(c,'widget_username',None): #'widget_username' in request.params:
-                return render("/html/widget/widget_signin.mako")
+            #setup_widget_env()
+            #if getattr(c,'widget_username',None): #'widget_username' in request.params:
+            #    return render("/html/widget/widget_signin.mako")
             return render("/html/web/account/signin.mako")
         
         c.auth_info    = None

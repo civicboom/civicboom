@@ -36,8 +36,6 @@ class MiscController(BaseController):
 
     @web
     def get_widget(self, id=None):
-        if not id:
-            id = "unittest"
         c.widget_user_preview = get_member(id)
         return action_ok()
 

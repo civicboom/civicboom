@@ -58,7 +58,9 @@ class UniqueUsernameValidator(validators.FancyValidator):
 
 class UniqueEmailValidator(validators.Email):
     def __init__(self, resolve_domain=True, *args, **kwargs):
-        kwargs.update(resolve_domain=True)
+        from pylons import config
+        if config['online']:
+            kwargs.update(resolve_domain=True)
         validators.Email.__init__(self, *args, **kwargs)
     def _to_python(self, value, state):
         value = unicode(value)
