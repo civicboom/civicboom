@@ -11,7 +11,7 @@ from civicboom.model      import User, UserLogin, Member
 from civicboom.model.meta import Session
 
 from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url, current_referer, cookie_set, cookie_remove, cookie_get, cookie_delete
-from civicboom.lib.helpers import url_from_widget
+#from civicboom.lib.helpers import url_from_widget
 
 
 # Other imports
@@ -142,7 +142,7 @@ def authorize(_target, *args, **kwargs):
             else:
                 login_redirect_action = json.dumps(dict())
             cookie_set('login_redirect_action', login_redirect_action , 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
-            return redirect(url_from_widget(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
+            return redirect(url(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
         
         # If API request - error unauthorised
         else:
@@ -156,9 +156,6 @@ def login_redirector():
     login_redirect = cookie_remove('login_redirect')
     if login_redirect:
         return redirect(login_redirect)
-    if getattr(c,'widget_username',None): #'widget_username' in request.params:
-        # if the request has come from a widget - redirect back to widget
-        return redirect(url_from_widget(controller='widget', action='main')) #, protocol='http'
 
 
 def signin_user(user, login_provider=None):

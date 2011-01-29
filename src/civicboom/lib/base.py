@@ -13,13 +13,10 @@ from pylons.templating        import render_mako
 from pylons.i18n.translation  import _, ungettext, set_lang
 from pylons.decorators.secure import https
 from webhelpers.pylonslib.secure_form import authentication_token
-#from pylons import url as url_pylons
-#url_current = url.current
-from civicboom.lib.helpers import url
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta
-from civicboom.lib.web                 import redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
+from civicboom.lib.web                 import url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
@@ -108,6 +105,48 @@ auth = chained(authorize, authenticate_form)
 
 
 #-------------------------------------------------------------------------------
+# Setup Widget Env - from query string
+#-------------------------------------------------------------------------------
+
+widget_var_prefix = config["setting.widget.var_prefix"]
+
+def setup_widget_env():
+    """
+    Take QUERY_STRING params and setup widget globals for widget templates
+    """
+    #referer = current_referer()
+    #if referer:
+    #    referer = unquote_plus(referer)+'&'
+    def get_widget_varibles_from_env():
+        #def get_env_from_referer(var_name):
+        #    try:
+        #        # AllanC - when the Authkit intercepts an action to authenticate the current URL does not have the widget details to display properly
+        #        #          in this case we may need to get the widget details from the referer
+        #        #          this regex seeks a variable in the http_referer
+        #        #          as a botch the variables are delimted by '&' and I have appended one to the end [because /b was not working in the regex :( ]
+        #        return re.search(var_name+r'=(.+?)&',referer).group(1).encode('utf-8')
+        #    except:
+        #        return None
+        for key in [key for key in c.widget.keys() if widget_var_prefix+key in request.params]:  #app_globals.widget_variables:
+            value = request.params[widget_var_prefix+key].encode('utf-8')
+            if isinstance(c.widget[key], int): # keep widget int's as ints
+                try:
+                    c.widget[key] = int(value)
+                except:
+                    pass
+            else:
+                c.widget[key] = value
+                #setattr(c, var, request.params[var].encode('utf-8')) #Get variable from current request (override refferer if exist)
+            #elif referer:
+            #    setattr(c, var, get_env_from_referer(var)) # Get varible from referer
+    get_widget_varibles_from_env()
+    if c.widget['owner']:
+        owner = get_member(c.widget['owner'])
+        if owner:
+            c.widget['owner'] = owner.to_dict()
+    
+
+#-------------------------------------------------------------------------------
 # Base Controller
 #-------------------------------------------------------------------------------
 class BaseController(WSGIController):
@@ -133,12 +172,14 @@ class BaseController(WSGIController):
 
         # Widget default settings
         c.widget = dict(
-            theme    = 'light' ,
-            width    = 240 ,
-            height   = 320 ,
-            title    = ''  ,
-            list     = ''  ,
+            theme     = 'light' ,
+            width     = 240 ,
+            height    = 320 ,
+            title     = _('Get involved')  ,
+            base_list = 'assignments_active',
+            owner     = ''  ,
         )
+        setup_widget_env()
 
         # Login - Fetch logged in user from session id (if present)
         username                 = session_get('username')
@@ -160,7 +201,7 @@ class BaseController(WSGIController):
         elif 'lang' in session       :  self._set_lang(       session['lang']) # Lang set for this users session
         #elif c.logged_in_persona has lang: self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
         else                         :  self._set_lang(        config['lang']) # Default lang in config file
-
+        
         # User pending regisration? - redirect to complete registration process
         if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url('current')):
             set_flash_message(_('Please complete the regisration process'))

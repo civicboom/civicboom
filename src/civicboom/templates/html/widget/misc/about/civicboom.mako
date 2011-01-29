@@ -10,7 +10,7 @@
     <%
         name = ""
         try:
-            name = c.owner['name']
+            name = c.widget['owner']['name']
         except:
             pass
     %>

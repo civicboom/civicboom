@@ -1,8 +1,10 @@
-from pylons import session, url, request, response, config, tmpl_context as c
+from pylons import url as url_pylons, session, request, response, config, tmpl_context as c, app_globals
 from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
 from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
 #from civicboom.lib.base import *
+
+
 
 from webhelpers.html import literal
 
@@ -32,7 +34,64 @@ def multidict_to_dict(multidict):
         for key in multidict.keys():
             dict[key] = multidict[key]
     return dict
-    
+
+
+#-------------------------------------------------------------------------------
+# Subdomain format
+#-------------------------------------------------------------------------------
+
+def get_subdomain_format():
+    domain = request.environ.get("HTTP_HOST", "")
+    for subdomain, subformat in app_globals.subdomains.iteritems():
+        if domain.startswith(subdomain+'.'):
+            return subformat
+    return 'web'
+
+
+#-------------------------------------------------------------------------------
+# URL Generation
+#-------------------------------------------------------------------------------
+
+def url(*args, **kwargs):
+    """
+    Passthough for Pylons URL generator with a few new features
+    """
+    # shortcut for absolute URL
+    if 'absolute' in kwargs:
+        kwargs['host'] = c.host
+
+    # Encode current widget state into URL if in widget mode
+    print kwargs
+    print c.format
+    if kwargs.get('subdomain')=='widget' or (get_subdomain_format()=='widget' and 'subdomain' not in kwargs): # If widget and not linking to new subdomain
+        widget_var_prefix = config["setting.widget.var_prefix"]
+        for key, value in c.widget.iteritems():
+            if isinstance(value, dict) and 'username' in value: # the owner may be a dict, convert it back to a username
+                value = value['username']
+            kwargs[widget_var_prefix+key] = value
+        
+    # Moving between subdomains
+    #  remove all known subdomains from URL and instate the new provided one
+    if 'subdomain' in kwargs:
+        subdomain = kwargs.pop('subdomain')
+        assert subdomain in app_globals.subdomains.keys()
+        if subdomain:
+            subdomain += '.'
+        host = c.host
+        for possible_subdomain in app_globals.subdomains.keys():
+            if possible_subdomain:
+                host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
+        kwargs['host'] = subdomain + host
+        
+    args = list(args)
+    if 'current' in args:
+        args.remove('current')
+        return url_pylons.current(*args, **kwargs)
+    else:
+        return url_pylons(        *args, **kwargs)
+
+
+
 
 #-------------------------------------------------------------------------------
 # Redirect Referer
@@ -240,12 +299,9 @@ def overlay_status_message(master_message, new_message):
 #-------------------------------------------------------------------------------
 
 def _find_subformat():
-    domain = request.environ.get("HTTP_HOST", "")
-    if domain.startswith("mobile.") or domain.startswith("m.") or request.environ['is_mobile']:
-        return "mobile"
-    if domain.startswith("widget.") or domain.startswith("w."):
-        return "widget"
-    return "web"
+    if request.environ['is_mobile']:
+        return 'mobile'
+    return get_subdomain_format()
 
 def _find_template(result, type):
     #If the result status is not OK then use the template for that status

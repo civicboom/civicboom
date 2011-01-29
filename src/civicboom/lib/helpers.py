@@ -7,7 +7,7 @@ available to Controllers. This module is available to templates as 'h'.
 #from webhelpers.html.tags import checkbox, password
 from webhelpers.pylonslib.secure_form import authentication_token, secure_form
 
-from pylons import url as url_pylons, config, app_globals, tmpl_context as c, request
+from pylons import config, app_globals, tmpl_context as c, request
 #from pylons.i18n.translation import _
 from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
@@ -19,7 +19,7 @@ from civicboom.lib.misc import args_to_tuple
 # use relative import so that "import helpers" works
 #from civicboom.lib.text import scan_for_embedable_view_and_autolink
 from text import scan_for_embedable_view_and_autolink
-from web import current_url
+from web import current_url, url
 
 import webhelpers.html.tags as html
 
@@ -32,6 +32,10 @@ import json
 import copy
 import time
 import datetime
+
+
+
+
 
 def get_captcha(lang='en', theme='red'):
     """
@@ -125,41 +129,7 @@ def wh_url(folder, filename):
     else:
         return config["warehouse_url"]+"/"+folder+"/"+filename
 
-def url_from_widget(*args, **kargs):
-    if hasattr(app_globals,'widget_variables'):
-        for var in app_globals.widget_variables:
-            if var in request.params:
-                kargs[var] = request.params.get(var)
-            #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
-            #    kargs[var] = getattr(c,var)
-    return url(*args,**kargs)
 
-def url(*args, **kwargs):
-    """
-    Passthough for Pylons URL generator with a few new features
-    """
-    # shortcut for absolute URL
-    if 'absolute' in kwargs:
-        kwargs['host'] = c.host
-        
-    # Moving between subdomains
-    #  remove all known subdomains from URL and instate the new provided one
-    if 'subdomain' in kwargs:
-        subdomain = kwargs.pop('subdomain')
-        assert subdomain in app_globals.subdomains
-        if subdomain:
-            subdomain += '.'
-        host = c.host
-        for possible_subdomain in app_globals.subdomains:
-            if possible_subdomain:
-                host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
-        kwargs['host'] = subdomain + host
-    args = list(args)
-    if 'current' in args:
-        args.remove('current')
-        return url_pylons.current(*args, **kwargs)
-    else:
-        return url_pylons(        *args, **kwargs)
 
 
 def uniqueish_id(*args):

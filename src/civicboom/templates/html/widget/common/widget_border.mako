@@ -19,18 +19,19 @@
     c.widget_height_content = size_content - 8 #Used for the QR Code to ensure correct size (the -8 is a hack because the padding is gets in the way)
     
     
-    #id    = c.id
-    title = c.widget['title']
-    
-    owner = d.get('content',dict()).get('creator')
-    if not owner:
-        owner = d.get('member')
-    if not owner:
+    if not c.widget['owner']:
+        c.widget['owner'] = d.get('content',dict()).get('creator')
+    if not c.widget['owner']:
+        c.widget['owner'] = d.get('member')
+    if not c.widget['owner']:
         from civicboom.lib.database.get_cached import get_member
         owner_obj = get_member(c.id)
         if owner_obj:
-            owner = owner_obj.to_dict()
-    c.owner = owner # for child templates to use
+            c.widget['owner'] = owner_obj.to_dict()
+    
+    owner = c.widget['owner']
+    title = c.widget['title']
+
 %>
 
 ##------------------------------------------------------------------------------
@@ -47,7 +48,7 @@
     <div class="widget_header" style="height:${size_header}px;"><div class="widget_header_footer">
         % if owner:
 		## Floating about icon
-		<a class="tooltip_icon" style="float: right;" href="${h.url_from_widget(controller='misc',action='about')}" title="${_('What is this?')}"></a>
+		<a class="tooltip_icon" style="float: right;" href="${h.url(controller='misc',action='about')}" title="${_('What is this?')}"></a>
 		## Tables just work, CSS layouts are ****ing anoying ...
         
 		<table><tr>
@@ -92,7 +93,7 @@
 				<img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
               </a>
           % else:
-              <a href="${h.url_from_widget(controller='widget', action='signin')}">
+              <a href="${h.url(controller='widget', action='signin')}">
 				${_("Sign up or Sign in to")}
 				<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
 			  </a>
@@ -137,13 +138,13 @@
         % if owner:
         <ul>
           <li class="widget_item_popup">
-            <a class="icon icon_mobile" href="${h.url_from_widget(controller='misc', action='get_mobile')}">
+            <a class="icon icon_mobile" href="${h.url(controller='misc', action='get_mobile')}">
                 ${_('Mobile reporting')}
             </a>
           </li>
           % if owner:
           <li class="widget_item_popup">
-            <a href="${h.url_from_widget(controller='misc', action='get_widget')}">
+            <a href="${h.url(controller='misc', action='get_widget')}">
                 ${_('Embed this widget')}
             </a>
           </li>

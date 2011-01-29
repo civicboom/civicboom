@@ -21,7 +21,7 @@
     ##<a href="${url('content', id=content['id'])}">${content['id']}</a>
     ##${content['title']}
     <li>
-        <a href="${h.url_from_widget('content', id=content['id'])}">
+        <a href="${h.url('content', id=content['id'])}">
             <img src="${content['thumbnail_url']}"/>
             <span>${content['title']}</span>
             <div style="clear: both;"></div>

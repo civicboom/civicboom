@@ -4,7 +4,7 @@ from civicboom.lib.misc import make_username
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
 from civicboom.controllers.widget   import setup_widget_env
-from civicboom.lib.helpers          import url_from_widget
+#from civicboom.lib.helpers          import url_from_widget
 
 # Import other controller actions
 from civicboom.controllers.register import register_new_janrain_user
@@ -220,22 +220,3 @@ class AccountController(BaseController):
             set_flash_message(_('password has been set'))
             redirect(url(controller='account', action='signin'))
 
-
-    #-----------------------------------------------------------------------------
-    # Standalone Login Redirector action
-    #-----------------------------------------------------------------------------    
-    def login_redirect(self):
-        """
-        During the signin process the login redirector is followed automatically
-        However
-        With signing over the widget the signin process if fragmented and differnt popup windows need to be closed
-        The original frame that needs to perform the original action is separte from the login frame
-        When the login frame closes it fires a javascript event that causese the widget to refresh
-        When this widget refreshes it will follow this login redirector call to point it in the right direction
-        """
-
-        login_redirector()
-        #If this method returns then there has been no login redirector
-
-        setup_widget_env() #This will get widget env's from the referer url
-        redirect(url_from_widget(controller='widget', action='main'))

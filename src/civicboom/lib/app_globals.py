@@ -38,9 +38,16 @@ class Globals(object):
         self.user_defaults.read("user_defaults.ini")
 
         # FIXME: spelling, theame -> theme
-        self.widget_variables = ['widget_theme', 'widget_title', 'widget_username', 'widget_width', 'widget_height']
+        #self.widget_variables = ['widget_theme', 'widget_title', 'widget_username', 'widget_width', 'widget_height']
 
-        self.subdomains = ['', 'widget', 'mobile', 'm', 'www']
+        self.subdomains = {
+            ''      : 'web'    ,
+            'www'   : 'web'    ,
+            'widget': 'widget' ,
+            'w'     : 'widget' ,
+            'mobile': 'mobile' ,
+            'm'     : 'mobile' ,
+        }
 
         # in the form list_name, icon, display_text
         self.contents_list_names = {
