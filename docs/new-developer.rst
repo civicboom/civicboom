@@ -63,6 +63,8 @@ Code Repositories
 repositories are in dev:/home/code/git, symlinked as /git, so they can be
 accessed as ssh://dev.civicboom.com/git/*reponame*
 
+git clone ssh://dev.civicboom.com/git/*reponame*
+
 - **website**
   - source for the cb-website-* packages
   - python-cbmisc also lives here (the entire package was 10 lines of
@@ -77,6 +79,8 @@ accessed as ssh://dev.civicboom.com/git/*reponame*
   - source for the cb-devkit package
 - **buildmaster**
   - buildmaster config files
+
+get checkout -b develop origin/develop
 
 
 Geolocation data (Optional)
@@ -125,3 +129,16 @@ Recommended tweaks to $REPO/.git/config:
  [branch "develop"]
      mergeoptions = --no-ff
 
+
+Running the Site
+~~~~~~~~~~~~~~~~
+
+cd src/
+
+make
+(bring up menu)
+
+make site 
+(to setup translation files)
+
+make test-db to init the db and popuplate with test data
