@@ -35,6 +35,28 @@ Packages
   - "make test-db" to wipe the DB and fill it with test data
   - "make run" to run in development mode
 
+- when working on themes, the developer will probably want to turn off the
+  caching of static files
+  - sudo gedit /etc/nginx/sites-enabled/civicboom.com
+    comment out:
+	# proxy_cache "cb";
+	# proxy_cache_key "$scheme://$host$request_uri-cookie:$cookie_civicboom_logged_in";
+
+- for working on extra subdomains (widget / mobile):
+  - sudo gedit /etc/hosts
+    add some entries to the 127.0.0.1 line if using localhost:
+    127.0.0.1    localhost.localdomain localhost widget.localhost mobile.localhost m.localhost
+	(or your VM's IP address if working on a VM)
+
+
+Using the site
+~~~~~~~~~~~~~~
+- To sign in
+  you can use unittest:password
+- To sign up
+  signup with site
+  see console for email debug printouts to get validation url
+
 
 Code Repositories
 ~~~~~~~~~~~~~~~~~
@@ -67,7 +89,7 @@ Geolocation data (Optional)
   - http://ftp.heanet.ie/mirrors/openstreetmap.org/planet-latest.osm.bz2
     - full planet, 10GB, decompresses to ~200GB and takes several days to load
 - place the .osm.bz2 file in admin_scripts/
-- init_cbdb will then notice the data file and load it when it creates the
+- "make test-db" will then notice the data file and load it when it creates the
   base databases
 
 
