@@ -20,9 +20,13 @@
         owner_obj = get_member(c.id)
         if owner_obj:
             c.widget['owner'] = owner_obj.to_dict()
+    if not isinstance(c.widget['owner'], dict):
+        c.widget['owner'] = dict(avatar_url='', username='', name='')
     
     owner = c.widget['owner']
     title = c.widget['title']
+    
+    
 %>
 <div class="widget_border" style="width: 100%; border: 1px solid #${color_border}; font-size:${size_font}px;">
 
@@ -57,32 +61,33 @@
     
 	<!--action_bar-->
     <div class="action_bar" style="height:${size_action_bar}px;">
-          ##----------------------------------------
-          ## Overrideable (normally back)
-          ##----------------------------------------
-          <div class="action_bar_element" style="float:left;">
-              <%def name="widget_actions()">
-              </%def>
-              ${self.widget_actions()}
-          </div>
+        ##----------------------------------------
+        ## Overrideable (normally back)
+        ##----------------------------------------
+        <div class="action_bar_element" style="float:left;">
+            <%def name="widget_actions()">
+            </%def>
+            ${self.widget_actions()}
+        </div>
       
-          ##----------------------------------------
-          ## Sign in/up
-          ##----------------------------------------
-          <div class="action_bar_element" style="float:right;">
-          % if c.logged_in_persona:
-              <a href="${h.url(controller='profile', action='index')}" target="_blank">
-				${c.logged_in_persona.username}
-				<img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
-              </a>
-          % else:
-              <a href="${h.url(controller='account', action='signin', subdomain='')}" target="_blank">
-				${_("Signup Signin")}
-				<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
-			  </a>
-          % endif
-          </div>
-          ##<div class="clearboth_hack"></div>
+        ##----------------------------------------
+        ## Sign in/up
+        ##----------------------------------------
+        <div class="action_bar_element" style="float:right;">
+        % if c.logged_in_persona:
+            <a href="${h.url(controller='profile', action='index')}" target="_blank">
+                ${c.logged_in_persona.username}
+                <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+            </a>
+        % else:
+            <a href="${h.url(controller='account', action='signin', subdomain='')}" target="_blank">
+                ${_("Signup Signin")} to 
+                <span class="icon icon_boom" title="${_('_site_name')}"></span>
+                ##<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
+            </a>
+        % endif
+        </div>
+        ##<div class="clearboth_hack"></div>
     </div>
 	<!--end action_bar-->
 

@@ -185,6 +185,8 @@ class BaseController(WSGIController):
         # Login - Fetch logged in user from session id (if present)
         username                 = session_get('username')
         username_persona         = session_get('username_persona')
+        request.environ['logged_in_user']     = username
+        request.environ['logged_in_persona']  = username_persona
         
         c.logged_in_user         = get_member(username)
         c.logged_in_persona      = c.logged_in_user
