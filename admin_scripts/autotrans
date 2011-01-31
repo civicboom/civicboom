@@ -1,9 +1,0 @@
-#!/bin/sh
-cd `dirname $0`
-
-curl \
-	-F pofile=@../src/civicboom/i18n/fr/LC_MESSAGES/civicboom.po \
-	-F language=fr \
-	-F output=pofile  \
-	--output ../src/civicboom/i18n/fr/LC_MESSAGES/civicboom.po \
-	http://pepipopum.dixo.net
