@@ -5,4 +5,7 @@
     % for content in d['responses']['items']:
         ${self.rss_content_item(content)}
     % endfor
+    % for content in d['comments']['items']:
+        ${self.rss_comment_item(content)}
+    % endfor
 </%def>

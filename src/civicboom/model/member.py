@@ -230,7 +230,7 @@ class Member(Base):
 
     def __link__(self):
         from pylons import url, app_globals
-        return url('member', id=self.id, host=app_globals.site_host)
+        return url('member', id=self.id, absolute=True)
 
     def hash(self):
         h = hashlib.md5()
@@ -293,7 +293,7 @@ class Member(Base):
     @property
     def url(self):
         from pylons import url, app_globals
-        return url('member', host=app_globals.site_host, id=self.username)
+        return url('member', id=self.username, absolute=True)
 
     @property
     def avatar_url(self, size=80):

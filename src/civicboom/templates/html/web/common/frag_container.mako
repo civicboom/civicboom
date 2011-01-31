@@ -1,14 +1,28 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
+##------------------------------------------------------------------------------
+## Global
+##------------------------------------------------------------------------------
+
 <%!
     import types
-    frag_container_css_class = '' # to be overridden
+    #frag_container_css_class = '' # to be overridden
+    
+    # Each frag can take 2 cols or 1 col
+    # 1 col = 250px, 2 cols = 500px
+    # this can be overridden by inherheriting templates to customise the size
+    frag_col_sizes = []
+    
 %>
 
+##------------------------------------------------------------------------------
+## Body
+##------------------------------------------------------------------------------
 
 <%def name="body()">
 
     ## How To Use: Overriding body methods should be blank - they should set self.attr.frags
+    ##             the overriding body method can have content, just dont set self.attr.frags
     <%
         frags_assigned_before = None
         if hasattr(self.attr, 'frags'):
@@ -23,26 +37,43 @@
 
 </%def>
 
+
+##------------------------------------------------------------------------------
+## Frag Containers
+##------------------------------------------------------------------------------
+
 <%def name="frag_containers(frags='')">
     <%
         if not isinstance(frags, list):
             frags = [frags]
+            
+        def get_col_size(col_num, default=2):
+            try:
+                return self.attr.frag_col_sizes[col_num]
+            except:
+                return default
     %>
     <div id='frag_containers'><!--
-        <% frag_counter = '' %>
+        <% frag_counter = 0 %>
         % for frag in frags:
-            --><div id="frag_${frag_counter}" class="frag_container ${self.attr.frag_container_css_class}">
+            <% frag_col_class = get_col_size(frag_counter, 2) %>
+            --><div id="frag__${frag_counter}" class="frag_container frag_col_${frag_col_class}">
                 % if isinstance(frag, types.FunctionType):
                     ${frag()}
                 % elif frag:
                     ${frag}
                 % endif
             </div><!--    
-            <% frag_counter += '_' %>
+            <% frag_counter += 1 %>
         % endfor
         -->
     </div>
 </%def>
+
+
+##------------------------------------------------------------------------------
+## Old
+##------------------------------------------------------------------------------
 
 <%doc>
             ## AllanC - Methods 1 and 2 have the same outcome

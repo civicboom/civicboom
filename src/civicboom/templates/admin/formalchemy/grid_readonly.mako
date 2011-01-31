@@ -11,7 +11,7 @@
     %endfor
   </tr>
   <tr id="searchrow">
-  <form action="${url.current()}" method="GET">
+  <form action="${h.url('current')}" method="GET">
     %for field in collection.render_fields.itervalues():
 	  % if field.key == "edit":
       <th colspan="2"><input type="submit" value="Search"></th>

@@ -7,7 +7,7 @@ The widget is an HTML iFrame that members can place on there own webpages reflec
 from civicboom.lib.base import *
 
 from civicboom.lib.web     import current_referer
-from civicboom.lib.helpers import url_from_widget
+#from civicboom.lib.helpers import url_from_widget
 
 from civicboom.controllers.contents       import ContentsController
 from civicboom.controllers.member_actions import MemberActionsController

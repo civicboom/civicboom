@@ -1,5 +1,9 @@
 <%inherit file="/frag/common/frag_lists.mako"/>
 
+<%!
+    rss_url = True
+%>
+
 
 <%def name="body()">
     <%

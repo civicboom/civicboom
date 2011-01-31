@@ -26,7 +26,14 @@
         
         self.attr.title     = _('Edit _%s' % self.selected_type)
         self.attr.icon_type = 'edit'
-
+        
+        if self.selected_type == 'assignment':
+            self.attr.help_frag = 'create_assignment'
+        if self.selected_type == 'article':
+            self.attr.help_frag = 'create_article'
+        if self.selected_type == 'article' and self.content.get('parent'):
+            self.attr.help_frag = 'create_response'
+        
     %>
 </%def>
 

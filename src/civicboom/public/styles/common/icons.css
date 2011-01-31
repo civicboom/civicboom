@@ -24,6 +24,7 @@
 }
 .icon span {display: none;}
 .icon_popup      {background: transparent url('/styles/common/icons16/bubble2-icon.png'  ) no-repeat;}
+.icon_help       {background: transparent url('/styles/common/icons16/info-icon.png'     ) no-repeat;}
 .icon_list       {background: transparent url('/styles/common/icons16/document2-icon.png') no-repeat;}
 .icon_approved   {background: transparent url('/styles/common/icons16/licence-icon.png'  ) no-repeat;}
 .icon_seen       {background: transparent url('/styles/common/icons16/tick-icon.png'     ) no-repeat;}

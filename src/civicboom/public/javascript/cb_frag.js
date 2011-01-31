@@ -7,7 +7,7 @@
 var frag_id_name                      = 'frag_';
 var fragment_containers_id            = '#frag_containers';
 var fragment_container_class          = 'frag_container';  // container for a full JSON object 500px
-var fragment_bridge_class             = 'frag_bridge';     // container for a bridge list 250px (half width)
+//var fragment_col_class                = 'frag_col_1';      // container for a bridge list 250px (half width)
 var fragment_source_class             = 'frag_source';
 var fragment_div_loading_placeholder  = '<div class="title_bar gradient">Loading...</div>'+
                                         '<div class="action_bar"></div>'+
@@ -33,7 +33,9 @@ function cb_frag(current_element, url, list_type) {
 	
 	// Set the class for this new fragment (bridge list or full container)
 	var new_fragment_class = fragment_container_class;
-	if (list_type=='bridge') {new_fragment_class += " "+fragment_bridge_class;}
+	if (typeof list_type == 'string') {new_fragment_class += ' '+list_type}
+	//if (list_type=='frag_col_1') {new_fragment_class += " "+fragment_col_class;}
+	//else                         {}
 	
 	// Register this page view with Google analytics.
 	// http://code.google.com/apis/analytics/docs/tracking/asyncMigrationExamples.html#VirtualPageviews
@@ -110,6 +112,10 @@ function cb_frag(current_element, url, list_type) {
 
 
 function cb_frag_load(jquery_element, url) {
+	// Register this page view with Google analytics. - see cb_frag() for more info
+	// AllanC - this is not ideal as it will have the.frag and not record the actual pageview ... but it's better than nothing for now
+	_gaq.push(['_trackPageview', url]);
+	
 	var frag_container = jquery_element.parents('.'+fragment_container_class)
 	frag_container.load(url);
 }

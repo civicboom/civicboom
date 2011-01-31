@@ -3,16 +3,16 @@ Set of helpers specific to the Civicboom project
   (these are not part of misc because misc continas more genereal functions that could be used in a range of projects)
 """
 
-from pylons import url, app_globals, tmpl_context as c, config
-from pylons.i18n.translation import _
+import civicboom.lib.constants as constants
+from civicboom.lib.base import url, app_globals, c, config, _
+
 
 from civicboom.model.meta import Session
-from civicboom.lib.database.get_cached import get_member
 
 from civicboom.lib.communication.email_lib import send_email
 
 from civicboom.model                            import DraftContent, ArticleContent, AssignmentContent, CommentContent, Media, Tag, FlaggedContent, UserLogin, PaymentAccount
-from civicboom.lib.database.get_cached          import get_content, get_tag
+from civicboom.lib.database.get_cached          import get_content, get_tag, get_member
 from civicboom.lib.database.actions             import del_content
 
 
@@ -23,7 +23,6 @@ from civicboom.lib.services.tiny_url        import tiny_url
 
 from civicboom.lib.text          import clean_html_markup, strip_html_tags, safe_python_strings
 from civicboom.lib.helpers       import truncate
-
 
 
 from sets import Set # may not be needed in Python 2.7+
@@ -56,7 +55,7 @@ def send_verifiy_email(user, controller='account', action='verify_email', messag
     if not message:
         message = _('verify this email address')
     Session.refresh(user)
-    validation_link = url(controller=controller, action=action, id=user.id, host=app_globals.site_host, hash=user.hash())
+    validation_link = url(controller=controller, action=action, id=user.id, hash=user.hash(), subdomain='') # Need https here?
     message         = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
     send_email(user.email_unverified, subject=_('verify e-mail address'), content_text=message)
 
@@ -72,7 +71,7 @@ def verify_email(user, hash, commit=False):
     return False
 
 def send_forgot_password_email(user):
-    validation_link = url(controller='account', action='forgot_password', host=app_globals.site_host, protocol='https', id=user.username, hash=user.hash())
+    validation_link = url(controller='account', action='forgot_password', protocol='https', id=user.username, hash=user.hash(), subdomain='')
     message         = _('Please click or copy the following link into your browser to reset your password: %s' % validation_link)
     user.send_email(subject=_('reset password'), content_text=message)
 
@@ -160,7 +159,7 @@ def aggregation_dict(content, safe_strings=True):
     
     content_preview = {}
     
-    content_url          = url('content', id=content['id'], host=app_globals.site_host)
+    content_url          = url('content', id=content['id'], subdomain='')
     content_creator_name = content.get('creator',{}).get('name', '')
 
     def action(content):
@@ -173,9 +172,9 @@ def aggregation_dict(content, safe_strings=True):
 
     def action_links(content):
         action_links = []
-        action_links.append(    {'href':url('new_content'   , parent_id=content['id'], host=app_globals.site_host), 'text':_('Write a response')  })
+        action_links.append(    {'href':url('new_content'   ,                  parent_id=content['id'], subdomain=''), 'text':_('Write a response')  })
         if content.get('type') == "assignment":
-            action_links.append({'href':url('content_action', action='accept', id       =content['id'], host=app_globals.site_host), 'text':_('Accept _assignment')})
+            action_links.append({'href':url('content_action', action='accept', id       =content['id'], subdomain=''), 'text':_('Accept _assignment')})
         return action_links
     
     def media(content):
@@ -322,3 +321,44 @@ def profanity_filter(content, delay_commit=False):
         #return False
     #return True
 
+
+
+#-------------------------------------------------------------------------------
+# Signin Actions
+#-------------------------------------------------------------------------------
+
+
+def get_signin_action_objects():
+    """
+    If signing in and performing an action
+    Will return ()
+    
+    """
+    from civicboom.lib.web import cookie_get
+    from civicboom.lib.helpers import get_object_from_action_url
+    from civicboom.controllers.members  import MembersController
+    from civicboom.controllers.contents import ContentsController
+    content_show = ContentsController().show
+    member_show  = MembersController().show
+
+    
+    # If performing an action we may want to display a custom message with the login
+    login_redirect_url = cookie_get('login_redirect') or ''
+    for action_identifyer, action_description in constants.actions_list:
+        if action_identifyer in login_redirect_url:
+            args, kwargs = get_object_from_action_url( login_redirect_url )
+            if args and kwargs:
+                # Generate action object frag URL
+                kwargs['format'] = 'frag'
+                action_object_frag_url = url(*args, **kwargs)
+                # Find action object
+                if 'content' in args and 'id' in kwargs:
+                    action_object = content_show(id=kwargs['id'])
+                if 'member' in args and 'id' in kwargs:
+                    action_object = member_show(id=kwargs['id'])
+            return dict(
+                description   = action_description     ,
+                action_object = action_object          ,
+                frag_url      = action_object_frag_url ,
+            )
+    return None

@@ -1,23 +1,19 @@
-from pylons import session, url, request, response, config, tmpl_context as c
+from pylons import url as url_pylons, session, request, response, config, tmpl_context as c, app_globals
 from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
 from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
-#from civicboom.lib.base import *
-
-from webhelpers.html import literal
 
 from civicboom.lib.xml_utils import dictToXMLString
-#from civicboom.lib.misc import DictAsObj
 
+
+from webhelpers.html import literal
 import formencode
-
 import os
 import time
 import json
 from decorator import decorator
 from pprint import pformat
 import logging
-import os
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -32,7 +28,62 @@ def multidict_to_dict(multidict):
         for key in multidict.keys():
             dict[key] = multidict[key]
     return dict
-    
+
+
+#-------------------------------------------------------------------------------
+# Subdomain format
+#-------------------------------------------------------------------------------
+
+def get_subdomain_format():
+    domain = request.environ.get("HTTP_HOST", "")
+    for subdomain, subformat in app_globals.subdomains.iteritems():
+        if domain.startswith(subdomain+'.'):
+            return subformat
+    return 'web'
+
+
+#-------------------------------------------------------------------------------
+# URL Generation
+#-------------------------------------------------------------------------------
+
+def url(*args, **kwargs):
+    """
+    Passthough for Pylons URL generator with a few new features
+    """
+    # shortcut for absolute URL
+    if 'absolute' in kwargs:
+        kwargs['host'] = c.host
+
+    # Encode current widget state into URL if in widget mode
+    if kwargs.get('subdomain')=='widget' or (get_subdomain_format()=='widget' and 'subdomain' not in kwargs): # If widget and not linking to new subdomain
+        widget_var_prefix = config["setting.widget.var_prefix"]
+        for key, value in c.widget.iteritems():
+            if isinstance(value, dict) and 'username' in value: # the owner may be a dict, convert it back to a username
+                value = value['username']
+            kwargs[widget_var_prefix+key] = value
+        
+    # Moving between subdomains
+    #  remove all known subdomains from URL and instate the new provided one
+    if 'subdomain' in kwargs:
+        subdomain = kwargs.pop('subdomain')
+        assert subdomain in app_globals.subdomains.keys()
+        if subdomain:
+            subdomain += '.'
+        host = c.host
+        for possible_subdomain in app_globals.subdomains.keys():
+            if possible_subdomain:
+                host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
+        kwargs['host'] = subdomain + host
+        
+    args = list(args)
+    if 'current' in args:
+        args.remove('current')
+        return url_pylons.current(*args, **kwargs)
+    else:
+        return url_pylons(        *args, **kwargs)
+
+
+
 
 #-------------------------------------------------------------------------------
 # Redirect Referer
@@ -61,7 +112,7 @@ def current_url(protocol=None):
 
 def redirect_to_referer():
     url_to = session_remove('login_action_referer') or current_referer() or '/'
-    if url_to == url.current(): # Detect if we are in a redirection loop and abort
+    if url_to == url('current'): # Detect if we are in a redirection loop and abort
         log.warning("Redirect loop detected for "+str(url_to))
         #redirect('/')
     #print "yay redirecting to %s" % url_to
@@ -102,6 +153,43 @@ def session_get(key):
     return None
 
 
+#-------------------------------------------------------------------------------
+# Cookie Timed Keys Management
+#-------------------------------------------------------------------------------
+# cookies can be given a key pair with an expiry time
+# a fetch with session_get will get the session value, but will return None if it's _exipre pair has expired
+
+# http://pythonpaste.org/webob/reference.html#id5
+
+
+def cookie_delete(key):
+    #log.debug("delete %s" % key)
+    try:
+        response.unset_cookie(key)
+    except:
+        pass
+    try:
+        response.delete_cookie(key)
+    except:
+        pass
+
+def cookie_remove(key):
+    value = cookie_get(key)
+    cookie_delete(key)
+    return value
+
+def cookie_set(key, value, duration=None):
+    """
+    duration in seconds
+    """
+    #log.debug("setting %s:%s" %(key, value))
+    response.set_cookie(key, value, max_age=duration, secure=True) #path='/', domain='example.org',
+
+def cookie_get(key):
+    #log.debug("getting %s:%s" %(key, request.cookies.get(key)))
+    return request.cookies.get(key)
+
+
 
 #-------------------------------------------------------------------------------
 # Action Message System
@@ -116,7 +204,7 @@ def set_flash_message(new_message):
     overlay_status_message(c.result, flash_message)
 
 
-def action_ok(message=None, data={}, code=200, template=None):
+def action_ok(message=None, data={}, code=200, **kwargs):
     assert not message or isinstance(message, basestring)
     assert isinstance(data, dict)
     assert isinstance(code, int)
@@ -126,8 +214,9 @@ def action_ok(message=None, data={}, code=200, template=None):
         "data"   : data,
         "code"   : code,
     }
-    if template:
-        d["template"] = template
+    #if template:
+    #    d["template"] = template
+    d.update(kwargs)
     return d
 
 # AllanC - convenicen metod for returning lists
@@ -202,12 +291,9 @@ def overlay_status_message(master_message, new_message):
 #-------------------------------------------------------------------------------
 
 def _find_subformat():
-    domain = request.environ.get("HTTP_HOST", "")
-    if domain.startswith("mobile.") or domain.startswith("m.") or request.environ['is_mobile']:
-        return "mobile"
-    if domain.startswith("widget.") or domain.startswith("w."):
-        return "widget"
-    return "web"
+    if request.environ['is_mobile']:
+        return 'mobile'
+    return get_subdomain_format()
 
 def _find_template(result, type):
     #If the result status is not OK then use the template for that status
@@ -219,21 +305,43 @@ def _find_template(result, type):
 
     # html is a meta-format -- if we are asked for a html template,
     # redirect to web, mobile or widget depending on the environment
+    subformat = _find_subformat()
     if type == "html":
-        subformat = _find_subformat()
         paths = [
             os.path.join("html", subformat, template_part),
             os.path.join("html", "web",     template_part),
         ]
+        ## AllanC: TODO
+        ## if there is no web template but there is a frag for this template part
+        ## wrap the fragment in a frag_container.mako
+        ## WIP see web/frag.mako
     else:
         paths = [
             os.path.join(type, template_part),
         ]
 
+    # So far we may have been unable to find a template file for this action
+    # It may be a 'list' with an 'object type'. we can add the default list renderer for the list as a last ditch effort
+    if 'data' in result and 'list' in result['data'] and 'type' in result['data']['list']:
+        list_type = result['data']['list']['type']
+        list_part = None
+        if   list_type == 'content':
+            list_part = 'contents/index'
+        elif list_type == 'member':
+            list_part = 'members/index'
+        elif list_type == 'message':
+            list_part = 'messages/index'
+        if list_part:
+            paths = paths + [
+                os.path.join(type, list_part)              ,
+                os.path.join("html", subformat, list_part) ,
+                os.path.join("html", "web"    , list_part) ,
+            ]
+    
     for path in paths:
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
             return path+".mako"
-
+    
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
 
@@ -359,7 +467,7 @@ def auto_format_output(target, *args, **kwargs):
     
     # After
     # Is result a dict with data?
-    if auto_format_output_flag and hasattr(result, "keys"): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
+    if auto_format_output_flag and isinstance(result,dict): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
         # set the HTTP status code
         if 'code' in result:
             response.status = int(result['code'])
@@ -369,6 +477,14 @@ def auto_format_output(target, *args, **kwargs):
             # a new call to error/document is made from scratch, this sets the default format to html again! if the format is in the query string this overrides it, but in the url path it gets lost
             # Verifyed as calling error/document.html/None
             #del result['code']
+        
+        # AllanC - if we perform an HTML action but have not come from our site and used format='redirect' then we want the redirect to the html object that the action has been performed on rather than displaying an error
+        if 'html_action_redirect_url' in result:
+            html_action_redirect_url = result['html_action_redirect_url']
+            del result['html_action_redirect_url']
+            if c.format == 'html':
+                set_flash_message(result)
+                redirect(html_action_redirect_url)
         
         # Render to format
         if c.format in format_processors:

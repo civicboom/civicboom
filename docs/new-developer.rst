@@ -8,6 +8,8 @@ Things for a sysadmin to do
     adduser <username> developers
 - Give them access to the dev website
     htpasswd /home/code/htpasswd <username>
+- Set up a google account
+    https://www.google.com/a/cpanel/civicboom.com/
 - Give them access to redmine
     https://dev.civicboom.com/redmine/users/new
 
@@ -28,7 +30,32 @@ Packages
 - once the website and dependencies are installed, a developer can clone
   the repository into their home folder and work on it there, running the
   development setup on port 5000
-  - in src, "paster serve --reload development.ini"
+  - from src
+  - once, "make site" to compile some static bits (eg language translations)
+  - "make test-db" to wipe the DB and fill it with test data
+  - "make run" to run in development mode
+
+- when working on themes, the developer will probably want to turn off the
+  caching of static files
+  - sudo gedit /etc/nginx/sites-enabled/civicboom.com
+    comment out:
+	# proxy_cache "cb";
+	# proxy_cache_key "$scheme://$host$request_uri-cookie:$cookie_civicboom_logged_in";
+
+- for working on extra subdomains (widget / mobile):
+  - sudo gedit /etc/hosts
+    add some entries to the 127.0.0.1 line if using localhost:
+    127.0.0.1    localhost.localdomain localhost widget.localhost mobile.localhost m.localhost
+	(or your VM's IP address if working on a VM)
+
+
+Using the site
+~~~~~~~~~~~~~~
+- To sign in
+  you can use unittest:password
+- To sign up
+  signup with site
+  see console for email debug printouts to get validation url
 
 
 Code Repositories
@@ -40,7 +67,7 @@ accessed as ssh://dev.civicboom.com/git/*reponame*
   - source for the cb-website-* packages
   - python-cbmisc also lives here (the entire package was 10 lines of
     makefile, so it was merged into the website makefile)
-- **android**
+- **mobile**
   - the android app, minimal files to build from the command line
     - so it can be automated
 	- no Eclipse bloat
@@ -50,17 +77,6 @@ accessed as ssh://dev.civicboom.com/git/*reponame*
   - source for the cb-devkit package
 - **buildmaster**
   - buildmaster config files
-
-
-Database schema
-~~~~~~~~~~~~~~~
-- A skeleton database needs to be created
-  - in admin_scripts, "./init_cbdb"
-- To populate the database with the base data
-  - in src, "paster setup-app development.ini"
-- To add example data, by testing the system
-  - in src, "nosetests"
-
 
 
 Geolocation data (Optional)
@@ -73,7 +89,7 @@ Geolocation data (Optional)
   - http://ftp.heanet.ie/mirrors/openstreetmap.org/planet-latest.osm.bz2
     - full planet, 10GB, decompresses to ~200GB and takes several days to load
 - place the .osm.bz2 file in admin_scripts/
-- init_cbdb will then notice the data file and load it when it creates the
+- "make test-db" will then notice the data file and load it when it creates the
   base databases
 
 

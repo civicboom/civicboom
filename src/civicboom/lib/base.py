@@ -7,21 +7,22 @@ Lots of stuff is imported here (eg controller action decorators) so that other
 controllers can do "from civicboom.lib.base import *"
 """
 from pylons.controllers       import WSGIController
-from pylons                   import request, response, app_globals, tmpl_context as c, url, config, session
+from pylons                   import request, response, app_globals, tmpl_context as c, config, session, url
 from pylons.controllers.util  import abort
-from pylons.templating        import render_mako
+from pylons.templating        import render_mako, render_mako_def
 from pylons.i18n.translation  import _, ungettext, set_lang
 from pylons.decorators.secure import https
 from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta
-from civicboom.lib.web                 import redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
+from civicboom.lib.web                 import url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize
 from civicboom.lib.permissions         import account_type
+
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
 
@@ -32,7 +33,7 @@ log = logging.getLogger(__name__)
 
 __all__ = [
     # pylons environment
-    "request", "response", "app_globals", "c", "url", "config",
+    "request", "response", "app_globals", "c", "url","config",
 
     # sqlalchemy environment
     "Session", "meta",
@@ -79,11 +80,12 @@ __all__ = [
 # Render
 #-------------------------------------------------------------------------------
 def render(*args, **kwargs):
-    if app_globals.cache_enabled:
-        return render_mako(*args, **kwargs)
-    else:
+    if not app_globals.cache_enabled:
         if 'cache_key'    in kwargs: del kwargs['cache_key']
         if 'cache_expire' in kwargs: del kwargs['cache_expire']
+    if len(args)==2:
+        return render_mako_def(*args, **kwargs)
+    else:
         return render_mako(*args, **kwargs)
 
 #-------------------------------------------------------------------------------
@@ -102,6 +104,48 @@ def chained(*dec_funs):
 web  = chained(auto_format_output, web_params_to_kwargs)
 auth = chained(authorize, authenticate_form)
 
+
+#-------------------------------------------------------------------------------
+# Setup Widget Env - from query string
+#-------------------------------------------------------------------------------
+
+widget_var_prefix = config["setting.widget.var_prefix"]
+
+def setup_widget_env():
+    """
+    Take QUERY_STRING params and setup widget globals for widget templates
+    """
+    #referer = current_referer()
+    #if referer:
+    #    referer = unquote_plus(referer)+'&'
+    def get_widget_varibles_from_env():
+        #def get_env_from_referer(var_name):
+        #    try:
+        #        # AllanC - when the Authkit intercepts an action to authenticate the current URL does not have the widget details to display properly
+        #        #          in this case we may need to get the widget details from the referer
+        #        #          this regex seeks a variable in the http_referer
+        #        #          as a botch the variables are delimted by '&' and I have appended one to the end [because /b was not working in the regex :( ]
+        #        return re.search(var_name+r'=(.+?)&',referer).group(1).encode('utf-8')
+        #    except:
+        #        return None
+        for key in [key for key in c.widget.keys() if widget_var_prefix+key in request.params]:  #app_globals.widget_variables:
+            value = request.params[widget_var_prefix+key].encode('utf-8')
+            if isinstance(c.widget[key], int): # keep widget int's as ints
+                try:
+                    c.widget[key] = int(value)
+                except:
+                    pass
+            else:
+                c.widget[key] = value
+                #setattr(c, var, request.params[var].encode('utf-8')) #Get variable from current request (override refferer if exist)
+            #elif referer:
+            #    setattr(c, var, get_env_from_referer(var)) # Get varible from referer
+    get_widget_varibles_from_env()
+    if c.widget['owner']:
+        owner = get_member(c.widget['owner'])
+        if owner:
+            c.widget['owner'] = owner.to_dict()
+    
 
 #-------------------------------------------------------------------------------
 # Base Controller
@@ -127,13 +171,16 @@ class BaseController(WSGIController):
         c.authenticated_form   = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs = None
 
-        #c.widget = dict(
-        #    theme    = 'light' ,
-        #    width    = 240 ,
-        #    height   = 320 ,
-        #    title    = '' ,
-        #    username = '' ,
-        #)
+        # Widget default settings
+        c.widget = dict(
+            theme     = 'light' ,
+            width     = 160 ,
+            height    = 200 ,
+            title     = _('Get involved')  ,
+            base_list = 'assignments_active',
+            owner     = ''  ,
+        )
+        setup_widget_env()
 
         # Login - Fetch logged in user from session id (if present)
         username                 = session_get('username')
@@ -155,9 +202,9 @@ class BaseController(WSGIController):
         elif 'lang' in session       :  self._set_lang(       session['lang']) # Lang set for this users session
         #elif c.logged_in_persona has lang: self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
         else                         :  self._set_lang(        config['lang']) # Default lang in config file
-
+        
         # User pending regisration? - redirect to complete registration process
-        if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url.current()):
+        if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url('current')):
             set_flash_message(_('Please complete the regisration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 
@@ -166,8 +213,8 @@ class BaseController(WSGIController):
         #          For development this is sufficent, but should not be used in a production env.
         #
         # TODO - yeah, we really need a STARTUP method that gets called to init these
-        if not hasattr(app_globals,'site_url'):
-            app_globals.site_host = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
+        #if not hasattr(app_globals,'site_url'):
+        c.host = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
             ##app_globals.site_url  = "http://" + app_globals.site_host
             #import urllib
             #app_globals.janrain_signin_url = urllib.quote_plus(url(controller='account', action='signin', host=app_globals.site_host, protocol='https'))
@@ -197,4 +244,8 @@ class BaseController(WSGIController):
         try:
             return WSGIController.__call__(self, environ, start_response)
         finally:
-            meta.Session.remove()
+            # apparently remove() doesn't always do a good job and we eventually
+            # run out of connections; close() works though
+            # http://www.mail-archive.com/sqlalchemy@googlegroups.com/msg05489.html
+            #meta.Session.remove()
+            meta.Session.close()

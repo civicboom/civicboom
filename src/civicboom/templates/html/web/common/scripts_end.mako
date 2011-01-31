@@ -24,6 +24,30 @@
         <script src="/javascript/_combined.foot.js"></script>
     % endif
 
+
+    ##----------------------------------------------------------------------------
+    ## JQuery SimpleModel Setup
+    ##----------------------------------------------------------------------------
+    ## http://www.ericmmartin.com/projects/simplemodal/
+	<script type="text/javascript">
+		$.extend($.modal.defaults, {
+			closeClass: "simplemodalClose" ,
+			##closeHTML : "<a href='#' class='icon icon_close' style='float: right;' title='Close'></a>" ,
+			##opacity   : 60 ,
+			onOpen: function (dialog) {
+				dialog.overlay.fadeIn('slow');
+				dialog.container.fadeIn('slow');
+				dialog.data.fadeIn('slow');
+			} ,
+			onClose: function (dialog) {
+				dialog.overlay.fadeOut('slow');
+				dialog.container.fadeOut('slow');
+				dialog.data.fadeOut('slow', function () {$.modal.close();});
+			},
+		});
+	</script>
+
+
 	## tinymce, should also be loaded on demand
 	<script src="/javascript/tiny_mce/tiny_mce.js"></script>
 </%def>

@@ -1,5 +1,10 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%!
+    import civicboom.lib.constants as constants
+    rss_url = True
+%>
+
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
@@ -35,7 +40,7 @@
                 self.attr.icon_type = 'current_user'
             
             self.attr.share_kwargs.update({
-                'url'  : h.url('member', id=self.id, host=app_globals.site_host, protocol='http') ,
+                'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
             })
         
         self.attr.frag_data_css_class = 'frag_member'
@@ -119,19 +124,19 @@
             <a class   = "icon icon_message"
                href    = "${url('messages',list='to')}"
                title   = "${_('Messages')}"
-               onclick = "cb_frag($(this), '${url('messages', list='to'          , format='frag')}', 'bridge'); return false;"
+               onclick = "cb_frag($(this), '${url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Messages')}</span></a>
     
             <a class   = "icon icon_message"
                href    = "${url('messages',list='sent')}"
                title   = "${_('Messages Sent')}"
-               onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'bridge'); return false;"
+               onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Messages')}</span></a>
             
             <a class   = "icon icon_notification"
                href    = "${url('messages', list='notification')}"
                title   = "${_('Notifications')}"
-               onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'bridge'); return false;"
+               onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Notifications')}</span></a>
         % endif
         
@@ -150,10 +155,10 @@
         
         ## Memers Content --------------------------------------------
         
-        % for list, icon in app_globals.contents_list_names.iteritems():
+        % for list, icon, decription in constants.contents_list_titles:
             ${frag_list.content_list(
                 d[list] ,
-                list ,
+                decription ,
                 h.args_to_tuple('contents', creator=self.id, list=list), 
                 icon = icon ,
             )}
