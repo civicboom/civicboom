@@ -32,12 +32,12 @@ test-db: skel-db
 	paster setup-app development.ini
 	nosetests
 
-data/live-data.sql:
+data/live-data.pgdump:
 	mkdir -p data
-	ssh -C civicboom.com /opt/cb/bin/dump_db > data/live-data.sql
+	ssh -C civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump
 
-live-db: skel-db data/live-data.sql
-	sudo -u postgres psql -q -f data/live-data.sql
+live-db: skel-db data/live-data.pgdump
+	sudo -u postgres pg_restore -d civicboom -f data/live-data.pgdump
 
 run:
 	paster serve --reload development.ini
