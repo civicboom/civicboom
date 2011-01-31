@@ -2,6 +2,11 @@
 ##${member_includes.member_list(d['list'])}
 <%inherit file="/frag/common/frag_lists.mako"/>
 
+<%!
+    rss_url = True
+%>
+
+
 <%def name="init_vars()">
     ${parent.init_vars()}
     <%        

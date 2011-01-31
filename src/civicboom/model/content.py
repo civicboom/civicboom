@@ -163,7 +163,7 @@ class Content(Base):
 
     def __link__(self):
         from pylons import url, app_globals
-        return url('content', id=self.id, host=app_globals.site_host)
+        return url('content', id=self.id, absolute=True)
 
     def clone(self, content):
         if content and content.id:
@@ -270,7 +270,7 @@ class Content(Base):
     @property
     def url(self):
         from pylons import url, app_globals
-        return url('content', host=app_globals.site_host, id=self.id)
+        return url('content', id=self.id, absolute=True)
 
     @property
     def content_short(self):

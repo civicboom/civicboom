@@ -1,58 +1,55 @@
 <%inherit file="./widget_base.mako"/>
-
-<%namespace name="member" file="/html/web/common/member.mako"/>
-
-<%! import json %>
-
 <%
-
-# Height calculations
-size_header        = 55
-size_footer        = 60
-size_action_bar    = 18
-size_flash_message = 0
-size_content       = 0
-
-if c.result.get('message'):
-	size_flash_message = 30;
-if c.widget_height:
-	size_content       = int(c.widget_height) - (size_header + size_footer + size_action_bar + size_flash_message) - 5 #borders mount up the 13 is the number of pixels of all the borders combined
-
-c.widget_height_content = size_content - 8 #Used for the QR Code to ensure correct size (the -8 is a hack because the padding is gets in the way)
+    size_font       =  9
+    size_header     = 24
+    size_footer     = 20
+    size_action_bar = 16
+    size_content    = c.widget['height'] - size_header - size_footer - size_action_bar
+    size_avatar     = 20
+  
+    color_border  = 'ccc'
+    color_header  = 'ccc'
+    color_content = 'eee'
+    
+    if not c.widget['owner']:
+        c.widget['owner'] = d.get('content',dict()).get('creator')
+    if not c.widget['owner']:
+        c.widget['owner'] = d.get('member')
+    if not c.widget['owner']:
+        from civicboom.lib.database.get_cached import get_member
+        owner_obj = get_member(c.id)
+        if owner_obj:
+            c.widget['owner'] = owner_obj.to_dict()
+    
+    owner = c.widget['owner']
+    title = c.widget['title']
 %>
-
-##------------------------------------------------------------------------------
-## Border
-##------------------------------------------------------------------------------
-
-<div class="widget_border">
-
-	<% id = c.widget_owner.username %>
+<div class="widget_border" style="width: 100%; border: 1px solid #${color_border}; font-size:${size_font}px;">
 
     ##----------------------------------------
     ## Header
     ##----------------------------------------
-    
-	<!--widget_header-->
-    <div class="widget_header" style="height:${size_header}px;"><div class="widget_header_footer">
-		## Floating about icon
-		<a class="tooltip_icon" style="float: right;" href="${h.url_from_widget(controller='widget',action='about')}" title="${_('What is this?')}"></a>
-		## Tables just work, CSS layouts are ****ing anoying ... 
-		<table><tr>
-			<td>${member.avatar(c.widget_owner.to_dict(), new_window=True)}</td>
-			<td class="title">	
-				<a href="${h.url('member', id=id)}" target="_blank">
-				% if c.widget_title:
-					${c.widget_title}
-				% else:
-					${c.widget_owner.name}
-					##insight: Share your news and opinion
-				% endif
-				</a>
-			</td>
+    <div class="widget_header" style="height:${size_header}px; background-color:#${color_header};">
+        <div class="padding">
+        <table><tr>
+            <td>
+                <a href="${h.url('member', id=owner['username'], subdomain='')}" target="_blank" title="${_('%s on _site_name') % owner['name'] or owner['username']}">
+                    <img src="${owner['avatar_url']}" alt="${owner['username']}" style="height:${size_avatar}px;"/>
+                </a>
+            </td>
+            <td class="title">	
+                <a href="${h.url('member', id=owner['username'], subdomain='')}" target="_blank" title="${_('%s on _site_name') % owner['name'] or owner['username']}">
+                    % if title:
+                        ${title}
+                    % else:
+                        ${owner['name']}
+                        ##insight: Share your news and opinion
+                    % endif
+                </a>
+            </td>
         </tr></table>
-    </div></div>
-	<!--end widget_header-->
+        </div>
+    </div>
     
     ##----------------------------------------
     ## Action Bar
@@ -79,107 +76,35 @@ c.widget_height_content = size_content - 8 #Used for the QR Code to ensure corre
 				<img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
               </a>
           % else:
-              <a href="${h.url_from_widget(controller='widget', action='signin')}">
-				${_("Sign up or Sign in to")}
+              <a href="${h.url(controller='account', action='signin', subdomain='')}" target="_blank">
+				${_("Signup Signin")}
 				<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
 			  </a>
           % endif
           </div>
-          <div class="clearboth_hack"></div>
+          ##<div class="clearboth_hack"></div>
     </div>
 	<!--end action_bar-->
-    
-    ##----------------------------------------
-    ## Flash Message
-    ##----------------------------------------
-    % if c.result['message'] != "":
-        <div class="flash_message" style="height: ${size_flash_message}px" class="status_${c.result['status']}">
-			<div style="padding: 0.25em;">
-				${c.result['message']}
-			</div>
-		</div>
-    % endif
-    
+
     ##----------------------------------------
     ## Content (Main) (scrollable vertically)
     ##----------------------------------------
     
-    <div class="widget_main" style="height: ${size_content}px;">    
-        ##----------------------------------------
-        ## Content (next template)
-        ##----------------------------------------    
+    <div class="widget_content" style="height: ${size_content}px; background-color:#${color_content};">
+        <div class="padding">
         ${next.body()}
+        </div>
     </div>
     
     ##----------------------------------------
     ## Footer
     ##----------------------------------------
-    
-	<!--widget_footer-->
-    <div class="widget_footer" style="height:${size_footer}px;"><div class="widget_header_footer">
-        <div class="powered_by">
-            ${_('Powered by')} <br/><a href="/" target="_blank"><img src="/images/logo.png" alt="${_('_site_name')} Logo" style="max-height: 1em;"/><span style="display: none;">${_('_site_name')}</span></a>
+    <div class="widget_footer" style="height:${size_footer}px; background-color:#${color_header};">
+        <div class="padding">
+            <a class="icon icon_boom"      title="${_('Powered by _site_name')}" target="_blank" href="${h.url('/', subdomain='')}" style="float:right;"><span>${_('_site_name')}</span></a>
+            <a class="icon icon_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='get_mobile', subdomain='')}"><span>Mobile</span></a>
+            <a class="icon icon_mobile"    title="${_('Embed this widget')}"     target="_blank" href="${h.url(controller='misc', action='get_widget', subdomain='')}"><span>Embed</span></a>
+            <a class="icon icon_rss"       title="${_('RSS')}"                   target="_blank" href="${h.url('member', id=owner['username'], format='rss', subdomain='')}"><span>RSS</span></a>
         </div>
-      
-      
-        <ul>
-          <li class="widget_item_popup">
-            <a class="icon icon_mobile" href="${h.url_from_widget(controller='widget', action='get_mobile')}">
-                ${_('Mobile reporting')}
-            </a>
-          </li>
-          % if c.widget_owner:
-          <li class="widget_item_popup">
-            <a href="${h.url_from_widget(controller='widget', action='get_widget')}">
-                ${_('Embed this widget')}
-            </a>
-          </li>
-          % endif
-        </ul>
-        
-        ##----------------------------------------
-        ## Feeds links
-        ##----------------------------------------
-        
-        % if c.widget_owner:
-        <ul class="widget_icon_list">
-            ##<li><%include file="/design09/gadget/get_gadget_link_button.mako"/></li>
-            <li><a target="_blank" class="icon icon_rss" href="${h.url('member', id=id, format='rss')}" title="${c.widget_owner.username} RSS Feed"><span>RSS</span></a></li>
-            ##% if c.widget_owner.twitter_username:
-            ##  <li><a target="_blank" class="icon icon_twitter" href="http://twitter.com/${c.widget_owner.twitter_username}" title="${c.widget_owner.username} on twitter"><span>twitter</span></a></li>
-            ##% endif
-            <li>&nbsp;</li>
-        </ul>
-        % endif
-        
-    </div></div><!--end widget_footer-->
-    
-</div><!--end widget_border-->
-
-##------------------------------------------------------------------------------
-## Old Popup reference
-##------------------------------------------------------------------------------
-
-<%doc>
-## inside       <li class="widget_item_popup">
-
-<%def name="mobile_reporting_popup()">
-<div class="popup_content widget_content">
-  <p class="content_title">Comming soon!</p>
-  <p>Report directly from your mobile phone</p>
+    </div>
 </div>
-</%def>
-
-<%def name="signup_popup()">
-<div class="popup_content widget_content">
-  <p class="content_title">Signup to Civicboom</p>
-  <p>sign up + auto_follow + alert organisation to widget signup</p>
-</div>
-</%def>
-
-<%def name="get_widget_popup()">
-<div class="popup_content widget_content">
-##widget_get_widget.mako
-</div>
-</%def>
-</%doc>

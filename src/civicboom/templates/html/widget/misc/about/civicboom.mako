@@ -1,4 +1,4 @@
-<%inherit file="./widget_content.mako"/>
+<%inherit file="/html/widget/common/widget_content.mako"/>
 
 <h2>${_("What is _site_name?")}</h2>
 <ul>
@@ -7,7 +7,14 @@
 
 <h2>${_("What is this widget?")}</h2>
 <ul>
-	<li>${c.widget_owner.username} is asking you for your news and insight, empowering you to participate in what matters to you.</li>
+    <%
+        name = ""
+        try:
+            name = c.widget['owner']['name']
+        except:
+            pass
+    %>
+	<li>${name} is asking you for your news and insight, empowering you to participate in what matters to you.</li>
 </ul>
   
 <h2>${_("What is the Mobile App?")}</h2>

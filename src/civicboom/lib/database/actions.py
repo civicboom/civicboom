@@ -386,8 +386,16 @@ def boom_content(content, member, delay_commit=False):
     #elif content.__type__ == 'assignment':
     #    member.send_message_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
     
-    #AllanC - TODO: check content already boomed? raise error
-    #               check content is PUBLIC or raise error
+    # Validation
+    if content.private == True:
+        raise action_error(_("cannot boom private content"), code=400)
+    boom = None
+    try:
+        boom = Session.query(Boom).filter(Boom.member_id==member.id).filter(Boom.content_id==content.id).one()
+    except:
+        pass
+    if boom:
+        raise action_error(_("You have previously boomed this _content"), code=400)
     
     boom = Boom()
     boom.content_id = content.id

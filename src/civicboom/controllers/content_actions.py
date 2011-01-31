@@ -163,7 +163,9 @@ class ContentActionsController(BaseController):
             # A convenience feature for flow of new users. If they are following nobody (they are probably a new user), then auto follow the assignment creator
             if c.logged_in_persona.num_following == 0:
                 c.logged_in_persona.follow(assignment.creator)
-            return action_ok(_("_assignment accepted"))
+            return action_ok(_("_assignment accepted"),
+                             html_action_redirect_url = url('content', id=id)
+                            )
         #elif isinstance(status,str):
         raise action_error(_('Unable to accept _assignment'), code=400)
 
