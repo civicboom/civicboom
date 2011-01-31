@@ -173,12 +173,17 @@ class BaseController(WSGIController):
 
         # Widget default settings
         c.widget = dict(
-            theme     = 'light' ,
-            width     = 160 ,
-            height    = 200 ,
-            title     = _('Get involved')  ,
-            base_list = 'assignments_active',
-            owner     = ''  ,
+            theme      = 'light' ,
+            width      = 160 ,
+            height     = 200 ,
+            title      = _('Get involved')  ,
+            base_list  = 'assignments_active',
+            owner      = '' ,
+            color_font       = '000' ,
+            color_border     = 'ccc' ,
+            color_header     = 'ccc' ,
+            color_action_bar = 'ddd',
+            color_content    = 'eee' ,
         )
         setup_widget_env()
 
