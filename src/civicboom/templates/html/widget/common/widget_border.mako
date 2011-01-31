@@ -3,8 +3,8 @@
     size_font       =  9
     size_header     = 24
     size_footer     = 20
-    size_action_bar = 16
-    size_content    = c.widget['height'] - size_header - size_footer - size_action_bar - 3 #there are 4 * 1px borders
+    size_action_bar = 13
+    size_content    = c.widget['height'] - size_header - size_footer - size_action_bar - 5 #there are 4 * 1px borders
     size_avatar     = 20
   
     
@@ -57,7 +57,7 @@
     ##----------------------------------------
     
 	<!--action_bar-->
-    <div class="action_bar" style="height:${size_action_bar}px; background-color:#${c.widget['color_action_bar']};">
+    <div class="action_bar" style="height:${size_action_bar}px; background-color:#${c.widget['color_action_bar']}; border: 1px solid #${c.widget['color_border']}; border-left: none; border-right: none; ">
         ##----------------------------------------
         ## Overrideable (normally back)
         ##----------------------------------------
