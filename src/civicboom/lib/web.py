@@ -11,6 +11,7 @@ import formencode
 import os
 import time
 import json
+import re
 from decorator import decorator
 from pprint import pformat
 import logging
@@ -72,7 +73,8 @@ def url(*args, **kwargs):
         host = c.host
         for possible_subdomain in app_globals.subdomains.keys():
             if possible_subdomain:
-                host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
+                #host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
+                host = re.sub('^'+possible_subdomain+r'\.', '', host)
         kwargs['host'] = subdomain + host
         
     args = list(args)
