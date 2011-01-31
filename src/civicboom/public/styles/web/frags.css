@@ -29,9 +29,9 @@
   */
 }
 
-#frag_containers .frag_bridge {
-  width: 250px;
-}
+#frag_containers .frag_col_1 {width: 250px;}
+/* #frag_containers .frag_col_2 {width: 500px;} /* default is width 2 */
+
 
 /*----------------------------------------------------------------------------*/
 /* Action/Title Bar                                                           */

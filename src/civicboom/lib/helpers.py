@@ -7,7 +7,7 @@ available to Controllers. This module is available to templates as 'h'.
 #from webhelpers.html.tags import checkbox, password
 from webhelpers.pylonslib.secure_form import authentication_token, secure_form
 
-from pylons import url, config, app_globals, tmpl_context as c, request
+from pylons import config, app_globals, tmpl_context as c, request
 #from pylons.i18n.translation import _
 from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
@@ -19,7 +19,7 @@ from civicboom.lib.misc import args_to_tuple
 # use relative import so that "import helpers" works
 #from civicboom.lib.text import scan_for_embedable_view_and_autolink
 from text import scan_for_embedable_view_and_autolink
-from web import current_url
+from web import current_url, url
 
 import webhelpers.html.tags as html
 
@@ -32,6 +32,10 @@ import json
 import copy
 import time
 import datetime
+
+
+
+
 
 def get_captcha(lang='en', theme='red'):
     """
@@ -49,7 +53,7 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
     Generate Janrain IFRAME component
     """
     if not return_url:
-        return_url = urllib.quote_plus(url.current(host=app_globals.site_host, protocol='https')) #controller='account', action='signin',
+        return_url = urllib.quote_plus(url('current', host=c.host, protocol='https')) #controller='account', action='signin',
     query_params = ""
     for karg in kargs:
         query_params += karg+"="+str(kargs[karg])
@@ -125,14 +129,8 @@ def wh_url(folder, filename):
     else:
         return config["warehouse_url"]+"/"+folder+"/"+filename
 
-def url_from_widget(*args, **kargs):
-    if hasattr(app_globals,'widget_variables'):
-        for var in app_globals.widget_variables:
-            if var in request.params:
-                kargs[var] = request.params.get(var)
-            #if hasattr(c,var) and getattr(c,var) != None and var not in kargs:
-            #    kargs[var] = getattr(c,var)
-    return url(*args,**kargs)
+
+
 
 def uniqueish_id(*args):
     """
@@ -383,7 +381,7 @@ def frag_link(id, frag_url, value, title='', css_class=''):
     # If javascript is disabled the link functionas as normal
     static_link = HTML.a(
         value ,
-        href    = url.current(**url_kwargs) ,
+        href    = url('current', **url_kwargs) ,
         class_  = css_class ,
         title   = title ,
         onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); $('#%(id)s').html('<img src=\\\'/images/media_placeholder.gif\\\'>'); $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,
@@ -416,11 +414,24 @@ def cb_frag_link(*args, **kwargs):
     return HTML.a(*args, **kwargs)
 
 
+
+#-------------------------------------------------------------------------------
+# Get object from Civicboom URL 
+#-------------------------------------------------------------------------------
+regex_content_url = re.compile(r'(?:.*?)/contents/(.*?)[/&?#\n. "]')
+regex_member_url  = re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "]')
+def get_object_from_action_url(action_url):
+    m = re.match(regex_content_url, action_url)
+    if m:
+        return ( ['content'], dict(id=m.group(1)) )
+    m = re.match(regex_member_url, action_url)
+    if m:
+        return ( ['member'], dict(id=m.group(1)) )
+    return (None,None)
+
 #-------------------------------------------------------------------------------
 # Notification "Links" to "Frag Links"
 #-------------------------------------------------------------------------------
-
-
 
 regex_content_links = re.compile(r'<a(?:[^<>]*?)href="(?:[^<>]*?)/contents/(.*?)[/&?#\n. "](?:[^<>]*?)>(.*?)</a>') # \1 = content id \2 = text
 regex_member_links  = re.compile(r'<a(?:[^<>]*?)href="(?:[^<>]*?)/members/(.*?)[/&?#\n. "](?:[^<>]*?)>(.*?)</a>') # \1 = member id \2 = text

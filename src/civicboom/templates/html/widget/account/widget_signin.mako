@@ -52,7 +52,7 @@ ${popup(h.literal("hello"), javascript_function_name='test', title=_('Test'), he
 ## Sign up
 ##------------------------------------------------------------------------------
 
-<form action="${h.url_from_widget(controller='register', action='email')}" method="post">
+<form action="${h.url(controller='register', action='email')}" method="post">
   <fieldset><legend>Sign up</legend>
     <label for="username_register"     >Username</label><input type="text"  id="username_register"      name="username" size="15" />
     <br/>

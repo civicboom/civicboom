@@ -1,4 +1,4 @@
-<%inherit file="./widget_content.mako"/>
+<%inherit file="/html/widget/common/widget_content.mako"/>
 
 <div class="get_mobile">
     <p class="content_title">${_("Android mobile application")}</p>

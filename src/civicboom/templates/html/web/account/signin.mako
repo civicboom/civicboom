@@ -44,7 +44,7 @@
 <%def name="signin()">
 <section>
 	<h1>${_("Sign in")}</h1>
-	<form action="${url.current(format='redirect')}" method="POST">
+	<form action="${h.url('current', format='redirect')}" method="POST">
 		<table class="form">
 			<tr>
 				<td width="50"><label for="username">${_("Username")}</label></td>

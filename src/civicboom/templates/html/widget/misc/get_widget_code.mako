@@ -1,3 +1,4 @@
+<%doc>
 <%def name="get_widget_vars(member=None)"><%
       if hasattr(member, 'username'):
           member = member.username
@@ -13,7 +14,7 @@
       self.title    = c_('widget_title')    or member
       self.username = c_('widget_username') or member
 %></%def>
-
+</%doc>
 
 ##------------------------------------------------------------------------------
 ## Widget Code
@@ -25,16 +26,11 @@
         id    = 'CivicboomWidget'
         title = '${_("_site_name Widget")}'
         src   = '${h.url(
-            host=app_globals.site_host, protocol='http',
-            controller='widget', action='main',
-            widget_username = self.username,
-            widget_theme    = self.theme ,
-            widget_title    = self.title ,
-            widget_width    = self.width ,
-            widget_height   = self.height,
+            'member', id=self.username,
+            subdomain='widget', protocol='http',
         )}'
         width='${self.width}' height='${self.height}' scrolling='no' frameborder='0'>'
-    <a href='${h.url(host=app_globals.site_host, controller='members', action='show', id=member)}'>
+    <a href='${h.url('member', id=self.username, subdomain='')}'>
         ${_('%ss _assigments on _site_name' % member)}
     </a>
 </iframe>
@@ -107,7 +103,7 @@
         <script language="javascript" type="text/javascript">
           function generate_widget_link() {
             var link = ""
-            link += "<iframe name='${_("_site_name")}' title='${_("_site_name Widget")}' src='http://${app_globals.site_host}/widget/main?";
+            link += "<iframe name='${_("_site_name")}' title='${_("_site_name Widget")}' src='http://${c.host}/widget/main?";
             link += "widget_username="+Url.encode("${member}")+"&";
             if (document.widget_customisation.theme[0].checked) {link += "widget_theme=light&";}
             if (document.widget_customisation.theme[1].checked) {link += "widget_theme=dark&" ;}
@@ -116,7 +112,7 @@
             var height = document.widget_customisation.height.value
             link += "widget_width="+width+"&";
             link += "widget_height="+height;
-            link += "' width='"+width+"' height='"+height+"' scrolling='no' frameborder='0'><a href='${h.url(host=app_globals.site_host, controller='members', action='show', id=member)}'>${_('%ss _assigments on _site_name' % member)}</a></iframe>";
+            link += "' width='"+width+"' height='"+height+"' scrolling='no' frameborder='0'><a href='${h.url('member', subdomain='widget', id=member)}'>${_('%ss _assigments on _site_name' % member)}</a></iframe>";
             document.widget_creator.widget_link.value = link
             
             document.getElementById("widget_container").innerHTML = link

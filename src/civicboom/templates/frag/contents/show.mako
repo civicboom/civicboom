@@ -10,6 +10,9 @@
 ## for deprication
 <%namespace name="loc"              file="/html/web/common/location.mako"     />
 
+<%!
+    rss_url = True
+%>
 
 ##------------------------------------------------------------------------------
 ## Variables
