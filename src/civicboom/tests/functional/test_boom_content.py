@@ -36,7 +36,7 @@ class TestBoomController(TestController):
         # Does unitfriend have the 'boom' action
         response = self.app.get(url('content', id=content_id, format='json'), status=200)
         response_json = json.loads(response.body)
-        assert 'boomed by unitfriend'
+        #assert 'boomed by unitfriend'
         assert 'boom' in response_json['data']['actions']
         boom_count = int(response_json['data']['content']['boom_count'])
         
@@ -104,3 +104,20 @@ class TestBoomController(TestController):
         #-----------------------------------------------------------------------
         
         # TODO: try to boom private content - "should get error"
+        
+        #-----------------------------------------------------------------------
+        
+        # Delete content that has been boomed to test Delete cascade behaviour
+        
+        self.log_in_as('unittest')
+        
+        response = self.app.delete(
+            url('content', id=content_id, format="json"),
+            params={'_authentication_token': self.auth_token,},
+            status=200
+        )
+
+        # Check that the content DOSE NOT appear in unitfriends profile
+        response = self.app.get(url('member', id='unitfriend', format='json'), status=200)
+        response_json = json.loads(response.body)
+        assert 'Content to BOOM!' not in response

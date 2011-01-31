@@ -1,10 +1,10 @@
 """The application's Globals object"""
 
-#from pylons import config
 from beaker.cache import CacheManager
 from beaker.util import parse_cache_config_options
 
 from pylons import config
+from pylons.i18n.translation  import _
 
 
 from paste.deploy.converters import asbool
@@ -35,11 +35,8 @@ class Globals(object):
         self.memcache      = memcache.Client(config['service.memcache.server'].split(), debug=0)
 
         self.user_defaults = SafeConfigParser()
-        self.user_defaults.read("user_defaults.ini")
-
-        # FIXME: spelling, theame -> theme
-        #self.widget_variables = ['widget_theme', 'widget_title', 'widget_username', 'widget_width', 'widget_height']
-
+        self.user_defaults.read("user_defaults.ini")        
+        
         self.subdomains = {
             ''      : 'web'    ,
             'www'   : 'web'    ,
@@ -49,11 +46,3 @@ class Globals(object):
             'm'     : 'mobile' ,
         }
 
-        # in the form list_name, icon, display_text
-        self.contents_list_names = {
-            'drafts'              : 'draft'      ,
-            'assignments_active'  : 'assignemnt' ,
-            'assignments_previous': 'assignment' ,
-            'responses'           : 'response'   ,
-            'articles'            : 'article'    ,
-        }

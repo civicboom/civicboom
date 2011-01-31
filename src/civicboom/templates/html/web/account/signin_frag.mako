@@ -1,9 +1,5 @@
 <%inherit file="/html/web/common/frag_container.mako"/>
 
-<%!
-    from civicboom.lib.web import cookie_get
-%>
-
 ##------------------------------------------------------------------------------
 ## Title - Override
 ##------------------------------------------------------------------------------
@@ -18,14 +14,9 @@
     <%        
         self.attr.frags = [signin]
         
-        self.attr.action_object_url = None
-        args, kwargs = h.get_object_from_action_url( cookie_get('login_redirect') )
-        if args and kwargs:
-            kwargs['format'] = 'frag'
-            self.attr.action_object_url = url(*args, **kwargs)
-        
-        if action_object_url:
+        if hasattr(c,'action_objects'):
             self.attr.frags.append(action_object_frag)
+            self.attr.action_object_frag_url = c.action_objects['frag_url']
     %>
 </%def>
 
@@ -34,5 +25,5 @@
 </%def>
 
 <%def name="action_object_frag()">
-    <!--#include file="${action_object_url}"-->
+    <!--#include file="${self.attr.action_object_frag_url}"-->
 </%def>

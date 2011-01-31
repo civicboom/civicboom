@@ -16,6 +16,10 @@
 ## Signin Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
+    % if hasattr(c, 'action_objects'):
+        ${c.action_objects['description']}
+        ##${c.action_objects['action_object']}
+    % endif
     ${signin.signin()}
     ${signin.signup()}
     ${signin.janrain()}

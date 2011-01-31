@@ -2,6 +2,9 @@
 
 <%!
     import copy
+    import civicboom.lib.constants as constants
+    
+    rss_url = True
 %>
 
 <%namespace name="member_includes" file="/html/web/common/member.mako" />
@@ -18,8 +21,9 @@
         #self.attr.auto_georss_link = True
         
         args, kwargs = c.web_params_to_kwargs
-        self.attr.title     = "%s (%s)" % (kwargs.get('list'), d['list']['count'] )
-        self.attr.icon_type = app_globals.contents_list_names.get(kwargs.get('list'))
+        icon, description = constants.get_list_titles(kwargs.get('list'))
+        self.attr.title     = "%s (%s)" % (description, d['list']['count'] )
+        self.attr.icon_type = icon
     %>
 </%def>
 <%def name="body()">

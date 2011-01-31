@@ -19,8 +19,8 @@
 </%def>
 
 ## AllanC - note: as padding gets ADDED to a components size this buggers up the layout when we want the widget_component to take up 100% size, the padding is added so it's 105% (or so)
-<div class="widget_content">
-    <div class="widget_content_padding">
-        ${next.body()}
-    </div>
-</div>
+##<div class="widget_content">
+##    <div class="widget_content_padding">
+${next.body()}
+##    </div>
+##</div>

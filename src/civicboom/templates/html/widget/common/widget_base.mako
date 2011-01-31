@@ -9,9 +9,10 @@
 		##----------------------------------------------------------------------
 		% if config['development_mode']:
 		<link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-grids-min.css" />
-		<link rel="stylesheet" type="text/css" href="/styles/common/thumbnails.css" />
+        <link rel="stylesheet" type="text/css" href="/styles/common/icons.css" />
+		##<link rel="stylesheet" type="text/css" href="/styles/common/thumbnails.css" />
 		<link rel="stylesheet" type="text/css" href="/styles/widget/layout.css" />
-		<link rel="stylesheet" type="text/css" href="/styles/widget/widget_size_wide.css" />
+		##<link rel="stylesheet" type="text/css" href="/styles/widget/widget_size_wide.css" />
 		% else:
 		<link rel="stylesheet" type="text/css" href="/styles/widget.css" />
 		% endif
@@ -45,10 +46,10 @@
 	#if isinstance(c.widget_width, basestring) and int(c.widget_width) >= 280:
 	#    additonal_layout = "wide"
     %>
-    <body id="CivicboomWidget">
-        <div class="theme_${c.widget['theme']} ${additonal_layout}" style="width:${c.widget['width']}px;">
-            ${next.body()}
-        </div>
+    <body id="CivicboomWidget" class="" style="width:${c.widget['width']}px; height:${c.widget['height']}px;">
+        ##<div class="theme_${c.widget['theme']} ${additonal_layout}" style="width:${c.widget['width']}px;">
+        ${next.body()}
+        ##</div>
     </body>
     
 	${scripts_end.google_analytics_end()}

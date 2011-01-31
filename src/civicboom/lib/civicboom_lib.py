@@ -3,6 +3,7 @@ Set of helpers specific to the Civicboom project
   (these are not part of misc because misc continas more genereal functions that could be used in a range of projects)
 """
 
+import civicboom.lib.constants as constants
 from civicboom.lib.base import url, app_globals, c, config, _
 
 
@@ -22,7 +23,6 @@ from civicboom.lib.services.tiny_url        import tiny_url
 
 from civicboom.lib.text          import clean_html_markup, strip_html_tags, safe_python_strings
 from civicboom.lib.helpers       import truncate
-
 
 
 from sets import Set # may not be needed in Python 2.7+
@@ -321,3 +321,44 @@ def profanity_filter(content, delay_commit=False):
         #return False
     #return True
 
+
+
+#-------------------------------------------------------------------------------
+# Signin Actions
+#-------------------------------------------------------------------------------
+
+
+def get_signin_action_objects():
+    """
+    If signing in and performing an action
+    Will return ()
+    
+    """
+    from civicboom.lib.web import cookie_get
+    from civicboom.lib.helpers import get_object_from_action_url
+    from civicboom.controllers.members  import MembersController
+    from civicboom.controllers.contents import ContentsController
+    content_show = ContentsController().show
+    member_show  = MembersController().show
+
+    
+    # If performing an action we may want to display a custom message with the login
+    login_redirect_url = cookie_get('login_redirect') or ''
+    for action_identifyer, action_description in constants.actions_list:
+        if action_identifyer in login_redirect_url:
+            args, kwargs = get_object_from_action_url( login_redirect_url )
+            if args and kwargs:
+                # Generate action object frag URL
+                kwargs['format'] = 'frag'
+                action_object_frag_url = url(*args, **kwargs)
+                # Find action object
+                if 'content' in args and 'id' in kwargs:
+                    action_object = content_show(id=kwargs['id'])
+                if 'member' in args and 'id' in kwargs:
+                    action_object = member_show(id=kwargs['id'])
+            return dict(
+                description   = action_description     ,
+                action_object = action_object          ,
+                frag_url      = action_object_frag_url ,
+            )
+    return None

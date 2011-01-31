@@ -1,5 +1,10 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%!
+    import civicboom.lib.constants as constants
+    rss_url = True
+%>
+
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
@@ -150,10 +155,10 @@
         
         ## Memers Content --------------------------------------------
         
-        % for list, icon in app_globals.contents_list_names.iteritems():
+        % for list, icon, decription in constants.contents_list_titles:
             ${frag_list.content_list(
                 d[list] ,
-                list ,
+                decription ,
                 h.args_to_tuple('contents', creator=self.id, list=list), 
                 icon = icon ,
             )}

@@ -9,7 +9,7 @@ controllers can do "from civicboom.lib.base import *"
 from pylons.controllers       import WSGIController
 from pylons                   import request, response, app_globals, tmpl_context as c, config, session, url
 from pylons.controllers.util  import abort
-from pylons.templating        import render_mako
+from pylons.templating        import render_mako, render_mako_def
 from pylons.i18n.translation  import _, ungettext, set_lang
 from pylons.decorators.secure import https
 from webhelpers.pylonslib.secure_form import authentication_token
@@ -80,11 +80,12 @@ __all__ = [
 # Render
 #-------------------------------------------------------------------------------
 def render(*args, **kwargs):
-    if app_globals.cache_enabled:
-        return render_mako(*args, **kwargs)
-    else:
+    if not app_globals.cache_enabled:
         if 'cache_key'    in kwargs: del kwargs['cache_key']
         if 'cache_expire' in kwargs: del kwargs['cache_expire']
+    if len(args)==2:
+        return render_mako_def(*args, **kwargs)
+    else:
         return render_mako(*args, **kwargs)
 
 #-------------------------------------------------------------------------------
@@ -173,8 +174,8 @@ class BaseController(WSGIController):
         # Widget default settings
         c.widget = dict(
             theme     = 'light' ,
-            width     = 240 ,
-            height    = 320 ,
+            width     = 160 ,
+            height    = 200 ,
             title     = _('Get involved')  ,
             base_list = 'assignments_active',
             owner     = ''  ,

@@ -9,7 +9,7 @@
     
     frag_url            = True
     html_url            = True
-    rss_url             = True
+    rss_url             = False
     ##auto_georss_link    = False
     
     help_frag           = None # This can be set to a string name to activate '/misc/help/HELP_FRAG' to render '/frag/help/HELP_FRAG.mako'

@@ -418,20 +418,15 @@ def cb_frag_link(*args, **kwargs):
 #-------------------------------------------------------------------------------
 # Get object from Civicboom URL 
 #-------------------------------------------------------------------------------
-regex_content_url = re.compile(r'/contents/(.*?)[/&?#\n. "]')
-regex_member_url  = re.compile(r'/members/(.*?)[/&?#\n. "]')
+regex_content_url = re.compile(r'(?:.*?)/contents/(.*?)[/&?#\n. "]')
+regex_member_url  = re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "]')
 def get_object_from_action_url(action_url):
-    print ""
-    print "finding"
-    print action_url
     m = re.match(regex_content_url, action_url)
     if m:
-        print "contnt"
-        return ( ('content'), dict(id=m.group(1)) )
+        return ( ['content'], dict(id=m.group(1)) )
     m = re.match(regex_member_url, action_url)
     if m:
-        print "member"
-        return ( ('member'), dict(id=m.group(1)) )
+        return ( ['member'], dict(id=m.group(1)) )
     return (None,None)
 
 #-------------------------------------------------------------------------------

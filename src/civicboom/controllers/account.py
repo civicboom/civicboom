@@ -1,15 +1,18 @@
 from civicboom.lib.base import *
 from civicboom.lib.misc import make_username
 
+import civicboom.lib.constants as constants
+
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
 #from civicboom.controllers.widget   import setup_widget_env
-#from civicboom.lib.helpers          import url_from_widget
-from civicboom.lib.web import cookie_get
+#from civicboom.lib.helpers          import get_object_from_action_url
+#from civicboom.lib.web import cookie_get
+
 
 # Import other controller actions
 from civicboom.controllers.register import register_new_janrain_user
-from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password
+from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password, get_signin_action_objects
 from civicboom.lib.database.get_cached import get_member
 
 
@@ -47,11 +50,12 @@ class AccountController(BaseController):
 
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':
-            if '/accept' in cookie_get('login_redirect'):
+            
+            action_objects = get_signin_action_objects()
+            if action_objects:
+                c.action_objects = action_objects
                 return render("/html/web/account/signin_frag.mako")
-            #setup_widget_env()
-            #if getattr(c,'widget_username',None): #'widget_username' in request.params:
-            #    return render("/html/widget/widget_signin.mako")
+            
             return render("/html/web/account/signin.mako")
         
         c.auth_info    = None
