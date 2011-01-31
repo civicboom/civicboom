@@ -1,3 +1,4 @@
+<%doc>
 <%inherit file="/html/web/common/frag_container.mako"/>
 
 <%def name="title()">
@@ -14,6 +15,9 @@
 
 <%def name="frag()">
 	##<!--#include file=""-->
-    <% frag = "/frag/%s" % self.attr.frag %>
+    <%
+		frag = "/frag/%s" % self.attr.frag
+	%>
     <%include file=frag />
 </%def>
+</%doc>

@@ -244,4 +244,8 @@ class BaseController(WSGIController):
         try:
             return WSGIController.__call__(self, environ, start_response)
         finally:
-            meta.Session.remove()
+            # apparently remove() doesn't always do a good job and we eventually
+            # run out of connections; close() works though
+            # http://www.mail-archive.com/sqlalchemy@googlegroups.com/msg05489.html
+            #meta.Session.remove()
+            meta.Session.close()
