@@ -8,6 +8,8 @@ Things for a sysadmin to do
     adduser <username> developers
 - Give them access to the dev website
     htpasswd /home/code/htpasswd <username>
+- Set up a google account
+    https://www.google.com/a/cpanel/civicboom.com/
 - Give them access to redmine
     https://dev.civicboom.com/redmine/users/new
 
@@ -28,7 +30,10 @@ Packages
 - once the website and dependencies are installed, a developer can clone
   the repository into their home folder and work on it there, running the
   development setup on port 5000
-  - in src, "paster serve --reload development.ini"
+  - from src
+  - once, "make site" to compile some static bits (eg language translations)
+  - "make test-db" to wipe the DB and fill it with test data
+  - "make run" to run in development mode
 
 
 Code Repositories
@@ -40,7 +45,7 @@ accessed as ssh://dev.civicboom.com/git/*reponame*
   - source for the cb-website-* packages
   - python-cbmisc also lives here (the entire package was 10 lines of
     makefile, so it was merged into the website makefile)
-- **android**
+- **mobile**
   - the android app, minimal files to build from the command line
     - so it can be automated
 	- no Eclipse bloat
@@ -50,17 +55,6 @@ accessed as ssh://dev.civicboom.com/git/*reponame*
   - source for the cb-devkit package
 - **buildmaster**
   - buildmaster config files
-
-
-Database schema
-~~~~~~~~~~~~~~~
-- A skeleton database needs to be created
-  - in admin_scripts, "./init_cbdb"
-- To populate the database with the base data
-  - in src, "paster setup-app development.ini"
-- To add example data, by testing the system
-  - in src, "nosetests"
-
 
 
 Geolocation data (Optional)
