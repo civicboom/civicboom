@@ -170,7 +170,7 @@ def _init_search_filters():
     search_filters = {
         'id'         : append_search_id ,
         'creator'    : append_search_creator ,
-        'query'      : append_search_text ,
+        'term'       : append_search_text ,
         'location'   : append_search_location ,
         'type'       : append_search_type ,
         'response_to': append_search_response_to ,
@@ -220,6 +220,8 @@ class ContentsController(BaseController):
         @param sort - comma separted list of col names e.g rating,creator,-update_date (- denotes alternate sorting)
         """
         # url('contents')
+        
+        print kwargs
         
         # Permissions
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
