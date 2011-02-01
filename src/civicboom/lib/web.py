@@ -51,6 +51,7 @@ def url(*args, **kwargs):
     """
     Passthough for Pylons URL generator with a few new features
     """
+    
     # shortcut for absolute URL
     if 'absolute' in kwargs:
         kwargs['host'] = c.host
@@ -66,7 +67,7 @@ def url(*args, **kwargs):
     # Moving between subdomains
     #  remove all known subdomains from URL and instate the new provided one
     if 'subdomain' in kwargs:
-        subdomain = kwargs.pop('subdomain')
+        subdomain = str(kwargs.pop('subdomain'))
         assert subdomain in app_globals.subdomains.keys()
         if subdomain:
             subdomain += '.'
