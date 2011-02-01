@@ -109,8 +109,10 @@
 ##------------------------------------------------------------------------------
 
 <%def name="actions_specific()">
-    <a href='' class="icon icon_save"    onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save')}"            ><span>${_('Save')}            </span></a>
-    <a href='' class="icon icon_preview" onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save and Preview')}"><span>${_('Save and Preview')}</span></a>
+    ## AllanC - for now just use buttons at bottom
+    ##<a href='' class="icon icon_save"    onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save')}"            ><span>${_('Save')}            </span></a>
+    ##<a href='' class="icon icon_preview" onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save and Preview')}"><span>${_('Save and Preview')}</span></a>
+    
     ##cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');
 </%def>
 
