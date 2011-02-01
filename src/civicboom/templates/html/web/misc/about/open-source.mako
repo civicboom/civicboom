@@ -141,3 +141,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 <p>Social Network Icon Pack by Komodo Media, Rogie King is licensed under a Creative Commons Attribution-Share Alike 3.0 Unported License.</p>
 <a href="http://www.komodomedia.com/download/#social-network-icon-pack">komodomedia.com</a>
 Creative Commons License
+
+<p>
+    <a href="http://www.softicons.com/free-icons/toolbar-icons/16x16-free-toolbar-icons-by-aha-soft/mobile-icon">Aha-Soft</a> mobile icon
+</p>

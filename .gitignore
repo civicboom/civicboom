@@ -19,3 +19,9 @@ debian/*.css
 # misc
 coverage/
 tmp/
+
+# swap and eclipse/aptana project files
+*.swp
+.project
+.pydevproject
+.settings/*

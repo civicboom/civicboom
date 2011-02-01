@@ -30,7 +30,7 @@
           </select>
           <p class="form_instructions">${_('Comment (optional)')}</p>
           <textarea name="comment" style="width:90%; height:3em;"></textarea>
-          <input type="submit" name="flagit" value="Flag it" class=""/>
+          <input type="submit" name="flagit" value="Flag it" class="" onclick="$.modal.close();"/>
           ##<a class="simplemodal-close">${_("Cancel")}</a>
       ${h.end_form()}
     ##</div>

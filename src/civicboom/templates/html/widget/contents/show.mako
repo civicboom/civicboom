@@ -11,7 +11,7 @@
 
 <a href="${h.url('content',id=id, subdomain='')}" target="_blank">
   <h1>${content['title']}</h1>
-  <img src=${content['thumbnail_url']}  style="max-width:100%;"/>
+  <img src=${content['thumbnail_url']}  style="max-width:40%; float: left;"/>
   <p>${h.truncate(h.strip_html_tags(content['content']), length=180, indicator='...', whole_word=True)}<strong>more</strong></p>
 </a>
 
@@ -20,7 +20,7 @@
     <table><tr>
         <td>
             <a href="${h.url('content_action', id=id, action='accept', subdomain='')}" target="_blank">${_('Accept _assignemnt')}</a>
-        </td>'
+        </td>
         <td>
             <a href="${h.url('new_content', parent_id=id, subdomain='')}" target="_blank">${_("Respond now!")}</a>
         </td>

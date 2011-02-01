@@ -1,6 +1,6 @@
 <%inherit file="help_frag.mako"/>
 <%def name="body()">
 
-Create Article
+Your group persona
 
 </%def>

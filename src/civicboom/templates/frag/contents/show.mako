@@ -24,7 +24,7 @@
         self.id        = self.content['id']
         self.actions   = d['actions']
         
-        self.attr.title     = self.content['type'].capitalize()
+        self.attr.title     = _('_'+self.content['type']).capitalize()
         self.attr.icon_type = self.content['type']
         
         self.attr.frag_data_css_class = 'frag_content'
@@ -39,6 +39,10 @@
                 'updated'  : self.content.get('update_date') ,
                 'author'   : self.content.get('creator', dict()).get('name') ,
             }
+        
+        self.attr.help_frag = self.content['type']
+        if self.attr.help_frag == 'draft':
+            self.attr.help_frag = 'create_'+self.content['target_type']
         
         self.attr.auto_georss_link = True
     %>
@@ -303,8 +307,23 @@
     ##        Email Resorces
     ##    </a>
 </%doc>
-    
+
 <%def name="actions_specific()">
+
+    ## --- Pubish --------------------------------------------------------------
+
+    % if 'publish' in self.actions:
+        ${h.secure_link(
+            h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
+            method = "PUT" ,
+            value           = _('Publish') ,
+            value_formatted = h.literal("<span class='icon icon_publish'></span>%s") % _('Publish') ,
+            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+            
+        )}
+        <span class="separtor"></span>
+    % endif
+
 
     ## --- Respond -------------------------------------------------------------
 

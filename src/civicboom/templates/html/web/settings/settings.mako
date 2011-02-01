@@ -3,7 +3,10 @@
 <%def name="title()">${_("Settings")}</%def>
 
 <%def name="body()">
-	<% self.attr.frags = [settings, help] %>
+	<%
+        self.attr.frags = [settings, help]
+        self.attr.frag_col_sizes = [2,1]
+    %>
 </%def>
 
 <%def name="settings()">

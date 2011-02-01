@@ -170,7 +170,7 @@ def _init_search_filters():
     search_filters = {
         'id'         : append_search_id ,
         'creator'    : append_search_creator ,
-        'query'      : append_search_text ,
+        'term'       : append_search_text ,
         'location'   : append_search_location ,
         'type'       : append_search_type ,
         'response_to': append_search_response_to ,
@@ -670,3 +670,4 @@ class ContentsController(BaseController):
         #c.content                  = form_to_content(kwargs, c.content)
         
         return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template
+
