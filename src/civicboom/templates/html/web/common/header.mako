@@ -166,7 +166,7 @@
 <div id="signin">
 % if c.logged_in_persona:
     ${h.secure_link(
-        url(controller='account', action='signout'),
+        h.url(controller='account', action='signout'),
         _('Sign out'),
         css_class="button"
     )}

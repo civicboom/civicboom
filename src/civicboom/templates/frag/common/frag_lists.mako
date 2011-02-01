@@ -17,7 +17,7 @@
 
 <%def name="init_vars()">
     <%
-        self.attr.share_url        = url('current') #format='html'
+        self.attr.share_url        = h.url('current') #format='html'
         #self.attr.auto_georss_link = True
         
         args, kwargs = c.web_params_to_kwargs
@@ -113,9 +113,9 @@
             href_args   = href[0]
             href_kwargs = href[1]
             href_kwargs['private'] = True # AllanC - short term hack - infuture this will only be needed on private profile pages, it may help caching if it's not included every time, future investigation needed as private=true may disabled the public cache
-            href      = url(*href_args, **href_kwargs)
+            href      = h.url(*href_args, **href_kwargs)
             href_kwargs['format'] = 'frag'
-            href_frag = url(*href_args, **href_kwargs)
+            href_frag = h.url(*href_args, **href_kwargs)
             js_link_to_frag_list = h.literal("""onclick="cb_frag($(this), '%s', 'frag_col_1'); return false;" """ % href_frag)
     %>
     % if hide_if_empty and not count:

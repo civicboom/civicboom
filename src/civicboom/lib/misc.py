@@ -52,8 +52,8 @@ def calculate_age(born):
     >>> ten_ago = date(today.year-10, today.month, today.day)
     >>> calculate_age(ten_ago)
     10
-    >>> born_yesterday = date(today.year, today.month, today.day-1)
-    >>> calculate_age(born_yesterday)
+    >>> born_today = date(today.year, today.month, today.day)
+    >>> calculate_age(born_today)
     0
     >>> born_odd = date(2000, 2, 29)
     >>> calculate_age(born_odd) > 0
