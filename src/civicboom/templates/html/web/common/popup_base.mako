@@ -38,9 +38,9 @@
 </%def>
 
 
-<%def name="link(url, title, text=None, class_='')">
+<%def name="link(url, title='Dialog', text=None, class_='')">
     <%
-        if text==None:
+        if title and text==None:
             text = h.literal("<span>%s</span>" % title)
         url_frag = None
         if isinstance(url, tuple):

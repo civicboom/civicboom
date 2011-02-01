@@ -242,12 +242,25 @@
 
 <%def name="actions_common()">
     % if 'message' in self.actions:
-        ${popup.link(h.args_to_tuple('new_message', target=self.id), title=_('Send message') , class_='icon icon_message')}
+        ${popup.link(
+            h.args_to_tuple('new_message', target=self.id),
+            title = _('Send Message'),
+            text  = h.literal("<span class='icon icon_message'></span>%s") % _('Send Message'),
+        )}
+        <span class="separtor"></span>
     % endif
+    
+    
     % if 'settings' in self.actions:
-        <a class="icon icon_settings" href="${h.url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>
+        <a href="${h.url('settings')}" title="${_('Settings')}"><span class="icon icon_settings"></span>${_('Settings')}</a>
+        <span class="separtor"></span>
     % endif
-    ${popup.link(h.args_to_tuple(controller='misc', action='get_widget', id=self.id), title=_('Get widget'), class_='icon icon_widget')}
+    
+    ${popup.link(
+        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+        title = _('Get widget'),
+        text  = h.literal("<span class='icon icon_widget'></span>%s") % _('Get widget'),
+    )}
     
     % if self.member.get('location_current') or self.member.get('location_home'):
         ${parent.georss_link()}
