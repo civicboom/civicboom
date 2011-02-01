@@ -15,6 +15,7 @@
 		<script src="/javascript/jquery.simplemodal.1.4.1.min.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
 		<script src="/javascript/jquery.html5-0.0.1.js"></script>
 		<script src="/javascript/jquery.uploadify.v2.1.4.js"></script>
+        <script src="/javascript/jquery.simple-color-picker.js"></script>
 		<!-- maps -->
         <script src="/javascript/gears_init.js"></script>
         <script src="/javascript/geo.js"></script>
