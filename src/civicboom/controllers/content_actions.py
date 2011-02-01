@@ -310,20 +310,3 @@ class ContentActionsController(BaseController):
     def contributors(self, id, **kwargs):
         content = _get_content(id, is_viewable=True)
         return action_ok_list([])
-
-
-    #-----------------------------------------------------------------------------
-    # HACK
-    #-----------------------------------------------------------------------------
-    @web
-    @auth
-    def publish(self, id, **kwargs):
-        """
-        AllanC
-        Convenience method for use on the webpage
-        To perform a publish we need to use the PUT method for routs to generate the correct call to update
-        We needed a link to pushish an already existing draft, this was problematic making a PUT request and it's the only curcumstance in the site that would need special treatment
-        The solution was to make a shortcut method
-        the actual decorators on the update call will trigger the authentication etc
-        """
-        return ContentsController().update(id, **kwargs)
