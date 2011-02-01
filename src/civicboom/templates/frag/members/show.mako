@@ -251,6 +251,10 @@
         <span class="separtor"></span>
     % endif
     
+    % if 'settings_group' in self.actions:
+        <a href="${h.url('edit_group', id=self.id)}" title="${_('_group Settings').capitalize()}"><span class="icon icon_group"></span>${_('_group Settings').capitalize()}</a>
+        <span class="separtor"></span>
+    % endif
     
     % if 'settings' in self.actions:
         <a href="${h.url('settings')}" title="${_('Settings')}"><span class="icon icon_settings"></span>${_('Settings')}</a>
