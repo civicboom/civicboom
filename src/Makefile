@@ -45,7 +45,7 @@ data/live-data.pgdump:
 	ssh -C civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump
 
 live-db: skel-db data/live-data.pgdump
-	sudo -u postgres pg_restore -d civicboom -f data/live-data.pgdump
+	sudo -u postgres pg_restore -d civicboom data/live-data.pgdump
 
 run:
 	paster serve --reload development.ini
