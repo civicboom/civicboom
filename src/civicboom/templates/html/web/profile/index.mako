@@ -1,9 +1,5 @@
 <%inherit file="/html/web/common/frag_container.mako"/>
 
-<%!
-    help_frag = 'profile'
-%>
-
 <%def name="title()">${_("Profile")}</%def>
 
 <%def name="body()">
@@ -18,7 +14,11 @@
 </%def>
 
 <%def name="help()">
+    % if   d['member']['type'] == 'user':
 	<!--#include file="/help/profile"-->
+    % elif d['member']['type'] == 'group':
+    <!--#include file="/help/group_persona"-->
+    % endif
 </%def>
 
 

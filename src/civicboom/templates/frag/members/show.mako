@@ -35,16 +35,16 @@
             if self.member['type'] == 'group':
                 self.attr.title     = _('Current Group Persona')
                 self.attr.icon_type = 'group'
+                self.attr.help_frag = 'group_persona'
             else:
                 self.attr.title     = _('Current User')
                 self.attr.icon_type = 'current_user'
+                self.attr.help_frag = 'profile'
             
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
             })
             self.attr.rss_url = h.url('formatted_member', id=self.id, format='rss', subdomain='')
-  
-            self.attr.help_frag = 'profile'
         
         self.attr.frag_data_css_class = 'frag_member'
         

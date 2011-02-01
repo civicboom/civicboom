@@ -24,11 +24,11 @@
 </%def>
 
 <%def name="help()">
-    % if   d['content']['type'] == 'assignment':
+    % if   d['content']['type'] == 'assignment' or d['content'].get('target_type') == 'assignment':
 	<!--#include file="/help/create_assignment"-->
     % elif d['content']['parent']:
     <!--#include file="/help/create_response"-->
-    % elif d['content']['type'] == 'article':
+    % elif d['content']['type'] == 'article'    or d['content'].get('target_type') == 'article'   :
     <!--#include file="/help/create_article"-->
     % endif
 </%def>
