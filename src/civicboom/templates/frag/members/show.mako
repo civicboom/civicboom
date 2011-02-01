@@ -42,6 +42,7 @@
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
             })
+            self.attr.rss_url = h.url('formatted_member', id=self.id, format='rss', subdomain='')
         
         self.attr.frag_data_css_class = 'frag_member'
         
