@@ -24,7 +24,7 @@
         self.id        = self.content['id']
         self.actions   = d['actions']
         
-        self.attr.title     = self.content['type'].capitalize()
+        self.attr.title     = _('_'+self.content['type']).capitalize()
         self.attr.icon_type = self.content['type']
         
         self.attr.frag_data_css_class = 'frag_content'

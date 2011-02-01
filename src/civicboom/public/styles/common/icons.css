@@ -55,13 +55,14 @@
 .icon_message   {background: transparent url('/styles/common/icons16/letter-icon.png'   ) no-repeat;}
 .icon_notification {background: transparent url('/styles/common/icons16/warning-icon.png'   ) no-repeat;}
 .icon_edit      {background: transparent url('/styles/common/icons16/pencil-icon.png'   ) no-repeat;}
-.icon_boom      {background: transparent url('/styles/common/icons16/megaphone-icon.png') no-repeat;}
+.icon_boom      {background: transparent url('/styles/common/icons16/cb_logo-icon.png') no-repeat;}
 .icon_accept    {background: transparent url('/styles/common/icons16/tick-icon.png'   ) no-repeat;}
 .icon_withdraw  {background: transparent url('/styles/common/icons16/delete-icon.png'   ) no-repeat;}
 .icon_respond   {background: transparent url('/styles/common/icons16/document-pencil-icon.png'   ) no-repeat;}
 .icon_reload    {background: transparent url('/styles/common/icons16/reload-icon.png'   ) no-repeat;}
 .icon_search    {background: transparent url('/styles/common/icons16/address-icon.png'   ) no-repeat;}
 .icon_map       {background: transparent url('/styles/common/icons16/globe-icon.png'   ) no-repeat;}
+.icon_mobile    {background: transparent url('/styles/common/icons16/mobile-icon.png'   ) no-repeat;}
 .icon_account_type_plus {background: transparent url('/styles/common/icons16/plus-icon.png') no-repeat;}
 
 .icon_twitter   {background: transparent url('/styles/common/icons16/social/twitter_16.png') no-repeat;}
