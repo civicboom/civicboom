@@ -127,6 +127,8 @@ function cb_frag_load(jquery_element, url) {
 
 function cb_frag_remove(jquery_element) {
 	var parent = jquery_element.parents('.'+fragment_container_class); // find parent
+  if (typeof cb_frag_get_variable(jquery_element, 'autosavedrafttimer') != 'undefined')
+    clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
 	parent.toggle(scroll_duration, function(){
 		parent.remove();
 		// If no fragments on screen redirect to default page
@@ -203,6 +205,15 @@ function cb_frag_reload(param) {
 
 function cb_frag_set_source(jquery_element, url) {
 	jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href', url);
+}
+
+function cb_frag_set_variable(jquery_element, variable, value) {
+  var valueClean = (typeof value == 'undefined')?(''):(value);
+  jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('cb'+variable, valueClean);
+}
+
+function cb_frag_get_variable(jquery_element, variable) {
+  return jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('cb'+variable);
 }
 
 //------------------------------------------------------------------------------

@@ -198,10 +198,9 @@
                 });
             }
             % if self.content['type'] == "draft":
-            if (typeof autoSaveDraftTimer != "undefined") {
-                clearInterval(autoSaveDraftTimer);
-            }
-            var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
+            if (typeof cb_frag_get_variable($("#${area_id}"), 'autoSaveDraftTimer') != "undefined")
+                clearInterval(cb_frag_get_variable($("#${area_id}"), 'autoSaveDraftTimer'));
+            cb_frag_set_variable($("#${area_id}"), 'autoSaveDraftTimer', setInterval('ajaxSave()', 60000));
             % endif
 		</script>
 
