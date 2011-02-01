@@ -221,8 +221,6 @@ class ContentsController(BaseController):
         """
         # url('contents')
         
-        print kwargs
-        
         # Permissions
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
         #          TODO: we need maybe a separte call, or something to identify a private call
@@ -672,3 +670,4 @@ class ContentsController(BaseController):
         #c.content                  = form_to_content(kwargs, c.content)
         
         return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template
+

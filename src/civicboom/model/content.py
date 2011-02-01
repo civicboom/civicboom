@@ -187,6 +187,8 @@ class Content(Base):
         action_list = []
         if self.editable_by(member):
             action_list.append('edit')
+            if self.__type__=='draft':
+                action_list.append('publish')
         if self.viewable_by(member):
             action_list.append('view')
         if self.private==False and self.creator != member:

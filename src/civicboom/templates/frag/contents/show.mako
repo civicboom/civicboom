@@ -303,8 +303,21 @@
     ##        Email Resorces
     ##    </a>
 </%doc>
-    
+
 <%def name="actions_specific()">
+
+    ## --- Pubish --------------------------------------------------------------
+
+    % if 'publish' in self.actions:
+        ${h.secure_link(
+            h.args_to_tuple('content_action', action='publish', id=self.id, format='redirect', submit_publish='publish') ,
+            value           = _('Publish') ,
+            value_formatted = h.literal("<span class='icon icon_publish'></span>%s") % _('Publish') ,
+            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+        )}
+        <span class="separtor"></span>
+    % endif
+
 
     ## --- Respond -------------------------------------------------------------
 
