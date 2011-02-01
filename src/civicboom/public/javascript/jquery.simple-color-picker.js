@@ -73,6 +73,10 @@ $.fn.simpleColorPicker = function(options) {
             showBox(box);
         });
 
+        txt.blur(function() {
+            //hideBox(box); // AllanC - does not work - only for first box
+        });
+
         function hideBox(box) {
             if (opts.hideEffect == 'fade')
                 box.fadeOut();
