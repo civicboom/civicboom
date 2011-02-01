@@ -46,7 +46,7 @@
 	#if isinstance(c.widget_width, basestring) and int(c.widget_width) >= 280:
 	#    additonal_layout = "wide"
     %>
-    <body id="CivicboomWidget" class="" style="width:${c.widget['width']}px; height:${c.widget['height']}px;">
+    <body id="CivicboomWidget" style="width:${c.widget['width']}px; height:${c.widget['height']}px;">
         ##<div class="theme_${c.widget['theme']} ${additonal_layout}" style="width:${c.widget['width']}px;">
         ${next.body()}
         ##</div>

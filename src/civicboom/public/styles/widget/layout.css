@@ -17,9 +17,15 @@
   overflow-y: auto;
   width: 100%;
 }
+#CivicboomWidget .action_bar .padding {
+  padding: 2px;
+}
 #CivicboomWidget .widget_content .padding {
   padding: 0.5em;
 }
 #CivicboomWidget .widget_footer .padding {
   padding: 2px;
 }
+#CivicboomWidget .widget_header {overflow: hidden;}
+#CivicboomWidget .action_bar    {overflow: hidden;}
+#CivicboomWidget .widget_footer {overflow: hidden;}

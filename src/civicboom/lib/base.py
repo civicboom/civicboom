@@ -173,18 +173,25 @@ class BaseController(WSGIController):
 
         # Widget default settings
         c.widget = dict(
-            theme     = 'light' ,
-            width     = 160 ,
-            height    = 200 ,
-            title     = _('Get involved')  ,
-            base_list = 'assignments_active',
-            owner     = ''  ,
+            theme      = 'light' ,
+            width      = 160 ,
+            height     = 200 ,
+            title      = _('Get involved')  ,
+            base_list  = 'assignments_active',
+            owner      = '' ,
+            color_font       = '000' ,
+            color_border     = 'ccc' ,
+            color_header     = 'ccc' ,
+            color_action_bar = 'ddd',
+            color_content    = 'eee' ,
         )
         setup_widget_env()
 
         # Login - Fetch logged in user from session id (if present)
         username                 = session_get('username')
         username_persona         = session_get('username_persona')
+        request.environ['logged_in_user']     = username
+        request.environ['logged_in_persona']  = username_persona
         
         c.logged_in_user         = get_member(username)
         c.logged_in_persona      = c.logged_in_user

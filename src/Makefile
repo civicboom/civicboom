@@ -3,6 +3,7 @@ help:
 	# Usage: make <target>, where target is
 	# site       -- i18n + js + css  (this should be done after git clone)
 	# i18n       -- compile the translations
+	# i18n-fr    -- generate a machine-translated french site
 	# js         -- compress javascript into _combined.head.js and foot.js
 	# css        -- compress folders of css into single files
 	# test-db    -- create a blank database and fill it with test data
@@ -19,6 +20,13 @@ i18n:
 	../admin_scripts/site_to_english civicboom/i18n/en/LC_MESSAGES/civicboom.po
 	python setup.py compile_catalog
 
+i18n-fr: i18n
+	curl \
+		-F pofile=@civicboom/i18n/en/LC_MESSAGES/civicboom.po \
+		-F language=fr \
+		-F output=pofile  \
+		--output civicboom/i18n/fr/LC_MESSAGES/civicboom.po \
+		http://pepipopum.dixo.net
 js:
 	cd civicboom/public/javascript && $(MAKE)
 
@@ -32,12 +40,12 @@ test-db: skel-db
 	paster setup-app development.ini
 	nosetests
 
-data/live-data.sql:
+data/live-data.pgdump:
 	mkdir -p data
-	ssh -C civicboom.com /opt/cb/bin/dump_db > data/live-data.sql
+	ssh -C civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump
 
-live-db: skel-db data/live-data.sql
-	sudo -u postgres psql -q -f data/live-data.sql
+live-db: skel-db data/live-data.pgdump
+	sudo -u postgres pg_restore -d civicboom data/live-data.pgdump
 
 run:
 	paster serve --reload development.ini

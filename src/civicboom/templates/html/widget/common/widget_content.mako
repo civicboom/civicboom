@@ -15,7 +15,8 @@
         else:
             back_url = current_referer()
     %>
-    <a class="icon icon_back" href="${back_url}"><span>${_("Back")}</span></a>
+    ##<a class="icon icon_back" href="${back_url}"><span>${_("Back")}</span></a>
+    <a href="${back_url}">&#171; ${_("Back")}</a>
 </%def>
 
 ## AllanC - note: as padding gets ADDED to a components size this buggers up the layout when we want the widget_component to take up 100% size, the padding is added so it's 105% (or so)
