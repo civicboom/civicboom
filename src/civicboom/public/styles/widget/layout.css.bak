@@ -19,7 +19,7 @@ html {background: transparent;}
 
 h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: small;}
 
-/*-----------------------Icons (copied from design09css)----------------------*/
+/*-----------------------Icons----------------------*/
 .icon {
 	display: inline-block;
 	height:  16px;
@@ -166,7 +166,7 @@ h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: smal
 /*
  the first idea was to have a cool floating transparent section, but firefox died with it :( 
 #CivicboomWidget .widget_main {padding-top: 2em;} for hovering transparent action bar 
-#CivicboomWidget .action_bar                              {border-color:     #04145a; background: url('/design09/background_transparent_dark.png');}
+#CivicboomWidget .action_bar                              {border-color:     #04145a;}
 #CivicboomWidget .action_bar {
   position: absolute;
   width: 93%;
@@ -266,7 +266,7 @@ h1,h2,h3,h4,h5,h6 {padding: 0em; margin: 0em; margin-top: 0.5em; font-size: smal
  
  old responsese list
  
-#CivicboomWidget .widget_content .reporter_inline {
+#CivicboomWidget .widget_content .member_inline {
   display: inline-block;
   float: right;
   margin-left: 1em;

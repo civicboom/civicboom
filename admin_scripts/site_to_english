@@ -8,11 +8,20 @@ def trans(text):
     text = text.replace("_tagline", "News. Don't just read it. Feed it.")
     text = text.replace("_site_description", "Building the world's first true community and audience assignment system")
 
+    banned = [
+        "reporter",
+        "report",
+    ]
+    for b in banned:
+        if "_"+b in text:
+            raise Exception("Banned word "+b+" in "+sys.argv[1])
+
     words = [
+        ("content",    "content"),
         ("assignment", "request"),
         ("article",    "content"),
-        ("reporter",   "user"),
-        ("report",     "content"),
+        ("member",     "member"),
+        ("user",       "user"),
         ("group",      "group"),
     ]
     for w, r in words:

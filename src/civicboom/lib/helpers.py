@@ -145,7 +145,7 @@ def uniqueish_id(*args):
 def objs_to_linked_formatted_dict(**kargs):
     """
     Takes a dict of string:string that correspond to python tmpl_context global e.g:
-      'member':'creator_reporter' would refer to c.creator_reporter
+      'member':'creator_member' would refer to c.creator_member
       'member': member_obj_ref 
     Then, See's if the object has a '__link___' attribute to generate a HTML <a> tag for this object
     """
