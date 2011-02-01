@@ -43,6 +43,8 @@
                 'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
             })
             self.attr.rss_url = h.url('formatted_member', id=self.id, format='rss', subdomain='')
+  
+            self.attr.help_frag = 'profile'
         
         self.attr.frag_data_css_class = 'frag_member'
         

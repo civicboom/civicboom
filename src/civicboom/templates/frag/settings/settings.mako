@@ -29,7 +29,7 @@
     % for group_name in setting_groups.keys():
         <div style="margin: 16px;">
 			<div style="font-weight: bold;">${group_name.capitalize()}</div>
-			<table class="form" style="width: 100%;">'
+			<table class="form" style="width: 100%;">
             % for setting_name in setting_groups[group_name]:
                 <tr>
                     <%

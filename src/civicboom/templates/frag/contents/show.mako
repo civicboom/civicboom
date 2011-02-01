@@ -40,6 +40,10 @@
                 'author'   : self.content.get('creator', dict()).get('name') ,
             }
         
+        self.attr.help_frag = self.content['type']
+        if self.attr.help_frag == 'draft':
+            self.attr.help_frag = 'create_'+self.content['target_type']
+        
         self.attr.auto_georss_link = True
     %>
 </%def>
