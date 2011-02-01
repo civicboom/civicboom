@@ -1,4 +1,8 @@
-﻿
+﻿// http://plugins.jquery.com/project/simple-color-picker
+// Modified by AllanC
+//  '#' have been removed from color descriptions so the returned txt has no hash
+//  added txt.attr('style', 'background-color: #'+txt.val()+';'); to set box color when color picked
+
 $.fn.simpleColorPicker = function(options) {
     var defaults = {
         colorsPerLine: 8,
@@ -38,12 +42,13 @@ $.fn.simpleColorPicker = function(options) {
             colorsMarkup += '<li id="' + prefix + 'color-' + i + '" class="color-box" style="' + breakLine + 'background-color: #' + item + '" title="' + item + '"></li>';
 		}
 
-        var box = $('<div id="' + prefix + 'color-picker" class="color-picker" style="position: absolute; left: 0px; top: 0px;"><ul>' + colorsMarkup + '</ul><div style="clear: both;"></div></div>');
+        var box = $('<div id="' + prefix + 'color-picker" class="color-picker" style="position: absolute; left: 0px; top: 0px; z-index:6000;"><ul>' + colorsMarkup + '</ul><div style="clear: both;"></div></div>');
         $('body').append(box);
         box.hide();
 
         box.find('li.color-box').click(function() {
             txt.val(opts.colors[this.id.substr(this.id.indexOf('-') + 1)]);
+            txt.attr('style', 'background-color: #'+txt.val()+';');
             txt.blur();
             hideBox(box);
         });
