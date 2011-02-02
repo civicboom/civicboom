@@ -110,6 +110,11 @@
   				<td style="width: 20px">&nbsp;</td>
   			</tr>
   			<tr class="padding">
+  			  <td colspan="7" style="text-align: center;">
+  			    Note: By creating this Group you are automatically set as an Administrator.
+  			  </td>
+  			</tr>
+  			<tr class="padding">
           <td colspan="7">${_("Join mode")}</td>
   			</tr>
   			<tr class="padding">
