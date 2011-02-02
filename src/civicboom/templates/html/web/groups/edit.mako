@@ -79,10 +79,10 @@
   			<tr class="padding">
   				<td style="width: 20px">&nbsp;</td>
   				<td colspan="6">
-            <input type="radio" name="default_role" value="observer" id="default_role_observer" /><label for="default_role_observer">Observer</label><br />
-            <input type="radio" name="default_role" value="contributor" id="default_role_contributor" /><label for="default_role_contributor">Contributor</label><br />
-            <input type="radio" name="default_role" value="editor" id="default_role_editor" /><label for="default_role_editor">Editor</label><br />
-            <input type="radio" name="default_role" value="admin" id="default_role_admin" /><label for="default_role_admin">Administrator</label><br />
+            <input type="radio" class="quickchange" name="default_role" value="observer" id="default_role_observer" /><label for="default_role_observer">Observer</label><br />
+            <input type="radio" class="quickchange" name="default_role" value="contributor" id="default_role_contributor" /><label for="default_role_contributor">Contributor</label><br />
+            <input type="radio" class="quickchange" name="default_role" value="editor" id="default_role_editor" /><label for="default_role_editor">Editor</label><br />
+            <input type="radio" class="quickchange" name="default_role" value="admin" id="default_role_admin" /><label for="default_role_admin">Administrator</label><br />
           ${show_error('default_role')}
   				</td>
   			</tr>
@@ -92,13 +92,13 @@
   			<tr class="padding">
           <td>&nbsp;</td>
           <td>
-            <input type="radio" name="join_mode" value="public" id="join_mode_public" /><label for="join_mode_public">Open?</label>
+            <input type="radio" class="quickchange" name="join_mode" value="public" id="join_mode_public" /><label for="join_mode_public">Open?</label>
           </td>
           <td>
-            <input type="radio" name="join_mode" value="invite_and_request" id="join_mode_invite_and_request" /><label for="join_mode_invite_and_request">Public?</label>
+            <input type="radio" class="quickchange" name="join_mode" value="invite_and_request" id="join_mode_invite_and_request" /><label for="join_mode_invite_and_request">Public?</label>
           </td>
           <td>
-            <input type="radio" name="join_mode" value="invite" id="join_mode_invite" /><label for="join_mode_invite">Private?</label><br />
+            <input type="radio" class="quickchange" name="join_mode" value="invite" id="join_mode_invite" /><label for="join_mode_invite">Private?</label><br />
           </td>
           <td colspan="3">
             ${show_error('join_mode')}
@@ -111,17 +111,17 @@
         <tr class="padding">
           <td>&nbsp;</td>
           <td>
-            <input type="radio" name="content_visibility" value="public" id="content_visibility_public" /><label for="content_visibility_public">Open</label>
+            <input type="radio" class="quickchange" name="content_visibility" value="public" id="content_visibility_public" /><label for="content_visibility_public">Open</label>
           </td>
           <td>
-            <input type="radio" name="content_visibility" value="private" id="content_visibility_private" /><label for="content_visibility_private">Hidden</label>
+            <input type="radio" class="quickchange" name="content_visibility" value="private" id="content_visibility_private" /><label for="content_visibility_private">Hidden</label>
           </td>
           <td>${show_error('default_content_visibility')}</td>
           <td>
-            <input type="radio" name="member_visibility" value="public" id="member_visibility_public" /><label for="member_visibility_public">Open</label>
+            <input type="radio" class="quickchange" name="member_visibility" value="public" id="member_visibility_public" /><label for="member_visibility_public">Open</label>
           </td>
           <td>
-            <input type="radio" name="member_visibility" value="private" id="member_visibility_private" /><label for="member_visibility_private">Hidden</label>
+            <input type="radio" class="quickchange" name="member_visibility" value="private" id="member_visibility_private" /><label for="member_visibility_private">Hidden</label>
           </td>
           <td style="width: 20px">
             ${show_error('member_visibility')}
@@ -189,7 +189,6 @@
                             'internal':'1211', 'workforce':'1000', 'creative':'1000', 'research':'1000'};
       $(function () {
         $('input.quickbutton').click(function () {
-          $('input.quickbutton').removeClass('quickhilite');
           var quickName = $(this).attr('name');
           if (typeof quickSelection[quickName] != 'undefined') {
             if (quickSelection[quickName].length == 4) {
@@ -199,8 +198,16 @@
               }
             }
           }
-          $(this).addClass('quickhilite');
+          hiliteQuickButtons (quickSelection[quickName]);
         });
+        function hiliteQuickButtons (quickString) {
+          $('.quickbutton').removeClass('quickhilite');
+          for (var qS in quickSelection) {
+            if (quickSelection[qS] == quickString) {
+              $('.quickbutton[name='+qS+']').addClass('quickhilite');
+            }
+          }
+        }
         $('input.quicktype').click(function () {
           switch ($(this).attr('value')) {
             case 'open':
@@ -210,6 +217,13 @@
               $('[name=join_mode]')[2].checked = true;
               break;
           }
+        });
+        $('input.quickchange').click(function () {
+          var quickString = '';
+          for (var qI = 0; qI < 4; qI ++) {
+            quickString = quickString + $('[name='+quickOrder[qI]+']').index($('[name='+quickOrder[qI]+']:checked'));
+          }
+          hiliteQuickButtons (quickString);
         });
       });
     </script>
