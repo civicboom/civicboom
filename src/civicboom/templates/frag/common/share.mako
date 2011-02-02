@@ -5,7 +5,7 @@
 ## Share (using default method)
 ##------------------------------------------------------------------------------
 <%def name="share(*args, **kwargs)">
-    ${ShareThis(*args,**kwargs)}
+    ${AddThis(*args,**kwargs)}
 
 </%def>
 
@@ -16,20 +16,27 @@
 ##------------------------------------------------------------------------------
 ## http://www.addthis.com/help/api-overview - registered to admin@civicboom.com
 <%def name="AddThis(*args, **kwargs)">
+    <%
+    area_id = h.uniqueish_id("addthis_tb")
+    %>
     <!-- AddThis Button BEGIN -->
-    <div class="addthis_toolbox addthis_default_style " style="display: inline-block;"
+    <script type="text/javascript">var addthis_share = {"data_track_clickback":true};</script>
+    <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
+    <div class="addthis_toolbox addthis_cb_style ${area_id}" style="display: inline-block;"
         % for k,v in kwargs.iteritems():
             addthis:${k}="${v.replace('"','')}"
         % endfor
     >
-    <a class="addthis_button_preferred_1"></a>
-    <a class="addthis_button_preferred_2"></a>
-    ##<a class="addthis_button_preferred_3"></a>
-    ##<a class="addthis_button_preferred_4"></a>
+    <a class="addthis_button_email"></a>
+    <a class="addthis_button_facebook"></a>
+    <a class="addthis_button_twitter"></a>
+    <a class="addthis_button_linkedin"></a>
     <a class="addthis_button_compact"></a>
     </div>
-    <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script>
-    <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
+    ## Initialise toolbox on fragment load (Greg)
+    <script type="text/javascript">
+      addthis.toolbox('.${area_id}');
+    </script>
     <!-- AddThis Button END -->
 </%def>
 
@@ -70,6 +77,7 @@
     ></span>
     <script type="text/javascript">
 		$(function() {
+		  for (var stt in $(
 			stButtons.locateElements();
 			##stButtons.makeButtons();
 			##stWidget.init();
