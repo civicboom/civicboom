@@ -20,11 +20,11 @@
         self.id      = d['content']['id']
         
         self.type          = self.content['type']
-        self.selected_type = type
+        self.selected_type = self.type
         if self.type == 'draft':
             self.selected_type = self.content.get('target_type')
         
-        self.attr.title     = _('Edit _%s' % self.selected_type)
+        self.attr.title     = _('Edit ') + _('_'+self.selected_type)
         self.attr.icon_type = 'edit'
         
         if self.selected_type == 'assignment':
@@ -95,8 +95,8 @@
                 }
             </script>
             ${base_content()}
-            ${media()}
             ${content_type()}
+            ${media()}
             ${location()}
             ${license()}
 			${submit_buttons()}
@@ -250,6 +250,7 @@
                 tags_string += tag + separator
             %>
             <input id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
+            <span>(${_('separated by commas')} ',')</span>
             ##${popup(_("extra_info"))}
         </p>
 
@@ -371,10 +372,10 @@
 ## Content Type
 ##------------------------------------------------------------------------------
 <%def name="content_type()">
-    <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("_%s Extras" % self.selected_type)}</legend>
-        <div class="hideable">
-        ##${form_instruction(_("What do you want to do with your content?"))}
+##    <fieldset>
+##        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("_%s Extras" % self.selected_type)}</legend>
+##        <div class="hideable">
+
         
         <%
             type          = self.type
@@ -420,8 +421,8 @@
                     due_date   = str(self.content.get('due_date') or '')[:10]
                     event_date = str(self.content.get('event_date') or '')[:10]
                 %>
-                <p>${_("Due Date:")}   <input type="date" name="due_date"   value="${due_date}"></p>
-                <p>${_("Event Date:")} <input type="date" name="event_date" value="${event_date}"></p>
+                <span>${_("Due Date:")}   <input type="date" name="due_date"   value="${due_date}"></span>
+                <span>${_("Event Date:")} <input type="date" name="event_date" value="${event_date}"></span>
                 <%doc>
                 <p>${_("Response License:")}
 				<table>
@@ -477,8 +478,8 @@
             
             highlightType('${selected_type}'); //Set the default highlighted item to be the content type
         </script>
-		</div>
-    </fieldset>
+		##</div>
+    ##</fieldset>
 </%def>
 
 

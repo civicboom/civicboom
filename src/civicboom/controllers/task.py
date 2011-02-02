@@ -54,10 +54,10 @@ class TaskController(BaseController):
 
 
     #---------------------------------------------------------------------------
-    # Remove Ghost Reporters
+    # Remove Ghost Users
     #---------------------------------------------------------------------------
 
-    def remove_ghost_reporters(self):
+    def remove_ghost_user(self):
         """
         Users who do not complete the signup process by entering an email
         address that is incorrect or a bots or cant use email should be
@@ -97,8 +97,8 @@ class TaskController(BaseController):
         date_1day       =                           datetime.timedelta(days=1)
         
         for assignment in get_assignments_by_date(date_start=date_7days_time, date_end=date_7days_time + date_1day): # Get all assignments due in 7 days
-            responded_member_ids = get_responded(assignment)                                                         #   Get a list of all the reporters that have responded to this assignment
-            for member in assignment.accepted_by:                                                                    #   For all reporters accepted this assignment
+            responded_member_ids = get_responded(assignment)                                                         #   Get a list of all the members that have responded to this assignment
+            for member in assignment.accepted_by:                                                                    #   For all members accepted this assignment
                 if member.id not in responded_member_ids:                                                            #     Check if they have responded with an article
                     member.send_message( messages.assignment_due_7days(member, assignment=assignment) )              #     if not send a reminder notification
                     

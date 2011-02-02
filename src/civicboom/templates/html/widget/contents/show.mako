@@ -11,7 +11,7 @@
 
 <a href="${h.url('content',id=id, subdomain='')}" target="_blank">
   <h1>${content['title']}</h1>
-  <img src=${content['thumbnail_url']}  style="max-width:100%;"/>
+  <img src=${content['thumbnail_url']}  style="max-width:40%; float: left;"/>
   <p>${h.truncate(h.strip_html_tags(content['content']), length=180, indicator='...', whole_word=True)}<strong>more</strong></p>
 </a>
 
@@ -20,7 +20,7 @@
     <table><tr>
         <td>
             <a href="${h.url('content_action', id=id, action='accept', subdomain='')}" target="_blank">${_('Accept _assignemnt')}</a>
-        </td>'
+        </td>
         <td>
             <a href="${h.url('new_content', parent_id=id, subdomain='')}" target="_blank">${_("Respond now!")}</a>
         </td>
@@ -28,28 +28,28 @@
     
     <div>
         <div style="display: inline-block;"><strong>${_("Due in")}:      </strong>fix</div>
-        <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>${content['num_accepted']} ${_('reporters')}</div>
+        <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>${content['num_accepted']} ${_('_members')}</div>
         <p                                 ><strong>${_("Responses:")}   </strong>${content['num_responses']}</p>        
         ##${h.time_ago_first_only(assignment.expiryDate)}
-        ##${h.format_multiple_prefix(assignment.num_accepted_by_reporters + len(assignment.newsarticles),single=c.terminology['reporter'])}
+        ##${h.format_multiple_prefix(assignment.num_accepted_by_members + len(assignment.newsarticles),single=_("_member"))}
         ##${h.format_multiple_prefix(len(assignment.newsarticles),nothing="Be the first to respond to this!")}
     </div>
 % endif
 
 % if 'responses' in d and d['responses']['count'] > 0:
 <table>
-    <tr><th>${_("Approved")}</th><th>${_("_article title")}</th><th colspan="2">${_("_reporter")}</th></tr>
+    <tr><th>${_("Approved")}</th><th>${_("_article title")}</th><th colspan="2">${_("_user")}</th></tr>
     % for response in d['responses']['items']:
         <%
             response_class = ""
             if response['approval']:
                 response_class = response['approval']
         %>
-        <tr class="${response_class}>
+        <tr class="${response_class}">
             <td class="${response_class}"></td>
             <td>${response['title']}</td> <!--article_includes.article_link(article)-->
-            <td>fix</td> <!-- reporter_includes.reporter_thumbnail_no_text(article.reporter) -->
-            <td>${response['creator']['name']}</td> <!-- reporter_includes.reporter_link(article.reporter, max_chars=8) -->
+            <td>fix</td> <!-- member_includes.member_thumbnail_no_text(article.member) -->
+            <td>${response['creator']['name']}</td> <!-- member_includes.member_link(article.member, max_chars=8) -->
         </tr>
     % endfor
 </table>
@@ -97,11 +97,11 @@
     
     <div class="assignment_details">
         <div style="display: inline-block;"><strong>${_("Due in")}:      </strong>fix</div>
-        <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>${content['num_accepted']} ${_('reporters')}</div>
+        <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>${content['num_accepted']} ${_('_members')}</div>
         <p                                 ><strong>${_("Responses:")}   </strong>${content['num_responses']}</p>
         
         ##${h.time_ago_first_only(assignment.expiryDate)}
-        ##${h.format_multiple_prefix(assignment.num_accepted_by_reporters + len(assignment.newsarticles),single=c.terminology['reporter'])}
+        ##${h.format_multiple_prefix(assignment.num_accepted_by_members + len(assignment.newsarticles),single=c.terminology['member'])}
         ##${h.format_multiple_prefix(len(assignment.newsarticles),nothing="Be the first to respond to this!")}
     </div>
 % endif
@@ -113,18 +113,18 @@
 
 % if 'responses' in d and d['responses']['count'] > 0:
 <table class="assignment_responses">
-    <tr><th>${_("Approved")}</th><th>${_("_article title")}</th><th colspan="2">${_("_reporter")}</th></tr>
+    <tr><th>${_("Approved")}</th><th>${_("_article title")}</th><th colspan="2">${_("_user")}</th></tr>
     % for response in d['responses']['items']:
         <%
             response_class = ""
             if response['approval']:
                 response_class = response['approval']
         %>
-        <tr class="${response_class}>
+        <tr class="${response_class}">
             <td class="${response_class}"></td>
             <td>${response['title']}</td> <!--article_includes.article_link(article)-->
-            <td>fix</td> <!-- reporter_includes.reporter_thumbnail_no_text(article.reporter) -->
-            <td>${response['creator']['name']}</td> <!-- reporter_includes.reporter_link(article.reporter, max_chars=8) -->
+            <td>fix</td> <!-- member_includes.member_thumbnail_no_text(article.member) -->
+            <td>${response['creator']['name']}</td> <!-- member_includes.member_link(article.member, max_chars=8) -->
         </tr>
     % endfor
 </table>

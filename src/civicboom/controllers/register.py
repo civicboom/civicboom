@@ -30,7 +30,7 @@ class RegisterController(BaseController):
     Registration process can be done in 2 ways:
         1.a) Collect email address and username
             - this can be done from a variaty of sources (e.g widget, webpage or mobile)
-            - server creates new reporter record and sends validation email
+            - server creates new user record and sends validation email
         1.b) User forwarded from validation email
             - validates email hash
             - collects password and addtional data
@@ -144,16 +144,16 @@ class RegisterController(BaseController):
             refered_by = get_member(kwargs['refered_by'])
             if refered_by and u.follow(refered_by) == True:
                 log.debug("message generation not implmented yet")
-                #refered_by.send_message(messages.followed_on_signup(reporter=u)
+                #refered_by.send_message(messages.followed_on_signup(member=u)
         
         # Accept assignment
         if 'accept_assignment' in kwargs:
             log.debug("auto accepting not implemented yet")
             # TODO: Implement
             #assignment = get_assignment(request.params['accept_assignment'])
-            #accept_assignment_status = accept_assignment(new_reporter, assignment)
+            #accept_assignment_status = accept_assignment(new_member, assignment)
             #if accept_assignment_status == True:
-            #    refered_by_reporter.send_message(messages.assignment_accepted(reporter=new_reporter, assignment=assignment))
+            #    refered_by_member.send_message(messages.assignment_accepted(member=new_member, assignment=assignment))
         
         Session.commit()
         

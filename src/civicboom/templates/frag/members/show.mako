@@ -35,9 +35,11 @@
             if self.member['type'] == 'group':
                 self.attr.title     = _('Current Group Persona')
                 self.attr.icon_type = 'group'
+                self.attr.help_frag = 'group_persona'
             else:
                 self.attr.title     = _('Current User')
                 self.attr.icon_type = 'current_user'
+                self.attr.help_frag = 'profile'
             
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
@@ -251,6 +253,10 @@
         <span class="separtor"></span>
     % endif
     
+    % if 'settings_group' in self.actions:
+        <a href="${h.url('edit_group', id=self.id)}" title="${_('_group Settings').capitalize()}"><span class="icon icon_group"></span>${_('_group Settings').capitalize()}</a>
+        <span class="separtor"></span>
+    % endif
     
     % if 'settings' in self.actions:
         <a href="${h.url('settings')}" title="${_('Settings')}"><span class="icon icon_settings"></span>${_('Settings')}</a>

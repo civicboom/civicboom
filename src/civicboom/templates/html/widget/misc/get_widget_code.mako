@@ -37,12 +37,12 @@
 </%def>
 
 ## Old notes for Javascript import that never took off because we went with the IFRAME method
-##%if reporter:
-##<script type='text/javascript'>civicboom_username='${reporter}';</script>
+##%if member:
+##<script type='text/javascript'>civicboom_username='${member}';</script>
 ##%endif
 ##<script src='/static/widget/widget.js' type='text/javascript'></script>
 ##<div style='width: 300px; background-color: #eee; border: 1px solid black; padding: 0.25em;'>
-##${reporter}
+##${member}
 ##<div style='clear: both;'>
 ##get involved <a href='#'>mobile reporting app</a><a href='#'>gadget</a>powered by ${c.site_name}
 ##</div>

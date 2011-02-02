@@ -157,7 +157,6 @@ class BaseController(WSGIController):
         set_lang(lang)
     
     def __before__(self):
-
         # Setup globals c
         # Request global - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
@@ -236,6 +235,7 @@ class BaseController(WSGIController):
         if flash_message_session:
             try:               overlay_status_message(c.result, json.loads(flash_message_session))
             except ValueError: overlay_status_message(c.result,            flash_message_session )
+            
 
     def print_controller_status(self):
         from civicboom.lib.web import current_referer, current_url

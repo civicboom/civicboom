@@ -63,7 +63,7 @@ def follow(follower, followed, delay_commit=False):
     follow.follower_id = follower.id
     Session.add(follow)
     
-    followed.send_message(messages.followed_by(reporter=follower), delay_commit=True)
+    followed.send_message(messages.followed_by(member=follower), delay_commit=True)
     
     if not delay_commit:
         Session.commit()
@@ -89,7 +89,7 @@ def unfollow(follower, followed, delay_commit=False):
     follow = Session.query(Follow).filter(Follow.member_id==followed.id).filter(Follow.follower_id==follower.id).one()
     Session.delete(follow)
         
-    followed.send_message(messages.follow_stop(reporter=follower), delay_commit=True)
+    followed.send_message(messages.follow_stop(member=follower), delay_commit=True)
     
     if not delay_commit:
         Session.commit()

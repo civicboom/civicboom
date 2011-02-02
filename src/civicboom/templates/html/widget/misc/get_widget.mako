@@ -2,11 +2,12 @@
 
 <%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
 
-<p class="content_title">${_("Embed this widget on your website")}</p>
-<p>${_("Simply copy and paste this code into your site's HTML to embed this organisation's _site_name request feed.")}</p>
+##<p class="content_title">${_("Embed this widget on your website")}</p>
+<p>${_("Simply copy and paste this code into your site's HTML")}</p>
+## to embed this organisation's _site_name request feed.
 
 <form action="">
-  <textarea name="widget_link" class="widget_link_form_field">${get_widget.widget_iframe(c.widget['owner'])}</textarea>
+  <textarea rows="4" name="widget_link" style="width:95%;">${get_widget.widget_iframe(c.widget['owner'])}</textarea>
 </form>
 
 <p>${_("Want to get a widget for your community?")}</p>
