@@ -1,0 +1,29 @@
+BODY.c-groups.a-new.u-user .group-edit {
+  width: 300px;
+}
+
+BODY.c-groups.a-new.u-user TEXTAREA.group-edit {
+  resize: vertical;
+}
+
+BODY.c-groups.a-new.u-user TR.padding TD, BODY.c-groups.a-new.u-user  {
+  padding-bottom: 0.6em;
+}
+
+BODY.c-groups.a-new.u-user TABLE.group-table {
+  width: 470px;
+}
+
+BODY.c-groups.a-new.u-user TABLE.quickgroup-table {
+  width: 210px;
+}
+
+BODY.c-groups.a-new.u-user .quickbutton {
+  width: 100px;
+  height: 60px;
+  white-space: normal;
+}
+
+BODY.c-groups.a-new.u-user .quickhilite {
+  color: #FFFF00;
+}
