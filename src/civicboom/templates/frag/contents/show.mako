@@ -28,11 +28,11 @@
         self.attr.title     = _('_'+self.content['type']).capitalize()
         self.attr.icon_type = self.content['type']
         
-        self.creation_date = datetime.datetime.strptime(self.content['creation_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if 'creation_date' in self.content else nothing
-        self.update_date = datetime.datetime.strptime(self.content['update_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if 'update_date' in self.content else nothing
-        self.publish_date = datetime.datetime.strptime(self.content['publish_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if 'publish_date' in self.content else nothing
-        self.due_date = datetime.datetime.strptime(self.content['due_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if 'due_date' in self.content else nothing
-        self.event_date = datetime.datetime.strptime(self.content['event_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if 'event_date' in self.content else nothing
+        self.creation_date = datetime.datetime.strptime(self.content['creation_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('creation_date') else nothing
+        self.update_date = datetime.datetime.strptime(self.content['update_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('update_date') else nothing
+        self.publish_date = datetime.datetime.strptime(self.content['publish_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('publish_date') else nothing
+        self.due_date = datetime.datetime.strptime(self.content['due_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('due_date') else nothing
+        self.event_date = datetime.datetime.strptime(self.content['event_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('event_date') else nothing
         self.attr.frag_data_css_class = 'frag_content'
         
         if self.content['private'] == False:
