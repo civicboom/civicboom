@@ -78,9 +78,20 @@
         <div class="frag_col">
         
         <h2>${_("Content by")}</h2>
-        ${member_includes.avatar(self.content['creator'], show_name=True, show_follow_button=True, class_="large")}
+        <div>
+          <span style="float:left; padding-right: 3px;">${member_includes.avatar(self.content['creator'], show_name=True, show_follow_button=True, class_="large")}</span>
         ##${frag_lists.member_list(content['creator'], _("Creator"))}
-        
+          <div>
+            ${self.content['creator']['name']}<br />
+            (${self.content['creator']['username']})<br />
+            ${self.content['creator']['type'].capitalize()}
+            ## Member Info Here
+            ##% if self.member['website'] != '':
+            ##  Website: ${self.member['join_date']}<br />
+            ##% endif
+            ##Joined: ${self.member['join_date']}<br />
+          </div>
+        </div>
         % if self.content['parent']:
             ${frag_lists.content_list(self.content['parent'], _("Parent content"), creator=True)}
         % endif
