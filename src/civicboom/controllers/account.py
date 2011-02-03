@@ -31,7 +31,7 @@ class AccountController(BaseController):
     @web
     @auth
     #@authenticate_form
-    def signout(self):
+    def signout(self, **kwargs):
         """
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies
         """

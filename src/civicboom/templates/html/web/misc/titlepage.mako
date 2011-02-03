@@ -71,7 +71,7 @@
         </div>
         
         <a style="float:right;" class="button" href="${url(controller='misc', action='about')}">${_('Learn more')}</a>
-        <p style="font-size: x-large; font-weight: bold;">${_("Don't just read it Feed it.")}</p>
+        <p style="font-size: x-large; font-weight: bold;">${_("Don't just read it. Feed it.")}</p>
         
         <div style="clear: both; padding: 0.5em;"></div>
         

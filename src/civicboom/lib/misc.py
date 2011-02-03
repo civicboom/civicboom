@@ -110,5 +110,5 @@ def make_username(title):
     >>> make_username("Bob's Cake Factory")
     'bob-s-cake-factory'
     """
-    return re.sub("[^\w-]", "-", title.lower())
+    return re.sub("[^\w-]", "-", title.lower()).strip("-")
 

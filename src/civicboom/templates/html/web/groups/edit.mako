@@ -35,10 +35,9 @@
     <%def name="show_error(name)">
         ##% if 'group' in d and name in d['group'] and 'error' in d['group'][name]:
         % if 'invalid' in d and name in d['invalid']:
-            <span class="error-message">${d['invalid'][name]}</span>
+            <span class="error-message error">${d['invalid'][name]}</span>
         % endif
     </%def>
-
 
 
     ## Setup Form
@@ -79,7 +78,7 @@
   			<tr>
   				<td style="width: 20px">&nbsp;</td>
   				<td colspan="5">
-            <input type="radio" class="quickchange" name="default_role" value="observer" id="default_role_observer" /><label for="default_role_observer">Observer</label>
+            <input type="radio" class="quickchange" name="default_role" ${'checked="checked"' if get_param('default_role') == 'observer' else ''} value="observer" id="default_role_observer" /><label for="default_role_observer">Observer</label>
             <span class="role_description"> - a member of a group who can only view content/drafts and comment</span>
           </td>
           <td style="width: 20px">&nbsp;</td>
@@ -87,7 +86,7 @@
         <tr>
           <td style="width: 20px">&nbsp;</td>
           <td colspan="5">
-            <input type="radio" class="quickchange" name="default_role" value="contributor" id="default_role_contributor" /><label for="default_role_contributor">Contributor</label>
+            <input type="radio" class="quickchange" name="default_role" ${'checked="checked"' if get_param('default_role') == 'contributor' else ''} value="contributor" id="default_role_contributor" /><label for="default_role_contributor">Contributor</label>
             <span class="role_description"> - a member who can do the above and create and edit drafts</span>
           </td>
           <td style="width: 20px">&nbsp;</td>
@@ -95,7 +94,7 @@
         <tr>
           <td style="width: 20px">&nbsp;</td>
           <td colspan="5">
-            <input type="radio" class="quickchange" name="default_role" value="editor" id="default_role_editor" /><label for="default_role_editor">Editor</label>
+            <input type="radio" class="quickchange" name="default_role" ${'checked="checked"' if get_param('default_role') == 'editor' else ''} value="editor" id="default_role_editor" /><label for="default_role_editor">Editor</label>
             <span class="role_description"> - a member who can do the above plus publish content</span>
           </td>
           <td style="width: 20px">&nbsp;</td>
@@ -103,7 +102,7 @@
         <tr class="padding">
           <td style="width: 20px">&nbsp;</td>
           <td colspan="5">
-            <input type="radio" class="quickchange" name="default_role" value="admin" id="default_role_admin" /><label for="default_role_admin">Administrator</label>
+            <input type="radio" class="quickchange" name="default_role" ${'checked="checked"' if get_param('default_role') == 'admin' else ''} value="admin" id="default_role_admin" /><label for="default_role_admin">Administrator</label>
             <span class="role_description"> - a member who can do the above and invite others to join and set member roles</span><br />
           ${show_error('default_role')}
   				</td>
@@ -120,13 +119,13 @@
   			<tr class="padding">
           <td>&nbsp;</td>
           <td>
-            <input type="radio" class="quickchange" name="join_mode" value="public" id="join_mode_public" /><label for="join_mode_public">Open?</label>
+            <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'public' else ''} value="public" id="join_mode_public" /><label for="join_mode_public">Open?</label>
           </td>
           <td>
-            <input type="radio" class="quickchange" name="join_mode" value="invite_and_request" id="join_mode_invite_and_request" /><label for="join_mode_invite_and_request">Public?</label>
+            <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite_and_request' else ''} value="invite_and_request" id="join_mode_invite_and_request" /><label for="join_mode_invite_and_request">Public?</label>
           </td>
           <td>
-            <input type="radio" class="quickchange" name="join_mode" value="invite" id="join_mode_invite" /><label for="join_mode_invite">Private?</label><br />
+            <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite' else ''} value="invite" id="join_mode_invite" /><label for="join_mode_invite">Private?</label><br />
           </td>
           <td colspan="3">
             ${show_error('join_mode')}
@@ -139,17 +138,17 @@
         <tr class="padding">
           <td>&nbsp;</td>
           <td>
-            <input type="radio" class="quickchange" name="content_visibility" value="public" id="content_visibility_public" /><label for="content_visibility_public">Open</label>
+            <input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'public' else ''} value="public" id="content_visibility_public" /><label for="content_visibility_public">Open</label>
           </td>
           <td>
-            <input type="radio" class="quickchange" name="content_visibility" value="private" id="content_visibility_private" /><label for="content_visibility_private">Hidden</label>
+            <input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'private' else ''} value="private" id="content_visibility_private" /><label for="content_visibility_private">Hidden</label>
           </td>
           <td>${show_error('default_content_visibility')}</td>
           <td>
-            <input type="radio" class="quickchange" name="member_visibility" value="public" id="member_visibility_public" /><label for="member_visibility_public">Open</label>
+            <input type="radio" class="quickchange" name="member_visibility" ${'checked="checked"' if get_param('member_visibility') == 'public' else ''} value="public" id="member_visibility_public" /><label for="member_visibility_public">Open</label>
           </td>
           <td>
-            <input type="radio" class="quickchange" name="member_visibility" value="private" id="member_visibility_private" /><label for="member_visibility_private">Hidden</label>
+            <input type="radio" class="quickchange" name="member_visibility" ${'checked="checked"' if get_param('member_visibility') == 'private' else ''} value="private" id="member_visibility_private" /><label for="member_visibility_private">Hidden</label>
           </td>
           <td style="width: 20px">
             ${show_error('member_visibility')}
@@ -213,7 +212,7 @@
 </%def>
 <%def name="quick_group_content()">
     <script type="text/javascript">
-      var quickOrder = ['default_role', 'join_mode', 'content_visibility', 'member_visibility'];
+      var quickOrder = ['default_role', 'join_mode', 'default_content_visibility', 'member_visibility'];
       var quickSelection = {'news': '0001',
                             'interest':'1100',
                             'educational':'2200',
@@ -240,7 +239,8 @@
       $(function () {
       var defaultDescPlaceholder = $('textarea#group_description').attr('placeholder');
         if (!Modernizr.input.placeholder) {
-          $('textarea#group_description').val($('textarea#group_description').attr('placeholder'));
+          if ($('textarea#group_description').val() == '')
+            $('textarea#group_description').val($('textarea#group_description').attr('placeholder'));
           $('textarea#group_description').focus(function (e) {
             $(this).val('');
           });

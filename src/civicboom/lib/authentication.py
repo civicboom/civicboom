@@ -126,6 +126,7 @@ def authorize(_target, *args, **kwargs):
                     c.authenticated_form = True # AllanC - the user has had to sign in - therefor they are aware they are performing an action - only our site can set the cookies
                 except:
                     pass
+
             
         # Make original method call
         result = _target(*args, **kwargs)
@@ -139,15 +140,20 @@ def authorize(_target, *args, **kwargs):
             cookie_set('login_action_referer', current_referer(protocol=protocol_after_login), 60 * 10)
             # The redirect auto formater looked for this and redirects as appropriate
         if c.format == "html" or c.format == "redirect":
-            cookie_set('login_redirect', current_url(protocol=protocol_after_login), 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
-            # save the the session POST data to be reinstated after the redirect
-            if request.POST:
-                login_redirect_action = json.dumps(multidict_to_dict(request.POST))
-            else:
-                login_redirect_action = json.dumps(dict())
-            
-            login_redirect_action = quote_plus(login_redirect_action)
-            cookie_set('login_redirect_action', login_redirect_action , 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+            login_redirect_url = current_url(protocol=protocol_after_login)
+            ## AllanC - bugfix - impaticent people who click signout beofre the page is loaded, dont allow signout as an actions!!
+            if 'signout' in login_redirect_url:
+                login_redirect_url = None
+            if login_redirect_url:
+                cookie_set('login_redirect', login_redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                # save the the session POST data to be reinstated after the redirect
+                if request.POST:
+                    login_redirect_action = json.dumps(multidict_to_dict(request.POST))
+                else:
+                    login_redirect_action = json.dumps(dict())
+                
+                login_redirect_action = quote_plus(login_redirect_action)
+                cookie_set('login_redirect_action', login_redirect_action , 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
             return redirect(url(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
         
         # If API request - error unauthorised
@@ -195,7 +201,8 @@ def signin_user_and_redirect(user, login_provider=None):
     login_redirector()
 
     # If no redirect send them to private profile
-    return redirect(url(controller="profile", action="index"))
+    #return redirect(url(controller="profile", action="index"))
+    return redirect("/profile")
     
 def signout_user(user):
     user_log.info("logged out")
@@ -207,7 +214,9 @@ def signout_user(user):
 
 def set_persona(persona):
     persona = get_member(persona)
-    if (persona == c.logged_in_user):        
+    if   persona == c.logged_in_persona:
+        return True
+    elif persona == c.logged_in_user:
         # If trying to fall back to self login then remove persona selection
         session_remove('username_persona')
         return True

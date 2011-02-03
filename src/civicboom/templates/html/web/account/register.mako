@@ -11,10 +11,10 @@
 
 <%def name="body()">
 
-    % if 'invalid' in c.result['data']:
-    <p>INVALID:</p>
-    <pre>${c.result['data']['invalid']}</pre>
-    % endif
+##    % if 'invalid' in c.result['data']:
+##    <p>INVALID:</p>
+##    <pre>${c.result['data']['invalid']}</pre>
+##    % endif
 
     <form action="" method="post">
 		<table class="form">
@@ -77,7 +77,7 @@
 </%def>
 
 <%def name="dob()">
-    <tr>
+  <tr>
 		<td>Date of Birth</td>
 		<td><input id="datepicker" type="date" name="dob"   value="${h.get_data_value('dob','register' ,c.logged_in_persona.config['dob'])}"></td>
 		<td>${invalid('dob')}</td>
@@ -85,21 +85,21 @@
 </%def>
 
 <%def name="password()">
-    <tr>
+  <tr>
+    <td style="vertical-align: middle;">Please type the text in the image</td>
 		<td>${h.get_captcha(c.lang, 'white')}</td>
 		<td>${invalid('recaptcha_response_field')}</td>
-    <tr>
-  
+  </tr>
     <tr>
 		<td>Password</td>
 		<td><input type="password" name="password"         value="" /></td>
 		<td>${invalid('password')}</td>
-    <tr>
-    <tr>
+  </tr>
+  <tr>
 		<td>Password Confirm</td>
 		<td><input type="password" name="password_confirm" value="" /></td>
 		<td>${invalid('password_confirm')}</td>
-    <tr>
+  </tr>
 </%def>
 
 
