@@ -1,4 +1,5 @@
 <%inherit file="/frag/common/frag.mako"/>
+<%! import datetime %>
 
 <%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"   />
 <%namespace name="flag"            file="/frag/content_actions/flag.mako"/>
@@ -27,6 +28,11 @@
         self.attr.title     = _('_'+self.content['type']).capitalize()
         self.attr.icon_type = self.content['type']
         
+        self.creation_date = datetime.datetime.strptime(self.content['creation_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if 'creation_date' in self.content else nothing
+        self.update_date = datetime.datetime.strptime(self.content['update_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if 'update_date' in self.content else nothing
+        self.publish_date = datetime.datetime.strptime(self.content['publish_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if 'publish_date' in self.content else nothing
+        self.due_date = datetime.datetime.strptime(self.content['due_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if 'due_date' in self.content else nothing
+        self.event_date = datetime.datetime.strptime(self.content['event_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if 'event_date' in self.content else nothing
         self.attr.frag_data_css_class = 'frag_content'
         
         if self.content['private'] == False:
@@ -123,10 +129,29 @@
             <p>${field_name}: ${content[field_name]}</p>
             % endif
         </%def>
+        <%def name="format_date_if(title, date_input)">
+          % if date_input:
+            <p>${title}: ${datetime.datetime.strftime(date_input, '%H:%M:%S %d/%m/%Y')}</p>
+          % endif
+        </%def>
+        <%def name="iconify(field_name, title, icon_classes)">
+          % if content.get(field_name):
+            <span class="${icon_classes}"><span>${title}</span></span>
+          % endif
+        </%def>
         
-        % for field_name in ['views', 'boom_count', 'due_date', 'event_date', 'private', 'closed', 'creation_date', 'update_date', 'publish_date', 'edit_lock']:
-            ${detail(field_name)}
-        % endfor
+        <p>Booms: ${content['boom_count'] if 'boom_count' in content else '0'}</p>
+        <p>Views: ${content['views'] if 'views' in content else '0'}</p>
+        ${format_date_if('Event Date', self.event_date)}
+        ${format_date_if('Due By', self.due_date)}
+        ${format_date_if('Created', self.creation_date)}</p>
+        ${format_date_if('Published', self.publish_date)}</p>
+        ${format_date_if('Updated', self.update_date)}</p>
+        <div class="iconholder">
+          ${iconify('private', 'Private Content', 'icon icon_private')}
+          ${iconify('closed', 'Closed', 'icon icon_closed')}
+          ${iconify('edit_lock', 'Locked for editing', 'icon icon_edit_lock')}
+        </div>
         
         % if 'license' in content:
         <% license = content['license'] %>
