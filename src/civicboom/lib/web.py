@@ -69,9 +69,8 @@ def url(*args, **kwargs):
     if 'subdomain' in kwargs:
         subdomain = str(kwargs.pop('subdomain'))
         assert subdomain in app_globals.subdomains.keys()
-        if not config['development_mode']: #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
-            if subdomain = '':
-                subdomain = 'www'
+        if not config['development_mode'] and subdomain = '': #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
+            subdomain = 'www'
         if subdomain:
             subdomain += '.'
         host = c.host
