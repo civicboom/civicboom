@@ -126,6 +126,7 @@ def authorize(_target, *args, **kwargs):
                     c.authenticated_form = True # AllanC - the user has had to sign in - therefor they are aware they are performing an action - only our site can set the cookies
                 except:
                     pass
+
             
         # Make original method call
         result = _target(*args, **kwargs)
