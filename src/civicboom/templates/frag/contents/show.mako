@@ -129,23 +129,29 @@
             <p>${field_name}: ${content[field_name]}</p>
             % endif
         </%def>
-        <%def name="formatDateIf(title, date_input)">
+        <%def name="format_date_if(title, date_input)">
           % if date_input:
             <p>${title}: ${datetime.datetime.strftime(date_input, '%H:%M:%S %d/%m/%Y')}</p>
+          % endif
+        </%def>
+        <%def name="iconify(field_name, title, icon_classes)">
+          % if content.get(field_name):
+            <span class="${icon_classes}"><span>${title}</span></span>
           % endif
         </%def>
         
         <p>Booms: ${content['boom_count'] if 'boom_count' in content else '0'}</p>
         <p>Views: ${content['views'] if 'views' in content else '0'}</p>
-        ${formatDateIf('Event Date', self.event_date)}
-        ${formatDateIf('Due By', self.due_date)}
-        ${formatDateIf('Created', self.creation_date)}</p>
-        ${formatDateIf('Published', self.publish_date)}</p>
-        ${formatDateIf('Updated', self.update_date)}</p>
-        
-        % for field_name in ['private', 'closed', 'edit_lock']:
-            ${detail(field_name)}
-        % endfor
+        ${format_date_if('Event Date', self.event_date)}
+        ${format_date_if('Due By', self.due_date)}
+        ${format_date_if('Created', self.creation_date)}</p>
+        ${format_date_if('Published', self.publish_date)}</p>
+        ${format_date_if('Updated', self.update_date)}</p>
+        <div class="iconholder">
+          ${iconify('private', 'Private Content', 'icon icon_private')}
+          ${iconify('closed', 'Closed', 'icon icon_closed')}
+          ${iconify('edit_lock', 'Locked for editing', 'icon icon_edit_lock')}
+        </div>
         
         % if 'license' in content:
         <% license = content['license'] %>
