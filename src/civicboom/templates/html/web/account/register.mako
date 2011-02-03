@@ -11,10 +11,10 @@
 
 <%def name="body()">
 
-    % if 'invalid' in c.result['data']:
-    <p>INVALID:</p>
-    <pre>${c.result['data']['invalid']}</pre>
-    % endif
+##    % if 'invalid' in c.result['data']:
+##    <p>INVALID:</p>
+##    <pre>${c.result['data']['invalid']}</pre>
+##    % endif
 
     <form action="" method="post">
 		<table class="form">

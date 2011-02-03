@@ -77,11 +77,18 @@
             Joined: ${self.member['join_date']}<br />
             Account: ${self.member['account_type'].capitalize()}
           </div>
-          <div style="clear:left;">
-            ${self.member['description']}
-          </div>
         </div>
-        
+        % if self.member.get('description'):
+          <div style="clear:left; height: 3px;">&nbsp;</div>
+          <div style="clear:left;" class="frag_list">
+            <h2><span class="icon icon_${self.attr.icon_type}"><span>descrition</span><div style="display:inline-block;padding-left:19px">Description</div></span></h2>
+            <div class="frag_list_contents">
+              <div class="content" style="padding-bottom: 3px;">
+                ${self.member['description']}
+              </div>
+            </div>
+          </div>
+        % endif
         ## Comunity ----------------------------------------
         
         ${frag_list.member_list_thumbnails(
