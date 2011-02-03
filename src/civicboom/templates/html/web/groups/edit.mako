@@ -139,10 +139,10 @@
         <tr class="padding">
           <td>&nbsp;</td>
           <td>
-            <input type="radio" class="quickchange" name="content_visibility" value="public" id="content_visibility_public" /><label for="content_visibility_public">Open</label>
+            <input type="radio" class="quickchange" name="default_content_visibility" value="public" id="content_visibility_public" /><label for="content_visibility_public">Open</label>
           </td>
           <td>
-            <input type="radio" class="quickchange" name="content_visibility" value="private" id="content_visibility_private" /><label for="content_visibility_private">Hidden</label>
+            <input type="radio" class="quickchange" name="default_content_visibility" value="private" id="content_visibility_private" /><label for="content_visibility_private">Hidden</label>
           </td>
           <td>${show_error('default_content_visibility')}</td>
           <td>
@@ -213,7 +213,7 @@
 </%def>
 <%def name="quick_group_content()">
     <script type="text/javascript">
-      var quickOrder = ['default_role', 'join_mode', 'content_visibility', 'member_visibility'];
+      var quickOrder = ['default_role', 'join_mode', 'default_content_visibility', 'member_visibility'];
       var quickSelection = {'news': '0001',
                             'interest':'1100',
                             'educational':'2200',
