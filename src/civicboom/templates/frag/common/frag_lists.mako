@@ -3,6 +3,7 @@
 <%!
     import copy
     import civicboom.lib.constants as constants
+    import datetime
     
     rss_url = True
 %>
@@ -306,6 +307,7 @@
 
 <%def name="render_item_message(message, list='to')">
 <%
+    dt = datetime.datetime.strptime(message['timestamp'].split('.')[0], "%Y-%m-%d %H:%M:%S") if message['timestamp'] else nothing
     read_status = ''
     if 'read' in message:
         if not message['read']:
@@ -332,28 +334,35 @@
     % if message.get('target') and list=='sent':
         ${member_includes.avatar(message['target'], class_="thumbnail_small target")}
     % endif
-    
-    % if 'content' in message:
-
-        <p class="subject">${message['subject']}</p>
-        % if list=='notification':
-        ## It is safe to use literal here as notifications only come from the system
-        <p class="content">${h.literal(h.links_to_frag_links(message['content']))}</p>
-        % else:
-        <p class="content">${message['content']}</p>
+    <div style="margin-left: 22px;">
+      % if 'content' in message:
+  
+          <p class="subject">${message['subject']}</p>
+          % if list=='notification':
+          ## It is safe to use literal here as notifications only come from the system
+          <p class="content">${h.literal(h.links_to_frag_links(message['content']))}</p>
+          % else:
+          <p class="content">${message['content']}</p>
+          % endif
+  
+      % else:
+          
+          <a href    = "${url('message', id=message['id'])}"
+             onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
+          >
+              <p class="subject">${message['subject']}</p>
+          </a>
+      % endif
+      <p class="timestamp">
+        % if message.get('source') and list!='sent':
+            From: ${message['source']['name']}
         % endif
-
-    % else:
-        
-        <a href    = "${url('message', id=message['id'])}"
-           onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
-        >
-            <p class="subject">${message['subject']}</p>
-        </a>
-    % endif
-    
-    <p class="timestamp">${message["timestamp"][0:16]}</p>
-    
+        % if message.get('target') and list=='sent':
+            To: ${message['target']['name']}
+        % endif
+      </p>
+      <p class="timestamp">${datetime.datetime.strftime(dt, '%H:%M:%S %d/%m/%Y')}</p>
+    </div>
     
 </li>
 </%def>
