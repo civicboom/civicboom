@@ -83,7 +83,7 @@ generators = [
     ["assignment_due_1day",                  "ne", _("_assignment due tomorrow"),    _("The _assignment you accepted %(assignment)s is due tomorrow")],
 
     # Response Actions
-    ["article_disasociated_from_assignment", "n",  _("_article disassociated from _assignment"), _("%(member)s disassociated your _article %(article)s from the _assignment %(assignment)s")],
+    ["article_disassociated_from_assignment","n",  _("_article disassociated from _assignment"), _("%(member)s disassociated your _article %(article)s from the _assignment %(assignment)s")],
     ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved your _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
       # TODO: response seen
 

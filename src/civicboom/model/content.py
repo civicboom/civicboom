@@ -448,9 +448,9 @@ class ArticleContent(UserVisibleContent):
         from civicboom.lib.database.actions import parent_approve
         return parent_approve(self)
 
-    def parent_dissasociate(self):
-        from civicboom.lib.database.actions import parent_disasociate
-        return parent_disasociate(self)
+    def parent_disassociate(self):
+        from civicboom.lib.database.actions import parent_disassociate
+        return parent_disassociate(self)
 
 
 class SyndicatedContent(UserVisibleContent):

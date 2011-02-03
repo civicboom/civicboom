@@ -9,7 +9,7 @@
 
 
 ## for deprication
-<%namespace name="loc"              file="/html/web/common/location.mako"     />
+<%namespace name="loc"             file="/html/web/common/location.mako"     />
 
 <%!
     rss_url = True
@@ -64,6 +64,7 @@
         <div class="frag_col">
         ${content_details()}
         ${content_content()}
+        ${content_license()}
         ${content_media()}
         ${content_map()}
         ${content_comments()}
@@ -82,9 +83,9 @@
           <span style="float:left; padding-right: 3px;">${member_includes.avatar(self.content['creator'], show_name=True, show_follow_button=True, class_="large")}</span>
         ##${frag_lists.member_list(content['creator'], _("Creator"))}
           <div>
+            <span style="font-weight: bold;">${self.content['creator']['type'].capitalize()}:</span><br />
             ${self.content['creator']['name']}<br />
             (${self.content['creator']['username']})<br />
-            ${self.content['creator']['type'].capitalize()}
             ## Member Info Here
             ##% if self.member['website'] != '':
             ##  Website: ${self.member['join_date']}<br />
@@ -142,7 +143,11 @@
         </%def>
         <%def name="format_date_if(title, date_input)">
           % if date_input:
-            <p>${title}: ${datetime.datetime.strftime(date_input, '%H:%M:%S %d/%m/%Y')}</p>
+            <tr>
+              <td><span class="icon icon_article"><span>&nbsp;</span></span></td>
+              <td>${title}</td>
+              <td colspan="4">${datetime.datetime.strftime(date_input, '%H:%M:%S %d/%m/%Y')}</td>
+            </tr>
           % endif
         </%def>
         <%def name="iconify(field_name, title, icon_classes)">
@@ -150,26 +155,32 @@
             <span class="${icon_classes}"><span>${title}</span></span>
           % endif
         </%def>
-        
-        <p>Booms: ${content['boom_count'] if 'boom_count' in content else '0'}</p>
-        <p>Views: ${content['views'] if 'views' in content else '0'}</p>
-        ${format_date_if('Event Date', self.event_date)}
-        ${format_date_if('Due By', self.due_date)}
-        ${format_date_if('Created', self.creation_date)}</p>
-        ${format_date_if('Published', self.publish_date)}</p>
-        ${format_date_if('Updated', self.update_date)}</p>
+        <style type="text/css">
+          table.content tr td { padding-right: 3px; }
+          table.content tr td.x { padding-left: 3px; }
+        </style>
+        <table class="content">
+          <tr>
+            <td><span class="icon icon_boom"><span>Boom</span></span></td>
+            <td>Booms</td>
+            <td>${content['boom_count'] if 'boom_count' in content else '0'}</td>
+            <td class="x"><span class="icon icon_seen"><span>Views</span></span></td>
+            <td>Views</td>
+            <td>${content['views'] if 'views' in content else '0'}</td>
+          </tr>
+          ${format_date_if('Event Date', self.event_date)}
+          ${format_date_if('Due By', self.due_date)}
+          ${format_date_if('Created', self.creation_date)}</p>
+          ${format_date_if('Published', self.publish_date)}</p>
+          ${format_date_if('Updated', self.update_date)}</p>
+        </table>
         <div class="iconholder">
           ${iconify('private', 'Private Content', 'icon icon_private')}
           ${iconify('closed', 'Closed', 'icon icon_closed')}
           ${iconify('edit_lock', 'Locked for editing', 'icon icon_edit_lock')}
         </div>
         
-        % if 'license' in content:
-        <% license = content['license'] %>
-        <a href="${license['url']}" target="_blank" title="${license['description']}">
-          <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
-        </a>
-        % endif        
+       
         
         <ul class="status">
             % if 'approval' in content and content['approval']=='approved':
@@ -191,6 +202,22 @@
     <div class="content_text">
       ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content']))}
     </div>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## License
+##------------------------------------------------------------------------------
+
+<%def name="content_license()">
+    % if 'license' in self.content:
+    <% license = self.content['license'] %>
+    <div>
+      <a href="${license['url']}" target="_blank" title="${license['description']}">
+        <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
+      </a>
+    </div>
+    % endif
 </%def>
 
 
@@ -435,7 +462,7 @@
     % endif
     % if 'dissasociate' in self.actions:
         ${h.secure_link(
-            h.args_to_tuple('content_action', action='disasociate', format='redirect', id=self.id),
+            h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
             value           = _('Disasociate') ,
             value_formatted = h.literal("<span class='icon icon_dissasociate'></span>%s") % _('Disasociate'),
             title           = _("Dissacociate your content from this response") ,
