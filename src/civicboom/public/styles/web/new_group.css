@@ -4,7 +4,7 @@ BODY.c-groups.a-new.u-user .group-edit {
 
 BODY.c-groups.a-new.u-user TEXTAREA.group-edit {
   resize: vertical;
-  height: 80px;
+  height: 75px;
 }
 
 BODY.c-groups.a-new.u-user TR TD  {

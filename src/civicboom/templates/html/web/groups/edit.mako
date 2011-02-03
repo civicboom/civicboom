@@ -21,7 +21,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="group()">
-    ${frag.frag_basic(title=_('%s group') % c.action.capitalize(), icon='group', frag_content=group_content)}
+    ${frag.frag_basic(title=_('%s Group') % c.action.capitalize(), icon='group', frag_content=group_content)}
 </%def>
 <%def name="group_content()">
     <%
@@ -69,7 +69,7 @@
   			<tr class="padding">
   				<td colspan="2">${_("Description")}<br />Who it's for<br />and purpose</td>
   				<td colspan="5">
-  		      <textarea class="group-edit" name="description" id="group_description" placeholder="One two three">${get_param('description')}</textarea><br />
+  		      <textarea class="group-edit" name="description" id="group_description" placeholder="This will have text that will be a top line description of what this group could be for.">${get_param('description')}</textarea><br />
             ${show_error('description')}
   				</td>
   			</tr>
@@ -189,13 +189,14 @@
           <td>&nbsp;</td>
         </tr>
   			<tr>
-  				<td colspan="7" style="text-align: right;">
+  				<td colspan="6" style="text-align: right;">
   				% if d['action']=='edit':
   					<input type="submit" name="submit" value="${_('Save Group')}" class="button" />
   				% else:
   					<input type="submit" name="submit" value="${_('Create Group')}" class="button" />
   				% endif
   				</td>
+  				<td>&nbsp;</td>
   			</tr>
       </table>
     </fieldset>
@@ -208,7 +209,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="quick_group()">
-    ${frag.frag_basic(title=_('Quick group'), icon='group', frag_content=quick_group_content)}
+    ${frag.frag_basic(title=_('Quick Group'), icon='group', frag_content=quick_group_content)}
 </%def>
 <%def name="quick_group_content()">
     <script type="text/javascript">
@@ -229,7 +230,15 @@
                             'workforce':'This is a workforce blurb',
                             'creative':'This is a creative blurb',
                             'research':'This is a research blurb'};
+      function changePlaceholder (jquery_object, text) {
+        if (typeof text === 'undefined') var text = '';
+        var oldPlaceholder = jquery_object.attr('placeholder'); 
+        jquery_object.attr('placeholder', text);
+        if ((!Modernizr.input.placeholder) && (jquery_object.val() === oldPlaceholder))
+          jquery_object.val(jquery_object.attr('placeholder'));
+      }
       $(function () {
+      var defaultDescPlaceholder = $('textarea#group_description').attr('placeholder');
         if (!Modernizr.input.placeholder) {
           $('textarea#group_description').val($('textarea#group_description').attr('placeholder'));
           $('textarea#group_description').focus(function (e) {
@@ -255,11 +264,7 @@
               }
             }
           }
-          ## Set placeholder (if not HTML5 update value if eq to old placeholder!)
-          var oldPlaceholder = $('#group_description').attr('placeholder'); 
-          $('#group_description').attr('placeholder', quickName);
-          if ((!Modernizr.input.placeholder) && ($('#group_description').val() === oldPlaceholder))
-            $('#group_description').val($('#group_description').attr('placeholder'));
+          changePlaceholder ($('#group_description'), quickBlurb[quickName]);
           if (quickHilite) $('.quickchange:checked').parents('td').addClass('quickchangehilite');
           hiliteQuickButtons (quickSelection[quickName]);
         });
@@ -282,6 +287,7 @@
           }
           $('td.quickchangehilite').removeClass('quickchangehilite');
           if (hiliteQuickButtons (quickString)) $('.quickchange:checked').parents('td').addClass('quickchangehilite');
+          changePlaceholder ($('#group_description'), defaultDescPlaceholder);
         });
       });
     </script>
