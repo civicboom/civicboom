@@ -139,14 +139,17 @@
         <div class="frag_col">
         
         % if self.current_user:
+            <%def name="messageIcon(messages)">
+              % if messages > 0:
+                <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
+              % endif
+            </%def>
             <a class   = "icon_larger icon_messages_larger"
                href    = "${h.url('messages',list='to')}"
                title   = "${_('Messages')}"
                onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Messages')}</span>
-            % if self.num_unread_messages > 0:
-              <div class="icon_overlay_red">&nbsp;${self.num_unread_messages}&nbsp;</div>
-            % endif
+            ${messageIcon(self.num_unread_messages}
             </a>
     
             <a class   = "icon_larger icon_messagesent_larger"
@@ -160,9 +163,7 @@
                title   = "${_('Notifications')}"
                onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Notifications')}</span>
-            %if self.num_unread_notifications > 0:
-              <div class="icon_overlay_red">&nbsp;${self.num_unread_notifications}&nbsp;</div>
-            %endif
+            ${messageIcon(self.num_unread_notifications}
             </a>
         % endif
         
