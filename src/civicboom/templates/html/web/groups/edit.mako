@@ -239,7 +239,8 @@
       $(function () {
       var defaultDescPlaceholder = $('textarea#group_description').attr('placeholder');
         if (!Modernizr.input.placeholder) {
-          $('textarea#group_description').val($('textarea#group_description').attr('placeholder'));
+          if ($('textarea#group_description').val() == '')
+            $('textarea#group_description').val($('textarea#group_description').attr('placeholder'));
           $('textarea#group_description').focus(function (e) {
             $(this).val('');
           });
