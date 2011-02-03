@@ -39,6 +39,10 @@
 
 /* Widget Content */
 
+#CivicboomWidget .widget_content .content_preview H1{
+  margin-bottom: 0.5em;
+}
+
 #CivicboomWidget .widget_content .content_preview IMG {
   margin-right: 0.5em;
 }
