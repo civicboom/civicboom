@@ -85,3 +85,16 @@
 .icon_edit_lock_large {background: transparent url('/styles/common/icons32/lock-icon.png'   ) no-repeat;}
 .icon_private_large   {background: transparent url('/styles/common/icons32/key-icon.png'    ) no-repeat;}
 .icon_seen_large      {background: transparent url('/styles/common/icons32/tick-icon.png'   ) no-repeat;}
+
+/* 40x40 icons */
+.icon_larger {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  vertical-align: middle;
+}
+.icon_larger span {display: none;}
+.icon_messages_larger {background: transparent url('/images/messages.png') no-repeat;}
+.icon_messagesent_larger {background: transparent url('/images/message_sent.png') no-repeat;}
+.icon_notifications_larger {background: transparent url('/images/notifications.png') no-repeat;}
+}

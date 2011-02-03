@@ -64,8 +64,11 @@
     <div class="frag_left_col">
         <div class="frag_col">
         ## Member Details
-		<h1>${self.member['name']} (${self.member['username']})</h1>
-        <br>${member_avatar()}
+		<h1>${self.member['name']} (${self.member['username']})</h1><br />
+        <div style="height: 80px;">
+          <span style="float:left;">${member_avatar()}</style>
+          <div style="clear:left; display: inline-block;">&nbsp;</div>
+        </div>
         
         ## Comunity ----------------------------------------
         
@@ -124,19 +127,19 @@
         <div class="frag_col">
         
         % if self.current_user:
-            <a class   = "icon icon_message"
+            <a class   = "icon_larger icon_messages_larger"
                href    = "${h.url('messages',list='to')}"
                title   = "${_('Messages')}"
                onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Messages')}</span></a>
     
-            <a class   = "icon icon_message"
+            <a class   = "icon_larger icon_messagesent_larger"
                href    = "${h.url('messages',list='sent')}"
                title   = "${_('Messages Sent')}"
                onclick = "cb_frag($(this), '${h.url('messages', list='sent'        , format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Messages')}</span></a>
             
-            <a class   = "icon icon_notification"
+            <a class   = "icon_larger icon_notifications_larger"
                href    = "${h.url('messages', list='notification')}"
                title   = "${_('Notifications')}"
                onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
