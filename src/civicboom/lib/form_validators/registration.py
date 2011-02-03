@@ -12,7 +12,7 @@ from civicboom.model.meta              import Session
 from civicboom.model.member            import User, Member
 
 # Other utils
-from civicboom.lib.misc           import calculate_age
+from civicboom.lib.misc           import calculate_age, make_username
 
 # Other libs
 #import recaptcha.client.captcha as librecaptcha
@@ -54,7 +54,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
             return value
         if Session.query(Member).filter(Member.username==value).count() > 0:
             raise formencode.Invalid(self.message("username_taken", state, name=value), value, state)
-        return value
+        return make_username(value)
 
 class UniqueEmailValidator(validators.Email):
     def __init__(self, resolve_domain=True, *args, **kwargs):
