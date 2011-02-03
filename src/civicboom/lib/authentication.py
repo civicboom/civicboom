@@ -212,7 +212,9 @@ def signout_user(user):
 
 def set_persona(persona):
     persona = get_member(persona)
-    if (persona == c.logged_in_user):        
+    if   persona == c.logged_in_persona:
+        return True
+    elif persona == c.logged_in_user:
         # If trying to fall back to self login then remove persona selection
         session_remove('username_persona')
         return True
