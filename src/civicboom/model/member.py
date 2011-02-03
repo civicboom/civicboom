@@ -202,6 +202,7 @@ class Member(Base):
             'utc_offset'          : None ,
             'join_date'           : None ,
             'website'             : None ,
+            'description'         : lambda member: member.config['description'] ,
             #'url'                 : None ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
@@ -535,7 +536,7 @@ class Group(Member):
             if self.is_admin(member, membership):
                 action_list.append('remove')
                 action_list.append('set_role')
-                action_list.append('edit')
+                action_list.append('settings_group')
                 if self.num_admins>1:
                     action_list.append('remove_self')
                     action_list.append('set_role_self')

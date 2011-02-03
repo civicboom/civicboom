@@ -11,13 +11,19 @@ user_log = logging.getLogger("user")
 
 
 class MediaController(BaseController):
+    """REST Controller styled on the Atom Publishing Protocol"""
+    # To properly map this controller, ensure your config/routing.py
+    # file has a resource setup:
+    #     map.resource('medium', 'media')
 
-    #-----------------------------------------------------------------------------
-    # Upload Media
-    #-----------------------------------------------------------------------------
-    #@authorize
-    def upload_media(self):
+    def index(self, format='html'):
+        """GET /media: All items in the collection"""
+        # url('media')
+
+    def create(self):
         """
+        POST /media: Create a new item
+
         With javascript/flash additional media can be uploaded individually
         """
         #user_log.debug("User is attempting to upload media:" + pprint.pformat(request.POST))
@@ -39,14 +45,44 @@ class MediaController(BaseController):
         else:
             return "missing file_data or content_id"
 
-    #-----------------------------------------------------------------------------
-    # Get Processing Status
-    #-----------------------------------------------------------------------------
+    def new(self, format='html'):
+        """GET /media/new: Form to create a new item"""
+        # url('new_medium')
+
+    def update(self, id):
+        """PUT /media/id: Update an existing item"""
+        # Forms posted to this method should contain a hidden field:
+        #    <input type="hidden" name="_method" value="PUT" />
+        # Or using helpers:
+        #    h.form(url('medium', id=ID),
+        #           method='put')
+        # url('medium', id=ID)
+
+    @auth
     @web
-    def get_media_processing_staus(self, id):
+    def delete(self, id):
+        """DELETE /media/id: Delete an existing item"""
+        m = Session.query(Media).filter(Feed.hash==id).first()
+        if not m:
+            raise action_error(_("No such media"), code=404)
+        if m.content.owner != c.logged_in_persona:
+            raise action_error(_("Not your media"), code=403)
+
+        Session.delete(m)
+        Session.commit()
+        return action_ok(_("Media deleted"), code=200)
+
+    @web
+    def show(self, id, format='html'):
         """
+        GET /media/id: Show a specific item
+
         Javascript can poll this method to get progress updates on the media processing
-        Currently only return a flag to state if processing it taking place,
-        but could be improved to return aditional progress info.
+        Currently only return a flag to state if processing it taking place, but could
+        be improved to return aditional progress info.
         """
         return action_ok(data={"status":app_globals.memcache.get(str("media_processing_"+id))})
+
+    def edit(self, id, format='html'):
+        """GET /media/id/edit: Form to edit an existing item"""
+        # url('edit_medium', id=ID)

@@ -182,7 +182,7 @@ def update_content(content):
     #cache_test.invalidate(get_content, '', content.id)
     
     etag_key_incement("member_content",content.creator.id)
-    #cache_test.invalidate(get_content_from, '', article.reporter.id)
+    #cache_test.invalidate(get_content_from, '', article.member.id)
     
     if content.parent:               # If content has parent
         #update_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now

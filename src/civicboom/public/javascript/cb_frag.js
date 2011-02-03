@@ -127,6 +127,8 @@ function cb_frag_load(jquery_element, url) {
 
 function cb_frag_remove(jquery_element) {
 	var parent = jquery_element.parents('.'+fragment_container_class); // find parent
+  if (typeof cb_frag_get_variable(jquery_element, 'autosavedrafttimer') != 'undefined')
+    clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
 	parent.toggle(scroll_duration, function(){
 		parent.remove();
 		// If no fragments on screen redirect to default page
@@ -181,7 +183,8 @@ function cb_frag_reload(param) {
 			var link_element = $(this);
 			for (var url_part in array_of_urls) {
 				url_part = array_of_urls[url_part];
-				if (link_element.attr('href').indexOf(url_part) != -1) {
+				link_element_href = link_element.attr('href');
+				if (link_element_href!=undefined && link_element_href.indexOf(url_part) != -1) {
 					var elem_source_pair = get_parent_container_element_source(link_element);
 					var frag_element = elem_source_pair[0];
 					var frag_source  = elem_source_pair[1];
@@ -203,6 +206,15 @@ function cb_frag_reload(param) {
 
 function cb_frag_set_source(jquery_element, url) {
 	jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href', url);
+}
+
+function cb_frag_set_variable(jquery_element, variable, value) {
+  var valueClean = (typeof value == 'undefined')?(''):(value);
+  jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('cb'+variable, valueClean);
+}
+
+function cb_frag_get_variable(jquery_element, variable) {
+  return jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('cb'+variable);
 }
 
 //------------------------------------------------------------------------------

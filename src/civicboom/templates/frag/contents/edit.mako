@@ -20,11 +20,11 @@
         self.id      = d['content']['id']
         
         self.type          = self.content['type']
-        self.selected_type = type
+        self.selected_type = self.type
         if self.type == 'draft':
             self.selected_type = self.content.get('target_type')
         
-        self.attr.title     = _('Edit _%s' % self.selected_type)
+        self.attr.title     = _('Edit ') + _('_'+self.selected_type)
         self.attr.icon_type = 'edit'
         
         if self.selected_type == 'assignment':
@@ -95,8 +95,8 @@
                 }
             </script>
             ${base_content()}
-            ${media()}
             ${content_type()}
+            ${media()}
             ${location()}
             ${license()}
 			${submit_buttons()}
@@ -109,8 +109,10 @@
 ##------------------------------------------------------------------------------
 
 <%def name="actions_specific()">
-    <a href='' class="icon icon_save"    onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save')}"            ><span>${_('Save')}            </span></a>
-    <a href='' class="icon icon_preview" onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save and Preview')}"><span>${_('Save and Preview')}</span></a>
+    ## AllanC - for now just use buttons at bottom
+    ##<a href='' class="icon icon_save"    onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save')}"            ><span>${_('Save')}            </span></a>
+    ##<a href='' class="icon icon_preview" onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save and Preview')}"><span>${_('Save and Preview')}</span></a>
+    
     ##cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');
 </%def>
 
@@ -198,10 +200,9 @@
                 });
             }
             % if self.content['type'] == "draft":
-            if (typeof autoSaveDraftTimer != "undefined") {
-                clearInterval(autoSaveDraftTimer);
-            }
-            var autoSaveDraftTimer = setInterval('ajaxSave()', 60000);
+            if (typeof cb_frag_get_variable($("#${area_id}"), 'autoSaveDraftTimer') != "undefined")
+                clearInterval(cb_frag_get_variable($("#${area_id}"), 'autoSaveDraftTimer'));
+            cb_frag_set_variable($("#${area_id}"), 'autoSaveDraftTimer', setInterval('ajaxSave()', 60000));
             % endif
 		</script>
 
@@ -249,6 +250,7 @@
                 tags_string += tag + separator
             %>
             <input id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
+            <span>(${_('separated by commas')} ',')</span>
             ##${popup(_("extra_info"))}
         </p>
 
@@ -280,11 +282,11 @@
                             ## Clients without javascript could have the current status hard in the HTML text
                             ## TODO
                             
-                            ## Clients with    javascript can have live updates from "get_media_processing_staus"
+                            ## Clients with    javascript can have live updates from the media controller
                             <script type="text/javascript">
                                 function updateMedia${id}() {
                                     $.getJSON(
-                                        "${url(controller='media', action='get_media_processing_staus', id=media['hash'], format='json')}",
+                                        "${url('media', id=media['hash'], format='json')}",
                                         processingStatus${id}
                                     );
                                 }
@@ -326,7 +328,7 @@
 				$(document).ready(function() {
 						$('#file_upload').uploadify({
 							'uploader'   : '/flash/uploadify.swf',
-							'script'     : '/media/upload_media',
+							'script'     : '/media',
 							'scriptData' : {
 								'content_id': ${self.id},
 								'member_id' : ${c.logged_in_persona.id},
@@ -370,10 +372,10 @@
 ## Content Type
 ##------------------------------------------------------------------------------
 <%def name="content_type()">
-    <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("_%s Extras" % self.selected_type)}</legend>
-        <div class="hideable">
-        ##${form_instruction(_("What do you want to do with your content?"))}
+##    <fieldset>
+##        <legend onclick="toggle_edit_section($(this));"><span class="icon icon_plus"></span>${_("_%s Extras" % self.selected_type)}</legend>
+##        <div class="hideable">
+
         
         <%
             type          = self.type
@@ -419,8 +421,8 @@
                     due_date   = str(self.content.get('due_date') or '')[:10]
                     event_date = str(self.content.get('event_date') or '')[:10]
                 %>
-                <p>${_("Due Date:")}   <input type="date" name="due_date"   value="${due_date}"></p>
-                <p>${_("Event Date:")} <input type="date" name="event_date" value="${event_date}"></p>
+                <span>${_("Due Date:")}   <input type="date" name="due_date"   value="${due_date}"></span>
+                <span>${_("Event Date:")} <input type="date" name="event_date" value="${event_date}"></span>
                 <%doc>
                 <p>${_("Response License:")}
 				<table>
@@ -476,8 +478,8 @@
             
             highlightType('${selected_type}'); //Set the default highlighted item to be the content type
         </script>
-		</div>
-    </fieldset>
+		##</div>
+    ##</fieldset>
 </%def>
 
 

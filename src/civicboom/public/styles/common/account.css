@@ -16,6 +16,16 @@ BODY.c-account.a-signin FORM {
 	-moz-border-radius   : 0.5em;
 	-webkit-border-radius: 0.5em;
 }
+BODY.c-account.a-signin FORM TABLE,
+BODY.c-account.a-signin FORM TABLE TBODY {
+	width: 100%;
+}
+BODY.c-account.a-signin FORM TD INPUT {
+	border-width: 1px;
+}
+
+
+/* --- stardard full page version --- */
 
 BODY.c-account.a-signin H1 {
 	text-align: left;
@@ -25,10 +35,15 @@ BODY.c-account.a-signin FORM,
 BODY.c-account.a-signin FORM TD {
 	padding: 8px;
 }
-BODY.c-account.a-signin FORM TABLE,
-BODY.c-account.a-signin FORM TABLE TBODY {
-	width: 100%;
+
+/* --- frag page version --- */
+BODY.c-account.a-signin .frag_container H1 {
+	font-size: 100%;
+	margin-bottom: 0.5em;
 }
-BODY.c-account.a-signin FORM TD INPUT {
-	border-width: 1px;
+BODY.c-account.a-signin .frag_container FORM,
+BODY.c-account.a-signin .frag_container FORM TD {
+	padding: 2px;
 }
+
+

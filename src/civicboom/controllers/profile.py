@@ -36,4 +36,9 @@ class ProfileController(BaseController):
         """
         # NOTE: if this method is refactored or renamed please update cb_frag.js (as it is outside pylons and has a hard coded url to '/profile/index')
         
-        return members_controller.show(id=c.logged_in_persona.username, private=True)
+        member_return = members_controller.show(id=c.logged_in_persona.username, private=True)
+        member_return['data'].update({
+            'num_unread_messages':c.logged_in_persona.num_unread_messages,
+            'num_unread_notifications':c.logged_in_persona.num_unread_notifications,
+        })
+        return member_return

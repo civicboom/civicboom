@@ -157,7 +157,6 @@ class BaseController(WSGIController):
         set_lang(lang)
     
     def __before__(self):
-
         # Setup globals c
         # Request global - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
@@ -173,18 +172,25 @@ class BaseController(WSGIController):
 
         # Widget default settings
         c.widget = dict(
-            theme     = 'light' ,
-            width     = 160 ,
-            height    = 200 ,
-            title     = _('Get involved')  ,
-            base_list = 'assignments_active',
-            owner     = ''  ,
+            theme      = 'light' ,
+            width      = 160 ,
+            height     = 200 ,
+            title      = _('Get involved')  ,
+            base_list  = 'assignments_active',
+            owner      = '' ,
+            color_font       = '000' ,
+            color_border     = 'ccc' ,
+            color_header     = 'ccc' ,
+            color_action_bar = 'ddd',
+            color_content    = 'eee' ,
         )
         setup_widget_env()
 
         # Login - Fetch logged in user from session id (if present)
         username                 = session_get('username')
         username_persona         = session_get('username_persona')
+        request.environ['logged_in_user']     = username
+        request.environ['logged_in_persona']  = username_persona
         
         c.logged_in_user         = get_member(username)
         c.logged_in_persona      = c.logged_in_user
@@ -229,6 +235,7 @@ class BaseController(WSGIController):
         if flash_message_session:
             try:               overlay_status_message(c.result, json.loads(flash_message_session))
             except ValueError: overlay_status_message(c.result,            flash_message_session )
+            
 
     def print_controller_status(self):
         from civicboom.lib.web import current_referer, current_url

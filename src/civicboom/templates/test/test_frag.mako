@@ -7,7 +7,7 @@
     ## AllanC - Methods 1 and 2 have the same outcome
     
     ## Method 1: Use SSI to get the fragment
-    <% frag_url = url('content', id=1, format='frag') %>
+    <% frag_url = h.url('content', id=1, format='frag') %>
     ${h.frag_div("frag_", frag_url, class_="frag_container")}
     
     ## Method 2: Create the div manually and render from the template

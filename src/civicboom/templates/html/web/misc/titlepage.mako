@@ -71,7 +71,7 @@
         </div>
         
         <a style="float:right;" class="button" href="${url(controller='misc', action='about')}">${_('Learn more')}</a>
-        <p style="font-size: x-large; font-weight: bold;">${_("Don't just read it, feed it")}</p>
+        <p style="font-size: x-large; font-weight: bold;">${_("Don't just read it Feed it.")}</p>
         
         <div style="clear: both; padding: 0.5em;"></div>
         
@@ -92,7 +92,7 @@
     <section class="mobile">
         
         <h2>${_('Grab the _site_name app')}</h2>
-        <a href="${url(controller='misc', action='mobile')}">
+        <a href="${url(controller='misc', action='about', id='mobile')}">
             <img src="/images/misc/mobile_android.png">
         </a>
         <p>${_('Coming soon:')}</p>
@@ -149,29 +149,3 @@
     
 </%def>
 
-##------------------------------------------------------------------------------
-## Old
-##------------------------------------------------------------------------------
-
-<%doc>
-<section class="signup">
-Already have a social media account?
-<br>&nbsp;
-<br><img src="/images/misc/socmed-signup.png">
-<br>&nbsp;
-<br><a href="/account/signin" class="button">Signup</a>
-</section>
-
-<section class="mobile">
-<img src="/images/misc/mobile_nonpreview.png">
-<br>Civicboom for your mobile
-</section>
-
-<section class="blurb">
-<br>"We work across wide-ranging communication
-<br>channels with clients who are visionaries in
-<br>their fields. By actively building close working
-<br>relationships we connect people."
-</section>
-
-</%doc>

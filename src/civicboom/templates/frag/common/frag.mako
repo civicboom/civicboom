@@ -81,6 +81,11 @@
         if self.attr.html_url == True:
             if 'format' in kwargs:
                 del kwargs['format']
+            if 'subdomain' in kwargs:
+                #print 'old subdomain = %s' % kwargs['subdomain']
+                # AllanC - annoyingly this should never happen ... but somhow the subdomain is leaking out of the URL generator - probably because somewhere there is a still a call to pylons.url rather than web.url
+                del kwargs['subdomain']
+                
             self.attr.html_url = h.url('current', subdomain='', **kwargs)
         
         # Gen RSS URL
@@ -121,8 +126,14 @@
             
             ## Help
             % if self.attr.help_frag:
-                <% help_url = '/help/' + self.attr.help_frag %>
-                <a href="${help_url}" onclick="cb_frag($(this), '${help_url}', 'frag_col_1'); return false;" class="icon icon_help" title="${_('Help')}"><span>${_('Help')}</span></a>
+                <%
+                    help_url = '/help/' + self.attr.help_frag
+                    js_open_help = h.literal("cb_frag($(this), '%s', 'frag_col_1');" % help_url)
+                %>
+                <a href="${help_url}" onclick="${js_open_help} return false;" class="icon icon_help" title="${_('Help')}"><span>${_('Help')}</span></a>
+                % if 'help' in kwargs:
+                <script type="text/javascript">${js_open_help}</script>
+                % endif
             % endif
             
             ## RSS

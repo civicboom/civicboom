@@ -2,7 +2,9 @@
 
 <%namespace name="loc" file="/html/web/common/location.mako"/>
 
+
 <%!
+    from civicboom.lib.constants import contents_list_titles
     rss_url = False
 %>
 
@@ -34,6 +36,16 @@
 				-->
                 <% args, kwargs = c.web_params_to_kwargs %>
                 Text: <input type="text" name="term" value="${kwargs.get('term')}"/>
+                <br/>
+                Type:<br/>
+                % for list, type, name in contents_list_titles:
+                    <%
+                        checked = ''
+                        if kwargs.get('list') == list:
+                            checked = 'checked'
+                    %>
+                    <input type="radio" name="list" value="${list}" ${checked}>${name}<br/>
+                % endfor
                 <br/>
                 Location: ${loc.location_picker()}
                 <br/>

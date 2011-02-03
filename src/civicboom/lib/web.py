@@ -11,6 +11,7 @@ import formencode
 import os
 import time
 import json
+import re
 from decorator import decorator
 from pprint import pformat
 import logging
@@ -50,6 +51,7 @@ def url(*args, **kwargs):
     """
     Passthough for Pylons URL generator with a few new features
     """
+    
     # shortcut for absolute URL
     if 'absolute' in kwargs:
         kwargs['host'] = c.host
@@ -65,14 +67,15 @@ def url(*args, **kwargs):
     # Moving between subdomains
     #  remove all known subdomains from URL and instate the new provided one
     if 'subdomain' in kwargs:
-        subdomain = kwargs.pop('subdomain')
+        subdomain = str(kwargs.pop('subdomain'))
         assert subdomain in app_globals.subdomains.keys()
         if subdomain:
             subdomain += '.'
         host = c.host
         for possible_subdomain in app_globals.subdomains.keys():
             if possible_subdomain:
-                host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
+                #host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
+                host = re.sub('^'+possible_subdomain+r'\.', '', host)
         kwargs['host'] = subdomain + host
         
     args = list(args)

@@ -163,9 +163,9 @@ def aggregation_dict(content, safe_strings=True):
     content_creator_name = content.get('creator',{}).get('name', '')
 
     def action(content):
-        if   content.get('type'  ) == "assignment": return content_creator_name + _(" Set an _assignment")
-        elif content.get('parent')                : return content_creator_name + _(" Wrote a response"  )
-        elif content.get('type'  ) == "article"   : return content_creator_name + _(" Wrote an _article" )
+        if   content.get('type'  ) == "assignment": return content_creator_name + _("Created a _assignment")
+        elif content.get('parent')                : return content_creator_name + _("Wrote a response"  )
+        elif content.get('type'  ) == "article"   : return content_creator_name + _("Wrote _article" )
     
     def description(content):
         return "%s: %s" % (action(content), content.get('title'))
@@ -344,7 +344,7 @@ def get_signin_action_objects():
     
     # If performing an action we may want to display a custom message with the login
     login_redirect_url = cookie_get('login_redirect') or ''
-    for action_identifyer, action_description in constants.actions_list:
+    for action_identifyer, action_action, action_description in constants.actions_list:
         if action_identifyer in login_redirect_url:
             args, kwargs = get_object_from_action_url( login_redirect_url )
             if args and kwargs:
@@ -353,10 +353,11 @@ def get_signin_action_objects():
                 action_object_frag_url = url(*args, **kwargs)
                 # Find action object
                 if 'content' in args and 'id' in kwargs:
-                    action_object = content_show(id=kwargs['id'])
+                    action_object = content_show(id=kwargs['id']).get('data')
                 if 'member' in args and 'id' in kwargs:
-                    action_object = member_show(id=kwargs['id'])
+                    action_object = member_show(id=kwargs['id']).get('data')
             return dict(
+                action        = action_action          ,
                 description   = action_description     ,
                 action_object = action_object          ,
                 frag_url      = action_object_frag_url ,

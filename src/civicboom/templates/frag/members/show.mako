@@ -20,6 +20,9 @@
         self.name      = self.member.get('name') or self.member.get('username')
         self.actions   = d.get('actions', [])
         
+        self.num_unread_messages = d.get('num_unread_messages', 0);
+        self.num_unread_notifications = d.get('num_unread_notifications', 0);
+        
         self.attr.title     = self.member['type'].capitalize()
         self.attr.icon_type = self.member['type']
         
@@ -35,13 +38,16 @@
             if self.member['type'] == 'group':
                 self.attr.title     = _('Current Group Persona')
                 self.attr.icon_type = 'group'
+                self.attr.help_frag = 'group_persona'
             else:
                 self.attr.title     = _('Current User')
                 self.attr.icon_type = 'current_user'
+                self.attr.help_frag = 'profile'
             
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
             })
+            self.attr.rss_url = h.url('formatted_member', id=self.id, format='rss', subdomain='')
         
         self.attr.frag_data_css_class = 'frag_member'
         
@@ -61,8 +67,20 @@
     <div class="frag_left_col">
         <div class="frag_col">
         ## Member Details
-		<h1>${self.member['name']} (${self.member['username']})</h1>
-        <br>${member_avatar()}
+		<h1>${self.member['name']} (${self.member['username']})</h1><br />
+        <div>
+          <span style="float:left; padding-right: 3px;">${member_avatar()}</span>
+          <div>
+            % if self.member['website'] != '':
+              Website: ${self.member['join_date']}<br />
+            % endif
+            Joined: ${self.member['join_date']}<br />
+            Account: ${self.member['account_type'].capitalize()}
+          </div>
+          <div style="clear:left;">
+            ${self.member['description']}
+          </div>
+        </div>
         
         ## Comunity ----------------------------------------
         
@@ -121,23 +139,32 @@
         <div class="frag_col">
         
         % if self.current_user:
-            <a class   = "icon icon_message"
-               href    = "${url('messages',list='to')}"
+            <%def name="messageIcon(messages)">
+              % if messages > 0:
+                <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
+              % endif
+            </%def>
+            <a class   = "icon_larger icon_messages_larger"
+               href    = "${h.url('messages',list='to')}"
                title   = "${_('Messages')}"
-               onclick = "cb_frag($(this), '${url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
-            ><span>${_('Messages')}</span></a>
+               onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
+            ><span>${_('Messages')}</span>
+            ${messageIcon(self.num_unread_messages)}
+            </a>
     
-            <a class   = "icon icon_message"
-               href    = "${url('messages',list='sent')}"
+            <a class   = "icon_larger icon_messagesent_larger"
+               href    = "${h.url('messages',list='sent')}"
                title   = "${_('Messages Sent')}"
-               onclick = "cb_frag($(this), '${url('messages', list='sent'        , format='frag')}', 'frag_col_1'); return false;"
+               onclick = "cb_frag($(this), '${h.url('messages', list='sent'        , format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Messages')}</span></a>
             
-            <a class   = "icon icon_notification"
-               href    = "${url('messages', list='notification')}"
+            <a class   = "icon_larger icon_notifications_larger"
+               href    = "${h.url('messages', list='notification')}"
                title   = "${_('Notifications')}"
-               onclick = "cb_frag($(this), '${url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
-            ><span>${_('Notifications')}</span></a>
+               onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
+            ><span>${_('Notifications')}</span>
+            ${messageIcon(self.num_unread_notifications)}
+            </a>
         % endif
         
         
@@ -242,12 +269,29 @@
 
 <%def name="actions_common()">
     % if 'message' in self.actions:
-        ${popup.link(h.args_to_tuple('new_message', target=self.id), title=_('Send message') , class_='icon icon_message')}
+        ${popup.link(
+            h.args_to_tuple('new_message', target=self.id),
+            title = _('Send Message'),
+            text  = h.literal("<span class='icon icon_message'></span>%s") % _('Send Message'),
+        )}
+        <span class="separtor"></span>
     % endif
+    
+    % if 'settings_group' in self.actions:
+        <a href="${h.url('edit_group', id=self.id)}" title="${_('_group Settings').capitalize()}"><span class="icon icon_group"></span>${_('_group Settings').capitalize()}</a>
+        <span class="separtor"></span>
+    % endif
+    
     % if 'settings' in self.actions:
-        <a class="icon icon_settings" href="${url('settings')}" title="${_('Settings')}"><span>${_('Settings')}</span></a>
+        <a href="${h.url('settings')}" title="${_('Settings')}"><span class="icon icon_settings"></span>${_('Settings')}</a>
+        <span class="separtor"></span>
     % endif
-    ${popup.link(h.args_to_tuple(controller='misc', action='get_widget', id=self.id), title=_('Get widget'), class_='icon icon_widget')}
+    
+    ${popup.link(
+        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+        title = _('Get widget'),
+        text  = h.literal("<span class='icon icon_widget'></span>%s") % _('Get widget'),
+    )}
     
     % if self.member.get('location_current') or self.member.get('location_home'):
         ${parent.georss_link()}

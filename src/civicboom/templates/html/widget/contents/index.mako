@@ -9,7 +9,7 @@
 
 <%def name="content_list(contents)">
     ##<div class="widget_content_assignment_list">
-    <ul>
+    <ul class="content_list">
     % for content in contents:
         ${content_item(content)}
     % endfor

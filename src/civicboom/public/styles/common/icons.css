@@ -15,6 +15,18 @@
  http://www.iconarchive.com/category/application/basic-2-icons-by-pixelmixer.html
 */
 
+.icon_overlay_red {
+  display: inline-block;
+  height: 1.3em;
+  text-align: center;
+  font-weight: bold;
+  color: #FFF;
+  background-color: #F00;
+  border-radius        : 0.5em;
+  -moz-border-radius   : 0.5em;
+  -webkit-border-radius: 0.5em;
+}
+
 /* 16x16 icons */
 .icon {
 	display: inline-block;
@@ -26,11 +38,11 @@
 .icon_popup      {background: transparent url('/styles/common/icons16/bubble2-icon.png'  ) no-repeat;}
 .icon_help       {background: transparent url('/styles/common/icons16/info-icon.png'     ) no-repeat;}
 .icon_list       {background: transparent url('/styles/common/icons16/document2-icon.png') no-repeat;}
-.icon_approved   {background: transparent url('/styles/common/icons16/licence-icon.png'  ) no-repeat;}
+.icon_approved   {background: transparent url('/styles/common/icons16/cb_approve-icon.png'  ) no-repeat;}
 .icon_seen       {background: transparent url('/styles/common/icons16/tick-icon.png'     ) no-repeat;}
 .icon_disasociate{background: transparent url('/styles/common/icons16/delete-icon.png'  ) no-repeat;}
 .icon_edit_lock {background: transparent url('/styles/common/icons16/lock-icon.png'     ) no-repeat;}
-.icon_private   {background: transparent url('/styles/common/icons16/key-icon.png'      ) no-repeat;}
+.icon_private   {background: transparent url('/styles/common/icons16/cb_private-icon.png') no-repeat;}
 .icon_follow    {background: transparent url('/styles/common/icons16/cb_follow-icon.png') no-repeat;}
 .icon_unfollow  {background: transparent url('/styles/common/icons16/cb_unfollow-icon.png') no-repeat;}
 .icon_widget    {background: transparent url('/styles/common/icons16/cb_widget-icon.png') no-repeat;}
@@ -54,14 +66,15 @@
 .icon_share     {background: transparent url('/styles/common/icons16/share-icon.png'    ) no-repeat;}
 .icon_message   {background: transparent url('/styles/common/icons16/letter-icon.png'   ) no-repeat;}
 .icon_notification {background: transparent url('/styles/common/icons16/warning-icon.png'   ) no-repeat;}
-.icon_edit      {background: transparent url('/styles/common/icons16/pencil-icon.png'   ) no-repeat;}
-.icon_boom      {background: transparent url('/styles/common/icons16/megaphone-icon.png') no-repeat;}
-.icon_accept    {background: transparent url('/styles/common/icons16/tick-icon.png'   ) no-repeat;}
-.icon_withdraw  {background: transparent url('/styles/common/icons16/delete-icon.png'   ) no-repeat;}
+.icon_edit      {background: transparent url('/styles/common/icons16/cb_edit-icon.png'   ) no-repeat;}
+.icon_boom      {background: transparent url('/styles/common/icons16/cb_logo-icon.png') no-repeat;}
+.icon_accept    {background: transparent url('/styles/common/icons16/cb_tick-icon.png'   ) no-repeat;}
+.icon_withdraw  {background: transparent url('/styles/common/icons16/cb_delete-icon.png'   ) no-repeat;}
 .icon_respond   {background: transparent url('/styles/common/icons16/document-pencil-icon.png'   ) no-repeat;}
 .icon_reload    {background: transparent url('/styles/common/icons16/reload-icon.png'   ) no-repeat;}
 .icon_search    {background: transparent url('/styles/common/icons16/address-icon.png'   ) no-repeat;}
 .icon_map       {background: transparent url('/styles/common/icons16/globe-icon.png'   ) no-repeat;}
+.icon_mobile    {background: transparent url('/styles/common/icons16/mobile-icon.png'   ) no-repeat;}
 .icon_account_type_plus {background: transparent url('/styles/common/icons16/plus-icon.png') no-repeat;}
 
 .icon_twitter   {background: transparent url('/styles/common/icons16/social/twitter_16.png') no-repeat;}
@@ -84,3 +97,16 @@
 .icon_edit_lock_large {background: transparent url('/styles/common/icons32/lock-icon.png'   ) no-repeat;}
 .icon_private_large   {background: transparent url('/styles/common/icons32/key-icon.png'    ) no-repeat;}
 .icon_seen_large      {background: transparent url('/styles/common/icons32/tick-icon.png'   ) no-repeat;}
+
+/* 40x40 icons */
+.icon_larger {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  vertical-align: middle;
+}
+.icon_larger span {display: none;}
+.icon_messages_larger {background: transparent url('/images/messages.png') no-repeat;}
+.icon_messagesent_larger {background: transparent url('/images/message_sent.png') no-repeat;}
+.icon_notifications_larger {background: transparent url('/images/notifications.png') no-repeat;}
+}

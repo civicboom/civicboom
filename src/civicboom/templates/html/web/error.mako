@@ -15,13 +15,13 @@ H1 {
 ##<p>Prefix:  ${c.error_prefix}</p>
 ##<p>Message: ${c.error_message}</p>
 % if c.result:
-% if 'code' in c.result:
-    <p>code: <b>${c.result['code']}</b>
-% endif
-
-% if 'message' in c.result:
-    <br>message: <b>${c.result['message']}</b>
-% endif
+    % if 'code' in c.result:
+        <p>code: <b>${c.result['code']}</b>
+    % endif
+    
+    % if 'message' in c.result:
+        <br>message: <b>${c.result['message']}</b>
+    % endif
 % endif
 
 <!--

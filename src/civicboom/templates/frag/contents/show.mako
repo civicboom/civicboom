@@ -1,4 +1,5 @@
 <%inherit file="/frag/common/frag.mako"/>
+<%! import datetime %>
 
 <%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"   />
 <%namespace name="flag"            file="/frag/content_actions/flag.mako"/>
@@ -24,9 +25,14 @@
         self.id        = self.content['id']
         self.actions   = d['actions']
         
-        self.attr.title     = self.content['type'].capitalize()
+        self.attr.title     = _('_'+self.content['type']).capitalize()
         self.attr.icon_type = self.content['type']
         
+        self.creation_date = datetime.datetime.strptime(self.content['creation_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('creation_date') else nothing
+        self.update_date = datetime.datetime.strptime(self.content['update_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('update_date') else nothing
+        self.publish_date = datetime.datetime.strptime(self.content['publish_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('publish_date') else nothing
+        self.due_date = datetime.datetime.strptime(self.content['due_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('due_date') else nothing
+        self.event_date = datetime.datetime.strptime(self.content['event_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('event_date') else nothing
         self.attr.frag_data_css_class = 'frag_content'
         
         if self.content['private'] == False:
@@ -39,6 +45,10 @@
                 'updated'  : self.content.get('update_date') ,
                 'author'   : self.content.get('creator', dict()).get('name') ,
             }
+        
+        self.attr.help_frag = self.content['type']
+        if self.attr.help_frag == 'draft':
+            self.attr.help_frag = 'create_'+self.content['target_type']
         
         self.attr.auto_georss_link = True
     %>
@@ -68,9 +78,20 @@
         <div class="frag_col">
         
         <h2>${_("Content by")}</h2>
-        ${member_includes.avatar(self.content['creator'], show_name=True, show_follow_button=True, class_="large")}
+        <div>
+          <span style="float:left; padding-right: 3px;">${member_includes.avatar(self.content['creator'], show_name=True, show_follow_button=True, class_="large")}</span>
         ##${frag_lists.member_list(content['creator'], _("Creator"))}
-        
+          <div>
+            ${self.content['creator']['name']}<br />
+            (${self.content['creator']['username']})<br />
+            ${self.content['creator']['type'].capitalize()}
+            ## Member Info Here
+            ##% if self.member['website'] != '':
+            ##  Website: ${self.member['join_date']}<br />
+            ##% endif
+            ##Joined: ${self.member['join_date']}<br />
+          </div>
+        </div>
         % if self.content['parent']:
             ${frag_lists.content_list(self.content['parent'], _("Parent content"), creator=True)}
         % endif
@@ -119,10 +140,29 @@
             <p>${field_name}: ${content[field_name]}</p>
             % endif
         </%def>
+        <%def name="format_date_if(title, date_input)">
+          % if date_input:
+            <p>${title}: ${datetime.datetime.strftime(date_input, '%H:%M:%S %d/%m/%Y')}</p>
+          % endif
+        </%def>
+        <%def name="iconify(field_name, title, icon_classes)">
+          % if content.get(field_name):
+            <span class="${icon_classes}"><span>${title}</span></span>
+          % endif
+        </%def>
         
-        % for field_name in ['views', 'boom_count', 'due_date', 'event_date', 'private', 'closed', 'creation_date', 'update_date', 'publish_date', 'edit_lock']:
-            ${detail(field_name)}
-        % endfor
+        <p>Booms: ${content['boom_count'] if 'boom_count' in content else '0'}</p>
+        <p>Views: ${content['views'] if 'views' in content else '0'}</p>
+        ${format_date_if('Event Date', self.event_date)}
+        ${format_date_if('Due By', self.due_date)}
+        ${format_date_if('Created', self.creation_date)}</p>
+        ${format_date_if('Published', self.publish_date)}</p>
+        ${format_date_if('Updated', self.update_date)}</p>
+        <div class="iconholder">
+          ${iconify('private', 'Private Content', 'icon icon_private')}
+          ${iconify('closed', 'Closed', 'icon icon_closed')}
+          ${iconify('edit_lock', 'Locked for editing', 'icon icon_edit_lock')}
+        </div>
         
         % if 'license' in content:
         <% license = content['license'] %>
@@ -303,8 +343,23 @@
     ##        Email Resorces
     ##    </a>
 </%doc>
-    
+
 <%def name="actions_specific()">
+
+    ## --- Pubish --------------------------------------------------------------
+
+    % if 'publish' in self.actions:
+        ${h.secure_link(
+            h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
+            method = "PUT" ,
+            value           = _('Publish') ,
+            value_formatted = h.literal("<span class='icon icon_publish'></span>%s") % _('Publish') ,
+            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+            
+        )}
+        <span class="separtor"></span>
+    % endif
+
 
     ## --- Respond -------------------------------------------------------------
 

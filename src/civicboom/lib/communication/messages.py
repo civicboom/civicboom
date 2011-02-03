@@ -5,7 +5,7 @@ import civicboom.lib.communication.messages as messages
 
 m1 = Member()
 m2 = Member()
-m1.send_message(messages.tipoff(reporter=m2, tipoff="there is a bomb"))
+m1.send_message(messages.tipoff(member=m2, tipoff="there is a bomb"))
 """
 
 from civicboom.lib.communication.email_lib import send_email
@@ -54,26 +54,26 @@ generators = [
     ["msg_test",                             "",   _("a test message"),              _("%(text)s")],
     
     # Member actions
-    ["followed_by",                          "ne", _("new follower"),                _("%(reporter)s is now following you")],
-    ["followed_on_signup",                   "ne", _("new sign up via widget"),      _("%(reporter)s has signed up via your widget and is now following you")],
-    ["follow_stop",                          "",   _("lost a follower"),             _("%(reporter)s has stopped following you")],
+    ["followed_by",                          "ne", _("new follower"),                _("%(member)s is now following you")],
+    ["followed_on_signup",                   "ne", _("new sign up via widget"),      _("%(member)s has signed up via your widget and is now following you")],
+    ["follow_stop",                          "",   _("lost a follower"),             _("%(member)s has stopped following you")],
 
     # New Content
     ["article_published_by_followed",        "ne", _("new _article"),                _("%(creator)s has written new _article : %(article)s")],
-    ["article_published_by_followed_mobile", "ne", _("new mobile _article"),         _("%(reporter)s has uploaded mobile _article : %(article)s")],
+    ["article_published_by_followed_mobile", "ne", _("new mobile _article"),         _("%(member)s has uploaded mobile _article : %(article)s")],
     
     # Content Actions
     ["article_rated",                        "",   _("_article rated"),              _("your _article %(article)s was rated a %(rating)s")],
-    ["comment",                              "n",  _("comment made on _article"),    _("%(reporter)s commented on your _article %(article)s")],  #Also passes comment.contents as a string and could be used here
+    ["comment",                              "n",  _("comment made on _article"),    _("%(member)s commented on your _article %(article)s")],  #Also passes comment.contents as a string and could be used here
 
     # Content Responses
-    ["assignment_response_mobile",           "ne", _("_assignment mobile response"), _("%(reporter)s has uploaded mobile _article titled %(article)s based on your _assignment %(assignment)s")],
+    ["assignment_response_mobile",           "ne", _("_assignment mobile response"), _("%(member)s has uploaded mobile _article titled %(article)s based on your _assignment %(assignment)s")],
     ["new_response",                         "ne", _("new response"),                _("%(member)s has published a response to your content %(parent)s called %(content)s ")],
     
     # Assignment Actions
     ["assignment_created",                   "ne", _("new _assignment"),             _("%(creator)s created a new _assignment %(assignment)s")],
     ["assignment_updated",                   "ne", _("_assignment updated"),         _("%(creator)s has updated their _assignment %(assignment)s")],
-    ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been canceled"), _("%(reporter)s canceled the _assignment %(assignment)s")],
+    ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been canceled"), _("%(member)s canceled the _assignment %(assignment)s")],
     ["assignment_accepted",                  "ne", _("_assignment accepted"),        _("%(member)s accepted your _assignment %(assignment)s")],
     ["assignment_interest_withdrawn",        "",   _("_assignment interest withdrawn"), _("%(member)s withdrew their interest in your _assignment %(assignment)s")],
     ["assignment_invite",                    "ne", _("closed _assignment invitation") , _("%(member)s has invited you to participate in the _assignment %(assignment)s")],
@@ -106,22 +106,9 @@ generators = [
     ["boom_assignment",                      "ne", _("_assignment boom"),            _("%(member)s thinks you might want to add your opinion to this _assignment %(assignment)s")],
 
     # Syndication
-    ["syndicate_accept",                     "n",  _("_article was syndicated"),     _("%(reporter)s has accepted your syndication request for _article %(article)s. Check your email for the details")],
-    ["syndicate_decline",                    "ne", _("_article was declined syndication"), _("%(reporter)s declined your syndication request for _article %(article)s. Your _article is now publicly visible")],
+    ["syndicate_accept",                     "n",  _("_article was syndicated"),     _("%(member)s has accepted your syndication request for _article %(article)s. Check your email for the details")],
+    ["syndicate_decline",                    "ne", _("_article was declined syndication"), _("%(member)s declined your syndication request for _article %(article)s. Your _article is now publicly visible")],
     ["syndicate_expire",                     "ne", _("_article was not syndicated"), _("Your syndication request for %(article)s was unsuccessful. Your _article is now publicly visible")],
-
-    # Old and depricated
-    ["tipoff",                               "ne", _("tipoff"),                      _("you have been tipped off by %(reporter)s - %(tipoff)s")],
-    ["tipoff_accepted",                      "ne", _("tipoff accepted"),             _("%(reporter)s has accepted your _tipoff - %(tipoff)s")],
-    ["tipoff_declined",                      "ne", _("tipoff declined"),             _("%(reporter)s has declined your _tipoff - %(tipoff)s")],
-    ["tipoff_deleted",                       "",   _("tipoff deleted"),              _("%(reporter)s has withdrawn their _tipoff")],
-    ["instant_news_update",                  "n",  _("_reporter has updated their instant news"), _("%(reporter)s has updated their instant news: %(instant)s_news")],
-    ["interview_used",                       "ne", _("interview has been used"),     _("%(reporter)s has written a _article in response to the interview with you called %(article)s")],
-    ["topic_update",                         "ne", _("topic update to an _article"), _("%(reporter)s wrote a topic update for your _report %(partent)s_article titled %(article)s")],
-
-
-
-
 ]
 
 #
