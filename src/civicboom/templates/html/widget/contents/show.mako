@@ -35,14 +35,16 @@
     <div>
         <div style="display: inline-block;"><strong>${_("Due in")}:      </strong>fix</div>
         <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>${content['num_accepted']} ${_('_members')}</div>
-
+        
         ##${h.time_ago_first_only(assignment.expiryDate)}
         ##${h.format_multiple_prefix(assignment.num_accepted_by_members + len(assignment.newsarticles),single=_("_member"))}
         ##${h.format_multiple_prefix(len(assignment.newsarticles),nothing="Be the first to respond to this!")}
     </div>
 % endif
 
-<h2>${_("Responses:")} (${content['num_responses']})</h2>
+% if 'num_responses' in content:
+    <h2>${_("Responses:")} (${content['num_responses']})</h2>
+% endif
 % if 'responses' in d and d['responses']['count'] > 0:
 <table class="responses">
     ##<tr><th>${_("Approved")}</th><th>${_("_article title")}</th><th colspan="2">${_("_user")}</th></tr>
@@ -54,12 +56,12 @@
         %>
         <tr class="${response_class}">
             <td class="${response_class}"></td>
-            <td><img src="${response['thumbnail_url']}" alt="${response['title']}" style="border: 1px solid #${c.widget['color_border']};"/></td>
+            <td><img src="${response['thumbnail_url']}" alt="${response['title']}" style="border: 1px solid #${c.widget['color_border']}; margin-right: 0.5em;"/></td>
             <td><a href="${h.url('content', id=response['id']                 , subdomain='')}" target="_blank">${response['title']}</a></td>
             <td><a href="${h.url('member' , id=response['creator']['username'], subdomain='')}" target="_blank"><img src="${response['creator']['avatar_url']}" alt="${response['creator']['name'] or response['creator']['username']}" style="border: 1px solid #${c.widget['color_border']};"/></a></td>
         </tr>
     % endfor
 </table>
+% else:
+  ${_('Get involved! Respond now!')}
 % endif
-
-
