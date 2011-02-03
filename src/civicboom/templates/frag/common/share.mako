@@ -29,7 +29,7 @@
                }
       };
     </script>
-    <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
+    <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
     <div class="addthis_toolbox addthis_cb_style ${area_id}" style="display: inline-block;"
         % for k,v in kwargs.iteritems():
             addthis:${k}="${v.replace('"','')}"
