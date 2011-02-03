@@ -282,11 +282,11 @@
                             ## Clients without javascript could have the current status hard in the HTML text
                             ## TODO
                             
-                            ## Clients with    javascript can have live updates from "get_media_processing_staus"
+                            ## Clients with    javascript can have live updates from the media controller
                             <script type="text/javascript">
                                 function updateMedia${id}() {
                                     $.getJSON(
-                                        "${url(controller='media', action='get_media_processing_staus', id=media['hash'], format='json')}",
+                                        "${url('media', id=media['hash'], format='json')}",
                                         processingStatus${id}
                                     );
                                 }
@@ -328,7 +328,7 @@
 				$(document).ready(function() {
 						$('#file_upload').uploadify({
 							'uploader'   : '/flash/uploadify.swf',
-							'script'     : '/media/upload_media',
+							'script'     : '/media',
 							'scriptData' : {
 								'content_id': ${self.id},
 								'member_id' : ${c.logged_in_persona.id},

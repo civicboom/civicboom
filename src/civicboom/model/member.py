@@ -202,6 +202,7 @@ class Member(Base):
             'utc_offset'          : None ,
             'join_date'           : None ,
             'website'             : None ,
+            'description'         : lambda member: member.config['description'] ,
             #'url'                 : None ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
