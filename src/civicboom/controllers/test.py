@@ -164,7 +164,7 @@ class TestController(BaseController):
 
     def frag(self, **kwargs):
         return render('/test/test_frag.mako')
-    
+
 
     #---------------------------------------------------------------------------
     # Upgrade Account
