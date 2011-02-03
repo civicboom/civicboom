@@ -99,6 +99,7 @@ class TestController(TestCase):
         """
         A function that can be called from other automated tests to call the signup proccess and generate a new user
         """
+        self.log_out()
         num_emails = getNumEmails()
         
         # Request new user email for new user

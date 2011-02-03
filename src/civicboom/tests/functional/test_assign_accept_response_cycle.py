@@ -16,7 +16,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         """
         Create
         Respond
-        Approve/Dissasociate/Seen
+        Approve/Disassociate/Seen
         """
         
         # Create assignment ----------------------------------------------------
@@ -61,12 +61,12 @@ class TestAssignAcceptResponseCycleController(TestController):
         self.assignment_response_id_1 = int(response_json['data']['id'])
         assert self.assignment_response_id_1 > 0
         
-        # Response to be 'disasociate'
+        # Response to be 'disassociate'
         response = self.app.post(
             url('contents', format='json'),
             params={
                 '_authentication_token': self.auth_token,
-                'title'         : u'Response to disasociate',
+                'title'         : u'Response to disassociate',
                 'contents'      : u'Test Response' ,
                 'type'          : u'article' ,
                 'parent_id'     : self.assignment_id ,
@@ -101,10 +101,10 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         response = self.app.get(url('content', id=self.assignment_id, format='json'), status=200)
         response_json = json.loads(response.body)
-        assert 'unitfriend'     in response
-        assert 'to approve'     in response
-        assert 'to disasociate' in response
-        assert 'to seen'        in response
+        assert 'unitfriend'      in response
+        assert 'to approve'      in response
+        assert 'to disassociate' in response
+        assert 'to seen'         in response
         assert len(response_json['data']['responses']['items']) == 3
         
         # Approve --------------------------------------------------------------
@@ -127,13 +127,15 @@ class TestAssignAcceptResponseCycleController(TestController):
         assert 'unittest@test.com'   in emails_to
         assert 'unitfriend@test.com' in emails_to
         
-        # Dissassociate --------------------------------------------------------
+        # Disassociate ---------------------------------------------------------
         
         response = self.app.post(
-            url('content_action', action='disasociate', id=self.assignment_response_id_2, format='json'),
+            url('content_action', action='disassociate', id=self.assignment_response_id_2, format='json'),
             params={'_authentication_token': self.auth_token,},
             status=200
         )
+        
+        # Seen -----------------------------------------------------------------
         
         response = self.app.post(
             url('content_action', action='seen',        id=self.assignment_response_id_3, format='json'),
@@ -146,10 +148,10 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         response = self.app.get(url('content', id=self.assignment_id, format='json'), status=200)
         response_json = json.loads(response.body)
-        assert 'unitfriend'         in response
-        assert 'to approve'         in response
-        assert 'to disasociate' not in response
-        assert 'to seen'            in response
+        assert 'unitfriend'          in response
+        assert 'to approve'          in response
+        assert 'to disassociate' not in response
+        assert 'to seen'             in response
         assert len(response_json['data']['responses']['items']) == 2
         
         # Delete Assignment ----------------------------------------------------
@@ -165,7 +167,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         response = self.app.get(url('content', id=self.assignment_response_id_1, format='json'), status=200)
         assert 'to approve' in response
         response = self.app.get(url('content', id=self.assignment_response_id_2, format='json'), status=200)
-        assert 'to disasociate' in response
+        assert 'to disassociate' in response
         response = self.app.get(url('content', id=self.assignment_response_id_3, format='json'), status=200)
         assert 'to seen' in response
         
