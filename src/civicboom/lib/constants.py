@@ -23,6 +23,8 @@ def get_list_titles(list_name):
     return (list_name,list_name)
 
 actions_list = [
-    # url identifyer , description
-    ('/accept', _('Accept an _assignment')),
+    # url identifyer , action, description
+    ('/accept', 'accept', _('Accept an _assignment')),
+    #('/follow', 'follow', _('')),
+    #('??'     , 'respond', _('')),
 ]
