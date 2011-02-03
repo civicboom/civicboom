@@ -21,6 +21,7 @@ from sqlalchemy.orm import join
 import hashlib
 from decorator import decorator
 import json
+from urllib import quote_plus, unquote_plus
 
 # Logging
 import logging
@@ -120,8 +121,11 @@ def authorize(_target, *args, **kwargs):
         if not cookie_get('login_redirect'):
             json_post = cookie_remove('login_redirect_action')
             if json_post:
-                kwargs.update(json.loads(json_post))
-                c.authenticated_form = True # AllanC - the user has had to sign in - therefor they are aware they are performing an action - only our site can set the cookies
+                try:
+                    kwargs.update(json.loads(unquote_plus(json_post)))
+                    c.authenticated_form = True # AllanC - the user has had to sign in - therefor they are aware they are performing an action - only our site can set the cookies
+                except:
+                    pass
             
         # Make original method call
         result = _target(*args, **kwargs)
@@ -141,6 +145,8 @@ def authorize(_target, *args, **kwargs):
                 login_redirect_action = json.dumps(multidict_to_dict(request.POST))
             else:
                 login_redirect_action = json.dumps(dict())
+            
+            login_redirect_action = quote_plus(login_redirect_action)
             cookie_set('login_redirect_action', login_redirect_action , 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
             return redirect(url(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
         
