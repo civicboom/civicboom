@@ -35,7 +35,7 @@
     <%def name="show_error(name)">
         ##% if 'group' in d and name in d['group'] and 'error' in d['group'][name]:
         % if 'invalid' in d and name in d['invalid']:
-            <span class="error-message">${d['invalid'][name]}</span>
+            <span class="error-message error">${d['invalid'][name]}</span>
         % endif
     </%def>
 
