@@ -49,67 +49,73 @@ ${widget_preview(c.widget_user_preview)}
   ## AllanC: I wanted to get this done, used tabled, fix it if you want ...
   <table><tr>
 
-    <td style="width: 400px;">
-      
-        <h1>${_('Widget test drive')}</h1>
-        <p>${_('This widget is a preview of the widget for %s' % member['username'])}</p>
+    <td style="width: 600px;">
         
-        
-        <p>${_('Embed the widget on your own website.')}</p>
-        
-        
-        <form name="widget_creator" action="">
-          <textarea name="widget_link" class="link_widget_form_field" rows="5" cols="60">${widget_iframe(member)}</textarea>
-        </form>
-      
-        <p class="link_widget_instructions">${_('Copy and paste this code onto your HTML')}</p>
-    
-    
-      ## Custimisation controls
-      ## The default values of this form must generate the same string as the sub "widget_iframe" above
-      ## this is because the IFRAME can work without javascript and so "should" (sigh) the main site.
+        <h1>${_('Grab your widget and get your community to respond to your requests! ')}</h1>
+        <p>${_('Through the widget, your community and audience can:')}</p>
+        <ul>
+            <li><${_('Read your requests')}</li>
+            <li><${_('Respond to them immediately')}</li>
+            <li><${_('Accept to complete at a later date')}</li>
+        </ul>
+        <p>${_('Anyone who isnt Following you on the Civicboom system, but clicks on "Accept" or "Respond" via your widget will automatically become a Follower of you. This means every time you send out a request, they will get alerted.')}</p>
+        <p>${_('Others can also grab the code for this widget and post on their own web pages - amplifying your reach to a wider audience.')}</p>
 
-        <h2>${_('Customise this widget')}</h2>
-        
-        <form name="widget_customisation" action="">
-          <fieldset><legend>${_("Title")}</legend>
-            <input type="text"    name="title"     value="${c.widget['title']    }" size="60"/><br/>
-            <input type="hidden"  name="base_list" value="${c.widget['base_list']}" size="60"/><!-- should be a drop down box -->
-          </fieldset>
-          
-          <table><tr>
-          <td>
-            <fieldset><legend>${_("Theme")}</legend>
-              <label>${_('Light')}</label><input type="radio" name="theme" value="light" checked/><br/>
-              <label>${_('Dark')} </label><input type="radio" name="theme" value="dark"         />
-            </fieldset>
+
+        <table><tr>
+        <td>
+            <form name="widget_creator" action="">
+                <textarea name="widget_link" class="link_widget_form_field" style="width: 250px; height: 200px;">${widget_iframe(member)}</textarea>
+            </form>      
+            <p class="link_widget_instructions">${_('Copy and paste this code onto your HTML')}</p>
+        </td>
+        <td>
+    
+            ## Custimisation controls
+            ## The default values of this form must generate the same string as the sub "widget_iframe" above
+            ## this is because the IFRAME can work without javascript and so "should" (sigh) the main site.
             
-            <fieldset><legend>${_("Size")}</legend>
-              <label>${_('Width')} </label><input type="text" name="width"  value="${c.widget['width' ]}" size="3" /><br/>
-              <label>${_('Height')}</label><input type="text" name="height" value="${c.widget['height']}" size="3" />
-            </fieldset>
-          </td>
-          <td>
-            <fieldset><legend>${_("Colours")}</legend>
-              <%
-                  colors = [
-                      (_('Border') , 'color_border'    ),
-                      (_('Header') , 'color_header'    ),
-                      (_('Action') , 'color_action_bar'),
-                      (_('Content'), 'color_content'   ),
-                      (_('Font')   , 'color_font'      ),
-                  ]
-              %>
-              % for color_name, color_field in colors:
-              <label>${color_name}</label><input type="text" id="${color_field}" name="${color_field}" value="${c.widget[color_field]}" size="6" /><br/>
-              % endfor
-            </fieldset>
-          </td>
-          </tr></table>
+            <form name="widget_customisation" action="" style="padding: 0.5em;">
+              <h2>${_('Customise this widget')}</h2>
+              <fieldset><legend>${_("Title")}</legend>
+                <input type="text"    name="title"     value="${c.widget['title']    }" size="30"/><br/>
+                <input type="hidden"  name="base_list" value="${c.widget['base_list']}" size="30"/><!-- should be a drop down box -->
+              </fieldset>
+              
+              <table><tr>
+              <td style="vertical-align: top; padding-right: 0.5em;">
+                
+                <fieldset><legend>${_("Size")}</legend>
+                  <label>${_('Width')} </label><input type="text" name="width"  value="${c.widget['width' ]}" size="3" /><br/>
+                  <label>${_('Height')}</label><input type="text" name="height" value="${c.widget['height']}" size="3" />
+                </fieldset>
+              </td>
+              <td style="vertical-align: top;">
+                <fieldset><legend>${_("Colours")}</legend>
+                  <%
+                      colors = [
+                          (_('Border') , 'color_border'    ),
+                          (_('Header') , 'color_header'    ),
+                          (_('Action') , 'color_action_bar'),
+                          (_('Content'), 'color_content'   ),
+                          (_('Font')   , 'color_font'      ),
+                      ]
+                  %>
+                  <table>
+                  % for color_name, color_field in colors:
+                  <tr><td><label>${color_name}</label></td><td><input type="text" id="${color_field}" name="${color_field}" value="${c.widget[color_field]}" size="6" /></td></tr>
+                  % endfor
+                  </table>
+                </fieldset>
+              </td>
+              </tr></table>
+            <input type="button" value="Preview Widget" onClick="generate_widget_link();" />
+            </form>
+        </td>
+        </tr></table>
 
           
-          <input type="button" value="Preview Widget" onClick="generate_widget_link();" />
-        </form>
+
         
         <%
             # generate the URL used for the IFRAME but dicard everything pased the "?"
@@ -134,8 +140,6 @@ ${widget_preview(c.widget_user_preview)}
                 % for color_name, color_field in colors:
                 link += "w_${color_field}=" + Url.encode( document.widget_customisation.${color_field}.value) + "&";
                 % endfor
-                if (document.widget_customisation.theme[0].checked) {link += "w_theme=light&";}
-                if (document.widget_customisation.theme[1].checked) {link += "w_theme=dark&" ;}
                 var width  = document.widget_customisation.width.value
                 var height = document.widget_customisation.height.value
                 link += "w_width="  + width + "&";
@@ -158,7 +162,7 @@ ${widget_preview(c.widget_user_preview)}
 
     </td>
   
-    <td id="widget_container" style="width: 400px; vertical-align: middle; text-align: center;">
+    <td id="widget_container" style="width: 300px; vertical-align: middle; text-align: center;">
         ${widget_iframe(member)}
     </td>
 

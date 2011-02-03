@@ -106,7 +106,7 @@
     <div class="widget_footer" style="height:${size_footer}px; background-color:#${c.widget['color_header']}; border-top: 1px solid #${c.widget['color_border']}">
         <div class="padding">
             <a class="icon icon_boom"      title="${_('Powered by _site_name')}" target="_blank" href="${h.url('/', subdomain='')}" style="float:right;"><span>${_('_site_name')}</span></a>
-            <a class="icon icon_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='get_mobile', subdomain='')}"><span>Mobile</span></a>
+            <a class="icon icon_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='about', id='mobile', subdomain='')}"><span>Mobile</span></a>
             <a class="icon icon_widget"    title="${_('Embed this widget')}"                     href="${h.url(controller='misc', action='get_widget')}"><span>Embed</span></a>
             <a class="icon icon_rss"       title="${_('RSS')}"                   target="_blank" href="${h.url('member', id=owner['username'], format='rss', subdomain='')}"><span>RSS</span></a>
         </div>
