@@ -97,7 +97,7 @@ class ContentActionsController(BaseController):
     @web
     @auth
     @account_type('plus')
-    def disasociate(self, id, **kwargs):
+    def disassociate(self, id, **kwargs):
         """
         POST /contents/{id}/disassociate: unlink an article from its parent
 
@@ -110,10 +110,10 @@ class ContentActionsController(BaseController):
         @return 500   error disassociating
         """
         content = _get_content(id, is_parent_owner=True)
-        if content.parent_dissasociate():
+        if content.parent_disassociate():
             user_log.debug("Disassociated Content #%d" % int(id))
-            return action_ok(_("content has dissasociated from your parent content"))
-        raise action_error(_('Error dissasociating content'))
+            return action_ok(_("content has disassociated from your parent content"))
+        raise action_error(_('Error disassociating content'))
 
 
     #---------------------------------------------------------------------------

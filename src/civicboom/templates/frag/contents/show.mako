@@ -435,7 +435,7 @@
     % endif
     % if 'dissasociate' in self.actions:
         ${h.secure_link(
-            h.args_to_tuple('content_action', action='disasociate', format='redirect', id=self.id),
+            h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
             value           = _('Disasociate') ,
             value_formatted = h.literal("<span class='icon icon_dissasociate'></span>%s") % _('Disasociate'),
             title           = _("Dissacociate your content from this response") ,
