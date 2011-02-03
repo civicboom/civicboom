@@ -9,7 +9,7 @@
 
 
 ## for deprication
-<%namespace name="loc"              file="/html/web/common/location.mako"     />
+<%namespace name="loc"             file="/html/web/common/location.mako"     />
 
 <%!
     rss_url = True
@@ -64,6 +64,7 @@
         <div class="frag_col">
         ${content_details()}
         ${content_content()}
+        ${content_license()}
         ${content_media()}
         ${content_map()}
         ${content_comments()}
@@ -164,12 +165,7 @@
           ${iconify('edit_lock', 'Locked for editing', 'icon icon_edit_lock')}
         </div>
         
-        % if 'license' in content:
-        <% license = content['license'] %>
-        <a href="${license['url']}" target="_blank" title="${license['description']}">
-          <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
-        </a>
-        % endif        
+       
         
         <ul class="status">
             % if 'approval' in content and content['approval']=='approved':
@@ -191,6 +187,22 @@
     <div class="content_text">
       ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content']))}
     </div>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## License
+##------------------------------------------------------------------------------
+
+<%def name="content_license()">
+    % if 'license' in self.content:
+    <% license = self.content['license'] %>
+    <div>
+      <a href="${license['url']}" target="_blank" title="${license['description']}">
+        <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
+      </a>
+    </div>
+    % endif
 </%def>
 
 
