@@ -78,6 +78,7 @@
             Account: ${self.member['account_type'].capitalize()}
           </div>
         </div>
+        <div style="clear: both;"></div>
         % if self.member.get('description'):
           <div style="clear:left; height: 3px;">&nbsp;</div>
           <div style="clear:left;" class="frag_list">
