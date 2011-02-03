@@ -200,7 +200,8 @@ def signin_user_and_redirect(user, login_provider=None):
     login_redirector()
 
     # If no redirect send them to private profile
-    return redirect(url(controller="profile", action="index"))
+    #return redirect(url(controller="profile", action="index"))
+    return redirect("/profile")
     
 def signout_user(user):
     user_log.info("logged out")
@@ -212,7 +213,9 @@ def signout_user(user):
 
 def set_persona(persona):
     persona = get_member(persona)
-    if (persona == c.logged_in_user):        
+    if   persona == c.logged_in_persona:
+        return True
+    elif persona == c.logged_in_user:
         # If trying to fall back to self login then remove persona selection
         session_remove('username_persona')
         return True
