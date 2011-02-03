@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 
 # List of dependencys to keep in memory
-etag_keys = {} #"assignment":{}, "article":{}, "reporter_articles":{}, "reporter":{}, "reporter_assignments_active":{}, "reporter_messages":{}, "reporter_assignments_accepted":{},"syndication_list":{}
+etag_keys = {} #"assignment":{}, "article":{}, "member_articles":{}, "member":{}, "member_assignments_active":{}, "member_messages":{}, "member_assignments_accepted":{},"syndication_list":{}
 # AllanC: TODO this should be in memcache and not a python array, 1.) memcache expires (useful under heavy load) 2.) memcahce state remains after a python restart if needed
 
 
@@ -39,7 +39,7 @@ def gen_cache_key(**kargs):
     """
     eTags are generated for a page depending on the pages known dependancys
     e.g.
-      cache_key = gen_cache_key(reporter=c.widget_reporter.id, assignment=id)  #if the etag is dependent on content of the listed reporter and listed assingnment
+      cache_key = gen_cache_key(member=c.widget_member.id, assignment=id)  #if the etag is dependent on content of the listed member and listed assingnment
     """
     def getsafe_current_username():
         if c.logged_in_persona: return c.logged_in_persona.username
