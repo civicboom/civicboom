@@ -219,17 +219,17 @@
                             'educational':'2200',
                             'marketing':'0110',
                             'internal':'2211',
-                            'workforce':'2211',
+                            'business':'2211',
                             'creative':'0001',
                             'research':'2110'};
-      var quickBlurb =     {'news': 'This is a news blurb',
-                            'interest':'This is an interest blurb',
-                            'educational':'This is an educational blurb',
-                            'marketing':'This is a marketing blurb',
-                            'internal':'This is an internal blurb',
-                            'workforce':'This is a workforce blurb',
-                            'creative':'This is a creative blurb',
-                            'research':'This is a research blurb'};
+      var quickBlurb =     {'news': 'Connect with your community and audience by creating Groups for your titles, sections or issues. Send out breaking news requests, get coverage directly from the source and utilise the power of the crowd. Empower the community you serve to be part of news and its creation.',
+                            'interest':'Create a Group and crowdsource social action, motivate advocacy from your community, generate real case studies and stories for your publications, heighten awareness, build a movement. Use the creativity of your community to heighten awareness on issues you need to know about.',
+                            'educational':'Students can create Groups on specific topics - evolve ideas together, share your creative work, tap into the wider community, build your portfolio. University departments can utilise the collective wisdom of their students to develop and improve courses and reach new audiences.',
+                            'marketing':'Get first hand experience and feedback directly form your customers and target audiences. What products do your consumers want? How can you improve? Set requests through your Group and ask the crowd.',
+                            'internal':'Create a private Group and empower your employees to submit ideas, upload their reports from events, share experiences - good and bad. Identify champions, learn from your workforce: they have the insight to help make your workplace and business better for all.',
+                            'business':'Work with your partners and customers: use Groups to push out new products, get engagement on hot topics associated with your industry, build a community around your brand, and improve brand awareness to wider audiences.',
+                            'creative':'From documentary makers to designers and everything in between, ask the crowd - photos, text, videos, audio. Empower people to share their experience, authenticity and creativity for your project through a Group.',
+                            'research':'Work in a closed, private Group with key people in your organisation or trusted external sources in research on any topic you choose.'};
       function changePlaceholder (jquery_object, text) {
         if (typeof text === 'undefined') var text = '';
         var oldPlaceholder = jquery_object.attr('placeholder'); 
@@ -311,7 +311,7 @@
 ##        </tr>
         <tr class="padding">
           <td><input class="button quickbutton" type="button" name="news" value="News Organisation" /></td>
-          <td><input class="button quickbutton" type="button" name="interest" value="Interest Group" /></td>
+          <td><input class="button quickbutton" type="button" name="interest" value="Interest Group / Charity" /></td>
         </tr>
         <tr class="padding">
           <td><input class="button quickbutton" type="button" name="educational" value="Educational Establishment" /></td>
@@ -319,7 +319,7 @@
         </tr>
         <tr class="padding">
           <td><input class="button quickbutton" type="button" name="internal" value="Internal Communications" /></td>
-          <td><input class="button quickbutton" type="button" name="workforce" value="Workforce" /></td>
+          <td><input class="button quickbutton" type="button" name="business" value="Business" /></td>
         </tr>
         <tr class="doublepadding">
           <td><input class="button quickbutton" type="button" name="creative" value="Creative Collaboration" /></td>
