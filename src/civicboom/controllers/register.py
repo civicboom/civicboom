@@ -9,6 +9,8 @@ from civicboom.model.member            import User, UserLogin
 # Communication & Messages
 from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email, associate_janrain_account, set_password
 
+# Signin
+from civicboom.lib.authentication import signin_user_and_redirect
 
 # Form Validators
 import formencode
@@ -106,7 +108,8 @@ class RegisterController(BaseController):
         c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako'))
         
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))
-        redirect('/')
+        signin_user_and_redirect(c.logged_in_persona, 'registration')
+        ##redirect('/')
 
 
     #---------------------------------------------------------------------------

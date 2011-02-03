@@ -11,4 +11,4 @@
 </form>
 
 <p>${_("Want to get a widget for your community?")}</p>
-<a href="/" target="_black">${_("Get started with ")}<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height: 1.5em; vertical-align: middle;"/></a>
+<a href="${h.url('/',subdomain='')}" target="_black">${_("Get started with ")}<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height: 1.5em; vertical-align: middle;"/></a>

@@ -1,6 +1,9 @@
 from civicboom.lib.base import *
 from civicboom.lib.misc import make_username
 
+from civicboom.controllers.account import AccountController
+set_persona = AccountController().set_persona
+
 from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
 
 from civicboom.controllers.contents import _normalize_member
@@ -215,9 +218,9 @@ class GroupsController(BaseController):
         Session.commit()
         
         if c.format == 'html':
-            #return redirect(url('group', id=group.id))
-            return redirect(url('members', id=group.username))
-        
+            ##return redirect(url('members', id=group.username))
+            set_persona(group)
+            
         return action_ok(message=_('group updated ok'), data=data)
 
 

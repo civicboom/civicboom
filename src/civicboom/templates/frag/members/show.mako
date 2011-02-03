@@ -67,7 +67,7 @@
     <div class="frag_left_col">
         <div class="frag_col">
         ## Member Details
-		<h1>${self.member['name']} (${self.member['username']})</h1><br />
+		<h1>${self.member['name'] or self.member['username']}</h1><br />
         <div>
           <span style="float:left; padding-right: 3px;">${member_avatar()}</span>
           <div>
@@ -78,6 +78,7 @@
             Account: ${self.member['account_type'].capitalize()}
           </div>
         </div>
+        <div style="clear: both;"></div>
         % if self.member.get('description'):
           <div style="clear:left; height: 3px;">&nbsp;</div>
           <div style="clear:left;" class="frag_list">
