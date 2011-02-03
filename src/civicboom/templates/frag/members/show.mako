@@ -66,7 +66,12 @@
         ## Member Details
 		<h1>${self.member['name']} (${self.member['username']})</h1><br />
         <div style="height: 80px;">
-          <span style="float:left;">${member_avatar()}</style>
+          <span style="float:left;">${member_avatar()}</span>
+          ${self.member['description']}<br /><br />
+          Joined: ${self.member['join_date']}<br />
+          % if self.member['website'] != '':
+            Website: ${self.member['join_date']}<br />
+          % endif
           <div style="clear:left; display: inline-block;">&nbsp;</div>
         </div>
         
