@@ -425,8 +425,9 @@ class ContentsController(BaseController):
                 return submit_keys[0]
             raise action_error(_('multiple submit types submited'), code=400)
         submit_type = normalise_submit(kwargs)
-        if submit_type==None and content.__type__!= kwargs.get('type'):
-            submit_type == 'publish'
+        # AllanC - we should consider this later .... for now the mobile works, but we way wawnt to get around HAVING to submit a submit_publish
+        #if submit_type==None and content.__type__!= kwargs.get('type'):
+        #    submit_type == 'publish'
 
         # -- Validate ----------------------------------------------------------
 
