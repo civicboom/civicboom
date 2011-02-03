@@ -20,6 +20,9 @@
         self.name      = self.member.get('name') or self.member.get('username')
         self.actions   = d.get('actions', [])
         
+        self.num_unread_messages = d.get('num_unread_messages', 0);
+        self.num_unread_notifications = d.get('num_unread_notifications', 0);
+        
         self.attr.title     = self.member['type'].capitalize()
         self.attr.icon_type = self.member['type']
         
@@ -136,7 +139,11 @@
                href    = "${h.url('messages',list='to')}"
                title   = "${_('Messages')}"
                onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
-            ><span>${_('Messages')}</span></a>
+            ><span>${_('Messages')}</span>
+            % if self.num_unread_messages > 0:
+              <div class="icon_overlay_red">&nbsp;${self.num_unread_messages}&nbsp;</div>
+            % endif
+            </a>
     
             <a class   = "icon_larger icon_messagesent_larger"
                href    = "${h.url('messages',list='sent')}"
@@ -148,7 +155,11 @@
                href    = "${h.url('messages', list='notification')}"
                title   = "${_('Notifications')}"
                onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
-            ><span>${_('Notifications')}</span></a>
+            ><span>${_('Notifications')}</span>
+            %if self.num_unread_notifications > 0:
+              <div class="icon_overlay_red">&nbsp;${self.num_unread_notifications}&nbsp;</div>
+            %endif
+            </a>
         % endif
         
         
