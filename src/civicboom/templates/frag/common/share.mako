@@ -20,7 +20,15 @@
     area_id = h.uniqueish_id("addthis_tb")
     %>
     <!-- AddThis Button BEGIN -->
-    <script type="text/javascript">var addthis_share = {"data_track_clickback":true};</script>
+    <script type="text/javascript">
+      var addthis_share = {
+        "data_track_clickback":true,
+##        email_template: 'Check out {{url}} (from @civicboom)',
+        templates: {
+                   twitter: 'Check out {{url}} (from @civicboom)'
+               }
+      };
+    </script>
     <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
     <div class="addthis_toolbox addthis_cb_style ${area_id}" style="display: inline-block;"
         % for k,v in kwargs.iteritems():

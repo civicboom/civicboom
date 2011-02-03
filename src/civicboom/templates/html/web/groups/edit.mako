@@ -21,7 +21,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="group()">
-    ${frag.frag_basic(title=_('%s group') % c.action.capitalize(), icon='group', frag_content=group_content)}
+    ${frag.frag_basic(title=_('%s Group') % c.action.capitalize(), icon='group', frag_content=group_content)}
 </%def>
 <%def name="group_content()">
     <%
@@ -60,31 +60,59 @@
   		<!--<legend>${_("Group")}</legend>-->
   		<table class='group-table'>
   			<tr class="padding">
-  				<td colspan="2">${_("Group Name")}</td>
+  				<td colspan="2">${_("Group name")}</td>
   				<td colspan="5">
-  		      <input class="group-edit" type="text" name="name" value="${get_param('name')}"/>
+  		      <input class="group-edit" type="text" name="name" value="${get_param('name')}" placeholder="Enter the public name of your Group here"/>
           ${show_error('name')}
   				</td>
   			</tr>
   			<tr class="padding">
-  				<td colspan="2">${_("Description")}</td>
+  				<td colspan="2">${_("Description")}<br />Who it's for<br />and purpose</td>
   				<td colspan="5">
-  		      <textarea class="group-edit" name="description">${get_param('description')}</textarea><br />
+  		      <textarea class="group-edit" name="description" id="group_description" placeholder="This will have text that will be a top line description of what this group could be for.">${get_param('description')}</textarea><br />
             ${show_error('description')}
   				</td>
   			</tr>
   			<tr class="padding">
   			  <td colspan="7">${_("Default member role")}</td>
   			</tr>
-  			<tr class="padding">
+  			<tr>
   				<td style="width: 20px">&nbsp;</td>
-  				<td colspan="6">
-            <input type="radio" class="quickchange" name="default_role" value="observer" id="default_role_observer" /><label for="default_role_observer">Observer</label><br />
-            <input type="radio" class="quickchange" name="default_role" value="contributor" id="default_role_contributor" /><label for="default_role_contributor">Contributor</label><br />
-            <input type="radio" class="quickchange" name="default_role" value="editor" id="default_role_editor" /><label for="default_role_editor">Editor</label><br />
-            <input type="radio" class="quickchange" name="default_role" value="admin" id="default_role_admin" /><label for="default_role_admin">Administrator</label><br />
+  				<td colspan="5">
+            <input type="radio" class="quickchange" name="default_role" value="observer" id="default_role_observer" /><label for="default_role_observer">Observer</label>
+            <span class="role_description"> - a member of a group who can only view content/drafts and comment</span>
+          </td>
+          <td style="width: 20px">&nbsp;</td>
+        </tr>
+        <tr>
+          <td style="width: 20px">&nbsp;</td>
+          <td colspan="5">
+            <input type="radio" class="quickchange" name="default_role" value="contributor" id="default_role_contributor" /><label for="default_role_contributor">Contributor</label>
+            <span class="role_description"> - a member who can do the above and create and edit drafts</span>
+          </td>
+          <td style="width: 20px">&nbsp;</td>
+        </tr>
+        <tr>
+          <td style="width: 20px">&nbsp;</td>
+          <td colspan="5">
+            <input type="radio" class="quickchange" name="default_role" value="editor" id="default_role_editor" /><label for="default_role_editor">Editor</label>
+            <span class="role_description"> - a member who can do the above plus publish content</span>
+          </td>
+          <td style="width: 20px">&nbsp;</td>
+        </tr>
+        <tr class="padding">
+          <td style="width: 20px">&nbsp;</td>
+          <td colspan="5">
+            <input type="radio" class="quickchange" name="default_role" value="admin" id="default_role_admin" /><label for="default_role_admin">Administrator</label>
+            <span class="role_description"> - a member who can do the above and invite others to join and set member roles</span><br />
           ${show_error('default_role')}
   				</td>
+  				<td style="width: 20px">&nbsp;</td>
+  			</tr>
+  			<tr class="padding">
+  			  <td colspan="7" style="text-align: center;">
+  			    Note: By creating this Group you are automatically set as an Administrator.
+  			  </td>
   			</tr>
   			<tr class="padding">
           <td colspan="7">${_("Join mode")}</td>
@@ -157,17 +185,18 @@
           <td>&nbsp;</td>
         </tr>
         <tr class="padding">
-          <td colspan="6">I can also confirm that by clicking "Create" I have read and accepted the <a href="#">terms and conditions</a> associated with creating a group.</td>
+          <td colspan="6">I can also confirm that by clicking "Create" I have read and accepted the <a href="http://localhost/about/terms">terms and conditions</a> associated with creating a Group.</td>
           <td>&nbsp;</td>
         </tr>
   			<tr>
-  				<td colspan="2">
+  				<td colspan="6" style="text-align: right;">
   				% if d['action']=='edit':
   					<input type="submit" name="submit" value="${_('Save Group')}" class="button" />
   				% else:
   					<input type="submit" name="submit" value="${_('Create Group')}" class="button" />
   				% endif
   				</td>
+  				<td>&nbsp;</td>
   			</tr>
       </table>
     </fieldset>
@@ -180,62 +209,106 @@
 ##------------------------------------------------------------------------------
 
 <%def name="quick_group()">
-    ${frag.frag_basic(title=_('Quick group'), icon='group', frag_content=quick_group_content)}
+    ${frag.frag_basic(title=_('Quick Group'), icon='group', frag_content=quick_group_content)}
 </%def>
 <%def name="quick_group_content()">
     <script type="text/javascript">
       var quickOrder = ['default_role', 'join_mode', 'content_visibility', 'member_visibility'];
-      var quickSelection = {'news': '0001', 'interest':'1000', 'educational':'1100', 'marketing':'0110',
-                            'internal':'1211', 'workforce':'1000', 'creative':'1000', 'research':'1000'};
+      var quickSelection = {'news': '0001',
+                            'interest':'1100',
+                            'educational':'2200',
+                            'marketing':'0110',
+                            'internal':'2211',
+                            'workforce':'2211',
+                            'creative':'0001',
+                            'research':'2110'};
+      var quickBlurb =     {'news': 'This is a news blurb',
+                            'interest':'This is an interest blurb',
+                            'educational':'This is an educational blurb',
+                            'marketing':'This is a marketing blurb',
+                            'internal':'This is an internal blurb',
+                            'workforce':'This is a workforce blurb',
+                            'creative':'This is a creative blurb',
+                            'research':'This is a research blurb'};
+      function changePlaceholder (jquery_object, text) {
+        if (typeof text === 'undefined') var text = '';
+        var oldPlaceholder = jquery_object.attr('placeholder'); 
+        jquery_object.attr('placeholder', text);
+        if ((!Modernizr.input.placeholder) && (jquery_object.val() === oldPlaceholder))
+          jquery_object.val(jquery_object.attr('placeholder'));
+      }
       $(function () {
+      var defaultDescPlaceholder = $('textarea#group_description').attr('placeholder');
+        if (!Modernizr.input.placeholder) {
+          $('textarea#group_description').val($('textarea#group_description').attr('placeholder'));
+          $('textarea#group_description').focus(function (e) {
+            $(this).val('');
+          });
+          $('textarea#group_description').blur(function (e) {
+            if ($(this).val() === '') $(this).val($(this).attr('placeholder'));
+          });
+          $('textarea#group_description').parents('form').submit(function (e) {
+            if ($('textarea#group_description').val() === $('textarea#group_description').attr('placeholder')) $('textarea#group_description').val('');
+          });
+        }
         $('input.quickbutton').click(function () {
+          var quickHilite = false
+          $('td.quickchangehilite').removeClass('quickchangehilite');
           var quickName = $(this).attr('name');
           if (typeof quickSelection[quickName] != 'undefined') {
             if (quickSelection[quickName].length == 4) {
               for (var qI = 0; qI < 4; qI ++) {
                 var quickValue = 1 * quickSelection[quickName][qI];
                 $('[name='+quickOrder[qI]+']')[quickValue].checked = true;
+                quickHilite = true;
               }
             }
           }
+          changePlaceholder ($('#group_description'), quickBlurb[quickName]);
+          if (quickHilite) $('.quickchange:checked').parents('td').addClass('quickchangehilite');
           hiliteQuickButtons (quickSelection[quickName]);
         });
+        
         function hiliteQuickButtons (quickString) {
+          var quickHilite = false;
           $('.quickbutton').removeClass('quickhilite');
           for (var qS in quickSelection) {
             if (quickSelection[qS] == quickString) {
               $('.quickbutton[name='+qS+']').addClass('quickhilite');
+              quickHilite = true;
             }
           }
+          return quickHilite;
         }
-        $('input.quicktype').click(function () {
-          switch ($(this).attr('value')) {
-            case 'open':
-              $('[name=join_mode]')[0].checked = true;
-              break;
-            case 'invite':
-              $('[name=join_mode]')[2].checked = true;
-              break;
-          }
-        });
         $('input.quickchange').click(function () {
           var quickString = '';
           for (var qI = 0; qI < 4; qI ++) {
             quickString = quickString + $('[name='+quickOrder[qI]+']').index($('[name='+quickOrder[qI]+']:checked'));
           }
-          hiliteQuickButtons (quickString);
+          $('td.quickchangehilite').removeClass('quickchangehilite');
+          if (hiliteQuickButtons (quickString)) $('.quickchange:checked').parents('td').addClass('quickchangehilite');
+          changePlaceholder ($('#group_description'), defaultDescPlaceholder);
         });
       });
     </script>
     <form id="quick_group">
       <table class="">
         <tr class="padding">
-          <td colspan="2">What type of group would you like to create?</td>
-        </tr>
-        <tr class="padding">
-          <td>Open <input type="radio" name="quick_type" class="quicktype" value="open" /></td>
-          <td>Invite only <input type="radio" name="quick_type" class="quicktype" value="invite" /></td>
-        </tr>
+         <td colspan="2" class="bold bigger">Need help?</td>
+        <tr>
+        <tr class="doublepadding">
+          <td colspan="2">By clicking on one of the buttons below, you can create a "quick group", which will have pre-set defaults.
+          (Try it out, click on a button and see the highlighted changes!)</td>
+        <tr>
+##        <tr class="padding">
+##          <td colspan="2">
+##            Would you like to create a group for:
+##          </td>
+##        </tr>
+##        <tr class="padding">
+##          <td>Open <input type="radio" name="quick_type" class="quicktype" value="open" /></td>
+##          <td>Invite only <input type="radio" name="quick_type" class="quicktype" value="invite" /></td>
+##        </tr>
         <tr class="padding">
           <td><input class="button quickbutton" type="button" name="news" value="News Organisation" /></td>
           <td><input class="button quickbutton" type="button" name="interest" value="Interest Group" /></td>
@@ -248,16 +321,16 @@
           <td><input class="button quickbutton" type="button" name="internal" value="Internal Communications" /></td>
           <td><input class="button quickbutton" type="button" name="workforce" value="Workforce" /></td>
         </tr>
-        <tr class="padding">
+        <tr class="doublepadding">
           <td><input class="button quickbutton" type="button" name="creative" value="Creative Collaboration" /></td>
           <td><input class="button quickbutton" type="button" name="research" value="Research" /></td>
         </tr>
         <tr class="padding">
-          <td colspan="2">Info here!</td>
+          <td colspan="2" class="bold bigger center">OR</td>
+        </tr>
         <tr>
-        <tr>
-          <td colspan="2">More Info Here!</td>
-        <tr>
+          <td colspan="2" class="bold big">Create your own group by filling in the form to suit your needs.</td>
+        </tr>
       </table>
     </form>
 </%def>
