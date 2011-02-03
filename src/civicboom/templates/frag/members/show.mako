@@ -68,7 +68,7 @@
         <div class="frag_col">
         ## Member Details
 		<h1>${self.member['name']} (${self.member['username']})</h1><br />
-        <div style="">
+        <div>
           <span style="float:left; padding-right: 3px;">${member_avatar()}</span>
           <div>
             % if self.member['website'] != '':
