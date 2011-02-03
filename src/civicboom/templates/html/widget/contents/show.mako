@@ -34,7 +34,7 @@
     
     <div>
         <div style="display: inline-block;"><strong>${_("Due in")}:      </strong>fix</div>
-        <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>${content['num_accepted']} ${_('_members')}</div>
+        <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>${content.get('num_accepted')} ${_('_members')}</div>
         
         ##${h.time_ago_first_only(assignment.expiryDate)}
         ##${h.format_multiple_prefix(assignment.num_accepted_by_members + len(assignment.newsarticles),single=_("_member"))}
