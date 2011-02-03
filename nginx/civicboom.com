@@ -62,6 +62,10 @@ server {
 		proxy_pass http://tile.openstreetmap.org/;
 	}
 
+	# for errors, don't proxy to pylons, just serve static files
+	location /errors/ {
+	}
+
 	location /nginx_status {
 		stub_status on;
 		access_log   off;
