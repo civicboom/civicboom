@@ -200,7 +200,8 @@ def signin_user_and_redirect(user, login_provider=None):
     login_redirector()
 
     # If no redirect send them to private profile
-    return redirect(url(controller="profile", action="index"))
+    #return redirect(url(controller="profile", action="index"))
+    return redirect("/profile")
     
 def signout_user(user):
     user_log.info("logged out")
