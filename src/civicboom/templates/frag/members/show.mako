@@ -68,7 +68,7 @@
         <div class="frag_col">
         ## Member Details
 		<h1>${self.member['name']} (${self.member['username']})</h1><br />
-        <div style="">
+        <div>
           <span style="float:left; padding-right: 3px;">${member_avatar()}</span>
           <div>
             % if self.member['website'] != '':
@@ -149,7 +149,7 @@
                title   = "${_('Messages')}"
                onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Messages')}</span>
-            ${messageIcon(self.num_unread_messages}
+            ${messageIcon(self.num_unread_messages)}
             </a>
     
             <a class   = "icon_larger icon_messagesent_larger"
@@ -163,7 +163,7 @@
                title   = "${_('Notifications')}"
                onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
             ><span>${_('Notifications')}</span>
-            ${messageIcon(self.num_unread_notifications}
+            ${messageIcon(self.num_unread_notifications)}
             </a>
         % endif
         
