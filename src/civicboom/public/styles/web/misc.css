@@ -78,3 +78,10 @@ HTML.js #step_container .step  {position: absolute;}
 }
 .steps_container .step_back {left  :   4px;}
 .steps_container .step_next {right : 204px;}
+
+/* --- Get Widget ---- */
+
+.get_widget ul li {
+    list-style: disc;
+    margin-left: 2em;
+}

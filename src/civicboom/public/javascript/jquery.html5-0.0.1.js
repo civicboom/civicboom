@@ -32,14 +32,16 @@ if (!Modernizr.input.placeholder){
 
 // date picker
 $(function() {
-  $("input[type='date']").datepicker ({ dateFormat: 'yy-mm-dd', changeYear: true, changeMonth: true, yearRange: '1900:2020', onChangeMonthYear: function (month, year, inst) {
+ $("input[type='date']").datepicker ({ dateFormat: 'yy-mm-dd', changeYear: true, changeMonth: true, yearRange: '1900:2020'});
+  //, onChangeMonthYear: function (month, year, inst) {
     // var dateSel = $(this).datepicker("getDate"); 
     // if (typeof dateSel !== 'null') {
     //   dateSel.setFullYear(year);
     //   dateSel.setMonth(month);
     //   $(this).datepicker("setDate", dateSel);
     // }
-  }});
+  //}
+  // });
 });
 
 });

@@ -7,7 +7,7 @@
 ##------------------------------------------------------------------------------
 <%def name="init_vars()">
     <%
-        self.attr.title     = _('Signin or Signup ')
+        self.attr.title     = _('Sign in or Sign up ')
         self.attr.icon_type = 'boom'
     %>
 </%def>
@@ -24,7 +24,7 @@
                 creator_name = assignment['creator']['name'] or assignment['creator']['username']
             %>
             ## AllanC: TODO - internationalise this string!
-            <p>By signing in you will accept the _assignment <b>${assignment['title']}</b> that has been set by <b>${creator_name}</b></p>
+            <p>By signing in you will accept the <b>${assignment['title']}</b> request that has been set by <b>${creator_name}</b></p>
         % endif
         ##${c.action_objects['description']}
         ##${c.action_objects['action_object']}

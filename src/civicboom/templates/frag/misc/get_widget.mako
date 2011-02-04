@@ -47,16 +47,17 @@ ${widget_preview(c.widget_user_preview)}
     %>
 
   ## AllanC: I wanted to get this done, used tabled, fix it if you want ...
-  <table><tr>
+  <table class="get_widget"><tr>
 
     <td style="width: 600px;">
+        
         
         <h1>${_('Grab your widget and get your community to respond to your requests! ')}</h1>
         <p>${_('Through the widget, your community and audience can:')}</p>
         <ul>
-            <li><${_('Read your requests')}</li>
-            <li><${_('Respond to them immediately')}</li>
-            <li><${_('Accept to complete at a later date')}</li>
+            <li>${_('Read your requests')}</li>
+            <li>${_('Respond to them immediately')}</li>
+            <li>${_('Accept to complete at a later date')}</li>
         </ul>
         <p>${_('Anyone who isnt Following you on the Civicboom system, but clicks on "Accept" or "Respond" via your widget will automatically become a Follower of you. This means every time you send out a request, they will get alerted.')}</p>
         <p>${_('Others can also grab the code for this widget and post on their own web pages - amplifying your reach to a wider audience.')}</p>

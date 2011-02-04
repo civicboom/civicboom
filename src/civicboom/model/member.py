@@ -228,10 +228,10 @@ class Member(Base):
 
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
-
+    
     def __link__(self):
-        from pylons import url, app_globals
-        return url('member', id=self.id, absolute=True)
+        from civicboom.lib.web import url
+        return url('member', id=self.id, subdomain='')
 
     def hash(self):
         h = hashlib.md5()

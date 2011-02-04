@@ -208,6 +208,8 @@ def signout_user(user):
     user_log.info("logged out")
     session.clear()
     cookie_delete("civicboom_logged_in")
+    cookie_delete("login_redirect_url")
+    cookie_delete("login_redirect_action")
     #response.delete_cookie("civicboom_logged_in")
     #session.save()
     #flash_message("Successfully signed out!")
