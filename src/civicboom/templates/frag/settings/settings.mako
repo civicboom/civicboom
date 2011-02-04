@@ -1,6 +1,7 @@
 <%inherit file="/frag/common/frag.mako"/>
 
 <%!
+    from sets import Set
     rss_url   = False
     help_frag = 'settings'
 %>
@@ -22,11 +23,21 @@
             if setting_meta['group'] not in setting_groups:
                 setting_groups[setting_meta['group']] = []
             setting_groups[setting_meta['group']].append(setting_meta['name'])
+        
+        #setting_group_order = Set(['general', 'contact', 'password', 'location', 'avatar'])
+        #setting_groups_set  = Set(setting_groups.keys())
+        #print (setting_groups_set & setting_group_order)
+        #print (setting_groups_set - setting_group_order)        
+        #for g in setting_group_order:
+        #    print g
+        #settings_groups_order = (setting_groups_set & setting_group_order) | (setting_groups_set - setting_group_order)
     %>
 
 	<style>
 	</style>
+
     % for group_name in setting_groups.keys():
+    ##% for group_name in settings_groups_order:
         <div style="margin: 16px;">
 			<div style="font-weight: bold;">${group_name.capitalize()}</div>
 			<table class="form" style="width: 100%;">
