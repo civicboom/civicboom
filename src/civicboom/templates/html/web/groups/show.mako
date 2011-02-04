@@ -25,7 +25,7 @@
         <a href="${h.url('edit_group', id=group['username'])}">edit</a>
     % endif
     
-    <h2>details</h2>
+    <h2>Details</h2>
     <p>full name ${group['name']}</p>
     <p>default_role ${group['default_role']}</p>
     <p>member_visibility ${group['member_visibility']}</p>
