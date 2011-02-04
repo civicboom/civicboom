@@ -40,6 +40,9 @@ test-db: skel-db
 	paster setup-app development.ini
 	nosetests
 
+test:
+	nosetests
+
 data/live-data.pgdump:
 	mkdir -p data
 	ssh -C civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump

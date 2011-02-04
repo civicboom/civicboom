@@ -22,7 +22,7 @@
     <table><tr>
         <td class="action">
             <div class="padding" style="background-color: #${c.widget['color_header']}; margin-right: 1em;">
-            <a href="${h.url('content_action', id=id, action='accept', subdomain='')}" target="_blank">${_('Accept _assignemnt')}</a>
+            <a href="${h.url('content_action', id=id, action='accept', subdomain='')}" target="_blank">${_('Accept _asignemnt')}</a>
             </div>
         </td>
         <td class="action">

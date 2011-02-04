@@ -162,8 +162,8 @@ class Content(Base):
         return self.title # + u" (" + self.__type__ + u")"
 
     def __link__(self):
-        from pylons import url, app_globals
-        return url('content', id=self.id, absolute=True)
+        from civicboom.lib.web import url
+        return url('content', id=self.id, subdomain='')
 
     def clone(self, content):
         if content and content.id:

@@ -38,7 +38,7 @@ class ProfileController(BaseController):
         
         member_return = members_controller.show(id=c.logged_in_persona.username, private=True)
         member_return['data'].update({
-            'num_unread_messages':c.logged_in_persona.num_unread_messages,
+            'num_unread_messages'     :c.logged_in_persona.num_unread_messages,
             'num_unread_notifications':c.logged_in_persona.num_unread_notifications,
         })
         return member_return
