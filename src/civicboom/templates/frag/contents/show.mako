@@ -64,9 +64,10 @@
         <div class="frag_col">
         ${content_details()}
         ${content_content()}
-        ${content_license()}
         ${content_media()}
         ${content_map()}
+        ${content_details_foot()}
+        ${content_license()}
         ${content_comments()}
         ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
         <%def name="flag_form()">
@@ -146,7 +147,7 @@
             <tr>
               <td><span class="icon icon_article"><span>&nbsp;</span></span></td>
               <td>${title}</td>
-              <td colspan="4">${datetime.datetime.strftime(date_input, '%H:%M:%S %d/%m/%Y')}</td>
+              <td colspan="4">${datetime.datetime.strftime(date_input, '%d/%m/%Y')}</td>
             </tr>
           % endif
         </%def>
@@ -170,9 +171,6 @@
           </tr>
           ${format_date_if('Event Date', self.event_date)}
           ${format_date_if('Due By', self.due_date)}
-          ${format_date_if('Created', self.creation_date)}</p>
-          ${format_date_if('Published', self.publish_date)}</p>
-          ${format_date_if('Updated', self.update_date)}</p>
         </table>
         <div class="iconholder">
           ${iconify('private', 'Private Content', 'icon icon_private')}
@@ -187,6 +185,46 @@
             <li><div class="icon_large icon_approved_large" title="approved content"></div>${_("approved content")}</li>
             % endif
         </ul>
+    </div>
+
+
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Content Details Footer
+##------------------------------------------------------------------------------
+<%def name="content_details_foot()">
+    <% content = self.content %>
+    <div class="details">
+      <%def name="detail(field_name)">
+          % if content.get(field_name):
+          <p>${field_name}: ${content[field_name]}</p>
+          % endif
+      </%def>
+      <%def name="format_date_if(title, date_input)">
+        % if date_input:
+          <tr>
+            <td><span class="icon icon_article"><span>&nbsp;</span></span></td>
+            <td>${title}</td>
+            <td>${datetime.datetime.strftime(date_input, '%H:%M:%S %d/%m/%Y')}</td>
+          </tr>
+        % endif
+      </%def>
+      <%def name="iconify(field_name, title, icon_classes)">
+        % if content.get(field_name):
+          <span class="${icon_classes}"><span>${title}</span></span>
+        % endif
+      </%def>
+      <style type="text/css">
+        table.content tr td { padding-right: 3px; }
+        table.content tr td.x { padding-left: 3px; }
+      </style>
+      <table class="content">
+        ${format_date_if('Created', self.creation_date)}</p>
+        ${format_date_if('Published', self.publish_date)}</p>
+        ${format_date_if('Updated', self.update_date)}</p>
+      </table>
     </div>
 
 
@@ -212,7 +250,7 @@
 <%def name="content_license()">
     % if 'license' in self.content:
     <% license = self.content['license'] %>
-    <div>
+    <div style="padding-top: 4px">
       <a href="${license['url']}" target="_blank" title="${license['description']}">
         <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
       </a>
