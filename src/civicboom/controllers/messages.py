@@ -46,6 +46,7 @@ def _get_message(message, is_target=False, is_target_or_source=False):
 #-------------------------------------------------------------------------------
 
 list_filters = {
+    'all'         : lambda results: results.filter(or_( Message.source_id==c.logged_in_persona.id , Message.target_id==c.logged_in_persona.id     )) ,
     'to'          : lambda results: results.filter(and_(Message.source_id!=null()                 , Message.target_id==c.logged_in_persona.id     )) ,
     'sent'        : lambda results: results.filter(and_(Message.source_id==c.logged_in_persona.id , Message.target_id!=null()                     )) ,
     'public'      : lambda results: results.filter(and_(Message.source_id==c.logged_in_persona.id , Message.target_id==null()                     )) ,
@@ -75,6 +76,7 @@ class MessagesController(BaseController):
         
         @param * (see common list return controls)
         @param list  which list to get
+               all           all messages the user can see, PMs and notifications
                to            ?
                from          ?
                public        ?
@@ -96,30 +98,30 @@ class MessagesController(BaseController):
         
         # Setup search criteria
         if 'list' not in kwargs:
-            kwargs['list'] = 'to'            
+            kwargs['list'] = 'all'
         kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.messages'])
         kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
-            if kwargs.get('list')=='to':
+            if kwargs.get('list') in ['to']:
                 kwargs['include_fields'] = "source, source_name"
-            if kwargs.get('list')=='sent':
+            if kwargs.get('list') in ['sent']:
                 kwargs['include_fields'] = "target, target_name"
         if 'exclude_fields' not in kwargs:
             kwargs['exclude_fields'] = ""
-            if kwargs.get('list')=='to':
-                kwargs['exclude_fields'] = "content"
-            if kwargs.get('list')=='sent':
-                kwargs['exclude_fields'] = "content, read"
+            #if kwargs.get('list')=='to':
+            #    kwargs['exclude_fields'] = "content"
+            if kwargs.get('list') in ['sent']:
+                kwargs['exclude_fields'] = "read"
         
         results = Session.query(Message)
         
         # Eager loading of linked fields
         #  this could be generifyed and use in members/index and contents/index
         #  the code is simple, but repreative and could be condenced in a sensible way
-        if 'source' in kwargs['include_fields'] or 'source' not in kwargs['exclude_fields']:
+        if 'source' in kwargs['include_fields']:
             results = results.options(joinedload('source'))
-        if 'target' in kwargs['include_fields'] or 'target' not in kwargs['exclude_fields']:
+        if 'target' in kwargs['include_fields']:
             results = results.options(joinedload('target'))
         
         
