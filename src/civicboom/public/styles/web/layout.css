@@ -110,6 +110,21 @@ HEADER #persona_select .selectable:hover {
     cursor: pointer;
 }
 
+HEADER #persona_select #persona_holder {
+  vertical-align: center;
+}
+
+HEADER #persona_select #persona_holder #message_holder {
+  position: relative;
+  top: -3px;
+  vertical-align: center;
+  height: 32px;
+  display: inline-block;
+}
+
+HEADER #persona_select #persona_holder #message_holder .icon_overlay_red {
+  font-size: 88%;
+}
 
 /*----------------------------------------------------------------------------*/
 /*                             Header detail:                                 */
@@ -132,7 +147,7 @@ HEADER #home_link {
 NAV {
 	position: absolute;
 	top: 11px;
-	left: 185px;
+	left: 215px;
 }
 
 NAV .menuh>UL {
