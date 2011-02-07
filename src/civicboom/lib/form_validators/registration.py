@@ -59,6 +59,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
 class UniqueEmailValidator(validators.Email):
     def __init__(self, *args, **kwargs):
         from pylons import config
+        kwargs['resolve_domain'] = False
         if config['online']:
             kwargs['resolve_domain'] = True
         validators.Email.__init__(self, *args, **kwargs)
