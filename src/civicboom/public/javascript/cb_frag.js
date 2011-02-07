@@ -169,6 +169,9 @@ function cb_frag_reload(param) {
 		var elem_source_pair = get_parent_container_element_source(jquery_element);
 		var frag_element = elem_source_pair[0];
 		var frag_source  = elem_source_pair[1];
+		// Remove auto-save timer if refreshing fragment! GM
+    if (typeof cb_frag_get_variable(jquery_element, 'autosavedrafttimer') != 'undefined')
+      clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
 		frag_element.load(frag_source);
 	}
 
@@ -188,6 +191,9 @@ function cb_frag_reload(param) {
 					var elem_source_pair = get_parent_container_element_source(link_element);
 					var frag_element = elem_source_pair[0];
 					var frag_source  = elem_source_pair[1];
+					// Remove auto-save timer if refreshing fragment! GM
+          if (typeof cb_frag_get_variable(link_element, 'autosavedrafttimer') != 'undefined')
+            clearInterval(cb_frag_get_variable(link_element, 'autoSaveDraftTimer'));
 					frags_to_refresh[frag_source] = frag_element;
 				}
 			}

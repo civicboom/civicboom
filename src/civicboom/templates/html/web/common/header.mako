@@ -15,10 +15,32 @@
 ##------------------------------------------------------------------------------
 % if c.logged_in_persona:
 <div id="persona_select">
-
-    <a class="name" href="${url(controller='profile', action='index')}">
-        <img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
-    </a>
+    <div id="persona_holder" style="vertical-align: center;">
+      <a class="name" href="${url(controller='profile', action='index')}">
+          <img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+      </a>
+      <%def name="messageIcon(messages)">
+        % if messages > 0:
+          <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
+        % endif
+      </%def>
+      <div id="message_holder">
+        <a class   = "icon icon_message"
+           href    = "${h.url('messages',list='to')}"
+           title   = "${_('Messages')}"
+           onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
+        ><span>${_('Messages')}</span>
+        </a>
+        ${messageIcon(c.logged_in_persona.num_unread_notifications)}<br />
+        <a class   = "icon icon_notification"
+           href    = "${h.url('messages',list='to')}"
+           title   = "${_('Messages')}"
+           onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
+        ><span>${_('Messages')}</span>
+        </a>
+        ${messageIcon(c.logged_in_persona.num_unread_notifications)}
+      </div>
+    </div>
     <table>
         <%def name="persona_select(member, **kwargs)">
             <%
@@ -43,6 +65,22 @@
                         <p class="info">${k.capitalize()}: ${str(v).capitalize()}</p>
                         % endif
                     % endfor
+                </td>
+                <td>
+                  <a class   = "icon icon_message"
+                     href    = "${h.url('messages',list='to')}"
+                     title   = "${_('Messages')}"
+                     onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
+                  ><span>${_('Messages')}</span>
+                  </a>
+                  ${messageIcon(member.num_unread_notifications)}<br />
+                  <a class   = "icon icon_notification"
+                     href    = "${h.url('messages',list='to')}"
+                     title   = "${_('Messages')}"
+                     onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
+                  ><span>${_('Messages')}</span>
+                  </a>
+                  ${messageIcon(member.num_unread_notifications)}
                 </td>
                 <td class="hide_if_js">
                     % if not current_persona:
