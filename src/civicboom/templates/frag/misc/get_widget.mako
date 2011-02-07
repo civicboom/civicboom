@@ -10,26 +10,32 @@ ${widget_preview(c.widget_user_preview)}
 ## The defaults here should match the defaults in the HTML javascript generator to ensure the IFRAME here is the same an the initial settings
 <%def name="widget_iframe(member=None)">\
 <%
-    if not member:
-        member = c.logged_in_persona
+    member_username = ''
+    #if not member:
+    #    member = c.logged_in_persona
     if hasattr(member, 'to_dict'):
         member = member.to_dict()
+    if isinstance(member, basestring):
+        member_username = member
+    if isinstance(member, dict):
+        member_username = member.get('username')
+    
 %>\
 <iframe \
  name='${_("_site_name")}'\
  id='CivicboomWidget'\
  title='${_("_site_name Widget")}'\
 % if c.widget['base_list']:
- src='${h.url('member_action', id=member['username'], action=c.widget['base_list'], subdomain='widget', protocol='http')}'\
+ src='${h.url('member_action', id=member_username, action=c.widget['base_list'], subdomain='widget', protocol='http')}'\
 % else:
- src='${h.url('member'       , id=member['username'],                               subdomain='widget', protocol='http')}'\
+ src='${h.url('member'       , id=member_username,                               subdomain='widget', protocol='http')}'\
 % endif
  width='${c.widget['width']}'\
  height='${c.widget['height']}'\
  scrolling='no'\
  frameborder='0'\
 >\
-<a href='${h.url('member', id=member['username'], subdomain='')}'>${_('%s on _site_name' % member['username'])}</a>\
+<a href='${h.url('member', id=member_username, subdomain='')}'>${_('%s on _site_name' % member_username)}</a>\
 </iframe>\
 </%def>
 
