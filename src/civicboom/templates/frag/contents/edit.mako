@@ -156,7 +156,7 @@
         ##${form_instruction(_("Got an opinion? want to ask a question?"))}
         
         ##<p>
-            <lable for="title_${self.id}">${_('Title')}:</lable><input id="title_${self.id}" name="title" type="text" value="${self.content['title']}" style="width:80%;" placeholder="${_('Enter a title')}"/>
+            <label for="title_${self.id}"><h2>${_('Title')}</h2></label><input id="title_${self.id}" name="title" type="text" value="${self.content['title']}" style="width:100%;" placeholder="${_('Enter a title')}"/>
             ##${popup(_("extra info"))}
         ##</p>
         
@@ -164,6 +164,7 @@
 		<%
 		area_id = h.uniqueish_id("content")
 		%>
+		<label for="${area_id}"><h2>Content</h2></label>
 		<textarea name="content" id="${area_id}" style="width:100%; height:250px;">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
         
@@ -236,7 +237,7 @@
         ## Tags
 
         <p>
-            <label for="tags_${self.id}">${_("Tags")}</label>
+            <label style="display: inline-block; width: 50pt;" for="tags_${self.id}">${_("Tags")}</label>
             <%
             tags = []
             separator = config['setting.content.tag_string_separator']
@@ -249,7 +250,7 @@
             for tag in tags:
                 tags_string += tag + separator
             %>
-            <input id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
+            <input style="width: 100pt;" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
             <span>(${_('separated by commas')} ',')</span>
             ##${popup(_("extra_info"))}
         </p>
@@ -421,8 +422,14 @@
                     due_date   = str(self.content.get('due_date') or '')[:10]
                     event_date = str(self.content.get('event_date') or '')[:10]
                 %>
-                <span>${_("Due Date:")}   <input type="date" name="due_date"   value="${due_date}"></span>
-                <span>${_("Event Date:")} <input type="date" name="event_date" value="${event_date}"></span>
+                <span>
+                  <span style="display: inline-block; width: 50pt;">${_("Due Date:")}</span>
+                  <input style="width: 100pt;" type="date" name="due_date"   value="${due_date}">
+                </span>
+                <span>
+                  <span style="display: inline-block; width: 50pt;">${_("Event Date:")}</span>
+                  <input style="width: 100pt;" type="date" name="event_date" value="${event_date}">
+                </span>
                 <%doc>
                 <p>${_("Response License:")}
 				<table>
