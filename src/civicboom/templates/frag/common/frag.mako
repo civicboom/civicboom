@@ -174,7 +174,9 @@
 </%def>
 
 <%def name="georss_link(georss_url=None)">
-    <%  
+    <%
+        ## Bug issue #300
+        ## AllanC - This is incorrect! if the current URL is profile/index the RSS source returns a 403 Error when it trys to access it
         feed = h.url(
             'current',
             format         ='rss' ,

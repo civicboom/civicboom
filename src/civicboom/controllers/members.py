@@ -169,6 +169,7 @@ class MembersController(BaseController):
                 member   member object
         @return 404      member not found
         """
+        
         member = _get_member(id)
         
         if 'lists' in kwargs:
