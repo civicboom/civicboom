@@ -17,13 +17,14 @@ def trans(text):
             raise Exception("Banned word "+b+" in "+sys.argv[1])
 
     words = [
+        ("contents",   "content"),
         ("content",    "content"),
-        ("assignment", "request"),
+        ("articles",   "content"),
         ("article",    "content"),
+        ("assignment", "request"),
         ("member",     "member"),
         ("user",       "user"),
         ("group",      "group"),
-        ("contents",   "content"),  # keep at the end so that it can correct articles->contents
     ]
     for w, r in words:
         text = text.replace("_"+w, r)

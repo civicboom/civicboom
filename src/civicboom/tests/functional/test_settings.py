@@ -120,6 +120,19 @@ class TestSettingsController(TestController):
             status=302
         )
         
+    def test_change_avatar(self):
+        self.png1x1 = b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAAXNSR0IArs4c6QAAAApJREFUCNdj+AcAAQAA/8I+2MAAAAAASUVORK5CYII=')
+        self.log_in_as('unittest')
+        response = self.app.post(
+            url(controller='settings', action='update'),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+            },
+            upload_files = [("avatar", "1x1.png", self.png1x1[0:30])],
+            status=302
+        )
+        
     def test_change_description(self):
         self.log_in_as('unittest')
         #Get current
@@ -140,6 +153,9 @@ class TestSettingsController(TestController):
         #Check changed
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
+        print self.old_description
+        print response_json['data']['settings']['description']
+        assert false
         assert self.old_description != response_json['data']['settings']['description']
         #Change
         response = self.app.post(
@@ -148,6 +164,39 @@ class TestSettingsController(TestController):
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'description'    : self.old_description,
+            },
+            status=302
+        )
+        
+    def test_change_location(self):
+        self.log_in_as('unittest')
+        #Get current
+        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response_json = json.loads(response.body)
+        self.old_location = response_json['data']['settings']['home_location']
+        assert self.old_location
+        #Change
+        response = self.app.post(
+            url(controller='settings', action='update'),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'home_location_name': 'blah',
+                'home_location'    : '1.0707 51.2999',
+            },
+            status=302
+        )
+        #Check changed
+        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response_json = json.loads(response.body)
+        assert self.old_location != response_json['data']['settings']['home_location']
+        #Change
+        response = self.app.post(
+            url(controller='settings', action='update'),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'home_location'    : self.old_location,
             },
             status=302
         )
@@ -226,10 +275,6 @@ class TestSettingsController(TestController):
             },
             status=302
         )
-        
-    def test_change_avatar(self):
-        self.png1x1 = b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAAXNSR0IArs4c6QAAAApJREFUCNdj+AcAAQAA/8I+2MAAAAAASUVORK5CYII=')
-        
         
 #    def these_tests_are_old(self):
 #        return """

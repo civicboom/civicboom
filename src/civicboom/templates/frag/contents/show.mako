@@ -62,9 +62,10 @@
 
     <div class="frag_left_col">
         <div class="frag_col">
+        ${content_title()}
+        ${content_media()}
         ${content_details()}
         ${content_content()}
-        ${content_media()}
         ${content_map()}
         ${content_details_foot()}
         ${content_license()}
@@ -125,15 +126,20 @@
 
 </%def>
 
+##------------------------------------------------------------------------------
+## Content Title
+##------------------------------------------------------------------------------
+
+<%def name="content_title()">
+    ##----Title----
+    <h1>${self.content['title']}</h1>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Content Details
 ##------------------------------------------------------------------------------
 <%def name="content_details()">
     <% content = self.content %>
-
-    ##----Title----
-    <h1>${content['title']}</h1>
 
     <div class="details">
         
