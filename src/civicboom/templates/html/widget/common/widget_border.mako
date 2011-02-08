@@ -8,15 +8,15 @@
     size_avatar     = 20
   
     
-    if not c.widget['owner']:
-        c.widget['owner'] = d.get('content',dict()).get('creator')
-    if not c.widget['owner']:
-        c.widget['owner'] = d.get('member')
-    if not c.widget['owner']:
-        from civicboom.lib.database.get_cached import get_member
-        owner_obj = get_member(c.id)
-        if owner_obj:
-            c.widget['owner'] = owner_obj.to_dict()
+    #if not c.widget['owner']:
+    #    c.widget['owner'] = d.get('content',dict()).get('creator')
+    #if not c.widget['owner']:
+    #    c.widget['owner'] = d.get('member')
+    #if not c.widget['owner']:
+    #    from civicboom.lib.database.get_cached import get_member
+    #    owner_obj = get_member(c.id)
+    #    if owner_obj:
+    #        c.widget['owner'] = owner_obj.to_dict()
     if not isinstance(c.widget['owner'], dict):
         c.widget['owner'] = dict(avatar_url='', username='', name='')
     

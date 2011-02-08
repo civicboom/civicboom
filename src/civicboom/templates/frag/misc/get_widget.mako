@@ -2,6 +2,8 @@
 
 <%!
     from civicboom.lib.web import current_protocol
+    from pylons import config
+    var_prefix = config['setting.widget.var_prefix']
 %>
 
 ##${widget_code.get_widget_code(c.widget_user_preview)}
@@ -12,7 +14,7 @@ ${widget_preview(c.widget_user_preview)}
 ## Widget IFRAME code
 ##------------------------------------------------------------------------------
 ## The defaults here should match the defaults in the HTML javascript generator to ensure the IFRAME here is the same an the initial settings
-<%def name="widget_iframe(member=None, protocol='http')">\
+<%def name="widget_iframe(member=None, protocol='http', iframe_url=None)">\
 <%
     #if not protocol:
     #    protocol = current_protocol()
@@ -26,12 +28,15 @@ ${widget_preview(c.widget_user_preview)}
     if isinstance(member, dict):
         member_username = member.get('username')
     
+    
 %>\
 <iframe \
  name='${_("_site_name")}'\
  id='CivicboomWidget'\
  title='${_("_site_name Widget")}'\
-% if c.widget['base_list']:
+% if iframe_url:
+ src='${iframe_url}'\
+% elif c.widget['base_list']:
  src='${h.url('member_action', id=member_username, action=c.widget['base_list'], subdomain='widget', protocol=protocol)}'\
 % else:
  src='${h.url('member'       , id=member_username,                               subdomain='widget', protocol=protocol)}'\
@@ -135,6 +140,7 @@ ${widget_preview(c.widget_user_preview)}
             # the first bit of the url is needed for the javascript to generate the IFRAME settings
             widget_url = h.url('member', id=member['username'], subdomain='widget', protocol='http')
             widget_url = widget_url.split('?')[0]
+            
         %>
         ##<script src="/javascript/jquery.simple-color-picker.js"></script>
         <script language="javascript" type="text/javascript">
@@ -147,16 +153,16 @@ ${widget_preview(c.widget_user_preview)}
                   link += "/" + Url.encode(document.widget_customisation.base_list.value);
                 }
                 link += "?";
-                link += "w_owner="     + Url.encode("${member['username']}")                       +"&";
-                link += "w_base_list=" + Url.encode(document.widget_customisation.base_list.value) +"&";
-                link += "w_title="     + Url.encode(document.widget_customisation.title.value)     +"&";
+                link += "${var_prefix}owner="     + Url.encode("${member['username']}")                       +"&";
+                link += "${var_prefix}base_list=" + Url.encode(document.widget_customisation.base_list.value) +"&";
+                link += "${var_prefix}title="     + Url.encode(document.widget_customisation.title.value)     +"&";
                 % for color_name, color_field in colors:
-                link += "w_${color_field}=" + Url.encode( document.widget_customisation.${color_field}.value) + "&";
+                link += "${var_prefix}${color_field}=" + Url.encode( document.widget_customisation.${color_field}.value) + "&";
                 % endfor
                 var width  = document.widget_customisation.width.value
                 var height = document.widget_customisation.height.value
-                link += "w_width="  + width + "&";
-                link += "w_height=" + height;
+                link += "${var_prefix}width="  + width + "&";
+                link += "${var_prefix}height=" + height;
                 link += "' width='"+width+"' height='"+height+"' scrolling='no' frameborder='0'>";
                 link += "<a href='${h.url('member', id=member['username'], subdomain='')}'>${_('%s on _site_name' % member['username'])}</a>";
                 link += "</iframe>";

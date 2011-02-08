@@ -1,5 +1,7 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
+<%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
+
 <%def name="title()">${_("Welcome")}</%def>
 
 
@@ -11,11 +13,27 @@
 
 <%def name="body()">
     <table style="display: inline-block; vertical-align: middle;"><tr>
-        <td></td>
-        <td>${what_is()}</td>
-        <td>${mobile()}</td>
+        <td>${assignments_active()}</td>
+        <td>${what_is()           }</td>
+        <td>${mobile()            }</td>
     </tr></table>
 </%def>
+
+##------------------------------------------------------------------------------
+## What is
+##------------------------------------------------------------------------------
+
+<%def name="assignments_active()">
+<%
+    c.widget['title' ] = _('Get involved with the latest _assignments on _site_name')
+    c.widget['width' ] = 200
+    c.widget['height'] = 400
+%>
+<div style="padding: 1em;">
+${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', subdomain='widget', list='assignments_active'))}
+</div>
+</%def>
+
 
 
 ##------------------------------------------------------------------------------

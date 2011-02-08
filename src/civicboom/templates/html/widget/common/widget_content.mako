@@ -8,9 +8,9 @@
     ## URL_FOR will automatically forward the widget variables such as user and theme
     <%
         back_url = ''
-        if c.widget['base_list']:
+        if c.widget['base_list'] and c.widget['owner']['username']:
             back_url = h.url('member_action', id=c.widget['owner']['username'], action=c.widget['base_list'])
-        elif c.widget['owner']:
+        elif c.widget['owner']['username']:
             back_url = h.url('member', id=c.widget['owner']['username'])
         else:
             back_url = current_referer()
