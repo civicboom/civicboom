@@ -21,7 +21,7 @@ import Image
 from   civicboom.lib.form_validators.validator_factory import build_schema
 from   civicboom.lib.form_validators.dict_overlay import validate_dict
 
-from civicboom.lib.civicboom_lib import set_password
+from civicboom.lib.civicboom_lib import set_password, send_verifiy_email
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -274,6 +274,12 @@ class SettingsController(BaseController):
             del settings['password_new_confirm']
         if 'password_current' in settings:
             del settings['password_current'    ]
+        
+        if 'email' in settings:
+            user.email_unverified = settings['email']
+            send_verifiy_email(user, message=_("please verify your email address"))
+            del settings['email']
+            # AllanC - todo - need message to say check email
         
         # Save all remaining properties
         for setting_name in settings.keys():
