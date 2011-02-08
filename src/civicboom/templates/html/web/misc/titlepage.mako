@@ -13,9 +13,9 @@
 
 <%def name="body()">
     <table style="display: inline-block; vertical-align: middle;"><tr>
-        <td>${assignments_active()}</td>
-        <td>${what_is()           }</td>
-        <td>${mobile()            }</td>
+        <td style="width: 200px;">${assignments_active()}</td>
+        <td                      >${what_is()           }</td>
+        <td style="width: 200px;">${mobile()            }</td>
     </tr></table>
 </%def>
 
@@ -26,12 +26,12 @@
 <%def name="assignments_active()">
 <%
     c.widget['title' ] = _('Get involved with the latest _assignments on _site_name')
-    c.widget['width' ] = 200
-    c.widget['height'] = 400
+    c.widget['width' ] = 180
+    c.widget['height'] = 350
 %>
-<div style="padding: 1em;">
+##<div style="padding: 1em;">
 ${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', subdomain='widget', list='assignments_active'))}
-</div>
+##</div>
 </%def>
 
 
