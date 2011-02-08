@@ -187,7 +187,7 @@ def register_new_janrain_user(profile):
     try   : u.email_unverified = UniqueEmailValidator().to_python(profile.get('email'))
     except: pass
     
-    u.name          = profile.get('name').get('formatted')
+    u.name          = profile.get('name', dict()).get('formatted')
     u.status        = "pending"
     #u.avatar        = profile.get('photo') # AllanC - disabled because we cant guarantee https - we need our server to auto copy this and upload it to our own S3 store
     #u.location      = get_location_from_json(profile.get('address'))
