@@ -25,8 +25,9 @@
 			digital technologies can empower and engage society
 			in participatory and collaborative agendas. Elizabeth is
 			a big fan of the great outdoors... when work allows.
-			<p><a href="#"><img src="/images/about/civicboom.png"></a>
-			   <a href="#"><img src="/images/about/twitter.png"></a>
+			<p>
+##<a href="#"><img src="/images/about/civicboom.png"></a>
+			   <a href="http://www.twitter.com/civicboom"><img src="/images/about/twitter.png"></a>
 			   <a href="http://uk.linkedin.com/in/elizabethhodgson"><img src="/images/about/linkedin.png"></a>
 		</td>
 	</tr>
@@ -51,6 +52,16 @@
 			<p><a href="http://uk.linkedin.com/pub/chris-girling/28/612/baa"><img src="/images/about/linkedin.png"></a>
 		</td>
 	</tr>
+  <tr>
+    <td><img class="photo" src="/images/about/greg.png"></td>
+    <td>
+      <h2>Greg Miell: Developer</h2>
+      <b>Extends Civicboom.</b> Develops new technologies to
+      interface with the Civicboom platform. When not in the office,
+      Greg can sometimes be caught drinking a pint or two of local ale.
+      <p><a href="http://uk.linkedin.com/in/gregmiell"><img src="/images/about/linkedin.png"></a>
+    </td>
+  </tr>
 	<tr>
 		<td colspan="2">
 			<h2>In the wings...</h2>
