@@ -81,6 +81,7 @@ class TestController(TestCase):
             assert '_authentication_token' in response.session # If this failed the login was unsuccessful
             self.auth_token   = response.session['_authentication_token']
             self.logged_in_as = username
+            self.logged_in_password = password
 
     def log_out(self):
         if self.logged_in_as:
@@ -152,3 +153,41 @@ class TestController(TestCase):
             },
             status=200
         )
+
+    def getNumNotifications(self, username=None, password=None):
+        if username:
+            if self.logged_in_as != username:
+                old_user = self.logged_in_as
+                old_password = self.logged_in_password
+                self.log_in_as(username, password)
+        response = self.app.get(
+            url('messages', format='json'),
+            params={
+                'list': 'notification',
+            },
+            status=200
+        )
+        response_json = json.loads(response.body)
+        if username:
+            if self.logged_in_as != old_user:
+                self.log_in_as(old_user, old_password)
+        return response_json['data']['list']['count']
+    
+    def getLastNotification(self, username=None, password=None):
+        if username:
+            if self.logged_in_as != username:
+                old_user = self.logged_in_as
+                old_password = self.logged_in_password
+                self.log_in_as(username, password)
+        response = self.app.get(
+            url('messages', format='json'),
+            params={
+                'list': 'notification',
+            },
+            status=200
+        )
+        response_json = json.loads(response.body)
+        if username:
+            if self.logged_in_as != old_user:
+                self.log_in_as(old_user, old_password)
+        return response_json['data']['list']['items'][0]
