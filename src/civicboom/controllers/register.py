@@ -179,7 +179,7 @@ def register_new_janrain_user(profile):
     
     u = User()
     try   : u.username         = UniqueUsernameValidator().to_python(profile.get('displayName'))
-    except: u.username         = unicode(new_user_prefix+random_string())
+    except: u.username         = UniqueUsernameValidator().to_python(new_user_prefix+random_string())
     
     try   : u.email            = UniqueEmailValidator().to_python(profile.get('verifiedEmail'))
     except: pass
