@@ -154,25 +154,25 @@
             ${show_error('member_visibility')}
           </td>
         </tr>
-        <tr class="padding">
-          <td colspan="2"><label for="website">Website:</label></td>
-          <td colspan="4"><input type="text" name="website" id="website" /></td>
-          <td>&nbsp;</td>
-        </tr>
-        <tr class="padding">
-          <td colspan="2"><label for="logo_file">Logo File:</label></td>
-          <td colspan="4"><input type="file" name="logo_file" id="logo_file" /></td>
-          <td>&nbsp;</td>
-        </tr>
-        <tr class="padding">
-          <td colspan="2"><label for="logo_file">or</label></td>
-          <td colspan="5">&nbsp;</td>
-        </tr>
-        <tr class="padding">
-          <td colspan="2"><label for="logo_url">Logo URL:</label></td>
-          <td colspan="4"><input type="text" name="logo_url" id="logo_url" /></td>
-          <td>&nbsp;</td>
-        </tr>
+##        <tr class="padding">
+##          <td colspan="2"><label for="website">Website:</label></td>
+##          <td colspan="4"><input type="text" name="website" id="website" /></td>
+##          <td>&nbsp;</td>
+##        </tr>
+##        <tr class="padding">
+##          <td colspan="2"><label for="logo_file">Logo File:</label></td>
+##          <td colspan="4"><input type="file" name="logo_file" id="logo_file" /></td>
+##          <td>&nbsp;</td>
+##        </tr>
+##        <tr class="padding">
+##          <td colspan="2"><label for="logo_file">or</label></td>
+##          <td colspan="5">&nbsp;</td>
+##        </tr>
+##        <tr class="padding">
+##          <td colspan="2"><label for="logo_url">Logo URL:</label></td>
+##          <td colspan="4"><input type="text" name="logo_url" id="logo_url" /></td>
+##          <td>&nbsp;</td>
+##        </tr>
         <tr class="padding">
           <td colspan="5"><label for="permission">This Group represents an organisation and I have the permissions/rights to create it.</label></td>
           <td><input type="checkbox" name="permission" id="permission"/>
