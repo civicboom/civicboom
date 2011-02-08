@@ -310,7 +310,6 @@
 
 <%def name="render_item_message(message, list='to')">
 <%
-    dt = datetime.datetime.strptime(message['timestamp'].split('.')[0], "%Y-%m-%d %H:%M:%S") if message['timestamp'] else nothing
     read_status = ''
     if 'read' in message:
         if not message['read']:
@@ -364,7 +363,7 @@
             To: ${message['target']['name']}
         % endif
       </p>
-      <p class="timestamp">${datetime.datetime.strftime(dt, '%H:%M:%S %d/%m/%Y')}</p>
+      <p class="timestamp">${_('%s ago') % h.time_ago(message['timestamp'])}</p>
     </div>
     
 </li>

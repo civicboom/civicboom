@@ -35,6 +35,7 @@
     vertical-align: middle;
 }
 .icon span {display: none;}
+.icon_date       {background: transparent url('/styles/common/icons16/calendar-icon.png' ) no-repeat;}
 .icon_popup      {background: transparent url('/styles/common/icons16/bubble2-icon.png'  ) no-repeat;}
 .icon_help       {background: transparent url('/styles/common/icons16/info-icon.png'     ) no-repeat;}
 .icon_list       {background: transparent url('/styles/common/icons16/document2-icon.png') no-repeat;}

@@ -12,6 +12,8 @@ from pylons import config, app_globals, tmpl_context as c, request
 from webhelpers.html import HTML, literal
 from webhelpers.text import truncate
 from webhelpers.html.tags import end_form
+from webhelpers.date import time_ago_in_words
+
 from civicboom.lib.text import strip_html_tags
 
 from civicboom.lib.misc import args_to_tuple
@@ -32,6 +34,7 @@ import json
 import copy
 import time
 import datetime
+
 
 
 
@@ -212,6 +215,19 @@ def date_to_rss(date):
     if isinstance(date, basestring):
         date = api_datestr_to_datetime(date)
     return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
+
+def time_ago(from_time):
+    if isinstance(from_time, basestring):
+        from_time = api_datestr_to_datetime(from_time)
+    time_ago = time_ago_in_words(from_time, granularity='minute', round=True)
+    crop_time_ago = time_ago.split(' ')
+    if crop_time_ago[1] == 'hours' or crop_time_ago[1] == 'hour':
+        return crop_time_ago[0] + ' ' + crop_time_ago[1]
+    else:
+        crop_time_ago = time_ago.split(', ')
+        return crop_time_ago[0]
+
+
 
 #-------------------------------------------------------------------------------
 # Standard and JSON URL generation
