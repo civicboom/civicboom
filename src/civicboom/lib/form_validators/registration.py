@@ -57,6 +57,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
         return make_username(value)
 
 class UniqueEmailValidator(validators.Email):
+    not_empty = True
     def __init__(self, *args, **kwargs):
         from pylons import config
         kwargs['resolve_domain'] = False
