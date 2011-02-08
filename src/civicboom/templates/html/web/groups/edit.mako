@@ -57,7 +57,7 @@
     
     <fieldset>
   		<!--<legend>${_("Group")}</legend>-->
-  		<table class='group-table'>
+  		<table class="group-table">
   			<tr class="padding">
   				<td colspan="2">${_("Group name")}</td>
   				<td colspan="5">
