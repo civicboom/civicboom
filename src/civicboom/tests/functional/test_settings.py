@@ -178,7 +178,6 @@ class TestSettingsController(TestController):
         response_json = json.loads(response.body)
         print self.old_description
         print response_json['data']['settings']['description']
-        assert false
         assert self.old_description != response_json['data']['settings']['description']
         #Change
         response = self.app.post(
