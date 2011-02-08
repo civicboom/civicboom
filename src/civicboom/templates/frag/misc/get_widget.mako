@@ -1,5 +1,9 @@
 ##<%namespace name="widget_code" file="/html/widget/get_widget_code.mako" />
 
+<%!
+    from civicboom.lib.web import current_protocol
+%>
+
 ##${widget_code.get_widget_code(c.widget_user_preview)}
 
 ${widget_preview(c.widget_user_preview)}
@@ -8,8 +12,10 @@ ${widget_preview(c.widget_user_preview)}
 ## Widget IFRAME code
 ##------------------------------------------------------------------------------
 ## The defaults here should match the defaults in the HTML javascript generator to ensure the IFRAME here is the same an the initial settings
-<%def name="widget_iframe(member=None)">\
+<%def name="widget_iframe(member=None, protocol='http')">\
 <%
+    #if not protocol:
+    #    protocol = current_protocol()
     member_username = ''
     #if not member:
     #    member = c.logged_in_persona
@@ -26,9 +32,9 @@ ${widget_preview(c.widget_user_preview)}
  id='CivicboomWidget'\
  title='${_("_site_name Widget")}'\
 % if c.widget['base_list']:
- src='${h.url('member_action', id=member_username, action=c.widget['base_list'], subdomain='widget', protocol='http')}'\
+ src='${h.url('member_action', id=member_username, action=c.widget['base_list'], subdomain='widget', protocol=protocol)}'\
 % else:
- src='${h.url('member'       , id=member_username,                               subdomain='widget', protocol='http')}'\
+ src='${h.url('member'       , id=member_username,                               subdomain='widget', protocol=protocol)}'\
 % endif
  width='${c.widget['width']}'\
  height='${c.widget['height']}'\
@@ -154,7 +160,12 @@ ${widget_preview(c.widget_user_preview)}
                 link += "' width='"+width+"' height='"+height+"' scrolling='no' frameborder='0'>";
                 link += "<a href='${h.url('member', id=member['username'], subdomain='')}'>${_('%s on _site_name' % member['username'])}</a>";
                 link += "</iframe>";
+                
                 document.widget_creator.widget_link.value = link
+                
+                % if current_protocol() != 'http':
+                link = link.replace('http://','${current_protocol()}://');
+                % endif
                 
                 document.getElementById("widget_container").innerHTML = link
             }
@@ -170,7 +181,7 @@ ${widget_preview(c.widget_user_preview)}
     </td>
   
     <td id="widget_container" style="width: 300px; vertical-align: middle; text-align: center;">
-        ${widget_iframe(member)}
+        ${widget_iframe(member, protocol=None)}
     </td>
 
   </tr></table>
