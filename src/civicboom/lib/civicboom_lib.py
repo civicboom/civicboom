@@ -54,7 +54,7 @@ def deny_pending_user(url_to_check):
 def send_verifiy_email(user, controller='account', action='verify_email', message=None):
     if not message:
         message = _('verify this email address')
-    Session.refresh(user)
+#    Session.refresh(user)
     validation_link = url(controller=controller, action=action, id=user.id, hash=user.hash(), subdomain='') # Need https here?
     message         = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
     send_email(user.email_unverified, subject=_('verify e-mail address'), content_text=message)

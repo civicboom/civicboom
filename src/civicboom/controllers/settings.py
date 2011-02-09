@@ -21,7 +21,7 @@ import Image
 from   civicboom.lib.form_validators.validator_factory import build_schema
 from   civicboom.lib.form_validators.dict_overlay import validate_dict
 
-from civicboom.lib.civicboom_lib import set_password
+from civicboom.lib.civicboom_lib import set_password, send_verifiy_email
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -255,10 +255,10 @@ class SettingsController(BaseController):
 
         if settings.get('home_location'):
             try:
-                (lon, lat) = [float(n) for n in request.POST["home_location"].split(",")]
+                (lon, lat) = [float(n) for n in settings["home_location"].split(",")]
             except Exception, e:
-                user_log.exception("Unable to understand location '%s'" % str(request.POST["location"]))
-                raise action_error(_("Unable to understand location '%s'" % str(request.POST["location"])))
+                user_log.exception("Unable to understand location '%s'" % str(settings["location"]))
+                raise action_error(_("Unable to understand location '%s'" % str(settings["location"])))
             user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
             del settings['home_location']
         elif settings.get("home_location_name"):
@@ -274,6 +274,12 @@ class SettingsController(BaseController):
             del settings['password_new_confirm']
         if 'password_current' in settings:
             del settings['password_current'    ]
+        
+        if 'email' in settings:
+            user.email_unverified = settings['email']
+            send_verifiy_email(user, message=_("please verify your email address"))
+            del settings['email']
+            # AllanC - todo - need message to say check email
         
         # Save all remaining properties
         for setting_name in settings.keys():

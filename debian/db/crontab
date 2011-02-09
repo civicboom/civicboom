@@ -1,1 +1,1 @@
-30 3 * * * root        sudo -u postgres pg_dump civicboom | gzip --rsyncable > /root/civicboom.sql.gz
+30 3 * * * root sudo -u postgres pg_dump -Fc civicboom > /root/civicboom.pgdump

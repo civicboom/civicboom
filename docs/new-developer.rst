@@ -12,6 +12,10 @@ Things for a sysadmin to do
     https://www.google.com/a/cpanel/civicboom.com/
 - Give them access to redmine
     https://dev.civicboom.com/redmine/users/new
+- Give them access to the company dropbox account
+    https://www.dropbox.com
+	- Get the user to sign up for a personal account if they don't have one
+	- Log into the civicboom company account and share the company folder
 
 
 Packages

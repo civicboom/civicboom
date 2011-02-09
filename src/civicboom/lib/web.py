@@ -104,9 +104,12 @@ def current_referer(protocol=None):
     #AllanC TODO - needs to enforce prosocol change - for login actions
     return request.environ.get('HTTP_REFERER')
 
+def current_protocol():
+    return request.environ.get('HTTP_X_URL_SCHEME', 'http')
+
 def current_host(protocol=None):
     if not protocol:
-        protocol = request.environ.get('HTTP_X_URL_SCHEME', 'http')
+        protocol = current_protocol()
     return  protocol + "://" + request.environ.get('HTTP_HOST')
 
 def current_url(protocol=None):

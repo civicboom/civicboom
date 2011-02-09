@@ -57,7 +57,7 @@
     
     <fieldset>
   		<!--<legend>${_("Group")}</legend>-->
-  		<table class='group-table'>
+  		<table class="group-table">
   			<tr class="padding">
   				<td colspan="2">${_("Group name")}</td>
   				<td colspan="5">
@@ -154,25 +154,25 @@
             ${show_error('member_visibility')}
           </td>
         </tr>
-        <tr class="padding">
-          <td colspan="2"><label for="website">Website:</label></td>
-          <td colspan="4"><input type="text" name="website" id="website" /></td>
-          <td>&nbsp;</td>
-        </tr>
-        <tr class="padding">
-          <td colspan="2"><label for="logo_file">Logo File:</label></td>
-          <td colspan="4"><input type="file" name="logo_file" id="logo_file" /></td>
-          <td>&nbsp;</td>
-        </tr>
-        <tr class="padding">
-          <td colspan="2"><label for="logo_file">or</label></td>
-          <td colspan="5">&nbsp;</td>
-        </tr>
-        <tr class="padding">
-          <td colspan="2"><label for="logo_url">Logo URL:</label></td>
-          <td colspan="4"><input type="text" name="logo_url" id="logo_url" /></td>
-          <td>&nbsp;</td>
-        </tr>
+##        <tr class="padding">
+##          <td colspan="2"><label for="website">Website:</label></td>
+##          <td colspan="4"><input type="text" name="website" id="website" /></td>
+##          <td>&nbsp;</td>
+##        </tr>
+##        <tr class="padding">
+##          <td colspan="2"><label for="logo_file">Logo File:</label></td>
+##          <td colspan="4"><input type="file" name="logo_file" id="logo_file" /></td>
+##          <td>&nbsp;</td>
+##        </tr>
+##        <tr class="padding">
+##          <td colspan="2"><label for="logo_file">or</label></td>
+##          <td colspan="5">&nbsp;</td>
+##        </tr>
+##        <tr class="padding">
+##          <td colspan="2"><label for="logo_url">Logo URL:</label></td>
+##          <td colspan="4"><input type="text" name="logo_url" id="logo_url" /></td>
+##          <td>&nbsp;</td>
+##        </tr>
         <tr class="padding">
           <td colspan="5"><label for="permission">This Group represents an organisation and I have the permissions/rights to create it.</label></td>
           <td><input type="checkbox" name="permission" id="permission"/>
@@ -295,20 +295,11 @@
       <table class="">
         <tr class="padding">
          <td colspan="2" class="bold bigger">Need help?</td>
-        <tr>
+        </tr>
         <tr class="doublepadding">
           <td colspan="2">By clicking on one of the buttons below, you can create a "quick group", which will have pre-set defaults.
           (Try it out, click on a button and see the highlighted changes!)</td>
-        <tr>
-##        <tr class="padding">
-##          <td colspan="2">
-##            Would you like to create a group for:
-##          </td>
-##        </tr>
-##        <tr class="padding">
-##          <td>Open <input type="radio" name="quick_type" class="quicktype" value="open" /></td>
-##          <td>Invite only <input type="radio" name="quick_type" class="quicktype" value="invite" /></td>
-##        </tr>
+        </tr>
         <tr class="padding">
           <td><input class="button quickbutton" type="button" name="news" value="News Organisation" /></td>
           <td><input class="button quickbutton" type="button" name="interest" value="Interest Group / Charity" /></td>

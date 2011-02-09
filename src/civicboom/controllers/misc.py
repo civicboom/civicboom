@@ -39,9 +39,9 @@ class MiscController(BaseController):
         c.widget_user_preview = get_member(id)
         return action_ok()
 
-    @web
-    def get_mobile(self, id=None):
-        return action_ok()
+    #@web
+    #def get_mobile(self, id=None):
+    #    return action_ok()
 
 
     @cacheable(time=600)

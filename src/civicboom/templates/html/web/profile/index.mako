@@ -4,8 +4,8 @@
 
 <%def name="body()">
 	<%
-        self.attr.frags = [profile, help]
-        self.attr.frag_col_sizes = [2,1]
+        self.attr.frags = [profile, help, assignments]
+        self.attr.frag_col_sizes = [2,1,1]
     %>
 </%def>
 
@@ -21,4 +21,6 @@
     % endif
 </%def>
 
-
+<%def name="assignments()">
+<!--#include file="${h.url('contents', format='frag', list='assignments_active')}"-->
+</%def>

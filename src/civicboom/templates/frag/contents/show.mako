@@ -62,9 +62,10 @@
 
     <div class="frag_left_col">
         <div class="frag_col">
+        ${content_title()}
+        ${content_media()}
         ${content_details()}
         ${content_content()}
-        ${content_media()}
         ${content_map()}
         ${content_details_foot()}
         ${content_license()}
@@ -125,15 +126,20 @@
 
 </%def>
 
+##------------------------------------------------------------------------------
+## Content Title
+##------------------------------------------------------------------------------
+
+<%def name="content_title()">
+    ##----Title----
+    <h1>${self.content['title']}</h1>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Content Details
 ##------------------------------------------------------------------------------
 <%def name="content_details()">
     <% content = self.content %>
-
-    ##----Title----
-    <h1>${content['title']}</h1>
 
     <div class="details">
         
@@ -145,9 +151,10 @@
         <%def name="format_date_if(title, date_input)">
           % if date_input:
             <tr>
-              <td><span class="icon icon_article"><span>&nbsp;</span></span></td>
+              <td><span class="icon icon_date"><span>&nbsp;</span></span></td>
               <td>${title}</td>
-              <td colspan="4">${datetime.datetime.strftime(date_input, '%d/%m/%Y')}</td>
+              ##<td colspan="4">${datetime.datetime.strftime(date_input, '%d/%m/%Y')}</td>
+              <td colspan="4">${h.time_ago(date_input)}</td>
             </tr>
           % endif
         </%def>
@@ -205,9 +212,9 @@
       <%def name="format_date_if(title, date_input)">
         % if date_input:
           <tr>
-            <td><span class="icon icon_article"><span>&nbsp;</span></span></td>
+            <td><span class="icon icon_date"><span>&nbsp;</span></span></td>
             <td>${title}</td>
-            <td>${datetime.datetime.strftime(date_input, '%H:%M:%S %d/%m/%Y')}</td>
+            <td>${_('%s ago') % h.time_ago(date_input)}</td>
           </tr>
         % endif
       </%def>

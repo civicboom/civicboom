@@ -1,4 +1,4 @@
-all: cb-website.deb cb-website-web.deb cb-website-api.deb cb-website-db.deb python-cbmisc.deb
+all: cb-website.deb python-cbmisc.deb
 
 VERSION := $(shell git describe)
 
@@ -56,7 +56,7 @@ python-cbmisc.deb: ../src/setup.py
 	echo ================================================ >/dev/null
 	echo "Package: python-cbmisc" > fs-env/DEBIAN/control
 	echo "Version: ${VERSION}" >> fs-env/DEBIAN/control
-	echo "Architecture: all" >> fs-env/DEBIAN/control
+	echo "Architecture: $(shell dpkg-architecture -qDEB_BUILD_ARCH)" >> fs-env/DEBIAN/control
 	echo "Maintainer: Shish <shish@civicboom.com>" >> fs-env/DEBIAN/control
 	echo "Depends: binutils" >> fs-env/DEBIAN/control
 	echo "Description: a package to install a python virtualenv and easy_install packages into it" >> fs-env/DEBIAN/control

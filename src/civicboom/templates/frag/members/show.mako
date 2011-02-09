@@ -75,7 +75,7 @@
               Website: ${self.member['join_date']}<br />
             % endif
             Joined: ${self.member['join_date']}<br />
-            Account: ${self.member['account_type'].capitalize()}
+##            Account: ${self.member['account_type'].capitalize()}
           </div>
         </div>
         <div style="clear: both;"></div>
