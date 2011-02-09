@@ -554,7 +554,9 @@ class ContentsController(BaseController):
                 # Send notifications about previously published content has been UPDATED
                 if   content.__type__ == "assignment":
                     m = messages.assignment_updated           (creator=content.creator, assignment=content)
-                user_log.info("updated published Content #%d" % (content.id, ))
+                # going straight to publish, content may not have an ID as it's
+                # not been added and committed yet (this happens below)
+                #user_log.info("updated published Content #%d" % (content.id, ))
             if m:
                 content.creator.send_message_to_followers(m, delay_commit=True)
                 

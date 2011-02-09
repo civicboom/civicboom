@@ -255,10 +255,10 @@ class SettingsController(BaseController):
 
         if settings.get('home_location'):
             try:
-                (lon, lat) = [float(n) for n in request.POST["home_location"].split(",")]
+                (lon, lat) = [float(n) for n in settings["home_location"].split(",")]
             except Exception, e:
-                user_log.exception("Unable to understand location '%s'" % str(request.POST["location"]))
-                raise action_error(_("Unable to understand location '%s'" % str(request.POST["location"])))
+                user_log.exception("Unable to understand location '%s'" % str(settings["location"]))
+                raise action_error(_("Unable to understand location '%s'" % str(settings["location"])))
             user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
             del settings['home_location']
         elif settings.get("home_location_name"):
