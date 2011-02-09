@@ -56,7 +56,7 @@ python-cbmisc.deb: ../src/setup.py
 	echo ================================================ >/dev/null
 	echo "Package: python-cbmisc" > fs-env/DEBIAN/control
 	echo "Version: ${VERSION}" >> fs-env/DEBIAN/control
-	echo "Architecture: all" >> fs-env/DEBIAN/control
+	echo "Architecture: $(shell dpkg-architecture -qDEB_BUILD_ARCH)" >> fs-env/DEBIAN/control
 	echo "Maintainer: Shish <shish@civicboom.com>" >> fs-env/DEBIAN/control
 	echo "Depends: binutils" >> fs-env/DEBIAN/control
 	echo "Description: a package to install a python virtualenv and easy_install packages into it" >> fs-env/DEBIAN/control
