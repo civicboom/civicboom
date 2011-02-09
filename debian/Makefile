@@ -1,4 +1,4 @@
-all: cb-website.deb cb-website-web.deb cb-website-api.deb cb-website-db.deb python-cbmisc.deb
+all: cb-website.deb python-cbmisc.deb
 
 VERSION := $(shell git describe)
 
