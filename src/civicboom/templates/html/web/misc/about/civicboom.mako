@@ -10,9 +10,9 @@ and collaborate on what matters to you.</h1>
 other to generate and organise relevant content and insight - be it as video, text, images or
 audio.
 <p>We built it because we think it's important to get as many views and ideas possible in order
-to understand what goes on around us - but in an organisied and relevant way.
-<p>We also know that we all have something to contribute, it's just we might not have ever had
-the opportunity to either ask for it from others - or be able to give it ourselves.
+to understand what goes on around us - but in an organised and relevant way.
+##<p>We also know that we all have something to contribute, it's just we might not have ever had
+##the opportunity to either ask for it from others - or be able to give it ourselves.
 <p>What's more, here at Civicboom, we believe things get a little more interesting when we
 truly participate beyond "liking" something. After all these days we're all creators, not just
 passive consumers.
@@ -23,8 +23,8 @@ do best.</h1>
 power of the crowd - and in Civicboom. Media organisations can use Civicboom to
 generate news directly from their community, straight to the newsroom. A charity can use
 our tools to get create better engagement audiences. Civicboom offers businesses an
-internal communications tool - or an external customer outreach and community building
-system, while it gives local interest groups the ability to better organise their wider
+internal communications system, as well as external customer outreach and community building tools.
+It also gives local interest groups the ability to better organise their wider
 engagement efforts. Think of it as your very own tool to tap into the most valuable asset we
 all have: each other.
 
@@ -36,9 +36,9 @@ respond and have your voice heard.
 
 <h2>Civicboom for organisations</h2>
 <p>Leverage the speed, insight, knowledge and creative power of your community, audience
-and customer base by empowering them to engage and participate in what matters. Do this
-by creating Groups - a space for you to request insight specific to your needs. By tapping
-into the "crowd" you can enhance your relevancy with the very people you serve.
+and customer base by empowering them to engage and participate in what matters to them.
+##Do this by creating Groups - a space for you to request insight specific to your needs.
+By tapping into the "crowd" you can enhance your relevance to the very people you serve.
 
 
 <h1>Developers: We're a platform with an API...</h1>
