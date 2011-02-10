@@ -31,6 +31,12 @@ file(sys.argv[1], "w").write("\\n".join(out)+"\\n")
 EOD
 	python /tmp/update_backends /etc/nginx/sites-available/civicboom.com $backends
 	rm -f /tmp/update_backends
+
+	db_get cb-website-web/caching && caching=$RET
+	if [ $caching == "false" ] ; then
+		cat /etc/nginx/sites-available/civicboom.com | grep -v "DC_CACHING" > /tmp/uncached
+		mv /tmp/uncached /etc/nginx/sites-available/civicboom.com
+	fi
 fi
 
 invoke-rc.d nginx restart
