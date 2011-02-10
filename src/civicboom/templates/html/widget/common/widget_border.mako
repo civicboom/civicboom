@@ -12,17 +12,19 @@
     #    c.widget['owner'] = d.get('content',dict()).get('creator')
     #if not c.widget['owner']:
     #    c.widget['owner'] = d.get('member')
-    #if not c.widget['owner']:
-    #    from civicboom.lib.database.get_cached import get_member
-    #    owner_obj = get_member(c.id)
-    #    if owner_obj:
-    #        c.widget['owner'] = owner_obj.to_dict()
+    if not c.widget['owner']:
+        from civicboom.lib.database.get_cached import get_member
+        from civicboom.lib.web                 import current_url
+        args, kwargs = h.get_object_from_action_url(current_url())
+        if args and kwargs and 'member' in args and 'id' in kwargs:
+            owner_obj = get_member(kwargs['id'])
+            if owner_obj:
+                c.widget['owner'] = owner_obj.to_dict()
     if not isinstance(c.widget['owner'], dict):
         c.widget['owner'] = dict(avatar_url='', username='', name='')
     
     owner = c.widget['owner']
     title = c.widget['title']
-    
     
 %>
 <div class="widget_border" style="border: 1px solid #${c.widget['color_border']}; font-size:${size_font}px; color:#${c.widget['color_font']};">
@@ -33,13 +35,23 @@
     <div class="widget_header" style="height:${size_header}px; background-color:#${c.widget['color_header']};">
         <div class="padding">
         <table><tr>
+            <%
+                owner_name = owner['name'] or owner['username']
+                owner_url  = h.url('/', subdomain='')
+                if owner['username']:
+                    owner_url = h.url('member', id=owner['username'], subdomain='')
+            %>
             <td>
-                <a href="${h.url('member', id=owner['username'], subdomain='')}" target="_blank" title="${_('%s on _site_name') % owner['name'] or owner['username']}">
-                    <img src="${owner['avatar_url']}" alt="${owner['username']}" style="height:${size_avatar}px;"/>
+                <a href="${owner_url}" target="_blank" title="${_('%s on _site_name') % owner_name}">
+                    % if owner_name:
+                    <img src="${owner['avatar_url']}" alt="${owner_name}"      style="height:${size_avatar}px;" onerror="this.onerror=null;this.src='/images/default_avatar.png'" />
+                    % else:
+                    <img src="/images/civicboom.png"  alt="${_('_site_name')}" style="height:${size_avatar}px;" />
+                    % endif
                 </a>
             </td>
             <td class="title">	
-                <a href="${h.url('member', id=owner['username'], subdomain='')}" target="_blank" title="${_('%s on _site_name') % owner['name'] or owner['username']}">
+                <a href="${owner_url}" target="_blank" title="${_('%s on _site_name') % owner_name}">
                     % if title:
                         ${title}
                     % else:
@@ -112,8 +124,16 @@
                 if owner['username']:
                     rss_url = h.url('member', id=owner['username'], format='rss', subdomain='')
                 else:
-                    # AllanC - TODO - the RSS feed is incorrect because it does not return list='assignments_active'
-                    rss_url = h.url('current', format='rss', subdomain='')
+                    # Get current URL deatils - set format to RSS and remove widget variables
+                    kwargs = {}
+                    if c.web_params_to_kwargs:
+                        args, kwargs = c.web_params_to_kwargs
+                    # Remove the widget variables from URL
+                    for key in [key for key in kwargs if config['setting.widget.var_prefix'] in key]:
+                        del kwargs[key]
+                    if 'format' in kwargs:
+                        del kwargs['format']
+                    rss_url = h.url('current', format='rss', subdomain='', **kwargs)
             %>
             <a class="icon icon_rss"       title="${_('RSS')}"                   target="_blank" href="${rss_url}"><span>RSS</span></a>
         </div>

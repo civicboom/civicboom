@@ -84,8 +84,10 @@ def render(*args, **kwargs):
         if 'cache_key'    in kwargs: del kwargs['cache_key']
         if 'cache_expire' in kwargs: del kwargs['cache_expire']
     if len(args)==2:
+        # if args is 'template_filename', 'def_name' then call the def
         return render_mako_def(*args, **kwargs)
     else:
+        # else if only 'template_filename' call the template file
         return render_mako(*args, **kwargs)
 
 #-------------------------------------------------------------------------------
