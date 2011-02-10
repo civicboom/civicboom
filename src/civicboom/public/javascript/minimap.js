@@ -38,7 +38,7 @@ function minimap(div_name, options, feeds) {
 	}
 	else {
 		map.setCenter(
-			new OpenLayers.LonLat(1, 51).transform(
+			new OpenLayers.LonLat(-3, 54).transform(
 				new OpenLayers.Projection("EPSG:4326"),
 				map.getProjectionObject()
 			),
