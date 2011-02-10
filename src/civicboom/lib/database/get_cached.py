@@ -31,6 +31,20 @@ add_etag_dependency_key("member_assignments_active")
 #-------------------------------------------------------------------------------
 # Most methods will have a get_stuff and get_stuff_nocache. As the cache is a decorator we can bypass the cache by calling the _nocache variant
 
+def get_media(id=None, hash=None):
+    if id:
+        try:
+            return Session.query(Media).filter(id=id).one()
+        except NoResultFound:
+            return None        
+    if hash:
+        try:
+            return Session.query(Media).filter(hash=media_hash).one()
+        except NoResultFound:
+            return None
+    
+    
+
 #@cache_this
 def get_licenses():
     return Session.query(License).all()
@@ -154,12 +168,6 @@ def get_tag(tag):
         Session.add(t)
         return t
 
-
-def get_media_nocache(media_id):
-    try:
-        return Session.query(Media).filter_by(id=media_id).one()
-    except NoResultFound:
-        return None
 
 
 #-------------------------------------------------------------------------------

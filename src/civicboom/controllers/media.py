@@ -1,7 +1,7 @@
 from civicboom.lib.base import *
 from civicboom.model import Media
 
-from civicboom.lib.database.get_cached import get_content, get_member
+from civicboom.lib.database.get_cached import get_content, get_member, get_media
 
 import pprint
 
@@ -81,7 +81,13 @@ class MediaController(BaseController):
         Currently only return a flag to state if processing it taking place, but could
         be improved to return aditional progress info.
         """
-        return action_ok(data={"status":app_globals.memcache.get(str("media_processing_"+id))})
+        media = get_media(hash=id)
+        return action_ok(
+            data={
+                "status"       : app_globals.memcache.get(str("media_processing_"+id)) ,
+                "thumbnail_url": media.thumbnail_url
+            }
+        )
 
     def edit(self, id, format='html'):
         """GET /media/id/edit: Form to edit an existing item"""
