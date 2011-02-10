@@ -47,8 +47,11 @@ server {
 
 	# by default, proxy to pylons
 	location / {
+		# $request_uri is what the browser sends, $uri is the currently active
+		# request. This is important when using SSI, as all subrequests have
+		# the same $request_uri and so they clobber eachother in the cache store.
 		proxy_cache "cb";
-		proxy_cache_key "$scheme://$host$request_uri-cookie:$cookie_civicboom_logged_in";
+		proxy_cache_key "$scheme://$host$uri-cookie:$cookie_civicboom_logged_in";
 		proxy_pass http://backends;
 	}
 
