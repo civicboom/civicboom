@@ -37,6 +37,13 @@ function minimap(div_name, options, feeds) {
 		);
 	}
 	else {
+		map.setCenter(
+			new OpenLayers.LonLat(1, 51).transform(
+				new OpenLayers.Projection("EPSG:4326"),
+				map.getProjectionObject()
+			),
+			4
+		);
 		function show_map(position) {
 			var latitude = position.coords.latitude;
 			var longitude = position.coords.longitude;
