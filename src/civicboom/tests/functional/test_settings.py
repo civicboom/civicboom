@@ -189,7 +189,19 @@ class TestSettingsController(TestController):
             },
             status=302
         )
-        
+
+    def test_invalid_location(self):
+        response = self.app.post(
+            url(controller='settings', action='update'),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'home_location_name': 'blah',
+                'home_location'    : 'rar biscuits',
+            },
+            status=400
+        )
+
     def test_change_location(self):
         self.log_in_as('unittest')
         #Get current
@@ -204,7 +216,7 @@ class TestSettingsController(TestController):
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'home_location_name': 'blah',
-                'home_location'    : '1.0707 51.2999',
+                'home_location'    : '1.0707, 51.2999',
             },
             status=302
         )
