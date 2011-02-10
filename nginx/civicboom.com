@@ -75,6 +75,7 @@ server {
 		allow 127.0.0.1;
 		allow 212.110.185.0/24;
 		allow 129.12.0.0/16;
+		allow 192.168.0.0/16;
 		deny all;
 	}
 }
