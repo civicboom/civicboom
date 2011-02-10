@@ -256,6 +256,9 @@ class SettingsController(BaseController):
         if settings.get('home_location'):
             try:
                 (lon, lat) = [float(n) for n in settings["home_location"].split(",")]
+            except ValueError, e:
+                user_log.exception("Unable to understand location '%s'" % str(settings["home_location"]))
+                raise action_error(_("Unable to understand location '%s'" % str(settings["home_location"])))
             except Exception, e:
                 user_log.exception("Unable to understand location '%s'" % str(settings["home_location"]))
                 raise action_error(_("Unable to understand location '%s'" % str(settings["home_location"])))
