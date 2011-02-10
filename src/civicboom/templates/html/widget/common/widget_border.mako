@@ -91,7 +91,7 @@
             </a>
         % else:
             <a href="${h.url('member_action', id=owner['username'], action='follow', subdomain='')}" target="_blank">
-                ${_("Signup Signin")}
+                ${_("Sign up/Sign in")}
                 ##to <span class="icon icon_boom" title="${_('_site_name')}"></span>
                 ##<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
             </a>

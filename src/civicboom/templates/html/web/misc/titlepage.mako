@@ -26,8 +26,8 @@
 <%def name="assignments_active()">
 <%
     c.widget['title' ] = _('Get involved with the latest _assignments on _site_name')
-    c.widget['width' ] = 180
-    c.widget['height'] = 350
+    c.widget['width' ] = 160
+    c.widget['height'] = 250
 %>
 ##<div style="padding: 1em;">
 ${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', subdomain='widget', list='assignments_active'))}
