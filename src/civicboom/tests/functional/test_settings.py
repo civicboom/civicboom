@@ -152,7 +152,7 @@ class TestSettingsController(TestController):
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
             },
-            upload_files = [("avatar", "1x1.png", self.png1x1[0:30])],
+            upload_files = [("avatar", "1x1.png", self.png1x1)],
             status=302
         )
         
