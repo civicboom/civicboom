@@ -21,7 +21,7 @@ from civicboom.lib.misc import args_to_tuple
 # use relative import so that "import helpers" works
 #from civicboom.lib.text import scan_for_embedable_view_and_autolink
 from text import scan_for_embedable_view_and_autolink
-from web import current_url, url
+from web import current_url, url, current_protocol
 
 import webhelpers.html.tags as html
 
@@ -62,7 +62,7 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
         query_params += karg+"="+str(kargs[karg])
     if query_params != "":
         query_params = urllib.quote_plus("?"+query_params)
-    scheme = request.environ.get('HTTP_X_URL_SCHEME', 'http')
+    scheme = current_protocol() #request.environ.get('HTTP_X_URL_SCHEME', 'http')
     return literal(
         """<iframe src="%s://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (scheme, return_url+query_params, lang)
     )
