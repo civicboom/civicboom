@@ -10,6 +10,7 @@ help:
 	# live-db    -- create a blank database and fill it with live data
 	# run        -- run the site in development mode
 	# clean      -- reset the folder to clean git checkout
+	# gource     -- generate a video of developer activity
 
 site: i18n js css
 
@@ -55,3 +56,10 @@ run:
 
 clean:
 	git clean -d -f -x
+
+gource:
+	gource \
+		-s 0.03 --auto-skip-seconds 0.1 --file-idle-time 500 --max-files 500 \
+		--file-filter tinymce --highlight-all-users \
+		--multi-sampling -1280x720 --stop-at-end --output-ppm-stream - ../ | \
+		ffmpeg -y -b 3000K -r 24 -f image2pipe -vcodec ppm -i - -vcodec mpeg4 gource.mp4
