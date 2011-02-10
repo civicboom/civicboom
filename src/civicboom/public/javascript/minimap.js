@@ -37,6 +37,13 @@ function minimap(div_name, options, feeds) {
 		);
 	}
 	else {
+		map.setCenter(
+			new OpenLayers.LonLat(-3, 54).transform(
+				new OpenLayers.Projection("EPSG:4326"),
+				map.getProjectionObject()
+			),
+			4
+		);
 		function show_map(position) {
 			var latitude = position.coords.latitude;
 			var longitude = position.coords.longitude;
@@ -77,6 +84,16 @@ function map_picker(field_name) {
 		}
 	);
 
+
+	var pin_layer = new OpenLayers.Layer.Markers( "Pin Layer" );
+	map.addLayer(pin_layer);
+
+	var pin = new OpenLayers.Marker(
+		new OpenLayers.LonLat(0,0),
+		new OpenLayers.Icon("/images/pins/red.png", new OpenLayers.Size(21,25), new OpenLayers.Pixel(-10, -25))
+	);
+	pin_layer.addMarker(pin);
+
 	OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
 		defaultHandlerOptions: {
 			'single': true,
@@ -97,17 +114,20 @@ function map_picker(field_name) {
 		},
 
 		trigger: function(e) {
-			 var p = map.getLonLatFromViewPortPx(e.xy);
-			 p = new OpenLayers.LonLat(p.lon, p.lat).transform(
-				 map.getProjectionObject(),
-				 new OpenLayers.Projection("EPSG:4326")
-			 );
+			var p = map.getLonLatFromViewPortPx(e.xy);
+			pin.moveTo(map.getLayerPxFromViewPortPx(e.xy));
+			map.panTo(p);
 
-			 namebox = document.getElementById(field_name+"_name");
-			 if(namebox.value == "" || namebox.value.match(/^[\d\., ]+$/)) {
-				 namebox.value = Math.round(p.lon*10000)/10000+", "+Math.round(p.lat*10000)/10000;
-			 }
-		 }
+			p = new OpenLayers.LonLat(p.lon, p.lat).transform(
+				map.getProjectionObject(),
+				new OpenLayers.Projection("EPSG:4326")
+			);
+
+			namebox = document.getElementById(field_name+"_name");
+			if(namebox.value == "" || namebox.value.match(/^[\d\., ]+$/)) {
+				namebox.value = Math.round(p.lon*10000)/10000+", "+Math.round(p.lat*10000)/10000;
+			}
+		}
 	});
 
 	var click = new OpenLayers.Control.Click();

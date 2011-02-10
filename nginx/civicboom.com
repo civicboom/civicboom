@@ -47,8 +47,13 @@ server {
 
 	# by default, proxy to pylons
 	location / {
-		proxy_cache "cb";
-		proxy_cache_key "$scheme://$host$request_uri-cookie:$cookie_civicboom_logged_in";
+		# $request_uri is what the browser sends, $uri is the currently active
+		# request. This is important when using SSI, as all subrequests have
+		# the same $request_uri and so they clobber eachother in the cache store.
+		#
+		# DC_CACHING lines are removed by debconf if caching = false
+		proxy_cache "cb"; # DC_CACHING
+		proxy_cache_key "$scheme://$host$uri-cookie:$cookie_civicboom_logged_in"; # DC_CACHING
 		proxy_pass http://backends;
 	}
 
@@ -72,6 +77,7 @@ server {
 		allow 127.0.0.1;
 		allow 212.110.185.0/24;
 		allow 129.12.0.0/16;
+		allow 192.168.0.0/16;
 		deny all;
 	}
 }
