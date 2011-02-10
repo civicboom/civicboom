@@ -25,10 +25,10 @@
 			digital technologies can empower and engage society
 			in participatory and collaborative agendas. Elizabeth is
 			a big fan of the great outdoors... when work allows.
-			<p>
-##<a href="#"><img src="/images/about/civicboom.png"></a>
+			<p><a href="/members/civicboom"><img src="/images/about/civicboom.png"></a>
 			   <a href="http://www.twitter.com/civicboom"><img src="/images/about/twitter.png"></a>
 			   <a href="http://uk.linkedin.com/in/elizabethhodgson"><img src="/images/about/linkedin.png"></a>
+			</p>
 		</td>
 	</tr>
 	<tr>
@@ -38,7 +38,7 @@
 			<b>Builds Civicboom.</b> Responsible for the technical
 			implementation and direction of Civicboom. When not
 			locked away as a code monkey, Allan likes to rock out.
-			<p><a href="http://www.linkedin.com/pub/allan-callaghan/15/825/47a"><img src="/images/about/linkedin.png"></a>
+			<p><a href="http://www.linkedin.com/pub/allan-callaghan/15/825/47a"><img src="/images/about/linkedin.png"></a></p>
 		</td>
 	</tr>
 	<tr>
@@ -49,7 +49,7 @@
 			smoothly, making sure it doesn't crash from the load when
 			a massive story breaks. Ever practical, Shish spends his
 			spare time adding useful features to his clothes...
-			<p><a href="http://uk.linkedin.com/pub/chris-girling/28/612/baa"><img src="/images/about/linkedin.png"></a>
+			<p><a href="http://uk.linkedin.com/pub/chris-girling/28/612/baa"><img src="/images/about/linkedin.png"></a></p>
 		</td>
 	</tr>
   <tr>
@@ -59,7 +59,7 @@
       <b>Extends Civicboom.</b> Develops new technologies to
       interface with the Civicboom platform. When not in the office,
       Greg can sometimes be caught drinking a pint or two of local ale.
-      <p><a href="http://uk.linkedin.com/in/gregmiell"><img src="/images/about/linkedin.png"></a>
+      <p><a href="http://uk.linkedin.com/in/gregmiell"><img src="/images/about/linkedin.png"></a></p>
     </td>
   </tr>
 	<tr>

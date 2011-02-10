@@ -109,7 +109,7 @@ class Content(Base):
     tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
     license         = relationship("License")
     
-    comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="CommentContent.id==Content.parent_id") # TODO: need Content.visible==True
+    comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="(CommentContent.id==Content.parent_id) & (Content.visible==True)")
     flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
     
 

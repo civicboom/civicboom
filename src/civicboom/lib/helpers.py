@@ -281,8 +281,11 @@ def form(*args, **kwargs):
             $.post(
                 '%(href_json)s',
                 $(this).serialize() ,
-                function(data) {
+                function(data, status, jqXhr) {
                     flash_message(data);
+                    if (jqXhr.status == 402) {
+                      //popup ('Please upgrade your account to proceed', '');
+                    }
                     if (data.status == 'ok') {
                         %(json_form_complete_actions)s
                     }
