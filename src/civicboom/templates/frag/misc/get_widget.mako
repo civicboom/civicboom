@@ -4,6 +4,16 @@
     from civicboom.lib.web import current_protocol
     from pylons import config
     var_prefix = config['setting.widget.var_prefix']
+    
+    def get_member_username(member):
+        member_username = ''
+        if hasattr(member, 'to_dict'):
+            member = member.to_dict()
+        if isinstance(member, basestring):
+            member_username = member
+        if isinstance(member, dict):
+            member_username = member.get('username')
+        return member_username
 %>
 
 ##${widget_code.get_widget_code(c.widget_user_preview)}
@@ -15,31 +25,19 @@ ${widget_preview(c.widget_user_preview)}
 ##------------------------------------------------------------------------------
 ## The defaults here should match the defaults in the HTML javascript generator to ensure the IFRAME here is the same an the initial settings
 <%def name="widget_iframe(member=None, protocol='http', iframe_url=None)">\
-<%
-    #if not protocol:
-    #    protocol = current_protocol()
-    member_username = ''
-    #if not member:
-    #    member = c.logged_in_persona
-    if hasattr(member, 'to_dict'):
-        member = member.to_dict()
-    if isinstance(member, basestring):
-        member_username = member
-    if isinstance(member, dict):
-        member_username = member.get('username')
-    
-    
-%>\
+<% member_username = get_member_username(member) %>\
 <iframe \
  name='${_("_site_name")}'\
  id='CivicboomWidget'\
  title='${_("_site_name Widget")}'\
 % if iframe_url:
  src='${iframe_url}'\
-% elif c.widget['base_list']:
+% elif c.widget['base_list'] and member_username:
  src='${h.url('member_action', id=member_username, action=c.widget['base_list'], subdomain='widget', protocol=protocol)}'\
-% else:
+% elif member_username:
  src='${h.url('member'       , id=member_username,                               subdomain='widget', protocol=protocol)}'\
+% else:
+ src='${h.url('contents'     ,                                                   subdomain='widget', protocol=protocol)}'\
 % endif
  width='${c.widget['width']}'\
  height='${c.widget['height']}'\
@@ -56,13 +54,7 @@ ${widget_preview(c.widget_user_preview)}
 ##------------------------------------------------------------------------------
 
 <%def name="widget_preview(member=None)">
-    <%
-        if not member:
-            member = c.logged_in_persona
-        if hasattr(member, 'to_dict'):
-            member = member.to_dict()
-    %>
-
+  <% member_username = get_member_username(member or c.widget_user_preview) %>\
   ## AllanC: I wanted to get this done, used tabled, fix it if you want ...
   <table class="get_widget"><tr>
 
@@ -138,8 +130,11 @@ ${widget_preview(c.widget_user_preview)}
         <%
             # generate the URL used for the IFRAME but dicard everything pased the "?"
             # the first bit of the url is needed for the javascript to generate the IFRAME settings
-            widget_url = h.url('member', id=member['username'], subdomain='widget', protocol='http')
-            widget_url = widget_url.split('?')[0]
+            # remeber this is duplicated in the widget_iframe
+            widget_url = h.url('contents', subdomain='widget', protocol='http')
+            if member_username:
+                widget_url = h.url('member', id=member_username, subdomain='widget', protocol='http')
+                widget_url = widget_url.split('?')[0]
             
         %>
         ##<script src="/javascript/jquery.simple-color-picker.js"></script>
@@ -153,8 +148,10 @@ ${widget_preview(c.widget_user_preview)}
                   link += "/" + Url.encode(document.widget_customisation.base_list.value);
                 }
                 link += "?";
-                link += "${var_prefix}owner="     + Url.encode("${member['username']}")                       +"&";
+                % if member_username:
+                link += "${var_prefix}owner="     + Url.encode("${member_username}")                          +"&";
                 link += "${var_prefix}base_list=" + Url.encode(document.widget_customisation.base_list.value) +"&";
+                % endif
                 link += "${var_prefix}title="     + Url.encode(document.widget_customisation.title.value)     +"&";
                 % for color_name, color_field in colors:
                 link += "${var_prefix}${color_field}=" + Url.encode( document.widget_customisation.${color_field}.value) + "&";
@@ -164,7 +161,9 @@ ${widget_preview(c.widget_user_preview)}
                 link += "${var_prefix}width="  + width + "&";
                 link += "${var_prefix}height=" + height;
                 link += "' width='"+width+"' height='"+height+"' scrolling='no' frameborder='0'>";
-                link += "<a href='${h.url('member', id=member['username'], subdomain='')}'>${_('%s on _site_name' % member['username'])}</a>";
+                % if member_username:
+                link += "<a href='${h.url('member', id=member_username, subdomain='')}'>${_('%s on _site_name' % member_username)}</a>";
+                % endif
                 link += "</iframe>";
                 
                 document.widget_creator.widget_link.value = link
@@ -187,7 +186,7 @@ ${widget_preview(c.widget_user_preview)}
     </td>
   
     <td id="widget_container" style="width: 300px; vertical-align: middle; text-align: center;">
-        ${widget_iframe(member, protocol=None)}
+        ${widget_iframe(member_username, protocol=None)}
     </td>
 
   </tr></table>
