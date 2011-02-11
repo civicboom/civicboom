@@ -16,12 +16,11 @@ import copy
 import tempfile
 import Image
 
-
-
-from   civicboom.lib.form_validators.validator_factory import build_schema
-from   civicboom.lib.form_validators.dict_overlay import validate_dict
+from civicboom.lib.form_validators.validator_factory import build_schema
+from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 from civicboom.lib.civicboom_lib import set_password, send_verifiy_email
+from civicboom.model.meta import location_to_string
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -49,7 +48,7 @@ add_setting('password_current'       , _('Current password')    , group='passwor
 #add_setting('broadcast_instant_news' , _('Twitter instant news'), group='aggregation', type='boolean')
 #add_setting('broadcast_content_posts', _('Twitter content' )    , group='aggregation', type='boolean')
 add_setting('avatar'                 , _('Avatar' )             , group='avatar'     , type='file')
-add_setting('home_location'          , _('Home Location' )      , group='location'   , type='location', info='type in your town name or select a locaiton from the map')
+add_setting('location_home'          , _('Home Location' )      , group='location'   , type='location', info='type in your town name or select a locaiton from the map')
 
 
 
@@ -82,8 +81,8 @@ settings_validators = dict(
     
     avatar = formencode.validators.FieldStorageUploadConverter(),
     
-    #location =
-    home_location = formencode.validators.UnicodeString(),
+    location_home = civicboom.lib.form_validators.base.LocationValidator(),
+    location_current = civicboom.lib.form_validators.base.LocationValidator(),
 )
 
     
@@ -154,7 +153,11 @@ class SettingsController(BaseController):
         
         # Populate settings dictionary for this user
         for setting_name in settings_meta.keys():
-            settings[setting_name] = user.config.get(setting_name)
+            v = user.config.get(setting_name)
+            if type(v) in [str, unicode]: # ugly hack
+                settings[setting_name] = v
+            else:
+                settings[setting_name] = location_to_string(v)
         
         return action_ok(
             data={
@@ -233,8 +236,8 @@ class SettingsController(BaseController):
         settings    = data['settings']
         
         # Save special properties that need special processing
-        # (counld have a dictionary of special processors here rather than having this code cludge this controller action up)
-        if settings.get('avatar'):
+        # (could have a dictionary of special processors here rather than having this code cludge this controller action up)
+        if settings.get('avatar') != None:
             with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
                 a = settings['avatar']
                 wh.copy_cgi_file(a, original.name)
@@ -250,24 +253,23 @@ class SettingsController(BaseController):
                     im.save(processed.name, "JPEG")
                     wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
 
-            user.avatar = "%s/avatars/%s" % (config['warehouse_url'], h)
+            user.avatar = h
             del settings['avatar']
 
-        if settings.get('home_location'):
-            try:
-                (lon, lat) = [float(n) for n in settings["home_location"].split(",")]
-            except ValueError, e:
-                user_log.exception("Unable to understand location '%s'" % str(settings["home_location"]))
-                raise action_error(_("Unable to understand location '%s'" % str(settings["home_location"])), code=400)
-            except Exception, e:
-                user_log.exception("Unable to understand location '%s'" % str(settings["home_location"]))
-                raise action_error(_("Unable to understand location '%s'" % str(settings["home_location"])), code=400)
-            user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
-            del settings['home_location']
-        elif settings.get("home_location_name"):
-            (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["home_location_name"]), see Feature #47
-            user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
-            del settings['home_location_name']
+        if settings.get('location_home'):
+            # translation to PostGIS format is done in the validator
+            user.location_home = settings.get('location_home')
+            del settings['location_home']
+        elif settings.get("location_home_name"):
+            user.location = "SRID=4326;POINT(%d %d)" % (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_home_name"]), see Feature #47
+            del settings['location_home_name']
+
+        if settings.get('location_current'):
+            user.location_current = settings.get('location_current')
+            del settings['location_current']
+        elif settings.get("location_current_name"):
+            user.location = "SRID=4326;POINT(%d %d)" % (0, 0)
+            del settings['location_current_name']
 
         if 'password_new' in settings:
             # OLD: We could put this in settings.py manager, have a dictionarys with special cases and functions to process/save them, therefor the code is transparent in the background. an idea?

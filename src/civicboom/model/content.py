@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base
+from civicboom.model.meta import Base, location_to_string
 from civicboom.model.member import Member
 from civicboom.model.media import Media
 
@@ -127,7 +127,7 @@ class Content(Base):
             'thumbnail_url': None ,
             'creation_date': None ,
             'update_date'  : None ,
-            'location'     : lambda content: content.location_string ,
+            'location'     : lambda content: location_to_string(content.location),
             'num_responses': None ,
             'num_comments' : None ,
             'license_id'   : None ,
@@ -282,14 +282,6 @@ class Content(Base):
         from civicboom.lib.text import strip_html_tags
         return truncate(strip_html_tags(self.content), length=100, indicator='...', whole_word=True)
 
-    @property
-    def location_string(self):
-        if self.location:
-            from civicboom.model.meta import Session
-            return '%s %s' % (self.location.coords(Session)[1], self.location.coords(Session)[0])
-        return None
-        # AllanC Note: duplicated for Member location ... could we have location_string in a common place?
-    
 DDL('DROP TRIGGER update_response_count ON content').execute_at('before-drop', Content.__table__)
 DDL("""
 CREATE OR REPLACE FUNCTION update_response_count() RETURNS TRIGGER AS $$
