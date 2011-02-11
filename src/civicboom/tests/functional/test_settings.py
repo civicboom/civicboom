@@ -192,7 +192,7 @@ class TestSettingsController(TestController):
 
     def test_invalid_location(self):
         response = self.app.post(
-            url(controller='settings', action='update'),
+            url(controller='settings', action='update', format="json"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -217,7 +217,7 @@ class TestSettingsController(TestController):
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'location_home_name': 'blah',
-                'location_home'    : '%f, %f' % (1+random(), 51+random()), # non-deterministic testing, yay
+                'location_home'    : '%f %f' % (1+random(), 51+random()), # non-deterministic testing, yay
             },
             status=302
         )
