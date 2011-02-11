@@ -34,12 +34,12 @@ add_etag_dependency_key("member_assignments_active")
 def get_media(id=None, hash=None):
     if id:
         try:
-            return Session.query(Media).filter(id=id).one()
+            return Session.query(Media).filter_by(id=id).one()
         except NoResultFound:
             return None        
     if hash:
         try:
-            return Session.query(Media).filter(hash=media_hash).one()
+            return Session.query(Media).filter_by(hash=hash).first()
         except NoResultFound:
             return None
     
