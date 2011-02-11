@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base
+from civicboom.model.meta import Base, location_to_string
 from civicboom.model.message import Message
 from civicboom.lib.misc import update_dict
 from civicboom.lib.helpers import wh_url
@@ -187,7 +187,7 @@ class Member(Base):
             'username'          : None ,
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
-            'location_home'     : lambda member: member.location_home_string ,
+            'location_home'     : lambda member: location_to_string(member.location_home) ,
             'num_followers'     : None ,
             'num_following'     : None ,
             'account_type'      : None ,
@@ -301,14 +301,6 @@ class Member(Base):
         if self.avatar:
             return wh_url("avatars", self.avatar)
         return wh_url("public", "images/default_avatar.png")
-
-    @property
-    def location_home_string(self):
-        if self.location_home:
-            from civicboom.model.meta import Session
-            return '%s %s' % (self.location_home.coords(Session)[1], self.location_home.coords(Session)[0])
-        return None
-        # AllanC Note: duplicated for Content location ... could we have location_string in a common place?
 
     def add_to_interests(self, content):
         from civicboom.lib.database.actions import add_to_interests
