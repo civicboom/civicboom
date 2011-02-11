@@ -256,13 +256,16 @@ class SettingsController(BaseController):
         if settings.get('home_location'):
             try:
                 (lon, lat) = [float(n) for n in settings["home_location"].split(",")]
+            except ValueError, e:
+                user_log.exception("Unable to understand location '%s'" % str(settings["home_location"]))
+                raise action_error(_("Unable to understand location '%s'" % str(settings["home_location"])), code=400)
             except Exception, e:
-                user_log.exception("Unable to understand location '%s'" % str(settings["location"]))
-                raise action_error(_("Unable to understand location '%s'" % str(settings["location"])))
+                user_log.exception("Unable to understand location '%s'" % str(settings["home_location"]))
+                raise action_error(_("Unable to understand location '%s'" % str(settings["home_location"])), code=400)
             user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
             del settings['home_location']
         elif settings.get("home_location_name"):
-            (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_name"]), see Feature #47
+            (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["home_location_name"]), see Feature #47
             user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
             del settings['home_location_name']
 

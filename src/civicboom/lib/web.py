@@ -51,7 +51,10 @@ def url(*args, **kwargs):
     """
     Passthough for Pylons URL generator with a few new features
     """
-    
+    # BUGFIX - if protocol is passed as None it goes baddgy ... this remove is ... seems unnessisary because url shoud deal with it (sigh)
+    if 'protocol' in kwargs and not isinstance(kwargs['protocol'], basestring):
+        del kwargs['protocol']
+
     # shortcut for absolute URL
     if 'absolute' in kwargs:
         kwargs['host'] = c.host
@@ -69,7 +72,7 @@ def url(*args, **kwargs):
     if 'subdomain' in kwargs:
         subdomain = str(kwargs.pop('subdomain'))
         assert subdomain in app_globals.subdomains.keys()
-        if not config['development_mode'] and subdomain == '': #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
+        if 'localhost' not in c.host and subdomain == '': #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
             subdomain = 'www'
         if subdomain:
             subdomain += '.'
