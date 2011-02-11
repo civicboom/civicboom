@@ -196,18 +196,19 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'home_location_name': 'blah',
-                'home_location'    : 'rar biscuits',
+                'location_home_name': 'blah',
+                'location_home'    : 'rar biscuits',
             },
             status=400
         )
 
     def test_change_location(self):
+        from random import random
         self.log_in_as('unittest')
         #Get current
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
-        self.old_location = response_json['data']['settings']['home_location']
+        self.old_location = response_json['data']['settings']['location_home']
         assert self.old_location
         #Change
         response = self.app.post(
@@ -215,22 +216,22 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'home_location_name': 'blah',
-                'home_location'    : '1.0707, 51.2999',
+                'location_home_name': 'blah',
+                'location_home'    : '%f, %f' % (1+random(), 51+random()), # non-deterministic testing, yay
             },
             status=302
         )
         #Check changed
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
-        assert self.old_location != response_json['data']['settings']['home_location']
+        self.assertNotEqual(self.old_location, response_json['data']['settings']['location_home'])
         #Change
         response = self.app.post(
             url(controller='settings', action='update'),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'home_location'    : self.old_location,
+                'location_home'    : self.old_location,
             },
             status=302
         )

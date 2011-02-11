@@ -49,7 +49,7 @@ add_setting('password_current'       , _('Current password')    , group='passwor
 #add_setting('broadcast_instant_news' , _('Twitter instant news'), group='aggregation', type='boolean')
 #add_setting('broadcast_content_posts', _('Twitter content' )    , group='aggregation', type='boolean')
 add_setting('avatar'                 , _('Avatar' )             , group='avatar'     , type='file')
-add_setting('home_location'          , _('Home Location' )      , group='location'   , type='location', info='type in your town name or select a locaiton from the map')
+add_setting('location_home'          , _('Home Location' )      , group='location'   , type='location', info='type in your town name or select a locaiton from the map')
 
 
 
@@ -83,7 +83,7 @@ settings_validators = dict(
     avatar = formencode.validators.FieldStorageUploadConverter(),
     
     #location =
-    home_location = formencode.validators.UnicodeString(),
+    location_home = formencode.validators.UnicodeString(),
 )
 
     
@@ -253,21 +253,21 @@ class SettingsController(BaseController):
             user.avatar = "%s/avatars/%s" % (config['warehouse_url'], h)
             del settings['avatar']
 
-        if settings.get('home_location'):
+        if settings.get('location_home'):
             try:
-                (lon, lat) = [float(n) for n in settings["home_location"].split(",")]
+                (lon, lat) = [float(n) for n in settings["location_home"].split(",")]
             except ValueError, e:
-                user_log.exception("Unable to understand location '%s'" % str(settings["home_location"]))
-                raise action_error(_("Unable to understand location '%s'" % str(settings["home_location"])), code=400)
+                user_log.exception("Unable to understand location '%s'" % str(settings["location_home"]))
+                raise action_error(_("Unable to understand location '%s'" % str(settings["location_home"])), code=400)
             except Exception, e:
-                user_log.exception("Unable to understand location '%s'" % str(settings["home_location"]))
-                raise action_error(_("Unable to understand location '%s'" % str(settings["home_location"])), code=400)
+                user_log.exception("Unable to understand location '%s'" % str(settings["location_home"]))
+                raise action_error(_("Unable to understand location '%s'" % str(settings["location_home"])), code=400)
             user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
-            del settings['home_location']
-        elif settings.get("home_location_name"):
-            (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["home_location_name"]), see Feature #47
+            del settings['location_home']
+        elif settings.get("location_home_name"):
+            (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_home_name"]), see Feature #47
             user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
-            del settings['home_location_name']
+            del settings['location_home_name']
 
         if 'password_new' in settings:
             # OLD: We could put this in settings.py manager, have a dictionarys with special cases and functions to process/save them, therefor the code is transparent in the background. an idea?
