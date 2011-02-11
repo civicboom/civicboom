@@ -237,7 +237,7 @@ class SettingsController(BaseController):
         
         # Save special properties that need special processing
         # (could have a dictionary of special processors here rather than having this code cludge this controller action up)
-        if settings.get('avatar'):
+        if settings.get('avatar') != None:
             with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
                 a = settings['avatar']
                 wh.copy_cgi_file(a, original.name)
@@ -253,7 +253,7 @@ class SettingsController(BaseController):
                     im.save(processed.name, "JPEG")
                     wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
 
-            user.avatar = "%s/avatars/%s" % (config['warehouse_url'], h)
+            user.avatar = h
             del settings['avatar']
 
         if settings.get('location_home'):
@@ -265,11 +265,10 @@ class SettingsController(BaseController):
             del settings['location_home_name']
 
         if settings.get('location_current'):
-            # translation to PostGIS format is done in the validator
             user.location_current = settings.get('location_current')
             del settings['location_current']
         elif settings.get("location_current_name"):
-            user.location = "SRID=4326;POINT(%d %d)" % (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_current_name"]), see Feature #47
+            user.location = "SRID=4326;POINT(%d %d)" % (0, 0)
             del settings['location_current_name']
 
         if 'password_new' in settings:
