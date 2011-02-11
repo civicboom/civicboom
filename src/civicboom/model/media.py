@@ -9,6 +9,7 @@ import civicboom.lib.worker as worker
 from pylons import config, app_globals # used in generation of URL's for media
 
 import magic
+import mimetypes
 import copy
 import logging
 import os
@@ -59,7 +60,6 @@ class Media(Base):
         """
         Create a Media object from a blob of data + upload form details
         """
-
         # Generate Hash and move file locally
         self.hash               = wh.hash_file(tmp_file)
 
@@ -75,6 +75,13 @@ class Media(Base):
         self.caption            = caption if caption else u""
         self.credit             = credit  if credit  else u""
         self.type, self.subtype = magic.from_file(my_file, mime=True).split("/")
+        
+        # libmagic is not magical enough (*cries*) to detect all types (e.g. MPEG)
+        #  need to detect by extension when fails - Greg M
+        if self.type == "application" and self.subtype == 'octet-stream':
+            mtype, msubtype = mimetypes.guess_type(self.name)
+            if mtype:
+                self.type, self.subtype = mtype.split("/")
 
         #def copy_config():
         #    d = {}

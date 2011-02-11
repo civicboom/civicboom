@@ -269,11 +269,22 @@
         ##${form_instruction(_("Add any relevent pictures, videos, sounds, links to your content"))}
         
         <ul class="media_files">
-            
+            <li class="media_file" style="display: none;" id="mediatemplate">
+              <div class="file_type_overlay icon"></div>
+              <a href="#">
+                <img id="media_thumbnail" class="media_preview" src="/images/media_placeholder.gif" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/>
+              </a>
+              <div class="media_fields">
+                  <span id="media_status" style="display: none">(status)</span>
+                  <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="text" disabled="true" value=""   /><input type="submit" name="file_remove" value="Remove" class="file_remove icon icon_delete"/></p>
+                  <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text"                 value=""/></p>
+                  <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text"                 value="" /></p>
+              </div>
+            </li>
             <!-- List existing media -->
             % for media in self.content['attachments']:
                 <% id = media['id'] %>
-                <li>
+                <li class="media_file" id="media_attachment_${id}">
                     <div class="file_type_overlay icon icon_${media['type']}"></div>
                     <a href="${media['original_url']}">
                         <img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/>
@@ -285,26 +296,7 @@
                             
                             ## Clients with    javascript can have live updates from the media controller
                             <script type="text/javascript">
-                                function updateMedia${id}() {
-                                    $.getJSON(
-                                        "${url('media', id=media['hash'], format='json')}",
-                                        processingStatus${id}
-                                    );
-                                }
-                                function processingStatus${id}(data) {
-                                    _status = data.data.status;
-                                    /*alert("Status got = "+_status);*/
-                                    if(!_status) {
-                                        clearInterval(media_thumbnail_timer_${id});
-                                        /*alert("processing complete reload the image!!!");*/
-                                        $("#media_thumbnail_${id}").src = "${media['thumbnail_url']}" + "?" + (new Date().getTime());
-                                        $("#media_status_${id}").text("");
-                                    }
-                                    else {
-                                        $("#media_status_${id}").text(_status);
-                                    }
-                                }
-                                var media_thumbnail_timer_${id} = setInterval('updateMedia${id}()', 5000);
+                                updateMedia($('#media_attachment_${id}'), ${id}, ${media['hash']});
                             </script>
                             <!-- End media still undergoing proceccesing -->
                         % endif
@@ -345,6 +337,7 @@
 								//alert('There are ' + data.fileCount + ' files remaining in the queue.');
 								// refresh the file list
 								Y.log("refresh the list now");
+								refreshProgress($('form#edit_${self.id}'));
 							}
 							});
 						});

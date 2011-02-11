@@ -28,11 +28,13 @@
         self.attr.title     = _('_'+self.content['type']).capitalize()
         self.attr.icon_type = self.content['type']
         
-        self.creation_date = datetime.datetime.strptime(self.content['creation_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('creation_date') else nothing
-        self.update_date = datetime.datetime.strptime(self.content['update_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('update_date') else nothing
-        self.publish_date = datetime.datetime.strptime(self.content['publish_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('publish_date') else nothing
-        self.due_date = datetime.datetime.strptime(self.content['due_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('due_date') else nothing
-        self.event_date = datetime.datetime.strptime(self.content['event_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('event_date') else nothing
+        # AllanC - rather than duplicating the formating information multiple times - use the subroutene h.api_datestr_to_datetime and time ago
+        #self.creation_date = datetime.datetime.strptime(self.content['creation_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('creation_date') else nothing
+        #self.update_date = datetime.datetime.strptime(self.content['update_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('update_date') else nothing
+        #self.publish_date = datetime.datetime.strptime(self.content['publish_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('publish_date') else nothing
+        #self.due_date = datetime.datetime.strptime(self.content['due_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('due_date') else nothing
+        #self.event_date = datetime.datetime.strptime(self.content['event_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('event_date') else nothing
+        
         self.attr.frag_data_css_class = 'frag_content'
         
         if self.content['private'] == False:
@@ -176,8 +178,8 @@
             <td>Views</td>
             <td>${content['views'] if 'views' in content else '0'}</td>
           </tr>
-          ${format_date_if('Event Date', self.event_date)}
-          ${format_date_if('Due By', self.due_date)}
+          ${format_date_if('Event Date', content.get('event_date'))}
+          ${format_date_if('Due By'    , content.get('due_date')  )}
         </table>
         <div class="iconholder">
           ${iconify('private', 'Private Content', 'icon icon_private')}
@@ -228,9 +230,9 @@
         table.content tr td.x { padding-left: 3px; }
       </style>
       <table class="content">
-        ${format_date_if('Created', self.creation_date)}</p>
-        ${format_date_if('Published', self.publish_date)}</p>
-        ${format_date_if('Updated', self.update_date)}</p>
+        ${format_date_if('Created'  , content.get('creation_date'))}</p>
+        ${format_date_if('Published', content.get('publish_date' ))}</p>
+        ${format_date_if('Updated'  , content.get('update_date'  ))}</p>
       </table>
     </div>
 

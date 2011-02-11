@@ -51,7 +51,10 @@ def url(*args, **kwargs):
     """
     Passthough for Pylons URL generator with a few new features
     """
-    
+    # BUGFIX - if protocol is passed as None it goes baddgy ... this remove is ... seems unnessisary because url shoud deal with it (sigh)
+    if 'protocol' in kwargs and not isinstance(kwargs['protocol'], basestring):
+        del kwargs['protocol']
+
     # shortcut for absolute URL
     if 'absolute' in kwargs:
         kwargs['host'] = c.host
@@ -69,7 +72,7 @@ def url(*args, **kwargs):
     if 'subdomain' in kwargs:
         subdomain = str(kwargs.pop('subdomain'))
         assert subdomain in app_globals.subdomains.keys()
-        if not config['development_mode'] and subdomain == '': #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
+        if 'localhost' not in c.host and subdomain == '': #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
             subdomain = 'www'
         if subdomain:
             subdomain += '.'
@@ -240,7 +243,7 @@ def action_ok_list(list, obj_type=None, **kwargs):
 
 
 class action_error(Exception):
-    def __init__(self, message=None, data={}, code=500, template=None, status='error'):
+    def __init__(self, message=None, data={}, code=500, status='error', **kwargs):
         assert not message or isinstance(message, basestring)
         assert isinstance(data, dict)
         assert isinstance(code, int)
@@ -250,8 +253,9 @@ class action_error(Exception):
             "data"   : data,
             "code"   : code,
         }
-        if template:
-            self.original_dict["template"] = template
+        self.original_dict.update(kwargs)
+        #if template:
+        #    self.original_dict["template"] = template
     def __str__( self ):
         return str(self.original_dict)
 
@@ -469,9 +473,15 @@ def auto_format_output(target, *args, **kwargs):
         if c.format == "python":
             raise
         else:
-            if ae.original_dict.get('code') == 402 and (c.format=="html" or c.format=="redirect"):
-                return redirect(url(controller='misc', action='upgrade_account'))
             result = ae.original_dict
+            if c.format=="html" or c.format=="redirect":
+                if result.get('code') == 402:
+                    return redirect(url(controller='misc', action='upgrade_account'))
+                if result.get('html_action_redirect_url'):
+                    if 'message' in result:
+                        set_flash_message(result) # Set flash message
+                    return redirect(result.get('html_action_redirect_url'))
+            
     
     # After
     # Is result a dict with data?

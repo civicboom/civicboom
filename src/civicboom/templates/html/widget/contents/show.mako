@@ -22,7 +22,7 @@
     <table><tr>
         <td class="action">
             <div class="padding" style="background-color: #${c.widget['color_header']}; margin-right: 1em;">
-            <a href="${h.url('content_action', id=id, action='accept', subdomain='')}" target="_blank">${_('Accept _asignemnt')}</a>
+            <a href="${h.url('content_action', id=id, action='accept', subdomain='')}" target="_blank">${_('Accept _assignment')}</a>
             </div>
         </td>
         <td class="action">
@@ -33,7 +33,9 @@
     </tr></table>
     
     <div>
-        <div style="display: inline-block;"><strong>${_("Due in")}:      </strong>fix</div>
+        % if content.get('due_date'):
+        <div style="display: inline-block;"><strong>${_("Due in")}:      </strong>${h.time_ago(content.get('due_date'))}</div>
+        % endif
         <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>${content.get('num_accepted')} ${_('_members')}</div>
         
         ##${h.time_ago_first_only(assignment.expiryDate)}

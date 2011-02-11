@@ -30,7 +30,7 @@ sed -i "s#DEBCONF_MC_SESSION#$MC_SESSION#" /opt/cb/share/website/production.ini
 sed -i "s#DEBCONF_MC_CACHE#$MC_CACHE#"     /opt/cb/share/website/production.ini
 
 update-rc.d cb-website defaults
-invoke-rc.d cb-website start || invoke-rc.d cb-website restart || true
+invoke-rc.d cb-website restart || invoke-rc.d cb-website start || true
 
 cd /opt/cb/share/website
 find -name "*.pyc" | xargs rm -f

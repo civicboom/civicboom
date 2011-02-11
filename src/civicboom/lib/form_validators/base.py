@@ -56,7 +56,7 @@ class LocationValidator(validators.FancyValidator):
             (lon, lat) = value.split(" ")
             return "SRID=4326;POINT(%f %f)" % (float(lon), float(lat))
         except:
-            return formencode.Invalid(self.message("not_in_range", state), value, state)
+            raise formencode.Invalid(self.message("not_in_range", state), value, state)
 
 
 

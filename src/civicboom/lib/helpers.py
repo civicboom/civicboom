@@ -21,7 +21,7 @@ from civicboom.lib.misc import args_to_tuple
 # use relative import so that "import helpers" works
 #from civicboom.lib.text import scan_for_embedable_view_and_autolink
 from text import scan_for_embedable_view_and_autolink
-from web import current_url, url
+from web import current_url, url, current_protocol
 
 import webhelpers.html.tags as html
 
@@ -62,7 +62,7 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
         query_params += karg+"="+str(kargs[karg])
     if query_params != "":
         query_params = urllib.quote_plus("?"+query_params)
-    scheme = request.environ.get('HTTP_X_URL_SCHEME', 'http')
+    scheme = current_protocol() #request.environ.get('HTTP_X_URL_SCHEME', 'http')
     return literal(
         """<iframe src="%s://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (scheme, return_url+query_params, lang)
     )
@@ -217,6 +217,8 @@ def date_to_rss(date):
     return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
 
 def time_ago(from_time):
+    if not from_time:
+        return None
     if isinstance(from_time, basestring):
         from_time = api_datestr_to_datetime(from_time)
     time_ago = time_ago_in_words(from_time, granularity='minute', round=True)
@@ -379,6 +381,13 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
 # Frag DIV's and Links - for Static and AJAX compatability
 #-------------------------------------------------------------------------------
 
+# AllanC - These are currently not used on the site
+#          they were to enable the static and dynamic generation of a page
+#          The fragment system currently duplicates lots of info for both static and dynamic,
+#          in future we could refine the system below to maybe tidy up the fragment system
+#
+#          NOTE: setSingleCSSClass is depricated and not implemtned anymore, the method below will need to be fixed
+
 def frag_link(id, frag_url, value, title='', css_class=''):
     """
     Populate an id destination with a fragments source using AJAX
@@ -429,6 +438,7 @@ def frag_div(id, default_frag_url=None, class_=None):
 #-------------------------------------------------------------------------------
 
 def cb_frag_link(*args, **kwargs):
+    # AllanC - hang on double check needed, where is this used? ... surely href is the static link? surely we want to use url_pair under the hood to generate the json version?
     kwargs['onclick'] = "cb_frag($(this), '%s'); return false;"  % kwargs['href']
     return HTML.a(*args, **kwargs)
 
@@ -440,6 +450,9 @@ def cb_frag_link(*args, **kwargs):
 regex_content_url = re.compile(r'(?:.*?)/contents/(.*?)[/&?#\n. "]')
 regex_member_url  = re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "]')
 def get_object_from_action_url(action_url):
+    """
+    Creates a tuple to be used with url(*tuple[0], **tuple[1])
+    """
     m = re.match(regex_content_url, action_url)
     if m:
         return ( ['content'], dict(id=m.group(1)) )
