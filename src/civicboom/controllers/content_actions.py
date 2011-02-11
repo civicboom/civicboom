@@ -152,22 +152,26 @@ class ContentActionsController(BaseController):
         @return 200   accepted ok
         @return 500   error accepting
         """
-        assignment = _get_content(id)
-        status     = assignment.accept(c.logged_in_persona)
+        assignment               = _get_content(id)
+        html_action_redirect_url = url('content', id=id)
+        
         # AllanC - TODO: need message to user as to why they could not accept the assignment
         #         private assingment? not invited?
         #         already withdraw before so cannot accept again
-        if status == True:
-            assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
-            user_log.debug("Accepted Content #%d" % int(id))
-            # A convenience feature for flow of new users. If they are following nobody (they are probably a new user), then auto follow the assignment creator
-            if c.logged_in_persona.num_following == 0:
-                c.logged_in_persona.follow(assignment.creator)
-            return action_ok(_("_assignment accepted"),
-                             html_action_redirect_url = url('content', id=id)
-                            )
-        #elif isinstance(status,str):
-        raise action_error(_('Unable to accept _assignment'), code=400)
+        try:
+            if assignment.accept(c.logged_in_persona):
+                assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
+                user_log.debug("Accepted Content #%d" % int(id))
+                # A convenience feature for flow of new users. If they are following nobody (they are probably a new user), then auto follow the assignment creator
+                if c.logged_in_persona.num_following == 0:
+                    c.logged_in_persona.follow(assignment.creator)
+                return action_ok(_("_assignment accepted"),
+                                 html_action_redirect_url = html_action_redirect_url
+                                )
+        except Exception as ae:
+            ae.original_dict.update(dict(html_action_redirect_url = html_action_redirect_url))
+            raise ae
+        raise action_error(_('Unable to accept _assignment'))
 
 
     #---------------------------------------------------------------------------

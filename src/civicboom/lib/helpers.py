@@ -217,6 +217,8 @@ def date_to_rss(date):
     return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
 
 def time_ago(from_time):
+    if not from_time:
+        return None
     if isinstance(from_time, basestring):
         from_time = api_datestr_to_datetime(from_time)
     time_ago = time_ago_in_words(from_time, granularity='minute', round=True)
