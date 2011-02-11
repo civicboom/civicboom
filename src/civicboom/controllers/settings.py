@@ -82,8 +82,8 @@ settings_validators = dict(
     
     avatar = formencode.validators.FieldStorageUploadConverter(),
     
-    #location =
-    location_home = formencode.validators.UnicodeString(),
+    location_home = civicboom.lib.form_validators.base.LocationValidator(),
+    location_current = civicboom.lib.form_validators.base.LocationValidator(),
 )
 
     
@@ -254,15 +254,8 @@ class SettingsController(BaseController):
             del settings['avatar']
 
         if settings.get('location_home'):
-            try:
-                (lon, lat) = [float(n) for n in settings["location_home"].split(",")]
-            except ValueError, e:
-                user_log.exception("Unable to understand location '%s'" % str(settings["location_home"]))
-                raise action_error(_("Unable to understand location '%s'" % str(settings["location_home"])), code=400)
-            except Exception, e:
-                user_log.exception("Unable to understand location '%s'" % str(settings["location_home"]))
-                raise action_error(_("Unable to understand location '%s'" % str(settings["location_home"])), code=400)
-            user.location = "SRID=4326;POINT(%d %d)" % (lon, lat)
+            # translation to PostGIS format is done in the validator
+            user.location = settings.get('location_home')
             del settings['location_home']
         elif settings.get("location_home_name"):
             (lon, lat) = (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_home_name"]), see Feature #47
