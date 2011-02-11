@@ -112,18 +112,22 @@ function createCSS(selector, declaration) {
 	}
 }
 
-if (typeof media_thumbnail_timers == 'undefined') {
-  var media_thumbnail_timers = {};
-}
+var media_thumbnail_timers = {};
+var media_jquery_objects = {};
 
-function updateMedia(jquery_element, id, hash) {
+function updateMedia(id, hash, jquery_element) {
+  if (typeof media_jquery_objects[id] == 'undefined')
+  {
+    media_jquery_objects[id] = jquery_element;
+  } else {
+    jquery_element = media_jquery_objects[id];
+  }
   if (typeof media_thumbnail_timers[id] == 'undefined')
-    media_thumbnail_timers[id] = setInterval ('updateMedia('+id+','+hash+')', 1000);
+    media_thumbnail_timers[id] = setInterval ('updateMedia('+id+',\''+hash+'\')', 1000);
   $.getJSON(
     '/media/' + hash + '.json',
     processingStatus
   );
-  Y.log ('updateMedia '+id)
   function processingStatus(data) {
     _status = data.data.status;
     if(!_status) {
@@ -160,8 +164,8 @@ function refreshProgress (jquery_element) {
         var attachment = attachments[i];
         if ($('#media_attachment_' + attachment.id).length == 0) {
           Y.log ('I found a new attachment!');
-          var at_element = $('#mediatemplate').clone(true, true).attr('id', '#media_attachment_' + attachment.id).css('display','');
-          $('#mediatemplate').after(at_element);
+          var at_element = jquery_element.find('#mediatemplate').clone(true, true).attr('id', '#media_attachment_' + attachment.id).css('display','');
+          jquery_element.find('ul.media_files').children('li.media_file').last().after(at_element);
           at_element.find('#media_file').attr('value', attachment.name);
           at_element.find('#media_caption').attr('value', attachment.caption);
           at_element.find('#media_credit').attr('value', attachment.credit);
@@ -171,7 +175,7 @@ function refreshProgress (jquery_element) {
             appendAttr(element, 'for', attachment.id);
             appendAttr(element, 'name', attachment.id);
           });
-          updateMedia(at_element, attachment.id, attachment.hash);
+          updateMedia(attachment.id, attachment.hash, at_element);
         }
       }
     }
