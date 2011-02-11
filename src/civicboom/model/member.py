@@ -414,7 +414,7 @@ class User(Member):
 
     __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_user_fields = {
-        'location_current' : None , #lambda member: ''
+        'location_current' : lambda member: location_to_string(member.location_home) ,
         'location_updated' : None ,
     }
     __to_dict__['default'     ].update(_extra_user_fields)
