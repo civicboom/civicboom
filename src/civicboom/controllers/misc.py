@@ -1,5 +1,8 @@
 from civicboom.lib.base import *
 
+from civicboom.lib.communication.email_lib import send_email
+from urllib import quote_plus, unquote_plus
+
 class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
@@ -11,7 +14,7 @@ class MiscController(BaseController):
     def help(self, id="civicboom"):
         return action_ok(template="help/"+id)
 
-    @cacheable(time=600)
+    #@cacheable(time=600)
     @auto_format_output
     def echo(self):
         return action_ok(data={
@@ -54,11 +57,11 @@ class MiscController(BaseController):
         c.widget_user_preview = get_member(id)
         return action_ok()
 
-    #@web
-    #def get_mobile(self, id=None):
-    #    return action_ok()
-
-
-    @cacheable(time=600)
-    def close_popup(self):
-        return '<script>self.close();</script>'
+    @auto_format_output
+    def feedback(self):
+        if not request.POST:
+            return action_ok() # Render the feedback form by autolocating the template
+        if 'message' in request.POST:
+            content_text = "%(from_)s\n\n%(message)s\n\n%(env)s" % dict(message=request.POST.get('message'), env=unquote_plus(request.POST.get('env')), from_=request.POST.get('from') )
+            send_email(config['email.contact'], subject=_('_site_name feedback'), content_text=content_text)
+            return action_ok(_("Thank you for your feedback"), code=201)
