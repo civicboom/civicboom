@@ -16,12 +16,11 @@ import copy
 import tempfile
 import Image
 
-
-
-from   civicboom.lib.form_validators.validator_factory import build_schema
-from   civicboom.lib.form_validators.dict_overlay import validate_dict
+from civicboom.lib.form_validators.validator_factory import build_schema
+from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 from civicboom.lib.civicboom_lib import set_password, send_verifiy_email
+from civicboom.model.meta import location_to_string
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -154,7 +153,11 @@ class SettingsController(BaseController):
         
         # Populate settings dictionary for this user
         for setting_name in settings_meta.keys():
-            settings[setting_name] = user.config.get(setting_name)
+            v = user.config.get(setting_name)
+            if type(v) in [str, unicode]: # ugly hack
+                settings[setting_name] = v
+            else:
+                settings[setting_name] = location_to_string(v)
         
         return action_ok(
             data={
@@ -233,7 +236,7 @@ class SettingsController(BaseController):
         settings    = data['settings']
         
         # Save special properties that need special processing
-        # (counld have a dictionary of special processors here rather than having this code cludge this controller action up)
+        # (could have a dictionary of special processors here rather than having this code cludge this controller action up)
         if settings.get('avatar'):
             with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
                 a = settings['avatar']
