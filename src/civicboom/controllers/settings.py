@@ -237,7 +237,7 @@ class SettingsController(BaseController):
         
         # Save special properties that need special processing
         # (could have a dictionary of special processors here rather than having this code cludge this controller action up)
-        if settings.get('avatar'):
+        if settings.get('avatar') != None:
             with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
                 a = settings['avatar']
                 wh.copy_cgi_file(a, original.name)
@@ -253,7 +253,7 @@ class SettingsController(BaseController):
                     im.save(processed.name, "JPEG")
                     wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
 
-            user.avatar = "%s/avatars/%s" % (config['warehouse_url'], h)
+            user.avatar = h
             del settings['avatar']
 
         if settings.get('location_home'):
