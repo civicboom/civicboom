@@ -13,7 +13,8 @@ class MemberSettingsManager(UserDict.DictMixin):
         self.member = member
 
     def __getitem__(self, name):
-        if hasattr(self.member, name): return get(name)
+        if hasattr(self.member, name):
+            return get(name)
         try:
             q = Session.query(MemberSetting)
             q = q.filter(MemberSetting.member_id==self.member.id)
@@ -27,9 +28,12 @@ class MemberSettingsManager(UserDict.DictMixin):
                 raise KeyError(name)
 
     def get(self, name, default=u''):
-        if hasattr(self.member, name): return getattr(self.member, name) or default
-        if name in self              : return self[name]
-        else                         : return default
+        if hasattr(self.member, name):
+            return getattr(self.member, name) or default
+        if name in self:
+            return self[name]
+        else:
+            return default
 
     def __setitem__(self, name, value):
         if hasattr(self.member, name):
