@@ -214,6 +214,10 @@ function cb_frag_set_source(jquery_element, url) {
 	jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href', url);
 }
 
+function cb_frag_get_source(jquery_element) {
+  jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href');
+}
+
 function cb_frag_set_variable(jquery_element, variable, value) {
   var valueClean = (typeof value == 'undefined')?(''):(value);
   jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('cb'+variable, valueClean);
