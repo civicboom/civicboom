@@ -32,7 +32,12 @@ function popup(title, url) {
 	// AllanC - TODO: need some indication to the user that this AJAX request is happening
 	$('#popup .title_text'   ).html(title);
 	$('#popup .popup_content').load(url,function(){
-		$('#popup').modal();
+		$('#popup').modal({ onShow: function (dialog) {
+		  var smc = $('.simplemodal-container');
+		  var smd = $('.popup-content');
+		  smc.css('width', smd.outerWidth(true));
+		  smc.css('height', smd.outerHeight(true));
+		}});
 	});
 
 	// AllanC - loading feedback could be:

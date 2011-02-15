@@ -265,9 +265,9 @@
     <td style="width:100%;">
         <a href="${h.url('content', id=id)}" ${js_link_to_frag}>
             <p class="content_title">${content['title']}</p>
-            % if content.get('creator'):
-            <p class="content_title">By: ${content['creator']['name']} (${content['creator']['username']})</p>
-            % endif
+          % if creator and 'creator' in content:
+            <p style="font-size: 88%" class="content_title">By: ${content['creator']['name']}</p>
+          % endif
         </a>
     </td>
     % if location:
