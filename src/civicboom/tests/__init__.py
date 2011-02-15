@@ -154,6 +154,44 @@ class TestController(TestCase):
             status=200
         )
 
+    def send_member_message(self, username, subject, content):
+        response = self.app.post(
+            url('messages', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'target' : username,
+                'subject': subject ,
+                'content': content ,
+            },
+            status=201
+        )
+        return json.loads(response.body)['data']['id']
+
+    def boom_content(self, content_id):
+        response = self.app.post(
+            url('content_action', action='boom', id=content_id, format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+            },
+            status=200
+        )
+        response_json = json.loads(response.body)
+        assert response_json['status'] == 'ok'
+
+    def comment(self, content_id, comment='comment'):
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                #'title': "A test comment by the test user",
+                'type'     : 'comment'  ,
+                'parent_id': content_id ,
+                'content'  : comment    ,
+            },
+            status=201
+        )
+        return json.loads(response.body)["data"]["id"]
+
     def getNumNotifications(self, username=None, password=None):
         if username:
             if self.logged_in_as != username:

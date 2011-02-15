@@ -72,57 +72,17 @@ class TestMessagesController(TestController):
         response = self.app.get(url('formatted_new_message', format='frag'))
 
     def part_create(self):
-        response = self.app.post(
-            url('messages', format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-                'target': 'unittest',
-                'subject': 'arrr, a subject',
-                'content': 'I am content',
-            },
-            status=201
-        )
-
+        self.send_member_message('unittest', 'arrr, a subject', 'I am content')
+        
         self.log_in_as("unittest")
-        response = self.app.post(
-            url('messages', format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-                'target': 'unitfriend',
-                'subject': 'Re: singing',
-                'content': 'My singing is fine!',
-            },
-            status=201
-        )
-        self.m1_id = json.loads(response.body)['data']['id']
-
+        self.m1_id = self.send_member_message('unitfriend', 'Re: singing'    , 'My singing is fine!')
+        
         self.log_in_as("unitfriend")
-        response = self.app.post(
-            url('messages', format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-                'target': 'unittest',
-                'subject': 'Re: Re: singing',
-                'content': 'It is totally not! And to explain, I will use a sentence that is over 50 characters long, to test the Message.__unicode__ truncation feature',
-            },
-            status=201
-        )
-        self.m2_id = json.loads(response.body)['data']['id']
-
-        response = self.app.post(
-            url('messages', format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-                'target': 'unittest',
-                'subject': 'deleteme',
-                'content': 'this is a message to test deletion with',
-            },
-            status=201
-        )
-        self.m5_id = json.loads(response.body)['data']['id']
-
+        self.m2_id = self.send_member_message('unittest'  , 'Re: Re: singing', 'It is totally not! And to explain, I will use a sentence that is over 50 characters long, to test the Message.__unicode__ truncation feature')
+        
+        self.m5_id = self.send_member_message('unittest'  , 'deleteme'       , 'this is a message to test deletion with')
+        
         self.log_in_as("unittest")
-
 
 
     def part_create_bad_target(self):
