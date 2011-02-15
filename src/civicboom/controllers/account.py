@@ -93,9 +93,9 @@ class AccountController(BaseController):
                 # Currently if a username conflict appears then a random new username is created and the user is prompted to enter a new one
                 #pass
             
-            u = register_new_janrain_user(c.auth_info['profile'])             # Create new user from Janrain profile data
+            c.logged_in_user = register_new_janrain_user(c.auth_info['profile'])             # Create new user from Janrain profile data
             # added to assiciate_janrain civicboomlib call #janrain('map', identifier=c.auth_info['profile']['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
-            signin_user_and_redirect(u, login_provider=c.auth_info['profile']['identifier'])
+            signin_user_and_redirect(c.logged_in_user, login_provider=login_provider)
             #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             
         # If not authenticated or any janrain info then error

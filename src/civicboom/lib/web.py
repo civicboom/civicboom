@@ -243,7 +243,7 @@ def action_ok_list(list, obj_type=None, **kwargs):
 
 
 class action_error(Exception):
-    def __init__(self, message=None, data={}, code=500, template=None, status='error'):
+    def __init__(self, message=None, data={}, code=500, status='error', **kwargs):
         assert not message or isinstance(message, basestring)
         assert isinstance(data, dict)
         assert isinstance(code, int)
@@ -253,8 +253,9 @@ class action_error(Exception):
             "data"   : data,
             "code"   : code,
         }
-        if template:
-            self.original_dict["template"] = template
+        self.original_dict.update(kwargs)
+        #if template:
+        #    self.original_dict["template"] = template
     def __str__( self ):
         return str(self.original_dict)
 
@@ -472,9 +473,15 @@ def auto_format_output(target, *args, **kwargs):
         if c.format == "python":
             raise
         else:
-            if ae.original_dict.get('code') == 402 and (c.format=="html" or c.format=="redirect"):
-                return redirect(url(controller='misc', action='upgrade_account'))
             result = ae.original_dict
+            if c.format=="html" or c.format=="redirect":
+                if result.get('code') == 402:
+                    return redirect(url(controller='misc', action='upgrade_account'))
+                if result.get('html_action_redirect_url'):
+                    if 'message' in result:
+                        set_flash_message(result) # Set flash message
+                    return redirect(result.get('html_action_redirect_url'))
+            
     
     # After
     # Is result a dict with data?
