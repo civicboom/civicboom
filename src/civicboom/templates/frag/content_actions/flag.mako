@@ -20,7 +20,8 @@
 
 <%def name="flag_form(id)">
     ##<div id="flag_content" class="hideable">
-      <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
+    <div style="padding-bottom: 6px;">
+##      <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
       ${h.form(h.args_to_tuple(controller='content_actions', action='flag', id=id, format='redirect'), json_form_complete_actions="cb_frag_remove(current_element);")}
           <select name="type">
               <% from civicboom.model.content import FlaggedContent %>
@@ -28,10 +29,10 @@
               <option value="${type}">${_(type.capitalize())}</option>
               % endfor
           </select>
-          <p class="form_instructions">${_('Comment (optional)')}</p>
+          <p style="padding-top: 3px; padding-bottom: 3px;" class="form_instructions">${_('Comment (optional)')}</p>
           <textarea name="comment" style="width:90%; height:3em;"></textarea>
           <input type="submit" name="flagit" value="Flag it" class="" onclick="$.modal.close();"/>
           ##<a class="simplemodal-close">${_("Cancel")}</a>
       ${h.end_form()}
-    ##</div>
+    </div>
 </%def>
