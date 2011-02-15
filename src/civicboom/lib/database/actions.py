@@ -275,12 +275,20 @@ def set_role(group, member, role, delay_commit=False):
 
 
 def del_group(group):
+    group = get_group(group)
     from pylons import tmpl_context as c
     for member in [member_role.member for member_role in group.members_roles]:
         member.send_message(messages.group_deleted(group=group, admin=c.logged_in_user), delay_commit=True)
     Session.delete(group)
     Session.commit()
     update_member(group)
+
+
+def del_member(member):
+    member = get_member(member)
+    Session.delete(member)
+    Session.commit()
+    update_member(member)
 
 #-------------------------------------------------------------------------------
 # Assignment Actions
