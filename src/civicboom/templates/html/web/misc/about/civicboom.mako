@@ -22,7 +22,7 @@ do best.</h1>
 <p>We're in Beta at the moment and are working with organisations that also believe in the
 power of the crowd - and in Civicboom. Media organisations can use Civicboom to
 generate news directly from their community, straight to the newsroom. A charity can use
-our tools to get create better engagement audiences. Civicboom offers businesses an
+our tools to create better engaged audiences. Civicboom offers businesses an
 internal communications system, as well as external customer outreach and community building tools.
 It also gives local interest groups the ability to better organise their wider
 engagement efforts. Think of it as your very own tool to tap into the most valuable asset we
