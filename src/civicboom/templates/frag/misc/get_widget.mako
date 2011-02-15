@@ -63,13 +63,13 @@ ${widget_preview(c.widget_user_preview)}
         
         <h1>${_('Grab your widget and get your community to respond to your requests! ')}</h1>
         <p>${_('Through the widget, your community and audience can:')}</p>
-        <ul>
+        <ul style="padding-top: 6px; padding-bottom: 6px;">
             <li>${_('Read your requests')}</li>
             <li>${_('Respond to them immediately')}</li>
             <li>${_('Accept to complete at a later date')}</li>
         </ul>
-        <p>${_('Anyone who isnt Following you on the Civicboom system, but clicks on "Accept" or "Respond" via your widget will automatically become a Follower of you. This means every time you send out a request, they will get alerted.')}</p>
-        <p>${_('Others can also grab the code for this widget and post on their own web pages - amplifying your reach to a wider audience.')}</p>
+        <p>${_('Anyone who is not Following you on the Civicboom system, but clicks on "Accept" or "Respond" via your widget will automatically become a Follower of you. This means every time you send out a request, they will get alerted.')}</p>
+        <p style="padding-top: 6px; padding-bottom: 6px;">${_("Others can also copy and paste this widget's code into their own website's HTML and show it on their site. This can help amplify your reach to a wider audience.")}</p>
 
 
         <table><tr>
@@ -77,7 +77,7 @@ ${widget_preview(c.widget_user_preview)}
             <form name="widget_creator" action="">
                 <textarea name="widget_link" class="link_widget_form_field" style="width: 250px; height: 200px;">${widget_iframe(member)}</textarea>
             </form>      
-            <p class="link_widget_instructions">${_('Copy and paste this code onto your HTML')}</p>
+            <p class="link_widget_instructions">${_("Copy and paste this code into your website's HTML")}</p>
         </td>
         <td>
     
