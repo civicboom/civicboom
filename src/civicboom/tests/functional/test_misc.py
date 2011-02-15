@@ -21,10 +21,6 @@ class TestMiscController(TestController):
     def test_upgrade_account(self):
         response = self.app.get(url(controller='misc', action='upgrade_account'))
 
-    def test_close_popup(self):
-        response = self.app.get(url(controller='misc', action='close_popup'))
-        assert "self.close()" in response
-
     def test_georss(self):
         response = self.app.get(url(controller='misc', action='georss'))
         response = self.app.get(url(controller='misc', action='georss', feed='/search/content.xml'))
