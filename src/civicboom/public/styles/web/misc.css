@@ -85,3 +85,6 @@ HTML.js #step_container .step  {position: absolute;}
     list-style: disc;
     margin-left: 2em;
 }
+label.norm {
+  font-weight: normal;
+}

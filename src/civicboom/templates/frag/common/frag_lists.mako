@@ -79,7 +79,7 @@
 </%def>
 
 <%def name="message_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_message      , type=('ul','li')   , list_class='messages'      , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_message      , type=('ul','li')   , list_class='messages', empty_message=_('You have no messages')      , *args, **kwargs)}
 </%def>
 
 
@@ -88,7 +88,7 @@
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(cb_list, title, href=None, show_heading=True, hide_if_empty=True, type=('ul','li'), list_class='', icon='', render_item_function=None, *args, **kwargs)">
+<%def name="frag_list(cb_list, title, href=None, show_heading=True, hide_if_empty=True, type=('ul','li'), list_class='', icon='', render_item_function=None, empty_message=None, *args, **kwargs)">
     <%
         count = None
         if isinstance(cb_list, dict) and 'items' in cb_list:
@@ -120,7 +120,9 @@
             js_link_to_frag_list = h.literal("""onclick="cb_frag($(this), '%s', 'frag_col_1'); return false;" """ % href_frag)
     %>
     % if hide_if_empty and not count:
-        
+      % if empty_message:
+        ${empty_message}
+      % endif
     % else:
         % if show_heading:
         <div class='frag_list'>
@@ -141,11 +143,15 @@
             <div class="frag_list_contents">
             <${type[0]} class="${list_class}">
                 ##% for item in items[0:limit]:
-                % for item in items:
-                ##<${type[1]}>
-                    ${render_item_function(item, *args, **kwargs)}
-                ##</${type[1]}>
-                % endfor
+                % if count:
+                  % for item in items:
+                  ##<${type[1]}>
+                      ${render_item_function(item, *args, **kwargs)}
+                  ##</${type[1]}>
+                  % endfor
+                % elif empty_message:
+                  <tr><td>${empty_message}</td></tr>
+                % endif
             </${type[0]}>
             % if href and show_heading and len(items) < count:
             <a href="${href}" ${js_link_to_frag_list} class="link_more">${count-len(items)} more</a>
@@ -179,7 +185,7 @@
     <td>
         ${member_includes.avatar(member, class_="thumbnail_small")}
     </td>
-    <td>
+    <td style="padding-left: 3px">
         <a href="${h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">
         ${member.get('name') or member.get('username')}
         </a>
@@ -331,6 +337,8 @@
     
     % if message.get('source') and list!='sent':
         ${member_includes.avatar(message['source'], class_="thumbnail_small source")}
+    % elif list=='notification':
+        <div class="icon icon_notification" style="float: left; margin: 3px 0 0 3px;"><span>Notification</span></div>
     % endif
     
     % if message.get('target') and list=='sent':

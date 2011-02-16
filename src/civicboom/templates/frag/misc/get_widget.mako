@@ -73,13 +73,7 @@ ${widget_preview(c.widget_user_preview)}
 
 
         <table><tr>
-        <td>
-            <form name="widget_creator" action="">
-                <textarea name="widget_link" class="link_widget_form_field" style="width: 250px; height: 200px;">${widget_iframe(member)}</textarea>
-            </form>      
-            <p class="link_widget_instructions">${_("Copy and paste this code into your website's HTML")}</p>
-        </td>
-        <td>
+        <td style="width: 300px; padding-right: 10px; vertical-align: top;">
     
             ## Custimisation controls
             ## The default values of this form must generate the same string as the sub "widget_iframe" above
@@ -96,11 +90,11 @@ ${widget_preview(c.widget_user_preview)}
               <td style="vertical-align: top; padding-right: 0.5em;">
                 
                 <fieldset><legend>${_("Size")}</legend>
-                  <label>${_('Width')} </label><input type="text" name="width"  value="${c.widget['width' ]}" size="3" /><br/>
-                  <label>${_('Height')}</label><input type="text" name="height" value="${c.widget['height']}" size="3" />
+                  <label style="width: 50pt">${_('Width')} </label><input type="text" name="width"  value="${c.widget['width' ]}" size="3" /><br/>
+                  <label style="width: 50pt">${_('Height')}</label><input type="text" name="height" value="${c.widget['height']}" size="3" />
                 </fieldset>
               </td>
-              <td style="vertical-align: top;">
+              <td style="padding-left: 6px;">
                 <fieldset><legend>${_("Colours")}</legend>
                   <%
                       colors = [
@@ -113,7 +107,7 @@ ${widget_preview(c.widget_user_preview)}
                   %>
                   <table>
                   % for color_name, color_field in colors:
-                  <tr><td><label>${color_name}</label></td><td><input type="text" id="${color_field}" name="${color_field}" value="${c.widget[color_field]}" size="6" /></td></tr>
+                  <tr><td><label style="width: 50pt">${color_name}</label></td><td><input type="text" id="${color_field}" name="${color_field}" value="${c.widget[color_field]}" size="6" /></td></tr>
                   % endfor
                   </table>
                 </fieldset>
@@ -121,6 +115,12 @@ ${widget_preview(c.widget_user_preview)}
               </tr></table>
             <input type="button" value="Preview Widget" onClick="generate_widget_link();" />
             </form>
+        </td>
+        <td style="width:300px">
+            <p style="font-weight: bold;" class="link_widget_instructions">${_("Copy and paste this code into your website's HTML:")}</p>
+            <form name="widget_creator" action="">
+                <textarea name="widget_link" class="link_widget_form_field" style="width: 300px; height: 200px;">${widget_iframe(member)}</textarea>
+            </form>      
         </td>
         </tr></table>
 
