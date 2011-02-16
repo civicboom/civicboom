@@ -8,6 +8,8 @@ proxy_cache_path /tmp/osm-cache   levels=2:2 keys_zone=osm:200m inactive=30d;
 proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:50m inactive=3m;
 proxy_temp_path  /tmp/nginx-temp;
 
+log_format timing '$remote_addr - $remote_user [$time_local] "$request" $status $bytes_sent $upstream_response_time $request_time';
+
 upstream backends {
 	### START MANAGED BY DEBCONF
 	# debconf will remove anything between the start and end
@@ -24,6 +26,7 @@ server {
 	listen 443 default ssl;   listen [::]:443 default ssl ipv6only=on;
 	server_name .civicboom.com localhost _;
 	access_log /var/log/nginx/civicboom.log;
+	access_log /var/log/nginx/civicboom.timing.log timing; # DC_TIMING
 	root /opt/cb/share/website/civicboom/public/;
 	error_page 500 502 503 504 /errors/50x.html;
 	client_max_body_size 100m;

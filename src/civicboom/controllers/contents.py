@@ -506,7 +506,7 @@ class ContentsController(BaseController):
         if 'media_file' in kwargs and kwargs['media_file'] != "":
             form_file = kwargs["media_file"]
             media = Media()
-            media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=kwargs["media_caption"], credit=kwargs["media_credit"])
+            media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=kwargs.get('media_caption'), credit=kwargs.get('media_credit'))
             content.attachments.append(media)
             #Session.add(media) # is this needed as it is appended to content and content is in the session?
 

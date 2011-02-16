@@ -41,14 +41,7 @@ class TestBoomController(TestController):
         boom_count = int(response_json['data']['content']['boom_count'])
         
         # Boom unittest's content as unitfriend
-        response = self.app.post(
-            url('content_action', action='boom', id=content_id, format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-            },
-            status=200
-        )
-        response_json = json.loads(response.body)
+        self.boom_content(content_id)
         
         # Try to Boom it again - expected error because you can only boom it once
         response = self.app.post(
@@ -80,21 +73,14 @@ class TestBoomController(TestController):
         #-----------------------------------------------------------------------
         
         # Ensure boomed content for other is unaffected after boom - login and get boom count
-        # Logged as issue 231
+        # Logged as issue #231
         self.log_in_as('kitten')
         
         response      = self.app.get(url('member', id='kitten', format='json'), status=200)
         response_json = json.loads(response.body)
         assert len(response_json['data']['boomed_content']['items']) == 0
         
-        response = self.app.post(
-            url('content_action', action='boom', id=content_id, format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-            },
-            status=200
-        )
-        response_json = json.loads(response.body)
+        self.boom_content(content_id)
         
         response      = self.app.get(url('member', id='kitten', format='json'), status=200)
         response_json = json.loads(response.body)

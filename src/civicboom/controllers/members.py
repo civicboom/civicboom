@@ -26,6 +26,8 @@ def _get_member(member):
     member = get_member(member)
     if not member:
         raise action_error(_("member not found"), code=404)
+    if member.status != "active":
+        raise action_error(_("member inactive") , code=404)
     return member
 
 #-------------------------------------------------------------------------------

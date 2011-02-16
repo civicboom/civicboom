@@ -302,6 +302,10 @@ class Member(Base):
             return wh_url("avatars", self.avatar)
         return wh_url("public", "images/default_avatar.png")
 
+    def delete(self):
+        from civicboom.lib.database.actions import del_member
+        return del_member(self)
+
     def add_to_interests(self, content):
         from civicboom.lib.database.actions import add_to_interests
         return add_to_interests(self, content)
