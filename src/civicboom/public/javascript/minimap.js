@@ -113,10 +113,10 @@ function map_picker(field_name, options) {
 		},
 
 		trigger: function(e) {
-			var p = map.getLonLatFromViewPortPx(e.xy);
 			pin.moveTo(map.getLayerPxFromViewPortPx(e.xy));
-			map.panTo(p);
 
+			var p = map.getLonLatFromViewPortPx(e.xy);
+			map.panTo(p);
 			p = new OpenLayers.LonLat(p.lon, p.lat).transform(
 				map.getProjectionObject(),
 				new OpenLayers.Projection("EPSG:4326")
