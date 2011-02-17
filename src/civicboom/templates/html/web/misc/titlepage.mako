@@ -149,7 +149,7 @@ ${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', subdomain
 
     <%self:step arg>
         <%def name="main()">
-            <div style="text-align: center; margin-top: 3em;"><img src="/images/civicboom.png" alt="Civicboom Logo" style="width: 50%;"/></div>
+            <div style="text-align: center; margin-top: 3em;"><img src="/images/boom193.png" alt="Civicboom Logo" style="width: 50%;"/></div>
         </%def>
         <%def name="description()">
             <p style="font-weight: bold; font-size: 120%;">Civicboom empowers you connect, create and collaborate on what matters to you. </p>

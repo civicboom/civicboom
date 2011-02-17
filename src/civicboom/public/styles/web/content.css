@@ -31,3 +31,6 @@ legend .smaller {
   font-size: 80%
 }
 
+.bold td {
+  font-weight: bold;
+}

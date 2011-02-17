@@ -35,9 +35,10 @@
                 <br/>
 				-->
                 <% args, kwargs = c.web_params_to_kwargs %>
-                Text: <input type="text" name="term" value="${kwargs.get('term')}"/>
+                <label for="term">Text</label><br />
+                <input type="text" style="width: 210px" name="term" value="${kwargs.get('term')}"/>
                 <br/>
-                Type:<br/>
+                <label for="list">Type</label><br/>
                 % for list, type, name in contents_list_titles:
                     <%
                         checked = ''
@@ -47,7 +48,8 @@
                     <input type="radio" name="list" value="${list}" ${checked}>${name}<br/>
                 % endfor
                 <br/>
-                Location: ${loc.location_picker()}
+                <label>Location</label><br />
+                ${loc.location_picker(width='210px')}
                 <br/>
                 <input type="submit" value="Search" class="button"/>
             </fieldset>

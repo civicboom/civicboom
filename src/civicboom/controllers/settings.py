@@ -206,6 +206,10 @@ class SettingsController(BaseController):
                     c.logged_in_persona.config[route_name] = setting
 
             Session.commit()
+            
+            if c.format == 'html':
+                return redirect(url('settings'))
+            
             return action_ok(
                 message = _('settings updated') ,
                 template='settings/messages' ,
