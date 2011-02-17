@@ -45,7 +45,8 @@
     
     <div class="frag_data ${self.attr.frag_data_css_class}">
         <div class="frag_col">
-            % if isinstance(frag_content, types.FunctionType):
+            ##% if isinstance(frag_content, types.FunctionType):
+            % if hasattr(frag_content, '__call__'):
                 ${frag_content()}
             % else:
                 ${frag_content}

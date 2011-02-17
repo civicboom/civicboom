@@ -1,5 +1,8 @@
 <%inherit file="/html/web/common/frag_container.mako"/>
 
+<%namespace name="frag"          file="/frag/common/frag.mako" />
+<%namespace name="feedback_frag" file="/frag/misc/feedback.mako" />
+
 <%def name="title()">${_("Feedback")}</%def>
 
 <%def name="body()">
@@ -7,5 +10,6 @@
 </%def>
 
 <%def name="feedback()">
-    <!--#include file="/misc/feedback.frag"-->
+    ${frag.frag_basic('Feedback', 'dialog', feedback_frag.feedback_form)}
+    ##<!--#include file="/misc/feedback.frag"-->
 </%def>
