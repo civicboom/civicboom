@@ -21,7 +21,7 @@ if not always_show_map:
 <script type="text/javascript">
 $(function() {
 	map = map_picker('${field_name}', {
-		lonlat: {lon:${lon}, lat:${lat}},
+		lonlat: {lon:${lon or 1}, lat:${lat or 51}},
 	});
 });
 </script>
@@ -38,8 +38,8 @@ $(function() {
 		'${name}_div',
 		{
 			controls: ${str(controls).lower()},
-			lonlat: {lon:${lon}, lat:${lat}},
-			zoom: ${zoom},
+			lonlat: {lon:${lon or 1}, lat:${lat or 51}},
+			zoom: ${zoom or 4},
 		},
 		${json.dumps(feeds)|n}
 	);
