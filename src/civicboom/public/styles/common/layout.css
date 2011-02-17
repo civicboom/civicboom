@@ -35,6 +35,11 @@ HTML, BODY, INPUT {
 /*
  * YUI grids turns off numbering of ordered lists
  */
+UL.bulleted LI {
+	display: list-item;
+	margin-left: 3em;
+	list-style: circle;
+}
 OL LI {
 	display: list-item;
 	margin-left: 3em;
