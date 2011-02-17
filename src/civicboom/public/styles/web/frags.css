@@ -61,14 +61,21 @@
 
 /*-----------------------------Action bar -----------------------------------*/
 #frag_containers .frag_container .action_bar {
-  height: 1.25em;
+  height: 1.35em;
   overflow: hidden;
   color: black;
+  
+  font-size: .9em;
+  font-weight: bold;
   
   border-bottom: 0.1em solid #888; /* to match .frag_container */
   
   background-color: #CCC;
   padding: 0.25em;
+}
+
+#frag_containers .frag_container .icon {
+  padding-right: 2px;
 }
 
 #frag_containers .frag_container .action_bar .object_actions_common {

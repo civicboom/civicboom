@@ -78,10 +78,10 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
     """
     content = get_content(id)
     if not content:
-        raise action_error(_("content not found"), code=404)
+        raise action_error(_("The _content you requested could not be found"), code=404)
     if is_viewable:
         if not content.viewable_by(c.logged_in_persona): 
-            raise action_error(_("_content not viewable"), code=403)
+            raise action_error(_("The _content you requested is not viewable"), code=403)
         if content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
             #raise action_error(_("_content not found"), code=404)
@@ -91,7 +91,7 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
         # AllanC TODO: need to check role in group to see if they can do this
         raise action_error(_("You do not have permission to edit this _content"), code=403)
     if is_parent_owner and not content.is_parent_owner(c.logged_in_persona):
-        raise action_error(_("not parent owner"), code=403)
+        raise action_error(_("You are not the owner of the parent _content"), code=403)
     return content
 
 #-------------------------------------------------------------------------------
@@ -381,7 +381,7 @@ class ContentsController(BaseController):
         if update_response['status'] != 'ok':
             return update_response
         
-        return action_ok(message=_('_content created ok'), data={'id':content.id}, code=201)
+        return action_ok(message=_('_content created'), data={'id':content.id}, code=201)
 
 
     @web
@@ -423,7 +423,7 @@ class ContentsController(BaseController):
                 return None
             if len(submit_keys) == 1:
                 return submit_keys[0]
-            raise action_error(_('multiple submit types submited'), code=400)
+            raise action_error(_('Multiple submit types submitted'), code=400)
         submit_type = normalise_submit(kwargs)
         # AllanC - we should consider this later .... for now the mobile works, but we way wawnt to get around HAVING to submit a submit_publish
         #if submit_type==None and content.__type__!= kwargs.get('type'):
@@ -469,7 +469,7 @@ class ContentsController(BaseController):
             error = action_error(
                 status   = 'error' ,
                 code     = 402 ,
-                message  = _('operation requires account upgrade') ,
+                message  = _('Account upgrade required before you can perform this action') , #operation requires account upgrade
             )
 
         
@@ -506,7 +506,7 @@ class ContentsController(BaseController):
         if 'media_file' in kwargs and kwargs['media_file'] != "":
             form_file = kwargs["media_file"]
             media = Media()
-            media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=kwargs["media_caption"], credit=kwargs["media_credit"])
+            media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=kwargs.get('media_caption'), credit=kwargs.get('media_credit'))
             content.attachments.append(media)
             #Session.add(media) # is this needed as it is appended to content and content is in the session?
 
@@ -589,7 +589,7 @@ class ContentsController(BaseController):
         if c.format == 'redirect' or c.format == 'html':
             return redirect(content_redirect)
         
-        return action_ok(_("_content updated"))
+        return action_ok(_("_content has been saved"))
 
 
     @web

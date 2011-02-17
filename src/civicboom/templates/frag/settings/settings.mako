@@ -1,5 +1,6 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+
 <%!
     from sets import Set
     rss_url   = False
@@ -8,11 +9,10 @@
 
 <%namespace name="loc" file="/html/web/common/location.mako"/>
 
-<%def name="body()">
-    <a href="${url(controller='settings', action='messages')}">${_("Edit Notifications")}</a>
-    <a href="${url(controller='account' , action='link_janrain')}">${_("Link Addtional Accounts")}</a>
-    <br/>
+<%def name="title()">${_("Edit your account settings")}</%def>
 
+<%def name="body()">
+## GregM: have moved as an addition to general group
     ${h.form(h.url('setting', id='None'), method='PUT', multipart=True)}
     <%
         # Setup Settings groups
@@ -24,20 +24,29 @@
                 setting_groups[setting_meta['group']] = []
             setting_groups[setting_meta['group']].append(setting_meta['name'])
         
-        #setting_group_order = Set(['general', 'contact', 'password', 'location', 'avatar'])
-        #setting_groups_set  = Set(setting_groups.keys())
-        #print (setting_groups_set & setting_group_order)
-        #print (setting_groups_set - setting_group_order)        
+        # GMiell: this list contains default order of settings groups
+        setting_group_order = ['general', 'contact', 'password', 'location', 'avatar']
+        # create a set from the available setting groups
+        setting_groups_set  = set(setting_groups.keys())
+        # create a set of default order settings that need to be removed from the default order
+        setting_groups_remove = set(setting_group_order) - setting_groups_set
+        # remove them
+        for m in setting_groups_remove:
+            if m in setting_group_order:
+                setting_group_order.remove (m)
+        # extend our default order 
+        setting_group_order.extend(setting_groups_set - set(setting_group_order))
+              
         #for g in setting_group_order:
         #    print g
-        #settings_groups_order = (setting_groups_set & setting_group_order) | (setting_groups_set - setting_group_order)
+        #settings_groups_order = (setting_group_order & setting_groups_set) | (setting_group_order - setting_groups_set)
     %>
 
 	<style>
 	</style>
 
-    % for group_name in setting_groups.keys():
-    ##% for group_name in settings_groups_order:
+    ##% for group_name in setting_groups.keys():
+    % for group_name in setting_group_order:
         <div style="margin: 16px;">
 			<div style="font-weight: bold;">${group_name.capitalize()}</div>
 			<table class="form" style="width: 100%;">
@@ -71,8 +80,16 @@
                     % elif setting_type == 'file':
                         <input name="${setting_name}" type="file" />
                     % elif setting_type == 'location':
-						</tr><tr><td colspan="2">
-						${loc.location_picker(field_name=setting_name, width='100%', height='300px', always_show_map=True)}
+            ##</tr><tr><td></td>
+						<td colspan="1"><div style="text-align: left;">
+						<%
+						try:
+							(lon, lat) = [float(f) for f in setting_value.split(" ")]
+						except:
+							(lon, lat) = (None, None)
+						%>
+						${loc.location_picker(field_name=setting_name, width='100%', height='300px', always_show_map=True, label_class="norm", lon=lon, lat=lat)}
+						</div>
                     % endif
 					</td>
 
@@ -81,6 +98,15 @@
                     % endif
                 </tr>
             % endfor
+##        GregM: Add the janrain & notifications links to the general group.
+            % if group_name == 'contact':
+              <tr><td>&nbsp;</td><td colspan="2">
+                <a href="${url(controller='account' , action='link_janrain')}">${_("Link Additional Accounts (Facebook, LinkedIn, Google and more)")}</a>
+              </td></tr>
+              <tr><td>&nbsp;</td><td colspan="2">
+                <a href="${url(controller='settings', action='messages')}">${_("Edit Notification Preferences")}</a>
+              </td></tr>
+            % endif
 			</table>
         </div>
     % endfor

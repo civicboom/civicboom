@@ -73,15 +73,14 @@ function minimap(div_name, options, feeds) {
 	return map;
 }
 
-function map_picker(field_name) {
-	var map = minimap(
-		field_name+'_div',
-		{
-			controls: true,
+function map_picker(field_name, options) {
+	options["controls"] = true;
 			// default UK
 			//lonlat: {lon:-4, lat:54},
 			//zoom: 4,
-		}
+	var map = minimap(
+		field_name+'_div',
+		options
 	);
 
 
@@ -114,10 +113,10 @@ function map_picker(field_name) {
 		},
 
 		trigger: function(e) {
-			var p = map.getLonLatFromViewPortPx(e.xy);
 			pin.moveTo(map.getLayerPxFromViewPortPx(e.xy));
-			map.panTo(p);
 
+			var p = map.getLonLatFromViewPortPx(e.xy);
+			map.panTo(p);
 			p = new OpenLayers.LonLat(p.lon, p.lat).transform(
 				map.getProjectionObject(),
 				new OpenLayers.Projection("EPSG:4326")

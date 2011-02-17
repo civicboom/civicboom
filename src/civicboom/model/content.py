@@ -102,11 +102,11 @@ class Content(Base):
     # AllanC - we want to cascade deleting of comments, but not full responses. Does the 'comments' cascade below over this?
     responses       = relationship("Content",  primaryjoin=id==parent_id, backref=backref('parent', remote_side=id, order_by=creation_date))
     #parent          = relationship("Content", primaryjoin=parent_id==id, remote_side=id)
-    creator         = relationship("Member" , primaryjoin="Content.creator_id==Member.id", backref=backref('content'))
+    creator         = relationship("Member" , primaryjoin="Content.creator_id==Member.id", backref=backref('content', cascade="all,delete-orphan"))
     
-    attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
+    attachments     = relationship("Media",              backref=backref('attached_to')         , cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
-    tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
+    tags            = relationship("Tag",                secondary=ContentTagMapping.__table__ )
     license         = relationship("License")
     
     comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="(CommentContent.id==Content.parent_id) & (Content.visible==True)")

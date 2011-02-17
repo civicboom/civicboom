@@ -309,6 +309,7 @@ UserGrid = Grid(model.User)
 UserGrid.configure(include=[
         UserGrid.name,
         UserGrid.username,
+        UserGrid.email,
         UserGrid.join_date.readonly(),
         UserGrid.status,
         ])

@@ -12,3 +12,12 @@ Default: false
 Description: Should the web server cache static data?
  The live server should cache data for performance, but it can be a pain
  when debugging
+
+Template: cb-website-web/timing
+Type: boolean
+Default: false
+Description: Should nginx log timing information?
+ Nginx can be set to log the amount of time it takes upstream (eg. pylons) to
+ generate a page and the time it takes downstream (eg. the browser) to get it;
+ however, this makes the log format non-standard, so it gets put into a
+ separate log file, which takes up more disk space.

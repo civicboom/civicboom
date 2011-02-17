@@ -28,6 +28,7 @@
 			<p><a href="/members/civicboom"><img src="/images/about/civicboom.png"></a>
 			   <a href="http://www.twitter.com/civicboom"><img src="/images/about/twitter.png"></a>
 			   <a href="http://uk.linkedin.com/in/elizabethhodgson"><img src="/images/about/linkedin.png"></a>
+			   <a href="mailto:contact@civicboom.com"><img src="/images/about/email.png"></a>
 			</p>
 		</td>
 	</tr>

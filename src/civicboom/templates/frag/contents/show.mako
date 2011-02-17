@@ -66,11 +66,8 @@
         <div class="frag_col">
         ${content_title()}
         ${content_media()}
-        ${content_details()}
         ${content_content()}
         ${content_map()}
-        ${content_details_foot()}
-        ${content_license()}
         ${content_comments()}
         ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
         <%def name="flag_form()">
@@ -80,23 +77,31 @@
         </div>
     </div>
     <div class="frag_right_col">
-        <div class="frag_col">
-        
-        <h2>${_("Content by")}</h2>
-        <div>
-          <span style="float:left; padding-right: 3px;">${member_includes.avatar(self.content['creator'], show_name=True, show_follow_button=True, class_="large")}</span>
-        ##${frag_lists.member_list(content['creator'], _("Creator"))}
-          <div>
-            <span style="font-weight: bold;">${self.content['creator']['type'].capitalize()}:</span><br />
-            ${self.content['creator']['name']}<br />
-            (${self.content['creator']['username']})<br />
-            ## Member Info Here
-            ##% if self.member['website'] != '':
-            ##  Website: ${self.member['join_date']}<br />
-            ##% endif
-            ##Joined: ${self.member['join_date']}<br />
+      <div class="frag_col">
+        <div style="clear:left;" class="frag_list">
+          <h2><span class="icon icon_${self.content['creator']['type']}"><span>${self.content['creator']['type']}</span><div style="display:inline-block;padding-left:19px; width: 100%">Created&nbsp;by</div></span></h2>
+          <div class="frag_list_contents">
+            <div class="content" style="padding-bottom: 11px;">
+              <div>
+                <span style="float:left; padding-right: 3px;">${member_includes.avatar(self.content['creator'], show_name=True, show_follow_button=True, class_="large")}</span>
+              ##${frag_lists.member_list(content['creator'], _("Creator"))}
+                <div>
+                  <span style="font-weight: bold;">${self.content['creator']['name']}</span><br />
+                  Type: ${self.content['creator']['type'].capitalize()}<br />
+                  ## Member Info Here
+                  ##% if self.member['website'] != '':
+                  ##  Website: ${self.member['join_date']}<br />
+                  ##% endif
+                  ##Joined: ${self.member['join_date']}<br />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+        ##<h2>${_("Content by")}</h2>
+        ${content_details_foot()}
+        ${content_details()}
+        ${content_license()}
         % if self.content['parent']:
             ${frag_lists.content_list(self.content['parent'], _("Parent content"), creator=True)}
         % endif
@@ -150,19 +155,22 @@
             <p>${field_name}: ${content[field_name]}</p>
             % endif
         </%def>
-        <%def name="format_date_if(title, date_input)">
+        <%def name="format_date_if(title, date_input, fuzzy=True)">
           % if date_input:
             <tr>
-              <td><span class="icon icon_date"><span>&nbsp;</span></span></td>
+              <td><span class="icon icon_date" title="${title}"><span>&nbsp;</span></span></td>
               <td>${title}</td>
-              ##<td colspan="4">${datetime.datetime.strftime(date_input, '%d/%m/%Y')}</td>
-              <td colspan="4">${h.time_ago(date_input)}</td>
+              % if fuzzy:
+                <td colspan="4">${h.time_ago(date_input)}</td>
+              % else:
+                <td colspan="4">${datetime.datetime.strftime(h.api_datestr_to_datetime(date_input), '%d/%m/%Y')}</td>
+              % endif
             </tr>
           % endif
         </%def>
         <%def name="iconify(field_name, title, icon_classes)">
           % if content.get(field_name):
-            <span class="${icon_classes}"><span>${title}</span></span>
+            <span class="${icon_classes}" title="${title}"><span>${title}</span></span>
           % endif
         </%def>
         <style type="text/css">
@@ -178,22 +186,16 @@
             <td>Views</td>
             <td>${content['views'] if 'views' in content else '0'}</td>
           </tr>
-          ${format_date_if('Event Date', content.get('event_date'))}
-          ${format_date_if('Due By'    , content.get('due_date')  )}
         </table>
-        <div class="iconholder">
+        <div class="padded">${rating()}</div>
+        <div class="iconholder padded">
           ${iconify('private', 'Private Content', 'icon icon_private')}
           ${iconify('closed', 'Closed', 'icon icon_closed')}
-          ${iconify('edit_lock', 'Locked for editing', 'icon icon_edit_lock')}
+          % if content.get('approval')=='approved':
+            <div class="icon icon_approved" title="approved"><span>Approved</span></div>${_("Approved")}
+          % endif
+          <span style="float: right;">${iconify('edit_lock', 'Locked for editing', 'icon icon_edit_lock')}</span>
         </div>
-        
-       
-        
-        <ul class="status">
-            % if 'approval' in content and content['approval']=='approved':
-            <li><div class="icon_large icon_approved_large" title="approved content"></div>${_("approved content")}</li>
-            % endif
-        </ul>
     </div>
 
 
@@ -211,15 +213,19 @@
           <p>${field_name}: ${content[field_name]}</p>
           % endif
       </%def>
-      <%def name="format_date_if(title, date_input)">
-        % if date_input:
-          <tr>
-            <td><span class="icon icon_date"><span>&nbsp;</span></span></td>
-            <td>${title}</td>
-            <td>${_('%s ago') % h.time_ago(date_input)}</td>
-          </tr>
-        % endif
-      </%def>
+        <%def name="format_date_if(title, date_input, fuzzy=True, trclass=None)">
+          % if date_input:
+            <tr${' class=%s' % trclass if trclass else ''}>
+              <td><span class="icon icon_date"><span>&nbsp;</span></span></td>
+              <td>${title}</td>
+              % if fuzzy:
+                <td>${_('%s ago') % h.time_ago(date_input)}</td>
+              % else:
+                <td>${datetime.datetime.strftime(h.api_datestr_to_datetime(date_input), '%d/%m/%Y')}</td>
+              % endif
+            </tr>
+          % endif
+        </%def>
       <%def name="iconify(field_name, title, icon_classes)">
         % if content.get(field_name):
           <span class="${icon_classes}"><span>${title}</span></span>
@@ -230,9 +236,13 @@
         table.content tr td.x { padding-left: 3px; }
       </style>
       <table class="content">
-        ${format_date_if('Created'  , content.get('creation_date'))}</p>
+##        ${format_date_if('Created'  , content.get('creation_date'))}</p>
         ${format_date_if('Published', content.get('publish_date' ))}</p>
-        ${format_date_if('Updated'  , content.get('update_date'  ))}</p>
+        % if content.get('publish_date') != content.get('update_date'):
+          ${format_date_if('Updated'  , content.get('update_date'  ))}</p>
+        % endif
+        ${format_date_if('Event Date', content.get('event_date'), False, 'bold')}
+        ${format_date_if('Due By'    , content.get('due_date'), False, 'bold'  )}
       </table>
     </div>
 
@@ -259,7 +269,7 @@
 <%def name="content_license()">
     % if 'license' in self.content:
     <% license = self.content['license'] %>
-    <div style="padding-top: 4px">
+    <div class="padded" style="margin-top:14px">
       <a href="${license['url']}" target="_blank" title="${license['description']}">
         <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
       </a>
@@ -282,7 +292,7 @@
 
     <ul class="media">
     % for media in content['attachments']:
-        <li>
+        <li class="paddedbottom">
         % if media['type'] == "image":
             <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}" style="max-width: ${media_width}px; max-height: ${media_height}px;"/></a>
         % elif media['type'] == "audio":
@@ -300,6 +310,16 @@
         % else:
             ${_("unrecognised media type: %s") % media['type']}
         % endif
+        % if media.get('caption') or media.get('credit'):
+          <br />
+        % endif
+        % if media.get('caption'):
+          <span class="caption">${media['caption']}</span>
+        % endif
+        % if media.get('credit'):
+          <span class="credit">(${_('Credit to')}: ${media['credit']})</span>
+        % endif
+        <br />
         </li>
     % endfor
     </ul>
@@ -340,14 +360,59 @@
     content  = self.content
     comments = d['comments']['items']
 %>
+<div style="padding-top: 20px;" class="acceptrequest">
+  % if 'publish' in self.actions:
+      ${h.secure_link(
+          h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
+          method = "PUT" ,
+          css_class = 'button',
+          value           = _('Publish') ,
+          json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+          
+      )}
+      <span class="separtor"></span>
+  % endif
+  ## --- Respond -------------------------------------------------------------
+  % if self.content['type'] != 'draft':
+      ${h.secure_link(
+          h.args_to_tuple('new_content', parent_id=self.id) ,
+          css_class = 'button',
+          value           = _("Respond") ,
+          json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+      )}
+      ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
+      ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
+      <span class="separtor"></span>
+  % endif
+  % if 'accept' in self.actions:
+      ${h.secure_link(
+          h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
+          css_class = 'button',
+          value           = _('Accept') ,
+          json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+      )}
+      ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
+      <span class="separtor"></span>
+  % endif
+  
+  % if 'withdraw' in self.actions:
+      ${h.secure_link(
+          h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
+          css_class = 'button',
+          value           = _('Withdraw') ,
+          json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+      )}
+      <span class="separtor"></span>
+  % endif
+</div>
 <div class="comments">
-    <h2>${_("Comments")}</h2>
+    <h2 style="padding-top: 20px; padding-bottom: 10px;">${_("Comments")}</h2>
 
     <table>
         <tr style="display: none;"><th>${_('Member')}</th><th>${_('Comment')}</th></tr>
         % for comment in comments:
         <tr>
-            <td class="comment_avatar">
+            <td style="padding-bottom: 6px" class="comment_avatar">
                 ${member_includes.avatar(comment['creator'])}
             </td>
             <td class="comment">
@@ -362,7 +427,7 @@
                 ##</b>
             </td>
             <td>
-                ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as offensive/spam') , class_='icon icon_flag')}
+                ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon icon_flag')}
             </td>
         </tr>
         % endfor
@@ -383,7 +448,7 @@
                     <input type="hidden" name="type" value="comment">
                     <textarea name="content" class="comment_textarea"></textarea>
                     <br><!--<input type="submit" name="submit_preview" value="Preview">-->
-                    <input type="submit" name="submit_response" value="${_('Comment')}">
+                    <br /><input type="submit" name="submit_response" value="${_('Comment')}">
                 ${h.end_form()}
             </td>
             <td>
@@ -510,7 +575,7 @@
     % if 'dissasociate' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
-            value           = _('Disasociate') ,
+            value           = _('Disassociate') ,
             value_formatted = h.literal("<span class='icon icon_dissasociate'></span>%s") % _('Disasociate'),
             title           = _("Dissacociate your content from this response") ,
             confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,

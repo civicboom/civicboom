@@ -2,11 +2,17 @@
  * composer (/messages/new)
  */
 .message_composer {
+  width: 200pt;
+  height: 200pt;
 	text-align: right;
 }
 .message_composer INPUT,
 .message_composer TEXTAREA {
 	width: 100%;
+}
+
+.message_composer TEXTAREA {
+  height: 150pt;
 }
 
 /*

@@ -5,6 +5,8 @@
     help_frag = 'message_routes'
 %>
 
+<%def name="title()">${_("Edit your notification settings")}</%def>
+
 <%def name="body()">
 ${h.form(h.url('setting', id='messages'), method='PUT')}
 <%
@@ -36,7 +38,11 @@ def check(name, tech, default):
 			<!--<td><input name="${gen[0]}_c" type="checkbox" value="c" ${check(gen[0], 'c', gen[1])}></td>-->
 		</tr>
 	% endfor
-		<tr><td colspan="3"><input class="button" type="submit" value="Save" style="width: 100%"></td></tr>
+		<tr><td>
+         <a class="button" href    = "${h.url('settings')}" title   = "${_('Back to Settings')}">
+          <span>${_('Back to Settings')}</span>
+         </a>
+		</td><td colspan="2"><input class="button" type="submit" value="Save" style="width: 100%"></td></tr>
 	</table>
 ${h.end_form()}
 </%def>
