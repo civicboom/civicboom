@@ -159,11 +159,11 @@
 ##          <td colspan="4"><input type="text" name="website" id="website" /></td>
 ##          <td>&nbsp;</td>
 ##        </tr>
-##        <tr class="padding">
-##          <td colspan="2"><label for="logo_file">Logo File:</label></td>
-##          <td colspan="4"><input type="file" name="logo_file" id="logo_file" /></td>
-##          <td>&nbsp;</td>
-##        </tr>
+        <tr class="padding">
+          <td colspan="2"><label for="logo_file">Logo File:</label></td>
+          <td colspan="4"><input type="file" name="logo_file" id="logo_file" /></td>
+          <td>&nbsp;</td>
+        </tr>
 ##        <tr class="padding">
 ##          <td colspan="2"><label for="logo_file">or</label></td>
 ##          <td colspan="5">&nbsp;</td>

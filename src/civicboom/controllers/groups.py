@@ -15,6 +15,10 @@ import formencode
 from civicboom.lib.form_validators.base         import DefaultSchema
 from civicboom.lib.form_validators.registration import UniqueUsernameValidator
 
+from civicboom.controllers.settings import SettingsController
+
+settings_update = SettingsController().update
+
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
@@ -35,6 +39,7 @@ class GroupSchema(DefaultSchema):
     join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
     member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
     default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
+    logo_file                  = formencode.validators.FieldStorageUploadConverter(          not_empty=False)
 
 class CreateGroupSchema(GroupSchema):
     username                   = UniqueUsernameValidator()
@@ -214,6 +219,13 @@ class GroupsController(BaseController):
         group.join_mode                  = group_dict['join_mode']
         group.member_visibility          = group_dict['member_visibility']
         group.default_content_visibility = group_dict['default_content_visibility']
+        
+        # GregM: call settings_update with logo_file as avatar
+        #Not working :( not being passed a webobj just string filename
+        if kwargs.get('logo_file'):
+            print kwargs
+            print request.POST['logo_file']
+            #settings_update(id=id, avatar=kwargs['logo_file'])
         
         Session.commit()
         
