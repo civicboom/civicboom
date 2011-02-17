@@ -21,13 +21,15 @@ if not always_show_map:
 <script type="text/javascript">
 $(function() {
 	map = map_picker('${field_name}', {
+% if lon and lat:
 		lonlat: {lon:${lon}, lat:${lat}},
+% endif
 	});
 });
 </script>
 </%def>
 
-<%def name="minimap(name='map', width='250px', height='250px', lon=None, lat=None, zoom=13, feeds=[], controls=False)">
+<%def name="minimap(lon, lat, zoom=13, name='map', width='250px', height='250px', feeds=[], controls=False)">
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 <%
 import json
