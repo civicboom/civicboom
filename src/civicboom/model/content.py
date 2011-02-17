@@ -104,9 +104,9 @@ class Content(Base):
     #parent          = relationship("Content", primaryjoin=parent_id==id, remote_side=id)
     creator         = relationship("Member" , primaryjoin="Content.creator_id==Member.id", backref=backref('content', cascade="all,delete-orphan"))
     
-    attachments     = relationship("Media",              backref=backref('attached_to'), cascade="all,delete-orphan")
+    attachments     = relationship("Media",              backref=backref('attached_to')         , cascade="all,delete-orphan")
     edits           = relationship("ContentEditHistory", backref=backref('content', order_by=id), cascade="all,delete-orphan")
-    tags            = relationship("Tag",                secondary=ContentTagMapping.__table__)
+    tags            = relationship("Tag",                secondary=ContentTagMapping.__table__ )
     license         = relationship("License")
     
     comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="(CommentContent.id==Content.parent_id) & (Content.visible==True)")

@@ -79,7 +79,10 @@
 <%def name="dob()">
   <tr>
 		<td>Date of Birth</td>
-		<td><input id="datepicker" type="date" name="dob"   value="${h.get_data_value('dob','register' ,c.logged_in_persona.config['dob'])}"></td>
+		<td>
+		  <input id="datepicker" type="date" name="dob"   value="${h.get_data_value('dob','register' ,c.logged_in_persona.config['dob'])}"><br />
+		  ${_('Please pick your year and month of birth before selecting the day.')}
+		</td>
 		<td>${invalid('dob')}</td>
 	</tr>
 </%def>
