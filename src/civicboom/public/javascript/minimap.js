@@ -73,15 +73,14 @@ function minimap(div_name, options, feeds) {
 	return map;
 }
 
-function map_picker(field_name) {
-	var map = minimap(
-		field_name+'_div',
-		{
-			controls: true,
+function map_picker(field_name, options) {
+	options["controls"] = true;
 			// default UK
 			//lonlat: {lon:-4, lat:54},
 			//zoom: 4,
-		}
+	var map = minimap(
+		field_name+'_div',
+		options
 	);
 
 
