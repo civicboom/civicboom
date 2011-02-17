@@ -39,7 +39,7 @@ class GroupSchema(DefaultSchema):
     join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
     member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
     default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
-    logo_file                  = formencode.validators.FieldStorageUploadConverter(          not_empty=False)
+    #logo_file                  = formencode.validators.FieldStorageUploadConverter(          not_empty=False)
 
 class CreateGroupSchema(GroupSchema):
     username                   = UniqueUsernameValidator()
@@ -158,8 +158,8 @@ class GroupsController(BaseController):
         """
         # url('groups') + POST
         # if only display name is specified, generate a user name
-        if "username" not in kwargs:
-            kwargs["username"] = make_username(kwargs["name"])
+        if not kwargs.get('username') and kwargs.get("name"):
+            kwargs["username"] = make_username(kwargs.get("name"))
         
         data       = {'group':kwargs, 'action':'create'}
         data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
