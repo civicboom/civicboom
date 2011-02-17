@@ -2,7 +2,7 @@ from civicboom.tests import *
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_content, get_membership
 
-from civicboom.model         import Boom, Content, Media, Member, Follow, GroupMembership, Message, Tag
+from civicboom.model         import Boom, Content, Media, Member, Follow, GroupMembership, Message, Tag, MemberAssignment
 from civicboom.model.meta    import Session
 
 from base64 import b64encode, b64decode
@@ -30,12 +30,12 @@ class TestDeleteCascadesController(TestController):
             url_index = url('contents', format='json', term=term)
         return self.get_list_count(url_index)
 
-    def create_content(self, parent_id=None, title=u'Testing delete_cascade'):
+    def create_content(self, parent_id=None, title=u'Testing delete_cascade', type='article'):
         params={
             '_authentication_token': self.auth_token,
             'title'         : title ,
             'contents'      : u'delete_cascade delete_cascade' ,
-            'type'          : u'article' ,
+            'type'          : type ,
             'tags'          : u'delete_cascade' ,
             'submit_publish': u'publish' ,
         }
@@ -93,7 +93,7 @@ class TestDeleteCascadesController(TestController):
                 '_authentication_token': self.auth_token,
                 'title'         : u'Testing delete_cascade' ,
                 'contents'      : u'delete_cascade delete_cascade' ,
-                'type'          : u'article' ,
+                'type'          : u'assignment' ,
                 'tags'          : u'delete_cascade' ,
                 'submit_publish': u'publish' ,
             },
@@ -125,8 +125,6 @@ class TestDeleteCascadesController(TestController):
         self.send_member_message('delete_cascade', 'testing delete_cascade', 'this message should never be seen as it part of the delete_cascade test')
         self.boom_content(self.content_id)
         self.comment(self.content_id, 'delete_cascade comment')
-        
-        
         
         # Follow, message send, comment
         self.log_in_as('delete_cascade')
@@ -238,19 +236,26 @@ class TestDeleteCascadesController(TestController):
         num_content_start = self.num_content_public()
         
         # Step 1: Create content
-        self.content_id = self.create_content()
+        self.content_id = self.create_content(type='assignment')
         
-        # Step 2: Create responses and comments
+        # Step 2: Create responses, comments and accept
         self.log_in_as('unitfriend')
         response_1_id = self.create_content(self.content_id, 'response 1')
         response_2_id = self.create_content(self.content_id, 'response 2')
         self.comment(  self.content_id, 'delete_cascade comment')
         self.comment(    response_1_id, 'delete_cascade response comment')
         
+        response = self.app.post( # Accept assignment
+            url('content_action', action='accept', id=self.content_id, format='json') ,
+            params = {'_authentication_token': self.auth_token,} ,
+            status = 200
+        )
+        
         response      = self.app.get(url('content', id=self.content_id, format='json'), status=200)
         response_json = json.loads(response.body)
         assert response_json['data']['responses']['count'] == 2
         assert response_json['data']['comments' ]['count'] == 1
+        assert response_json['data']['accepted_status']['count'] == 1
         
         # Step 3: Delete content
         content_delete_cascade = get_content(self.content_id)
@@ -261,6 +266,7 @@ class TestDeleteCascadesController(TestController):
         assert 'delete_cascade response comment' in response
         response      = self.app.get(url('content', id=response_2_id, format='json'), status=200)
         
-        assert Session.query(Content        ).filter_by(  parent_id = self.content_id              ).count() == 0
-        assert Session.query(Tag            ).filter_by(       name = 'delete_cascade'             ).count() == 1 #Tag remains at the end, this could be tidyed witha  delete orphan cascade
+        assert Session.query(Content         ).filter_by(  parent_id = self.content_id              ).count() == 0
+        assert Session.query(Tag             ).filter_by(       name = 'delete_cascade'             ).count() == 1 #Tag remains at the end, this could be tidyed witha  delete orphan cascade
+        assert Session.query(MemberAssignment).filter_by( content_id = self.content_id              ).count() == 0
         
