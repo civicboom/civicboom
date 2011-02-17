@@ -79,8 +79,8 @@ generators = [
     ["assignment_invite",                    "ne", _("closed _assignment invitation") , _("%(member)s has invited you to participate in the _assignment %(assignment)s")],
 
     # Assignment Timed Tasks
-    ["assignment_due_7days",                 "ne", _("_assignment due next week"),   _("The _assignment you accepted %(assignment)s is due next week")],
-    ["assignment_due_1day",                  "ne", _("_assignment due tomorrow"),    _("The _assignment you accepted %(assignment)s is due tomorrow")],
+    ["assignment_due_7days",                 "ne", _("_assignment alert: due next week"),   _("The _assignment you accepted %(assignment)s is due next week")],
+    ["assignment_due_1day",                  "ne", _("_assignment alert: due tomorrow"),    _("The _assignment you accepted %(assignment)s is due tomorrow")],
 
     # Response Actions
     ["article_disassociated_from_assignment","n",  _("_article disassociated from _assignment"), _("%(member)s disassociated your _article %(article)s from the _assignment %(assignment)s")],
@@ -102,8 +102,8 @@ generators = [
     ["group_remove_member_to_member",        "ne", _("removed from _group"),         _("%(admin)s removed your membership to %(group)s")],
     
     # Aggregation
-    ["boom_article",                         "ne", _("_article boom"),               _("%(member)s thinks you might find this _article interesting %(article)s")],
-    ["boom_assignment",                      "ne", _("_assignment boom"),            _("%(member)s thinks you might want to add your opinion to this _assignment %(assignment)s")],
+    ["boom_article",                         "ne", _("_article boomed"),               _("%(member)s thinks you might find this _article interesting %(article)s")],
+    ["boom_assignment",                      "ne", _("_assignment boomed"),            _("%(member)s thinks you might want to add your opinion to this _assignment %(assignment)s")],
 
     # Syndication
     ["syndicate_accept",                     "n",  _("_article was syndicated"),     _("%(member)s has accepted your syndication request for _article %(article)s. Check your email for the details")],
