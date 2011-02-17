@@ -47,10 +47,10 @@
     %>
     % if d['action']=='edit' and 'group' in d:
         ## Editing Form
-        ${h.form(h.url('group', id=get_param('id')), method='put')}
+        ${h.form(h.url('group', id=get_param('id')), method='PUT' , multipart=True)}
     % else:
         ## Creating Form
-        ${h.form(h.url('groups', ), method='post')}
+        ${h.form(h.url('groups', )                 , method='POST', multipart=True)}
     % endif
 
 
@@ -160,8 +160,8 @@
 ##          <td>&nbsp;</td>
 ##        </tr>
         <tr class="padding">
-          <td colspan="2"><label for="logo_file">Logo File:</label></td>
-          <td colspan="4"><input type="file" name="logo_file" id="logo_file" /></td>
+          <td colspan="2"><label for="avatar">Group avatar:</label></td>
+          <td colspan="4"><input type="file" name="avatar" id="avatar" /></td>
           <td>&nbsp;</td>
         </tr>
 ##        <tr class="padding">

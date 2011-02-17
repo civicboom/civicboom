@@ -25,6 +25,7 @@ def trans(text):
         ("member",     "member"),
         ("user",       "user"),
         ("group",      "group"),
+        ("draft",      "draft"),
     ]
     for w, r in words:
         text = text.replace("_"+w, r)

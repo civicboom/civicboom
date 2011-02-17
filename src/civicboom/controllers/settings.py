@@ -81,7 +81,7 @@ settings_validators = dict(
     
     avatar = formencode.validators.FieldStorageUploadConverter(),
     
-    location_home = civicboom.lib.form_validators.base.LocationValidator(),
+    location_home    = civicboom.lib.form_validators.base.LocationValidator(),
     location_current = civicboom.lib.form_validators.base.LocationValidator(),
 )
 
