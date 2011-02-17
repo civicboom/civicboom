@@ -125,12 +125,15 @@ class TestDeleteCascadesController(TestController):
         self.send_member_message('delete_cascade', 'testing delete_cascade', 'this message should never be seen as it part of the delete_cascade test')
         self.boom_content(self.content_id)
         self.comment(self.content_id, 'delete_cascade comment')
+        unittest_assingment_id = self.create_content(type='assignment')
         
         # Follow, message send, comment
         self.log_in_as('delete_cascade')
         self.follow('unittest')
         self.send_member_message('unittest', 'testing delete_cascade', 'this message should never be seen as it part of the delete_cascade test')
         self.comment(self.content_id, 'delete_cascade comment')
+        # TODO: accept assignment by unittest
+        self.accept_assignment(unittest_assingment_id)
         
         response      = self.app.get(url('member', id='unittest', format='json'), status=200)
         response_json = json.loads(response.body)
@@ -164,23 +167,24 @@ class TestDeleteCascadesController(TestController):
         # check tables deeply for all instances of the member id for removal
         
         assert self.num_members_public('delete_cascade') == 2 # 'delete_cascade' and 'delete_cascade_group'
-        assert self.num_content_public('delete_cascade') == 1 # 'delete_cascade' in public content
+        assert self.num_content_public('delete_cascade') == 2 # 'delete_cascade' in public content # unittest assignment has delete cascade in title and content
         
-        assert Session.query(Media          ).filter_by(         id = self.media_id                ).count() == 1
-        assert Session.query(Content        ).filter_by(         id = self.content_id              ).count() == 1
-        assert Session.query(Content        ).filter_by(  parent_id = self.content_id              ).count() == 2
-        assert Session.query(Boom           ).filter_by( content_id = self.content_id              ).count() == 1
+        assert Session.query(Media           ).filter_by(         id = self.media_id                ).count() == 1
+        assert Session.query(Content         ).filter_by(         id = self.content_id              ).count() == 1
+        assert Session.query(Content         ).filter_by(  parent_id = self.content_id              ).count() == 2
+        assert Session.query(Boom            ).filter_by( content_id = self.content_id              ).count() == 1
         
-        assert Session.query(Member         ).filter_by(         id = self.delete_cascade_member_id).count() == 1
-        #assert Session.query(Boom           ).filter_by(  member_id = self.delete_cascade_member_id).count() == 1 # The boom didnt come from the member 'delete_cascade'
-        assert Session.query(GroupMembership).filter_by(  member_id = self.delete_cascade_member_id).count() == 1
-        assert Session.query(Follow         ).filter_by(  member_id = self.delete_cascade_member_id).count() == 1
-        assert Session.query(Follow         ).filter_by(follower_id = self.delete_cascade_member_id).count() == 1
+        assert Session.query(Member          ).filter_by(         id = self.delete_cascade_member_id).count() == 1
+        #assert Session.query(Boom            ).filter_by(  member_id = self.delete_cascade_member_id).count() == 1 # The boom didnt come from the member 'delete_cascade'
+        assert Session.query(GroupMembership ).filter_by(  member_id = self.delete_cascade_member_id).count() == 1
+        assert Session.query(Follow          ).filter_by(  member_id = self.delete_cascade_member_id).count() == 1
+        assert Session.query(Follow          ).filter_by(follower_id = self.delete_cascade_member_id).count() == 1
+        assert Session.query(MemberAssignment).filter_by(  member_id = self.delete_cascade_member_id).count() == 1
         
-        #assert Session.query(Message        ).filter_by(  target_id = self.delete_cascade_member_id).count() == 1 # cant == 1 as notifications are generated and it is more than 1
-        assert Session.query(Message        ).filter_by(  source_id = self.delete_cascade_member_id).count() == 1
+        #assert Session.query(Message         ).filter_by(  target_id = self.delete_cascade_member_id).count() == 1 # cant == 1 as notifications are generated and it is more than 1
+        assert Session.query(Message         ).filter_by(  source_id = self.delete_cascade_member_id).count() == 1
         
-        assert Session.query(Tag            ).filter_by(       name = 'delete_cascade'             ).count() == 1
+        assert Session.query(Tag             ).filter_by(       name = 'delete_cascade'             ).count() == 1
         
         #-----------------------------------------------------------------------
         # Step 3: Delete objects
@@ -198,9 +202,9 @@ class TestDeleteCascadesController(TestController):
         #-----------------------------------------------------------------------
         
         assert self.num_members_public('delete_cascade') == 0
-        assert self.num_content_public('delete_cascade') == 0
+        assert self.num_content_public('delete_cascade') == 1 #unittest assignmet is still there
         assert num_members_start == self.num_members_public()
-        assert num_content_start == self.num_content_public()
+        assert num_content_start == self.num_content_public() - 1  # unittest assignmetn is still there
         
         # check current number of
         response      = self.app.get(url('member', id='unittest', format='json'), status=200)
@@ -210,21 +214,26 @@ class TestDeleteCascadesController(TestController):
         assert num_boomed_content == response_json['data']['boomed_content']['count']
         
         # check tables deeply for all instances of the member id for removal
-        assert Session.query(Media          ).filter_by(         id = self.media_id                ).count() == 0
-        assert Session.query(Content        ).filter_by(         id = self.content_id              ).count() == 0
-        assert Session.query(Content        ).filter_by(  parent_id = self.content_id              ).count() == 0
-        assert Session.query(Boom           ).filter_by( content_id = self.content_id              ).count() == 0
+        assert Session.query(Media           ).filter_by(         id = self.media_id                ).count() == 0
+        assert Session.query(Content         ).filter_by(         id = self.content_id              ).count() == 0
+        assert Session.query(Content         ).filter_by(  parent_id = self.content_id              ).count() == 0
+        assert Session.query(Boom            ).filter_by( content_id = self.content_id              ).count() == 0
         
-        assert Session.query(Member         ).filter_by(         id = self.delete_cascade_member_id).count() == 0        
-        assert Session.query(Boom           ).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
-        assert Session.query(GroupMembership).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
-        assert Session.query(Follow         ).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
-        assert Session.query(Follow         ).filter_by(follower_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(Member          ).filter_by(         id = self.delete_cascade_member_id).count() == 0        
+        assert Session.query(Boom            ).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(GroupMembership ).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(Follow          ).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(Follow          ).filter_by(follower_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(MemberAssignment).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
         
-        assert Session.query(Message        ).filter_by(  target_id = self.delete_cascade_member_id).count() == 0
-        assert Session.query(Message        ).filter_by(  source_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(Message         ).filter_by(  target_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(Message         ).filter_by(  source_id = self.delete_cascade_member_id).count() == 0
         
-        assert Session.query(Tag            ).filter_by(       name = 'delete_cascade'             ).count() == 1 #Tag remains at the end, this could be tidyed witha  delete orphan cascade
+        assert Session.query(Tag             ).filter_by(       name = 'delete_cascade'             ).count() == 1 #Tag remains at the end, this could be tidyed witha  delete orphan cascade
+        
+        # Step 5: cleanup
+        unittest_assignment = get_content(unittest_assingment_id)
+        unittest_assignment.delete()
         
         
     #---------------------------------------------------------------------------
@@ -244,12 +253,7 @@ class TestDeleteCascadesController(TestController):
         response_2_id = self.create_content(self.content_id, 'response 2')
         self.comment(  self.content_id, 'delete_cascade comment')
         self.comment(    response_1_id, 'delete_cascade response comment')
-        
-        response = self.app.post( # Accept assignment
-            url('content_action', action='accept', id=self.content_id, format='json') ,
-            params = {'_authentication_token': self.auth_token,} ,
-            status = 200
-        )
+        self.accept_assignment(self.content_id)
         
         response      = self.app.get(url('content', id=self.content_id, format='json'), status=200)
         response_json = json.loads(response.body)
