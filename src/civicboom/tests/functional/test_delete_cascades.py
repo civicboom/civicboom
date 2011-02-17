@@ -2,7 +2,7 @@ from civicboom.tests import *
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_content, get_membership
 
-from civicboom.model         import Boom, Content, Media, Member, Follow, GroupMembership, Message
+from civicboom.model         import Boom, Content, Media, Member, Follow, GroupMembership, Message, Tag
 from civicboom.model.meta    import Session
 
 from base64 import b64encode, b64decode
@@ -29,6 +29,28 @@ class TestDeleteCascadesController(TestController):
         if term:
             url_index = url('contents', format='json', term=term)
         return self.get_list_count(url_index)
+
+    def create_content(self, parent_id=None, title=u'Testing delete_cascade'):
+        params={
+            '_authentication_token': self.auth_token,
+            'title'         : title ,
+            'contents'      : u'delete_cascade delete_cascade' ,
+            'type'          : u'article' ,
+            'tags'          : u'delete_cascade' ,
+            'submit_publish': u'publish' ,
+        }
+        if parent_id:
+            params.update({'parent_id':parent_id})
+        
+        response = self.app.post(
+            url('contents', format='json') ,
+            params = params ,
+            status = 201 ,
+        )
+        response_json = json.loads(response.body)
+        content_id = int(response_json['data']['id'])
+        assert content_id > 0
+        return content_id
 
 
     #---------------------------------------------------------------------------
@@ -117,7 +139,7 @@ class TestDeleteCascadesController(TestController):
         assert num_following      + 1 == response_json['data']['following'     ]['count']
         assert num_followers      + 1 == response_json['data']['followers'     ]['count']
         assert num_boomed_content + 1 == response_json['data']['boomed_content']['count']
-
+        
         
         # Create group - and therefor become a member
         response = self.app.post(
@@ -138,11 +160,32 @@ class TestDeleteCascadesController(TestController):
         self.group_id = int(response_json['data']['id'])
         assert self.group_id > 0
         
+        #-----------------------------------------------------------------------
+        # Step 2: check data is in database
+        #-----------------------------------------------------------------------
+        # check tables deeply for all instances of the member id for removal
+        
         assert self.num_members_public('delete_cascade') == 2 # 'delete_cascade' and 'delete_cascade_group'
         assert self.num_content_public('delete_cascade') == 1 # 'delete_cascade' in public content
         
+        assert Session.query(Media          ).filter_by(         id = self.media_id                ).count() == 1
+        assert Session.query(Content        ).filter_by(         id = self.content_id              ).count() == 1
+        assert Session.query(Content        ).filter_by(  parent_id = self.content_id              ).count() == 2
+        assert Session.query(Boom           ).filter_by( content_id = self.content_id              ).count() == 1
+        
+        assert Session.query(Member         ).filter_by(         id = self.delete_cascade_member_id).count() == 1
+        #assert Session.query(Boom           ).filter_by(  member_id = self.delete_cascade_member_id).count() == 1 # The boom didnt come from the member 'delete_cascade'
+        assert Session.query(GroupMembership).filter_by(  member_id = self.delete_cascade_member_id).count() == 1
+        assert Session.query(Follow         ).filter_by(  member_id = self.delete_cascade_member_id).count() == 1
+        assert Session.query(Follow         ).filter_by(follower_id = self.delete_cascade_member_id).count() == 1
+        
+        #assert Session.query(Message        ).filter_by(  target_id = self.delete_cascade_member_id).count() == 1 # cant == 1 as notifications are generated and it is more than 1
+        assert Session.query(Message        ).filter_by(  source_id = self.delete_cascade_member_id).count() == 1
+        
+        assert Session.query(Tag            ).filter_by(       name = 'delete_cascade'             ).count() == 1
+        
         #-----------------------------------------------------------------------
-        # Step 2: Delete objects
+        # Step 3: Delete objects
         #-----------------------------------------------------------------------
         
         member_delete_cascade = get_member('delete_cascade')
@@ -153,7 +196,7 @@ class TestDeleteCascadesController(TestController):
         group_delete_cascade.delete()
         
         #-----------------------------------------------------------------------
-        # Step 3: Check for successful removal
+        # Step 4: Check for successful removal
         #-----------------------------------------------------------------------
         
         assert self.num_members_public('delete_cascade') == 0
@@ -173,7 +216,7 @@ class TestDeleteCascadesController(TestController):
         assert Session.query(Content        ).filter_by(         id = self.content_id              ).count() == 0
         assert Session.query(Content        ).filter_by(  parent_id = self.content_id              ).count() == 0
         assert Session.query(Boom           ).filter_by( content_id = self.content_id              ).count() == 0
-
+        
         assert Session.query(Member         ).filter_by(         id = self.delete_cascade_member_id).count() == 0        
         assert Session.query(Boom           ).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
         assert Session.query(GroupMembership).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
@@ -182,3 +225,42 @@ class TestDeleteCascadesController(TestController):
         
         assert Session.query(Message        ).filter_by(  target_id = self.delete_cascade_member_id).count() == 0
         assert Session.query(Message        ).filter_by(  source_id = self.delete_cascade_member_id).count() == 0
+        
+        assert Session.query(Tag            ).filter_by(       name = 'delete_cascade'             ).count() == 1 #Tag remains at the end, this could be tidyed witha  delete orphan cascade
+        
+        
+    #---------------------------------------------------------------------------
+    # Delete Content
+    #---------------------------------------------------------------------------
+    def test_delete_content(self):
+        
+        assert self.num_content_public('delete_cascade') == 0
+        num_content_start = self.num_content_public()
+        
+        # Step 1: Create content
+        self.content_id = self.create_content()
+        
+        # Step 2: Create responses and comments
+        self.log_in_as('unitfriend')
+        response_1_id = self.create_content(self.content_id, 'response 1')
+        response_2_id = self.create_content(self.content_id, 'response 2')
+        self.comment(  self.content_id, 'delete_cascade comment')
+        self.comment(    response_1_id, 'delete_cascade response comment')
+        
+        response      = self.app.get(url('content', id=self.content_id, format='json'), status=200)
+        response_json = json.loads(response.body)
+        assert response_json['data']['responses']['count'] == 2
+        assert response_json['data']['comments' ]['count'] == 1
+        
+        # Step 3: Delete content
+        content_delete_cascade = get_content(self.content_id)
+        content_delete_cascade.delete()
+        
+        # Step 4: Check deleted
+        response      = self.app.get(url('content', id=response_1_id, format='json'), status=200)
+        assert 'delete_cascade response comment' in response
+        response      = self.app.get(url('content', id=response_2_id, format='json'), status=200)
+        
+        assert Session.query(Content        ).filter_by(  parent_id = self.content_id              ).count() == 0
+        assert Session.query(Tag            ).filter_by(       name = 'delete_cascade'             ).count() == 1 #Tag remains at the end, this could be tidyed witha  delete orphan cascade
+        
