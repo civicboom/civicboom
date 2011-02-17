@@ -70,15 +70,15 @@
 		<h1>${self.member['name'] or self.member['username']}</h1><br />
         <div>
           <span style="float:left; padding-right: 3px;">${member_avatar()}</span>
-          <div>
+          <div style="padding-left: 92px" >
             % if self.member['website'] != '':
-              Website: ${self.member['join_date']}<br />
+              ${_('Website')}: ${self.member['join_date']}<br />
             % endif
             Joined: ${self.member['join_date']}<br />
             % if self.current_user:
-              Type: ${self.member['account_type'].capitalize()}
+              ${_('Type')}: ${self.member['account_type'].capitalize()}
             % endif
-            
+            <br />
             % if 'follow' in self.actions:
                 ${h.secure_link(
                     h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
@@ -88,9 +88,7 @@
                     json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
                 )}
                 <span class="separtor"></span>
-            % endif
-        
-            % if 'unfollow' in self.actions:
+            % elif 'unfollow' in self.actions:
                 ${h.secure_link(
                     h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
                     value           = _('Unfollow') ,
