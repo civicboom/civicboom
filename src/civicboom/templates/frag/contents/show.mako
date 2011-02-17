@@ -158,7 +158,7 @@
         <%def name="format_date_if(title, date_input, fuzzy=True)">
           % if date_input:
             <tr>
-              <td><span class="icon icon_date"><span>&nbsp;</span></span></td>
+              <td><span class="icon icon_date" title="${title}"><span>&nbsp;</span></span></td>
               <td>${title}</td>
               % if fuzzy:
                 <td colspan="4">${h.time_ago(date_input)}</td>
@@ -170,7 +170,7 @@
         </%def>
         <%def name="iconify(field_name, title, icon_classes)">
           % if content.get(field_name):
-            <span class="${icon_classes}"><span>${title}</span></span>
+            <span class="${icon_classes}" title="${title}"><span>${title}</span></span>
           % endif
         </%def>
         <style type="text/css">
@@ -187,7 +187,8 @@
             <td>${content['views'] if 'views' in content else '0'}</td>
           </tr>
         </table>
-        <div class="iconholder">
+        <div class="padded">${rating()}</div>
+        <div class="iconholder padded">
           ${iconify('private', 'Private Content', 'icon icon_private')}
           ${iconify('closed', 'Closed', 'icon icon_closed')}
           % if content.get('approval')=='approved':
@@ -212,9 +213,9 @@
           <p>${field_name}: ${content[field_name]}</p>
           % endif
       </%def>
-        <%def name="format_date_if(title, date_input, fuzzy=True)">
+        <%def name="format_date_if(title, date_input, fuzzy=True, trclass=None)">
           % if date_input:
-            <tr>
+            <tr${' class=%s' % trclass if trclass else ''}>
               <td><span class="icon icon_date"><span>&nbsp;</span></span></td>
               <td>${title}</td>
               % if fuzzy:
@@ -240,8 +241,8 @@
         % if content.get('publish_date') != content.get('update_date'):
           ${format_date_if('Updated'  , content.get('update_date'  ))}</p>
         % endif
-        ${format_date_if('Event Date', content.get('event_date'), False)}
-        ${format_date_if('Due By'    , content.get('due_date'), False  )}
+        ${format_date_if('Event Date', content.get('event_date'), False, 'bold')}
+        ${format_date_if('Due By'    , content.get('due_date'), False, 'bold'  )}
       </table>
     </div>
 
@@ -268,7 +269,7 @@
 <%def name="content_license()">
     % if 'license' in self.content:
     <% license = self.content['license'] %>
-    <div style="padding-top: 4px">
+    <div class="padded" style="margin-top:14px">
       <a href="${license['url']}" target="_blank" title="${license['description']}">
         <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
       </a>

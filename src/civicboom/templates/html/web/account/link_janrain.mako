@@ -20,15 +20,19 @@
 <%def name="link_accounts_frag()">
     <h1>${_("Link accounts")}</h1>
     
-    <h2>${_("Currently linked accounts")}</h2>
+    <h2>${_("Currently Linked Accounts")}</h2>
         <ul>
             % for login in c.logged_in_persona.login_details:
-            <li>${login.type}</li>
+            <li>${login.type.capitalize()}</li>
             % endfor
         </ul>
     
     <h2>${_("Add Account")}</h2>
         ${h.get_janrain(lang=c.lang)}
+    <br />
+    <a class="button" href    = "${h.url('settings')}" title   = "${_('Back to Settings')}">
+      <span>${_('Back to Settings')}</span>
+    </a>
 </%def>
 
 <%def name="help()">

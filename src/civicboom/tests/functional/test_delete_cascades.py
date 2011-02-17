@@ -1,6 +1,9 @@
 from civicboom.tests import *
 
-from civicboom.lib.database.get_cached import get_member, get_content, get_membership
+from civicboom.lib.database.get_cached import get_member, get_group, get_content, get_membership
+
+from civicboom.model         import Boom, Content, Media, Member, Follow, GroupMembership, Message
+from civicboom.model.meta    import Session
 
 from base64 import b64encode, b64decode
 
@@ -45,6 +48,12 @@ class TestDeleteCascadesController(TestController):
         
         # Create user
         self.sign_up_as('delete_cascade')
+        
+        response      = self.app.get(url('member', id='delete_cascade', format='json'), status=200)
+        response_json = json.loads(response.body)
+        self.delete_cascade_member_id = response_json['data']['member']['id']
+        assert self.delete_cascade_member_id > 0
+        
         assert self.num_members_public() == num_members_start + 1
         
         # Setup known objects for delete cascade - Create a record in every related table to 'delete_cascade' member
@@ -72,28 +81,43 @@ class TestDeleteCascadesController(TestController):
         response_json = json.loads(response.body)
         self.content_id = int(response_json['data']['id'])
         assert self.content_id > 0
-        
-        # Following, message recive, boom, comment
-        self.log_in_as('unittest')
+        response      = self.app.get(url('content', id=self.content_id, format='json'), status=200)
+        response_json = json.loads(response.body)
+        self.media_id = response_json['data']['content']['attachments'][0]['id']
+        assert self.media_id   > 0
+
+
+
         
         # record current number of
-        response      = self.app.get(url('member', id='delete_cascade', format='json'), status=200)
+        response      = self.app.get(url('member', id='unittest', format='json'), status=200)
         response_json = json.loads(response.body)
         num_following      = response_json['data']['following']['count']
         num_followers      = response_json['data']['followers']['count']
         num_boomed_content = response_json['data']['boomed_content']['count']
         #num_sent_messages =
         
+        # Following, message recive, boom, comment
+        self.log_in_as('unittest')
         self.follow('delete_cascade')
         self.send_member_message('delete_cascade', 'testing delete_cascade', 'this message should never be seen as it part of the delete_cascade test')
         self.boom_content(self.content_id)
         self.comment(self.content_id, 'delete_cascade comment')
-        self.log_in_as('delete_cascade')
+        
+        
         
         # Follow, message send, comment
+        self.log_in_as('delete_cascade')
         self.follow('unittest')
         self.send_member_message('unittest', 'testing delete_cascade', 'this message should never be seen as it part of the delete_cascade test')
         self.comment(self.content_id, 'delete_cascade comment')
+        
+        response      = self.app.get(url('member', id='unittest', format='json'), status=200)
+        response_json = json.loads(response.body)
+        assert num_following      + 1 == response_json['data']['following'     ]['count']
+        assert num_followers      + 1 == response_json['data']['followers'     ]['count']
+        assert num_boomed_content + 1 == response_json['data']['boomed_content']['count']
+
         
         # Create group - and therefor become a member
         response = self.app.post(
@@ -138,8 +162,23 @@ class TestDeleteCascadesController(TestController):
         assert num_content_start == self.num_content_public()
         
         # check current number of
-        response      = self.app.get(url('member', id='delete_cascade', format='json'), status=200)
+        response      = self.app.get(url('member', id='unittest', format='json'), status=200)
         response_json = json.loads(response.body)
         assert num_following      == response_json['data']['following']['count']
         assert num_followers      == response_json['data']['followers']['count']
         assert num_boomed_content == response_json['data']['boomed_content']['count']
+        
+        # check tables deeply for all instances of the member id for removal
+        assert Session.query(Media          ).filter_by(         id = self.media_id                ).count() == 0
+        assert Session.query(Content        ).filter_by(         id = self.content_id              ).count() == 0
+        assert Session.query(Content        ).filter_by(  parent_id = self.content_id              ).count() == 0
+        assert Session.query(Boom           ).filter_by( content_id = self.content_id              ).count() == 0
+
+        assert Session.query(Member         ).filter_by(         id = self.delete_cascade_member_id).count() == 0        
+        assert Session.query(Boom           ).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(GroupMembership).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(Follow         ).filter_by(  member_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(Follow         ).filter_by(follower_id = self.delete_cascade_member_id).count() == 0
+        
+        assert Session.query(Message        ).filter_by(  target_id = self.delete_cascade_member_id).count() == 0
+        assert Session.query(Message        ).filter_by(  source_id = self.delete_cascade_member_id).count() == 0
