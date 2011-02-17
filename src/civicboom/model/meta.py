@@ -30,7 +30,7 @@ Base = declarative_base()
 
 def location_to_string(location):
     if location:
-        return '%s %s' % (location.coords(Session)[1], location.coords(Session)[0])
+        return '%s %s' % (location.coords(Session)[0], location.coords(Session)[1])
     return None
 
 def to_dict(self, list_type='default', include_fields=None, exclude_fields=None, **kwargs):
