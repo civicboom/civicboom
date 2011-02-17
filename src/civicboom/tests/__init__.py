@@ -194,6 +194,13 @@ class TestController(TestCase):
         )
         return json.loads(response.body)["data"]["id"]
 
+    def accept_assignment(self, id):
+        response = self.app.post( # Accept assignment
+            url('content_action', action='accept', id=id, format='json') ,
+            params = {'_authentication_token': self.auth_token,} ,
+            status = 200
+        )
+
     def getNumNotifications(self, username=None, password=None):
         if username:
             if self.logged_in_as != username:

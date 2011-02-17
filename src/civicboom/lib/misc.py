@@ -90,7 +90,7 @@ def obj_to_dict(obj, dict_fields):
         if field_value:
             if hasattr(field_value,'keys') or hasattr(field_value, '__iter__'):
                 pass
-            elif type(field_value)==types.IntType:
+            elif type(field_value)==types.IntType or type(field_value)==types.FloatType:
                 pass
             else:
                 try:

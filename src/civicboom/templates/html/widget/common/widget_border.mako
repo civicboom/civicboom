@@ -46,7 +46,7 @@
                     % if owner_name:
                     <img src="${owner['avatar_url']}" alt="${owner_name}"      style="height:${size_avatar}px;" onerror="this.onerror=null;this.src='/images/default_avatar.png'" />
                     % else:
-                    <img src="/images/civicboom.png"  alt="${_('_site_name')}" style="height:${size_avatar}px;" />
+                    <img src="/images/boom128.png"  alt="${_('_site_name')}" style="height:${size_avatar}px;" />
                     % endif
                 </a>
             </td>

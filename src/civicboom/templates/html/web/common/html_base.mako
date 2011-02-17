@@ -15,7 +15,7 @@
 ## Meta Text
 ##----------------------------------------------------------------------------
 	<meta name="description" content="${_("_site_description")}"/>
-	<meta name="keywords"    content="" />
+	<meta name="keywords"    content="civicboom, social media, community, information, news" />
 	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
 	<meta name="robots"      content="all" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
