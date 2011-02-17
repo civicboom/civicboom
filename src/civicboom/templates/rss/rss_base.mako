@@ -109,7 +109,7 @@
         % endif
         
         % if content['location']:
-        <% lat, lon = content['location'].split(' ') %>
+        <% lon, lat = content['location'].split(' ') %>
         <georss:point>${lat} ${lon}</georss:point>
         <geo:lat>${lat}</geo:lat><geo:long>${lon}</geo:long>
         % endif
