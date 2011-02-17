@@ -92,6 +92,8 @@ def obj_to_dict(obj, dict_fields):
                 pass
             elif type(field_value)==types.IntType:
                 pass
+            elif type(field_value)==types.FloatType:
+                pass
             else:
                 try:
                     field_value = unicode(field_value)
