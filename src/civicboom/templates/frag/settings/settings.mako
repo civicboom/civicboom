@@ -82,7 +82,13 @@
                     % elif setting_type == 'location':
             ##</tr><tr><td></td>
 						<td colspan="1"><div style="text-align: left;">
-						${loc.location_picker(field_name=setting_name, width='100%', height='300px', always_show_map=True, label_class="norm")}
+						<%
+						try:
+							(lon, lat) = [float(f) for f in setting_value.split(" ")]
+						except:
+							(lon, lat) = (None, None)
+						%>
+						${loc.location_picker(field_name=setting_name, width='100%', height='300px', always_show_map=True, label_class="norm", lon=lon, lat=lat)}
 						</div>
                     % endif
 					</td>
