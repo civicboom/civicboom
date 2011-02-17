@@ -1,7 +1,7 @@
 <%inherit file="base.mako"/>
 <%def name="title()">${_("About _site_name & FAQ")}</%def>
 
-<img src="/images/civicboom.png" style="float:right;">
+<img src="/images/boom128.png" style="float:right;">
 <h1>Civicboom empowers you connect, create
 and collaborate on what matters to you.</h1>
 
