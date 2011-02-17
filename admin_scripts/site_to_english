@@ -24,7 +24,7 @@ def trans(text):
         ("assignment", "request"),
         ("member",     "member"),
         ("user",       "user"),
-        ("group",      "group"),
+        ("group",      "hub"),
         ("draft",      "draft"),
     ]
     for w, r in words:
