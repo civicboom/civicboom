@@ -37,3 +37,12 @@ class Globals(object):
         self.user_defaults = SafeConfigParser()
         self.user_defaults.read("user_defaults.ini")
 
+        self.subdomains = {
+            ''      : 'web'    ,
+            'www'   : 'web'    ,
+            'widget': 'widget' ,
+            'w'     : 'widget' ,
+            'mobile': 'mobile' ,
+            'm'     : 'mobile' ,
+        }
+
