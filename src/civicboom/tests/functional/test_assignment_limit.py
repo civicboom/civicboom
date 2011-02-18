@@ -32,7 +32,7 @@ class TestAssignmentLimitController(TestController):
         
         # Upgrade account
         response = self.app.get(url(controller='test', action='upgrade_account', id='assign_limit'))
-        assert 'ok' in response.body
+        self.assertIn('ok', response.body)
         
         # Set a new assignment
         response = self.create_assignment('Assignment Limit > Paid')
@@ -45,7 +45,7 @@ class TestAssignmentLimitController(TestController):
             for title in title_check:
                 if title in assignment['title']:
                     title_check.remove(title)
-        assert len(title_check) == 0
+        self.assertEqual(len(title_check), 0)
 
 
 
@@ -68,7 +68,7 @@ class TestAssignmentLimitController(TestController):
         if status==201:
             response_json = json.loads(response.body)
             id = int(response_json['data']['id'])
-            assert id > 0
+            self.assertNotEqual(id, 0)
             ##print('created assignment %d' % id)
             return id
         return response

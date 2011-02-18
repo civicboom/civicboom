@@ -13,11 +13,11 @@ class TestGroupsController(TestController):
 
     #def test_group(self):
     #    response = self.app.get(url('group', id='patty', format='json'))
-    #    assert 'patty' in response
+    #    self.assertIn('patty', response)
 
     #def test_group_page_html(self):
     #    response = self.app.get(url('group', id='patty'))
-    #    assert 'patty' in response
+    #    self.assertIn('patty', response)
 
     ## new -> create #########################################################
 
@@ -59,15 +59,15 @@ class TestGroupsController(TestController):
         c = json.loads(response.body)
         #
         self.group_id = int(c['data']['id'])
-        assert self.group_id > 0
+        self.assertNotEqual(self.group_id, 0)
         
         response = self.app.get(url('group', id=self.group_id, format='json'))
         response_json = json.loads(response.body)
-        assert response_json['data']['member']['username']                   == 'test_group'
-        assert response_json['data']['member']['join_mode']                  == 'invite_and_request'
-        assert response_json['data']['member']['default_role']               == 'editor'
-        assert response_json['data']['member']['member_visibility']          == 'public'
-        assert response_json['data']['member']['default_content_visibility'] == 'public' 
+        self.assertEqual(response_json['data']['member']['username']                  , 'test_group')
+        self.assertEqual(response_json['data']['member']['join_mode']                 , 'invite_and_request')
+        self.assertEqual(response_json['data']['member']['default_role']              , 'editor')
+        self.assertEqual(response_json['data']['member']['member_visibility']         , 'public')
+        self.assertEqual(response_json['data']['member']['default_content_visibility'], 'public' )
         
         
 
@@ -85,12 +85,12 @@ class TestGroupsController(TestController):
             },
             status=400
         )
-        assert 'invalid'      in response
-        assert 'name'         in response
-        assert 'default_role' in response
-        assert 'join_mode'    in response
-        assert 'member_visibility' in response
-        assert 'default_content_visibility' in response
+        self.assertIn('invalid'     , response)
+        self.assertIn('name'        , response)
+        self.assertIn('default_role', response)
+        self.assertIn('join_mode'   , response)
+        self.assertIn('member_visibility', response)
+        self.assertIn('default_content_visibility', response)
 
 
 
@@ -104,8 +104,8 @@ class TestGroupsController(TestController):
             },
             status=400
         )
-        assert 'invalid'  in response
-        assert 'username' in response
+        self.assertIn('invalid' , response)
+        self.assertIn('username', response)
         
         # username too short
         response = self.app.post(
@@ -116,8 +116,8 @@ class TestGroupsController(TestController):
             },
             status=400
         )
-        assert 'invalid'  in response
-        assert 'username' in response
+        self.assertIn('invalid' , response)
+        self.assertIn('username', response)
 
         # username invalid chars
         response = self.app.post(
@@ -128,8 +128,8 @@ class TestGroupsController(TestController):
             },
             status=400
         )
-        assert 'invalid'  in response
-        assert 'username' in response
+        self.assertIn('invalid' , response)
+        self.assertIn('username', response)
 
 
 
@@ -139,9 +139,9 @@ class TestGroupsController(TestController):
     def subtest_edit(self):
         
         response = self.app.get(url('edit_group', id=1       ), status=404)
-        assert self.group_id > 0
+        self.assertNotEqual(self.group_id, 0)
         response = self.app.get(url('edit_group', id=self.group_id), status=200)
-        assert 'test_group' in response
+        self.assertIn('test_group', response)
         self.log_out()
         response = self.app.get(url('edit_group', id=self.group_id), status=302) # redirect to login page as not logged in
         self.log_in_as('unitfriend')
@@ -166,9 +166,9 @@ class TestGroupsController(TestController):
         )
         #log.debug(response)
         # appears to be a validation error? why? description is missing!! ? WHAT? description is not a required field.. wtf
-        assert 'ALRIGHT' in response
-        assert 'editor' not in response
-        assert 'contributor' in response
+        self.assertIn('ALRIGHT', response)
+        self.assertNotIn('editor', response)
+        self.assertIn('contributor', response)
         
     
     ## join request ############################################################
@@ -190,7 +190,7 @@ class TestGroupsController(TestController):
             },
             status=200,
         )
-        assert 'request' in response # successful "join request" in response
+        self.assertIn('request' in response # successful "join request", response)
         
         self.log_out()
         
@@ -202,13 +202,13 @@ class TestGroupsController(TestController):
         for member in response_json['data']['members']['items']:
             if member['username'] == 'unitfriend' and member['status']=='request':
                 found = True
-        assert found
+        self.assertTrue(found)
         
         self.log_in_as('unittest')
         
         response = self.app.get(url('group', id=self.group_id, format='json'))
-        assert 'unitfriend' in response
-        assert 'request'    in response # successful "join request" in member list
+        self.assertIn('unitfriend', response)
+        self.assertIn('request'    in response # successful "join request", member list)
         
         # accept join request
         response = self.app.post(
@@ -229,7 +229,7 @@ class TestGroupsController(TestController):
         for member in response_json['data']['members']['items']:
             if member['username'] == 'unitfriend' and member['status']=='active':
                 found = True
-        assert found
+        self.assertTrue(found)
     
     
     ## invite ############################################################
@@ -256,7 +256,7 @@ class TestGroupsController(TestController):
             } ,
             status=400
         ) 
-        assert 'admin' in response
+        self.assertIn('admin', response)
         
         # Upgrade 'unitfriend' to admin
         response = self.app.post(

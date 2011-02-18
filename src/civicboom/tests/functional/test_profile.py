@@ -8,4 +8,4 @@ class TestUserProfileController(TestController):
 
     def test_index(self):
         response = self.app.get(url(controller='profile', action='index'))
-        assert "Mr U. Test" in response
+        self.assertIn("Mr U. Test", response)

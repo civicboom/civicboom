@@ -21,7 +21,7 @@ class TestSetPersonaController(TestController):
             status=201
         )
         response_json = json.loads(response.body)
-        assert response_json['data']['id'] > 0
+        self.assertNotEqual(response_json['data']['id'], 0)
 
 
         # Set Persona to new group
@@ -73,7 +73,7 @@ class TestSetPersonaController(TestController):
             status=201
         )
         response_json = json.loads(response.body)
-        assert response_json['data']['id'] > 0
+        self.assertNotEqual(response_json['data']['id'], 0)
 
         # Invite - unittest
         response = self.app.post(

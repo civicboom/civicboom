@@ -37,7 +37,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         )
         response_json = json.loads(response.body)
         self.assignment_id = int(response_json['data']['id'])
-        assert self.assignment_id > 0
+        self.assertNotEqual(self.assignment_id, 0)
         
         # Responses ------------------------------------------------------------
         #  unitfirend to respond 3 times
@@ -59,7 +59,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         )
         response_json = json.loads(response.body)
         self.assignment_response_id_1 = int(response_json['data']['id'])
-        assert self.assignment_response_id_1 > 0
+        self.assertNotEqual(self.assignment_response_id_1, 0)
         
         # Response to be 'disassociate'
         response = self.app.post(
@@ -76,7 +76,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         )
         response_json = json.loads(response.body)
         self.assignment_response_id_2 = int(response_json['data']['id'])
-        assert self.assignment_response_id_2 > 0
+        self.assertNotEqual(self.assignment_response_id_2, 0)
         
         # Response to be 'seen'
         response = self.app.post(
@@ -93,7 +93,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         )
         response_json = json.loads(response.body)
         self.assignment_response_id_3 = int(response_json['data']['id'])
-        assert self.assignment_response_id_3 > 0
+        self.assertNotEqual(self.assignment_response_id_3, 0)
         
         # Check Responses ------------------------------------------------------
         
@@ -101,11 +101,11 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         response = self.app.get(url('content', id=self.assignment_id, format='json'), status=200)
         response_json = json.loads(response.body)
-        assert 'unitfriend'      in response
-        assert 'to approve'      in response
-        assert 'to disassociate' in response
-        assert 'to seen'         in response
-        assert len(response_json['data']['responses']['items']) == 3
+        self.assertIn('unitfriend'     , response)
+        self.assertIn('to approve'     , response)
+        self.assertIn('to disassociate', response)
+        self.assertIn('to seen'        , response)
+        self.assertEqual(len(response_json['data']['responses']['items']), 3)
         
         # Approve --------------------------------------------------------------
         
@@ -118,14 +118,14 @@ class TestAssignAcceptResponseCycleController(TestController):
         )
         
         # Check that the emails have been generated and sent to the correct users once approved
-        assert getNumEmails() == num_emails + 2
+        self.assertEqual(getNumEmails(), num_emails + 2)
         emails_sent_when_approved = [
             emails[len(emails)-1],
             emails[len(emails)-2],
         ]
         emails_to = [email.email_to for email in emails_sent_when_approved]
-        assert 'unittest@test.com'   in emails_to
-        assert 'unitfriend@test.com' in emails_to
+        self.assertIn('unittest@test.com'  , emails_to)
+        self.assertIn('unitfriend@test.com', emails_to)
         
         # Disassociate ---------------------------------------------------------
         
@@ -148,11 +148,11 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         response = self.app.get(url('content', id=self.assignment_id, format='json'), status=200)
         response_json = json.loads(response.body)
-        assert 'unitfriend'          in response
-        assert 'to approve'          in response
-        assert 'to disassociate' not in response
-        assert 'to seen'             in response
-        assert len(response_json['data']['responses']['items']) == 2
+        self.assertIn('unitfriend'         , response)
+        self.assertIn('to approve'         , response)
+        self.assertNotIn('to disassociate' , response)
+        self.assertIn('to seen'            , response)
+        self.assertEqual(len(response_json['data']['responses']['items']), 2)
         
         # Delete Assignment ----------------------------------------------------
         
@@ -165,11 +165,11 @@ class TestAssignAcceptResponseCycleController(TestController):
         # Check Cascade of Delete was correct ----------------------------------
         
         response = self.app.get(url('content', id=self.assignment_response_id_1, format='json'), status=200)
-        assert 'to approve' in response
+        self.assertIn('to approve', response)
         response = self.app.get(url('content', id=self.assignment_response_id_2, format='json'), status=200)
-        assert 'to disassociate' in response
+        self.assertIn('to disassociate', response)
         response = self.app.get(url('content', id=self.assignment_response_id_3, format='json'), status=200)
-        assert 'to seen' in response
+        self.assertIn('to seen', response)
         
         # Cleanup --------------------------------------------------------------
         
@@ -221,7 +221,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         )
         response_json = json.loads(response.body)
         self.assignment_id = int(response_json['data']['id'])
-        assert self.assignment_id > 0
+        self.assertNotEqual(self.assignment_id, 0)
         
         # Accept and Withdraw Assignment ---------------------------------------
         
@@ -267,7 +267,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         # record number of currently accepted assignments - to compare at end
         response = self.app.get(url('member', id='unitfriend', format='json'), status=200)
         response_json = json.loads(response.body)
-        assert num_accepted == len(response_json['data']['assignments_accepted']['items'])
+        self.assertEqual(num_accepted, len(response_json['data']['assignments_accepted']['items']))
         
         # Cleanup --------------------------------------------------------------
         
@@ -325,7 +325,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         )
         response_json = json.loads(response.body)
         self.assignment_id = int(response_json['data']['id'])
-        assert self.assignment_id > 0
+        self.assertNotEqual(self.assignment_id, 0)
         
         self.log_in_as('unitfriend')
         
