@@ -202,7 +202,7 @@ class Member(Base):
             'num_followers'       : None ,
             'utc_offset'          : None ,
             'join_date'           : None ,
-            'website'             : None ,
+            'website'             : lambda member: member.config['website'] ,
             'description'         : lambda member: member.config['description'] ,
             #'url'                 : None ,
             
