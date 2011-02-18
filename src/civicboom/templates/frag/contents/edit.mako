@@ -199,6 +199,10 @@
                         ed.setProgressState(0);
                         flash_message(data);
                     },
+                    error: function (jqXHR, status, error) {
+                        ed.setProgressState(0);
+                        flash_message('${_('Error automatically saving your content')}');
+                    },
                 });
             }
             % if self.content['type'] == "draft":
