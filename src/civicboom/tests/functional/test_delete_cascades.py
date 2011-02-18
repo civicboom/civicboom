@@ -30,11 +30,11 @@ class TestDeleteCascadesController(TestController):
             url_index = url('contents', format='json', term=term)
         return self.get_list_count(url_index)
 
-    def create_content(self, parent_id=None, title=u'Testing delete_cascade', type='article'):
+    def create_content(self, parent_id=None, title=u'Testing delete_cascade', content=u'delete_cascade delete_cascade', type='article'):
         params={
             '_authentication_token': self.auth_token,
             'title'         : title ,
-            'contents'      : u'delete_cascade delete_cascade' ,
+            'contents'      : content ,
             'type'          : type ,
             'tags'          : u'delete_cascade' ,
             'submit_publish': u'publish' ,
@@ -125,7 +125,7 @@ class TestDeleteCascadesController(TestController):
         self.send_member_message('delete_cascade', 'testing delete_cascade', 'this message should never be seen as it part of the delete_cascade test')
         self.boom_content(self.content_id)
         self.comment(self.content_id, 'delete_cascade comment')
-        unittest_assingment_id = self.create_content(type='assignment')
+        unittest_assingment_id = self.create_content(type='assignment', title='assignment', content='assignment')
         
         # Follow, message send, comment
         self.log_in_as('delete_cascade')
@@ -134,6 +134,7 @@ class TestDeleteCascadesController(TestController):
         self.comment(self.content_id, 'delete_cascade comment')
         # TODO: accept assignment by unittest
         self.accept_assignment(unittest_assingment_id)
+        self.withdraw_assignment(unittest_assingment_id)
         
         response      = self.app.get(url('member', id='unittest', format='json'), status=200)
         response_json = json.loads(response.body)
@@ -167,7 +168,7 @@ class TestDeleteCascadesController(TestController):
         # check tables deeply for all instances of the member id for removal
         
         assert self.num_members_public('delete_cascade') == 2 # 'delete_cascade' and 'delete_cascade_group'
-        assert self.num_content_public('delete_cascade') == 2 # 'delete_cascade' in public content # unittest assignment has delete cascade in title and content
+        assert self.num_content_public('delete_cascade') == 1 # 'delete_cascade' in public content # unittest assignment has delete cascade in title and content
         
         assert Session.query(Media           ).filter_by(         id = self.media_id                ).count() == 1
         assert Session.query(Content         ).filter_by(         id = self.content_id              ).count() == 1
@@ -202,9 +203,9 @@ class TestDeleteCascadesController(TestController):
         #-----------------------------------------------------------------------
         
         assert self.num_members_public('delete_cascade') == 0
-        assert self.num_content_public('delete_cascade') == 1 #unittest assignmet is still there
+        assert self.num_content_public('delete_cascade') == 0
         assert num_members_start == self.num_members_public()
-        assert num_content_start == self.num_content_public() - 1  # unittest assignmetn is still there
+        assert num_content_start == self.num_content_public() - 1 # -1 because unittest set an assignment
         
         # check current number of
         response      = self.app.get(url('member', id='unittest', format='json'), status=200)

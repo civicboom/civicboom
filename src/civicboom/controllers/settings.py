@@ -231,6 +231,10 @@ class SettingsController(BaseController):
             schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the 
             schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
         
+        # GregM: Patched to remove avatar kwarg if blank (keeping current avatar on settings save!)
+        if kwargs.get('avatar') == '':
+            del kwargs['avatar']
+        
         settings.update(kwargs)
         
         validate_dict(data, schema, dict_to_validate_key='settings', template_error='settings/settings')
@@ -241,7 +245,8 @@ class SettingsController(BaseController):
         
         # Save special properties that need special processing
         # (could have a dictionary of special processors here rather than having this code cludge this controller action up)
-        if settings.get('avatar') != None:
+        # GregM: check kwargs as if no new avatar and has current avatar this FAILS! 
+        if kwargs.get('avatar') != None:
             with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
                 a = settings['avatar']
                 wh.copy_cgi_file(a, original.name)

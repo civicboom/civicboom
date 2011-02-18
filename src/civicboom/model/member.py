@@ -154,6 +154,7 @@ class Member(Base):
     followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
     following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
 
+    assigments           = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
 
     # Content relation shortcuts
     #content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
@@ -201,7 +202,7 @@ class Member(Base):
             'num_followers'       : None ,
             'utc_offset'          : None ,
             'join_date'           : None ,
-            'website'             : None ,
+            'website'             : lambda member: member.config['website'] ,
             'description'         : lambda member: member.config['description'] ,
             #'url'                 : None ,
             

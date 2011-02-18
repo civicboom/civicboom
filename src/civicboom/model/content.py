@@ -558,7 +558,7 @@ class MemberAssignment(Base):
     #update_date   = Column(DateTime(),   nullable=False, default=func.now(), doc="Controlled by postgres trigger")
     # AllanC - TODO - implement member assignment update date postgress trigger
 
-    member       = relationship("Member")
+    #member       = relationship("Member")
     #content      = relationship("AssignmentContent")
 
 class License(Base):
