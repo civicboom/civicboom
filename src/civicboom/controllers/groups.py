@@ -223,7 +223,7 @@ class GroupsController(BaseController):
         # ARRRGHHH: Hacked c.format as settings_update redirects on html
         cformat = c.format
         c.format = 'python'
-        if 'avatar' in kwargs or 'website' in kwargs:
+        if 'avatar' in kwargs:
             settings_update(id=id, avatar=kwargs['avatar'])
         if 'website' in kwargs:
             settings_update(id=id, website=kwargs['website'])
