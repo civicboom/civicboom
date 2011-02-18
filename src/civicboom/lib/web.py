@@ -15,6 +15,7 @@ import re
 from decorator import decorator
 from pprint import pformat
 import logging
+import urllib
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -199,6 +200,9 @@ def cookie_set(key, value, duration=None):
 
 def cookie_get(key):
     #log.debug("getting %s:%s" %(key, request.cookies.get(key)))
+    # GregM Pass the cookie through urllib unquote_plus to fix any url encoding (and replace + with space!)
+    if request.cookies.get(key):
+        return urllib.unquote_plus(request.cookies.get(key))
     return request.cookies.get(key)
 
 
