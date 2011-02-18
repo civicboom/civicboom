@@ -4,7 +4,7 @@
 
 <%def name="body()">
 	<%
-        self.attr.frags = [profile, help, assignments]
+        self.attr.frags = [profile, assignments, help]
         self.attr.frag_col_sizes = [2,1,1]
     %>
 </%def>
