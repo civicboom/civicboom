@@ -250,20 +250,9 @@ class TestAssignAcceptResponseCycleController(TestController):
         )
         
         # Accept
-        response = self.app.post(
-            url('content_action', action='accept', id=self.assignment_id, format='json'),
-            params={'_authentication_token': self.auth_token,},
-            status=200
-        )
-        assert 'accepted' in response
-        
+        self.accept_assignment(self.assignment_id)
         # withdraw
-        response = self.app.post(
-            url('content_action', action='withdraw', id=self.assignment_id, format='json'),
-            params={'_authentication_token': self.auth_token,},
-            status=200
-        )
-        assert 'withdrawn' in response
+        self.withdraw_assignment(self.assignment_id)
         
         # Accept again (should reject)
         response = self.app.post(
@@ -341,12 +330,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         self.log_in_as('unitfriend')
         
         # Accept ---------------------------------------------------------------
-        response = self.app.post(
-            url('content_action', action='accept', id=self.assignment_id, format='json'),
-            params={'_authentication_token': self.auth_token,},
-            status=200
-        )
-        assert 'accepted' in response
+        self.accept_assignment(self.assignment_id)
 
         # Delete assignemnt ----------------------------------------------------
         
@@ -366,5 +350,5 @@ class TestAssignAcceptResponseCycleController(TestController):
         response_json = json.loads(response.body)
 
         #TODO
-        # Check delete cascade
+        # Check delete cascade - AllanC: see test_delete_cascades.py
         # Check assignment canceled notification was sent

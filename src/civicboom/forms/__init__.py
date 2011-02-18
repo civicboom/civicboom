@@ -307,6 +307,7 @@ FlaggedContentGrid.configure(include=[
 
 UserGrid = Grid(model.User)
 UserGrid.configure(include=[
+        #UserGrid.id.readonly(),
         UserGrid.name,
         UserGrid.username,
         UserGrid.email,
