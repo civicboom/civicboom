@@ -298,7 +298,10 @@ class SettingsController(BaseController):
         # Save all remaining properties
         for setting_name in settings.keys():
             log.debug("saving setting %s" % setting_name)
-            user.config[setting_name] = settings[setting_name]
+            if settings[setting_name] == None:
+                del user.config[setting_name]
+            else:
+                user.config[setting_name] = settings[setting_name]
             
         Session.commit()
         
