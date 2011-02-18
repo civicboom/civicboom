@@ -5,7 +5,7 @@ Locked down for use in development mode only
 """
 
 from civicboom.lib.base import *
-from time import sleep
+from time import sleep, time
 
 log = logging.getLogger(__name__)
 
@@ -41,6 +41,25 @@ class TestController(BaseController):
     @authorize
     def logged_in(self):
         return "you are logged in"
+
+    def time_gsdf(self):
+        """
+        from civicboom.lib.web import get_subdomain_format, get_subdomain_format2, get_subdomain_format3, get_subdomain_format4
+        a = time()
+        for n in xrange(0, 100000):
+            get_subdomain_format()
+        b = time()
+        for n in xrange(0, 100000):
+            get_subdomain_format2()
+        c = time()
+        for n in xrange(0, 100000):
+            get_subdomain_format3()
+        d = time()
+        for n in xrange(0, 100000):
+            get_subdomain_format4()
+        e = time()
+        return "1:%f 2:%f 3:%f 4:%f" % (b-a, c-b, d-c, e-d)
+        """
 
     def db_read(self):
         from civicboom.lib.database.get_cached import get_licenses
