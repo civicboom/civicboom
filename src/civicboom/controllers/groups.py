@@ -290,5 +290,11 @@ class GroupsController(BaseController):
         Current user must be identifyed as an administrator of this group.
         """
         # url('edit_group', id=ID)
+        # GregM: BIG DIRTY HACK to show website and description in the group config editor.
         group = _get_group(id, is_admin=True)
-        return action_ok(data={'group':group.to_dict(), 'action':'edit'}) #Auto Format with activate HTML edit template automatically if template placed/named correctly
+        config = group.config
+        groupdict = group.to_dict()
+        groupdict['website'] = config.get('website')
+        groupdict['description'] = config.get('description')
+        
+        return action_ok(data={'group':groupdict, 'action':'edit'}) #Auto Format with activate HTML edit template automatically if template placed/named correctly
