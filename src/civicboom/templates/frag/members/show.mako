@@ -71,7 +71,7 @@
         <div>
           <span style="float:left; padding-right: 3px;">${member_avatar()}</span>
           <div style="padding-left: 92px" >
-            % if self.member['website'] != '':
+            % if self.member.get('website'):
               ${_('Website')}: <br /><a href="${self.member['website']}" target="_blank">${self.member['website']}</a><br />
             % endif
             Joined: ${self.member['join_date']}<br />

@@ -42,7 +42,7 @@ def check(name, tech, default):
 	% for gen in generators:
 	   % if not gen[0] in ignore_generators:
 		<tr>
-			<td>${str(gen[2])}</td>
+			<td>${str(gen[2]).capitalize()}</td>
 			<td><input name="${gen[0]}_n" type="checkbox" value="n" ${check(gen[0], 'n', gen[1])}></td>
 			<td><input name="${gen[0]}_e" type="checkbox" value="e" ${check(gen[0], 'e', gen[1])}></td>
 			<!--<td><input name="${gen[0]}_c" type="checkbox" value="c" ${check(gen[0], 'c', gen[1])}></td>-->
