@@ -35,11 +35,12 @@ def multidict_to_dict(multidict):
 # Subdomain format
 #-------------------------------------------------------------------------------
 
-def get_subdomain_format():
-    domain = request.environ.get("HTTP_HOST", "")
-    for subdomain, subformat in app_globals.subdomains.iteritems():
-        if domain.startswith(subdomain+'.'):
-            return subformat
+def get_subdomain_format2():
+    subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
+    if subdomain == "w" or subdomain == "widget":
+        return "widget"
+    if subdomain == "m" or subdomain == "mobile":
+        return "mobile"
     return 'web'
 
 
