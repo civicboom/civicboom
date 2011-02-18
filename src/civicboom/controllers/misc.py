@@ -8,7 +8,7 @@ class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
     def about(self, id="civicboom"):
-        if os.path.exists("templates/html/misc/about/"+id+".mako"):
+        if os.path.exists(config['path.templates']+"/html/web/misc/about/"+id+".mako"):
             return action_ok(template="misc/about/"+id)
         else:
             raise action_error(code=404, message="No description for this topic")
@@ -16,7 +16,7 @@ class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
     def help(self, id="civicboom"):
-        if os.path.exists("templates/html/help/"+id+".mako"):
+        if os.path.exists(config['path.templates']+"/html/web/help/"+id+".mako"):
             return action_ok(template="help/"+id)
         else:
             raise action_error(code=404, message="No help for this topic")
