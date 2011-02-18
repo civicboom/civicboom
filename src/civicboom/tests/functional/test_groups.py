@@ -190,7 +190,7 @@ class TestGroupsController(TestController):
             },
             status=200,
         )
-        self.assertIn('request' in response # successful "join request", response)
+        self.assertIn('request', response) # successful "join request" in response
         
         self.log_out()
         
@@ -208,7 +208,7 @@ class TestGroupsController(TestController):
         
         response = self.app.get(url('group', id=self.group_id, format='json'))
         self.assertIn('unitfriend', response)
-        self.assertIn('request'    in response # successful "join request", member list)
+        self.assertIn('request', response) # successful "join request" in member list
         
         # accept join request
         response = self.app.post(
