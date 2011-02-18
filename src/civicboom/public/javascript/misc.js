@@ -167,9 +167,10 @@ function refreshProgress (jquery_element) {
       Y.log (attachments.length);
       for (var i = 0; i < attachments.length; i ++) {
         var attachment = attachments[i];
+        Y.log ('#media_attachment_' + attachment.id + ' :' + $('#media_attachment_' + attachment.id).length);
         if ($('#media_attachment_' + attachment.id).length == 0) {
           Y.log ('I found a new attachment!');
-          var at_element = jquery_element.find('#mediatemplate').clone(true, true).attr('id', '#media_attachment_' + attachment.id).css('display','');
+          var at_element = jquery_element.find('#mediatemplate').clone(true, true).attr('id', 'media_attachment_' + attachment.id).css('display','');
           jquery_element.find('ul.media_files').children('li.media_file').last().after(at_element);
           at_element.find('#media_file').attr('value', attachment.name);
           at_element.find('#media_caption').attr('value', attachment.caption);
