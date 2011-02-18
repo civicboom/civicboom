@@ -5,7 +5,7 @@ import sys
 
 def trans(text):
     text = text.replace("_site_name", "Civicboom")
-    text = text.replace("_tagline", "News. Don't just read it. Feed it.")
+    text = text.replace("_tagline", "Don't just read it. Feed it.")
     text = text.replace("_site_description", "Building the world's first true community and audience assignment system")
 
     banned = [
@@ -24,7 +24,7 @@ def trans(text):
         ("assignment", "request"),
         ("member",     "member"),
         ("user",       "user"),
-        ("group",      "group"),
+        ("group",      "hub"),
         ("draft",      "draft"),
     ]
     for w, r in words:

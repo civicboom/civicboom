@@ -222,7 +222,7 @@ class SettingsController(BaseController):
         # List validators required
         validators = {}
         for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings[setting_name] != kwargs[setting_name] ]:
-            #print "adding validator: %s" % validate_fieldname
+            #log.debug("adding validator: %s" % validate_fieldname)
             validators[validate_fieldname] = settings_validators[validate_fieldname]
         # Build a dynamic validation scema based on these required fields and validate the form
         schema = build_schema(**validators)
@@ -230,6 +230,10 @@ class SettingsController(BaseController):
         if 'password_new' in validators:
             schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the 
             schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
+        
+        # GregM: Patched to remove avatar kwarg if blank (keeping current avatar on settings save!)
+        if kwargs.get('avatar') == '':
+            del kwargs['avatar']
         
         settings.update(kwargs)
         
@@ -241,7 +245,8 @@ class SettingsController(BaseController):
         
         # Save special properties that need special processing
         # (could have a dictionary of special processors here rather than having this code cludge this controller action up)
-        if settings.get('avatar') != None:
+        # GregM: check kwargs as if no new avatar and has current avatar this FAILS! 
+        if kwargs.get('avatar') != None:
             with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
                 a = settings['avatar']
                 wh.copy_cgi_file(a, original.name)
@@ -293,7 +298,10 @@ class SettingsController(BaseController):
         # Save all remaining properties
         for setting_name in settings.keys():
             log.debug("saving setting %s" % setting_name)
-            user.config[setting_name] = settings[setting_name]
+            if settings[setting_name] == None:
+                del user.config[setting_name]
+            else:
+                user.config[setting_name] = settings[setting_name]
             
         Session.commit()
         

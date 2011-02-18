@@ -187,7 +187,6 @@ def convert_html_to_plain_text(content_html, ommit_links=False):
         -li to ' - '
     """
     
-    #print "CONTENT IN: %s" % content_html
     text = content_html  
     text_body = re.sub(r'(?is)<body>(.*)</body>',r'\1',text)  #Extact the body if text if it is a full HTML doc
     if text_body:
@@ -218,7 +217,6 @@ def convert_html_to_plain_text(content_html, ommit_links=False):
     text = re.sub(r'[\r\f\a\v]',r'\n',text) # Convert all known new lines characters into a single type
     text = re.sub(r'\n \n',r'\n',text)      # This is the pain in the ass, spaces locked inbetween new lines ... rrrrr
     text = re.sub(r'\n+',r'\n',text)        # Replace multiple occourences of new lines with a single one
-    #print "CONTENT OUT: %s" % text
     return text
 
 

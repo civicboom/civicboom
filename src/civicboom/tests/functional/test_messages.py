@@ -113,7 +113,7 @@ class TestMessagesController(TestController):
 
     def part_index(self):
         response = self.app.get(url('formatted_messages', format="frag"))
-        assert "Re: Re: singing" in response
+        self.assertIn("Re: Re: singing", response)
 
     def part_index_lists(self):
         response = self.app.get(url('formatted_messages', format="json", list="notification"))
@@ -124,16 +124,16 @@ class TestMessagesController(TestController):
 
     def part_index_as_json(self):
         response = self.app.get(url('formatted_messages', format='json'))
-        assert "Re: Re: singing" in response
+        self.assertIn("Re: Re: singing", response)
 
     def part_show(self):
         response = self.app.get(url('formatted_message', id=self.m2_id, format="frag"))
         # TODO - check read status after viewing
-        assert "truncation" in response
+        self.assertIn("truncation", response)
 
     def part_show_as_json(self):
         response = self.app.get(url('formatted_message', id=self.m2_id, format='json'))
-        assert "truncation" in response
+        self.assertIn("truncation", response)
 
     def part_show_someone_elses(self):
         self.log_in_as('kitten')

@@ -336,8 +336,8 @@
     <% content = self.content %>
     % if content.get('location'):
         <%
-        lat = content['location'].split(' ')[0]
-        lon = content['location'].split(' ')[1]
+        lon = content['location'].split(' ')[0]
+        lat = content['location'].split(' ')[1]
         %>
         <p>
         ${loc.minimap(

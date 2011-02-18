@@ -220,8 +220,19 @@ class GroupsController(BaseController):
         group.default_content_visibility = group_dict['default_content_visibility']
         
         # GregM: call settings_update with logo_file as avatar
+        # ARRRGHHH: Hacked c.format as settings_update redirects on html
+        cformat = c.format
+        c.format = 'python'
         if 'avatar' in kwargs:
             settings_update(id=id, avatar=kwargs['avatar'])
+        if 'website' in kwargs:
+            settings_update(id=id, website=kwargs['website'])
+        # GregM: Does not work! AC Please HEEEELLPPPP! Ktnxbai...
+        if 'description' in kwargs:
+            log.debug('!!!')
+            log.debug(kwargs['description'])
+            log.debug(settings_update(id=id, description=kwargs['description']))
+        c.format = cformat
         
         Session.commit()
         
@@ -279,5 +290,11 @@ class GroupsController(BaseController):
         Current user must be identifyed as an administrator of this group.
         """
         # url('edit_group', id=ID)
+        # GregM: BIG DIRTY HACK to show website and description in the group config editor.
         group = _get_group(id, is_admin=True)
-        return action_ok(data={'group':group.to_dict(), 'action':'edit'}) #Auto Format with activate HTML edit template automatically if template placed/named correctly
+        config = group.config
+        groupdict = group.to_dict()
+        groupdict['website'] = config.get('website')
+        groupdict['description'] = config.get('description')
+        
+        return action_ok(data={'group':groupdict, 'action':'edit'}) #Auto Format with activate HTML edit template automatically if template placed/named correctly

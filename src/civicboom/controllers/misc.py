@@ -2,17 +2,24 @@ from civicboom.lib.base import *
 
 from civicboom.lib.communication.email_lib import send_email
 from urllib import quote_plus, unquote_plus
+import os
 
 class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
     def about(self, id="civicboom"):
-        return action_ok(template="misc/about/"+id)
+        if os.path.exists(config['path.templates']+"/html/web/misc/about/"+id+".mako"):
+            return action_ok(template="misc/about/"+id)
+        else:
+            raise action_error(code=404, message="No description for this topic")
 
     @cacheable(time=600)
     @auto_format_output
     def help(self, id="civicboom"):
-        return action_ok(template="help/"+id)
+        if os.path.exists(config['path.templates']+"/frag/help/"+id+".mako"):
+            return action_ok(template="help/"+id)
+        else:
+            raise action_error(code=404, message="No help for this topic")
 
     #@cacheable(time=600)
     @auto_format_output
@@ -57,11 +64,22 @@ class MiscController(BaseController):
         c.widget_user_preview = get_member(id)
         return action_ok()
 
-    @auto_format_output
-    def feedback(self):
+    @web
+    def feedback(self, **kwargs):
         if not request.POST:
             return action_ok() # Render the feedback form by autolocating the template
-        if 'message' in request.POST:
-            content_text = "%(from_)s\n\n%(message)s\n\n%(env)s" % dict(message=request.POST.get('message'), env=unquote_plus(request.POST.get('env')), from_=request.POST.get('from') )
-            send_email(config['email.contact'], subject=_('_site_name feedback'), content_text=content_text)
-            return action_ok(_("Thank you for your feedback"), code=201)
+        else:
+            @authenticate_form
+            def submit_feedback(**kwargs):
+                if c.logged_in_user:
+                    kwargs['from'] = c.logged_in_user.email or c.logged_in_user.email_unverified
+                if not kwargs.get('env'):
+                    kwargs['env'] = ''
+                    for key,value in request.environ.iteritems():
+                        kwargs['env'] += "%s:%s\n" % (key,value)
+                if kwargs.get('referer'):
+                    kwargs['referer'] = unquote_plus(kwargs['referer'])
+                content_text = "%(referer)s\n\n%(category)s\n\n%(from_)s\n\n%(message)s\n\n%(env)s" % dict(message=kwargs.get('message'), env=unquote_plus(kwargs.get('env')), from_=kwargs.get('from'), category=kwargs.get('category'), referer=kwargs.get('referer') )
+                send_email(config['email.contact'], subject=_('_site_name feedback'), content_text=content_text)
+                return action_ok(_("Thank you for your feedback"), code=201)
+            return submit_feedback(**kwargs)

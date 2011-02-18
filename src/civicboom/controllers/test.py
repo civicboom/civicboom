@@ -5,7 +5,7 @@ Locked down for use in development mode only
 """
 
 from civicboom.lib.base import *
-from time import sleep
+from time import sleep, time
 
 log = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class TestController(BaseController):
     def memcache(self):
         mc = app_globals.memcache
         
-        print "old: %s" % mc.get("old_key")
+        log.debug("old: %s" % mc.get("old_key"))
         mc.set("some_key", "Some value")
         mc.set("some_key", "Some value again!", time=60)
         mc.set("old_key" , "some value"       , time=2)
@@ -31,8 +31,8 @@ class TestController(BaseController):
         mc.incr("key")
         mc.decr("key")
         mc.incr("key")
-        print "value: %s" % mc.get("some_key")
-        print "inc  : %s" % mc.get("key")
+        log.debug("value: %s" % mc.get("some_key"))
+        log.debug("inc  : %s" % mc.get("key"))
 
     def session(self):
         flash_message("hello session test")
@@ -42,11 +42,33 @@ class TestController(BaseController):
     def logged_in(self):
         return "you are logged in"
 
+    def time_gsdf(self):
+        """
+        example of timer test function
+        """
+        """
+        from civicboom.lib.web import get_subdomain_format, get_subdomain_format2, get_subdomain_format3, get_subdomain_format4
+        a = time()
+        for n in xrange(0, 100000):
+            get_subdomain_format()
+        b = time()
+        for n in xrange(0, 100000):
+            get_subdomain_format2()
+        c = time()
+        for n in xrange(0, 100000):
+            get_subdomain_format3()
+        d = time()
+        for n in xrange(0, 100000):
+            get_subdomain_format4()
+        e = time()
+        return "1:%f 2:%f 3:%f 4:%f" % (b-a, c-b, d-c, e-d)
+        """
+
     def db_read(self):
         from civicboom.lib.database.get_cached import get_licenses
-        print "printing licence names"
+        log.debug("printing licence names")
         for licence in get_licenses():
-            print licence.name
+            log.debug(licence.name)
 
     def environ(self):
         env_string = ""
@@ -149,7 +171,6 @@ class TestController(BaseController):
     def recaptcha(self, **kwargs):
         c.kwargs = kwargs
         from pylons import request
-        #print request
 
         if request.environ['REQUEST_METHOD'] == 'POST':
             from civicboom.lib.services.reCAPTCHA import reCAPTCHA_verify

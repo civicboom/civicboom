@@ -2,7 +2,7 @@
 <label${' class=%s' % label_class if label_class else ''} for="${field_name}_name">${_("Location name")}</label><br />
 <input id="${field_name}_name" name="${field_name}_name" type="text" style="width: ${width}">
 <div style="padding-top: 6px" id="${field_name}_comp"></div>
-<input id="${field_name}" name="${field_name}" type="hidden">
+<input id="${field_name}" name="${field_name}" type="hidden" value="${lon} ${lat}">
 % if not always_show_map:
 <script>
 $(function() {
@@ -21,13 +21,15 @@ if not always_show_map:
 <script type="text/javascript">
 $(function() {
 	map = map_picker('${field_name}', {
-		lonlat: {lon:${lon or 1}, lat:${lat or 51}},
+% if lon and lat:
+		lonlat: {lon:${lon}, lat:${lat}},
+% endif
 	});
 });
 </script>
 </%def>
 
-<%def name="minimap(name='map', width='250px', height='250px', lon=None, lat=None, zoom=13, feeds=[], controls=False)">
+<%def name="minimap(lon, lat, zoom=13, name='map', width='250px', height='250px', feeds=[], controls=False)">
 <div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
 <%
 import json
@@ -38,8 +40,8 @@ $(function() {
 		'${name}_div',
 		{
 			controls: ${str(controls).lower()},
-			lonlat: {lon:${lon or 1}, lat:${lat or 51}},
-			zoom: ${zoom or 4},
+			lonlat: {lon:${lon}, lat:${lat}},
+			zoom: ${zoom},
 		},
 		${json.dumps(feeds)|n}
 	);

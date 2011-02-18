@@ -154,6 +154,7 @@ class Member(Base):
     followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
     following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
 
+    assigments           = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
 
     # Content relation shortcuts
     #content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
@@ -201,8 +202,8 @@ class Member(Base):
             'num_followers'       : None ,
             'utc_offset'          : None ,
             'join_date'           : None ,
-            'website'             : None ,
-            'description'         : lambda member: member.config['description'] ,
+            'website'             : lambda member: member.config.get('website') ,
+            'description'         : lambda member: member.config.get('description') ,
             #'url'                 : None ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
@@ -395,7 +396,7 @@ class Member(Base):
             wanted_content = get_content(42)
             claimed_user = get_member(alice)
             if key == claimed_user.get_action_key('read article '+wanted_content.id):
-                print wanted_content
+                print(wanted_content)
         """
         return hashlib.sha1(str(self.id)+action+self.salt).hexdigest()
 

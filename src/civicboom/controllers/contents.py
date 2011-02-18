@@ -399,9 +399,9 @@ class ContentsController(BaseController):
         @comment Shish paramaters need filling out
         """
         # url('content', id=ID)
-        #print "--KWARGS--"
-        #print kwargs
-        #print ""
+        #log.debug("--KWARGS--")
+        #log.debug(kwargs)
+        #log.debug("")
         
         # -- Variables-- -------------------------------------------------------
         content_redirect = None
@@ -462,8 +462,8 @@ class ContentsController(BaseController):
         
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
-            #print "set the error"
-            #print errors.account_level
+            #log.debug("set the error")
+            #log.debug(errors.account_level)
             # AllanC - ARRRRRRRRRRRRRRRRRRRRR!!!! this reference to this object ... something somewhere is maliciously removing the code from errors.account_level
             #error = errors.account_level
             error = action_error(
@@ -486,7 +486,7 @@ class ContentsController(BaseController):
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
             if field in kwargs and hasattr(content,field):
-                #print "set %s as %s" % (field, kwargs[field])
+                #log.debug("set %s as %s" % (field, kwargs[field]))
                 setattr(content,field,kwargs[field])
         
         # Update Existing Media - Form Fields
@@ -572,8 +572,8 @@ class ContentsController(BaseController):
         # -- Redirect ----------------------------------------------------------
 
         if error:
-            #print "raising the error"
-            #print error
+            #log.debug("raising the error")
+            #log.debug(error)
             raise error
 
         if not content_redirect:

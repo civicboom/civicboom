@@ -29,7 +29,7 @@ class TestListsController(TestController):
             )
             response_json = json.loads(response.body)
             id = int(response_json['data']['id'])
-            assert id > 0
+            self.assertNotEqual(id, 0)
             return id
         
         def create_member(name):

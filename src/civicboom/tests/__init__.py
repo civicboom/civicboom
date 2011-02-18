@@ -7,7 +7,7 @@ command.
 This module initializes the application via ``websetup`` (`paster
 setup-app`) and provides the base testing objects.
 """
-from unittest import TestCase
+from unittest2 import TestCase
 
 from paste.deploy import loadapp
 from paste.script.appinstall import SetupCommand
@@ -193,6 +193,23 @@ class TestController(TestCase):
             status=201
         )
         return json.loads(response.body)["data"]["id"]
+
+    def accept_assignment(self, id):
+        response = self.app.post( # Accept assignment
+            url('content_action', action='accept', id=id, format='json') ,
+            params = {'_authentication_token': self.auth_token,} ,
+            status = 200
+        )
+        assert 'accepted' in response
+
+    def withdraw_assignment(self, id):
+        response = self.app.post(
+            url('content_action', action='withdraw', id=id, format='json'),
+            params={'_authentication_token': self.auth_token,},
+            status=200
+        )
+        assert 'withdrawn' in response
+
 
     def getNumNotifications(self, username=None, password=None):
         if username:

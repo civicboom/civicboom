@@ -80,8 +80,12 @@ function cb_frag(current_element, url, list_type) {
 
 	// AJAX load html fragment
 	frag_loading.load(url,
-		function(){ // When AJAX load complete
-			if (frag_loading) {
+		function(response, status, request){ // When AJAX load complete
+			Y.log (request);
+		    if (request.status != 200) {
+		    	frag_loading.remove();
+		    }
+		    if (frag_loading) {
 				frag_loading.fadeTo(0, 0.01); // Set opacity to 0.01 with a delay of 0, this could be replaced with a setOpacity call? I think this is creating animtion headaches
 				//frag_loading.width(0); // animating width buggers up scrolling
 				//frag_loading.animate({width: '500px', opacity: 1.0}, scroll_duration);
