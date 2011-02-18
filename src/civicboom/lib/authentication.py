@@ -6,6 +6,8 @@ Tools used for Authentication of users
 from civicboom.lib.base import *
 from civicboom.lib.database.get_cached import get_membership
 
+from pylons.i18n import _ #WHY THE *** IS THIS NEEDED!! .. it's part of lib.base above?! but without it, it's not imported
+
 # Civicboom imports
 from civicboom.model      import User, UserLogin, Member
 from civicboom.model.meta import Session
