@@ -36,7 +36,7 @@ def multidict_to_dict(multidict):
 # Subdomain format
 #-------------------------------------------------------------------------------
 
-def get_subdomain_format2():
+def get_subdomain_format():
     subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
     if subdomain == "w" or subdomain == "widget":
         return "widget"
