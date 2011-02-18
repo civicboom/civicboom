@@ -11,6 +11,8 @@ help:
 	# run        -- run the site in development mode
 	# clean      -- reset the folder to clean git checkout
 	# gource     -- generate a video of developer activity
+	# profile    -- run the test suite with profiling enabled (slow)
+	# stats      -- run the interactive profile examiner
 
 site: i18n js css
 
@@ -56,6 +58,7 @@ run:
 
 clean:
 	git clean -d -f -x
+	rm -f /tmp/prof.out
 
 gource:
 	gource \
@@ -63,3 +66,9 @@ gource:
 		--file-filter tinymce --highlight-all-users \
 		--multi-sampling -1280x720 --stop-at-end --output-ppm-stream - ../ | \
 		ffmpeg -y -b 3000K -r 24 -f image2pipe -vcodec ppm -i - -vcodec mpeg4 gource.mp4
+
+profile:
+	time python -m cProfile -o /tmp/prof.out /usr/bin/nosetests
+
+stats:
+	python -m pstats /tmp/prof.out
