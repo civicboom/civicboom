@@ -15,6 +15,7 @@ import re
 from decorator import decorator
 from pprint import pformat
 import logging
+import urllib
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -36,10 +37,11 @@ def multidict_to_dict(multidict):
 #-------------------------------------------------------------------------------
 
 def get_subdomain_format():
-    domain = request.environ.get("HTTP_HOST", "")
-    for subdomain, subformat in app_globals.subdomains.iteritems():
-        if domain.startswith(subdomain+'.'):
-            return subformat
+    subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
+    if subdomain == "w" or subdomain == "widget":
+        return "widget"
+    if subdomain == "m" or subdomain == "mobile":
+        return "mobile"
     return 'web'
 
 
@@ -198,6 +200,9 @@ def cookie_set(key, value, duration=None):
 
 def cookie_get(key):
     #log.debug("getting %s:%s" %(key, request.cookies.get(key)))
+    # GregM Pass the cookie through urllib unquote_plus to fix any url encoding (and replace + with space!)
+    if request.cookies.get(key):
+        return urllib.unquote_plus(request.cookies.get(key))
     return request.cookies.get(key)
 
 

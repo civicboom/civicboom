@@ -35,8 +35,8 @@ class Globals(object):
         self.memcache      = memcache.Client(config['service.memcache.server'].split(), debug=0)
 
         self.user_defaults = SafeConfigParser()
-        self.user_defaults.read("user_defaults.ini")        
-        
+        self.user_defaults.read("user_defaults.ini")
+
         self.subdomains = {
             ''      : 'web'    ,
             'www'   : 'web'    ,
