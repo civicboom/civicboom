@@ -205,7 +205,7 @@ class TestDeleteCascadesController(TestController):
         self.assertEqual(self.num_members_public('delete_cascade'), 0)
         self.assertEqual(self.num_content_public('delete_cascade'), 0)
         self.assertEqual(num_members_start, self.num_members_public())
-        self.assertEqual(num_content_start, self.num_content_public() - 1 # -1 because unittest set an assignment)
+        self.assertEqual(num_content_start, self.num_content_public() - 1) # -1 because unittest set an assignment
         
         # check current number of
         response      = self.app.get(url('member', id='unittest', format='json'), status=200)
@@ -230,7 +230,7 @@ class TestDeleteCascadesController(TestController):
         self.assertEqual(Session.query(Message         ).filter_by(  target_id = self.delete_cascade_member_id).count(), 0)
         self.assertEqual(Session.query(Message         ).filter_by(  source_id = self.delete_cascade_member_id).count(), 0)
         
-        self.assertEqual(Session.query(Tag             ).filter_by(       name = 'delete_cascade'             ).count(), 1 #Tag remains at the end, this could be tidyed witha  delete orphan cascade)
+        self.assertEqual(Session.query(Tag             ).filter_by(       name = 'delete_cascade'             ).count(), 1) #Tag remains at the end, this could be tidyed witha  delete orphan cascade
         
         # Step 5: cleanup
         unittest_assignment = get_content(unittest_assingment_id)
@@ -272,6 +272,6 @@ class TestDeleteCascadesController(TestController):
         response      = self.app.get(url('content', id=response_2_id, format='json'), status=200)
         
         self.assertEqual(Session.query(Content         ).filter_by(  parent_id = self.content_id              ).count(), 0)
-        self.assertEqual(Session.query(Tag             ).filter_by(       name = 'delete_cascade'             ).count(), 1 #Tag remains at the end, this could be tidyed witha  delete orphan cascade)
+        self.assertEqual(Session.query(Tag             ).filter_by(       name = 'delete_cascade'             ).count(), 1) #Tag remains at the end, this could be tidyed witha  delete orphan cascade
         self.assertEqual(Session.query(MemberAssignment).filter_by( content_id = self.content_id              ).count(), 0)
         
