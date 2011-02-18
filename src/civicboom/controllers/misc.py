@@ -2,17 +2,24 @@ from civicboom.lib.base import *
 
 from civicboom.lib.communication.email_lib import send_email
 from urllib import quote_plus, unquote_plus
+import os
 
 class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
     def about(self, id="civicboom"):
-        return action_ok(template="misc/about/"+id)
+        if os.path.exists("templates/html/misc/about/"+id+".mako"):
+            return action_ok(template="misc/about/"+id)
+        else:
+            raise action_error(code=404, message="No description for this topic")
 
     @cacheable(time=600)
     @auto_format_output
     def help(self, id="civicboom"):
-        return action_ok(template="help/"+id)
+        if os.path.exists("templates/html/help/"+id+".mako"):
+            return action_ok(template="help/"+id)
+        else:
+            raise action_error(code=404, message="No help for this topic")
 
     #@cacheable(time=600)
     @auto_format_output

@@ -57,8 +57,8 @@ def init_base_data():
         u1.join_date     = datetime.datetime.now()
         u1.status        = "active"
         u1.email         = u"unittest@test.com"
-        u1.location_home = "SRID=4326;POINT(1 51)"
-        u1.location_current = "SRID=4326;POINT(2 51)"
+        u1.location_home = "SRID=4326;POINT(1.0652 51.2976)"
+        u1.location_current = "SRID=4326;POINT(1.0803 51.2789)"
         u1.config['home_location'] = u"The Moon"
         u1.config['description']   = u"A user for automated tests to log in as"
 
