@@ -200,6 +200,16 @@ class TestController(TestCase):
             params = {'_authentication_token': self.auth_token,} ,
             status = 200
         )
+        assert 'accepted' in response
+
+    def withdraw_assignment(self, id):
+        response = self.app.post(
+            url('content_action', action='withdraw', id=id, format='json'),
+            params={'_authentication_token': self.auth_token,},
+            status=200
+        )
+        assert 'withdrawn' in response
+
 
     def getNumNotifications(self, username=None, password=None):
         if username:
