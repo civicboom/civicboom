@@ -154,11 +154,11 @@
             ${show_error('member_visibility')}
           </td>
         </tr>
-##        <tr class="padding">
-##          <td colspan="2"><label for="website">Website:</label></td>
-##          <td colspan="4"><input type="text" name="website" id="website" /></td>
-##          <td>&nbsp;</td>
-##        </tr>
+        <tr class="padding">
+          <td colspan="2"><label for="website">Website:</label></td>
+          <td colspan="4"><input type="text" name="website" id="website" value="${get_param('website')}" /></td>
+          <td>&nbsp;</td>
+        </tr>
         <tr class="padding">
           <td colspan="2"><label for="avatar">Group avatar:</label></td>
           <td colspan="4"><input type="file" name="avatar" id="avatar" /></td>
