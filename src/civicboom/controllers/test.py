@@ -44,6 +44,9 @@ class TestController(BaseController):
 
     def time_gsdf(self):
         """
+        example of timer test function
+        """
+        """
         from civicboom.lib.web import get_subdomain_format, get_subdomain_format2, get_subdomain_format3, get_subdomain_format4
         a = time()
         for n in xrange(0, 100000):
