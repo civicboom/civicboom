@@ -38,7 +38,7 @@
         setting_group_order.extend(setting_groups_set - set(setting_group_order))
               
         #for g in setting_group_order:
-        #    print g
+        #    log.debug(g)
         #settings_groups_order = (setting_group_order & setting_groups_set) | (setting_group_order - setting_groups_set)
     %>
 

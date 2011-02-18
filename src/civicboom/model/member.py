@@ -396,7 +396,7 @@ class Member(Base):
             wanted_content = get_content(42)
             claimed_user = get_member(alice)
             if key == claimed_user.get_action_key('read article '+wanted_content.id):
-                print wanted_content
+                print(wanted_content)
         """
         return hashlib.sha1(str(self.id)+action+self.salt).hexdigest()
 

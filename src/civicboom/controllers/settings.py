@@ -222,7 +222,7 @@ class SettingsController(BaseController):
         # List validators required
         validators = {}
         for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings[setting_name] != kwargs[setting_name] ]:
-            #print "adding validator: %s" % validate_fieldname
+            #log.debug("adding validator: %s" % validate_fieldname)
             validators[validate_fieldname] = settings_validators[validate_fieldname]
         # Build a dynamic validation scema based on these required fields and validate the form
         schema = build_schema(**validators)

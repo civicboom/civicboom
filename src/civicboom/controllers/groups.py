@@ -229,9 +229,9 @@ class GroupsController(BaseController):
             settings_update(id=id, website=kwargs['website'])
         # GregM: Does not work! AC Please HEEEELLPPPP! Ktnxbai...
         if 'description' in kwargs:
-            print '!!!'
-            print kwargs['description']
-            print settings_update(id=id, description=kwargs['description'])
+            log.debug('!!!')
+            log.debug(kwargs['description'])
+            log.debug(settings_update(id=id, description=kwargs['description']))
         c.format = cformat
         
         Session.commit()

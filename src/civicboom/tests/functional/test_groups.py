@@ -164,7 +164,7 @@ class TestGroupsController(TestController):
             },
             #status=200
         )
-        #print response
+        #log.debug(response)
         # appears to be a validation error? why? description is missing!! ? WHAT? description is not a required field.. wtf
         assert 'ALRIGHT' in response
         assert 'editor' not in response
