@@ -65,6 +65,12 @@ class MiscController(BaseController):
         return action_ok()
 
     @web
+    def upgrade_plans(self):
+        c.upgrade_plans_title = 'You have reached your Basic account limit for this month.'
+        c.upgrade_plans_subtitle = 'If you want to get more from Civicboom you can choose premium or above:'
+        return action_ok()
+    
+    @web
     def feedback(self, **kwargs):
         if not request.POST:
             return action_ok() # Render the feedback form by autolocating the template
