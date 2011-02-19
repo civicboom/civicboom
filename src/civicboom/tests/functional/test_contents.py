@@ -226,24 +226,24 @@ class TestContentsController(TestController):
 
     def part_content_results(self):
         response = self.app.get(url('contents', query='test'))
-        assert "A test article by unitfriend" in response
-        assert "Friend" in response
-        #assert "0 responses" in response
+        self.assertIn("A test article by unitfriend", response)
+        self.assertIn("Friend", response)
+        #self.assertIn("0 responses", response)
 
     def part_content_results_rss(self):
         response = self.app.get(url('contents', format="rss", query='test'))
-        assert "A test article by unitfriend" in response
-        assert "Friend" in response
+        self.assertIn("A test article by unitfriend", response)
+        self.assertIn("Friend", response)
 
     def part_content_results_json(self):
         response = self.app.get(url('contents', format="json", query='test'))
-        assert "A test article by unitfriend" in response
-        assert "Friend" in response
+        self.assertIn("A test article by unitfriend", response)
+        self.assertIn("Friend", response)
 
     def part_content_no_results(self):
         response = self.app.get(url('contents', query='cake'))
         # FIXME: term is no longer used in output
-        #assert "'cake' did not match any articles" in response
+        #self.assertIn("'cake' did not match any articles", response)
 
     def part_content_no_query(self):
         response = self.app.get(url('contents'))
@@ -255,24 +255,24 @@ class TestContentsController(TestController):
     def part_content_location(self):
         response = self.app.get(url('contents', location='1,51', format="frag"))
         # FIXME: article list has no content, only title
-        #assert "Here is some text" in response
+        #self.assertIn("Here is some text", response)
 
     def part_content_location_radius(self):
         response = self.app.get(url('contents', location='1,51,10', format="frag"))
-        #assert "Here is some text" in response
+        #self.assertIn("Here is some text", response)
 
     def part_content_type(self):
         response = self.app.get(url('contents', type='assignment', format="frag"))
-        assert "There once was" in response
+        self.assertIn("There once was", response)
 
     def part_content_author(self):
         response = self.app.get(url('contents', author='unittest', format="frag"))
-        assert "Assignment for the world to see" in response
+        self.assertIn("Assignment for the world to see", response)
 
     def part_content_response_to(self):
         response = self.app.get(url('contents', response_to=2, format="frag"))
         # FIXME: create a response as test data
-        #assert "something" in response
+        #self.assertIn("something", response)
 
 
     ## new -> create #########################################################
@@ -310,7 +310,7 @@ class TestContentsController(TestController):
             },
             status=400
         )
-        assert 'invalid' in response
+        self.assertIn('invalid', response)
 
     def part_cant_comment_on_something_that_doesnt_exist(self):
         response = self.app.post(
@@ -324,7 +324,7 @@ class TestContentsController(TestController):
             },
             status=400
         )
-        assert 'invalid' in response
+        self.assertIn('invalid', response)
 
     def part_cant_comment_on_what_cant_be_seen(self):
         response = self.app.post(

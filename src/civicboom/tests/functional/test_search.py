@@ -12,8 +12,8 @@ class TestSearchController(TestController):
     def test_location_results(self):
         response = self.app.get(url(controller='search', action='location', format="json", term="cant"))
         # FIXME: test install has no geolocation data
-        #assert "Canterbury" in response
+        #self.assertIn("Canterbury", response)
 
     def test_location_no_results(self):
         response = self.app.get(url(controller='search', action='location', format="json", term="waffleville"))
-        assert "Canterbury" not in response
+        self.assertNotIn("Canterbury", response)

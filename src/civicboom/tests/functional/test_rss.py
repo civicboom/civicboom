@@ -18,7 +18,7 @@ class TestRSSController(TestController):
             )
             response_json = json.loads(response.body)
             id = int(response_json['data']['id'])
-            assert id > 0
+            self.assertNotEqual(id, 0)
             return id
         
         #response      = self.app.get(url('member', id='unittest', format='json'), status=200)
@@ -30,10 +30,10 @@ class TestRSSController(TestController):
         #          in prefernce users are expected to use contents/index
         #response      = self.app.get(url('member', id='unittest', format='rss'), status=200)
         response      = self.app.get(url('contents', creator='unittest', format='rss'), status=200)
-        assert 'rss content test' in response
+        self.assertIn('rss content test', response)
         
         response      = self.app.get(url('content', id=rss_content_id, format='rss'), status=200)
-        assert 'rss content test' in response
+        self.assertIn('rss content test', response)
         
         response      = self.app.get(url('members' , format='rss'), status=200)
         response      = self.app.get(url('contents', format='rss'), status=200)

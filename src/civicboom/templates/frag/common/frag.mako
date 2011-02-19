@@ -83,7 +83,7 @@
             if 'format' in kwargs:
                 del kwargs['format']
             if 'subdomain' in kwargs:
-                #print 'old subdomain = %s' % kwargs['subdomain']
+                #log.debug('old subdomain = %s' % kwargs['subdomain'])
                 # AllanC - annoyingly this should never happen ... but somhow the subdomain is leaking out of the URL generator - probably because somewhere there is a still a call to pylons.url rather than web.url
                 del kwargs['subdomain']
                 

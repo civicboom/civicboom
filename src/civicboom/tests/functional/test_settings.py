@@ -22,7 +22,7 @@ class TestSettingsController(TestController):
             },
             status=400
         )
-        assert 'Fields do not match' in response
+        self.assertIn('Fields do not match', response)
         #Change password
         response = self.app.post(
             url(controller='settings', action='update'),
@@ -55,7 +55,7 @@ class TestSettingsController(TestController):
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
         self.email_address = response_json['data']['settings']['email']
-        assert self.email_address
+        self.assertTrue(self.email_address)
         
         #Change email address no AT
         response = self.app.post(
@@ -67,7 +67,7 @@ class TestSettingsController(TestController):
             },
             status=400
         )
-        assert 'An email address must contain a single @' in response
+        self.assertIn('An email address must contain a single @', response)
         
 #        BROKEN: domain check not active in test mode!
 #        #Change email address invalid domain
@@ -80,7 +80,7 @@ class TestSettingsController(TestController):
 #            },
 #            status=400
 #        )
-#        assert 'The domain of the email address does not exist' in response
+#        self.assertIn('The domain of the email address does not exist', response)
 
 #        BROKEN: allows blank email addresses
         #Change email address invalid blank
@@ -106,17 +106,17 @@ class TestSettingsController(TestController):
             status=302
         )
         #Should send an email
-        assert getNumEmails() == num_emails + 1
+        self.assertEqual(getNumEmails(), num_emails + 1)
         email_response = getLastEmail()
         #Email should be sent to new address
-        assert 'test@example.com' in email_response.email_to
+        self.assertIn('test@example.com', email_response.email_to)
         link = str(re.search(r'https?://(?:.*?)(/.*?)[\'"\s]', email_response.content_text+' ').group(1))
-        assert 'hash' in link
+        self.assertIn('hash', link)
         response = self.app.get(link,status=302)
         #Check changed
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
-        assert 'test@example.com' in response # Email address has changed
+        self.assertIn('test@example.com', response) # Email address has changed
         
         num_emails = getNumEmails()
         
@@ -131,17 +131,17 @@ class TestSettingsController(TestController):
             status=302
         )
         #Should send an email
-        assert getNumEmails() == num_emails + 1
+        self.assertEqual(getNumEmails(), num_emails + 1)
         email_response = getLastEmail()
         #Email should be sent to new address
-        assert self.email_address in email_response.email_to
+        self.assertIn(self.email_address, email_response.email_to)
         link = str(re.search(r'https?://(?:.*?)(/.*?)[\'"\s]', email_response.content_text+' ').group(1))
-        assert 'hash' in link
+        self.assertIn('hash', link)
         response = self.app.get(link,status=302)
         #Check changed
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
-        assert self.email_address in response # Email address has changed
+        self.assertIn(self.email_address, response) # Email address has changed
         
     def test_change_avatar(self):
         self.png1x1 = b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAAXNSR0IArs4c6QAAAApJREFUCNdj+AcAAQAA/8I+2MAAAAAASUVORK5CYII=')
@@ -162,7 +162,7 @@ class TestSettingsController(TestController):
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
         self.old_description = response_json['data']['settings']['description']
-        assert self.old_description
+        self.assertTrue(self.old_description)
         #Change
         response = self.app.post(
             url(controller='settings', action='update'),
@@ -176,9 +176,7 @@ class TestSettingsController(TestController):
         #Check changed
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
-        print self.old_description
-        print response_json['data']['settings']['description']
-        assert self.old_description != response_json['data']['settings']['description']
+        self.assertNotEqual(self.old_description, response_json['data']['settings']['description'])
         #Change
         response = self.app.post(
             url(controller='settings', action='update'),
@@ -209,7 +207,7 @@ class TestSettingsController(TestController):
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
         self.old_location = response_json['data']['settings']['location_home']
-        assert self.old_location
+        self.assertTrue(self.old_location)
         #Change
         response = self.app.post(
             url(controller='settings', action='update'),
@@ -255,7 +253,7 @@ class TestSettingsController(TestController):
         #Check changed
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
-        assert self.old_name != response_json['data']['settings']['name']
+        self.assertNotEqual(self.old_name, response_json['data']['settings']['name'])
         #Change
         response = self.app.post(
             url(controller='settings', action='update'),
@@ -283,7 +281,7 @@ class TestSettingsController(TestController):
             },
             status=400
         )
-        assert 'That is not a valid URL' in response
+        self.assertIn('That is not a valid URL', response)
         
         #Change
         response = self.app.post(
@@ -299,7 +297,7 @@ class TestSettingsController(TestController):
         #Check changed
         response = self.app.get(url(controller='settings', action="show", format='json'))
         response_json = json.loads(response.body)
-        assert self.old_website != response_json['data']['settings']['website']
+        self.assertNotEqual(self.old_website, response_json['data']['settings']['website'])
         #Change
         response = self.app.post(
             url(controller='settings', action='update'),
@@ -317,12 +315,12 @@ class TestSettingsController(TestController):
 #        self.log_out()
 #        response = self.app.get(url(controller='settings', action='general', id='unittest'), status=302)
 #        response.follow()
-#        assert "Sign in" in response
+#        self.assertIn("Sign in", response)
 #
 #    def test_general(self):
 #        # test that with no ID, we get our own user page
 #        response = self.app.get(url(controller='settings', action='general'))
-#        assert "Display name" in response
+#        self.assertIn("Display name", response)
 #
 #        response = self.app.post(
 #            url(controller='settings', action='save_general', id='unittest'),
@@ -389,7 +387,7 @@ class TestSettingsController(TestController):
 #    def test_messages(self):
 #        # test that with no ID, we get our own user page
 #        response = self.app.get(url(controller='settings', action='messages'))
-#        assert "a test message" in response
+#        self.assertIn("a test message", response)
 #
 #        response = self.app.post(
 #            url(controller='settings', action='save_messages', id='unittest'),
@@ -408,7 +406,7 @@ class TestSettingsController(TestController):
 #            },
 #            status = 403
 #        )
-#        assert "Hold it!" in response
+#        self.assertIn("Hold it!", response)
 #        # FIXME: test with CSRF protection passed
 #        # FIXME: check for session['flash'] = "Settings changed: email"
 #        # FIXME: check that we're redirected back to the settings page
