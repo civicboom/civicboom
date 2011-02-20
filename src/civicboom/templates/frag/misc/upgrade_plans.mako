@@ -25,7 +25,7 @@ ${payplans()}
           <ul>
             <li>Up to 5 requests per month</li>
             <li>Audio requests and responses</li>
-            <li>Another here</li>
+##            <li>Another here</li>
           </ul>
           <div class="buttons">
             <div class="buttongreen">Ideal for...</div>
@@ -41,7 +41,7 @@ ${payplans()}
           <ul>
             <li>Unlimited requests per month</li>
             <li>Closed requests</li>
-            <li>Another here</li>
+##            <li>Another here</li>
             <li>Unlimited hubs</li>
           </ul>
           <div class="buttons">
@@ -58,9 +58,7 @@ ${payplans()}
         </div>
         <div class="planpoints">
           <ul>
-            <li>Up to 5 requests per month</li>
-            <li>Audio requests and responses</li>
-            <li>Another here</li>
+            <li>More details coming soon!</li>
           </ul>
           <div class="buttons">
             <div class="buttongreen">Ideal for...</div>
@@ -74,9 +72,7 @@ ${payplans()}
         </div>
         <div class="planpoints">
           <ul>
-            <li>Up to 5 requests per month</li>
-            <li>Audio requests and responses</li>
-            <li>Another here</li>
+            <li>More details coming soon!</li>
           </ul>
           <div class="buttons">
             <div class="buttongreen">Ideal for...</div><br />
