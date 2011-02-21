@@ -232,7 +232,7 @@ class Member(Base):
     
     def __link__(self):
         from civicboom.lib.web import url
-        return url('member', id=self.id, subdomain='')
+        return url('member', id=self.id, subdomain='', absolute=True)
 
     def hash(self):
         h = hashlib.md5()
