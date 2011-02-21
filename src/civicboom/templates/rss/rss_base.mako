@@ -50,7 +50,7 @@
         <link>${url('content', id=content['id'], subdomain='')}</link> 
         <description>${content['content_short']}</description> 
         <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate>
-        <guid isPermaLink="false">Civicboom Content #${content['id']}</guid>
+        <guid isPermaLink="false">Content #${content['id']}</guid>
         % if 'tags' in content:
         <category>
             % for tag in content['tags']:
@@ -147,7 +147,7 @@
         <description>${member['description']}</description>
         % endif
         ##<pubDate>${h.datetime_to_rss(h.api_datestr_to_datetime(content['creation_date']))}</pubDate> 
-        <guid isPermaLink="false">Civicboom Member #${member['id']}</guid>
+        <guid isPermaLink="false">Member #${member['id']}</guid>
 
     ##% if 'thumbnail_url' in member:
     ##    <enclosure url="${member['thumbnail_url']}" type="image/jpeg" />
