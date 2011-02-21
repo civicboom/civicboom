@@ -198,7 +198,7 @@ def convert_html_to_plain_text(content_html, ommit_links=False):
         # improvement idea: use str.center(width[, fillchar]) Return centered in a string of length width. Padding is done using the specified fillchar (default is a space).
         heading_level = m.group(2)
         heading_decoration = ""
-        for i in range(int(heading_level)):
+        for i in range(5-int(heading_level)):
           heading_decoration += "="
         newline_before = ""
         newline_after  = ""
