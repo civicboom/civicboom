@@ -7,7 +7,7 @@ command.
 This module initializes the application via ``websetup`` (`paster
 setup-app`) and provides the base testing objects.
 """
-from unittest import TestCase
+from unittest2 import TestCase
 
 from paste.deploy import loadapp
 from paste.script.appinstall import SetupCommand

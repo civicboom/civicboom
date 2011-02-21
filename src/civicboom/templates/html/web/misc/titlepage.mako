@@ -94,7 +94,7 @@ ${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', subdomain
         <div style="clear: both; padding: 0.5em;"></div>
         
         <a style="float:right; color: black; background: none;" class="button" href="mailto:contact@civicboom.com">${_('Get in touch')}</a>
-        <p style="font-weight: bold;">${_('Are you an organisation? Do you want to know how Civicboom can help you?')}</p>
+        <p style="font-weight: bold;">${_('Are you an organisation? Do you want to know how _site_name can help you?')}</p>
     </section>
 </%def>
 
@@ -149,10 +149,10 @@ ${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', subdomain
 
     <%self:step arg>
         <%def name="main()">
-            <div style="text-align: center; margin-top: 3em;"><img src="/images/boom193.png" alt="Civicboom Logo" width="193" height="193" /></div>
+            <div style="text-align: center; margin-top: 3em;"><img src="/images/boom193.png" alt="${_("_site_name logo")}" width="193" height="193" /></div>
         </%def>
         <%def name="description()">
-            <p style="font-weight: bold; font-size: 120%;">Civicboom empowers you connect, create and collaborate on what matters to you. </p>
+            <p style="font-weight: bold; font-size: 120%;">${_("_site_name empowers you connect, create and collaborate on what matters to you.")}</p>
         </%def>
     </%self:step>
 

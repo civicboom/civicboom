@@ -137,7 +137,7 @@ ${self.head_links()}
 			}
 			## GregM: Upgrade Required
       if (request.status == 402) {
-        //popup ('Please upgrade your account to proceed', '');
+        popup('${_('Upgrade plans')}','/misc/upgrade_plans.frag');
       }
       ## GregM: Login Required
         if (request.status == 403) {

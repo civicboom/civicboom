@@ -68,7 +68,7 @@ ${widget_preview(c.widget_user_preview)}
             <li>${_('Respond to them immediately')}</li>
             <li>${_('Accept to complete at a later date')}</li>
         </ul>
-        <p>${_('Anyone who is not Following you on the Civicboom system, but clicks on "Accept" or "Respond" via your widget will automatically become a Follower of you. This means every time you send out a request, they will get alerted.')}</p>
+        <p>${_('Anyone who is not Following you on the _site_name system, but clicks on "Accept" or "Respond" via your widget will automatically become a Follower of you. This means every time you send out a request, they will get alerted.')}</p>
         <p style="padding-top: 6px; padding-bottom: 6px;">${_("Others can also copy and paste this widget's code into their own website's HTML and show it on their site. This can help amplify your reach to a wider audience.")}</p>
 
 

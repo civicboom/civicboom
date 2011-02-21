@@ -10,7 +10,7 @@ class TestAdminController(TestController):
     def test_event_log(self):
         response = self.app.get(url(controller='test', action='fill_log'))
         response = self.app.get(url(controller='admin', action='event_log'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
-        assert "debug" in response
+        self.assertIn("debug", response)
         # test searching
         response = self.app.get(url(controller='admin', action='event_log', module='civicboom/controllers/test.py'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
         response = self.app.get(url(controller='admin', action='event_log', line_num='20'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})

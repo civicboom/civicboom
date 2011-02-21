@@ -1,13 +1,13 @@
 <html>
 	<head>
-		<title>Civicboom - Mobile Edition</title>
+		<title>${_("_site_name - Mobile Edition")}</title>
 	</html>
 	<body>
-Welcome to Civicboom mobile edition!
+$_{("Welcome to _site_name mobile edition!")}
 <ul>
-<li><a href="/account/signin">Sign in</a>
-<li><a href="/profile">My Profile</a>
-<li><a href="/contents">Contents</a>
+<li><a href="/account/signin">${_("Sign in")}</a>
+<li><a href="/profile">${_("My Profile")}</a>
+<li><a href="/contents">${_("Contents")}</a>
 </ul>
 	</body>
 </html>

@@ -21,7 +21,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="group()">
-    ${frag.frag_basic(title=_('%s Group') % c.action.capitalize(), icon='group', frag_content=group_content)}
+    ${frag.frag_basic(title=_('%s _Group') % c.action.capitalize(), icon='group', frag_content=group_content)}
 </%def>
 <%def name="group_content()">
     <%
@@ -56,12 +56,12 @@
 
     
     <fieldset>
-  		<!--<legend>${_("Group")}</legend>-->
+  		<!--<legend>${_("_Group")}</legend>-->
   		<table class="group-table">
   			<tr class="padding">
-  				<td colspan="2">${_("Group name")}</td>
+  				<td colspan="2">${_("_Group name")}</td>
   				<td colspan="5">
-  		      <input class="group-edit" type="text" name="name" value="${get_param('name')}" placeholder="Enter the public name of your Group here"/>
+  		      <input class="group-edit" type="text" name="name" value="${get_param('name')}" placeholder="${_("Enter the public name of your _Group here")}"/>
           ${show_error('name')}
   				</td>
   			</tr>
@@ -110,7 +110,7 @@
   			</tr>
   			<tr class="padding">
   			  <td colspan="7" style="text-align: center;">
-  			    Note: By creating this Group you are automatically set as an Administrator.
+  			    ${_("Note: By creating this _Group you are automatically set as an Administrator.")}
   			  </td>
   			</tr>
   			<tr class="padding">
@@ -160,7 +160,7 @@
           <td>&nbsp;</td>
         </tr>
         <tr class="padding">
-          <td colspan="2"><label for="avatar">Group avatar:</label></td>
+          <td colspan="2"><label for="avatar">${_("_Group avatar:")}</label></td>
           <td colspan="4"><input type="file" name="avatar" id="avatar" /></td>
           <td>&nbsp;</td>
         </tr>
@@ -174,7 +174,7 @@
 ##          <td>&nbsp;</td>
 ##        </tr>
         <tr class="padding">
-          <td colspan="5"><label for="permission">This Group represents an organisation and I have the permissions/rights to create it.</label></td>
+          <td colspan="5"><label for="permission">${_("This _Group represents an organisation and I have the permissions/rights to create it.")}</label></td>
           <td><input type="checkbox" name="permission" id="permission"/>
           <td>&nbsp;</td>
         </tr>
@@ -190,9 +190,9 @@
   			<tr>
   				<td colspan="6" style="text-align: right;">
   				% if d['action']=='edit':
-  					<input type="submit" name="submit" value="${_('Save Group')}" class="button" />
+  					<input type="submit" name="submit" value="${_('Save _Group')}" class="button" />
   				% else:
-  					<input type="submit" name="submit" value="${_('Create Group')}" class="button" />
+  					<input type="submit" name="submit" value="${_('Create _Group')}" class="button" />
   				% endif
   				</td>
   				<td>&nbsp;</td>
@@ -208,7 +208,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="quick_group()">
-    ${frag.frag_basic(title=_('Quick Group'), icon='group', frag_content=quick_group_content)}
+    ${frag.frag_basic(title=_('Quick _Group'), icon='group', frag_content=quick_group_content)}
 </%def>
 <%def name="quick_group_content()">
     <script type="text/javascript">

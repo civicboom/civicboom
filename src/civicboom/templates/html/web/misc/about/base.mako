@@ -13,6 +13,8 @@
 <li><a class="button" href="${h.url(controller='misc', action='about', id='investors'       )}">${_("Investors")}</a>
 <!--<li><a class="button" href="${h.url(controller='misc', action='about', id='press'      )}">${_("Press")}</a>-->
 <li><p>
+<li><p><a class="button" href="${h.url(controller='misc', action='about', id='plans'  )}">${_("Payment Plans")}</a>
+<li><p>
 <li><a class="button" href="${h.url(controller='misc', action='about', id='mobile'     )}">${_("Mobile")}</a>
 <li><p>
 <li><a class="button" href="${h.url(controller='misc', action='about', id='developers' )}">${_("Developers")}</a>

@@ -8,7 +8,7 @@ class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
     def about(self, id="civicboom"):
-        if os.path.exists("templates/html/misc/about/"+id+".mako"):
+        if os.path.exists(config['path.templates']+"/html/web/misc/about/"+id+".mako"):
             return action_ok(template="misc/about/"+id)
         else:
             raise action_error(code=404, message="No description for this topic")
@@ -16,7 +16,7 @@ class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
     def help(self, id="civicboom"):
-        if os.path.exists("templates/html/help/"+id+".mako"):
+        if os.path.exists(config['path.templates']+"/frag/help/"+id+".mako"):
             return action_ok(template="help/"+id)
         else:
             raise action_error(code=404, message="No help for this topic")
@@ -64,6 +64,12 @@ class MiscController(BaseController):
         c.widget_user_preview = get_member(id)
         return action_ok()
 
+    @web
+    def upgrade_plans(self):
+        c.upgrade_plans_title = 'You have reached your Basic account limit for this month.'
+        c.upgrade_plans_subtitle = 'If you want to get more from Civicboom you can choose premium or above:'
+        return action_ok()
+    
     @web
     def feedback(self, **kwargs):
         if not request.POST:

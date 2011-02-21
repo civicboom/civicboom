@@ -1,16 +1,13 @@
 <%inherit file="base.mako"/>
-<%def name="title()">${_("Investors")}</%def>
-
-<h1>Investors</h1>
-
-<p>After Seeding Funding and Round 1 external investment we are
-now in the process of opening up Round 2 investment discussions
-to further expand the Civicboom platform.</p>
-<h2>Interested parties</h2>
-<p>Please email <a href="mailto:investors@civicboom.com">investors@civicboom.com</a></p>
-
-##<h2>Interested in Investing?</h2>
-##<p>Please contact ...</p>
+<%def name="title()">${_("Payment Plans")}</%def>
+<%
+  c.upgrade_plans_title = None
+  c.upgrade_plans_subtitle = None
+  %>
+<h1 class="centre" style="font-size: 250%">Get more from Civicboom</h1>
+<div style="position: relative; left: -5em;" class="centre">
+  <%include file="/frag/misc/upgrade_plans.mako"/>
+</div>
 
 <!-- hack to widen the table up to its max-width, while remaining shrinkable -->
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;

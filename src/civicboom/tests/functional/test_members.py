@@ -8,15 +8,15 @@ class TestMembersController(TestController):
     def test_member_list(self):
         # by name
         response = self.app.get(url('members', format="json", list="all", term="mr"))
-        assert "Mr U. Test" in response
+        self.assertIn("Mr U. Test", response)
 
         # by username
         response = self.app.get(url('members', format="json", list="all", term="unit"))
-        assert "Mr U. Test" in response
+        self.assertIn("Mr U. Test", response)
 
         # invalid
         response = self.app.get(url('members', format="json", list="all", term="waffleville"))
-        assert "Mr" not in response
+        self.assertNotIn("Mr", response)
 
     def test_member_show(self):
         response = self.app.get(url('member', id='unittest', format='json'))
