@@ -28,7 +28,7 @@ function flash_message(json_message) {
 	}
 }
 
-function popup(title, url) {
+function popup(title, url) {	
 	// AllanC - TODO: need some indication to the user that this AJAX request is happening
 	$('#popup .title_text'   ).html(title);
 	$('#popup .popup_content').load(url,function(){

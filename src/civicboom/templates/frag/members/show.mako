@@ -39,10 +39,12 @@ _<%inherit file="/frag/common/frag.mako"/>
                 self.attr.title     = _('Current _Group Persona')
                 self.attr.icon_type = 'group'
                 self.attr.help_frag = 'group_persona'
+                self.attr.created_popup_url = url(controller='misc', action='help', id='created_group', format='frag')
             else:
                 self.attr.title     = _('Current User')
                 self.attr.icon_type = 'current_user'
                 self.attr.help_frag = 'profile'
+                self.attr.created_popup_url = url(controller='misc', action='help', id='created_user', format='frag')
             
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
@@ -56,6 +58,8 @@ _<%inherit file="/frag/common/frag.mako"/>
         #self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
         self.attr.auto_georss_link = True
+        
+        
     %>
 </%def>
 

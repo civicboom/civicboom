@@ -31,13 +31,6 @@
             self.attr.title     = _('_'+self.content['type']).capitalize()
         self.attr.icon_type = self.content['type']
         
-        # AllanC - rather than duplicating the formating information multiple times - use the subroutene h.api_datestr_to_datetime and time ago
-        #self.creation_date = datetime.datetime.strptime(self.content['creation_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('creation_date') else nothing
-        #self.update_date = datetime.datetime.strptime(self.content['update_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('update_date') else nothing
-        #self.publish_date = datetime.datetime.strptime(self.content['publish_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('publish_date') else nothing
-        #self.due_date = datetime.datetime.strptime(self.content['due_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('due_date') else nothing
-        #self.event_date = datetime.datetime.strptime(self.content['event_date'].split('.')[0], "%Y-%m-%d %H:%M:%S") if self.content.get('event_date') else nothing
-        
         self.attr.frag_data_css_class = 'frag_content'
         
         if self.content['private'] == False:
@@ -56,6 +49,9 @@
             self.attr.help_frag = 'create_'+self.content['target_type']
         
         self.attr.auto_georss_link = True
+        
+        if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment':
+            self.attr.created_popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
     %>
 </%def>
 
