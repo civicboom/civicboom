@@ -1,4 +1,4 @@
-<%inherit file="/frag/common/frag.mako"/>
+_<%inherit file="/frag/common/frag.mako"/>
 
 <%!
     import civicboom.lib.constants as constants
@@ -36,7 +36,7 @@
         
         if self.current_user:
             if self.member['type'] == 'group':
-                self.attr.title     = _('Current Group Persona')
+                self.attr.title     = _('Current _Group Persona')
                 self.attr.icon_type = 'group'
                 self.attr.help_frag = 'group_persona'
             else:
@@ -105,7 +105,7 @@
         % if self.member.get('description'):
           <div style="clear:left; height: 3px;">&nbsp;</div>
           <div style="clear:left;" class="frag_list">
-            <h2><span class="icon icon_${self.attr.icon_type}"><span>descrition</span><div style="display:inline-block;padding-left:19px">Description</div></span></h2>
+            <h2><span class="icon icon_${self.attr.icon_type}"><span>description</span><div style="display:inline-block;padding-left:19px">Description</div></span></h2>
             <div class="frag_list_contents">
               <div class="content" style="padding-bottom: 3px;">
                 ${self.member['description']}
@@ -132,7 +132,7 @@
         
         ${frag_list.member_list_thumbnails(
             [m for m in d['groups']['items'] if m['status']=='active'],
-            _('Groups') ,
+            _('_Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
             icon = 'group' ,
         )}
@@ -279,7 +279,7 @@
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
             value           = _('Join _group') ,
-            value_formatted = h.literal("<span class='icon icon_join'></span>%s") % _('Join Group'),
+            value_formatted = h.literal("<span class='icon icon_join'></span>%s") % _('Join _Group'),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>

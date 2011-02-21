@@ -140,9 +140,9 @@
     <ul>
         <li><a href="#" class="top_parent button">${_("Create")}</a>
         <ul>
-            <li>${h.secure_link(h.url('new_content', target_type='assignment'), _("_assignment").capitalize(), css_class="sub_option")}</li>
-            <li>${h.secure_link(h.url('new_content', target_type='article'   ), _("_article").capitalize()   , css_class="sub_option")}</li>
-            <li><a href="${h.url('new_group')}" class="sub_option">${_("Group")}</a></li>
+            <li>${h.secure_link(h.url('new_content', target_type='assignment'), _("_Assignment"), css_class="sub_option")}</li>
+            <li>${h.secure_link(h.url('new_content', target_type='article'   ), _("_Article"), css_class="sub_option")}</li>
+            <li><a href="${h.url('new_group')}" class="sub_option">${_("_Group")}</a></li>
         </ul>
         </li>
     </ul>
@@ -163,10 +163,10 @@
 			</li>
 -->
 % endif
-            <li><a href="/contents?list=assignments_active" class="sub_option">${_("_assignments").capitalize()}</a></li>
-            <li><a href="/contents?list=articles"           class="sub_option">${_("_articles").capitalize()}</a></li>
-            <li><a href="/members?type=user"                class="sub_option">${_("_users").capitalize()}</a></li>
-            <li><a href="/members?type=group"               class="sub_option">${_("_groups").capitalize()}</a></li>
+            <li><a href="/contents?list=assignments_active" class="sub_option">${_("_Assignments")}</a></li>
+            <li><a href="/contents?list=articles"           class="sub_option">${_("_Articles")}</a></li>
+            <li><a href="/members?type=user"                class="sub_option">${_("_Users")}</a></li>
+            <li><a href="/members?type=group"               class="sub_option">${_("_Groups")}</a></li>
         </ul>
         </li>
     </ul>
@@ -178,7 +178,7 @@
             <li><a href="/settings" class="sub_option">${_("Settings")}</a></li>
             ##<li><a href="/profile"  class="sub_option">${_("Content")}</a></li>
             ##<li><a href="/profile"  class="sub_option">${_("_Assignments")}</a></li>
-            ##<li><a href="${url('member_action', id=c.logged_in_persona.username, action='groups')}"  class="sub_option">${_("My Groups")}</a></li>
+            ##<li><a href="${url('member_action', id=c.logged_in_persona.username, action='groups')}"  class="sub_option">${_("My _Groups")}</a></li>
         </ul>
         </li>
     </ul>
