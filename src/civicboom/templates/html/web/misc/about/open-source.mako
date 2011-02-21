@@ -3,9 +3,9 @@
 
 <h1>Open Source &amp; Credits</h1>
 
-<p>Civicboom is built on open source foundations -- as well as sending patches upstream
+<p>Civicboom is built on open source foundations. As well as sending patches upstream
 whenever we fix bugs or add features, the scripts and tools that we write internally
-but can be used as standalone programs are available from
+(but can be used as standalone programs) are available from
 <a href="https://github.com/civicboom">our github page</a>.
 
 <!--
