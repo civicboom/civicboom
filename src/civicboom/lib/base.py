@@ -228,8 +228,8 @@ class BaseController(WSGIController):
             #app_globals.janrain_signin_url = urllib.quote_plus(url(controller='account', action='signin', host=app_globals.site_host, protocol='https'))
 
 
-        #AllanC - For gadgets and emails links and static content need to be absolute
-        #         A gadget controler could set this True, any image or URL created with helpers.py would have host appended to them
+        # For gadgets and emails links and static content need to be absolute
+        # this is interprited by civicboom.lib.web:url
         c.absolute_links = False
         
         # Session Flash Message

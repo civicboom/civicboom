@@ -58,7 +58,7 @@ def url(*args, **kwargs):
         del kwargs['protocol']
 
     # shortcut for absolute URL
-    if 'absolute' in kwargs:
+    if 'absolute' in kwargs or c.absolute_links:
         kwargs['host'] = c.host
 
     # Encode current widget state into URL if in widget mode
