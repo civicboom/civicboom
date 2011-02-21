@@ -8,11 +8,11 @@
     %>
     
     <h1>${_('Congratulations!')}</h1>
-    <p >${_('Your _article %(article)s in response to %(parent)s has been requested for potential use by %(member)s') % formatted_links}</p>
+    <p >${_('Your _article %(article)s in response to %(parent)s has been requested for potential use by %(member)s') % formatted_links |n}</p>
     
     <h2>${_('What next?')}</h2>
     <p >${_('The content you created in response to the _assignment is now locked and no further edits can be made.')}</p>
-    <p >${_('The assigner will be able to use this content under the <a href="http://creativecommons.org/licenses/by/3.0/"> Creative Commons Attribution 3.0 Unported </a>')}</p>
+    <p >${_('The assigner will be able to use this content under the <a href="http://creativecommons.org/licenses/by/3.0/"> Creative Commons Attribution 3.0 Unported </a>') |n}</p>
     
     <h2>${_('How you will be credited:')}</h2>
     <p >${_('If the assignee chooses to use part of or all content, they will attribute your work in one of the following ways:')}</p>

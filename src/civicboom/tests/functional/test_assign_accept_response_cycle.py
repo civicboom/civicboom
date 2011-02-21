@@ -127,6 +127,10 @@ class TestAssignAcceptResponseCycleController(TestController):
         self.assertIn('unittest@test.com'  , emails_to)
         self.assertIn('unitfriend@test.com', emails_to)
         
+        print emails[len(emails)-1].content_text
+        print emails[len(emails)-2].content_text
+        assert False
+        
         # Disassociate ---------------------------------------------------------
         
         response = self.app.post(
