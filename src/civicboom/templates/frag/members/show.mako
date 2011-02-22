@@ -23,7 +23,7 @@
         self.num_unread_messages = d.get('num_unread_messages', 0);
         self.num_unread_notifications = d.get('num_unread_notifications', 0);
         
-        self.attr.title     = self.member['type'].capitalize()
+        self.attr.title     = _('_' + self.member['type'].capitalize())
         self.attr.icon_type = self.member['type']
         
         self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
@@ -132,7 +132,7 @@
         
         ${frag_list.member_list_thumbnails(
             [m for m in d['groups']['items'] if m['status']=='active'],
-            _('Groups') ,
+            _('_Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
             icon = 'group' ,
         )}
