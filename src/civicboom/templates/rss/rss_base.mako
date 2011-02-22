@@ -44,10 +44,8 @@
 
 <%def name="rss_content_item(content)">
     <item>
-        
-
         <title>${content['title']}</title>
-        <link>${url('content', id=content['id'], subdomain='')}</link> 
+        <link>${h.url('content', id=content['id'], subdomain='')}</link> 
         <description>${content['content_short']}</description> 
         <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate>
         <guid isPermaLink="false">Content #${content['id']}</guid>
@@ -60,17 +58,17 @@
         % endif
         <dc:creator>${content.get('creator',dict()).get('name')} (${content.get('creator',dict()).get('username')})</dc:creator>
         ## Comments - http://wellformedweb.org/news/wfw_namespace_elements/
-        ##<wfw:comment   >${url('contents', parent_id=content['id'], type='comment', format='rss', host=app_globals.site_host)}</wfw:comment>
-        <wfw:commentRss>${url('content_actions', action='comments', id=content['id'], format='rss', subdomain='')}</wfw:commentRss>
+        ##<wfw:comment   >${h.url('contents', parent_id=content['id'], type='comment', format='rss', host=app_globals.site_host)}</wfw:comment>
+        <wfw:commentRss>${h.url('content_action', action='comments', id=content['id'], format='rss', subdomain='')}</wfw:commentRss>
         <!-- <creativeCommons:license>license url here</creativeCommons:license> -->
-        
+		##
         ##% if 'thumbnail_url' in content:
             ## AllanC :( Broken  .. WHY!!! WHY!!!
             ## With this line enabled ... it wont show up in firefox .. the entire entry is not displayed
             ##<enclosure url="${content['thumbnail_url']}" length="0" type="image/png"/>
             ## cant guaranete that it's a jpeg because placeholders are pngs :(
         ##% endif
-        
+        ##
         % if 'attachments' in content:
             % for media in content['attachments']:
             <%doc>
@@ -107,13 +105,12 @@
             <enclosure url="${media['media_url']}" length="${media['filesize']}" type="${media['type']}/${media['subtype']}" />
             % endfor
         % endif
-        
+		##
         % if content['location']:
         <% lon, lat = content['location'].split(' ') %>
         <georss:point>${lat} ${lon}</georss:point>
         <geo:lat>${lat}</geo:lat><geo:long>${lon}</geo:long>
         % endif
-    
     </item>
 </%def>
 
@@ -141,7 +138,7 @@
 <%def name="rss_member_item(member)">
     <item> 
         <title>${member['name'] or member['username']}</title> 
-        <link>${url('member', id=member['username'], subdomain='')}</link>
+        <link>${h.url('member', id=member['username'], subdomain='')}</link>
         <category>${member['type']}</category>
         % if 'description' in member:
         <description>${member['description']}</description>
