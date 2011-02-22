@@ -95,21 +95,17 @@ class MembersController(BaseController):
         
         @api members 1.0 (WIP)
     
-        @param list    type of list to get
-               all     all members (useful with "term")
-        @param term    filter results
-        @param * (see common list return controls)
+        @param member       ...
+        @param name         ... (aka 'term' for the autocompleter)
+        @param type         ...
+        @param location     ...
+        @param followed_by  ...
+        @param follower_of  ...
+        @param *            (see common list return controls)
     
         @return 200      list ok
-                members  array of member objects
+                list     array of member objects
         """
-        #def (, list='all', term=None,
-        #result = []
-        #if list == "all":
-        #    result = Session.query(Member)
-        #if term:
-        #    result = result.filter(or_(Member.name.ilike("%"+term+"%"), Member.username.ilike("%"+term+"%")))
-        #return action_ok(data={"list": [m.to_dict(**kwargs) for m in result]})
         
         # Autocomplete uses term not name - for ease of migration term is copyed to name if name not present
         if 'term' in kwargs and 'name' not in kwargs:
