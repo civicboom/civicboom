@@ -36,6 +36,10 @@ Most actions follow the following structure:
  
 """
 
+import logging
+log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
+
 
 #-------------------------------------------------------------------------------
 # Member Actions

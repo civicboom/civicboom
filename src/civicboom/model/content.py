@@ -122,7 +122,7 @@ class Content(Base):
             #'status'       : None ,
             'parent_id'    : None ,
             'title'        : None ,
-            'content_short': lambda content: "implement content_short postgress trigger" ,
+            'content_short': None , # this is a property # lambda content: "implement content_short postgress trigger" ,
             'creator_id'   : None , 
             'thumbnail_url': None ,
             'creation_date': None ,

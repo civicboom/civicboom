@@ -16,9 +16,9 @@
 % if c.logged_in_persona:
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
-      <a class="name" href="${url(controller='profile', action='index')}">
-          <img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
-      </a>
+      <a class="name" href="${url(controller='profile', action='index')}"
+	  	><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'
+	  /></a>
       <%def name="messageIcon(messages)">
         % if messages > 0:
           <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
@@ -140,8 +140,8 @@
     <ul>
         <li><a href="#" class="top_parent button">${_("Create")}</a>
         <ul>
-            <li>${h.secure_link(h.url('new_content', target_type='assignment'), _("_Assignment"), css_class="sub_option")}</li>
-            <li>${h.secure_link(h.url('new_content', target_type='article'   ), _("_Article"), css_class="sub_option")}</li>
+            <li>${h.secure_link(h.url('new_content', target_type='assignment'), _("_assignment").capitalize(), css_class="sub_option")}</li>
+            <li>${h.secure_link(h.url('new_content', target_type='article'   ), _("_article").capitalize()   , css_class="sub_option")}</li>
             <li><a href="${h.url('new_group')}" class="sub_option">${_("_Group")}</a></li>
         </ul>
         </li>
