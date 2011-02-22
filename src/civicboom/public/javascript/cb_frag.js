@@ -204,6 +204,8 @@ function cb_frag_reload(param) {
 		});
 		// Go though all frags found reloading them
 		for (var key in frags_to_refresh) {
+		  var title = frags_to_refresh[key].find('.title_text').first();
+		  title.html(title.html() + ' <img src="/images/ajax-loader.gif" />');
 			frags_to_refresh[key].load(key);
 		}
 	}

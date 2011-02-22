@@ -128,8 +128,6 @@ ${self.head_links()}
 	<!-- redirect all AJAX errors to use the flash message system -->
 	<script type="text/javascript">
 		$('body').ajaxError(function(event, request, settings, exception) {
-		Y.log (event);
-		Y.log (request);
 		Y.log (settings);
 		  try {
 			  flash_message(jQuery.parseJSON(request.responseText));
@@ -145,10 +143,14 @@ ${self.head_links()}
         ## settings.url has the last ajax settings including url :D
         $.cookie('login_redirect', 'https://' + document.location.hostname + settings.url.replace(/json$/, 'redirect'), { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
         ## Need to set this to stop "Hold It!" message...
-        $.cookie('login_redirect_action', '{}', { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
+        var login_redirect_action = '{}';
+        if (settings.type == 'POST') {
+          login_redirect_action = "{'" + settings.data.replace("&", "','").replace("=", "':'") + "'}";
+        }
+        $.cookie('login_redirect_action', login_redirect_action, { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
+        //$.cookie('login_action_referer', 
         ## Redirect User
         window.location.href = '/account/signin';
-        //redirect to login
       }
 		});
 	</script>
