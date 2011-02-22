@@ -1,4 +1,4 @@
-_<%inherit file="/frag/common/frag.mako"/>
+<%inherit file="/frag/common/frag.mako"/>
 
 <%!
     import civicboom.lib.constants as constants
@@ -23,7 +23,7 @@ _<%inherit file="/frag/common/frag.mako"/>
         self.num_unread_messages = d.get('num_unread_messages', 0);
         self.num_unread_notifications = d.get('num_unread_notifications', 0);
         
-        self.attr.title     = self.member['type'].capitalize()
+        self.attr.title     = _('_' + self.member['type'].capitalize())
         self.attr.icon_type = self.member['type']
         
         self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
@@ -36,15 +36,13 @@ _<%inherit file="/frag/common/frag.mako"/>
         
         if self.current_user:
             if self.member['type'] == 'group':
-                self.attr.title     = _('Current _Group Persona')
+                self.attr.title     = _('Current Group Persona')
                 self.attr.icon_type = 'group'
                 self.attr.help_frag = 'group_persona'
-                self.attr.created_popup_url = url(controller='misc', action='help', id='created_group', format='frag')
             else:
                 self.attr.title     = _('Current User')
                 self.attr.icon_type = 'current_user'
                 self.attr.help_frag = 'profile'
-                self.attr.created_popup_url = url(controller='misc', action='help', id='created_user', format='frag')
             
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
@@ -58,8 +56,6 @@ _<%inherit file="/frag/common/frag.mako"/>
         #self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
         self.attr.auto_georss_link = True
-        
-        
     %>
 </%def>
 
@@ -109,7 +105,7 @@ _<%inherit file="/frag/common/frag.mako"/>
         % if self.member.get('description'):
           <div style="clear:left; height: 3px;">&nbsp;</div>
           <div style="clear:left;" class="frag_list">
-            <h2><span class="icon icon_${self.attr.icon_type}"><span>description</span><div style="display:inline-block;padding-left:19px">Description</div></span></h2>
+            <h2><span class="icon icon_${self.attr.icon_type}"><span>descrition</span><div style="display:inline-block;padding-left:19px">Description</div></span></h2>
             <div class="frag_list_contents">
               <div class="content" style="padding-bottom: 3px;">
                 ${self.member['description']}
@@ -283,7 +279,7 @@ _<%inherit file="/frag/common/frag.mako"/>
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
             value           = _('Join _group') ,
-            value_formatted = h.literal("<span class='icon icon_join'></span>%s") % _('Join _Group'),
+            value_formatted = h.literal("<span class='icon icon_join'></span>%s") % _('Join Group'),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>

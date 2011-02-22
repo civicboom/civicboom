@@ -140,8 +140,8 @@
     <ul>
         <li><a href="#" class="top_parent button">${_("Create")}</a>
         <ul>
-            <li>${h.secure_link(h.url('new_content', target_type='assignment'), _("_Assignment"), css_class="sub_option")}</li>
-            <li>${h.secure_link(h.url('new_content', target_type='article'   ), _("_Article"), css_class="sub_option")}</li>
+            <li>${h.secure_link(h.url('new_content', target_type='assignment'), _("_assignment").capitalize(), css_class="sub_option")}</li>
+            <li>${h.secure_link(h.url('new_content', target_type='article'   ), _("_article").capitalize()   , css_class="sub_option")}</li>
             <li><a href="${h.url('new_group')}" class="sub_option">${_("_Group")}</a></li>
         </ul>
         </li>
