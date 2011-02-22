@@ -53,6 +53,7 @@ class TestMiscController(TestController):
         # FIXME: check for things in response
         # FIXME: no html template?
         #response = self.app.get(url(controller='misc', action='upgrade_plans'))
+        pass
 
     def test_feedback(self):
         # FIXME: check POST
