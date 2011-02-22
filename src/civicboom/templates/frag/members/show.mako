@@ -39,12 +39,14 @@ _<%inherit file="/frag/common/frag.mako"/>
                 self.attr.title     = _('Current _Group Persona')
                 self.attr.icon_type = 'group'
                 self.attr.help_frag = 'group_persona'
-                self.attr.created_popup_url = url(controller='misc', action='help', id='created_group', format='frag')
+                if c.logged_in_persona and not c.logged_in_persona.config['help_popup_created_group']:
+                    self.attr.popup_url = url(controller='misc', action='help', id='created_group', format='frag')
             else:
                 self.attr.title     = _('Current User')
                 self.attr.icon_type = 'current_user'
                 self.attr.help_frag = 'profile'
-                self.attr.created_popup_url = url(controller='misc', action='help', id='created_user', format='frag')
+                if c.logged_in_persona and not c.logged_in_persona.config['help_popup_created_user']:
+                    self.attr.popup_url = url(controller='misc', action='help', id='created_user', format='frag')
             
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,

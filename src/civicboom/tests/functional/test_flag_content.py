@@ -46,4 +46,5 @@ class TestFlagContentController(TestController):
         on admin pannel
         admin take offline
         """
+        # Check email is sent to moderator in config
         pass

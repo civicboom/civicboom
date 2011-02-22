@@ -50,7 +50,11 @@ add_setting('password_current'       , _('Current password')    , group='passwor
 add_setting('avatar'                 , _('Avatar' )             , group='avatar'     , type='file')
 add_setting('location_home'          , _('Home Location' )      , group='location'   , type='location', info='type in your town name or select a locaiton from the map')
 
-
+config_var_list = [
+    'help_popup_created_user',
+    'help_popup_created_group',
+    'help_popup_created_assignment',
+]
 
 
 #---------------------------------------------------------------------------
@@ -83,6 +87,7 @@ settings_validators = dict(
     
     location_home    = civicboom.lib.form_validators.base.LocationValidator(),
     location_current = civicboom.lib.form_validators.base.LocationValidator(),
+    
 )
 
     
@@ -183,7 +188,7 @@ class SettingsController(BaseController):
         - Saves update
         - Returns written object
         """
-
+        
         # special case for generators
         if id == "messages":
             from civicboom.lib.communication.messages import generators
@@ -215,6 +220,7 @@ class SettingsController(BaseController):
                 template='settings/messages' ,
             )
 
+        # Get current values of fields from the edit action
         data        = self.edit(id=id)['data']
         settings    = data['settings']
         
@@ -302,7 +308,12 @@ class SettingsController(BaseController):
                 del user.config[setting_name]
             else:
                 user.config[setting_name] = settings[setting_name]
-            
+        
+        # AllanC - an validatorless hack for config vars .. the whole settings framework needs looking at and cleaning
+        for setting_name in [key for key in kwargs if key in config_var_list]:
+            log.debug("saving config var %s" % setting_name)
+            user.config[setting_name] = kwargs[setting_name]
+        
         Session.commit()
         
         if c.format == 'html':
