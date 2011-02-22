@@ -87,9 +87,10 @@
 
 <%def name="forgot()">
 <section>
-	<a class="button" style="float: right; margin: 16px;" href="#" onclick="$('#reminder').show('slow');">Forgotten your password?</a>
+	<a class="button" style="float: right; margin: 16px;" href="#" id="iforgot" onclick="$('#iforgot').hide(); $('#reminder').show();">Forgotten your password?</a>
 	
 	<div id="reminder" class="hideable">
+	<p>&nbsp;
 	<form action="${h.url(controller='account', action='forgot_password', format='redirect')}" method="post" style="clear:both">
 		<table class="form">
 			<tr>
@@ -109,6 +110,7 @@
 			</tr>
 		</table>
 	</form>
+	<p>&nbsp;
 	</div>
 </section>
 </%def>
