@@ -8,11 +8,13 @@ class TestMiscController(TestController):
         response = self.app.get(url(controller='misc', action='about', id='civicboom'))
         response = self.app.get(url(controller='misc', action='about', id='civicboom', format="rss"), status=404)
         response = self.app.get(url(controller='misc', action='about', id='waffles'), status=404)
+        self.assertIn(response, "No description")
 
     def test_help(self):
         response = self.app.get(url(controller='misc', action='help', id='profile'))
         response = self.app.get(url(controller='misc', action='help', id='profile', format="rss"), status=404)
         response = self.app.get(url(controller='misc', action='help', id='waffles'), status=404)
+        self.assertIn(response, "No help")
 
 
     # actual misc actions
