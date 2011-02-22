@@ -15,11 +15,14 @@
     help_frag           = None # This can be set to a string name to activate '/misc/help/HELP_FRAG' to render '/frag/help/HELP_FRAG.mako'
     
     frag_data_css_class = ''
+    
+    created_popup_url   = None  # AllanC - hack ish here ... some frags can be created for the frist time, in this case we display a one time "you created it, now have a cookie" popup
 %>
 
 
 
 <%namespace name="share" file="/frag/common/share.mako"/>
+<%namespace name="popup" file="/html/web/common/popup_base.mako"/>
 
 ##------------------------------------------------------------------------------
 ## Frag Basic
@@ -65,13 +68,13 @@
     <%
         # Default creation of URLS - these can be overridden by init_vars()
         import copy
+        args   = []
+        kwargs = {}
+        
         if c.web_params_to_kwargs:
             args, kwargs = c.web_params_to_kwargs
             args   = copy.copy(args)
             kwargs = copy.copy(kwargs)
-        else:
-            args   = []
-            kwargs = {}
         
         # Gen frag URL
         if self.attr.frag_url == True:
@@ -99,8 +102,11 @@
         ${self.init_vars()}
     % endif
 
-    ## AJAX Fragment refresh (not visible to user)
+    % if 'created' in kwargs and self.attr.created_popup_url:
+        ${popup.popup_frag(_('What next ...'), self.attr.created_popup_url)}
+    % endif
 
+    ## AJAX Fragment refresh (not visible to user)
     <a class="frag_source" href="${self.attr.frag_url}" style="display: none;">frag source</a>
     ##.current_url()##
     

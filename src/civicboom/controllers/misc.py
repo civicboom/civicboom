@@ -16,8 +16,8 @@ class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
     def help(self, id="civicboom"):
-        if os.path.exists(config['path.templates']+"/frag/help/"+id+".mako"):
-            return action_ok(template="help/"+id)
+        if os.path.exists(config['path.templates']+"/frag/misc/help/"+id+".mako"):
+            return action_ok(template="misc/help/"+id)
         else:
             raise action_error(code=404, message="No help for this topic")
 

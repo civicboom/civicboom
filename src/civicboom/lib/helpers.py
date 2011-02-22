@@ -159,8 +159,7 @@ def objs_to_linked_formatted_dict(**kargs):
         else:
             return HTML.span(unicode(o)) # the span here is for security, it does HTML escaping
     links = {}
-    for key in kargs:
-        val = kargs[key]
+    for key, val in kargs.iteritems():
         if isinstance(val, basestring) and hasattr(c, val): # if val is text then check to see if it is a key in teml_context
             val = c[val]
         links[key] = gen_link(val)

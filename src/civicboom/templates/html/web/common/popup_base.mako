@@ -37,6 +37,15 @@
     </div>
 </%def>
 
+<%def name="popup_frag(title, url_frag)">
+    <script type="text/javascript">
+        ## wrapping th call in this function will be called when page is ready
+        $(function() {
+            popup('${title}','${url_frag}');
+        });
+    </script>
+</%def>
+
 
 <%def name="link(url, title='Dialog', text=None, class_='')">
     <%

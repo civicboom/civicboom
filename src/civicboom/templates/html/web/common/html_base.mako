@@ -185,7 +185,7 @@ else:
 		<div id="col_main">${next.body()}</div>
 	</div>
 	<footer><%include file="footer.mako"/></footer>
-	${popup_frame()}
+    ${popup_frame()}
 	##<%include file="scripts_end.mako"/>
 	${scripts_end.body()}
 </body>
