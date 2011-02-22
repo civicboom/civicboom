@@ -16,7 +16,7 @@
     
     frag_data_css_class = ''
     
-    created_popup_url   = None  # AllanC - hack ish here ... some frags can be created for the frist time, in this case we display a one time "you created it, now have a cookie" popup
+    popup_url   = None  # Frags can set this if they want a loaded popup to show
 %>
 
 
@@ -102,8 +102,8 @@
         ${self.init_vars()}
     % endif
 
-    % if 'created' in kwargs and self.attr.created_popup_url:
-        ${popup.popup_frag(_('What next ...'), self.attr.created_popup_url)}
+    % if self.attr.popup_url:
+        ${popup.popup_frag(_('What next ...'), self.attr.popup_url)}
     % endif
 
     ## AJAX Fragment refresh (not visible to user)

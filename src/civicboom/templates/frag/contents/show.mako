@@ -50,8 +50,8 @@
         
         self.attr.auto_georss_link = True
         
-        if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment':
-            self.attr.created_popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
+        if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment' and not c.logged_in_persona.config['help_popup_created_assignment']:
+            self.attr.popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
     %>
 </%def>
 
