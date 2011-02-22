@@ -173,7 +173,6 @@
 ##          <td colspan="4"><input type="text" name="logo_url" id="logo_url" /></td>
 ##          <td>&nbsp;</td>
 ##        </tr>
-        <tr class="padding">
           <td colspan="5"><label for="permission">${_('This _Group represents an organisation and I have the permissions/rights to create it.')}</label></td>
           <td><input type="checkbox" name="permission" id="permission"/>
           <td>&nbsp;</td>

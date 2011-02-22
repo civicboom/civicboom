@@ -20,6 +20,11 @@ upstream backends {
 	### END MANAGED BY DEBCONF
 }
 
+upstream tileserver {
+	server 193.63.75.26;
+	#server tile.openstreetmap.org;
+}
+
 server {
 	# server stuff
 	listen 80;                listen [::]:80 ipv6only=on;
@@ -67,7 +72,7 @@ server {
 		proxy_cache "osm";
 		proxy_cache_key "$request_uri";
 		proxy_set_header Host tile.openstreetmap.org;
-		proxy_pass http://tile.openstreetmap.org/;
+		proxy_pass http://tileserver;
 	}
 
 	# for errors, don't proxy to pylons, just serve static files

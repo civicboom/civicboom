@@ -6,6 +6,15 @@ class TestMiscController(TestController):
 
     def test_about(self):
         response = self.app.get(url(controller='misc', action='about', id='civicboom'))
+        response = self.app.get(url(controller='misc', action='about', id='civicboom', format="rss"), status=404)
+        response = self.app.get(url(controller='misc', action='about', id='waffles'), status=404)
+        #self.assertIn(response, "No description")
+
+    def test_help(self):
+        response = self.app.get(url(controller='misc', action='help', id='profile', format="frag"))
+        response = self.app.get(url(controller='misc', action='help', id='profile', format="rss"), status=404)
+        response = self.app.get(url(controller='misc', action='help', id='waffles'), status=404)
+        #self.assertIn(response, "No help")
 
 
     # actual misc actions
@@ -23,10 +32,31 @@ class TestMiscController(TestController):
 
     def test_georss(self):
         response = self.app.get(url(controller='misc', action='georss'))
-        response = self.app.get(url(controller='misc', action='georss', feed='/search/content.xml'))
+        response = self.app.get(url(controller='misc', action='georss', feed='/contents.rss'))
         response = self.app.get(url(controller='misc', action='georss', feed='invalid'))
         response = self.app.get(url(controller='misc', action='georss', location='0,0'))
         response = self.app.get(url(controller='misc', action='georss', location='invalid'))
+
+    def test_echo(self):
+        # FIXME: tests for GET and POST variables
+        response = self.app.get(url(controller='misc', action='echo', format="json"))
+
+    def test_stats(self):
+        # FIXME: check JSON output
+        response = self.app.get(url(controller='misc', action='stats', format="json"))
+
+    def test_get_widget(self):
+        # FIXME: check for things in response
+        response = self.app.get(url(controller='misc', action='get_widget'))
+
+    def test_upgrade_plans(self):
+        # FIXME: check for things in response
+        # FIXME: no html template?
+        #response = self.app.get(url(controller='misc', action='upgrade_plans'))
+
+    def test_feedback(self):
+        # FIXME: check POST
+        response = self.app.get(url(controller='misc', action='feedback'))
 
 
     # other misc bits that aren't part of the misc controller, but are just misc

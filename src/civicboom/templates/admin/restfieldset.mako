@@ -35,7 +35,7 @@ from pylons import url
 </%def>
 <%def name="body()">
   %if isinstance(models, dict):
-    <h1 id="header" style="padding-bottom: 0px;">${_('Civicboom Control Panel')}</h1>
+    <h1 id="header" style="padding-bottom: 0px;">${_('_site_name Control Panel')}</h1>
 	<table class="outer">
 		<tr><td>
 <table>

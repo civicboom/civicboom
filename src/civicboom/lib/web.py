@@ -58,8 +58,10 @@ def url(*args, **kwargs):
         del kwargs['protocol']
 
     # shortcut for absolute URL
-    if 'absolute' in kwargs:
+    if 'absolute' in kwargs or c.absolute_links:
         kwargs['host'] = c.host
+    if 'absolute' in kwargs:
+        del kwargs['absolute']
 
     # Encode current widget state into URL if in widget mode
     if kwargs.get('subdomain')=='widget' or (get_subdomain_format()=='widget' and 'subdomain' not in kwargs): # If widget and not linking to new subdomain

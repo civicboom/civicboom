@@ -1,4 +1,9 @@
+
 <%def name="subject()">${_('_site_name')}</%def>
+
+##<%def name="subject()">${_("_site_name: _tagline")}</%def>
+
+<%def name="body()">\
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -14,9 +19,13 @@
         </style>
     </head>
 
+    <%
+        absolute_links_state = c.absolute_links
+        c.absolute_links     = True # For the duration of the email All links in emails are absolute
+        
+        site_url = h.url('.', protocol='http', subdomain='') ## TODO: line needs testing on live server
+    %>
     <body>
-        ## TODO: line below needs testing on live server
-        <% site_url = h.url('.', protocol='http', subdomain='') %>
         <a href="${site_url}">
             <img src="${site_url}/images/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
         </a>
@@ -24,9 +33,11 @@
       
         ${next.body()}
     </body>
+    <%
+        c.absolute_links = absolute_links_state
+    %>
 </html>
-
-##<%def name="subject()">${_("_site_name: _tagline")}</%def>
+</%def>
 
 <%def name="footer()">
     <br/>
