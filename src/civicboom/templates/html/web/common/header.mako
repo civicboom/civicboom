@@ -16,9 +16,9 @@
 % if c.logged_in_persona:
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
-      <a class="name" href="${url(controller='profile', action='index')}">
-          <img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
-      </a>
+      <a class="name" href="${url(controller='profile', action='index')}"
+	  	><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'
+	  /></a>
       <%def name="messageIcon(messages)">
         % if messages > 0:
           <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
