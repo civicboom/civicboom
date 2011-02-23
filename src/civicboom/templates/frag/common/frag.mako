@@ -204,5 +204,5 @@
         georss_url      = h.url(**georss_url)
         georss_url_frag = h.url(**georss_url_frag)
     %>
-    <a href="${georss_url}" title="${_('View on map')}" class="icon icon_map" onclick="cb_frag($(this), '${georss_url_frag}'); return false;"><span>${_('View on map')}</span></a>
+    <a href="${georss_url}" title="${_('View on map')}" onclick="cb_frag($(this), '${georss_url_frag}'); return false;"><span class="icon icon_map"></span>${_('Map')}</a>
 </%def>
