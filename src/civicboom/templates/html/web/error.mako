@@ -1,19 +1,18 @@
 <html>
 	<head>
-		<title>Error</title>
-		<style>
-H1 {
-	text-align: center;
-}
-		</style>
+		<title>Civicboom - Internal Error</title>
 	</head>
-	<body>
+	<body style="text-align: center; vertical-align: middle;">
 
-<h1>Civicboom Internal Error</h1>
+        <div style="padding:2em; background-color: #005493; color: white; display: inline-block;">
+            <h1>CIVICFAIL</h1>
+            
+            <p style="font-size: 180%; font-weight: bold; margin: 0em;">KEEP<br/>CALM</p>
+            <span style="font-weight: normal;">AND</span>
+            <p style="font-size: 180%; font-weight: bold; margin: 0em;">MAKE A<br/>CUP OF TEA</p>
+            <p>OUR TECH MONKEYS HAVE BEEN ALERTED</p>
+        </div>
 
-##<p>Code:    ${c.error_code}</p>
-##<p>Prefix:  ${c.error_prefix}</p>
-##<p>Message: ${c.error_message}</p>
 % if c.result:
     % if 'code' in c.result:
         <p>code: <b>${c.result['code']}</b>
@@ -24,18 +23,7 @@ H1 {
     % endif
 % endif
 
-<!--
-here is some padding to bring the page over 512 bytes
-here is some padding to bring the page over 512 bytes
-here is some padding to bring the page over 512 bytes
-here is some padding to bring the page over 512 bytes
-here is some padding to bring the page over 512 bytes
-here is some padding to bring the page over 512 bytes
-here is some padding to bring the page over 512 bytes
-here is some padding to bring the page over 512 bytes
-here is some padding to bring the page over 512 bytes
-here is some padding to bring the page over 512 bytes
--->
+        <!--#include file="/misc/feedback.frag"-->
 
 	</body>
 </html>

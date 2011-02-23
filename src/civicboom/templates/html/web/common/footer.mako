@@ -1,8 +1,17 @@
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
+
 <span class="copyright">
+    ##<a href="mailto:feedback@civicboom.com">${_("Please send us your Feedback")}</a>
+    ${popup.link(
+        h.args_to_tuple(controller='misc', action='feedback'),
+        title = _('Feedback'),
+        text  = h.literal("<strong>%s</strong>" % _("Feedback")),
+    )}
+
 	${_(u"Website © Indiconews Ltd, articles © their respective authors")}
 </span>
 
-<a href="mailto:feedback@civicboom.com">${_("Please send us your Feedback")}</a>
+
 
 <a href="${h.url(controller='misc', action='about', id='civicboom')}">${_("About")}</a>
 <!--<a href="${h.url(controller='misc', action='about', id='press'  )}">${_("Press")}</a>-->

@@ -23,7 +23,7 @@
         self.num_unread_messages = d.get('num_unread_messages', 0);
         self.num_unread_notifications = d.get('num_unread_notifications', 0);
         
-        self.attr.title     = self.member['type'].capitalize()
+        self.attr.title     = _('_' + self.member['type'].capitalize())
         self.attr.icon_type = self.member['type']
         
         self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
@@ -39,10 +39,14 @@
                 self.attr.title     = _('Current Group Persona')
                 self.attr.icon_type = 'group'
                 self.attr.help_frag = 'group_persona'
+                if c.logged_in_persona and not c.logged_in_persona.config['help_popup_created_group']:
+                    self.attr.popup_url = url(controller='misc', action='help', id='created_group', format='frag')
             else:
                 self.attr.title     = _('Current User')
                 self.attr.icon_type = 'current_user'
                 self.attr.help_frag = 'profile'
+                if c.logged_in_persona and not c.logged_in_persona.config['help_popup_created_user']:
+                    self.attr.popup_url = url(controller='misc', action='help', id='created_user', format='frag')
             
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
@@ -132,7 +136,7 @@
         
         ${frag_list.member_list_thumbnails(
             [m for m in d['groups']['items'] if m['status']=='active'],
-            _('Groups') ,
+            _('_Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
             icon = 'group' ,
         )}

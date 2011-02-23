@@ -1,0 +1,27 @@
+#!/usr/bin/python
+
+import math
+
+timings = {}
+
+def tryfloat(n):
+    return (0 if n=="-" else float(n))
+
+for line in file("/var/log/nginx/civicboom.timing.log"):
+    #192.168.0.6 - - [17/Feb/2011:10:26:12 +0000] "GET /styles/common/uploadify.css HTTP/1.1" 200 1327 0.208 0.208
+    try:
+        (ip, vhost, user, date, offset, method, uri, proto, status, size, upstream, downstream) = line.split()
+        if uri not in timings:
+            timings[uri] = {"up":[], "dn":[]}
+        timings[uri]["up"].append(tryfloat(upstream))
+        timings[uri]["dn"].append(tryfloat(downstream))
+    except:
+        print
+
+for uri in timings:
+    timings[uri]["up-avg"] = sum(timings[uri]["up"]) / len(timings[uri]["up"])
+    timings[uri]["dn-avg"] = sum(timings[uri]["dn"]) / len(timings[uri]["dn"])
+
+for uri in timings:
+    if len(timings[uri]["up"]) > 1:
+        print "%5.3f %d %s" % (timings[uri]["up-avg"], len(timings[uri]["up"]), uri)

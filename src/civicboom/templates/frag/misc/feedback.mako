@@ -28,13 +28,18 @@
 ## Feedback form
 ##------------------------------------------------------------------------------
 <%def name="feedback_form()">
-    
-    ${h.form(h.url(controller='misc', action='feedback', format='redirect'), method='POST')}
+<style>
+TABLE.feedback INPUT,
+TABLE.feedback SELECT {
+	width: 100%;
+}
+</style>
+    ${h.form(h.args_to_tuple(controller='misc', action='feedback', format='redirect'), method='POST', json_form_complete_actions="cb_frag_remove(current_element);")}
         % if current_referer():
         <input type="hidden" name="referer" value="${quote_plus(current_referer())}"/>
         % endif
         
-        <table>
+        <table class="feedback">
             <tr>
                 <td>${_('Category')}</td>
                 <td>
@@ -62,9 +67,12 @@
                 </td>
             </tr>
             % endif
+
+			<tr>
+		        <td colspan="2"><input type="submit" name="submit" value="submit"/></td>
+			</tr>
         </table>
-        
-        <input type="submit" name="submit" value="submit"/>
     </form>
+    <a href="mailto:feedback@civicboom.com">${_("Alternatively email us your feedback")}</a>
     
 </%def>

@@ -66,10 +66,11 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 % else:
 	<script src="/javascript/_combined.head.js"></script>
 % endif
-<!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
-<!--[if lt IE 7]>
-	<script src="/javascript/IE8.js"></script>
-<![endif]-->
+##<!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
+## it even makes IE6 worse?
+##<!--[if lt IE 7]>
+##	<script src="/javascript/IE8.js"></script>
+##<![endif]-->
 
 
 ##----------------------------------------------------------------------------
@@ -127,8 +128,6 @@ ${self.head_links()}
 	<!-- redirect all AJAX errors to use the flash message system -->
 	<script type="text/javascript">
 		$('body').ajaxError(function(event, request, settings, exception) {
-		Y.log (event);
-		Y.log (request);
 		Y.log (settings);
 		  try {
 			  flash_message(jQuery.parseJSON(request.responseText));
@@ -137,17 +136,21 @@ ${self.head_links()}
 			}
 			## GregM: Upgrade Required
       if (request.status == 402) {
-        //popup ('Please upgrade your account to proceed', '');
+        popup('${_('Upgrade plans')}','/misc/upgrade_plans.frag');
       }
       ## GregM: Login Required
         if (request.status == 403) {
         ## settings.url has the last ajax settings including url :D
         $.cookie('login_redirect', 'https://' + document.location.hostname + settings.url.replace(/json$/, 'redirect'), { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
         ## Need to set this to stop "Hold It!" message...
-        $.cookie('login_redirect_action', '{}', { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
+        var login_redirect_action = '{}';
+        if (settings.type == 'POST') {
+          login_redirect_action = "{'" + settings.data.replace("&", "','").replace("=", "':'") + "'}";
+        }
+        $.cookie('login_redirect_action', login_redirect_action, { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
+        //$.cookie('login_action_referer', 
         ## Redirect User
         window.location.href = '/account/signin';
-        //redirect to login
       }
 		});
 	</script>
@@ -184,7 +187,7 @@ else:
 		<div id="col_main">${next.body()}</div>
 	</div>
 	<footer><%include file="footer.mako"/></footer>
-	${popup_frame()}
+    ${popup_frame()}
 	##<%include file="scripts_end.mako"/>
 	${scripts_end.body()}
 </body>

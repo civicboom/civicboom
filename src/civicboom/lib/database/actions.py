@@ -1,4 +1,4 @@
-from pylons import config, url
+from pylons import config
 from pylons.templating  import render_mako as render #for rendering emails
 from pylons.i18n.translation import _
 
@@ -14,7 +14,7 @@ from civicboom.lib.communication           import messages
 from civicboom.lib.communication.email_lib import send_email
 
 from civicboom.lib.text import strip_html_tags
-from civicboom.lib.web  import action_error
+from civicboom.lib.web  import action_error, url
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -35,6 +35,10 @@ Most actions follow the following structure:
  - return True
  
 """
+
+import logging
+log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 
 
 #-------------------------------------------------------------------------------
