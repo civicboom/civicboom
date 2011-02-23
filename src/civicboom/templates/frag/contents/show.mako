@@ -50,8 +50,8 @@
         
         self.attr.auto_georss_link = True
         
-        if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment':
-            self.attr.created_popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
+        if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment' and not c.logged_in_persona.config['help_popup_created_assignment']:
+            self.attr.popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
     %>
 </%def>
 
@@ -606,12 +606,12 @@
     % endif
 
     % if 'aggregate' in self.actions:
-        ##<a href='' class="icon icon_boom"><span>Aggregate</span></a>
-        ${share.janrain_social(self.content, 'janrain', class_='icon icon_share')}
+        ##${share.janrain_social(self.content, 'janrain', class_='icon icon_share')}
     % endif
     
     % if 'flag' in self.actions:
-        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
+        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}'><span class="icon icon_flag"></span>Flag</a>
+        <span class="separtor"></span>
     % endif
     
     % if self.content.get('location'):

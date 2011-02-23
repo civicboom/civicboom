@@ -40,8 +40,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
         'illegal_chars' : _('Usernames may only contain alphanumeric characters or underscores'),
         }
     def _to_python(self, value, state):
-        value = unicode(value.strip())
-        # TODO: Strip or alert any characters that make it non URL safe, see feature #54
+        value = make_username(unicode(value.strip()))
         if not re.search("^[\w-]*$", value):
             raise formencode.Invalid(self.message("illegal_chars", state,), value, state)
         if len(value) <= self.min:
@@ -54,7 +53,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
             return value
         if Session.query(Member).filter(Member.username==value).count() > 0:
             raise formencode.Invalid(self.message("username_taken", state, name=value), value, state)
-        return make_username(value)
+        return value
 
 class UniqueEmailValidator(validators.Email):
     not_empty = True

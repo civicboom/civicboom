@@ -39,10 +39,14 @@
                 self.attr.title     = _('Current Group Persona')
                 self.attr.icon_type = 'group'
                 self.attr.help_frag = 'group_persona'
+                if c.logged_in_persona and not c.logged_in_persona.config['help_popup_created_group']:
+                    self.attr.popup_url = url(controller='misc', action='help', id='created_group', format='frag')
             else:
                 self.attr.title     = _('Current User')
                 self.attr.icon_type = 'current_user'
                 self.attr.help_frag = 'profile'
+                if c.logged_in_persona and not c.logged_in_persona.config['help_popup_created_user']:
+                    self.attr.popup_url = url(controller='misc', action='help', id='created_user', format='frag')
             
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
@@ -324,9 +328,10 @@
         title = _('Get widget'),
         text  = h.literal("<span class='icon icon_widget'></span>%s") % _('Get widget'),
     )}
+    <span class="separtor"></span>
     
     % if self.member.get('location_current') or self.member.get('location_home'):
-        ${parent.georss_link()}
+        ##${parent.georss_link()}
     % endif
 </%def>
 

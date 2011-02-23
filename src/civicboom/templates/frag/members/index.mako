@@ -12,7 +12,9 @@
     <%        
         args, kwargs = c.web_params_to_kwargs
         
-        title = _('_' + kwargs.get('type') + 's').capitalize()
+        title = ''
+        if kwargs.get('type')
+            title = _('_' + kwargs.get('type') + 's').capitalize()
         icon  = 'user'
         
         if 'followed_by' in kwargs:

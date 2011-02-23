@@ -49,7 +49,7 @@
 .icon_widget    {background: transparent url('/styles/common/icons16/cb_widget-icon.png') no-repeat;}
 .icon_invite    {background: transparent url('/styles/common/icons16/cb_invite-icon.png') no-repeat;}
 .icon_user      {background: transparent url('/styles/common/icons16/user-icon.png'     ) no-repeat;}
-.icon_current_user {background: transparent url('/styles/common/icons16/user-3-icon.png') no-repeat;}
+.icon_current_user {background: transparent url('/styles/common/icons16/user-icon.png') no-repeat;}
 .icon_group     {background: transparent url('/styles/common/icons16/group-icon.png'  ) no-repeat;}
 .icon_userid    {background: transparent url('/styles/common/icons16/user-info-icon.png') no-repeat;}
 .icon_delete    {background: transparent url('/styles/common/icons16/delete-icon.png'   ) no-repeat;}
