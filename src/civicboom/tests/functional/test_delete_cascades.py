@@ -30,13 +30,22 @@ class TestDeleteCascadesController(TestController):
             url_index = url('contents', format='json', term=term)
         return self.get_list_count(url_index)
 
-    def create_content(self, parent_id=None, title=u'Testing delete_cascade', content=u'delete_cascade delete_cascade', type='article'):
+    # AllanC - TODO! this should put in default params to use __init__.create_content but cant get it working right now
+    #          see remmed out ideas below
+    def create_content(self, parent_id=None, title=u'Testing delete_cascade', content=u'delete_cascade delete_cascade', type='article', tags=u'delete_cascade'):
+        #def create_content(self, **kwargs):
+        #    if 'title' not in kwargs:
+        #        kwargs['title'] = u'Testing delete_cascade'
+        #    if 'content' not in kwargs:
+        #        kwargs['content'] = u'delete_cascade delete_cascade'
+        #    super(TestDeleteCascadesController,self).create_content(**kwargs)
+        
         params={
             '_authentication_token': self.auth_token,
             'title'         : title ,
             'contents'      : content ,
             'type'          : type ,
-            'tags'          : u'delete_cascade' ,
+            'tags'          : tags ,
             'submit_publish': u'publish' ,
         }
         if parent_id:
@@ -250,8 +259,8 @@ class TestDeleteCascadesController(TestController):
         
         # Step 2: Create responses, comments and accept
         self.log_in_as('unitfriend')
-        response_1_id = self.create_content(self.content_id, 'response 1')
-        response_2_id = self.create_content(self.content_id, 'response 2')
+        response_1_id = self.create_content(parent_id=self.content_id, title='response 1')
+        response_2_id = self.create_content(parent_id=self.content_id, title='response 2')
         self.comment(  self.content_id, 'delete_cascade comment')
         self.comment(    response_1_id, 'delete_cascade response comment')
         self.accept_assignment(self.content_id)

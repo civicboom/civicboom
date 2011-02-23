@@ -141,6 +141,7 @@ class SettingsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @authorize
+    @role_required('admin')
     def edit(self, id, **kwargs):
         """GET /id;edit: Form to edit an existing item."""
         
@@ -179,6 +180,7 @@ class SettingsController(BaseController):
     
     @web
     @authorize
+    @role_required('admin')
     def update(self, id, **kwargs):
         """
         PUT /id: Update an existing item.
