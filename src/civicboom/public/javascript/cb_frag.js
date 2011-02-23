@@ -83,6 +83,7 @@ function cb_frag(current_element, url, list_type) {
 		function(response, status, request){ // When AJAX load complete
 			Y.log (request);
 		    if (request.status != 200) {
+		      cb_ajax_error (request);
 		    	frag_loading.remove();
 		    }
 		    if (frag_loading) {
@@ -121,7 +122,13 @@ function cb_frag_load(jquery_element, url) {
 	_gaq.push(['_trackPageview', url]);
 	
 	var frag_container = jquery_element.parents('.'+fragment_container_class)
-	frag_container.load(url);
+	frag_container.load(url,
+	  function (response, status, request) {
+	    if (request.status != 200) {
+	      cb_ajax_error (request);
+	      frag_container.remove();
+	    }
+	  });
 }
 
 
@@ -165,6 +172,18 @@ function cb_frag_reload(param) {
 		var frag_source_href    = frag_source_element.attr('href');
 		return [container_element, frag_source_href];
 	}
+	// On error load original content back into element & trigger cb_ajax_error
+	function load (frag, url) {
+	  var oldcontent = frag.html();
+	  frag.load(url,
+	    function (response, status, request) {
+	      if (request.status != 200) {
+	        cb_ajax_error (request);
+	        frag.html (oldcontent);
+	        frag.find('.title_text').first().find('.refreshremove').remove();
+	      }
+	    })
+	}
 	
 	// Move up the chain from this element
 	//   grab the href of the A frag_source
@@ -176,7 +195,8 @@ function cb_frag_reload(param) {
 		// Remove auto-save timer if refreshing fragment! GM
     if (typeof cb_frag_get_variable(jquery_element, 'autosavedrafttimer') != 'undefined')
       clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
-		frag_element.load(frag_source);
+		load (frag_element, frag_source);
+		// frag_element.load(frag_source);
 	}
 
 	function reload_frags_containing(array_of_urls) {
@@ -205,8 +225,9 @@ function cb_frag_reload(param) {
 		// Go though all frags found reloading them
 		for (var key in frags_to_refresh) {
 		  var title = frags_to_refresh[key].find('.title_text').first();
-		  title.html(title.html() + ' <img src="/images/ajax-loader.gif" />');
-			frags_to_refresh[key].load(key);
+		  title.html(title.html() + ' <img class="refreshremove" src="/images/ajax-loader.gif" />');
+		  load (frags_to_refresh[key], key);
+			// frags_to_refresh[key].load(key);
 		}
 	}
 
