@@ -57,7 +57,6 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 	<script src="/javascript/Modernizr.js"></script>
 	<script src="/javascript/swfobject.js"></script>
 	<!-- jQuery -->
-##	<script src="/javascript/jquery-1.4.2.js"></script>
 	<script src="/javascript/jquery-1.5.js"></script>
 	<script src="/javascript/jquery.cookie.js"></script>
 	<!-- Civicboom -->
@@ -67,11 +66,6 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 % else:
 	<script src="/javascript/_combined.head.js"></script>
 % endif
-##<!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
-## it even makes IE6 worse?
-##<!--[if lt IE 7]>
-##	<script src="/javascript/IE8.js"></script>
-##<![endif]-->
 
 
 ##----------------------------------------------------------------------------
