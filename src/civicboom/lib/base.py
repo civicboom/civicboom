@@ -21,7 +21,7 @@ from civicboom.lib.database.get_cached import get_member, get_group, get_members
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize
-from civicboom.lib.permissions         import account_type
+from civicboom.lib.permissions         import account_type, role_required, has_role_required, raise_if_current_role_insufficent
 
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
@@ -50,7 +50,7 @@ __all__ = [
     "cacheable",
     "web",
     "auth",
-    "account_type",
+    "account_type", "role_required",
     #"account_types", #types for use with with account_type decorator
     
     #errors
@@ -71,6 +71,7 @@ __all__ = [
     "get_member", "get_group", #AllanC - should be used with cuation, we need to be careful about permissions
     "logging",
     "overlay_status_message",
+    "raise_if_current_role_insufficent", "has_role_required",
     
     #cache
     "gen_cache_key"
@@ -196,7 +197,7 @@ class BaseController(WSGIController):
         
         c.logged_in_user         = get_member(username)
         c.logged_in_persona      = c.logged_in_user
-        c.logged_in_persona_role = None #session_get('role')
+        c.logged_in_persona_role = 'admin' #always an admin of yourself
         if username != username_persona:
             persona    = get_group(username_persona)
             membership = get_membership(persona ,c.logged_in_user)

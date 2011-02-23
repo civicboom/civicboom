@@ -276,19 +276,24 @@ def form(*args, **kwargs):
         kwargs['onsubmit'] = literal("""
             %(pre_onsubmit)s
             var current_element = $(this);
+            var formData = $(this).serialize();
             $.post(
                 '%(href_json)s',
-                $(this).serialize() ,
+                formData ,
                 function(data, status, jqXhr) {
                     flash_message(data);
-                    if (jqXhr.status == 402) {
-                      //popup ('Please upgrade your account to proceed', '');
-                    }
                     if (data.status == 'ok') {
                         %(json_form_complete_actions)s
                     }
                 },
                 'json'
+            ).error(
+                function (request, status, exception) {
+                    cb_ajax_error (request, 
+                        {'url':'%(href_json)s', 'type':'POST', 'data':formData},
+                        current_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href')
+                    );
+                }
             );
             return false;
         """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions, pre_onsubmit=pre_onsubmit)

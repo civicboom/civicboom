@@ -182,15 +182,7 @@ class TestGroupsController(TestController):
         self.log_in_as('unitfriend')
         
         # Create a join request (as group is invite and request and unitfriend is not a member)
-        response = self.app.post(
-            url('group_action', action='join', id=self.group_id, format='json') ,
-            params={
-                '_authentication_token': self.auth_token ,
-                'member': 'unittest',
-            },
-            status=200,
-        )
-        self.assertIn('request', response) # successful "join request" in response
+        self.join(self.group_id)
         
         self.log_out()
         

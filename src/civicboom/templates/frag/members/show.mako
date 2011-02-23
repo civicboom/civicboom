@@ -328,9 +328,10 @@
         title = _('Get widget'),
         text  = h.literal("<span class='icon icon_widget'></span>%s") % _('Get widget'),
     )}
+    <span class="separtor"></span>
     
     % if self.member.get('location_current') or self.member.get('location_home'):
-        ${parent.georss_link()}
+        ##${parent.georss_link()}
     % endif
 </%def>
 

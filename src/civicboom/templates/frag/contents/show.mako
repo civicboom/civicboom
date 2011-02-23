@@ -606,12 +606,12 @@
     % endif
 
     % if 'aggregate' in self.actions:
-        ##<a href='' class="icon icon_boom"><span>Aggregate</span></a>
-        ${share.janrain_social(self.content, 'janrain', class_='icon icon_share')}
+        ##${share.janrain_social(self.content, 'janrain', class_='icon icon_share')}
     % endif
     
     % if 'flag' in self.actions:
-        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}' class="icon icon_flag"><span>Flag</span></a>
+        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}'><span class="icon icon_flag"></span>Flag</a>
+        <span class="separtor"></span>
     % endif
     
     % if self.content.get('location'):

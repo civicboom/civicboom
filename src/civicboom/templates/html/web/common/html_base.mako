@@ -57,7 +57,7 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 	<script src="/javascript/Modernizr.js"></script>
 	<script src="/javascript/swfobject.js"></script>
 	<!-- jQuery -->
-	<script src="/javascript/jquery-1.4.2.js"></script>
+	<script src="/javascript/jquery-1.5.js"></script>
 	<script src="/javascript/jquery.cookie.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
@@ -66,11 +66,6 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 % else:
 	<script src="/javascript/_combined.head.js"></script>
 % endif
-##<!-- IE9.js breaks other browsers, so keep it out of the minimised packs -->
-## it even makes IE6 worse?
-##<!--[if lt IE 7]>
-##	<script src="/javascript/IE8.js"></script>
-##<![endif]-->
 
 
 ##----------------------------------------------------------------------------
@@ -128,30 +123,7 @@ ${self.head_links()}
 	<!-- redirect all AJAX errors to use the flash message system -->
 	<script type="text/javascript">
 		$('body').ajaxError(function(event, request, settings, exception) {
-		Y.log (settings);
-		  try {
-			  flash_message(jQuery.parseJSON(request.responseText));
-			} catch (e) {
-			  flash_message('${_('A server error has occured!')}');
-			}
-			## GregM: Upgrade Required
-      if (request.status == 402) {
-        popup('${_('Upgrade plans')}','/misc/upgrade_plans.frag');
-      }
-      ## GregM: Login Required
-        if (request.status == 403) {
-        ## settings.url has the last ajax settings including url :D
-        $.cookie('login_redirect', 'https://' + document.location.hostname + settings.url.replace(/json$/, 'redirect'), { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
-        ## Need to set this to stop "Hold It!" message...
-        var login_redirect_action = '{}';
-        if (settings.type == 'POST') {
-          login_redirect_action = "{'" + settings.data.replace("&", "','").replace("=", "':'") + "'}";
-        }
-        $.cookie('login_redirect_action', login_redirect_action, { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
-        //$.cookie('login_action_referer', 
-        ## Redirect User
-        window.location.href = '/account/signin';
-      }
+		  cb_ajax_error(request, settings);
 		});
 	</script>
 </%def>

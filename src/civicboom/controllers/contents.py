@@ -340,12 +340,16 @@ class ContentsController(BaseController):
         
         # Create Content Object
         if   kwargs['type'] == 'draft':
+            raise_if_current_role_insufficent('contributor')
             content = DraftContent()
         elif kwargs['type'] == 'comment':
+            raise_if_current_role_insufficent('editor')
             content = CommentContent()
         elif kwargs['type'] == 'article':
+            raise_if_current_role_insufficent('editor')
             content = ArticleContent()
         elif kwargs['type'] == 'assignment':
+            raise_if_current_role_insufficent('editor')
             content = AssignmentContent()
         
         # Set create to currently logged in user
@@ -463,17 +467,22 @@ class ContentsController(BaseController):
         permissions = {}
         permissions['can_publish'] = True
         
+        if kwargs.get('type') != 'draft':
+            if not has_role_required('editor', c.logged_in_persona_role):
+                permissions['can_publish'] = False
+                error                      = errors.error_role()
+        
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
             #log.debug("set the error")
             #log.debug(errors.account_level)
             # AllanC - ARRRRRRRRRRRRRRRRRRRRR!!!! this reference to this object ... something somewhere is maliciously removing the code from errors.account_level
-            #error = errors.account_level
-            error = action_error(
-                status   = 'error' ,
-                code     = 402 ,
-                message  = _('Account upgrade required before you can perform this action') , #operation requires account upgrade
-            )
+            error                      = errors.error_account_level()
+            #error = action_error(
+            #    status   = 'error' ,
+            #    code     = 402 ,
+            #    message  = _('Account upgrade required before you can perform this action') , #operation requires account upgrade
+            #)
 
         
         # -- Set Content fields ------------------------------------------------

@@ -187,3 +187,30 @@ function refreshProgress (jquery_element) {
     }
   });
 }
+
+function cb_ajax_error (request, settings, referrer_url) {
+    var json;
+    try {
+      json = jQuery.parseJSON(request.responseText);
+    } catch (e) {
+      json = 'A server error has occured!';
+    }
+    if (json == null) json = 'A server error has occured!';
+    flash_message(json);
+    
+    if (request.status == 402) {
+      popup('Upgrade plans','/misc/upgrade_plans.frag');
+    }
+    if (typeof settings == 'undefined') return;
+    if (request.status == 403) {
+    $.cookie('login_redirect', 'https://' + document.location.hostname + settings.url.replace(/json$/, 'redirect'), { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
+    var login_redirect_action = '{}';
+    if (settings.type == 'POST') {
+      login_redirect_action = "{'" + settings.data.replace(/\&/gi, "','").replace(/\=/gi, "':'") + "'}";
+    }
+    $.cookie('login_redirect_action', login_redirect_action, { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
+    if (typeof referrer_url != 'undefined')
+      $.cookie('login_action_referer', referrer_url, { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
+    window.location.href = '/account/signin';
+    }
+}
