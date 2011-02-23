@@ -8,18 +8,17 @@ FOOT=\
 	jquery.uploadify.v2.1.4.js jquery.simple-color-picker.js \
 	gears_init.js geo.js OpenLayers.js minimap.js
 
-OUT=_combined.head.js _combined.foot.js
 
-all: $(OUT)
-
-clean:
-	rm -f $(OUT)
+all: _combined.head.js _combined.foot.js
 
 _combined.head.js: $(HEAD)
 	cat $(HEAD) | yui-compressor --type js -o _combined.head.js
 
 _combined.foot.js: $(FOOT)
 	cat $(FOOT) | yui-compressor --type js -o _combined.foot.js
+
+clean:
+	rm -f _combined.head.js _combined.foot.js
 
 
 #
