@@ -22,6 +22,7 @@ class MemberActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
+    @role_required('editor')
     def follow(self, id, **kwargs):
         """
         POST /members/{name}/follow: follow the member
@@ -41,6 +42,7 @@ class MemberActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
+    @role_required('editor')
     def unfollow(self, id, **kwargs):
         """
         POST /members/{name}/unfollow: unfollow the member

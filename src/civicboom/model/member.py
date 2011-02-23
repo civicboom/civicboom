@@ -21,6 +21,7 @@ import urllib, hashlib, copy
 member_type              = Enum("user", "group",                     name="member_type"  )
 account_types            = Enum("free", "plus", "corp", "copp_plus", name="account_types")
 
+group_member_roles_level =     ("admin", "editor", "contributor", "observer") # the order of permissions e.g admin has higher privilages than editor
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
 group_member_status      = Enum("active", "invite", "request",                name="group_member_status")
 
@@ -28,7 +29,17 @@ group_join_mode          = Enum("public", "invite" , "invite_and_request",    na
 group_member_visibility  = Enum("public", "private",                          name="group_member_visibility" )
 group_content_visibility = Enum("public", "private",                          name="group_content_visibility")
 
-
+def has_role_required(role_required, role_current):
+    """
+    returns 1 or more if has permissons
+    returns 0 or less if not permissions
+    """
+    try:
+        permission_index_required = group_member_roles_level.index(role_required)
+        permission_index_current  = group_member_roles_level.index(role_current)
+        return permission_index_required - permission_index_current + 1
+    except:
+        return 0
 
 class GroupMembership(Base):
     __tablename__ = "map_user_to_group"
