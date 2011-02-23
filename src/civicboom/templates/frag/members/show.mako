@@ -331,7 +331,7 @@
     <span class="separtor"></span>
     
     % if self.member.get('location_current') or self.member.get('location_home'):
-        ${parent.georss_link()}
+        ##${parent.georss_link()}
     % endif
 </%def>
 
