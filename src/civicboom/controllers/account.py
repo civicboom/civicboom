@@ -147,6 +147,7 @@ class AccountController(BaseController):
             c.auth_info = janrain('auth_info', token=kwargs.get('token'))
             
         if c.auth_info:
+            user_log.info("linked account from %s" % c.auth_info['profile']['providerName'])
             associate_janrain_account(c.logged_in_persona, c.auth_info['profile']['providerName'], c.auth_info['profile']['identifier'])
             set_flash_message(action_ok("Account successfully linked to _site_name"))
         else:
