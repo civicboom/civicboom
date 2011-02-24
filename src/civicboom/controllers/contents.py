@@ -335,6 +335,9 @@ class ContentsController(BaseController):
         # url('contents') + POST
         
         # type MUST be passed in kwargs as this is relayed on to the sub calls. If it is missing from the call to update this breaks some of the permissions checks
+
+        user_log.info("Creating new content")
+
         if 'type' not in kwargs:
             kwargs['type'] = 'draft'
         
@@ -618,6 +621,7 @@ class ContentsController(BaseController):
         """
         # url('content', id=ID)
         content = _get_content(id, is_editable=True)
+        user_log.info("Deleting content %d" % id)
         content.delete()
         return action_ok(_("_content deleted"), code=200)
 
