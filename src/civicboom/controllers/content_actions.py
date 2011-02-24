@@ -72,7 +72,8 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
-    @account_type('plus')
+    #@account_type('plus')
+    @role_required('editor')
     def approve(self, id, **kwargs):
         """
         POST /contents/{id}/approve: claim an article for publishing
@@ -96,7 +97,8 @@ class ContentActionsController(BaseController):
 
     @web
     @auth
-    @account_type('plus')
+    #@account_type('plus')
+    @role_required('editor')
     def disassociate(self, id, **kwargs):
         """
         POST /contents/{id}/disassociate: unlink an article from its parent
@@ -121,7 +123,8 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
-    @account_type('plus')
+    #@account_type('plus')
+    @role_required('editor')
     def seen(self, id, **kwargs):
         """
         POST /contents/{id}/seen: mark response as seen
@@ -143,6 +146,7 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
+    @role_required('editor')
     def accept(self, id=None, **kwargs):
         """
         POST /contents/{id}/accept: accept an assignment
@@ -179,6 +183,7 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
+    @role_required('editor')
     def withdraw(self, id=None, **kwargs):
         """
         POST /contents/{id}/witdraw: withdraw from an assignment

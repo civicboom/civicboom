@@ -57,14 +57,8 @@ CREATE OR REPLACE FUNCTION update_num_unread() RETURNS TRIGGER AS $$
     DECLARE
         tmp_target_id integer;
     BEGIN
-        IF (TG_OP = 'INSERT') THEN
-            tmp_target_id := NEW.target_id;
-        ELSIF (TG_OP = 'UPDATE') THEN
-            -- FIXME: check that the target_id hasn't changed
-            tmp_target_id := NEW.target_id;
-        ELSIF (TG_OP = 'DELETE') THEN
-            tmp_target_id := OLD.target_id;
-        END IF;
+        -- UPDATE changing the target ID should never happen
+        tmp_target_id := CASE WHEN TG_OP='DELETE' THEN OLD.target_id ELSE NEW.target_id END;
 
         UPDATE member SET num_unread_messages = (
             SELECT COUNT(message.id)
@@ -79,7 +73,7 @@ CREATE OR REPLACE FUNCTION update_num_unread() RETURNS TRIGGER AS $$
             FROM message
             WHERE
                 message.target_id=member.id AND
-                message.source_id IS NOT NULL AND
+                message.source_id IS NULL AND
                 NOT message.read
         ) WHERE member.id = tmp_target_id;
         RETURN NULL;

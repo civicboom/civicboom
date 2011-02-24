@@ -147,7 +147,8 @@ ${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', subdomain
 
 <%def name="steps()">
 
-    <%self:step arg>
+    <%doc>
+    <%self:step>
         <%def name="main()">
             <div style="text-align: center; margin-top: 3em;"><img src="/images/boom193.png" alt="${_("_site_name logo")}" width="193" height="193" /></div>
         </%def>
@@ -155,13 +156,27 @@ ${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', subdomain
             <p style="font-weight: bold; font-size: 120%;">${_("_site_name empowers you connect, create and collaborate on what matters to you.")}</p>
         </%def>
     </%self:step>
+    </%doc>
+
 
     <%self:step>
         <%def name="main()">
-            more steps
+            <img src="images/misc/titlepage/step1.png" alt="step 1"/>
         </%def>
         <%def name="description()">
-            more steps
+            <h2>Civicboom empowers you to connect and collaborate with your community and audience on what matters...</h2>
+        </%def>
+    </%self:step>    
+
+    <%self:step>
+        <%def name="main()">
+            <img src="images/misc/titlepage/step2.png" alt="step 2"/>
+        </%def>
+        <%def name="description()">
+            <h2>Local news media: get closer to your community</h2>
+            <p>Create Hubs for your titles, sections or issues.</p>
+            <p>Send out breaking news requests, get coverage directly from the source and utilise the power of the crowd.</p>
+            <p>Empower the community you serve to be part of news and its creation - then create relevant, timely and enhanced content.</p>
         </%def>
     </%self:step>    
     

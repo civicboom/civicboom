@@ -15,7 +15,13 @@
 
 <p>
 
-<h1>${_("How to get the app:")}</h1>
+<h1>${_("How to get the app")}</h1>
 ${_("Scan the barcode (opposite) into your phone by using the barcode reader on your handset")}
 (If you don't have the barcode reader, you can download the app directly from the
 <a href="http://market.android.com/details?id=com.civicboom.mobile2">Android marketplace</a> on your handset)
+
+<p>
+
+<h1>${_("Android app features and functions")}</h1>
+
+<img src="/images/about/tour-sm.png">

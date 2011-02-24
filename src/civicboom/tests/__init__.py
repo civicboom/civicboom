@@ -98,6 +98,29 @@ class TestController(TestCase):
             self.logged_in_as = None
         self.app.reset()
 
+    def set_persona(self, username_group):
+        response = self.app.post(
+            url(controller='account', action='set_persona', id=username_group, format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+            },
+            status=200
+        )
+        response_json = json.loads(response.body)
+        assert response_json['status'] == 'ok'
+
+    def join(self, username_group):
+        response = self.app.post(
+            url('group_action', action='join', id=username_group, format='json') ,
+            params={
+                '_authentication_token': self.auth_token   ,
+                #'member'               : self.logged_in_as , #AllanC - why was this here?
+            },
+            status=200,
+        )
+        #self.assertIn('request', response) # successful "join request" in response
+
+
     def sign_up_as(self, username, password=u'password'):
         """
         A function that can be called from other automated tests to call the signup proccess and generate a new user
@@ -137,6 +160,25 @@ class TestController(TestCase):
         
         self.log_in_as(username, password)
     
+    def create_content(self, title=u'Test', content=u'Test', type='article', **kwargs):
+        params={
+            '_authentication_token': self.auth_token,
+            'title'         : title      ,
+            'contents'      : content    ,
+            'type'          : type       ,
+            'submit_publish': u'publish' , # publish needs to be remove from API
+        }
+        params.update(kwargs)
+        
+        response = self.app.post(
+            url('contents', format='json') ,
+            params = params ,
+            status = 201 ,
+        )
+        response_json = json.loads(response.body)
+        content_id = int(response_json['data']['id'])
+        self.assertNotEqual(content_id, 0)
+        return content_id
 
     def follow(self, username):
         response = self.app.post(

@@ -23,16 +23,8 @@ class TestSetPersonaController(TestController):
         response_json = json.loads(response.body)
         self.assertNotEqual(response_json['data']['id'], 0)
 
-
         # Set Persona to new group
-        response = self.app.post(
-            url(controller='account', action='set_persona', id='set_persona_test',format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-            },
-            status=200
-        )
-        response_json = json.loads(response.body)
+        self.set_persona('set_persona_test')
 
         # Set Persona to group that does not exisit
         response = self.app.post(
@@ -125,6 +117,9 @@ class TestSetPersonaController(TestController):
         )
         response_json = json.loads(response.body)
         
+        # TODO
+        # above has the invite and uninvite
+        # could we follow the invite process through to accepting a join invite and then setting the persona correctly
         
         #Delete Groups
 
