@@ -156,12 +156,11 @@ function map_picker(field_name, options) {
 
 			$('#'+field_name+'').val(lon+","+lat);
 			$('#'+field_name+'_name').val(ui.item.label);
-			map.setCenter(
+			map.panTo(
 				new OpenLayers.LonLat(Number(lon), Number(lat)).transform(
 					new OpenLayers.Projection("EPSG:4326"),
 					map.getProjectionObject()
-				),
-				13
+				)
 			);
 			return false;
 		}
