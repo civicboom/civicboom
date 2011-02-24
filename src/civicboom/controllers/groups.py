@@ -82,6 +82,8 @@ class GroupsController(BaseController):
     def index(self, **kwargs):
         """
         GET /groups: All groups the current user is a member of
+
+        @api groups 1.0 (WIP)
         
         @param * (see common list return controls)
         
@@ -145,6 +147,8 @@ class GroupsController(BaseController):
     def create(self, **kwargs):
         """
         POST /groups: Create a new group
+
+        @api groups 1.0 (WIP)
         
         Creates a new group with the specifyed username with the currently logged in user as as administrator of the new group
         
@@ -198,6 +202,8 @@ class GroupsController(BaseController):
         """
         PUT /groups/{id} - Update a groups settings
         (aka POST /groups/{id} with POST[_method] = "PUT")
+
+        @api groups 1.0 (WIP)
         
         @param * - see "POST contents"
         
@@ -248,7 +254,6 @@ class GroupsController(BaseController):
     def delete(self, id, **kwargs):
         """
         DELETE /group/{id}: Delete an existing group
-        (aka POST /group/{id} with POST[_method] = "DELETE")
         
         Current user must be identifyed as an administrator of this group.
         

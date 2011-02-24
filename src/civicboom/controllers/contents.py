@@ -330,7 +330,7 @@ class ContentsController(BaseController):
 
         @return 201   content created
                 id    new content id
-        @return x     see update return types
+        @return *     see update return types
         """
         # url('contents') + POST
         

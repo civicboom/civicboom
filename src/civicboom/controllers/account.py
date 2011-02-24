@@ -99,6 +99,7 @@ class AccountController(BaseController):
             #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
             
         # If not authenticated or any janrain info then error
+        user_log.warning("Failed to log in as '%s'" % kwargs.get('username', ''))
         err = action_error(_('Unable to authenticate user'), code=403)
         if c.format in ["html", "redirect"]:
             set_flash_message(err.original_dict)
@@ -131,7 +132,7 @@ class AccountController(BaseController):
     @authorize
     def link_janrain(self, **kwargs):
         """
-        A user can have there account linked to multiple external accounts
+        A user can have their account linked to multiple external accounts
         The benefit of this is that all external accounts registered with us will
         allow a user to aggregate over those external services.
         

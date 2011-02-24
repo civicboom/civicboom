@@ -33,6 +33,8 @@ class ProfileController(BaseController):
                 member   member object
                 content  a list of the member's contents
                 messages a list of messages, split into 'notifications' and 'to'
+                num_unread_messages
+                num_unread_notifications
         """
         # NOTE: if this method is refactored or renamed please update cb_frag.js (as it is outside pylons and has a hard coded url to '/profile/index')
         

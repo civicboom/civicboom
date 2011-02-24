@@ -19,9 +19,12 @@ class GroupActionsController(BaseController):
     @auth
     def join(self, id, **kwargs):
         """
-        Current user join a group
+        POST /groups/{id}/join: join the group, or request to join if admin approval is required
+
+        @api groups 1.0 (WIP)
         
-        @return 200 - joined ok
+        @return 200 joined ok
+        @return 403 permission denied
         """
         group = _get_group(id)
 
@@ -47,7 +50,9 @@ class GroupActionsController(BaseController):
     @auth
     def remove_member(self, id, **kwargs):
         """
+        POST /groups/{id}/remove_member: remove a member from the group
         
+        @api groups 1.0 (WIP)
         """
         member = kwargs.get('member', None)
         
@@ -70,8 +75,11 @@ class GroupActionsController(BaseController):
     @auth
     def invite(self, id, **kwargs):
         """
+        POST /groups/{id}/invite:
         Invite a member to join this groups
         (only if current user has admin role in group)
+        
+        @api groups 1.0 (WIP)
         
         @param role - the role the new user is to be invited as (if None group default is used)
             admin
@@ -97,12 +105,19 @@ class GroupActionsController(BaseController):
     @auth
     def set_role(self, id, member=None, role=None, **kwargs):
         """
+        POST /groups/{id}/set_role:
+        
+        @api groups 1.0 (WIP)
+        
         (only if current user has admin role in group)
         
         used to approve join requests (role=None=default group join role)
+
+        @param member
+        @param role
         
-        return 200 - role set ok
-        return 400 - cannot remove last admin
+        @return 200  role set ok
+        @return 400  cannot remove last admin
         """
         group = _get_group(id, is_admin=True)
         if group.set_role(member, role): # FIXME: check that member exists? If we _get_member, then member.username would work below
