@@ -188,7 +188,7 @@ class GroupsController(BaseController):
     @authorize
     def new(self, **kwargs):
         """
-        GET /groups/new - Form to create a new item
+        GET /groups/new: Form to create a new item
         
         @return 200 - ???
         """
@@ -200,8 +200,7 @@ class GroupsController(BaseController):
     @auth
     def update(self, id, **kwargs):
         """
-        PUT /groups/{id} - Update a groups settings
-        (aka POST /groups/{id} with POST[_method] = "PUT")
+        PUT /groups/{id}: Update a groups settings
 
         @api groups 1.0 (WIP)
         
@@ -259,9 +258,9 @@ class GroupsController(BaseController):
         
         @api groups 1.0 (WIP)
         
-        @return 403 - lacking permission
-        @return 404   group not found to delete
-        @return 200 - group deleted successfully
+        @return 403 lacking permission
+        @return 404 group not found to delete
+        @return 200 group deleted successfully
         """
         group = _get_group(id, is_admin=True)
         group.delete()
@@ -292,7 +291,7 @@ class GroupsController(BaseController):
         """
         GET /contents/{id}/edit: Form to edit an existing item
         
-        Current user must be identifyed as an administrator of this group.
+        Current user must be identified as an administrator of this group.
         """
         # url('edit_group', id=ID)
         # GregM: BIG DIRTY HACK to show website and description in the group config editor.
