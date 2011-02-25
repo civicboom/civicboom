@@ -18,6 +18,19 @@
   <defs
      id="defs4">
     <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path4567"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+    <marker
        inkscape:stockid="Arrow1Lend"
        orient="auto"
        refY="0"
@@ -45,6 +58,20 @@
          style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
          transform="matrix(-0.8,0,0,-0.8,-10,0)" />
     </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-9-5"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4291-1-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -53,14 +80,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.56738281"
-     inkscape:cx="614.22375"
-     inkscape:cy="517.4176"
+     inkscape:zoom="0.87207031"
+     inkscape:cx="307.31467"
+     inkscape:cy="512"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1366"
-     inkscape:window-height="768"
+     inkscape:window-width="1920"
+     inkscape:window-height="1080"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0">
@@ -82,7 +109,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -91,6 +118,20 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-28.36218)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.99999988;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4005-4-3-7"
+       width="176"
+       height="128"
+       x="816"
+       y="668.36218" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.99999988;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4005-4-3"
+       width="176"
+       height="128"
+       x="624"
+       y="668.36218" />
     <rect
        style="fill:#ffc0c0;fill-opacity:1;stroke:#ff0000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect6535"
@@ -123,9 +164,9 @@
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect4005"
-       width="768"
+       width="592"
        height="128"
-       x="128"
+       x="16"
        y="668.36218" />
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -544,7 +585,7 @@
     </g>
     <g
        id="g4212"
-       transform="translate(0,-256)">
+       transform="translate(0,-64.000006)">
       <rect
          style="fill:#c0c0ff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
          y="780.36218"
@@ -569,14 +610,18 @@
       <text
          sodipodi:linespacing="125%"
          id="text3051"
-         y="804.56384"
+         y="790.47546"
          x="896"
          style="font-size:22px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
-           y="804.56384"
+           y="790.47546"
            x="896"
            id="tspan3053"
-           sodipodi:role="line">Memcache</tspan></text>
+           sodipodi:role="line">Data</tspan><tspan
+           y="817.97546"
+           x="896"
+           sodipodi:role="line"
+           id="tspan3218">Cache</tspan></text>
     </g>
     <g
        id="g4204"
@@ -620,7 +665,7 @@
     </g>
     <g
        id="g4251"
-       transform="translate(0,-256)">
+       transform="translate(-112,-256)">
       <rect
          style="fill:#ffc0c0;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
          y="972.36218"
@@ -660,7 +705,7 @@
     </g>
     <g
        id="g4259"
-       transform="translate(0,-256)">
+       transform="translate(-112,-256)">
       <rect
          style="fill:#c0ffc0;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
          y="972.36218"
@@ -700,7 +745,7 @@
     </g>
     <g
        id="g4267"
-       transform="translate(0,-256)">
+       transform="translate(96,-256)">
       <rect
          inkscape:transform-center-y="-33"
          inkscape:transform-center-x="384"
@@ -746,7 +791,7 @@
     </g>
     <g
        id="g4275"
-       transform="translate(0,-256)">
+       transform="translate(-304,-256)">
       <rect
          style="fill:#ffffc0;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
          y="972.36218"
@@ -786,36 +831,36 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-size:32px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="896"
-       y="284.36218"
+       style="font-size:24px;font-style:normal;font-weight:normal;text-align:end;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="976"
+       y="268.36218"
        id="text4007"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4009"
-         x="896"
-         y="284.36218">Nginx</tspan></text>
+         x="976"
+         y="268.36218">Nginx</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:32px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="672"
-       y="604.36218"
+       style="font-size:24px;font-style:normal;font-weight:normal;text-align:end;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="752"
+       y="588.36218"
        id="text4011"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4013"
-         x="672"
-         y="604.36218">Pylons</tspan></text>
+         x="752"
+         y="588.36218">Pylons</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:32px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="768"
+       style="font-size:24px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="400"
        y="668.36218"
        id="text4015"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4017"
-         x="768"
+         x="400"
          y="668.36218">PostgreSQL</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Lend)"
@@ -893,10 +938,11 @@
        id="path5685"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Lend-9)"
-       d="m 592,540.36218 240,0"
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Lstart);marker-mid:none;marker-end:none"
+       d="m 704,700.36218 0,-48 -16,-16 -176,0"
        id="path5687"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:none"
        d="m 512,588.36218 0,48"
@@ -905,25 +951,19 @@
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Lend-9)"
-       d="m 512,636.36218 80,0 16,16 0,48"
+       d="m 400,636.36218 112,0 -16,16 0,48"
        id="path5691"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Lend-9)"
-       d="m 592,636.36218 192,0 16,16 0,48"
-       id="path5693"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Lend-9)"
-       d="m 512,636.36218 -80,0 -16,16 0,48"
+       d="m 400,636.36218 -80,0 -16,16 0,48"
        id="path5695"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Lend-9)"
-       d="m 432,636.36218 -192,0 -16,16 0,48"
+       d="m 320,636.36218 -192,0 -16,16 0,48"
        id="path5697"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
@@ -1010,5 +1050,33 @@
            height="176"
            x="800"
            y="560" /></flowRegion><flowPara
-         id="flowPara6533">Replicated: scales badly; there can be multiple read-only copies but only one writable master server. The complex inter-related data makes it hard to split into separate shards.</flowPara></flowRoot>  </g>
+         id="flowPara6533">Replicated: scales badly; there can be multiple read-only copies but only one writable master server. The complex inter-related data makes it hard to split into separate shards.</flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="896"
+       y="668.36218"
+       id="text4011-7"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4013-6"
+         x="896"
+         y="668.36218">Memcache</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow1Lend-9)"
+       d="m 688,636.36218 192,0 16,16 0,48"
+       id="path5687-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="704"
+       y="668.36218"
+       id="text4011-7-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4013-6-5"
+         x="704"
+         y="668.36218">MemcacheDB</tspan></text>
+  </g>
 </svg>
