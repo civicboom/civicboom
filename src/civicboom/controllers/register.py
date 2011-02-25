@@ -107,6 +107,7 @@ class RegisterController(BaseController):
         
         c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako'))
         
+        user_log.info("Registered new user")
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))
         signin_user_and_redirect(c.logged_in_persona, 'registration')
         ##redirect('/')
@@ -160,6 +161,7 @@ class RegisterController(BaseController):
         
         Session.commit()
         
+        user_log.info("Sending verification email")
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
         

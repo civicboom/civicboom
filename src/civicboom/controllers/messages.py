@@ -226,7 +226,8 @@ class MessagesController(BaseController):
         #    h.form(h.url('message', id=ID), method='delete')
         # url('message', id=ID)
         
-        message = _get_message(id, is_target=True) 
+        message = _get_message(id, is_target=True)
+        user_log.info("Deleted Message #%d" % (message.id, ))
         message.delete()
         
         return action_ok(_("Message deleted"))

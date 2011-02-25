@@ -65,6 +65,7 @@ class FeedsController(BaseController):
             f.query = _post_to_query(request.POST)
             c.logged_in_persona.feeds.append(f)
             Session.commit()
+            user_log.info("Created Feed #%d (%s)" % (f.id, f.name))
             return action_ok(_("Feed created"), code=201, data={'id': f.id})
         except Exception, e:
             raise action_error(_("Error creating feed"), code=500)
@@ -94,6 +95,7 @@ class FeedsController(BaseController):
 
         f.name = request.POST['name']
         f.query = _post_to_query(request.POST)
+        user_log.info("Updated Feed #%d (%s)" % (f.id, f.name))
         return action_ok(_("Feed updated"), code=200)
 
     @auto_format_output
@@ -112,6 +114,7 @@ class FeedsController(BaseController):
         if f.member != c.logged_in_persona:
             raise action_error(_("Not your feed"), code=403)
 
+        user_log.info("Deleted Feed #%d (%s)" % (f.id, f.name))
         Session.delete(f)
         Session.commit()
         return action_ok(_("Feed deleted"), code=200)
