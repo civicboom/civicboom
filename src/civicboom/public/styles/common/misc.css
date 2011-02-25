@@ -84,12 +84,12 @@ BODY.c-misc.a-about OL OL {
 }
 .payplanwrapper {
   position: relative;
-  width: 50em;
+  width: 40em;
   height: 30em;
 }
 .payplanholder {
   position: absolute;
-  width: 50em;
+  width: 40em;
   text-align: left;
 }
 .payplan {
@@ -126,14 +126,14 @@ BODY.c-misc.a-about OL OL {
   height: 26em;
   background-color: #EEE;
 }
-.payplan .planpoints ul li {
-  padding: 1em 1em 0.25em 1em;
+.payplan .planpoints ul.points li {
+  padding: 0.5em 1em 0.5em 1em;
   border-bottom: 0.1em solid gray;
   text-align: center;
   font-weight: bold;
   font-size: 100%;
 }
-.payplan.active .planpoints ul li {
+.payplan.active .planpoints ul.points li {
   font-size: 120%;
   color: #500;
 }
@@ -152,4 +152,33 @@ BODY.c-misc.a-about OL OL {
 .payplan.active .planpoints .buttons {
   bottom: 4em;
   width: 14em;
+}
+
+.payplan .ideal .idealpop {
+  display: none;
+  position: absolute;
+  top: -14.5em;
+  height: 14.5em;
+  width: 100%;
+}
+
+.payplan .ideal .idealpop .pop {
+  background-color: #FFF;
+  width: 95%;
+  margin: auto;
+  height: 90%;
+  border-radius        : 0.4em;
+  -moz-border-radius   : 0.4em;
+  -webkit-border-radius: 0.4em;
+  border: 2px solid #4A73B8;
+  text-align: left;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+}
+.payplan .ideal .idealpop .pop ul li {
+  list-style: square inside;
+}
+
+.payplan .ideal:hover .idealpop {
+  display: block; 
 }
