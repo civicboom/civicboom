@@ -63,7 +63,7 @@ class GroupActionsController(BaseController):
             raise action_error('current user has no permissions for this group', code=403)
         # remove action
         if group.remove_member(member):
-            user_log.info("Remebed member %s from group %s" % (member.username, group.username))
+            user_log.info("Removed Member #%d (%s) from Group #%d (%s)" % (member.id, member.username, group.id, group.username))
             return action_ok(message='member removed sucessfully')
         raise action_error('unable to remove member', code=500)
 
@@ -90,10 +90,11 @@ class GroupActionsController(BaseController):
         @return 200 - invite sent ok
         """
         member = kwargs.get('member', None)
-        role   = kwargs.get('role'  , None)        
+        role   = kwargs.get('role'  , None)
         
         group = _get_group(id, is_admin=True)
         if group.invite(member, role):
+            user_log.info("Invited Member #%d (%s) to Group #%d (%s)" % (member.id, member.username, group.id, group.username))
             return action_ok(_('%(member)s has been invited to join %(group)s' % {'member':member, 'group':group.name}))
         raise action_error('unable to invite member', code=500)
     

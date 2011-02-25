@@ -179,6 +179,8 @@ class GroupsController(BaseController):
         Session.commit()
         
         self.update(group.id, **kwargs) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
+
+        user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         
         return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)
 
@@ -240,6 +242,8 @@ class GroupsController(BaseController):
         c.format = cformat
         
         Session.commit()
+
+        user_log.info("Updated Group #%d (%s)" % (group.id, group.username))
         
         if c.format == 'html':
             ##return redirect(url('members', id=group.username))
@@ -263,6 +267,7 @@ class GroupsController(BaseController):
         @return 200 group deleted successfully
         """
         group = _get_group(id, is_admin=True)
+        user_log.info("Deleted Group #%d (%s)" % (group.id, group.username))
         group.delete()
         return action_ok(_("group deleted"), code=200)
 
