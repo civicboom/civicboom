@@ -621,7 +621,7 @@ class ContentsController(BaseController):
         """
         # url('content', id=ID)
         content = _get_content(id, is_editable=True)
-        user_log.info("Deleting content %d" % id)
+        user_log.info("Deleting content %d" % content.id)
         content.delete()
         return action_ok(_("_content deleted"), code=200)
 
