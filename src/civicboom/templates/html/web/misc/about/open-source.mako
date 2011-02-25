@@ -13,6 +13,9 @@ bugs reported in other people's trackers:
 http://code.google.com/p/page-speed/issues/detail?id=448 - png optimisation
 https://bitbucket.org/bbangert/beaker/issue/62/some-way-to-set-httponly-cookies
 https://bitbucket.org/bbangert/beaker/issue/63/secure-auto-cookie-setting
+http://www.sqlalchemy.org/trac/ticket/2079 - unicode col with non-unicode default
+http://trac.pythonpaste.org/pythonpaste/ticket/483 - urlparse.parse_qsl rather than cgi
+https://bugs.launchpad.net/ubuntu/+source/lazr.uri/+bug/725124 - lazr missing __init__.py
 -->
 <div>
 <b>Front End:</b>
