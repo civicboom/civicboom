@@ -226,7 +226,7 @@
                             'internal':'${_("Create a private _Group and empower your employees to submit ideas, upload their reports from events, share experiences - good and bad. Identify champions, learn from your workforce: they have the insight to help make your workplace and business better for all.")}',
                             'business':'${_("Work with your partners and customers: use _Groups to push out new products, get engagement on hot topics associated with your industry, build a community around your brand, and improve brand awareness to wider audiences.")}',
                             'creative':'${_("From documentary makers to designers and everything in between, ask the crowd - photos, text, videos, audio. Empower people to share their experience, authenticity and creativity for your project through a _Group.")}',
-                            'research':'${_("Work in a closed, private _Group with key people in your organisation or trusted external sources in research on any topic you choose.")};
+                            'research':'${_("Work in a closed, private _Group with key people in your organisation or trusted external sources in research on any topic you choose.")}' };
       function changePlaceholder (jquery_object, text) {
         if (typeof text === 'undefined') var text = '';
         var oldPlaceholder = jquery_object.attr('placeholder'); 
