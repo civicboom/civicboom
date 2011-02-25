@@ -68,6 +68,7 @@ class MediaController(BaseController):
         if m.content.owner != c.logged_in_persona:
             raise action_error(_("Not your media"), code=403)
 
+        user_log.info("Deleting Media #%d" % (media.id, ))
         Session.delete(m)
         Session.commit()
         return action_ok(_("Media deleted"), code=200)
