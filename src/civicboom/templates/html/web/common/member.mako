@@ -30,7 +30,7 @@
                 new_window = ''
         %>
         <a href="${h.url('member', id=member['username'])}" title="${member['name']}" ${js_link_to_frag} ${new_window}>
-          <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+          <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
         </a>
     </div>
     % endif
@@ -43,7 +43,7 @@
 		% if show_avatar:
 		<div class="clipper">
             <a href="${h.url('member', id=member['username'])}" title="${member['name']}">
-			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
             </a>
 			##<img src="/images/badges/user.png" alt="User" class="type">
             ##% if member['type']=="user":

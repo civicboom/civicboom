@@ -44,7 +44,7 @@
             <td>
                 <a href="${owner_url}" target="_blank" title="${_('%s on _site_name') % owner_name}">
                     % if owner_name:
-                    <img src="${owner['avatar_url']}" alt="${owner_name}"      style="height:${size_avatar}px;" onerror="this.onerror=null;this.src='/images/default_avatar.png'" />
+                    <img src="${owner['avatar_url']}" alt="${owner_name}"      style="height:${size_avatar}px;" onerror="this.onerror=null;this.src='/images/default/avatar.png'" />
                     % else:
                     <img src="/images/boom128.png"  alt="${_('_site_name')}" style="height:${size_avatar}px;" />
                     % endif
@@ -87,7 +87,7 @@
         % if c.logged_in_persona:
             <a href="${h.url(controller='profile', action='index')}" target="_blank">
                 ${c.logged_in_persona.username}
-                <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+                <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
             </a>
         % else:
             <a href="${h.url('member_action', id=owner['username'], action='follow', subdomain='')}" target="_blank">

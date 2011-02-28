@@ -17,7 +17,7 @@
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
       <a class="name" href="${url(controller='profile', action='index')}"
-	  	><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'
+	  	><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"'
 	  /></a>
       <%def name="messageIcon(messages)">
         % if messages > 0:
@@ -56,7 +56,7 @@
                 % endif
             >
                 <td>
-                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
                 </td>
                 <td>
                     <p class="name">${member.name or member.username}</p>
