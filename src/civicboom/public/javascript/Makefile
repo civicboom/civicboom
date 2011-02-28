@@ -5,7 +5,7 @@ HEAD=\
 FOOT=\
 	jquery.ui.js jquery.ui.stars-3.0.1.js \
 	jquery.html5-0.0.1.js jquery.scrollTo.js jquery.simplemodal.1.4.1.min.js jquery.uploadify.v2.1.4.js jquery.simple-color-picker.js\
-	gears_init.js geo.js OpenLayers.js minimap.js
+	gears_init.js geo.js OpenLayers.js minimap.js jquery.cookie.js jquery.ba-hashchange.min.js
 
 
 all: _combined.head.js _combined.foot.js

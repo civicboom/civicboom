@@ -78,7 +78,7 @@
     <div class="frag_right_col">
       <div class="frag_col">
         <div style="clear:left;" class="frag_list">
-          <h2><span class="icon icon_${self.content['creator']['type']}"><span>${self.content['creator']['type']}</span><div style="display:inline-block;padding-left:19px; width: 100%">Created&nbsp;by</div></span></h2>
+          <h2><span class="icon16 i_${self.content['creator']['type']}"><span>${self.content['creator']['type']}</span><div style="display:inline-block;padding-left:19px; width: 100%">Created&nbsp;by</div></span></h2>
           <div class="frag_list_contents">
             <div class="content" style="padding-bottom: 11px;">
               <div>
@@ -157,7 +157,7 @@
         <%def name="format_date_if(title, date_input, fuzzy=True)">
           % if date_input:
             <tr>
-              <td><span class="icon icon_date" title="${title}"><span>&nbsp;</span></span></td>
+              <td><span class="icon16 i_date" title="${title}"><span>&nbsp;</span></span></td>
               <td>${title}</td>
               % if fuzzy:
                 <td colspan="4">${h.time_ago(date_input)}</td>
@@ -178,22 +178,22 @@
         </style>
         <table class="content">
           <tr>
-            <td><span class="icon icon_boom"><span>Boom</span></span></td>
+            <td><span class="icon16 i_boom"><span>Boom</span></span></td>
             <td>Booms</td>
             <td>${content['boom_count'] if 'boom_count' in content else '0'}</td>
-            <td class="x"><span class="icon icon_seen"><span>Views</span></span></td>
+            <td class="x"><span class="icon16 i_seen"><span>Views</span></span></td>
             <td>Views</td>
             <td>${content['views'] if 'views' in content else '0'}</td>
           </tr>
         </table>
         <div class="padded">${rating()}</div>
         <div class="iconholder padded">
-          ${iconify('private', 'Private Content', 'icon icon_private')}
-          ${iconify('closed', 'Closed', 'icon icon_closed')}
+          ${iconify('private', 'Private Content', 'icon16 i_private')}
+          ${iconify('closed', 'Closed', 'icon16 i_closed')}
           % if content.get('approval')=='approved':
-            <div class="icon icon_approved" title="approved"><span>Approved</span></div>${_("Approved")}
+            <div class="icon16 i_approved" title="approved"><span>Approved</span></div>${_("Approved")}
           % endif
-          <span style="float: right;">${iconify('edit_lock', 'Locked for editing', 'icon icon_edit_lock')}</span>
+          <span style="float: right;">${iconify('edit_lock', 'Locked for editing', 'icon16 i_edit_lock')}</span>
         </div>
     </div>
 
@@ -215,7 +215,7 @@
         <%def name="format_date_if(title, date_input, fuzzy=True, trclass=None)">
           % if date_input:
             <tr${' class=%s' % trclass if trclass else ''}>
-              <td><span class="icon icon_date"><span>&nbsp;</span></span></td>
+              <td><span class="icon16 i_date"><span>&nbsp;</span></span></td>
               <td>${title}</td>
               % if fuzzy:
                 <td>${_('%s ago') % h.time_ago(date_input)}</td>
@@ -342,7 +342,7 @@
             lat = lat,
             lon = lon,
             feeds = [
-                dict(pin='yellow',  url='/contents.rss?location=%s,%s' % (lon,lat)      ),
+                dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)      ),
                 dict(pin='red',     url='/contents.rss?id=%s'          % content['id']  ),
             ]
         )}
@@ -390,7 +390,7 @@
           value           = _('Accept') ,
           json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
       )}
-      ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
+      ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
       <span class="separtor"></span>
   % endif
   
@@ -426,7 +426,7 @@
                 ##</b>
             </td>
             <td>
-                ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon icon_flag')}
+                ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon16 i_flag')}
             </td>
         </tr>
         % endfor
@@ -491,7 +491,7 @@
             h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
             method = "PUT" ,
             value           = _('Publish') ,
-            value_formatted = h.literal("<span class='icon icon_publish'></span>%s") % _('Publish') ,
+            value_formatted = h.literal("<span class='icon16 i_publish'></span>%s") % _('Publish') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
             
         )}
@@ -505,7 +505,7 @@
         ${h.secure_link(
             h.args_to_tuple('new_content', parent_id=self.id) ,
             value           = _("Respond") ,
-            value_formatted = h.literal("<span class='icon icon_respond'></span>%s") % _('Respond') ,
+            value_formatted = h.literal("<span class='icon16 i_respond'></span>%s") % _('Respond') ,
             json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
         )}
         ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
@@ -519,10 +519,10 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
             value           = _('Accept') ,
-            value_formatted = h.literal("<span class='icon icon_accept'></span>%s") % _('Accept') ,
+            value_formatted = h.literal("<span class='icon16 i_accept'></span>%s") % _('Accept') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
-        ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon icon_accept")}
+        ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
         <span class="separtor"></span>
     % endif
     
@@ -530,7 +530,7 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
             value           = _('Withdraw') ,
-            value_formatted = h.literal("<span class='icon icon_withdraw'></span>%s") % _('Withdraw'),
+            value_formatted = h.literal("<span class='icon16 i_withdraw'></span>%s") % _('Withdraw'),
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         <span class="separtor"></span>
@@ -542,7 +542,7 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='boom', format='redirect', id=self.id) ,
             value           = _('Boom') ,
-            value_formatted = h.literal("<span class='icon icon_boom'></span>%s") % _('Boom') ,
+            value_formatted = h.literal("<span class='icon16 i_boom'></span>%s") % _('Boom') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         <span class="separtor"></span>
@@ -554,7 +554,7 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
             value           = _('Approve & Lock'),
-            value_formatted = h.literal("<span class='icon icon_approve'></span>%s") % _('Approve & Lock'),
+            value_formatted = h.literal("<span class='icon16 i_approve'></span>%s") % _('Approve & Lock'),
             title           = _("Approve and lock this content so no further editing is possible"),
             confirm_text    = _('Click OK to approve this. Once approved, no further changes can be made by the creator, and further details will be sent to your inbox.'),
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
@@ -565,7 +565,7 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='seen'   , format='redirect', id=self.id),
             value           = _('Viewed') ,
-            value_formatted = h.literal("<span class='icon icon_seen'></span>%s") % _('Viewed'),
+            value_formatted = h.literal("<span class='icon16 i_seen'></span>%s") % _('Viewed'),
             title           = _("Mark this content as viewed") ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
         )}
@@ -575,7 +575,7 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
             value           = _('Disassociate') ,
-            value_formatted = h.literal("<span class='icon icon_dissasociate'></span>%s") % _('Disasociate'),
+            value_formatted = h.literal("<span class='icon16 i_dissasociate'></span>%s") % _('Disasociate'),
             title           = _("Dissacociate your content from this response") ,
             confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
@@ -591,14 +591,14 @@
     % if 'edit' in self.actions:
         <a href="${h.url('edit_content', id=self.id)}"
            onclick="cb_frag_load($(this), '${h.url('edit_content', id=self.id, format='frag')}'); return false;"
-        ><span class="icon icon_edit"></span>${_("Edit")}</a>
+        ><span class="icon16 i_edit"></span>${_("Edit")}</a>
         <span class="separtor"></span>
         
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
             method = "DELETE",
             value           = _("Delete"),
-            value_formatted = h.literal("<span class='icon icon_delete'></span>%s") % _('Delete'),
+            value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
             confirm_text    = _("Are your sure you want to delete this content?"),
             json_form_complete_actions = "cb_frag_reload('contents/%s'); cb_frag_remove(current_element);" % self.id,
         )}
@@ -606,11 +606,11 @@
     % endif
 
     % if 'aggregate' in self.actions:
-        ##${share.janrain_social(self.content, 'janrain', class_='icon icon_share')}
+        ##${share.janrain_social(self.content, 'janrain', class_='icon16 i_share')}
     % endif
     
     % if 'flag' in self.actions:
-        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}'><span class="icon icon_flag"></span>Flag</a>
+        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}'><span class="icon16 i_flag"></span>Flag</a>
         <span class="separtor"></span>
     % endif
     

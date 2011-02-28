@@ -30,7 +30,7 @@
                 new_window = ''
         %>
         <a href="${h.url('member', id=member['username'])}" title="${member['name']}" ${js_link_to_frag} ${new_window}>
-          <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+          <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
         </a>
     </div>
     % endif
@@ -43,14 +43,14 @@
 		% if show_avatar:
 		<div class="clipper">
             <a href="${h.url('member', id=member['username'])}" title="${member['name']}">
-			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
             </a>
 			##<img src="/images/badges/user.png" alt="User" class="type">
             ##% if member['type']=="user":
-            ##<div class="type icon16 icon_user"></div>
+            ##<div class="type icon16 i_user"></div>
             ##% endif
             % if member['type']=="group":
-                ##<div class="type icon icon_group" title="group"></div>
+                ##<div class="type icon16 i_group" title="group"></div>
                 ${h.icon('group', class_="type")}
             % endif
             % if 'account_type' in member and member['account_type']!='free':
@@ -59,13 +59,13 @@
             
             
             ## TODO - onClick javascript AJAX id card:
-            <a class="info icon icon_userid" href="${h.url('member', id=member['username'])}" title="${_("click for more info about %s" % member['username'])}"><span>more</span></a>
+            <a class="info icon16 i_userid" href="${h.url('member', id=member['username'])}" title="${_("click for more info about %s" % member['username'])}"><span>more</span></a>
             
             % if not c.logged_in_persona or (c.logged_in_persona and c.logged_in_persona.username != member['username']):
                 % if c.logged_in_persona and c.logged_in_persona.is_following(member['username']):
-                ${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
+                ${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon16 i_unfollow")}
                 % else:
-                ${h.secure_link(url('member_action', action='follow'  , id=member['username'], format='redirect'), _(' '), title=_("Follow %s" % member['username']),         css_class="follow_action icon icon_follow"  )}
+                ${h.secure_link(url('member_action', action='follow'  , id=member['username'], format='redirect'), _(' '), title=_("Follow %s" % member['username']),         css_class="follow_action icon16 i_follow"  )}
                 % endif
             % endif
 		</div>

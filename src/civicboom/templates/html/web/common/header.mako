@@ -17,7 +17,7 @@
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
       <a class="name" href="${url(controller='profile', action='index')}"
-	  	><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default_avatar.png"'
+	  	><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"'
 	  /></a>
       <%def name="messageIcon(messages)">
         % if messages > 0:
@@ -25,14 +25,14 @@
         % endif
       </%def>
       <div id="message_holder">
-        <a class   = "icon icon_message"
+        <a class   = "icon16 i_message"
            href    = "${h.url('messages',list='to')}"
            title   = "${_('Messages')}"
            onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
         ><span>${_('Messages')}</span>
         </a>
         ${messageIcon(c.logged_in_persona.num_unread_messages)}<br />
-        <a class   = "icon icon_notification"
+        <a class   = "icon16 i_notification"
            href    = "${h.url('messages',list='notification')}"
            title   = "${_('Notification')}"
            onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
@@ -56,7 +56,7 @@
                 % endif
             >
                 <td>
-                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
+                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
                 </td>
                 <td>
                     <p class="name">${member.name or member.username}</p>
@@ -67,14 +67,14 @@
                     % endfor
                 </td>
                 <td>
-                  <a class   = "icon icon_message"
+                  <a class   = "icon16 i_message"
                      href    = "${h.url('messages',list='to')}"
                      title   = "${_('Messages')}"
                      onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
                   ><span>${_('Messages')}</span>
                   </a>
                   ${messageIcon(member.num_unread_messages)}<br />
-                  <a class   = "icon icon_notification"
+                  <a class   = "icon16 i_notification"
                      href    = "${h.url('messages',list='notification')}"
                      title   = "${_('Notifications')}"
                      onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
@@ -103,7 +103,7 @@
                 num_members = c.logged_in_persona.num_members
         %>
         
-        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, num_members=num_members)}
+        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
         % if c.logged_in_user!=c.logged_in_persona:
             ${persona_select(c.logged_in_user)}
         % endif

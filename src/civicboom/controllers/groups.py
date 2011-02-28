@@ -220,7 +220,7 @@ class GroupsController(BaseController):
         group_dict = data['group']
         
         group.name                       = group_dict['name']
-        group.description                = group_dict['description']
+        #group.description                = group_dict['description'] GregM: Broke description saving, ARRGHHHHHH!!!!!!!!!
         group.default_role               = group_dict['default_role']
         group.join_mode                  = group_dict['join_mode']
         group.member_visibility          = group_dict['member_visibility']
@@ -230,15 +230,12 @@ class GroupsController(BaseController):
         # ARRRGHHH: Hacked c.format as settings_update redirects on html
         cformat = c.format
         c.format = 'python'
+        if 'description' in kwargs:
+            settings_update(id=id, description=kwargs['description'])
         if 'avatar' in kwargs:
             settings_update(id=id, avatar=kwargs['avatar'])
         if 'website' in kwargs:
             settings_update(id=id, website=kwargs['website'])
-        # GregM: Does not work! AC Please HEEEELLPPPP! Ktnxbai...
-        if 'description' in kwargs:
-            log.debug('!!!')
-            log.debug(kwargs['description'])
-            log.debug(settings_update(id=id, description=kwargs['description']))
         c.format = cformat
         
         Session.commit()

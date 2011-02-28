@@ -45,6 +45,12 @@ https://bugs.launchpad.net/ubuntu/+source/lazr.uri/+bug/725124 - lazr missing __
 <p>Feature detection -
 	<a href="http://www.modernizr.com/">Modernizr</a> -
 	MIT
+
+<p>Icon Mapper -
+	<a href="http://oranlooney.com/make-css-icons-python-image-library/">Script</a> -
+	CC-By-SA -
+	&copy; Oran Looney, Shish
+
 </div>
 
 <div>

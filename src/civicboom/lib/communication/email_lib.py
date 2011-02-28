@@ -39,15 +39,14 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
     #   -autolinking any links
     #   -putting inside html header
     if content_text!=None and content_html==None:
-        content_text_copy = content_text
-        content_html      = auto_link(content_text_copy.replace('\n','<br/>').decode('UTF-8'))
+        content_html      = auto_link(content_text.decode('UTF-8')).replace('\n',literal('<br/>\n'))
     # Convert html emails into a plain text equivlent
     elif content_html!=None and content_text==None:
         content_text      = convert_html_to_plain_text(content_html)
   
     # If not already wrapped in HTML header
     if not re.search(r'<body.*</body>',content_html, re.DOTALL + re.IGNORECASE): #If content HTML is not a complete document with a head and body - put it in the standard email template
-        c.email_content = literal(content_html)
+        c.email_content = content_html
         content_html = render('/email/base_email_from_plaintext.mako')
   
     # Subject - append site name to subject

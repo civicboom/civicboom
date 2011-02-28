@@ -11,6 +11,7 @@
             <span style="font-weight: normal;">AND</span>
             <p style="font-size: 180%; font-weight: bold; margin: 0em;">MAKE A<br/>CUP OF TEA</p>
             <p>OUR TECH MONKEYS HAVE BEEN ALERTED</p>
+            <img src="/images/logo.png" style="float: right;"/>
         </div>
 
 % if c.result:
