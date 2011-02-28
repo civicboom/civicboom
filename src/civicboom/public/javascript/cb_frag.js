@@ -309,36 +309,35 @@ function update_history(url, replace) {
   } else {
     if (replace) {
       if (location.hash.substr(1,3) != 'cbh') {
-        location.replace('#cbh' + encode64(JSON.stringify(createStateObj())));
+        location.replace('#cbh' + encode64($.JSON.encode(createStateObj())));
       } else {
         $(window).hashchange();
       }
     } else {
-      location.hash = '#cbh' + encode64(JSON.stringify(createStateObj()));
+      location.hash = '#cbh' + encode64($.JSON.encode(createStateObj()));
     }
   }
 }
 
-if(Modernizr.history) {
-  // Browser supports HTML5 history states
-	// FIXME: jQuery-ise this, rather than using the raw window.blah
-  window.onpopstate = function(popstate) { loadStateObj(popstate.state); }
-} else {
-  // Browser does not support HTML5 history states
-  // Use url hash instead
-  $(window).hashchange(function (e) {
-    var hash = location.hash;
-    if (hash != '' && typeof hash != 'undefined') {
-      if (hash.substr(1,3) == 'cbh') {
-        try {
-          var stateObj = $.parseJSON(decode64(hash.substr(4)));
-          loadStateObj(stateObj);
-        } catch (e) {} 
-      }
-    }
-  });
-}
-
 $(function () {
+  if(Modernizr.history) {
+    // Browser supports HTML5 history states
+    // FIXME: jQuery-ise this, rather than using the raw window.blah
+    window.onpopstate = function(popstate) { loadStateObj(popstate.state); }
+  } else {
+    // Browser does not support HTML5 history states
+    // Use url hash instead
+    $(window).hashchange(function (e) {
+      var hash = location.hash;
+      if (hash != '' && typeof hash != 'undefined') {
+        if (hash.substr(1,3) == 'cbh') {
+          try {
+            var stateObj = $.parseJSON(decode64(hash.substr(4)));
+            loadStateObj(stateObj);
+          } catch (e) {} 
+        }
+      }
+    });
+  }
   update_history(location.href, true);
 })
