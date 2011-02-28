@@ -342,7 +342,7 @@
             lat = lat,
             lon = lon,
             feeds = [
-                dict(pin='yellow',  url='/contents.rss?location=%s,%s' % (lon,lat)      ),
+                dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)      ),
                 dict(pin='red',     url='/contents.rss?id=%s'          % content['id']  ),
             ]
         )}
