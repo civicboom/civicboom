@@ -82,6 +82,8 @@ class GroupsController(BaseController):
     def index(self, **kwargs):
         """
         GET /groups: All groups the current user is a member of
+
+        @api groups 1.0 (WIP)
         
         @param * (see common list return controls)
         
@@ -145,6 +147,8 @@ class GroupsController(BaseController):
     def create(self, **kwargs):
         """
         POST /groups: Create a new group
+
+        @api groups 1.0 (WIP)
         
         Creates a new group with the specifyed username with the currently logged in user as as administrator of the new group
         
@@ -175,6 +179,8 @@ class GroupsController(BaseController):
         Session.commit()
         
         self.update(group.id, **kwargs) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
+
+        user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         
         return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)
 
@@ -184,7 +190,7 @@ class GroupsController(BaseController):
     @authorize
     def new(self, **kwargs):
         """
-        GET /groups/new - Form to create a new item
+        GET /groups/new: Form to create a new item
         
         @return 200 - ???
         """
@@ -196,8 +202,9 @@ class GroupsController(BaseController):
     @auth
     def update(self, id, **kwargs):
         """
-        PUT /groups/{id} - Update a groups settings
-        (aka POST /groups/{id} with POST[_method] = "PUT")
+        PUT /groups/{id}: Update a groups settings
+
+        @api groups 1.0 (WIP)
         
         @param * - see "POST contents"
         
@@ -235,6 +242,8 @@ class GroupsController(BaseController):
         c.format = cformat
         
         Session.commit()
+
+        user_log.info("Updated Group #%d (%s)" % (group.id, group.username))
         
         if c.format == 'html':
             ##return redirect(url('members', id=group.username))
@@ -248,17 +257,17 @@ class GroupsController(BaseController):
     def delete(self, id, **kwargs):
         """
         DELETE /group/{id}: Delete an existing group
-        (aka POST /group/{id} with POST[_method] = "DELETE")
         
         Current user must be identifyed as an administrator of this group.
         
         @api groups 1.0 (WIP)
         
-        @return 403 - lacking permission
-        @return 404   group not found to delete
-        @return 200 - group deleted successfully
+        @return 403 lacking permission
+        @return 404 group not found to delete
+        @return 200 group deleted successfully
         """
         group = _get_group(id, is_admin=True)
+        user_log.info("Deleted Group #%d (%s)" % (group.id, group.username))
         group.delete()
         return action_ok(_("group deleted"), code=200)
 
@@ -287,7 +296,7 @@ class GroupsController(BaseController):
         """
         GET /contents/{id}/edit: Form to edit an existing item
         
-        Current user must be identifyed as an administrator of this group.
+        Current user must be identified as an administrator of this group.
         """
         # url('edit_group', id=ID)
         # GregM: BIG DIRTY HACK to show website and description in the group config editor.

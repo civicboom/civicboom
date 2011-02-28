@@ -9,14 +9,10 @@ setup a cron job to run these tasks
 
 from civicboom.lib.base import *
 
-
-
-import logging
 import datetime
 
-
-
 log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 response_completed_ok = "task:ok" #If this is changed please update tasks.py to reflect the same "task ok" string
 
 
@@ -39,6 +35,7 @@ class TaskController(BaseController):
                 request.environ['REMOTE_ADDR'] == request.environ.get('SERVER_ADDR', '0.0.0.0')
             ):
             return abort(403)
+        user_log.info("Performing task '%s'" % (action, ))
         BaseController.__before__(self)
 
 
@@ -165,7 +162,7 @@ class TaskController(BaseController):
         return "\n".join(done)
 
 
-    def purdge_unneeded_warehouse_media(self):
+    def purge_unneeded_warehouse_media(self):
         """
         Compare the warehouse files with the database media list.
         If media records have been removed then we can safly remove them from the warehouse

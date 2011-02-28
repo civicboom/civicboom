@@ -193,6 +193,7 @@ class SettingsController(BaseController):
         
         # special case for generators
         if id == "messages":
+            user_log.info("Saving message settings")
             from civicboom.lib.communication.messages import generators
             for gen in generators:
                 route_name = "route_"+gen[0]
@@ -221,6 +222,8 @@ class SettingsController(BaseController):
                 message = _('settings updated') ,
                 template='settings/messages' ,
             )
+
+        user_log.info("Saving general settings")
 
         # Get current values of fields from the edit action
         data        = self.edit(id=id)['data']
@@ -326,34 +329,3 @@ class SettingsController(BaseController):
             data    = data ,
             template='settings/settings' ,
         )
-
-
-#---------------------------------------------------------------------------
-# Old Settings Reference
-#---------------------------------------------------------------------------
-"""
-    @authorize
-    def messages(self, id=None):
-        c.viewing_user = c.logged_in_persona
-        return render("html/web/settings/messages.mako")
-
-    @authorize
-    @authenticate_form
-    def save_messages(self, id=None, format="html"):
-        c.viewing_user = c.logged_in_persona
-        from civicboom.lib.communication.messages import generators
-        for gen in generators:
-            route_name = "route_"+gen[0]
-            setting = "".join([
-                request.POST.get(gen[0]+"_n", ""),
-                request.POST.get(gen[0]+"_e", ""),
-                request.POST.get(gen[0]+"_c", ""),
-            ])
-            if setting == gen[1]:
-                if route_name in c.viewing_user.config:
-                    del c.viewing_user.config[route_name]
-            else:
-                c.viewing_user.config[route_name] = setting
-
-        return action_ok(_("Settings saved"))
-"""

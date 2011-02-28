@@ -153,16 +153,15 @@ function map_picker(field_name, options) {
 			var typelonlat = ui.item.value.split(/[ ()]/);
 			var lon = typelonlat[1];
 			var lat = typelonlat[2];
+			var lonlat = new OpenLayers.LonLat(Number(lon), Number(lat)).transform(
+				new OpenLayers.Projection("EPSG:4326"),
+				map.getProjectionObject()
+			);
 
 			$('#'+field_name+'').val(lon+","+lat);
 			$('#'+field_name+'_name').val(ui.item.label);
-			map.setCenter(
-				new OpenLayers.LonLat(Number(lon), Number(lat)).transform(
-					new OpenLayers.Projection("EPSG:4326"),
-					map.getProjectionObject()
-				),
-				13
-			);
+			pin.moveTo(map.getLayerPxFromLonLat(lonlat));
+			map.panTo(lonlat);
 			return false;
 		}
 	});
