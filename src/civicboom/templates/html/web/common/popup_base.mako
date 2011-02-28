@@ -15,10 +15,10 @@
     >
         <div class="title_bar">
             <div class="title">
-                <span class="icon icon_popup"></span><span class="title_text">${title}</span>
+                <span class="icon16 popup"></span><span class="title_text">${title}</span>
             </div>
             <div class="common_actions">
-                <a href='' title='${_('Close popup')}' class="icon icon_close simplemodalClose"><span>Close</span></a>
+                <a href='' title='${_('Close popup')}' class="icon16 close simplemodalClose"><span>Close</span></a>
             </div>
         </div>
         

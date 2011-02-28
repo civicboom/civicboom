@@ -25,14 +25,14 @@
         % endif
       </%def>
       <div id="message_holder">
-        <a class   = "icon icon_message"
+        <a class   = "icon16 message"
            href    = "${h.url('messages',list='to')}"
            title   = "${_('Messages')}"
            onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
         ><span>${_('Messages')}</span>
         </a>
         ${messageIcon(c.logged_in_persona.num_unread_messages)}<br />
-        <a class   = "icon icon_notification"
+        <a class   = "icon16 notification"
            href    = "${h.url('messages',list='notification')}"
            title   = "${_('Notification')}"
            onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
@@ -67,14 +67,14 @@
                     % endfor
                 </td>
                 <td>
-                  <a class   = "icon icon_message"
+                  <a class   = "icon16 message"
                      href    = "${h.url('messages',list='to')}"
                      title   = "${_('Messages')}"
                      onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
                   ><span>${_('Messages')}</span>
                   </a>
                   ${messageIcon(member.num_unread_messages)}<br />
-                  <a class   = "icon icon_notification"
+                  <a class   = "icon16 notification"
                      href    = "${h.url('messages',list='notification')}"
                      title   = "${_('Notifications')}"
                      onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"

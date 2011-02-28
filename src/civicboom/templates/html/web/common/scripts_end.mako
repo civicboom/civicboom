@@ -33,7 +33,7 @@
 	<script type="text/javascript">
 		$.extend($.modal.defaults, {
 			closeClass: "simplemodalClose" ,
-			##closeHTML : "<a href='#' class='icon icon_close' style='float: right;' title='Close'></a>" ,
+			##closeHTML : "<a href='#' class='icon16 close' style='float: right;' title='Close'></a>" ,
 			##opacity   : 60 ,
 			onOpen: function (dialog) {
 				dialog.overlay.fadeIn('slow');

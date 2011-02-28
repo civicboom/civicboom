@@ -92,7 +92,7 @@
         % else:
             <a href="${h.url('member_action', id=owner['username'], action='follow', subdomain='')}" target="_blank">
                 ${_("Sign up/Sign in")}
-                ##to <span class="icon icon_boom" title="${_('_site_name')}"></span>
+                ##to <span class="icon16 boom" title="${_('_site_name')}"></span>
                 ##<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
             </a>
         % endif
@@ -117,9 +117,9 @@
     ##----------------------------------------
     <div class="widget_footer" style="height:${size_footer}px; background-color:#${c.widget['color_header']}; border-top: 1px solid #${c.widget['color_border']}">
         <div class="padding">
-            <a class="icon icon_boom"      title="${_('Powered by _site_name')}" target="_blank" href="${h.url('/', subdomain='')}" style="float:right;"><span>${_('_site_name')}</span></a>
-            <a class="icon icon_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='about', id='mobile', subdomain='')}"><span>Mobile</span></a>
-            <a class="icon icon_widget"    title="${_('Embed this widget')}"                     href="${h.url(controller='misc', action='get_widget')}"><span>Embed</span></a>
+            <a class="icon16 boom"      title="${_('Powered by _site_name')}" target="_blank" href="${h.url('/', subdomain='')}" style="float:right;"><span>${_('_site_name')}</span></a>
+            <a class="icon16 mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='about', id='mobile', subdomain='')}"><span>Mobile</span></a>
+            <a class="icon16 widget"    title="${_('Embed this widget')}"                     href="${h.url(controller='misc', action='get_widget')}"><span>Embed</span></a>
             <%
                 if owner['username']:
                     rss_url = h.url('member', id=owner['username'], format='rss', subdomain='')
@@ -135,7 +135,7 @@
                         del kwargs['format']
                     rss_url = h.url('current', format='rss', subdomain='', **kwargs)
             %>
-            <a class="icon icon_rss"       title="${_('RSS')}"                   target="_blank" href="${rss_url}"><span>RSS</span></a>
+            <a class="icon16 rss"       title="${_('RSS')}"                   target="_blank" href="${rss_url}"><span>RSS</span></a>
         </div>
     </div>
 </div>

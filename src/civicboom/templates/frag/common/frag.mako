@@ -33,7 +33,7 @@
 <%def name="frag_basic(title='', icon='', frag_content=None)">
     <div class="title_bar">
         <div class="title">
-            <span class="icon icon_${icon}"></span><span class="title_text">${title}</span>
+            <span class="icon16 ${icon}"></span><span class="title_text">${title}</span>
         </div>
         <div class="common_actions">
         </div>
@@ -113,14 +113,14 @@
     <div class="title_bar">
         <div class="title">
             ## Title
-            <span class="icon icon_${self.attr.icon_type}"></span><span class="title_text">${self.attr.title}</span>
+            <span class="icon16 ${self.attr.icon_type}"></span><span class="title_text">${self.attr.title}</span>
         </div>
 
         <div class="common_actions">
             ## Reload
             % if config['development_mode']:
                 ##c.format=='frag' and 
-                <a href='' class="icon icon_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
+                <a href='' class="icon16 reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
                 <span class="icon"></span>
             % endif
             
@@ -137,7 +137,7 @@
                     help_url = '/help/' + self.attr.help_frag
                     js_open_help = h.literal("cb_frag($(this), '%s', 'frag_col_1');" % help_url)
                 %>
-                <a href="${help_url}" onclick="${js_open_help} return false;" class="icon icon_help" title="${_('Help')}"><span>${_('Help')}</span></a>
+                <a href="${help_url}" onclick="${js_open_help} return false;" class="icon16 help" title="${_('Help')}"><span>${_('Help')}</span></a>
                 % if 'help' in kwargs:
                 <script type="text/javascript">${js_open_help}</script>
                 % endif
@@ -145,12 +145,12 @@
             
             ## RSS
             % if self.attr.rss_url:
-                <a href='${self.attr.rss_url}' title='RSS' class="icon icon_rss"><span>RSS</span></a>
+                <a href='${self.attr.rss_url}' title='RSS' class="icon16 rss"><span>RSS</span></a>
             % endif
             
             ## Close
             % if c.format=='frag':
-                <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
+                <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon16 close"><span>${_('Close')}</span></a>
             % else:
                 <span class="icon"></span>
             % endif
@@ -204,5 +204,5 @@
         georss_url      = h.url(**georss_url)
         georss_url_frag = h.url(**georss_url_frag)
     %>
-    <a href="${georss_url}" title="${_('View on map')}" onclick="cb_frag($(this), '${georss_url_frag}'); return false;"><span class="icon icon_map"></span>${_('Map')}</a>
+    <a href="${georss_url}" title="${_('View on map')}" onclick="cb_frag($(this), '${georss_url_frag}'); return false;"><span class="icon16 map"></span>${_('Map')}</a>
 </%def>
