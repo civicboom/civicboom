@@ -132,18 +132,11 @@
           </td>
         </tr>
         <tr class="padding">
-          <td colspan="4">${_("Default content visibility")}</td>
-          <td colspan="3">${_("Member visibility")}</td>
+          <td colspan="4">${_("Member visibility")}</td>
+          <td colspan="3"><!--${_("Default content visibility")}--></td>
         </tr>
         <tr class="padding">
           <td>&nbsp;</td>
-          <td>
-            <input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'public' else ''} value="public" id="content_visibility_public" /><label for="content_visibility_public">${_('Open')}</label>
-          </td>
-          <td>
-            <input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'private' else ''} value="private" id="content_visibility_private" /><label for="content_visibility_private">${_('Hidden')}</label>
-          </td>
-          <td>${show_error('default_content_visibility')}</td>
           <td>
             <input type="radio" class="quickchange" name="member_visibility" ${'checked="checked"' if get_param('member_visibility') == 'public' else ''} value="public" id="member_visibility_public" /><label for="member_visibility_public">${_('Open')}</label>
           </td>
@@ -153,6 +146,13 @@
           <td style="width: 20px">
             ${show_error('member_visibility')}
           </td>
+          <td>
+            <!--<input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'public' else ''} value="public" id="content_visibility_public" /><label for="content_visibility_public">${_('Open')}</label>-->
+          </td>
+          <td>
+            <!--<input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'private' else ''} value="private" id="content_visibility_private" /><label for="content_visibility_private">${_('Hidden')}</label>-->
+          </td>
+          <td>${show_error('default_content_visibility')}</td>
         </tr>
         <tr class="padding">
           <td colspan="2"><label for="website">${_('Website:')}</label></td>

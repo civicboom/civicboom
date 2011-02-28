@@ -318,7 +318,7 @@
         <span class="separtor"></span>
     % endif
     
-    % if 'settings' in self.actions:
+    % if 'settings' in self.actions and self.member['type'] != 'group':
         <a href="${h.url('settings')}" title="${_('Settings')}"><span class="icon16 i_settings"></span>${_('Settings')}</a>
         <span class="separtor"></span>
     % endif
