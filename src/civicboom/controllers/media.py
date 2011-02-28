@@ -86,7 +86,8 @@ class MediaController(BaseController):
         return action_ok(
             data={
                 "status"       : app_globals.memcache.get(str("media_processing_"+id)) ,
-                "thumbnail_url": media.thumbnail_url if media else None
+                "thumbnail_url": media.thumbnail_url if media else None,
+                "media"        : media.to_dict(),
             }
         )
 

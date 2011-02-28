@@ -135,7 +135,7 @@
             % if self.attr.help_frag:
                 <%
                     help_url = '/help/' + self.attr.help_frag
-                    js_open_help = h.literal("cb_frag($(this), '%s', 'frag_col_1');" % help_url)
+                    js_open_help = h.literal("cb_frag($(this), '%s', 'frag_col_1 frag_help');" % help_url) # GregM: Added frag_help class for help fragments
                 %>
                 <a href="${help_url}" onclick="${js_open_help} return false;" class="icon icon_help" title="${_('Help')}"><span>${_('Help')}</span></a>
                 % if 'help' in kwargs:

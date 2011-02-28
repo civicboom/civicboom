@@ -36,7 +36,7 @@
         
         if self.current_user:
             if self.member['type'] == 'group':
-                self.attr.title     = _('Current Group Persona')
+                self.attr.title     = _('Current _Group Persona')
                 self.attr.icon_type = 'group'
                 self.attr.help_frag = 'group_persona'
                 if c.logged_in_persona and not c.logged_in_persona.config['help_popup_created_group']:

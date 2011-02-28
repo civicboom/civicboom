@@ -42,9 +42,9 @@ TABLE.feedback SELECT {
         <table class="feedback">
             <tr>
                 <td>${_('Category')}</td>
-                <td>
+                <td style="padding: 3px 0 0 3px">
                     <select name="category">
-                      <option value="bug"    >${_('Reoort a bug')}</option>
+                      <option value="bug"    >${_('Report a bug')}</option>
                       <option value="feature">${_('Feature request')}</option>
                       <option value="opinion">${_('Opinion')}</option>
                       <option value="other"  >${_('Other')}</option>
@@ -54,25 +54,26 @@ TABLE.feedback SELECT {
             
             <tr>
                 <td>${_('Message')}</td>
-                <td>
-                    <textarea name="message" placeholder="${_('Please tell us about your experience/problems to help us improve _site_name')}"></textarea>
+                <td style="padding: 3px 0 0 3px">
+                    <textarea name="message" style="width: 450px; height: 300px;" placeholder="${_('Please tell us about your experience/problems to help us improve _site_name')}"></textarea>
                 </td>
             </tr>
             
             % if not c.logged_in_user:
             <tr>
                 <td>${_('Contact email')}</td>
-                <td>
+                <td style="padding: 3px 0 0 3px">
                     <input type="text" name="from" />
                 </td>
             </tr>
             % endif
 
 			<tr>
-		        <td colspan="2"><input type="submit" name="submit" value="submit"/></td>
+		        <td style="padding: 3px 0 0 3px" colspan="2"><input type="submit" name="submit" value="submit"/></td>
 			</tr>
         </table>
     </form>
+    <br />
     <a href="mailto:feedback@civicboom.com">${_("Alternatively email us your feedback")}</a>
     
 </%def>

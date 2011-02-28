@@ -12,6 +12,7 @@
     # 1 col = 250px, 2 cols = 500px
     # this can be overridden by inherheriting templates to customise the size
     frag_col_sizes = []
+    frag_col_classes = []
     
 %>
 
@@ -52,12 +53,19 @@
                 return self.attr.frag_col_sizes[col_num]
             except:
                 return default
+            
+        def get_col_class(col_num, default=''):
+            try:
+                return (' ' + self.attr.frag_classes[col_num]) if self.attr.frag_classes[col_num] else default
+            except:
+                return default
     %>
     <div id='frag_containers'><!--
         <% frag_counter = 0 %>
         % for frag in frags:
             <% frag_col_class = get_col_size(frag_counter, 2) %>
-            --><div id="frag__${frag_counter}" class="frag_container frag_col_${frag_col_class}">
+            <% frag_col_classes = get_col_class(frag_counter) %>
+            --><div id="frag__${frag_counter}" class="frag_container frag_col_${frag_col_class}${frag_col_classes}">
                 % if isinstance(frag, types.FunctionType):
                     ${frag()}
                 % elif frag:
