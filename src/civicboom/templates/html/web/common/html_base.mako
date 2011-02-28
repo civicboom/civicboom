@@ -58,8 +58,6 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 	<script src="/javascript/swfobject.js"></script>
 	<!-- jQuery -->
 	<script src="/javascript/jquery-1.4.2.js"></script>
-	<script src="/javascript/jquery.cookie.js"></script>
-	<script src="/javascript/jquery.ba-hashchange.min.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
