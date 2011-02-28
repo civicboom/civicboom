@@ -160,22 +160,21 @@ class BaseController(WSGIController):
         set_lang(lang)
     
     def __before__(self):
-        # For gadgets and emails links and static content need to be absolute
-        # this is interprited by civicboom.lib.web:url
-        c.absolute_links = False
+        # Setup globals c ------------------------------------------------------
         
-        # Setup globals c
         # Request global - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
         c.controller = current_request.get("controller")
         c.action     = current_request.get("action")
         c.id         = current_request.get("id")
         
-        c.result = {'status':'ok', 'message':'', 'data':{}}
+        c.result = {'status':'ok', 'message':'', 'data':{}} # Default return object
 
         c.format               = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
         c.authenticated_form   = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs = None
+        c.absolute_links       = False # For gadgets and emails links and static content need to be absolute. this is interprited by civicboom.lib.web:url
+        c.host                 = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
 
         # Widget default settings
         c.widget = dict(
@@ -193,7 +192,8 @@ class BaseController(WSGIController):
         )
         setup_widget_env()
 
-        # Login - Fetch logged in user from session id (if present)
+        # Login ----------------------------------------------------------------
+        # Fetch logged in user from session id (if present)
         username                 = session_get('username')
         username_persona         = session_get('username_persona')
         request.environ['logged_in_user']     = username
@@ -209,31 +209,20 @@ class BaseController(WSGIController):
                 c.logged_in_persona      = persona
                 c.logged_in_persona_role = membership.role
 
-        # Setup Langauge
+        # Setup Langauge -------------------------------------------------------
         #  - there is a way of setting fallback langauges, investigate?
         if   'lang' in request.params:  self._set_lang(request.params['lang']) # If lang set in URL
         elif 'lang' in session       :  self._set_lang(       session['lang']) # Lang set for this users session
         #elif c.logged_in_persona has lang: self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
         else                         :  self._set_lang(        config['lang']) # Default lang in config file
         
-        # User pending regisration? - redirect to complete registration process
+        # User pending regisration? --------------------------------------------
+        # redirect to complete registration process
         if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url('current')):
             set_flash_message(_('Please complete the regisration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 
-        # Setup site app_globals on first request
-        # AllanC - I dont like this, is there a call we can maybe put in the tasks controler? or an init controler? that we can fire when the site is restarted?
-        #          For development this is sufficent, but should not be used in a production env.
-        #
-        # TODO - yeah, we really need a STARTUP method that gets called to init these
-        #if not hasattr(app_globals,'site_url'):
-        c.host = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
-            ##app_globals.site_url  = "http://" + app_globals.site_host
-            #import urllib
-            #app_globals.janrain_signin_url = urllib.quote_plus(url(controller='account', action='signin', host=app_globals.site_host, protocol='https'))
-
-
-        # Session Flash Message
+        # Session Flash Message ------------------------------------------------
         flash_message_session = session_remove('flash_message')
         if flash_message_session:
             try:               overlay_status_message(c.result, json.loads(flash_message_session))
