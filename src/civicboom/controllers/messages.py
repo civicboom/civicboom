@@ -70,7 +70,7 @@ class MessagesController(BaseController):
     @authorize
     def index(self, **kwargs):
         """
-        GET /messages: All items in the collection.
+        GET /messages: Get messages related to the user
         
         @api messages 1.0 (WIP)
         
@@ -88,8 +88,6 @@ class MessagesController(BaseController):
         @comment Shish   do we want people to see their sent messages? Messages
                          will disappear from this list as the target deletes them,
                          the target may not want their activity known
-        @comment Shish   are public messages used yet? if they aren't used, IMHO
-                         they should be left undocumented
         @comment Shish   using a list of functions makes it impossible to check
                          that all paths are tested - we can only tell that the
                          lookup table has been referenced at least once :/
@@ -228,7 +226,8 @@ class MessagesController(BaseController):
         #    h.form(h.url('message', id=ID), method='delete')
         # url('message', id=ID)
         
-        message = _get_message(id, is_target=True) 
+        message = _get_message(id, is_target=True)
+        user_log.info("Deleted Message #%d" % (message.id, ))
         message.delete()
         
         return action_ok(_("Message deleted"))

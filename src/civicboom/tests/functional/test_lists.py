@@ -6,15 +6,10 @@ from pylons import config
 
 class TestListsController(TestController):
 
-    #---------------------------------------------------------------------------
-    # Assignment Limit
-    #---------------------------------------------------------------------------
     def test_lists(self):
         """
         Create a large number of articles and members to test list functionality
         """
-        
-        
         def create_content(title):
             response = self.app.post(
                 url('contents', format='json'),
@@ -36,12 +31,12 @@ class TestListsController(TestController):
             self.sign_up_as(name)
             self.follow('unittest')
         
-        # Create LOTS Users with 1 peice of content each
-        #  create as many as the normal serach limit and then one more to test pagination
-        for count in range( config['search.default.limit.contents'] + 1):
-            create_content('unit_content_%s' % count)
-        
-        for count in range( config['search.default.limit.members'] + 1):
+        # make sure to overflow all limits
+        limits = [
+            config['search.default.limit.members'],
+            config['search.default.limit.contents']
+        ]
+        for count in range(max(limits) + 1):
             create_member('list_member_%s' % count)
             create_content('list_content_%s' % count)
         

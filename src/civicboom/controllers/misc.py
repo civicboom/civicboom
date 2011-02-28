@@ -4,6 +4,9 @@ from civicboom.lib.communication.email_lib import send_email
 from urllib import quote_plus, unquote_plus
 import os
 
+user_log = logging.getLogger("user")
+
+
 class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
@@ -75,6 +78,7 @@ class MiscController(BaseController):
         if not request.POST:
             return action_ok() # Render the feedback form by autolocating the template
         else:
+            user_log.info("Sending feedback")
             @authenticate_form
             def submit_feedback(**kwargs):
                 if c.logged_in_user:

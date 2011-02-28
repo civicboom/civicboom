@@ -293,7 +293,7 @@ HEADER #signin .button {
 /*----------------------------------------------------------------------------*/
 
 FOOTER A {
-    vertical-align : middle;
+    /*vertical-align : middle;*/
 	text-decoration: none;
 	margin-right: 8px;
 }

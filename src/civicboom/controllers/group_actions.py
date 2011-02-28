@@ -19,9 +19,12 @@ class GroupActionsController(BaseController):
     @auth
     def join(self, id, **kwargs):
         """
-        Current user join a group
+        POST /groups/{id}/join: join the group, or request to join if admin approval is required
+
+        @api groups 1.0 (WIP)
         
-        @return 200 - joined ok
+        @return 200 joined ok
+        @return 403 permission denied
         """
         group = _get_group(id)
 
@@ -47,7 +50,9 @@ class GroupActionsController(BaseController):
     @auth
     def remove_member(self, id, **kwargs):
         """
+        POST /groups/{id}/remove_member: remove a member from the group
         
+        @api groups 1.0 (WIP)
         """
         member = kwargs.get('member', None)
         
@@ -58,7 +63,7 @@ class GroupActionsController(BaseController):
             raise action_error('current user has no permissions for this group', code=403)
         # remove action
         if group.remove_member(member):
-            user_log.info("Remebed member %s from group %s" % (member.username, group.username))
+            user_log.info("Removed Member #%d (%s) from Group #%d (%s)" % (member.id, member.username, group.id, group.username))
             return action_ok(message='member removed sucessfully')
         raise action_error('unable to remove member', code=500)
 
@@ -70,8 +75,11 @@ class GroupActionsController(BaseController):
     @auth
     def invite(self, id, **kwargs):
         """
+        POST /groups/{id}/invite:
         Invite a member to join this groups
         (only if current user has admin role in group)
+        
+        @api groups 1.0 (WIP)
         
         @param role - the role the new user is to be invited as (if None group default is used)
             admin
@@ -82,10 +90,11 @@ class GroupActionsController(BaseController):
         @return 200 - invite sent ok
         """
         member = kwargs.get('member', None)
-        role   = kwargs.get('role'  , None)        
+        role   = kwargs.get('role'  , None)
         
         group = _get_group(id, is_admin=True)
         if group.invite(member, role):
+            user_log.info("Invited %s to Group #%d (%s)" % (member, group.id, group.username))
             return action_ok(_('%(member)s has been invited to join %(group)s' % {'member':member, 'group':group.name}))
         raise action_error('unable to invite member', code=500)
     
@@ -97,12 +106,19 @@ class GroupActionsController(BaseController):
     @auth
     def set_role(self, id, member=None, role=None, **kwargs):
         """
+        POST /groups/{id}/set_role:
+        
+        @api groups 1.0 (WIP)
+        
         (only if current user has admin role in group)
         
         used to approve join requests (role=None=default group join role)
+
+        @param member
+        @param role
         
-        return 200 - role set ok
-        return 400 - cannot remove last admin
+        @return 200  role set ok
+        @return 400  cannot remove last admin
         """
         group = _get_group(id, is_admin=True)
         if group.set_role(member, role): # FIXME: check that member exists? If we _get_member, then member.username would work below
