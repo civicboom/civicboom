@@ -241,7 +241,7 @@ class SettingsController(BaseController):
         if 'password_new' in validators:
             schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the 
             schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
-        
+            
         # GregM: Patched to remove avatar kwarg if blank (keeping current avatar on settings save!)
         if kwargs.get('avatar') == '':
             del kwargs['avatar']
