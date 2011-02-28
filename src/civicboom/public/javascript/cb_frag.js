@@ -12,6 +12,7 @@ var fragment_source_class             = 'frag_source';
 var fragment_div_loading_placeholder  = '<div class="title_bar gradient">Loading...</div>'+
                                         '<div class="action_bar"></div>'+
                                         '<p class="loading_placeholder">loading</p>';
+var fragment_help_class               = 'frag_help';
 var scroll_duration = 600;
 
 var frag_count      = 0;
@@ -24,7 +25,7 @@ var frags_to_remove = null;
 
 // current_element = JQuery element object
 // url             = String
-function cb_frag(current_element, url, list_type) {
+function cb_frag(current_element, url, list_type, from_history, callback) {
 	// Take the url from the current <A> element (hence the name url_a)
 	var url_a = current_element.attr('href');
 	
@@ -60,54 +61,43 @@ function cb_frag(current_element, url, list_type) {
 	//$(window)._scrollable().scrollTo('100%',0, {duration: scroll_duration});
 	//$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});
 	
-	// update the URL bar to point at the latest block, and
-	// store previous blocks in the history state object
-	if(Modernizr.history && false) {
-		// FIXME: save the actual state of the app; this is just an
-		// example of how I imagine it would work, with a list of
-		// currently loaded blocks and their states.
-		// Note: this object is limited to 640k (which ought to be
-		// enough for anyone) when saved in the browser history file
-		var stateObj = {
-			blocks: [
-				{ url: "/contents/1", scrollpos: 50 },
-				{ url: "/members/2", blockmode: "pie" },
-				{ url: "/members/2/followers" }
-			]
-		};
-		history.pushState(stateObj, "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
-	}
+	function frag_update_history() {
+  	// Call update history with fragment URL
+  	if (! from_history) update_history();
+  }
 
 	// AJAX load html fragment
 	frag_loading.load(url,
 		function(response, status, request){ // When AJAX load complete
-			Y.log (request);
+		  var frag_loading = $(this);
 		    if (request.status != 200) {
 		    	frag_loading.remove();
+		    	if (typeof callback != 'undefined') callback(false);
 		    }
 		    if (frag_loading) {
-				frag_loading.fadeTo(0, 0.01); // Set opacity to 0.01 with a delay of 0, this could be replaced with a setOpacity call? I think this is creating animtion headaches
-				//frag_loading.width(0); // animating width buggers up scrolling
-				//frag_loading.animate({width: '500px', opacity: 1.0}, scroll_duration);
-				frag_loading.animate({opacity: 1.0}, scroll_duration);
-				//frag_loading.fadeIn(scroll_duration);
-				//frag_loading.toggle(scroll_duration);
-				
-				cb_frag_remove_sibblings(frag_loading);
-
-				// remove the "opacity" setting, as IE doesn't antialias filtered stuff
-				frag_loading.animate({opacity: null}, 0);
-				
-				frag_loading = null;
-				
-				// These are unneeded because the playholder is the correct width, so the scroll above will be scrolling to the correct place as the AJAX loads
-				//$(window)._scrollable().scrollTo(frag_loading, {duration: scroll_duration});
-				//$(window)._scrollable().scrollTo('100%',0, {duration: scroll_duration});
-				//$.scrollTo(frag_loading, {duration: scroll_duration}); //(fragment_containers_id)
-				//$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});	
-			}
-		}
-	);
+  				frag_loading.fadeTo(0, 0.01); // Set opacity to 0.01 with a delay of 0, this could be replaced with a setOpacity call? I think this is creating animtion headaches
+  				//frag_loading.width(0); // animating width buggers up scrolling
+  				//frag_loading.animate({width: '500px', opacity: 1.0}, scroll_duration);
+  				frag_loading.animate({opacity: 1.0}, scroll_duration);
+  				//frag_loading.fadeIn(scroll_duration);
+  				//frag_loading.toggle(scroll_duration);
+  				
+  				if (! from_history) cb_frag_remove_sibblings(frag_loading, frag_update_history);
+  
+  				// remove the "opacity" setting, as IE doesn't antialias filtered stuff
+  				frag_loading.animate({opacity: null}, 0);
+  				
+  				frag_loading = null;
+  				if (typeof callback != 'undefined') callback(true);
+  				// These are unneeded because the playholder is the correct width, so the scroll above will be scrolling to the correct place as the AJAX loads
+  				//$(window)._scrollable().scrollTo(frag_loading, {duration: scroll_duration});
+  				//$(window)._scrollable().scrollTo('100%',0, {duration: scroll_duration});
+  				//$.scrollTo(frag_loading, {duration: scroll_duration}); //(fragment_containers_id)
+  				//$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});	
+  			 }
+  		}
+  	);
+  return frag_loading;
 }
 
 //------------------------------------------------------------------------------
@@ -129,7 +119,7 @@ function cb_frag_load(jquery_element, url) {
 //                               Remove Frag
 //------------------------------------------------------------------------------
 
-function cb_frag_remove(jquery_element) {
+function cb_frag_remove(jquery_element, callback, from_history) {
 	var parent = jquery_element.parents('.'+fragment_container_class); // find parent
   if (typeof cb_frag_get_variable(jquery_element, 'autosavedrafttimer') != 'undefined')
     clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
@@ -139,15 +129,28 @@ function cb_frag_remove(jquery_element) {
 		if ($('.'+fragment_container_class).length == 0) {
 			window.location.replace("/profile");
 		}
+		if (typeof callback != 'undefined') callback();
+		if (! from_history) update_history( $('.'+fragment_container_class).not('.'+fragment_help_class).last().find('.'+fragment_source_class).first().attr('href') );
 	});
 	cb_frag_remove_sibblings(parent);
 	
 	$.modal.close(); // Aditionaly, if this is in a popup then close the popup
 }
 
-function cb_frag_remove_sibblings(jquery_element) {
-	var parent_siblings = jquery_element.nextAll();
-	parent_siblings.toggle(scroll_duration, function(){parent_siblings.remove()});
+function cb_frag_remove_sibblings(jquery_element, callback, ignorehelp) {
+  var parent_siblings;
+  if (ignorehelp) {
+    parent_siblings = jquery_element.nextAll('.'+fragment_container_class+':not(.'+fragment_help_class+')');
+  } else {
+    parent_siblings = jquery_element.nextAll();
+  }
+	parent_siblings.toggle(scroll_duration, function()
+	  {
+	    parent_siblings.remove();
+	    if (typeof callback != 'undefined') callback();
+	    callback = undefined;
+	  });
+	if (parent_siblings.length == 0 && typeof callback != 'undefined') callback();
 }
 
 //------------------------------------------------------------------------------
@@ -237,12 +240,105 @@ function cb_frag_get_variable(jquery_element, variable) {
 //                            Browser URL updating
 //------------------------------------------------------------------------------
 
-if(Modernizr.history && false) {
-	// FIXME: jQuery-ise this, rather than using the raw window.blah
-	window.onpopstate = function(popstate) {
-		if(popstate.state) {
-			// go through $state, make sure that each block in
-			// the current page matches $state['blocks'][n]['url']
-		}
-	}
+function createStateObj() {
+  var stateObj = { 'blocks': []};
+  $('.'+fragment_container_class).not('.'+fragment_help_class).each (function (index, element)
+    {
+      var s_url = $(element).find('.'+fragment_source_class).first().attr('href');
+      stateObj.blocks[index] = {'url'  : s_url,
+                                'classes': $(element).attr('class')
+                               };
+    });
+  return stateObj;
 }
+
+function loadStateObj(stateObj) {
+  var frag_previous;
+  if(stateObj !== null) {
+    if (typeof stateObj.blocks == 'undefined') return;
+    
+    var i = 0;
+    
+    function load() {
+      if (i < stateObj.blocks.length) {
+        var frag_source = frag_previous.find('.'+fragment_source_class).first();
+        var stat_href = stateObj.blocks[i].url;
+        frag_previous = cb_frag(frag_source, stat_href, undefined, true, load); //$($('.'+fragment_container_class)[i-1]).find('.'+fragment_source_class)
+        i ++;
+      } else {
+        cb_frag_remove_sibblings($($('.'+fragment_container_class)[stateObj.blocks.length-1]), undefined, true);
+        return;
+      }
+    }
+
+    for (i = 0; i < stateObj.blocks.length; i++) {
+      var frag_exists = typeof $('.'+fragment_container_class)[i] != 'undefined';
+      var frag_container = $($('.'+fragment_container_class)[i]);
+      var frag_source = frag_container.find('.'+fragment_source_class);
+      var frag_href = frag_source.attr('href');
+      var stat_href = stateObj.blocks[i].url;
+      if (!frag_exists) {
+        load ();
+        //frag_container = cb_frag(frag_previous.find('.'+fragment_source_class).first(), stat_href, undefined, true, waiter); //$($('.'+fragment_container_class)[i-1]).find('.'+fragment_source_class)
+        break;
+      } else if (frag_href != stat_href) {
+        frag_container.attr('class', stateObj.blocks[i].classes);
+        frag_container.find('.'+fragment_source_class).first().attr('href', stat_href);
+        cb_frag_reload (frag_container);
+      }
+      frag_previous = frag_container;
+    }
+    if (i = (stateObj.blocks.length - 1))
+      cb_frag_remove_sibblings($($('.'+fragment_container_class)[stateObj.blocks.length-1]), undefined, true);
+  }
+}
+
+function update_history(url, replace) {
+  if (typeof url == 'undefined')
+    var url = $('.'+fragment_container_class).not('.'+fragment_help_class).last().find('.'+fragment_source_class).first().attr('href');
+  // update the URL bar to point at the latest block, and
+  // store previous blocks in the history state object
+  if(Modernizr.history) {
+    // Note: this object is limited to 640k (which ought to be
+    // enough for anyone) when saved in the browser history file
+    if (replace) {
+      history.replaceState(createStateObj());
+    } else {
+      history.pushState(createStateObj(), "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
+    }
+  } else {
+    if (replace) {
+      if (location.hash.substr(1,3) != 'cbh') {
+        location.replace('#cbh' + encode64(JSON.stringify(createStateObj())));
+      } else {
+        $(window).hashchange();
+      }
+    } else {
+      location.hash = '#cbh' + encode64(JSON.stringify(createStateObj()));
+    }
+  }
+}
+
+if(Modernizr.history) {
+  // Browser supports HTML5 history states
+	// FIXME: jQuery-ise this, rather than using the raw window.blah
+  window.onpopstate = function(popstate) { loadStateObj(popstate.state); }
+} else {
+  // Browser does not support HTML5 history states
+  // Use url hash instead
+  $(window).hashchange(function (e) {
+    var hash = location.hash;
+    if (hash != '' && typeof hash != 'undefined') {
+      if (hash.substr(1,3) == 'cbh') {
+        try {
+          var stateObj = $.parseJSON(decode64(hash.substr(4)));
+          loadStateObj(stateObj);
+        } catch (e) {} 
+      }
+    }
+  });
+}
+
+$(function () {
+  update_history(location.href, true);
+})
