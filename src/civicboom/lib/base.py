@@ -160,6 +160,10 @@ class BaseController(WSGIController):
         set_lang(lang)
     
     def __before__(self):
+        # For gadgets and emails links and static content need to be absolute
+        # this is interprited by civicboom.lib.web:url
+        c.absolute_links = False
+        
         # Setup globals c
         # Request global - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
@@ -229,10 +233,6 @@ class BaseController(WSGIController):
             #app_globals.janrain_signin_url = urllib.quote_plus(url(controller='account', action='signin', host=app_globals.site_host, protocol='https'))
 
 
-        # For gadgets and emails links and static content need to be absolute
-        # this is interprited by civicboom.lib.web:url
-        c.absolute_links = False
-        
         # Session Flash Message
         flash_message_session = session_remove('flash_message')
         if flash_message_session:
