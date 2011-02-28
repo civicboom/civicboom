@@ -83,6 +83,10 @@ class MiscController(BaseController):
             def submit_feedback(**kwargs):
                 if c.logged_in_user:
                     kwargs['from'] = c.logged_in_user.email or c.logged_in_user.email_unverified
+                else:
+                    if kwargs.get('simple_captcha') != 'xyz':
+                        raise action_error('invalid capture')
+                    
                 if not kwargs.get('env'):
                     kwargs['env'] = ''
                     for key,value in request.environ.iteritems():
