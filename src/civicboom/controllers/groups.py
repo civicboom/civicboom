@@ -224,7 +224,7 @@ class GroupsController(BaseController):
         group.default_role               = group_dict['default_role']
         group.join_mode                  = group_dict['join_mode']
         group.member_visibility          = group_dict['member_visibility']
-        group.default_content_visibility = group_dict['default_content_visibility']
+        group.default_content_visibility = group_dict.get('default_content_visibility', "public") # Shish: hack
         
         # GregM: call settings_update with logo_file as avatar
         # ARRRGHHH: Hacked c.format as settings_update redirects on html
