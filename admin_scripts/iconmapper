@@ -13,8 +13,24 @@
 import os
 import sys
 import Image
+from optparse import OptionParser
 
-filenames = sys.argv[1:]
+parser = OptionParser(usage="%prog [-q] [-c foo.css] [-p foo.png] icon1.png icon2.png ...")
+parser.add_option("-q", "--quiet",
+        action="store_false", dest="verbose", default=True,
+        help="don't print status messages to stdout")
+parser.add_option("-c", "--css",
+        dest="css_filename", default="icons.css",
+        help="output filename for the CSS")
+parser.add_option("-p", "--png",
+        dest="png_filename", default="icons.png",
+        help="output filename for the PNG")
+(options, args) = parser.parse_args()
+
+if not args:
+    parser.error("You need to specify some input files")
+
+filenames = args
 prefixLen = len(os.path.commonprefix(filenames))
 
 iconMap = [(
@@ -23,37 +39,37 @@ iconMap = [(
     ) for fn in filenames]
 
 images = [Image.open(filename) for cssClass, filename in iconMap]
-print "%d images will be combined." % len(images)
+if options.verbose: print "%d images will be combined." % len(images)
 
 master_width = max([i.size[0] for i in images])
 master_height = sum([i.size[1] for i in images])
-print "the master image will by %d by %d" % (master_width, master_height)
+if options.verbose: print "the master image will by %d by %d" % (master_width, master_height)
 
-print "creating image...",
+if options.verbose: print "creating image...",
 master = Image.new(
     mode='RGBA',
     size=(master_width, master_height),
     color=(0,0,0,0))  # fully transparent
-print "created."
+if options.verbose: print "created."
 
-print "adding images...",
+if options.verbose: print "adding images...",
 offset = 0
 for count, image in enumerate(images):
-    print "\radding image %d..." % (count+1),
+    if options.verbose: print "\radding image %d..." % (count+1),
     master.paste(image,(0,offset))
     offset = offset + image.size[1]
-print "done."
+if options.verbose: print "done."
 
-print "saving icons.png...",
-master.save('icons.png')
-print "saved."
+if options.verbose: print "saving %s..." % options.png_filename,
+master.save(options.png_filename)
+if options.verbose: print "saved."
 
 
 cssTemplate = '.%s {background-position: 6px %dpx;}\n'
 
-print 'saving icons.css...',
+if options.verbose: print 'saving %s...' % options.css_filename,
 offset = 0
-iconCssFile = open('icons.css' ,'w')
+iconCssFile = open(options.css_filename ,'w')
 iconCssFile.write("""/* common bits */
 .icon, .icon_large {background-image:url(icons.png); display:inline-block; vertical-align:top;}
 .icon span, .icon_large span {display: none;}
@@ -68,6 +84,6 @@ for count, pair in enumerate(iconMap):
     iconCssFile.write( cssTemplate % (cssClass, 4-offset) )
     offset = offset + image.size[1]
 iconCssFile.close()
-print 'created.'
+if options.verbose: print 'created.'
 
 
