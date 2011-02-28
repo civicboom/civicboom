@@ -276,9 +276,9 @@
         <ul class="media_files">
             <li class="media_file" style="display: none;" id="mediatemplate">
               <div class="file_type_overlay icon"></div>
-              <a href="#">
-                <img id="media_thumbnail" class="media_preview" src="/images/media_placeholder.gif" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/>
-              </a>
+              <a href="#"><!--
+                --><img id="media_thumbnail" class="media_preview" src="/images/media_placeholder.gif" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
+              --></a>
               <div class="media_fields">
                   <span id="media_status" style="display: none">(status)</span>
                   <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="text" disabled="true" value=""   /><input type="submit" name="file_remove" value="Remove" class="file_remove icon16 i_delete"/></p>
@@ -291,21 +291,20 @@
                 <% id = media['id'] %>
                 <li class="media_file" id="media_attachment_${id}">
                     <div class="file_type_overlay icon16 i_${media['type']}"></div>
-                    <a href="${media['original_url']}">
-                        <img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/>
-                        
-                        % if app_globals.memcache.get(str("media_processing_"+media['hash'])):
-                            <!-- Media still undergoing proceccesing -->
-                            ## Clients without javascript could have the current status hard in the HTML text
-                            ## TODO
-                            
-                            ## Clients with    javascript can have live updates from the media controller
-                            <script type="text/javascript">
-                                updateMedia($('#media_attachment_${id}'), ${id}, ${media['hash']});
-                            </script>
-                            <!-- End media still undergoing proceccesing -->
-                        % endif
-                    </a>
+                    <a href="${media['original_url']}"><!--
+                        --><img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
+                    --></a>
+					% if app_globals.memcache.get(str("media_processing_"+media['hash'])):
+						<!-- Media still undergoing proceccesing -->
+						## Clients without javascript could have the current status hard in the HTML text
+						## TODO
+						
+						## Clients with    javascript can have live updates from the media controller
+						<script type="text/javascript">
+							updateMedia($('#media_attachment_${id}'), ${id}, ${media['hash']});
+						</script>
+						<!-- End media still undergoing proceccesing -->
+					% endif
                     <span id="media_status_${id}" style="display: none">(status)</span>
                     
                     <div class="media_fields">
