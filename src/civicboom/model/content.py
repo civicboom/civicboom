@@ -267,7 +267,7 @@ class Content(Base):
             thumbnail_type = 'response'
 
         from civicboom.lib.helpers import wh_url
-        return wh_url("public", "images/default_thumbnail_%s.png" % thumbnail_type)
+        return wh_url("public", "images/default/thumbnail_%s.png" % thumbnail_type)
 
     @property
     def url(self):

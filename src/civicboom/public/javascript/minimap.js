@@ -62,7 +62,7 @@ function minimap(div_name, options, feeds) {
 	}
 	/* ${name}.addControl(new OpenLayers.Control.LayerSwitcher()); */
 	for(var feed in feeds) {
-		var pin  = new OpenLayers.Icon("/images/pins/"+feeds[feed].pin+".png", new OpenLayers.Size(21,25));
+		var pin  = new OpenLayers.Icon("/images/map-icons/marker-"+feeds[feed].pin+".png", new OpenLayers.Size(21,25));
 		var newl = new OpenLayers.Layer.GeoRSS('GeoRSS', feeds[feed].url, {'icon': pin});
 		if(feeds[feed].focus) {
 			newl.events.on({'loadend': function() {map.zoomToExtent(newl.getDataExtent());}});
@@ -89,7 +89,7 @@ function map_picker(field_name, options) {
 
 	var pin = new OpenLayers.Marker(
 		new OpenLayers.LonLat(0,0),
-		new OpenLayers.Icon("/images/pins/red.png", new OpenLayers.Size(21,25), new OpenLayers.Pixel(-10, -25))
+		new OpenLayers.Icon("/images/map-icons/marker-red.png", new OpenLayers.Size(21,25), new OpenLayers.Pixel(-10, -25))
 	);
 	pin_layer.addMarker(pin);
 
