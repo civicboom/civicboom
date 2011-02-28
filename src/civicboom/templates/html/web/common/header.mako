@@ -31,12 +31,12 @@
            onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
         ><span>${_('Messages')}</span>
         </a>
-        ${messageIcon(c.logged_in_persona.num_unread_notifications)}<br />
+        ${messageIcon(c.logged_in_persona.num_unread_messages)}<br />
         <a class   = "icon icon_notification"
-           href    = "${h.url('messages',list='to')}"
-           title   = "${_('Messages')}"
-           onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
-        ><span>${_('Messages')}</span>
+           href    = "${h.url('messages',list='notification')}"
+           title   = "${_('Notification')}"
+           onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
+        ><span>${_('Notifications')}</span>
         </a>
         ${messageIcon(c.logged_in_persona.num_unread_notifications)}
       </div>
@@ -73,12 +73,12 @@
                      onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
                   ><span>${_('Messages')}</span>
                   </a>
-                  ${messageIcon(member.num_unread_notifications)}<br />
+                  ${messageIcon(member.num_unread_messages)}<br />
                   <a class   = "icon icon_notification"
-                     href    = "${h.url('messages',list='to')}"
-                     title   = "${_('Messages')}"
-                     onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
-                  ><span>${_('Messages')}</span>
+                     href    = "${h.url('messages',list='notification')}"
+                     title   = "${_('Notifications')}"
+                     onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
+                  ><span>${_('Notifications')}</span>
                   </a>
                   ${messageIcon(member.num_unread_notifications)}
                 </td>

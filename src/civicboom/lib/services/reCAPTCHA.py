@@ -11,7 +11,7 @@ import urllib2
 import logging
 log = logging.getLogger(__name__)
 
-service_url = 'http://www.google.com/recaptcha/api/'
+service_url = 'https://www.google.com/recaptcha/api/'
 
 
 #                    'remoteip' :  encode_if_necessary(request.environ['REMOTE_ADDR']),

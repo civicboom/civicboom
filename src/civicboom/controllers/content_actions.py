@@ -186,7 +186,7 @@ class ContentActionsController(BaseController):
     @role_required('editor')
     def withdraw(self, id=None, **kwargs):
         """
-        POST /contents/{id}/witdraw: withdraw from an assignment
+        POST /contents/{id}/withdraw: withdraw from an assignment
 
         @api contents 1.0 (WIP)
 
@@ -209,12 +209,16 @@ class ContentActionsController(BaseController):
     @web
     def flag(self, id, **kwargs):
         """
-        POST /contents/{id}/flag: Flag this content as being inapproprate of copyright violoation
+        POST /contents/{id}/flag: Flag this content for administrator attention
 
         @api contents 1.0 (WIP)
 
-        @param type      ?
-        @param comment   ?
+        @param type      what the type of the problem is
+               offensive
+               spam
+               copyright
+               other
+        @param comment   a text string for the user's comment
         """
         @auth
         def flag_action(id, type='offensive', comment='', **kwargs):
@@ -225,7 +229,7 @@ class ContentActionsController(BaseController):
         
         # AllanC - as this is a special case we can render templates if the user trys to GET data
         if request.environ['REQUEST_METHOD'] == 'GET':
-            return action_ok() # This will then trigger the auto-formatter to auto select the appropiate template for the format specifyed
+            return action_ok() # This will then trigger the auto-formatter to auto select the appropiate template for the format specified
         else:
             return flag_action(id, **kwargs)
 

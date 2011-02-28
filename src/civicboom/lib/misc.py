@@ -77,7 +77,21 @@ def update_dict(dict_a, dict_b):
 def obj_to_dict(obj, dict_fields):
     """
     Used to convert a python object to a python dict of strings, but only including requested fields
-    TODO: currenly dose not follow lists or dict, just string dumps .. could be useful in future to recusivly call obj_to_dict
+    TODO: currenly does not follow lists or dict, just string dumps .. could be useful in future to recusivly call obj_to_dict
+
+    >>> class a:
+    ...    foo = "bar"
+    ...    def __unicode__(self):
+    ...        raise Exception('asdf')
+    ...
+    >>> b = a()
+    >>> b.c = a()
+    >>> obj_to_dict(b, {'foo': None})
+    {'foo': u'bar'}
+    >>> obj_to_dict(b, {'c': None})
+    Traceback (most recent call last):
+        ...
+    Exception: Object types are not allowed in object dictionaries [c]
     """
     d = {}
     for field_name in dict_fields.keys():
@@ -96,7 +110,7 @@ def obj_to_dict(obj, dict_fields):
                 try:
                     field_value = unicode(field_value)
                 except:
-                    raise Exception('Object types are not allowed in object dictionarys %s %s' % (field_name,field_value))
+                    raise Exception('Object types are not allowed in object dictionaries [%s]' % (field_name, ))
         d[field_name] = field_value
     return d
 

@@ -9,11 +9,11 @@
 
 <%def name="init_vars()">
     ${parent.init_vars()}
-    <%        
+    <%
         args, kwargs = c.web_params_to_kwargs
         
         title = ''
-        if kwargs.get('type')
+        if kwargs.get('type'):
             title = _('_' + kwargs.get('type') + 's').capitalize()
         icon  = 'user'
         

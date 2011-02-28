@@ -11,8 +11,9 @@ except:
 	location = [-1.0, 53.0, 5.0]
 %>
 
+<div style="position: fixed; top: 52px; left: 10px; right: 10px; bottom: 26px;">
 ${loc.minimap(
-	width="100%", height="600px",
+	width="100%", height="100%",
 	lon = location[0],
 	lat = location[1],
 	zoom = location[2],
@@ -21,3 +22,4 @@ ${loc.minimap(
 	],
 	controls = True
 )}
+</div>
