@@ -72,13 +72,13 @@
 <%def name="ShareThis(*args, **kwargs)">
     
     <%def name="share_this_icon(service)">
-        <span class="st_${service}_custom icon icon_${service} link_pointer" title="${_('Share This via ')}${service}"><span>${service}</span></span>
+        <span class="st_${service}_custom icon16 i_${service} link_pointer" title="${_('Share This via ')}${service}"><span>${service}</span></span>
     </%def>
     
     % for service in ['email', 'facebook', 'twitter', 'linkedin']:
         ${share_this_icon(service)}
     % endfor
-    <span class="st_sharethis_custom icon icon_share link_pointer" title="ShareThis"
+    <span class="st_sharethis_custom icon16 i_share link_pointer" title="ShareThis"
         % for k,v in kwargs.iteritems():
             st_${k}='${v.replace("'","").replace('"','')}'
         % endfor
@@ -105,7 +105,7 @@
     ##<span class="st_twitter_custom"></span>
 
     ##<span class="st_sharethis" displayText="ShareThis"></span>
-    <span class="st_sharethis_custom icon icon_share" title="ShareThis"></span>
+    <span class="st_sharethis_custom icon16 i_share" title="ShareThis"></span>
     ##<img src="/styles/web/icons16/share-icon.png"> 
 
     <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
@@ -128,7 +128,7 @@
     ## http://sharethis.com/developers/api - hidden API examples
     ## http://forums.sharethis.com/topic.php?id=147
     ## http://forums.sharethis.com/topic.php?id=261
-    <span id="share2" class="icon icon_share" title="ShareThis"></span>
+    <span id="share2" class="icon16 i_share" title="ShareThis"></span>
     <script language="javascript" type="text/javascript">
         var st_entry = SHARETHIS.addEntry({
                 % for k,v in kwargs.iteritems():

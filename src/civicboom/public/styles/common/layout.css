@@ -269,3 +269,16 @@ DIV#app .button {
 .link_pointer {
 	cursor: pointer;
 }
+
+.icon_overlay_red {
+	display: inline-block;
+	height: 1.3em;
+	text-align: center;
+	font-weight: bold;
+	color: #FFF;
+	background-color: #F00;
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+}
+
