@@ -140,7 +140,7 @@
         % if owner:
         <ul>
           <li class="widget_item_popup">
-            <a class="icon16 mobile" href="${h.url(controller='misc', action='get_mobile')}">
+            <a class="icon16 i_mobile" href="${h.url(controller='misc', action='get_mobile')}">
                 ${_('Mobile reporting')}
             </a>
           </li>
@@ -158,9 +158,9 @@
         ##----------------------------------------
         
         <ul class="widget_icon_list">
-            <li><a target="_blank" class="icon16 rss" href="${h.url('member', id=owner['username'], format='rss', subdomain='')}" title="${owner['username']} RSS Feed"><span>RSS</span></a></li>
+            <li><a target="_blank" class="icon16 i_rss" href="${h.url('member', id=owner['username'], format='rss', subdomain='')}" title="${owner['username']} RSS Feed"><span>RSS</span></a></li>
             ##% if c.widget_owner.twitter_username:
-            ##  <li><a target="_blank" class="icon16 twitter" href="http://twitter.com/${c.widget_owner.twitter_username}" title="${c.widget_owner.username} on twitter"><span>twitter</span></a></li>
+            ##  <li><a target="_blank" class="icon16 i_twitter" href="http://twitter.com/${c.widget_owner.twitter_username}" title="${c.widget_owner.username} on twitter"><span>twitter</span></a></li>
             ##% endif
             <li>&nbsp;</li>
         </ul>

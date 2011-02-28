@@ -110,8 +110,8 @@
 
 <%def name="actions_specific()">
     ## AllanC - for now just use buttons at bottom
-    ##<a href='' class="icon16 save"    onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save')}"            ><span>${_('Save')}            </span></a>
-    ##<a href='' class="icon16 preview" onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save and Preview')}"><span>${_('Save and Preview')}</span></a>
+    ##<a href='' class="icon16 i_save"    onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save')}"            ><span>${_('Save')}            </span></a>
+    ##<a href='' class="icon16 i_preview" onclick="$('#edit_${self.id} input.submit_draft').click(); return false;" title="${_('Save and Preview')}"><span>${_('Save and Preview')}</span></a>
     
     ##cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');
 </%def>
@@ -119,7 +119,7 @@
 <%def name="actions_common()">
     % if self.id:
         <a href="${h.url('content', id=self.id)}"
-           class="icon16 close_edit"
+           class="icon16 i_close_edit"
            title="${_('Discard Changes and view')}"
            onclick="if (confirm('${_('View _content without saving your changes?')}')) {cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');} return false;"
         ><span>${_("Discard Changes and view")}</span></a>
@@ -129,7 +129,7 @@
             method="DELETE" ,
             value="" ,
             title=_("Delete") ,
-            css_class="icon16 delete" ,
+            css_class="icon16 i_delete" ,
             confirm_text=_("Are your sure you want to delete this content?") ,
             json_form_complete_actions = "cb_frag_remove($(this));" ,
         )}
@@ -269,7 +269,7 @@
 
 <%def name="media()">
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 plus"></span>${_("Media")}<span class="smaller"> - ${_("you can add video, images and audio to your content")}</span></legend>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Media")}<span class="smaller"> - ${_("you can add video, images and audio to your content")}</span></legend>
         <div class="hideable">
         ##${form_instruction(_("Add any relevent pictures, videos, sounds, links to your content"))}
         
@@ -281,7 +281,7 @@
               </a>
               <div class="media_fields">
                   <span id="media_status" style="display: none">(status)</span>
-                  <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="text" disabled="true" value=""   /><input type="submit" name="file_remove" value="Remove" class="file_remove icon16 delete"/></p>
+                  <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="text" disabled="true" value=""   /><input type="submit" name="file_remove" value="Remove" class="file_remove icon16 i_delete"/></p>
                   <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text"                 value=""/></p>
                   <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text"                 value="" /></p>
               </div>
@@ -290,7 +290,7 @@
             % for media in self.content['attachments']:
                 <% id = media['id'] %>
                 <li class="media_file" id="media_attachment_${id}">
-                    <div class="file_type_overlay icon16 ${media['type']}"></div>
+                    <div class="file_type_overlay icon16 i_${media['type']}"></div>
                     <a href="${media['original_url']}">
                         <img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/>
                         
@@ -309,7 +309,7 @@
                     <span id="media_status_${id}" style="display: none">(status)</span>
                     
                     <div class="media_fields">
-                        <p><label for="media_file_${id}"   >${_("File")}       </label><input id="media_file_${id}"    name="media_file_${id}"    type="text" disabled="true" value="${media['name']}"   /><input type="submit" name="file_remove_${id}" value="Remove" class="file_remove icon16 delete"/></p>
+                        <p><label for="media_file_${id}"   >${_("File")}       </label><input id="media_file_${id}"    name="media_file_${id}"    type="text" disabled="true" value="${media['name']}"   /><input type="submit" name="file_remove_${id}" value="Remove" class="file_remove icon16 i_delete"/></p>
                         <p><label for="media_caption_${id}">${_("Caption")}    </label><input id="media_caption_${id}" name="media_caption_${id}" type="text"                 value="${media['caption']}"/></p>
                         <p><label for="media_credit_${id}" >${_("Credited to")}</label><input id="media_credit_${id}"  name="media_credit_${id}"  type="text"                 value="${media['credit']}" /></p>
                     </div>
@@ -372,7 +372,7 @@
 ##------------------------------------------------------------------------------
 <%def name="content_type()">
 ##    <fieldset>
-##        <legend onclick="toggle_edit_section($(this));"><span class="icon16 plus"></span>${_("_%s Extras" % self.selected_type)}</legend>
+##        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("_%s Extras" % self.selected_type)}</legend>
 ##        <div class="hideable">
 
         
@@ -490,7 +490,7 @@
 <%def name="location()">
     <!-- Licence -->
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 plus"></span>${_("Location")}<span class="smaller"> - set the location of your event or request</span></legend>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Location")}<span class="smaller"> - set the location of your event or request</span></legend>
         <div class="hideable">
             ##${form_instruction(_("why give us this..."))}
 			${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
@@ -508,7 +508,7 @@
     <% from civicboom.lib.database.get_cached import get_licenses %>
     <!-- Licence -->
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 plus"></span>${_("Licence")}</legend>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Licence")}</legend>
         <div class="hideable">
             <%doc>
             <span style="padding-top: 3px;">

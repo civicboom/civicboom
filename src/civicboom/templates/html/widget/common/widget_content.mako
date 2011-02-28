@@ -15,7 +15,7 @@
         else:
             back_url = current_referer()
     %>
-    ##<a class="icon16 back" href="${back_url}"><span>${_("Back")}</span></a>
+    ##<a class="icon16 i_back" href="${back_url}"><span>${_("Back")}</span></a>
     <a href="${back_url}">&#171; ${_("Back")}</a>
 </%def>
 

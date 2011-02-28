@@ -77,7 +77,7 @@
         % if show_actions:
         <td>
             % if content['edit_lock']:
-              <span class="icon32 locked">edit locked</span>
+              <span class="icon32 i_locked">edit locked</span>
             % else:
               <a class="button_small button_small_style_2" href="${h.url('edit_content', id=content['id'])}">
                 ${_("Edit")}

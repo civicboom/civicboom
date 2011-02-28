@@ -128,7 +128,7 @@
         <div class='frag_list'>
             <h2>
                 % if icon:
-                <span class="icon16 ${icon}"><span>${icon}</span></span>
+                <span class="icon16 i_${icon}"><span>${icon}</span></span>
                 % endif
                 % if href:
                 <a href="${href}" ${js_link_to_frag_list}>${title}</a>
@@ -330,7 +330,7 @@
             method="DELETE",
             value="",
             title=_("Delete"),
-            css_class="icon16 delete",
+            css_class="icon16 i_delete",
             json_form_complete_actions = "cb_frag_reload(current_element);" ,
         )}
     % endif
@@ -338,7 +338,7 @@
     % if message.get('source') and list!='sent':
         ${member_includes.avatar(message['source'], class_="thumbnail_small source")}
     % elif list=='notification':
-        <div class="icon16 notification" style="float: left; margin: 3px 0 0 3px;"><span>Notification</span></div>
+        <div class="icon16 i_notification" style="float: left; margin: 3px 0 0 3px;"><span>Notification</span></div>
     % endif
     
     % if message.get('target') and list=='sent':
