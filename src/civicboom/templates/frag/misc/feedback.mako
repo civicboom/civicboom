@@ -66,6 +66,13 @@ TABLE.feedback SELECT {
                     <input type="text" name="from" />
                 </td>
             </tr>
+            <tr>
+                <td>${_('Prove you are human:')}</td>
+                <td>
+                    <input type="text" name="simple_captcha" />
+                    <p>${_('type "xyz" into this box')}</p>
+                </td>
+            </tr>
             % endif
 
 			<tr>
