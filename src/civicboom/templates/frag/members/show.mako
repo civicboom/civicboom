@@ -36,7 +36,7 @@
         
         if self.current_user:
             if self.member['type'] == 'group':
-                self.attr.title     = _('Current Group Persona')
+                self.attr.title     = _('Current _Group Persona')
                 self.attr.icon_type = 'group'
                 self.attr.help_frag = 'group_persona'
                 if c.logged_in_persona and not c.logged_in_persona.config['help_popup_created_group']:
@@ -109,7 +109,7 @@
         % if self.member.get('description'):
           <div style="clear:left; height: 3px;">&nbsp;</div>
           <div style="clear:left;" class="frag_list">
-            <h2><span class="icon icon_${self.attr.icon_type}"><span>descrition</span><div style="display:inline-block;padding-left:19px">Description</div></span></h2>
+            <h2><span class="icon16 i_${self.attr.icon_type}"><span>descrition</span><div style="display:inline-block;padding-left:19px">Description</div></span></h2>
             <div class="frag_list_contents">
               <div class="content" style="padding-bottom: 3px;">
                 ${self.member['description']}
@@ -180,19 +180,19 @@
               <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
             % endif
           </%def>
-          <a style="text-align:left; float:left;" class   = "icon_large icon_messages_large"
+          <a style="text-align:left; float:left;" class   = "icon40 i_message"
              href    = "${h.url('messages',list='to')}"
              title   = "${_('Messages')}"
              onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
           ><span>${_('Messages')}</span>
           ${messageIcon(self.num_unread_messages)}
           </a>
-          <a class   = "icon_large icon_messagesent_large"
+          <a class   = "icon40 i_message_sent"
              href    = "${h.url('messages',list='sent')}"
              title   = "${_('Messages Sent')}"
              onclick = "cb_frag($(this), '${h.url('messages', list='sent'        , format='frag')}', 'frag_col_1'); return false;"
           ><span>${_('Messages')}</span></a>
-          <a style="text-align:left; float:right;" class   = "icon_large icon_notifications_large"
+          <a style="text-align:left; float:right;" class   = "icon40 i_notification"
              href    = "${h.url('messages', list='notification')}"
              title   = "${_('Notifications')}"
              onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
@@ -252,7 +252,7 @@
 <%def name="actions_specific()">
     ##% if c.logged_in_persona and c.logged_in_persona.username != member['username']:
     ##    % if c.logged_in_persona and c.logged_in_persona.is_following(member['username']):
-        ##${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon icon_unfollow")}
+        ##${h.secure_link(url('member_action', action='unfollow', id=member['username'], format='redirect'), _(' '), title=_("Stop following %s" % member['username']), css_class="follow_action icon16 i_unfollow")}
         ##% else:  
         ##% endif
     ##% endif
@@ -261,7 +261,7 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
             value           = _('Follow') ,
-            value_formatted = h.literal("<span class='icon icon_follow'></span>%s") % _('Follow'),
+            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Follow'),
             title           = _("Follow %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -272,7 +272,7 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
             value           = _('Unfollow') ,
-            value_formatted = h.literal("<span class='icon icon_unfollow'></span>%s") % _('Stop Following'),
+            value_formatted = h.literal("<span class='icon16 i_unfollow'></span>%s") % _('Stop Following'),
             title           = _("Stop following %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -283,7 +283,7 @@
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
             value           = _('Join _group') ,
-            value_formatted = h.literal("<span class='icon icon_join'></span>%s") % _('Join Group'),
+            value_formatted = h.literal("<span class='icon16 i_join'></span>%s") % _('Join Group'),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
@@ -294,7 +294,7 @@
         ${h.secure_link(
             h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect') ,
             value           = _('Invite') ,
-            value_formatted = h.literal("<span class='icon icon_invite'></span>%s") % _('Invite') ,
+            value_formatted = h.literal("<span class='icon16 i_invite'></span>%s") % _('Invite') ,
             title           = invite_text , 
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -308,25 +308,25 @@
         ${popup.link(
             h.args_to_tuple('new_message', target=self.id),
             title = _('Send Message'),
-            text  = h.literal("<span class='icon icon_message'></span>%s") % _('Send Message'),
+            text  = h.literal("<span class='icon16 i_message'></span>%s") % _('Send Message'),
         )}
         <span class="separtor"></span>
     % endif
     
     % if 'settings_group' in self.actions:
-        <a href="${h.url('edit_group', id=self.id)}" title="${_('_group Settings').capitalize()}"><span class="icon icon_group"></span>${_('_group Settings').capitalize()}</a>
+        <a href="${h.url('edit_group', id=self.id)}" title="${_('_group Settings').capitalize()}"><span class="icon16 i_group"></span>${_('_group Settings').capitalize()}</a>
         <span class="separtor"></span>
     % endif
     
     % if 'settings' in self.actions:
-        <a href="${h.url('settings')}" title="${_('Settings')}"><span class="icon icon_settings"></span>${_('Settings')}</a>
+        <a href="${h.url('settings')}" title="${_('Settings')}"><span class="icon16 i_settings"></span>${_('Settings')}</a>
         <span class="separtor"></span>
     % endif
     
     ${popup.link(
         h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
         title = _('Get widget'),
-        text  = h.literal("<span class='icon icon_widget'></span>%s") % _('Get widget'),
+        text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get widget'),
     )}
     <span class="separtor"></span>
     
@@ -364,9 +364,9 @@
             description = d['member'].get('description') or '' ,
         )}
         
-        ##<a href='${url('formatted_member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon icon_rss"  ><span>RSS</span></a>
-        <a href='${url.current(format='rss')}' title='RSS' class="icon icon_rss"><span>RSS</span></a>
-        <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon icon_close"><span>${_('Close')}</span></a>
+        ##<a href='${url('formatted_member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon16 i_rss"  ><span>RSS</span></a>
+        <a href='${url.current(format='rss')}' title='RSS' class="icon16 i_rss"><span>RSS</span></a>
+        <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon16 i_close"><span>${_('Close')}</span></a>
     </div>
 </%doc>
 

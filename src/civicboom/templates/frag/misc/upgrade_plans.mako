@@ -22,13 +22,29 @@ ${payplans()}
           <span class="subtitle">Free</span>
         </div>
         <div class="planpoints">
-          <ul>
+          <ul class="points">
             <li>Up to 5 requests per month</li>
             <li>Audio requests and responses</li>
-##            <li>Another here</li>
+            <li>Unlimited hubs</li>
           </ul>
           <div class="buttons">
-            <div class="buttongreen">Ideal for...</div>
+            <div class="ideal">
+              <div class="idealpop">
+                <div class="pop">
+                  <ul>
+                    <li>Local events</li>
+                    <li>Festivals</li>
+                    <li>Societies / clubs</li>
+                    <li>Amateur sports clubs</li>
+                    <li>Hyperlocal news</li>
+                    <li>Bloggers</li>
+                    <li>Interest groups</li>
+                    <li>Students</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="buttongreen">Ideal for...</div>
+            </div>
           </div>
         </div>
       </div>
@@ -38,14 +54,33 @@ ${payplans()}
           <span class="subtitle">£50/month - includes Basic</span>
         </div>
         <div class="planpoints">
-          <ul>
+          <ul class="points">
             <li>Unlimited requests per month</li>
             <li>Closed requests</li>
+            <li>Direct upload from own site</li>
+            <li>Analysis</li>
 ##            <li>Another here</li>
-            <li>Unlimited hubs</li>
           </ul>
           <div class="buttons">
-            <div class="buttongreen">Ideal for...</div>
+            <div class="ideal">
+              <div class="idealpop">
+                <div class="pop">
+                  <ul>
+                    <li>News and media orgs</li>
+                    <li>Creative agencies</li>
+                    <li>SMEs</li>
+                    <li>Charities *</li>
+                    <li>Local authorities</li>
+                    <li>Professional sports orgs</li>
+                    <li>Marketing / research orgs</li>
+                    <li>Educational establishments</li>
+                  </ul>
+                  <br />
+                  <span style="font-size: 80%">* Premium is free for charities</span>
+                </div>
+              </div>
+              <div class="buttongreen">Ideal for...</div>
+            </div>
             <div class="buttonpad"></div>
             <a href="mailto:payment@civicboom.com?Subject=Premium Upgrade" class="button">Choose</a>
           </div>
@@ -57,28 +92,51 @@ ${payplans()}
           <span class="subtitle ital">Coming soon</span>
         </div>
         <div class="planpoints">
-          <ul>
-            <li>More details coming soon!</li>
+          <ul class="points">
+            <li>Flexible upload</li>
+            <li>Sponsored assignments</li>
+            <li>Intranet integration</li>
+            <li>Deep analysis</li>
           </ul>
           <div class="buttons">
-            <div class="buttongreen">Ideal for...</div>
+            <div class="ideal">
+              <div class="idealpop">
+                <div class="pop">
+                  <ul>
+                    <li>Large media orgs</li>
+                    <li>Corporations</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="buttongreen">Ideal for...</div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="payplan"  id="plancorpplus">
-        <div class="plantitle">
-          Corporate plus<br />
-          <span class="subtitle ital">Coming soon</span>
-        </div>
-        <div class="planpoints">
-          <ul>
-            <li>More details coming soon!</li>
-          </ul>
-          <div class="buttons">
-            <div class="buttongreen">Ideal for...</div><br />
-          </div>
-        </div>
-      </div>
+##      <div class="payplan"  id="plancorpplus">
+##        <div class="plantitle">
+##          Corporate plus<br />
+##          <span class="subtitle ital">Coming soon</span>
+##        </div>
+##        <div class="planpoints">
+##          <ul class="points">
+##            <li>More details coming soon...</li>
+##          </ul>
+##          <div class="buttons">
+##            <div class="ideal">
+##              <div class="idealpop">
+##                <div class="pop">
+##                  <ul>
+##                    <li>Large media orgs</li>
+##                    <li>Corporations</li>
+##                  </ul>
+##                </div>
+##              </div>
+##              <div class="buttongreen">Ideal for...</div>
+##            </div>
+##          </div>
+##        </div>
+##      </div>
     </div>
   </div>
 </%def>

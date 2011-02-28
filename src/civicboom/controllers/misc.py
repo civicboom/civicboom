@@ -1,4 +1,5 @@
 from civicboom.lib.base import *
+from civicboom.model import User, Group, Media, Content
 
 from civicboom.lib.communication.email_lib import send_email
 from urllib import quote_plus, unquote_plus
@@ -50,7 +51,6 @@ class MiscController(BaseController):
     @cacheable(time=30)
     @auto_format_output
     def stats(self):
-        from civicboom.model import User, Group, Media, Content
         return action_ok(data={
             'users':     Session.query(User).filter(User.status=="active").count(),
             'pending':   Session.query(User).filter(User.status=="pending").count(),
