@@ -103,7 +103,7 @@
                 num_members = c.logged_in_persona.num_members
         %>
         
-        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, num_members=num_members)}
+        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
         % if c.logged_in_user!=c.logged_in_persona:
             ${persona_select(c.logged_in_user)}
         % endif
