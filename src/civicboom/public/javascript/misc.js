@@ -136,7 +136,7 @@ function updateMedia(id, hash, jquery_element) {
   function processingStatus(data) {
     _status = data.data.status;
     if(!_status) {
-      Y.log ('uM got thumb');
+      //Y.log ('uM got thumb');
       _thumbnail = data.data.thumbnail_url
       clearInterval(media_thumbnail_timers[id]);
       // delete media_thumbnail_timers[id]; FIXME: uncomment this line before go-live!
@@ -164,12 +164,12 @@ function refreshProgress (jquery_element) {
   $.getJSON( url, function (data) {
     if (typeof data.data.content.attachments != 'undefined') {
       var attachments = data.data.content.attachments
-      Y.log (attachments.length);
+      //Y.log (attachments.length);
       for (var i = 0; i < attachments.length; i ++) {
         var attachment = attachments[i];
-        Y.log ('#media_attachment_' + attachment.id + ' :' + $('#media_attachment_' + attachment.id).length);
+        //Y.log ('#media_attachment_' + attachment.id + ' :' + $('#media_attachment_' + attachment.id).length);
         if ($('#media_attachment_' + attachment.id).length == 0) {
-          Y.log ('I found a new attachment!');
+          //Y.log ('I found a new attachment!');
           var at_element = jquery_element.find('#mediatemplate').clone(true, true).attr('id', 'media_attachment_' + attachment.id).css('display','');
           jquery_element.find('ul.media_files').children('li.media_file').last().after(at_element);
           at_element.find('#media_file').attr('value', attachment.name);

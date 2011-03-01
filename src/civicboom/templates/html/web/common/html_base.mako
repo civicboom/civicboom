@@ -73,18 +73,6 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 	${scripts_end.google_analytics_head()}
 
 
-##----------------------------------------------------------------------------
-## Development Javascript Debug Console Output
-##----------------------------------------------------------------------------
-% if config['development_mode']:
-	<!-- Development Mode - Enabale Console Logging in client browser (recomend firebug) but could instate YUI log console here -->
-	<script src="/javascript/yui-min.js"></script>
-	<script>
-		Y = new YUI({ debug : true }); //var 
-		Y.log("YUI Debugger Enabled", "info",  "civicboom");
-	</script>
-% endif
-
 
 ##------------------------------------------------------------------------------
 ## Additional Head Links - child templates can add scripts & styles
@@ -122,7 +110,7 @@ ${self.head_links()}
 	<!-- redirect all AJAX errors to use the flash message system -->
 	<script type="text/javascript">
 		$('body').ajaxError(function(event, request, settings, exception) {
-		Y.log (settings);
+		//Y.log (settings);
 		  try {
 			  flash_message(jQuery.parseJSON(request.responseText));
 			} catch (e) {
