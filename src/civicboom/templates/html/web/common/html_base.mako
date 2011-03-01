@@ -40,13 +40,13 @@ from glob import glob
 css_common = glob("civicboom/public/styles/common/*.css")
 css_web    = glob("civicboom/public/styles/web/*.css")
 css_all    = css_common + css_web
-css_all    = [n[len("civicboom/public"):] for n in css_all]
+css_all    = [n[len("civicboom/public/"):] for n in css_all]
 %>
 % for css in css_all:
-	<link rel="stylesheet" type="text/css" href="${css}" />
+	<link rel="stylesheet" type="text/css" href="${h.wh_url("public", css)}" />
 % endfor
 % else:
-	<link rel="stylesheet" type="text/css" href="/styles/web.css" />
+	<link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/web.css")}" />
 % endif
 
 ##-------------------
@@ -63,7 +63,7 @@ css_all    = [n[len("civicboom/public"):] for n in css_all]
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
 % else:
-	<script src="/javascript/_combined.head.js"></script>
+	<script src="${h.wh_url("public", "javascript/_combined.head.js")}"></script>
 % endif
 
 
