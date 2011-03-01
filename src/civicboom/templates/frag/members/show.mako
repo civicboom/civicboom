@@ -60,6 +60,8 @@
         #self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
         self.attr.auto_georss_link = True
+        _('_free')
+        _('_plus')
     %>
 </%def>
 
@@ -80,7 +82,7 @@
             % endif
             Joined: ${self.member['join_date']}<br />
             % if self.current_user:
-              ${_('Type')}: ${_('_' + self.member['account_type'].capitalize())}
+              ${_('Type')}: ${_('_' + self.member['account_type']).capitalize()}
             % endif
             <br />
             % if 'follow' in self.actions:
