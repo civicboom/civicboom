@@ -3,6 +3,7 @@
 import babel.messages.pofile as po
 import sys
 
+
 def trans(text):
     text = text.replace("_site_name", "Civicboom")
     text = text.replace("_tagline", "Don't just read it. Feed it.")
@@ -39,19 +40,24 @@ def trans(text):
     return text
 
 
-cat = po.read_po(file(sys.argv[1], "r"))
+def trans_cat(cat):
+    for n, msg in enumerate(cat):
+        #if n % 10 == 0:
+        #    print "\rParsing message %d" % n,
+        #    print ".",
+        if type(msg.id) == tuple:
+            msg.string = tuple([trans(i) for i in msg.id])
+        else:
+            msg.string = trans(msg.id)
+    #print
 
-for n, msg in enumerate(cat):
-    if n % 10 == 0:
-        #print "\rParsing message %d" % n,
-        print ".",
-#    print msg.id
-#    print msg.string
-#    print
-    if type(msg.id) == tuple:
-        msg.string = tuple([trans(i) for i in msg.id])
-    else:
-        msg.string = trans(msg.id)
-print
 
-po.write_po(file(sys.argv[1], "w"), cat)
+def main():
+    cat = po.read_po(file(sys.argv[1], "r"))
+    trans_cat(cat)
+    po.write_po(file(sys.argv[1], "w"), cat)
+
+
+if __name__ == "__main__":
+    main()
+
