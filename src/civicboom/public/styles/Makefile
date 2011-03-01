@@ -6,7 +6,7 @@ clean:
 	rm -f $(ALL)
 
 common/icons.css: common/icons/*
-	../../../../admin_scripts/iconmapper -c common/icons.css -p icons.png common/icons/*
+	iconmapper -c common/icons.css -p icons.png common/icons/*
 	cp icons.png common/icons.png
 
 web.css:    common/*.css  common/icons.css  web/*.css     Makefile
