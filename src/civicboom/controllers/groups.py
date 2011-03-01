@@ -228,7 +228,15 @@ class GroupsController(BaseController):
         
         # GregM: call settings_update with logo_file as avatar
         # ARRRGHHH: Hacked c.format as settings_update redirects on html
+        # old_persona = c.logged_in_persona
+        
+        ## GregM DIRTIEST HACK IN HISTORY! OMFG! Works... do not try this at home!
+        
+        Session.commit()
+        
         cformat = c.format
+        cpersona = c.logged_in_persona
+        c.logged_in_persona = group
         c.format = 'python'
         if 'description' in kwargs:
             settings_update(id=id, description=kwargs['description'])
@@ -237,6 +245,7 @@ class GroupsController(BaseController):
         if 'website' in kwargs:
             settings_update(id=id, website=kwargs['website'])
         c.format = cformat
+        c.logged_in_persona = cpersona
         
         Session.commit()
 
