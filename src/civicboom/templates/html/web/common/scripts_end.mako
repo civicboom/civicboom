@@ -16,7 +16,7 @@
 		<script src="/javascript/jquery.html5-0.0.1.js"></script>
 		<script src="/javascript/jquery.uploadify.v2.1.4.js"></script>
 		<script src="/javascript/jquery.ba-hashchange.min.js"></script>
-    <script src="/javascript/jquery.cookie.js"></script>
+		<script src="/javascript/jquery.cookie.js"></script>
         <script src="/javascript/jquery.simple-color-picker.js"></script>
 		<!-- maps -->
         <script src="/javascript/gears_init.js"></script>
@@ -24,7 +24,7 @@
         <script src="/javascript/OpenLayers.js"></script>
         <script src="/javascript/minimap.js"></script>
     % else:
-        <script src="/javascript/_combined.foot.js"></script>
+		<script src="${h.wh_url("public", "javascript/_combined.foot.js")}"></script>
     % endif
 
 

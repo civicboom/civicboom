@@ -27,6 +27,7 @@ import webhelpers.html.tags as html
 
 #import recaptcha.client.captcha as librecaptcha
 from civicboom.lib.services.reCAPTCHA import reCAPTCHA_html
+import os
 import re
 import urllib
 import hashlib
@@ -34,9 +35,6 @@ import json
 import copy
 import time
 import datetime
-
-
-
 
 
 
@@ -121,12 +119,14 @@ def wh_url(folder, filename):
     # with the specific version of the code -- so while we are small and doing
     # lots of updates, serve the public folder locally
     if folder == "public":
+        path = os.path.join("civicboom", "public", filename)
+        ut = str(int(os.stat(path).st_mtime))
         if config['debug']:
             # in development,  serve locally
-            return "/"+filename
+            return "/"+filename+"?ut="+ut
         else:
             # in production, serve from a domain without cookies
-            return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+filename
+            return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+filename+"?ut="+ut
     # all other folders (media, avatars) are served from our beefy-but-slow-to
     # update warehouse (currently amazon S3)
     else:
