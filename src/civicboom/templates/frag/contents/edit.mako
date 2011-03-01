@@ -340,7 +340,7 @@
 							'onComplete'  : function(event, ID, fileObj, response, data) {
 								//alert('There are ' + data.fileCount + ' files remaining in the queue.');
 								// refresh the file list
-								Y.log("refresh the list now");
+								//Y.log("refresh the list now");
 								refreshProgress($('form#edit_${self.id}'));
 							}
 							});

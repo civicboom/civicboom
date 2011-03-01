@@ -127,6 +127,20 @@ class TestPermissionsController(TestController):
         draft_id = json.loads(response.body)["data"]["id"]
         self.assertGreater(draft_id, 0)
         
+        # Upgrade draft to article - rejected
+        response = self.app.post(
+            url('content', id=draft_id, format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                '_method'       : 'PUT'               ,
+                'title'         : "permission article",
+                'content'       : "a test update"     ,
+                'type'          : "article"           ,
+                #'submit_publish': u'publish'          ,
+            },
+            status=403
+        )
+        
         # Create article as group persona - should be rejected because role is contributor
         response = self.app.post(
             url('contents', format="json"),
@@ -135,7 +149,7 @@ class TestPermissionsController(TestController):
                 'title'         : "permission article",
                 'content'       : "a test "           ,
                 'type'          : "article"           ,
-                'submit_publish': u'publish'          ,
+                #'submit_publish': u'publish'          ,
             },
             status=403
         )
@@ -167,7 +181,7 @@ class TestPermissionsController(TestController):
                 'title'         : "permission article",
                 'content'       : "a test "           ,
                 'type'          : "article"           ,
-                'submit_publish': u'publish'          ,
+                #'submit_publish': u'publish'          ,
             },
             status=201
         )

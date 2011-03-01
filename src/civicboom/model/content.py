@@ -20,6 +20,7 @@ from webhelpers.text import truncate
 #-------------------------------------------------------------------------------
 _content_type = Enum("comment", "draft", "article", "assignment", "syndicate", name="content_type")
 
+publishable_types = ["article", "assignment"]
 
 #-------------------------------------------------------------------------------
 # Objects

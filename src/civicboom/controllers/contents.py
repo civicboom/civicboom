@@ -4,7 +4,7 @@ from civicboom.lib.base import *
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom
 from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license, get_tag, get_assigned_to
-from civicboom.model.content           import _content_type as content_types
+from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
 from civicboom.lib.misc import str_to_int
@@ -333,12 +333,10 @@ class ContentsController(BaseController):
         @return *     see update return types
         """
         # url('contents') + POST
-        
-        # type MUST be passed in kwargs as this is relayed on to the sub calls. If it is missing from the call to update this breaks some of the permissions checks
 
         user_log.info("Creating new content")
 
-        if 'type' not in kwargs:
+        if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
         
         # Create Content Object
@@ -349,11 +347,13 @@ class ContentsController(BaseController):
             raise_if_current_role_insufficent('editor')
             content = CommentContent()
         elif kwargs['type'] == 'article':
-            raise_if_current_role_insufficent('editor')
-            content = ArticleContent()
+            raise_if_current_role_insufficent('editor') # Check permissions
+            content = ArticleContent()                  # Create base content
+            kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         elif kwargs['type'] == 'assignment':
-            raise_if_current_role_insufficent('editor')
-            content = AssignmentContent()
+            raise_if_current_role_insufficent('editor') # Check permissions
+            content = AssignmentContent()               # Create base content
+            kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
@@ -409,9 +409,9 @@ class ContentsController(BaseController):
         @comment Shish paramaters need filling out
         """
         # url('content', id=ID)
-        #log.debug("--KWARGS--")
-        #log.debug(kwargs)
-        #log.debug("")
+        #print("--KWARGS--")
+        #print(kwargs)
+        #print("")
         
         # -- Variables-- -------------------------------------------------------
         content_redirect = None
@@ -424,21 +424,6 @@ class ContentsController(BaseController):
             content = _get_content(id, is_editable=True)
         assert content
         
-
-        # -- Decode Action -----------------------------------------------------
-        # AllanC - could this be turned into a validator?
-        def normalise_submit(kwargs):
-            submit_keys = [key.replace("submit_","") for key in kwargs.keys() if key.startswith("submit_") and kwargs[key]!=None and kwargs[key]!='']
-            if len(submit_keys) == 0:
-                return None
-            if len(submit_keys) == 1:
-                return submit_keys[0]
-            raise action_error(_('Multiple submit types submitted'), code=400)
-        submit_type = normalise_submit(kwargs)
-        # AllanC - we should consider this later .... for now the mobile works, but we way wawnt to get around HAVING to submit a submit_publish
-        #if submit_type==None and content.__type__!= kwargs.get('type'):
-        #    submit_type == 'publish'
-
         # -- Validate ----------------------------------------------------------
 
         # Select Validation Schema (based on content type)
@@ -453,40 +438,56 @@ class ContentsController(BaseController):
         data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
         kwargs     = data['content']
 
+        # -- Decode Action -----------------------------------------------------
+        #
+        # Takes the form field 'submit_????' and decides operation:
+        #            = Save + forward back to editor
+        #   preview  = Save + forward to show
+        #   publish  = Save + Publish (send notifications) + forward to show
+        #   response = Save + show parent
+        #
+        # Default
+        #  Save + (if format = html or redirect -> redirect back to editor)
+        #  if no submit_???? is provided and the content type = draft -> article or assignment - pubmit type is set to 'publish'
+        #
+        
+        def normalise_form_submit(kwargs):
+            submit_keys = [key.replace("submit_","") for key in kwargs.keys() if key.startswith("submit_") and kwargs[key]!=None and kwargs[key]!='']
+            if len(submit_keys) == 0:
+                return None
+            if len(submit_keys) == 1:
+                return submit_keys[0]
+            raise action_error(_('Multiple submit types submitted'), code=400)
+            
+        if content.__type__ not in publishable_types and kwargs.get('type') in publishable_types:
+            submit_type = 'publish'
+            log.debug ( "AUTO PUBLISH! %s - %s" % (content.__type__, kwargs.get('type')) )
+        else:
+            submit_type = normalise_form_submit(kwargs)
+        
         # Normalize 'type'
-        starting_content_type = content.__type__
+        starting_content_type = content.__type__ # This is required later to assertain if this is an update or a new item of content
         if submit_type == 'publish' and 'type' not in kwargs: # If publishing set 'type' (as this is submitted from the form as 'target_type')
             if hasattr(content, 'target_type'):
                 kwargs['type'] = content.target_type
             if kwargs.get('target_type'):
                 kwargs['type'] = kwargs['target_type']
-
+        
 
         # -- Publish Permission-------------------------------------------------
-        # TODO - need to check role in group to see if they have permissions to do this
-        # TODO - Publish Permission for groups (to be part of is editable?)
-        # return 403
-        # some permissions like permissions['can_publish'] are related to payment, we want to still save the data, but we might not want to go through with the whole publish procedure
+        # some permissions like permissions['can_publish'] could be related to payment, we want to still save the data, but we might not want to go through with the whole publish procedure
+        # The content will save and the error will be raised at the end.
         permissions = {}
         permissions['can_publish'] = True
         
-        if kwargs.get('type') != 'draft':
-            if not has_role_required('editor', c.logged_in_persona_role):
-                permissions['can_publish'] = False
-                error                      = errors.error_role()
+        if kwargs.get('type') in publishable_types and not has_role_required('editor', c.logged_in_persona_role):
+            permissions['can_publish'] = False
+            error                      = errors.error_role()
         
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
-            #log.debug("set the error")
-            #log.debug(errors.account_level)
-            # AllanC - ARRRRRRRRRRRRRRRRRRRRR!!!! this reference to this object ... something somewhere is maliciously removing the code from errors.account_level
             error                      = errors.error_account_level()
-            #error = action_error(
-            #    status   = 'error' ,
-            #    code     = 402 ,
-            #    message  = _('Account upgrade required before you can perform this action') , #operation requires account upgrade
-            #)
-
+            
         
         # -- Set Content fields ------------------------------------------------
         
@@ -494,8 +495,8 @@ class ContentsController(BaseController):
         
         # Morph Content type - if needed (only appropriate for data already in DB)
         if 'type' in kwargs:
-            #AllanC - logic bug?! with this if statement we cant downgrade content from assignmes to drafts
-            if kwargs['type']!='draft' and permissions['can_publish']:
+            if kwargs.get('type') not in publishable_types or \
+               kwargs.get('type')     in publishable_types and permissions['can_publish']:
                 content = morph_content_to(content, kwargs['type'])
         
         # Set content fields from validated kwargs input
@@ -538,7 +539,9 @@ class ContentsController(BaseController):
         
         
         # -- Publishing --------------------------------------------------------
-        if submit_type == 'publish' and permissions['can_publish']:
+        if  submit_type=='publish'     and \
+            permissions['can_publish'] and \
+            content.__type__ in publishable_types:
             
             # Profanity Check --------------------------------------------------
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
@@ -560,7 +563,8 @@ class ContentsController(BaseController):
                         messages.new_response(member = content.creator, content = content, parent = content.parent), delay_commit=True
                     )
                 
-                # TODO: Clear comments when upgraded from draft to published content?
+                content.comments = [] # Clear comments when upgraded from draft to published content? we dont want observers comments 
+                
                 user_log.info("published new Content #%d" % (content.id, ))
                 # Aggregate new content
                 content.aggregate_via_creator() # Agrigate content over creators known providers
@@ -573,6 +577,7 @@ class ContentsController(BaseController):
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
             if m:
+                # AllanC: TODO this needs to optimised! see issue #258 bulk messages are a blocking call
                 content.creator.send_message_to_followers(m, delay_commit=True)
                 
 
@@ -584,25 +589,27 @@ class ContentsController(BaseController):
         update_content(content)  #   Invalidate any cache associated with this content
         user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
         
-        # -- Redirect ----------------------------------------------------------
+        # -- Redirect (if needed)-----------------------------------------------
 
+        # We raise any errors at the end because we still want to save any draft content even if the content is not published
         if error:
             #log.debug("raising the error")
             #log.debug(error)
             raise error
 
         if not content_redirect:
-            if submit_type == 'publish' and permissions['can_publish']:
+            if   submit_type == 'publish' and permissions['can_publish']:
                 content_redirect = url('content', id=content.id, prompt_aggregate=True)
-            if submit_type == 'preview':
+            elif submit_type == 'preview':
                 content_redirect = url('content', id=content.id)
-            if submit_type == 'response':
+            elif submit_type == 'response':
                 content_redirect = url('content', id=content.parent_id)
-        if not content_redirect:
-            content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
+            else:
+                content_redirect = url('edit_content', id=content.id) # Default redirect back to editor to continue editing
         
         if c.format == 'redirect' or c.format == 'html':
             return redirect(content_redirect)
+        
         
         return action_ok(_("_content has been saved"))
 
@@ -660,7 +667,7 @@ class ContentsController(BaseController):
         # Increase content view count
         if hasattr(content,'views'):
             content_view_key = 'content_%s' % content.id
-            if session_get(content_view_key):
+            if not session_get(content_view_key):
                 session_set(content_view_key, True)
                 content.views += 1
                 Session.commit()
