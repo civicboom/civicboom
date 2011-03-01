@@ -126,7 +126,7 @@ def current_url(protocol=None):
     return target_url
 
 def redirect_to_referer():
-    url_to = session_remove('login_action_referer') or current_referer() or '/'
+    url_to = cookie_get('login_action_referer') or session_remove('login_action_referer') or current_referer() or '/'
     if url_to == url('current'): # Detect if we are in a redirection loop and abort
         log.warning("Redirect loop detected for "+str(url_to))
         #redirect('/')
