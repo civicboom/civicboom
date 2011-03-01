@@ -28,7 +28,7 @@ def trans(text):
         ("group",      "hub"),
         ("draft",      "draft"),
         ("free",       "basic"),
-        ("premium",    "premium"),
+        ("plus",    "premium"),
         ("corporate",  "corporate"),
     ]
     for w, r in words:
