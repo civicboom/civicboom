@@ -31,7 +31,7 @@ class TestAssignAcceptResponseCycleController(TestController):
                 'type'         : u'assignment' ,
                 #'due_date'     : datetime.datetime.now() + datetime.timedelta(days=3) ,
                 #'event_date'   : datetime.datetime.now() + datetime.timedelta(days=1) ,
-                'submit_publish': u'publish' ,
+                #'submit_publish': u'publish' ,
             },
             status=201
         )
@@ -53,7 +53,7 @@ class TestAssignAcceptResponseCycleController(TestController):
                 'contents'      : u'Test Response' ,
                 'type'          : u'article' ,
                 'parent_id'     : self.assignment_id ,
-                'submit_publish': u'publish' ,
+                #'submit_publish': u'publish' ,
             },
             status=201
         )
@@ -70,7 +70,7 @@ class TestAssignAcceptResponseCycleController(TestController):
                 'contents'      : u'Test Response' ,
                 'type'          : u'article' ,
                 'parent_id'     : self.assignment_id ,
-                'submit_publish': u'publish' ,
+                #'submit_publish': u'publish' ,
             },
             status=201
         )
@@ -87,7 +87,7 @@ class TestAssignAcceptResponseCycleController(TestController):
                 'contents'      : u'Test Response' ,
                 'type'          : u'article' ,
                 'parent_id'     : self.assignment_id ,
-                'submit_publish': u'publish' ,
+                #'submit_publish': u'publish' ,
             },
             status=201
         )
@@ -215,7 +215,7 @@ class TestAssignAcceptResponseCycleController(TestController):
                 'title'        : u'Assignment to test Accept/Withdraw',
                 'contents'     : u'content' ,
                 'type'         : u'assignment' ,
-                'submit_publish': u'publish' ,
+                #'submit_publish': u'publish' ,
             },
             status=201
         )
@@ -319,7 +319,7 @@ class TestAssignAcceptResponseCycleController(TestController):
                 'title'        : u'Assignment to test accept delete cascade',
                 'contents'     : u'content' ,
                 'type'         : u'assignment' ,
-                'submit_publish': u'publish' ,
+                #'submit_publish': u'publish' ,
             },
             status=201
         )

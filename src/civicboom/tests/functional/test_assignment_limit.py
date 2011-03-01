@@ -61,7 +61,7 @@ class TestAssignmentLimitController(TestController):
                 'title'        : title,
                 'contents'     : u'Testing assignment limit' ,
                 'type'         : u'assignment' ,
-                'submit_publish': u'publish' ,
+                #'submit_publish': u'publish' ,
             },
             status=status
         )

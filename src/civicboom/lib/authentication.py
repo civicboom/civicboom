@@ -52,7 +52,19 @@ def get_user_and_check_password(username, password):
         q = q.one()
         return q
     except:
-        return None
+        # AllanC - Added fallback to search for email as some users get confised as to how to identify themselfs
+        #          emails are not indexed? performance? using this should be safe as our username policy prohibits '@' and '.'
+        try:
+            q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
+            q = q.filter(User.email      == username  )
+            q = q.filter(User.status     == 'active'  )
+            q = q.filter(UserLogin.type  == 'password')
+            q = q.filter(UserLogin.token == encode_plain_text_password(password))
+            q = q.one()
+            return q
+        except:
+            return None
+
 
 
 def get_user_from_openid_identifyer(identifyer):
