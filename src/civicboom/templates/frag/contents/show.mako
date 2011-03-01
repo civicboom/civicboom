@@ -80,7 +80,7 @@
         <div style="clear:left;" class="frag_list">
           <h2><span class="icon16 i_${self.content['creator']['type']}"><span>${self.content['creator']['type']}</span><div style="display:inline-block;padding-left:19px; width: 100%">Created&nbsp;by</div></span></h2>
           <div class="frag_list_contents">
-            <div class="content" style="padding-bottom: 11px;">
+            <div class="content">
               <div>
                 <span style="float:left; padding-right: 3px;">${member_includes.avatar(self.content['creator'], show_name=True, show_follow_button=True, class_="large")}</span>
               ##${frag_lists.member_list(content['creator'], _("Creator"))}
@@ -93,6 +93,7 @@
                   ##% endif
                   ##Joined: ${self.member['join_date']}<br />
                 </div>
+				<div style="clear: both; height: 5px;"></div>
               </div>
             </div>
           </div>
