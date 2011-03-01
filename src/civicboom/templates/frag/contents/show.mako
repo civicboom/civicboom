@@ -437,6 +437,7 @@
                 %endif
             </td>
             <td class="comment">
+            ## GregM: Not displaying comment box if user not logged in until we move all cookies to server side session.
               % if c.logged_in_persona:
                 ${h.form(h.args_to_tuple('contents', format='redirect'), json_form_complete_actions="cb_frag_reload(current_element);" )}
                     ##% url("content",id=d['content']['id'])
