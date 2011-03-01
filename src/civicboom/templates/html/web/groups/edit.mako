@@ -254,8 +254,8 @@
           $('td.quickchangehilite').removeClass('quickchangehilite');
           var quickName = $(this).attr('name');
           if (typeof quickSelection[quickName] != 'undefined') {
-            if (quickSelection[quickName].length == 4) {
-              for (var qI = 0; qI < 4; qI ++) {
+            if (quickSelection[quickName].length == quickOrder.length) {
+              for (var qI = 0; qI < quickOrder.length; qI ++) {
                 var quickValue = 1 * quickSelection[quickName][qI];
                 $('[name='+quickOrder[qI]+']')[quickValue].checked = true;
                 quickHilite = true;
@@ -280,7 +280,7 @@
         }
         $('input.quickchange').click(function () {
           var quickString = '';
-          for (var qI = 0; qI < 4; qI ++) {
+          for (var qI = 0; qI < quickOrder.length; qI ++) {
             quickString = quickString + $('[name='+quickOrder[qI]+']').index($('[name='+quickOrder[qI]+']:checked'));
           }
           $('td.quickchangehilite').removeClass('quickchangehilite');
