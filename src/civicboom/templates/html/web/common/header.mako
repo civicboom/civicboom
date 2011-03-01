@@ -16,9 +16,9 @@
 % if c.logged_in_persona:
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
-      <a class="name" href="${url(controller='profile', action='index')}"
-	  	><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"'
-	  /></a>
+      <a class="name" href="${url(controller='profile', action='index')}"><!--
+	  	--><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' /><!--
+	  --></a>
       <%def name="messageIcon(messages)">
         % if messages > 0:
           <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
@@ -103,7 +103,7 @@
                 num_members = c.logged_in_persona.num_members
         %>
         
-        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, num_members=num_members)}
+        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
         % if c.logged_in_user!=c.logged_in_persona:
             ${persona_select(c.logged_in_user)}
         % endif

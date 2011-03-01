@@ -13,6 +13,9 @@
         args, kwargs = c.web_params_to_kwargs
         
         title = ''
+        title = _('_user')
+        title = _('_users')
+        title = _('_groups')
         if kwargs.get('type'):
             title = _('_' + kwargs.get('type') + 's').capitalize()
         icon  = 'user'
