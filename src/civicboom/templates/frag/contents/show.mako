@@ -86,7 +86,7 @@
               ##${frag_lists.member_list(content['creator'], _("Creator"))}
                 <div>
                   <span style="font-weight: bold;">${self.content['creator']['name']}</span><br />
-                  Type: ${self.content['creator']['type'].capitalize()}<br />
+                  Type: ${_('_'+self.content['creator']['type'].capitalize())}<br />
                   ## Member Info Here
                   ##% if self.member['website'] != '':
                   ##  Website: ${self.member['join_date']}<br />
