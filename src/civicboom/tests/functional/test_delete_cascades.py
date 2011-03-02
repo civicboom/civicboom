@@ -46,7 +46,7 @@ class TestDeleteCascadesController(TestController):
             'contents'      : content ,
             'type'          : type ,
             'tags'          : tags ,
-            'submit_publish': u'publish' ,
+            #'submit_publish': u'publish' ,
         }
         if parent_id:
             params.update({'parent_id':parent_id})
@@ -104,7 +104,7 @@ class TestDeleteCascadesController(TestController):
                 'contents'      : u'delete_cascade delete_cascade' ,
                 'type'          : u'assignment' ,
                 'tags'          : u'delete_cascade' ,
-                'submit_publish': u'publish' ,
+                #'submit_publish': u'publish' ,
             },
             upload_files = [("media_file", "1x1.png", self.png1x1)],
             status=201
