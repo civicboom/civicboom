@@ -464,7 +464,7 @@ class AssignmentContent(UserVisibleContent):
     due_date        = Column(DateTime(),       nullable=True)
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
     default_response_license_id = Column(Unicode(32), ForeignKey('license.id'), nullable=False, default=u"CC-BY")
-    #num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
+    num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
 
     default_response_license    = relationship("License")
 
@@ -488,8 +488,6 @@ class AssignmentContent(UserVisibleContent):
     #        'withdrawn': lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"] ,
     #})
     #__to_dict__['full+actions'].update(__to_dict__['full'])
-
-
 
     def action_list_for(self, member):
         action_list = UserVisibleContent.action_list_for(self, member)
@@ -542,14 +540,6 @@ class AssignmentContent(UserVisibleContent):
         else:
             invite_member(members)
         Session.commit()
-        
-    @property
-    def num_accepted(self):
-        """
-        AllanC - TODO: Performance!
-        To be replaced with derived field with DB trigger or update_assignment call
-        """
-        return len([a for a in self.assigned_to if a.status=='accepted'])
 
 
 class MemberAssignment(Base):
@@ -564,6 +554,35 @@ class MemberAssignment(Base):
 
     #member       = relationship("Member")
     #content      = relationship("AssignmentContent")
+
+
+DDL('DROP TRIGGER IF EXISTS update_num_accepted ON member_assignment').execute_at('before-drop', MemberAssignment.__table__)
+DDL("""
+CREATE OR REPLACE FUNCTION update_num_accepted() RETURNS TRIGGER AS $$
+    DECLARE
+        tmp_content_id integer;
+    BEGIN
+        IF (TG_OP = 'INSERT') THEN
+            tmp_content_id := NEW.content_id;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            tmp_content_id := NEW.content_id;
+        ELSIF (TG_OP = 'DELETE') THEN
+            tmp_content_id := OLD.content_id;
+        END IF;
+
+        UPDATE content_assignment SET num_accepted = (
+            SELECT count(*)
+            FROM member_assignment
+            WHERE member_assignment.status = 'accepted' AND content_assignment.id=tmp_content_id
+        ) WHERE id=tmp_content_id;
+        RETURN NULL;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_num_accepted
+    AFTER INSERT OR UPDATE OR DELETE ON member_assignment
+    FOR EACH ROW EXECUTE PROCEDURE update_num_accepted();
+""").execute_at('after-create', MemberAssignment.__table__)
 
 
 class License(Base):
