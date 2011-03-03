@@ -4,7 +4,7 @@ from civicboom.lib.misc import make_username
 from civicboom.controllers.account import AccountController
 set_persona = AccountController().set_persona
 
-from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
+from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visibility, group_content_visibility, Member
 
 from civicboom.controllers.contents import _normalize_member
 
@@ -16,6 +16,8 @@ from civicboom.lib.form_validators.base         import DefaultSchema
 from civicboom.lib.form_validators.registration import UniqueUsernameValidator
 
 from civicboom.controllers.settings import SettingsController
+
+import re
 
 settings_update = SettingsController().update
 
@@ -38,7 +40,7 @@ class GroupSchema(DefaultSchema):
     default_role               = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
     join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
     member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
-    default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
+    #default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
 
 class CreateGroupSchema(GroupSchema):
     username                   = UniqueUsernameValidator()
@@ -60,6 +62,14 @@ def _get_group(id, is_admin=False, is_member=False):
     if is_member and not group.get_membership(c.logged_in_persona):
         raise action_error(_("you are not a member of this group"), code=403)
     return group
+
+def _gen_username(base):
+    if not re.search(base, "[0-9]$"):
+        base = base + "2"
+    while Session.query(Member).filter(Member.username==base).count() > 0:
+        name, num = re.match("(.*?)([0-9]+)", base).groups()
+        base = name + str(int(num)+1)
+    return base
 
 
 #-------------------------------------------------------------------------------
@@ -162,7 +172,7 @@ class GroupsController(BaseController):
         # url('groups') + POST
         # if only display name is specified, generate a user name
         if not kwargs.get('username') and kwargs.get("name"):
-            kwargs["username"] = make_username(kwargs.get("name"))
+            kwargs["username"] = _gen_username(make_username(kwargs.get("name")))
         
         data       = {'group':kwargs, 'action':'create'}
         data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
@@ -224,11 +234,19 @@ class GroupsController(BaseController):
         group.default_role               = group_dict['default_role']
         group.join_mode                  = group_dict['join_mode']
         group.member_visibility          = group_dict['member_visibility']
-        group.default_content_visibility = group_dict['default_content_visibility']
+        group.default_content_visibility = group_dict.get('default_content_visibility', "public") # Shish: hack
         
         # GregM: call settings_update with logo_file as avatar
         # ARRRGHHH: Hacked c.format as settings_update redirects on html
+        # old_persona = c.logged_in_persona
+        
+        ## GregM DIRTIEST HACK IN HISTORY! OMFG! Works... do not try this at home!
+        
+        Session.commit()
+        
         cformat = c.format
+        cpersona = c.logged_in_persona
+        c.logged_in_persona = group
         c.format = 'python'
         if 'description' in kwargs:
             settings_update(id=id, description=kwargs['description'])
@@ -237,6 +255,7 @@ class GroupsController(BaseController):
         if 'website' in kwargs:
             settings_update(id=id, website=kwargs['website'])
         c.format = cformat
+        c.logged_in_persona = cpersona
         
         Session.commit()
 

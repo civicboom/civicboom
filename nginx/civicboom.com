@@ -27,7 +27,7 @@ server {
 	server_name .civicboom.com localhost _;
 	access_log /var/log/nginx/civicboom.log;
 	access_log /var/log/nginx/civicboom.timing.log timing; # DC_TIMING
-	root /opt/cb/share/website/civicboom/public/;
+	root /opt/cb/share/website-web/;
 	error_page 500 502 503 504 /errors/50x.html;
 	client_max_body_size 100m;
 	ssi on;

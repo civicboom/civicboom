@@ -17,7 +17,7 @@ class TestBoomController(TestController):
                 'title'        : u'Content to BOOM!',
                 'contents'     : u'This tests is going to Boom be boomed by unitfriend' ,
                 'type'         : u'article' ,
-                'submit_publish': u'publish' ,
+                #'submit_publish': u'publish' ,
             },
             status=201
         )

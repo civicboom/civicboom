@@ -60,6 +60,8 @@
         #self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
         self.attr.auto_georss_link = True
+        _('_free')
+        _('_plus')
     %>
 </%def>
 
@@ -80,7 +82,7 @@
             % endif
             Joined: ${self.member['join_date']}<br />
             % if self.current_user:
-              ${_('Type')}: ${self.member['account_type'].capitalize()}
+              ${_('Type')}: ${_('_' + self.member['account_type']).capitalize()}
             % endif
             <br />
             % if 'follow' in self.actions:
@@ -180,19 +182,19 @@
               <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
             % endif
           </%def>
-          <a style="text-align:left; float:left;" class   = "icon40 i_message"
+          <a style="text-align:left; float:left;" class   = "icon32 i_message"
              href    = "${h.url('messages',list='to')}"
              title   = "${_('Messages')}"
              onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
           ><span>${_('Messages')}</span>
           ${messageIcon(self.num_unread_messages)}
           </a>
-          <a class   = "icon40 i_message_sent"
+          <a class   = "icon32 i_message_sent"
              href    = "${h.url('messages',list='sent')}"
              title   = "${_('Messages Sent')}"
              onclick = "cb_frag($(this), '${h.url('messages', list='sent'        , format='frag')}', 'frag_col_1'); return false;"
           ><span>${_('Messages')}</span></a>
-          <a style="text-align:left; float:right;" class   = "icon40 i_notification"
+          <a style="text-align:left; float:right;" class   = "icon32 i_notification"
              href    = "${h.url('messages', list='notification')}"
              title   = "${_('Notifications')}"
              onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"

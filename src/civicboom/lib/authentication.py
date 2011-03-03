@@ -52,7 +52,19 @@ def get_user_and_check_password(username, password):
         q = q.one()
         return q
     except:
-        return None
+        # AllanC - Added fallback to search for email as some users get confised as to how to identify themselfs
+        #          emails are not indexed? performance? using this should be safe as our username policy prohibits '@' and '.'
+        try:
+            q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
+            q = q.filter(User.email      == username  )
+            q = q.filter(User.status     == 'active'  )
+            q = q.filter(UserLogin.type  == 'password')
+            q = q.filter(UserLogin.token == encode_plain_text_password(password))
+            q = q.one()
+            return q
+        except:
+            return None
+
 
 
 def get_user_from_openid_identifyer(identifyer):
@@ -120,11 +132,11 @@ def authorize(_target, *args, **kwargs):
         #          the reason is that when the user log's in securely then the session cookie is destroyed
         #          currently no redirect actions work
         #          this could be fixed by putting the data in the client's cookie instead - consider creating a cookie_remove and a cookie_set cookie_get
-        if not cookie_get('login_redirect'):
+        if cookie_get('login_redirect'):
             json_post = cookie_remove('login_redirect_action')
             if json_post:
                 try:
-                    kwargs.update(json.loads(unquote_plus(json_post)))
+                    kwargs.update()
                     c.authenticated_form = True # AllanC - the user has had to sign in - therefor they are aware they are performing an action - only our site can set the cookies
                 except:
                     pass

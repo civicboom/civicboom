@@ -14,7 +14,7 @@
 		<link rel="stylesheet" type="text/css" href="/styles/widget/layout.css" />
 		##<link rel="stylesheet" type="text/css" href="/styles/widget/widget_size_wide.css" />
 		% else:
-		<link rel="stylesheet" type="text/css" href="/styles/widget.css" />
+		<link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/widget.css")}" />
 		% endif
 
 		##----------------------------------------------------------------------
@@ -22,16 +22,6 @@
 		##----------------------------------------------------------------------
 		${scripts_end.google_analytics_head()}
 
-		##----------------------------------------------------------------------
-		## YUI Logger
-		##----------------------------------------------------------------------
-		% if config['development_mode']:
-		<script src="/javascript/yui-min.js"></script>
-		<script>
-			Y = new YUI({ debug : true }); //var 
-			Y.log("YUI Debugger Enabled", "info",  "civicboom");
-		</script>
-		% endif
 		
 		<%doc>
 			## debug
