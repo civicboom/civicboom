@@ -2,6 +2,8 @@
 	<head>
 		<title>Civicboom - Internal Error</title>
 	</head>
+
+    % if c.result.get('code') == 500:
 	<body style="text-align: center; vertical-align: middle;">
 
         <div style="padding:2em; background-color: #005493; color: white; display: inline-block;">
@@ -13,17 +15,21 @@
             <p>OUR TECH MONKEYS HAVE BEEN ALERTED</p>
             <img src="/images/logo.png" style="float: right;"/>
         </div>
-
-% if c.result:
-    % if 'code' in c.result:
-        <p>code: <b>${c.result['code']}</b>
+    % else:
+    <body>
+        <h1>Error</h1>
     % endif
     
-    % if 'message' in c.result:
-        <br>message: <b>${c.result['message']}</b>
-    % endif
-% endif
-
+        % if 'code' in c.result:
+        <p>code: <b>${c.result['code']}</b>
+        % endif
+        
+        <br/>
+        
+        % if 'message' in c.result:
+        message: <b>${c.result['message']}</b>
+        % endif
+        
         <!--#include file="/misc/feedback.frag"-->
 
 	</body>

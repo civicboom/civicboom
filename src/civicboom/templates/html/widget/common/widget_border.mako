@@ -86,15 +86,20 @@
             <div class="padding">
         % if c.logged_in_persona:
             <a href="${h.url(controller='profile', action='index')}" target="_blank">
-                ${c.logged_in_persona.username}
+                ${c.logged_in_persona.name or c.logged_in_persona.username}
                 <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
             </a>
-        % else:
+        % elif owner['username']:
             <a href="${h.url('member_action', id=owner['username'], action='follow', subdomain='')}" target="_blank">
+                ${_("Sign up/Sign in")}
+            </a>
+        % else:
+            <a href="${h.url(controller='account', action='signin', subdomain='')}" target="_blank">
                 ${_("Sign up/Sign in")}
                 ##to <span class="icon16 i_boom" title="${_('_site_name')}"></span>
                 ##<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
             </a>
+
         % endif
             </div>
         </div>

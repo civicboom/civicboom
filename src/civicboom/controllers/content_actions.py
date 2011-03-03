@@ -32,7 +32,7 @@ class ContentActionsController(BaseController):
         @return 200   rated ok
         @return 400   invalid rating
         """
-        content = _get_content(id)
+        content = _get_content(id, set_html_action_fallback=True)
         content.rate(c.logged_in_persona, int(rating))
         user_log.debug("Rated Content #%d as %d" % (int(id), int(rating)))
         return action_ok(_("Vote counted"))
@@ -58,7 +58,7 @@ class ContentActionsController(BaseController):
         #    raise action_error(_('already boomed this'), code=400)
         #session[boomkey] = True
 
-        content = _get_content(id)
+        content = _get_content(id, set_html_action_fallback=True)
         if content.creator == c.logged_in_persona:
             raise action_error(_('You can not boom your own content'))
         content.boom_content(c.logged_in_persona)
@@ -83,7 +83,7 @@ class ContentActionsController(BaseController):
         @return 200   locked ok
         @return 500   error locking
         """
-        content = _get_content(id, is_parent_owner=True)
+        content = _get_content(id, is_parent_owner=True, set_html_action_fallback=True)
         if content.parent_approve():
             user_log.debug("Approved & Locked Content #%d" % int(id))
             return action_ok(_("content has been approved and locked"))
@@ -111,7 +111,7 @@ class ContentActionsController(BaseController):
         @return 200   disassociated ok
         @return 500   error disassociating
         """
-        content = _get_content(id, is_parent_owner=True)
+        content = _get_content(id, is_parent_owner=True, set_html_action_fallback=True)
         if content.parent_disassociate():
             user_log.debug("Disassociated Content #%d" % int(id))
             return action_ok(_("content has disassociated from your parent content"))
@@ -134,7 +134,7 @@ class ContentActionsController(BaseController):
         @return 200   seen ok
         @return 500   error
         """
-        content = _get_content(id, is_parent_owner=True)
+        content = _get_content(id, is_parent_owner=True, set_html_action_fallback=True)
         if content.parent_seen():
             user_log.debug("Seen Content #%d" % int(id))
             return action_ok(_("content has been marked as seen"))
@@ -156,25 +156,19 @@ class ContentActionsController(BaseController):
         @return 200   accepted ok
         @return 500   error accepting
         """
-        assignment               = _get_content(id)
-        html_action_redirect_url = url('content', id=id)
+        assignment = _get_content(id, set_html_action_fallback=True)
         
         # AllanC - TODO: need message to user as to why they could not accept the assignment
         #         private assingment? not invited?
         #         already withdraw before so cannot accept again
-        try:
-            if assignment.accept(c.logged_in_persona):
-                assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
-                user_log.debug("Accepted Content #%d" % int(id))
-                # A convenience feature for flow of new users. If they are following nobody (they are probably a new user), then auto follow the assignment creator
-                if c.logged_in_persona.num_following == 0:
-                    c.logged_in_persona.follow(assignment.creator)
-                return action_ok(_("_assignment accepted"),
-                                 html_action_redirect_url = html_action_redirect_url
-                                )
-        except Exception as ae:
-            ae.original_dict.update(dict(html_action_redirect_url = html_action_redirect_url))
-            raise ae
+
+        if assignment.accept(c.logged_in_persona):
+            assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
+            user_log.debug("Accepted Content #%d" % int(id))
+            # A convenience feature for flow of new users. If they are following nobody (they are probably a new user), then auto follow the assignment creator
+            if c.logged_in_persona.num_following == 0:
+                c.logged_in_persona.follow(assignment.creator)
+            return action_ok(_("_assignment accepted"))
         raise action_error(_('Unable to accept _assignment'))
 
 
@@ -193,7 +187,8 @@ class ContentActionsController(BaseController):
         @return 200   withdrawn ok
         @return 500   error withdrawing
         """
-        assignment = _get_content(id)
+        assignment = _get_content(id, set_html_action_fallback=True)
+        
         status     = assignment.withdraw(c.logged_in_persona)
         if status == True:
             user_log.debug("Withdrew from Content #%d" % int(id))

@@ -391,6 +391,10 @@ def setup_format_processors():
         return render_template(result, 'frag')
         
     def format_html(result):
+        # AllanC - if we perform an HTML action but have not come from our site and used format='redirect' then we want the redirect to the html object that the action has been performed on rather than displaying an error
+        if c.html_action_fallback_url: #and c.format == 'html'
+            set_flash_message(result)
+            redirect(c.html_action_fallback_url)
         return render_template(result, 'html')
 
     def format_redirect(result):
@@ -484,10 +488,9 @@ def auto_format_output(target, *args, **kwargs):
             if c.format=="html" or c.format=="redirect":
                 if result.get('code') == 402:
                     return redirect(url(controller='misc', action='upgrade_account'))
-                if result.get('html_action_redirect_url'):
-                    if 'message' in result:
-                        set_flash_message(result) # Set flash message
-                    return redirect(result.get('html_action_redirect_url'))
+                if c.html_action_fallback_url:
+                    set_flash_message(result) # Set flash message
+                    return redirect(c.html_action_fallback_url)
             
     
     # After
@@ -502,15 +505,7 @@ def auto_format_output(target, *args, **kwargs):
             # a new call to error/document is made from scratch, this sets the default format to html again! if the format is in the query string this overrides it, but in the url path it gets lost
             # Verifyed as calling error/document.html/None
             #del result['code']
-        
-        # AllanC - if we perform an HTML action but have not come from our site and used format='redirect' then we want the redirect to the html object that the action has been performed on rather than displaying an error
-        if 'html_action_redirect_url' in result:
-            html_action_redirect_url = result['html_action_redirect_url']
-            del result['html_action_redirect_url']
-            if c.format == 'html':
-                set_flash_message(result)
-                redirect(html_action_redirect_url)
-        
+                
         # Render to format
         if c.format in format_processors:
             return format_processors[c.format](result)

@@ -170,11 +170,12 @@ class BaseController(WSGIController):
         
         c.result = {'status':'ok', 'message':'', 'data':{}} # Default return object
 
-        c.format               = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
-        c.authenticated_form   = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
-        c.web_params_to_kwargs = None
-        c.absolute_links       = False # For gadgets and emails links and static content need to be absolute. this is interprited by civicboom.lib.web:url
-        c.host                 = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
+        c.format                   = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
+        c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
+        c.web_params_to_kwargs     = None
+        c.html_action_fallback_url = None # Some actions like 'follow' and 'accept' do not have templates - a fallback can be set and @auto_format interperits this as a redirect fallback
+        c.absolute_links           = False # For gadgets and emails links and static content need to be absolute. this is interprited by civicboom.lib.web:url
+        c.host                     = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
 
         # Widget default settings
         c.widget = dict(
