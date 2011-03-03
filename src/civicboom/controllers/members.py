@@ -19,7 +19,7 @@ user_log = logging.getLogger("user")
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_member(member):
+def _get_member(member, set_html_action_fallback=False):
     """
     Shortcut to return a member and raise not found automatically (as these are common opertations every time a member is fetched)
     """
@@ -28,6 +28,9 @@ def _get_member(member):
         raise action_error(_("member not found"), code=404)
     if member.status != "active":
         raise action_error(_("member inactive") , code=404)
+    if set_html_action_fallback:
+        # AllanC - see _get_content for rational behind this
+        c.html_action_fallback_url = url('member', id=member.username)
     return member
 
 

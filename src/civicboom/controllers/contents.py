@@ -70,7 +70,7 @@ class ContentCommentSchema(ContentSchema):
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False):
+def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False, set_html_action_fallback=False):
     """
     Shortcut to return content and raise not found or permission exceptions automatically (as these are common opertations every time a content is fetched)
     """
@@ -90,6 +90,12 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
         raise action_error(_("You do not have permission to edit this _content"), code=403)
     if is_parent_owner and not content.is_parent_owner(c.logged_in_persona):
         raise action_error(_("You are not the owner of the parent _content"), code=403)
+    if set_html_action_fallback:
+        # AllanC - Many times when we fetch content in an 'action' we dont have a template set.
+        # if we perform an action but dont have a page to display an error occurs
+        # we set a url fallback.
+        # This bool can be set to auto generate this as a convenience
+        c.html_action_fallback_url = url('content', id=content.id)
     return content
 
 #-------------------------------------------------------------------------------

@@ -32,9 +32,11 @@ class MemberActionsController(BaseController):
         @return 200   following ok
         @return 500   error following
         """
-        status = c.logged_in_persona.follow(id)
+        member = _get_member(id, set_html_action_fallback=True)
+
+        status = c.logged_in_persona.follow(member)
         if status == True:
-            return action_ok(_('You are now following %s') % id)
+            return action_ok( _('You are now following %s') % member.name or member.username )
         raise action_error(_('Unable to follow member: %s') % status)
 
     #---------------------------------------------------------------------------
@@ -52,9 +54,10 @@ class MemberActionsController(BaseController):
         @return 200   unfollowing ok
         @return 500   error unfollowing
         """
-        status = c.logged_in_persona.unfollow(id)
+        member = _get_member(id, set_html_action_fallback=True)
+        status = c.logged_in_persona.unfollow(member)
         if status == True:
-            return action_ok(_('You have stopped following %s') % id)
+            return action_ok(_('You have stopped following %s') % member.name or member.username)
         raise action_error(_('Unable to stop following member: %s') % status)
 
 
