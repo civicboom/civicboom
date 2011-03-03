@@ -19,7 +19,7 @@ import urllib, hashlib, copy
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 member_type              = Enum("user", "group",                     name="member_type"  )
-account_types            = Enum("free", "plus", "corp", "copp_plus", name="account_types")
+account_types            = Enum("free", "plus", "corp", "corp_plus", name="account_types")
 
 group_member_roles_level =     ("admin", "editor", "contributor", "observer") # the order of permissions e.g admin has higher privilages than editor
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
@@ -28,6 +28,7 @@ group_member_status      = Enum("active", "invite", "request",                na
 group_join_mode          = Enum("public", "invite" , "invite_and_request",    name="group_join_mode")
 group_member_visibility  = Enum("public", "private",                          name="group_member_visibility" )
 group_content_visibility = Enum("public", "private",                          name="group_content_visibility")
+
 
 def has_role_required(role_required, role_current):
     """
@@ -40,6 +41,7 @@ def has_role_required(role_required, role_current):
         return permission_index_required - permission_index_current + 1
     except:
         return 0
+
 
 class GroupMembership(Base):
     __tablename__ = "map_user_to_group"
@@ -127,6 +129,7 @@ CREATE TRIGGER update_follower_count
 def _generate_salt():
     import os
     return os.urandom(256)
+
 
 class Member(Base):
     "Abstract class"
@@ -493,7 +496,7 @@ CREATE TRIGGER update_location_time
 class Group(Member):
     __tablename__      = "member_group"
     __mapper_args__    = {'polymorphic_identity': 'group'}
-    id                         = Column(Integer(), ForeignKey('member.id'), primary_key=True)    
+    id                         = Column(Integer(), ForeignKey('member.id'), primary_key=True)
     join_mode                  = Column(group_join_mode         , nullable=False, default="invite")
     member_visibility          = Column(group_member_visibility , nullable=False, default="public")
     default_content_visibility = Column(group_content_visibility, nullable=False, default="public")
@@ -604,13 +607,14 @@ class Group(Member):
         from civicboom.lib.database.actions import del_group
         return del_group(self)
     
+
 class UserLogin(Base):
     __tablename__    = "member_user_login"
     id          = Column(Integer(),    primary_key=True)
     member_id   = Column(Integer(),    ForeignKey('member.id'), index=True)
     # FIXME: need full list; facebook, google, yahoo?
     #type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
-    type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time    
+    type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time
     token       = Column(String(250),  nullable=False)
 
 

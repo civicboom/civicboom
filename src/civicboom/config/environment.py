@@ -14,7 +14,8 @@ import civicboom.lib.helpers
 from civicboom.config.routing import make_map
 from civicboom.model import init_model
 from civicboom.lib.worker import start_worker
-from civicboom.lib.civicboom_init import init as civicboom_init # This will tirgger a set of additional initalizers
+from civicboom.lib.civicboom_init import init as civicboom_init  # This will trigger a set of additional initalizers
+
 
 def load_environment(global_conf, app_conf):
     """
@@ -80,7 +81,6 @@ def load_environment(global_conf, app_conf):
                         ]
     for varname in integer_varnames:
         config[varname] = int(config[varname].strip())
-    
 
     # worker and websetup.py both try to access pylons.config before it is
     # officially ready -- so make it unofficially ready and pray (HACK)

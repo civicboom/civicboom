@@ -3,6 +3,7 @@ from civicboom.model.meta import Session
 from civicboom.model import Message, Member
 #import json
 
+
 class TestMessagesController(TestController):
     def test_all(self):
         self.part_setup()

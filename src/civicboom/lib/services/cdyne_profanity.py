@@ -31,7 +31,9 @@ def profanity_check(content):
          ProfanityCount: Returns Integer
          CleanText     : Returns the clean text. profanitys replaced with [Explicit]
     """
-    if not content: return
+    if not content:
+        return
+
     try                : content = content.encode('utf-8')
     except UnicodeError: pass
 
@@ -50,8 +52,10 @@ def profanity_check(content):
         return response
         
     response = do_request(request)
-    if not response: response = do_request(request)
-    if not response: return None
+    if not response:
+        response = do_request(request)
+    if not response:
+        return None
 
     profanity_response = readXMLStringtoDic(response.read())
     profanity_response = profanity_response['FilterReturn']

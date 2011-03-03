@@ -21,6 +21,7 @@ service_url = 'https://www.google.com/recaptcha/api/'
 lazy_html        = None
 lazy_private_key = None
 
+
 def reCAPTCHA_html(lang='en', theme='red'):
     global lazy_html
     if not lazy_html:
@@ -41,7 +42,8 @@ def reCAPTCHA(method, **kwargs):
     Make reCAPTCHA API calls from python
     """
     global lazy_private_key
-    if not lazy_private_key: lazy_private_key = config['api_key.reCAPTCHA.private']
+    if not lazy_private_key:
+        lazy_private_key = config['api_key.reCAPTCHA.private']
     kwargs['privatekey'] = lazy_private_key
     
     try:
@@ -52,6 +54,7 @@ def reCAPTCHA(method, **kwargs):
         log.error(self.message('reCAPTCHA network_failure', state))
         return None
     return reCAPTCHA_response
+
 
 def reCAPTCHA_verify(**kwargs):
     reCAPTCHA_response = reCAPTCHA('verify', **kwargs)
@@ -66,7 +69,3 @@ def reCAPTCHA_verify(**kwargs):
     if error not in ['incorrect-captcha-sol']:
         log.error(error) # Log real errors
     return error
-        
-
-    
-    

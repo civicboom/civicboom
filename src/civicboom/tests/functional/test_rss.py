@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestRSSController(TestController):
 
     def test_rss_member(self):

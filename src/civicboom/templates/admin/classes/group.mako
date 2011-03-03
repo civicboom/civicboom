@@ -9,7 +9,14 @@ ${common.errors(fieldset)}
 	<tr><th colspan="2">${_("Information")}</th></tr>
 	${common.render_short_field(fieldset.username)|n}
 	${common.render_short_field(fieldset.status.dropdown(options=["pending", "active", "removed"]))|n}
-##	${common.render_short_field(fieldset.members)|n}
+</table>
+
+<table>
+	<tr><th colspan="2">${_("Mode")}</th></tr>
+	${common.render_short_field(fieldset.join_mode)|n}
+	${common.render_short_field(fieldset.member_visibility)|n}
+	${common.render_short_field(fieldset.default_content_visibility)|n}
+	${common.render_short_field(fieldset.default_role)|n}
 </table>
 		</td>
 		<td>

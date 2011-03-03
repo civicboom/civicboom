@@ -17,16 +17,20 @@ import sqlalchemy
 
 fa_config.encoding = 'utf-8'
 
+
 class TemplateEngine(templates.TemplateEngine):
     def render(self, name, **kwargs):
         return render('/admin/formalchemy/%s.mako' % name, extra_vars=kwargs)
 fa_config.engine = TemplateEngine()
 
+
 class FieldSet(forms.FieldSet):
     pass
 
+
 class Grid(tables.Grid):
     pass
+
 
 # custom renderers {{{
 def create_autocompleter(url):
@@ -68,10 +72,11 @@ $('#%(name)s_name').autocomplete({
             """ % vars
     return AutoCompleteRenderer
 
+
 class DatePickerFieldRenderer(FieldRenderer):
     def render(self):
-        value= self.value and self.value or ''
-        vars = dict(name=self.name, value=value)
+        value= self.value or ''
+        vars = dict(name=self.name, value=value.split(".")[0])
         return """
 <input id="%(name)s" name="%(name)s" type="text" value="%(value)s">
 <script type="text/javascript">
@@ -79,9 +84,26 @@ $('#%(name)s').datepicker({dateFormat: 'yy-mm-dd'})
 </script>
         """ % vars
 
+
+class EnumFieldRenderer(FieldRenderer):
+    def render(self):
+        value = self.value or ''
+        opts = ""
+        for o in self.field._columns[0].type.enums:  # is there a better way? :|
+            sel = " selected" if self.value==o else ""
+            opts = opts + ("<option value='%s'%s>%s</option>\n" % (o, sel, o.replace("_", " ")))
+        vars = dict(name=self.name, opts=opts)
+        return """
+<select id="%(name)s" name="%(name)s">
+%(opts)s
+</select>
+        """ % vars
+
 FieldSet.default_renderers[geometry.Geometry] = GeometryFieldRenderer
 FieldSet.default_renderers[sqlalchemy.UnicodeText] = TextAreaFieldRenderer
 FieldSet.default_renderers[sqlalchemy.DateTime] = DatePickerFieldRenderer
+FieldSet.default_renderers[sqlalchemy.Enum] = EnumFieldRenderer
+
 
 # }}}
 # object editors {{{
@@ -216,7 +238,10 @@ Group.configure(include=[
         Group.name,
         Group.join_date,
         Group.status,
-        #Group.members, # FIXME: links are to memberships, not members
+        Group.join_mode,
+        Group.member_visibility,
+        Group.default_content_visibility,
+        Group.default_role,
         ])
 
 Message = FieldSet(model.Message)

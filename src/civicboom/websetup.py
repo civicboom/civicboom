@@ -15,23 +15,19 @@ import logging
 log = logging.getLogger(__name__)
 
 
-
-
-
 def setup_app(command, conf, variables):
     """Place any commands to setup civicboom here"""
-    if not pylons.test.pylonsapp: # pragma: no cover -- "if not testing" will not be true for testing...
+    if not pylons.test.pylonsapp:  # pragma: no cover -- "if not testing" will not be true for testing...
         load_environment(conf.global_conf, conf.local_conf)
 
-
     ###################################################################
-    log.info("Creating tables") # {{{
+    log.info("Creating tables")   # {{{
 
     Base.metadata.drop_all(checkfirst=True, bind=Session.bind)
     Base.metadata.create_all(bind=Session.bind)
 
     # }}}
-    log.info("Creating triggers") # {{{
+    log.info("Creating triggers")   # {{{
     sess = Session()
     conn = sess.connection()
 #model/member.py:    new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
@@ -171,7 +167,7 @@ CREATE TRIGGER update_content
     """)
     #}}}
     ###################################################################
-    log.info("Populating tables with base data") # {{{
+    log.info("Populating tables with base data")  # {{{
 
     unspecified = License(u"Unspecified", u"Unspecified", u"", u"")
     cc_by       = License(u"CC-BY",       u"Creative Commons Attribution", u"Alteration allowed with credit to the source", u"http://www.creativecommons.org")
@@ -212,13 +208,12 @@ CREATE TRIGGER update_content
     # }}}
     ###################################################################
 
-    if pylons.test.pylonsapp: # only populate when in test mode?
+    if pylons.test.pylonsapp:  # only populate when in test mode?
         from civicboom.tests.init_base_data import init_base_data
         init_base_data()
-
 
     log.info("Successfully set up tables")
 
     worker.stop_worker()
-    
+
     log.info("Setup complete")

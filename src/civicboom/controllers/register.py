@@ -64,10 +64,14 @@ class RegisterController(BaseController):
         
         # Build required fields list from current user data - the template will then display these and a custom validator will be created for them
         c.required_fields = ['username','email','password','dob']
-        if not c.logged_in_persona.username.startswith(new_user_prefix): c.required_fields.remove('username')
-        if c.logged_in_persona.email                                   : c.required_fields.remove('email')
-        if len(c.logged_in_persona.login_details) > 0                  : c.required_fields.remove('password')
-        if c.logged_in_persona.config["dob"] != u""                    : c.required_fields.remove('dob')
+        if not c.logged_in_persona.username.startswith(new_user_prefix):
+            c.required_fields.remove('username')
+        if c.logged_in_persona.email:
+            c.required_fields.remove('email')
+        if len(c.logged_in_persona.login_details) > 0:
+            c.required_fields.remove('password')
+        if c.logged_in_persona.config["dob"] != u"":
+            c.required_fields.remove('dob')
         
         # If no post data, display the registration form with required fields
         if request.environ['REQUEST_METHOD'] == 'GET':
@@ -176,7 +180,7 @@ def register_new_janrain_user(profile):
     """
     With a Janrain user dictonary create a new user with whatever data has been provided as best we can
     If additional information is required the account controler will redirect to the register action to ask for additional details
-    """    
+    """
     Session.flush() # AllanC - for some mythical reason the commit below wont function because the database is in an odd state, this flush makes the commit below work, more investigation may be needed or maybe a newer version of SQL alchemy will fix this issue
     
     u = User()

@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestUserProfileController(TestController):
 
     def test_index_not_logged_in(self):

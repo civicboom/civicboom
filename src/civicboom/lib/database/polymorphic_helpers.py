@@ -87,7 +87,8 @@ def morph_content_to(content, after_type):
     """
     
     content = get_content(content)
-    if not content: raise Exception('no content to morph')
+    if not content:
+        raise Exception('no content to morph')
     
     if content.__type__ == None      : return content # If we don't know the source object type then we cant process it
     if content.__type__ == after_type: return content # If the before and after types are the same then return the content obj as no processing needs to take place

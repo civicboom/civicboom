@@ -16,15 +16,17 @@ contents_list_titles = [
     ('articles'            , 'article'    , _('_articles').capitalize()             ),
 ]
 
+
 def get_list_titles(list_name):
     for (list, icon, description) in contents_list_titles:
         if list == list_name:
             return (icon, description)
     return (list_name,list_name)
 
+
 actions_list = [
     # url identifyer , action, description
     ('/accept', 'accept', _('Accept an _assignment')),
-    #('/follow', 'follow', _('')),
+    ('/follow', 'follow', _('Follow a _member')     ),
     #('??'     , 'respond', _('')),
 ]

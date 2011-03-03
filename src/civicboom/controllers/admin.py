@@ -14,6 +14,7 @@ import re
 
 prefix = '/admin/'
 
+
 class AdminControllerBase(BaseController):
     model = model # where your SQLAlchemy mappers are
     forms = forms # module containing FormAlchemy fieldsets definitions
@@ -48,7 +49,7 @@ class AdminControllerBase(BaseController):
         # FIXME: SQL injection; regex whitelist *should* stop it
         for name in [n for n in request.GET.keys() if "--" in n]:
             col_name = name[name.find("--")+2:]
-            value = request.GET[name];
+            value = request.GET[name]
             if re.match("^[a-zA-Z0-9_]+$", col_name) and re.match("^[a-zA-Z0-9_]+$", value):
                 if re.match("^[0-9]+$", value):
                     q = q.filter("%s = %s" % (col_name, str(value)))

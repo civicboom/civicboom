@@ -39,4 +39,3 @@ class TestListsController(TestController):
         for count in range(max(limits) + 1):
             create_member('list_member_%s' % count)
             create_content('list_content_%s' % count)
-        

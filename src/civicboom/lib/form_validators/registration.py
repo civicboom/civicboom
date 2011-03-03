@@ -55,6 +55,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
             raise formencode.Invalid(self.message("username_taken", state, name=value), value, state)
         return value
 
+
 class UniqueEmailValidator(validators.Email):
     not_empty = True
     def __init__(self, *args, **kwargs):
@@ -103,14 +104,14 @@ class MinimumAgeValidator(IsoFormatDateConverter):
             raise formencode.Invalid(self.message('under_min_age', state), value, state)
         return date
 
+
 class ReCaptchaValidator(validators.FancyValidator):
-    """    
+    """
     References
         http://toscawidgets.org/hg/tw.recaptcha/file/f846368854fe/tw/recaptcha/validator.py
         http://pypi.python.org/pypi/recaptcha-client
         http://www.google.com/recaptcha
     """
-    
     messages = {
         'incorrect'       : _('reCAPTCHA field is incorrect'),
         'missing'         : _("Missing reCAPTCHA value."),
@@ -125,7 +126,7 @@ class ReCaptchaValidator(validators.FancyValidator):
 
     def __init__(self, remote_ip, *args, **kw):
         super(ReCaptchaValidator, self).__init__(args, kw)
-        self.remote_ip = remote_ip 
+        self.remote_ip = remote_ip
         self.field_names = ['recaptcha_challenge_field',
                             'recaptcha_response_field']
     
@@ -160,5 +161,5 @@ class ReCaptchaValidator(validators.FancyValidator):
 #-------------------------------------------------------------------------------
 
 class RegisterSchemaEmailUsername(DefaultSchema):
-  username  = UniqueUsernameValidator(not_empty=True)
-  email     = UniqueEmailValidator   (not_empty=True)
+    username  = UniqueUsernameValidator(not_empty=True)
+    email     = UniqueEmailValidator   (not_empty=True)

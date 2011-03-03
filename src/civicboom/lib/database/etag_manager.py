@@ -19,6 +19,7 @@ etag_keys = {} #"assignment":{}, "article":{}, "member_articles":{}, "member":{}
 def add_etag_dependency_key(dependecy_key):
     etag_keys[dependecy_key] = {}
 
+
 #-------------------------------------------------------------------------------
 
 def etag_key_incement(key, value):
@@ -26,12 +27,14 @@ def etag_key_incement(key, value):
     eTags can be invalidated
     to be called when an object is commited to the database and requires the tag to be updated
     e.g.
-      
     """
     value    = str(value)
     etag_key = etag_keys[key]
-    if value in etag_key: etag_key[value] += 1
-    else                : etag_key[value]  = 0
+    if value in etag_key:
+        etag_key[value] += 1
+    else:
+        etag_key[value]  = 0
+
 
 #-------------------------------------------------------------------------------
 
@@ -42,7 +45,8 @@ def gen_cache_key(**kargs):
       cache_key = gen_cache_key(member=c.widget_member.id, assignment=id)  #if the etag is dependent on content of the listed member and listed assingnment
     """
     def getsafe_current_username():
-        if c.logged_in_persona: return c.logged_in_persona.username
+        if c.logged_in_persona:
+            return c.logged_in_persona.username
         return ""
     def getsafe_flash_message():
         #if 'flash_message' in session: return session['flash_message']

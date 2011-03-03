@@ -13,7 +13,7 @@ import re
 import logging
 log = logging.getLogger(__name__)
 
-random_symbols = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
 def random_string(length=8):
     """
     Generate a random string of a-z A-Z 0-9
@@ -31,10 +31,12 @@ def random_string(length=8):
     >>> len(zlib.compress(random_string(100))) > 50
     True
     """
+    random_symbols = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     r = ''
     for i in range(length):
         r += random_symbols[random.randint(0,len(random_symbols)-1)]
     return r
+
 
 def str_to_int(text, default=0):
     try:
@@ -42,6 +44,7 @@ def str_to_int(text, default=0):
     except:
         pass
     return default
+
 
 def calculate_age(born):
     """
@@ -61,11 +64,16 @@ def calculate_age(born):
     """
     today = date.today()
     
-    try              : birthday = date(today.year, born.month, born.day    )
-    except ValueError: birthday = date(today.year, born.month, born.day - 1) # Raised when person was born on 29 February and the current year is not a leap year.
+    try:
+        birthday = date(today.year, born.month, born.day    )
+    except ValueError:
+        birthday = date(today.year, born.month, born.day - 1) # Raised when person was born on 29 February and the current year is not a leap year.
     
-    if birthday > today: return today.year - born.year - 1
-    else               : return today.year - born.year
+    if birthday > today:
+        return today.year - born.year - 1
+    else:
+        return today.year - born.year
+
 
 def update_dict(dict_a, dict_b):
     """
@@ -73,6 +81,7 @@ def update_dict(dict_a, dict_b):
     """
     dict_a.update(dict_b)
     return dict_a
+
 
 def obj_to_dict(obj, dict_fields):
     """
@@ -114,8 +123,10 @@ def obj_to_dict(obj, dict_fields):
         d[field_name] = field_value
     return d
 
+
 def args_to_tuple(*args, **kwargs):
     return (args, kwargs)
+
 
 def make_username(title):
     """
@@ -125,4 +136,3 @@ def make_username(title):
     'bob-s-cake-factory'
     """
     return re.sub("[^\w-]", "-", title.lower()).strip("-")
-

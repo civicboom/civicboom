@@ -19,7 +19,7 @@ user_log = logging.getLogger("user")
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_member(member):
+def _get_member(member, set_html_action_fallback=False):
     """
     Shortcut to return a member and raise not found automatically (as these are common opertations every time a member is fetched)
     """
@@ -28,7 +28,11 @@ def _get_member(member):
         raise action_error(_("member not found"), code=404)
     if member.status != "active":
         raise action_error(_("member inactive") , code=404)
+    if set_html_action_fallback:
+        # AllanC - see _get_content for rational behind this
+        c.html_action_fallback_url = url('member', id=member.username)
     return member
+
 
 #-------------------------------------------------------------------------------
 # Search Filters
@@ -76,6 +80,7 @@ def _init_search_filters():
 
 search_filters = _init_search_filters()
 
+
 #-------------------------------------------------------------------------------
 # Members Controler
 #-------------------------------------------------------------------------------
@@ -109,7 +114,7 @@ class MembersController(BaseController):
         
         # Autocomplete uses term not name - for ease of migration term is copyed to name if name not present
         if 'term' in kwargs and 'name' not in kwargs:
-            kwargs['name'] =  kwargs['term']
+            kwargs['name'] = kwargs['term']
         
         # Setup search criteria
         kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.members'])

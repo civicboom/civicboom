@@ -33,6 +33,7 @@ def location_to_string(location):
         return '%s %s' % (location.coords(Session)[0], location.coords(Session)[1])
     return None
 
+
 def to_dict(self, list_type='default', include_fields=None, exclude_fields=None, **kwargs):
     """
     describe
@@ -75,4 +76,3 @@ def to_dict(self, list_type='default', include_fields=None, exclude_fields=None,
 Base.__to_dict__    =  {}
 Base.to_dict        = to_dict
 #Base.to_dict_update = to_dict_update
-

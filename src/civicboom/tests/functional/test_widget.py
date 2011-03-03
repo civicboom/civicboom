@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestWidgetController(TestController):
     pass
     #def test_no_widget_user(self):

@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 # inherit from TestController so that url() is set up
 class TestRoutes(TestController):
     def test_rest_routes(self):
