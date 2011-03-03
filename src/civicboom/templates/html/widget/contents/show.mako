@@ -21,7 +21,7 @@
 ## If the widget is not owned by anybody then show the creator
 % if not c.widget['owner']['username']:
 <p>
-    <a href="${h.url('member', id=content['creator']['username'])}" target="_blank">
+    <a href="${h.url('member', id=content['creator']['username'], subdomain='')}" target="_blank">
         By
         <img src="${content['creator']['avatar_url']}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
         ${content['creator']['name'] or content['creator']['username']}
