@@ -394,10 +394,11 @@ def flag_content(content, member=None, type="automated", comment=None):
         member_username = flag.member.username
     except:
         pass
-    send_email(config['email.moderator'],
-               subject=_('flagged content'),
-               content_text="%s flagged %s as %s" % (member_username, url(controller='content', action='view', id=content.id), type)
-               )
+    send_email(
+        config['email.moderator'],
+        subject      = _('flagged content'),
+        content_text = "%s flagged %s as %s" % (member_username, url('content', id=content.id), type),
+    )
 
 
 def boom_content(content, member, delay_commit=False):

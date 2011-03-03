@@ -333,13 +333,13 @@ def profanity_filter(content, delay_commit=False):
 #-------------------------------------------------------------------------------
 
 
-def get_signin_action_objects():
+def get_action_objects_for_url(action_url=None):
     """
     If signing in and performing an action
     Will return ()
     
     """
-    from civicboom.lib.web import cookie_get
+    from civicboom.lib.web     import current_url
     from civicboom.lib.helpers import get_object_from_action_url
     from civicboom.controllers.members  import MembersController
     from civicboom.controllers.contents import ContentsController
@@ -348,10 +348,11 @@ def get_signin_action_objects():
 
     
     # If performing an action we may want to display a custom message with the login
-    login_redirect_url = cookie_get('login_redirect') or ''
+    if not action_url:
+        action_url = current_url()
     for action_identifyer, action_action, action_description in constants.actions_list:
-        if action_identifyer in login_redirect_url:
-            args, kwargs = get_object_from_action_url( login_redirect_url )
+        if action_identifyer in action_url:
+            args, kwargs = get_object_from_action_url( action_url )
             if args and kwargs:
                 # Generate action object frag URL
                 kwargs['format'] = 'frag'
@@ -367,4 +368,4 @@ def get_signin_action_objects():
                 action_object = action_object          ,
                 frag_url      = action_object_frag_url ,
             )
-    return None
+    return {}
