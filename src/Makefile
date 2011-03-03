@@ -13,6 +13,7 @@ help:
 	# gource     -- generate a video of developer activity
 	# profile    -- run the test suite with profiling enabled (slow)
 	# stats      -- run the interactive profile examiner
+	# pep8       -- strict syntax checking
 
 site: i18n js css
 
@@ -72,3 +73,12 @@ profile:
 
 stats:
 	python -m pstats /tmp/prof.out
+
+pep8:
+	# 2XX = whitespace inside lines
+	# 293 = whitespace at end of line (warning only if blank line)
+	# 301 = expected 1 blank line, found 0
+	# 303 = too many blank lines
+	# 501 = line too long
+	# 701 = multiple statments one line (colons)
+	pep8 -r --ignore=E2,E301,E303,E501,E701,W293 civicboom

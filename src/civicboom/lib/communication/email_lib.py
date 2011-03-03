@@ -33,8 +33,8 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
     
     # Check paramiters for validity and throw exception if needed
     if content_text==None and content_html==None:
-      raise EmailContentError('email content for plain text or HTML not specifyed')
-  
+        raise EmailContentError('email content for plain text or HTML not specifyed')
+
     # Convert plain text into html by:
     #   -autolinking any links
     #   -putting inside html header
@@ -50,8 +50,10 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
         content_html = render('/email/base_email_from_plaintext.mako')
   
     # Subject - append site name to subject
-    if subject==None or subject=='': subject = _("_site_name")
-    else                           : subject = _("_site_name")+': '+subject  
+    if subject==None or subject=='':
+        subject = _("_site_name")
+    else:
+        subject = _("_site_name")+': '+subject
   
     if config['online'] and config['feature.aggregate.email']:
         send_email_smtp(email_to, subject, content_text, content_html)
@@ -122,4 +124,3 @@ def send_email_smtp(email_to, subject, content_text, content_html, sender=None):
         log.error('Unable to send email: %s' % e)
     except smtplib.socket.error as e:
         log.error('Mail server not available/misconfigured: %s' % e)
-

@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestMiscController(TestController):
 
     # about is mapped to /about/*, and loads the template from /web/about/$id.mako
@@ -106,4 +107,3 @@ class TestMiscController(TestController):
             }
         )
         # FIXME: test environ['is_mobile']
-

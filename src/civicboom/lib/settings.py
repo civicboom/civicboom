@@ -8,6 +8,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
+
 class MemberSettingsManager(UserDict.DictMixin):
     def __init__(self, member):
         self.member = member

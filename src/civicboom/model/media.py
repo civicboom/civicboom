@@ -50,8 +50,8 @@ class Media(Base):
         },
     })
     __to_dict__.update({
-        'full'        : copy.deepcopy(__to_dict__['default']) , 
-        #'full+actions': copy.deepcopy(__to_dict__['default']) , 
+        'full'        : copy.deepcopy(__to_dict__['default']) ,
+        #'full+actions': copy.deepcopy(__to_dict__['default']) ,
     })
 
 

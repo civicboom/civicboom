@@ -17,6 +17,7 @@ from civicboom.middleware.MobileDetectionMiddleware import MobileDetectionMiddle
 from civicboom.middleware.EnvironMiddleware import EnvironMiddleware
 from civicboom.middleware.SecurifyCookiesMiddleware import SecurifyCookiesMiddleware
 
+
 class HeaderURLParser(StaticURLParser):
     def make_app(self, filename):
         # set headers so that static content can be cached
@@ -25,6 +26,7 @@ class HeaderURLParser(StaticURLParser):
             ("Vary", "Accept-Encoding"),
         ]
         return FileApp(filename, headers)#, content_type='application/octetstream')
+
 
 def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     """Create a Pylons WSGI application and return it
@@ -64,7 +66,6 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     app = MobileDetectionMiddleware(app)
     app = EnvironMiddleware(app)
     app = SecurifyCookiesMiddleware(app)
-
 
     if asbool(full_stack):
         # Handle Python exceptions

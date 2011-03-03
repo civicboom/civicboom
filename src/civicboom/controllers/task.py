@@ -100,7 +100,7 @@ class TaskController(BaseController):
                     member.send_message( messages.assignment_due_7days(member, assignment=assignment) )              #     if not send a reminder notification
                     
         for assignment in get_assignments_by_date(date_start=date_1days_time, date_end=date_1days_time + date_1day): #Same as above but on day before
-            responded_member_ids = get_responded(assignment) 
+            responded_member_ids = get_responded(assignment)
             for member in assignment.accepted_by:
                 if member.id not in responded_member_ids:
                     member.send_message( messages.assignment_due_1day(member, assignment=assignment) )
@@ -177,4 +177,3 @@ class TaskController(BaseController):
 
     def test(self):
         return "<task happened>"
-

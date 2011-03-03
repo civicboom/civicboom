@@ -10,12 +10,14 @@ log = logging.getLogger(__name__)
 
 emails = []
 
+
 class Email:
     def __init__(self, email_to, subject, content_text, content_html):
         self.email_to     = email_to
         self.subject      = subject
         self.content_text = content_text
         self.content_html = content_html
+
 
 def email_log(email_to, subject, content_text, content_html):
     log.info("--Email Send Disabled-- To: %s Subject: %s" % (email_to, subject))
@@ -25,8 +27,10 @@ def email_log(email_to, subject, content_text, content_html):
     if config['test_mode']:
         emails.append(Email(email_to, subject, content_text, content_html))
     
+
 def getNumEmails():
     return len(emails)
+
 
 def getLastEmail():
     return emails[-1]

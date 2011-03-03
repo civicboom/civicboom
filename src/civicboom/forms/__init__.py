@@ -17,16 +17,20 @@ import sqlalchemy
 
 fa_config.encoding = 'utf-8'
 
+
 class TemplateEngine(templates.TemplateEngine):
     def render(self, name, **kwargs):
         return render('/admin/formalchemy/%s.mako' % name, extra_vars=kwargs)
 fa_config.engine = TemplateEngine()
 
+
 class FieldSet(forms.FieldSet):
     pass
 
+
 class Grid(tables.Grid):
     pass
+
 
 # custom renderers {{{
 def create_autocompleter(url):
@@ -68,6 +72,7 @@ $('#%(name)s_name').autocomplete({
             """ % vars
     return AutoCompleteRenderer
 
+
 class DatePickerFieldRenderer(FieldRenderer):
     def render(self):
         value= self.value and self.value or ''
@@ -82,6 +87,7 @@ $('#%(name)s').datepicker({dateFormat: 'yy-mm-dd'})
 FieldSet.default_renderers[geometry.Geometry] = GeometryFieldRenderer
 FieldSet.default_renderers[sqlalchemy.UnicodeText] = TextAreaFieldRenderer
 FieldSet.default_renderers[sqlalchemy.DateTime] = DatePickerFieldRenderer
+
 
 # }}}
 # object editors {{{

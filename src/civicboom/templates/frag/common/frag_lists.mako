@@ -272,7 +272,7 @@
         <a href="${h.url('content', id=id)}" ${js_link_to_frag}>
             <p class="content_title">${content['title']}</p>
           % if creator and 'creator' in content:
-            <p style="font-size: 88%" class="content_title">By: ${content['creator']['name']}</p>
+            <p style="font-size: 88%" class="content_title">By: ${content['creator']['name'] or content['creator']['username']}</p>
           % endif
         </a>
     </td>

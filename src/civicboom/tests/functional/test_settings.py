@@ -2,6 +2,7 @@ from civicboom.tests import *
 from base64 import b64encode, b64decode
 import warnings
 
+
 class TestSettingsController(TestController):
     
 #    def test_index(self):

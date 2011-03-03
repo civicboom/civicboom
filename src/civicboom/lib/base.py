@@ -43,7 +43,7 @@ __all__ = [
 
     # decorators
     "https",
-    "authorize", 
+    "authorize",
     "authenticate_form",
     "auto_format_output",
     "web_params_to_kwargs",
@@ -77,19 +77,23 @@ __all__ = [
     "gen_cache_key"
 ]
 
+
 #-------------------------------------------------------------------------------
 # Render
 #-------------------------------------------------------------------------------
 def render(*args, **kwargs):
     if not app_globals.cache_enabled:
-        if 'cache_key'    in kwargs: del kwargs['cache_key']
-        if 'cache_expire' in kwargs: del kwargs['cache_expire']
+        if 'cache_key'    in kwargs:
+            del kwargs['cache_key']
+        if 'cache_expire' in kwargs:
+            del kwargs['cache_expire']
     if len(args)==2:
         # if args is 'template_filename', 'def_name' then call the def
         return render_mako_def(*args, **kwargs)
     else:
         # else if only 'template_filename' call the template file
         return render_mako(*args, **kwargs)
+
 
 #-------------------------------------------------------------------------------
 # Decorators - Merged
@@ -113,6 +117,7 @@ auth = chained(authorize, authenticate_form)
 #-------------------------------------------------------------------------------
 
 widget_var_prefix = config["setting.widget.var_prefix"]
+
 
 def setup_widget_env():
     """
@@ -212,10 +217,14 @@ class BaseController(WSGIController):
 
         # Setup Langauge -------------------------------------------------------
         #  - there is a way of setting fallback langauges, investigate?
-        if   'lang' in request.params:  self._set_lang(request.params['lang']) # If lang set in URL
-        elif 'lang' in session       :  self._set_lang(       session['lang']) # Lang set for this users session
-        #elif c.logged_in_persona has lang: self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
-        else                         :  self._set_lang(        config['lang']) # Default lang in config file
+        if 'lang' in request.params:
+            self._set_lang(request.params['lang']) # If lang set in URL
+        elif 'lang' in session:
+            self._set_lang(       session['lang']) # Lang set for this users session
+        #elif c.logged_in_persona has lang:
+        #    self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
+        else:
+            self._set_lang(        config['lang']) # Default lang in config file
         
         # User pending regisration? --------------------------------------------
         # redirect to complete registration process

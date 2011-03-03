@@ -27,6 +27,7 @@ class NewMessageSchema(DefaultSchema):
     subject                    = formencode.validators.String(not_empty=False, max=255)
     content                    = formencode.validators.String(not_empty=False)
 
+
 #-------------------------------------------------------------------------------
 # Global Functions
 #-------------------------------------------------------------------------------
@@ -129,7 +130,7 @@ class MessagesController(BaseController):
             else:
                 raise action_error(_('list %s not supported') % kwargs['list'], code=400)
                 
-        # Sort        
+        # Sort
         results = results.order_by(Message.timestamp.desc())
         
         # Count

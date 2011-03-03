@@ -26,6 +26,7 @@ add_etag_dependency_key("member")
 add_etag_dependency_key("member_content")
 add_etag_dependency_key("member_assignments_active")
 
+
 #-------------------------------------------------------------------------------
 # Database Object Gets - Cached - Get data from database that is cached
 #-------------------------------------------------------------------------------
@@ -36,7 +37,7 @@ def get_media(id=None, hash=None):
         try:
             return Session.query(Media).filter_by(id=id).one()
         except NoResultFound:
-            return None        
+            return None
     if hash:
         try:
             return Session.query(Media).filter_by(hash=hash).first()
@@ -48,6 +49,7 @@ def get_media(id=None, hash=None):
 #@cache_this
 def get_licenses():
     return Session.query(License).all()
+
 
 # AllanC - primarly used in setup of test data, not normally used in main site operation
 def get_license(license):
@@ -64,6 +66,7 @@ def get_license(license):
         #except NoResultFound:
             pass
     return None
+
 
 def get_member_nocache(member, search_email=False):
     assert type(member) in [int, str, unicode]
@@ -84,6 +87,7 @@ def get_member_nocache(member, search_email=False):
                     pass
     return None
 
+
 #@cache_test.cache() #Cache decorator to go here
 # TODO: it might be nice to specify eager load fields here, so getting the logged in user eagerloads group_roles and groups to be show in the title bar with only one query
 def get_member(member, **kwargs):
@@ -93,6 +97,7 @@ def get_member(member, **kwargs):
         return member
     return get_member_nocache(member, **kwargs)
 
+
 def get_group(group):
     if isinstance(group, Group):
         return group
@@ -100,6 +105,7 @@ def get_group(group):
     if isinstance(group, Group):
         return group
     return None
+
 
 def get_membership(group, member):
     member = get_member(member)
@@ -117,6 +123,7 @@ def get_membership(group, member):
         ).one()
     except NoResultFound:
         return None
+
 
 def get_assigned_to(content, member):
     content = get_group(content)
@@ -138,6 +145,7 @@ def get_assigned_to(content, member):
 def get_message(message):
     return Session.query(Message).filter(Message.id==int(message)).options(joinedload('source')).options(joinedload('target')).first()
 
+
 def get_content_nocache(content_id):
     #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried
     # could use .with_polymorphic([DraftContent, ArticleContent, AssignmentContent]), will see if this is needed
@@ -145,6 +153,7 @@ def get_content_nocache(content_id):
         return Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
     except: # used to have NoResultFound but didnt want a 500 error raised, the caller code can detect NONE and just say "not found" neatly
         return None
+
 
 def get_content(content):
     if not content:
@@ -182,6 +191,7 @@ def get_tag(tag):
 def update_member(member):
     etag_key_incement("member",member.id)
 
+
 def update_content(content):
     if not issubclass(content.__class__, Content):
         content = get_content_nocache(content)
@@ -197,11 +207,14 @@ def update_content(content):
         # dissasociate has code to separately update the parent, could thoese lines be ignored?
         pass
 
+
 def update_member_messages(member):
     pass
 
+
 def update_accepted_assignment(member):
     pass
+
 
 def update_member_assignments_active(member):
     pass

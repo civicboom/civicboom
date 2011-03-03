@@ -195,12 +195,3 @@ def init_base_data():
 
         assert list(Session.query(User).filter(User.id==0)) == []
         assert list(Session.query(User).filter(User.username=="MrNotExists")) == []
-
-        ###############################################################
-        
-        
-        #u1.follow(u2)
-        #u2.follow(u1)
-        
-
-        

@@ -34,6 +34,7 @@ class ContentTagMapping(Base):
     content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
     tag_id        = Column(Integer(),    ForeignKey('tag.id')    , nullable=False, primary_key=True)
 
+
 class Boom(Base):
     __tablename__ = "map_booms"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
@@ -42,11 +43,13 @@ class Boom(Base):
     #member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
     #content       = relationship("Content", primaryjoin='Content.id==Boom.content_id')
 
+
 class Rating(Base):
     __tablename__ = "map_ratings"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
     rating        = Column(Integer(),    nullable=False, default=0)
+
 
 class Interest(Base):
     __tablename__ = "map_interest"
@@ -124,7 +127,7 @@ class Content(Base):
             'parent_id'    : None ,
             'title'        : None ,
             'content_short': None , # this is a property # lambda content: "implement content_short postgress trigger" ,
-            'creator_id'   : None , 
+            'creator_id'   : None ,
             'thumbnail_url': None ,
             'creation_date': None ,
             'update_date'  : None ,
@@ -562,6 +565,7 @@ class MemberAssignment(Base):
     #member       = relationship("Member")
     #content      = relationship("AssignmentContent")
 
+
 class License(Base):
     __tablename__ = "license"
     id            = Column(Unicode(32),   nullable=False, primary_key=True)
@@ -654,4 +658,3 @@ class FlaggedContent(Base):
 
     def __str__(self):
         return "%s - %s (%s)" % (self.member.username if self.member else "System", self.comment, self.type)
-

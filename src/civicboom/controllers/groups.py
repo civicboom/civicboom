@@ -4,7 +4,7 @@ from civicboom.lib.misc import make_username
 from civicboom.controllers.account import AccountController
 set_persona = AccountController().set_persona
 
-from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
+from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visibility, group_content_visibility, Member
 
 from civicboom.controllers.contents import _normalize_member
 
@@ -16,6 +16,8 @@ from civicboom.lib.form_validators.base         import DefaultSchema
 from civicboom.lib.form_validators.registration import UniqueUsernameValidator
 
 from civicboom.controllers.settings import SettingsController
+
+import re
 
 settings_update = SettingsController().update
 
@@ -40,6 +42,7 @@ class GroupSchema(DefaultSchema):
     member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
     #default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
 
+
 class CreateGroupSchema(GroupSchema):
     username                   = UniqueUsernameValidator()
 
@@ -60,6 +63,14 @@ def _get_group(id, is_admin=False, is_member=False):
     if is_member and not group.get_membership(c.logged_in_persona):
         raise action_error(_("you are not a member of this group"), code=403)
     return group
+
+def _gen_username(base):
+    if not re.search(base, "[0-9]$"):
+        base = base + "2"
+    while Session.query(Member).filter(Member.username==base).count() > 0:
+        name, num = re.match("(.*?)([0-9]+)", base).groups()
+        base = name + str(int(num)+1)
+    return base
 
 
 #-------------------------------------------------------------------------------
@@ -125,11 +136,11 @@ class GroupsController(BaseController):
         results = Session.query(Member).join(Group, Member, Group.members_roles)
         
         if 'group' in kwargs:
-            group   = _normalize_member(kwargs['group'], always_return_id=True)    
+            group   = _normalize_member(kwargs['group'], always_return_id=True)
             results = results.filter(Group.id==group)
         
         if 'member' in kwargs:
-            member   = _normalize_member(kwargs['member'], always_return_id=True)    
+            member   = _normalize_member(kwargs['member'], always_return_id=True)
             results = results.filter(Member.id==member)
         
         #results = results.filter(Member.status=='active')
@@ -162,7 +173,7 @@ class GroupsController(BaseController):
         # url('groups') + POST
         # if only display name is specified, generate a user name
         if not kwargs.get('username') and kwargs.get("name"):
-            kwargs["username"] = make_username(kwargs.get("name"))
+            kwargs["username"] = _gen_username(make_username(kwargs.get("name")))
         
         data       = {'group':kwargs, 'action':'create'}
         data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
