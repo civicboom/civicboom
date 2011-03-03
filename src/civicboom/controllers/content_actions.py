@@ -90,11 +90,9 @@ class ContentActionsController(BaseController):
         raise action_error(_('Error locking content'))
 
 
-
     #---------------------------------------------------------------------------
     # Action - Disassociate: Response Content (organistaion only)
     #---------------------------------------------------------------------------
-
     @web
     @auth
     #@account_type('plus')
@@ -234,7 +232,6 @@ class ContentActionsController(BaseController):
             return flag_action(id, **kwargs)
 
 
-
     #-----------------------------------------------------------------------------
     # Action - Add to Interest List
     #-----------------------------------------------------------------------------
@@ -251,10 +248,9 @@ class ContentActionsController(BaseController):
         return action_ok(_("added to interest list"))
 
 
-
     #-----------------------------------------------------------------------------
     # List - User Actions
-    #-----------------------------------------------------------------------------    
+    #-----------------------------------------------------------------------------
     @web
     def actions(self, id, **kwargs):
         """
@@ -270,7 +266,7 @@ class ContentActionsController(BaseController):
         """
         content = _get_content(id, is_viewable=True)
         actions = content.action_list_for(c.logged_in_persona)
-        return action_ok(data={'list':actions})
+        return action_ok(data={'list': actions})
 
 
     #-----------------------------------------------------------------------------
@@ -298,10 +294,9 @@ class ContentActionsController(BaseController):
         content = _get_content(id, is_viewable=True)
         
         if hasattr(content, 'assigned_to'):
-            assigned_to = [update_dict(a.member.to_dict(),{'status':a.status}) for a in content.assigned_to] ##, 'update_date':a.update_date
+            assigned_to = [update_dict(a.member.to_dict(), {'status': a.status}) for a in content.assigned_to]  # 'update_date':a.update_date
             return action_ok_list(assigned_to)
         return action_ok_list([])
-
 
 
     #-----------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestMembersController(TestController):
 
     def test_member_page(self):
@@ -63,4 +64,3 @@ class TestMembersController(TestController):
             params={'_authentication_token': self.auth_token},
             status=400
         )
-

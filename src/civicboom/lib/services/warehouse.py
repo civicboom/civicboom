@@ -112,5 +112,3 @@ def __http_escape(text):
     escape the data in a way that makes it safe to include in an HTTP header
     """
     return re.sub("[^a-zA-Z0-9\.-]", "_", text)
-
-

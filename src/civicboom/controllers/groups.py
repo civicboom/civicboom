@@ -42,6 +42,7 @@ class GroupSchema(DefaultSchema):
     member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
     #default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
 
+
 class CreateGroupSchema(GroupSchema):
     username                   = UniqueUsernameValidator()
 
@@ -135,11 +136,11 @@ class GroupsController(BaseController):
         results = Session.query(Member).join(Group, Member, Group.members_roles)
         
         if 'group' in kwargs:
-            group   = _normalize_member(kwargs['group'], always_return_id=True)    
+            group   = _normalize_member(kwargs['group'], always_return_id=True)
             results = results.filter(Group.id==group)
         
         if 'member' in kwargs:
-            member   = _normalize_member(kwargs['member'], always_return_id=True)    
+            member   = _normalize_member(kwargs['member'], always_return_id=True)
             results = results.filter(Member.id==member)
         
         #results = results.filter(Member.status=='active')

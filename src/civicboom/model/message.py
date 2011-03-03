@@ -10,6 +10,7 @@ from sqlalchemy.schema import DDL
 
 import copy
 
+
 class Message(Base):
     __tablename__ = "message"
     id          = Column(Integer(),     primary_key=True)
@@ -37,8 +38,8 @@ class Message(Base):
         },
     })
     __to_dict__.update({
-        'full'         : copy.deepcopy(__to_dict__['default']) , 
-        #'full+actions': copy.deepcopy(__to_dict__['default']) , 
+        'full'         : copy.deepcopy(__to_dict__['default']) ,
+        #'full+actions': copy.deepcopy(__to_dict__['default']) ,
     })
     __to_dict__['full'].update({
             'source'       : lambda message: message.source.to_dict() if message.source!=None else None ,

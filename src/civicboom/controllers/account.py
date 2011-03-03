@@ -36,7 +36,7 @@ class AccountController(BaseController):
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies
         """
         signout_user(c.logged_in_persona)
-        return redirect(url('/',protocol='http'))
+        return redirect(url('/', protocol='http'))
 
 
     #---------------------------------------------------------------------------
@@ -204,6 +204,7 @@ class AccountController(BaseController):
         else:
             import civicboom.lib.form_validators.base
             import formencode.validators
+            
             class SetPasswordSchema(civicboom.lib.form_validators.base.DefaultSchema):
                 password_new         = civicboom.lib.form_validators.base.PasswordValidator(not_empty=True)
                 password_new_confirm = civicboom.lib.form_validators.base.PasswordValidator(not_empty=True)
@@ -211,7 +212,7 @@ class AccountController(BaseController):
             
             # Validate new password
             try:
-                kwargs = SetPasswordSchema().to_python(kwargs)            
+                kwargs = SetPasswordSchema().to_python(kwargs)
             # Validation Failed
             except formencode.Invalid as error:
                 dict_validated        = error.value
@@ -228,4 +229,3 @@ class AccountController(BaseController):
             set_password(user, kwargs['password_new'])
             set_flash_message(_('password has been set'))
             redirect(url(controller='account', action='signin'))
-

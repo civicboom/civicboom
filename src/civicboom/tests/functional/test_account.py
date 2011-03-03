@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestAccountController(TestController):
 
     def setUp(self):

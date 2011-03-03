@@ -62,10 +62,8 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
 
 
 class ContentCommentSchema(ContentSchema):
-    parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator( not_empty=True, empty=_('comments must have a valid parent'))
+    parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=True, empty=_('comments must have a valid parent'))
     content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'))
-
-    
 
 
 #-------------------------------------------------------------------------------
@@ -80,7 +78,7 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
     if not content:
         raise action_error(_("The _content you requested could not be found"), code=404)
     if is_viewable:
-        if not content.viewable_by(c.logged_in_persona): 
+        if not content.viewable_by(c.logged_in_persona):
             raise action_error(_("The _content you requested is not viewable"), code=403)
         if content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
@@ -95,7 +93,7 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
     return content
 
 #-------------------------------------------------------------------------------
-# Decorators 
+# Decorators
 #-------------------------------------------------------------------------------
 
 #@decorator
@@ -164,8 +162,7 @@ def _init_search_filters():
     def append_search_boomed_by(query, member):
         member = _normalize_member(member, always_return_id=True)
         #return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
-        return query.filter(Content.id.in_( Session.query(Boom.content_id).filter(Boom.member_id==member) ))
-        
+        return query.filter(Content.id.in_(Session.query(Boom.content_id).filter(Boom.member_id==member)))
 
     search_filters = {
         'id'         : append_search_id ,
@@ -191,9 +188,6 @@ list_filters = {
     'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval!='none')),
 }
 
-
-    
-    
 
 #-------------------------------------------------------------------------------
 # Content Controler
@@ -431,7 +425,8 @@ class ContentsController(BaseController):
         if kwargs.get('type') == 'comment':
             schema = ContentCommentSchema()
             # AllanC - HACK! the validators cant handle missing fields .. so we botch an empty string field in here
-            if 'parent_id' not in kwargs: kwargs['parent_id'] = ''
+            if 'parent_id' not in kwargs:
+                kwargs['parent_id'] = ''
         
         # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic
         data       = {'content':kwargs}
@@ -579,15 +574,13 @@ class ContentsController(BaseController):
             if m:
                 # AllanC: TODO this needs to optimised! see issue #258 bulk messages are a blocking call
                 content.creator.send_message_to_followers(m, delay_commit=True)
-                
-
 
 
         # -- Save to Database --------------------------------------------------
         Session.add(content)
         Session.commit()
-        update_content(content)  #   Invalidate any cache associated with this content
-        user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
+        update_content(content)  # Invalidate any cache associated with this content
+        user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
         # -- Redirect (if needed)-----------------------------------------------
 
@@ -698,4 +691,3 @@ class ContentsController(BaseController):
         #c.content                  = form_to_content(kwargs, c.content)
         
         return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template
-

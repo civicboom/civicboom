@@ -41,6 +41,7 @@ SetupCommand('setup-app').run([pylons.test.pylonsapp.config['__file__']])
 
 environ = {}
 
+
 class TestController(TestCase):
 
     logged_in_as = None

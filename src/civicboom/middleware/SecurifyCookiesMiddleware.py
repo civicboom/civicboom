@@ -23,6 +23,7 @@ same session ID
 
 from pylons import config
 
+
 class SecurifyCookiesMiddleware(object):
     def __init__(self, app):
         self.app = app

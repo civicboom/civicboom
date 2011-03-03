@@ -6,6 +6,7 @@ import pprint
 import logging
 log = logging.getLogger(__name__)
 
+
 def validate_dict(data, schema, dict_to_validate_key=None, template_error=None):
     # Prepare dict to validate
     if dict_to_validate_key==None and len(data.keys())==1: #If dict only contains 1 key then validate that one key
@@ -31,7 +32,8 @@ def validate_dict(data, schema, dict_to_validate_key=None, template_error=None):
         
         for key in dict_validated_errors.keys():
             e = dict_validated_errors[key]
-            if hasattr(e,'msg'): e = e.msg
+            if hasattr(e, 'msg'):
+                e = e.msg
             invalid_dict[key] = e
             
         # Raise Validation Error

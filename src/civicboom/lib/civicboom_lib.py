@@ -59,6 +59,7 @@ def send_verifiy_email(user, controller='account', action='verify_email', messag
     message         = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
     send_email(user.email_unverified, subject=_('verify e-mail address'), content_text=message)
 
+
 def verify_email(user, hash, commit=False):
     user = get_member(user)
     if user and user.hash() == hash:
@@ -69,6 +70,7 @@ def verify_email(user, hash, commit=False):
             Session.commit()
         return True
     return False
+
 
 def send_forgot_password_email(user):
     validation_link = url(controller='account', action='forgot_password', protocol='https', id=user.username, hash=user.hash(), subdomain='')
@@ -93,7 +95,8 @@ def associate_janrain_account(user, type, token):
     except:
         pass
     if login:
-        if login.user == user: return # If login already belongs to this user then abort
+        if login.user == user:
+            return # If login already belongs to this user then abort
         if login.user: # Warn existing user that account is being reallocated
             login.user.send_email(subject=_('login account reallocated'), content_text=_('your %s account has been allocated to the user %s') % (type, user.username))
         if not config['development_mode']:
@@ -108,6 +111,7 @@ def associate_janrain_account(user, type, token):
     Session.commit()
     if not config['development_mode']:
         janrain('map', identifier=login.token, primaryKey=login.member_id) # Let janrain know this users primary key id, this is needed for agrigation posts
+
 
 #-------------------------------------------------------------------------------
 # Password Setter
@@ -125,13 +129,14 @@ def set_password(user, new_token, delay_commit=False):
     #
     try:
         #existing_login = Session.query(UserLogin).filter(UserLogin.user==user, UserLogin.type=='password').one()
-        for existing_login in [login for login in user.login_details if login.type=='password']:            
+        for existing_login in [login for login in user.login_details if login.type=='password']:
             log.debug("removing password for %s" % user.username)
             #if existing_login.token == old_token: raise Exception('old password token does not match - aborting password change')
             Session.delete(existing_login)
             log.debug("removed ok")
     #try: Session.execute(UserLogin.__table__.delete().where(and_(UserLogin.__table__.c.member_id == user.id, UserLogin.__table__.c.token == token)))
-    except: pass
+    except:
+        pass
     # Set new password
     u_login = UserLogin()
     u_login.user   = user

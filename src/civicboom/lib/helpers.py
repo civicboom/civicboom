@@ -81,6 +81,7 @@ def shorten_url(url):
     """
     return re.sub("https?://[^/]+", "", url)
 
+
 def shorten_module(mod):
     """
     Return a module name that is shorter but still useful, for
@@ -90,6 +91,7 @@ def shorten_module(mod):
     'lib.helpers'
     """
     return re.sub("civicboom/(.*).py", "\\1", mod).replace("/", ".")
+
 
 def link_to_objects(text):
     """
@@ -113,6 +115,7 @@ def link_to_objects(text):
     if prev_word:
         output = output + HTML.literal(prev_word)
     return output
+
 
 def wh_url(folder, filename):
     # pylons' "public" folder is updated pretty frequently, and is associated
@@ -145,11 +148,12 @@ def uniqueish_id(*args):
     largs.append(str(int(time.time() * 1e9)))
     return "_".join([str(a) for a in largs])
 
+
 def objs_to_linked_formatted_dict(**kargs):
     """
     Takes a dict of string:string that correspond to python tmpl_context global e.g:
       'member':'creator_member' would refer to c.creator_member
-      'member': member_obj_ref 
+      'member': member_obj_ref
     Then, See's if the object has a '__link___' attribute to generate a HTML <a> tag for this object
     """
     def gen_link(o):
@@ -210,10 +214,12 @@ def icon(icon_type, description=None, class_=''):
 def api_datestr_to_datetime(date_str):
     return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
 
+
 def date_to_rss(date):
     if isinstance(date, basestring):
         date = api_datestr_to_datetime(date)
     return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
+
 
 def time_ago(from_time):
     if not from_time:
@@ -259,7 +265,7 @@ def form(*args, **kwargs):
     if isinstance(kwargs.get('href'), tuple):
         href_tuple = kwargs['href']
 
-    # if href=tuple then generate 2 URL's from tuple 1.) Standard  2.) JSON    
+    # if href=tuple then generate 2 URL's from tuple 1.) Standard  2.) JSON
     if href_tuple:
         href, href_json = url_pair(gen_format='json', *href_tuple[0], **href_tuple[1]) # generate standard and JSON URL's
         
@@ -302,6 +308,7 @@ def form(*args, **kwargs):
         kwargs['href'] = href
     
     return secure_form(*args, **kwargs)
+
 
 #-------------------------------------------------------------------------------
 # Secure Link - Form Submit or Styled link (for JS browsers)
@@ -355,7 +362,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         confirm_text = "true"
 
     # Styled submit link ------
-    # A standard <A> tag that submits the compatable form (typically used with format='redirect')    
+    # A standard <A> tag that submits the compatable form (typically used with format='redirect')
     hl = HTML.a(
         value_formatted ,
         id      = "link_"+hhash,
@@ -413,6 +420,7 @@ def frag_link(id, frag_url, value, title='', css_class=''):
     
     return static_link #HTML.span(static_link, class_="frag_link")
 
+
 def frag_div(id, default_frag_url=None, class_=None):
     """
     Create an HTML div linked to a fragment
@@ -441,10 +449,12 @@ def cb_frag_link(*args, **kwargs):
 
 
 #-------------------------------------------------------------------------------
-# Get object from Civicboom URL 
+# Get object from Civicboom URL
 #-------------------------------------------------------------------------------
 regex_content_url = re.compile(r'(?:.*?)/contents/(.*?)[/&?#\n. "]')
 regex_member_url  = re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "]')
+
+
 def get_object_from_action_url(action_url):
     """
     Creates a tuple to be used with url(*tuple[0], **tuple[1])
@@ -463,6 +473,7 @@ def get_object_from_action_url(action_url):
 
 regex_content_links = re.compile(r'<a(?:[^<>]*?)href="(?:[^<>]*?)/contents/(.*?)[/&?#\n. "](?:[^<>]*?)>(.*?)</a>') # \1 = content id \2 = text
 regex_member_links  = re.compile(r'<a(?:[^<>]*?)href="(?:[^<>]*?)/members/(.*?)[/&?#\n. "](?:[^<>]*?)>(.*?)</a>') # \1 = member id \2 = text
+
 
 def links_to_frag_links(content):
     """

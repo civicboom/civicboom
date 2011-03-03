@@ -5,6 +5,7 @@ import warnings
 
 #self.group_id = 0
 
+
 class TestGroupsController(TestController):
 
     #self.group_id = 0
@@ -248,7 +249,7 @@ class TestGroupsController(TestController):
                 'role'  : 'editor',
             } ,
             status=400
-        ) 
+        )
         self.assertIn('admin', response)
         
         # Upgrade 'unitfriend' to admin
@@ -271,7 +272,7 @@ class TestGroupsController(TestController):
                 'role'  : 'observer',
             } ,
             status=200
-        ) 
+        )
         
     
     

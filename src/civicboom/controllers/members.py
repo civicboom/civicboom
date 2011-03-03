@@ -30,6 +30,7 @@ def _get_member(member):
         raise action_error(_("member inactive") , code=404)
     return member
 
+
 #-------------------------------------------------------------------------------
 # Search Filters
 #-------------------------------------------------------------------------------
@@ -76,6 +77,7 @@ def _init_search_filters():
 
 search_filters = _init_search_filters()
 
+
 #-------------------------------------------------------------------------------
 # Members Controler
 #-------------------------------------------------------------------------------
@@ -109,7 +111,7 @@ class MembersController(BaseController):
         
         # Autocomplete uses term not name - for ease of migration term is copyed to name if name not present
         if 'term' in kwargs and 'name' not in kwargs:
-            kwargs['name'] =  kwargs['term']
+            kwargs['name'] = kwargs['term']
         
         # Setup search criteria
         kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.members'])

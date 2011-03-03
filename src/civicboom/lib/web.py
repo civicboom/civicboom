@@ -20,6 +20,7 @@ import urllib
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
+
 #-------------------------------------------------------------------------------
 # UnicodeMultiDict Convertion
 #-------------------------------------------------------------------------------
@@ -107,23 +108,28 @@ def redirect(*args, **kwargs):
     else:
         raise Exception('unable to perform redirect with format=%s' % c.format)
 
+
 def current_referer(protocol=None):
     #AllanC TODO - needs to enforce prosocol change - for login actions
     return request.environ.get('HTTP_REFERER')
 
+
 def current_protocol():
     return request.environ.get('HTTP_X_URL_SCHEME', 'http')
+
 
 def current_host(protocol=None):
     if not protocol:
         protocol = current_protocol()
     return  protocol + "://" + request.environ.get('HTTP_HOST')
 
+
 def current_url(protocol=None):
     target_url = current_host(protocol) + request.environ.get('PATH_INFO')
     if 'QUERY_STRING' in request.environ:
         target_url += '?'+request.environ.get('QUERY_STRING')
     return target_url
+
 
 def redirect_to_referer():
     url_to = cookie_get('login_action_referer') or session_remove('login_action_referer') or current_referer() or '/'
@@ -142,13 +148,17 @@ def redirect_to_referer():
     
 
 def session_delete(key):
-    if key           in session: del session[key]
-    if key+'_expire' in session: del session[key+'_expire']
+    if key in session:
+        del session[key]
+    if key+'_expire' in session:
+        del session[key+'_expire']
+
 
 def session_remove(key):
     value = session_get(key)
     session_delete(key)
     return value
+
 
 def session_set(key, value, duration=None):
     """
@@ -158,9 +168,10 @@ def session_set(key, value, duration=None):
     if duration:
         session[key+'_expire'] = time.time() + duration
 
+
 def session_get(key):
     key_expire = key+'_expire'
-    if key_expire in session:  
+    if key_expire in session:
         if time.time() > float(session[key_expire]):
             session_delete(key)
     if key in session:
@@ -188,10 +199,12 @@ def cookie_delete(key):
     except:
         pass
 
+
 def cookie_remove(key):
     value = cookie_get(key)
     cookie_delete(key)
     return value
+
 
 def cookie_set(key, value, duration=None):
     """
@@ -199,6 +212,7 @@ def cookie_set(key, value, duration=None):
     """
     #log.debug("setting %s:%s" %(key, value))
     response.set_cookie(key, value, max_age=duration, secure=True) #path='/', domain='example.org',
+
 
 def cookie_get(key):
     #log.debug("getting %s:%s" %(key, request.cookies.get(key)))
@@ -212,7 +226,7 @@ def cookie_get(key):
 #-------------------------------------------------------------------------------
 # Action Message System
 #-------------------------------------------------------------------------------
-def set_flash_message(new_message):    
+def set_flash_message(new_message):
     flash_message = None
     flash_message_string = session_get('flash_message')
     if flash_message_string:
@@ -236,6 +250,7 @@ def action_ok(message=None, data={}, code=200, **kwargs):
     #    d["template"] = template
     d.update(kwargs)
     return d
+
 
 # AllanC - convenicen metod for returning lists
 def action_ok_list(list, obj_type=None, **kwargs):
@@ -266,6 +281,7 @@ class action_error(Exception):
     def __str__( self ):
         return str(self.original_dict)
 
+
 def overlay_status_message(master_message, new_message):
     """
 
@@ -275,7 +291,7 @@ def overlay_status_message(master_message, new_message):
     if not master_message:
         master_message = {}
     master_message['status']  = master_message.get('status' ) or 'ok'
-    master_message['message'] = master_message.get('message') or u'' 
+    master_message['message'] = master_message.get('message') or u''
     master_message['data']    = master_message.get('data'   ) or {}
 
     if isinstance(new_message, basestring):
@@ -313,6 +329,7 @@ def _find_subformat():
     if request.environ['is_mobile']:
         return 'mobile'
     return get_subdomain_format()
+
 
 def _find_template(result, type):
     #If the result status is not OK then use the template for that status
@@ -398,7 +415,7 @@ def setup_format_processors():
         A special case for compatable browsers making REST calls
         Actions can be performed, session message set, and the client redirected back to it's http referer with the session flash message displayed
         
-        Format Redirector 
+        Format Redirector
         Will
           1.) take note of originator http_referer *[this method call]
           
@@ -436,6 +453,7 @@ def setup_format_processors():
 
 format_processors = setup_format_processors()
 
+
 @decorator
 def auto_format_output(target, *args, **kwargs):
     """
@@ -445,7 +463,7 @@ def auto_format_output(target, *args, **kwargs):
         - XML
         - RSS
         - HTML (with htmlfill overlay if nessisary) [auto selecting mobile template if needed]
-            + Web 
+            + Web
             + Mobile
         - HTML_FRAGMENT
             Used to generate fragments of pages for use with AJAX calls or as a component of a static page
@@ -557,7 +575,7 @@ def authenticate_form(target, *args, **kwargs):
         param_dict[secure_form.token_key] = request.POST[secure_form.token_key]
     if secure_form.token_key in kwargs:
         param_dict[secure_form.token_key] = kwargs[secure_form.token_key]
-    if authenticated_form(param_dict): #authenticated_form(request.POST) or 
+    if authenticated_form(param_dict): #authenticated_form(request.POST) or
         #if authenticated_form(request.POST):
         if secure_form.token_key in request.POST:
             del request.POST[secure_form.token_key]
@@ -591,7 +609,8 @@ def cacheable(time=60*60*24*365, anon_only=True):
         if not anon_only or 'civicboom_logged_in' not in request.cookies: # no cache for logged in users
             response.headers["Cache-Control"] = "public,max-age=%d" % time
             response.headers["Vary"] = "cookie"
-            if "Pragma" in response.headers: del response.headers["Pragma"]
+            if "Pragma" in response.headers:
+                del response.headers["Pragma"]
             #log.info(pprint.pformat(response.headers))
         return func(*args, **kwargs)
     return decorator(_cacheable)
@@ -677,4 +696,3 @@ def web_params_to_kwargs(target, *args, **kwargs):
     #user_log.info("calling "+target.func_name+", now have param values and kwargs "+pformat(new_args)+pformat(new_kwargs))
     c.web_params_to_kwargs = (new_args, new_kwargs)
     return target(*new_args, **new_kwargs) # Execute the wrapped function
-
