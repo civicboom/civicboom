@@ -16,7 +16,22 @@
   <p>${h.truncate(h.strip_html_tags(content['content']), length=180, indicator='...', whole_word=True)}<strong>more</strong></p>
 </a>
 
+<div style="clear: both;"></div>
+
+## If the widget is not owned by anybody then show the creator
+% if not c.widget['owner']['username']:
+<p>
+    <a href="${h.url('member', id=content['creator']['username'])}" target="_blank">
+        By
+        <img src="${content['creator']['avatar_url']}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
+        ${content['creator']['name'] or content['creator']['username']}
+    </a>
+</p>
+% endif
+
 <div style="clear: both; margin-bottom: 1em;"></div>
+
+
 
 % if content['type'] == 'assignment':
     <table><tr>
