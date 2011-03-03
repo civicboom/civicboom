@@ -222,7 +222,10 @@ Group.configure(include=[
         Group.name,
         Group.join_date,
         Group.status,
-        #Group.members, # FIXME: links are to memberships, not members
+        Group.join_mode,
+        Group.member_visibility,
+        Group.default_content_visibility,
+        Group.default_role,
         ])
 
 Message = FieldSet(model.Message)
