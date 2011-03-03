@@ -19,7 +19,7 @@ import urllib, hashlib, copy
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 member_type              = Enum("user", "group",                     name="member_type"  )
-account_types            = Enum("free", "plus", "corp", "copp_plus", name="account_types")
+account_types            = Enum("free", "plus", "corp", "corp_plus", name="account_types")
 
 group_member_roles_level =     ("admin", "editor", "contributor", "observer") # the order of permissions e.g admin has higher privilages than editor
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
