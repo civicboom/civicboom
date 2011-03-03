@@ -65,6 +65,9 @@ def _get_group(id, is_admin=False, is_member=False):
     return group
 
 def _gen_username(base):
+    if Session.query(Member).filter(Member.username==base).count() == 0:
+        return base
+
     if not re.search(base, "[0-9]$"):
         base = base + "2"
     while Session.query(Member).filter(Member.username==base).count() > 0:
