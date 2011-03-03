@@ -75,8 +75,8 @@ $('#%(name)s_name').autocomplete({
 
 class DatePickerFieldRenderer(FieldRenderer):
     def render(self):
-        value= self.value and self.value or ''
-        vars = dict(name=self.name, value=value)
+        value= self.value or ''
+        vars = dict(name=self.name, value=value.split(".")[0])
         return """
 <input id="%(name)s" name="%(name)s" type="text" value="%(value)s">
 <script type="text/javascript">
