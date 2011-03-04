@@ -188,7 +188,7 @@
             'current',
             format         = 'rss',
             include_fields = 'attachments',
-			**request.params,
+			**request.params
         )
         
         georss_url = dict(
