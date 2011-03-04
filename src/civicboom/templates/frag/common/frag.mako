@@ -186,10 +186,9 @@
         ## AllanC - This is incorrect! if the current URL is profile/index the RSS source returns a 403 Error when it trys to access it
         feed = h.url(
             'current',
-            format         ='rss' ,
-            query          =request.params.get('query') ,
-            location       =request.params.get('location') ,
-            include_fields = 'attachments' ,
+            format         = 'rss',
+            include_fields = 'attachments',
+			**request.params
         )
         
         georss_url = dict(

@@ -61,6 +61,7 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
+	<script src="/javascript/ajaxError.js"></script>
 % else:
 	<script src="${h.wh_url("public", "javascript/_combined.head.js")}"></script>
 % endif
