@@ -396,8 +396,45 @@ def flag_content(content, member=None, type="automated", comment=None):
         pass
     send_email(
         config['email.moderator'],
-        subject      = _('flagged content'),
-        content_text = "%s flagged %s as %s" % (member_username, url('content', id=content.id), type),
+        subject      = _('flagged content ['+type+']'),
+        content_text = """
+--- Report ---
+
+Reporter: %(reporter)s
+Category: %(type)s
+
+%(comment)s
+
+
+--- Reported Content ---
+
+Title:  %(content_title)s
+        %(content_url)s
+Author: %(member_name)s
+        %(member_url)s
+
+%(content_body)s
+
+
+--- Actions ---
+
+If the content is ok, visit the list of reports and delete this one:
+  %(action_ignore)s
+
+If the content is not ok, go to the content list and delete it:
+  %(action_delete)s
+""" % {
+            "reporter": member_username,
+            "type": type,
+            "comment": comment,
+            "member_name": content.creator.username,
+            "member_url": url('member', id=content.creator.username, subdomain="www"),
+            "content_url": url('content', id=content.id, subdomain="www"),
+            "content_title": content.title,
+            "content_body": content.content,
+            "action_ignore": url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), subdomain="www"),
+            "action_delete": url("admin/Content/models?Content--id="+str(content.id), subdomain="www"),
+        },
     )
 
 
