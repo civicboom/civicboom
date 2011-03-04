@@ -153,9 +153,9 @@ class MemberActionsController(BaseController):
     # List - Boomed Content
     #---------------------------------------------------------------------------
     @web
-    def boomed_content(self, id, **kwargs):
+    def boomed(self, id, **kwargs):
         """
-        GET /members/{name}/boomed_content: get a list content this user has boomed
+        GET /members/{name}/boomed: get a list content this user has boomed
         
         @api members 1.0 (WIP)
         
@@ -172,7 +172,7 @@ class MemberActionsController(BaseController):
     @web
     def content_and_boomed(self, id, **kwargs):
         """
-        GET /members/{name}/boomed_content: get a list content this user has boomed
+        GET /members/{name}/content_and_boomed: get a list content this user has created and boomed
         
         @api members 1.0 (WIP)
         

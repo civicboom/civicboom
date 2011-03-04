@@ -31,7 +31,7 @@ class TestMembersController(TestController):
         # show content from members
         response = self.app.get(url('member_action', id='unittest', action='content'           , format='json'                 ))
         response = self.app.get(url('member_action', id='unittest', action='content'           , format='json', list='articles'))
-        response = self.app.get(url('member_action', id='unittest', action='boomed_content'    , format='json'                 ))
+        response = self.app.get(url('member_action', id='unittest', action='boomed'            , format='json'                 ))
         response = self.app.get(url('member_action', id='unittest', action='content_and_boomed', format='json'                 ))
 
         # badly named content lists should give "bad paramaters" error

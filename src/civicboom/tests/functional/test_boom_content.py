@@ -34,7 +34,7 @@ class TestBoomController(TestController):
         response_json = json.loads(response.body)
         count_content = response_json['data']['list']['count']
         # Count boomed (to be used for assertion later)
-        response      = self.app.get(url('member_action', action='boomed_content', id='unitfriend', format='json'), status=200)
+        response      = self.app.get(url('member_action', action='boomed', id='unitfriend', format='json'), status=200)
         response_json = json.loads(response.body)
         count_boomed  = response_json['data']['list']['count']
         
@@ -66,7 +66,7 @@ class TestBoomController(TestController):
         response_json = json.loads(response.body)
         
         # Check that it appears in unitfriend's boomed list
-        response      = self.app.get(url('member_action', action='boomed_content', id='unitfriend', format='json'), status=200)
+        response      = self.app.get(url('member_action', action='boomed', id='unitfriend', format='json'), status=200)
         response_json = json.loads(response.body)
         self.assertIn('Content to BOOM!', response)
         
@@ -97,13 +97,13 @@ class TestBoomController(TestController):
         
         response      = self.app.get(url('member', id='kitten', format='json'), status=200)
         response_json = json.loads(response.body)
-        self.assertEqual(len(response_json['data']['boomed_content']['items']), 0)
+        self.assertEqual(len(response_json['data']['boomed']['items']), 0)
         
         self.boom_content(content_id)
         
         response      = self.app.get(url('member', id='kitten', format='json'), status=200)
         response_json = json.loads(response.body)
-        self.assertEqual(len(response_json['data']['boomed_content']['items']), 1)
+        self.assertEqual(len(response_json['data']['boomed']['items']), 1)
 
 
         #-----------------------------------------------------------------------

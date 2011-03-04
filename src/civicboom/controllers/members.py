@@ -195,7 +195,7 @@ class MembersController(BaseController):
                 # Other
                 'assignments_accepted',
                 'actions',
-                'boomed_content' ,
+                'boomed' ,
             ]
         
         data = {'member': member.to_dict(list_type='full', **kwargs)}
