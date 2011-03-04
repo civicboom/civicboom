@@ -56,7 +56,7 @@ Packages
 Using the site
 ~~~~~~~~~~~~~~
 - To sign in
-  you can use unittest:password
+  you can use unittest:password or unitfriend:password
 - To sign up
   signup with site
   see console for email debug printouts to get validation url
@@ -146,3 +146,9 @@ make site
 (to setup translation files)
 
 make test-db to init the db and popuplate with test data
+
+to run
+ensure memcachedb is running [bug?]
+sudo /etc/init.d/memcachedb start
+
+

@@ -23,8 +23,8 @@
 
 ## If the widget is not owned by anybody then show the creator
 % if not c.widget['owner']['username'] and c.widget['owner']['username'] != content['creator']['username']:
-<p>
-    ${member_includes.by_member(content['creator'])}
+<p style="float: right; text-align: right;">
+    By ${member_includes.by_member(content['creator'])}
 </p>
 % endif
 

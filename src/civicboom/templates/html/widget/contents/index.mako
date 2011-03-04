@@ -11,25 +11,30 @@
 
 <%def name="content_list(contents)">
     ##<div class="widget_content_assignment_list">
-    <ul class="content_list">
+    <table class="content_list">
     % for content in contents:
         ${content_item(content)}
     % endfor
-    </ul>
+    </table>
     ##</div>
 </%def>
 
 <%def name="content_item(content)">
     ##<a href="${url('content', id=content['id'])}">${content['id']}</a>
     ##${content['title']}
-    <li>
-        <a href="${h.url('content', id=content['id'])}">
-            ##<img src="${content['thumbnail_url']}"/>
-            <span>${content['title']}</span>
-            ##<div style="clear: both;"></div>
-            % if c.widget['owner']['username'] != content['creator']['username']:
-                ${member_includes.by_member(content['creator'], link=False)}
-            % endif
-        </a>
-    </li>
+    <tr style="border-bottom: 1px solid #${c.widget['color_border']};">
+        <td>
+            <img class="thumbnail" src="${content['thumbnail_url']}" style="border: 1px solid #${c.widget['color_border']};"/>
+        </td>
+        <td>
+            <a href="${h.url('content', id=content['id'])}">
+                
+                <p class="title">${content['title']}</p>
+                ##<div style="clear: both;"></div>
+                % if c.widget['owner']['username'] != content['creator']['username']:
+                <p class="creator">${member_includes.by_member(content['creator'], link=False)}</p>
+                % endif
+            </a>
+        </td>
+    </tr>
 </%def>
