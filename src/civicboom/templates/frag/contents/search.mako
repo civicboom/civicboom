@@ -27,31 +27,41 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     <div class="frag_col">
+		<!--
         <form id="form_search" action="${url('contents')}" method="GET"
               onsubmit="cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
+			<% args, kwargs = c.web_params_to_kwargs %>
+            <fieldset style="border: 1px solid black; padding: 4px;">
+                <legend>${_("Basic Search")}</legend>
+                <input type="search" style="width: 100%;" name="term" placeholder="Search terms" value="${kwargs.get('term')}"/>
+                <br/><input type="submit" style="width: 100%;" value="Search" class="button"/>
+            </fieldset>
+		</form>
+
+        <p>&nbsp;
+		-->
+		
+		<form id="form_search" action="${url('contents')}" method="GET"
+              onsubmit="cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
+            <!--<fieldset style="border: 1px solid black; padding: 4px;">-->
             <fieldset>
-				<!--
-                <legend>Search</legend>
-                <br/>
-				-->
-                <% args, kwargs = c.web_params_to_kwargs %>
-                <label for="term">Text</label><br />
-                <input type="text" style="width: 210px" name="term" value="${kwargs.get('term')}"/>
-                <br/>
-                <label for="list">Type</label><br/>
+                <!--<legend>${_("Advanced search")}</legend>-->
+
+				<p><label>Search for</label><br>
+				<select name="list" style="width: 100%;">
                 % for list, type, name in contents_list_titles:
-                    <%
-                        checked = ''
-                        if kwargs.get('list') == list:
-                            checked = 'checked'
-                    %>
-                    <input type="radio" name="list" value="${list}" ${checked}>${name}<br/>
+                    <% checked = 'selected' if (kwargs.get('list') == list) else '' %>
+                    <option value="${list}" ${checked}>${name}</option>
                 % endfor
-                <br/>
-                <label>Location</label><br />
-                ${loc.location_picker(width='210px')}
-                <br/>
-                <input type="submit" value="Search" class="button"/>
+				</select>
+
+				<label>Talking about</label><br>
+                <input type="search" style="width: 100%;" name="term" placeholder="Enter key words" value="${kwargs.get('term')}"/>
+
+                <p><label>Near to</label>
+                ${loc.location_picker(width='213px', height="213px")}
+
+                <p><input type="submit" style="width: 100%;" value="Search" class="button"/>
             </fieldset>
         </form>
     </div>
