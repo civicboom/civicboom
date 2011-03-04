@@ -28,7 +28,10 @@ server {
 	access_log /var/log/nginx/civicboom.log;
 	access_log /var/log/nginx/civicboom.timing.log timing; # DC_TIMING
 	root /opt/cb/share/website-web/;
-	error_page 500 502 503 504 /errors/50x.html;
+	error_page 500 /errors/50x.html;
+	error_page 502 /errors/502.html;
+	error_page 503 /errors/503.html;
+	error_page 504 /errors/504.html;
 	client_max_body_size 100m;
 	ssi on;
 
