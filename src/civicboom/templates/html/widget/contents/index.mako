@@ -1,5 +1,7 @@
 <%inherit file="../common/widget_border.mako"/>
 
+<%namespace name="member_includes" file="/html/widget/common/member.mako"/>
+
 % if d['list']['count'] == 0:
     ${_('No content')}
 % else:
@@ -25,6 +27,9 @@
             ##<img src="${content['thumbnail_url']}"/>
             <span>${content['title']}</span>
             ##<div style="clear: both;"></div>
+            % if c.widget['owner']['username'] != content['creator']['username']:
+                ${member_includes.by_member(content['creator'], link=False)}
+            % endif
         </a>
     </li>
 </%def>
