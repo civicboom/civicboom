@@ -125,7 +125,7 @@ class TestDeleteCascadesController(TestController):
         response_json = json.loads(response.body)
         num_following      = response_json['data']['following']['count']
         num_followers      = response_json['data']['followers']['count']
-        num_boomed_content = response_json['data']['boomed_content']['count']
+        num_boomed_content = response_json['data']['boomed'   ]['count']
         #num_sent_messages =
         
         # Following, message recive, boom, comment
@@ -147,9 +147,9 @@ class TestDeleteCascadesController(TestController):
         
         response      = self.app.get(url('member', id='unittest', format='json'), status=200)
         response_json = json.loads(response.body)
-        self.assertEqual(num_following      + 1, response_json['data']['following'     ]['count'])
-        self.assertEqual(num_followers      + 1, response_json['data']['followers'     ]['count'])
-        self.assertEqual(num_boomed_content + 1, response_json['data']['boomed_content']['count'])
+        self.assertEqual(num_following      + 1, response_json['data']['following']['count'])
+        self.assertEqual(num_followers      + 1, response_json['data']['followers']['count'])
+        self.assertEqual(num_boomed_content + 1, response_json['data']['boomed'   ]['count'])
         
         
         # Create group - and therefor become a member
@@ -221,7 +221,7 @@ class TestDeleteCascadesController(TestController):
         response_json = json.loads(response.body)
         self.assertEqual(num_following     , response_json['data']['following']['count'])
         self.assertEqual(num_followers     , response_json['data']['followers']['count'])
-        self.assertEqual(num_boomed_content, response_json['data']['boomed_content']['count'])
+        self.assertEqual(num_boomed_content, response_json['data']['boomed'   ]['count'])
         
         # check tables deeply for all instances of the member id for removal
         self.assertEqual(Session.query(Media           ).filter_by(         id = self.media_id                ).count(), 0)

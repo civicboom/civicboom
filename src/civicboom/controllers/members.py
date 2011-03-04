@@ -117,8 +117,6 @@ class MembersController(BaseController):
             kwargs['name'] = kwargs['term']
         
         # Setup search criteria
-        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.members'])
-        kwargs['offset'] = str_to_int(kwargs.get('offset')                                       )
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
@@ -142,6 +140,8 @@ class MembersController(BaseController):
         count = results.count()
         
         # Limit & Offset
+        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.members'])
+        kwargs['offset'] = str_to_int(kwargs.get('offset')                                       )
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
         # Return search results
@@ -195,7 +195,7 @@ class MembersController(BaseController):
                 # Other
                 'assignments_accepted',
                 'actions',
-                'boomed_content' ,
+                'boomed' ,
             ]
         
         data = {'member': member.to_dict(list_type='full', **kwargs)}
