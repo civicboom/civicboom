@@ -1,4 +1,3 @@
-<%namespace name="scripts_end" file="/html/web/common/scripts_end.mako"/>
 <!DOCTYPE html>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie ie6"> <![endif]-->
@@ -70,8 +69,8 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 ##----------------------------------------------------------------------------
 ## Google Analitics (async setup, see scripts_end for more)
 ##----------------------------------------------------------------------------
+	<%namespace name="scripts_end" file="/html/web/common/scripts_end.mako"/>
 	${scripts_end.google_analytics_head()}
-
 
 
 ##------------------------------------------------------------------------------
@@ -89,7 +88,6 @@ ${self.head_links()}
 	${next.styleOverides()}
 	</style>
 % endif
-
 
 </head>
 
