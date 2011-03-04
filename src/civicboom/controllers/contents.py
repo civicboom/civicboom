@@ -153,12 +153,14 @@ def _init_search_filters():
         return query.filter(Content.__type__==type_text)
     
     def append_search_creator(query, creator):
-        creator = _normalize_member(creator)
+        creator = _normalize_member(creator, always_return_id=True)
         if isinstance(creator, int):
             return query.filter(Content.creator_id==creator)
         else:
             # AllanC - WARNING this is untested ... all creators should be normalized - I dont think this is ever called
-            return query.filter(Member.username==creator) #select_from(join(Content, Member, Content.creator)).
+            # THIS WILL NOT WORK UNLESS - select_from(join(Content, Member, Content.creator)).
+            #return query.filter(Member.username==creator)
+            raise Exception('unsuported search operation')
     
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
@@ -195,6 +197,38 @@ list_filters = {
 }
 
 
+def sqlalchemy_content_query(include_private=False, **kwargs):
+    """
+    Returns an SQLAlchemy query object
+    This is used in the main contents/index and also to create a union stream of 2 querys
+    """
+    # Build Search
+    results = Session.query(Content)
+    results = results.with_polymorphic('*')
+    #results = results.options(defer(Content.content)) # exculude fetch of content field in this query return. we never need the full content in a list TODO: this will only become efficent IF content_short postgress trigger is implemented (issue #257)
+    results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
+    
+    #if 'private' in kwargs and logged_in_creator:
+    if include_private:
+        pass # allow private content
+    else:
+        results = results.filter(Content.private==False) # public content only
+    if 'creator' in kwargs.get('include_fields',[]):
+        results = results.options(joinedload('creator'))
+    if 'attachments' in kwargs.get('include_fields',[]):
+        results = results.options(joinedload('attachments'))
+    if 'tags' in kwargs.get('include_fields',[]):
+        results = results.options(joinedload('tags'))
+    for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
+        results = search_filters[key](results, kwargs[key])
+    if 'list' in kwargs:
+        if kwargs['list'] in list_filters:
+            results = list_filters[kwargs['list']](results)
+        else:
+            raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+    return results
+
+
 #-------------------------------------------------------------------------------
 # Content Controler
 #-------------------------------------------------------------------------------
@@ -210,7 +244,7 @@ class ContentsController(BaseController):
     #     map.resource('content', 'contents')
     
     @web
-    def index(self, **kwargs):
+    def index(self, union_query=None, **kwargs):
         """
         GET /contents: All items in the collection
         @param limit
@@ -234,8 +268,6 @@ class ContentsController(BaseController):
                 logged_in_creator = True
         
         # Setup search criteria
-        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
-        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
@@ -244,37 +276,11 @@ class ContentsController(BaseController):
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
         
-        # RSS feeds now need to specifically request attachments
-        # AllanC - WARNING! this breaks casheability! need to consider the use case for RSS with media to be added manually with the request
-        #if 'list_type' not in kwargs:
-            #kwargs['list_type'] = 'default'
-        #    if c.format == 'rss':                       # Default RSS to list_with_media
-        #        kwargs['include_fields'] += ',attachments'
-        
-        # Build Search
-        results = Session.query(Content)
-        results = results.with_polymorphic('*')
-        results = results.options(defer(Content.content))
-        results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
-        # TODO: exculude fetch of content field in this query return. lazyload it?
-        if 'private' in kwargs and logged_in_creator:
-            pass # allow private content
-        else:
-            results = results.filter(Content.private==False) # public content only
-        if 'creator' in kwargs['include_fields']:
-            results = results.options(joinedload('creator'))
-        if 'attachments' in kwargs['include_fields']:
-            results = results.options(joinedload('attachments'))
-        if 'tags' in kwargs['include_fields']:
-            results = results.options(joinedload('tags'))
-        for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
-            results = search_filters[key](results, kwargs[key])
-        if 'list' in kwargs:
-            if kwargs['list'] in list_filters:
-                results = list_filters[kwargs['list']](results)
-            else:
-                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
-        
+        include_private_content = 'private' in kwargs and logged_in_creator
+        results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)
+        if union_query:
+            results = results.union(union_query)
+
         # Sort
         if 'sort' not in kwargs:
             sort = 'update_date'
@@ -285,6 +291,8 @@ class ContentsController(BaseController):
         count = results.count()
         
         # Limit & Offset
+        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
+        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
         # Return search results
