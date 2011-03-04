@@ -31,7 +31,7 @@
                 
                 <p class="title">${content['title']}</p>
                 ##<div style="clear: both;"></div>
-                % if c.widget['owner']['username'] != content['creator']['username']:
+                % if 'creator' in content and c.widget['owner']['username'] != content['creator']['username']:
                 <p class="creator">${member_includes.by_member(content['creator'], link=False)}</p>
                 % endif
             </a>
