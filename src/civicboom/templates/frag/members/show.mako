@@ -220,11 +220,11 @@
         
         ## Memers Content --------------------------------------------
         
-        % for list, icon, decription in constants.contents_list_titles:
+        % for list, icon, description in [n for n in constants.contents_list_titles if n[0] not in ["all", ]]:
             ${frag_list.content_list(
                 d[list] ,
-                decription ,
-                h.args_to_tuple('contents', creator=self.id, list=list), 
+                description ,
+                h.args_to_tuple('contents', creator=self.id, list=list),
                 icon = icon ,
             )}
         % endfor
