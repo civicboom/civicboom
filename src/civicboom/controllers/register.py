@@ -5,6 +5,7 @@ from civicboom.model.member            import User, UserLogin
 
 # Database Actions
 #from civicboom.lib.database.actions    import follow, accept_assignment
+from civicboom.lib.database.get_cached import get_member as _get_member
 
 # Communication & Messages
 from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email, associate_janrain_account, set_password
@@ -22,7 +23,6 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 from civicboom.lib.misc import random_string
 
 log      = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 new_user_prefix = "newuser__"
 
@@ -51,7 +51,7 @@ class RegisterController(BaseController):
         """
         registration_template = "/html/web/account/register.mako"
         
-        c.new_user = get_member(id)
+        c.new_user = _get_member(id)
         
         # Validate User
         if c.logged_in_persona and c.logged_in_persona == c.new_user: # from janrain login
@@ -143,13 +143,13 @@ class RegisterController(BaseController):
         Session.commit()
         
         # Automatically Follow Civicboom
-        civicboom = get_member('civicboom')
+        civicboom = _get_member('civicboom')
         if civicboom:
             u.follow(civicboom)
         
         # Follow the refered_by user if they exisits
         if 'refered_by' in kwargs:
-            refered_by = get_member(kwargs['refered_by'])
+            refered_by = _get_member(kwargs['refered_by'])
             if refered_by and u.follow(refered_by) == True:
                 log.debug("message generation not implmented yet")
                 #refered_by.send_message(messages.followed_on_signup(member=u)

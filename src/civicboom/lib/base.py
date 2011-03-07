@@ -15,9 +15,9 @@ from pylons.decorators.secure import https
 from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
-from civicboom.model                   import meta
+from civicboom.model                   import meta, Member
 from civicboom.lib.web                 import url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
-from civicboom.lib.database.get_cached import get_member, get_group, get_membership
+from civicboom.lib.database.get_cached import get_member as _get_member, get_group as _get_group, get_membership as _get_membership, get_message as _get_message, get_content as _get_content
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize
@@ -29,7 +29,8 @@ import civicboom.lib.errors as errors
 import json
 
 import logging
-log = logging.getLogger(__name__)
+log      = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 
 __all__ = [
     # pylons environment
@@ -68,13 +69,17 @@ __all__ = [
     "BaseController",
     "authentication_token",
     "redirect_to_referer", #TODO? potential for removal?
-    "get_member", "get_group", #AllanC - should be used with cuation, we need to be careful about permissions
     "logging",
     "overlay_status_message",
     "raise_if_current_role_insufficent", "has_role_required",
+    "get_member", "get_group", "get_content", "get_message",
+    "normalize_member",
     
     #cache
-    "gen_cache_key"
+    "gen_cache_key",
+    
+    #log
+    "user_log",
 ]
 
 
@@ -153,7 +158,104 @@ def setup_widget_env():
         owner = get_member(c.widget['owner'])
         if owner:
             c.widget['owner'] = owner.to_dict()
-    
+
+
+#-------------------------------------------------------------------------------
+# Get Objects
+#-------------------------------------------------------------------------------
+
+def get_member(member, set_html_action_fallback=False, search_email=False):
+    """
+    Shortcut to return a member and raise not found automatically (as these are common opertations every time a member is fetched)
+    """
+    # Concept of 'me' in API
+    if isinstance(member, basestring) and member.lower()=='me' and c.logged_in_persona:
+        member = c.logged_in_persona.username
+    member = _get_member(member, search_email=search_email)
+    if not member:
+        raise action_error(_("member not found"), code=404)
+    if member.status != "active":
+        raise action_error(_("member inactive") , code=404)
+    if set_html_action_fallback:
+        # AllanC - see _get_content for rational behind this
+        c.html_action_fallback_url = url('member', id=member.username)
+    return member
+
+
+def get_group(id, is_admin=False, is_member=False, set_html_action_fallback=False):
+    """
+    Shortcut to return a group and raise not found or permission exceptions automatically (as these are common opertations every time a group is fetched)
+    """
+    group = get_member(id, set_html_action_fallback=set_html_action_fallback)
+    #if not isinstance(group, Group):
+    if group.__type__ != 'group':
+        raise action_error(_("%s is not a group" % id), code=404)
+    #if not group:
+    #    raise action_error(_("group not found"), code=404)
+    if is_admin and not group.is_admin(c.logged_in_persona):
+        raise action_error(_("you do not have permission for this group"), code=403)
+    if is_member and not group.get_membership(c.logged_in_persona):
+        raise action_error(_("you are not a member of this group"), code=403)
+    return group
+
+
+def get_message(message, is_target=False, is_target_or_source=False):
+    message = _get_message(message)
+    if not message:
+        raise action_error(_("Message does not exist"), code=404)
+    if is_target and message.target != c.logged_in_persona:
+        raise action_error(_("You are not the target of this message"), code=403)
+    if is_target_or_source and c.logged_in_persona and not (message.target==c.logged_in_persona or message.source==c.logged_in_persona):
+        raise action_error(_("You are not the target or source of this message"), code=403)
+    return message
+
+
+def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False, set_html_action_fallback=False):
+    """
+    Shortcut to return content and raise not found or permission exceptions automatically (as these are common opertations every time a content is fetched)
+    """
+    content = _get_content(id)
+    if not content:
+        raise action_error(_("The _content you requested could not be found"), code=404)
+    if is_viewable:
+        if not content.viewable_by(c.logged_in_persona):
+            raise action_error(_("The _content you requested is not viewable"), code=403)
+        if content.__type__ == "comment":
+            user_log.debug("Attempted to view a comment as an article")
+            #raise action_error(_("_content not found"), code=404)
+            # AllanC - originaly viewing a comment was an error, we may want in the future to display comments and sub comments, for now we redirect to parent
+            if c.format == 'html' or c.format == 'redirect':
+                return redirect(url('content', id=content.parent.id))
+            return action_error(_('Attempted to view a comment as _article'))
+    if is_editable and not content.editable_by(c.logged_in_persona):
+        # AllanC TODO: need to check role in group to see if they can do this
+        raise action_error(_("You do not have permission to edit this _content"), code=403)
+    if is_parent_owner and not content.is_parent_owner(c.logged_in_persona):
+        raise action_error(_("You are not the owner of the parent _content"), code=403)
+    if set_html_action_fallback:
+        # AllanC - Many times when we fetch content in an 'action' we dont have a template set.
+        # if we perform an action but dont have a page to display an error occurs
+        # we set a url fallback.
+        # This bool can be set to auto generate this as a convenience
+        c.html_action_fallback_url = url('content', id=content.id)
+    return content
+
+
+def normalize_member(member, always_return_id=True):
+    if isinstance(member, Member):
+        member = member.id
+    elif isinstance(member, basestring) and member.lower()=='me' and c.logged_in_persona:
+        return c.logged_in_persona.id
+    else:
+        try:
+            member = int(member)
+        except:
+            if always_return_id:
+                member = _get_member(member)
+                if member:
+                    member = member.id
+    return member
+
 
 #-------------------------------------------------------------------------------
 # Base Controller
@@ -205,12 +307,12 @@ class BaseController(WSGIController):
         request.environ['logged_in_user']     = username
         request.environ['logged_in_persona']  = username_persona
         
-        c.logged_in_user         = get_member(username)
+        c.logged_in_user         = _get_member(username)
         c.logged_in_persona      = c.logged_in_user
         c.logged_in_persona_role = 'admin' #always an admin of yourself
         if username != username_persona:
-            persona    = get_group(username_persona)
-            membership = get_membership(persona ,c.logged_in_user)
+            persona    = _get_group(username_persona)
+            membership = _get_membership(persona ,c.logged_in_user)
             if membership:
                 c.logged_in_persona      = persona
                 c.logged_in_persona_role = membership.role

@@ -1,5 +1,5 @@
 from civicboom.lib.base import *
-from civicboom.controllers.members  import MembersController , _get_member
+from civicboom.controllers.members  import MembersController 
 from civicboom.controllers.contents import ContentsController, sqlalchemy_content_query
 from civicboom.lib.misc import update_dict
 
@@ -7,7 +7,6 @@ content_search = ContentsController().index
 member_search  = MembersController().index
 
 log      = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 class MemberActionsController(BaseController):
@@ -32,7 +31,7 @@ class MemberActionsController(BaseController):
         @return 200   following ok
         @return 500   error following
         """
-        member = _get_member(id, set_html_action_fallback=True)
+        member = get_member(id, set_html_action_fallback=True)
 
         status = c.logged_in_persona.follow(member)
         if status == True:
@@ -54,7 +53,7 @@ class MemberActionsController(BaseController):
         @return 200   unfollowing ok
         @return 500   error unfollowing
         """
-        member = _get_member(id, set_html_action_fallback=True)
+        member = get_member(id, set_html_action_fallback=True)
         status = c.logged_in_persona.unfollow(member)
         if status == True:
             return action_ok(_('You have stopped following %s') % member.name or member.username)
@@ -77,7 +76,7 @@ class MemberActionsController(BaseController):
                 list  the list
         @return 404   not found
         """
-        member = _get_member(id)
+        member = get_member(id)
         return action_ok(data={"list": member.action_list_for(c.logged_in_persona)})
 
 
@@ -192,7 +191,7 @@ class MemberActionsController(BaseController):
 
     @web
     def groups(self, id, **kwargs):
-        member = _get_member(id)
+        member = get_member(id)
         
         if member == c.logged_in_persona and kwargs.get('private'):
             group_roles = member.groups_roles #self._groups_list_dict(
@@ -207,7 +206,7 @@ class MemberActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     def assignments_accepted(self, id, **kwargs):
-        member = _get_member(id)
+        member = get_member(id)
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_accepted]
@@ -216,7 +215,7 @@ class MemberActionsController(BaseController):
 
     @web
     def assignments_unaccepted(self, id, **kwargs):
-        member = _get_member(id)
+        member = get_member(id)
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_unaccepted]
@@ -240,7 +239,7 @@ class MemberActionsController(BaseController):
         not exactly the best place for this ... but it fits.
         making a groups_list controler was overkill and compicated members/show ... so I left it here
         """
-        group = _get_member(id)
+        group = get_member(id)
         
         # FIXME!!!!!
         # AllanC - HACK ALERT - I needed actions for a member list, so I left c.group so the frag template could look at it - horrible!!!

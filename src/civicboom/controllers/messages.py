@@ -1,5 +1,4 @@
 from civicboom.lib.base import *
-from civicboom.lib.database.get_cached import get_message
 from civicboom.model import Message
 import json
 
@@ -12,7 +11,6 @@ from civicboom.lib.form_validators.base import DefaultSchema, MemberValidator
 import formencode
 
 log = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 
@@ -32,15 +30,6 @@ class NewMessageSchema(DefaultSchema):
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_message(message, is_target=False, is_target_or_source=False):
-    message = get_message(message)
-    if not message:
-        raise action_error(_("Message does not exist"), code=404)
-    if is_target and message.target != c.logged_in_persona:
-        raise action_error(_("You are not the target of this message"), code=403)
-    if is_target_or_source and c.logged_in_persona and not (message.target==c.logged_in_persona or message.source==c.logged_in_persona):
-        raise action_error(_("You are not the target or source of this message"), code=403)
-    return message
 
 #-------------------------------------------------------------------------------
 # Search Filters
@@ -227,7 +216,7 @@ class MessagesController(BaseController):
         #    h.form(h.url('message', id=ID), method='delete')
         # url('message', id=ID)
         
-        message = _get_message(id, is_target=True)
+        message = get_message(id, is_target=True)
         user_log.info("Deleted Message #%d" % (message.id, ))
         message.delete()
         
@@ -261,7 +250,7 @@ class MessagesController(BaseController):
         
         #c.viewing_user = c.logged_in_persona - swiching persona will mean that logged_in_user is group
         
-        message = _get_message(id, is_target_or_source=True)
+        message = get_message(id, is_target_or_source=True)
         if not message.read and message.target_id==c.logged_in_persona.id:
             message.read = True
             Session.commit()

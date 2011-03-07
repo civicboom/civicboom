@@ -3,7 +3,7 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom
-from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license, get_tag, get_assigned_to
+from civicboom.lib.database.get_cached import update_content, get_licenses, get_license, get_tag, get_assigned_to, get_content as _get_content
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
@@ -32,7 +32,7 @@ from sets import Set # may not be needed in Python 2.7+
 
 # Logging setup
 log      = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
+
 
 
 #-------------------------------------------------------------------------------
@@ -70,33 +70,6 @@ class ContentCommentSchema(ContentSchema):
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False, set_html_action_fallback=False):
-    """
-    Shortcut to return content and raise not found or permission exceptions automatically (as these are common opertations every time a content is fetched)
-    """
-    content = get_content(id)
-    if not content:
-        raise action_error(_("The _content you requested could not be found"), code=404)
-    if is_viewable:
-        if not content.viewable_by(c.logged_in_persona):
-            raise action_error(_("The _content you requested is not viewable"), code=403)
-        if content.__type__ == "comment":
-            user_log.debug("Attempted to view a comment as an article")
-            #raise action_error(_("_content not found"), code=404)
-            # AllanC - originaly viewing a comment was an error, we may want in the future to display comments and sub comments, for now we redirect to parent
-            return redirect(url('content', id=content.parent.id))
-    if is_editable and not content.editable_by(c.logged_in_persona):
-        # AllanC TODO: need to check role in group to see if they can do this
-        raise action_error(_("You do not have permission to edit this _content"), code=403)
-    if is_parent_owner and not content.is_parent_owner(c.logged_in_persona):
-        raise action_error(_("You are not the owner of the parent _content"), code=403)
-    if set_html_action_fallback:
-        # AllanC - Many times when we fetch content in an 'action' we dont have a template set.
-        # if we perform an action but dont have a page to display an error occurs
-        # we set a url fallback.
-        # This bool can be set to auto generate this as a convenience
-        c.html_action_fallback_url = url('content', id=content.id)
-    return content
 
 #-------------------------------------------------------------------------------
 # Decorators
@@ -113,18 +86,6 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
 # Search Filters
 #-------------------------------------------------------------------------------
 
-def _normalize_member(member, always_return_id=False):
-    if isinstance(member, Member):
-        member = member.id
-    else:
-        try:
-            member = int(member)
-        except:
-            if always_return_id:
-                member = get_member(member)
-                if member:
-                    member = member.id
-    return member
 
 
 def _init_search_filters():
@@ -153,7 +114,7 @@ def _init_search_filters():
         return query.filter(Content.__type__==type_text)
     
     def append_search_creator(query, creator):
-        creator = _normalize_member(creator, always_return_id=True)
+        creator = normalize_member(creator)
         if isinstance(creator, int):
             return query.filter(Content.creator_id==creator)
         else:
@@ -168,7 +129,7 @@ def _init_search_filters():
         return query.filter(Content.parent_id==int(content_id))
 
     def append_search_boomed_by(query, member):
-        member = _normalize_member(member, always_return_id=True)
+        member = normalize_member(member)
         #return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
         return query.filter(Content.id.in_(Session.query(Boom.content_id).filter(Boom.member_id==member)))
 
@@ -264,7 +225,7 @@ class ContentsController(BaseController):
         #          TODO: we need maybe a separte call, or something to identify a private call
         logged_in_creator = False
         if 'creator' in kwargs:
-            kwargs['creator'] = _normalize_member(kwargs['creator'], always_return_id=True) # normalize creator
+            kwargs['creator'] = normalize_member(kwargs['creator']) # normalize creator
             if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
         
@@ -367,20 +328,17 @@ class ContentsController(BaseController):
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
         
-        # If a license isn't explicitly set, use the parent's preference
-        parent_id  = kwargs.get('parent_id')
-        license_id = kwargs.get('license_id')
-        if parent_id and not license_id:
-            parent = get_content(parent_id)
-            if parent and parent.__type__ == 'assignment' and parent.default_response_license:
-                content.license = parent.default_response_license
-
-        # if a title isn't set but we have a parent, title = "Re: parent title"
-        title = kwargs.get('title')
-        if parent_id and not title:
-            parent = get_content(parent_id)
-            if parent and parent.title:
-                content.title = "Re: "+parent.title
+        
+        parent = _get_content(kwargs.get('parent_id'))
+        if parent:
+            # If a license isn't explicitly set, use the parent's preference
+            if not kwargs.get('license_id'):
+                if parent and parent.__type__ == 'assignment' and parent.default_response_license:
+                    content.license = parent.default_response_license
+            # if a title isn't set but we have a parent, title = "Re: parent title"
+            if not kwargs.get('title'):
+                if parent and parent.title:
+                    content.title = "Re: "+parent.title
 
         # comments are always owned by the writer; ignore settings
         # and parent preferences
@@ -430,7 +388,7 @@ class ContentsController(BaseController):
         if isinstance(id, Content):
             content = id
         else:
-            content = _get_content(id, is_editable=True)
+            content = get_content(id, is_editable=True)
         assert content
         
         # -- Validate ----------------------------------------------------------
@@ -635,7 +593,7 @@ class ContentsController(BaseController):
         @return 404   no content to delete
         """
         # url('content', id=ID)
-        content = _get_content(id, is_editable=True)
+        content = get_content(id, is_editable=True)
         user_log.info("Deleting content %d" % content.id)
         content.delete()
         return action_ok(_("_content deleted"), code=200)
@@ -657,7 +615,7 @@ class ContentsController(BaseController):
         """
         # url('content', id=ID)
         
-        content = _get_content(id, is_viewable=True)
+        content = get_content(id, is_viewable=True)
         
         if 'lists' not in kwargs:
             kwargs['lists'] = 'comments, responses, contributors, actions, accepted_status'
@@ -701,7 +659,7 @@ class ContentsController(BaseController):
         """
         # url('edit_content', id=ID)
         
-        c.content = _get_content(id, is_editable=True)
+        c.content = get_content(id, is_editable=True)
         
         #c.content                  = form_to_content(kwargs, c.content)
         

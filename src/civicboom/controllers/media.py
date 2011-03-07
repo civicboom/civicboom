@@ -7,7 +7,6 @@ import pprint
 
 # Logging setup
 log      = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 class MediaController(BaseController):
