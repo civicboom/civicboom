@@ -38,7 +38,6 @@ Most actions follow the following structure:
 
 import logging
 log = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 #-------------------------------------------------------------------------------
@@ -556,8 +555,6 @@ def rate_content(content, member, rating):
             Session.add(r)
             Session.commit()
 
-    user_log.debug("Rated Content #%d as %d" % (content.id, int(rating)))
-
 
 def add_to_interests(member, content, delay_commit=False):
     content = get_content(content)
@@ -577,8 +574,6 @@ def add_to_interests(member, content, delay_commit=False):
     if not delay_commit:
         Session.commit()
 
-    user_log.debug("Added to interests #%d" % (content.id))
-    
     return True
 
 
