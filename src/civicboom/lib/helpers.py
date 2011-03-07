@@ -127,8 +127,8 @@ def wh_url(folder, filename):
         path = os.path.join("civicboom", "public", filename)
         ut = str(int(os.stat(path).st_mtime))
         if config['debug']:
-            # in development,  serve locally
-            return "/"+filename+"?ut="+ut
+            # in development, serve locally
+            return request.environ.get('wsgi.url_scheme', 'https')+"://"+request.environ.get("HTTP_HOST")+"/"+filename+"?ut="+ut
         else:
             # in production, serve from a domain without cookies
             return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+filename+"?ut="+ut
