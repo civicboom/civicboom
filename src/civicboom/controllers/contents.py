@@ -209,6 +209,9 @@ class ContentsController(BaseController):
     def index(self, union_query=None, **kwargs):
         """
         GET /contents: All items in the collection
+
+        @api contents 1.0 (WIP)
+
         @param limit
         @param offset
         @param include_fields   "attachments" for media

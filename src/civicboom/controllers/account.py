@@ -18,6 +18,11 @@ log      = logging.getLogger(__name__)
 
 
 class AccountController(BaseController):
+    """
+    @title Accounts
+    @doc account
+    @desc controller for signing in and out
+    """
 
     #---------------------------------------------------------------------------
     # Signout
@@ -30,6 +35,12 @@ class AccountController(BaseController):
     #@authenticate_form
     def signout(self, **kwargs):
         """
+        POST /account/signout: End the current session
+
+        @api account 1.0 (WIP)
+
+        @return 302   redirect to the front page
+
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies
 
         Redirect to a new URL so that the browser doesn't cache it (Shouldn't be necessary, but it
@@ -47,6 +58,17 @@ class AccountController(BaseController):
     # mobile requires a valid cert, mobile.civicboom.com doesn't have one
     #@https() # redirect to https for transfer of password
     def signin(self, **kwargs):
+        """
+        POST /account/signin: Create a new session
+
+        @api account 1.0 (WIP)
+
+        @param username     the user's civicboom.com username
+        @param password     the user's civicboom.com password
+
+        @return 200         logged in ok
+                auth_token  the token to be supplied with any data-modifying requests
+        """
 
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':
@@ -113,6 +135,14 @@ class AccountController(BaseController):
     @web
     @auth
     def set_persona(self, id, **kwargs):
+        """
+        POST /account/set_persona/{id}: change the currently active persona
+
+        @api account 1.0 (WIP)
+
+        @return 200     switched ok
+        @return 500     switch failed
+        """
         if set_persona(id):
             user_log.info("Switched to persona %s" % id)
             # AllanC - not a sutable solution - I wanted an AJAX working version
