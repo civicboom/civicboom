@@ -85,11 +85,11 @@ ${widget_preview(c.widget_user_preview)}
                 <input type="text"    name="title"     value="${c.widget['title']    }" size="30"/><br/>
                 <%
                     base_lists = [
-                        ('assignments_active'   , _('my active _assignments')                ),
-                        ('assignments_accepted' , _('_assignments I have accepted')          ),
-                        ('content_and_boomed'   , _('my _content and _content I have boomed')),
-                        ('boomed'               , _('_content I have boomed')                ),
-                        ('content'              , _('all my _content')                       ),
+                        ('assignments_active'   , _('My active _assignments')                ),
+                        ('assignments_accepted' , _('_Assignments I have accepted')          ),
+                        ('content_and_boomed'   , _('My _content and _content I have boomed')),
+                        ('boomed'               , _('_Content I have boomed')                ),
+                        ('content'              , _('All my _content')                       ),
                     ]
                 %>
                 <select name="base_list">
@@ -99,7 +99,7 @@ ${widget_preview(c.widget_user_preview)}
                         if c.widget['base_list'] == list_name:
                             selected = 'selected'
                     %>
-                    <option value="${list_name}" ${selected}>${list_description.capitalize()}</option>
+                    <option value="${list_name}" ${selected}>${list_description}</option>
                     % endfor
                 </select>
                 ##<input type="hidden"  name="base_list" value="${c.widget['base_list']}" size="30"/><!-- should be a drop down box -->
