@@ -11,6 +11,8 @@ from civicboom.lib.database.get_cached import get_member
 
 from civicboom.controllers.register import register_new_janrain_user
 
+import time
+
 
 log      = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -30,9 +32,12 @@ class AccountController(BaseController):
     def signout(self, **kwargs):
         """
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies
+
+        Redirect to a new URL so that the browser doesn't cache it (Shouldn't be necessary, but it
+        seems that sometimes it is?)
         """
         signout_user(c.logged_in_persona)
-        return redirect(url('/', protocol='http'))
+        return redirect(url('/', protocol='http', ut=str(time.time())))
 
 
     #---------------------------------------------------------------------------
