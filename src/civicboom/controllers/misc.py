@@ -57,8 +57,8 @@ class MiscController(BaseController):
             'groups':    Session.query(Group).count(),
             'media':     Session.query(Media).count(),
             'requests':  Session.query(Content).filter(Content.__type__=="assignment").count(),
-            'responses': Session.query(Content).filter(Content.__type__=="article" and Content.parent_id!=None).count(),
-            'articles':  Session.query(Content).filter(Content.__type__=="article" and Content.parent_id==None).count(),
+            'responses': Session.query(Content).filter(Content.__type__=="article").filter(Content.parent_id!=None).count(),
+            'articles':  Session.query(Content).filter(Content.__type__=="article").filter(Content.parent_id==None).count(),
             'comments':  Session.query(Content).filter(Content.__type__=="comment").count(),
         })
 
