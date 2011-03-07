@@ -1,5 +1,8 @@
 <%inherit file="../common/widget_content.mako"/>
 
+<%namespace name="member_includes" file="/html/widget/common/member.mako"/>
+
+
 ##------------------------------------------------------------------------------
 ## Variables
 ##------------------------------------------------------------------------------
@@ -19,13 +22,9 @@
 <div style="clear: both;"></div>
 
 ## If the widget is not owned by anybody then show the creator
-% if not c.widget['owner']['username']:
-<p>
-    <a href="${h.url('member', id=content['creator']['username'], subdomain='')}" target="_blank">
-        By
-        <img src="${content['creator']['avatar_url']}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
-        ${content['creator']['name'] or content['creator']['username']}
-    </a>
+% if not c.widget['owner']['username'] and c.widget['owner']['username'] != content['creator']['username']:
+<p style="float: right; text-align: right;">
+    By ${member_includes.by_member(content['creator'])}
 </p>
 % endif
 

@@ -126,9 +126,12 @@
             <a class="icon16 i_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='about', id='mobile', subdomain='')}"><span>Mobile</span></a>
             <a class="icon16 i_widget"    title="${_('Embed this widget')}"                     href="${h.url(controller='misc', action='get_widget')}"><span>Embed</span></a>
             <%
+                rss_url = ''
+                
                 if owner['username']:
                     rss_url = h.url('member', id=owner['username'], format='rss', subdomain='')
-                else:
+                    
+                elif '/misc' not in h.current_url(): #do not show RSS link for misc pages as they are static
                     # Get current URL deatils - set format to RSS and remove widget variables
                     kwargs = {}
                     if c.web_params_to_kwargs:
@@ -139,8 +142,16 @@
                     if 'format' in kwargs:
                         del kwargs['format']
                     rss_url = h.url('current', format='rss', subdomain='', **kwargs)
+                    
+                    #rss_url = ''
+                    #(args, kwargs)  = h.get_object_from_action_url()
+                    #if args and ('member' in args or 'content' in args):
+                    #    kwargs['format'] = 'rss'
+                    #    rss_url = h.url(*args, **kwargs)
             %>
+            % if rss_url:
             <a class="icon16 i_rss"       title="${_('RSS')}"                   target="_blank" href="${rss_url}"><span>RSS</span></a>
+            % endif
         </div>
     </div>
 </div>

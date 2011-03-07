@@ -83,7 +83,26 @@ ${widget_preview(c.widget_user_preview)}
               <h2>${_('Customise this widget')}</h2>
               <fieldset><legend>${_("Title")}</legend>
                 <input type="text"    name="title"     value="${c.widget['title']    }" size="30"/><br/>
-                <input type="hidden"  name="base_list" value="${c.widget['base_list']}" size="30"/><!-- should be a drop down box -->
+                <%
+                    base_lists = [
+                        ('assignments_active'   , _('my active _assignments')                ),
+                        ('assignments_accepted' , _('_assignments I have accepted')          ),
+                        ('content_and_boomed'   , _('my _content and _content I have boomed')),
+                        ('boomed'               , _('_content I have boomed')                ),
+                        ('content'              , _('all my _content')                       ),
+                    ]
+                %>
+                <select name="base_list">
+                    % for list_name, list_description in base_lists:
+                    <%
+                        selected = ''
+                        if c.widget['base_list'] == list_name:
+                            selected = 'selected'
+                    %>
+                    <option value="${list_name}" ${selected}>${list_description.capitalize()}</option>
+                    % endfor
+                </select>
+                ##<input type="hidden"  name="base_list" value="${c.widget['base_list']}" size="30"/><!-- should be a drop down box -->
               </fieldset>
               
               <table><tr>

@@ -1,6 +1,6 @@
 from civicboom.lib.base import *
 from civicboom.controllers.members  import MembersController , _get_member
-from civicboom.controllers.contents import ContentsController
+from civicboom.controllers.contents import ContentsController, sqlalchemy_content_query
 from civicboom.lib.misc import update_dict
 
 content_search = ContentsController().index
@@ -153,9 +153,9 @@ class MemberActionsController(BaseController):
     # List - Boomed Content
     #---------------------------------------------------------------------------
     @web
-    def boomed_content(self, id, **kwargs):
+    def boomed(self, id, **kwargs):
         """
-        GET /members/{name}/boomed_content: get a list content this user has boomed
+        GET /members/{name}/boomed: get a list content this user has boomed
         
         @api members 1.0 (WIP)
         
@@ -164,6 +164,23 @@ class MemberActionsController(BaseController):
         @return 404   member not found
         """
         return content_search(boomed_by=id, **kwargs)
+
+
+    #---------------------------------------------------------------------------
+    # List - Member Content and Boomed Content Union
+    #---------------------------------------------------------------------------
+    @web
+    def content_and_boomed(self, id, **kwargs):
+        """
+        GET /members/{name}/content_and_boomed: get a list content this user has created and boomed
+        
+        @api members 1.0 (WIP)
+        
+        @return 200    list generated ok
+                list   array of content objects
+        @return 404   member not found
+        """
+        return content_search(boomed_by=id, union_query=sqlalchemy_content_query(creator=id) , **kwargs)
 
 
     #---------------------------------------------------------------------------

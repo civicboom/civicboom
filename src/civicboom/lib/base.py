@@ -188,7 +188,7 @@ class BaseController(WSGIController):
             width      = 160 ,
             height     = 200 ,
             title      = _('Get involved')  ,
-            base_list  = 'assignments_active',
+            base_list  = 'content_and_boomed',
             owner      = '' ,
             color_font       = '000' ,
             color_border     = 'ccc' ,

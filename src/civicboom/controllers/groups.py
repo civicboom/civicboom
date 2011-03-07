@@ -35,8 +35,8 @@ user_log = logging.getLogger("user")
 #-------------------------------------------------------------------------------
 
 class GroupSchema(DefaultSchema):
-    name                       = formencode.validators.String(max=255, min=2               , not_empty=False)
-    description                = formencode.validators.String(max=255, min=2               , not_empty=False)
+    name                       = formencode.validators.String(max=255, min=4               , not_empty=False)
+    description                = formencode.validators.String(max=4096, min=0              , not_empty=False)
     default_role               = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
     join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
     member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)

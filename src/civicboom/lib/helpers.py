@@ -21,7 +21,7 @@ from civicboom.lib.misc import args_to_tuple
 # use relative import so that "import helpers" works
 #from civicboom.lib.text import scan_for_embedable_view_and_autolink
 from text import scan_for_embedable_view_and_autolink
-from web import current_url, url, current_protocol
+from civicboom.lib.web import current_url, url, current_protocol
 
 import webhelpers.html.tags as html
 
@@ -455,10 +455,12 @@ regex_content_url = re.compile(r'(?:.*?)/contents/(.*?)[/&?#\n. "]')
 regex_member_url  = re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "]')
 
 
-def get_object_from_action_url(action_url):
+def get_object_from_action_url(action_url=None):
     """
     Creates a tuple to be used with url(*tuple[0], **tuple[1])
     """
+    if not action_url:
+        action_url = current_url()
     m = re.match(regex_content_url, action_url)
     if m:
         return ( ['content'], dict(id=m.group(1)) )

@@ -98,8 +98,6 @@ class MessagesController(BaseController):
         # Setup search criteria
         if 'list' not in kwargs:
             kwargs['list'] = 'all'
-        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.messages'])
-        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
             if kwargs.get('list') in ['to']:
@@ -137,6 +135,8 @@ class MessagesController(BaseController):
         count = results.count()
         
         # Limit & Offset
+        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.messages'])
+        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
         # Return search results
