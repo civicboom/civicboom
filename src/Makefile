@@ -14,6 +14,7 @@ help:
 	# profile    -- run the test suite with profiling enabled (slow)
 	# stats      -- run the interactive profile examiner
 	# pep8       -- strict syntax checking
+	# api-doc    -- build civicboom/public/api.html
 
 site: i18n js css
 
@@ -82,3 +83,6 @@ pep8:
 	# 501 = line too long
 	# 701 = multiple statments one line (colons)
 	pep8 -r --ignore=E2,E301,E303,E501,E701,W293 civicboom
+
+api-doc:
+	../admin_scripts/gendoc -i civicboom/controllers/ -t ../docs -o civicboom/public/api.html
