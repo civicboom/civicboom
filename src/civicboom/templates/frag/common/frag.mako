@@ -184,11 +184,16 @@
     <%
         ## Bug issue #300
         ## AllanC - This is incorrect! if the current URL is profile/index the RSS source returns a 403 Error when it trys to access it
+        params = dict(request.params)
+        if "format" in params:
+            del params["format"]
+        if "include_fields" in params:
+            del params["include_fields"]
         feed = h.url(
             'current',
             format         = 'rss',
             include_fields = 'attachments',
-			**request.params
+            **params
         )
         
         georss_url = dict(
