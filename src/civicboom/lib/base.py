@@ -169,8 +169,11 @@ def get_member(member, set_html_action_fallback=False, search_email=False):
     Shortcut to return a member and raise not found automatically (as these are common opertations every time a member is fetched)
     """
     # Concept of 'me' in API
-    if isinstance(member, basestring) and member.lower()=='me' and c.logged_in_persona:
-        member = c.logged_in_persona.username
+    if isinstance(member, basestring) and member.lower()=='me':
+        if c.logged_in_persona:
+            member = c.logged_in_persona.username
+        else:
+            raise action_error(_("cannot reffer to 'me' when not logged in"), code=400)
     member = _get_member(member, search_email=search_email)
     if not member:
         raise action_error(_("member not found"), code=404)
@@ -244,8 +247,11 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
 def normalize_member(member, always_return_id=True):
     if isinstance(member, Member):
         member = member.id
-    elif isinstance(member, basestring) and member.lower()=='me' and c.logged_in_persona:
-        return c.logged_in_persona.id
+    elif isinstance(member, basestring) and member.lower()=='me':
+        if c.logged_in_persona:
+            return c.logged_in_persona.id
+        else:
+            raise action_error(_("cannot reffer to 'me' when not logged in"), code=400)
     else:
         try:
             member = int(member)

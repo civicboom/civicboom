@@ -27,11 +27,15 @@ log      = logging.getLogger(__name__)
 def _init_search_filters():
     
     def append_search_member(query, member):
-        if isinstance(member, Member):
-            member = member.id
-        try:
+        #if isinstance(member, Member):
+        #    member = member.id
+        #try:
+        #    return query.filter(Member.id       == int(member))
+        #except:
+        member = normalize_member(member, always_return_id=False)
+        if isinstance(member, int):
             return query.filter(Member.id       == int(member))
-        except:
+        elif isinstance(member, basestring):
             return query.filter(Member.username == member     )
 
     def append_search_name(query, name):
