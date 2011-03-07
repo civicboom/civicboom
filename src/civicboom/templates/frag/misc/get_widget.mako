@@ -89,7 +89,7 @@ ${widget_preview(c.widget_user_preview)}
                         ('assignments_accepted' , _('_Assignments I have accepted')          ),
                         ('content_and_boomed'   , _('My _content and _content I have boomed')),
                         ('boomed'               , _('_Content I have boomed')                ),
-                        ('content'              , _('All my _content')                       ),
+                        ('content'              , _('My _content')                           ),
                     ]
                 %>
                 <select name="base_list">
