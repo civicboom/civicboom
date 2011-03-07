@@ -34,7 +34,7 @@ class UniqueUsernameValidator(validators.FancyValidator):
     min =  4
     max = 32
     messages = {
-        'too_few'       : _('Your username must be longer than %(min)i characters'),
+        'too_few'       : _('Your username must be at least %(min)i characters'),
         'too_long'      : _('Your username must be shorter than %(max)i characters'),
         'username_taken': _('The username %(name)s is no longer available, please try a different one'),
         'illegal_chars' : _('Usernames may only contain alphanumeric characters or underscores'),
@@ -43,9 +43,9 @@ class UniqueUsernameValidator(validators.FancyValidator):
         value = make_username(unicode(value.strip()))
         if not re.search("^[\w-]*$", value):
             raise formencode.Invalid(self.message("illegal_chars", state,), value, state)
-        if len(value) <= self.min:
+        if len(value) < self.min:
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
-        if len(value) >= self.max:
+        if len(value) > self.max:
             raise formencode.Invalid(self.message("too_long", state, max=self.max), value, state)
             
         from pylons import tmpl_context as c
