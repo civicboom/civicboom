@@ -32,13 +32,13 @@ user_log = logging.getLogger("user")
 # Form Schema
 #-------------------------------------------------------------------------------
 
-class GroupSchema(DefaultSchema):
-    name                       = formencode.validators.String(max=255, min=2               , not_empty=False)
-    description                = formencode.validators.String(max=255, min=2               , not_empty=False)
-    default_role               = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
-    join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
-    member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
-    #default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
+#class GroupSchema(DefaultSchema):
+#    name                       = formencode.validators.String(max=255, min=2               , not_empty=False)
+#    description                = formencode.validators.String(max=255, min=2               , not_empty=False)
+#    default_role               = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
+#    join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
+#    member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
+#    #default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
 
 class CreateGroupSchema(GroupSchema):
     username                   = UniqueUsernameValidator()
@@ -164,10 +164,13 @@ class GroupsController(BaseController):
         if not kwargs.get('username') and kwargs.get("name"):
             kwargs["username"] = make_username(kwargs.get("name"))
         
-        data       = {'group':kwargs, 'action':'create'}
-        data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
-        group_dict = data['group']
+        # Need to validate before creating group, not sure how we could do this via settings controller :S GregM
+        data       = {'settings':kwargs, 'action':'create'}
+        data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='settings', template_error='groups/edit')
+        group_dict = data['settings']
         
+        
+        # Create and set group admin here!
         group              = Group()
         group.username     = group_dict['username']
         group.status       = 'active'
@@ -178,7 +181,10 @@ class GroupsController(BaseController):
         Session.add(group)
         Session.commit()
         
-        self.update(group.id, **kwargs) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
+#        self.update(group.username, **kwargs) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
+        
+        # Call settings controller to update group settings!
+        settings_update(group.username, **kwargs)
 
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         
@@ -195,67 +201,19 @@ class GroupsController(BaseController):
         @return 200 - ???
         """
         #url_for('new_group')
-        return action_ok(template='groups/edit')
+        print settings_base
+        return action_ok(template='groups/create')
 
 
     @web
     @auth
     def update(self, id, **kwargs):
         """
-        PUT /groups/{id}: Update a groups settings
-
-        @api groups 1.0 (WIP)
-        
-        @param * - see "POST contents"
-        
-        @return 403 - lacking permission to edit
-        @return 200 - success
+        PUT /groups/{id}: Depricated!
         """
-        group = _get_group(id, is_admin=True)
-        
-        group_dict = group.to_dict()
-        group_dict.update(kwargs)
-        data = {'group':group_dict, 'action':'edit'}
-        data = validate_dict(data, GroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
-        group_dict = data['group']
-        
-        group.name                       = group_dict['name']
-        #group.description                = group_dict['description'] GregM: Broke description saving, ARRGHHHHHH!!!!!!!!!
-        group.default_role               = group_dict['default_role']
-        group.join_mode                  = group_dict['join_mode']
-        group.member_visibility          = group_dict['member_visibility']
-        group.default_content_visibility = group_dict.get('default_content_visibility', "public") # Shish: hack
-        
-        # GregM: call settings_update with logo_file as avatar
-        # ARRRGHHH: Hacked c.format as settings_update redirects on html
-        # old_persona = c.logged_in_persona
-        
-        ## GregM DIRTIEST HACK IN HISTORY! OMFG! Works... do not try this at home!
-        
-        Session.commit()
-        
-        cformat = c.format
-        cpersona = c.logged_in_persona
-        c.logged_in_persona = group
-        c.format = 'python'
-        if 'description' in kwargs:
-            settings_update(id=id, description=kwargs['description'])
-        if 'avatar' in kwargs:
-            settings_update(id=id, avatar=kwargs['avatar'])
-        if 'website' in kwargs:
-            settings_update(id=id, website=kwargs['website'])
-        c.format = cformat
-        c.logged_in_persona = cpersona
-        
-        Session.commit()
-
-        user_log.info("Updated Group #%d (%s)" % (group.id, group.username))
-        
-        if c.format == 'html':
-            ##return redirect(url('members', id=group.username))
-            set_persona(group)
-            
-        return action_ok(message=_('group updated ok'), data=data)
+        # h.form(h.url_for('message', id=ID), method='delete')
+        # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
+        raise action_error(_('operation not supported'), code=501)
 
 
     @web
@@ -303,13 +261,17 @@ class GroupsController(BaseController):
         GET /contents/{id}/edit: Form to edit an existing item
         
         Current user must be identified as an administrator of this group.
-        """
-        # url('edit_group', id=ID)
-        # GregM: BIG DIRTY HACK to show website and description in the group config editor.
-        group = _get_group(id, is_admin=True)
-        config = group.config
-        groupdict = group.to_dict()
-        groupdict['website'] = config.get('website')
-        groupdict['description'] = config.get('description')
         
-        return action_ok(data={'group':groupdict, 'action':'edit'}) #Auto Format with activate HTML edit template automatically if template placed/named correctly
+        This will now redirect to the settings controller.
+        """
+        redirect_url = ('/settings/'+id).encode('ascii','ignore')
+        return redirect(url(redirect_url))
+#        # url('edit_group', id=ID)
+#        # GregM: BIG DIRTY HACK to show website and description in the group config editor.
+#        group = _get_group(id, is_admin=True)
+#        config = group.config
+#        groupdict = group.to_dict()
+#        groupdict['website'] = config.get('website')
+#        groupdict['description'] = config.get('description')
+#        
+#        return action_ok(data={'group':groupdict, 'action':'edit'}) #Auto Format with activate HTML edit template automatically if template placed/named correctly

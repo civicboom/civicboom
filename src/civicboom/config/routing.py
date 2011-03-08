@@ -61,6 +61,10 @@ def make_map(config):
     map.connect('/', controller='misc', action='titlepage')
     map.connect('/about/{id}' , controller='misc', action="about")
     map.connect('/help/{id}'  , controller='misc', action="help", format="frag")
+    map.connect('/settings/{id}/{panel}.{format}', controller='settings', action="panel", conditions=dict(method=['GET']))
+    map.connect('/settings/{id}/{panel}', controller='settings', action="panel", conditions=dict(method=['GET']))
+    map.connect('/settings/{id}/{action}.{format}', controller='settings')
+    map.connect('/settings/{id}/{action}', controller='settings')
     
     cb_resource(map, 'content', 'contents')
     cb_resource(map, 'message', 'messages')

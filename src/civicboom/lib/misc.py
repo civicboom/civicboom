@@ -13,10 +13,11 @@ import re
 import logging
 log = logging.getLogger(__name__)
 
-random_symbols = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+random_symbols = '1234567890bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ'
 def random_string(length=8):
     """
     Generate a random string of a-z A-Z 0-9
+    (Without vowels to stop bad words from being generated!)
 
     >>> a = random_string()
     >>> len(a)

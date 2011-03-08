@@ -183,3 +183,24 @@ class IsoFormatDateConverter(validators.DateConverter):
         if len(date_strings)>=1:
             value = date_strings[0]
         return super(IsoFormatDateConverter, self)._to_python(value, state)
+
+class SetValidator(validators.FancyValidator):
+    not_empty    = False
+    separator    = ','
+    set=[]
+    messages = {
+        'invalid'   : _('Some item(s) not in set'),
+        'empty'     : _('Set cannot be empty'),
+        }
+    def _to_python(self, value, state):
+        value = value.strip()
+        values = value.split(separator)
+        if len(values) == 0 and not_empty:
+            raise formencode.Invalid(self.message("empty", state), value, state)
+        elif len(values) == 0:
+            return values
+        
+        for value in values:
+            if not value in set:
+                raise formencode.Invalid(self.message("invalid", state), value, state)
+        return values

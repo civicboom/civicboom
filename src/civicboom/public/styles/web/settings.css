@@ -9,7 +9,7 @@ BODY.c-settings FIELDSET TABLE {
 	width: 100%;
 }
 BODY.c-settings FIELDSET TABLE INPUT {
-	width: 95%;
+	/*width: 95%;*/
 }
 BODY.c-settings FIELDSET TABLE .descr {
 	width: 10em;
