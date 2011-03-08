@@ -7,7 +7,7 @@ Lots of stuff is imported here (eg controller action decorators) so that other
 controllers can do "from civicboom.lib.base import *"
 """
 from pylons.controllers       import WSGIController
-from pylons                   import request, response, app_globals, tmpl_context as c, config, session, url
+from pylons                   import request, response, app_globals, tmpl_context as c, config
 from pylons.controllers.util  import abort
 from pylons.templating        import render_mako, render_mako_def
 from pylons.i18n.translation  import _, ungettext, set_lang
@@ -16,7 +16,7 @@ from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta, Member
-from civicboom.lib.web                 import url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, authenticate_form, cacheable, web_params_to_kwargs
+from civicboom.lib.web                 import url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, session_keys, authenticate_form, cacheable, web_params_to_kwargs
 from civicboom.lib.database.get_cached import get_member as _get_member, get_group as _get_group, get_membership as _get_membership, get_message as _get_message, get_content as _get_content
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
@@ -61,17 +61,14 @@ __all__ = [
     "_", "ungettext", "set_lang",
 
     # session managemnet - is is prefered that all access to the session is via accessors
-    "session_get", "session_remove", "session_set",
+    "session_get", "session_remove", "session_set", "session_keys",
 
     "set_flash_message",
 
-    # misc
-    "BaseController",
-    "authentication_token",
-    "redirect_to_referer", #TODO? potential for removal?
-    "logging",
-    "overlay_status_message",
+    # permissions
     "raise_if_current_role_insufficent", "has_role_required",
+
+    # get objects
     "get_member", "get_group", "get_content", "get_message",
     "normalize_member",
     
@@ -80,6 +77,14 @@ __all__ = [
     
     #log
     "user_log",
+    
+    # misc
+    "BaseController",
+    "authentication_token",
+    "redirect_to_referer", #TODO? potential for removal?
+    "logging",
+    "overlay_status_message",
+    
 ]
 
 
@@ -327,8 +332,8 @@ class BaseController(WSGIController):
         #  - there is a way of setting fallback langauges, investigate?
         if 'lang' in request.params:
             self._set_lang(request.params['lang']) # If lang set in URL
-        elif 'lang' in session:
-            self._set_lang(       session['lang']) # Lang set for this users session
+        elif 'lang' in session_keys():
+            self._set_lang(   session_get('lang')) # Lang set for this users session
         #elif c.logged_in_persona has lang:
         #    self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
         else:
