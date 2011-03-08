@@ -169,21 +169,20 @@ def setup_widget_env():
 # Get Objects
 #-------------------------------------------------------------------------------
 
-def get_member(member, set_html_action_fallback=False, search_email=False):
+def get_member(member_search, set_html_action_fallback=False, search_email=False):
     """
     Shortcut to return a member and raise not found automatically (as these are common opertations every time a member is fetched)
     """
     # Concept of 'me' in API
-    if isinstance(member, basestring) and member.lower()=='me':
-        if c.logged_in_persona:
-            member = c.logged_in_persona.username
-        else:
+    if isinstance(member_search, basestring) and member_search.lower()=='me':
+        if not c.logged_in_persona:
             raise action_error(_("cannot reffer to 'me' when not logged in"), code=400)
-    member = _get_member(member, search_email=search_email)
+        member_search = c.logged_in_persona
+    member = _get_member(member_search, search_email=search_email)
     if not member:
-        raise action_error(_("member not found"), code=404)
+        raise action_error(_("member %s not found" % member_search), code=404)
     if member.status != "active":
-        raise action_error(_("member inactive") , code=404)
+        raise action_error(_("member %s is inactive" % member.username) , code=404)
     if set_html_action_fallback:
         # AllanC - see _get_content for rational behind this
         c.html_action_fallback_url = url('member', id=member.username)
@@ -249,23 +248,30 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
     return content
 
 
-def normalize_member(member, always_return_id=True):
-    if isinstance(member, Member):
-        member = member.id
-    elif isinstance(member, basestring) and member.lower()=='me':
-        if c.logged_in_persona:
-            return c.logged_in_persona.id
-        else:
-            raise action_error(_("cannot reffer to 'me' when not logged in"), code=400)
-    else:
-        try:
-            member = int(member)
-        except:
-            if always_return_id:
-                member = _get_member(member)
-                if member:
-                    member = member.id
-    return member
+def normalize_member(member):
+    """
+    Will return integer member_id or raise action_error
+    """
+    if isinstance(member, int):
+        return member
+    return get_member(member).id
+    
+    #elif isinstance(member, basestring) and member.lower()=='me':
+    #    if c.logged_in_persona:
+    #        return c.logged_in_persona.id
+    #    else:
+    #        raise action_error(_("cannot reffer to 'me' when not logged in"), code=400)
+    #else:
+    #    try:
+    #        member = int(member)
+    #    except:
+    #        if always_return_id:
+    #            member = _get_member(member)
+    #            if member:
+    #                member = member.id
+    #if not member:
+    #    raise action_error(_(""), code=404)
+    #return member
 
 
 #-------------------------------------------------------------------------------

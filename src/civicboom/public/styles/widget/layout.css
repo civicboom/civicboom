@@ -32,7 +32,7 @@
 
 /* Widget List */
 #CivicboomWidget .widget_content .content_list {
-  font-size: 110%;
+  /* font-size: 110%; */
   margin-bottom: 0.5em;
   clear: both;
 }

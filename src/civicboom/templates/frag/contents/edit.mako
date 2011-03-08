@@ -94,6 +94,7 @@
                     }
                 }
             </script>
+            ${invalid_messages()}
             ${base_content()}
             ${content_type()}
             ${media()}
@@ -145,6 +146,26 @@
 
 <%def name="form_instruction(text)">
 <p class="instuctions">${_(text)}</p>
+</%def>
+
+<%def name="invalid_messages()">
+    <%doc>
+        AllanC
+        I was debating putting invalid fields net to each of the fields themselfs but decided to just list all errors in one place for now
+        This form potentially needs reworking if we are going to have embedable forms in the future (feature #335)
+    </%doc>
+
+    ## testing
+    ##<% d['invalid'] = dict(test='testing is the way to go', test2='testing is the way to go', test3='testing is the way to go') %>
+    
+    % if 'invalid' in d:
+        <div class="invalid error">
+        <p>${_('Invalid')}</p>
+        % for key, value in d['invalid'].iteritems():
+            <p><span>${key}</span>: ${value}</p>
+        % endfor
+        </div>
+    % endif
 </%def>
 
 ##------------------------------------------------------------------------------
