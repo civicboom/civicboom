@@ -55,6 +55,8 @@
 
 <%def name="body()">
     ##<div style="position: fixed; top: 52px; left: 10px;">
+    <div style="padding: 1em;">
     ${full(d['media'])}
+    </div>
     ##</div>
 </%def>
