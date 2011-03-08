@@ -114,14 +114,14 @@ def _init_search_filters():
         return query.filter(Content.__type__==type_text)
     
     def append_search_creator(query, creator):
-        creator = normalize_member(creator)
-        if isinstance(creator, int):
-            return query.filter(Content.creator_id==creator)
-        else:
+        return query.filter(Content.creator_id==normalize_member(creator))
+        #creator = 
+        #if isinstance(creator, int):
+        #else:
             # AllanC - WARNING this is untested ... all creators should be normalized - I dont think this is ever called
             # THIS WILL NOT WORK UNLESS - select_from(join(Content, Member, Content.creator)).
             #return query.filter(Member.username==creator)
-            raise Exception('unsuported search operation')
+            #raise Exception('unsuported search operation')
     
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
@@ -164,6 +164,7 @@ def sqlalchemy_content_query(include_private=False, **kwargs):
     Returns an SQLAlchemy query object
     This is used in the main contents/index and also to create a union stream of 2 querys
     """
+
     # Build Search
     results = Session.query(Content)
     results = results.with_polymorphic('*')

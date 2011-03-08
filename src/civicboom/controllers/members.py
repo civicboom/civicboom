@@ -32,11 +32,11 @@ def _init_search_filters():
         #try:
         #    return query.filter(Member.id       == int(member))
         #except:
-        member = normalize_member(member, always_return_id=False)
-        if isinstance(member, int):
-            return query.filter(Member.id       == int(member))
-        elif isinstance(member, basestring):
-            return query.filter(Member.username == member     )
+        
+        if isinstance(member, basestring):
+            return query.filter(Member.username == member                  )
+        else:
+            return query.filter(Member.id       == normalize_member(member))
 
     def append_search_name(query, name):
         return query.filter(or_(Member.name.ilike("%"+name+"%"), Member.username.ilike("%"+name+"%")))
