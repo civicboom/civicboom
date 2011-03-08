@@ -178,6 +178,8 @@ def session_get(key):
         return session[key]
     return None
 
+def session_keys():
+    return session.keys()
 
 #-------------------------------------------------------------------------------
 # Cookie Timed Keys Management

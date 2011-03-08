@@ -73,7 +73,7 @@ class MediaController(BaseController):
         return action_ok(_("Media deleted"), code=200)
 
     @web
-    def show(self, id, format='html'):
+    def show(self, id):
         """
         GET /media/id: Show a specific item
 
@@ -84,9 +84,9 @@ class MediaController(BaseController):
         media = get_media(hash=id)
         return action_ok(
             data={
-                "status"       : app_globals.memcache.get(str("media_processing_"+id)) ,
-                "thumbnail_url": media.thumbnail_url if media else None,
-                "media"        : media.to_dict(),
+                #"status"       : app_globals.memcache.get(str("media_processing_"+id)) ,
+                #"thumbnail_url": media.thumbnail_url if media else None,
+                "media"        : media.to_dict(list_type='full'),
             }
         )
 
