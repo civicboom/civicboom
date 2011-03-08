@@ -89,6 +89,8 @@ class EnumFieldRenderer(FieldRenderer):
     def render(self):
         value = self.value or ''
         opts = ""
+        if self.field._columns[0].nullable:
+            opts = opts + "<option value>None</option>\n"
         for o in self.field._columns[0].type.enums:  # is there a better way? :|
             sel = " selected" if self.value==o else ""
             opts = opts + ("<option value='%s'%s>%s</option>\n" % (o, sel, o.replace("_", " ")))
