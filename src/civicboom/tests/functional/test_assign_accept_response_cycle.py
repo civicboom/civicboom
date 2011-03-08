@@ -156,11 +156,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         # Delete Assignment ----------------------------------------------------
         
-        response = self.app.delete(
-            url('content', id=self.assignment_id, format="json"),
-            params={'_authentication_token': self.auth_token,},
-            status=200
-        )
+        self.delete_content(self.assignment_id)
         
         # Check Cascade of Delete was correct ----------------------------------
         
@@ -336,11 +332,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         self.log_in_as('unittest')
         
-        response = self.app.delete(
-            url('content', id=self.assignment_id, format="json"),
-            params={'_authentication_token': self.auth_token,},
-            status=200
-        )
+        self.delete_content(self.assignment_id)
 
         # Check delete cascade  ------------------------------------------------
 

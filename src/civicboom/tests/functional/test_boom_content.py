@@ -115,12 +115,8 @@ class TestBoomController(TestController):
         # Delete content that has been boomed to test Delete cascade behaviour
         
         self.log_in_as('unittest')
-        
-        response = self.app.delete(
-            url('content', id=content_id, format="json"),
-            params={'_authentication_token': self.auth_token,},
-            status=200
-        )
+
+        self.delete_content(content_id)
 
         # Check that the content DOSE NOT appear in unitfriends profile
         response = self.app.get(url('member', id='unitfriend', format='json'), status=200)
