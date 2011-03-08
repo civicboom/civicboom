@@ -124,6 +124,9 @@ function map_picker(field_name, options) {
 
 			var valbox = document.getElementById(field_name);
 			valbox.value = Math.round(p.lon*10000)/10000+" "+Math.round(p.lat*10000)/10000;
+			if(options.style == "wkt") {
+				valbox.value = "SRID=4326;POINT("+valbox.value+")";
+			}
 
 			var namebox = document.getElementById(field_name+"_name");
 			if(namebox.value == "" || namebox.value.match(/^[\d\., ]+$/)) {

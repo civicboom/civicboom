@@ -113,12 +113,13 @@ class LocationPickerRenderer(FieldRenderer):
 <div style="position: relative; z-index: 0;">
 <input id="%(field_name)s_name" name="%(field_name)s_name" type="search" placeholder="Search for location" style="width: 100%%;">
 <div style="padding-top: 6px; z-index: 1;" id="%(field_name)s_comp"></div>
-<input id="%(field_name)s" name="%(field_name)s" type="hidden" value="%(lonlat_str)s">
+<input id="%(field_name)s" name="%(field_name)s" type="hidden" value="SRID=4326;POINT(%(lonlat_str)s)">
 
 <div style="width: 100%%; height: 200px; border: 1px solid black; z-index: 0;" id="%(field_name)s_div"></div>
 <script type="text/javascript">
 $(function() {
 	map = map_picker('%(field_name)s', {
+        style: 'wkt',
         %(lonlat_js)s
 	});
 });
