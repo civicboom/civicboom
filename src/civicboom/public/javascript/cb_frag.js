@@ -324,7 +324,7 @@ $(function () {
     // Browser supports HTML5 history states
     // FIXME: jQuery-ise this, rather than using the raw window.blah
     window.onpopstate = function(popstate) { loadStateObj(popstate.state); }
-  } else {
+    } else if(Modernizr.hashchange) {
     // Browser does not support HTML5 history states
     // Use url hash instead
     $(window).hashchange(function (e) {
