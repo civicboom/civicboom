@@ -225,11 +225,15 @@ class SettingsController(BaseController):
         for setting_name in settings_meta.keys():
             if settings_meta[setting_name].get('who', user_type) == user_type:
                 if setting_name == 'email' and user.email_unverified != None:
-                    settings_hints['email'] = _('You have an unverified email address (%s), please check your email. If this is incorrect please update and save, then check your email.') % user.email_unverified
+                    settings_hints['email'] = _('You have an unverified email address (%s), please check your email. If this address is incorrect please update and save, then check your email.') % user.email_unverified
+                if setting_name == 'password_current' and not 'password' in [login.type for login in user.login_details]:
+                    del settings_meta[setting_name]
+                    settings_hints['password_new'] = _("You first signed into Civicboom using another provider's login, please set a Civicboom password here to use our mobile application.")
                 if hasattr(user, setting_name):
                     v = getattr(user, setting_name)
                 else:
-                    v = user.config.get(setting_name, settings_meta[setting_name].get('default'))
+                    if setting_name in settings_meta:
+                        v = user.config.get(setting_name, settings_meta[setting_name].get('default'))
                 if isinstance(v, basestring): # ugly hack
                     settings[setting_name] = v
                 else:
