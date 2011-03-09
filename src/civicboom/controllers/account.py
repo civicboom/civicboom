@@ -5,22 +5,24 @@ import civicboom.lib.constants as constants
 
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
-#from civicboom.controllers.widget   import setup_widget_env
-#from civicboom.lib.helpers          import get_object_from_action_url
-#from civicboom.lib.web import cookie_get
+from civicboom.lib.web              import cookie_get
+from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password, get_action_objects_for_url
+#from civicboom.lib.database.get_cached import get_member
 
-
-# Import other controller actions
 from civicboom.controllers.register import register_new_janrain_user
-from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password, get_signin_action_objects
-from civicboom.lib.database.get_cached import get_member
+
+import time
 
 
 log      = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 class AccountController(BaseController):
+    """
+    @title Accounts
+    @doc account
+    @desc controller for signing in and out
+    """
 
     #---------------------------------------------------------------------------
     # Signout
@@ -33,10 +35,19 @@ class AccountController(BaseController):
     #@authenticate_form
     def signout(self, **kwargs):
         """
+        POST /account/signout: End the current session
+
+        @api account 1.0 (WIP)
+
+        @return 302   redirect to the front page
+
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies
+
+        Redirect to a new URL so that the browser doesn't cache it (Shouldn't be necessary, but it
+        seems that sometimes it is?)
         """
         signout_user(c.logged_in_persona)
-        return redirect(url('/',protocol='http'))
+        return redirect(url('/', protocol='http', ut=str(time.time())))
 
 
     #---------------------------------------------------------------------------
@@ -47,11 +58,22 @@ class AccountController(BaseController):
     # mobile requires a valid cert, mobile.civicboom.com doesn't have one
     #@https() # redirect to https for transfer of password
     def signin(self, **kwargs):
+        """
+        POST /account/signin: Create a new session
+
+        @api account 1.0 (WIP)
+
+        @param username     the user's civicboom.com username
+        @param password     the user's civicboom.com password
+
+        @return 200         logged in ok
+                auth_token  the token to be supplied with any data-modifying requests
+        """
 
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':
             
-            action_objects = get_signin_action_objects()
+            action_objects = get_action_objects_for_url(cookie_get('login_redirect') or '')
             if action_objects:
                 c.action_objects = action_objects
                 return render("/html/web/account/signin_frag.mako")
@@ -113,6 +135,14 @@ class AccountController(BaseController):
     @web
     @auth
     def set_persona(self, id, **kwargs):
+        """
+        POST /account/set_persona/{id}: change the currently active persona
+
+        @api account 1.0 (WIP)
+
+        @return 200     switched ok
+        @return 500     switch failed
+        """
         if set_persona(id):
             user_log.info("Switched to persona %s" % id)
             # AllanC - not a sutable solution - I wanted an AJAX working version
@@ -184,8 +214,8 @@ class AccountController(BaseController):
         c.hash = kwargs.get('hash')
         
         user = get_member(id or kwargs.get('username') or kwargs.get('email'), search_email=True)
-        if not user:
-            raise action_error('user not found', code=404)
+        #if not user:
+        #    raise action_error('user not found', code=404)
 
         # Step 1: User request link with hash to be sent via email
         if not c.hash:
@@ -204,6 +234,7 @@ class AccountController(BaseController):
         else:
             import civicboom.lib.form_validators.base
             import formencode.validators
+            
             class SetPasswordSchema(civicboom.lib.form_validators.base.DefaultSchema):
                 password_new         = civicboom.lib.form_validators.base.PasswordValidator(not_empty=True)
                 password_new_confirm = civicboom.lib.form_validators.base.PasswordValidator(not_empty=True)
@@ -211,7 +242,7 @@ class AccountController(BaseController):
             
             # Validate new password
             try:
-                kwargs = SetPasswordSchema().to_python(kwargs)            
+                kwargs = SetPasswordSchema().to_python(kwargs)
             # Validation Failed
             except formencode.Invalid as error:
                 dict_validated        = error.value
@@ -228,4 +259,3 @@ class AccountController(BaseController):
             set_password(user, kwargs['password_new'])
             set_flash_message(_('password has been set'))
             redirect(url(controller='account', action='signin'))
-

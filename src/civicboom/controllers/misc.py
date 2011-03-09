@@ -1,11 +1,11 @@
 from civicboom.lib.base import *
 from civicboom.model import User, Group, Media, Content
+from civicboom.lib.database.get_cached import get_member as _get_member
 
 from civicboom.lib.communication.email_lib import send_email
 from urllib import quote_plus, unquote_plus
 import os
 
-user_log = logging.getLogger("user")
 
 
 class MiscController(BaseController):
@@ -57,14 +57,14 @@ class MiscController(BaseController):
             'groups':    Session.query(Group).count(),
             'media':     Session.query(Media).count(),
             'requests':  Session.query(Content).filter(Content.__type__=="assignment").count(),
-            'responses': Session.query(Content).filter(Content.__type__=="article" and Content.parent_id!=None).count(),
-            'articles':  Session.query(Content).filter(Content.__type__=="article" and Content.parent_id==None).count(),
+            'responses': Session.query(Content).filter(Content.__type__=="article").filter(Content.parent_id!=None).count(),
+            'articles':  Session.query(Content).filter(Content.__type__=="article").filter(Content.parent_id==None).count(),
             'comments':  Session.query(Content).filter(Content.__type__=="comment").count(),
         })
 
     @web
     def get_widget(self, id=None):
-        c.widget_user_preview = get_member(id)
+        c.widget_user_preview = _get_member(id)
         return action_ok()
 
     @web

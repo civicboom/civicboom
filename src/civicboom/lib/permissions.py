@@ -7,6 +7,7 @@ import civicboom.lib.errors as errors
 
 from civicboom.model.member import has_role_required as has_role_required
 
+
 def account_type(required_account_type):
     """
     Check if logged in user has paid for the services reuqired
@@ -23,6 +24,7 @@ def account_type(required_account_type):
     
     return wrapper
 
+
 def role_required(role_required):
     """
     lock controller actions to require certan permissions
@@ -38,6 +40,7 @@ def role_required(role_required):
     
     return wrapper
     
+
 def raise_if_current_role_insufficent(role_required):
     if has_role_required(role_required, c.logged_in_persona_role):
         return

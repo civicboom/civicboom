@@ -30,6 +30,7 @@ t = Twitter(
 )
 """
 
+
 def status(**kargs):
     kargs['status'] = kargs['status'].encode('utf8', 'replace')
     log.warn('global twitter disabled')
@@ -50,7 +51,7 @@ format  = 'json'
 
 def twitter(method, **kargs):
 
-    #Make Twitter API calls from python - more info for each call at 
+    #Make Twitter API calls from python - more info for each call at
 
     #kargs['apiKey'] = config['api_key.twitter']
     

@@ -38,7 +38,6 @@ Most actions follow the following structure:
 
 import logging
 log = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 #-------------------------------------------------------------------------------
@@ -77,6 +76,7 @@ def follow(follower, followed, delay_commit=False):
 
     return True
 
+
 def unfollow(follower, followed, delay_commit=False):
     followed = get_member(followed)
     follower = get_member(follower)
@@ -102,6 +102,7 @@ def unfollow(follower, followed, delay_commit=False):
     update_member(followed)
 
     return True
+
 
 #-------------------------------------------------------------------------------
 # Message Actions
@@ -186,9 +187,9 @@ def remove_member(group, member, delay_commit=False):
             membership.member.send_message(messages.group_remove_member_to_member(admin=c.logged_in_user, group=group), delay_commit=True)
         group.send_message(messages.group_remove_member_to_group( admin=c.logged_in_user, group=group, member=member), delay_commit=True)
     elif membership.status == "invite": # invitation declined
-        group.send_message(messages.group_invitation_declined(member=member, group=group), delay_commit=True) 
+        group.send_message(messages.group_invitation_declined(member=member, group=group), delay_commit=True)
     elif membership.status == "request": # request declined
-        membership.member.send_message(messages.group_request_declined(group=group), delay_commit=True) 
+        membership.member.send_message(messages.group_request_declined(group=group), delay_commit=True)
     
     Session.delete(membership)
     
@@ -294,6 +295,7 @@ def del_member(member):
     Session.commit()
     update_member(member)
 
+
 #-------------------------------------------------------------------------------
 # Assignment Actions
 #-------------------------------------------------------------------------------
@@ -339,6 +341,7 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     update_accepted_assignment(member)
     return True
 
+
 def withdraw_assignemnt(assignment, member, delay_commit=False):
     member     = get_member(member)
     assignment = get_content(assignment)
@@ -374,6 +377,7 @@ def del_content(content):
     Session.delete(content)
     Session.commit()
     
+
 def flag_content(content, member=None, type="automated", comment=None):
     flag = FlaggedContent()
     flag.member  = get_member(member)
@@ -385,12 +389,53 @@ def flag_content(content, member=None, type="automated", comment=None):
     
     # Send email to alert moderator
     member_username = 'profanity_filter'
-    try   : member_username = flag.member.username
-    except: pass
-    send_email(config['email.moderator'],
-               subject=_('flagged content'),
-               content_text="%s flagged %s as %s" % (member_username, url(controller='content', action='view', id=content.id), type)
-               )
+    try:
+        member_username = flag.member.username
+    except:
+        pass
+    send_email(
+        config['email.moderator'],
+        subject      = _('flagged content ['+type+']'),
+        content_text = """
+--- Report ---
+
+Reporter: %(reporter)s
+Category: %(type)s
+
+%(comment)s
+
+
+--- Reported Content ---
+
+Title:  %(content_title)s
+        %(content_url)s
+Author: %(member_name)s
+        %(member_url)s
+
+%(content_body)s
+
+
+--- Actions ---
+
+If the content is ok, visit the list of reports and delete this one:
+  %(action_ignore)s
+
+If the content is not ok, go to the content list and delete it:
+  %(action_delete)s
+""" % {
+            "reporter": member_username,
+            "type": type,
+            "comment": comment,
+            "member_name": content.creator.username,
+            "member_url": url('member', id=content.creator.username, subdomain="www"),
+            "content_url": url('content', id=content.id, subdomain="www"),
+            "content_title": content.title,
+            "content_body": content.content,
+            "action_ignore": url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), subdomain="www"),
+            "action_delete": url("admin/Content/models?Content--id="+str(content.id), subdomain="www"),
+        },
+    )
+
 
 def boom_content(content, member, delay_commit=False):
     #if   content.__type__ == 'article':
@@ -417,6 +462,7 @@ def boom_content(content, member, delay_commit=False):
     if not delay_commit:
         Session.commit()
 
+
 def parent_seen(content, delay_commit=False):
     content.edit_lock     = "parent_owner"
     content.approval = "seen"
@@ -425,9 +471,10 @@ def parent_seen(content, delay_commit=False):
     #content.creator.send_message(???, delay_commit=True)
     
     if not delay_commit:
-        Session.commit()        
+        Session.commit()
     update_content(content)
     return True
+
 
 def parent_approve(content, delay_commit=False):
 
@@ -452,7 +499,8 @@ def parent_approve(content, delay_commit=False):
     
     
 def parent_disassociate(content, delay_commit=False):
-    if not content.parent: return False
+    if not content.parent:
+        return False
     
     # Update has to be done before the commit in this case bcause the parent is needed
     update_content(content.parent) # Could update responses in the future, but for now we just invalidate the whole content
@@ -467,6 +515,7 @@ def parent_disassociate(content, delay_commit=False):
         Session.commit()
     
     return True
+
 
 def rate_content(content, member, rating):
     content = get_content(content)
@@ -506,7 +555,6 @@ def rate_content(content, member, rating):
             Session.add(r)
             Session.commit()
 
-    user_log.debug("Rated Content #%d as %d" % (content.id, int(rating)))
 
 def add_to_interests(member, content, delay_commit=False):
     content = get_content(content)
@@ -526,8 +574,6 @@ def add_to_interests(member, content, delay_commit=False):
     if not delay_commit:
         Session.commit()
 
-    user_log.debug("Added to interests #%d" % (content.id))
-    
     return True
 
 
@@ -535,7 +581,7 @@ def add_to_interests(member, content, delay_commit=False):
 # Set Payment Account
 #-------------------------------------------------------------------------------
 def set_payment_account(member, value, delay_commit=False):
-    member = get_member(member);
+    member = get_member(member)
     account = None
     if isinstance(value, PaymentAccount):
         account = value

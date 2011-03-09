@@ -225,4 +225,3 @@ class TestPermissionsController(TestController):
             },
             status=200
         )
-

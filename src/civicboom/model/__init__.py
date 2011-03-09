@@ -11,6 +11,7 @@ from civicboom.model.message import Message
 from civicboom.model.media   import Media
 from civicboom.model.feed    import Feed
 
+
 def init_model(main_engine):
     """Call me before using any of the tables or classes in the model"""
     ## Reflected tables must be defined and mapped here
@@ -21,4 +22,3 @@ def init_model(main_engine):
     #
     meta.Session.configure(bind=main_engine)
     meta.engine = main_engine
-

@@ -3,7 +3,7 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom
-from civicboom.lib.database.get_cached import get_content, update_content, get_licenses, get_license, get_tag, get_assigned_to
+from civicboom.lib.database.get_cached import update_content, get_licenses, get_license, get_tag, get_assigned_to, get_content as _get_content
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
@@ -32,7 +32,7 @@ from sets import Set # may not be needed in Python 2.7+
 
 # Logging setup
 log      = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
+
 
 
 #-------------------------------------------------------------------------------
@@ -62,40 +62,17 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
 
 
 class ContentCommentSchema(ContentSchema):
-    parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator( not_empty=True, empty=_('comments must have a valid parent'))
+    parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=True, empty=_('comments must have a valid parent'))
     content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'))
-
-    
 
 
 #-------------------------------------------------------------------------------
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False):
-    """
-    Shortcut to return content and raise not found or permission exceptions automatically (as these are common opertations every time a content is fetched)
-    """
-    content = get_content(id)
-    if not content:
-        raise action_error(_("The _content you requested could not be found"), code=404)
-    if is_viewable:
-        if not content.viewable_by(c.logged_in_persona): 
-            raise action_error(_("The _content you requested is not viewable"), code=403)
-        if content.__type__ == "comment":
-            user_log.debug("Attempted to view a comment as an article")
-            #raise action_error(_("_content not found"), code=404)
-            # AllanC - originaly viewing a comment was an error, we may want in the future to display comments and sub comments, for now we redirect to parent
-            return redirect(url('content', id=content.parent.id))
-    if is_editable and not content.editable_by(c.logged_in_persona):
-        # AllanC TODO: need to check role in group to see if they can do this
-        raise action_error(_("You do not have permission to edit this _content"), code=403)
-    if is_parent_owner and not content.is_parent_owner(c.logged_in_persona):
-        raise action_error(_("You are not the owner of the parent _content"), code=403)
-    return content
 
 #-------------------------------------------------------------------------------
-# Decorators 
+# Decorators
 #-------------------------------------------------------------------------------
 
 #@decorator
@@ -109,18 +86,6 @@ def _get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False
 # Search Filters
 #-------------------------------------------------------------------------------
 
-def _normalize_member(member, always_return_id=False):
-    if isinstance(member, Member):
-        member = member.id
-    else:
-        try:
-            member = int(member)
-        except:
-            if always_return_id:
-                member = get_member(member)
-                if member:
-                    member = member.id
-    return member
 
 
 def _init_search_filters():
@@ -149,12 +114,14 @@ def _init_search_filters():
         return query.filter(Content.__type__==type_text)
     
     def append_search_creator(query, creator):
-        creator = _normalize_member(creator)
-        if isinstance(creator, int):
-            return query.filter(Content.creator_id==creator)
-        else:
+        return query.filter(Content.creator_id==normalize_member(creator))
+        #creator = 
+        #if isinstance(creator, int):
+        #else:
             # AllanC - WARNING this is untested ... all creators should be normalized - I dont think this is ever called
-            return query.filter(Member.username==creator) #select_from(join(Content, Member, Content.creator)).
+            # THIS WILL NOT WORK UNLESS - select_from(join(Content, Member, Content.creator)).
+            #return query.filter(Member.username==creator)
+            #raise Exception('unsuported search operation')
     
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
@@ -162,10 +129,9 @@ def _init_search_filters():
         return query.filter(Content.parent_id==int(content_id))
 
     def append_search_boomed_by(query, member):
-        member = _normalize_member(member, always_return_id=True)
+        member = normalize_member(member)
         #return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
-        return query.filter(Content.id.in_( Session.query(Boom.content_id).filter(Boom.member_id==member) ))
-        
+        return query.filter(Content.id.in_(Session.query(Boom.content_id).filter(Boom.member_id==member)))
 
     search_filters = {
         'id'         : append_search_id ,
@@ -183,6 +149,7 @@ search_filters = _init_search_filters()
 
 
 list_filters = {
+    'all'                 : lambda results: results ,
     'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null())) ,
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
@@ -192,8 +159,38 @@ list_filters = {
 }
 
 
+def sqlalchemy_content_query(include_private=False, **kwargs):
+    """
+    Returns an SQLAlchemy query object
+    This is used in the main contents/index and also to create a union stream of 2 querys
+    """
+
+    # Build Search
+    results = Session.query(Content)
+    results = results.with_polymorphic('*')
+    #results = results.options(defer(Content.content)) # exculude fetch of content field in this query return. we never need the full content in a list TODO: this will only become efficent IF content_short postgress trigger is implemented (issue #257)
+    results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
     
-    
+    #if 'private' in kwargs and logged_in_creator:
+    if include_private:
+        pass # allow private content
+    else:
+        results = results.filter(Content.private==False) # public content only
+    if 'creator' in kwargs.get('include_fields',[]):
+        results = results.options(joinedload('creator'))
+    if 'attachments' in kwargs.get('include_fields',[]):
+        results = results.options(joinedload('attachments'))
+    if 'tags' in kwargs.get('include_fields',[]):
+        results = results.options(joinedload('tags'))
+    for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
+        results = search_filters[key](results, kwargs[key])
+    if 'list' in kwargs:
+        if kwargs['list'] in list_filters:
+            results = list_filters[kwargs['list']](results)
+        else:
+            raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+    return results
+
 
 #-------------------------------------------------------------------------------
 # Content Controler
@@ -210,9 +207,12 @@ class ContentsController(BaseController):
     #     map.resource('content', 'contents')
     
     @web
-    def index(self, **kwargs):
+    def index(self, union_query=None, **kwargs):
         """
         GET /contents: All items in the collection
+
+        @api contents 1.0 (WIP)
+
         @param limit
         @param offset
         @param include_fields   "attachments" for media
@@ -229,13 +229,11 @@ class ContentsController(BaseController):
         #          TODO: we need maybe a separte call, or something to identify a private call
         logged_in_creator = False
         if 'creator' in kwargs:
-            kwargs['creator'] = _normalize_member(kwargs['creator'], always_return_id=True) # normalize creator
+            kwargs['creator'] = normalize_member(kwargs['creator']) # normalize creator
             if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
         
         # Setup search criteria
-        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
-        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
@@ -244,37 +242,11 @@ class ContentsController(BaseController):
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
         
-        # RSS feeds now need to specifically request attachments
-        # AllanC - WARNING! this breaks casheability! need to consider the use case for RSS with media to be added manually with the request
-        #if 'list_type' not in kwargs:
-            #kwargs['list_type'] = 'default'
-        #    if c.format == 'rss':                       # Default RSS to list_with_media
-        #        kwargs['include_fields'] += ',attachments'
-        
-        # Build Search
-        results = Session.query(Content)
-        results = results.with_polymorphic('*')
-        results = results.options(defer(Content.content))
-        results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
-        # TODO: exculude fetch of content field in this query return. lazyload it?
-        if 'private' in kwargs and logged_in_creator:
-            pass # allow private content
-        else:
-            results = results.filter(Content.private==False) # public content only
-        if 'creator' in kwargs['include_fields']:
-            results = results.options(joinedload('creator'))
-        if 'attachments' in kwargs['include_fields']:
-            results = results.options(joinedload('attachments'))
-        if 'tags' in kwargs['include_fields']:
-            results = results.options(joinedload('tags'))
-        for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
-            results = search_filters[key](results, kwargs[key])
-        if 'list' in kwargs:
-            if kwargs['list'] in list_filters:
-                results = list_filters[kwargs['list']](results)
-            else:
-                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
-        
+        include_private_content = 'private' in kwargs and logged_in_creator
+        results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)
+        if union_query:
+            results = results.union(union_query)
+
         # Sort
         if 'sort' not in kwargs:
             sort = 'update_date'
@@ -285,6 +257,8 @@ class ContentsController(BaseController):
         count = results.count()
         
         # Limit & Offset
+        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
+        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
         
         # Return search results
@@ -358,20 +332,17 @@ class ContentsController(BaseController):
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
         
-        # If a license isn't explicitly set, use the parent's preference
-        parent_id  = kwargs.get('parent_id')
-        license_id = kwargs.get('license_id')
-        if parent_id and not license_id:
-            parent = get_content(parent_id)
-            if parent and parent.__type__ == 'assignment' and parent.default_response_license:
-                content.license = parent.default_response_license
-
-        # if a title isn't set but we have a parent, title = "Re: parent title"
-        title = kwargs.get('title')
-        if parent_id and not title:
-            parent = get_content(parent_id)
-            if parent and parent.title:
-                content.title = "Re: "+parent.title
+        
+        parent = _get_content(kwargs.get('parent_id'))
+        if parent:
+            # If a license isn't explicitly set, use the parent's preference
+            if not kwargs.get('license_id'):
+                if parent and parent.__type__ == 'assignment' and parent.default_response_license:
+                    content.license = parent.default_response_license
+            # if a title isn't set but we have a parent, title = "Re: parent title"
+            if not kwargs.get('title'):
+                if parent and parent.title:
+                    content.title = "Re: "+parent.title
 
         # comments are always owned by the writer; ignore settings
         # and parent preferences
@@ -421,7 +392,7 @@ class ContentsController(BaseController):
         if isinstance(id, Content):
             content = id
         else:
-            content = _get_content(id, is_editable=True)
+            content = get_content(id, is_editable=True)
         assert content
         
         # -- Validate ----------------------------------------------------------
@@ -431,7 +402,8 @@ class ContentsController(BaseController):
         if kwargs.get('type') == 'comment':
             schema = ContentCommentSchema()
             # AllanC - HACK! the validators cant handle missing fields .. so we botch an empty string field in here
-            if 'parent_id' not in kwargs: kwargs['parent_id'] = ''
+            if 'parent_id' not in kwargs:
+                kwargs['parent_id'] = ''
         
         # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic
         data       = {'content':kwargs}
@@ -579,15 +551,13 @@ class ContentsController(BaseController):
             if m:
                 # AllanC: TODO this needs to optimised! see issue #258 bulk messages are a blocking call
                 content.creator.send_message_to_followers(m, delay_commit=True)
-                
-
 
 
         # -- Save to Database --------------------------------------------------
         Session.add(content)
         Session.commit()
-        update_content(content)  #   Invalidate any cache associated with this content
-        user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above 
+        update_content(content)  # Invalidate any cache associated with this content
+        user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
         # -- Redirect (if needed)-----------------------------------------------
 
@@ -627,7 +597,7 @@ class ContentsController(BaseController):
         @return 404   no content to delete
         """
         # url('content', id=ID)
-        content = _get_content(id, is_editable=True)
+        content = get_content(id, is_editable=True)
         user_log.info("Deleting content %d" % content.id)
         content.delete()
         return action_ok(_("_content deleted"), code=200)
@@ -649,7 +619,7 @@ class ContentsController(BaseController):
         """
         # url('content', id=ID)
         
-        content = _get_content(id, is_viewable=True)
+        content = get_content(id, is_viewable=True)
         
         if 'lists' not in kwargs:
             kwargs['lists'] = 'comments, responses, contributors, actions, accepted_status'
@@ -693,9 +663,8 @@ class ContentsController(BaseController):
         """
         # url('edit_content', id=ID)
         
-        c.content = _get_content(id, is_editable=True)
+        c.content = get_content(id, is_editable=True)
         
         #c.content                  = form_to_content(kwargs, c.content)
         
         return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template
-

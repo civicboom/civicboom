@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestMembersController(TestController):
 
     def test_member_page(self):
@@ -28,8 +29,10 @@ class TestMembersController(TestController):
         response = self.app.get(url('member', id='mrdoesnotexist', format='json'), status=404)
 
         # show content from members
-        response = self.app.get(url('member_action', id='unittest', action='content', format='json'))
-        response = self.app.get(url('member_action', id='unittest', action='content', list='articles', format='json'))
+        response = self.app.get(url('member_action', id='unittest', action='content'           , format='json'                 ))
+        response = self.app.get(url('member_action', id='unittest', action='content'           , format='json', list='articles'))
+        response = self.app.get(url('member_action', id='unittest', action='boomed'            , format='json'                 ))
+        response = self.app.get(url('member_action', id='unittest', action='content_and_boomed', format='json'                 ))
 
         # badly named content lists should give "bad paramaters" error
         response = self.app.get(url('member_action', id='unittest', action='content', list='cake', format='json'), status=400)
@@ -63,4 +66,3 @@ class TestMembersController(TestController):
             params={'_authentication_token': self.auth_token},
             status=400
         )
-

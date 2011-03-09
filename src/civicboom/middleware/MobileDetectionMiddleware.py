@@ -3,13 +3,14 @@
 
 import re
 
+
 class MobileDetectionMiddleware(object):
     def __init__(self, app):
         self.app = app
 
     def __call__(self, environ, start_response):
         # TODO: middleware needs to be upgraded to look for subdomain m. in url
-        is_mobile = False;
+        is_mobile = False
 
         if 'HTTP_USER_AGENT' in environ:
             user_agent = environ['HTTP_USER_AGENT']
@@ -20,7 +21,7 @@ class MobileDetectionMiddleware(object):
             match   = prog.search(user_agent)
 
             if match:
-                is_mobile = True;
+                is_mobile = True
             else:
                 # Nokia like test for WAP browsers.
                 # http://www.developershome.com/wap/xhtmlmp/xhtml_mp_tutorial.asp?page=mimeTypesFileExtension
@@ -57,8 +58,10 @@ class MobileDetectionMiddleware(object):
                 if test in user_agents_test:
                     is_mobile = True
 
-        if is_mobile: environ['is_mobile'] = str(is_mobile)
-        else        : environ['is_mobile'] = None
+        if is_mobile:
+            environ['is_mobile'] = str(is_mobile)
+        else:
+            environ['is_mobile'] = None
             
 
         return self.app(environ, start_response)

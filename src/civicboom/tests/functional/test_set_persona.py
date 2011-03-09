@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestSetPersonaController(TestController):
     
     def test_set_persona(self):
@@ -131,7 +132,7 @@ class TestSetPersonaController(TestController):
             status=200
         )
 
-        self.log_in_as('unitfriend')        
+        self.log_in_as('unitfriend')
         response = self.app.delete(
             url('group', id='set_persona_test2', format="json"),
             params={
@@ -139,4 +140,3 @@ class TestSetPersonaController(TestController):
             },
             status=200
         )
-

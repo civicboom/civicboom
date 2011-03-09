@@ -11,11 +11,13 @@ import platform
 
 log_engine = None
 
+
 def get_engine():
     global log_engine
     if not log_engine:
         log_engine = engine_from_config(config, 'sqlalchemy.log.')
     return log_engine
+
 
 class UserLogHandler(logging.Handler):
     def emit(self, record):
@@ -43,4 +45,3 @@ class UserLogHandler(logging.Handler):
         """), id=str(id), node=node, module=module, line_num=line_num, username=username, persona=persona, url=url, address=addr, priority=priority, message=message)
         # connection.commit()
         connection.close()
-

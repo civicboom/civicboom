@@ -73,9 +73,3 @@ class TestAssignmentLimitController(TestController):
             return id
         return response
 
-    def delete_assignment(self, id):
-        response = self.app.delete(
-            url('content', id=id, format="json"),
-            params={'_authentication_token': self.auth_token,},
-            status=200
-        )

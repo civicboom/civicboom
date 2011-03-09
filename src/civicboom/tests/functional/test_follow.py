@@ -3,9 +3,8 @@ from pylons import config
 
 #import json
 
+
 class TestFollowController(TestController):
-
-
     #---------------------------------------------------------------------------
     # Test Following
     #---------------------------------------------------------------------------
@@ -56,4 +55,3 @@ class TestFollowController(TestController):
         
         self.log_in_as('follow_test')
         check_follow(following=1, followers=1)
-        

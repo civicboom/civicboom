@@ -4,6 +4,7 @@ from civicboom.model.meta import Base
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, Integer, PickleType
 
+
 class Feed(Base):
     __tablename__ = "feed"
     id            = Column(Integer(),     primary_key=True)

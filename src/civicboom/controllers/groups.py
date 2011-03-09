@@ -4,9 +4,9 @@ from civicboom.lib.misc import make_username
 from civicboom.controllers.account import AccountController
 set_persona = AccountController().set_persona
 
-from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
+from civicboom.model.member import Group, GroupMembership, group_member_roles, group_join_mode, group_member_visibility, group_content_visibility, Member
 
-from civicboom.controllers.contents import _normalize_member
+#from civicboom.controllers.contents import _normalize_member # now part of base
 
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
@@ -17,10 +17,12 @@ from civicboom.lib.form_validators.registration import UniqueUsernameValidator
 
 from civicboom.controllers.settings import SettingsController
 
+import re
+
 settings_update = SettingsController().update
 
-log = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
+log      = logging.getLogger(__name__)
+
 
 #-------------------------------------------------------------------------------
 # Constants
@@ -33,12 +35,13 @@ user_log = logging.getLogger("user")
 #-------------------------------------------------------------------------------
 
 class GroupSchema(DefaultSchema):
-    name                       = formencode.validators.String(max=255, min=2               , not_empty=False)
-    description                = formencode.validators.String(max=255, min=2               , not_empty=False)
+    name                       = formencode.validators.String(max=255, min=4               , not_empty=False)
+    description                = formencode.validators.String(max=4096, min=0              , not_empty=False)
     default_role               = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
     join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
     member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
     #default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
+
 
 class CreateGroupSchema(GroupSchema):
     username                   = UniqueUsernameValidator()
@@ -48,18 +51,17 @@ class CreateGroupSchema(GroupSchema):
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_group(id, is_admin=False, is_member=False):
-    """
-    Shortcut to return a group and raise not found or permission exceptions automatically (as these are common opertations every time a group is fetched)
-    """
-    group = get_group(id)
-    if not group:
-        raise action_error(_("group not found"), code=404)
-    if is_admin and not group.is_admin(c.logged_in_persona):
-        raise action_error(_("you do not have permission for this group"), code=403)
-    if is_member and not group.get_membership(c.logged_in_persona):
-        raise action_error(_("you are not a member of this group"), code=403)
-    return group
+
+def _gen_username(base):
+    if Session.query(Member).filter(Member.username==base).count() == 0:
+        return base
+
+    if not re.search(base, "[0-9]$"):
+        base = base + "2"
+    while Session.query(Member).filter(Member.username==base).count() > 0:
+        name, num = re.match("(.*?)([0-9]+)", base).groups()
+        base = name + str(int(num)+1)
+    return base
 
 
 #-------------------------------------------------------------------------------
@@ -109,10 +111,6 @@ class GroupsController(BaseController):
         
         
         # Setup search criteria
-        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
-            kwargs['limit'] = config['search.default.limit']
-        if 'offset' not in kwargs:
-            kwargs['offset'] = 0
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
@@ -125,14 +123,19 @@ class GroupsController(BaseController):
         results = Session.query(Member).join(Group, Member, Group.members_roles)
         
         if 'group' in kwargs:
-            group   = _normalize_member(kwargs['group'], always_return_id=True)    
+            group   = normalize_member(kwargs['group'])
             results = results.filter(Group.id==group)
         
         if 'member' in kwargs:
-            member   = _normalize_member(kwargs['member'], always_return_id=True)    
+            member   = normalize_member(kwargs['member'])
             results = results.filter(Member.id==member)
         
         #results = results.filter(Member.status=='active')
+
+        if 'limit' not in kwargs: #Set default limit and offset (can be overfidden by user)
+            kwargs['limit'] = config['search.default.limit']
+        if 'offset' not in kwargs:
+            kwargs['offset'] = 0
 
         results = results.order_by(Member.name.asc())
         results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
@@ -162,7 +165,7 @@ class GroupsController(BaseController):
         # url('groups') + POST
         # if only display name is specified, generate a user name
         if not kwargs.get('username') and kwargs.get("name"):
-            kwargs["username"] = make_username(kwargs.get("name"))
+            kwargs["username"] = _gen_username(make_username(kwargs.get("name")))
         
         data       = {'group':kwargs, 'action':'create'}
         data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
@@ -211,7 +214,7 @@ class GroupsController(BaseController):
         @return 403 - lacking permission to edit
         @return 200 - success
         """
-        group = _get_group(id, is_admin=True)
+        group = get_group(id, is_admin=True)
         
         group_dict = group.to_dict()
         group_dict.update(kwargs)
@@ -272,7 +275,7 @@ class GroupsController(BaseController):
         @return 404 group not found to delete
         @return 200 group deleted successfully
         """
-        group = _get_group(id, is_admin=True)
+        group = get_group(id, is_admin=True)
         user_log.info("Deleted Group #%d (%s)" % (group.id, group.username))
         group.delete()
         return action_ok(_("group deleted"), code=200)
@@ -306,7 +309,7 @@ class GroupsController(BaseController):
         """
         # url('edit_group', id=ID)
         # GregM: BIG DIRTY HACK to show website and description in the group config editor.
-        group = _get_group(id, is_admin=True)
+        group = get_group(id, is_admin=True)
         config = group.config
         groupdict = group.to_dict()
         groupdict['website'] = config.get('website')
