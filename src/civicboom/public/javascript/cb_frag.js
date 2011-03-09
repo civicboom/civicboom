@@ -327,17 +327,18 @@ $(function () {
     } else if(Modernizr.hashchange) {
     // Browser does not support HTML5 history states
     // Use url hash instead
-    $(window).hashchange(function (e) {
-      var hash = location.hash;
-      if (hash != '' && typeof hash != 'undefined') {
-        if (hash.substr(1,3) == 'cbh') {
-          try {
-            var stateObj = $.parseJSON(decode64(hash.substr(4)));
-            loadStateObj(stateObj);
-          } catch (e) {} 
-        }
-      }
-    });
+    // GregM: Causing stability issues in IE, removed for now
+    // $(window).hashchange(function (e) {
+    //   var hash = location.hash;
+    //   if (hash != '' && typeof hash != 'undefined') {
+    //     if (hash.substr(1,3) == 'cbh') {
+    //       try {
+    //         var stateObj = $.parseJSON(decode64(hash.substr(4)));
+    //         loadStateObj(stateObj);
+    //       } catch (e) {} 
+    //     }
+    //   }
+    // });
   }
   update_history(location.href, true);
 })
