@@ -32,13 +32,13 @@ user_log = logging.getLogger("user")
 # Form Schema
 #-------------------------------------------------------------------------------
 
-#class GroupSchema(DefaultSchema):
-#    name                       = formencode.validators.String(max=255, min=2               , not_empty=False)
-#    description                = formencode.validators.String(max=255, min=2               , not_empty=False)
-#    default_role               = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
-#    join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
-#    member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
-#    #default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
+class GroupSchema(DefaultSchema):
+    name                       = formencode.validators.String(max=255, min=2               , not_empty=False)
+    description                = formencode.validators.String(max=255, min=2               , not_empty=False)
+    default_role               = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
+    join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
+    member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
+    #default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
 
 class CreateGroupSchema(GroupSchema):
     username                   = UniqueUsernameValidator()
