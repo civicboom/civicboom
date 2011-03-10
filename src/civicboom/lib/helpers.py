@@ -301,9 +301,9 @@ def form(*args, **kwargs):
                 'json'
             )
             .error(function(jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR);
                 if (jqXHR.status == 403) {
-                    current_element.submit(); //perform normal post, bypassing onsubmit
+                    console.log('403 detected');
+                    //current_element.submit(); //perform normal post, bypassing onsubmit
                 }
             });
             return false;

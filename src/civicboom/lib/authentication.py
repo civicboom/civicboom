@@ -198,7 +198,7 @@ def signin_user(user, login_provider=None):
     
     # Instate new session with old vars under the new session id
     for key, value in session_old.iteritems():
-        session.set(key, value)
+        session[key] = value
     
     session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
     
