@@ -61,7 +61,11 @@ add_setting('password_new_confirm'      , _('New password again')        , group
 add_setting('avatar'                    , _('Avatar' )                   , group='general/avatar'     , weight=11 , type='file'                                                                              )
 
 
-add_setting('location_home'             , _('Home Location' )            , group='location/location'  , weight=100, type='location'        , info='type in your town name or select a locaiton from the map' )
+add_setting('location_home'             , _('Home Location' )            , group='location/location'  , weight=100, type='location'        , info=
+                        '<b>Optional</b><br />' +
+                        'Civicboom will be adding new features in the coming months. Part of this is the ability to geo-locate content in your area, get alerted to local requests and participate fully in the crowdsourcing experience.' +
+                        'You can add your location now, but this will not be used until the features are rolled out.<br />'
+                        '<b>Your location will not be shared with other users. Your geo-location will be used in order for relevant requests to be pushed to you. This is an opt-in feature.</b>' )
 
 
 # Ignore these messages generators!

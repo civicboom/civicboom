@@ -23,6 +23,9 @@
         self.num_unread_messages = d.get('num_unread_messages', 0);
         self.num_unread_notifications = d.get('num_unread_notifications', 0);
         
+        _('_User')  # Force user translate
+        _('_Group') # Force group translate
+        
         self.attr.title     = _('_' + self.member['type'].capitalize())
         self.attr.icon_type = self.member['type']
         

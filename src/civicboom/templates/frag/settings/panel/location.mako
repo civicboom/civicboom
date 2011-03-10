@@ -35,6 +35,12 @@
     % for group_name in setting_group_order:
         <div style="margin: 16px;">
       <div style="font-weight: bold;">${group_name.capitalize()}</div>
+      <div class="settinginfo">
+        <p><b>OPTIONAL</b></p>
+        <p>Civicboom will be adding new features in the coming months. Part of this is the ability to geo-locate content in your area, get alerted to local requests and participate fully in the crowdsourcing experience.</p>
+        <p>You can add your location now, but this will not be used until the features are rolled out.</p>
+        <p><b>Your location will not be shared with other users. Your geo-location will be used in order for relevant requests to be pushed to you. <br/><u>This is an opt-in function.</u></b></p>
+      </div>
       <table class="form" style="width: 100%;">
             % for setting_name in setting_groups[group_name]:
                 <tr>
@@ -52,9 +58,6 @@
                     <td width="130" class='descr'>${setting_meta['description']}</td>
                     
           <td>
-                    % if setting_meta.get('info'):
-                        <div class="settinginfo">${setting_meta['info']}</div>
-                    % endif
                     % if settings_hints.get(setting_name[0]):
                         <div class="settinghint">${settings_hints.get(setting_name[0])}</div>
                     % endif

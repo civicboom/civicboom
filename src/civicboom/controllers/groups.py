@@ -201,7 +201,7 @@ class GroupsController(BaseController):
         @return 200 - ???
         """
         #url_for('new_group')
-        print settings_base
+        ##print settings_base
         return action_ok(template='groups/create')
 
 

@@ -9,7 +9,7 @@
 
 <%def name="body()">
     <%
-        self.attr.frags = [menu, messages, help]
+        self.attr.frags = [menu, location, help]
         self.attr.frag_col_sizes = [1,2,1]
     %>
 </%def>
@@ -18,10 +18,10 @@
   <%include file="/frag/settings/menu.mako"/>
 </%def>
 
-<%def name="messages()">
-  <%include file="/frag/settings/panel/messages.mako"/>
+<%def name="location()">
+  <%include file="/frag/settings/panel/location.mako"/>
 </%def>
 
 <%def name="help()">
-  <!--#include file="/help/settings_panel_messages"-->
+  <!--#include file="/help/settings"-->
 </%def>

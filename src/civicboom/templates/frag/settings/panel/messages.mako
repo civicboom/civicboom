@@ -2,7 +2,7 @@
 
 <%!
     rss_url   = False
-    help_frag = 'message_routes'
+    help_frag = 'settings_panel_messages'
 %>
 
 <%def name="title()">${_("Edit your notification settings")}</%def>
