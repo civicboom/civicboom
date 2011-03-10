@@ -12,7 +12,8 @@ $('body').ajaxError(function(event, request, settings, exception) {
 	}
 
 	// GregM: Login Required
-	if (request.status == 403) {
+	//if (request.status == 403) {
+    if (false) {
 		// settings.url has the last ajax settings including url :D
 		$.cookie('login_redirect', 'https://' + document.location.hostname + settings.url.replace(/json$/, 'redirect'), { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
 		// Need to set this to stop "Hold It!" message...

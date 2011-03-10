@@ -32,6 +32,11 @@ log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
 
 
+#-------------------------------------------------------------------------------
+# Constants
+#-------------------------------------------------------------------------------
+
+login_expire_time = config['setting.session.login_expire_time']
 
 #-------------------------------------------------------------------------------
 # Standard Tools
@@ -128,21 +133,13 @@ def authorize(_target, *args, **kwargs):
     Once you log in, it sends you back to the original url call.
     """
     # CHECK Loggin in
-    if c.logged_in_user: #authenticator(
+    if c.logged_in_user:
         # Reinstate any session encoded POST data if this is the first page since the login_redirect
-        # AllanC - THIS IS BROKEN
-        #          the reason is that when the user log's in securely then the session cookie is destroyed
-        #          currently no redirect actions work
-        #          this could be fixed by putting the data in the client's cookie instead - consider creating a cookie_remove and a cookie_set cookie_get
-        if cookie_get('login_redirect'):
-            json_post = cookie_remove('login_redirect_action')
+        if session_get('login_redirect'):
+            json_post = session_remove('login_redirect_action')
             if json_post:
-                try:
-                    kwargs.update()
-                    c.authenticated_form = True # AllanC - the user has had to sign in - therefor they are aware they are performing an action - only our site can set the cookies
-                except:
-                    pass
-
+                kwargs.update(json.loads(unquote_plus(json_post)))
+                # This will fail the auth_token as a new session will have been created and it will ask the user again if they want to perform the action
             
         # Make original method call
         result = _target(*args, **kwargs)
@@ -153,23 +150,21 @@ def authorize(_target, *args, **kwargs):
         # If request was a browser - prompt for login
             #raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
         if c.format=="redirect":
-            cookie_set('login_action_referer', current_referer(protocol=protocol_after_login), 60 * 10)
+            session_set('login_action_referer', current_referer(protocol=protocol_after_login), login_expire_time)
             # The redirect auto formater looked for this and redirects as appropriate
         if c.format == "html" or c.format == "redirect":
             login_redirect_url = current_url(protocol=protocol_after_login)
-            ## AllanC - bugfix - impaticent people who click signout beofre the page is loaded, dont allow signout as an actions!!
-            if 'signout' in login_redirect_url:
+            if 'signout' in login_redirect_url: ## AllanC - bugfix - impaticent people who click signout beofre the page is loaded, dont allow signout as an actions!!
                 login_redirect_url = None
             if login_redirect_url:
-                cookie_set('login_redirect', login_redirect_url, 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                session_set('login_redirect', login_redirect_url, login_expire_time) # save timestamp with this url, expire after x min, if they do not complete the login process
                 # save the the session POST data to be reinstated after the redirect
                 if request.POST:
                     login_redirect_action = json.dumps(multidict_to_dict(request.POST))
                 else:
                     login_redirect_action = json.dumps(dict())
-                
                 login_redirect_action = quote_plus(login_redirect_action)
-                cookie_set('login_redirect_action', login_redirect_action , 60 * 10) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                session_set('login_redirect_action', login_redirect_action , login_expire_time) # save timestamp with this url, expire after 5 min, if they do not complete the login process
             return redirect(url(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
         
         # If API request - error unauthorised
@@ -226,8 +221,8 @@ def signout_user(user):
     user_log.info("logged out")
     session.clear()
     cookie_delete("civicboom_logged_in")
-    cookie_delete("login_redirect_url")
-    cookie_delete("login_redirect_action")
+    session_delete("login_redirect_url")
+    session_delete("login_redirect_action")
     #response.delete_cookie("civicboom_logged_in")
     #session.save()
     #flash_message("Successfully signed out!")

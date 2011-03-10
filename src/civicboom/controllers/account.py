@@ -105,7 +105,6 @@ class AccountController(BaseController):
         
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
-            
             #try   : existing_user = get_user(c.auth_info['profile']['displayName'])
             #except: pass
             #if existing_user:
@@ -122,10 +121,15 @@ class AccountController(BaseController):
             
         # If not authenticated or any janrain info then error
         user_log.warning("Failed to log in as '%s'" % kwargs.get('username', ''))
+        
         err = action_error(_('Unable to authenticate user'), code=403)
+        # AllanC - TODO
+        # Check if user does exisit but simply has no 'password' login record accociated with it
+        if False:
+            pass
         if c.format in ["html", "redirect"]:
             set_flash_message(err.original_dict)
-            return redirect_to_referer()
+            return redirect_to_referer() #AllanC - TODO .. humm .. this will remove the login_action_referer so if they fail a login first time they cant perform the action thats remembered. This need thinking about.
         else:
             raise err
 

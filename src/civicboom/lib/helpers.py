@@ -294,8 +294,8 @@ def form(*args, **kwargs):
                 $(this).serialize() ,
                 function(data, status, jqXhr) {
                     flash_message(data);
-                    if (jqXhr.status == 402) {
-                      //popup ('Please upgrade your account to proceed', '');
+                    if (jqXhr.status == 403) {
+                        current_element.submit(); //perform normal post, bypassing onsubmit
                     }
                     if (data.status == 'ok') {
                         %(json_form_complete_actions)s
