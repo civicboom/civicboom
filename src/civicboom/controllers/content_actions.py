@@ -1,12 +1,11 @@
 from civicboom.lib.base import *
-from civicboom.controllers.contents import _get_content, ContentsController
+from civicboom.controllers.contents import ContentsController
 from civicboom.lib.communication    import messages
 from civicboom.lib.misc import update_dict
 
 content_search = ContentsController().index
 
 log      = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 class ContentActionsController(BaseController):
@@ -32,7 +31,7 @@ class ContentActionsController(BaseController):
         @return 200   rated ok
         @return 400   invalid rating
         """
-        content = _get_content(id, set_html_action_fallback=True)
+        content = get_content(id, set_html_action_fallback=True)
         content.rate(c.logged_in_persona, int(rating))
         user_log.debug("Rated Content #%d as %d" % (int(id), int(rating)))
         return action_ok(_("Vote counted"))
@@ -58,7 +57,7 @@ class ContentActionsController(BaseController):
         #    raise action_error(_('already boomed this'), code=400)
         #session[boomkey] = True
 
-        content = _get_content(id, set_html_action_fallback=True)
+        content = get_content(id, set_html_action_fallback=True)
         if content.creator == c.logged_in_persona:
             raise action_error(_('You can not boom your own content'))
         content.boom_content(c.logged_in_persona)
@@ -83,7 +82,7 @@ class ContentActionsController(BaseController):
         @return 200   locked ok
         @return 500   error locking
         """
-        content = _get_content(id, is_parent_owner=True, set_html_action_fallback=True)
+        content = get_content(id, is_parent_owner=True, set_html_action_fallback=True)
         if content.parent_approve():
             user_log.debug("Approved & Locked Content #%d" % int(id))
             return action_ok(_("content has been approved and locked"))
@@ -109,7 +108,7 @@ class ContentActionsController(BaseController):
         @return 200   disassociated ok
         @return 500   error disassociating
         """
-        content = _get_content(id, is_parent_owner=True, set_html_action_fallback=True)
+        content = get_content(id, is_parent_owner=True, set_html_action_fallback=True)
         if content.parent_disassociate():
             user_log.debug("Disassociated Content #%d" % int(id))
             return action_ok(_("content has disassociated from your parent content"))
@@ -132,7 +131,7 @@ class ContentActionsController(BaseController):
         @return 200   seen ok
         @return 500   error
         """
-        content = _get_content(id, is_parent_owner=True, set_html_action_fallback=True)
+        content = get_content(id, is_parent_owner=True, set_html_action_fallback=True)
         if content.parent_seen():
             user_log.debug("Seen Content #%d" % int(id))
             return action_ok(_("content has been marked as seen"))
@@ -154,7 +153,7 @@ class ContentActionsController(BaseController):
         @return 200   accepted ok
         @return 500   error accepting
         """
-        assignment = _get_content(id, set_html_action_fallback=True)
+        assignment = get_content(id, set_html_action_fallback=True)
         
         # AllanC - TODO: need message to user as to why they could not accept the assignment
         #         private assingment? not invited?
@@ -185,7 +184,7 @@ class ContentActionsController(BaseController):
         @return 200   withdrawn ok
         @return 500   error withdrawing
         """
-        assignment = _get_content(id, set_html_action_fallback=True)
+        assignment = get_content(id, set_html_action_fallback=True)
         
         status     = assignment.withdraw(c.logged_in_persona)
         if status == True:
@@ -215,7 +214,7 @@ class ContentActionsController(BaseController):
         """
         @auth
         def flag_action(id, type='offensive', comment='', **kwargs):
-            _get_content(id).flag(member=c.logged_in_persona, type=type, comment=comment)
+            get_content(id).flag(member=c.logged_in_persona, type=type, comment=comment)
             user_log.debug("Flagged Content #%d as %s" % (int(id), type))
             return action_ok(_("An administrator has been alerted to this content"))
             #raise action_error(_("Error flaging content, please email us"))
@@ -259,7 +258,7 @@ class ContentActionsController(BaseController):
                 list  the list
         @return 404   not found
         """
-        content = _get_content(id, is_viewable=True)
+        content = get_content(id, is_viewable=True)
         actions = content.action_list_for(c.logged_in_persona)
         return action_ok(data={'list': actions})
 
@@ -276,7 +275,7 @@ class ContentActionsController(BaseController):
         
         @return list  the list of comments
         """
-        content = _get_content(id, is_viewable=True)
+        content = get_content(id, is_viewable=True)
         comments = [c.to_dict() for c in content.comments]
         return action_ok_list(comments)
 
@@ -286,7 +285,7 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     @web
     def accepted_status(self, id, **kwargs):
-        content = _get_content(id, is_viewable=True)
+        content = get_content(id, is_viewable=True)
         
         if hasattr(content, 'assigned_to'):
             assigned_to = [update_dict(a.member.to_dict(), {'status': a.status}) for a in content.assigned_to]  # 'update_date':a.update_date
@@ -311,5 +310,5 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     @web
     def contributors(self, id, **kwargs):
-        content = _get_content(id, is_viewable=True)
+        content = get_content(id, is_viewable=True)
         return action_ok_list([])

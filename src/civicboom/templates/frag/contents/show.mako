@@ -1,11 +1,12 @@
 <%inherit file="/frag/common/frag.mako"/>
 <%! import datetime %>
 
-<%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"   />
-<%namespace name="flag"            file="/frag/content_actions/flag.mako"/>
-<%namespace name="share"           file="/frag/common/share.mako"        />
-<%namespace name="popup"           file="/html/web/common/popup_base.mako"    />
-<%namespace name="member_includes" file="/html/web/common/member.mako"        />
+<%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"     />
+<%namespace name="flag"            file="/frag/content_actions/flag.mako"  />
+<%namespace name="share"           file="/frag/common/share.mako"          />
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
+<%namespace name="member_includes" file="/html/web/common/member.mako"     />
+<%namespace name="media_includes"  file="/html/web/media/show.mako"        />
 
 
 ## for deprication
@@ -86,7 +87,7 @@
               ##${frag_lists.member_list(content['creator'], _("Creator"))}
                 <div>
                   <span style="font-weight: bold;">${self.content['creator']['name']}</span><br />
-                  Type: ${self.content['creator']['type'].capitalize()}<br />
+                  Type: ${_('_'+self.content['creator']['type'].capitalize())}<br />
                   ## Member Info Here
                   ##% if self.member['website'] != '':
                   ##  Website: ${self.member['join_date']}<br />
@@ -286,30 +287,15 @@
         content = self.content
     %>
     <%
-        media_width  = config['media.display.video.width' ]
-        media_height = config['media.display.video.height']
+        # AllanC - now done by media/show.mako
+        #media_width  = config['media.display.video.width' ]
+        #media_height = config['media.display.video.height']
     %>
 
     <ul class="media">
     % for media in content['attachments']:
         <li class="paddedbottom">
-        % if media['type'] == "image":
-            <a href="${h.url('medium', id=media['hash'])}"><img src="${media['media_url']}" alt="${media['caption']}" style="max-width: ${media_width}px; max-height: ${media_height}px;"/></a>
-        % elif media['type'] == "audio":
-            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="30">
-                <param name="movie" value="/flash/player_flv_maxi.swf" />
-                <param name="allowFullScreen" value="true" />
-                <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
-            </object>
-        % elif media['type'] == "video":
-            <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="${media_height}">
-                <param name="movie" value="/flash/player_flv_maxi.swf" />
-                <param name="allowFullScreen" value="true" />
-                <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;startimage=${media['thumbnail_url']}&amp;showvolume=1&amp;showfullscreen=1" />
-            </object>
-        % else:
-            ${_("unrecognised media type: %s") % media['type']}
-        % endif
+            ${media_includes.preview(media)}
         % if media.get('caption') or media.get('credit'):
           <br />
         % endif

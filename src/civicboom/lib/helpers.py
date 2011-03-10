@@ -35,7 +35,9 @@ import json
 import copy
 import time
 import datetime
+import logging
 
+user_log = logging.getLogger("user")
 
 
 def get_captcha(lang='en', theme='red'):
@@ -125,8 +127,8 @@ def wh_url(folder, filename):
         path = os.path.join("civicboom", "public", filename)
         ut = str(int(os.stat(path).st_mtime))
         if config['debug']:
-            # in development,  serve locally
-            return "/"+filename+"?ut="+ut
+            # in development, serve locally
+            return request.environ.get('wsgi.url_scheme', 'https')+"://"+request.environ.get("HTTP_HOST")+"/"+filename+"?ut="+ut
         else:
             # in production, serve from a domain without cookies
             return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+filename+"?ut="+ut
@@ -134,8 +136,6 @@ def wh_url(folder, filename):
     # update warehouse (currently amazon S3)
     else:
         return config["warehouse_url"]+"/"+folder+"/"+filename
-
-
 
 
 def uniqueish_id(*args):
@@ -168,8 +168,6 @@ def objs_to_linked_formatted_dict(**kargs):
             val = c[val]
         links[key] = gen_link(val)
     return links
-
-
 
 
 # AllanC - not happy with this ... see register template for example ...
@@ -216,9 +214,15 @@ def api_datestr_to_datetime(date_str):
 
 
 def date_to_rss(date):
+    """
+    Turns an ISO date (as used by our API) into an RSS one
+
+    >>> date_to_rss('2010-05-21 16:30:10')
+    'Fri, 21 May 2010 16:30:10 +0000'
+    """
     if isinstance(date, basestring):
         date = api_datestr_to_datetime(date)
-    return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
+    return date.strftime("%a, %d %b %Y %H:%M:%S +0000")
 
 
 def time_ago(from_time):
@@ -226,16 +230,19 @@ def time_ago(from_time):
         return None
     if isinstance(from_time, basestring):
         from_time = api_datestr_to_datetime(from_time)
-    time_ago = time_ago_in_words(from_time, granularity='minute', round=True).split(', ')[0]
-    time_ago = time_ago.split(' and')[0]
-    time_ago = time_ago.replace('minute','min')
-    return time_ago
-
+    time_ago = time_ago_in_words(from_time, granularity='minute', round=True)
+    match = re.match("\d+ [a-z]+", time_ago)
+    if match:
+        return match.group(0)
+    else:
+        user_log.error("Failed to shorten time_ago:"+time_ago)
+        return time_ago
 
 
 #-------------------------------------------------------------------------------
 # Standard and JSON URL generation
 #-------------------------------------------------------------------------------
+
 def url_pair(*args, **kwargs):
     # Defensive copying
     #args   = copy.copy(args)

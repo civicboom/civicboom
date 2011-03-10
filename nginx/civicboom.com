@@ -21,10 +21,22 @@ upstream backends {
 }
 
 server {
+	# listen options are set in the main block below -- listen options
+	# per socket are global, so if two listen commands say eg "use ssl"
+	# then we get an error about duplicate options
+	listen 80;    listen [::]:80;
+	listen 443;   listen [::]:443;
+	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
+	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
+	server_name civicboom.com;
+	rewrite ^(.*) $scheme://www.civicboom.com$1 permanent;
+}
+
+server {
 	# server stuff
 	listen 80;                listen [::]:80 ipv6only=on;
 	listen 443 default ssl;   listen [::]:443 default ssl ipv6only=on;
-	server_name .civicboom.com localhost _;
+	server_name *.civicboom.com _;
 	access_log /var/log/nginx/civicboom.log;
 	access_log /var/log/nginx/civicboom.timing.log timing; # DC_TIMING
 	root /opt/cb/share/website-web/;

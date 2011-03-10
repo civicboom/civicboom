@@ -178,6 +178,8 @@ def session_get(key):
         return session[key]
     return None
 
+def session_keys():
+    return session.keys()
 
 #-------------------------------------------------------------------------------
 # Cookie Timed Keys Management
@@ -266,7 +268,7 @@ def action_ok_list(list, obj_type=None, **kwargs):
 
 class action_error(Exception):
     def __init__(self, message=None, data={}, code=500, status='error', **kwargs):
-        assert not message or isinstance(message, basestring)
+        assert isinstance(message, basestring)
         assert isinstance(data, dict)
         assert isinstance(code, int)
         self.original_dict = {

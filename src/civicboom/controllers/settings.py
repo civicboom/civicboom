@@ -23,7 +23,6 @@ from civicboom.lib.civicboom_lib import set_password, send_verifiy_email
 from civicboom.model.meta import location_to_string
 
 log = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 #---------------------------------------------------------------------------

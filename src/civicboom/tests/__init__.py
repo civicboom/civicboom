@@ -167,7 +167,7 @@ class TestController(TestCase):
             'title'         : title      ,
             'contents'      : content    ,
             'type'          : type       ,
-            'submit_publish': u'publish' , # publish needs to be remove from API
+            #'submit_publish': u'publish' , # publish needs to be remove from API
         }
         params.update(kwargs)
         
@@ -180,6 +180,14 @@ class TestController(TestCase):
         content_id = int(response_json['data']['id'])
         self.assertNotEqual(content_id, 0)
         return content_id
+
+    def delete_content(self, id):
+        response = self.app.delete(
+            url('content', id=id, format="json"),
+            params={'_authentication_token': self.auth_token,},
+            status=200
+        )
+
 
     def follow(self, username):
         response = self.app.post(

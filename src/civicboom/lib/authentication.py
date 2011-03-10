@@ -3,8 +3,9 @@ Tools used for Authentication of users
 """
 
 # Pylons imports
+from pylons import session # needed for invalidating the session
 from civicboom.lib.base import *
-from civicboom.lib.database.get_cached import get_membership
+from civicboom.lib.database.get_cached import get_membership, get_member #note get_member should override base:get_member
 
 from pylons.i18n import _ #WHY THE *** IS THIS NEEDED!! .. it's part of lib.base above?! but without it, it's not imported
 

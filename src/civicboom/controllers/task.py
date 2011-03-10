@@ -12,7 +12,7 @@ from civicboom.lib.base import *
 import datetime
 
 log = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
+
 response_completed_ok = "task:ok" #If this is changed please update tasks.py to reflect the same "task ok" string
 
 

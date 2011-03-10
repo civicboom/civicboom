@@ -7,16 +7,22 @@ from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_
 from civicboom.lib.services.janrain import janrain
 from civicboom.lib.web              import cookie_get
 from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password, get_action_objects_for_url
-from civicboom.lib.database.get_cached import get_member
+#from civicboom.lib.database.get_cached import get_member
 
 from civicboom.controllers.register import register_new_janrain_user
 
+import time
+
 
 log      = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 class AccountController(BaseController):
+    """
+    @title Accounts
+    @doc account
+    @desc controller for signing in and out
+    """
 
     #---------------------------------------------------------------------------
     # Signout
@@ -29,10 +35,19 @@ class AccountController(BaseController):
     #@authenticate_form
     def signout(self, **kwargs):
         """
+        POST /account/signout: End the current session
+
+        @api account 1.0 (WIP)
+
+        @return 302   redirect to the front page
+
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies
+
+        Redirect to a new URL so that the browser doesn't cache it (Shouldn't be necessary, but it
+        seems that sometimes it is?)
         """
         signout_user(c.logged_in_persona)
-        return redirect(url('/', protocol='http'))
+        return redirect(url('/', protocol='http', ut=str(time.time())))
 
 
     #---------------------------------------------------------------------------
@@ -43,6 +58,17 @@ class AccountController(BaseController):
     # mobile requires a valid cert, mobile.civicboom.com doesn't have one
     #@https() # redirect to https for transfer of password
     def signin(self, **kwargs):
+        """
+        POST /account/signin: Create a new session
+
+        @api account 1.0 (WIP)
+
+        @param username     the user's civicboom.com username
+        @param password     the user's civicboom.com password
+
+        @return 200         logged in ok
+                auth_token  the token to be supplied with any data-modifying requests
+        """
 
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':
@@ -109,6 +135,14 @@ class AccountController(BaseController):
     @web
     @auth
     def set_persona(self, id, **kwargs):
+        """
+        POST /account/set_persona/{id}: change the currently active persona
+
+        @api account 1.0 (WIP)
+
+        @return 200     switched ok
+        @return 500     switch failed
+        """
         if set_persona(id):
             user_log.info("Switched to persona %s" % id)
             # AllanC - not a sutable solution - I wanted an AJAX working version
@@ -180,8 +214,8 @@ class AccountController(BaseController):
         c.hash = kwargs.get('hash')
         
         user = get_member(id or kwargs.get('username') or kwargs.get('email'), search_email=True)
-        if not user:
-            raise action_error('user not found', code=404)
+        #if not user:
+        #    raise action_error('user not found', code=404)
 
         # Step 1: User request link with hash to be sent via email
         if not c.hash:

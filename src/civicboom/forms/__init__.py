@@ -1,6 +1,7 @@
 from pylons import config
 from civicboom import model
 from civicboom.lib.base import render
+from civicboom.model.meta import location_to_string
 from formalchemy import config as fa_config
 from formalchemy import templates
 from formalchemy import validators
@@ -11,7 +12,6 @@ from formalchemy.ext.fsblob import FileFieldRenderer
 from formalchemy.ext.fsblob import ImageFieldRenderer
 from formalchemy.fields import FieldRenderer
 from formalchemy.fields import TextAreaFieldRenderer
-from geoformalchemy.base import GeometryFieldRenderer
 from geoalchemy import geometry
 import sqlalchemy
 
@@ -89,6 +89,8 @@ class EnumFieldRenderer(FieldRenderer):
     def render(self):
         value = self.value or ''
         opts = ""
+        if self.field._columns[0].nullable:
+            opts = opts + "<option value>None</option>\n"
         for o in self.field._columns[0].type.enums:  # is there a better way? :|
             sel = " selected" if self.value==o else ""
             opts = opts + ("<option value='%s'%s>%s</option>\n" % (o, sel, o.replace("_", " ")))
@@ -99,7 +101,35 @@ class EnumFieldRenderer(FieldRenderer):
 </select>
         """ % vars
 
-FieldSet.default_renderers[geometry.Geometry] = GeometryFieldRenderer
+
+class LocationPickerRenderer(FieldRenderer):
+    def render(self):
+        if self.raw_value:
+            lonlatval = location_to_string(self.raw_value)
+            lonlat = "lonlat: {lon:%s, lat:%s}," % tuple(lonlatval.split(" "))
+        else:
+            lonlatval = ""
+            lonlat = ""
+        vars = dict(field_name=self.name, lonlat_js=lonlat, lonlat_str=lonlatval)
+        return """
+<div style="position: relative; z-index: 0;">
+<input id="%(field_name)s_name" name="%(field_name)s_name" type="search" placeholder="Search for location" style="width: 100%%;">
+<div style="padding-top: 6px; z-index: 1;" id="%(field_name)s_comp"></div>
+<input id="%(field_name)s" name="%(field_name)s" type="hidden" value="SRID=4326;POINT(%(lonlat_str)s)">
+
+<div style="width: 100%%; height: 200px; border: 1px solid black; z-index: 0;" id="%(field_name)s_div"></div>
+<script type="text/javascript">
+$(function() {
+	map = map_picker('%(field_name)s', {
+        style: 'wkt',
+        %(lonlat_js)s
+	});
+});
+</script>
+</div>
+""" % vars
+
+FieldSet.default_renderers[geometry.Geometry] = LocationPickerRenderer
 FieldSet.default_renderers[sqlalchemy.UnicodeText] = TextAreaFieldRenderer
 FieldSet.default_renderers[sqlalchemy.DateTime] = DatePickerFieldRenderer
 FieldSet.default_renderers[sqlalchemy.Enum] = EnumFieldRenderer

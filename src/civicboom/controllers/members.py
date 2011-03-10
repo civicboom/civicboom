@@ -2,7 +2,7 @@ from civicboom.lib.base import *
 
 from civicboom.lib.misc import str_to_int
 
-from civicboom.controllers.contents import _normalize_member
+#from civicboom.controllers.contents import _normalize_member
 
 
 # AllanC - for members autocomplete index
@@ -12,26 +12,12 @@ from sqlalchemy         import or_, and_
 
 
 log      = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 #-------------------------------------------------------------------------------
 # Global Functions
 #-------------------------------------------------------------------------------
 
-def _get_member(member, set_html_action_fallback=False):
-    """
-    Shortcut to return a member and raise not found automatically (as these are common opertations every time a member is fetched)
-    """
-    member = get_member(member)
-    if not member:
-        raise action_error(_("member not found"), code=404)
-    if member.status != "active":
-        raise action_error(_("member inactive") , code=404)
-    if set_html_action_fallback:
-        # AllanC - see _get_content for rational behind this
-        c.html_action_fallback_url = url('member', id=member.username)
-    return member
 
 
 #-------------------------------------------------------------------------------
@@ -41,12 +27,16 @@ def _get_member(member, set_html_action_fallback=False):
 def _init_search_filters():
     
     def append_search_member(query, member):
-        if isinstance(member, Member):
-            member = member.id
-        try:
-            return query.filter(Member.id       == int(member))
-        except:
-            return query.filter(Member.username == member     )
+        #if isinstance(member, Member):
+        #    member = member.id
+        #try:
+        #    return query.filter(Member.id       == int(member))
+        #except:
+        
+        if isinstance(member, basestring):
+            return query.filter(Member.username == member                  )
+        else:
+            return query.filter(Member.id       == normalize_member(member))
 
     def append_search_name(query, name):
         return query.filter(or_(Member.name.ilike("%"+name+"%"), Member.username.ilike("%"+name+"%")))
@@ -59,11 +49,11 @@ def _init_search_filters():
         return query
 
     def append_search_followed_by(query, member):
-        member_id = _normalize_member(member, always_return_id=True)
+        member_id = normalize_member(member)
         return query.filter(Member.id.in_( Session.query(Follow.member_id  ).filter(Follow.follower_id==member_id) ))
 
     def append_search_follower_of(query, member):
-        member_id = _normalize_member(member, always_return_id=True)
+        member_id = normalize_member(member)
         return query.filter(Member.id.in_( Session.query(Follow.follower_id).filter(Follow.member_id  ==member_id) ))
 
 
@@ -173,7 +163,7 @@ class MembersController(BaseController):
         @return 404      member not found
         """
         
-        member = _get_member(id)
+        member = get_member(id)
         
         if 'lists' in kwargs:
             lists = [list.strip() for list in kwargs['lists'].split(',')]

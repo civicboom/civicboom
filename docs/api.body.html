@@ -44,10 +44,32 @@ may prefer /messages/42.json or /messages/42.xml
 <pre>
 {
     "status": "ok" / "error" / "invalid",                  (required)
-    "message": "string to show in app status bar / popup", (string or None, should be there if status = error)
+    "message": "string to show in app status bar / popup", (required; can be null if status=ok)
     "data": {                                              (required; blank dictionary if there is no data)
         "foo": "bar", # function-specific data
-        "baz": "qux"
+        "baz": "qux",
+        ...
+    }
+}
+</pre>
+
+<p>JSON list format:
+<pre>
+{
+    "status": "ok",
+    "message": null,
+    "data": {
+        "list": {
+            "items": [
+                {...},
+                {...},
+                {...}
+            ],
+            "type": "content",
+            "limit": 20,
+            "offset": 0,
+            "count": 3
+        }
     }
 }
 </pre>
