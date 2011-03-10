@@ -63,7 +63,7 @@ class TestDeleteCascadesController(TestController):
 
 
     #---------------------------------------------------------------------------
-    # Delete User 
+    # Delete User
     #---------------------------------------------------------------------------
     def test_delete_user(self):
         
@@ -125,7 +125,7 @@ class TestDeleteCascadesController(TestController):
         response_json = json.loads(response.body)
         num_following      = response_json['data']['following']['count']
         num_followers      = response_json['data']['followers']['count']
-        num_boomed_content = response_json['data']['boomed_content']['count']
+        num_boomed_content = response_json['data']['boomed'   ]['count']
         #num_sent_messages =
         
         # Following, message recive, boom, comment
@@ -147,9 +147,9 @@ class TestDeleteCascadesController(TestController):
         
         response      = self.app.get(url('member', id='unittest', format='json'), status=200)
         response_json = json.loads(response.body)
-        self.assertEqual(num_following      + 1, response_json['data']['following'     ]['count'])
-        self.assertEqual(num_followers      + 1, response_json['data']['followers'     ]['count'])
-        self.assertEqual(num_boomed_content + 1, response_json['data']['boomed_content']['count'])
+        self.assertEqual(num_following      + 1, response_json['data']['following']['count'])
+        self.assertEqual(num_followers      + 1, response_json['data']['followers']['count'])
+        self.assertEqual(num_boomed_content + 1, response_json['data']['boomed'   ]['count'])
         
         
         # Create group - and therefor become a member
@@ -194,7 +194,7 @@ class TestDeleteCascadesController(TestController):
         #self.assertEqual(Session.query(Message         ).filter_by(  target_id = self.delete_cascade_member_id).count() == 1) # cant, 1 as notifications are generated and it is more than 1
         self.assertEqual(Session.query(Message         ).filter_by(  source_id = self.delete_cascade_member_id).count(), 1)
         
-        self.assertEqual(Session.query(Tag             ).filter_by(       name = 'delete_cascade'             ).count(), 1)
+        self.assertEqual(Session.query(Tag             ).filter_by(       name = u'delete_cascade'            ).count(), 1)
         
         #-----------------------------------------------------------------------
         # Step 3: Delete objects
@@ -221,7 +221,7 @@ class TestDeleteCascadesController(TestController):
         response_json = json.loads(response.body)
         self.assertEqual(num_following     , response_json['data']['following']['count'])
         self.assertEqual(num_followers     , response_json['data']['followers']['count'])
-        self.assertEqual(num_boomed_content, response_json['data']['boomed_content']['count'])
+        self.assertEqual(num_boomed_content, response_json['data']['boomed'   ]['count'])
         
         # check tables deeply for all instances of the member id for removal
         self.assertEqual(Session.query(Media           ).filter_by(         id = self.media_id                ).count(), 0)
@@ -239,7 +239,7 @@ class TestDeleteCascadesController(TestController):
         self.assertEqual(Session.query(Message         ).filter_by(  target_id = self.delete_cascade_member_id).count(), 0)
         self.assertEqual(Session.query(Message         ).filter_by(  source_id = self.delete_cascade_member_id).count(), 0)
         
-        self.assertEqual(Session.query(Tag             ).filter_by(       name = 'delete_cascade'             ).count(), 1) #Tag remains at the end, this could be tidyed witha  delete orphan cascade
+        self.assertEqual(Session.query(Tag             ).filter_by(       name = u'delete_cascade'            ).count(), 1) #Tag remains at the end, this could be tidyed witha  delete orphan cascade
         
         # Step 5: cleanup
         unittest_assignment = get_content(unittest_assingment_id)
@@ -283,4 +283,3 @@ class TestDeleteCascadesController(TestController):
         self.assertEqual(Session.query(Content         ).filter_by(  parent_id = self.content_id              ).count(), 0)
         self.assertEqual(Session.query(Tag             ).filter_by(       name = u'delete_cascade'            ).count(), 1) #Tag remains at the end, this could be tidyed witha  delete orphan cascade
         self.assertEqual(Session.query(MemberAssignment).filter_by( content_id = self.content_id              ).count(), 0)
-        

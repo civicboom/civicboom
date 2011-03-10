@@ -134,10 +134,10 @@ function updateMedia(id, hash, jquery_element) {
     processingStatus
   );
   function processingStatus(data) {
-    _status = data.data.status;
+    _status = data.data.media.processing_status;
     if(!_status) {
       //Y.log ('uM got thumb');
-      _thumbnail = data.data.thumbnail_url
+      _thumbnail = data.data.media.thumbnail_url
       clearInterval(media_thumbnail_timers[id]);
       // delete media_thumbnail_timers[id]; FIXME: uncomment this line before go-live!
       jquery_element.find('img').attr('src', _thumbnail + "?" + (new Date().getTime()));

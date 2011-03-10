@@ -21,7 +21,7 @@ from civicboom.lib.misc import args_to_tuple
 # use relative import so that "import helpers" works
 #from civicboom.lib.text import scan_for_embedable_view_and_autolink
 from text import scan_for_embedable_view_and_autolink
-from web import current_url, url, current_protocol
+from civicboom.lib.web import current_url, url, current_protocol
 
 import webhelpers.html.tags as html
 
@@ -35,7 +35,9 @@ import json
 import copy
 import time
 import datetime
+import logging
 
+user_log = logging.getLogger("user")
 
 
 def get_captcha(lang='en', theme='red'):
@@ -81,6 +83,7 @@ def shorten_url(url):
     """
     return re.sub("https?://[^/]+", "", url)
 
+
 def shorten_module(mod):
     """
     Return a module name that is shorter but still useful, for
@@ -90,6 +93,7 @@ def shorten_module(mod):
     'lib.helpers'
     """
     return re.sub("civicboom/(.*).py", "\\1", mod).replace("/", ".")
+
 
 def link_to_objects(text):
     """
@@ -114,6 +118,7 @@ def link_to_objects(text):
         output = output + HTML.literal(prev_word)
     return output
 
+
 def wh_url(folder, filename):
     # pylons' "public" folder is updated pretty frequently, and is associated
     # with the specific version of the code -- so while we are small and doing
@@ -122,8 +127,8 @@ def wh_url(folder, filename):
         path = os.path.join("civicboom", "public", filename)
         ut = str(int(os.stat(path).st_mtime))
         if config['debug']:
-            # in development,  serve locally
-            return "/"+filename+"?ut="+ut
+            # in development, serve locally
+            return request.environ.get('wsgi.url_scheme', 'https')+"://"+request.environ.get("HTTP_HOST")+"/"+filename+"?ut="+ut
         else:
             # in production, serve from a domain without cookies
             return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+filename+"?ut="+ut
@@ -131,8 +136,6 @@ def wh_url(folder, filename):
     # update warehouse (currently amazon S3)
     else:
         return config["warehouse_url"]+"/"+folder+"/"+filename
-
-
 
 
 def uniqueish_id(*args):
@@ -145,11 +148,12 @@ def uniqueish_id(*args):
     largs.append(str(int(time.time() * 1e9)))
     return "_".join([str(a) for a in largs])
 
+
 def objs_to_linked_formatted_dict(**kargs):
     """
     Takes a dict of string:string that correspond to python tmpl_context global e.g:
       'member':'creator_member' would refer to c.creator_member
-      'member': member_obj_ref 
+      'member': member_obj_ref
     Then, See's if the object has a '__link___' attribute to generate a HTML <a> tag for this object
     """
     def gen_link(o):
@@ -164,8 +168,6 @@ def objs_to_linked_formatted_dict(**kargs):
             val = c[val]
         links[key] = gen_link(val)
     return links
-
-
 
 
 # AllanC - not happy with this ... see register template for example ...
@@ -210,26 +212,37 @@ def icon(icon_type, description=None, class_=''):
 def api_datestr_to_datetime(date_str):
     return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
 
+
 def date_to_rss(date):
+    """
+    Turns an ISO date (as used by our API) into an RSS one
+
+    >>> date_to_rss('2010-05-21 16:30:10')
+    'Fri, 21 May 2010 16:30:10 +0000'
+    """
     if isinstance(date, basestring):
         date = api_datestr_to_datetime(date)
-    return literal(date.strftime("%a, %d %b %Y %H:%M:%S +0000"))
+    return date.strftime("%a, %d %b %Y %H:%M:%S +0000")
+
 
 def time_ago(from_time):
     if not from_time:
         return None
     if isinstance(from_time, basestring):
         from_time = api_datestr_to_datetime(from_time)
-    time_ago = time_ago_in_words(from_time, granularity='minute', round=True).split(', ')[0]
-    time_ago = time_ago.split(' and')[0]
-    time_ago = time_ago.replace('minute','min')
-    return time_ago
-
+    time_ago = time_ago_in_words(from_time, granularity='minute', round=True)
+    match = re.match("\d+ [a-z]+", time_ago)
+    if match:
+        return match.group(0)
+    else:
+        user_log.error("Failed to shorten time_ago:"+time_ago)
+        return time_ago
 
 
 #-------------------------------------------------------------------------------
 # Standard and JSON URL generation
 #-------------------------------------------------------------------------------
+
 def url_pair(*args, **kwargs):
     # Defensive copying
     #args   = copy.copy(args)
@@ -259,7 +272,7 @@ def form(*args, **kwargs):
     if isinstance(kwargs.get('href'), tuple):
         href_tuple = kwargs['href']
 
-    # if href=tuple then generate 2 URL's from tuple 1.) Standard  2.) JSON    
+    # if href=tuple then generate 2 URL's from tuple 1.) Standard  2.) JSON
     if href_tuple:
         href, href_json = url_pair(gen_format='json', *href_tuple[0], **href_tuple[1]) # generate standard and JSON URL's
         
@@ -302,6 +315,7 @@ def form(*args, **kwargs):
         kwargs['href'] = href
     
     return secure_form(*args, **kwargs)
+
 
 #-------------------------------------------------------------------------------
 # Secure Link - Form Submit or Styled link (for JS browsers)
@@ -355,7 +369,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         confirm_text = "true"
 
     # Styled submit link ------
-    # A standard <A> tag that submits the compatable form (typically used with format='redirect')    
+    # A standard <A> tag that submits the compatable form (typically used with format='redirect')
     hl = HTML.a(
         value_formatted ,
         id      = "link_"+hhash,
@@ -413,6 +427,7 @@ def frag_link(id, frag_url, value, title='', css_class=''):
     
     return static_link #HTML.span(static_link, class_="frag_link")
 
+
 def frag_div(id, default_frag_url=None, class_=None):
     """
     Create an HTML div linked to a fragment
@@ -441,14 +456,18 @@ def cb_frag_link(*args, **kwargs):
 
 
 #-------------------------------------------------------------------------------
-# Get object from Civicboom URL 
+# Get object from Civicboom URL
 #-------------------------------------------------------------------------------
 regex_content_url = re.compile(r'(?:.*?)/contents/(.*?)[/&?#\n. "]')
 regex_member_url  = re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "]')
-def get_object_from_action_url(action_url):
+
+
+def get_object_from_action_url(action_url=None):
     """
     Creates a tuple to be used with url(*tuple[0], **tuple[1])
     """
+    if not action_url:
+        action_url = current_url()
     m = re.match(regex_content_url, action_url)
     if m:
         return ( ['content'], dict(id=m.group(1)) )
@@ -463,6 +482,7 @@ def get_object_from_action_url(action_url):
 
 regex_content_links = re.compile(r'<a(?:[^<>]*?)href="(?:[^<>]*?)/contents/(.*?)[/&?#\n. "](?:[^<>]*?)>(.*?)</a>') # \1 = content id \2 = text
 regex_member_links  = re.compile(r'<a(?:[^<>]*?)href="(?:[^<>]*?)/members/(.*?)[/&?#\n. "](?:[^<>]*?)>(.*?)</a>') # \1 = member id \2 = text
+
 
 def links_to_frag_links(content):
     """

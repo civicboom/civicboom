@@ -1,4 +1,3 @@
-<%namespace name="scripts_end" file="/html/web/common/scripts_end.mako"/>
 <!DOCTYPE html>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie ie6"> <![endif]-->
@@ -62,6 +61,7 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
+	<script src="/javascript/ajaxError.js"></script>
 % else:
 	<script src="${h.wh_url("public", "javascript/_combined.head.js")}"></script>
 % endif
@@ -70,8 +70,8 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 ##----------------------------------------------------------------------------
 ## Google Analitics (async setup, see scripts_end for more)
 ##----------------------------------------------------------------------------
+	<%namespace name="scripts_end" file="/html/web/common/scripts_end.mako"/>
 	${scripts_end.google_analytics_head()}
-
 
 
 ##------------------------------------------------------------------------------
@@ -90,7 +90,6 @@ ${self.head_links()}
 	</style>
 % endif
 
-
 </head>
 
 ##------------------------------------------------------------------------------
@@ -107,35 +106,6 @@ ${self.head_links()}
 		$(function() {flash_message(${json_message|n});});
 	</script>
 	% endif
-	<!-- redirect all AJAX errors to use the flash message system -->
-	<script type="text/javascript">
-		$('body').ajaxError(function(event, request, settings, exception) {
-		//Y.log (settings);
-		  try {
-			  flash_message(jQuery.parseJSON(request.responseText));
-			} catch (e) {
-			  flash_message('${_('A server error has occured!')}');
-			}
-			## GregM: Upgrade Required
-      if (request.status == 402) {
-        popup('${_('Upgrade plans')}','/misc/upgrade_plans.frag');
-      }
-      ## GregM: Login Required
-        if (request.status == 403) {
-        ## settings.url has the last ajax settings including url :D
-        $.cookie('login_redirect', 'https://' + document.location.hostname + settings.url.replace(/json$/, 'redirect'), { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
-        ## Need to set this to stop "Hold It!" message...
-        var login_redirect_action = '{}';
-        if (settings.type == 'POST') {
-          login_redirect_action = "{'" + settings.data.replace("&", "','").replace("=", "':'") + "'}";
-        }
-        $.cookie('login_redirect_action', login_redirect_action, { expires: new Date((new Date()).getTime() + 5*60000), path: '/' });
-        //$.cookie('login_action_referer', 
-        ## Redirect User
-        window.location.href = '/account/signin';
-      }
-		});
-	</script>
 </%def>
 
 ##------------------------------------------------------------------------------

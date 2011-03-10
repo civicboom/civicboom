@@ -74,8 +74,10 @@ Filter()
 (1=1)
 """
 
+
 def html(o):
     return o.__html__()
+
 
 def sql(o):
     return o.__sql__()
@@ -123,6 +125,7 @@ class OrFilter(Filter):
     def __sql__(self):
         return "(" + (") OR (".join([sql(s) for s in self.subs])) + ")"
 
+
 class AndFilter(Filter):
     def __init__(self, subs):
         self.subs = subs
@@ -138,6 +141,7 @@ class AndFilter(Filter):
 
     def __sql__(self):
         return "(" + (") AND (".join([sql(s) for s in self.subs])) + ")"
+
 
 class NotFilter(Filter):
     def __init__(self, sub):
@@ -169,6 +173,7 @@ class TextFilter(Filter):
     def __sql__(self):
         return "to_tsvector(content.content) @@ to_tsquery('"+self.text+"')"
 
+
 class LocationFilter(Filter):
     def __init__(self, loc, rad=10):
         self.loc = loc
@@ -183,6 +188,7 @@ class LocationFilter(Filter):
     def __sql__(self):
         return "ST_DWithin(content.location, 'SRID=4326;POINT(%d %d)', %d)" % (self.loc[0], self.loc[1], self.rad)
 
+
 class AuthorIDFilter(Filter):
     def __init__(self, author_id):
         self.author_id = author_id
@@ -196,6 +202,7 @@ class AuthorIDFilter(Filter):
     def __sql__(self):
         return "content.creator_id = "+str(self.author_id)
 
+
 class TagFilter(Filter):
     def __init__(self, tag):
         self.tag = tag
@@ -208,5 +215,3 @@ class TagFilter(Filter):
 
     def __sql__(self):
         return "content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = '"+self.tag+"')"
-
-

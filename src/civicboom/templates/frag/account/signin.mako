@@ -18,13 +18,26 @@
 <%def name="body()">
     <div class="frag_col">
     % if hasattr(c, 'action_objects'):
-        % if c.action_objects['action'] == 'accept':
+        ## Approved actions
+        
+        ## Accept
+        % if   c.action_objects['action'] == 'accept':
             <%
                 assignment   = c.action_objects['action_object']['content']
                 creator_name = assignment['creator']['name'] or assignment['creator']['username']
             %>
             ## AllanC: TODO - internationalise this string!
-            <p>By signing in you will accept the <b>${assignment['title']}</b> request that has been set by <b>${creator_name}</b></p>
+            <p>By signing  in/up you will accept the <b>${assignment['title']}</b> request that has been set by <b>${creator_name}</b></p>
+            
+        ## Follow
+        % elif c.action_objects['action'] == 'follow':
+            <%
+                member      = c.action_objects['action_object']['member']
+                member_name = member['name'] or member['username']
+            %>
+            ## AllanC: TODO - internationalise this string!
+            <p>By signing in/up you will follow <b>${member_name}</b> </p>
+            
         % endif
         ##${c.action_objects['description']}
         ##${c.action_objects['action_object']}

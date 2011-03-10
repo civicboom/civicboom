@@ -1,6 +1,7 @@
 from civicboom.tests import *
 #import json
 
+
 class TestFeedsController(TestController):
     def test_all(self):
         self.part_new()

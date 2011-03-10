@@ -223,11 +223,11 @@
         
         ## Memers Content --------------------------------------------
         
-        % for list, icon, decription in constants.contents_list_titles:
+        % for list, icon, description in [n for n in constants.contents_list_titles if n[0] not in ["all", ]]:
             ${frag_list.content_list(
                 d[list] ,
-                decription ,
-                h.args_to_tuple('contents', creator=self.id, list=list), 
+                description ,
+                h.args_to_tuple('contents', creator=self.id, list=list),
                 icon = icon ,
             )}
         % endfor
@@ -236,9 +236,9 @@
         ## Boomed Content --------------------------------------------
         
         ${frag_list.content_list(
-            d['boomed_content'],
+            d['boomed'],
             _('Boomed content'),
-            #h.args_to_tuple('member_action', id=self.id, action='boomed_content') ,
+            #h.args_to_tuple('member_action', id=self.id, action='boomed') ,
             h.args_to_tuple('contents', boomed_by=self.id) ,
             creator = True ,
             icon = 'boom' ,

@@ -46,4 +46,3 @@ class Globals(object):
             'm'     : 'mobile' ,
             'api-v1': 'api'    ,
         }
-

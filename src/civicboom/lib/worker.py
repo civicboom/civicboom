@@ -42,6 +42,7 @@ class MediaThread(Thread):
             _media_queue.task_done()
             sleep(3)
 
+
 def start_worker(count=3):
     log.info('Starting worker threads.')
     for n in range(count):
@@ -51,6 +52,7 @@ def start_worker(count=3):
         worker.start()
         _workers.append(worker)
 
+
 def stop_worker():
     log.info('Stopping worker threads.')
     if _workers:
@@ -59,6 +61,7 @@ def stop_worker():
         for worker in _workers:
             worker.join()
             _workers.remove(worker)
+
 
 def add_job(job):
     log.info('Adding job to worker queue: %s' % job["task"])
@@ -88,8 +91,10 @@ def _update_media_length(hash, length):
     #import database actions
     # update the record in db
 
+
 def _reformed(name, ext):
     return os.path.splitext(name)[0] + "." + ext
+
 
 def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     import memcache
@@ -192,5 +197,3 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
 
     m.delete(memcache_key)
     log.debug("deleting memcache %s" % memcache_key)
-
-

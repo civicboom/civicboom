@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestMediaController(TestController):
     """
     def test_index(self):

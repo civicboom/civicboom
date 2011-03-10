@@ -7,6 +7,7 @@ refer to the routes manual at http://routes.groovie.org/docs/
 from pylons import config
 from routes import Mapper
 
+
 def cb_resource(mapper, single, plural, **kwargs):
     # nothing uses this yet, so it is untested
     #if kwargs:
@@ -46,7 +47,7 @@ def cb_resource(mapper, single, plural, **kwargs):
     mapper.connect('edit_'+single, '/'+plural+'/{id}/edit',                    controller=plural, action='edit',   conditions=dict(method=['GET']))
 
     # /foo/42/activate
-    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions', format='redirect', conditions=dict(method=['POST','PUT','DELETE']))
+    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions', format='redirect', conditions=dict(method=['POST', 'PUT', 'DELETE']))
     mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions', format='html'    , conditions=dict(method=['GET']))
     mapper.connect('/'+plural+'/{id}/{action}',                                controller=single+'_actions', format='html')
 
@@ -75,7 +76,7 @@ def make_map(config):
     cb_resource(map, 'medium',  'media'   )
 
     # Map the /admin url to FA's AdminController
-    # Map static files  
+    # Map static files
     map.connect('fa_static', '/admin/_static/{path_info:.*}', controller='admin', action='static')
     # Index page
     map.connect('admin', '/admin', controller='admin', action='models')
@@ -83,9 +84,8 @@ def make_map(config):
     # Models
     map.resource('model', 'models', path_prefix='/admin/{model_name}', controller='admin')
 
-
     # Redirects were eating form posts so they have been remmed out for refernece
-    #map.redirect('/{controller}/'         , '/{controller}'         ) 
+    #map.redirect('/{controller}/'         , '/{controller}'         )
     #map.redirect('/{controller}/{action}/', '/{controller}/{action}')
 
     # the first route that matches url() args is the one that's generated,

@@ -101,10 +101,11 @@ class ContentTagsValidator(validators.FancyValidator):
     if_missing = []
     if_empty   = []
     def _to_python(self, value, state):
-        from civicboom.lib.database.get_cached import get_tag        
+        from civicboom.lib.database.get_cached import get_tag
         tags_raw = value.split(" ")
         tags     = [get_tag(tag) for tag in tags_raw if tag!=""]
         return tags
+
 
 class LicenseValidator(validators.FancyValidator):
     not_empty = False
@@ -178,7 +179,7 @@ class IsoFormatDateConverter(validators.DateConverter):
                 return '/'.join([str(d) for d in date_sections])
             return None
 
-        date_strings = [split_date_by(value,split_value) for split_value in ['-','/','\\',' ']] # 
+        date_strings = [split_date_by(value,split_value) for split_value in ['-','/','\\',' ']]
         date_strings = [date_string for date_string in date_strings if date_string != None]     # Filter null entries
         if len(date_strings)>=1:
             value = date_strings[0]

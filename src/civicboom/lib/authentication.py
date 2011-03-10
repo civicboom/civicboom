@@ -3,8 +3,9 @@ Tools used for Authentication of users
 """
 
 # Pylons imports
+from pylons import session # needed for invalidating the session
 from civicboom.lib.base import *
-from civicboom.lib.database.get_cached import get_membership
+from civicboom.lib.database.get_cached import get_membership, get_member #note get_member should override base:get_member
 
 from pylons.i18n import _ #WHY THE *** IS THIS NEEDED!! .. it's part of lib.base above?! but without it, it's not imported
 
@@ -38,6 +39,7 @@ user_log = logging.getLogger("user")
 
 def encode_plain_text_password(password):
     return hashlib.sha1(password).hexdigest()
+
 
 def get_user_and_check_password(username, password):
     """
@@ -148,7 +150,7 @@ def authorize(_target, *args, **kwargs):
 
     # ELSE: not logged in
     else:
-        # If request was a browser - prompt for login    
+        # If request was a browser - prompt for login
             #raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
         if c.format=="redirect":
             cookie_set('login_action_referer', current_referer(protocol=protocol_after_login), 60 * 10)
@@ -201,6 +203,7 @@ def signin_user(user, login_provider=None):
     #    secure=(request.environ['wsgi.url_scheme']=="https"),
     #    httponly=True
 
+
 def signin_user_and_redirect(user, login_provider=None):
     """
     Perform the sigin for a user
@@ -218,6 +221,7 @@ def signin_user_and_redirect(user, login_provider=None):
     #return redirect(url(controller="profile", action="index"))
     return redirect("/profile")
     
+
 def signout_user(user):
     user_log.info("logged out")
     session.clear()
@@ -227,6 +231,7 @@ def signout_user(user):
     #response.delete_cookie("civicboom_logged_in")
     #session.save()
     #flash_message("Successfully signed out!")
+
 
 def set_persona(persona):
     persona = get_member(persona)

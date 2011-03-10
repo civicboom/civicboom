@@ -9,8 +9,10 @@ XML Handling Utils
 
 from xml.dom.minidom import parse, parseString
 
+
 class NotTextNodeError:
     pass
+
 
 def getTextFromNode(node):
     """
@@ -33,36 +35,36 @@ def nodeToDic(node):
         - if the node has the attribute "method" set to "true", then it's children will be appended to a list and this list is merged to the dictionary in the form: {nodeName:list}.
         - else, nodeToDic() will call itself recursively on the nodes children (merging {nodeName:nodeToDic()} to the dictionary).
     """
-    dic = {} 
+    dic = {}
     for n in node.childNodes:
-	if n.nodeType != n.ELEMENT_NODE:
-	    continue
-	if n.getAttribute("multiple") == "true":
-	    # node with multiple children:
-	    # put them in a list
-	    l = []
-	    for c in n.childNodes:
-	        if c.nodeType != n.ELEMENT_NODE:
-		    continue
-		l.append(nodeToDic(c))
-	        dic.update({n.nodeName:l})
-	    continue
-		
-	try:
-	    text = getTextFromNode(n)
-	except NotTextNodeError:
+        if n.nodeType != n.ELEMENT_NODE:
+            continue
+        if n.getAttribute("multiple") == "true":
+            # node with multiple children:
+            # put them in a list
+            l = []
+            for c in n.childNodes:
+                if c.nodeType != n.ELEMENT_NODE:
+                    continue
+                l.append(nodeToDic(c))
+                dic.update({n.nodeName:l})
+            continue
+        try:
+            text = getTextFromNode(n)
+        except NotTextNodeError:
             # 'normal' node
             dic.update({n.nodeName:nodeToDic(n)})
             continue
 
         # text node
         dic.update({n.nodeName:text})
-	continue
+        continue
     return dic
 
 
 def readXMLFiletoDic(filename):
     return nodeToDic(parse(filename))
+
 
 def readXMLStringtoDic(xml_string):
     return nodeToDic(parseString(xml_string))
@@ -73,6 +75,7 @@ def readXMLStringtoDic(xml_string):
 #-------------------------------------------------------------------------------
 
 from xml.etree.ElementTree import Element, tostring
+
 
 def dictToXMLString(d):
 

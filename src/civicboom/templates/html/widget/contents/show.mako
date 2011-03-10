@@ -1,5 +1,8 @@
 <%inherit file="../common/widget_content.mako"/>
 
+<%namespace name="member_includes" file="/html/widget/common/member.mako"/>
+
+
 ##------------------------------------------------------------------------------
 ## Variables
 ##------------------------------------------------------------------------------
@@ -16,7 +19,18 @@
   <p>${h.truncate(h.strip_html_tags(content['content']), length=180, indicator='...', whole_word=True)}<strong>more</strong></p>
 </a>
 
+<div style="clear: both;"></div>
+
+## If the widget is not owned by anybody then show the creator
+% if not c.widget['owner']['username'] and c.widget['owner']['username'] != content['creator']['username']:
+<p style="float: right; text-align: right;">
+    By ${member_includes.by_member(content['creator'])}
+</p>
+% endif
+
 <div style="clear: both; margin-bottom: 1em;"></div>
+
+
 
 % if content['type'] == 'assignment':
     <table><tr>

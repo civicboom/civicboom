@@ -9,11 +9,13 @@ import logging
 
 gis_engine = None
 
+
 def get_engine():
     global gis_engine
     if not gis_engine:
         gis_engine = engine_from_config(config, 'sqlalchemy.gis.')
     return gis_engine
+
 
 def get_location_by_name(name):
     # NOTE: use of the google geocoding and other APIs require that the results

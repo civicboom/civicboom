@@ -21,14 +21,26 @@ upstream backends {
 }
 
 server {
+	listen 80;        listen [::]:80 ipv6only=on;
+	listen 443 ssl;   listen [::]:443 ssl ipv6only=on;
+	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
+	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
+	server_name civicboom.com;
+	rewrite ^(.*) $scheme://www.civicboom.com$1 permanent;
+}
+
+server {
 	# server stuff
 	listen 80;                listen [::]:80 ipv6only=on;
 	listen 443 default ssl;   listen [::]:443 default ssl ipv6only=on;
-	server_name .civicboom.com localhost _;
+	server_name *.civicboom.com _;
 	access_log /var/log/nginx/civicboom.log;
 	access_log /var/log/nginx/civicboom.timing.log timing; # DC_TIMING
 	root /opt/cb/share/website-web/;
-	error_page 500 502 503 504 /errors/50x.html;
+	error_page 500 /errors/50x.html;
+	error_page 502 /errors/502.html;
+	error_page 503 /errors/503.html;
+	error_page 504 /errors/504.html;
 	client_max_body_size 100m;
 	ssi on;
 

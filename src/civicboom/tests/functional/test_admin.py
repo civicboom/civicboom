@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestAdminController(TestController):
     #AllanC - when isignificantly changed the model so that some of the SQLAlchemy links were no longer needed, this totally broke the admin pannel
     #       - we can decide if we need to re-instate these links if nessisary, but I would prefer that as many calls as possible used the API, but I know the admin interface is a very differnt kettle of fish

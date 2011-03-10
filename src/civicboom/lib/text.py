@@ -52,6 +52,7 @@ def split_word(text, max_chars):
 
 #-------------------------------------------------------------------------------
 
+
 # AllanC - Is this needed now we have internationalisation?
 def format_multiple_prefix(number, **kargs):
     """
@@ -72,9 +73,9 @@ def format_multiple(number,nothing="",single="",multiple=None,multiple_addition=
     Used to put 's at end of words if there is more than one of them
     """
     if number == 0:
-        return nothing;
+        return nothing
     if number == 1:
-        return single;
+        return single
     if number > 1:
         if multiple == None and single!="":
             return single+multiple_addition
@@ -86,6 +87,7 @@ def format_multiple(number,nothing="",single="",multiple=None,multiple_addition=
 #-------------------------------------------------------------------------------
 
 html_tags_allowed = (r'br',r'br/',r'ul',r'/ul',r'ol',r'/ol',r'li',r'/li',r'/a',r'strong',r'/strong',r'em',r'/em',r'p',r'/p')
+
 
 def clean_html_markup(text):
     """
@@ -109,14 +111,17 @@ def clean_html_markup(text):
     text = re.sub("&gt;","-gt-",text)
     
     text = saxutils.escape(text) #webhelpers.html.converters.format_paragraphs(text)
+
     def process_tag(m):
         tag_contents = m.group(1)
         tag_type     = tag_contents.split(" ")[0]
-        if tag_type in html_tags_allowed: return "<%s>" % tag_type
+        if tag_type in html_tags_allowed:
+            return "<%s>" % tag_type
         if tag_contents.startswith("a"):
             url = ""
             url_find = re.search(r'href="(.*)"', tag_contents) # Question, why have the " not been escaped to &quot; ? I dont like this saxutils should have escaped them
-            if url_find: url = url_find.group(1)
+            if url_find:
+                url = url_find.group(1)
             return r'<a href="' + saxutils.unescape(url) + r'">'
         return '' #&lt;%s&gt;' % tag_contents
     p = re.compile(r'&lt;(.*?)&gt;',re.DOTALL)
@@ -128,11 +133,12 @@ def clean_html_markup(text):
     return text
 
 
-from lxml.html.clean import Cleaner
 def clean_html(text):
+    from lxml.html.clean import Cleaner
     return Cleaner(links=False, style=True).clean_html(text)
 
 #-------------------------------------------------------------------------------
+
 
 def scan_for_embedable_view_and_autolink(text, remove=False):
     """
@@ -164,6 +170,7 @@ def scan_for_embedable_view_and_autolink(text, remove=False):
 
 #-------------------------------------------------------------------------------
 
+
 def strip_html_tags(text):
     """
     Removes anything between html tags <>
@@ -176,6 +183,7 @@ def strip_html_tags(text):
     
 #-------------------------------------------------------------------------------
    
+
 def convert_html_to_plain_text(content_html, ommit_links=False):
     """
     Convert and HTML document into a plain text equivelent
@@ -187,25 +195,26 @@ def convert_html_to_plain_text(content_html, ommit_links=False):
         -li to ' - '
     """
     
-    text = content_html  
+    text = content_html
     text_body = re.sub(r'(?is)<body>(.*)</body>',r'\1',text)  #Extact the body if text if it is a full HTML doc
     if text_body:
         text = text_body
     text = re.sub(r'(?is)<style.*</style>',r'',text)       # The style tag has contents that are not human readable, dispose of contents and not just the tag
     text = re.sub(r'(?i)<br>|<br/>|</p>|</li>',r'\n',text) # Replace any ends of sections with new lines
     text = re.sub(r'(?i)<li>',r' - ',text)                 # List items should have starters (enchancement? numbers for ol?)
+
     def heading_replace(m):
         # improvement idea: use str.center(width[, fillchar]) Return centered in a string of length width. Padding is done using the specified fillchar (default is a space).
         heading_level = m.group(2)
         heading_decoration = ""
         for i in range(5-int(heading_level)):
-          heading_decoration += "="
+            heading_decoration += "="
         newline_before = ""
         newline_after  = ""
         if m.group(1)!='':
-          newline_after = '\n'
+            newline_after = '\n'
         else:
-          newline_before = '\n'
+            newline_before = '\n'
         return newline_before+" "+heading_decoration+" "+newline_after
     text = re.sub(r'(?i)<(/?)h([1-9])>',heading_replace,text)  #Replace headdings with ==Heading==
     link_replacement_pattern = r'\2 (\1)'
@@ -227,6 +236,7 @@ def get_html_links(text):
 
 #-------------------------------------------------------------------------------
 
+
 def safe_python_strings(d):
     """
     Recursivly steps though a python dictionary
@@ -241,6 +251,3 @@ def safe_python_strings(d):
         for key in d.keys():
             d[key] = safe_python_strings(d[key])
     return d
-
-#-------------------------------------------------------------------------------
-

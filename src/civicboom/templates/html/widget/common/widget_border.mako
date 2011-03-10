@@ -86,15 +86,20 @@
             <div class="padding">
         % if c.logged_in_persona:
             <a href="${h.url(controller='profile', action='index')}" target="_blank">
-                ${c.logged_in_persona.username}
+                ${c.logged_in_persona.name or c.logged_in_persona.username}
                 <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
             </a>
-        % else:
+        % elif owner['username']:
             <a href="${h.url('member_action', id=owner['username'], action='follow', subdomain='')}" target="_blank">
+                ${_("Sign up/Sign in")}
+            </a>
+        % else:
+            <a href="${h.url(controller='account', action='signin', subdomain='')}" target="_blank">
                 ${_("Sign up/Sign in")}
                 ##to <span class="icon16 i_boom" title="${_('_site_name')}"></span>
                 ##<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
             </a>
+
         % endif
             </div>
         </div>
@@ -121,9 +126,12 @@
             <a class="icon16 i_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='about', id='mobile', subdomain='')}"><span>Mobile</span></a>
             <a class="icon16 i_widget"    title="${_('Embed this widget')}"                     href="${h.url(controller='misc', action='get_widget')}"><span>Embed</span></a>
             <%
+                rss_url = ''
+                
                 if owner['username']:
                     rss_url = h.url('member', id=owner['username'], format='rss', subdomain='')
-                else:
+                    
+                elif '/misc' not in h.current_url(): #do not show RSS link for misc pages as they are static
                     # Get current URL deatils - set format to RSS and remove widget variables
                     kwargs = {}
                     if c.web_params_to_kwargs:
@@ -134,8 +142,16 @@
                     if 'format' in kwargs:
                         del kwargs['format']
                     rss_url = h.url('current', format='rss', subdomain='', **kwargs)
+                    
+                    #rss_url = ''
+                    #(args, kwargs)  = h.get_object_from_action_url()
+                    #if args and ('member' in args or 'content' in args):
+                    #    kwargs['format'] = 'rss'
+                    #    rss_url = h.url(*args, **kwargs)
             %>
+            % if rss_url:
             <a class="icon16 i_rss"       title="${_('RSS')}"                   target="_blank" href="${rss_url}"><span>RSS</span></a>
+            % endif
         </div>
     </div>
 </div>

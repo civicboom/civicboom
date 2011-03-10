@@ -28,7 +28,6 @@ from civicboom.model.meta import location_to_string
 from civicboom.lib.web import _find_template_basic
 
 log = logging.getLogger(__name__)
-user_log = logging.getLogger("user")
 
 
 #---------------------------------------------------------------------------
@@ -400,7 +399,7 @@ class SettingsController(BaseController):
         schema = build_schema(**validators)
         # Add any additional validators for custom fields
         if 'password_new' in validators:
-            schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the 
+            schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the
             schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
         
         validate_dict(data, schema, dict_to_validate_key='settings', template_error=panel_template)
@@ -410,7 +409,7 @@ class SettingsController(BaseController):
         
         # Save special properties that need special processing
         # (could have a dictionary of special processors here rather than having this code cludge this controller action up)
-        # GregM: check kwargs as if no new avatar and has current avatar this FAILS! 
+        # GregM: check kwargs as if no new avatar and has current avatar this FAILS!
         if kwargs.get('avatar') != None:
             with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
                 a = settings['avatar']

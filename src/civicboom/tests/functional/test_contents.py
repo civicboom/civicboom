@@ -4,6 +4,7 @@ from civicboom.tests import *
 #import json
 import warnings
 
+
 class TestContentsController(TestController):
     def test_all(self):
         self.part_setup()
