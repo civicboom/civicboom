@@ -1,5 +1,4 @@
-
-$('body').ajaxError(function(event, request, settings, exception) {
+$(document).ajaxError(function(event, request, settings, exception) {
 	try {
 		flash_message(jQuery.parseJSON(request.responseText));
 	} catch (e) {
