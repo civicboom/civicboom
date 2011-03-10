@@ -309,8 +309,8 @@ class GroupsController(BaseController):
         GET /contents/{id}/edit: Form to edit an existing item
         
         Current user must be identified as an administrator of this group.
-<<<<<<< HEAD
-=======
+        
+        This will now redirect to the settings controller.
         """
         # url('edit_group', id=ID)
         # GregM: BIG DIRTY HACK to show website and description in the group config editor.
@@ -319,10 +319,7 @@ class GroupsController(BaseController):
         groupdict = group.to_dict()
         groupdict['website'] = config.get('website')
         groupdict['description'] = config.get('description')
->>>>>>> develop
-        
-        This will now redirect to the settings controller.
-        """
+
         redirect_url = ('/settings/'+id).encode('ascii','ignore')
         return redirect(url(redirect_url))
 #        # url('edit_group', id=ID)
