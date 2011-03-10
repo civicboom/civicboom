@@ -302,8 +302,8 @@ def form(*args, **kwargs):
             )
             .error(function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 403) {
-                    console.log('403 detected');
-                    //current_element.submit(); //perform normal post, bypassing onsubmit
+                    current_element.attr('onsubmit',''); //clear submit action to perform normal post
+                    current_element.submit();
                 }
             });
             return false;
