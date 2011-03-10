@@ -16,7 +16,7 @@ from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta, Member
-from civicboom.lib.web                 import url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, session_keys, authenticate_form, cacheable, web_params_to_kwargs
+from civicboom.lib.web                 import url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, session_keys, session_delete, authenticate_form, cacheable, web_params_to_kwargs, current_url, current_referer
 from civicboom.lib.database.get_cached import get_member as _get_member, get_group as _get_group, get_membership as _get_membership, get_message as _get_message, get_content as _get_content
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
@@ -61,7 +61,7 @@ __all__ = [
     "_", "ungettext", "set_lang",
 
     # session managemnet - is is prefered that all access to the session is via accessors
-    "session_get", "session_remove", "session_set", "session_keys",
+    "session_get", "session_remove", "session_set", "session_keys", "session_delete",
 
     "set_flash_message",
 
@@ -84,6 +84,7 @@ __all__ = [
     "redirect_to_referer", #TODO? potential for removal?
     "logging",
     "overlay_status_message",
+    "current_url", "current_referer",
     
 ]
 
@@ -338,8 +339,8 @@ class BaseController(WSGIController):
         #  - there is a way of setting fallback langauges, investigate?
         if 'lang' in request.params:
             self._set_lang(request.params['lang']) # If lang set in URL
-        elif 'lang' in session_keys():
-            self._set_lang(   session_get('lang')) # Lang set for this users session
+        elif session_get('lang'):
+            self._set_lang(session_get('lang')) # Lang set for this users session
         #elif c.logged_in_persona has lang:
         #    self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
         else:

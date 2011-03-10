@@ -179,7 +179,7 @@ def session_get(key):
     return None
 
 def session_keys():
-    return session.keys()
+    return [key for key in session.keys() if '_expire' not in key]
 
 #-------------------------------------------------------------------------------
 # Cookie Timed Keys Management

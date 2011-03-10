@@ -4,7 +4,7 @@ Set of helpers specific to the Civicboom project
 """
 
 import civicboom.lib.constants as constants
-from civicboom.lib.base import url, app_globals, c, config, _
+from civicboom.lib.base import url, app_globals, c, config, _, current_url
 
 
 from civicboom.model.meta import Session
@@ -339,7 +339,7 @@ def get_action_objects_for_url(action_url=None):
     Will return ()
     
     """
-    from civicboom.lib.web     import current_url
+    #from civicboom.lib.web     import current_url
     from civicboom.lib.helpers import get_object_from_action_url
     from civicboom.controllers.members  import MembersController
     from civicboom.controllers.contents import ContentsController

@@ -294,15 +294,18 @@ def form(*args, **kwargs):
                 $(this).serialize() ,
                 function(data, status, jqXhr) {
                     flash_message(data);
-                    if (jqXhr.status == 403) {
-                        current_element.submit(); //perform normal post, bypassing onsubmit
-                    }
                     if (data.status == 'ok') {
                         %(json_form_complete_actions)s
                     }
                 },
                 'json'
-            );
+            )
+            .error(function(jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                if (jqXHR.status == 403) {
+                    current_element.submit(); //perform normal post, bypassing onsubmit
+                }
+            });
             return false;
         """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions, pre_onsubmit=pre_onsubmit)
         )

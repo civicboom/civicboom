@@ -5,7 +5,7 @@ import civicboom.lib.constants as constants
 
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
-from civicboom.lib.web              import cookie_get
+#from civicboom.lib.web              import cookie_get
 from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password, get_action_objects_for_url
 #from civicboom.lib.database.get_cached import get_member
 
@@ -73,7 +73,7 @@ class AccountController(BaseController):
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':
             
-            action_objects = get_action_objects_for_url(cookie_get('login_redirect') or '')
+            action_objects = get_action_objects_for_url(session_get('login_redirect') or '')
             if action_objects:
                 c.action_objects = action_objects
                 return render("/html/web/account/signin_frag.mako")
