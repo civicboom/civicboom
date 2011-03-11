@@ -1,5 +1,5 @@
 HEAD=\
-	Modernizr.js \
+	modernizr-1.7.js \
 	swfobject.js \
 	jquery-1.5.1.js \
 	misc.js\
@@ -20,7 +20,6 @@ FOOT=\
 	geo.js \
 	OpenLayers.js \
 	minimap.js \
-	
 
 
 all: _combined.head.js _combined.foot.js
