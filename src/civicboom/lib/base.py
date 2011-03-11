@@ -8,6 +8,7 @@ controllers can do "from civicboom.lib.base import *"
 """
 from pylons.controllers       import WSGIController
 from pylons                   import request, response, app_globals, tmpl_context as c, config
+from pylons                   import session # needed for invalidating the session
 from pylons.controllers.util  import abort
 from pylons.templating        import render_mako, render_mako_def
 from pylons.i18n.translation  import _, ungettext, set_lang
@@ -316,6 +317,14 @@ class BaseController(WSGIController):
             color_content    = 'eee' ,
         )
         setup_widget_env()
+
+        # Log out if missing civicboom_logged_in -------------------------------
+        # The cache is active if civicboom_logged_in is false. If the cookie is
+        # missing (deleted, expired, something else) but the main session cookie
+        # is still there then caching could activate by accident. As such, if
+        # the logged_in cookie is missing, force a logout.
+        if session_get('username') and not request.cookies.get("civicboom_logged_in"):
+            session.invalidate()
 
         # Login ----------------------------------------------------------------
         # Fetch logged in user from session id (if present)
