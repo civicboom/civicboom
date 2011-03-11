@@ -1,4 +1,6 @@
 from civicboom.lib.base import *
+from civicboom.lib.misc import make_username
+from civicboom.model import User, Group
 
 import civicboom.lib.constants as constants
 
@@ -171,8 +173,24 @@ class AccountController(BaseController):
         
         Only currently logged in users can add additional janrain accounts
         """
+        id = kwargs.get('id')
+        username = id
+        if not username or username == 'me':
+             username = c.logged_in_persona.username
+             id = 'me'
+        user_type = 'group'
+        user = get_member(username)  
+        if isinstance(user, User):
+            user_type = 'member'
+            if not user == c.logged_in_user:
+                raise action_error(code=403, message="No permission")
+        else:
+            raise action_error(code=404, message="Not applicable to groups")
+        
+        redirect_url = ('/settings/'+id+'/link_janrain').encode('ascii','ignore')
+        
         if request.environ['REQUEST_METHOD'] == 'GET':
-            return render("/html/web/account/link_janrain.mako")
+            redirect(url(redirect_url))
         
         c.auth_info = None
         
@@ -186,7 +204,7 @@ class AccountController(BaseController):
         else:
             set_flash_message(action_error("Error linking accounts"))
             
-        redirect(url('current'))
+        redirect(url(redirect_url))
 
 
     #---------------------------------------------------------------------------

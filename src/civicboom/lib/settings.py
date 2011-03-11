@@ -14,8 +14,8 @@ class MemberSettingsManager(UserDict.DictMixin):
         self.member = member
 
     def __getitem__(self, name):
-        if hasattr(self.member, name):
-            return get(name)
+#        if hasattr(self.member, name):
+#            return get(name)
         try:
             q = Session.query(MemberSetting)
             q = q.filter(MemberSetting.member_id==self.member.id)
@@ -29,18 +29,20 @@ class MemberSettingsManager(UserDict.DictMixin):
                 raise KeyError(name)
 
     def get(self, name, default=u''):
-        if hasattr(self.member, name):
-            return getattr(self.member, name) or default
+#        GregM: DEPRICATED, huge security hole
+#        if hasattr(self.member, name):
+#            return getattr(self.member, name) or default
         if name in self:
             return self[name]
         else:
             return default
 
     def __setitem__(self, name, value):
-        if hasattr(self.member, name):
-            setattr(self.member,name,value)
-            # remeber this will need to be commited if it's a local property and not a config var
-            return
+#        GregM: DEPRICATED, huge security hole
+#        if hasattr(self.member, name):
+#            setattr(self.member,name,value)
+#            # remeber this will need to be commited if it's a local property and not a config var
+#            return
         if type(value) == type(True):
             if value:
                 value = "True"
