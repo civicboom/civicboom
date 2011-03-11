@@ -62,9 +62,8 @@ function cb_frag(current_element, url, list_type, from_history, callback) {
 	//$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});
 	
 	function frag_update_history() {
-  	// Call update history with fragment URL
-  	if (! from_history) update_history();
-  }
+		if (! from_history) update_history(); // Call update history with fragment URL
+	}
 
 	// AJAX load html fragment
 	frag_loading.load(url,
@@ -83,7 +82,7 @@ function cb_frag(current_element, url, list_type, from_history, callback) {
   				//frag_loading.toggle(scroll_duration);
   				
   				if (! from_history) cb_frag_remove_sibblings(frag_loading, frag_update_history);
-  
+				
   				// remove the "opacity" setting, as IE doesn't antialias filtered stuff
   				frag_loading.animate({opacity: null}, 0);
   				
@@ -94,10 +93,10 @@ function cb_frag(current_element, url, list_type, from_history, callback) {
   				//$(window)._scrollable().scrollTo('100%',0, {duration: scroll_duration});
   				//$.scrollTo(frag_loading, {duration: scroll_duration}); //(fragment_containers_id)
   				//$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});	
-  			 }
+  			}
   		}
   	);
-  return frag_loading;
+	return frag_loading;
 }
 
 //------------------------------------------------------------------------------
@@ -138,18 +137,18 @@ function cb_frag_remove(jquery_element, callback, from_history) {
 }
 
 function cb_frag_remove_sibblings(jquery_element, callback, ignorehelp) {
-  var parent_siblings;
-  if (ignorehelp) {
-    parent_siblings = jquery_element.nextAll('.'+fragment_container_class+':not(.'+fragment_help_class+')');
-  } else {
-    parent_siblings = jquery_element.nextAll();
-  }
-	parent_siblings.toggle(scroll_duration, function()
-	  {
+	var parent_siblings;
+	if (ignorehelp) {
+		parent_siblings = jquery_element.nextAll('.'+fragment_container_class+':not(.'+fragment_help_class+')');
+	}
+	else {
+		parent_siblings = jquery_element.nextAll();
+	}
+	parent_siblings.toggle(scroll_duration, function() {
 	    parent_siblings.remove();
 	    if (typeof callback != 'undefined') callback();
 	    callback = undefined;
-	  });
+	});
 	if (parent_siblings.length == 0 && typeof callback != 'undefined') callback();
 }
 
@@ -161,6 +160,19 @@ function cb_frag_reload(param) {
 	// Can be passed a JQuery object or a String
 	//  JQuery - find frag_container parent - find hidden source link for that frag - reload
 	//  String - find hidden source link for all frags - dose source href contain param - reload
+
+	function display_reload_feedback(jquery_element) {
+		//jquery_element.find('.title_text').first() += ' <img src="/images/ajax-loader.gif" />';
+		var title = jquery_element.find('.title_text').first();
+		title.html(title.html() + ' <img src="/images/ajax-loader.gif" />');
+	}
+
+	// Remove auto-save timer if refreshing fragment! GM
+	function clear_autosave_timer(jquery_element) {
+		if (typeof cb_frag_get_variable(jquery_element, 'autosavedrafttimer') != 'undefined') {
+			clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
+		}
+	}
 	
 	function get_parent_container_element_source(jquery_element) {
 		var container_element   = jquery_element.parents('.'+fragment_container_class);
@@ -176,18 +188,16 @@ function cb_frag_reload(param) {
 		var elem_source_pair = get_parent_container_element_source(jquery_element);
 		var frag_element = elem_source_pair[0];
 		var frag_source  = elem_source_pair[1];
-		// Remove auto-save timer if refreshing fragment! GM
-    if (typeof cb_frag_get_variable(jquery_element, 'autosavedrafttimer') != 'undefined')
-      clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
+		clear_autosave_timer(jquery_element); 
+		display_reload_feedback(frag_element);
 		frag_element.load(frag_source);
 	}
-
+	
 	function reload_frags_containing(array_of_urls) {
 		// Look through all <A> tags in every frgament for the string
 		// if the link contains this string
 		// add the <A>'s parent frag to a refresh list (preventing duplicates)
 		// go through the frag list refreshing
-		
 		var frags_to_refresh = {};
 		$(fragment_containers_id+' a').each(function(index) {
 			var link_element = $(this);
@@ -198,24 +208,22 @@ function cb_frag_reload(param) {
 					var elem_source_pair = get_parent_container_element_source(link_element);
 					var frag_element = elem_source_pair[0];
 					var frag_source  = elem_source_pair[1];
-					// Remove auto-save timer if refreshing fragment! GM
-          if (typeof cb_frag_get_variable(link_element, 'autosavedrafttimer') != 'undefined')
-            clearInterval(cb_frag_get_variable(link_element, 'autoSaveDraftTimer'));
+					clear_autosave_timer(link_element); 
 					frags_to_refresh[frag_source] = frag_element;
 				}
 			}
 		});
 		// Go though all frags found reloading them
-		for (var key in frags_to_refresh) {
-		  var title = frags_to_refresh[key].find('.title_text').first();
-		  title.html(title.html() + ' <img src="/images/ajax-loader.gif" />');
-			frags_to_refresh[key].load(key);
+		for (var frag_source in frags_to_refresh) {
+			var frag_element = frags_to_refresh[frag_source]
+			display_reload_feedback(frag_element);
+			frag_element.load(frag_source);
 		}
 	}
-
-	if      (typeof param == 'string') {reload_frags_containing([param]);}
-	else if (typeOf(param) == 'array') {reload_frags_containing( param );}
-	else                               {reload_element(param);}
+	
+	if      (                            typeof param    == 'string') {reload_frags_containing([param]);}
+	else if (typeOf(param) == 'array' && typeof param[0] == 'string') {reload_frags_containing( param );}
+	else                                                              {reload_element(          param );}
 
 }
 

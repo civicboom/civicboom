@@ -1,12 +1,11 @@
 from civicboom.lib.base import *
-from civicboom.lib.misc import make_username
 
 import civicboom.lib.constants as constants
 
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
-from civicboom.lib.web              import cookie_get
-from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password, get_action_objects_for_url
+#from civicboom.lib.web              import cookie_get
+from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password, get_action_objects_for_url, has_account_without_password
 #from civicboom.lib.database.get_cached import get_member
 
 from civicboom.controllers.register import register_new_janrain_user
@@ -73,7 +72,7 @@ class AccountController(BaseController):
         # If no POST display signin template
         if request.environ['REQUEST_METHOD'] == 'GET':
             
-            action_objects = get_action_objects_for_url(cookie_get('login_redirect') or '')
+            action_objects = get_action_objects_for_url(session_get('login_redirect') or '')
             if action_objects:
                 c.action_objects = action_objects
                 return render("/html/web/account/signin_frag.mako")
@@ -92,7 +91,7 @@ class AccountController(BaseController):
 
         # Authenticate with standard username
         if 'username' in kwargs and 'password' in kwargs:
-            c.logged_in_user = get_user_and_check_password(make_username(kwargs['username']), kwargs['password'])
+            c.logged_in_user = get_user_and_check_password(kwargs['username'], kwargs['password'])
             login_provider = "password"
 
         # If user has existing account: Login
@@ -105,7 +104,6 @@ class AccountController(BaseController):
         
         # If no user found but we have Janrain auth_info - create user and redirect to complete regisration
         if c.auth_info:
-            
             #try   : existing_user = get_user(c.auth_info['profile']['displayName'])
             #except: pass
             #if existing_user:
@@ -122,10 +120,15 @@ class AccountController(BaseController):
             
         # If not authenticated or any janrain info then error
         user_log.warning("Failed to log in as '%s'" % kwargs.get('username', ''))
+        
         err = action_error(_('Unable to authenticate user'), code=403)
+        # AllanC - TODO
+        # Check if user does exisit but simply has no 'password' login record accociated with it
+        if has_account_without_password(kwargs.get('username')):
+            err = action_error(_('%s has not setup a _site_name password yet, please visit your settings') % kwargs.get('username'), code=403)
         if c.format in ["html", "redirect"]:
             set_flash_message(err.original_dict)
-            return redirect_to_referer()
+            return redirect_to_referer() #AllanC - TODO .. humm .. this will remove the login_action_referer so if they fail a login first time they cant perform the action thats remembered. This need thinking about.
         else:
             raise err
 
@@ -259,3 +262,4 @@ class AccountController(BaseController):
             set_password(user, kwargs['password_new'])
             set_flash_message(_('password has been set'))
             redirect(url(controller='account', action='signin'))
+
