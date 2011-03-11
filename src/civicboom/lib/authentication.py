@@ -194,14 +194,7 @@ def signin_user(user, login_provider=None):
     user_log.info("logged in with %s" % login_provider)   # Log user login
     #session_set('user_id' , user.id      ) # Set server session variable to user.id
     session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
-    cookie_set("civicboom_logged_in", "True", int(config["beaker.session.timeout"]))
-    #response.set_cookie(
-    #    "civicboom_logged_in", "True",
-    #    int(config["beaker.session.timeout"])
-    #)
-    # SecurifyCookiesMiddleware will set these
-    #    secure=(request.environ['wsgi.url_scheme']=="https"),
-    #    httponly=True
+    cookie_set("civicboom_logged_in", "True", int(config["beaker.session.timeout"]), secure=False)
 
 
 def signin_user_and_redirect(user, login_provider=None):
@@ -228,9 +221,6 @@ def signout_user(user):
     cookie_delete("civicboom_logged_in")
     cookie_delete("login_redirect_url")
     cookie_delete("login_redirect_action")
-    #response.delete_cookie("civicboom_logged_in")
-    #session.save()
-    #flash_message("Successfully signed out!")
 
 
 def set_persona(persona):
