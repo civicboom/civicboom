@@ -39,6 +39,11 @@ BODY.c-misc.a-about OL OL {
   font-weight: bold;
 }
 
+.settinghint {
+  color: #F00;
+  font-weight: bold;
+}
+
 .toc {
 	padding-top: 32px;
 }

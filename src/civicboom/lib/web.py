@@ -382,7 +382,30 @@ def _find_template(result, type):
     
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
-
+def _find_template_basic(controller=None, action=None, format=None):
+    controller = controller or c.controller
+    action = action or c.action
+    format = format or c.format or "html"
+    template_part = '%s/%s' % (controller, action)
+    subformat = _find_subformat()
+    if format == "html":
+        paths = [
+            os.path.join("html", subformat, template_part),
+            os.path.join("html", "web",     template_part),
+        ]
+        ## AllanC: TODO
+        ## if there is no web template but there is a frag for this template part
+        ## wrap the fragment in a frag_container.mako
+        ## WIP see web/frag.mako
+    else:
+        paths = [
+            os.path.join(format, template_part),
+        ]
+    for path in paths:
+        if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
+            return path+".mako"
+    raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (format, controller, action, "", "\n".join(paths)))
+        
 def setup_format_processors():
     def render_template(result, type):
         overlay_status_message(c.result, result)

@@ -167,10 +167,13 @@ class GroupsController(BaseController):
         if not kwargs.get('username') and kwargs.get("name"):
             kwargs["username"] = _gen_username(make_username(kwargs.get("name")))
         
-        data       = {'group':kwargs, 'action':'create'}
-        data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='group', template_error='groups/edit')
-        group_dict = data['group']
+        # Need to validate before creating group, not sure how we could do this via settings controller :S GregM
+        data       = {'settings':kwargs, 'action':'create'}
+        data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='settings', template_error='groups/edit')
+        group_dict = data['settings']
         
+        
+        # Create and set group admin here!
         group              = Group()
         group.username     = group_dict['username']
         group.status       = 'active'
@@ -181,7 +184,10 @@ class GroupsController(BaseController):
         Session.add(group)
         Session.commit()
         
-        self.update(group.id, **kwargs) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
+#        self.update(group.username, **kwargs) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
+        
+        # Call settings controller to update group settings!
+        settings_update(group.username, **kwargs)
 
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         
@@ -198,22 +204,19 @@ class GroupsController(BaseController):
         @return 200 - ???
         """
         #url_for('new_group')
-        return action_ok(template='groups/edit')
+        ##print settings_base
+        return action_ok(template='groups/create')
 
 
     @web
     @auth
     def update(self, id, **kwargs):
         """
-        PUT /groups/{id}: Update a groups settings
-
-        @api groups 1.0 (WIP)
-        
-        @param * - see "POST contents"
-        
-        @return 403 - lacking permission to edit
-        @return 200 - success
+        PUT /groups/{id}: Depricated!
         """
+        # h.form(h.url_for('message', id=ID), method='delete')
+        # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
+        raise action_error(_('operation not supported'), code=501)
         group = get_group(id, is_admin=True)
         
         group_dict = group.to_dict()
@@ -306,6 +309,8 @@ class GroupsController(BaseController):
         GET /contents/{id}/edit: Form to edit an existing item
         
         Current user must be identified as an administrator of this group.
+        
+        This will now redirect to the settings controller.
         """
         # url('edit_group', id=ID)
         # GregM: BIG DIRTY HACK to show website and description in the group config editor.
@@ -314,5 +319,15 @@ class GroupsController(BaseController):
         groupdict = group.to_dict()
         groupdict['website'] = config.get('website')
         groupdict['description'] = config.get('description')
-        
-        return action_ok(data={'group':groupdict, 'action':'edit'}) #Auto Format with activate HTML edit template automatically if template placed/named correctly
+
+        redirect_url = ('/settings/'+id).encode('ascii','ignore')
+        return redirect(url(redirect_url))
+#        # url('edit_group', id=ID)
+#        # GregM: BIG DIRTY HACK to show website and description in the group config editor.
+#        group = _get_group(id, is_admin=True)
+#        config = group.config
+#        groupdict = group.to_dict()
+#        groupdict['website'] = config.get('website')
+#        groupdict['description'] = config.get('description')
+#        
+#        return action_ok(data={'group':groupdict, 'action':'edit'}) #Auto Format with activate HTML edit template automatically if template placed/named correctly

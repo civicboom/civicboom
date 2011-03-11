@@ -57,9 +57,9 @@
                         setting_type  = None
                         if 'type' in setting_meta:
                             setting_type  = setting_meta['type']
-                        setting_value = ''
-                        if setting_name in d['settings']:
-                            setting_value = d['settings'][setting_name]
+                        print setting_
+                        setting_values = setting_meta.get('value').split(',')
+                        setting_value = d['settings'][setting_name] if setting_name in d['settings'] else ''
                     %>
 
                     <td width="130" class='descr'>${setting_meta['description']}</td>
@@ -79,6 +79,11 @@
                         <input name="${setting_name}" type="password" />
                     % elif setting_type == 'file':
                         <input name="${setting_name}" type="file" />
+                    % elif setting_type == 'enum':
+                        % for value in setting_values:
+                            <input type="radio" name="${setting_name}" value="${value}" id="${setting_name}_${value}" />
+                            <label for="${setting_name}_${value}">${value.capitalize()}</label>
+                        % endfor
                     % elif setting_type == 'location':
             ##</tr><tr><td></td>
 						<td colspan="1"><div style="text-align: left;">
