@@ -14,6 +14,9 @@ from civicboom.model      import User, UserLogin, Member
 from civicboom.model.meta import Session
 
 from civicboom.lib.web     import multidict_to_dict, cookie_set, cookie_remove, cookie_get, cookie_delete
+
+from civicboom.lib.misc import make_username
+
 #, current_url, current_referer, 
 #from civicboom.lib.helpers import url_from_widget
 
@@ -53,7 +56,7 @@ def get_user_and_check_password(username, password):
     """
     try:
         q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
-        q = q.filter(User.username   == username  )
+        q = q.filter(User.username   == make_username(username))
         q = q.filter(User.status     == 'active'  )
         q = q.filter(UserLogin.type  == 'password')
         q = q.filter(UserLogin.token == encode_plain_text_password(password))
@@ -204,15 +207,6 @@ def signin_user(user, login_provider=None):
     cookie_set("civicboom_logged_in", "True", int(config["beaker.session.timeout"]))
     
     user_log.info("logged in with %s" % login_provider)   # Log user login
-    #session_set('user_id' , user.id      ) # Set server session variable to user.id
-    
-    #response.set_cookie(
-    #    "civicboom_logged_in", "True",
-    #    int(config["beaker.session.timeout"])
-    #)
-    # SecurifyCookiesMiddleware will set these
-    #    secure=(request.environ['wsgi.url_scheme']=="https"),
-    #    httponly=True
 
 
 def signin_user_and_redirect(user, login_provider=None):
@@ -233,11 +227,9 @@ def signout_user(user):
     user_log.info("logged out")
     session.clear()
     cookie_delete("civicboom_logged_in")
-    session_delete("login_redirect_url")
-    session_delete("login_redirect_action")
-    #response.delete_cookie("civicboom_logged_in")
-    #session.save()
-    #flash_message("Successfully signed out!")
+    #session_delete("login_redirect_url") #unneeded? session.clear() handls this?
+    #session_delete("login_redirect_action")
+
 
 
 def set_persona(persona):

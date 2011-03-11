@@ -116,7 +116,7 @@ def associate_janrain_account(user, type, token):
 #-------------------------------------------------------------------------------
 # Password Setter
 #-------------------------------------------------------------------------------
-# don't know if this is right place, but related account stuff was the closest I could think of
+# AllanC - don't know if this is right place, but related account stuff was the closest I could think of
 
 def set_password(user, new_token, delay_commit=False):
     """
@@ -128,7 +128,6 @@ def set_password(user, new_token, delay_commit=False):
     # search for existing record and remove it
     #
     try:
-        #existing_login = Session.query(UserLogin).filter(UserLogin.user==user, UserLogin.type=='password').one()
         for existing_login in [login for login in user.login_details if login.type=='password']:
             log.debug("removing password for %s" % user.username)
             #if existing_login.token == old_token: raise Exception('old password token does not match - aborting password change')
@@ -147,7 +146,18 @@ def set_password(user, new_token, delay_commit=False):
     if not delay_commit:
         Session.commit()
 
-
+def has_account_without_password(user):
+    user = get_member(user, search_email=True)
+    password_login = None
+    if user:
+        try:
+            password_login = Session.query(UserLogin).filter(UserLogin.user==user).filter(UserLogin.type  == 'password').one()
+        except:
+            pass
+        if not password_login:
+            return True
+    return False
+    
 
 #-------------------------------------------------------------------------------
 # Content Aggrigation

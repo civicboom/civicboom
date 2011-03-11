@@ -170,6 +170,10 @@ def setup_widget_env():
 # Get Objects
 #-------------------------------------------------------------------------------
 
+# AllanC - These get methods are to be used by Controllers as they raise action_error's that can be be interperited by the auto_formatter
+#          Librarys normally use the methods in lib.database.get_cached
+#          NOTE!: Please check the imports for what version of get_???? you are using! This controler version or the db version
+
 def get_member(member_search, set_html_action_fallback=False, search_email=False):
     """
     Shortcut to return a member and raise not found automatically (as these are common opertations every time a member is fetched)
