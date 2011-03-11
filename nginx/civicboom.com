@@ -21,15 +21,6 @@ upstream backends {
 }
 
 server {
-	listen 80;        listen [::]:80 ipv6only=on;
-	listen 443 ssl;   listen [::]:443 ssl ipv6only=on;
-	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
-	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
-	server_name civicboom.com;
-	rewrite ^(.*) $scheme://www.civicboom.com$1 permanent;
-}
-
-server {
 	# server stuff
 	listen 80;                listen [::]:80 ipv6only=on;
 	listen 443 default ssl;   listen [::]:443 default ssl ipv6only=on;
@@ -88,7 +79,7 @@ server {
 
 	location /nginx_status {
 		stub_status on;
-		access_log   off;
+		access_log  off;
 		allow 127.0.0.1;
 		allow 212.110.185.0/24;
 		allow 129.12.0.0/16;
@@ -98,10 +89,23 @@ server {
 }
 
 server {
+	# listen options are inherited from where the are first defined,
+	# so if two listen commands say eg "use ssl" then we get an error
+	# about duplicate options
+	listen 80;    listen [::]:80;
+	listen 443;   listen [::]:443;
+	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
+	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
+	server_name civicboom.com;
+	rewrite ^(.*) $scheme://www.civicboom.com$1 permanent;
+}
+
+server {
 	listen 80;
 	listen 443 ssl;
 	server_name static.civicboom.com;
 	root /opt/cb/share/website/civicboom/public/;
+	expires max;
 }
 
 server {

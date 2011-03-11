@@ -233,7 +233,10 @@ def time_ago(from_time):
     time_ago = time_ago_in_words(from_time, granularity='minute', round=True)
     match = re.match("\d+ [a-z]+", time_ago)
     if match:
-        return match.group(0)
+        part = match.group(0)
+        part = part.replace("minute", "min")
+        part = part.replace("second", "sec")
+        return part
     else:
         user_log.error("Failed to shorten time_ago:"+time_ago)
         return time_ago
