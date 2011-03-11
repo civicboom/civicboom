@@ -13,7 +13,11 @@ from pylons.i18n import _ #WHY THE *** IS THIS NEEDED!! .. it's part of lib.base
 from civicboom.model      import User, UserLogin, Member
 from civicboom.model.meta import Session
 
-from civicboom.lib.web     import session_set, session_get, session_remove, multidict_to_dict, current_url, current_referer, cookie_set, cookie_remove, cookie_get, cookie_delete
+from civicboom.lib.web     import multidict_to_dict, cookie_set, cookie_remove, cookie_get, cookie_delete
+
+from civicboom.lib.misc import make_username
+
+#, current_url, current_referer, 
 #from civicboom.lib.helpers import url_from_widget
 
 
@@ -52,7 +56,7 @@ def get_user_and_check_password(username, password):
     """
     try:
         q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
-        q = q.filter(User.username   == username  )
+        q = q.filter(User.username   == make_username(username))
         q = q.filter(User.status     == 'active'  )
         q = q.filter(UserLogin.type  == 'password')
         q = q.filter(UserLogin.token == encode_plain_text_password(password))
@@ -176,7 +180,7 @@ def login_redirector():
     """
     If this method returns (rather than aborting with a redirect) then there is no login_redirector
     """
-    login_redirect = cookie_remove('login_redirect')
+    login_redirect = session_remove('login_redirect')
     if login_redirect:
         return redirect(login_redirect)
 
@@ -185,18 +189,24 @@ def signin_user(user, login_provider=None):
     """
     Perform the sigin for a user
     """
+    # Copy old session data
+    session_old = {}
+    for key, value in session.iteritems():
+        session_old[key] = value
+        #log.debug('Copying session keys to secure session %s:%s' % (key,value))
+    
+    # Destroy old session
     session.invalidate()
-    user_log.info("logged in with %s" % login_provider)   # Log user login
-    #session_set('user_id' , user.id      ) # Set server session variable to user.id
+    
+    # Instate new session with old vars under the new session id
+    for key, value in session_old.iteritems():
+        session[key] = value
+    
     session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
+    
     cookie_set("civicboom_logged_in", "True", int(config["beaker.session.timeout"]))
-    #response.set_cookie(
-    #    "civicboom_logged_in", "True",
-    #    int(config["beaker.session.timeout"])
-    #)
-    # SecurifyCookiesMiddleware will set these
-    #    secure=(request.environ['wsgi.url_scheme']=="https"),
-    #    httponly=True
+    
+    user_log.info("logged in with %s" % login_provider)   # Log user login
 
 
 def signin_user_and_redirect(user, login_provider=None):
@@ -205,10 +215,6 @@ def signin_user_and_redirect(user, login_provider=None):
     """
     signin_user(user, login_provider)
     
-    if 'popup_close' in request.params:
-        # Redirect to close the login frame, but keep the login_redirector for a separte call later
-        return redirect(url(controller='misc', action='close_popup'))
-
     # Redirect them back to where they were going if a redirect was set
     login_redirector()
 
@@ -221,11 +227,9 @@ def signout_user(user):
     user_log.info("logged out")
     session.clear()
     cookie_delete("civicboom_logged_in")
-    session_delete("login_redirect_url")
-    session_delete("login_redirect_action")
-    #response.delete_cookie("civicboom_logged_in")
-    #session.save()
-    #flash_message("Successfully signed out!")
+    #session_delete("login_redirect_url") #unneeded? session.clear() handls this?
+    #session_delete("login_redirect_action")
+
 
 
 def set_persona(persona):
