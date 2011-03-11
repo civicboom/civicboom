@@ -13,7 +13,6 @@ import civicboom.lib.app_globals as app_globals
 import civicboom.lib.helpers
 from civicboom.config.routing import make_map
 from civicboom.model import init_model
-from civicboom.lib.worker import start_worker
 from civicboom.lib.civicboom_init import init as civicboom_init  # This will trigger a set of additional initalizers
 
 
@@ -78,6 +77,7 @@ def load_environment(global_conf, app_conf):
                         'search.default.limit.contents'  ,
                         'search.default.limit.members'   ,
                         'search.default.limit.messages'  ,
+                        'setting.session.login_expire_time',
                         ]
     for varname in integer_varnames:
         config[varname] = int(config[varname].strip())
@@ -89,6 +89,5 @@ def load_environment(global_conf, app_conf):
         pylons_config[k] = v
 
     civicboom_init() # This will tirgger a set of additional initalizers
-    start_worker()
 
     return config

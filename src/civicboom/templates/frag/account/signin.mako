@@ -16,7 +16,7 @@
 ## Signin Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-    <div class="frag_col">
+    <div class="frag_col frag_signin">
     % if hasattr(c, 'action_objects'):
         ## Approved actions
         
@@ -38,7 +38,16 @@
             ## AllanC: TODO - internationalise this string!
             <p>By signing in/up you will follow <b>${member_name}</b> </p>
             
+        % elif c.action_objects['action'] == 'boom':
+            <%
+                content      = c.action_objects['action_object']['content']
+                creator_name = content['creator']['name'] or content['creator']['username']
+            %>
+            ## AllanC: TODO - internationalise this string!
+            <p>By signing in/up you will Boom the _content <b>${content['title']}</b> by <b>${creator_name}</b></p>
+            
         % endif
+
         ##${c.action_objects['description']}
         ##${c.action_objects['action_object']}
         <br/>

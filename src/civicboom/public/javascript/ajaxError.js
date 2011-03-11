@@ -10,6 +10,8 @@ $(document).ajaxError(function(event, request, settings, exception) {
 		popup('Upgrade plans', '/misc/upgrade_plans.frag');
 	}
 
+    /**
+    // AllanC: Depricated - no longer requires client site cookies to perform remebered operations - however, requires upgrade to jQuery 1.5.0
 	// GregM: Login Required
 	if (request.status == 403) {
 		// settings.url has the last ajax settings including url :D
@@ -24,4 +26,5 @@ $(document).ajaxError(function(event, request, settings, exception) {
 		// Redirect User
 		window.location.href = '/account/signin';
 	}
+    */
 });

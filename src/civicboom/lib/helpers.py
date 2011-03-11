@@ -233,7 +233,10 @@ def time_ago(from_time):
     time_ago = time_ago_in_words(from_time, granularity='minute', round=True)
     match = re.match("\d+ [a-z]+", time_ago)
     if match:
-        return match.group(0)
+        part = match.group(0)
+        part = part.replace("minute", "min")
+        part = part.replace("second", "sec")
+        return part
     else:
         user_log.error("Failed to shorten time_ago:"+time_ago)
         return time_ago
@@ -294,15 +297,18 @@ def form(*args, **kwargs):
                 $(this).serialize() ,
                 function(data, status, jqXhr) {
                     flash_message(data);
-                    if (jqXhr.status == 402) {
-                      //popup ('Please upgrade your account to proceed', '');
-                    }
                     if (data.status == 'ok') {
                         %(json_form_complete_actions)s
                     }
                 },
                 'json'
-            );
+            )
+            .error(function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status == 403) {
+                    current_element.attr('onsubmit','');
+                    current_element.submit();
+                }
+            });
             return false;
         """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions, pre_onsubmit=pre_onsubmit)
         )

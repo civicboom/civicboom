@@ -14,12 +14,14 @@
 
 <center>
 	<h1>${_("Just checking ...")}</h1>
-	${_("You are about to %s on _site_name, but it looks like you've come from another web site; do you want to continue?") % action_description}
+	<p>${_("You are about to %s on _site_name; do you want to continue?") % action_description}</p>
+    
 	${h.form(c.target_url)}
 % for k, v in c.post_values.items():
 		<input type="hidden" name="${k}" value="${v}">
 % endfor
-		<input type="submit" value="${_("Yes")}">
-		<input type="button" value="${_("No")}" onclick="go_to_front_page()"> <!-- FIXME -->
+		<input type="submit" value="${_("Yes")}" class="button">
+        <a class="button" href="/profile">${_("No")}</a>
 	${h.end_form()}
+    <p style="font-style: italic;">${_("(We are double checking because you could have been tricked into performing an action that you did not want to do)")}</p>
 </center>

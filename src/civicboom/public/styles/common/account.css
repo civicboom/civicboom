@@ -37,12 +37,12 @@ BODY.c-account.a-signin FORM TD {
 }
 
 /* --- frag page version --- */
-BODY.c-account.a-signin .frag_container H1 {
+BODY.c-account.a-signin .frag_signin H1 {
 	font-size: 100%;
 	margin-bottom: 0.5em;
 }
-BODY.c-account.a-signin .frag_container FORM,
-BODY.c-account.a-signin .frag_container FORM TD {
+BODY.c-account.a-signin .frag_signin FORM,
+BODY.c-account.a-signin .frag_signin FORM TD {
 	padding: 2px;
 }
 

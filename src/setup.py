@@ -19,13 +19,13 @@ setup(
     # supplied by debian
     install_requires=[
         "python_magic",
+        "FormAlchemy",
         "GeoAlchemy",
         "twitter>=1.4.2",
     ] + [
         "SQLAlchemy>=0.6.5", # debian experimental has 0.6.6
         "Pylons>=1.0.0",     # debian experimental
         "Mako>=0.3.4",       # debian experimental has 0.3.6
-        "FormAlchemy",
         #"recaptcha-client", # AllanC - I wrote our own one out of frustration, turned out to be the validator triggering twice :(
         #"GeoFormAlchemy",   # now using a custom geometry renderer with our own location picker component
         "pyDNS",

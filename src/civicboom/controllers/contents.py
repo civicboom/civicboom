@@ -557,7 +557,7 @@ class ContentsController(BaseController):
         Session.add(content)
         Session.commit()
         update_content(content)  # Invalidate any cache associated with this content
-        user_log.info("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
+        user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
         # -- Redirect (if needed)-----------------------------------------------
 
