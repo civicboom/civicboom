@@ -105,6 +105,7 @@ server {
 	listen 443 ssl;
 	server_name static.civicboom.com;
 	root /opt/cb/share/website/civicboom/public/;
+	expires max;
 }
 
 server {
