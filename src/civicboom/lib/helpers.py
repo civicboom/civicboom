@@ -302,7 +302,7 @@ def form(*args, **kwargs):
             )
             .error(function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 403) {
-                    current_element.attr('onsubmit',''); //clear submit action to perform normal post
+                    current_element.attr('onsubmit','');
                     current_element.submit();
                 }
             });
