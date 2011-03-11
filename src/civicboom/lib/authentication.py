@@ -188,11 +188,10 @@ def signin_user(user, login_provider=None):
     """
     # Copy old session data
     session_old = {}
-    print('copying from old session')
     for key, value in session.iteritems():
-        print('%s:%s' % (key,value))
         session_old[key] = value
-        
+        #log.debug('Copying session keys to secure session %s:%s' % (key,value))
+    
     # Destroy old session
     session.invalidate()
     
