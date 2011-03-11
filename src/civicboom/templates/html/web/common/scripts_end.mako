@@ -8,16 +8,16 @@
 
     ## Maps (should be loaded on-demand, but frags confuse that
     % if config['development_mode']:
+        ## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
 		<!-- non-urgent bits -->
 		<script src="/javascript/jquery.ui.js"></script>
-		<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+        <script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+        <script src="/javascript/jquery.html5-0.0.1.js"></script>
 		<script src="/javascript/jquery.scrollTo.js"></script>
 		<script src="/javascript/jquery.simplemodal.1.4.1.min.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
-		<script src="/javascript/jquery.html5-0.0.1.js"></script>
 		<script src="/javascript/jquery.uploadify.v2.1.4.js"></script>
-		<script src="/javascript/jquery.ba-hashchange.min.js"></script>
-		<script src="/javascript/jquery.cookie.js"></script>
         <script src="/javascript/jquery.simple-color-picker.js"></script>
+		<script src="/javascript/jquery.ba-hashchange.min.js"></script>
 		<!-- maps -->
         <script src="/javascript/gears_init.js"></script>
         <script src="/javascript/geo.js"></script>
@@ -55,6 +55,7 @@
 	<script src="/javascript/tiny_mce/tiny_mce.js"></script>
 </%def>
 
+
 ##----------------------------------------------------------------------------
 ## Google Analitics
 ##----------------------------------------------------------------------------
@@ -86,6 +87,10 @@
     % endif
 </%def>
 
+
+##----------------------------------------------------------------------------
+## Dynamic Fragment Height
+##----------------------------------------------------------------------------
 <%def name="refresh_fragment_height()">
 ## this only works properly if it is the first of the footer scripts and
 ## included in the HTML -- if it is in the header bundle or footer bundle,

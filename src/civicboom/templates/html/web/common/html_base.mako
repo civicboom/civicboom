@@ -52,6 +52,7 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 ## Javascripts
 ##-------------------
 % if config['development_mode']:
+    ## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
 	<!-- Browser bug fixes -->
 	<script src="/javascript/Modernizr.js"></script>
 	<script src="/javascript/swfobject.js"></script>
