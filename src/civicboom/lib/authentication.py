@@ -203,8 +203,7 @@ def signin_user(user, login_provider=None):
         session[key] = value
     
     session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
-    
-    cookie_set("civicboom_logged_in", "True", int(config["beaker.session.timeout"]))
+    cookie_set("logged_in", "True", secure=False)
     
     user_log.info("logged in with %s" % login_provider)   # Log user login
 
@@ -226,10 +225,9 @@ def signin_user_and_redirect(user, login_provider=None):
 def signout_user(user):
     user_log.info("logged out")
     session.clear()
-    cookie_delete("civicboom_logged_in")
+    cookie_delete("logged_in")
     #session_delete("login_redirect_url") #unneeded? session.clear() handls this?
     #session_delete("login_redirect_action")
-
 
 
 def set_persona(persona):

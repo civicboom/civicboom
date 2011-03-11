@@ -59,7 +59,7 @@ server {
 		#
 		# DC_CACHING lines are removed by debconf if caching = false
 		proxy_cache "cb"; # DC_CACHING
-		proxy_cache_key "$scheme://$host$uri-cookie:$cookie_civicboom_logged_in"; # DC_CACHING
+		proxy_cache_key "$scheme://$host$uri-cookie:$cookie_logged_in"; # DC_CACHING
 		proxy_pass http://backends;
 	}
 

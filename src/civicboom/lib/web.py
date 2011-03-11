@@ -208,12 +208,14 @@ def cookie_remove(key):
     return value
 
 
-def cookie_set(key, value, duration=None):
+def cookie_set(key, value, duration=None, secure=None):
     """
     duration in seconds
     """
     #log.debug("setting %s:%s" %(key, value))
-    response.set_cookie(key, value, max_age=duration, secure=True) #path='/', domain='example.org',
+    if secure == None:
+        secure = (request.environ['wsgi.url_scheme']=="https")
+    response.set_cookie(key, value, max_age=duration, secure=secure) #path='/', domain='example.org',
 
 
 def cookie_get(key):
@@ -603,7 +605,7 @@ def authenticate_form(target, *args, **kwargs):
 def cacheable(time=60*60*24*365, anon_only=True):
     def _cacheable(func, *args, **kwargs):
         from pylons import request, response
-        if not anon_only or 'civicboom_logged_in' not in request.cookies: # no cache for logged in users
+        if not anon_only or 'logged_in' not in request.cookies: # no cache for logged in users
             response.headers["Cache-Control"] = "public,max-age=%d" % time
             response.headers["Vary"] = "cookie"
             if "Pragma" in response.headers:
