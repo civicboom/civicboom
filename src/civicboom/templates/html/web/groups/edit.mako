@@ -22,7 +22,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="group()">
-    ${frag.frag_basic(title=_('%s _Group') % c.action.capitalize(), icon='group', frag_content=group_content)}
+    ${frag.frag_basic(title=_('%s _Group') % c.action.capitalize(), icon='group', frag_content=group_settings.body())}
 </%def>
 <%def name="group_content()">
 ${group_settings.body()}

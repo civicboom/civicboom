@@ -41,14 +41,14 @@ def add_setting(name, description, value='', group=None, **kwargs):
     settings_base[setting['name']]=setting
     
 add_setting('name'                      , _('Display name' )             , group='general/general'    , weight=0  , type='string'                                                                            )
-add_setting('description'               , _('Description'  )             , group='general/general'    , weight=1  , type='longstring'                                                                        )
+add_setting('description'               , _('Description'  )             , group='general/general'    , weight=1  , type='longstring'      , info=_('Tell the world about you and your interests.')          )
 
 add_setting('default_role'              , _('Default Role')              , group='general/group'      , weight=2  , type='enum'            , who='group' , value='observer,contributor,editor,administrator' )
 add_setting('join_mode'                 , _('Join Mode')                 , group='general/group'      , weight=3  , type='enum'            , who='group' , value='public,invite_and_request,invite'          )
 add_setting('member_visibility'         , _('Member Visibility')         , group='general/group'      , weight=4  , type='enum'            , who='group' , value='public,private'                            )
 add_setting('default_content_visibility', _('Default Content Visibility'), group='general/group'      , weight=5  , type='enum'            , who='group' , value='public,private'                            )
 
-add_setting('website'                   , _('Website'      )             , group='general/contact'    , weight=6  , type='url'                                                                               )
+add_setting('website'                   , _('Website'      )             , group='general/contact'    , weight=6  , type='url'             , info=_('Optional: add your website or blog etc. to your profile'))
 add_setting('email'                     , _('Email Address')             , group='general/contact'    , weight=7  , type='email'           , who='member'                                                    )
 add_setting('password_current'          , _('Current password')          , group='general/password'   , weight=8  , type='password_current', who='member'                                                    )
 add_setting('password_new'              , _('New password')              , group='general/password'   , weight=9  , type='password'        , who='member'                                                    )
@@ -60,11 +60,7 @@ add_setting('password_new_confirm'      , _('New password again')        , group
 add_setting('avatar'                    , _('Avatar' )                   , group='general/avatar'     , weight=11 , type='file'                                                                              )
 
 
-add_setting('location_home'             , _('Home Location' )            , group='location/location'  , weight=100, type='location'        , info=
-                        '<b>Optional</b><br />' +
-                        'Civicboom will be adding new features in the coming months. Part of this is the ability to geo-locate content in your area, get alerted to local requests and participate fully in the crowdsourcing experience.' +
-                        'You can add your location now, but this will not be used until the features are rolled out.<br />'
-                        '<b>Your location will not be shared with other users. Your geo-location will be used in order for relevant requests to be pushed to you. This is an opt-in feature.</b>' )
+add_setting('location_home'             , _('Home Location' )            , group='location/location'  , weight=100, type='location' )
 
 
 # Ignore these messages generators!
@@ -197,25 +193,37 @@ class SettingsController(BaseController):
     def panel(self, id='me', panel='general'):
         username = id
         if not username or username == 'me':
-            username = c.logged_in_persona.username
-            id = 'me'
+             username = c.logged_in_persona.username
+             id = 'me'
         user_type = 'group'
-        user = get_group(username)
-        if not user:
-            user = get_member(username)
+        user = get_member(username)  
+        if isinstance(user, User):
             user_type = 'member'
             if not user == c.logged_in_user:
                 raise action_error(code=403, message="No permission")
         else:
             if not user.is_admin(c.logged_in_user):
                 raise action_error(code=403, message="No permission")
-            
-        settings_meta = dict( [ (setting['name'], setting ) for setting in settings_base.values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
         
-        panels = dict( [ ( setting['group'].split('/')[0], setting['weight'] ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] )
+        settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
+        
+        panels = dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title':setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] )
+        
+        #Janrain HACK
+        
+        if user_type == 'member' and panel == 'link_janrain':
+            return action_ok(
+                data={
+                      'settings_meta':settings_meta,
+                      'panels':panels
+                },
+                username=id,
+                user_type=user_type,
+                template="settings/panel/link_janrain",
+            )
         
         if not panel in panels:
-            raise action_error(code=404, message="This panel is not applicable for a " + user_type) 
+            raise action_error(code=404, message="This panel is not applicable for a " + user_type)
         # c.format in ["html", "mobile"] and 
         
         # Generate base settings dictonary for ALL settings (GregM: for this user type! - Makes generating settings pages easier!)
@@ -228,10 +236,22 @@ class SettingsController(BaseController):
         for setting_name in settings_meta.keys():
             if settings_meta[setting_name].get('who', user_type) == user_type:
                 if setting_name == 'email' and user.email_unverified != None:
-                    settings_hints['email'] = _('You have an unverified email address (%s), please check your email. If this address is incorrect please update and save, then check your email.') % user.email_unverified
+                    settings_hints['email'] = _( 'You have an unverified email address. This could be for two reasons:') + '<ol>' + \
+                                                 '<li>' + _('You have signed up to Civicboom via Twitter, Facebook, LinkedIn, etc.') + '</li>' + \
+                                                 '<li>' + _('You have changed your email address and not verified it.') + '</li>' + \
+                                                 '</ol>' + _('To verify your email: please check your email account (%s) and follow instructions.') % user.email_unverified + '<br />' + \
+                                                 _('OR enter new email address below and check your email.')
+                    #_('You have an unverified email address (%s), please check your email. If this address is incorrect please update and save, then check your email.') % user.email_unverified
                 if setting_name == 'password_current' and not 'password' in [login.type for login in user.login_details]:
                     del settings_meta[setting_name]
-                    settings_hints['password_new'] = _("You first signed into Civicboom using another provider's login, please set a Civicboom password here to use our mobile application.")
+                    settings_hints['password_new'] = _("You have signed up via Twitter, Facebook, LinkedIn, etc. In order to login to our mobile app, please create a Civicboom password here. (You will use this password and your username to login to the app.)")
+                if 'password' in setting_name and user.email_unverified != None:
+                    if not '_readonly' in settings_meta[setting_name]['type']:
+                        settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
+                    if not 'password' in [login.type for login in user.login_details]:
+                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                    else:
+                        settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
                 if hasattr(user, setting_name):
                     v = getattr(user, setting_name)
                 else:
@@ -258,8 +278,9 @@ class SettingsController(BaseController):
                   'settings': settings ,
                   'panels': panels,
                   },
-            panel= panel,
+            panel=panel,
             username=id,
+            user_type=user_type,
             template="settings/panel/"+template,
         )
 
@@ -366,10 +387,6 @@ class SettingsController(BaseController):
             panel_redirect = ('/members/'+id).encode('ascii', 'ignore')
         else:
             panel_redirect = ('/settings/'+id+('/'+panel if panel else '')).encode('ascii','ignore')
-        
-        print '###### Will redirect to:'
-        print panel_redirect
-        print c
             
         # If no new password set disregard (delete) all password fields!
         if kwargs.get('password_new') == '':
@@ -401,6 +418,7 @@ class SettingsController(BaseController):
         if 'password_new' in validators:
             schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the
             schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
+            schema.chained_validators.append(formencode.validators.Empty('password_new'))
         
         validate_dict(data, schema, dict_to_validate_key='settings', template_error=panel_template)
         

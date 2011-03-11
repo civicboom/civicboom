@@ -13,19 +13,23 @@
 <%def name="body()">
 <%
     settings_meta = d['settings_meta']
-    #panels = dict( [ ( setting['group'].split('/')[0], setting['weight'] ) for setting in settings_meta.values() if setting.get('who', user_type) == user_type] )
     panels = d['panels']
-    panels = sorted(panels, key=panels.__getitem__)
-    print panels
+    if c.result.get('user_type') == 'member':
+    	panels['janrain'] = {'weight':100, 'title':'Link additional login accounts', 'panel':'link_janrain'}
+    panelorder = sorted(panels, key=panels.__getitem__)
+    
 %>
     <%def name="link(title, panel)">
         <li><a href="/settings/${c.id or 'me'}/${panel}">${title}</a></li>
     </%def>
     <div style="padding: 3px 3px 3px 3px;">
       <ul>
-      %for panel in panels:
-        ${link(panel.capitalize(), panel)}
-      %endfor
+      % for panel in panelorder:
+      	<%
+      		paneldata = panels[panel]
+      	%>
+        ${link(paneldata['title'].capitalize(), paneldata['panel'])}
+      % endfor
       </ul>
     </div>
 </%def>

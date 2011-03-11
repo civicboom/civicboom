@@ -1,5 +1,8 @@
 <%inherit file="/html/web/common/frag_container.mako"/>
 
+<%namespace name="frag" file="/frag/common/frag.mako"/>
+<%namespace name="location_settings" file="/frag/settings/panel/location.mako" import="body,title"/>
+
 <%def name="title()">General Settings</%def>
 
 
@@ -19,7 +22,7 @@
 </%def>
 
 <%def name="location()">
-  <%include file="/frag/settings/panel/location.mako"/>
+  ${frag.frag_basic(title=location_settings.title, icon='group', frag_content=location_settings.body)}
 </%def>
 
 <%def name="help()">

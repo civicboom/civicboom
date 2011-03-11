@@ -1,6 +1,9 @@
 <%inherit file="/html/web/common/frag_container.mako"/>
 
-<%def name="title()">General Settings</%def>
+<%namespace name="frag" file="/frag/common/frag.mako"/>
+<%namespace name="generic_settings" file="/frag/settings/panel/generic.mako" import="body"/>
+
+<%def name="title()">Settings</%def>
 
 
 ##------------------------------------------------------------------------------
@@ -19,7 +22,7 @@
 </%def>
 
 <%def name="generic()">
-  <%include file="/frag/settings/panel/generic.mako"/>
+  ${frag.frag_basic(title=_('Settings'), icon='group', frag_content=generic_settings.body)}
 </%def>
 
 <%def name="help()">

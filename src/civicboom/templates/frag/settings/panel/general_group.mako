@@ -99,16 +99,40 @@
         <tr class="padding">
           <td colspan="7">${_("Join mode")}</td>
         </tr>
+        <style>
+        	.mo-help div { display: none; position: absolute; z-index: 100; width: 175px; background-color: #FFF; border: 12px white solid; }
+        	.mo-marker { display: inline-block; font-weight: bold; font-size: 1.25em; width: 1.25em; }
+        	.mo-help:hover div { display: block; }
+        </style>
         <tr class="padding">
           <td>&nbsp;</td>
-          <td>
-            <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'public' else ''} value="public" id="join_mode_public" /><label for="join_mode_public">${_('Open?')}</label>
+          <td style="width:7em">
+            <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'public' else ''} value="public" id="join_mode_public" /><label for="join_mode_public">${_('Open')}</label>
+            <span class="mo-help">
+            	<span class="mo-marker">?</span>
+            	<div class="mo-help-r">
+            		${_('Anyone can join this Hub and become a member as per default role setting. This means anyone beyond your club/assoc/brand can have privilages to Observe / Contribute / Edit or Administrate your Hub as set above.')}<br />
+            		${_('Do not create an open Hub if you are not prepared for general access. For tighter join modes please see Public and Private options.')}
+            	</div>
+            </span>
           </td>
-          <td>
-            <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite_and_request' else ''} value="invite_and_request" id="join_mode_invite_and_request" /><label for="join_mode_invite_and_request">${_('Public?')}</label>
+          <td style="width:7em">
+            <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite_and_request' else ''} value="invite_and_request" id="join_mode_invite_and_request" /><label for="join_mode_invite_and_request">${_('Public')}</label>
+            <span class="mo-help">
+            	<span class="mo-marker">?</span>
+            	<div class="mo-help-r">
+            		${_('Anyone can request to join this Hub, and you can invite others to join, you have the ability to accept or decline join requests. The Public setting gives you greater control on who joins the Hub.')}
+            	</div>
+            </span>
           </td>
-          <td>
-            <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite' else ''} value="invite" id="join_mode_invite" /><label for="join_mode_invite">${_('Private?')}</label><br />
+          <td style="width:7em">
+            <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite' else ''} value="invite" id="join_mode_invite" /><label for="join_mode_invite">${_('Private')}</label>
+            <span class="mo-help">
+            	<span class="mo-marker">?</span>
+            	<div class="mo-help-r">
+            		${_('This gives you strictest control of who joins your Hub. It is invite only, and as an administrator you decide who to invite.')}
+            	</div>
+            </span>
           </td>
           <td colspan="3">
             ${show_error('join_mode')}
@@ -122,17 +146,29 @@
           <td>&nbsp;</td>
           <td>
             <input type="radio" class="quickchange" name="member_visibility" ${'checked="checked"' if get_param('member_visibility') == 'public' else ''} value="public" id="member_visibility_public" /><label for="member_visibility_public">${_('Open')}</label>
+            <span class="mo-help">
+            	<span class="mo-marker">?</span>
+            	<div class="mo-help-r">
+            		${_('This gives you strictest control of who joins your Hub. It is invite only, and as an administrator you decide who to invite.')}
+            	</div>
+            </span>
           </td>
           <td>
             <input type="radio" class="quickchange" name="member_visibility" ${'checked="checked"' if get_param('member_visibility') == 'private' else ''} value="private" id="member_visibility_private" /><label for="member_visibility_private">${_('Hidden')}</label>
+            <span class="mo-help">
+            	<span class="mo-marker">?</span>
+            	<div class="mo-help-r">
+            		${_('This gives you strictest control of who joins your Hub. It is invite only, and as an administrator you decide who to invite.')}
+            	</div>
+            </span>
           </td>
           <td style="width: 20px">
             ${show_error('member_visibility')}
           </td>
-          <td>
+          <td style="width:7em">
             <!--<input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'public' else ''} value="public" id="content_visibility_public" /><label for="content_visibility_public">${_('Open')}</label>-->
           </td>
-          <td>
+          <td>&nbsp;
             <!--<input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'private' else ''} value="private" id="content_visibility_private" /><label for="content_visibility_private">${_('Hidden')}</label>-->
           </td>
           <td>${show_error('default_content_visibility')}</td>
@@ -147,18 +183,10 @@
           <td colspan="4"><input type="file" name="avatar" id="avatar" /></td>
           <td>&nbsp;</td>
         </tr>
-##        <tr class="padding">
-##          <td colspan="2"><label for="logo_file">or</label></td>
-##          <td colspan="5">&nbsp;</td>
-##        </tr>
-##        <tr class="padding">
-##          <td colspan="2"><label for="logo_url">${_('Logo URL:')}</label></td>
-##          <td colspan="4"><input type="text" name="logo_url" id="logo_url" /></td>
-##          <td>&nbsp;</td>
-##        </tr>
-          <td colspan="5"><label for="permission">${_('This _Group represents an organisation and I have the permissions/rights to create it.')}</label></td>
-          <td><input type="checkbox" name="permission" id="permission"/>
-          <td>&nbsp;</td>
+        <tr class="padding">
+        	<td colspan="5"><label for="permission">${_('This _Group represents an organisation and I have the permissions/rights to create it.')}</label></td>
+          <td><input type="checkbox" name="permission" id="permission" /></td>
+          <td style="width: 10px">&nbsp;</td>
         </tr>
         <tr class="padding">
           <td colspan="6">${_('Before clicking "Create" I confirm any logo/image I upload does not infringe upon any trademarks, third party copyrights, other such rights, or violate the user agreement.')}</td>
