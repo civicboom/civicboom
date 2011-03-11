@@ -83,7 +83,7 @@ def dictToXMLString(d):
         e = Element(tag)
         if isinstance(d, basestring): # is String
             e.text = d
-        elif isinstance(d, int):
+        elif type(d) in [int, long]:
             e.text = str(d)
         elif hasattr(d,'keys'): # is Dict
             for key in d.keys():

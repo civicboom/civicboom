@@ -223,8 +223,11 @@ class MemberActionsController(BaseController):
 
     @web
     def assignments_active(self, id, **kwargs):
-        return content_search(creator=id, list='assignments_active',**kwargs)
+        return content_search(creator=id, list='assignments_active'  ,**kwargs)
 
+    @web
+    def assignments_previous(self, id, **kwargs):
+        return content_search(creator=id, list='assignments_previous',**kwargs)
 
 
     #---------------------------------------------------------------------------
