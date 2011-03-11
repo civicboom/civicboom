@@ -1,5 +1,5 @@
 HEAD=\
-	Modernizr.js swfobject.js jquery-1.4.2.js \
+	modernizr-1.7.js swfobject.js jquery-1.5.1.js \
 	misc.js url_encode.js cb_frag.js ajaxError.js
 
 FOOT=\

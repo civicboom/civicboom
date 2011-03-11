@@ -53,7 +53,7 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 ##-------------------
 % if config['development_mode']:
 	<!-- Browser bug fixes -->
-	<script src="/javascript/Modernizr.js"></script>
+	<script src="/javascript/modernizr-1.7.js"></script>
 	<script src="/javascript/swfobject.js"></script>
 	<!-- jQuery -->
 	<script src="/javascript/jquery-1.5.1.js"></script>
