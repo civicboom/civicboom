@@ -398,7 +398,7 @@
         <tr style="display: none;"><th>${_('Member')}</th><th>${_('Comment')}</th></tr>
         % for comment in comments:
         <tr>
-            <td style="padding-bottom: 6px" class="comment_avatar">
+            <td class="comment_avatar">
                 ${member_includes.avatar(comment['creator'])}
             </td>
             <td class="comment">
@@ -434,9 +434,9 @@
                     <input type="hidden" name="parent_id" value="${d['content']['id']}">
                     <input type="hidden" name="title" value="Re: ${d['content']['title']}">
                     <input type="hidden" name="type" value="comment">
-                    <textarea name="content" class="comment_textarea"></textarea>
-                    <br><!--<input type="submit" name="submit_preview" value="Preview">-->
-                    <br /><input type="submit" name="submit_response" value="${_('Comment')}">
+                    <textarea name="content"></textarea>
+                    <!--<br><input type="submit" name="submit_preview" value="Preview">-->
+                    <br /><input type="submit" class="button" name="submit_response" value="${_('Comment')}">
                 ${h.end_form()}
               % else:
                 ${_('Please login to comment')}
