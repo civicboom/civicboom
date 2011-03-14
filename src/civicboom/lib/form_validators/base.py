@@ -205,3 +205,13 @@ class SetValidator(validators.FancyValidator):
             if not value in set:
                 raise formencode.Invalid(self.message("invalid", state), value, state)
         return values
+
+class EmptyValidator(validators.FancyValidator):
+    messages = {
+        'invalid'   : _('You cannot enter a value here due to other errors'),
+        }
+    def _to_python(self, value, state):
+        if len(value) > 0:
+            raise formencode.Invalid(self.message("invalid", state), value, state)
+        else:
+            return value
