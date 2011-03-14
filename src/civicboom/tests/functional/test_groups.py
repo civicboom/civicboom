@@ -141,12 +141,12 @@ class TestGroupsController(TestController):
         
         response = self.app.get(url('edit_group', id=1       ), status=404)
         self.assertNotEqual(self.group_id, 0)
-        response = self.app.get(url('edit_group', id=self.group_id), status=200)
+        response = self.app.get(url('settings', id=self.group_id), status=200)
         self.assertIn('test_group', response)
         self.log_out()
-        response = self.app.get(url('edit_group', id=self.group_id), status=302) # redirect to login page as not logged in
+        response = self.app.get(url('settings', id=self.group_id), status=302) # redirect to login page as not logged in
         self.log_in_as('unitfriend')
-        response = self.app.get(url('edit_group', id=self.group_id), status=403) # permission denied not a group admin
+        response = self.app.get(url('settings', id=self.group_id), status=403) # permission denied not a group admin
 
         self.log_out()
 
@@ -157,7 +157,7 @@ class TestGroupsController(TestController):
         self.log_in_as('unittest')
         
         response = self.app.put(
-            url('group', id=self.group_id, format='json'),
+            url('settings', id=self.group_id, format='json'),
             params={
                 '_authentication_token': self.auth_token,
                 'name'         : 'Test group for unit tests (ALRIGHT!)' ,
