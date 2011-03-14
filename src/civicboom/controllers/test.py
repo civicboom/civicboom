@@ -186,6 +186,17 @@ class TestController(BaseController):
     def frag(self, **kwargs):
         return render('/test/test_frag.mako')
 
+    @web_params_to_kwargs
+    def config_var(self, key=None, value=None):
+        """
+        Used to get and set config vars from automated tests
+        """
+        if isinstance(key, basestring):
+            if isinstance(value, basestring):
+                config[key] = value
+                log.info('set config[%s] = %s' % (key, value))
+            return '{"%s":"%s"}' % (key, config.get(key))
+            
 
     #---------------------------------------------------------------------------
     # Upgrade Account

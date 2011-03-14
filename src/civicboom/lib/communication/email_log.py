@@ -25,6 +25,7 @@ def email_log(email_to, subject, content_text, content_html):
     #log.debug("Message (content_html): %s" % content_html)
     
     if config['test_mode']:
+        #print "Email: %s - %s" %(email_to, subject)
         emails.append(Email(email_to, subject, content_text, content_html))
     
 
