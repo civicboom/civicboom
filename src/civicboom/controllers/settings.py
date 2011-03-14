@@ -419,7 +419,7 @@ class SettingsController(BaseController):
             schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the
             schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
             if user.email_unverified != None:
-                schema.chained_validators.append(formencode.validators.Empty('password_new'))
+                schema.fields['password_new'] = civicboom.lib.form_validators.base.EmptyValidator()
         
         validate_dict(data, schema, dict_to_validate_key='settings', template_error=panel_template)
         
