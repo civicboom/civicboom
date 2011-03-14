@@ -361,7 +361,7 @@ class SettingsController(BaseController):
         user_log.info("Saving general settings")
         
         # User panel if there else use general
-        panel = kwargs['panel'] if 'panel' in kwargs else 'general'
+        panel = kwargs['panel'] if 'panel' in kwargs and kwargs['panel'] != '' else 'general'
         if 'panel' in kwargs:
             del kwargs['panel']
         
