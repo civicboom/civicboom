@@ -400,7 +400,7 @@ class SettingsController(BaseController):
         
         data = { 'settings'      : kwargs,
                  'settings_meta' : dict( [ (setting['name'], setting ) for setting in settings_base.values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] ),
-                 'panels'        : dict( [ ( setting['group'].split('/')[0], setting['weight'] ) for setting in settings_base.values() ] ),
+                 'panels'        : dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title':setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] ),
                  'panel'         : panel,
         }
         
@@ -418,7 +418,8 @@ class SettingsController(BaseController):
         if 'password_new' in validators:
             schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the
             schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
-            schema.chained_validators.append(formencode.validators.Empty('password_new'))
+            if user.email_unverified != None:
+                schema.chained_validators.append(formencode.validators.Empty('password_new'))
         
         validate_dict(data, schema, dict_to_validate_key='settings', template_error=panel_template)
         
