@@ -143,9 +143,9 @@ class RegisterController(BaseController):
         Session.commit()
         
         # Automatically Follow Civicboom
-        civicboom = _get_member('civicboom')
-        if civicboom:
-            u.follow(civicboom)
+        user_to_auto_follow_on_signup = _get_member(config['setting.username_to_auto_follow_on_signup'])
+        if user_to_auto_follow_on_signup:
+            u.follow(user_to_auto_follow_on_signup)
         
         # Follow the refered_by user if they exisits
         if 'refered_by' in kwargs:
