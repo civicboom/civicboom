@@ -142,7 +142,7 @@ class RegisterController(BaseController):
         Session.add(u)
         Session.commit()
         
-        # Automatically Follow Civicboom
+        # Automatically Follow User from config
         user_to_auto_follow_on_signup = _get_member(config['setting.username_to_auto_follow_on_signup'])
         if user_to_auto_follow_on_signup:
             u.follow(user_to_auto_follow_on_signup)

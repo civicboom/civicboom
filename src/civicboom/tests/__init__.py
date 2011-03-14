@@ -66,6 +66,20 @@ class TestController(TestCase):
     # Common functions for all test
     #---------------------------------------------------------------------------
 
+    def config_var(self, key, value=None):
+        """
+        Used to get and set config vars from automated tests
+        """
+        response = self.app.get(
+            url(controller='test', action='config_var'),
+            params={
+                'key'  : key   ,
+                'value': value ,
+            },
+            status=200
+        )
+        return json.loads(response.body)[key]
+
     def log_in(self):
         self.log_in_as('unittest')
 
