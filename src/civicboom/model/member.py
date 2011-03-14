@@ -293,22 +293,26 @@ class Member(Base):
         return unfollow(self, member)
 
     def is_follower(self, member):
-        if not member:
-            return False
-        from civicboom.controllers.members import MembersController
-        member_search = MembersController().index
-        return bool(member_search(member=self, followed_by=member)['data']['list']['count'])
+        #if not member:
+        #    return False
+        #from civicboom.controllers.members import MembersController
+        #member_search = MembersController().index
+        #return bool(member_search(member=self, followed_by=member)['data']['list']['count'])
+        from civicboom.lib.database.actions import is_follower
+        return is_follower(self, member)
     
     def is_following(self, member):
-        if not member:
-            return False
-        from civicboom.controllers.members import MembersController
-        member_search = MembersController().index
-        return bool(member_search(member=self, follower_of=member)['data']['list']['count'])
+        #if not member:
+        #    return False
+        #from civicboom.controllers.members import MembersController
+        #member_search = MembersController().index
+        #return bool(member_search(member=self, follower_of=member)['data']['list']['count'])
+        from civicboom.lib.database.actions import is_follower
+        return is_follower(member, self)
 
     @property
     def url(self):
-        from pylons import url, app_globals
+        from civicboom.lib.web import url
         return url('member', id=self.username, absolute=True)
 
     @property

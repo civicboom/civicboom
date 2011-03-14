@@ -117,3 +117,34 @@ class TestSignup(TestController):
         
         # Test lowercase normalisation
         self.log_in_as('TeSt_SiGnUp', 'password')
+
+    #---------------------------------------------------------------------------
+    # Signup & autofollow user
+    #---------------------------------------------------------------------------
+    def test_signup_and_follow_default_user(self):
+        self.log_out()
+        
+        # Fake config setting
+        
+        default_auto_follow = self.config_var('setting.username_to_auto_follow_on_signup')
+        self.config_var('setting.username_to_auto_follow_on_signup', 'unittest')
+        
+        num_emails = getNumEmails()
+        
+        # Request new user email for new user
+        response = self.app.post(
+            url(controller='register', action='email', format="json"),
+            params={
+                'username': u'test_signup_follow',
+                'email'   : u'signup_autofollow@moose.com',
+            },
+        )
+        
+        # 2 emails should be generated, the welcome! and the 'new_follower' email to unittest
+        self.assertEqual(getNumEmails(), num_emails + 2)
+
+        from civicboom.lib.database.get_cached import get_member
+        get_member('test_signup_follow').delete()
+
+        # Set back the config var so tests run after this are not affected
+        self.config_var('setting.username_to_auto_follow_on_signup', default_auto_follow)

@@ -44,6 +44,28 @@ log = logging.getLogger(__name__)
 # Member Actions
 #-------------------------------------------------------------------------------
 
+def is_follower(a,b):
+    """
+    True if 'b' is following 'a'
+    True if 'b' is a follower of 'a'
+    """
+    a = get_member(a)
+    b = get_member(b)
+    #if not a:
+    #    raise action_error(_('unable to find followed'), code=404)
+    #if not b:
+    #    raise action_error(_('unable to find follower'), code=404)
+    if not a or not b:
+        return False
+
+    try:
+        if Session.query(Follow).filter(Follow.member_id == a.id).filter(Follow.follower_id == b.id).one():
+            return True
+    except:
+        pass
+    return False
+
+
 def follow(follower, followed, delay_commit=False):
     followed = get_member(followed)
     follower = get_member(follower)

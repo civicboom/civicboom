@@ -33,7 +33,7 @@
 <%def name="frag_basic(title='', icon='', frag_content=None)">
     <div class="title_bar">
         <div class="title">
-            <span class="icon16 i_${icon}"></span><span class="title_text">${title}</span>
+            <span class="icon16 i_${icon}"></span><span class="title_text">${title() if hasattr(title, '__call__') else title}</span>
         </div>
         <div class="common_actions">
         </div>
