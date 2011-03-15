@@ -202,27 +202,46 @@ class ContentsController(BaseController):
     @doc contents
     @desc REST Controller styled on the Atom Publishing Protocol
     """
-    # To properly map this controller, ensure your config/routing.py
-    # file has a resource setup:
-    #     map.resource('content', 'contents')
+
     
     @web
     def index(self, union_query=None, **kwargs):
         """
-        GET /contents: All items in the collection
+        GET /contents: Content Search
         @type list
-        @api contents 1.0 (WIP)
-
-        @param limit
-        @param offset
-        @param include_fields   "attachments" for media
-        @param sort             comma separted list of col names e.g rating,creator,-update_date (- denotes alternate sorting)
-        @param *                (see common list return controls)
-
-        @comment Allan if 'creator' not in params or exclude list then it is added by default:
-
+        @api contents 1.0 (WIP)        
+        
+        @param list
+            'all'                    (default) all content
+            'assignments_active'     assignments with a due date in the future
+            'assignments_previous'   assignments with a due date in the past
+            'assignments'            all assignments reguardless of due date
+            'drafts'                 drafts
+            'articles'               articles that do not have a parent
+            'responses'              articles that have a parent
+        @param creator      username or user_id of creator
+        @param term         text to search for (searchs title and body text)
+        @param location     TODO
+        @param type
+            'article'
+            'assignment'
+            'draft'
+        @param response_to  content_id of parent
+        @param boomed_by    username or user_id of booming user
+        @param private      if set and creator==logged_in_persona both public and private content will be returned
+        @param sort         (default) 'update_date' (currently no other sorting fields are implemented)
+        @param * (see common list return controls)
+        
         @return 200      list ok
-                list     array of content objects
+            list list of content objects
+        
+        @example http://new.civicboom.com/contents.json?creator=unittest&limit=2
+        @example http://new.civicboom.com/contents.json?list=assignments_active&limit=2
+        @example http://new.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
+        
+        @comment AllanC use 'include_fields=attachments' for media
+        @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
+        
         """
         # url('contents')
         
