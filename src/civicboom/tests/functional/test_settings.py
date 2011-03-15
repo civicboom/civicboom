@@ -205,7 +205,7 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'description'    : u'testingtestingtesting',
+                'description'    : u'This is a new test description',
             },
             status=200
         )
@@ -231,7 +231,7 @@ class TestSettingsController(TestController):
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'location_home_name': 'blah',
-                'location_home'    : 'rar biscuits',
+                'location_home'    : 'biscuits',
             },
             status=400
         )
