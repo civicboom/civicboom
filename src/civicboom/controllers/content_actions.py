@@ -164,7 +164,10 @@ class ContentActionsController(BaseController):
             user_log.debug("Accepted Content #%d" % int(id))
             # A convenience feature for flow of new users. If they are following nobody (they are probably a new user), then auto follow the assignment creator
             if c.logged_in_persona.num_following <= 2:
-                c.logged_in_persona.follow(assignment.creator)
+                try:
+                    c.logged_in_persona.follow(assignment.creator)
+                except:
+                    pass #we dont care if they are already following this user.
             return action_ok(_("_assignment accepted"))
         raise action_error(_('Unable to accept _assignment'))
 
