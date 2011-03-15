@@ -183,7 +183,8 @@ def sqlalchemy_content_query(include_private=False, **kwargs):
     if 'tags' in kwargs.get('include_fields',[]):
         results = results.options(joinedload('tags'))
     for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
-        results = search_filters[key](results, kwargs[key])
+        if kwargs[key]:
+            results = search_filters[key](results, kwargs[key])
     if 'list' in kwargs:
         if kwargs['list'] in list_filters:
             results = list_filters[kwargs['list']](results)
@@ -202,25 +203,46 @@ class ContentsController(BaseController):
     @doc contents
     @desc REST Controller styled on the Atom Publishing Protocol
     """
-    # To properly map this controller, ensure your config/routing.py
-    # file has a resource setup:
-    #     map.resource('content', 'contents')
+
     
     @web
     def index(self, union_query=None, **kwargs):
         """
-        GET /contents: All items in the collection
-
-        @api contents 1.0 (WIP)
-
-        @param limit
-        @param offset
-        @param include_fields   "attachments" for media
-        @param sort             comma separted list of col names e.g rating,creator,-update_date (- denotes alternate sorting)
-        @param *                (see common list return controls)
-
+        GET /contents: Content Search
+        @type list
+        @api contents 1.0 (WIP)        
+        
+        @param list
+            'all'                    (default) all content
+            'assignments_active'     assignments with a due date in the future
+            'assignments_previous'   assignments with a due date in the past
+            'assignments'            all assignments reguardless of due date
+            'drafts'                 drafts
+            'articles'               articles that do not have a parent
+            'responses'              articles that have a parent
+        @param creator      username or user_id of creator
+        @param term         text to search for (searchs title and body text)
+        @param location     TODO
+        @param type
+            'article'
+            'assignment'
+            'draft'
+        @param response_to  content_id of parent
+        @param boomed_by    username or user_id of booming user
+        @param private      if set and creator==logged_in_persona both public and private content will be returned
+        @param sort         (default) 'update_date' (currently no other sorting fields are implemented)
+        @param * (see common list return controls)
+        
         @return 200      list ok
-                list     array of content objects
+            list list of content objects
+        
+        @example http://new.civicboom.com/contents.json?creator=unittest&limit=2
+        @example http://new.civicboom.com/contents.json?list=assignments_active&limit=2
+        @example http://new.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
+        
+        @comment AllanC use 'include_fields=attachments' for media
+        @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
+        
         """
         # url('contents')
         
@@ -238,7 +260,9 @@ class ContentsController(BaseController):
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
             kwargs['exclude_fields'] = ""
-        if 'creator' not in kwargs:
+            
+        # Defaults
+        if 'creator' not in kwargs and 'creator' not in kwargs['exclude_fields']:
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
         
@@ -259,7 +283,7 @@ class ContentsController(BaseController):
         # Limit & Offset
         kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
         kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
-        results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
+        results = results.limit(kwargs['limit']).offset(kwargs['offset'])
         
         # Return search results
         return action_ok(
@@ -296,7 +320,7 @@ class ContentsController(BaseController):
     def create(self, **kwargs):
         """
         POST /contents: Create a new item
-
+        @type action
         @api contents 1.0 (WIP)
 
         @param type
@@ -370,7 +394,7 @@ class ContentsController(BaseController):
     def update(self, id, **kwargs):
         """
         PUT /contents/{id}: Update an existing item
-
+        @type action
         @api contents 1.0 (WIP)
 
         @return 200   success
@@ -607,7 +631,7 @@ class ContentsController(BaseController):
     def show(self, id, **kwargs):
         """
         GET /content/{id}: Show a specific item
-        
+        @type object
         @api contents 1.0 (WIP)
         
         @param * (see common list return controls)

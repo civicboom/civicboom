@@ -186,10 +186,12 @@ def copy_user_settings(settings_meta, user, user_type):
 
 class SettingsController(BaseController):
     """
-    REST controller for Settings
+    @title Sesttings
+    @doc settings
+    @desc REST controller for Settings
     
-    http://wiki.pylonshq.com/display/pylonscookbook/How+map.resource+enables+controllers+as+services
-    
+    AllanC- unneed?
+    http://wiki.pylonshq.com/display/pylonscookbook/How+map.resource+enables+controllers+as+services    
     needs in config/routing.py -> map.resource('setting', 'settings')
     """
     

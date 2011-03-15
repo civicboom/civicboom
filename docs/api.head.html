@@ -2,32 +2,48 @@
 <html>
     <head>
         <title>Civicboom API docs</title>
+        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssreset/reset-min.css">
         <style>
+HTML {
+    font-family: sans-serif;
+}
+H1, H2, H3, H4, H5, H6 {
+    font-weight: bold;
+    margin: 0;
+}
+P {
+    margin: 0.5em;
+}
+LI {margin-left: 2em;}
+UL LI    {list-style: disc; }
+UL LI LI {list-style: circle; }
+OL LI    {list-style: decimal;}
 H1 { /* document title */
+    font-size: 140%;
     text-align: center;
-    margin: 0px;
-    padding: 16px;
+
+    padding: 1em;
 }
 ARTICLE {
     border: 1px solid grey;
-    margin: 32px;
+    margin: 2em;
 }
 H2 { /* module title */
-    margin: 0px;
-    padding: 4px;
+    font-size: 120%;
+    padding: 0.5em;
     border-bottom: 1px solid grey;
     background: #AAF;
 }
 SECTION {
     border: 1px solid grey;
-    margin: 32px;
+    margin: 2em;
 }
 SECTION > DIV, ARTICLE > DIV {
-    padding: 16px;
+    padding: 1em;
 }
 H3 { /* function title */
-    margin: 0px;
-    padding: 4px;
+    font-size: 110%;
+    padding: 0.5em;
     border-bottom: 1px solid grey;
     background: #AAF;
 }
@@ -35,7 +51,13 @@ H3 SPAN {
     float: right;
 }
 H4 { /* function part */
-    margin: 0px;
+    padding: 0.25em 0.5em;
+    border-top   : 1px solid grey;
+    border-bottom: 1px solid grey;
+    background: #DDF;
+    margin-top   : 1em;
+    margin-bottom: 0.5em;
+    
 }
 H4:first-child {
 }
