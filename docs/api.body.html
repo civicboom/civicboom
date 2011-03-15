@@ -1,113 +1,239 @@
 <article>
 <h2>Things common to all requests:</h2>
 
+
 <section>
 <h3>Notes about this document</h3>
-<ul>
-<li>"WIP" = "Work in Progress; first attempt to get something that works at all"
-<li>"Draft" = "It seems to work, waiting for the whole team + consultants to say Yay"
-<li>"Untested" = "automated tests are incomplete"
-<li>Just a number = "Ready to be used -- team + consultants like the design and it is tested"
-</ul>
+<div>
+    <h4>Implementaton Indicators</h4>
+    <ul>
+    <li>"WIP" = "Work in Progress; first attempt to get something that works at all"
+    <li>"Draft" = "It seems to work, waiting for the whole team + consultants to say Yay"
+    <li>"Untested" = "automated tests are incomplete"
+    <li>Just a number = "Ready to be used -- team + consultants like the design and it is tested"
+    </ul>
+    <h4>Terminology Note</h4>
+    <p>The API is abstracted from the presentation of the Civicboom website.
+       There may be some discrepancys e.g 'groups' in the API are refered to as 'Hubs' on the website.
+       The API terminology is fixed. The website frontend terminology is subject to change.</p>
+</div>
 </section>
+
 
 <section>
 <h3><span>(1.0 WIP)</span>Transport</h3>
-<ul>
-<li>All content-modifying actions (POST, PUT, DELETE) require an _authentication_token
-    argument; since this is universal, it isn't mentioned in the docs for each action
-    separately. The token can be found by calling /account/signin.json / xml
-<li>Cookies are used to keep track of sessions
-<li>PUT and DELETE can be emulated with POST, having the form variable "_method" set
-    to PUT or DELETE respectively
-<li>HTTP status codes are used:
+<div>
     <ul>
-      <li>200 - generic success
-      <li>201 - content created
-      <li>400 - generic user error (commonly missing required data when submitting a form)
-      <li>403 - permission denied
-      <li>404 - content not found
-      <li>500 - generic server error
-      <li>501 - not implemented
-      <li>502 - back-end server is down for maintenance
+    <li>All content-modifying actions (POST, PUT, DELETE) require an _authentication_token
+        argument; since this is universal, it isn't mentioned in the docs for each action
+        separately. The token can be found by calling /account/signin.json or /account/signin.xml
+    <li>Cookies are used to keep track of logged in sessions.
+        Your client may be sent additional cookies while using the API.
+        These should be stored and retreived as normal cookies.
+    <li>PUT and DELETE can be emulated with POST, having the form variable "_method" set
+        to PUT or DELETE respectively
+    <li>HTTP status codes are used:
+        <ul>
+          <li>200 - generic success
+          <li>201 - content created
+          <li>400 - generic user error (commonly missing required data when submitting a form)
+          <li>403 - permission denied
+          <li>404 - content/member not found
+          <li>500 - generic server error
+          <li>501 - not implemented
+          <li>502 - back-end server is down for maintenance
+        </ul>
     </ul>
-</ul>
+</div>
 </section>
+
+
+<section>
+<h3><span>(1.0 WIP)</span>Object types overview</h3>
+<div>
+    <p>The Civicboom API has 3 core object types. An overview is provided here but
+       the details of these types are given in detail with the call defenitions.
+    
+    TODO:-auto list fields in model? default/full-
+    
+    <h4>Content</h4>
+    
+    article
+    assignment
+    
+    <h4>Member</h4>
+    user
+    group
+    
+    <h4>Message</h4>
+</div>
+</section>
+
 
 <section>
 <h3><span>(1.0 WIP)</span>Data formats</h3>
-<p>Formats can be added to the end of the URL; for instance while /messages/42
-will show you message #42 in a browser-friendly way (HTML), a standalone app
-may prefer /messages/42.json or /messages/42.xml
-
-<p>JSON data format:
-<pre>
-{
-    "status": "ok" / "error" / "invalid",                  (required)
-    "message": "string to show in app status bar / popup", (required; can be null if status=ok)
-    "data": {                                              (required; blank dictionary if there is no data)
-        "foo": "bar", # function-specific data
-        "baz": "qux",
-        ...
-    }
-}
-</pre>
-
-<p>JSON list format:
-<pre>
-{
-    "status": "ok",
-    "message": null,
-    "data": {
-        "list": {
-            "items": [
-                {...},
-                {...},
-                {...}
-            ],
-            "type": "content",
-            "limit": 20,
-            "offset": 0,
-            "count": 3
+<div>
+    <p>Formats can be added to the end of the URL; for instance while /contents/42
+    will show you content #42 in a browser-friendly way (HTML), a standalone app
+    may prefer /contentss/42.json or /contents/42.xml
+    
+    <p>Most examples in this documentation will be given in JSON format.
+    
+    <p>Format list:
+    <ul>
+        <li>JSON
+        <li>XML
+        <li>Frag
+        <li>RSS
+    </ul>
+    
+    <h4>JSON</h4>
+    <p>JSON data format:
+    <pre>
+    {
+        "status" : "ok" / "error" / "invalid",                 (required)
+        "message": "string to show in app status bar / popup", (required; can be null if status=ok)
+        "data"   : {                                           (required; blank dictionary if there is no data)
+            "foo": "bar", # function-specific data
+            "baz": "qux",
+            ...
         }
     }
-}
-</pre>
+    </pre>
+    
+    <p>JSON list format:
+    <pre>
+    {
+        "status" : "ok",
+        "message": null,
+        "data"   : {
+            "list": {
+                "items": [
+                    {...},
+                    {...},
+                    {...}
+                ],
+                "type"  : "content" / "member" / "message",
+                "limit" : 20,
+                "offset":  0,
+                "count" :  3
+            }
+        }
+    }
+    </pre>
+    
+    <h4>XML</h4>
+    <p>The same as JSON, just in XML.</p>
+    
+    <h4>Frag</h4>
+    <p>Fragments are chunks of HTML data with marked up with class's for use with
+       injecting content directly into exisiting webpages. The developer can then
+       style this injected HTML simply with standard CSS rules
+    <p>WIP NOTE: Currently .frag returns HTML specific to the Civiciboom site and is
+       not generic enough for mainstream use. Work is currently underway to make the
+       .frag a generic tool for developers. (tentativly May 2011)
+    
+    <h4>RSS</h4>
+    <p>Objects and Lists can be returned as RSS feeds
+    <p>Some of the fields are not relevenet for an RSS output.
+       The list is fields returned in the RSS ofen a subset of the JSON/XML output.
+    <p>It is part of the RSS standard that clients can sort items by date.
+       Some objects may return lists of items that are not in date order.
+    <p>Hint: Common use of RSS 'content' lists:
+       By default media attachments are not included in the RSS return
+       but can be enabled by including the paramiter 'include_fields=attachments'</p>
+</div>
+</section>
 
-<p>XML is pretty much the same, just in XML</p>
+
+<section>
+<h3><span>(1.0 WIP)</span>List Controls</h3>
+<div>
+    <p>API calls masked as 'list' will return lists of objects.
+       These lists can be customised by passing common control parmiters.
+    <ul>
+        <li>
+            <p>list_type: default='default'
+            <p>Permitted Values
+            <ul>
+            <li>'empty' = no fields (to be used with include_fields to build a custom object)
+            <li>'default' = object fields (usually used for list as no links to other objects are present)
+            <li>'full' = object + links (links to sub objects or lists are followed e.g a contents creator field will contain a sub object member).
+                 full field lists often include fields that are expensive to process and are normally unnessisary for summary lists.
+            </ul>
+        
+        <li>
+            <p>'exclude_fields': ommit fields from the return object default=''
+            <p>e.g "exclude_fields=avatar_url,location_home" will ommit the fields avatar_url and location_home form the returned list.
+        
+        <li>
+            <p>'include_fields': fields to include in the return object deafult=''
+            <p>e.g 'include_fields=followers,username,name,webpage,content_public'.
+            <p>e.g 'include_fields=attachments'
+            <p>Often used in conjection with 'list_type=empty' to build a custom return object.
+               Often used to add addtional linked fields such as 
+        
+        <li>
+            <p>limit: limit items returned default='20'
+            <p>e.g 10 - only return 10 items max
+            <p>e.g  0 - return all items with no maximum limit
+        <li>
+            <p>offset: define where in the list to return default='0'
+            <p>e.g 30 - start the listing at item 30
+    </ul>
+</div>
+</section>
+
+
+<section>
+<h3 id="validation"><span>(1.0 WIP)</span>Validation</h3>
+<div>
+    <p>If an invalid request is made the following structure will be returned.
+    <pre>
+    {
+        "status" : "invalid",
+        "message": "description of invalid state", 
+        "data"   : {
+            "foo": "bar",
+            "baz": "qux",
+            ...
+            "invalid": {
+                "foo": "description of validation error"
+            }
+        }
+    }
+    </pre>
+    <p>Invalid feilds are listed in the 'invalid' dictonary with a text description of why the validation failed</p>
+
+</div>
 </section>
 
 <section>
-<h3>Common List Return Controls</h3>
-<p>Calls to objects/ or objects/id will return an object or a list of objects</p>
-<p>The fields returned by these calls can be customised by passing the following paramiters:</p>
-<ul>
-    <li>
-        <p>list_type: default='default'</p>
-        <p>Permitted Values</p>
-        <ul>
-        <li>'empty' = no fields (to be used with include_fields to build a custom object)</li>
-        <li>'default' = object fields (usually used for list as no links to other objects are present)</li>
-        <li>'full' = object + links (links to sub objects or lists are followed e.g a members content_public field will contain a list of published content sub objects)</li>
-        <li>'full+actions' = object + links + actions(the current user can perform on this object)</li>
-        </ul>
-    </li>
-    <li>
-        <p>'exclude_fields' - ommit fields from the return object</p>
-        <p>e.g "exclude_fields=avatar_url,location_home" will ommit the fields avatar_url and location_home form the returned list.</p>
-    </li>
-    <li>
-        <p>'include_fields' - fields to include in the return object</p>
-        <p>e.g "include_field=followers,username,name,webpage,content_public".</p>
-        <p>Often used in conjection with list_type=empty to build a custom return object.</p>
-    </li>
-</ul>
-
+<h3><span>(1.0 WIP)</span>Concept of 'me'</h3>
+<div>
+    <p>Anywhere a username or user_id are present in the API, you may submit the value 'me' to refer to the currently logged in user e.g:
+    <ul>
+        <li>members/me/content
+        <li>members?followed_by=me
+        <li>contents?boomed_by=me
+    </ul>
+</div>
 </section>
 
 <section>
-<h3>Validation</h3>
-<p>placeholder</p>
+<h3><span>(1.0 WIP)</span>Global Settings</h3>
+<div>
+    <h4>Language</h4>
+    <p>Lanaguages can be set using standard 2 letter codes
+    <p>Supported langauges: en</p>
+    <p>Language can be set (in order of precidence) by:
+    <ol>
+        <li>Sending the 'lang' param with any GET or POST request
+        <li>Calling 'session set lang' (to be implemented)
+        <li>Using the 'settings' controller to set the 'lang' property
+    </ol>
+</div>
 </section>
+
 
 </article>

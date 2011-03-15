@@ -211,7 +211,7 @@ class ContentsController(BaseController):
     def index(self, union_query=None, **kwargs):
         """
         GET /contents: All items in the collection
-
+        @type list
         @api contents 1.0 (WIP)
 
         @param limit
@@ -219,6 +219,8 @@ class ContentsController(BaseController):
         @param include_fields   "attachments" for media
         @param sort             comma separted list of col names e.g rating,creator,-update_date (- denotes alternate sorting)
         @param *                (see common list return controls)
+
+        @comment Allan if 'creator' not in params or exclude list then it is added by default:
 
         @return 200      list ok
                 list     array of content objects
@@ -239,7 +241,9 @@ class ContentsController(BaseController):
             kwargs['include_fields'] = ""
         if 'exclude_fields' not in kwargs:
             kwargs['exclude_fields'] = ""
-        if 'creator' not in kwargs:
+            
+        # Defaults
+        if 'creator' not in kwargs and 'creator' not in kwargs['exclude_fields']:
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
         
@@ -260,7 +264,7 @@ class ContentsController(BaseController):
         # Limit & Offset
         kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
         kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
-        results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
+        results = results.limit(kwargs['limit']).offset(kwargs['offset'])
         
         # Return search results
         return action_ok(
@@ -297,7 +301,7 @@ class ContentsController(BaseController):
     def create(self, **kwargs):
         """
         POST /contents: Create a new item
-
+        @type action
         @api contents 1.0 (WIP)
 
         @param type
@@ -371,7 +375,7 @@ class ContentsController(BaseController):
     def update(self, id, **kwargs):
         """
         PUT /contents/{id}: Update an existing item
-
+        @type action
         @api contents 1.0 (WIP)
 
         @return 200   success
@@ -608,7 +612,7 @@ class ContentsController(BaseController):
     def show(self, id, **kwargs):
         """
         GET /content/{id}: Show a specific item
-        
+        @type object
         @api contents 1.0 (WIP)
         
         @param * (see common list return controls)
