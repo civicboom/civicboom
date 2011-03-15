@@ -148,9 +148,11 @@ def build_meta(user, user_type, panel):
                     settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
     data = dict( settings_meta=settings_meta,
                  settings_hints=settings_hints,
-                 panels=panels
+                 panels=panels,
+                 panel=panel
     )
     return data
+
 def find_template(panel, user_type):
     try:
         # panel_user_type?
@@ -165,6 +167,21 @@ def find_template(panel, user_type):
             # default to generic
             template = 'generic'
     return template
+
+def copy_user_settings(settings_meta, user, user_type):
+    settings = {}
+    for setting_name in settings_meta.keys():
+        setting_name_repl = setting_name.replace('_read_only', '')
+        if settings_meta[setting_name_repl].get('who', user_type) == user_type:
+            if hasattr(user, setting_name_repl):
+                v = getattr(user, setting_name_repl)
+            else:
+                v = user.config.get(setting_name_repl, settings_meta[setting_name].get('default'))
+            if isinstance(v, basestring): # ugly hack
+                settings[setting_name_repl] = v
+            else:
+                settings[setting_name_repl] = location_to_string(v)
+    return settings
 #---------------------------------------------------------------------------
 # REST Controller
 #---------------------------------------------------------------------------
@@ -240,20 +257,9 @@ class SettingsController(BaseController):
                 template="settings/panel/link_janrain",
             )
         
-        settings       = {}
-        settings_meta = data['settings_meta']
+        settings_meta  = data['settings_meta']
         # Populate settings dictionary for this user
-        for setting_name in settings_meta.keys():
-            setting_name_repl = setting_name.replace('_read_only', '')
-            if settings_meta[setting_name_repl].get('who', user_type) == user_type:
-                if hasattr(user, setting_name_repl):
-                    v = getattr(user, setting_name_repl)
-                else:
-                    v = user.config.get(setting_name_repl, settings_meta[setting_name].get('default'))
-                if isinstance(v, basestring): # ugly hack
-                    settings[setting_name_repl] = v
-                else:
-                    settings[setting_name_repl] = location_to_string(v)
+        settings       = copy_user_settings(settings_meta, user, user_type)
                     
         data['settings'] = settings
         
@@ -371,7 +377,9 @@ class SettingsController(BaseController):
         
         data = build_meta(user, user_type, panel)
         
-        data['settings'] = kwargs
+        data['settings'] = copy_user_settings(data['settings_meta'], user, user_type)
+        
+        data['settings'].update(kwargs)
         
         settings = kwargs
         

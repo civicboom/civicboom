@@ -18,8 +18,8 @@ class SettingActionsController(SettingsController):
     Settings Actions and lists relating to an item of content
     
     This reflects calls back to SettingsController.panel to allow for:
-    /settings/me/location
-    /settings/me/general
+    /settings/me/location  equiv of /settings/me/panel?panel=location
+    /settings/me/general   equiv of /settings/me/panel?panel=general
     etc.
     """
     def __getattribute__(self,name):
