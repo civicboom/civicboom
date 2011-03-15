@@ -184,13 +184,16 @@ class SettingsController(BaseController):
         # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
         raise action_error(_('operation not supported (yet)'), code=501)
 
-    def show(self, id):
+    def show(self, id, **kwargs):
         """GET /id: Show a specific item."""
-        return self.panel(id=id) #self.edit(id)
+        return self.panel(id=id, **kwargs) #self.edit(id)
 
     @web
     @authorize
-    def panel(self, id='me', panel='general'):
+    def panel(self, id='me', panel='general', **kwargs):
+#        print url('settings',action='show',id="me", panel="generic")
+        if panel=="general" and not c.action in ("panel", "show", "index", "edit"):
+            panel=c.action
         username = id
         if not username or username == 'me':
              username = c.logged_in_persona.username
@@ -242,7 +245,7 @@ class SettingsController(BaseController):
                                                  '</ol>' + _('To verify your email: please check your email account (%s) and follow instructions.') % user.email_unverified + '<br />' + \
                                                  _('OR enter new email address below and check your email.')
                     #_('You have an unverified email address (%s), please check your email. If this address is incorrect please update and save, then check your email.') % user.email_unverified
-                if setting_name == 'password_current' and not 'password' in [login.type for login in user.login_details]:
+                if setting_name == 'password_current' and 'password_current' in settings_meta and not 'password' in [login.type for login in user.login_details]:
                     del settings_meta[setting_name]
                     settings_hints['password_new'] = _("You have signed up via Twitter, Facebook, LinkedIn, etc. In order to login to our mobile app, please create a Civicboom password here. (You will use this password and your username to login to the app.)")
                 if 'password' in setting_name and user.email_unverified != None:
@@ -384,9 +387,9 @@ class SettingsController(BaseController):
         panel_template = ('settings/panel/'+template).encode('ascii','ignore')
         
         if c.action=='create' and c.controller=='groups' and c.format=='html':
-            panel_redirect = ('/members/'+id).encode('ascii', 'ignore')
+            panel_redirect = url('member', id=id)
         else:
-            panel_redirect = ('/settings/'+id+('/'+panel if panel else '')).encode('ascii','ignore')
+            panel_redirect = url('setting', id=id, panel=panel)
             
         # If no new password set disregard (delete) all password fields!
         if kwargs.get('password_new') == '':
@@ -398,8 +401,33 @@ class SettingsController(BaseController):
         if kwargs.get('avatar') == '':
             del kwargs['avatar']
         
+        settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
+        
+        settings_hints = {}
+        
+        for setting_name in settings_meta.keys():
+            if settings_meta[setting_name].get('who', user_type) == user_type:
+                if setting_name == 'email' and user.email_unverified != None:
+                    settings_hints['email'] = _( 'You have an unverified email address. This could be for two reasons:') + '<ol>' + \
+                                                 '<li>' + _('You have signed up to Civicboom via Twitter, Facebook, LinkedIn, etc.') + '</li>' + \
+                                                 '<li>' + _('You have changed your email address and not verified it.') + '</li>' + \
+                                                 '</ol>' + _('To verify your email: please check your email account (%s) and follow instructions.') % user.email_unverified + '<br />' + \
+                                                 _('OR enter new email address below and check your email.')
+                    #_('You have an unverified email address (%s), please check your email. If this address is incorrect please update and save, then check your email.') % user.email_unverified
+                if setting_name == 'password_current' and 'password_current' in settings_meta and not 'password' in [login.type for login in user.login_details]:
+                    del settings_meta[setting_name]
+                    settings_hints['password_new'] = _("You have signed up via Twitter, Facebook, LinkedIn, etc. In order to login to our mobile app, please create a Civicboom password here. (You will use this password and your username to login to the app.)")
+                if 'password' in setting_name and user.email_unverified != None:
+                    if not '_readonly' in settings_meta[setting_name]['type']:
+                        settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
+                    if not 'password' in [login.type for login in user.login_details]:
+                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                    else:
+                        settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+        
         data = { 'settings'      : kwargs,
-                 'settings_meta' : dict( [ (setting['name'], setting ) for setting in settings_base.values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] ),
+                 'settings_meta' : settings_meta,
+                 'settings_hints': settings_hints,
                  'panels'        : dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title':setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] ),
                  'panel'         : panel,
         }
@@ -416,7 +444,8 @@ class SettingsController(BaseController):
         schema = build_schema(**validators)
         # Add any additional validators for custom fields
         if 'password_new' in validators:
-            schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the
+            if 'password' in [login.type for login in user.login_details]:
+                schema.fields['password_current'] = settings_validators['password_current'] # This is never added in the
             schema.chained_validators.append(formencode.validators.FieldsMatch('password_new', 'password_new_confirm'))
             if user.email_unverified != None:
                 schema.fields['password_new'] = civicboom.lib.form_validators.base.EmptyValidator()
@@ -482,6 +511,8 @@ class SettingsController(BaseController):
         # Save validated Sets: Needs cleaning up!
         for setting_set in [(setting_name, settings_base[setting_name].get('value','').split(',')) for setting_name in settings_base.keys() if settings_base[setting_name].get('type') == 'set']:
             setting_name = setting_set[0]
+            
+            
             if setting_name in settings:
                 if validators.get(setting_name):
                     if hasattr(user, setting_name):

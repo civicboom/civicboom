@@ -30,7 +30,6 @@
         
         settings_hints = d.get('settings_hints') or {}
     %>
-    ##% for group_name in setting_groups.keys():
     % for group_name in setting_group_order:
         <div style="margin: 0;">
      	<div class="setting_group_name setting_pad">${group_name.capitalize()}</div>
