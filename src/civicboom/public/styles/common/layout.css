@@ -50,6 +50,33 @@ OL OL LI {
 }
 
 
+INPUT[type="search"] {
+	-webkit-appearance: none; /* chrome thinks it knows best when <input type="search"> */
+}
+INPUT[type="text"],
+INPUT[type="search"],
+INPUT[type="email"],
+INPUT[type="password"],
+SELECT,
+TEXTAREA {
+	border: 1px solid #2a3a87;
+
+	border-radius        : 0.2em;
+	-moz-border-radius   : 0.2em;
+	-webkit-border-radius: 0.2em;
+
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+HTML INPUT, HTML TEXTAREA {
+	padding: 2px 5px;
+}
+HTML SELECT {
+	padding: 1px 5px;
+}
+
+
 /*----------------------------------------------------------------------------*/
 /* Table - Zebra Colours                                                      */
 /*----------------------------------------------------------------------------*/

@@ -20,9 +20,6 @@ BODY.c-account.a-signin FORM TABLE,
 BODY.c-account.a-signin FORM TABLE TBODY {
 	width: 100%;
 }
-BODY.c-account.a-signin FORM TD INPUT {
-	border-width: 1px;
-}
 
 
 /* --- stardard full page version --- */
