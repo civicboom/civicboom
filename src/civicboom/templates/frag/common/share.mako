@@ -15,10 +15,7 @@
 ## AddThis
 ##------------------------------------------------------------------------------
 ## http://www.addthis.com/help/api-overview - registered to admin@civicboom.com
-<%def name="AddThis(*args, **kwargs)">
-    <%
-    area_id = h.uniqueish_id("addthis_tb")
-    %>
+<%def name="AddThisScript(*args, **kwargs)">
     <!-- AddThis Button BEGIN -->
     <script type="text/javascript">
       var addthis_share = {
@@ -30,6 +27,11 @@
       };
     </script>
     <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
+</%def>
+<%def name="AddThis(*args, **kwargs)">
+    <%
+    area_id = h.uniqueish_id("addthis_tb")
+    %>
     <div class="addthis_toolbox addthis_cb_style ${area_id}" style="display: inline-block;"
         % for k,v in kwargs.iteritems():
             addthis:${k}="${v.replace('"','')}"

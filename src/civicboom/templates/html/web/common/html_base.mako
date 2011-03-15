@@ -67,6 +67,9 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 	<script src="${h.wh_url("public", "javascript/_combined.head.js")}"></script>
 % endif
 
+<%namespace name="share" file="/frag/common/share.mako" />
+
+${share.AddThisScript()}
 
 ##----------------------------------------------------------------------------
 ## Google Analitics (async setup, see scripts_end for more)

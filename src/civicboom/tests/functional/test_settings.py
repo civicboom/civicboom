@@ -8,12 +8,44 @@ class TestSettingsController(TestController):
 #    def test_index(self):
 #        self.log_in_as('unittest')
 #        response = self.app.get(url('settings'))
+
+    def test_invalid_user(self):
+        self.log_in_as('unittest')
+        # Fail validation
+        response = self.app.post(
+            url('setting',id="thisuserdoesnotexist"),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'panel'               : u'general',
+                'password_current'    : u'password',
+                'password_new'        : u'password1',
+                'password_new_confirm': u'password2', # Passwords dont match
+            },
+            status=404
+        )
+        
+    def test_invalid_user(self):
+        self.log_in_as('unittest')
+        # Fail validation
+        response = self.app.post(
+            url('setting',id="unitfriend"),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'panel'               : u'general',
+                'password_current'    : u'password',
+                'password_new'        : u'password1',
+                'password_new_confirm': u'password2', # Passwords dont match
+            },
+            status=403
+        )
         
     def test_password_change(self):
         self.log_in_as('unittest')
         # Fail validation
         response = self.app.post(
-            '/settings/me.frag', #GregM: WTF!?!?!?!?! Why does url('settings', id='me') not work??? (Would like a white padded room soon pls?!)
+            url('setting',id="me"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -24,11 +56,10 @@ class TestSettingsController(TestController):
             },
             status=400
         )
-        
         self.assertIn('Fields do not match', response)
         #Change password
         response = self.app.post(
-            url('settings', id='me'),
+            url('setting',id="me"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -41,7 +72,7 @@ class TestSettingsController(TestController):
         self.log_in_as('unittest', password='password2')
         # Change password back!
         response = self.app.post(
-            url('settings', id='me'),
+            url('setting',id="me"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -64,7 +95,7 @@ class TestSettingsController(TestController):
         
         #Change email address no AT
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -90,7 +121,7 @@ class TestSettingsController(TestController):
 #        BROKEN: allows blank email addresses
         #Change email address invalid blank
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -102,7 +133,7 @@ class TestSettingsController(TestController):
         
         #Change email address
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -127,7 +158,7 @@ class TestSettingsController(TestController):
         
         #Change email back
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -152,7 +183,7 @@ class TestSettingsController(TestController):
         self.png1x1 = b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAAXNSR0IArs4c6QAAAApJREFUCNdj+AcAAQAA/8I+2MAAAAAASUVORK5CYII=')
         self.log_in_as('unittest')
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -170,11 +201,11 @@ class TestSettingsController(TestController):
         self.assertTrue(self.old_description)
         #Change
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'description'    : u'testingtestingtesting',
+                'description'    : u'This is a new test description',
             },
             status=200
         )
@@ -184,7 +215,7 @@ class TestSettingsController(TestController):
         self.assertNotEqual(self.old_description, response_json['data']['settings']['description'])
         #Change
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -195,12 +226,12 @@ class TestSettingsController(TestController):
 
     def test_invalid_location(self):
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'location_home_name': 'blah',
-                'location_home'    : 'rar biscuits',
+                'location_home'    : 'biscuits',
             },
             status=400
         )
@@ -215,7 +246,7 @@ class TestSettingsController(TestController):
         self.assertTrue(self.old_location)
         #Change
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -230,7 +261,7 @@ class TestSettingsController(TestController):
         self.assertNotEqual(self.old_location, response_json['data']['settings']['location_home'])
         #Change
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -247,7 +278,7 @@ class TestSettingsController(TestController):
         self.old_name = response_json['data']['settings']['name']
         #Change
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -261,7 +292,7 @@ class TestSettingsController(TestController):
         self.assertNotEqual(self.old_name, response_json['data']['settings']['name'])
         #Change
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -278,7 +309,7 @@ class TestSettingsController(TestController):
         self.old_website = response_json['data']['settings']['website']
         #Change incorrect url
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -290,7 +321,7 @@ class TestSettingsController(TestController):
         
         #Change
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -305,7 +336,7 @@ class TestSettingsController(TestController):
         self.assertNotEqual(self.old_website, response_json['data']['settings']['website'])
         #Change
         response = self.app.post(
-            '/settings/me.frag',
+            url('setting',id="me",format="frag"),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
