@@ -183,7 +183,8 @@ def sqlalchemy_content_query(include_private=False, **kwargs):
     if 'tags' in kwargs.get('include_fields',[]):
         results = results.options(joinedload('tags'))
     for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
-        results = search_filters[key](results, kwargs[key])
+        if kwargs[key]:
+            results = search_filters[key](results, kwargs[key])
     if 'list' in kwargs:
         if kwargs['list'] in list_filters:
             results = list_filters[kwargs['list']](results)
