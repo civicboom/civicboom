@@ -640,6 +640,8 @@ class ContentsController(BaseController):
                 content  content object
         @return 403      permission denied
         @return 404      content not found
+        
+        @example http://new.civicboom.com/contents/1.json
         """
         # url('content', id=ID)
         
