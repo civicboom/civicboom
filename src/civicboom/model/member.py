@@ -284,13 +284,13 @@ class Member(Base):
         for follower in self.followers:
             follower.send_message(m, delay_commit)
 
-    def follow(self, member):
+    def follow(self, member, delay_commit=False):
         from civicboom.lib.database.actions import follow
-        return follow(self, member)
+        return follow(self, member, delay_commit=delay_commit)
         
-    def unfollow(self, member):
+    def unfollow(self, member, delay_commit=False):
         from civicboom.lib.database.actions import unfollow
-        return unfollow(self, member)
+        return unfollow(self, member, delay_commit=delay_commit)
 
     def is_follower(self, member):
         #if not member:
