@@ -9,6 +9,9 @@ BODY.c-account.a-signin .signin {
 BODY.c-account.a-signin TABLE {
 	margin: auto;
 }
+BODY.c-account.a-signin TABLE TD {
+	vertical-align: middle;
+}
 BODY.c-account.a-signin FORM {
 	background: #f6f6f6;
 	border: 1px solid #ddd;
