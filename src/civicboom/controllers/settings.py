@@ -119,31 +119,52 @@ for setting in settings_base.values():
     else:
         settings_validators[setting['name']] = type_validators.get(setting['type'])
 
-# DEPRICATED: Automatically generated above!
-
-#settings_validators = dict(
-#    name        = formencode.validators.UnicodeString(),
-#    description = formencode.validators.UnicodeString(),
-#    website     = formencode.validators.URL(),
-#    
-#    email       = civicboom.lib.form_validators.registration.UniqueEmailValidator(),
-#    
-#    password_new         = civicboom.lib.form_validators.base.PasswordValidator(),
-#    password_new_confirm = civicboom.lib.form_validators.base.PasswordValidator(),
-#    password_current     = civicboom.lib.form_validators.base.CurrentUserPasswordValidator(),
-#    
-#    #twitter_username        = formencode.validators.UnicodeString(),
-#    #twitter_auth_key        = formencode.validators.UnicodeString(),
-#    #broadcast_instant_news  = formencode.validators.StringBool(if_missing=False),
-#    #broadcast_content_posts = formencode.validators.StringBool(if_missing=False),
-#    
-#    avatar = formencode.validators.FieldStorageUploadConverter(),
-#    
-#    location_home    = civicboom.lib.form_validators.base.LocationValidator(),
-#    location_current = civicboom.lib.form_validators.base.LocationValidator(),
-#    
-#)
+def build_meta(user, user_type, panel):
+    settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
+    panels = dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title':setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] )
     
+    if not panel in panels:
+        raise action_error(code=404, message="This panel is not applicable for a " + user_type)
+    settings_hints = {}
+    # Populate settings dictionary for this user
+    for setting_name in settings_meta.keys():
+        if settings_meta[setting_name].get('who', user_type) == user_type:
+            if setting_name == 'email' and user.email_unverified != None:
+                settings_hints['email'] = _( 'You have an unverified email address. This could be for two reasons:') + '<ol>' + \
+                                             '<li>' + _('You have signed up to Civicboom via Twitter, Facebook, LinkedIn, etc.') + '</li>' + \
+                                             '<li>' + _('You have changed your email address and not verified it.') + '</li>' + \
+                                             '</ol>' + _('To verify your email: please check your email account (%s) and follow instructions.') % user.email_unverified + '<br />' + \
+                                             _('OR enter new email address below and check your email.')
+                #_('You have an unverified email address (%s), please check your email. If this address is incorrect please update and save, then check your email.') % user.email_unverified
+            if setting_name == 'password_current' and 'password_current' in settings_meta and not 'password' in [login.type for login in user.login_details]:
+                del settings_meta[setting_name]
+                settings_hints['password_new'] = _("You have signed up via Twitter, Facebook, LinkedIn, etc. In order to login to our mobile app, please create a Civicboom password here. (You will use this password and your username to login to the app.)")
+            if 'password' in setting_name and user.email_unverified != None:
+                if not '_readonly' in settings_meta[setting_name]['type']:
+                    settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
+                if not 'password' in [login.type for login in user.login_details]:
+                    settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                else:
+                    settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+    data = dict( settings_meta=settings_meta,
+                 settings_hints=settings_hints,
+                 panels=panels
+    )
+    return data
+def find_template(panel, user_type):
+    try:
+        # panel_user_type?
+        _find_template_basic(action='panel/'+panel+'_'+user_type)
+        template = panel+'_'+user_type
+    except:
+        try:
+            # panel?
+            _find_template_basic(action='panel/'+panel)
+            template = panel
+        except:
+            # default to generic
+            template = 'generic'
+    return template
 #---------------------------------------------------------------------------
 # REST Controller
 #---------------------------------------------------------------------------
@@ -208,79 +229,38 @@ class SettingsController(BaseController):
             if not user.is_admin(c.logged_in_user):
                 raise action_error(code=403, message="No permission")
         
-        settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
-        
-        panels = dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title':setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] )
+        data = build_meta(user, user_type, panel)
         
         #Janrain HACK
-        
         if user_type == 'member' and panel == 'link_janrain':
             return action_ok(
-                data={
-                      'settings_meta':settings_meta,
-                      'panels':panels
-                },
+                data=data,
                 username=id,
                 user_type=user_type,
                 template="settings/panel/link_janrain",
             )
         
-        if not panel in panels:
-            raise action_error(code=404, message="This panel is not applicable for a " + user_type)
-        # c.format in ["html", "mobile"] and 
-        
-        # Generate base settings dictonary for ALL settings (GregM: for this user type! - Makes generating settings pages easier!)
-        #settings_meta = copy.deepcopy(settings_base)
-        #settings_meta = dict( [ (setting['name'], setting ) for setting in settings_base.values() if setting.get('who', user_type) == user_type] )
-        #moved meta above to allow for easier generation of panels
         settings       = {}
-        settings_hints = {}
+        settings_meta = data['settings_meta']
         # Populate settings dictionary for this user
         for setting_name in settings_meta.keys():
-            if settings_meta[setting_name].get('who', user_type) == user_type:
-                if setting_name == 'email' and user.email_unverified != None:
-                    settings_hints['email'] = _( 'You have an unverified email address. This could be for two reasons:') + '<ol>' + \
-                                                 '<li>' + _('You have signed up to Civicboom via Twitter, Facebook, LinkedIn, etc.') + '</li>' + \
-                                                 '<li>' + _('You have changed your email address and not verified it.') + '</li>' + \
-                                                 '</ol>' + _('To verify your email: please check your email account (%s) and follow instructions.') % user.email_unverified + '<br />' + \
-                                                 _('OR enter new email address below and check your email.')
-                    #_('You have an unverified email address (%s), please check your email. If this address is incorrect please update and save, then check your email.') % user.email_unverified
-                if setting_name == 'password_current' and 'password_current' in settings_meta and not 'password' in [login.type for login in user.login_details]:
-                    del settings_meta[setting_name]
-                    settings_hints['password_new'] = _("You have signed up via Twitter, Facebook, LinkedIn, etc. In order to login to our mobile app, please create a Civicboom password here. (You will use this password and your username to login to the app.)")
-                if 'password' in setting_name and user.email_unverified != None:
-                    if not '_readonly' in settings_meta[setting_name]['type']:
-                        settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
-                    if not 'password' in [login.type for login in user.login_details]:
-                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
-                    else:
-                        settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
-                if hasattr(user, setting_name):
-                    v = getattr(user, setting_name)
+            setting_name_repl = setting_name.replace('_read_only', '')
+            if settings_meta[setting_name_repl].get('who', user_type) == user_type:
+                if hasattr(user, setting_name_repl):
+                    v = getattr(user, setting_name_repl)
                 else:
-                    if setting_name in settings_meta:
-                        v = user.config.get(setting_name, settings_meta[setting_name].get('default'))
+                    v = user.config.get(setting_name_repl, settings_meta[setting_name].get('default'))
                 if isinstance(v, basestring): # ugly hack
-                    settings[setting_name] = v
+                    settings[setting_name_repl] = v
                 else:
-                    settings[setting_name] = location_to_string(v)
+                    settings[setting_name_repl] = location_to_string(v)
+                    
+        data['settings'] = settings
         
-        try:
-            _find_template_basic(action='panel/'+panel+'_'+user_type)
-            template = panel+'_'+user_type
-        except:
-            try:
-                _find_template_basic(action='panel/'+panel)
-                template = panel
-            except:
-                template = 'generic'
+        template = find_template(panel, user_type)
+        
         return action_ok(
-            data={
-                  'settings_hints': settings_hints ,
-                  'settings_meta': settings_meta ,
-                  'settings': settings ,
-                  'panels': panels,
-                  },
+            data=data,
             panel=panel,
             username=id,
             user_type=user_type,
@@ -369,19 +349,7 @@ class SettingsController(BaseController):
             del kwargs['panel']
         
         # Find template from panel and user_type
-        template = panel
-        try:
-            # panel_user_type?
-            _find_template_basic(action='panel/'+panel+'_'+user_type)
-            template = panel+'_'+user_type
-        except:
-            try:
-                # panel?
-                _find_template_basic(action='panel/'+panel)
-                template = panel
-            except:
-                # default to generic
-                template = 'generic'
+        template = find_template(panel, user_type)
         
         # variables to store template and redirect urel
         panel_template = ('settings/panel/'+template).encode('ascii','ignore')
@@ -401,38 +369,11 @@ class SettingsController(BaseController):
         if kwargs.get('avatar') == '':
             del kwargs['avatar']
         
-        settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
+        data = build_meta(user, user_type, panel)
         
-        settings_hints = {}
+        data['settings'] = kwargs
         
-        for setting_name in settings_meta.keys():
-            if settings_meta[setting_name].get('who', user_type) == user_type:
-                if setting_name == 'email' and user.email_unverified != None:
-                    settings_hints['email'] = _( 'You have an unverified email address. This could be for two reasons:') + '<ol>' + \
-                                                 '<li>' + _('You have signed up to Civicboom via Twitter, Facebook, LinkedIn, etc.') + '</li>' + \
-                                                 '<li>' + _('You have changed your email address and not verified it.') + '</li>' + \
-                                                 '</ol>' + _('To verify your email: please check your email account (%s) and follow instructions.') % user.email_unverified + '<br />' + \
-                                                 _('OR enter new email address below and check your email.')
-                    #_('You have an unverified email address (%s), please check your email. If this address is incorrect please update and save, then check your email.') % user.email_unverified
-                if setting_name == 'password_current' and 'password_current' in settings_meta and not 'password' in [login.type for login in user.login_details]:
-                    del settings_meta[setting_name]
-                    settings_hints['password_new'] = _("You have signed up via Twitter, Facebook, LinkedIn, etc. In order to login to our mobile app, please create a Civicboom password here. (You will use this password and your username to login to the app.)")
-                if 'password' in setting_name and user.email_unverified != None:
-                    if not '_readonly' in settings_meta[setting_name]['type']:
-                        settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
-                    if not 'password' in [login.type for login in user.login_details]:
-                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
-                    else:
-                        settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
-        
-        data = { 'settings'      : kwargs,
-                 'settings_meta' : settings_meta,
-                 'settings_hints': settings_hints,
-                 'panels'        : dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title':setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] ),
-                 'panel'         : panel,
-        }
-        
-        settings = data['settings']
+        settings = kwargs
         
         # Setup custom schema for this update
         # List validators required
@@ -511,8 +452,6 @@ class SettingsController(BaseController):
         # Save validated Sets: Needs cleaning up!
         for setting_set in [(setting_name, settings_base[setting_name].get('value','').split(',')) for setting_name in settings_base.keys() if settings_base[setting_name].get('type') == 'set']:
             setting_name = setting_set[0]
-            
-            
             if setting_name in settings:
                 if validators.get(setting_name):
                     if hasattr(user, setting_name):
