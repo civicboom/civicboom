@@ -13,23 +13,26 @@ class TestSettingsController(TestController):
         self.log_in_as('unittest')
         # Fail validation
         response = self.app.post(
-            url(controller='settings', action='update', type='frag'),
+            '/settings/me.frag', #GregM: WTF!?!?!?!?! Why does url('settings', id='me') not work??? (Would like a white padded room soon pls?!)
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
+                'panel'               : u'general',
                 'password_current'    : u'password',
                 'password_new'        : u'password1',
                 'password_new_confirm': u'password2', # Passwords dont match
             },
             status=400
         )
+        
         self.assertIn('Fields do not match', response)
         #Change password
         response = self.app.post(
-            url(controller='settings', action='update'),
+            url('settings', id='me'),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
+                'panel'               : u'general',
                 'password_current'    : u'password',
                 'password_new'        : u'password2',
                 'password_new_confirm': u'password2', # Passwords match
@@ -38,10 +41,11 @@ class TestSettingsController(TestController):
         self.log_in_as('unittest', password='password2')
         # Change password back!
         response = self.app.post(
-            url(controller='settings', action='update'),
+            url('settings', id='me'),
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
+                'panel'               : u'general',
                 'password_current'    : u'password2',
                 'password_new'        : u'password',
                 'password_new_confirm': u'password', # Passwords match
@@ -53,14 +57,14 @@ class TestSettingsController(TestController):
         self.log_in_as('unittest')
         num_emails = getNumEmails()
         #Get current email address
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id='me', format='json')) #url(controller='settings', action="show", format='json')
         response_json = json.loads(response.body)
         self.email_address = response_json['data']['settings']['email']
         self.assertTrue(self.email_address)
         
         #Change email address no AT
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -86,7 +90,7 @@ class TestSettingsController(TestController):
 #        BROKEN: allows blank email addresses
         #Change email address invalid blank
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -98,13 +102,13 @@ class TestSettingsController(TestController):
         
         #Change email address
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'email'    : u'test@example.com',
             },
-            status=302
+            status=200
         )
         #Should send an email
         self.assertEqual(getNumEmails(), num_emails + 1)
@@ -115,7 +119,7 @@ class TestSettingsController(TestController):
         self.assertIn('hash', link)
         response = self.app.get(link,status=302)
         #Check changed
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id='me', format='json'))
         response_json = json.loads(response.body)
         self.assertIn('test@example.com', response) # Email address has changed
         
@@ -123,13 +127,13 @@ class TestSettingsController(TestController):
         
         #Change email back
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'email'    : self.email_address,
             },
-            status=302
+            status=200
         )
         #Should send an email
         self.assertEqual(getNumEmails(), num_emails + 1)
@@ -140,7 +144,7 @@ class TestSettingsController(TestController):
         self.assertIn('hash', link)
         response = self.app.get(link,status=302)
         #Check changed
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id='me', format='json'))
         response_json = json.loads(response.body)
         self.assertIn(self.email_address, response) # Email address has changed
         
@@ -148,50 +152,50 @@ class TestSettingsController(TestController):
         self.png1x1 = b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAAXNSR0IArs4c6QAAAApJREFUCNdj+AcAAQAA/8I+2MAAAAAASUVORK5CYII=')
         self.log_in_as('unittest')
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
             },
             upload_files = [("avatar", "1x1.png", self.png1x1)],
-            status=302
+            status=200
         )
         
     def test_change_description(self):
         self.log_in_as('unittest')
         #Get current
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id="me", format='json'))
         response_json = json.loads(response.body)
         self.old_description = response_json['data']['settings']['description']
         self.assertTrue(self.old_description)
         #Change
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'description'    : u'testingtestingtesting',
             },
-            status=302
+            status=200
         )
         #Check changed
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id="me", format='json'))
         response_json = json.loads(response.body)
         self.assertNotEqual(self.old_description, response_json['data']['settings']['description'])
         #Change
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'description'    : self.old_description,
             },
-            status=302
+            status=200
         )
 
     def test_invalid_location(self):
         response = self.app.post(
-            url(controller='settings', action='update', format="json"),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -205,76 +209,76 @@ class TestSettingsController(TestController):
         from random import random
         self.log_in_as('unittest')
         #Get current
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id="me", panel="location", format='json'))
         response_json = json.loads(response.body)
         self.old_location = response_json['data']['settings']['location_home']
         self.assertTrue(self.old_location)
         #Change
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'location_home_name': 'blah',
                 'location_home'    : '%f %f' % (1+random(), 51+random()), # non-deterministic testing, yay
             },
-            status=302
+            status=200
         )
         #Check changed
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id="me", panel="location", format='json'))
         response_json = json.loads(response.body)
         self.assertNotEqual(self.old_location, response_json['data']['settings']['location_home'])
         #Change
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'location_home'    : self.old_location,
             },
-            status=302
+            status=200
         )
         
     def test_change_name(self):
         self.log_in_as('unittest')
         #Get current
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id="me", format='json'))
         response_json = json.loads(response.body)
         self.old_name = response_json['data']['settings']['name']
         #Change
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'name'    : u'Testing User Testing User',
             },
-            status=302
+            status=200
         )
         #Check changed
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id="me", format='json'))
         response_json = json.loads(response.body)
         self.assertNotEqual(self.old_name, response_json['data']['settings']['name'])
         #Change
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'description'    : self.old_name,
             },
-            status=302
+            status=200
         )
         
     def test_change_website(self):
         self.log_in_as('unittest')
         #Get current
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id="me", format='json'))
         response_json = json.loads(response.body)
         self.old_website = response_json['data']['settings']['website']
         #Change incorrect url
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
@@ -286,28 +290,28 @@ class TestSettingsController(TestController):
         
         #Change
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'website'    : u'http://cb.example.com',
             },
-            status=302
+            status=200
         )
         
         #Check changed
-        response = self.app.get(url(controller='settings', action="show", format='json'))
+        response = self.app.get(url('settings', id="me", format='json'))
         response_json = json.loads(response.body)
         self.assertNotEqual(self.old_website, response_json['data']['settings']['website'])
         #Change
         response = self.app.post(
-            url(controller='settings', action='update'),
+            '/settings/me.frag',
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
                 'website'    : self.old_website,
             },
-            status=302
+            status=200
         )
         
 #    def these_tests_are_old(self):
