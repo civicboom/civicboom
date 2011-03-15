@@ -39,7 +39,7 @@ def send_email(email_to, subject='', content_text=None, content_html=None):
     #   -autolinking any links
     #   -putting inside html header
     if content_text!=None and content_html==None:
-        content_html      = auto_link(content_text.decode('UTF-8')).replace('\n',literal('<br/>\n'))
+        content_html      = auto_link(content_text).replace('\n',literal('<br/>\n')) # .decode('UTF-8')
     # Convert html emails into a plain text equivlent
     elif content_html!=None and content_text==None:
         content_text      = convert_html_to_plain_text(content_html)
