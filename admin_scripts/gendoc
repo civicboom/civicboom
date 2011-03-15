@@ -69,6 +69,7 @@ class Example(object):
             self.example = json.dumps(json.loads(response), sort_keys=True, indent=4)
         except:
             self.example = response
+        self.example = self.example.replace('<','&lt;').replace('>','&gt;')
         
 
     def __str__(self):
