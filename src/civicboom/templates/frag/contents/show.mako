@@ -27,7 +27,7 @@
         self.actions   = d['actions']
         force = _('_draft')
         if self.content['type'] == 'draft':
-            self.attr.title     = _('_draft').capitalize() + ' ' + _('_'+self.content['target_type'])
+            self.attr.title     = _('_Draft') + ' ' + _('_'+self.content['target_type'])
         else:
             self.attr.title     = _('_'+self.content['type']).capitalize()
         self.attr.icon_type = self.content['type']

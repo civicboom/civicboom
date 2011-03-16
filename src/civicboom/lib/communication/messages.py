@@ -109,6 +109,9 @@ generators = [
     ["syndicate_accept",                     "n",  _("_article was syndicated"),     _("%(member)s has accepted your syndication request for _article %(article)s. Check your email for the details")],
     ["syndicate_decline",                    "ne", _("_article was declined syndication"), _("%(member)s declined your syndication request for _article %(article)s. Your _article is now publicly visible")],
     ["syndicate_expire",                     "ne", _("_article was not syndicated"), _("Your syndication request for %(article)s was unsuccessful. Your _article is now publicly visible")],
+    
+    # Inter-user messages
+    ["message_received",                     "e",  _("message received from another member"), _("You have received a message from %(member)s, please login to Civicboom and check your messages")],
 ]
 
 #

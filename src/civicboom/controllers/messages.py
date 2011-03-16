@@ -1,4 +1,5 @@
 from civicboom.lib.base import *
+import civicboom.lib.communication.messages as messages
 from civicboom.model import Message
 import json
 
@@ -175,6 +176,9 @@ class MessagesController(BaseController):
         m.content = content
         Session.add(m)
         Session.commit()
+        
+        m1 = get_member(target)
+        m1.send_message(messages.message_received(member=c.logged_in_persona))
         
         user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
         

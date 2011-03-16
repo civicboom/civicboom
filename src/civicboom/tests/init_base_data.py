@@ -22,13 +22,13 @@ def init_base_data():
 
         # AllanC - the follow action requires members/index controller call - this isnt active for the base setup
         #          Here is an alternate way of adding followers without needing the site active
-        def follow(follower,followed):
-                follow = Follow()
-                follow.member_id   = followed.id
-                follow.follower_id = follower.id
-                assert follow.member_id
-                assert follow.follower_id
-                Session.add(follow)
+        #def follow(follower,followed):
+        #        follow = Follow()
+        #        follow.member_id   = followed.id
+        #        follow.follower_id = follower.id
+        #        assert follow.member_id
+        #        assert follow.follower_id
+        #        Session.add(follow)
 
 
         ###############################################################
@@ -93,8 +93,10 @@ def init_base_data():
         Session.add_all([u2, u2_login]); Session.commit();
         assert u2.id == 2
 
-        follow(u1,u2)
-        follow(u2,u1)
+        #follow(u1,u2)
+        #follow(u2,u1)
+        u1.follow(u2)
+        u2.follow(u1)
         
         
 
@@ -153,16 +155,16 @@ def init_base_data():
         u7_login.token  = hashlib.sha1("password").hexdigest()
 
         Session.add_all([u6, u6_login, u7, u7_login]);
-        #u6.follow(u7)
-        #u6.follow(u3)
-        #u6.follow(u4)
-        #u6.follow(u5)
+        u6.follow(u7, delay_commit=True)
+        u6.follow(u3, delay_commit=True)
+        u6.follow(u4, delay_commit=True)
+        u6.follow(u5, delay_commit=True)
         Session.commit();
 
-        follow(u6,u7)
-        follow(u6,u3)
-        follow(u6,u4)
-        follow(u6,u5)
+        #follow(u6,u7)
+        #follow(u6,u3)
+        #follow(u6,u4)
+        #follow(u6,u5)
 
 
         # test data for commercial first demo
@@ -180,18 +182,26 @@ def init_base_data():
 
         Session.add_all([u8, u8_login]);
         
-        #u8.follow(u7)
-        #u8.follow(u3)
-        #u8.follow(u4)
-        #u8.follow(u5)
+        u8.follow(u7, delay_commit=True)
+        u8.follow(u3, delay_commit=True)
+        u8.follow(u4, delay_commit=True)
+        u8.follow(u5, delay_commit=True)
         Session.commit();
 
-        follow(u8,u7)
-        follow(u8,u3)
-        follow(u8,u4)
-        follow(u8,u5)
+        #follow(u8,u7)
+        #follow(u8,u3)
+        #follow(u8,u4)
+        #follow(u8,u5)
 
-        Session.commit();
+        #Session.commit();
+
+        # Create first item of content as content_id=1 for automated document examples to use
+        a = ArticleContent()
+        a.title   = "Documentation Test"
+        a.content = "API Documentation test content"
+        a.creator = u1
+        Session.add(a)
+        Session.commit()
 
         assert list(Session.query(User).filter(User.id==0)) == []
         assert list(Session.query(User).filter(User.username=="MrNotExists")) == []

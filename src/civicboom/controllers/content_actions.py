@@ -21,7 +21,7 @@ class ContentActionsController(BaseController):
     def rate(self, id, rating=None, **kwargs):
         """
         POST /contents/{id}/rate: rate an article
-
+        @type action
         @api contents 1.0 (WIP)
 
         @param rating  optional int, default 0
@@ -45,7 +45,7 @@ class ContentActionsController(BaseController):
     def boom(self, id, **kwargs):
         """
         POST /contents/{id}/boom: alert your followers to an article
-
+        @type action
         @api contents 1.0 (WIP)
 
         @return 200   boomed successfully
@@ -102,7 +102,7 @@ class ContentActionsController(BaseController):
 
         Useful if eg. a response is so offensive that one doesn't want it
         in the "responses" list of the request
-
+        @type action
         @api contents 1.0 (WIP)
 
         @return 200   disassociated ok
@@ -125,7 +125,7 @@ class ContentActionsController(BaseController):
     def seen(self, id, **kwargs):
         """
         POST /contents/{id}/seen: mark response as seen
-
+        @type action
         @api contents 1.0 (WIP)
 
         @return 200   seen ok
@@ -147,7 +147,7 @@ class ContentActionsController(BaseController):
     def accept(self, id=None, **kwargs):
         """
         POST /contents/{id}/accept: accept an assignment
-
+        @type action
         @api contents 1.0 (WIP)
 
         @return 200   accepted ok
@@ -163,8 +163,11 @@ class ContentActionsController(BaseController):
             assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
             user_log.debug("Accepted Content #%d" % int(id))
             # A convenience feature for flow of new users. If they are following nobody (they are probably a new user), then auto follow the assignment creator
-            if c.logged_in_persona.num_following == 0:
-                c.logged_in_persona.follow(assignment.creator)
+            if c.logged_in_persona.num_following <= 2:
+                try:
+                    c.logged_in_persona.follow(assignment.creator)
+                except:
+                    pass #we dont care if they are already following this user.
             return action_ok(_("_assignment accepted"))
         raise action_error(_('Unable to accept _assignment'))
 
@@ -178,7 +181,7 @@ class ContentActionsController(BaseController):
     def withdraw(self, id=None, **kwargs):
         """
         POST /contents/{id}/withdraw: withdraw from an assignment
-
+        @type action
         @api contents 1.0 (WIP)
 
         @return 200   withdrawn ok
@@ -202,7 +205,7 @@ class ContentActionsController(BaseController):
     def flag(self, id, **kwargs):
         """
         POST /contents/{id}/flag: Flag this content for administrator attention
-
+        @type action
         @api contents 1.0 (WIP)
 
         @param type      what the type of the problem is
@@ -234,7 +237,7 @@ class ContentActionsController(BaseController):
     def add_to_interests(self, id, **kwargs):
         """
         POST /contents/{id}/add_to_interests: Flag this content as being interesting
-        
+        @type action
         @api contents 1.0 (WIP)
         """
         c.logged_in_persona.add_to_interests(id)
@@ -249,10 +252,12 @@ class ContentActionsController(BaseController):
     def actions(self, id, **kwargs):
         """
         GET /contents/{id}/actions: actions the current user can perform on this content
-        
+        @type list
         @api contents 1.0 (WIP)
         
         @param * (see common list return controls)
+        
+        @comment Allan This is a special case return and will only return an array of strings rather than a complete list libject with count, offset, etc
         
         @return 200   list ok
                 list  the list
@@ -270,7 +275,7 @@ class ContentActionsController(BaseController):
     def comments(self, id, **kwargs):
         """
         POST /contents/{id}/comments: Get a list of comments on the article
-        
+        @type list
         @api contents 1.0 (WIP)
         
         @return list  the list of comments
@@ -285,6 +290,15 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     @web
     def accepted_status(self, id, **kwargs):
+        """
+        POST /contents/{id}/accepted_status: Get a list of accepted reporters
+        @type list
+        @api contents 1.0 (WIP)
+        
+        @comment Allan currently a special case and does not use the common list controls
+        
+        @return list  the list of comments
+        """
         content = get_content(id, is_viewable=True)
         
         if hasattr(content, 'assigned_to'):

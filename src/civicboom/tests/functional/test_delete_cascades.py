@@ -229,7 +229,7 @@ class TestDeleteCascadesController(TestController):
         self.assertEqual(Session.query(Content         ).filter_by(  parent_id = self.content_id              ).count(), 0)
         self.assertEqual(Session.query(Boom            ).filter_by( content_id = self.content_id              ).count(), 0)
         
-        self.assertEqual(Session.query(Member          ).filter_by(         id = self.delete_cascade_member_id).count(), 0        )
+        self.assertEqual(Session.query(Member          ).filter_by(         id = self.delete_cascade_member_id).count(), 0)
         self.assertEqual(Session.query(Boom            ).filter_by(  member_id = self.delete_cascade_member_id).count(), 0)
         self.assertEqual(Session.query(GroupMembership ).filter_by(  member_id = self.delete_cascade_member_id).count(), 0)
         self.assertEqual(Session.query(Follow          ).filter_by(  member_id = self.delete_cascade_member_id).count(), 0)
@@ -259,8 +259,8 @@ class TestDeleteCascadesController(TestController):
         
         # Step 2: Create responses, comments and accept
         self.log_in_as('unitfriend')
-        response_1_id = self.create_content(parent_id=self.content_id, title='response 1')
-        response_2_id = self.create_content(parent_id=self.content_id, title='response 2')
+        response_1_id = self.create_content(parent_id=self.content_id, title='response 1', content='delete_cascade')
+        response_2_id = self.create_content(parent_id=self.content_id, title='response 2', content='delete_cascade')
         self.comment(  self.content_id, 'delete_cascade comment')
         self.comment(    response_1_id, 'delete_cascade response comment')
         self.accept_assignment(self.content_id)

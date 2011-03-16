@@ -20,7 +20,7 @@
     
 %>
     <%def name="link(title, panel)">
-        <li><a href="/settings/${c.id or 'me'}/${panel}">${title}</a></li>
+        <li><a href="${h.url('setting_action', id=c.id or 'me', action=panel)}">${title}</a></li>
     </%def>
     <div style="padding: 3px 3px 3px 3px;">
       <ul>

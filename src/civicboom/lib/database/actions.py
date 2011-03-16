@@ -445,16 +445,16 @@ If the content is ok, visit the list of reports and delete this one:
 If the content is not ok, go to the content list and delete it:
   %(action_delete)s
 """ % {
-            "reporter": member_username,
-            "type": type,
-            "comment": comment,
-            "member_name": content.creator.username,
-            "member_url": url('member', id=content.creator.username, subdomain="www"),
-            "content_url": url('content', id=content.id, subdomain="www"),
-            "content_title": content.title,
-            "content_body": content.content,
+            "reporter"     : member_username,
+            "type"         : type,
+            "comment"      : flag.comment,
+            "member_name"  : flag.content.creator.username,
+            "member_url"   : url('member', id=flag.content.creator.username, subdomain="www"),
+            "content_url"  : url('content', id=flag.content.id, subdomain="www"),
+            "content_title": flag.content.title,
+            "content_body" : flag.content.content,
             "action_ignore": url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), subdomain="www"),
-            "action_delete": url("admin/Content/models?Content--id="+str(content.id), subdomain="www"),
+            "action_delete": url("admin/Content/models?Content--id="+str(flag.content.id), subdomain="www"),
         },
     )
 
