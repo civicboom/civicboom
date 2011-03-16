@@ -138,12 +138,13 @@ def build_meta(user, user_type, panel):
                 del settings_meta[setting_name]
                 settings_hints['password_new'] = _("You have signed up via Twitter, Facebook, LinkedIn, etc. In order to login to our mobile app, please create a Civicboom password here. (You will use this password and your username to login to the app.)")
             if 'password' in setting_name and user.email_unverified != None:
-                if not '_readonly' in settings_meta[setting_name]['type']:
-                    settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
-                if not 'password' in [login.type for login in user.login_details]:
-                    settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
-                else:
-                    settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                if setting_name in settings_meta:
+                    if not '_readonly' in settings_meta[setting_name]['type']:
+                        settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
+                    if not 'password' in [login.type for login in user.login_details]:
+                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                    else:
+                        settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
     data = dict( settings_meta=settings_meta,
                  settings_hints=settings_hints,
                  panels=panels,
@@ -371,8 +372,10 @@ class SettingsController(BaseController):
         # If no new password set disregard (delete) all password fields!
         if kwargs.get('password_new') == '':
             del kwargs['password_new']
-            del kwargs['password_current']
-            del kwargs['password_new_confirm']
+            if kwargs.get('password_current'):
+                del kwargs['password_current']
+            if kwargs.get('password_new_confirm'):
+                del kwargs['password_new_confirm']
                 
         # GregM: Patched to remove avatar kwarg if blank (keeping current avatar on settings save!)
         if kwargs.get('avatar') == '':
