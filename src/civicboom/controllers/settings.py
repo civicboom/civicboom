@@ -372,10 +372,14 @@ class SettingsController(BaseController):
         # If no new password set disregard (delete) all password fields!
         if kwargs.get('password_new') == '':
             del kwargs['password_new']
-            if kwargs.get('password_current'):
+            try:
                 del kwargs['password_current']
-            if kwargs.get('password_new_confirm'):
+            except:
+                pass
+            try:
                 del kwargs['password_new_confirm']
+            except:
+                pass
                 
         # GregM: Patched to remove avatar kwarg if blank (keeping current avatar on settings save!)
         if kwargs.get('avatar') == '':
@@ -514,10 +518,11 @@ class SettingsController(BaseController):
         Session.commit()
         
         if c.format == 'html':
+            set_flash_message(action_ok(_('Settings updated')))
             return redirect(url(panel_redirect))
         
         return action_ok(
-            message = _('settings updated') ,
+            message = _('Settings updated') ,
             data    = data ,
             template= panel_template ,
         )
