@@ -239,7 +239,8 @@ def set_persona(persona):
         session_remove('username_persona')
         return True
     else:
-        membership = get_membership(persona, c.logged_in_user)
+        membership = get_membership(persona, c.logged_in_persona)
+        #membership = get_membership(persona, c.logged_in_user)
         if not membership:
             raise action_error(_('not a member of this group'), code=403)
         if membership.status != "active":

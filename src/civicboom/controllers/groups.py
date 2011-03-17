@@ -188,7 +188,9 @@ class GroupsController(BaseController):
         
         # Call settings controller to update group settings!
         kwargs['panel'] = 'general'
-        settings_update(group.username, **kwargs)
+        settings_update(group.username, private=True, **kwargs)
+        
+        set_persona(group.username)
 
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         
