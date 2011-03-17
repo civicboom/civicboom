@@ -11,14 +11,12 @@ $(document).ajaxError(function(event, request, settings, exception) {
 	
 	if (typeof jsob != 'undefined') {
 		if (typeof jsob.message != 'undefined' && typeof jsob.data != 'undefined' && typeof jsob.data.invalid != 'undefined') {
-			window.console.log('!');
 			jsob.message = jsob.message + ' (';
 			for (var i in jsob.data.invalid) {
 				jsob.message = jsob.message + i + ': ' + jsob.data.invalid[i] + ', ';
 			}
 			jsob.message = jsob.message + ')';
 		}
-		window.console.log (jsob);
 		flash_message(jsob);
 	}
 	
