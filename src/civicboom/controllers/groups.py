@@ -187,6 +187,7 @@ class GroupsController(BaseController):
 #        self.update(group.username, **kwargs) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
         
         # Call settings controller to update group settings!
+        kwargs['panel'] = 'general'
         settings_update(group.username, **kwargs)
 
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
