@@ -635,8 +635,9 @@ class Tag(Base):
     id            = Column(Integer(),    primary_key=True)
     name          = Column(Unicode(250), nullable=False, index=True) # FIXME: should be unique within its category
     #type          = Column(Unicode(250), nullable=False, default=u"Topic")
+    #children      = relationship("Tag", backref=backref('parent', remote_side=id))
     parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True, index=True)
-    children      = relationship("Tag", backref=backref('parent', remote_side=id))
+    parent        = relationship('Tag',      backref=backref('children'), remote_side='tag.c.id')
 
     def __init__(self, name=None, parent=None):
         self.name = name
