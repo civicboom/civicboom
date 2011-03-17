@@ -34,9 +34,9 @@ function popup(title, url) {
 	$('#popup .popup_content').load(url,function(){
 		$('#popup').modal({ onShow: function (dialog) {
 		  var smc = $('.simplemodal-container');
-		  var smd = $('.popup-content');
-		  smc.css('width', smd.outerWidth(true));
-		  smc.css('height', smd.outerHeight(true));
+		  var smd = $('.popup_content');
+		  smc.css('width', smd.outerWidth(true)+30);
+		  smc.css('height', smd.outerHeight(true)+30);
 		}});
 	});
 
