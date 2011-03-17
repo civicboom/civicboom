@@ -138,12 +138,13 @@ def build_meta(user, user_type, panel):
                 del settings_meta[setting_name]
                 settings_hints['password_new'] = _("You have signed up via Twitter, Facebook, LinkedIn, etc. In order to login to our mobile app, please create a Civicboom password here. (You will use this password and your username to login to the app.)")
             if 'password' in setting_name and user.email_unverified != None:
-                if not '_readonly' in settings_meta[setting_name]['type']:
-                    settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
-                if not 'password' in [login.type for login in user.login_details]:
-                    settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
-                else:
-                    settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                if setting_name in settings_meta:
+                    if not '_readonly' in settings_meta[setting_name]['type']:
+                        settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
+                    if not 'password' in [login.type for login in user.login_details]:
+                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                    else:
+                        settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
     data = dict( settings_meta=settings_meta,
                  settings_hints=settings_hints,
                  panels=panels,
@@ -243,7 +244,7 @@ class SettingsController(BaseController):
             if not user == c.logged_in_user:
                 raise action_error(code=403, message="No permission")
         else:
-            if not user.is_admin(c.logged_in_user):
+            if not user.is_admin(c.logged_in_persona):
                 raise action_error(code=403, message="No permission")
         
         data = build_meta(user, user_type, panel)
@@ -336,6 +337,9 @@ class SettingsController(BaseController):
         """
         # Check permissions on object, find actual username and store in username
         # id will always contain me if it was passed
+        
+        private = kwargs.get('private')
+        
         username = id
         if not username or username == 'me':
             username = c.logged_in_persona.username
@@ -347,7 +351,7 @@ class SettingsController(BaseController):
             if not user == c.logged_in_user:
                 raise action_error(code=403, message="No permission")
         else:
-            if not user.is_admin(c.logged_in_user):
+            if not user.is_admin(c.logged_in_persona):
                 raise action_error(code=403, message="No permission")
 
         user_log.info("Saving general settings")
@@ -371,8 +375,14 @@ class SettingsController(BaseController):
         # If no new password set disregard (delete) all password fields!
         if kwargs.get('password_new') == '':
             del kwargs['password_new']
-            del kwargs['password_current']
-            del kwargs['password_new_confirm']
+            try:
+                del kwargs['password_current']
+            except:
+                pass
+            try:
+                del kwargs['password_new_confirm']
+            except:
+                pass
                 
         # GregM: Patched to remove avatar kwarg if blank (keeping current avatar on settings save!)
         if kwargs.get('avatar') == '':
@@ -510,11 +520,14 @@ class SettingsController(BaseController):
         
         Session.commit()
         
+        if private: return
+        
         if c.format == 'html':
+            set_flash_message(action_ok(_('Settings updated')))
             return redirect(url(panel_redirect))
         
         return action_ok(
-            message = _('settings updated') ,
+            message = _('Settings updated') ,
             data    = data ,
             template= panel_template ,
         )

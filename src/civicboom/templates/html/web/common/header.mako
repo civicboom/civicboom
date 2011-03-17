@@ -14,6 +14,9 @@
 ## Persona Switching
 ##------------------------------------------------------------------------------
 % if c.logged_in_persona:
+<%
+	from civicboom.model import Group
+%>
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
       <a class="name" href="${url(controller='profile', action='index')}"><!--
@@ -103,11 +106,14 @@
                 num_members = c.logged_in_persona.num_members
         %>
         
-        ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
-        % if c.logged_in_user!=c.logged_in_persona:
-            ${persona_select(c.logged_in_user)}
+        ## Show default persona (the user logged in)
+        ${persona_select(c.logged_in_user)}
+        ## Show current persona (current group persona if applicable)
+        % if c.logged_in_persona != c.logged_in_user:
+        	${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
         % endif
-        % for membership in [membership for membership in c.logged_in_user.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona]:
+        ## Show currently logged in persona's groups:
+        % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
             ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
         % endfor
     </table>
@@ -192,7 +198,7 @@
 ##------------------------------------------------------------------------------
 <div id="search">
 	<form action="${h.url('contents')}" method='GET'>
-		<input type="search" class="search_input" name="query" placeholder=" ${_("Search")}" />
+		<input type="search" class="search_input" name="term" placeholder=" ${_("Search")}" />
 		<input type="submit" class="button" value="GO">
 	</form>
 </div>

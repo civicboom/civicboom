@@ -5,7 +5,7 @@
 <section>
 <h3>Notes about this document</h3>
 <div>
-    <h4>Implementaton Indicators</h4>
+    <h4>Implementation Indicators</h4>
     <ul>
     <li>"WIP" = "Work in Progress; first attempt to get something that works at all"
     <li>"Draft" = "It seems to work, waiting for the whole team + consultants to say Yay"
@@ -14,18 +14,18 @@
     </ul>
     <h4>Terminology Note</h4>
     <p>The API is abstracted from the presentation of the Civicboom website.
-       There may be some discrepancys e.g 'groups' in the API are refered to as 'Hubs' on the website.
-       The API terminology is fixed. The website frontend terminology is subject to change.</p>
+       There may be some discrepancies e.g. 'groups' in the API are referred to as 'Hubs' on the website.
+       The API terminology is fixed. The website front-end terminology is subject to change.</p>
 </div>
 </section>
 
 <section>
 <h3>Development Server</h3>
 <div>
-    <p>Developers are enouraged to test the use of the API on a dedicated test server.
-    <p><a href="http://new.civicboom.com">http://new.civicboom.com</a>
-    <p>The data on the test server will be periodicly reset.
-    <p>The test server is not a guarenteed service and may have periods of unavalability.
+    <p>Developers are encouraged to test the use of the API on a dedicated test server.
+    <p><a href="http://test.civicboom.com">http://test.civicboom.com</a>
+    <p>The data on the test server will be periodically reset.
+    <p>The test server is not a guaranteed service and may have periods of unavailability.
 </div>
 </section>
 
@@ -39,7 +39,7 @@
         separately. The token can be found by calling /account/signin.json or /account/signin.xml
     <li>Cookies are used to keep track of logged in sessions.
         Your client may be sent additional cookies while using the API.
-        These should be stored and retreived as normal cookies.
+        These should be stored and retrieved as normal cookies.
     <li>PUT and DELETE can be emulated with POST, having the form variable "_method" set
         to PUT or DELETE respectively
     <li>HTTP status codes are used:
@@ -62,7 +62,7 @@
 <h3><span>(1.0 WIP)</span>Object types overview</h3>
 <div>
     <p>The Civicboom API has 3 core object types. An overview is provided here but
-       the details of these types are given in detail with the call defenitions.
+       the details of these types are given in detail with the call definitions.
     
     TODO:-auto list fields in model? default/full-
     
@@ -85,7 +85,7 @@
 <div>
     <p>Formats can be added to the end of the URL; for instance while /contents/42
     will show you content #42 in a browser-friendly way (HTML), a standalone app
-    may prefer /contentss/42.json or /contents/42.xml
+    may prefer /contents/42.json or /contents/42.xml
     
     <p>Most examples in this documentation will be given in JSON format.
     
@@ -137,21 +137,21 @@
     
     <h4>Frag</h4>
     <p>Fragments are chunks of HTML data with marked up with class's for use with
-       injecting content directly into exisiting webpages. The developer can then
+       injecting content directly into existing web pages. The developer can then
        style this injected HTML simply with standard CSS rules
-    <p>WIP NOTE: Currently .frag returns HTML specific to the Civiciboom site and is
+    <p>WIP NOTE: Currently .frag returns HTML specific to the Civicboom site and is
        not generic enough for mainstream use. Work is currently underway to make the
-       .frag a generic tool for developers. (tentativly May 2011)
+       .frag a generic tool for developers. (tentatively May 2011)
     
     <h4>RSS</h4>
     <p>Objects and Lists can be returned as RSS feeds
-    <p>Some of the fields are not relevenet for an RSS output.
-       The list is fields returned in the RSS ofen a subset of the JSON/XML output.
+    <p>Some of the fields are not relevant for an RSS output.
+       The list is fields returned in the RSS often a subset of the JSON/XML output.
     <p>It is part of the RSS standard that clients can sort items by date.
        Some objects may return lists of items that are not in date order.
     <p>Hint: Common use of RSS 'content' lists:
        By default media attachments are not included in the RSS return
-       but can be enabled by including the paramiter 'include_fields=attachments'</p>
+       but can be enabled by including the parameter 'include_fields=attachments'</p>
 </div>
 </section>
 
@@ -160,7 +160,7 @@
 <h3><span>(1.0 WIP)</span>List Controls</h3>
 <div>
     <p>API calls masked as 'list' will return lists of objects.
-       These lists can be customised by passing common control parmiters.
+       These lists can be customised by passing common control parameters.
     <ul>
         <li>
             <p>list_type: default='default'
@@ -168,30 +168,30 @@
             <ul>
             <li>'empty' = no fields (to be used with include_fields to build a custom object)
             <li>'default' = object fields (usually used for list as no links to other objects are present)
-            <li>'full' = object + links (links to sub objects or lists are followed e.g a contents creator field will contain a sub object member).
-                 full field lists often include fields that are expensive to process and are normally unnessisary for summary lists.
+            <li>'full' = object + links (links to sub objects or lists are followed e.g. a contents creator field will contain a sub object member).
+                 full field lists often include fields that are expensive to process and are normally unnecessary for summary lists.
             </ul>
         
         <li>
-            <p>'exclude_fields': ommit fields from the return object default=''
-            <p>e.g "exclude_fields=avatar_url,location_home" will ommit the fields avatar_url and location_home form the returned list.
+            <p>'exclude_fields': omit fields from the return object default=''
+            <p>e.g. "exclude_fields=avatar_url,location_home" will omit the fields avatar_url and location_home form the returned list.
         
         <li>
-            <p>'include_fields': fields to include in the return object deafult=''
-            <p>e.g 'include_fields=followers,username,name,webpage,content_public'.
-            <p>e.g 'include_fields=attachments'
-            <p>Often used in conjection with 'list_type=empty' to build a custom return object.
-               Often used to add addtional linked fields such as 
+            <p>'include_fields': fields to include in the return object default=''
+            <p>e.g. 'include_fields=followers,username,name,webpage,content_public'.
+            <p>e.g. 'include_fields=attachments'
+            <p>Often used in conjunction with 'list_type=empty' to build a custom return object.
+               Often used to add additional linked fields such as 
         <li>
-            <p>sort: (not implmented - planned for June 2011)
-            <p>comma separted list of col names e.g rating,creator,-update_date (- denotes alternate sorting)
+            <p>sort: (not implemented - planned for June 2011)
+            <p>comma separated list of col names e.g. rating,creator,-update_date (- denotes alternate sorting)
         <li>
             <p>limit: limit items returned default='20'
-            <p>e.g 10 - only return 10 items max
-            <p>e.g  0 - return all items with no maximum limit
+            <p>e.g. 10 - only return 10 items max
+            <p>e.g.  0 - return all items with no maximum limit
         <li>
             <p>offset: define where in the list to return default='0'
-            <p>e.g 30 - start the listing at item 30
+            <p>e.g. 30 - start the listing at item 30
     </ul>
 </div>
 </section>
@@ -215,7 +215,7 @@
         }
     }
     </pre>
-    <p>Invalid feilds are listed in the 'invalid' dictonary with a text description of why the validation failed</p>
+    <p>Invalid fields are listed in the 'invalid' dictionary with a text description of why the validation failed</p>
 
 </div>
 </section>
@@ -223,7 +223,7 @@
 <section>
 <h3><span>(1.0 WIP)</span>Concept of 'me'</h3>
 <div>
-    <p>Anywhere a username or user_id are present in the API, you may submit the value 'me' to refer to the currently logged in user e.g:
+    <p>Anywhere a username or user_id are present in the API, you may submit the value 'me' to refer to the currently logged in user e.g.:
     <ul>
         <li>members/me/content
         <li>members?followed_by=me
@@ -236,11 +236,11 @@
 <h3><span>(1.0 WIP)</span>Global Settings</h3>
 <div>
     <h4>Language</h4>
-    <p>Lanaguages can be set using standard 2 letter codes
-    <p>Supported langauges: en</p>
-    <p>Language can be set (in order of precidence) by:
+    <p>Languages can be set using standard 2 letter codes
+    <p>Supported languages: en</p>
+    <p>Language can be set (in order of precedence) by:
     <ol>
-        <li>Sending the 'lang' param with any GET or POST request
+        <li>Sending the 'lang' parameter with any GET or POST request
         <li>Calling 'session set lang' (to be implemented)
         <li>Using the 'settings' controller to set the 'lang' property
     </ol>

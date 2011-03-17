@@ -29,7 +29,21 @@
         % if 'message' in c.result:
         message: <b>${c.result['message']}</b>
         % endif
-        
+
+	% if c.result.get('code') == 404:
+		<hr>
+		<p>
+		<script type="text/javascript">
+			var GOOG_FIXURL_LANG = 'en-GB';
+			var GOOG_FIXURL_SITE = 'https://www.civicboom.com'
+		</script>
+		<script type="text/javascript"
+			src="http://linkhelp.clients.google.com/tbproxy/lh/wm/fixurl.js">
+		</script>
+	% endif
+
+		<hr>
+        <h3>Feedback</h3>
         <!--#include file="/misc/feedback.frag"-->
 
 	</body>

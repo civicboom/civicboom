@@ -61,7 +61,8 @@
                 <p><label>Near to</label>
                 ${loc.location_picker(width='213px', height="213px")}
 
-                <p><input type="submit" style="width: 100%;" value="Search" class="button"/>
+                <p>&nbsp;<br>
+				<input type="submit" style="width: 100%;" value="Search" class="button"/>
             </fieldset>
         </form>
     </div>

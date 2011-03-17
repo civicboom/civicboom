@@ -18,7 +18,7 @@ from webhelpers.pylonslib.secure_form import authentication_token
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta, Member
 from civicboom.lib.web                 import url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, session_keys, session_delete, authenticate_form, cacheable, web_params_to_kwargs, current_url, current_referer
-from civicboom.lib.database.get_cached import get_member as _get_member, get_group as _get_group, get_membership as _get_membership, get_message as _get_message, get_content as _get_content
+from civicboom.lib.database.get_cached import get_member as _get_member, get_group as _get_group, get_membership as _get_membership, get_membership_tree as _get_membership_tree, get_message as _get_message, get_content as _get_content
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize
@@ -343,7 +343,7 @@ class BaseController(WSGIController):
         c.logged_in_persona_role = 'admin' #always an admin of yourself
         if username != username_persona:
             persona    = _get_group(username_persona)
-            membership = _get_membership(persona ,c.logged_in_user)
+            membership = _get_membership_tree(persona ,c.logged_in_user)
             if membership:
                 c.logged_in_persona      = persona
                 c.logged_in_persona_role = membership.role
