@@ -637,7 +637,7 @@ class Tag(Base):
     #type          = Column(Unicode(250), nullable=False, default=u"Topic")
     #children      = relationship("Tag", backref=backref('parent', remote_side=id))
     parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True, index=True)
-    parent        = relation('Tag',      backref=backref('children'), remote_side='tag.c.id')
+    parent        = relationship('Tag',      backref=backref('children'), remote_side='tag.c.id')
 
     def __init__(self, name=None, parent=None):
         self.name = name
