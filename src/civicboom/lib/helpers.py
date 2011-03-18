@@ -327,7 +327,7 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title='', confirm_text=None, method='POST', json_form_complete_actions=''):
+def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title=None, confirm_text=None, method='POST', json_form_complete_actions=''):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -339,8 +339,6 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
     
     Then use javascript to hide the form and show the pretty link
     """
-    if not title:
-        title = value
     if not value_formatted:
         value_formatted = value
 
