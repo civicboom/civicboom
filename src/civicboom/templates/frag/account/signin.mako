@@ -45,7 +45,12 @@
             %>
             ## AllanC: TODO - internationalise this string!
             <p>By signing in/up you will Boom the _content <b>${content['title']}</b> by <b>${creator_name}</b></p>
-            
+        %elif  c.action_objects['action'] == 'new_respose':
+            <%
+                content      = c.action_objects['action_object']['content']
+                creator_name = content['creator']['name'] or content['creator']['username']
+            %>
+            <p>By signing in/up you will respond to the _assignment <b>${content['title']}</b> by <b>${creator_name}</b></p>
         % endif
 
         ##${c.action_objects['description']}

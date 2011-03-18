@@ -176,6 +176,9 @@ def copy_user_settings(settings_meta, user, user_type):
                 v = getattr(user, setting_name_repl)
             else:
                 v = user.config.get(setting_name_repl, settings_meta[setting_name].get('default'))
+            # Special case for email addresses, if the user has no email address but has unverified, show that instead.
+            if v == None and setting_name == 'email' and user.email_unverified != None:
+                v = user.email_unverified
             if isinstance(v, basestring): # ugly hack
                 settings[setting_name_repl] = v
             else:
@@ -244,7 +247,7 @@ class SettingsController(BaseController):
             if not user == c.logged_in_user:
                 raise action_error(code=403, message="No permission")
         else:
-            if not user.is_admin(c.logged_in_user):
+            if not user.is_admin(c.logged_in_persona):
                 raise action_error(code=403, message="No permission")
         
         data = build_meta(user, user_type, panel)
@@ -337,6 +340,9 @@ class SettingsController(BaseController):
         """
         # Check permissions on object, find actual username and store in username
         # id will always contain me if it was passed
+        
+        private = kwargs.get('private')
+        
         username = id
         if not username or username == 'me':
             username = c.logged_in_persona.username
@@ -348,7 +354,7 @@ class SettingsController(BaseController):
             if not user == c.logged_in_user:
                 raise action_error(code=403, message="No permission")
         else:
-            if not user.is_admin(c.logged_in_user):
+            if not user.is_admin(c.logged_in_persona):
                 raise action_error(code=403, message="No permission")
 
         user_log.info("Saving general settings")
@@ -516,6 +522,8 @@ class SettingsController(BaseController):
             user.config[setting_name] = kwargs[setting_name]
         
         Session.commit()
+        
+        if private: return
         
         if c.format == 'html':
             set_flash_message(action_ok(_('Settings updated')))
