@@ -10,3 +10,5 @@ ${_("_article")}
 ${_("_Article")}
 ${_("_assignment")}
 ${_("_Assignment")}
+${_("_request")}
+${_("_Request")}
