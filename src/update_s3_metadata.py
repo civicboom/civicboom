@@ -30,11 +30,11 @@ def upload(prefix):
 #        if key.get_metadata("Cache-Control"):
 #            print "already cached"
 #            continue
-#        key.open()
-#        sample = key.read(4096)
-#        key.close()
+        key.open()
+        sample = key.read(4096)
+        key.close()
         metadata = {
-            #'Content-Type': magic.from_buffer(sample, mime=True),
+            'Content-Type': magic.from_buffer(sample, mime=True),
             'Cache-Control': 'public, max-age=31536000',
             #'Content-Disposition': 'inline; filename='+__http_escape(filename) if filename else 'inline',
         }
