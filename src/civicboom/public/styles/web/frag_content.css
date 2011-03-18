@@ -42,7 +42,14 @@
     font-weight: bold;
     margin-bottom: 0.25em;
 }
-#frag_containers .frag_container .frag_content .comment .comment_content        {font-size:  88%; line-height: 1em;}
+#frag_containers .frag_container .frag_content .comment .comment_content        {
+	font-size:  88%;
+	line-height: 1em;
+
+	/* stop over-wide comments */
+	max-width: 228px;
+	word-wrap: break-word;
+}
 /*
  could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
 #frag_containers .frag_container .frag_content .comment .comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
