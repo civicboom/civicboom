@@ -3,35 +3,42 @@
 function html5ize (jqContainer) {
 	if (typeof jqContainer == 'undefined')
 		jqContainer = $('body')
-		
-	if (!Modernizr.input.placeholder){
-	jqContainer.find('input').each(function(i){
-    if ($(this).val() =='')
-      $(this).val($(this).attr('placeholder'));
 
-    $(this).focus(function(e){
-      if ($(this).val() === $(this).attr('placeholder')) {
-        $(this).val('');
-      }
-    });
+	if (!Modernizr.input.placeholder) {
+		jqContainer.find('input').each(function(i) {
+			if ($(this).val() =='')
+				$(this).val($(this).attr('placeholder'));
 
-    $(this).blur(function(e){
-      if ($(this).val() === '') {
-        $(this).val($(this).attr('placeholder'));
-      }
-    });
-  });
+			$(this).focus(function(e) {
+				if ($(this).val() === $(this).attr('placeholder')) {
+					$(this).val('');
+				}
+			});
 
-  jqContainer.find('form').submit(function(e){
-    $(this).find('input').each(function(i){
-      if ($(this).val() === $(this).attr('placeholder')) {
-        $(this).val('');
-      }
-    });
-  });
-  }
-  
-  jqContainer.find("input[type='date']").datepicker ({ dateFormat: 'yy-mm-dd', changeYear: true, changeMonth: true, yearRange: '1900:2020'});
+			$(this).blur(function(e) {
+				if ($(this).val() === '') {
+					$(this).val($(this).attr('placeholder'));
+				}
+			});
+		});
+
+		jqContainer.find('form').submit(function(e) {
+			$(this).find('input').each(function(i) {
+				if ($(this).val() === $(this).attr('placeholder')) {
+					$(this).val('');
+				}
+			});
+		});
+	}
+
+	if (!Modernizr.inputtypes.date) {
+		jqContainer.find("input[type='date']").datepicker ({
+			dateFormat: 'yy-mm-dd',
+			changeYear: true,
+			changeMonth: true,
+			yearRange: '1900:2020'
+		});
+	}
 }
 
 $(function () { html5ize() });
