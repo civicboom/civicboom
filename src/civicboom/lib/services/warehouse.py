@@ -50,7 +50,8 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
         key.key = warehouse+"/"+hash
         metadata = {
             'Content-Type': magic.from_file(src, mime=True),
-            'Cache-Control': 'no-cache' if placeholder else 'public, max-age=14400',
+            'Cache-Control': 'no-cache' if placeholder else 'public, max-age=31536000',
+            'Expires': 'Sun, 17 Mar 2023 17:48:53 GMT', # FIXME: now() + 1 year
             'Content-Disposition': 'inline; filename='+__http_escape(filename) if filename else 'inline',
         }
 

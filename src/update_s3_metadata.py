@@ -36,6 +36,7 @@ def upload(prefix):
         metadata = {
             'Content-Type': magic.from_buffer(sample, mime=True),
             'Cache-Control': 'public, max-age=31536000',
+            'Expires': 'Sun, 17 Mar 2023 17:48:53 GMT', # FIXME: now() + 1 year
             #'Content-Disposition': 'inline; filename='+__http_escape(filename) if filename else 'inline',
         }
 
