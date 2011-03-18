@@ -34,6 +34,7 @@ function html5ize (jqContainer) {
 	if (typeof jqContainer == 'undefined')
 		jqContainer = $('body')
 		
+	if (!Modernizr.input.placeholder){
 	jqContainer.find('input').each(function(i){
     if ($(this).val() =='')
       $(this).val($(this).attr('placeholder'));
@@ -58,6 +59,7 @@ function html5ize (jqContainer) {
       }
     });
   });
+  }
   
   jqContainer.find("input[type='date']").datepicker ({ dateFormat: 'yy-mm-dd', changeYear: true, changeMonth: true, yearRange: '1900:2020'});
 }
