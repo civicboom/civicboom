@@ -25,6 +25,7 @@ class MemberActionsController(BaseController):
     def follow(self, id, **kwargs):
         """
         POST /members/{name}/follow: follow the member
+
         @type action
         @api members 1.0 (WIP)
 
@@ -47,6 +48,7 @@ class MemberActionsController(BaseController):
     def unfollow(self, id, **kwargs):
         """
         POST /members/{name}/unfollow: unfollow the member
+
         @type action
         @api members 1.0 (WIP)
 
@@ -67,6 +69,7 @@ class MemberActionsController(BaseController):
     def actions(self, id, **kwargs):
         """
         GET /members/{name}/actions: actions the current user can perform on this member
+
         @type special
         @api members 1.0 (WIP)
         
@@ -86,10 +89,11 @@ class MemberActionsController(BaseController):
     def followers(self, id, **kwargs):
         """
         GET /members/{name}/followers: get a list of followers
+
+        shortcut to members?follower_of={name}
+
         @type list
         @api members 1.0 (WIP)
-        
-        shortcut to members?follower_of={name}
         
         @param * (see common list return controls)
         
@@ -109,10 +113,11 @@ class MemberActionsController(BaseController):
     def following(self, id, **kwargs):
         """
         GET /members/{name}/following: get a list of members the user is following
+
+        shortcut to members?followed_by={name}
+
         @type list
         @api members 1.0 (WIP)
-        
-        shortcut to members?followed_by={name}
         
         @param * (see common list return controls)
         
@@ -132,6 +137,7 @@ class MemberActionsController(BaseController):
     def content(self, id, **kwargs):
         """
         GET /members/{name}/content: get a list content (including private if current user)
+
         @type list
         shortcut to /contents?creator={name}
         
@@ -152,10 +158,11 @@ class MemberActionsController(BaseController):
     def boomed(self, id, **kwargs):
         """
         GET /members/{name}/boomed: get a list content this user has boomed
-        @type list
-        @api members 1.0 (WIP)
         
         shortcut to content?boomed_by={name}
+
+        @type list
+        @api members 1.0 (WIP)
         
         @return 200    list generated ok
                 list   array of content objects
@@ -171,6 +178,7 @@ class MemberActionsController(BaseController):
     def content_and_boomed(self, id, **kwargs):
         """
         GET /members/{name}/content_and_boomed: get a list content this user has created and boomed
+
         @type list
         @api members 1.0 (WIP)
         
@@ -193,6 +201,7 @@ class MemberActionsController(BaseController):
     def groups(self, id, **kwargs):
         """
         GET /members/{name}/groups: get a list groups this member belongs to
+
         @type list
         @api members 1.0 (WIP)
         
@@ -220,6 +229,7 @@ class MemberActionsController(BaseController):
     def assignments_accepted(self, id, **kwargs):
         """
         GET /members/{name}/assignments_accepted: get a list of assignments this use has accepted
+
         @type list
         @api members 1.0 (WIP)
         
@@ -240,6 +250,7 @@ class MemberActionsController(BaseController):
     def assignments_unaccepted(self, id, **kwargs):
         """
         GET /members/{name}/assignments_unaccepted: get a list of assignments this user has been invited to join
+
         @type list
         @api members 1.0 (WIP)
         
@@ -261,6 +272,7 @@ class MemberActionsController(BaseController):
     def assignments_active(self, id, **kwargs):
         """
         GET /members/{name}/assignments_active: list of members active assignments
+
         @type list
         
         shotcut to /members?creator={name}&list=assignments_active
@@ -276,6 +288,7 @@ class MemberActionsController(BaseController):
     def assignments_previous(self, id, **kwargs):
         """
         GET /members/{name}/assignments_previous: list of members previous assignments
+
         @type list
         
         shotcut to /members?creator={name}&list=assignments_previous
@@ -295,12 +308,13 @@ class MemberActionsController(BaseController):
     def members(self, id, **kwargs):
         """
         GET /members/{name}/members: list of members of this group
+        
+        groups only
+
         @type list
         @api members 1.0 (WIP)
         
-        groups only
-        
-        AllanC
+        @comment AllanC
         not exactly the best place for this ... but it fits.
         making a groups_list controler was overkill and compicated members/show ... so I left it here
         """
