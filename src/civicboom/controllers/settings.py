@@ -176,6 +176,9 @@ def copy_user_settings(settings_meta, user, user_type):
                 v = getattr(user, setting_name_repl)
             else:
                 v = user.config.get(setting_name_repl, settings_meta[setting_name].get('default'))
+            # Special case for email addresses, if the user has no email address but has unverified, show that instead.
+            if v == None and setting_name == 'email' and user.email_unverified != None:
+                v = user.email_unverified
             if isinstance(v, basestring): # ugly hack
                 settings[setting_name_repl] = v
             else:

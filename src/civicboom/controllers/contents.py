@@ -236,9 +236,9 @@ class ContentsController(BaseController):
         @return 200      list ok
             list list of content objects
         
-        @example http://new.civicboom.com/contents.json?creator=unittest&limit=2
-        @example http://new.civicboom.com/contents.rss?list=assignments_active&limit=2
-        @example http://new.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
+        @example http://test.civicboom.com/contents.json?creator=unittest&limit=2
+        @example http://test.civicboom.com/contents.rss?list=assignments_active&limit=2
+        @example http://test.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
         
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
@@ -641,8 +641,8 @@ class ContentsController(BaseController):
         @return 403      permission denied
         @return 404      content not found
         
-        @example http://new.civicboom.com/contents/1.json
-        @example http://new.civicboom.com/contents/1.rss
+        @example http://test.civicboom.com/contents/1.json
+        @example http://test.civicboom.com/contents/1.rss
         """
         # url('content', id=ID)
         

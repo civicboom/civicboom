@@ -186,7 +186,7 @@
 		<%
 		area_id = h.uniqueish_id("content")
 		%>
-		<label for="${area_id}">Content</label>
+		<label for="${area_id}">Content</label><br />
 		<textarea class="editor" name="content" id="${area_id}">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
         
