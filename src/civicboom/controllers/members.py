@@ -101,8 +101,8 @@ class MembersController(BaseController):
         @return 200      list ok
                 list     array of member objects
         
-        @example http://new.civicboom.com/members.json?name=unit
-        @example http://new.civicboom.com/members.json?follower_of=1&limit=5
+        @example http://test.civicboom.com/members.json?name=unit
+        @example http://test.civicboom.com/members.json?follower_of=1&limit=5
         """
         
         # Autocomplete uses term not name - for ease of migration term is copyed to name if name not present
@@ -165,7 +165,7 @@ class MembersController(BaseController):
                 member   member object
         @return 404      member not found
         
-        @example http://new.civicboom.com/members/1.json
+        @example http://test.civicboom.com/members/1.json
         """
         
         member = get_member(id)
