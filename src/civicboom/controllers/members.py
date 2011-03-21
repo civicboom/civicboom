@@ -90,12 +90,12 @@ class MembersController(BaseController):
         
         @api members 1.0 (WIP)
     
-        @param member       ...
-        @param name         ... (aka 'term' for the autocompleter)
-        @param type         ...
-        @param location     ...
-        @param followed_by  ...
-        @param follower_of  ...
+        @param member       find this specific member by name
+        @param name         find members with names like this (aka 'term' for the autocompleter)
+        @param type         'user' or 'group'
+        @param location     find members with a public location near to this point
+        @param followed_by  find members followed by the specified member
+        @param follower_of  find members who are a follower of the specified member
         @param *            (see common list return controls)
     
         @return 200      list ok
