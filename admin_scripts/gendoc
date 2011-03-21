@@ -10,6 +10,11 @@ from optparse import OptionParser
 import urllib
 import urllib2
 import json
+import xml.dom.minidom
+
+from pygments import highlight
+from pygments.lexers import JavascriptLexer, XmlLexer
+from pygments.formatters import HtmlFormatter
 
 import logging
 log = logging.getLogger(__name__)
@@ -66,10 +71,18 @@ class Example(object):
         if http_response:
             http_response.close()
         try:
-            self.example = json.dumps(json.loads(response), sort_keys=True, indent=4)
-        except:
+            if ".json" in self.url:
+                self.example = json.dumps(json.loads(response), sort_keys=True, indent=4)
+                self.example = highlight(self.example, JavascriptLexer(), HtmlFormatter())
+            if ".rss" in self.url or ".xml" in self.url:
+                # xml prettyprinter *adds* blank lines >_<
+                #self.example = xml.dom.minidom.parseString(response).toprettyxml()
+                self.example = "\n".join([n for n in response.split("\n") if len(n.strip()) != 0])
+                self.example = highlight(self.example, XmlLexer(), HtmlFormatter())
+        except Exception as e:
+            print "Error loading example:", e
             self.example = response
-        self.example = self.example.replace('<','&lt;').replace('>','&gt;')
+            self.example = self.example.replace('<','&lt;').replace('>','&gt;')
         
 
     def __str__(self):
@@ -195,6 +208,8 @@ def to_html(template_dir, sections):
     html = ""
 
     html = html + file(os.path.join(template_dir, "api.head.html")).read()
+
+    html = html + "<style>"+HtmlFormatter().get_style_defs('.highlight')+"</style>"
 
     # main TOC
     html = html + "<ul>"

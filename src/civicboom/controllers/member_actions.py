@@ -25,7 +25,7 @@ class MemberActionsController(BaseController):
     def follow(self, id, **kwargs):
         """
         POST /members/{name}/follow: follow the member
-
+        @type action
         @api members 1.0 (WIP)
 
         @return 200   following ok
@@ -47,7 +47,7 @@ class MemberActionsController(BaseController):
     def unfollow(self, id, **kwargs):
         """
         POST /members/{name}/unfollow: unfollow the member
-
+        @type action
         @api members 1.0 (WIP)
 
         @return 200   unfollowing ok
@@ -67,14 +67,13 @@ class MemberActionsController(BaseController):
     def actions(self, id, **kwargs):
         """
         GET /members/{name}/actions: actions the current user can perform on this member
-        
+        @type special
         @api members 1.0 (WIP)
         
-        @param * (see common list return controls)
-        
         @return 200   list ok
-                list  the list
-        @return 404   not found
+                list of strings
+        
+        @comment AllanC This is just a list of strings and is not a list object
         """
         member = get_member(id)
         return action_ok(data={"list": member.action_list_for(c.logged_in_persona)})
@@ -87,8 +86,10 @@ class MemberActionsController(BaseController):
     def followers(self, id, **kwargs):
         """
         GET /members/{name}/followers: get a list of followers
-        
+        @type list
         @api members 1.0 (WIP)
+        
+        shortcut to members?follower_of={name}
         
         @param * (see common list return controls)
         
@@ -108,8 +109,10 @@ class MemberActionsController(BaseController):
     def following(self, id, **kwargs):
         """
         GET /members/{name}/following: get a list of members the user is following
-        
+        @type list
         @api members 1.0 (WIP)
+        
+        shortcut to members?followed_by={name}
         
         @param * (see common list return controls)
         
@@ -129,21 +132,15 @@ class MemberActionsController(BaseController):
     def content(self, id, **kwargs):
         """
         GET /members/{name}/content: get a list content (including private if current user)
+        @type list
+        shortcut to /contents?creator={name}
         
         @api members 1.0 (WIP)
         
-        @param * (see common list return controls)
-        @param list what type of contents to return, possible values:
-          content
-          assignments_active
-          assignments_previous
-          assignments
-          articles
-          drafts
+        @param * (see GET /content)
 
         @return 200    list generated ok
                 list   array of content objects
-        @return 404   member not found
         """
         return content_search(creator=id, **kwargs)
 
@@ -155,8 +152,10 @@ class MemberActionsController(BaseController):
     def boomed(self, id, **kwargs):
         """
         GET /members/{name}/boomed: get a list content this user has boomed
-        
+        @type list
         @api members 1.0 (WIP)
+        
+        shortcut to content?boomed_by={name}
         
         @return 200    list generated ok
                 list   array of content objects
@@ -172,12 +171,13 @@ class MemberActionsController(BaseController):
     def content_and_boomed(self, id, **kwargs):
         """
         GET /members/{name}/content_and_boomed: get a list content this user has created and boomed
-        
+        @type list
         @api members 1.0 (WIP)
         
         @return 200    list generated ok
                 list   array of content objects
-        @return 404   member not found
+        
+        @comment AllanC special list union of content?boomed_by={name} and content?creator={name}
         """
         return content_search(boomed_by=id, union_query=sqlalchemy_content_query(creator=id) , **kwargs)
 
@@ -191,6 +191,18 @@ class MemberActionsController(BaseController):
 
     @web
     def groups(self, id, **kwargs):
+        """
+        GET /members/{name}/groups: get a list groups this member belongs to
+        @type list
+        @api members 1.0 (WIP)
+        
+        @return 200    list generated ok
+                list   array of content objects
+        @return 404   member not found
+        
+        @comment AllanC not driven by members/index and lacks limit/offset controls etc
+        """
+
         member = get_member(id)
         
         if member == c.logged_in_persona and kwargs.get('private'):
@@ -206,6 +218,17 @@ class MemberActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     def assignments_accepted(self, id, **kwargs):
+        """
+        GET /members/{name}/assignments_accepted: get a list of assignments this use has accepted
+        @type list
+        @api members 1.0 (WIP)
+        
+        @return 200    list generated ok
+                list   array of content objects
+        @return 404   member not found
+        
+        @comment AllanC not driven by members/index and lacks limit/offset controls etc
+        """
         member = get_member(id)
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
@@ -215,6 +238,19 @@ class MemberActionsController(BaseController):
 
     @web
     def assignments_unaccepted(self, id, **kwargs):
+        """
+        GET /members/{name}/assignments_unaccepted: get a list of assignments this user has been invited to join
+        @type list
+        @api members 1.0 (WIP)
+        
+        @return 200    list generated ok
+                list   array of content objects
+        @return 404   member not found
+        
+        @comment AllanC unaccepted is not the correct term, we use the term 'invite'
+        @comment AllanC not driven by members/index and lacks limit/offset controls etc
+        """
+
         member = get_member(id)
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
@@ -223,10 +259,32 @@ class MemberActionsController(BaseController):
 
     @web
     def assignments_active(self, id, **kwargs):
+        """
+        GET /members/{name}/assignments_active: list of members active assignments
+        @type list
+        
+        shotcut to /members?creator={name}&list=assignments_active
+        
+        @api members 1.0 (WIP)
+        
+        @return 200    list generated ok
+                list   array of content objects
+        """
         return content_search(creator=id, list='assignments_active'  ,**kwargs)
 
     @web
     def assignments_previous(self, id, **kwargs):
+        """
+        GET /members/{name}/assignments_previous: list of members previous assignments
+        @type list
+        
+        shotcut to /members?creator={name}&list=assignments_previous
+        
+        @api members 1.0 (WIP)
+        
+        @return 200    list generated ok
+                list   array of content objects
+        """
         return content_search(creator=id, list='assignments_previous',**kwargs)
 
 
@@ -236,6 +294,10 @@ class MemberActionsController(BaseController):
     @web
     def members(self, id, **kwargs):
         """
+        GET /members/{name}/members: list of members of this group
+        @type list
+        @api members 1.0 (WIP)
+        
         groups only
         
         AllanC

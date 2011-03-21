@@ -257,7 +257,7 @@ class ContentActionsController(BaseController):
         
         @param * (see common list return controls)
         
-        @comment Allan This is a special case return and will only return an array of strings rather than a complete list libject with count, offset, etc
+        @comment Allan This is a special case return and will only return an array of strings rather than a complete list object with count, offset, etc
         
         @return 200   list ok
                 list  the list

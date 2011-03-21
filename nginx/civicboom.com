@@ -106,6 +106,7 @@ server {
 	server_name static.civicboom.com;
 	root /opt/cb/share/website/civicboom/public/;
 	expires max;
+	add_header Cache-Control public;
 }
 
 server {
