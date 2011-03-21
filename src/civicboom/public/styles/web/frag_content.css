@@ -14,6 +14,10 @@
 
 /*----------------------------Content Comments--------------------------------*/
 
+#frag_containers .frag_container .frag_content .comments table {
+    width: 100%;
+}
+
 #frag_containers .frag_container .frag_content .comments h2 {
     font-size: 150%;
 }
