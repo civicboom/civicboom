@@ -182,7 +182,7 @@
 
 <%def name="render_item_member(member)">
 <tr>
-    <td>
+    <td style="padding-top: 3px;">
         ${member_includes.avatar(member, class_="thumbnail_small")}
     </td>
     <td style="padding-left: 3px">
