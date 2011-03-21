@@ -247,7 +247,7 @@ class SettingsController(BaseController):
             if not user == c.logged_in_user:
                 raise action_error(code=403, message="No permission")
         else:
-            if not user.is_admin(c.logged_in_persona):
+            if not user.is_admin(c.logged_in_user):
                 raise action_error(code=403, message="No permission")
         
         data = build_meta(user, user_type, panel)
