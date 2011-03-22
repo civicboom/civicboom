@@ -26,11 +26,11 @@ class AdminControllerBase(BaseController):
     @https()
     def __before__(self):
         BaseController.__before__(self)
-        if pylons.test.pylonsapp:
+        if config['debug']:
             # allow tests to see admin?
             # this could be done better when we have a proper admin definiton
             return
-        if (not c.logged_in_user) or (c.logged_in_user.username not in ["shish", "unittest", "civicboom"]): # pragma: no cover - tests take the shortcut above
+        if not (c.logged_in_persona and c.logged_in_persona.username == "civicboom"):  # pragma: no cover - tests take the shortcut above
             abort(403)
 
     # this is used by the superclass somehow
