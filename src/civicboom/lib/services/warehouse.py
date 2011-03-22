@@ -57,9 +57,11 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
 
         if key.exists():
             log.warning("%s/%s already exists; updating metadata only" % (warehouse, hash))
-            key.copy(bucket.name, key.key, metadata=metadata, preserve_acl=True)
+            key.copy(bucket.name, key.key, metadata=metadata)
+            key.set_acl('public-read')
         else:
-            key.set_contents_from_filename(src, headers=metadata, policy='public-read')
+            key.set_contents_from_filename(src, headers=metadata)
+            key.set_acl('public-read')
 
     elif config["warehouse"] == "ssh":
         log.error("SSH warehouse not implemented")
