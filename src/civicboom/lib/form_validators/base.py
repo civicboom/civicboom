@@ -53,6 +53,7 @@ class LocationValidator(validators.FancyValidator):
     }
     def _to_python(self, value, state):
         try:
+            value = value.replace(",", " ")
             (lon, lat) = value.split(" ")
             return "SRID=4326;POINT(%f %f)" % (float(lon), float(lat))
         except:
