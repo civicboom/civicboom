@@ -3,9 +3,9 @@ $(document).ajaxError(function(event, request, settings, exception) {
 		jsob = jQuery.parseJSON(request.responseText);
 	} catch (e) {
 		if (request.status == 404) {
-			flash_message('The page you requested could not be found, it may have been removed or hidden.');
+			flash_message({message: 'The page you requested could not be found, it may have been removed or hidden.', status: 'error'});
 		} else {
-			flash_message('A server error has occurred!');
+			flash_message({message: 'A server error has occurred!'                                                  , status: 'error'});
 		}
 	}
 	
@@ -20,6 +20,7 @@ $(document).ajaxError(function(event, request, settings, exception) {
 		flash_message(jsob);
 	}
 	
+    /** AllanC - unneeded?
 	try {
 		//flash_message(jQuery.parseJSON(request.responseText));
 	} catch (e) {
@@ -29,6 +30,7 @@ $(document).ajaxError(function(event, request, settings, exception) {
 			flash_message('A server error has occurred!');
 		}
 	}
+    */
 
 	// GregM: Upgrade Required
 	if (request.status == 402) {
