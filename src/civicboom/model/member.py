@@ -29,6 +29,8 @@ group_join_mode          = Enum("public", "invite" , "invite_and_request",    na
 group_member_visibility  = Enum("public", "private",                          name="group_member_visibility" )
 group_content_visibility = Enum("public", "private",                          name="group_content_visibility")
 
+follow_type              = Enum("trusted", "trusted_invite", "normal",        name="follow_type")
+
 
 def has_role_required(role_required, role_current):
     """
@@ -86,6 +88,7 @@ class Follow(Base):
     __tablename__ = "map_member_to_follower"
     member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
     follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    type          = Column(follow_type                          , nullable=False, default="normal")
 
 DDL('DROP TRIGGER IF EXISTS update_follower_count ON map_member_to_follower').execute_at('before-drop', Follow.__table__)
 DDL("""
