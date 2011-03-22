@@ -90,7 +90,10 @@ class ContentCommentSchema(ContentSchema):
 
 def _init_search_filters():
     def append_search_text(query, text):
-        return query.filter(or_(Content.title.match(text), Content.content.match(text)))
+        return query.filter("""
+            to_tsvector('english', title || ' ' || content) @@
+            plainto_tsquery(:text)
+        """).params(text=text)
     
     def append_search_location(query, location_text):
         parts = location_text.split(",")
