@@ -59,7 +59,8 @@ python-cbmisc.deb: ../lib/Makefile
 	echo ================================================ >/dev/null
 	echo "Package: python-cbmisc" > fs-env/DEBIAN/control
 	echo "Version: ${VERSION}" >> fs-env/DEBIAN/control
-	echo "Architecture: $(shell dpkg-architecture -qDEB_BUILD_ARCH)" >> fs-env/DEBIAN/control
+	#echo "Architecture: $(shell dpkg-architecture -qDEB_BUILD_ARCH)" >> fs-env/DEBIAN/control
+	echo "Architecture: all" >> fs-env/DEBIAN/control
 	echo "Maintainer: Shish <shish@civicboom.com>" >> fs-env/DEBIAN/control
 	echo "Depends: binutils" >> fs-env/DEBIAN/control
 	echo "Description: a package with some non-debian-packaged python bits in" >> fs-env/DEBIAN/control
