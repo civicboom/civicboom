@@ -125,6 +125,14 @@ def unfollow(follower, followed, delay_commit=False):
 
     return True
 
+def follower_trust(followed, follower, delay_commit=False):
+    return True
+
+def follower_distrust(followed, follower, delay_commit=False):
+    return True
+
+def follower_invite(followed, follower, delay_commit=False):
+    return True
 
 #-------------------------------------------------------------------------------
 # Message Actions

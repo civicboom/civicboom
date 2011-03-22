@@ -63,6 +63,79 @@ class MemberActionsController(BaseController):
 
 
     #---------------------------------------------------------------------------
+    # Action - Trust Follower
+    #---------------------------------------------------------------------------
+    @web
+    @auth
+    @role_required('editor')
+    def follower_trust(self, id, **kwargs):
+        """
+        POST /members/{name}/trust_follower: follow the member
+
+        @type action
+        @api members 1.0 (WIP)
+
+        @return 200   following ok
+        @return 500   error following
+        """
+        member = get_member(id, set_html_action_fallback=True)
+
+        status = c.logged_in_persona.follower_trust(member)
+        if status == True:
+            return action_ok( _('trust %s') % member.name or member.username )
+        raise action_error(_('Unable to : %s') % status)
+
+
+    #---------------------------------------------------------------------------
+    # Action - DisTrust Follower
+    #---------------------------------------------------------------------------
+    @web
+    @auth
+    @role_required('editor')
+    def follower_distrust(self, id, **kwargs):
+        """
+        POST /members/{name}/distrust_follower: follow the member
+
+        @type action
+        @api members 1.0 (WIP)
+
+        @return 200   following ok
+        @return 500   error following
+        """
+        member = get_member(id, set_html_action_fallback=True)
+
+        status = c.logged_in_persona.follower_distrust(member)
+        if status == True:
+            return action_ok( _('distrust trust %s') % member.name or member.username )
+        raise action_error(_('Unable to : %s') % status)
+
+
+    #---------------------------------------------------------------------------
+    # Action - Invite Trusted Follower
+    #---------------------------------------------------------------------------
+    @web
+    @auth
+    @role_required('editor')
+    def follower_invite(self, id, **kwargs):
+        """
+        POST /members/{name}/follower_invite: 
+
+        @type action
+        @api members 1.0 (WIP)
+
+        @return 200   
+        @return 500   error 
+        """
+        member = get_member(id, set_html_action_fallback=True)
+
+        status = c.logged_in_persona.follower_invite(member)
+        if status == True:
+            return action_ok( _('invite trust %s') % member.name or member.username )
+        raise action_error(_('Unable to invite: %s') % status)
+
+
+
+    #---------------------------------------------------------------------------
     # List - User Actions
     #---------------------------------------------------------------------------
     @web

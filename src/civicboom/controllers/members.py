@@ -50,11 +50,11 @@ def _init_search_filters():
 
     def append_search_followed_by(query, member):
         member_id = normalize_member(member)
-        return query.filter(Member.id.in_( Session.query(Follow.member_id  ).filter(Follow.follower_id==member_id) ))
+        return query.filter(Member.id.in_( Session.query(Follow.member_id  ).filter(Follow.follower_id==member_id).filter(Follow.type!='trusted_invite') ))
 
     def append_search_follower_of(query, member):
         member_id = normalize_member(member)
-        return query.filter(Member.id.in_( Session.query(Follow.follower_id).filter(Follow.member_id  ==member_id) ))
+        return query.filter(Member.id.in_( Session.query(Follow.follower_id).filter(Follow.member_id  ==member_id).filter(Follow.type!='trusted_invite') ))
 
 
     search_filters = {
