@@ -310,7 +310,7 @@ class ContentsController(BaseController):
         #url_for('new_content')
         create_ = ContentsController().create(**kwargs)
         # AllanC TODO - needs restructure - see create
-        if (c.format=='html' or c.format=='redirect') and create_['status'] == "ok":
+        if create_['data'].get('id') and (c.format=='html' or c.format=='redirect'):
             return redirect(url('edit_content', id=create_['data']['id']))
 
         if isinstance(create_, action_error):
@@ -340,7 +340,7 @@ class ContentsController(BaseController):
 
         if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
-        
+
         # Create Content Object
         if   kwargs['type'] == 'draft':
             raise_if_current_role_insufficent('contributor')
@@ -359,7 +359,8 @@ class ContentsController(BaseController):
         
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
-        
+        print "creator"
+        print content.creator
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
