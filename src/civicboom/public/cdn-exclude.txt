@@ -1,5 +1,7 @@
 styles/*/*
 javascript/tiny_mce/*
-javascript/[a-z]*.js
+javascript/[a-zA-Z]*.js
 cdn-exclude.txt
 robots.txt
+*/.gitignore
+*/Makefile
