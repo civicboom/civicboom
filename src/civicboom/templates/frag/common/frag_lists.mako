@@ -182,13 +182,21 @@
 
 <%def name="render_item_member(member)">
 <tr>
-    <td>
+    <td style="padding-top: 3px;">
         ${member_includes.avatar(member, class_="thumbnail_small")}
     </td>
     <td style="padding-left: 3px">
         <a href="${h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">
         ${member.get('name') or member.get('username')}
         </a>
+		<br><small>
+			<!-- Following ${member['num_following']}; -->
+			% if member['type'] == 'group' and member['num_members']:
+				${member['num_followers']} followers; ${member['num_members']} members
+			% else:
+				${member['num_followers']} followers
+			% endif
+		</small>
     </td>
 </tr>
 </%def>

@@ -1,7 +1,9 @@
 
+PYTHONPATH=../lib
+
 help:
 	# Usage: make <target>, where target is
-	# site       -- i18n + js + css  (this should be done after git clone)
+	# site       -- i18n + js + css + libs (this should be done after git clone)
 	# i18n       -- compile the translations
 	# i18n-fr    -- generate a machine-translated french site
 	# js         -- compress javascript into _combined.head.js and foot.js
@@ -15,8 +17,9 @@ help:
 	# stats      -- run the interactive profile examiner
 	# pep8       -- strict syntax checking
 	# api-doc    -- build civicboom/public/api.html
+	# libs       -- fetch external libraries
 
-site: i18n js css
+site: i18n js css libs
 
 i18n:
 	python setup.py extract_messages
@@ -86,3 +89,8 @@ pep8:
 
 api-doc:
 	../admin_scripts/gendoc -i civicboom/controllers/ -t ../docs -o civicboom/public/api.html
+
+py-libs:
+	make -C ../lib
+
+libs: py-libs

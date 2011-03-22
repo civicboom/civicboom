@@ -328,6 +328,20 @@
         <span class="separtor"></span>
     % endif
     
+    <%doc>
+    % if 'delete' in self.actions and self.member['type'] == 'group':
+        ${h.secure_link(
+            h.args_to_tuple('group', id=self.id, format='redirect'),
+            method = "DELETE",
+            value           = _("Delete _group"),
+            value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
+            confirm_text    = _("Are your sure you want to delete this group?"),
+            json_form_complete_actions = "cb_frag_remove(current_element); cb_frag_reload('members/%s');" % self.id,
+        )}
+        <span class="separtor"></span>
+    % endif
+    </%doc>
+
     ${popup.link(
         h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
         title = _('Get widget'),

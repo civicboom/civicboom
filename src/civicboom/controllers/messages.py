@@ -165,9 +165,9 @@ class MessagesController(BaseController):
         
         if not (target and subject and content):
             raise action_error('missing / incorrect paramaters', code=400)
-        target = get_member(target)
-        if not target:
-            raise action_error('user does not exist', code=404)
+        target = get_member(target, set_html_action_fallback=True)
+        #if not target:
+        #    raise action_error('user does not exist', code=404)
         
         m = Message()
         m.source  = c.logged_in_persona

@@ -151,16 +151,17 @@ class GroupsController(BaseController):
         """
         POST /groups: Create a new group
 
+        Creates a new group with the specified username with the currently
+        logged in user as as administrator of the new group
+
         @api groups 1.0 (WIP)
         
-        Creates a new group with the specifyed username with the currently logged in user as as administrator of the new group
+        @param username  a unique username, cannot clash with existing usernames
+        @param *         see "POST /groups"
         
-        @param username - a unique username, cannot clash with existing usernames
-        @param *        - see "POST /groups"
-        
-        @return 400 - data invalid (ie, username that already exisits)
-        @return 201 - group created, data.id = new group id
-        @return 301 - if format redirect specifyed will redirect to show group
+        @return 400  data invalid (ie, username that already exisits)
+        @return 201  group created, data.id = new group id
+        @return 301  if format redirect specifyed will redirect to show group
         """
         # url('groups') + POST
         # if only display name is specified, generate a user name
@@ -181,6 +182,14 @@ class GroupsController(BaseController):
         group_admin.member = c.logged_in_persona
         group_admin.role   = "admin"
         group.members_roles.append(group_admin)
+        
+        # GregM: Create current user as admin of group too to allow them to admin group (until permission tree is sorted!)
+        if isinstance(c.logged_in_persona, Group):
+            group_admin_user        = GroupMembership()
+            group_admin_user.member = c.logged_in_user
+            group_admin_user.role   = "admin"
+            group.members_roles.append(group_admin_user)
+        
         Session.add(group)
         Session.commit()
         
