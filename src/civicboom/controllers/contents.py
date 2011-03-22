@@ -312,7 +312,11 @@ class ContentsController(BaseController):
         # AllanC TODO - needs restructure - see create
         if create_['data'].get('id') and (c.format=='html' or c.format=='redirect'):
             return redirect(url('edit_content', id=create_['data']['id']))
-        return create_
+
+        if isinstance(create_, action_error):
+            raise create_
+        else:
+            return create_
 
 
     @web

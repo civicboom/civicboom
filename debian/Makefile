@@ -22,6 +22,7 @@ cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
 
 cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -type f)
 	cd ../src/ && $(MAKE) site
+	cd ../src/ && $(MAKE) api-doc
 	rm -rf fs-api
 	$(call mdcp, api/*              , fs-api/DEBIAN/                   )
 	$(call mdcp, api/crontab        , fs-api/etc/cron.d/,cb-website-web )
@@ -52,7 +53,7 @@ cb-website-db.deb: $(shell find db)
 	fakeroot dpkg -b fs-db cb-website-db_${VERSION}_all.deb 
 	ln -sf cb-website-db_${VERSION}_all.deb cb-website-db.deb
 
-python-cbmisc.deb: ../src/setup.py
+python-cbmisc.deb: ../lib/Makefile
 	mkdir -p fs-env/DEBIAN/
 	echo ================================================ >/dev/null
 	echo "Package: python-cbmisc" > fs-env/DEBIAN/control
@@ -60,15 +61,11 @@ python-cbmisc.deb: ../src/setup.py
 	echo "Architecture: $(shell dpkg-architecture -qDEB_BUILD_ARCH)" >> fs-env/DEBIAN/control
 	echo "Maintainer: Shish <shish@civicboom.com>" >> fs-env/DEBIAN/control
 	echo "Depends: binutils" >> fs-env/DEBIAN/control
-	echo "Description: a package to install a python virtualenv and easy_install packages into it" >> fs-env/DEBIAN/control
+	echo "Description: a package with some non-debian-packaged python bits in" >> fs-env/DEBIAN/control
 	echo ================================================ >/dev/null
-	mkdir -p fs-env/opt/cb
-	virtualenv fs-env/opt/cb
-	./fs-env/opt/cb/bin/easy_install $(shell python helper.py find_packages)
-	mkdir -p ./fs-env/usr/lib/python2.6/dist-packages/
-	cat fs-env/opt/cb/lib/python2.6/site-packages/easy-install.pth | \
-		sed "s#./#/opt/cb/lib/python2.6/site-packages/#" \
-		> fs-env/usr/lib/python2.6/dist-packages/cbmisc.pth
+	mkdir -p fs-env/usr/local/lib/python2.6/dist-packages
+	make -C ../lib
+	cp -rv ../lib/* fs-env/usr/local/lib/python2.6/dist-packages/
 	echo ================================================ >/dev/null
 	fakeroot dpkg -b fs-env python-cbmisc_${VERSION}.deb
 	ln -sf python-cbmisc_${VERSION}.deb python-cbmisc.deb

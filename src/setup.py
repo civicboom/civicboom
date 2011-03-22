@@ -18,7 +18,6 @@ setup(
     # from the python package index, the second array is packages which are
     # supplied by debian
     install_requires=[
-        "python_magic",
         "FormAlchemy",
         "GeoAlchemy",
         "twitter>=1.4.2",
@@ -27,7 +26,8 @@ setup(
         "Pylons>=1.0.0",     # debian experimental
         "Mako>=0.3.4",       # debian experimental has 0.3.6
         #"recaptcha-client", # AllanC - I wrote our own one out of frustration, turned out to be the validator triggering twice :(
-        #"GeoFormAlchemy",   # now using a custom geometry renderer with our own location picker component
+        #"GeoFormAlchemy",   # Shish - now using a custom geometry renderer with our own location picker component
+        #"python_magic",     # Shish - now bundled by hand (lib/magic.py)
         "pyDNS",
         "python_memcached",
         "boto",
