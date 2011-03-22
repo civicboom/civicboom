@@ -17,6 +17,7 @@
 	<meta name="keywords"    content="civicboom, social media, community, information, news" />
 	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
 	<meta name="robots"      content="all" />
+	<meta name="viewport"    content="width=500">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta charset="utf-8">
 
