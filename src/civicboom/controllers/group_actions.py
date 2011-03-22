@@ -107,11 +107,11 @@ class GroupActionsController(BaseController):
         """
         POST /groups/{id}/set_role:
         
-        @api groups 1.0 (WIP)
-        
         (only if current user has admin role in group)
         
         used to approve join requests (role=None=default group join role)
+        
+        @api groups 1.0 (WIP)
 
         @param member
         @param role

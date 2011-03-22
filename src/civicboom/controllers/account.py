@@ -38,14 +38,14 @@ class AccountController(BaseController):
         """
         POST /account/signout: End the current session
 
-        @api account 1.0 (WIP)
-
-        @return 302   redirect to the front page
-
         This function is also pointed to from the ini config to trigger AuthKit to remove cookies
 
         Redirect to a new URL so that the browser doesn't cache it (Shouldn't be necessary, but it
         seems that sometimes it is?)
+
+        @api account 1.0 (WIP)
+
+        @return 302   redirect to the front page
         """
         signout_user(c.logged_in_persona)
         return redirect(url('/', protocol='http', ut=str(time.time())))

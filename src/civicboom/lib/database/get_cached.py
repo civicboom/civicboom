@@ -134,9 +134,6 @@ def get_membership_tree(group, member, iter = 0):
     if not (member and group):
         return None
 
-    print member.username
-    print group.username
-
     try:
         return Session.query(GroupMembership).filter(
             and_(
@@ -155,8 +152,6 @@ def get_membership_tree(group, member, iter = 0):
             ).all()
             for p_group in groups:
                 p_result = get_membership_tree(p_group.member.id, member.id, iter + 1)
-                print p_result
-                print p_group.group.username
                 if p_result:
                     return p_result
             return None
