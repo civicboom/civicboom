@@ -16,7 +16,7 @@ HTML {
 
 HEADER {
 	clear: both;
-	background: url("/styles/web/headerbk.png") 0 -10px;
+	background: url("/styles/web/headerbk.png");
 	position: fixed;
     top  : 0px;
 	left : 0px;
@@ -29,6 +29,11 @@ HEADER {
 	 * 800px screen, overlapping is slightly less bad
 	 * than the Sign In button going off the edge of
 	 * the screen
+	 */
+	/*
+	 * this should never matter, as for thin browsers
+	 * we go into thin mode; but possibly this is still
+	 * useful for IE7/8
 	 */
 	min-width: 780px;
 }
@@ -73,6 +78,7 @@ HEADER #persona_select {
     position: absolute;
     top : 8px;
     left: 155px;
+	z-index: 501; /* above the create/explore/manage */
 }
 
 HEADER #persona_select img {
@@ -147,11 +153,12 @@ HEADER #home_link {
 NAV {
 	position: absolute;
 	top: 11px;
-	left: 215px;
+	left: 223px;
 }
 
 NAV .menuh>UL {
-	margin-left: 16px;
+	margin-left: 8px;
+	margin-right: 8px;
 	height: 20px;
 }
 NAV .menuh>UL>LI>UL{
@@ -301,6 +308,9 @@ FOOTER A {
 	text-decoration: none;
 	margin-right: 8px;
 }
+FOOTER .links {
+	float: left;
+}
 FOOTER .copyright {
 	float: right;
 }
@@ -316,4 +326,36 @@ H1,H2,H3,H4 {
 }
 H1 {
     font-size: 150%;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                                  Thin Mode                                 */
+/*----------------------------------------------------------------------------*/
+
+@media (max-width: 940px) {
+	HEADER {
+		min-width: 480px;
+		height: 84px;
+	}
+	NAV {
+		top: 53px;
+		left: 0px;
+		right: 0px;
+	}
+	NAV .menuh {
+		width: 400px;
+		margin: auto;
+	}
+
+	BODY>DIV#app {
+		margin-top: 86px;
+	}
+
+	FOOTER .links, FOOTER .copyright {
+		float: left;
+		clear: both;
+		width: 100%;
+		text-align: center;
+	}
 }
