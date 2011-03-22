@@ -6,3 +6,9 @@ ${_("_user")}
 ${_("_User")}
 ${_("_free")}
 ${_("_Free")}
+${_("_article")}
+${_("_Article")}
+${_("_assignment")}
+${_("_Assignment")}
+${_("_request")}
+${_("_Request")}

@@ -90,7 +90,10 @@ class ContentCommentSchema(ContentSchema):
 
 def _init_search_filters():
     def append_search_text(query, text):
-        return query.filter(or_(Content.title.match(text), Content.content.match(text)))
+        return query.filter("""
+            to_tsvector('english', title || ' ' || content) @@
+            plainto_tsquery(:text)
+        """).params(text=text)
     
     def append_search_location(query, location_text):
         parts = location_text.split(",")
@@ -236,9 +239,9 @@ class ContentsController(BaseController):
         @return 200      list ok
             list list of content objects
         
-        @example http://new.civicboom.com/contents.json?creator=unittest&limit=2
-        @example http://new.civicboom.com/contents.rss?list=assignments_active&limit=2
-        @example http://new.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
+        @example http://test.civicboom.com/contents.json?creator=unittest&limit=2
+        @example http://test.civicboom.com/contents.rss?list=assignments_active&limit=2
+        @example http://test.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
         
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
@@ -310,9 +313,13 @@ class ContentsController(BaseController):
         #url_for('new_content')
         create_ = ContentsController().create(**kwargs)
         # AllanC TODO - needs restructure - see create
-        if c.format=='html' or c.format=='redirect':
+        if create_['data'].get('id') and (c.format=='html' or c.format=='redirect'):
             return redirect(url('edit_content', id=create_['data']['id']))
-        return create_
+
+        if isinstance(create_, action_error):
+            raise create_
+        else:
+            return create_
 
 
     @web
@@ -336,7 +343,7 @@ class ContentsController(BaseController):
 
         if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
-        
+
         # Create Content Object
         if   kwargs['type'] == 'draft':
             raise_if_current_role_insufficent('contributor')
@@ -355,7 +362,6 @@ class ContentsController(BaseController):
         
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
-        
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
@@ -641,8 +647,8 @@ class ContentsController(BaseController):
         @return 403      permission denied
         @return 404      content not found
         
-        @example http://new.civicboom.com/contents/1.json
-        @example http://new.civicboom.com/contents/1.rss
+        @example http://test.civicboom.com/contents/1.json
+        @example http://test.civicboom.com/contents/1.rss
         """
         # url('content', id=ID)
         

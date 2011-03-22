@@ -90,19 +90,19 @@ class MembersController(BaseController):
         
         @api members 1.0 (WIP)
     
-        @param member       ...
-        @param name         ... (aka 'term' for the autocompleter)
-        @param type         ...
-        @param location     ...
-        @param followed_by  ...
-        @param follower_of  ...
+        @param member       find this specific member by name
+        @param name         find members with names like this (aka 'term' for the autocompleter)
+        @param type         'user' or 'group'
+        @param location     find members with a public location near to this point
+        @param followed_by  find members followed by the specified member
+        @param follower_of  find members who are a follower of the specified member
         @param *            (see common list return controls)
     
         @return 200      list ok
                 list     array of member objects
         
-        @example http://new.civicboom.com/members.json?name=unit
-        @example http://new.civicboom.com/members.json?follower_of=1&limit=5
+        @example http://test.civicboom.com/members.json?name=unit
+        @example http://test.civicboom.com/members.json?follower_of=1&limit=5
         """
         
         # Autocomplete uses term not name - for ease of migration term is copyed to name if name not present
@@ -165,7 +165,7 @@ class MembersController(BaseController):
                 member   member object
         @return 404      member not found
         
-        @example http://new.civicboom.com/members/1.json
+        @example http://test.civicboom.com/members/1.json
         """
         
         member = get_member(id)

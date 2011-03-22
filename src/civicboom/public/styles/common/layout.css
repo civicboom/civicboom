@@ -255,7 +255,15 @@ HTML.no-js #flash_message {
 	font-weight: bold;
 
 	cursor: pointer;
-}	
+}
+
+.acceptrequest {
+	width: 100%;
+	text-align: center;
+}
+.acceptrequest .button {
+	width: 45%;
+}
 
 DIV#app .button {
 	padding: 0.25em 0.5em;

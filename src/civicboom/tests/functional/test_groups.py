@@ -141,8 +141,8 @@ class TestGroupsController(TestController):
         
         response = self.app.get(url('edit_group', id=1       ), status=404)
         self.assertNotEqual(self.group_id, 0)
-        response = self.app.get(url('settings', id=self.group_id), status=200)
-        self.assertIn('test_group', response)
+        response = self.app.get(url('settings', id=self.group_id, format="json"), status=200)
+        self.assertIn('Test group for unit tests', response)
         self.log_out()
         response = self.app.get(url('settings', id=self.group_id), status=302) # redirect to login page as not logged in
         self.log_in_as('unitfriend')

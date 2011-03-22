@@ -45,17 +45,23 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
     elif config["warehouse"] == "s3":
         connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
         bucket = connection.get_bucket(config["s3_bucket_name"])
+
         key = Key(bucket)
         key.key = warehouse+"/"+hash
+        metadata = {
+            'Content-Type': magic.from_file(src, mime=True),
+            'Cache-Control': 'no-cache' if placeholder else 'public, max-age=31536000',
+            #'Expires': 'Sun, 17 Mar 2023 17:48:53 GMT', # FIXME: now() + 1 year
+            'Content-Disposition': 'inline; filename='+__http_escape(filename) if filename else 'inline',
+        }
+
         if key.exists():
             log.warning("%s/%s already exists; updating metadata only" % (warehouse, hash))
+            key.copy(bucket.name, key.key, metadata=metadata)
+            key.set_acl('public-read')
         else:
-            key.set_contents_from_filename(src)
-        key.set_metadata('Content-Type', magic.from_file(src, mime=True))
-        key.set_metadata('Cache-Control', 'no-cache' if placeholder else 'public')
-        if filename:
-            key.set_metadata('Content-Disposition', 'inline; filename='+__http_escape(filename))
-        key.set_acl('public-read')
+            key.set_contents_from_filename(src, headers=metadata)
+            key.set_acl('public-read')
 
     elif config["warehouse"] == "ssh":
         log.error("SSH warehouse not implemented")

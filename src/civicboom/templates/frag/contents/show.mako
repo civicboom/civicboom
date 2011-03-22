@@ -347,6 +347,7 @@
     comments = d['comments']['items']
 %>
 <div style="padding-top: 20px;" class="acceptrequest">
+  <span class="separtor"></span>
   % if 'publish' in self.actions:
       ${h.secure_link(
           h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
@@ -359,17 +360,6 @@
       <span class="separtor"></span>
   % endif
   ## --- Respond -------------------------------------------------------------
-  % if self.content['type'] != 'draft':
-      ${h.secure_link(
-          h.args_to_tuple('new_content', parent_id=self.id) ,
-          css_class = 'button',
-          value           = _("Respond") ,
-          json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
-      )}
-      ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
-      ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
-      <span class="separtor"></span>
-  % endif
   % if 'accept' in self.actions:
       ${h.secure_link(
           h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
@@ -378,6 +368,17 @@
           json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
       )}
       ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
+      <span class="separtor"></span>
+  % endif
+  % if self.content['type'] != 'draft':
+      ${h.secure_link(
+          h.args_to_tuple('new_content', parent_id=self.id) ,
+          css_class = 'button',
+          value           = _("Respond Now") ,
+          json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+      )}
+      ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
+      ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
       <span class="separtor"></span>
   % endif
   

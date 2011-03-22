@@ -327,7 +327,7 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title='', confirm_text=None, method='POST', json_form_complete_actions=''):
+def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title=None, confirm_text=None, method='POST', json_form_complete_actions=''):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -339,8 +339,6 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
     
     Then use javascript to hide the form and show the pretty link
     """
-    if not title:
-        title = value
     if not value_formatted:
         value_formatted = value
 
@@ -464,9 +462,11 @@ def cb_frag_link(*args, **kwargs):
 #-------------------------------------------------------------------------------
 # Get object from Civicboom URL
 #-------------------------------------------------------------------------------
-regex_content_url = re.compile(r'(?:.*?)/contents/(.*?)[/&?#\n. "]')
-regex_member_url  = re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "]')
-
+regex_urls = [
+    ('content', re.compile(r'(?:.*?)/contents/new\?parent_id=(\d+)') ),
+    ('content', re.compile(r'(?:.*?)/contents/(\d+)')                ),
+    ('member' , re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "$]')     ),
+]
 
 def get_object_from_action_url(action_url=None):
     """
@@ -474,12 +474,11 @@ def get_object_from_action_url(action_url=None):
     """
     if not action_url:
         action_url = current_url()
-    m = re.match(regex_content_url, action_url)
-    if m:
-        return ( ['content'], dict(id=m.group(1)) )
-    m = re.match(regex_member_url, action_url)
-    if m:
-        return ( ['member'], dict(id=m.group(1)) )
+
+    for (object_type, re_url) in regex_urls:
+        m = re.match(re_url, action_url)
+        if m:
+            return ( [object_type], dict(id=m.group(1)) )
     return (None,None)
 
 #-------------------------------------------------------------------------------

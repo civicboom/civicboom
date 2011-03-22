@@ -87,6 +87,7 @@ function cb_frag(current_element, url, list_type, from_history, callback) {
   				frag_loading.animate({opacity: null}, 0);
   				
   				frag_loading = null;
+  				html5ize(frag_loading);
   				if (typeof callback != 'undefined') callback(true);
   				// These are unneeded because the playholder is the correct width, so the scroll above will be scrolling to the correct place as the AJAX loads
   				//$(window)._scrollable().scrollTo(frag_loading, {duration: scroll_duration});
@@ -110,7 +111,9 @@ function cb_frag_load(jquery_element, url) {
 	_gaq.push(['_trackPageview', url]);
 	
 	var frag_container = jquery_element.parents('.'+fragment_container_class)
-	frag_container.load(url);
+	frag_container.load(url, function() {
+		html5ize(frag_container);
+	});
 }
 
 

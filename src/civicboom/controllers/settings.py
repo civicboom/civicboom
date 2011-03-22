@@ -176,6 +176,9 @@ def copy_user_settings(settings_meta, user, user_type):
                 v = getattr(user, setting_name_repl)
             else:
                 v = user.config.get(setting_name_repl, settings_meta[setting_name].get('default'))
+            # Special case for email addresses, if the user has no email address but has unverified, show that instead.
+            if v == None and setting_name == 'email' and user.email_unverified != None:
+                v = user.email_unverified
             if isinstance(v, basestring): # ugly hack
                 settings[setting_name_repl] = v
             else:
@@ -187,7 +190,7 @@ def copy_user_settings(settings_meta, user, user_type):
 
 class SettingsController(BaseController):
     """
-    @title Sesttings
+    @title Settings
     @doc settings
     @desc REST controller for Settings
     
@@ -201,30 +204,30 @@ class SettingsController(BaseController):
     #---------------------------------------------------------------------------
     
     def index(self):
-        """GET /: All items in the collection."""
+        """GET /settings: All items in the collection."""
         return self.panel() #self.show(None)
     
     @auto_format_output
     def create(self):
-        """POST /: Create a new item."""
+        """POST /settings: Create a new item."""
         raise action_error(_('operation not supported'), code=501)
     
     @auto_format_output
     def new(self):
-        """GET /new: Form to create a new item."""
+        """GET /settings/new: Form to create a new item."""
         raise action_error(_('operation not supported'), code=501)
     
     @auto_format_output
     def delete(self, id):
         """
-        DELETE /id: Delete an existing item.
+        DELETE /settings/id: Delete an existing item.
         """
         # h.form(h.url_for('message', id=ID), method='delete')
         # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
         raise action_error(_('operation not supported (yet)'), code=501)
 
     def show(self, id, **kwargs):
-        """GET /id: Show a specific item."""
+        """GET /settings/id: Show a specific item."""
         return self.panel(id=id, **kwargs) #self.edit(id)
 
     @web
@@ -249,7 +252,7 @@ class SettingsController(BaseController):
         
         data = build_meta(user, user_type, panel)
         
-        #Janrain HACK
+        # Janrain HACK
         if user_type == 'member' and panel == 'link_janrain':
             return action_ok(
                 data=data,
@@ -285,7 +288,7 @@ class SettingsController(BaseController):
     @authorize
     @role_required('admin')
     def edit(self, id, **kwargs):
-        """GET /id;edit: Form to edit an existing item."""
+        """GET /settings/id/edit: Form to edit an existing item."""
         
         # Return panel instead of old settings template!
         return self.panel(id=id, panel=kwargs.get('panel'))
@@ -298,7 +301,7 @@ class SettingsController(BaseController):
 #        
 #        user = c.logged_in_persona
 #        
-#        # Generate base settings dictonary for ALL settings
+#        # Generate base settings dictionary for ALL settings
 #        settings_meta = copy.deepcopy(settings_base)
 #        settings      = {}
 #        
@@ -330,13 +333,16 @@ class SettingsController(BaseController):
         """
         PUT /id: Update an existing item.
         
-        - Creates a custom validator schema for the inputed data that has changed from the db
+        - Creates a custom validator schema for the input data that has changed from the DB
         - Validates the request overlaying errors if generated
         - Saves update
         - Returns written object
         """
         # Check permissions on object, find actual username and store in username
         # id will always contain me if it was passed
+        
+        private = kwargs.get('private')
+        
         username = id
         if not username or username == 'me':
             username = c.logged_in_persona.username
@@ -348,7 +354,7 @@ class SettingsController(BaseController):
             if not user == c.logged_in_user:
                 raise action_error(code=403, message="No permission")
         else:
-            if not user.is_admin(c.logged_in_user):
+            if not user.is_admin(c.logged_in_persona):
                 raise action_error(code=403, message="No permission")
 
         user_log.info("Saving general settings")
@@ -372,10 +378,14 @@ class SettingsController(BaseController):
         # If no new password set disregard (delete) all password fields!
         if kwargs.get('password_new') == '':
             del kwargs['password_new']
-            if kwargs.get('password_current'):
+            try:
                 del kwargs['password_current']
-            if kwargs.get('password_new_confirm'):
+            except:
+                pass
+            try:
                 del kwargs['password_new_confirm']
+            except:
+                pass
                 
         # GregM: Patched to remove avatar kwarg if blank (keeping current avatar on settings save!)
         if kwargs.get('avatar') == '':
@@ -395,7 +405,7 @@ class SettingsController(BaseController):
         for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings_base[setting_name.split('-')[0]].get('who', user_type) == user_type ]:
             log.debug("adding validator: %s" % validate_fieldname)
             validators[validate_fieldname] = settings_validators[validate_fieldname]
-        # Build a dynamic validation scema based on these required fields and validate the form
+        # Build a dynamic validation schema based on these required fields and validate the form
         schema = build_schema(**validators)
         # Add any additional validators for custom fields
         if 'password_new' in validators:
@@ -466,16 +476,19 @@ class SettingsController(BaseController):
         # Save validated Sets: Needs cleaning up!
         for setting_set in [(setting_name, settings_base[setting_name].get('value','').split(',')) for setting_name in settings_base.keys() if settings_base[setting_name].get('type') == 'set']:
             setting_name = setting_set[0]
+            # If storing using the api route_this = 'en', route_that = 'n', etc.
             if setting_name in settings:
                 if validators.get(setting_name):
                     if hasattr(user, setting_name):
                         setattr(user, setting_name, settings[setting_name].join(''))
                     else:
                         user.config[setting_name] = settings[setting_name].join('')
+                        print setting_name
                     del settings[setting_name]
                     for setting_value in setting_set[1]:
                         if setting_name+'-'+setting_value in settings:
                             del settings[setting_name+'-'+setting_value]
+            # If storing using the web route_this-e = 'e', route_this-n = 'n', etc.
             else:
                 setting_new_value = ''
                 setting_count = 0
@@ -485,7 +498,7 @@ class SettingsController(BaseController):
                         setting_new_value = setting_new_value + (settings[setting_name+'-'+setting_value] or '')
                         del settings[setting_name+'-'+setting_value]
                 if setting_count == len(setting_set[1]):
-                    if validators.get(setting_name):
+                    if validators.get(setting_name+'-'+setting_value):
                         if hasattr(user, setting_name):
                                 setattr(user, setting_name, setting_new_value)
                         else:
@@ -513,11 +526,14 @@ class SettingsController(BaseController):
         
         Session.commit()
         
+        if private: return
+        
         if c.format == 'html':
+            set_flash_message(action_ok(_('Settings updated')))
             return redirect(url(panel_redirect))
         
         return action_ok(
-            message = _('settings updated') ,
+            message = _('Settings updated') ,
             data    = data ,
             template= panel_template ,
         )

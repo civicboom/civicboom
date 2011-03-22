@@ -82,7 +82,7 @@ class MiscController(BaseController):
             @authenticate_form
             def submit_feedback(**kwargs):
                 if c.logged_in_user:
-                    kwargs['from'] = c.logged_in_user.email or c.logged_in_user.email_unverified
+                    kwargs['from'] = (c.logged_in_user.email or c.logged_in_user.email_unverified) if isinstance(c.logged_in_user, User) else 'noreply@civicboom.com'
                 else:
                     if kwargs.get('simple_captcha') != 'xyz':
                         raise action_error('invalid capture')

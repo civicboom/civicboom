@@ -1,9 +1,36 @@
 $(document).ajaxError(function(event, request, settings, exception) {
 	try {
-		flash_message(jQuery.parseJSON(request.responseText));
+		jsob = jQuery.parseJSON(request.responseText);
 	} catch (e) {
-		flash_message('A server error has occured!');
+		if (request.status == 404) {
+			flash_message({message: 'The page you requested could not be found, it may have been removed or hidden.', status: 'error'});
+		} else {
+			flash_message({message: 'A server error has occurred!'                                                  , status: 'error'});
+		}
 	}
+	
+	if (typeof jsob != 'undefined') {
+		if (typeof jsob.message != 'undefined' && typeof jsob.data != 'undefined' && typeof jsob.data.invalid != 'undefined') {
+			jsob.message = jsob.message + ' (';
+			for (var i in jsob.data.invalid) {
+				jsob.message = jsob.message + i + ': ' + jsob.data.invalid[i] + ', ';
+			}
+			jsob.message = jsob.message + ')';
+		}
+		flash_message(jsob);
+	}
+	
+    /** AllanC - unneeded?
+	try {
+		//flash_message(jQuery.parseJSON(request.responseText));
+	} catch (e) {
+		if (request.status == 404) {
+			flash_message('The page you requested could not be found, it may have been removed or hidden.');
+		} else {
+			flash_message('A server error has occurred!');
+		}
+	}
+    */
 
 	// GregM: Upgrade Required
 	if (request.status == 402) {

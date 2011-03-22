@@ -57,7 +57,6 @@
                         setting_type  = None
                         if 'type' in setting_meta:
                             setting_type  = setting_meta['type']
-                        print setting_
                         setting_values = setting_meta.get('value').split(',')
                         setting_value = d['settings'][setting_name] if setting_name in d['settings'] else ''
                     %>
