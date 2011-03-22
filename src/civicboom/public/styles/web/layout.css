@@ -16,7 +16,7 @@ HTML {
 
 HEADER {
 	clear: both;
-	background: url("/styles/web/headerbk.png") 0 -10px;
+	background: url("headerbk.png") 0 -10px;
 	position: fixed;
     top  : 0px;
 	left : 0px;
