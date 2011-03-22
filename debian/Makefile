@@ -65,7 +65,7 @@ python-cbmisc.deb: ../lib/Makefile
 	echo ================================================ >/dev/null
 	mkdir -p fs-env/usr/local/lib/python2.6/dist-packages
 	make -C ../lib
-	cp -rv ../lib/* fs-env/usr/local/lib/python2.6/dist-packages/
+	cp -r ../lib/* fs-env/usr/local/lib/python2.6/dist-packages/
 	echo ================================================ >/dev/null
 	fakeroot dpkg -b fs-env python-cbmisc_${VERSION}.deb
 	ln -sf python-cbmisc_${VERSION}.deb python-cbmisc.deb
