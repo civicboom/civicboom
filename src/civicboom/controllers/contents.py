@@ -355,8 +355,6 @@ class ContentsController(BaseController):
         
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
-        print "creator"
-        print content.creator
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
