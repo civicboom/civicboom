@@ -310,9 +310,13 @@ class ContentsController(BaseController):
         #url_for('new_content')
         create_ = ContentsController().create(**kwargs)
         # AllanC TODO - needs restructure - see create
-        if c.format=='html' or c.format=='redirect':
+        if (c.format=='html' or c.format=='redirect') and create_['status'] == "ok":
             return redirect(url('edit_content', id=create_['data']['id']))
-        return create_
+
+        if isinstance(create_, action_error):
+            raise create_
+        else:
+            return create_
 
 
     @web
