@@ -325,7 +325,7 @@ class MemberActionsController(BaseController):
         c.group = group
         
         if hasattr(group, 'member_visibility'):
-            if group.member_visibility=="public" or group.get_membership(c.logged_in_persona):
+            if group.member_visibility=="public" or group.get_membership(c.logged_in_persona) or group == c.logged_in_persona:
                 members = [update_dict(mr.member.to_dict(),{'role':mr.role, 'status':mr.status}) for mr in group.members_roles]
                 return action_ok_list(members)
         return action_ok_list([])
