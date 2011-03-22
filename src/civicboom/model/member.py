@@ -550,6 +550,7 @@ class Group(Member):
         else:
             if self.is_admin(member, membership):
                 action_list.append('delete')
+                action_list.append('remove') #AllanC - could be renamed? this means remove member?
                 action_list.append('set_role')
                 action_list.append('settings_group')
                 if self.num_admins>1:

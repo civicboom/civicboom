@@ -328,6 +328,7 @@
         <span class="separtor"></span>
     % endif
     
+    <%doc>
     % if 'delete' in self.actions and self.member['type'] == 'group':
         ${h.secure_link(
             h.args_to_tuple('group', id=self.id, format='redirect'),
@@ -339,6 +340,7 @@
         )}
         <span class="separtor"></span>
     % endif
+    </%doc>
 
     ${popup.link(
         h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
