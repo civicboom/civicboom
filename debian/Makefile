@@ -31,6 +31,7 @@ cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -ty
 	$(call mdcp, ../docs/*          , fs-api/opt/cb/share/doc/website/ )
 	$(call mdcp, ../src/*           , fs-api/opt/cb/share/website/     )
 	sed -i s/VERSION/${VERSION}/ fs-api/DEBIAN/control
+	echo ${VERSION} > fs-api/opt/cb/share/website/.version
 	fakeroot dpkg -b fs-api cb-website-api_${VERSION}_all.deb 
 	ln -sf cb-website-api_${VERSION}_all.deb cb-website-api.deb
 
