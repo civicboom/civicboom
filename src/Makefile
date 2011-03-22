@@ -18,6 +18,7 @@ help:
 	# pep8       -- strict syntax checking
 	# api-doc    -- build civicboom/public/api.html
 	# libs       -- fetch external libraries
+	# cdnpush    -- push static files to CDN
 
 site: i18n js css libs
 
@@ -94,3 +95,10 @@ py-libs:
 	make -C ../lib
 
 libs: py-libs
+
+cdnpush:
+	./cdnpush.py \
+		--ini production.ini \
+		--version $(shell git describe) \
+		--exclude-file civicboom/public/cdn-exclude.txt \
+		civicboom/public
