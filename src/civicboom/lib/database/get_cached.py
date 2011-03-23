@@ -107,6 +107,7 @@ def get_group(group):
     return None
 
 
+
 def get_membership(group, member):
     member = get_member(member)
     group  = get_group(group)
@@ -157,6 +158,23 @@ def get_membership_tree(group, member, iter = 0):
             return None
         except NoResultFound:
             return None
+
+def get_follower_type(member, follower):
+    member   = get_member(member)
+    follower = get_member(follower)
+
+    if not (member and follower):
+        return None
+
+    try:
+        return Session.query(Follow).filter(
+            and_(
+                Follow.member_id   == member.id,
+                Follow.follower_id == follower.id,
+            )
+        ).one().type
+    except NoResultFound:
+        return None
 
 def get_assigned_to(content, member):
     content = get_group(content)
