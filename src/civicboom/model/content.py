@@ -359,7 +359,8 @@ class DraftContent(Content):
     __to_dict__['full'        ].update(_extra_draft_fields)
 
     def __init__(self):
-        self.private = True
+        #self.private = True # GregM: Removed set to user/hub default in contents controller
+        pass
 
     def clone(self, content):
         Content.clone(self, content)

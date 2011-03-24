@@ -363,6 +363,9 @@ class ContentsController(BaseController):
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
         
+        # GregM: Set private flag to user or hub setting (or public as default)
+        content.private = c.logged_in_persona.config.get('default_content_visibility', False)
+        
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
             # If a license isn't explicitly set, use the parent's preference
