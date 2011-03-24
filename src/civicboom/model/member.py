@@ -276,7 +276,7 @@ class Member(Base):
             elif not member.is_follow_trusted_invitee(self):
                 action_list.append('follower_invite_trusted') # GregM:
         
-        if member and member.is_following(self) or member.is_follow_trusted_inviter(self): # GregM: FIXME: Working?? or invitee? BrainFAIL :S
+        if member and (member.is_following(self) or member.is_follow_trusted_inviter(self)):
             action_list.append('unfollow')
         if member and (not member.is_following(self) or member.is_follow_trusted_inviter(self)):
             if self != member:
