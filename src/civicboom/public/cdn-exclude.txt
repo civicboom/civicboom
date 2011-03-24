@@ -6,3 +6,4 @@ cdn-exclude.txt
 robots.txt
 */.gitignore
 */Makefile
+*.bak
