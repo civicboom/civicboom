@@ -63,8 +63,6 @@
         #self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
         self.attr.auto_georss_link = True
-        _('_free')
-        _('_plus')
     %>
 </%def>
 
@@ -97,16 +95,52 @@
                     json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
                 )}
                 <span class="separtor"></span>
-            % elif 'unfollow' in self.actions:
+            % endif
+            % if 'unfollow' in self.actions:
                 ${h.secure_link(
                     h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
-                    value           = _('Unfollow') ,
+                    value           = _('Unfollow') if 'follow' not in self.actions else _('Ignore invite') ,
                     css_class = 'button button_large',
-                    title           = _("Stop following %s" % self.name) ,
+                    title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
                     json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
                 )}
                 <span class="separtor"></span>
             % endif
+            
+        ## GregM: Urrgh wrong place!
+            
+			% if 'follower_invite_trusted' in self.actions:
+                ${h.secure_link(
+                    h.args_to_tuple('member_action', action='follower_invite_trusted'  , id=self.id, format='redirect') ,
+                    value           = _('Invite as a Trusted Follower') ,
+                    css_class = 'button button_large',
+                    title           = _("Invite %s as a Trusted Follower" % self.name) ,
+                    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+                )}
+                <span class="separtor"></span>
+            % endif
+            
+			% if 'follower_trust' in self.actions:
+                ${h.secure_link(
+                    h.args_to_tuple('member_action', action='follower_trust'  , id=self.id, format='redirect') ,
+                    value           = _('Trust this follower') ,
+                    css_class = 'button button_large',
+                    title           = _("Trust your follower: %s" % self.name) ,
+                    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+                )}
+                <span class="separtor"></span>
+			% elif 'follower_distrust' in self.actions:
+                ${h.secure_link(
+                    h.args_to_tuple('member_action', action='follower_distrust'  , id=self.id, format='redirect') ,
+                    value           = _('Distrust this follower') ,
+                    css_class = 'button button_large',
+                    title           = _("Distrust your follower: %s" % self.name) ,
+                    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+                )}
+                <span class="separtor"></span>
+            % endif
+            
+        ## GregM: /Urrgh wrong place!
               
           </div>
         </div>
