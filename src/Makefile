@@ -1,5 +1,6 @@
 
 PYTHONPATH=../lib
+GIT_TAG:=$(shell git describe)
 
 help:
 	# Usage: make <target>, where target is
@@ -97,8 +98,9 @@ py-libs:
 libs: py-libs
 
 cdnpush:
-	./cdnpush.py \
-		--ini production.ini \
-		--version $(shell git describe) \
+	./bundle-static.py \
+		--output static-${GIT_TAG}.zip \
 		--exclude-file civicboom/public/cdn-exclude.txt \
 		civicboom/public
+	scp static-${GIT_TAG}.zip static.civicboom.com:~/
+	ssh static.civicboom.com unzip static-${GIT_TAG}.zip -d /opt/cb/var/www/static/${GIT_TAG}

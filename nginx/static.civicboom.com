@@ -3,7 +3,7 @@ server {
 	listen 80;
 	listen 443 ssl;
 	server_name static.civicboom.com;
-	root /var/www/cb-static/;
+	root /opt/cb/var/www/static/;
 	expires max;
 	add_header Cache-Control public;
 }
