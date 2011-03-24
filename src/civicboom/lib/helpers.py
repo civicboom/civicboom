@@ -126,7 +126,7 @@ def wh_url(folder, filename):
     if folder == "public":
         if app_globals.version:
             # in production, serve from a domain without cookies, with package version as cache breaker
-            return config['warehouse_url']+"/public/"+app_globals.version+"/"+filename
+            return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+app_globals.version+"/"+filename
         else:
             # in development, serve locally, with update time as cache breaker
             path = os.path.join("civicboom", "public", filename)
