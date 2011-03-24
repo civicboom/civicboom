@@ -37,10 +37,12 @@ cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -ty
 
 cb-website-web.deb: $(shell find ../nginx)
 	rm -rf fs-web
-	$(call mdcp, web/*                         , fs-web/DEBIAN/                    )
-	$(call mdcp, ../nginx/civicboom.com        , fs-web/etc/nginx/sites-available/ )
-	$(call mdcp, ../nginx/errors               , fs-web/opt/cb/share/website-web/  )
-	$(call mdcp, ../ssl/wild.civicboom.com.key , fs-web/opt/cb/etc/ssl/            )
+	$(call mdcp, web/*                          , fs-web/DEBIAN/                    )
+	$(call mdcp, ../nginx/civicboom-common.conf , fs-web/etc/nginx/conf.d/          )
+	$(call mdcp, ../nginx/civicboom.com         , fs-web/etc/nginx/sites-available/ )
+	$(call mdcp, ../nginx/static.civicboom.com  , fs-web/etc/nginx/sites-available/ )
+	$(call mdcp, ../nginx/errors                , fs-web/opt/cb/share/website-web/  )
+	$(call mdcp, ../ssl/wild.civicboom.com.key  , fs-web/opt/cb/etc/ssl/            )
 	cat ../ssl/wild.civicboom.com.crt ../ssl/rapidssl-ca.crt ../ssl/rapidssl-ca-cross.crt > fs-web/opt/cb/etc/ssl/wild.civicboom.com.pem
 	sed -i s/VERSION/${VERSION}/ fs-web/DEBIAN/control
 	fakeroot dpkg -b fs-web cb-website-web_${VERSION}_all.deb 

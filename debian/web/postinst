@@ -3,6 +3,7 @@
 . /usr/share/debconf/confmodule
 
 ln -sf /etc/nginx/sites-available/civicboom.com /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/static.civicboom.com /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
 if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
