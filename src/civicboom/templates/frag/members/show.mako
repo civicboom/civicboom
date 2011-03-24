@@ -274,9 +274,9 @@
     % if 'unfollow' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
-            value           = _('Unfollow') ,
+            value           = _('Unfollow') if 'follow' not in self.actions else _('Ignore invite') ,
             value_formatted = h.literal("<span class='icon16 i_unfollow'></span>%s") % _('Stop Following'),
-            title           = _("Stop following %s" % self.name) ,
+            title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
