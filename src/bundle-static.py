@@ -35,6 +35,8 @@ if __name__ == '__main__':
         for filename in filenames:
             fullpath = os.path.join(root, filename)
             relpath = fullpath[len(args[0]):]
+            if relpath[0] == "/":
+                relpath = relpath[1:]
             included = True
             for file_to_exclude in excludes:
                 if fnmatch.fnmatch(relpath, file_to_exclude):
