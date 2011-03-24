@@ -27,7 +27,7 @@ class SearchController(BaseController):
                 WHERE
                     name ILIKE %s
                     AND place IS NOT NULL -- IN ('city')
-                    AND ST_DWithin(way, 'SRID=4326;POINT(-3 54)', 10)
+                    -- AND ST_DWithin(way, 'SRID=4326;POINT(-3 54)', 10)
                 LIMIT 20
             """
             result = connection.execute(query, [q+"%", ])
