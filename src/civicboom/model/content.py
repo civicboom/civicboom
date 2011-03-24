@@ -224,6 +224,14 @@ class Content(Base):
         if self.__type__ == "comment":
             return self.parent.viewable_by(member) # if comment, show if we can see the parent article
         if self.visible == True:
+            # GregM: If current content has a root parent then check viewable_by on root parent
+            root = self.root_parent
+            if root:
+                return root.viewable_by(member)
+            # GregM: If content is private check member is a trusted follower of content's creator
+            #       We NEED to check has accepted, invited etc. for requests
+            if self.private == True:
+                return self.creator.is_follower_trusted(member)
             return True
         return False
 
@@ -250,6 +258,13 @@ class Content(Base):
         if self.__type__ == 'article' or self.__type__ == 'assignment':
             return aggregate_via_user(self, self.creator)
     
+    @property
+    def root_parent(self):
+        """
+        Find this piece of content's root parent (or False if this is the root!)
+        """
+        from civicboom.lib.database.actions import find_content_root
+        return find_content_root(self)
     
     @property
     def thumbnail_url(self):
@@ -344,7 +359,8 @@ class DraftContent(Content):
     __to_dict__['full'        ].update(_extra_draft_fields)
 
     def __init__(self):
-        self.private = True
+        #self.private = True # GregM: Removed set to user/hub default in contents controller
+        pass
 
     def clone(self, content):
         Content.clone(self, content)

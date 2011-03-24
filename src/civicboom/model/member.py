@@ -267,9 +267,18 @@ class Member(Base):
         if self == member:
             action_list.append('settings')
             action_list.append('logout')
-        if member and member.is_following(self):
+        elif member:
+            if self.is_following(member):
+                if member.is_follower_trusted(self):
+                    action_list.append('follower_distrust')
+                else:
+                    action_list.append('follower_trust')
+            elif not member.is_follow_trusted_invitee(self):
+                action_list.append('follower_invite_trusted') # GregM:
+        
+        if member and (member.is_following(self) or member.is_follow_trusted_inviter(self)):
             action_list.append('unfollow')
-        else:
+        if member and (not member.is_following(self) or member.is_follow_trusted_inviter(self)):
             if self != member:
                 action_list.append('follow')
         if self != member:
@@ -304,11 +313,11 @@ class Member(Base):
 
     def follower_distrust(self, member, delay_commit=False):
         from civicboom.lib.database.actions import follower_distrust
-        return follower_trust(self, member, delay_commit=delay_commit)
+        return follower_distrust(self, member, delay_commit=delay_commit)
         
-    def follower_invite(self, member, delay_commit=False):
-        from civicboom.lib.database.actions import follower_invite
-        return follower_invite(self, member, delay_commit=delay_commit)
+    def follower_invite_trusted(self, member, delay_commit=False):
+        from civicboom.lib.database.actions import follower_invite_trusted
+        return follower_invite_trusted(self, member, delay_commit=delay_commit)
 
     def is_follower(self, member):
         #if not member:
@@ -320,8 +329,16 @@ class Member(Base):
         return is_follower(self, member)
     
     def is_follower_trusted(self, member):
-        from civicboom.lib.database.actions import is_follower
-        return is_follower(self, member)
+        from civicboom.lib.database.actions import is_follower_trusted
+        return is_follower_trusted(self, member)
+    
+    def is_follow_trusted_invitee(self, member): # Was: is_follower_invited_trust
+        from civicboom.lib.database.actions import is_follow_trusted_invitee as _is_follow_trusted_invitee
+        return _is_follow_trusted_invitee(self, member)
+    
+    def is_follow_trusted_inviter(self, member): # Was: is_following_invited_trust
+        from civicboom.lib.database.actions import is_follow_trusted_invitee as _is_follow_trusted_invitee
+        return _is_follow_trusted_invitee(member, self)
         
     def is_following(self, member):
         #if not member:
