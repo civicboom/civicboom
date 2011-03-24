@@ -57,6 +57,11 @@ generators = [
     ["followed_by",                          "ne", _("new follower"),                _("%(member)s is now following you")],
     ["followed_on_signup",                   "ne", _("new sign up via widget"),      _("%(member)s has signed up via your widget and is now following you")],
     ["follow_stop",                          "e",   _("lost a follower"),             _("%(member)s has stopped following you")],
+    
+    # GregM: Follow action notifications
+    ["follower_trusted",                     "ne", _("trusted follower"),             _("%(member)s has made you a trusted follower, you can now see their private content")],
+    ["follower_distrusted",                  "ne", _("no longer a trusted follower"), _("%(member)s has stopped you being a trusted follower, you will not be able to see their private content")],
+    ["follow_invite_trusted",                "ne", _("trusted follower invite"),      _("%(member)s has invited you to follow them as a trusted follower, if you accept you will be able see their private content")],
 
     # New Content
     ["article_published_by_followed",        "ne", _("new _article"),                _("%(creator)s has written new _article : %(article)s")],

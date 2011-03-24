@@ -316,8 +316,8 @@ class Member(Base):
         return follower_distrust(self, member, delay_commit=delay_commit)
         
     def follower_invite_trusted(self, member, delay_commit=False):
-        from civicboom.lib.database.actions import follower_invite
-        return follower_invite(self, member, delay_commit=delay_commit)
+        from civicboom.lib.database.actions import follower_invite_trusted
+        return follower_invite_trusted(self, member, delay_commit=delay_commit)
 
     def is_follower(self, member):
         #if not member:
