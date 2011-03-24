@@ -101,7 +101,9 @@ CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
             tmp_member_id   := NEW.member_id;
             tmp_follower_id := NEW.follower_id;
         ELSIF (TG_OP = 'UPDATE') THEN
-            RAISE EXCEPTION 'Can''t alter follows, only add or remove';
+            --RAISE EXCEPTION 'Can''t alter follows, only add or remove'; --follows can now have a follow type that could be updated without removing the record
+            tmp_member_id   := NEW.member_id;
+            tmp_follower_id := NEW.follower_id;
         ELSIF (TG_OP = 'DELETE') THEN
             tmp_member_id   := OLD.member_id;
             tmp_follower_id := OLD.follower_id;
@@ -110,13 +112,13 @@ CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
         UPDATE member SET num_followers = (
             SELECT count(*)
             FROM map_member_to_follower
-            WHERE member_id=tmp_member_id
+            WHERE member_id=tmp_member_id AND NOT type='trusted_invite'
         ) WHERE id=tmp_member_id;
         
         UPDATE member SET num_following = (
             SELECT count(*)
             FROM map_member_to_follower
-            WHERE follower_id=tmp_follower_id
+            WHERE follower_id=tmp_follower_id AND NOT type='trusted_invite'
         ) WHERE id=tmp_follower_id;
         
         RETURN NULL;
@@ -168,8 +170,9 @@ class Member(Base):
     feeds                = relationship("Feed"            , backref=backref('member'), cascade="all,delete-orphan")
 
     # AllanC - I wanted to remove these but they are still used by actions.py because they are needed to setup the base test data
-    followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
-    following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
+    following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="(Member.id==Follow.member_id  ) & (Follow.type!='trusted_invite')", secondary=Follow.__table__)
+    followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="(Member.id==Follow.follower_id) & (Follow.type!='trusted_invite')", secondary=Follow.__table__)
+    #followers_trusted    = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="(Member.id==Follow.follower_id) & (Follow.type=='trusted'       )", secondary=Follow.__table__)
 
     assigments           = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
 
@@ -295,6 +298,18 @@ class Member(Base):
         from civicboom.lib.database.actions import unfollow
         return unfollow(self, member, delay_commit=delay_commit)
 
+    def follower_trust(self, member, delay_commit=False):
+        from civicboom.lib.database.actions import follower_trust
+        return follower_trust(self, member, delay_commit=delay_commit)
+
+    def follower_distrust(self, member, delay_commit=False):
+        from civicboom.lib.database.actions import follower_distrust
+        return follower_trust(self, member, delay_commit=delay_commit)
+        
+    def follower_invite(self, member, delay_commit=False):
+        from civicboom.lib.database.actions import follower_invite
+        return follower_invite(self, member, delay_commit=delay_commit)
+
     def is_follower(self, member):
         #if not member:
         #    return False
@@ -304,6 +319,10 @@ class Member(Base):
         from civicboom.lib.database.actions import is_follower
         return is_follower(self, member)
     
+    def is_follower_trusted(self, member):
+        from civicboom.lib.database.actions import is_follower
+        return is_follower(self, member)
+        
     def is_following(self, member):
         #if not member:
         #    return False
