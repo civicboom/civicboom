@@ -329,11 +329,6 @@ def overlay_status_message(master_message, new_message):
 # Auto Format Output
 #-------------------------------------------------------------------------------
 
-def _find_subformat():
-    if request.environ['is_mobile']:
-        return 'mobile'
-    return get_subdomain_format()
-
 
 def _find_template(result, type):
     #If the result status is not OK then use the template for that status
@@ -345,7 +340,7 @@ def _find_template(result, type):
 
     # html is a meta-format -- if we are asked for a html template,
     # redirect to web, mobile or widget depending on the environment
-    subformat = _find_subformat()
+    subformat = get_subdomain_format()
     if type == "html":
         paths = [
             os.path.join("html", subformat, template_part),
@@ -389,7 +384,7 @@ def _find_template_basic(controller=None, action=None, format=None):
     action = action or c.action
     format = format or c.format or "html"
     template_part = '%s/%s' % (controller, action)
-    subformat = _find_subformat()
+    subformat = get_subdomain_format()
     if format == "html":
         paths = [
             os.path.join("html", subformat, template_part),
