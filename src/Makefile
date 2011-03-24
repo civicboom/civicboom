@@ -103,4 +103,4 @@ cdnpush: js css
 		--exclude-file civicboom/public/cdn-exclude.txt \
 		civicboom/public
 	scp static-${GIT_TAG}.zip static.civicboom.com:~/
-	ssh static.civicboom.com unzip static-${GIT_TAG}.zip -d /opt/cb/var/www/static/${GIT_TAG}
+	ssh static.civicboom.com unzip -o static-${GIT_TAG}.zip -d /opt/cb/var/www/static/${GIT_TAG}
