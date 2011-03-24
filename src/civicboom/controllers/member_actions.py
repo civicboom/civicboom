@@ -70,20 +70,20 @@ class MemberActionsController(BaseController):
     @role_required('editor')
     def follower_trust(self, id, **kwargs):
         """
-        POST /members/{name}/trust_follower: follow the member
+        POST /members/{name}/trust_follower: trust a follower
 
         @type action
         @api members 1.0 (WIP)
 
-        @return 200   following ok
-        @return 500   error following
+        @return 200   follower trusted
+        @return 500   error trusting
         """
         member = get_member(id, set_html_action_fallback=True)
 
         status = c.logged_in_persona.follower_trust(member)
         if status == True:
-            return action_ok( _('trust %s') % member.name or member.username )
-        raise action_error(_('Unable to : %s') % status)
+            return action_ok( _('You are now trusting your follower %s') % member.name or member.username )
+        raise action_error(_('Unable to trust member: %s') % status)
 
 
     #---------------------------------------------------------------------------
@@ -94,20 +94,20 @@ class MemberActionsController(BaseController):
     @role_required('editor')
     def follower_distrust(self, id, **kwargs):
         """
-        POST /members/{name}/distrust_follower: follow the member
+        POST /members/{name}/distrust_follower: remove trust from a follower
 
         @type action
         @api members 1.0 (WIP)
 
-        @return 200   following ok
-        @return 500   error following
+        @return 200   follower trust removed
+        @return 500   error removing trust
         """
         member = get_member(id, set_html_action_fallback=True)
 
         status = c.logged_in_persona.follower_distrust(member)
         if status == True:
-            return action_ok( _('distrust trust %s') % member.name or member.username )
-        raise action_error(_('Unable to : %s') % status)
+            return action_ok( _('You have removed trust from your follower %s') % member.name or member.username )
+        raise action_error(_('Unable to distrust: %s') % status)
 
 
     #---------------------------------------------------------------------------
@@ -116,21 +116,21 @@ class MemberActionsController(BaseController):
     @web
     @auth
     @role_required('editor')
-    def follower_invite(self, id, **kwargs):
+    def follower_invite_trusted(self, id, **kwargs):
         """
-        POST /members/{name}/follower_invite: 
+        POST /members/{name}/follower_invite: invite someone to follow you and become trusted
 
         @type action
         @api members 1.0 (WIP)
 
-        @return 200   
+        @return 200   trusted follower invite sent
         @return 500   error 
         """
         member = get_member(id, set_html_action_fallback=True)
 
-        status = c.logged_in_persona.follower_invite(member)
+        status = c.logged_in_persona.follower_invite_trusted(member)
         if status == True:
-            return action_ok( _('invite trust %s') % member.name or member.username )
+            return action_ok( _('You have invited the member %s to follow you as a trusted follower') % member.name or member.username )
         raise action_error(_('Unable to invite: %s') % status)
 
 

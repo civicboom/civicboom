@@ -48,6 +48,14 @@ class TestFollowController(TestController):
         self.follow('unittest')
         check_follow(following=1, followers=0)
         
+        # GregM: Test basic trust distrust routines
+        self.log_in_as('unittest')
+        # Check not trusted
+        self.follower_trust('follow_test')
+        # Check trused
+        self.follower_distrust('follow_test')
+        # Check not trusted
+        
         self.log_in_as('unittest')
         check_follow(following=num_unittest_following  , followers=num_unittest_followers+1)
         self.follow('follow_test')
@@ -55,3 +63,29 @@ class TestFollowController(TestController):
         
         self.log_in_as('follow_test')
         check_follow(following=1, followers=1)
+        
+        # GregM: Begin testing trusted follow invites etc.
+        self.unfollow('unittest')
+        check_follow(following=0, followers=1)
+        
+        self.log_in_as('unittest')
+        check_follow(following=num_unittest_following+1, followers=num_unittest_followers  )
+        self.follower_invite_trusted('follow_test')
+        check_follow(following=num_unittest_following+1, followers=num_unittest_followers  )
+        
+        self.log_in_as('follow_test')
+        # Check invite
+        self.follow('unittest')
+        check_follow(following=1, followers=1)
+        # Check I am trusted follower
+        
+        self.log_in_as('unittest')
+        check_follow(following=num_unittest_following+1, followers=num_unittest_followers+1)
+        # Check follow_test is trusted
+        
+        self.log_in_as('follow_test')
+        self.unfollow('unittest')
+        # Check I am not trusted follower
+        
+        self.follow('unittest')
+        # Check I am not trusted follower
