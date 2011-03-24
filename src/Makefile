@@ -97,7 +97,7 @@ py-libs:
 
 libs: py-libs
 
-cdnpush:
+cdnpush: js css
 	./bundle-static.py \
 		--output static-${GIT_TAG}.zip \
 		--exclude-file civicboom/public/cdn-exclude.txt \
