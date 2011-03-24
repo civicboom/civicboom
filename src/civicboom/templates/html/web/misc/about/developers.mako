@@ -7,11 +7,8 @@
 We have no idea what will be built - but that's the fun part. We hope to
 see some interesting creations that bring Civicboom to life for yourselves.
 
-<p><b>We are releasing the API documentation in March 2011</b>, so if you would
-like to be alerted to this, please email 
-<a href="mailto:contact@civicboom.com">contact@civicboom.com</a>.
-
 <ul>
+<li><a href="/api.html">API documentation</a>; email <a href="mailto:contact@civicboom.com">contact@civicboom.com</a> if you have questions or suggestions
 <li><a href="${url(controller='misc', action='about', id='developer-terms')}">API Terms & Conditions</a>
 </ul>
 
