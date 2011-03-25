@@ -3,8 +3,6 @@ import civicboom.lib.communication.messages as messages
 from civicboom.model import Message
 import json
 
-from civicboom.lib.misc import str_to_int
-
 from sqlalchemy.orm       import join, joinedload
 from sqlalchemy           import or_, and_, null
 
@@ -121,25 +119,8 @@ class MessagesController(BaseController):
         # Sort
         results = results.order_by(Message.timestamp.desc())
         
-        # Count
-        count = results.count()
-        
-        # Limit & Offset
-        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.messages'])
-        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
-        results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
-        
-        # Return search results
-        return action_ok(
-            data = {'list': {
-                'items' : [message.to_dict(**kwargs) for message in results.all()] ,
-                'count' : count ,
-                'limit' : kwargs['limit'] ,
-                'offset': kwargs['offset'] ,
-                'type'  : 'message' ,
-                }
-            }
-        )
+        return to_apilist(results, obj_type='message', **kwargs)
+
 
     @web
     @auth

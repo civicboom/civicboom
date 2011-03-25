@@ -256,16 +256,6 @@ def action_ok(message=None, data={}, code=200, **kwargs):
     return d
 
 
-# AllanC - convenicen metod for returning lists
-def action_ok_list(list, obj_type=None, **kwargs):
-    return action_ok(data={'list': {
-            'items' : list     ,
-            'count' : len(list),
-            'limit' : None     ,
-            'offset': 0        ,
-            'type'  : obj_type ,
-        }
-    }, **kwargs)
 
 
 class action_error(Exception):

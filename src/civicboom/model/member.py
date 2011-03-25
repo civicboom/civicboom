@@ -89,6 +89,9 @@ class Follow(Base):
     member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
     follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
     type          = Column(follow_type                          , nullable=False, default="normal")
+    
+    member   = relationship("Member", primaryjoin="Member.id==Follow.member_id"  )
+    follower = relationship("Member", primaryjoin="Member.id==Follow.follower_id")
 
 DDL('DROP TRIGGER IF EXISTS update_follower_count ON map_member_to_follower').execute_at('before-drop', Follow.__table__)
 DDL("""

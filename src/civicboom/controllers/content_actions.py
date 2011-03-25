@@ -274,15 +274,16 @@ class ContentActionsController(BaseController):
     @web
     def comments(self, id, **kwargs):
         """
-        POST /contents/{id}/comments: Get a list of comments on the article
+        GET /contents/{id}/comments: Get a list of comments on the article
         @type list
         @api contents 1.0 (WIP)
         
         @return list  the list of comments
         """
         content = get_content(id, is_viewable=True)
-        comments = [c.to_dict() for c in content.comments]
-        return action_ok_list(comments)
+        #comments = [c.to_dict() for c in content.comments]
+        #return action_ok_list(comments)
+        return to_apilist(content.comments, **kwargs)
 
 
     #-----------------------------------------------------------------------------
@@ -291,7 +292,7 @@ class ContentActionsController(BaseController):
     @web
     def accepted_status(self, id, **kwargs):
         """
-        POST /contents/{id}/accepted_status: Get a list of accepted reporters
+        GET /contents/{id}/accepted_status: Get a list of accepted reporters
         @type list
         @api contents 1.0 (WIP)
         
@@ -303,8 +304,8 @@ class ContentActionsController(BaseController):
         
         if hasattr(content, 'assigned_to'):
             assigned_to = [update_dict(a.member.to_dict(), {'status': a.status}) for a in content.assigned_to]  # 'update_date':a.update_date
-            return action_ok_list(assigned_to)
-        return action_ok_list([])
+            return to_apilist(assigned_to, **kwargs) #TODO transform
+        return to_apilist()
 
 
     #-----------------------------------------------------------------------------
@@ -312,6 +313,13 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     @web
     def responses(self, id, **kwargs):
+        """
+        GET /contents/{id}/responses: Get a list of responses
+        @type list
+        @api contents 1.0 (WIP)
+        
+        shotcut to /contents?response_to={id}
+        """
         #content = _get_content(id, is_viewable=True)
         #if 'include_fields' not in kwargs:
         #    kwargs['include_fields']='creator'
@@ -324,5 +332,14 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     @web
     def contributors(self, id, **kwargs):
+        """
+        GET /contents/{id}/contributors: Get list of contributors (unimplemented)
+        @type list
+        @api contents 1.0 (WIP)
+        
+        shotcut to /contents?response_to={id}
+        
+        @comment AllanC will currently return empty list - unimplemented
+        """
         content = get_content(id, is_viewable=True)
-        return action_ok_list([])
+        return to_apilist()

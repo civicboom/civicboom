@@ -53,10 +53,27 @@ class TestContentsController(TestController):
         self.part_cant_delete_someone_elses_article()
         self.part_cant_delete_article_that_doesnt_exist()
         self.part_can_delete_article_owned_by_group_i_am_admin_of()
-
+        
+        # GregM: Test private content with followers
+        self.part_create_private_content()
+        self.part_view_private_content_not_trusted()
+        self.part_view_private_content_trusted()
+        self.part_distrust_check()
 
     def part_setup(self):
+        
+        # GregM: Create accounts & setup to test private content
+        self.sign_up_as("private_content_trusted")
+        self.sign_up_as("private_content_untrusted")
+        self.sign_up_as("private_content_nonfollower")
+        self.log_in_as("private_content_trusted")
+        self.follow("unittest")
+        self.log_in_as("private_content_untrusted")
+        self.follow("unittest")
+        
         self.log_in_as("unittest")
+        # GregM: Trust one follower
+        self.follower_trust("private_content_trusted")
 
         response = self.app.post(
             url('contents', format="json"),
@@ -427,3 +444,61 @@ class TestContentsController(TestController):
     def part_can_delete_article_owned_by_group_i_am_admin_of(self):
         pass
         #warnings.warn("test not implemented")
+    
+    def part_create_private_content(self):
+        self.log_in_as("unittest")
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test private article by the test user",
+                'type': "article",
+                'content': "This is my private article.",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+                'private': True,
+            },
+            status=201
+        )
+        self.my_private_article_id = json.loads(response.body)["data"]["id"]
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test private assignment by the test user",
+                'type': "article",
+                'content': "This is my private assignment.",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+                'private': True,
+            },
+            status=201
+        )
+        self.my_private_assignment_id = json.loads(response.body)["data"]["id"]
+    
+    def part_view_private_content_not_trusted(self):
+#        self.sign_up_as("private_content_trusted")
+#        self.sign_up_as("private_content_untrusted")
+#        self.sign_up_as("private_content_nonfollower")
+        self.log_in_as("private_content_untrusted")
+        response = self.app.get(url('content', id=self.my_private_article_id), status=403)
+        response = self.app.get(url('content', id=self.my_private_assignment_id), status=403)
+        self.log_in_as("private_content_nonfollower")
+        response = self.app.get(url('content', id=self.my_private_article_id), status=403)
+        response = self.app.get(url('content', id=self.my_private_assignment_id), status=403)
+    
+    def part_view_private_content_trusted(self):
+        self.log_in_as("private_content_trusted")
+        response = self.app.get(url('content', id=self.my_private_article_id), status=200)
+        response = self.app.get(url('content', id=self.my_private_assignment_id), status=200)
+    
+    def part_distrust_check(self):
+        self.log_in_as("unittest")
+        self.follower_distrust("private_content_trusted")
+        self.log_in_as("private_content_trusted")
+        response = self.app.get(url('content', id=self.my_private_article_id), status=403)
+        response = self.app.get(url('content', id=self.my_private_assignment_id), status=403)
+        self.log_in_as("unittest")
+        self.follower_trust("private_content_trusted")
+        response = self.app.get(url('content', id=self.my_private_article_id), status=200)
+        response = self.app.get(url('content', id=self.my_private_assignment_id), status=200)
