@@ -126,7 +126,6 @@ class Content(Base):
             #'status'       : None ,
             'parent_id'    : None ,
             'title'        : None ,
-            'content_short': None , # this is a property # lambda content: "implement content_short postgress trigger" ,
             'creator_id'   : None ,
             'thumbnail_url': None ,
             'creation_date': None ,
@@ -155,7 +154,6 @@ class Content(Base):
             'tags'        : lambda content: [tag.name for tag in content.tags] ,
             #'url'         : None ,
     })
-    #del __to_dict__['full']['content_short'] # This is still useful for aggrigation so it stays in by default
     del __to_dict__['full']['parent_id']
     del __to_dict__['full']['creator_id']
     del __to_dict__['full']['license_id']
@@ -292,14 +290,6 @@ class Content(Base):
     def url(self):
         from pylons import url, app_globals
         return url('content', id=self.id, absolute=True)
-
-    @property
-    def content_short(self):
-        """
-        AllanC TODO: Derived field - Postgress trigger needed
-        """
-        from civicboom.lib.text import strip_html_tags
-        return truncate(strip_html_tags(self.content), length=100, indicator='...', whole_word=True)
 
 DDL('DROP TRIGGER update_response_count ON content').execute_at('before-drop', Content.__table__)
 DDL("""

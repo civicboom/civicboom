@@ -22,7 +22,7 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
-from sqlalchemy           import or_, and_, null
+from sqlalchemy           import or_, and_, null, func
 from sqlalchemy.orm       import join, joinedload, defer
 import datetime
 
@@ -271,8 +271,20 @@ class ContentsController(BaseController):
         
         include_private_content = 'private' in kwargs and logged_in_creator
         results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)
+        results.add_column(func.strip_tags(Content.content))
         if union_query:
             results = results.union(union_query)
+
+        #if 'term' in kwargs:
+        #    results.add_column(func.ts_headline('pg_catalog.english',
+        #                func.strip_tags(Content.content),
+        #                func.plainto_tsquery(term),
+        #                'MaxFragments=5,FragmentDelimiter=|||,'\
+        #                'StartSel="<span class=""highlight"">", '\
+        #                'StopSel = "</span>", ',
+        #                type_= Unicode))
+        #else:
+        #results.add_column(func.strip_tags(Content.content))
 
         # Sort
         if 'sort' not in kwargs:
@@ -288,10 +300,17 @@ class ContentsController(BaseController):
         kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
         results = results.limit(kwargs['limit']).offset(kwargs['offset'])
         
+        def merge_snippet(content, snippet):
+            c = content.to_dict(**kwargs)
+            c['content_short'] = snippet
+            return c
+
+        print results.all()
+
         # Return search results
         return action_ok(
             data = {'list': {
-                'items' : [content.to_dict(**kwargs) for content in results.all()] ,
+                'items' : [merge_snippet(content, snippet) for content, snippet in results.all()] ,
                 'count' : count ,
                 'limit' : kwargs['limit'] ,
                 'offset': kwargs['offset'] ,
