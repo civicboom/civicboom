@@ -300,7 +300,7 @@ class ContentsController(BaseController):
             content['content_short'] = snippet
             return content
 
-        return to_apilist([merge_snippet(c, s) for c, s in results], obj_type='content', **kwargs)
+        return to_apilist([merge_snippet(co, sn) for co, sn in results], obj_type='content', **kwargs)
 
 
     @web
