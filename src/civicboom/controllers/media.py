@@ -83,14 +83,9 @@ class MediaController(BaseController):
         """
         media = get_media(hash=id)
         if media:
-            return action_ok(
-                data={
-                    #"status"       : app_globals.memcache.get(str("media_processing_"+id)) ,
-                    #"thumbnail_url": media.thumbnail_url if media else None,
-                    "media"        : media.to_dict(list_type='full'),
-                }
-            )
-        return action_error(_('media item not found'), code=404)
+            return action_ok(data={"media": media.to_dict(list_type='full')})
+        else:
+            raise action_error(_('media item not found'), code=404)
 
     def edit(self, id, format='html'):
         """GET /media/id/edit: Form to edit an existing item"""

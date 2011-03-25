@@ -21,6 +21,9 @@ def setup_app(command, conf, variables):
         load_environment(conf.global_conf, conf.local_conf)
 
     ###################################################################
+    sess = Session()
+    conn = sess.connection()
+
     log.info("Creating tables")   # {{{
 
     Base.metadata.drop_all(checkfirst=True, bind=Session.bind)
@@ -28,9 +31,12 @@ def setup_app(command, conf, variables):
 
     # }}}
     log.info("Creating triggers")   # {{{
-    sess = Session()
-    conn = sess.connection()
-#model/member.py:    new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
+
+    conn.execute("""
+CREATE OR REPLACE FUNCTION strip_tags(TEXT) RETURNS TEXT AS $$
+    SELECT regexp_replace(regexp_replace($1, E'(?x)<[^>]*?(\s alt \s* = \s* ([\\'"]) ([^>]*?) \\2) [^>]*? >', E'\\3'), E'(?x)(< [^>]*? >)', '', 'g')
+$$ LANGUAGE SQL;
+""")
 
     conn.execute("""
 CREATE OR REPLACE FUNCTION update_boom_count() RETURNS TRIGGER AS $$

@@ -1,14 +1,14 @@
 from civicboom.lib.base import *
 
-from civicboom.lib.misc import str_to_int
-
 #from civicboom.controllers.contents import _normalize_member
 
 
+from civicboom.lib.misc import update_dict
+
 # AllanC - for members autocomplete index
-from civicboom.model    import Member, Follow
-from sqlalchemy         import or_, and_
-#from sqlalchemy.orm     import join
+from civicboom.model      import Member, Follow, GroupMembership, Group
+from sqlalchemy           import or_, and_, null
+from sqlalchemy.orm       import join, joinedload, defer
 
 
 log      = logging.getLogger(__name__)
@@ -66,8 +66,8 @@ def _init_search_filters():
         'name'         : append_search_name        ,
         'type'         : append_search_type        ,
         'location'     : append_search_location    ,
-        'followed_by'  : append_search_followed_by ,
-        'follower_of'  : append_search_follower_of ,
+        #'followed_by'  : append_search_followed_by ,
+        #'follower_of'  : append_search_follower_of ,
     }
     
     return search_filters
@@ -119,40 +119,92 @@ class MembersController(BaseController):
         if 'exclude_fields' not in kwargs:
             kwargs['exclude_fields'] = ""
         
-        results = Session.query(Member)
-        results = results.filter(Member.status=='active')
-        if False: # if fields in include_fields are in User or Group only
-            results = results.with_polymorphic('*')
+        list_to_dict_transform = None
+
+        if 'members_of' in kwargs or 'groups_for' in kwargs:
+            results = Session.query(GroupMembership)
+            
+            if 'members_of' in kwargs:
+                results = results.options(joinedload(GroupMembership.member))
+                # Get Group
+                group   = get_group(kwargs['members_of'])
+                # Permissions - only show member roles if part of this group
+                if group.member_visibility=="public" or group == c.logged_in_persona or group.get_membership(c.logged_in_persona):
+                    results = results.filter(GroupMembership.group_id==normalize_member(group))
+                # to_dict transform
+                def member_roles_to_dict_transform(results, **kwargs):
+                    return [update_dict(member_role.member.to_dict(**kwargs),{'role':member_role.role, 'status':member_role.status}) for member_role in results]
+                list_to_dict_transform = member_roles_to_dict_transform
+                
+            elif 'groups_for' in kwargs:
+                results = results.select_from(join(Group, GroupMembership, GroupMembership.group))
+                results = results.options(joinedload(GroupMembership.group))
+                # Get Member
+                member = get_member(kwargs['groups_for'])
+                results = results.filter(GroupMembership.member_id==normalize_member(member))
+                # Permissions - only show membership of public groups
+                if not (member == c.logged_in_persona and kwargs.get('private')):
+                    results = results.filter(GroupMembership.status  == 'active')
+                    results = results.filter(Group.member_visibility == 'public')
+                # to_dict transform
+                def group_roles_to_dict_transform(results, **kwargs):
+                    return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in results]
+                list_to_dict_transform = group_roles_to_dict_transform
+            
+        elif 'follower_of' in kwargs or 'followed_by' in kwargs:
+            member  = get_member(kwargs.get('follower_of') or kwargs.get('followed_by'))
+            results = Session.query(Follow)
+            
+            if 'followed_by' in kwargs:
+                results.options(joinedload(Follow.member))
+                results = results.filter(Follow.follower==member)
+                def me_followed_by_to_dict_transform(results, **kwargs):
+                    return [update_dict(follow.member.to_dict(**kwargs), {'follow_type':follow.type}) for follow in results]
+                def followed_by_to_dict_transform(results, **kwargs):
+                    return [follow.member.to_dict(**kwargs) for follow in results]
+                if member == c.logged_in_persona:
+                    list_to_dict_transform = me_followed_by_to_dict_transform
+                else:
+                    list_to_dict_transform = followed_by_to_dict_transform
+                
+            if 'follower_of' in kwargs:
+                results.options(joinedload(Follow.follower))
+                results = results.filter(Follow.member==member)
+                def me_follower_of_to_dict_transform(results, **kwargs):
+                    return [update_dict(follow.follower.to_dict(**kwargs), {'follow_type':follow.type}) for follow in results]
+                def follower_of_to_dict_transform(results, **kwargs):
+                    return [follow.follower.to_dict(**kwargs) for follow in results]
+                if member == c.logged_in_persona:
+                    list_to_dict_transform = me_follower_of_to_dict_transform
+                else:
+                    list_to_dict_transform = follower_of_to_dict_transform
+            
+            if member != c.logged_in_persona:
+                results.filter(Follow.type!='trusted_invite')
+
+        else:
+            results = Session.query(Member)
+            results = results.filter(Member.status=='active')
+            # TODO
+            if False: # if fields in include_fields are in User or Group only
+                results = results.with_polymorphic('*')
+            for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
+                results = search_filters[key](results, kwargs[key])
+                
+            # Sort
+            if 'sort' not in kwargs:
+                sort = 'name'
+            # TODO: use kwargs['sort']
+            results = results.order_by(Member.name.asc())
+            # NOOO!! ... this should be at the end ... and sort all fields ... but this is cant be done with Follow objects ... rarara ... bollox
+
         
-        for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
-            results = search_filters[key](results, kwargs[key])
+        # Could be a much better way of doing the above
+        # http://lowmanio.co.uk/blog/entries/postgresql-full-text-search-and-sqlalchemy/
+        # The link has some tips as how to use add_colums - it is very lightly documented in SQLA docs        
         
-        # Sort
-        if 'sort' not in kwargs:
-            sort = 'name'
-        # TODO: use kwargs['sort']
-        results = results.order_by(Member.name.asc())
         
-        # Count
-        count = results.count()
-        
-        # Limit & Offset
-        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.members'])
-        kwargs['offset'] = str_to_int(kwargs.get('offset')                                       )
-        results = results.limit(kwargs['limit']).offset(kwargs['offset']) # Apply limit and offset (must be done at end)
-        
-        # Return search results
-        # Return search results
-        return action_ok(
-            data = {'list': {
-                'items' : [content.to_dict(**kwargs) for content in results.all()] ,
-                'count' : count ,
-                'limit' : kwargs['limit'] ,
-                'offset': kwargs['offset'] ,
-                'type'  : 'member' ,
-                }
-            }
-        )
+        return to_apilist(results, obj_type='member', list_to_dict_transform=list_to_dict_transform, **kwargs)
 
 
 
