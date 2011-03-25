@@ -280,7 +280,7 @@ class ContentsController(BaseController):
                 func.ts_headline('pg_catalog.english',
                     func.strip_tags(Content.content),
                     func.plainto_tsquery(kwargs['term']),
-                    'MaxFragments=5, FragmentDelimiter="<p>", StartSel="<b>", StopSel="</b>", ',
+                    'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
                     type_= Unicode
                 )
             )
