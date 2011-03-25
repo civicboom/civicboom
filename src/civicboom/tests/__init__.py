@@ -221,6 +221,33 @@ class TestController(TestCase):
             status=200
         )
 
+    def follower_trust(self, username):
+        response = self.app.post(
+            url('member_action', action='follower_trust', id=username, format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=200
+        )
+        
+    def follower_distrust(self, username):
+        response = self.app.post(
+            url('member_action', action='follower_distrust', id=username, format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=200
+        )
+
+    def follower_invite_trusted(self, username):
+        response = self.app.post(
+            url('member_action', action='follower_invite_trusted', id=username, format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=200
+        )
+
     def send_member_message(self, username, subject, content):
         response = self.app.post(
             url('messages', format='json'),

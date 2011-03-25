@@ -9,6 +9,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" href="/images/boom16.ico" />
 	<link rel="apple-touch-icon" href="/images/boom128.png" />
+	<link rel="fluid-icon" href="/images/boom128.png" />
+	<link rel="search" type="application/opensearchdescription+xml" href="/misc/opensearch.xml" title="${_("_site_name")}" />
 
 ##----------------------------------------------------------------------------
 ## Meta Text

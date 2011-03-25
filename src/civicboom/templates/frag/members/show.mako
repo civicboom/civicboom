@@ -63,8 +63,6 @@
         #self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
         self.attr.auto_georss_link = True
-        _('_free')
-        _('_plus')
     %>
 </%def>
 
@@ -80,6 +78,7 @@
         <div>
           <span style="float:left; padding-right: 3px;">${member_avatar()}</span>
           <div style="padding-left: 92px" >
+          	${_('Username')}: <br />${self.member['username']}<br />
             % if self.member.get('website'):
               ${_('Website')}: <br /><a href="${self.member['website']}" target="_blank">${self.member['website']}</a><br />
             % endif
@@ -97,17 +96,17 @@
                     json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
                 )}
                 <span class="separtor"></span>
-            % elif 'unfollow' in self.actions:
+            % endif
+            % if 'unfollow' in self.actions:
                 ${h.secure_link(
                     h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
-                    value           = _('Unfollow') ,
+                    value           = _('Unfollow') if 'follow' not in self.actions else _('Ignore invite') ,
                     css_class = 'button button_large',
-                    title           = _("Stop following %s" % self.name) ,
+                    title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
                     json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
                 )}
                 <span class="separtor"></span>
             % endif
-              
           </div>
         </div>
         <div style="clear: both;"></div>
@@ -276,9 +275,9 @@
     % if 'unfollow' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
-            value           = _('Unfollow') ,
+            value           = _('Unfollow') if 'follow' not in self.actions else _('Ignore invite') ,
             value_formatted = h.literal("<span class='icon16 i_unfollow'></span>%s") % _('Stop Following'),
-            title           = _("Stop following %s" % self.name) ,
+            title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
@@ -288,7 +287,7 @@
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
             value           = _('Join _group') ,
-            value_formatted = h.literal("<span class='icon16 i_join'></span>%s") % _('Join Group'),
+            value_formatted = h.literal("<span class='icon16 i_join'></span>%s") % _('Join _Group'),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
@@ -301,6 +300,38 @@
             value           = _('Invite') ,
             value_formatted = h.literal("<span class='icon16 i_invite'></span>%s") % _('Invite') ,
             title           = invite_text , 
+            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+        )}
+        <span class="separtor"></span>
+    % endif
+    
+	## GregM: Addition of follower actions
+	% if 'follower_invite_trusted' in self.actions:
+        ${h.secure_link(
+            h.args_to_tuple('member_action', action='follower_invite_trusted'  , id=self.id, format='redirect') ,
+            value           = _('Invite as a trusted follower') ,
+            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Invite as a trusted follower'),
+            title           = _("Invite %s as a trusted follower" % self.name) ,
+            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+        )}
+        <span class="separtor"></span>
+    % endif
+    
+	% if 'follower_trust' in self.actions:
+        ${h.secure_link(
+            h.args_to_tuple('member_action', action='follower_trust'  , id=self.id, format='redirect') ,
+            value           = _('Trust follower') ,
+            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Trust follower'),
+            title           = _("Trust follower %s" % self.name) ,
+            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+        )}
+        <span class="separtor"></span>
+	% elif 'follower_distrust' in self.actions:
+        ${h.secure_link(
+            h.args_to_tuple('member_action', action='follower_distrust'  , id=self.id, format='redirect') ,
+            value           = _('Distrust follower') ,
+            value_formatted = h.literal("<span class='icon16 i_unfollow'></span>%s") % _('Distrust follower'),
+            title           = _("Distrust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>

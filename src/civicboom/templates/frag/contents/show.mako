@@ -34,7 +34,7 @@
         
         self.attr.frag_data_css_class = 'frag_content'
         
-        if self.content['private'] == False:
+        if self.content['private'] == False and self.content['type'] != 'draft':
             self.attr.share_kwargs = {
                 'url'      : self.attr.html_url ,
                 'title'    : self.content.get('title') ,

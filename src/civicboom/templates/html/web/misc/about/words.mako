@@ -12,3 +12,5 @@ ${_("_assignment")}
 ${_("_Assignment")}
 ${_("_request")}
 ${_("_Request")}
+${_("_free")}
+${_("_plus")}

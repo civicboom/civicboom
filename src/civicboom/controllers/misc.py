@@ -67,6 +67,19 @@ class MiscController(BaseController):
         c.widget_user_preview = _get_member(id)
         return action_ok()
 
+    def opensearch(self, format="xml"):
+        import base64
+        return """<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+<ShortName>Civicboom</ShortName>
+<Description>Search Civicboom</Description>
+<InputEncoding>UTF-8</InputEncoding>
+<Image width="16" height="16">data:image/x-icon;base64,%s</Image>
+<Url type="text/html" method="get" template="https://www.civicboom.com/contents">
+  <Param name="term" value="{searchTerms}"/>
+</Url>
+<moz:SearchForm>https://www.civicboom.com/contents</moz:SearchForm>
+</OpenSearchDescription>""" % (base64.b64encode(file("civicboom/public/images/boom16.ico").read()), )
+
     @web
     def upgrade_plans(self):
         c.upgrade_plans_title = 'You have reached your Basic account limit for this month.'
