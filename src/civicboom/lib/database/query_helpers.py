@@ -16,7 +16,7 @@ limit_default = config['search.default.limit.contents']
 
 def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
 
-    def apilist(results, count=None, limit=None, offset=None, obj_type=None):
+    def apilist(results, count=0, limit=0, offset=0, obj_type=None):
         return action_ok(
             data = {'list': {
                 'items' : results   ,
