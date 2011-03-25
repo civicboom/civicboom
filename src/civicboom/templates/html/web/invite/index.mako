@@ -13,7 +13,7 @@
 
 <%def name="body()">
 	<%
-		invite_type = d.get('invite-type')
+		invite_type = d.get('invite')
 		self.attr.frags = [invite]
 		self.attr.frag_col_sizes = [2]
 		if invite_type == 'assignment':

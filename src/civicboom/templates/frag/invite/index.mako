@@ -18,7 +18,7 @@
     							'assignment'       : _('Invite people to view this _assignment'),
     							'group'            : _('Invite people to join this _group'),
     	}
-        self.attr.title     = invite_types[d['invite-type']]
+        self.attr.title     = invite_types[d['invite']]
         self.attr.icon_type = None
     %>
 </%def>
@@ -37,7 +37,8 @@
 		    width: 50%;
 		}
 	</style>
-	<form method="POST" action="/invite?invite_type=${d.get('invite-type')}&invite_id=${d.get('invite-id')}">
+	<form method="POST" action="/invite?invite=${d.get('invite')}&id=${d.get('id')}">
+		<input type="hidden" name="search-offset" value="${d['search-offset']}" />
 	    <div class="frag_right_col">
 	        <div class="frag_col">
 	        	<h1>Invite people</h1>
@@ -54,6 +55,12 @@
 	        	</div>
 	        	<div class="invite-list">
 	        		${invite_list()}
+	        	</div>
+	        	<div class="invite-controls">
+	        	% if d['search-offset'] > 0:
+	        		<input class="button" type="submit" name="search-prev" value="<<" />
+	        	% endif
+	        		<input class="button" type="submit" name="search-next" value=">>" />
 	        	</div>
 	        </div>
 	    </div>
