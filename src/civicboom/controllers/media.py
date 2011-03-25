@@ -82,13 +82,15 @@ class MediaController(BaseController):
         be improved to return aditional progress info.
         """
         media = get_media(hash=id)
-        return action_ok(
-            data={
-                #"status"       : app_globals.memcache.get(str("media_processing_"+id)) ,
-                #"thumbnail_url": media.thumbnail_url if media else None,
-                "media"        : media.to_dict(list_type='full'),
-            }
-        )
+        if media:
+            return action_ok(
+                data={
+                    #"status"       : app_globals.memcache.get(str("media_processing_"+id)) ,
+                    #"thumbnail_url": media.thumbnail_url if media else None,
+                    "media"        : media.to_dict(list_type='full'),
+                }
+            )
+        return action_error(_('media item not found'), code=404)
 
     def edit(self, id, format='html'):
         """GET /media/id/edit: Form to edit an existing item"""

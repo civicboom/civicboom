@@ -141,30 +141,6 @@ CREATE TRIGGER update_rating
     AFTER INSERT OR UPDATE OR DELETE ON map_ratings
     FOR EACH ROW EXECUTE PROCEDURE update_rating();
     """)
-    conn.execute("""
-ALTER TABLE content ADD COLUMN textsearch tsvector;
-CREATE INDEX textsearch_idx ON content USING gin(textsearch);
-
-CREATE OR REPLACE FUNCTION update_content() RETURNS TRIGGER AS $$
-    BEGIN
-        IF (TG_OP = 'INSERT') THEN
-            UPDATE content
-                SET textsearch = to_tsvector('english', coalesce(title,'') || ' ' || coalesce(content,''))
-                WHERE id = NEW.id;
-        ELSIF (TG_OP = 'UPDATE') AND (NEW.title != OLD.title OR NEW.content != OLD.content) THEN
-            UPDATE content
-                SET textsearch = to_tsvector('english', coalesce(title,'') || ' ' || coalesce(content,'')),
-                    update_date = now()
-                WHERE id = NEW.id;
-        END IF;
-        RETURN NULL;
-    END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_content
-    AFTER INSERT OR UPDATE ON content
-    FOR EACH ROW EXECUTE PROCEDURE update_content();
-    """)
     #}}}
     ###################################################################
     log.info("Populating tables with base data")  # {{{
