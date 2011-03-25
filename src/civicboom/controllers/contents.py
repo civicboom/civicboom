@@ -296,9 +296,9 @@ class ContentsController(BaseController):
         results = results.order_by(Content.update_date.desc())
         
         def merge_snippet(content, snippet):
-            c = content.to_dict(**kwargs)
-            c['content_short'] = snippet
-            return c
+            content = content.to_dict(**kwargs)
+            content['content_short'] = snippet
+            return content
 
         return to_apilist([merge_snippet(c, s) for c, s in results], obj_type='content', **kwargs)
 
