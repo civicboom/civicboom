@@ -364,7 +364,7 @@ class ContentsController(BaseController):
         content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
-        content.private = c.logged_in_persona.config.get('default_content_visibility', False)
+        content.private = kwargs.get('private') or c.logged_in_persona.config.get('default_content_visibility', False)
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
