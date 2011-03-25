@@ -197,8 +197,8 @@ def init_base_data():
 
         # Create first item of content as content_id=1 for automated document examples to use
         a = ArticleContent()
-        a.title   = "Documentation Test"
-        a.content = "API Documentation test content"
+        a.title   = u"Documentation Test"
+        a.content = u"API Documentation test content"
         a.creator = u1
         Session.add(a)
         Session.commit()
