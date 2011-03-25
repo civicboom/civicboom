@@ -18,7 +18,7 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
-    def rate(self, id, rating=None, **kwargs):
+    def rate(self, id, rating=0, **kwargs):
         """
         POST /contents/{id}/rate: rate an article
         @type action
