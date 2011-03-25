@@ -21,7 +21,7 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
-from sqlalchemy           import or_, and_, null
+from sqlalchemy           import or_, and_, null, func, Unicode
 from sqlalchemy.orm       import join, joinedload, defer
 import datetime
 
@@ -271,8 +271,23 @@ class ContentsController(BaseController):
         
         include_private_content = 'private' in kwargs and logged_in_creator
         results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)
+
         if union_query:
             results = results.union(union_query)
+
+        if 'term' in kwargs:
+            results = results.add_column(
+                func.ts_headline('pg_catalog.english',
+                    func.strip_tags(Content.content),
+                    func.plainto_tsquery(kwargs['term']),
+                    'MaxFragments=5, FragmentDelimiter="<p>", StartSel="<b>", StopSel="</b>", ',
+                    type_= Unicode
+                )
+            )
+        else:
+            results = results.add_column(
+                func.substr(func.strip_tags(Content.content), 0, 100)
+            )
 
         # Sort
         if 'sort' not in kwargs:
@@ -280,7 +295,12 @@ class ContentsController(BaseController):
         # TODO: use kwargs['sort']
         results = results.order_by(Content.update_date.desc())
         
-        return to_apilist(results, obj_type='content', **kwargs)
+        def merge_snippet(content, snippet):
+            c = content.to_dict(**kwargs)
+            c['content_short'] = snippet
+            return c
+
+        return to_apilist([merge_snippet(c, s) for c, s in results], obj_type='content', **kwargs)
 
 
     @web
