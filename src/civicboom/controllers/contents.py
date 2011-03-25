@@ -7,7 +7,6 @@ from civicboom.lib.database.get_cached import update_content, get_licenses, get_
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
-from civicboom.lib.misc import str_to_int
 from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
@@ -180,7 +179,8 @@ def sqlalchemy_content_query(include_private=False, **kwargs):
     else:
         results = results.filter(Content.private==False) # public content only
     if 'creator' in kwargs.get('include_fields',[]):
-        results = results.options(joinedload('creator'))
+        #results = results.options(joinedload('creator'))
+        results = results.options(joinedload(Content.creator))
     if 'attachments' in kwargs.get('include_fields',[]):
         results = results.options(joinedload('attachments'))
     if 'tags' in kwargs.get('include_fields',[]):
@@ -280,25 +280,7 @@ class ContentsController(BaseController):
         # TODO: use kwargs['sort']
         results = results.order_by(Content.update_date.desc())
         
-        # Count
-        count = results.count()
-        
-        # Limit & Offset
-        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
-        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
-        results = results.limit(kwargs['limit']).offset(kwargs['offset'])
-        
-        # Return search results
-        return action_ok(
-            data = {'list': {
-                'items' : [content.to_dict(**kwargs) for content in results.all()] ,
-                'count' : count ,
-                'limit' : kwargs['limit'] ,
-                'offset': kwargs['offset'] ,
-                'type'  : 'content' ,
-                }
-            }
-        )
+        return to_apilist(results, obj_type='content', **kwargs)
 
 
     @web
