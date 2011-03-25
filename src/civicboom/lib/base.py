@@ -164,7 +164,7 @@ def setup_widget_env():
             #    setattr(c, var, get_env_from_referer(var)) # Get varible from referer
     get_widget_varibles_from_env()
     if c.widget['owner']:
-        owner = get_member(c.widget['owner'])
+        owner = _get_member(c.widget['owner'])
         if owner:
             c.widget['owner'] = owner.to_dict()
 
