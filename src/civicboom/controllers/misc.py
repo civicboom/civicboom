@@ -107,6 +107,6 @@ class MiscController(BaseController):
                 if kwargs.get('referer'):
                     kwargs['referer'] = unquote_plus(kwargs['referer'])
                 content_text = "%(referer)s\n\n%(category)s\n\n%(from_)s\n\n%(message)s\n\n%(env)s" % dict(message=kwargs.get('message'), env=unquote_plus(kwargs.get('env')), from_=kwargs.get('from'), category=kwargs.get('category'), referer=kwargs.get('referer') )
-                send_email(config['email.contact'], subject=_('_site_name feedback'), content_text=content_text)
+                send_email(config['email.contact'], subject=_('_site_name feedback'), content_text=content_text, sender=kwargs['from'])
                 return action_ok(_("Thank you for your feedback"), code=201)
             return submit_feedback(**kwargs)
