@@ -14,12 +14,10 @@ class TestPermissionsController(TestController):
         """
         pass
     
-    def test_settings_permissions(self):
-        pass
     
-    def test_publish_permissions(self):
+    def test_persona_permissions(self):
         """
-        Test content publishing permission rules
+        Test content persona publishing permission rules
         other tests handle the rules for the 'individual user' publishing
         this test specifically tests the permissions for an active group persona
         """
@@ -44,18 +42,11 @@ class TestPermissionsController(TestController):
         self.set_persona('publish_permission_test')
         
         # Create draft as group persona
-        response = self.app.post(
-            url('contents', format="json"),
-            params={
-                '_authentication_token': self.auth_token,
-                'title'  : "permission draft 1",
-                'content': "a test draft",
-            },
-            status=201
+        draft_id = self.create_content(
+            title   = 'permission draft 1',
+            content = 'a test draft'      ,
+            type    = 'draft'             ,
         )
-        draft_id = json.loads(response.body)["data"]["id"]
-        self.assertGreater(draft_id, 0)
-        
         
         self.log_in_as('unitfriend')
         
@@ -225,3 +216,76 @@ class TestPermissionsController(TestController):
             },
             status=200
         )
+
+
+
+    def test_private_content_viewing_permissions(self):
+        # Tests GregM - moved from test_contents by AllanC
+        
+        # Create accounts & setup to test private content ----------------------
+        self.sign_up_as("private_content_trusted")
+        self.sign_up_as("private_content_untrusted")
+        self.sign_up_as("private_content_nonfollower")
+        self.log_in_as("private_content_trusted")
+        self.follow("unittest")
+        self.log_in_as("private_content_untrusted")
+        self.follow("unittest")
+        
+        self.log_in_as("unittest")
+        # GregM: Trust one follower
+        self.follower_trust("private_content_trusted")
+        
+        # Create private content -----------------------------------------------
+        #self.log_in_as("unittest")
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test private article by the test user",
+                'type': "article",
+                'content': "This is my private article.",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+                'private': True,
+            },
+            status=201
+        )
+        self.my_private_article_id = json.loads(response.body)["data"]["id"]
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test private assignment by the test user",
+                'type': "article",
+                'content': "This is my private assignment.",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+                'private': True,
+            },
+            status=201
+        )
+        self.my_private_assignment_id = json.loads(response.body)["data"]["id"]
+        
+        # view_private_content_not_trusted -------------------------------------
+        self.log_in_as("private_content_untrusted")
+        response = self.app.get(url('content', id=self.my_private_article_id), status=403)
+        response = self.app.get(url('content', id=self.my_private_assignment_id), status=403)
+        self.log_in_as("private_content_nonfollower")
+        response = self.app.get(url('content', id=self.my_private_article_id), status=403)
+        response = self.app.get(url('content', id=self.my_private_assignment_id), status=403)
+        
+        # view_private_content_trusted -----------------------------------------
+        self.log_in_as("private_content_trusted")
+        response = self.app.get(url('content', id=self.my_private_article_id), status=200)
+        response = self.app.get(url('content', id=self.my_private_assignment_id), status=200)
+        
+        # distrust_check -------------------------------------------------------
+        self.log_in_as("unittest")
+        self.follower_distrust("private_content_trusted")
+        self.log_in_as("private_content_trusted")
+        response = self.app.get(url('content', id=self.my_private_article_id), status=403)
+        response = self.app.get(url('content', id=self.my_private_assignment_id), status=403)
+        self.log_in_as("unittest")
+        self.follower_trust("private_content_trusted")
+        response = self.app.get(url('content', id=self.my_private_article_id), status=200)
+        response = self.app.get(url('content', id=self.my_private_assignment_id), status=200)
