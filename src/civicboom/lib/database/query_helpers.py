@@ -53,7 +53,10 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
         )
     
     if isinstance(results, list):
-        results = results[offset:offset+limit]
+        end_point = None
+        if limit:
+            end_point = offset + limit
+        results = results[offset:offset+end_point]
         return apilist(
             list_to_dict(results, list_to_dict_transform, **kwargs),
             count=len(results), limit=limit, offset=offset, obj_type=kwargs.get('obj_type')
