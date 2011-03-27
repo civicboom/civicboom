@@ -39,10 +39,14 @@ def _init_search_filters():
             return query.filter(Member.id       == normalize_member(member))
 
     def append_search_name(query, name):
-        return query.filter(or_(Member.name.ilike("%"+name+"%"), Member.username.ilike("%"+name+"%")))
+        if name:
+            return query.filter(or_(Member.name.ilike("%"+name+"%"), Member.username.ilike("%"+name+"%")))
+        return query
     
     def append_search_type(query, type_text):
-        return query.filter(Member.__type__==type_text)
+        if type_text:
+            return query.filter(Member.__type__==type_text)
+        return query
 
     def append_search_location(query, location_text):
         log.warning('member location search not implemented')

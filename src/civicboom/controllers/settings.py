@@ -142,7 +142,7 @@ def build_meta(user, user_type, panel):
                     if not '_readonly' in settings_meta[setting_name]['type']:
                         settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
                     if not 'password' in [login.type for login in user.login_details]:
-                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above). You will need to verify your address and create a password to use our mobile app.")
                     else:
                         settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
     data = dict( settings_meta=settings_meta,
