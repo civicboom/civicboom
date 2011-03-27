@@ -103,12 +103,12 @@ def clean_html_markup(text):
     so the purpose of this here is to convert these characters created by the rich text, knowing that they will be escaped next line
     This levels the playing field, malicious &lt &gt are converted to < > and escaped in the same way
     """
-    
     text = re.sub(r'<style(.*?)style>', " ", text) #Strip STYLE (under no circumstances do we want this)
     text = re.sub("&nbsp;"," ",text)               #Replace escaped spaces
     #text = re.sub("&amp;","&",text)
     text = re.sub("&lt;","-lt-",text) #convert legitmate lt gt's so that they can be untouched and reinserted later
     text = re.sub("&gt;","-gt-",text)
+    text = re.sub(r'&(\w{1,6}?);', r'-amp-\1;', text)
     
     text = saxutils.escape(text) #webhelpers.html.converters.format_paragraphs(text)
 
@@ -117,7 +117,7 @@ def clean_html_markup(text):
         tag_type     = tag_contents.split(" ")[0]
         if tag_type in html_tags_allowed:
             return "<%s>" % tag_type
-        if tag_contents.startswith("a"):
+        if tag_contents.startswith("a "):
             url = ""
             url_find = re.search(r'href="(.*)"', tag_contents) # Question, why have the " not been escaped to &quot; ? I dont like this saxutils should have escaped them
             if url_find:
@@ -129,6 +129,7 @@ def clean_html_markup(text):
     
     text = re.sub("-lt-","&lt;",text) #Add back the legitmate escapes for gt and lt
     text = re.sub("-gt-","&gt;",text)
+    text = re.sub(r'-amp-(\w{1,6}?);', r'&\1;', text)
     text = re.sub("<br>","<br/>",text) #replace all line breaks with XHTML complient tags
     return text
 
