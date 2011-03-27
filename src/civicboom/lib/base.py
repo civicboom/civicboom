@@ -241,7 +241,7 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
             # AllanC - originaly viewing a comment was an error, we may want in the future to display comments and sub comments, for now we redirect to parent
             if c.format == 'html' or c.format == 'redirect':
                 return redirect(url('content', id=content.parent.id))
-            return action_error(_('Attempted to view a comment as _article'))
+            raise action_error(_('Attempted to view a comment as _article'))
     if is_editable and not content.editable_by(c.logged_in_persona):
         # AllanC TODO: need to check role in group to see if they can do this
         raise action_error(_("You do not have permission to edit this _content"), code=403)
