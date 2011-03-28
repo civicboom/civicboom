@@ -179,7 +179,7 @@ class TestController(TestCase):
         params={
             '_authentication_token': self.auth_token,
             'title'         : title      ,
-            'contents'      : content    ,
+            'content'       : content    ,
             'type'          : type       ,
             #'submit_publish': u'publish' , # publish needs to be remove from API
         }
@@ -192,7 +192,7 @@ class TestController(TestCase):
         )
         response_json = json.loads(response.body)
         content_id = int(response_json['data']['id'])
-        self.assertNotEqual(content_id, 0)
+        self.assertGreater(content_id, 0)
         return content_id
 
     def delete_content(self, id):
