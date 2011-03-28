@@ -1,0 +1,9 @@
+styles/*/*.css
+styles/common/icons/*
+javascript/tiny_mce/*
+javascript/[a-zA-Z]*.js
+cdn-exclude.txt
+robots.txt
+*/.gitignore
+*/Makefile
+*.bak

@@ -2,7 +2,11 @@
 
 . /usr/share/debconf/confmodule
 
+mkdir -p /opt/cb/var/www/static/
+chmod 777 /opt/cb/var/www/static/
+
 ln -sf /etc/nginx/sites-available/civicboom.com /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/static.civicboom.com /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
 if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
