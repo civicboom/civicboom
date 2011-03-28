@@ -85,29 +85,40 @@
 					}
 					var invitee_ul = button.parents('form').find('.invitee_ul');
 					var li = button.parents('li').detach();
-					invitee_ul.children('li:last').after(li);
+					invitee_ul.append(li);
+					invitee_ul.children('li.none').remove();
 					exclude_members.push(button_key);
 					li.append('<input type="hidden" class="username" name="inv-' + (exclude_members.length - 1) + '" value="' + button_key + '" />');
 					li.find('input.button').val('Remove').attr('name', 'rem-' + (exclude_members.length - 1));
 					// refreshSearch(button);
-					return false;
 				break;
 				case 'rem':
 					var li = button.parents('li');
+					var ul = button.parents('ul');
 					var username = li.find('input.username').val();
 					// remove username from exclude list
 					exclude_members = exclude_members.remove(username);
 					refreshSearch(button);
 					li.remove();
-					return false;
+					if (ul.find('li').length == 0)
+						ul.append('<li class="none">${_('Select people to invite from the right')}</li>');
 				break;
+				case 'search':
+					switch (button_key) {
+						case 'next':
+						case 'prev':
+							refreshSearch(button, [{ 'name':button_name }]);
+							break;
+					}
 			}
 			return false;
 		}
-		function refreshSearch(element) {
+		function refreshSearch(element, extra_fields) {
 			var form = element.parents('form');
 			var ul = form.find('.invite_ul');
 			var formArray = form.serializeArray();
+			if (typeof extra_fields != 'undefined')
+				formArray = formArray.concat(extra_fields)
 			$.post('/invite/search.frag', formArray, function (data) {
 				ul.html(data);
 			});
@@ -136,9 +147,9 @@
 	        	</div>
 	        	<div class="invite-controls">
 	        	% if d['search-offset'] > 0:
-	        		<input class="button" type="submit" name="search-prev" value="<<" />
+	        		<input class="button" onclick="return inviteClick(this)" type="submit" name="search-prev" value="<<" />
 	        	% endif
-	        		<input class="button" type="submit" name="search-next" value=">>" />
+	        		<input class="button" onclick="return inviteClick(this)" type="submit" name="search-next" value=">>" />
 	        	</div>
 	        </div>
 	    </div>
@@ -167,7 +178,7 @@
 	%>
 	<ul class="invitee_ul">
 		% if len(list) == 0:
-			${_('Select people to invite from the right')}
+			<li class="none">${_('Select people to invite from the right')}</li>
 		% endif
 		% for key in list.keys():
 		<%
@@ -192,7 +203,7 @@
 	%>
 	<ul class="invite_ul">
 		% if len(list) == 0:
-			${_('Your search returned no results')}
+			<li>${_('Your search returned no results')}</li>
 		% endif
 		% for item in list:
 			<li style="padding-top: 3px; display: inline-block; width: 100%;">
