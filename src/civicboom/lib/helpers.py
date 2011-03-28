@@ -124,14 +124,14 @@ def wh_url(folder, filename):
     # with the specific version of the code -- so while we are small and doing
     # lots of updates, serve the public folder locally
     if folder == "public":
-        path = os.path.join("civicboom", "public", filename)
-        ut = str(int(os.stat(path).st_mtime))
-        if config['debug']:
-            # in development, serve locally
-            return request.environ.get('wsgi.url_scheme', 'https')+"://"+request.environ.get("HTTP_HOST")+"/"+filename+"?ut="+ut
+        if app_globals.version:
+            # in production, serve from a domain without cookies, with package version as cache breaker
+            return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+app_globals.version+"/"+filename
         else:
-            # in production, serve from a domain without cookies
-            return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+filename+"?ut="+ut
+            # in development, serve locally, with update time as cache breaker
+            path = os.path.join("civicboom", "public", filename)
+            ut = str(int(os.stat(path).st_mtime))
+            return request.environ.get('wsgi.url_scheme', 'https')+"://"+request.environ.get("HTTP_HOST")+"/"+filename+"?ut="+ut
     # all other folders (media, avatars) are served from our beefy-but-slow-to
     # update warehouse (currently amazon S3)
     else:

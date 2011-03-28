@@ -12,6 +12,7 @@ from paste.deploy.converters import asbool
 import memcache
 from ConfigParser import SafeConfigParser
 
+import os
 
 
 class Globals(object):
@@ -27,7 +28,10 @@ class Globals(object):
         'app_globals' variable
         """
 
-        self.version       = "temp string" #Needs to be replaced with version hash of this git build
+        if os.path.exists(".version"):
+            self.version   = file(".version").read().strip()
+        else:
+            self.version   = None
 
         self.cache         = CacheManager(**parse_cache_config_options(config))
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
