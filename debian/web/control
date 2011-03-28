@@ -2,5 +2,5 @@ Package: cb-website-web
 Version: VERSION
 Architecture: all
 Maintainer: Shish <shish@civicboom.com>
-Pre-Depends: python, nginx(>=0.8), debconf(>=0.2.17), unzip
+Pre-Depends: python, nginx(>=0.8), debconf(>=0.2.17)
 Description: The settings for the nginx civicboom front-end
