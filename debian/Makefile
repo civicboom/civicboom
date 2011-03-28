@@ -20,7 +20,7 @@ cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
 	fakeroot dpkg -b fs-meta cb-website_${VERSION}_all.deb
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
-cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -type f)
+cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src ./api -type f)
 	cd ../src/ && $(MAKE) site
 	cd ../src/ && $(MAKE) api-doc
 	rm -rf fs-api
@@ -35,7 +35,7 @@ cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -ty
 	fakeroot dpkg -b fs-api cb-website-api_${VERSION}_all.deb 
 	ln -sf cb-website-api_${VERSION}_all.deb cb-website-api.deb
 
-cb-website-web.deb: $(shell find ../nginx)
+cb-website-web.deb: $(shell find ../nginx ./web)
 	rm -rf fs-web
 	$(call mdcp, web/*                          , fs-web/DEBIAN/                    )
 	$(call mdcp, ../nginx/civicboom-common.conf , fs-web/etc/nginx/conf.d/          )
@@ -48,7 +48,7 @@ cb-website-web.deb: $(shell find ../nginx)
 	fakeroot dpkg -b fs-web cb-website-web_${VERSION}_all.deb 
 	ln -sf cb-website-web_${VERSION}_all.deb cb-website-web.deb
 
-cb-website-db.deb: $(shell find db)
+cb-website-db.deb: $(shell find ./db)
 	rm -rf fs-db
 	$(call mdcp, db/*       , fs-db/DEBIAN/                    )
 	$(call mdcp, db/crontab , fs-db/etc/cron.d/,cb-website-db  )
