@@ -104,6 +104,7 @@ class MembersController(BaseController):
     
         @return 200      list ok
                 list     array of member objects
+        @return 404      members_of=user is not a group
         
         @example http://test.civicboom.com/members.json?name=unit
         @example http://test.civicboom.com/members.json?follower_of=1&limit=5
