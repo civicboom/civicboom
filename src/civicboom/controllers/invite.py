@@ -146,7 +146,18 @@ class InviteController(BaseController):
         
         # Remove removed items from invitee list
         invitee_usernames = [invitee_list[key]['username'] for key in invitee_list.keys() if key not in invitee_remove]
-        invitee_list = dict([(key, invitee_list[key]) for key in invitee_list if invitee_list[key]['username'] in invitee_usernames])
+        invitee_list = dict([(key, invitee_list[key]) for key in invitee_list.keys() if invitee_list[key]['username'] in invitee_usernames])
+        
+        # Re-create key numbering
+        invitee_keys = sorted(invitee_list.keys())
+        invitee_key_map = {}
+        i = 0
+        for key in invitee_keys:
+            invitee_key_map[key] = i
+            i = i + 1
+            
+        invitee_list = dict([ (invitee_key_map[key], invitee_list[key]) for key in invitee_list.keys()] )
+        
         
         # Process invitee list into near-proper list format
         invitee_list = {'count' : len(invitee_list),

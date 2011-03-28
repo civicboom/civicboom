@@ -87,8 +87,9 @@
 					var li = button.parents('li').detach();
 					invitee_ul.children('li:last').after(li);
 					exclude_members.push(button_key);
-					li.append('<input type="hidden" class="username" name="inv-' + exclude_members.length + '" value="' + button_key + '" />');
-					li.find('input.button').val('Remove').attr('name', 'rem-' + exclude_members.length);
+					li.append('<input type="hidden" class="username" name="inv-' + (exclude_members.length - 1) + '" value="' + button_key + '" />');
+					li.find('input.button').val('Remove').attr('name', 'rem-' + (exclude_members.length - 1));
+					// refreshSearch(button);
 					return false;
 				break;
 				case 'rem':
@@ -96,8 +97,8 @@
 					var username = li.find('input.username').val();
 					// remove username from exclude list
 					exclude_members = exclude_members.remove(username);
-					li.remove();
 					refreshSearch(button);
+					li.remove();
 					return false;
 				break;
 			}
@@ -107,7 +108,6 @@
 			var form = element.parents('form');
 			var ul = form.find('.invite_ul');
 			var formArray = form.serializeArray();
-			
 			$.post('/invite/search.frag', formArray, function (data) {
 				ul.html(data);
 			});
