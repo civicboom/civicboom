@@ -121,19 +121,20 @@ def link_to_objects(text):
 
 def wh_url(folder, filename):
     # see /docs/cdn.rst for an explanation of our CDN setup
+    proto = request.environ.get('wsgi.url_scheme', 'https')+"://"
     if folder == "public":
         if app_globals.version:
             # in production, serve from a domain without cookies, with package version as cache breaker
-            return request.environ.get('wsgi.url_scheme', 'https')+"://"+config['cdn_url']+"/"+app_globals.version+"/"+filename
+            return proto+config['cdn_url']+"/"+app_globals.version+"/"+filename
         else:
             # in development, serve locally, with update time as cache breaker
             path = os.path.join("civicboom", "public", filename)
             ut = str(int(os.stat(path).st_mtime))
-            return request.environ.get('wsgi.url_scheme', 'https')+"://"+request.environ.get("HTTP_HOST")+"/"+filename+"?ut="+ut
+            return proto+request.environ.get("HTTP_HOST")+"/"+filename+"?ut="+ut
     # all other folders (media, avatars) are served from our beefy-but-slow-to
     # update warehouse (currently amazon S3)
     else:
-        return config["warehouse_url"]+"/"+folder+"/"+filename
+        return proto+config["warehouse_url"]+"/"+folder+"/"+filename
 
 
 def uniqueish_id(*args):
