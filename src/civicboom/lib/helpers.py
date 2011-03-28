@@ -120,13 +120,11 @@ def link_to_objects(text):
 
 
 def wh_url(folder, filename):
-    # pylons' "public" folder is updated pretty frequently, and is associated
-    # with the specific version of the code -- so while we are small and doing
-    # lots of updates, serve the public folder locally
+    # see /docs/cdn.rst for an explanation of our CDN setup
     if folder == "public":
         if app_globals.version:
             # in production, serve from a domain without cookies, with package version as cache breaker
-            return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+app_globals.version+"/"+filename
+            return request.environ.get('wsgi.url_scheme', 'https')+"://"+config['cdn_url']+"/"+app_globals.version+"/"+filename
         else:
             # in development, serve locally, with update time as cache breaker
             path = os.path.join("civicboom", "public", filename)
