@@ -181,7 +181,7 @@ class MembersController(BaseController):
                     list_to_dict_transform = follower_of_to_dict_transform
             
             if member != c.logged_in_persona:
-                results.filter(Follow.type!='trusted_invite')
+                results = results.filter(Follow.type!='trusted_invite')
 
         else:
             results = Session.query(Member)
