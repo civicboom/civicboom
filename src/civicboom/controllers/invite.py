@@ -24,7 +24,7 @@ def check_member(member):
 def check_assignment(content):
     return content.editable_by(c.logged_in_persona)
 
-search_limit = 8
+search_limit = 6
 
 invite_types = {
     'group' : {
@@ -105,10 +105,10 @@ class InviteController(BaseController):
             for key in request.POST:
                 username = None
                 order = None
-                if key[0:4] == 'add-' and request.POST[key] == 'Add':
+                if key[0:4] == 'add-':
                     username = key[4:]
                     list = 'add'
-                if key[0:4] == 'rem-' and request.POST[key] == 'Remove':
+                if key[0:4] == 'rem-':
                     order = int(key[4:])
                     list = 'rem'
                 if key[0:4] == 'inv-':
@@ -129,12 +129,12 @@ class InviteController(BaseController):
                 # We don't need to do anything for searching as the parameters are submitted
                 #  and passed to the members index
                 pass
-            if 'search-prev' in request.POST and request.POST['search-prev'] == '<<':
+            if 'search-prev' in request.POST:
                 search_offset -= search_limit
                 if search_offset < 0:
                     search_offset = 0
                 pass
-            if 'search-next' in request.POST and request.POST['search-next'] == '>>':
+            if 'search-next' in request.POST:
                 search_offset += search_limit
                 pass
         
@@ -155,7 +155,7 @@ class InviteController(BaseController):
         for key in invitee_keys:
             invitee_key_map[key] = i
             i = i + 1
-            
+                
         invitee_list = dict([ (invitee_key_map[key], invitee_list[key]) for key in invitee_list.keys()] )
         
         
@@ -205,6 +205,15 @@ class InviteController(BaseController):
     @authorize
     def search(self, **kwargs):
         search_offset = int(kwargs.get('search-offset', 0))
+        
+        if 'search-prev' in request.POST and request.POST['search-prev'] == '<<':
+            search_offset -= search_limit
+            if search_offset < 0:
+                search_offset = 0
+            pass
+        if 'search-next' in request.POST and request.POST['search-next'] == '>>':
+            search_offset += search_limit
+            pass
         
         search_type = {}
         if not kwargs.get('search-type', '') == '':
