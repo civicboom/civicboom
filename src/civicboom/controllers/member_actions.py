@@ -76,7 +76,7 @@ class MemberActionsController(BaseController):
         @api members 1.0 (WIP)
 
         @return 200   follower trusted
-        @return 400   error trusting
+        @return 500   error trusting
         """
         member = get_member(id, set_html_action_fallback=True)
 
@@ -100,7 +100,7 @@ class MemberActionsController(BaseController):
         @api members 1.0 (WIP)
 
         @return 200   follower trust removed
-        @return 400   error removing trust
+        @return 500   error removing trust
         """
         member = get_member(id, set_html_action_fallback=True)
 

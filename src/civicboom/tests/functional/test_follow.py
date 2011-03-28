@@ -84,6 +84,14 @@ class TestFollowController(TestController):
         # Invite follow_test as a trusted follower
         check_follow(following=num_unittest_following, followers=num_unittest_followers)
         self.follower_invite_trusted('follow_test')
+        response = self.app.post( # try action again, should error
+            url('member_action', action='follower_invite_trusted', id='follow_test', format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=500
+        )
+        
         check_follow(following=num_unittest_following, followers=num_unittest_followers + 1, check_postgress_triggers=False) # the trsuted invite will appear in the follower list for the logged_in user
         self.assertEquals(get_follower_count(follow_type='trusted_invite'), 1)
         self.assertEquals(get_follower_count(follow_type='trusted'       ), 0)
@@ -123,6 +131,13 @@ class TestFollowController(TestController):
         self.assertEquals(get_following_count(follow_type='trusted_invite'), 0)
         self.assertEquals(get_following_count(follow_type='trusted'       ), 0)
         self.follower_trust('follow_test')    # trust
+        response = self.app.post( #trust again - fail
+            url('member_action', action='follower_trust', id='follow_test', format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=400
+        )
         self.follower_distrust('follow_test') # Should negate previous state
         self.assertEquals(get_following_count(follow_type='trusted_invite'), 0)
         self.assertEquals(get_following_count(follow_type='trusted'       ), 0)
