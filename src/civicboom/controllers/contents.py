@@ -356,6 +356,7 @@ class ContentsController(BaseController):
         if   kwargs['type'] == 'draft':
             raise_if_current_role_insufficent('contributor')
             content = DraftContent()
+            kwargs['private'] = kwargs.get('private', True) # Set drafts visability to default to private
         elif kwargs['type'] == 'comment':
             raise_if_current_role_insufficent('editor')
             content = CommentContent()
