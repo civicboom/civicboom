@@ -32,7 +32,17 @@
     %>
     % for group_name in setting_group_order:
         <div style="margin: 0;">
-     	<div class="setting_group_name setting_pad">${group_name.capitalize()}</div>
+    	% if group_name == 'password':
+    		<div class="setting_group_name setting_pad" style="padding-top: 12px">${_('Accessing your account via the mobile app:')}</div>
+    		<div class="setting_hint" style="padding-top: 12px">
+    			If you have downloaded our <a href="/about/mobile">mobile app</a> but have signed up to Civicboom
+				via Facebook, Twitter, LinkedIn etc, you will need to set up a password
+				and make a note of your Username to log into the mobile app.
+			</div>
+    		<div class="setting_group_name setting_pad"  style="padding-top: 12px">${_('How to change your password, or to create one to access your account via the mobile app:')}</div>
+        % else:
+     		<div class="setting_group_name setting_pad">${group_name.capitalize()}</div>
+     	% endif
         % for setting_name in setting_groups[group_name]:
             <%
                 setting_meta  = d['settings_meta'][setting_name[0]]
@@ -93,6 +103,8 @@
                     %>
                     ${loc.location_picker(field_name=setting_name[0], width='100%', height='300px', always_show_map=True, label_class="norm", lon=lon, lat=lat)}
                     </div>
+                % elif setting_type == 'display':
+                	<input name="${setting_name[0]}" type="text" readonly="readonly" ${placeholder()} value="${setting_value}">
                 % else:
                 	<input name="${setting_name[0]}" type="text" ${readonly()} ${placeholder()} value="${setting_value}">
                 % endif
@@ -104,9 +116,9 @@
             % endif
 		% endfor
 ##        GregM: Add the janrain & notifications links to the general group.
-            % if group_name == 'contact':
-                <a href="${url(controller='account' , action='link_janrain')}">${_("Link Additional Accounts (Facebook, LinkedIn, Google and more)")}</a>
-            % endif
+##            % if group_name == 'contact':
+##                <a href="${url(controller='account' , action='link_janrain')}">${_("Link Additional Accounts (Facebook, LinkedIn, Google and more)")}</a>
+##            % endif
         </div>
     % endfor
     <input class="button" type="submit" name="submit" value="${_('Save settings')}" style="margin: 16px;"/>

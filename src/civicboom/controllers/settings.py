@@ -41,23 +41,24 @@ def add_setting(name, description, value='', group=None, **kwargs):
     settings_base[setting['name']]=setting
     
 add_setting('name'                      , _('Display name' )             , group='general/general'    , weight=0  , type='string'                                                                            )
-add_setting('description'               , _('Description'  )             , group='general/general'    , weight=1  , type='longstring'      , info=_('Tell the world about you and your interests.')          )
+add_setting('username'                  , _('Username' )                 , group='general/general'    , weight=1  , type='display'         , who='member'                                                    )
+add_setting('description'               , _('Description'  )             , group='general/general'    , weight=2  , type='longstring'      , info=_('Tell the world about you and your interests.')          )
 
-add_setting('default_role'              , _('Default Role')              , group='general/group'      , weight=2  , type='enum'            , who='group' , value='observer,contributor,editor,administrator' )
-add_setting('join_mode'                 , _('Join Mode')                 , group='general/group'      , weight=3  , type='enum'            , who='group' , value='public,invite_and_request,invite'          )
-add_setting('member_visibility'         , _('Member Visibility')         , group='general/group'      , weight=4  , type='enum'            , who='group' , value='public,private'                            )
-add_setting('default_content_visibility', _('Default Content Visibility'), group='general/group'      , weight=5  , type='enum'            , who='group' , value='public,private'                            )
+add_setting('default_role'              , _('Default Role')              , group='general/group'      , weight=3  , type='enum'            , who='group' , value='observer,contributor,editor,administrator' )
+add_setting('join_mode'                 , _('Join Mode')                 , group='general/group'      , weight=4  , type='enum'            , who='group' , value='public,invite_and_request,invite'          )
+add_setting('member_visibility'         , _('Member Visibility')         , group='general/group'      , weight=5  , type='enum'            , who='group' , value='public,private'                            )
+add_setting('default_content_visibility', _('Default Content Visibility'), group='general/group'      , weight=6  , type='enum'            , who='group' , value='public,private'                            )
 
-add_setting('website'                   , _('Website'      )             , group='general/contact'    , weight=6  , type='url'             , info=_('Optional: add your website or blog etc. to your profile'))
-add_setting('email'                     , _('Email Address')             , group='general/contact'    , weight=7  , type='email'           , who='member'                                                    )
-add_setting('password_current'          , _('Current password')          , group='general/password'   , weight=8  , type='password_current', who='member'                                                    )
-add_setting('password_new'              , _('New password')              , group='general/password'   , weight=9  , type='password'        , who='member'                                                    )
-add_setting('password_new_confirm'      , _('New password again')        , group='general/password'   , weight=10 , type='password'        , who='member'                                                    )
+add_setting('website'                   , _('Website'      )             , group='general/contact'    , weight=7  , type='url'             , info=_('Optional: add your website or blog etc. to your profile'))
+add_setting('email'                     , _('Email Address')             , group='general/contact'    , weight=8  , type='email'           , who='member'                                                    )
+add_setting('password_current'          , _('Current password')          , group='general/password'   , weight=9  , type='password_current', who='member'                                                    )
+add_setting('password_new'              , _('New password')              , group='general/password'   , weight=10 , type='password'        , who='member'                                                    )
+add_setting('password_new_confirm'      , _('New password again')        , group='general/password'   , weight=11 , type='password'        , who='member'                                                    )
 #add_setting('twitter_username'          , _('Twitter username')          , group='aggregation')
 #add_setting('twitter_auth_key'          , _('Twitter authkey' )          , group='aggregation')
 #add_setting('broadcast_instant_news'    , _('Twitter instant news')      , group='aggregation', type='boolean')
 #add_setting('broadcast_content_posts'   , _('Twitter content' )          , group='aggregation', type='boolean')
-add_setting('avatar'                    , _('Avatar' )                   , group='general/avatar'     , weight=11 , type='file'                                                                              )
+add_setting('avatar'                    , _('Avatar' )                   , group='general/avatar'     , weight=12 , type='file'                                                                              )
 
 
 add_setting('location_home'             , _('Home Location' )            , group='location/location'  , weight=100, type='location' )
