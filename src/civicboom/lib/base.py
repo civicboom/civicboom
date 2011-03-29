@@ -225,13 +225,15 @@ def get_message(message, is_target=False, is_target_or_source=False):
     return message
 
 
-def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False, set_html_action_fallback=False):
+def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False, content_type=None, set_html_action_fallback=False):
     """
     Shortcut to return content and raise not found or permission exceptions automatically (as these are common opertations every time a content is fetched)
     """
     content = _get_content(id)
     if not content:
         raise action_error(_("The _content you requested could not be found"), code=404)
+    if content_type and content.__type__ != content_type:
+        raise action_error(_("The _content you requested was not %s" % content_type), code=404)
     if is_viewable:
         if not content.viewable_by(c.logged_in_persona):
             raise action_error(_("The _content you requested is not viewable"), code=403)

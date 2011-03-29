@@ -153,7 +153,7 @@ class ContentActionsController(BaseController):
         @return 200   accepted ok
         @return 500   error accepting
         """
-        assignment = get_content(id, set_html_action_fallback=True)
+        assignment = get_content(id, content_type='assignment', is_viewable=True, set_html_action_fallback=True)
         
         # AllanC - TODO: need message to user as to why they could not accept the assignment
         #         private assingment? not invited?
@@ -161,7 +161,7 @@ class ContentActionsController(BaseController):
 
         if assignment.accept(c.logged_in_persona):
             assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
-            user_log.debug("Accepted Content #%d" % int(id))
+            user_log.debug("Accepted Content #%d" % assignment.id)
             # A convenience feature for flow of new users. If they are following nobody (they are probably a new user), then auto follow the assignment creator
             if c.logged_in_persona.num_following <= 2:
                 try:

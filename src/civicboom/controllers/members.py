@@ -127,11 +127,14 @@ class MembersController(BaseController):
             
             if 'members_of' in kwargs:
                 results = results.options(joinedload(GroupMembership.member))
+                
                 # Get Group
                 group   = get_group(kwargs['members_of'])
                 # Permissions - only show member roles if part of this group
                 if group.member_visibility=="public" or group == c.logged_in_persona or group.get_membership(c.logged_in_persona):
                     results = results.filter(GroupMembership.group_id==normalize_member(group))
+                else:
+                    results = None
                 # to_dict transform
                 def member_roles_to_dict_transform(results, **kwargs):
                     return [update_dict(member_role.member.to_dict(**kwargs),{'role':member_role.role, 'status':member_role.status}) for member_role in results]
@@ -140,11 +143,16 @@ class MembersController(BaseController):
             elif 'groups_for' in kwargs:
                 results = results.select_from(join(Group, GroupMembership, GroupMembership.group))
                 results = results.options(joinedload(GroupMembership.group))
+                
                 # Get Member
                 member = get_member(kwargs['groups_for'])
                 results = results.filter(GroupMembership.member_id==normalize_member(member))
                 # Permissions - only show membership of public groups
-                if not (member == c.logged_in_persona and kwargs.get('private')):
+                print member
+                print kwargs.get('private')
+                if member == c.logged_in_persona and kwargs.get('private', False):
+                    pass
+                else:
                     results = results.filter(GroupMembership.status  == 'active')
                     results = results.filter(Group.member_visibility == 'public')
                 # to_dict transform

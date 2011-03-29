@@ -284,7 +284,7 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         @return 404   member not found
         """
-        return member_search(groups_for=id)
+        return member_search(groups_for=id, **kwargs)
         
         #member = get_member(id)        
         #if member == c.logged_in_persona and kwargs.get('private'):

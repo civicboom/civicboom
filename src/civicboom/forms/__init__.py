@@ -107,7 +107,7 @@ class EnumFieldRenderer(FieldRenderer):
 
 class LocationPickerRenderer(FieldRenderer):
     def render(self):
-        if self.raw_value:
+        if hasattr(self, 'raw_value') and self.raw_value:
             lonlatval = location_to_string(self.raw_value)
             lonlat = "lonlat: {lon:%s, lat:%s}," % tuple(lonlatval.split(" "))
         else:

@@ -46,7 +46,7 @@
     <item>
         <title>${content['title']}</title>
         <link>${h.url('content', id=content['id'], subdomain='')}</link> 
-        <description>${content['content_short']}</description> 
+        <description>${content['content']}</description> 
         <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate>
         <guid isPermaLink="false">Content #${content['id']}</guid>
         % if 'tags' in content:

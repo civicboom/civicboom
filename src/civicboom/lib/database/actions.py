@@ -472,8 +472,12 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
         raise action_error(_("cant find assignment"), code=404)
     if not issubclass(assignment.__class__,AssignmentContent):
         raise action_error(_("only _assignments can be accepted"), code=400)
+    # all permissins hendled by controler action - so this is unneeded here
+    #if not assignment.viewable_by(c.logged_in_persona):
+    #    raise action_error(_('_assignment is not visible to your user and therefor cannot be accepted'), code=403)
     if assignment_previously_accepted_by(assignment, member):
         raise action_error(_('_assignment has been previously accepted and cannot be accepted again'), code=400)
+
     
     assignment_accepted        = MemberAssignment()
     assignment.assigned_to.append(assignment_accepted)
