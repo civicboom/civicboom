@@ -277,20 +277,20 @@ class ContentsController(BaseController):
 
         # union and add_column are mutually exclusive; union is functional while
         # add_column is visual, so disable add_column if union is there
-        if not union_query:
-            if 'term' in kwargs:
-                results = results.add_column(
-                    func.ts_headline('pg_catalog.english',
-                        func.strip_tags(Content.content),
-                        func.plainto_tsquery(kwargs['term']),
-                        'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
-                        type_= Unicode
-                    )
-                )
-            else:
-                results = results.add_column(
-                    func.substr(func.strip_tags(Content.content), 0, 100)
-                )
+        #if not union_query:
+        #    if 'term' in kwargs:
+        #        results = results.add_column(
+        #            func.ts_headline('pg_catalog.english',
+        #                func.strip_tags(Content.content),
+        #                func.plainto_tsquery(kwargs['term']),
+        #                'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
+        #                type_= Unicode
+        #            )
+        #        )
+        #    else:
+        #        results = results.add_column(
+        #            func.substr(func.strip_tags(Content.content), 0, 100)
+        #        )
 
         # Sort
         if 'sort' not in kwargs:
@@ -303,8 +303,8 @@ class ContentsController(BaseController):
             content['content_short'] = snippet
             return content
 
-        if not union_query:
-            results = [merge_snippet(co, sn) for co, sn in results]
+        #if not union_query:
+        #    results = [merge_snippet(co, sn) for co, sn in results]
 
         return to_apilist(results, obj_type='content', **kwargs)
 

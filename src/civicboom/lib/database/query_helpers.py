@@ -53,13 +53,14 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
         )
     
     if isinstance(results, list):
+        count = len(results)
         end_point = None
         if limit:
             end_point = offset + limit
         results = results[offset:end_point]
         return apilist(
             list_to_dict(results, list_to_dict_transform, **kwargs),
-            count=len(results), limit=limit, offset=offset, obj_type=kwargs.get('obj_type')
+            count=count, limit=limit, offset=offset, obj_type=kwargs.get('obj_type')
         )
 
     raise Exception('unsupported list type')
