@@ -385,6 +385,17 @@ class ContentsController(BaseController):
             if not kwargs.get('title'):
                 if parent and parent.title:
                     content.title = "Re: "+parent.title
+            if kwargs['type'] != 'comment':
+                # If parent is an assignment then 'auto accept' it - ignore all errors, except 403 - propergate it up
+                from civicboom.controllers.content_actions import ContentActionsController
+                content_accept = ContentActionsController().accept
+                try:
+                    content_accept(id=parent)
+                except action_error as ae:
+                    if ae.original_dict.get('code') == 403:
+                        raise ae
+                
+            
 
         # comments are always owned by the writer; ignore settings
         # and parent preferences
@@ -447,7 +458,7 @@ class ContentsController(BaseController):
             if 'parent_id' not in kwargs:
                 kwargs['parent_id'] = ''
         
-        # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic
+        # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic - will raise invalid if needed
         data       = {'content':kwargs}
         data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
         kwargs     = data['content']
