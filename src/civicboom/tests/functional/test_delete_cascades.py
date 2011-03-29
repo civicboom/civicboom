@@ -259,11 +259,11 @@ class TestDeleteCascadesController(TestController):
         
         # Step 2: Create responses, comments and accept
         self.log_in_as('unitfriend')
+        #self.accept_assignment(self.content_id) # Accepting should now be done automatically when responding
         response_1_id = self.create_content(parent_id=self.content_id, title='response 1', content='delete_cascade')
         response_2_id = self.create_content(parent_id=self.content_id, title='response 2', content='delete_cascade')
         self.comment(  self.content_id, 'delete_cascade comment')
         self.comment(    response_1_id, 'delete_cascade response comment')
-        self.accept_assignment(self.content_id)
         
         response      = self.app.get(url('content', id=self.content_id, format='json'), status=200)
         response_json = json.loads(response.body)
