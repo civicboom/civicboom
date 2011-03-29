@@ -318,3 +318,6 @@ DIV#app .button {
 	-webkit-border-radius: 0.5em;
 }
 
+.content_short P {
+	margin-bottom: 1em;
+}

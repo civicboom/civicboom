@@ -67,6 +67,19 @@ class MiscController(BaseController):
         c.widget_user_preview = _get_member(id)
         return action_ok()
 
+    def opensearch(self, format="xml"):
+        import base64
+        return """<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/" xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+<ShortName>Civicboom</ShortName>
+<Description>Search Civicboom</Description>
+<InputEncoding>UTF-8</InputEncoding>
+<Image width="16" height="16">data:image/x-icon;base64,%s</Image>
+<Url type="text/html" method="get" template="https://www.civicboom.com/contents">
+  <Param name="term" value="{searchTerms}"/>
+</Url>
+<moz:SearchForm>https://www.civicboom.com/contents</moz:SearchForm>
+</OpenSearchDescription>""" % (base64.b64encode(file("civicboom/public/images/boom16.ico").read()), )
+
     @web
     def upgrade_plans(self):
         c.upgrade_plans_title = 'You have reached your Basic account limit for this month.'
@@ -82,7 +95,7 @@ class MiscController(BaseController):
             @authenticate_form
             def submit_feedback(**kwargs):
                 if c.logged_in_user:
-                    kwargs['from'] = (c.logged_in_user.email or c.logged_in_user.email_unverified) if isinstance(c.logged_in_user, User) else 'noreply@civicboom.com'
+                    kwargs['from'] = (c.logged_in_user.email or c.logged_in_user.email_unverified) # if isinstance(c.logged_in_user, User) else 'noreply@civicboom.com' # AllanC - should never happen, was just a one off problem when user was upgraded by hand
                 else:
                     if kwargs.get('simple_captcha') != 'xyz':
                         raise action_error('invalid capture')
@@ -94,6 +107,6 @@ class MiscController(BaseController):
                 if kwargs.get('referer'):
                     kwargs['referer'] = unquote_plus(kwargs['referer'])
                 content_text = "%(referer)s\n\n%(category)s\n\n%(from_)s\n\n%(message)s\n\n%(env)s" % dict(message=kwargs.get('message'), env=unquote_plus(kwargs.get('env')), from_=kwargs.get('from'), category=kwargs.get('category'), referer=kwargs.get('referer') )
-                send_email(config['email.contact'], subject=_('_site_name feedback'), content_text=content_text)
+                send_email(config['email.contact'], subject=_('_site_name feedback'), content_text=content_text, sender=kwargs['from'])
                 return action_ok(_("Thank you for your feedback"), code=201)
             return submit_feedback(**kwargs)

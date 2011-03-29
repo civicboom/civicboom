@@ -126,7 +126,6 @@ class Content(Base):
             #'status'       : None ,
             'parent_id'    : None ,
             'title'        : None ,
-            'content_short': None , # this is a property # lambda content: "implement content_short postgress trigger" ,
             'creator_id'   : None ,
             'thumbnail_url': None ,
             'creation_date': None ,
@@ -155,7 +154,6 @@ class Content(Base):
             'tags'        : lambda content: [tag.name for tag in content.tags] ,
             #'url'         : None ,
     })
-    #del __to_dict__['full']['content_short'] # This is still useful for aggrigation so it stays in by default
     del __to_dict__['full']['parent_id']
     del __to_dict__['full']['creator_id']
     del __to_dict__['full']['license_id']
@@ -224,6 +222,14 @@ class Content(Base):
         if self.__type__ == "comment":
             return self.parent.viewable_by(member) # if comment, show if we can see the parent article
         if self.visible == True:
+            # GregM: If current content has a root parent then check viewable_by on root parent
+            root = self.root_parent
+            if root:
+                return root.viewable_by(member)
+            # GregM: If content is private check member is a trusted follower of content's creator
+            #       We NEED to check has accepted, invited etc. for requests
+            if self.private == True:
+                return self.creator.is_follower_trusted(member)
             return True
         return False
 
@@ -250,6 +256,13 @@ class Content(Base):
         if self.__type__ == 'article' or self.__type__ == 'assignment':
             return aggregate_via_user(self, self.creator)
     
+    @property
+    def root_parent(self):
+        """
+        Find this piece of content's root parent (or False if this is the root!)
+        """
+        from civicboom.lib.database.actions import find_content_root
+        return find_content_root(self)
     
     @property
     def thumbnail_url(self):
@@ -277,14 +290,6 @@ class Content(Base):
     def url(self):
         from pylons import url, app_globals
         return url('content', id=self.id, absolute=True)
-
-    @property
-    def content_short(self):
-        """
-        AllanC TODO: Derived field - Postgress trigger needed
-        """
-        from civicboom.lib.text import strip_html_tags
-        return truncate(strip_html_tags(self.content), length=100, indicator='...', whole_word=True)
 
 DDL('DROP TRIGGER update_response_count ON content').execute_at('before-drop', Content.__table__)
 DDL("""
@@ -344,7 +349,8 @@ class DraftContent(Content):
     __to_dict__['full'        ].update(_extra_draft_fields)
 
     def __init__(self):
-        self.private = True
+        #self.private = True # GregM: Removed set to user/hub default in contents controller
+        pass
 
     def clone(self, content):
         Content.clone(self, content)

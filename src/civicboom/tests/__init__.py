@@ -179,7 +179,7 @@ class TestController(TestCase):
         params={
             '_authentication_token': self.auth_token,
             'title'         : title      ,
-            'contents'      : content    ,
+            'content'       : content    ,
             'type'          : type       ,
             #'submit_publish': u'publish' , # publish needs to be remove from API
         }
@@ -192,7 +192,7 @@ class TestController(TestCase):
         )
         response_json = json.loads(response.body)
         content_id = int(response_json['data']['id'])
-        self.assertNotEqual(content_id, 0)
+        self.assertGreater(content_id, 0)
         return content_id
 
     def delete_content(self, id):
@@ -215,6 +215,33 @@ class TestController(TestCase):
     def unfollow(self, username):
         response = self.app.post(
             url('member_action', action='unfollow', id=username, format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=200
+        )
+
+    def follower_trust(self, username):
+        response = self.app.post(
+            url('member_action', action='follower_trust', id=username, format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=200
+        )
+        
+    def follower_distrust(self, username):
+        response = self.app.post(
+            url('member_action', action='follower_distrust', id=username, format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=200
+        )
+
+    def follower_invite_trusted(self, username):
+        response = self.app.post(
+            url('member_action', action='follower_invite_trusted', id=username, format='json'),
             params={
                 '_authentication_token': self.auth_token ,
             },

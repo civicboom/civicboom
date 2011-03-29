@@ -6,6 +6,17 @@ import warnings
 
 
 class TestContentsController(TestController):
+    
+    def test_character_escaping(self):
+        before = u'&euro;<moose><p class="TEST">&</p>' # humm .. I wanted to put an actuall euro in ... humm ...  is this an error with the request generator not accepting unicode? or our site? €
+        after  = u'&euro;<p>&amp;</p>' # &euro; should be preserved and <tag should be stripped> & should be escaped
+        
+        content_id = self.create_content(content=before)
+        response      = self.app.get(url('content', id=content_id, format='json'), status=200)
+        response_json = json.loads(response.body)
+        self.assertIn(after, response_json['data']['content']['content']) 
+    
+    
     def test_all(self):
         self.part_setup()
 
@@ -53,11 +64,16 @@ class TestContentsController(TestController):
         self.part_cant_delete_someone_elses_article()
         self.part_cant_delete_article_that_doesnt_exist()
         self.part_can_delete_article_owned_by_group_i_am_admin_of()
-
+        
+        # GregM: Test private content with followers
+        # AllanC: could this be moved to test_permissions.py? I think it fits better
+        #self.part_create_private_content()
+        #self.part_view_private_content_not_trusted()
+        #self.part_view_private_content_trusted()
+        #self.part_distrust_check()
 
     def part_setup(self):
-        self.log_in_as("unittest")
-
+        
         response = self.app.post(
             url('contents', format="json"),
             params={
@@ -427,3 +443,5 @@ class TestContentsController(TestController):
     def part_can_delete_article_owned_by_group_i_am_admin_of(self):
         pass
         #warnings.warn("test not implemented")
+    
+    

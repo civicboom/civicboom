@@ -17,9 +17,10 @@ from webhelpers.pylonslib.secure_form import authentication_token
 
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta, Member
-from civicboom.lib.web                 import url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_ok_list, action_error, auto_format_output, session_get, session_remove, session_set, session_keys, session_delete, authenticate_form, cacheable, web_params_to_kwargs, current_url, current_referer
+from civicboom.lib.web                 import url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set, session_keys, session_delete, authenticate_form, cacheable, web_params_to_kwargs, current_url, current_referer
 from civicboom.lib.database.get_cached import get_member as _get_member, get_group as _get_group, get_membership as _get_membership, get_membership_tree as _get_membership_tree, get_message as _get_message, get_content as _get_content
 from civicboom.lib.database.etag_manager import gen_cache_key
+from civicboom.lib.database.query_helpers import to_apilist
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize
 from civicboom.lib.permissions         import account_type, role_required, has_role_required, raise_if_current_role_insufficent
@@ -41,7 +42,7 @@ __all__ = [
     "Session", "meta",
 
     # return types
-    "abort", "redirect", "action_ok", "action_ok_list", "action_error", "render",
+    "abort", "redirect", "action_ok", "action_error", "render",
 
     # decorators
     "https",
@@ -86,6 +87,7 @@ __all__ = [
     "logging",
     "overlay_status_message",
     "current_url", "current_referer",
+    "to_apilist",
     
 ]
 
@@ -162,7 +164,7 @@ def setup_widget_env():
             #    setattr(c, var, get_env_from_referer(var)) # Get varible from referer
     get_widget_varibles_from_env()
     if c.widget['owner']:
-        owner = get_member(c.widget['owner'])
+        owner = _get_member(c.widget['owner'])
         if owner:
             c.widget['owner'] = owner.to_dict()
 
@@ -239,7 +241,7 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
             # AllanC - originaly viewing a comment was an error, we may want in the future to display comments and sub comments, for now we redirect to parent
             if c.format == 'html' or c.format == 'redirect':
                 return redirect(url('content', id=content.parent.id))
-            return action_error(_('Attempted to view a comment as _article'))
+            raise action_error(_('Attempted to view a comment as _article'))
     if is_editable and not content.editable_by(c.logged_in_persona):
         # AllanC TODO: need to check role in group to see if they can do this
         raise action_error(_("You do not have permission to edit this _content"), code=403)

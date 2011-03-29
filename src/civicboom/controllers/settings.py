@@ -142,7 +142,7 @@ def build_meta(user, user_type, panel):
                     if not '_readonly' in settings_meta[setting_name]['type']:
                         settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
                     if not 'password' in [login.type for login in user.login_details]:
-                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above). You will need to verify your address and create a password to use our mobile app.")
                     else:
                         settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
     data = dict( settings_meta=settings_meta,
@@ -476,16 +476,19 @@ class SettingsController(BaseController):
         # Save validated Sets: Needs cleaning up!
         for setting_set in [(setting_name, settings_base[setting_name].get('value','').split(',')) for setting_name in settings_base.keys() if settings_base[setting_name].get('type') == 'set']:
             setting_name = setting_set[0]
+            # If storing using the api route_this = 'en', route_that = 'n', etc.
             if setting_name in settings:
                 if validators.get(setting_name):
                     if hasattr(user, setting_name):
                         setattr(user, setting_name, settings[setting_name].join(''))
                     else:
                         user.config[setting_name] = settings[setting_name].join('')
+                        print setting_name
                     del settings[setting_name]
                     for setting_value in setting_set[1]:
                         if setting_name+'-'+setting_value in settings:
                             del settings[setting_name+'-'+setting_value]
+            # If storing using the web route_this-e = 'e', route_this-n = 'n', etc.
             else:
                 setting_new_value = ''
                 setting_count = 0
@@ -495,7 +498,7 @@ class SettingsController(BaseController):
                         setting_new_value = setting_new_value + (settings[setting_name+'-'+setting_value] or '')
                         del settings[setting_name+'-'+setting_value]
                 if setting_count == len(setting_set[1]):
-                    if validators.get(setting_name):
+                    if validators.get(setting_name+'-'+setting_value):
                         if hasattr(user, setting_name):
                                 setattr(user, setting_name, setting_new_value)
                         else:

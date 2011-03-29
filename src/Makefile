@@ -1,5 +1,6 @@
 
 PYTHONPATH=../lib
+GIT_TAG:=$(shell git describe)
 
 help:
 	# Usage: make <target>, where target is
@@ -18,6 +19,8 @@ help:
 	# pep8       -- strict syntax checking
 	# api-doc    -- build civicboom/public/api.html
 	# libs       -- fetch external libraries
+	# shell      -- python shell with the pylons environment loaded
+	# cdnpush    -- push static files to CDN
 
 site: i18n js css libs
 
@@ -94,3 +97,14 @@ py-libs:
 	make -C ../lib
 
 libs: py-libs
+
+shell:
+	paster shell
+
+cdnpush: js css
+	./bundle-static.py \
+		--output static-${GIT_TAG}.zip \
+		--exclude-file civicboom/public/cdn-exclude.txt \
+		civicboom/public
+	scp static-${GIT_TAG}.zip static.civicboom.com:~/
+	ssh static.civicboom.com unzip -o static-${GIT_TAG}.zip -d /opt/cb/var/www/static/${GIT_TAG}

@@ -7,7 +7,6 @@ from civicboom.lib.database.get_cached import update_content, get_licenses, get_
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
-from civicboom.lib.misc import str_to_int
 from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
@@ -22,7 +21,7 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
-from sqlalchemy           import or_, and_, null
+from sqlalchemy           import or_, and_, null, func, Unicode
 from sqlalchemy.orm       import join, joinedload, defer
 import datetime
 
@@ -180,7 +179,8 @@ def sqlalchemy_content_query(include_private=False, **kwargs):
     else:
         results = results.filter(Content.private==False) # public content only
     if 'creator' in kwargs.get('include_fields',[]):
-        results = results.options(joinedload('creator'))
+        #results = results.options(joinedload('creator'))
+        results = results.options(joinedload(Content.creator))
     if 'attachments' in kwargs.get('include_fields',[]):
         results = results.options(joinedload('attachments'))
     if 'tags' in kwargs.get('include_fields',[]):
@@ -271,8 +271,26 @@ class ContentsController(BaseController):
         
         include_private_content = 'private' in kwargs and logged_in_creator
         results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)
+
         if union_query:
             results = results.union(union_query)
+
+        # union and add_column are mutually exclusive; union is functional while
+        # add_column is visual, so disable add_column if union is there
+        if not union_query:
+            if 'term' in kwargs:
+                results = results.add_column(
+                    func.ts_headline('pg_catalog.english',
+                        func.strip_tags(Content.content),
+                        func.plainto_tsquery(kwargs['term']),
+                        'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
+                        type_= Unicode
+                    )
+                )
+            else:
+                results = results.add_column(
+                    func.substr(func.strip_tags(Content.content), 0, 100)
+                )
 
         # Sort
         if 'sort' not in kwargs:
@@ -280,25 +298,15 @@ class ContentsController(BaseController):
         # TODO: use kwargs['sort']
         results = results.order_by(Content.update_date.desc())
         
-        # Count
-        count = results.count()
-        
-        # Limit & Offset
-        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
-        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
-        results = results.limit(kwargs['limit']).offset(kwargs['offset'])
-        
-        # Return search results
-        return action_ok(
-            data = {'list': {
-                'items' : [content.to_dict(**kwargs) for content in results.all()] ,
-                'count' : count ,
-                'limit' : kwargs['limit'] ,
-                'offset': kwargs['offset'] ,
-                'type'  : 'content' ,
-                }
-            }
-        )
+        def merge_snippet(content, snippet):
+            content = content.to_dict(**kwargs)
+            content['content_short'] = snippet
+            return content
+
+        if not union_query:
+            results = [merge_snippet(co, sn) for co, sn in results]
+
+        return to_apilist(results, obj_type='content', **kwargs)
 
 
     @web
@@ -348,6 +356,7 @@ class ContentsController(BaseController):
         if   kwargs['type'] == 'draft':
             raise_if_current_role_insufficent('contributor')
             content = DraftContent()
+            kwargs['private'] = kwargs.get('private', True) # Set drafts visability to default to private
         elif kwargs['type'] == 'comment':
             raise_if_current_role_insufficent('editor')
             content = CommentContent()
@@ -362,8 +371,9 @@ class ContentsController(BaseController):
         
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
-        print "creator"
-        print content.creator
+        
+        # GregM: Set private flag to user or hub setting (or public as default)
+        content.private = kwargs.get('private') or c.logged_in_persona.config.get('default_content_visibility', False)
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:

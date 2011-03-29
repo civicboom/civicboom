@@ -4,7 +4,7 @@ from pylons.i18n.translation import _
 
 from civicboom.model.meta import Session
 from civicboom.model         import Rating
-from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent, Boom
+from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent, Boom, Content
 from civicboom.model.member  import GroupMembership, group_member_roles, PaymentAccount, account_types, Follow
 
 
@@ -17,6 +17,10 @@ from civicboom.lib.text import strip_html_tags
 from civicboom.lib.web  import action_error, url
 
 from sqlalchemy.orm.exc import NoResultFound
+
+from civicboom.lib.sqla_hierarchy import *
+
+from sqlalchemy import select
 
 
 """
@@ -59,12 +63,45 @@ def is_follower(a,b):
         return False
 
     try:
-        if Session.query(Follow).filter(Follow.member_id == a.id).filter(Follow.follower_id == b.id).one():
+        if Session.query(Follow).filter(Follow.member_id == a.id).filter(Follow.follower_id == b.id).filter(Follow.type != 'trusted_invite').one():
             return True
     except:
         pass
     return False
 
+def is_follower_trusted(a,b):
+    """
+    True if 'b' is following 'a' and is trusted by 'a'
+    True if 'b' is a trusted follower of 'a'
+    """
+    a = get_member(a)
+    b = get_member(b)
+    if not a or not b:
+        return False
+    
+    try:
+        if Session.query(Follow).filter(Follow.member_id == a.id).filter(Follow.follower_id == b.id).filter(Follow.type == 'trusted').one():
+            return True
+    except:
+        pass
+    return False
+
+def is_follow_trusted_invitee(a,b): # Was is_follower_invited_trust
+    """
+    True if 'b' has been invited to follow 'a' as a trusted follower
+    True if 'b' is the invitee to follow 'a' as a trusted follower
+    """
+    a = get_member(a)
+    b = get_member(b)
+    if not a or not b:
+        return False
+    
+    try:
+        if Session.query(Follow).filter(Follow.member_id == a.id).filter(Follow.follower_id == b.id).filter(Follow.type == 'trusted_invite').one():
+            return True
+    except:
+        pass
+    return False
 
 def follow(follower, followed, delay_commit=False):
     followed = get_member(followed)
@@ -82,11 +119,16 @@ def follow(follower, followed, delay_commit=False):
     
     # AllanC - I wanted to use is_following and remove the following reference - but as this code is run by base test populator before the site is running it cant be
     
-    #follower.following.append(followed)
-    follow = Follow()
-    follow.member_id   = followed.id
-    follow.follower_id = follower.id
-    Session.add(follow)
+    # GregM: Change invite to follow if is invited, otherwise follow:
+    if follower.is_follow_trusted_inviter(followed):
+        follow = Session.query(Follow).filter(Follow.member_id == followed.id).filter(Follow.follower_id == follower.id).filter(Follow.type == 'trusted_invite').one()
+        follow.type = 'trusted'
+    else:
+        #follower.following.append(followed)
+        follow = Follow()
+        follow.member_id   = followed.id
+        follow.follower_id = follower.id
+        Session.add(follow)
     
     followed.send_message(messages.followed_by(member=follower), delay_commit=True)
     
@@ -108,7 +150,8 @@ def unfollow(follower, followed, delay_commit=False):
     if not follower:
         raise action_error(_('unable to find follower'), code=404)
     #if followed not in follower.following:
-    if not follower.is_following(followed):
+    # GregM: can unfollow to remove trusted invite
+    if not follower.is_following(followed) and not follower.is_follow_trusted_inviter(followed):
         raise action_error(_('not currently following'), code=400)
     
     #follower.following.remove(followed)
@@ -125,6 +168,92 @@ def unfollow(follower, followed, delay_commit=False):
 
     return True
 
+def follower_trust(followed, follower, delay_commit=False):
+    followed = get_member(followed)
+    follower = get_member(follower)
+    
+    if not followed:
+        raise action_error(_('unable to find followed'), code=404)
+    if not follower:
+        raise action_error(_('unable to find follower'), code=404)
+    if not follower.is_following(followed):
+        raise action_error(_('not currently following'), code=400)
+    
+    follow = Session.query(Follow).filter(Follow.member_id==followed.id).filter(Follow.follower_id==follower.id).one()
+    if follow.type == 'normal':
+        follow.type = 'trusted'
+    elif follow.type == 'trusted_invite':
+        raise action_error(_('follower still has pending invite'), code=400)
+    elif follow.type == 'trusted':
+        raise action_error(_('follower already trusted'), code=400)
+    
+    followed.send_message(messages.follower_trusted(member=follower), delay_commit=True)
+    
+    if not delay_commit:
+        Session.commit()
+    
+    # update_member(follower) # GregM: Needed?
+    # update_member(followed) # GregM: Needed?
+    return True
+
+def follower_distrust(followed, follower, delay_commit=False):
+    followed = get_member(followed)
+    follower = get_member(follower)
+    
+    if not followed:
+        raise action_error(_('unable to find followed'), code=404)
+    if not follower:
+        raise action_error(_('unable to find follower'), code=404)
+    if not follower.is_following(followed):
+        raise action_error(_('not currently following'), code=400)
+    
+    follow = Session.query(Follow).filter(Follow.member_id==followed.id).filter(Follow.follower_id==follower.id).one()
+    if follow.type == 'trusted':
+        follow.type = 'normal'
+    elif follow.type == 'trusted_invite':
+        raise action_error(_('follower still has pending invite'), code=400)
+    elif follow.type == 'normal':
+        raise action_error(_('follower was not trusted'))
+    
+    followed.send_message(messages.follower_distrusted(member=follower), delay_commit=True)
+    
+    if not delay_commit:
+        Session.commit()
+    
+    # update_member(follower) # GregM: Needed?
+    # update_member(followed) # GregM: Needed?
+    return True
+
+def follower_invite_trusted(followed, follower, delay_commit=False):
+    followed = get_member(followed)
+    follower = get_member(follower)
+    
+    if not followed:
+        raise action_error(_('unable to find followed'), code=404)
+    if not follower:
+        raise action_error(_('unable to find follower'), code=404)
+    if follower == followed:
+        raise action_error(_('may not follow yourself'), code=400)
+    #if followed in follower.following:
+    if follower.is_following(followed):
+        raise action_error(_('already following'), code=400)
+    if follower.is_follow_trusted_inviter(followed):
+        raise action_error(_('already invited to follow as trusted'))
+    
+    follow = Follow()
+    follow.member_id   = followed.id
+    follow.follower_id = follower.id
+    follow.type        = 'trusted_invite'
+    Session.add(follow)
+    
+    followed.send_message(messages.follow_invite_trusted(member=follower), delay_commit=True)
+    
+    if not delay_commit:
+        Session.commit()
+    
+    update_member(follower)
+    update_member(followed)
+    return True
 
 #-------------------------------------------------------------------------------
 # Message Actions
@@ -598,6 +727,28 @@ def add_to_interests(member, content, delay_commit=False):
 
     return True
 
+def find_content_root(content):
+    content = get_content(content)
+    
+    if not content:
+        raise action_error(_('unable to find content'), code=404)
+    
+    if not content.parent: return False
+    
+    qry = Hierarchy(
+        Session,
+        Content.__table__,
+        select([Content.__table__.c.id, Content.__table__.c.parent_id]),
+        starting_node=content.id,
+        return_leaf=True,
+    ) # FIXME: Greg
+    #print qry
+    ev = Session.execute(qry).first()
+    
+    if ev:
+        return get_content(ev.id) or False
+    else:
+        return False
 
 #-------------------------------------------------------------------------------
 # Set Payment Account
