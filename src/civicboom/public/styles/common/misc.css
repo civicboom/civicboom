@@ -27,11 +27,8 @@ BODY.c-misc.a-about ARTICLE TIME {
 }
 
 
-BODY.c-misc.a-about OL {
+BODY.c-misc.a-about OL.legal {
 	font-size: 0.75em;
-}
-BODY.c-misc.a-about OL OL {
-	font-size: 1em;
 }
 
 .error {
