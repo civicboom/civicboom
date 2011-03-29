@@ -115,6 +115,7 @@ class InviteController(BaseController):
                 elif list == 'rem' and order != None:
                     invitee_remove.append(int(order))
                 elif list == 'search':
+                    print '### ' + order
                     if   order == 'button':
                         pass
                     elif order == 'prev':
@@ -194,12 +195,12 @@ class InviteController(BaseController):
     def search(self, **kwargs):
         search_offset = int(kwargs.get('search-offset', 0))
         
-        if 'search-prev' in request.POST and request.POST['search-prev'] == '<<':
+        if 'search-prev' in request.POST:
             search_offset -= search_limit
             if search_offset < 0:
                 search_offset = 0
             pass
-        if 'search-next' in request.POST and request.POST['search-next'] == '>>':
+        if 'search-next' in request.POST:
             search_offset += search_limit
             pass
         
