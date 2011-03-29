@@ -166,7 +166,7 @@ NAV .menuh>UL>LI>UL{
 	padding-top: 0px;
 }
 NAV .menuh ul {
-    width:9em;	/* width of all menu boxes */
+    width: 120px;
 }
 NAV .menuh LI:hover a.top_parent {
 	border-top: 1px solid #555;
@@ -347,9 +347,29 @@ H1 {
 		width: 400px;
 		margin: auto;
 	}
+	NAV .menuh>UL {
+		margin-left: 4px;
+		margin-right: 4px;
+	}
 
 	BODY>DIV#app {
 		margin-top: 86px;
+	}
+
+	BODY>DIV#app #frag_containers {
+		margin: 0px;
+	}
+	BODY>DIV#app #frag_containers .frag_container {
+		margin: 0px;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+	}
+	BODY>DIV#app #frag_containers .frag_container.frag_col_1 {
+		width: 240px;
+	}
+	BODY>DIV#app #frag_containers .frag_container.frag_col_2 {
+		width: 480px;
 	}
 
 	FOOTER .links, FOOTER .copyright {
