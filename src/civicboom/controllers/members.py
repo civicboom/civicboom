@@ -148,8 +148,6 @@ class MembersController(BaseController):
                 member = get_member(kwargs['groups_for'])
                 results = results.filter(GroupMembership.member_id==normalize_member(member))
                 # Permissions - only show membership of public groups
-                print member
-                print kwargs.get('private')
                 if member == c.logged_in_persona and kwargs.get('private', False):
                     pass
                 else:
