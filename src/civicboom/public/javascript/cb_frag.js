@@ -224,6 +224,8 @@ function cb_frag_reload(param) {
 		}
 	}
 	
+	if      (param === false) return;
+	
 	if      (                            typeof param    == 'string') {reload_frags_containing([param]);}
 	else if (typeOf(param) == 'array' && typeof param[0] == 'string') {reload_frags_containing( param );}
 	else                                                              {reload_element(          param );}
@@ -245,6 +247,10 @@ function cb_frag_set_variable(jquery_element, variable, value) {
 
 function cb_frag_get_variable(jquery_element, variable) {
   return jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('cb'+variable);
+}
+
+function cb_frag_previous(jquery_element) {
+	return jquery_element.parents('.'+fragment_container_class).prev().children('.'+fragment_source_class);
 }
 
 //------------------------------------------------------------------------------
@@ -305,8 +311,10 @@ function loadStateObj(stateObj) {
 }
 
 function update_history(url, replace) {
-  if (typeof url == 'undefined')
+  if (typeof url == 'undefined' || url == null)
     var url = $('.'+fragment_container_class).not('.'+fragment_help_class).last().find('.'+fragment_source_class).first().attr('href');
+  if (typeof url == 'undefined' || url == null)
+  	return;
   // update the URL bar to point at the latest block, and
   // store previous blocks in the history state object
   if(Modernizr.history) {
