@@ -45,8 +45,8 @@ class Globals(object):
             ''      : 'web'    ,
             'www'   : 'web'    ,
             'widget': 'widget' ,
-            'w'     : 'widget' ,
-            'mobile': 'mobile' ,
+            #'w'     : 'widget' ,
+            #'mobile': 'mobile' ,
             'm'     : 'mobile' ,
             'api-v1': 'api'    ,
         }
