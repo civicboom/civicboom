@@ -56,9 +56,7 @@ invite_types = {
 
 class InviteController(BaseController):
     """
-    @title Invite
-    @doc invite
-    @desc a controller which produces a nice graphical invite fragment
+    a controller which produces a nice graphical invite fragment
     """
 
     @web
@@ -103,40 +101,30 @@ class InviteController(BaseController):
         invitee_remove = []
         if request.environ['REQUEST_METHOD'] == 'POST':
             for key in request.POST:
-                username = None
                 order = None
-                if key[0:4] == 'add-':
-                    username = key[4:]
-                    list = 'add'
-                if key[0:4] == 'rem-':
-                    order = int(key[4:])
-                    list = 'rem'
-                if key[0:4] == 'inv-':
-                    username = request.POST[key]
-                    order = int(key[4:])
-                    list = 'inv'
-                    
-                if username and list == 'inv':
-                    user = get_member(username)
-                    invitee_list[order] = user.to_dict()
-                elif username and list == 'add':
-                    user = get_member(username)
-                    invitee_add[username] = user.to_dict()
-                elif order != None and list == 'rem':
-                    invitee_remove.append(order)
                 
-            if 'search' in request.POST and request.POST['search'] == 'Search':
-                # We don't need to do anything for searching as the parameters are submitted
-                #  and passed to the members index
-                pass
-            if 'search-prev' in request.POST:
-                search_offset -= search_limit
-                if search_offset < 0:
-                    search_offset = 0
-                pass
-            if 'search-next' in request.POST:
-                search_offset += search_limit
-                pass
+                list, order = key.split('-',1)
+                value       = request.POST[key]
+                    
+                if   list == 'inv' and order:
+                    user = get_member(value)
+                    invitee_list[int(order)] = user.to_dict()
+                elif list == 'add' and order:
+                    user = get_member(order)
+                    invitee_add[order] = user.to_dict()
+                elif list == 'rem' and order != None:
+                    invitee_remove.append(int(order))
+                elif list == 'search':
+                    if   order == 'button':
+                        pass
+                    elif order == 'prev':
+                        search_offset -= search_limit
+                        if search_offset < 0:
+                            search_offset = 0
+                        pass
+                    elif order == 'next':
+                        search_offset += search_limit
+                        pass
         
         
         # Add new additions to invitee_list
