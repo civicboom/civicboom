@@ -15,39 +15,37 @@ class TestFollowController(TestController):
         def get_following_count(username=None, follow_type=None):
             if not username:
                 username = self.logged_in_as
-            response      = self.app.get(url('member_action', action='following', id=username, limit=0, format='json'), status=200)
+            response      = self.app.get(url('member_action', action='following', id=username, format='json'), status=200)
             response_json = json.loads(response.body)
-            if   type == 'trusted':
-                return len(folow for folow in response_json['data']['list']['items'] if follow['follow_type']=='trusted'       )
-            elif type == 'trusted_invite':
-                return len(folow for folow in response_json['data']['list']['items'] if follow['follow_type']=='trusted_invite')
+            if follow_type:
+                return len([follow for follow in response_json['data']['list']['items'] if follow['follow_type']==follow_type])
             return response_json['data']['list']['count']
         
         def get_follower_count(username=None, follow_type=None):
             if not username:
                 username = self.logged_in_as
-            response      = self.app.get(url('member_action', action='followers', id=username, limit=0, format='json'), status=200)
+            response      = self.app.get(url('member_action', action='followers', id=username, format='json'), status=200)
             response_json = json.loads(response.body)
-            if   type == 'trusted':
-                return len(folow for folow in response_json['data']['list']['items'] if follow['follow_type']=='trusted'       )
-            elif type == 'trusted_invite':
-                return len(folow for folow in response_json['data']['list']['items'] if follow['follow_type']=='trusted_invite')
+            if follow_type:
+                return len([follow for follow in response_json['data']['list']['items'] if follow['follow_type']==follow_type])
             return response_json['data']['list']['count']
         
-        def check_follow(following, followers, username='follow_test'):
+        def check_follow(following, followers, check_postgress_triggers=True):
             # Get follow and follower lists and check correct number of items
             self.assertEqual(get_follower_count() , followers)
             self.assertEqual(get_following_count(), following)
             
-            # Check postgresql triggers
             response      = self.app.get(url('member', id=self.logged_in_as, format='json'), status=200)
             response_json = json.loads(response.body)
             
-            self.assertEqual(response_json['data']['followers']['count'], response_json['data']['member']['num_followers'])
             self.assertEqual(response_json['data']['followers']['count'], followers)
-            
-            self.assertEqual(response_json['data']['following']['count'], response_json['data']['member']['num_following'])
             self.assertEqual(response_json['data']['following']['count'], following)
+            
+            # Check postgresql triggers            
+            if check_postgress_triggers:
+                self.assertEqual(response_json['data']['followers']['count'], response_json['data']['member']['num_followers'])
+                self.assertEqual(response_json['data']['following']['count'], response_json['data']['member']['num_following'])
+
             
         
         # Followers ------------------------------------------------------------
@@ -85,12 +83,20 @@ class TestFollowController(TestController):
         
         # Invite follow_test as a trusted follower
         check_follow(following=num_unittest_following, followers=num_unittest_followers)
-        self.follower_invite_trusted('follow_test') 
-        #check_follow(following=num_unittest_following, followers=num_unittest_followers + 1)
+        self.follower_invite_trusted('follow_test')
+        response = self.app.post( # try action again, should error
+            url('member_action', action='follower_invite_trusted', id='follow_test', format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=500
+        )
+        
+        check_follow(following=num_unittest_following, followers=num_unittest_followers + 1, check_postgress_triggers=False) # the trsuted invite will appear in the follower list for the logged_in user
         self.assertEquals(get_follower_count(follow_type='trusted_invite'), 1)
         self.assertEquals(get_follower_count(follow_type='trusted'       ), 0)
         self.log_out()
-        self.assertEquals(get_follower_count(username='unittest'), num_unittest_followers)
+        self.assertEquals(get_follower_count(username='unittest'), num_unittest_followers) # invite will not appear for a not logged in user
         
         # Check invite and upgrade to trsuted follower
         self.log_in_as('follow_test')
@@ -125,6 +131,13 @@ class TestFollowController(TestController):
         self.assertEquals(get_following_count(follow_type='trusted_invite'), 0)
         self.assertEquals(get_following_count(follow_type='trusted'       ), 0)
         self.follower_trust('follow_test')    # trust
+        response = self.app.post( #trust again - fail
+            url('member_action', action='follower_trust', id='follow_test', format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=400
+        )
         self.follower_distrust('follow_test') # Should negate previous state
         self.assertEquals(get_following_count(follow_type='trusted_invite'), 0)
         self.assertEquals(get_following_count(follow_type='trusted'       ), 0)
