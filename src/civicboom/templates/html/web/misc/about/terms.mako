@@ -3,7 +3,7 @@
 
 <h1>Terms and Conditions</h1>
 
-<ol>
+<ol class='legal'>
 
 <li><b>Civicboom Terms of Service</b>
 <ol>
