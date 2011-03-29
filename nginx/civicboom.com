@@ -12,7 +12,7 @@ upstream backends {
 
 server {
 	# server stuff
-	listen 80;                listen [::]:80 ipv6only=on;
+	listen 80  default;       listen [::]:80  default     ipv6only=on;
 	listen 443 default ssl;   listen [::]:443 default ssl ipv6only=on;
 	server_name *.civicboom.com;
 	access_log /var/log/nginx/civicboom.log;

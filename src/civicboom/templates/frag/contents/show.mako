@@ -435,7 +435,10 @@
                     <input type="hidden" name="parent_id" value="${d['content']['id']}">
                     <input type="hidden" name="title" value="Re: ${d['content']['title']}">
                     <input type="hidden" name="type" value="comment">
-                    <textarea name="content"></textarea>
+                    <textarea name="content" onkeypress="return limitInputLength(event,this,200)"
+                    	onkeyup="countInputLength(event,this,200,$(this).siblings('.commentcount-${self.id}'))"></textarea><br />
+                    You have <span class="commentcount-${self.id}">200</span> charaters left.<br />
+                    If you are responding to the requested question you should respond with the button above.<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Comment')}">
                 ${h.end_form()}
@@ -593,7 +596,7 @@
             value           = _("Delete"),
             value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
             confirm_text    = _("Are your sure you want to delete this content?"),
-            json_form_complete_actions = "cb_frag_reload('contents/%s'); cb_frag_remove(current_element);" % self.id,
+            json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
         )}
         <span class="separtor"></span>
     % endif

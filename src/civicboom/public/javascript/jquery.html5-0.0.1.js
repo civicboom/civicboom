@@ -1,7 +1,7 @@
 // HTML5 feature emulation for older browsers
 
 function html5ize (jqContainer) {
-	if (typeof jqContainer == 'undefined')
+	if (typeof jqContainer == 'undefined' || jqContainer == null)
 		jqContainer = $('body')
 
 	if (!Modernizr.input.placeholder) {

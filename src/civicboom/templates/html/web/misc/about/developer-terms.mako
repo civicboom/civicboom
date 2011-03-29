@@ -6,7 +6,7 @@
 <p>You are responsible for your application and its content and all uses you make of this API. This includes ensuring your application or use of Platform meets our Developer Terms and Conditions as set out here.
 <p>Your access to and use of data you receive from Civicboom will be limited as follows:
 
-<ol>
+<ol class='legal'>
 <li>You will only request data you need to operate your application
 <li>You will have a privacy policy that tells users what user data you are going to use and how you will use, display, share, or transfer that data and you will include your privacy policy URL in the Developer Application.
 <li>You will not use, display, share, or transfer a user’s data in a manner inconsistent with your privacy policy.

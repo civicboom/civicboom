@@ -5,7 +5,7 @@
 
 <p>Indiconews Limited (“the Company”, “Indiconews”, “Civicboom”, “We”) is committed to ensuring that users (“you”, “your”) privacy is protected. This privacy policy explains how we intend to and will use the data we collect about you on www.civicboom.com, the widget and API (“The Service”), how you can instruct us if you prefer to limit the use of that data and the procedures that we have in place to safeguard your privacy. Civicboom is registered with the Information Commissioner’s Office in the United Kingdom. You should read this policy in its entirety.
 
-<ol>
+<ol class='legal'>
 <li>When using any of The Service you consent to the collection, transfer, manipulation, storage, disclosure and other uses of your information as described in this Privacy Policy. Irrespective of which country that you reside in or create information from, your information may be used by Civicboom in whatever country it operates.
 <li>If you wish to interact with elements of The Service in a participatory manner (respond to assignments, upload content etc) you are required to register as a user before you can do so. During this registration process, we collect personal data about you, including your name, e-mail address and date of birth. Some of this information will be visible (but not date of birth). Other information might be a description about yourself or the Group you have created, your location or an avatar.
 <li>We may use your contact information to send you information about our Services or to market to you. You may unsubscribe from these messages by following the instructions contained within the messages. If you email us, we may keep your message, email address and contact information to respond to your request.
