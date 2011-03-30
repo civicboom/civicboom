@@ -187,7 +187,7 @@ def follower_trust(followed, follower, delay_commit=False):
     elif follow.type == 'trusted':
         raise action_error(_('follower already trusted'), code=400)
     
-    followed.send_message(messages.follower_trusted(member=follower), delay_commit=True)
+    follower.send_message(messages.follower_trusted(member=followed), delay_commit=True)
     
     if not delay_commit:
         Session.commit()
@@ -215,7 +215,7 @@ def follower_distrust(followed, follower, delay_commit=False):
     elif follow.type == 'normal':
         raise action_error(_('follower was not trusted'))
     
-    followed.send_message(messages.follower_distrusted(member=follower), delay_commit=True)
+    follower.send_message(messages.follower_distrusted(member=followed), delay_commit=True)
     
     if not delay_commit:
         Session.commit()
@@ -246,7 +246,7 @@ def follower_invite_trusted(followed, follower, delay_commit=False):
     follow.type        = 'trusted_invite'
     Session.add(follow)
     
-    followed.send_message(messages.follow_invite_trusted(member=follower), delay_commit=True)
+    follower.send_message(messages.follow_invite_trusted(member=followed), delay_commit=True)
     
     if not delay_commit:
         Session.commit()
