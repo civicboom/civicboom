@@ -24,12 +24,14 @@ cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src ./a
 	cd ../src/ && $(MAKE) site
 	cd ../src/ && $(MAKE) api-doc
 	rm -rf fs-api
-	$(call mdcp, api/*              , fs-api/DEBIAN/                   )
-	$(call mdcp, api/crontab        , fs-api/etc/cron.d/,cb-website-web )
-	$(call mdcp, api/init.d         , fs-api/etc/init.d/,cb-website     )
-	$(call mdcp, ../admin_scripts/* , fs-api/opt/cb/bin/               )
-	$(call mdcp, ../docs/*          , fs-api/opt/cb/share/doc/website/ )
-	$(call mdcp, ../src/*           , fs-api/opt/cb/share/website/     )
+	$(call mdcp, api/*                 , fs-api/DEBIAN/                   )
+	$(call mdcp, api/crontab           , fs-api/etc/cron.d/,cb-website-web )
+	$(call mdcp, api/init.d            , fs-api/etc/init.d/,cb-website     )
+	$(call mdcp, ../admin_scripts/*    , fs-api/opt/cb/bin/               )
+	$(call mdcp, ../docs/*             , fs-api/opt/cb/share/doc/website/ )
+	$(call mdcp, ../src/*              , fs-api/opt/cb/share/website/     )
+	$(call mdcp, ../src/production.ini , fs-api/opt/cb/share/website-api/     )
+	$(call mdcp, api/crontab           , fs-api/opt/cb/share/website-api/     )
 	sed -i s/VERSION/${VERSION}/ fs-api/DEBIAN/control
 	echo ${VERSION} > fs-api/opt/cb/share/website/.version
 	fakeroot dpkg -b fs-api cb-website-api_${VERSION}_all.deb 
