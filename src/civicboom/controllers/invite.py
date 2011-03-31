@@ -1,4 +1,4 @@
-regfrom civicboom.lib.base import *
+from civicboom.lib.base import *
 
 from civicboom.controllers.contents       import ContentsController
 from civicboom.controllers.members        import MembersController
