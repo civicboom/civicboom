@@ -407,11 +407,11 @@
                 
                 <p class="comment_content">${comment['content']}</p>
                 
-                ##<b style="float: right;">
+                <p style="float: right;">
                 ##	${comment['creator']['name']}
                     ##${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
-                ##	${str(comment['creation_date'])[0:19]}
-                ##</b>
+                	<i>${h.time_ago(comment['creation_date'])} ${_('ago')}</i>
+                </p>
             </td>
             <td>
                 ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon16 i_flag')}
