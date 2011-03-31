@@ -33,6 +33,7 @@ for line in file(sys.argv[1]):
 
 file(sys.argv[1], "w").write("\\n".join(out)+"\\n")
 EOD
+	cp /opt/cb/share/website-web/civicboom.com /etc/nginx/sites-available/civicboom.com
 	python /tmp/update_backends /etc/nginx/sites-available/civicboom.com $backends
 	rm -f /tmp/update_backends
 
