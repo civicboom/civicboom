@@ -78,6 +78,7 @@ def load_environment(global_conf, app_conf):
                         'search.default.limit.members'   ,
                         'search.default.limit.messages'  ,
                         'setting.session.login_expire_time',
+                        'email.smtp_port',
                         ]
     for varname in integer_varnames:
         config[varname] = int(config[varname].strip())
