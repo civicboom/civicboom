@@ -16,6 +16,7 @@ FOOT=\
 	jquery.uploadify.v2.1.4.js \
 	jquery.simple-color-picker.js \
 	jquery.ba-hashchange.min.js \
+	jquery.limit-1.2.js \
 	gears_init.js \
 	geo.js \
 	OpenLayers.js \
