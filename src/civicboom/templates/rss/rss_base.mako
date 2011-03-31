@@ -123,7 +123,7 @@
     ##% if content['type'] == 'comment':
     <% name = comment.get('creator', dict()).get('name') or comment.get('creator', dict()).get('username') %>
     <title>${_('Comment by')}: ${name} - ${h.truncate(comment['content'], length=50, whole_word=True, indicator='...')}</title>
-    <description>${content.get('content', content.get('content_short'))}</description>
+    <description>${comment.get('content')}</description>
     <pubDate>${h.date_to_rss(comment.get('creation_date'))}</pubDate>
     ## ${datetime.strptime(content['creation_date'][0:19], "%Y-%m-%d %H:%M:%S").strftime("%a, %d %b %Y %H:%M:%S +0000")}
     <dc:creator>${name}</dc:creator>
