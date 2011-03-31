@@ -321,7 +321,7 @@ function update_history(url, replace) {
     // Note: this object is limited to 640k (which ought to be
     // enough for anyone) when saved in the browser history file
     if (replace) {
-      history.replaceState(createStateObj());
+      history.replaceState(createStateObj(), "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
     } else {
       history.pushState(createStateObj(), "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
     }
