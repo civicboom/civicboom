@@ -184,7 +184,7 @@ def get_member(member_search, set_html_action_fallback=False, search_email=False
     # Concept of 'me' in API
     if isinstance(member_search, basestring) and member_search.lower()=='me':
         if not c.logged_in_persona:
-            raise action_error(_("cannot reffer to 'me' when not logged in"), code=400)
+            raise action_error(_("cannot refer to 'me' when not logged in"), code=400)
         member_search = c.logged_in_persona
     member = _get_member(member_search, search_email=search_email)
     if not member:
