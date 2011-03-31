@@ -76,7 +76,8 @@ class InviteController(BaseController):
         # Get item type and id
         type = invite_types.get(kwargs.get('invite'))
         id   = kwargs.get('id')
-        search_offset = int(kwargs.get('search-offset', 0))
+        search_offset  = int(kwargs.get('search-offset' , 0))
+        invitee_offset = int(kwargs.get('invitee-offset', 0))
         if not type or not id:
             raise action_error('need type and id', code=500)
         
@@ -115,7 +116,6 @@ class InviteController(BaseController):
                 elif list == 'rem' and order != None:
                     invitee_remove.append(int(order))
                 elif list == 'search':
-                    print '### ' + order
                     if   order == 'button':
                         pass
                     elif order == 'prev':
@@ -125,6 +125,17 @@ class InviteController(BaseController):
                         pass
                     elif order == 'next':
                         search_offset += search_limit
+                        pass
+                elif list == 'invitee':
+                    if   order == 'button':
+                        pass
+                    elif order == 'prev':
+                        invitee_offset -= search_limit
+                        if invitee_offset < 0:
+                            invitee_offset = 0
+                        pass
+                    elif order == 'next':
+                        invitee_offset += search_limit
                         pass
         
         
@@ -181,6 +192,7 @@ class InviteController(BaseController):
             'search-type'     : kwargs.get('search-type'),
             'search-offset'   : search_offset,
             'search-limit'    : search_limit,
+            'invitee-offset'  : invitee_offset,
             'invite'          : kwargs.get('invite'),
             'id'              : kwargs.get('id'),
             'exclude-members' : ','.join(invitee_usernames),
@@ -228,3 +240,8 @@ class InviteController(BaseController):
         }
         
         return action_ok(data=data)
+    
+    @web
+    @authorize
+    def invitee(self, **kwargs):
+        pass

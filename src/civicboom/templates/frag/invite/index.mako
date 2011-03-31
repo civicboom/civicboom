@@ -83,7 +83,7 @@
 					}
 					var invitee_ul = button.parents('form').find('.invitee_ul');
 					var li = button.parents('li').detach();
-					invitee_ul.append(li);
+					invitee_ul.prepend(li);
 					invitee_ul.children('li.none').remove();
 					exclude_members.push(button_key);
 					li.append('<input type="hidden" class="username" name="inv-' + (exclude_members.length - 1) + '" value="' + button_key + '" />');
@@ -104,22 +104,59 @@
 				case 'search':
 					refreshSearch(button, [{ 'name':button_name }]);
 					break;
+				case 'invitee':
+					offset = getValue(button,'invitee-offset');
+					limit  = getValue(button,'search-limit');
+					ul     = button.parents('form').find('.invitee_ul');
+					switch (button_key) {
+						case 'next':
+							if (offset + limit <= ul.find('li').count) {
+								offset = offset + limit;
+								ul.parents('form').find('.invitee-prev').attr('disabled','');
+							} else {
+								ul.parents('form').find('.invitee-prev').attr('disabled','disabled');
+							}
+						break;
+						case 'prev':
+							if (offset - limit <= 0) {
+								offset = 0;
+								ul.parents('form').find('.invitee-prev').attr('disabled','disabled');
+								
+							} else {
+								offset = offset - limit;
+							}
+							ul.parents('form').find('.invitee-next').attr('disabled','');
+						break;
+					}
+					
+					listPaginate(ul, offset, limit);
+					console.log('rar');
+					break;
 			}
 			return false;
 		}
 		function refreshSearch(element, extra_fields) {
 			var form = element.parents('form');
-			var ul = form.find('.invite_ul');
+			var ul = form.find('.invite-list');
 			var formArray = form.serializeArray();
 			if (typeof extra_fields != 'undefined')
 				formArray = formArray.concat(extra_fields)
 			formArray.push({'name': 'exclude-members', 'value': exclude_members});
 			$.post('/invite/search.frag', formArray, function (data) {
 				ul.html(data);
+				ul.children('.search-offset').val()
 			});
+		}
+		function getValue(element, class) {
+			return element.parents('form').find('.'+class).val() * 1;
+		}
+		function listPaginate(ul, offset, limit) {
+			var visible = ul.children('li:eq('+offset+'),li:gt('+offset+')').filter('li:lt('+limit+')').css('display','inline-block');
+			var hidden  = ul.children('li').not(visible).css('display','none');
 		}
 	</script>
 	<form method="POST" action="/invite?invite=${d.get('invite')}&id=${d.get('id')}">
+		<input type="hidden" class="search-limit" name="search-limit" value="${d['search-limit']}" />
 	    <div class="frag_right_col">
 	        <div class="frag_col">
 		        <div class="invite_header">
@@ -138,12 +175,6 @@
 		        </div>
 	        	<div class="invite_area invite-list">
 	        		${invite_list()}
-	        	</div>
-	        	<div class="invite-controls">
-	        	% if d['search-offset'] > 0:
-	        		<input class="button" onclick="return inviteClick(this)" type="submit" name="search-prev" value="<<" />
-	        	% endif
-	        		<input class="button" onclick="return inviteClick(this)" type="submit" name="search-next" value=">>" />
 	        	</div>
 	        </div>
 	    </div>
@@ -169,16 +200,24 @@
 <%def name="invitee_list()">
 	<%
 		list = d['invitee_list']['items']
+		list_keys = sorted(list.keys(), reverse=True)
+		i = -1
 	%>
+	<div class="invite-controls">
+		<input class="button" onclick="return inviteClick(this)" ${'disabled=disabled' if d['invitee-offset']==0 else''} type="submit" name="invitee-prev" value="<<" />
+		<input class="button" onclick="return inviteClick(this)" ${'disabled=disabled' if d['invitee-offset']+d['search-limit']>d['invitee_list']['count'] else''} type="submit" name="invitee-next" value=">>" />
+	</div>
+	<input type="hidden" class="invitee-offset" name="invitee-offset" value="${d['invitee-offset']}" />
 	<ul class="invitee_ul">
 		% if len(list) == 0:
 			<li class="none">${_('Select people to invite from the right')}</li>
 		% endif
-		% for key in list.keys():
+		% for key in list_keys:
 		<%
 			item = list[key]
+			i += 1
 		%>
-			<li style="padding-top: 3px; display: inline-block; width: 100%;">
+			<li style="padding-top: 3px; display: ${'inline-block' if i >= d['invitee-offset'] and i < d['invitee-offset']+d['search-limit'] else 'none'} ; width: 100%;">
 				<div style="float:left">${member_avatar(item)}</div>
 				% if len(item.get('name')) > 0:
 					${item.get('name')}<br />
@@ -195,6 +234,11 @@
 	<%
 		list = d['invite_list']['items']
 	%>
+	<div class="invite-controls">
+		<input class="button" onclick="return inviteClick(this)" ${'disabled=disabled' if d['search-offset']==0 else''} type="submit" name="search-prev" value="<<" />
+		<input class="button" onclick="return inviteClick(this)" ${'disabled=disabled' if d['search-offset']+d['search-limit']>d['invite_list']['count'] else''} type="submit" name="search-next" value=">>" />
+	</div>
+	<input type="hidden" class="search-offset" name="search-offset" value="${d['search-offset']}" />
 	<ul class="invite_ul">
 		% if len(list) == 0:
 			<li>${_('Your search returned no results')}</li>
