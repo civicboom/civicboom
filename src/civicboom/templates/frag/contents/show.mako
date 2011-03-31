@@ -435,12 +435,16 @@
                     <input type="hidden" name="parent_id" value="${d['content']['id']}">
                     <input type="hidden" name="title" value="Re: ${d['content']['title']}">
                     <input type="hidden" name="type" value="comment">
-                    <textarea name="content" onkeypress="return limitInputLength(event,this,200)"
-                    	onkeyup="countInputLength(event,this,200,$(this).siblings('.commentcount-${self.id}'))"></textarea><br />
+                    <textarea name="content" class="comment-${self.id}"></textarea><br />
                     You have <span class="commentcount-${self.id}">200</span> charaters left.<br />
                     If you are responding to the requested question you should respond with the button above.<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Comment')}">
+                    <script type="text/javascript">
+                    	$(function () {
+                    		$('.comment-${self.id}').limit(200, '.commentcount-${self.id}');
+                    	});
+                    </script>
                 ${h.end_form()}
               % else:
                 ${_('Please login to comment')}
