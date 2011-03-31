@@ -88,7 +88,7 @@
 					exclude_members.push(button_key);
 					li.append('<input type="hidden" class="username" name="inv-' + (exclude_members.length - 1) + '" value="' + button_key + '" />');
 					li.find('input.button').val('Remove').attr('name', 'rem-' + (exclude_members.length - 1));
-					// refreshSearch(button); Needs adding when exclude-members starts working
+					refreshSearch(button);
 				break;
 				case 'rem':
 					var li = button.parents('li');
