@@ -5,6 +5,8 @@ from civicboom.controllers.members        import MembersController
 from civicboom.controllers.member_actions import MemberActionsController
 from civicboom.controllers.group_actions  import GroupActionsController
 
+import copy
+
 from civicboom.model.member import Member, Group
 from civicboom.model.content import AssignmentContent
 
@@ -52,6 +54,17 @@ invite_types = {
         'method' : 'follower_invite_trusted'
     },
 }
+
+def re_key (dictionary):
+   # Re-create key numbering
+    keys = sorted(dictionary.keys())
+    key_map = {}
+    i = 0
+    for key in keys:
+        key_map[key] = i
+        i = i + 1
+            
+    return dict([ (key_map[key], dictionary[key]) for key in dictionary.keys()] )
 
 
 class InviteController(BaseController):
@@ -138,27 +151,36 @@ class InviteController(BaseController):
                         invitee_offset += search_limit
                         pass
         
+        # Remove removed items from invitee list
+        invitee_usernames = [invitee_list[key]['username'] for key in invitee_list.keys() if key not in invitee_remove]
+        invitee_list = dict([(key, invitee_list[key]) for key in invitee_list.keys() if invitee_list[key]['username'] in invitee_usernames])
+                
+        invitee_list = re_key(invitee_list)
         
         # Add new additions to invitee_list
         for username in invitee_add.keys():
             if username not in [user['username'] for user in invitee_list.values()]:
                 invitee_list[len(invitee_list)] = invitee_add[username]
         
-        # Remove removed items from invitee list
-        invitee_usernames = [invitee_list[key]['username'] for key in invitee_list.keys() if key not in invitee_remove]
-        invitee_list = dict([(key, invitee_list[key]) for key in invitee_list.keys() if invitee_list[key]['username'] in invitee_usernames])
-        
-        # Re-create key numbering
-        invitee_keys = sorted(invitee_list.keys())
-        invitee_key_map = {}
-        i = 0
-        for key in invitee_keys:
-            invitee_key_map[key] = i
-            i = i + 1
-                
-        invitee_list = dict([ (invitee_key_map[key], invitee_list[key]) for key in invitee_list.keys()] )
-        
-        
+        message = None
+        error_list = None
+        if 'submit-invite' in request.POST:
+            error_list = {}
+            message = _('Invited') + ' '
+            for key in invitee_list.keys():
+                invitee = copy.deepcopy(invitee_list[key])
+                method = getattr(item, type['method'], None)
+                if method:
+                    try:
+                        method(invitee['username'])
+                    except action_error as error:
+                        error.original_dict['data'] = invitee
+                        error_list[invitee['username']] = error.original_dict
+            if len(error_list) > 0:
+                message = message + _('except:') + ' ' + ','.join(error_list.keys())
+                invitee_list = dict([(key, invitee_list[key]) for key in invitee_list.keys() if invitee_list[key]['username'] in error_list.keys()])
+                invitee_list = re_key(invitee_list)
+            
         # Process invitee list into near-proper list format
         invitee_list = {'count' : len(invitee_list),
                         'items'  : invitee_list,
@@ -199,8 +221,10 @@ class InviteController(BaseController):
             'actions'         : [],
         } )
         
+        if error_list:
+            data.update( {'error-list': error_list})
         
-        return action_ok(data=data)
+        return action_ok(data=data, message=message)
     
     @web
     @authorize
