@@ -107,7 +107,6 @@ def get_group(group):
     return None
 
 
-
 def get_membership(group, member):
     member = get_member(member)
     group  = get_group(group)

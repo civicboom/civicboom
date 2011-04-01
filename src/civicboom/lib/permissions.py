@@ -41,7 +41,8 @@ def role_required(role_required):
     return wrapper
     
 
-def raise_if_current_role_insufficent(role_required):
-    if has_role_required(role_required, c.logged_in_persona_role):
-        return
+def raise_if_current_role_insufficent(role_required, group=None):
+    if not group or (group and group == c.logged_in_persona):
+        if has_role_required(role_required, c.logged_in_persona_role):
+            return
     raise errors.error_role()

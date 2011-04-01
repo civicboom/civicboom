@@ -55,11 +55,11 @@ class GroupActionsController(BaseController):
         """
         member = kwargs.get('member', None)
         
-        group  = get_group(id)
+        group  = get_group(id, is_current_persona_admin=True)
         member = get_member(member)
         # permissions check
-        if member!=c.logged_in_persona and not group.is_admin(c.logged_in_persona):
-            raise action_error('current user has no permissions for this group', code=403)
+        #if member!=c.logged_in_persona and not group.is_admin(c.logged_in_persona):
+        #    raise action_error('current user has no permissions for this group', code=403)
         # remove action
         if group.remove_member(member):
             user_log.info("Removed Member #%d (%s) from Group #%d (%s)" % (member.id, member.username, group.id, group.username))
@@ -91,7 +91,7 @@ class GroupActionsController(BaseController):
         member = kwargs.get('member', None)
         role   = kwargs.get('role'  , None)
         
-        group = get_group(id, is_admin=True)
+        group = get_group(id, is_current_persona_admin=True)
         if group.invite(member, role):
             user_log.info("Invited %s to Group #%d (%s)" % (member, group.id, group.username))
             return action_ok(_('%(member)s has been invited to join %(group)s' % {'member':member, 'group':group.name}))
@@ -119,7 +119,7 @@ class GroupActionsController(BaseController):
         @return 200  role set ok
         @return 400  cannot remove last admin
         """
-        group = get_group(id, is_admin=True)
+        group = get_group(id, is_current_persona_admin=True)
         if group.set_role(member, role): # FIXME: check that member exists? If we _get_member, then member.username would work below
             user_log.info("Set role of member %s to %s in group %s" % (member, role, group.username))
             return action_ok(_('role set successfully'))

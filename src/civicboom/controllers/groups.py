@@ -184,11 +184,11 @@ class GroupsController(BaseController):
         group.members_roles.append(group_admin)
         
         # GregM: Create current user as admin of group too to allow them to admin group (until permission tree is sorted!)
-        if isinstance(c.logged_in_persona, Group):
-            group_admin_user        = GroupMembership()
-            group_admin_user.member = c.logged_in_user
-            group_admin_user.role   = "admin"
-            group.members_roles.append(group_admin_user)
+        #if isinstance(c.logged_in_persona, Group):
+        #    group_admin_user        = GroupMembership()
+        #    group_admin_user.member = c.logged_in_user
+        #    group_admin_user.role   = "admin"
+        #    group.members_roles.append(group_admin_user)
         
         Session.add(group)
         Session.commit()
@@ -229,7 +229,7 @@ class GroupsController(BaseController):
         # h.form(h.url_for('message', id=ID), method='delete')
         # Rather than delete the setting this simple blanks the required fields - or removes the config dict entry
         raise action_error(_('operation not supported'), code=501)
-        group = get_group(id, is_admin=True)
+        group = get_group(id, is_current_persona_admin=True)
         
         group_dict = group.to_dict()
         group_dict.update(kwargs)
@@ -290,7 +290,7 @@ class GroupsController(BaseController):
         @return 404 group not found to delete
         @return 200 group deleted successfully
         """
-        group = get_group(id, is_admin=True)
+        group = get_group(id, is_current_persona_admin=True)
         user_log.info("Deleted Group #%d (%s)" % (group.id, group.username))
         group.delete()
         return action_ok(_("group deleted"), code=200)
@@ -326,7 +326,7 @@ class GroupsController(BaseController):
         """
         # url('edit_group', id=ID)
         # GregM: BIG DIRTY HACK to show website and description in the group config editor.
-        group = get_group(id, is_admin=True)
+        group = get_group(id, is_current_persona_admin=True)
         config = group.config
         groupdict = group.to_dict()
         groupdict['website'] = config.get('website')
