@@ -160,9 +160,9 @@
 	    <div class="frag_right_col">
 	        <div class="frag_col">
 		        <div class="invite_header">
-		        	<h1>Invite people</h1>
+		        	<h1>${_('Invite people & hubs')}</h1>
 		        	<div>
-		        		<h2>Search</h2>
+		        		<h2>${_('Search')}</h2>
 		        		<select name="search-type">
 		        			${select_item('', 'Everyone', d.get('search-type'))}
 ##		        			${select_item('member_of', 'Members', d.get('search-type'))}
@@ -181,14 +181,20 @@
 	    <div class="frag_left_col">
 	        <div class="frag_col">
 		        <div class="invite_header">
-	        		<h1>Invitees</h1>
-	        		<p>The invitees below will...</p>
+	        		<h1>${_('Invitees')}</h1>
+	        		<p>${_('The people below will be invited to...')}</p>
+	        		% if 'error-list' in d:
+	        			<p class="error">${_('Unfortunately there was a problem inviting the people below')}</p>
+	        		% endif
 	        	</div>
 		        <div class="invite_area invitee-list">
 			        ${invitee_list()}
 		        </div>
 	        </div>
 	    </div>
+		        <div class="bottom" style="clear:both;">
+	    			<input class="button" type="submit" name="submit-invite" value="Invite" />
+	   			</div>
 	</form>
 
 </%def>
@@ -223,6 +229,9 @@
 					${item.get('name')}<br />
 				% endif
 				${item.get('username')}
+				% if 'error-list' in d and item['username'] in d['error-list']:
+					<br />${d['error-list'][item['username']]['message']}
+				% endif 
 				<div style="float:right"><input onclick="return inviteClick(this)" class="button" type="submit" name="rem-${key}" value="Remove" /></div>
 				<input type="hidden" class="username" name="inv-${key}" value="${item.get('username')}" />
 			</li>
