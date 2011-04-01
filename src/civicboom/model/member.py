@@ -607,7 +607,9 @@ class Group(Member):
         if not member:
             return False
         if self.username == member.username: #originaly self==member but wasnt sure if SQL alchemy calculates equality, they could have differnt object references
-            return True
+        #    return True
+            from pylons import tmpl_context as c
+            member = c.logged_in_user # HACK!!! SHORT TERM!!! only supports one level deep of permissions
         if not membership:
             membership = self.get_membership(member)
         if membership and membership.member_id==member.id and membership.status=="active" and membership.role=="admin":

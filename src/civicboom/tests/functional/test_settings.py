@@ -205,7 +205,7 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'description'    : u'This is a new test description',
+                'description'    : u'This is a new test description, with some sort of weird dot: \xe2\x80\xa2',
             },
             status=200
         )

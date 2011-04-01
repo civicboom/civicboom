@@ -24,12 +24,14 @@ cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src ./a
 	cd ../src/ && $(MAKE) site
 	cd ../src/ && $(MAKE) api-doc
 	rm -rf fs-api
-	$(call mdcp, api/*              , fs-api/DEBIAN/                   )
-	$(call mdcp, api/crontab        , fs-api/etc/cron.d/,cb-website-web )
-	$(call mdcp, api/init.d         , fs-api/etc/init.d/,cb-website     )
-	$(call mdcp, ../admin_scripts/* , fs-api/opt/cb/bin/               )
-	$(call mdcp, ../docs/*          , fs-api/opt/cb/share/doc/website/ )
-	$(call mdcp, ../src/*           , fs-api/opt/cb/share/website/     )
+	$(call mdcp, api/*                    , fs-api/DEBIAN/                   )
+	$(call mdcp, api/crontab              , fs-api/etc/cron.d/,cb-website-web )
+	$(call mdcp, api/init.d               , fs-api/etc/init.d/,cb-website     )
+	$(call mdcp, ../admin_scripts/cb-task , fs-api/opt/cb/bin/               )
+	$(call mdcp, ../docs/*                , fs-api/opt/cb/share/doc/website/ )
+	$(call mdcp, ../src/*                 , fs-api/opt/cb/share/website/     )
+	$(call mdcp, ../src/production.ini    , fs-api/opt/cb/share/website-api/     )
+	$(call mdcp, api/crontab              , fs-api/opt/cb/share/website-api/     )
 	sed -i s/VERSION/${VERSION}/ fs-api/DEBIAN/control
 	echo ${VERSION} > fs-api/opt/cb/share/website/.version
 	fakeroot dpkg -b fs-api cb-website-api_${VERSION}_all.deb 
@@ -42,6 +44,7 @@ cb-website-web.deb: $(shell find ../nginx ./web)
 	$(call mdcp, ../nginx/civicboom.com         , fs-web/etc/nginx/sites-available/ )
 	$(call mdcp, ../nginx/static.civicboom.com  , fs-web/etc/nginx/sites-available/ )
 	$(call mdcp, ../nginx/errors                , fs-web/opt/cb/share/website-web/  )
+	$(call mdcp, ../nginx/civicboom.com         , fs-web/opt/cb/share/website-web/  )
 	$(call mdcp, ../ssl/wild.civicboom.com.key  , fs-web/opt/cb/etc/ssl/            )
 	cat ../ssl/wild.civicboom.com.crt ../ssl/rapidssl-ca.crt ../ssl/rapidssl-ca-cross.crt > fs-web/opt/cb/etc/ssl/wild.civicboom.com.pem
 	sed -i s/VERSION/${VERSION}/ fs-web/DEBIAN/control
@@ -50,8 +53,9 @@ cb-website-web.deb: $(shell find ../nginx ./web)
 
 cb-website-db.deb: $(shell find ./db)
 	rm -rf fs-db
-	$(call mdcp, db/*       , fs-db/DEBIAN/                    )
-	$(call mdcp, db/crontab , fs-db/etc/cron.d/,cb-website-db  )
+	$(call mdcp, ../admin_scripts/init_cbdb , fs-api/opt/cb/bin/               )
+	$(call mdcp, db/*                       , fs-db/DEBIAN/                    )
+	$(call mdcp, db/crontab                 , fs-db/etc/cron.d/,cb-website-db  )
 	sed -i s/VERSION/${VERSION}/ fs-db/DEBIAN/control
 	fakeroot dpkg -b fs-db cb-website-db_${VERSION}_all.deb 
 	ln -sf cb-website-db_${VERSION}_all.deb cb-website-db.deb
