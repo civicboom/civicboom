@@ -48,7 +48,7 @@ class MemberSettingsManager(UserDict.DictMixin):
                 value = "True"
             else:
                 value = "" # blank string evaluates to false
-        log.debug(self.member.username+":"+name+" = "+str(value))
+        log.debug("%s:%s = %s" % (self.member.username, name, value))
         try:
             q = Session.query(MemberSetting)
             q = q.filter(MemberSetting.member_id==self.member.id)

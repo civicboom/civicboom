@@ -29,6 +29,7 @@ from civicboom.lib.permissions         import account_type, role_required, has_r
 import civicboom.lib.errors as errors
 
 import json
+import platform
 
 import logging
 log      = logging.getLogger(__name__)
@@ -184,7 +185,7 @@ def get_member(member_search, set_html_action_fallback=False, search_email=False
     # Concept of 'me' in API
     if isinstance(member_search, basestring) and member_search.lower()=='me':
         if not c.logged_in_persona:
-            raise action_error(_("cannot reffer to 'me' when not logged in"), code=400)
+            raise action_error(_("cannot refer to 'me' when not logged in"), code=400)
         member_search = c.logged_in_persona
     member = _get_member(member_search, search_email=search_email)
     if not member:
@@ -310,6 +311,9 @@ class BaseController(WSGIController):
         c.html_action_fallback_url = None # Some actions like 'follow' and 'accept' do not have templates - a fallback can be set and @auto_format interperits this as a redirect fallback
         c.absolute_links           = False # For gadgets and emails links and static content need to be absolute. this is interprited by civicboom.lib.web:url
         c.host                     = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
+
+        request.environ['app_version'] = app_globals.version
+        request.environ['node_name']   = platform.node()
 
         # Widget default settings
         c.widget = dict(

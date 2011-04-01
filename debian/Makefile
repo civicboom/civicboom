@@ -53,7 +53,7 @@ cb-website-web.deb: $(shell find ../nginx ./web)
 
 cb-website-db.deb: $(shell find ./db)
 	rm -rf fs-db
-	$(call mdcp, ../admin_scripts/init_cbdb , fs-api/opt/cb/bin/               )
+	$(call mdcp, ../admin_scripts/init_cbdb , fs-db/opt/cb/bin/                )
 	$(call mdcp, db/*                       , fs-db/DEBIAN/                    )
 	$(call mdcp, db/crontab                 , fs-db/etc/cron.d/,cb-website-db  )
 	sed -i s/VERSION/${VERSION}/ fs-db/DEBIAN/control

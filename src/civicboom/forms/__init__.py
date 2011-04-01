@@ -36,14 +36,15 @@ class Grid(tables.Grid):
 def create_autocompleter(url):
     class AutoCompleteRenderer(FieldRenderer):
         def render(self, options={}):
+            sval = self.value if hasattr(self, 'value') else ''
             cn = ""
             for name, val in options:
-                if str(val) == self.value:
+                if str(val) == sval:
                     cn = name
             vars = dict(
                 url=url,
                 name=self.name,
-                value=self.value,
+                value=sval,
                 value_name=cn,
             )
             return """

@@ -134,7 +134,7 @@ def current_url(protocol=None):
 def redirect_to_referer():
     url_to = session_remove('login_action_referer') or current_referer() or '/' #cookie_get('login_action_referer') or
     if url_to == url('current'): # Detect if we are in a redirection loop and abort
-        log.warning("Redirect loop detected for "+str(url_to))
+        log.warning("Redirect loop detected for %s" % url_to)
         #redirect('/')
     #print "yay redirecting to %s" % url_to
     return redirect(url_to)
@@ -453,7 +453,7 @@ def setup_format_processors():
         #if action_redirect and action_redirect.find(url.current())<0: # If the redirector contains the current URL path we are in an infinate loop and need to return just the text rather than a redirect
         #    return redirect(action_redirect)
             
-        #log.warning("Redirect loop detected for "+str(action_redirect))
+        #log.warning("Redirect loop detected for %s" % action_redirect)
         #return redirect("/")
 
     return dict(
@@ -540,7 +540,7 @@ def auto_format_output(target, *args, **kwargs):
         if c.format in format_processors:
             return format_processors[c.format](result)
         else:
-            log.warning("Unknown format: "+str(c.format))
+            log.warning("Unknown format: %s" % c.format)
         
     # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
     #log.debug("returning pre-rendered stuff")
