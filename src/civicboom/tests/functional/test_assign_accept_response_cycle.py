@@ -217,7 +217,13 @@ class TestAssignAcceptResponseCycleController(TestController):
         )
         response_json = json.loads(response.body)
         self.assignment_id = int(response_json['data']['id'])
-        self.assertNotEqual(self.assignment_id, 0)
+        self.assertGreater(self.assignment_id, 0)
+        
+        # Check content is published and check num_accepted trigger
+        response      = self.app.get(url('content', id=self.assignment_id, format='json'), status=200)
+        response_json = json.loads(response.body)
+        self.assertEquals(response_json['data']['content']['num_accepted'], 0)
+
         
         # Accept and Withdraw Assignment ---------------------------------------
         
@@ -227,9 +233,15 @@ class TestAssignAcceptResponseCycleController(TestController):
             params={'_authentication_token': self.auth_token,},
             #status=400
             status=200
-            # TODO: This should fail! needs to be added in future!
-            #       Users should not be able to accept there own assignments
+            # TODO: Should this fail? needs to be added in future?
+            #       Should Users should not be able to accept there own assignments?
         )
+
+        # check accepted num
+        response      = self.app.get(url('content', id=self.assignment_id, format='json'), status=200)
+        response_json = json.loads(response.body)
+        self.assertEquals(response_json['data']['content']['num_accepted'], 1)
+
         
         self.log_in_as('unitfriend')
         
@@ -247,6 +259,13 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         # Accept
         self.accept_assignment(self.assignment_id)
+        
+        # check accepted num - only appear in postgress trigger if record exisits
+        response      = self.app.get(url('content', id=self.assignment_id, format='json'), status=200)
+        response_json = json.loads(response.body)
+        self.assertEquals(response_json['data']['content']['num_accepted'], 2)
+        self.assertIn('unitfriend', [accepted['username'] for accepted in response_json['data']['accepted_status']['items'] if accepted['status']=='accepted'])
+        
         # withdraw
         self.withdraw_assignment(self.assignment_id)
         
@@ -257,7 +276,14 @@ class TestAssignAcceptResponseCycleController(TestController):
             status=400
         )
         
-        # Num accepted ---------------------------------------------------------
+        # Content num accepted ------------------------------------------------
+
+        response      = self.app.get(url('content', id=self.assignment_id, format='json'), status=200)
+        response_json = json.loads(response.body)
+        self.assertEquals(response_json['data']['content']['num_accepted'], 1)
+        self.assertIn('unitfriend', [accepted['username'] for accepted in response_json['data']['accepted_status']['items'] if accepted['status']=='withdrawn'])
+        
+        # Member Num accepted ---------------------------------------------------------
         
         # compare number of accepted assignments to num at beggining of test
         # record number of currently accepted assignments - to compare at end
@@ -298,7 +324,7 @@ class TestAssignAcceptResponseCycleController(TestController):
     #---------------------------------------------------------------------------
     # Accepted Assignment Delete Cascade
     #---------------------------------------------------------------------------
-    def test_accept_withdraw(self):
+    def test_accept_delete(self):
         """
         Create assignment
         Accept assignment
@@ -312,7 +338,7 @@ class TestAssignAcceptResponseCycleController(TestController):
             url('contents', format='json'),
             params={
                 '_authentication_token': self.auth_token,
-                'title'        : u'Assignment to test accept delete cascade',
+                'title'        : u'Assignment to test accept delete (not allowed to say it) c4sc4dE',
                 'contents'     : u'content' ,
                 'type'         : u'assignment' ,
                 #'submit_publish': u'publish' ,
@@ -320,26 +346,43 @@ class TestAssignAcceptResponseCycleController(TestController):
             status=201
         )
         response_json = json.loads(response.body)
-        self.assignment_id = int(response_json['data']['id'])
-        self.assertNotEqual(self.assignment_id, 0)
-        
+        assignment_id = int(response_json['data']['id'])
+        self.assertGreater(assignment_id, 0)
+                
         self.log_in_as('unitfriend')
+
+        # AllanC - I double check the assignment num here because the prostgress trigger was incorrect and returning ALL accepted number for all assignments at one point, so haveing another accept check here was sensibel
+
+        # check accepted num
+        response      = self.app.get(url('content', id=assignment_id, format='json'), status=200)
+        response_json = json.loads(response.body)
+        self.assertEquals(response_json['data']['content']['num_accepted'], 0)
         
         # Accept ---------------------------------------------------------------
-        self.accept_assignment(self.assignment_id)
+        self.accept_assignment(assignment_id)
+
+        # check accepted num
+        response      = self.app.get(url('content', id=assignment_id, format='json'), status=200)
+        response_json = json.loads(response.body)
+        self.assertEquals(response_json['data']['content']['num_accepted'], 1)
+        
+        
+
 
         # Delete assignemnt ----------------------------------------------------
         
         self.log_in_as('unittest')
         
-        self.delete_content(self.assignment_id)
+        # AllanC - this is tested in test_delete_cascade?
+        
+        #self.delete_content(assignment_id)
 
         # Check delete cascade  ------------------------------------------------
 
-        self.log_in_as('unitfriend')
+        #self.log_in_as('unitfriend')
 
-        response = self.app.get(url('member', id='unitfriend', format='json'), status=200)
-        response_json = json.loads(response.body)
+        #response = self.app.get(url('member', id='unitfriend', format='json'), status=200)
+        #response_json = json.loads(response.body)
 
         #TODO
         # Check delete cascade - AllanC: see test_delete_cascades.py
