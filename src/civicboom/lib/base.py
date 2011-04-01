@@ -29,6 +29,7 @@ from civicboom.lib.permissions         import account_type, role_required, has_r
 import civicboom.lib.errors as errors
 
 import json
+import platform
 
 import logging
 log      = logging.getLogger(__name__)
@@ -310,6 +311,9 @@ class BaseController(WSGIController):
         c.html_action_fallback_url = None # Some actions like 'follow' and 'accept' do not have templates - a fallback can be set and @auto_format interperits this as a redirect fallback
         c.absolute_links           = False # For gadgets and emails links and static content need to be absolute. this is interprited by civicboom.lib.web:url
         c.host                     = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
+
+        request.environ['app_version'] = app_globals.version
+        request.environ['node_name']   = platform.node()
 
         # Widget default settings
         c.widget = dict(
