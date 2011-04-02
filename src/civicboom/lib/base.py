@@ -22,7 +22,7 @@ from civicboom.lib.database.get_cached import get_member as _get_member, get_gro
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.database.query_helpers import to_apilist
 from civicboom.lib.civicboom_lib       import deny_pending_user
-from civicboom.lib.authentication      import authorize, get_lowest_role_for_user_list
+from civicboom.lib.authentication      import authorize, get_lowest_role_for_user
 from civicboom.lib.permissions         import account_type, role_required, has_role_required, raise_if_current_role_insufficent
 
 #from civicboom.model.member            import account_types
@@ -349,20 +349,16 @@ class BaseController(WSGIController):
         
         c.logged_in_user         = _get_member(c.logged_in_user)
         c.logged_in_persona      = c.logged_in_user
-        c.logged_in_persona_path = []
         if c.logged_in_user and not c.logged_in_persona_role:
             c.logged_in_persona_role = 'admin'
-        if c.logged_in_user:
-            c.logged_in_persona_path += [c.logged_in_user.id]
-        if logged_in.get('logged_in_persona_path'):
-            c.logged_in_persona_path += [int(i) for i in logged_in.get('logged_in_persona_path').split(',')]
         if logged_in['logged_in_user'] != logged_in['logged_in_persona']:
             group_persona = _get_group(logged_in['logged_in_persona'])
-            if group_persona and group_persona.id == c.logged_in_persona_path[-1]:
-                role = get_lowest_role_for_user_list(c.logged_in_persona_path)
+            if group_persona: # and group_persona.id == c.logged_in_persona_path[-1]: #Wanted to double check group permissions matched the group being set
+                role = get_lowest_role_for_user()
                 if role:
                     c.logged_in_persona      = group_persona
                     c.logged_in_persona_role = role
+                    
             
         for field in login_session_fields:
             request.environ[field] = str(getattr(c,field))

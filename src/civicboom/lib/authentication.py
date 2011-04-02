@@ -205,7 +205,8 @@ def signin_user(user, login_provider=None):
     for key, value in session_old.iteritems():
         session[key] = value
     
-    session_set('logged_in_user', user.username) # Set server session username so we know the actual user regardless of persona
+    session_set('logged_in_user'        , user.username) # Set server session username so we know the actual user regardless of persona
+    #session_set('logged_in_persona_path', user.id      )
     cookie_set("logged_in", "True", secure=False)
     
     user_log.info("logged in with %s" % login_provider)   # Log user login
@@ -254,23 +255,27 @@ def set_persona(persona):
         session_set('logged_in_persona'     , persona.username)
         session_set('logged_in_persona_role', lowest_role(membership.role, c.logged_in_persona_role))
         
-        persona_path = session_get('logged_in_persona_path')
-        persona_path = persona_path.split(',') if isinstance(persona_path, basestring) else []
-        if persona.id in persona_path:
-            persona_path = persona_path[0:persona_path.index(persona.id)] #Truncate the list at the occourance of this usename
+        persona_path = session_get('logged_in_persona_path') or str(c.logged_in_user.id)
+        persona_path = persona_path.split(',') #if isinstance(persona_path, basestring) else []
+        if str(persona.id) in persona_path:
+            persona_path = persona_path[0:persona_path.index(str(persona.id))] #Truncate the list at the occourance of this usename
         persona_path.append(persona.id)
         session_set('logged_in_persona_path', ','.join([str(i) for i in persona_path]))
         return True
     return False
 
 
-def get_lowest_role_for_user_list(user_list):
+def get_lowest_role_for_user(user_list=None):
     """
     user_list is a list of integers
     the first id should always the curent logged in user id (this is appended by base)
     """
+    if not user_list:
+        user_list = session_get('logged_in_persona_path')
+    
     if isinstance(user_list, basestring):
         user_list = [int(i) for i in user_list.split(',')]
+        
     if not isinstance(user_list, list):
         return None
     
@@ -281,6 +286,8 @@ def get_lowest_role_for_user_list(user_list):
         # Warning is logged - this could mean a permission/membership has changed since the user logged in
         # AllanC - If the warning is spamming the logs it should be removed, but I wanted to catch the error out of paranoia
         log.warn('logged_in_persona_path is invalid - preventing return of group role')
+        session_remove('logged_in_persona_path')
+        session_remove('logged_in_persona'     )
         return None
     
     role = 'admin'
