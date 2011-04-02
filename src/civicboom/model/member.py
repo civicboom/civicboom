@@ -34,22 +34,26 @@ follow_type              = Enum("trusted", "trusted_invite", "normal",        na
 
 def has_role_required(role_required, role_current):
     """
-    returns 1 or more if has permissons
-    returns 0 or less if not permissions
+    returns True  if has permissons
+    returns False if not permissions
     
     >>> has_role_required('admin', 'admin')
-    1
+    True
     >>> has_role_required('editor','admin')
-    2
+    True
     >>> has_role_required('editor','observer')
-    -1
+    False
+    >>> has_role_required('editor','oogyboogly')
+    False
+    >>> has_role_required( None   ,'admin')
+    False
     """
     try:
         permission_index_required = group_member_roles_level.index(role_required)
         permission_index_current  = group_member_roles_level.index(role_current)
-        return permission_index_required - permission_index_current + 1
+        return (permission_index_required - permission_index_current + 1) > 0
     except:
-        return 0
+        return False
 
 def lowest_role(a,b):
     """

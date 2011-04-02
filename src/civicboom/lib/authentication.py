@@ -276,6 +276,13 @@ def get_lowest_role_for_user_list(user_list):
     
     roles = Session.query(GroupMembership).filter(or_(*[and_(GroupMembership.member_id==user_list[i], GroupMembership.group_id==user_list[i+1]) for i in range(len(user_list)-1)])).all()
     
+    if len(roles) != len(user_list) - 1:
+        # If not all the records exisit for the user_list given then some of the links could not be found and the route is invalid. No permissions should be returned
+        # Warning is logged - this could mean a permission/membership has changed since the user logged in
+        # AllanC - If the warning is spamming the logs it should be removed, but I wanted to catch the error out of paranoia
+        log.warn('logged_in_persona_path is invalid - preventing return of group role')
+        return None
+    
     role = 'admin'
     for r in roles:
         role = lowest_role(role,r.role)

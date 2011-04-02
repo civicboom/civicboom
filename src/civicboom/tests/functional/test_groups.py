@@ -198,6 +198,7 @@ class TestGroupsController(TestController):
         self.assertTrue(found)
         
         self.log_in_as('unittest')
+        self.set_persona('test_group')
         
         response = self.app.get(url('group', id=self.group_id, format='json'))
         self.assertIn('unitfriend', response)
@@ -239,6 +240,7 @@ class TestGroupsController(TestController):
         
         
         self.log_in_as('unittest')
+        self.set_persona('test_group')
         
         # Cannot set own role as unittest is the only admin - error will be thrown
         response = self.app.post(
@@ -274,6 +276,19 @@ class TestGroupsController(TestController):
             status=200
         )
         
+        # Try to upgrade self to editor after becoming an observer
+        # NOTE: because the permissions check is done every load of base this permissions should take effect imediately
+        # If we eveer just store role in the session then this test will fail because the user has not logged in and out to refresh the role
+        response = self.app.post(
+            url('group_action', action='set_role', id=self.group_id, format='json') ,
+            params={
+                '_authentication_token': self.auth_token ,
+                'member': 'unittest',
+                'role'  : 'editor',
+            } ,
+            status=403
+        )
+        
     
     
     ## delete ################################################################
@@ -284,7 +299,8 @@ class TestGroupsController(TestController):
         """
         
         
-        self.log_in_as('unittest')
+        #self.log_in_as('unittest')
+        #self.set_persona('test_group')
         
         # Try deleting when logged in as 'unittest' ... should fail as 'unittest' is not an admin anymore
         response = self.app.delete(
@@ -296,6 +312,7 @@ class TestGroupsController(TestController):
         )
         
         self.log_in_as('unitfriend')
+        self.set_persona('test_group')
         
         response = self.app.delete(
             url('group', id=self.group_id, format='json'),

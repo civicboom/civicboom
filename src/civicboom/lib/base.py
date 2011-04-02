@@ -300,6 +300,8 @@ class BaseController(WSGIController):
         c.action     = current_request.get("action")
         c.id         = current_request.get("id")
         
+        #print "controller=%s action=%s id=%s" % (c.controller, c.action, c.id)
+        
         c.result = {'status':'ok', 'message':'', 'data':{}} # Default return object
 
         c.format                   = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
@@ -314,7 +316,7 @@ class BaseController(WSGIController):
 
         # Widget default settings
         c.widget = dict(
-            theme      = 'light' ,
+            #theme      = 'light' ,
             width      = 160 ,
             height     = 200 ,
             title      = _('Get involved')  ,
@@ -357,8 +359,10 @@ class BaseController(WSGIController):
         if logged_in['logged_in_user'] != logged_in['logged_in_persona']:
             group_persona = _get_group(logged_in['logged_in_persona'])
             if group_persona and group_persona.id == c.logged_in_persona_path[-1]:
-                c.logged_in_persona = group_persona
-                c.logged_in_persona_role = get_lowest_role_for_user_list(c.logged_in_persona_path)
+                role = get_lowest_role_for_user_list(c.logged_in_persona_path)
+                if role:
+                    c.logged_in_persona      = group_persona
+                    c.logged_in_persona_role = role
             
         for field in login_session_fields:
             request.environ[field] = str(getattr(c,field))
