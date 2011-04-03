@@ -20,7 +20,7 @@
 	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
 	<meta name="robots"      content="all" />
 	<meta name="viewport"    content="width=480, initial-scale=1">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=8,chrome=1">
 	<meta charset="utf-8">
 
 ##----------------------------------------------------------------------------
