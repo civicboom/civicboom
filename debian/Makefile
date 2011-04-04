@@ -56,7 +56,6 @@ cb-website-db.deb: Makefile $(shell find ./db)
 	rm -rf fs-db
 	$(call mdcp, ../admin_scripts/init_cbdb , fs-db/opt/cb/bin/                )
 	$(call mdcp, db/*                       , fs-db/DEBIAN/                    )
-	$(call mdcp, db/crontab                 , fs-db/etc/cron.d/,cb-website-db  )
 	sed -i s/VERSION/${VERSION}/ fs-db/DEBIAN/control
 	fakeroot dpkg -b fs-db cb-website-db_${VERSION}_all.deb 
 	ln -sf cb-website-db_${VERSION}_all.deb cb-website-db.deb
