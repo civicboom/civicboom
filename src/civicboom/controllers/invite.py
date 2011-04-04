@@ -5,6 +5,8 @@ from civicboom.controllers.members        import MembersController
 from civicboom.controllers.member_actions import MemberActionsController
 from civicboom.controllers.group_actions  import GroupActionsController
 
+from civicboom.model.member  import group_member_roles
+
 import copy
 
 from civicboom.model.member import Member, Group
@@ -35,7 +37,8 @@ invite_types = {
         'get'    : get_member,
         'show'   : members_controller.show,
         'check'  : check_member,
-        'method' : 'invite'
+        'method' : 'invite',
+        'roles'  : group_member_roles.enums,
     },
     'assignment' : {
         'key'    : 'content',
@@ -43,7 +46,8 @@ invite_types = {
         'get'    : get_content,
         'show'   : contents_controller.show,
         'check'  : check_assignment,
-        'method' : 'invite'
+        'method' : 'invite',
+        'roles'  : None,
     },
     'trusted_follower' : {
         'key'    : 'member',
@@ -51,7 +55,8 @@ invite_types = {
         'get'    : get_member,
         'show'   : members_controller.show,
         'check'  : check_member,
-        'method' : 'follower_invite_trusted'
+        'method' : 'follower_invite_trusted',
+        'roles'  : None,
     },
 }
 
@@ -66,6 +71,8 @@ def re_key (dictionary):
             
     return dict([ (key_map[key], dictionary[key]) for key in dictionary.keys()] )
 
+def search (**kwargs):
+    pass
 
 class InviteController(BaseController):
     """
@@ -116,7 +123,6 @@ class InviteController(BaseController):
         if request.environ['REQUEST_METHOD'] == 'POST':
             for key in request.POST:
                 order = None
-                
                 list, order = key.split('-',1)
                 value       = request.POST[key]
                     
@@ -128,17 +134,6 @@ class InviteController(BaseController):
                     invitee_add[order] = user.to_dict()
                 elif list == 'rem' and order != None:
                     invitee_remove.append(int(order))
-                elif list == 'search':
-                    if   order == 'button':
-                        pass
-                    elif order == 'prev':
-                        search_offset -= search_limit
-                        if search_offset < 0:
-                            search_offset = 0
-                        pass
-                    elif order == 'next':
-                        search_offset += search_limit
-                        pass
                 elif list == 'invitee':
                     if   order == 'button':
                         pass
@@ -188,36 +183,16 @@ class InviteController(BaseController):
                         'items'  : invitee_list,
         }
         
-        # Turn search type into a parameter for index method
-        search_type = {}
-        if not kwargs.get('search-type', '') == '':
-            search_type[kwargs['search-type']] = 'me'
-        
-        invite_list = members_controller.index(
-            type   = None,                                      # could search for users and hubs separately kwargs.get('type')
-            limit  = search_limit,
-            offset = search_offset,
-            name   = kwargs.get('search-name'),
-            exclude_members = ','.join(invitee_usernames),
-            **search_type
-        )['data']['list']
+        # search data
+        data = self.search(**kwargs)['data']
         
         # If we are rendering a static page we need the object's data
         if c.format == 'html':
-            data = type['show'](id = id)['data']
-        else:
-            data = {}
-        
-        print invitee_usernames
+            data.update(type['show'](id = id)['data'])
         
         # Overlay any of the invite list's data over any object's data
         data.update( {
-            'invite_list'     : invite_list,
             'invitee_list'    : invitee_list,
-            'search-name'     : kwargs.get('search-name'),
-            'search-type'     : kwargs.get('search-type'),
-            'search-offset'   : search_offset,
-            'search-limit'    : search_limit,
             'invitee-offset'  : invitee_offset,
             'invite'          : kwargs.get('invite'),
             'id'              : kwargs.get('id'),
@@ -227,6 +202,9 @@ class InviteController(BaseController):
         
         if error_list:
             data.update( {'error-list': error_list})
+            
+        if type['roles']:
+            data.update( {'roles': type['roles']})
         
         return action_ok(data=data, message=message)
     
@@ -246,7 +224,7 @@ class InviteController(BaseController):
         
         search_type = {}
         if not kwargs.get('search-type', '') == '':
-            search_type[kwargs['search-type']] = 'me'
+            search_type[kwargs['search-type']] = kwargs.get('id')
         
         invite_list = members_controller.index(
             type   = None,                                      # could search for users and hubs separately kwargs.get('type')
@@ -270,8 +248,3 @@ class InviteController(BaseController):
         }
         
         return action_ok(data=data)
-    
-    @web
-    @authorize
-    def invitee(self, **kwargs):
-        pass
