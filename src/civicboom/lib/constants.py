@@ -5,6 +5,7 @@ Consistants
 """
 from pylons.i18n.translation  import _
 
+import re
 
 # in the form list_name, icon, display_text
 contents_list_titles = [
@@ -27,9 +28,13 @@ def get_list_titles(list_name):
 
 actions_list = [
     # url identifyer , action, description
-    ('/accept'                 , 'accept'     , _('Accept an _assignment')),
-    ('/follow'                 , 'follow'     , _('Follow a _member')     ),
-    ('/boom'                   , 'boom'       , _('Boom _content')        ),
-    ('/contents/new?parent_id=', 'new_respose', _('Create a response')    ),
-    #('??'     , 'respond', _('')),
+    (re.compile('/accept'                          ) , 'accept'     , _('Accept an _assignment')),
+    (re.compile('/follow'                          ) , 'follow'     , _('Follow a _member')     ),
+    (re.compile('/boom'                            ) , 'boom'       , _('Boom _content')        ),
+    (re.compile('/contents/new?parent_id='         ) , 'new_respose', _('Create a response')    ),
+    (re.compile('/contents?(.*?)type=comment(.*?)parent_id=') , 'comment'    , _('make a comment')       ), #AllanC - I weep at the inefficency and code duplication
+    (re.compile('/contents?(.*?)parent_id=(.*?)type=comment') , 'comment'    , _('make a comment')       ),
+
+#/contents/new?parent_id=26&type=comment
+
 ]
