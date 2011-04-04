@@ -51,16 +51,21 @@ def deny_pending_user(url_to_check):
 # Verify Email
 #-------------------------------------------------------------------------------
 
-def send_verifiy_email(user, controller='account', action='verify_email', message=None):
+def validation_url(user, controller, action):
+    return url(controller=controller, action=action, id=user.username, hash=user.hash(), subdomain='', protocol='https')
+
+def send_verifiy_email(user, controller='account', action='verify_email', message=None, subject=_('verify e-mail address')):
     if not message:
         message = _('verify this email address')
 #    Session.refresh(user)
-    validation_link = url(controller=controller, action=action, id=user.id, hash=user.hash(), subdomain='') # Need https here?
-    message         = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
-    send_email(user.email_unverified, subject=_('verify e-mail address'), content_text=message)
+    validation_link  = validation_url(user, controller, action)
+    message          = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
+    if action=='verify_email':
+        send_email(user.email_unverified, subject=subject, content_text=message)
+    user.send_email(subject=subject, content_text=message)
+    
 
-
-def verify_email(user, hash, commit=False):
+def verify_email_hash(user, hash, commit=False):
     user = get_member(user)
     if user and user.hash() == hash:
         if user.email_unverified:
@@ -71,11 +76,10 @@ def verify_email(user, hash, commit=False):
         return True
     return False
 
-
-def send_forgot_password_email(user):
-    validation_link = url(controller='account', action='forgot_password', protocol='https', id=user.username, hash=user.hash(), subdomain='')
-    message         = _('Please click or copy the following link into your browser to reset your password: %s' % validation_link)
-    user.send_email(subject=_('reset password'), content_text=message)
+#def send_forgot_password_email(user):
+#    validation_link = url(controller='account', action='forgot_password', id=user.username, hash=user.hash(), subdomain='', protocol='https')
+#    message         = _('Please click or copy the following link into your browser to reset your password: %s' % validation_link)
+#    user.send_email(subject=_('reset password'), content_text=message)
 
 
 #-------------------------------------------------------------------------------
