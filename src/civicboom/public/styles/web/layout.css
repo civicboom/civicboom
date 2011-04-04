@@ -42,7 +42,6 @@ BODY>DIV#app {
 	position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
 	z-index: 0;
     margin-top: 44px;
-    margin-bottom: 1em;
 }
 
 FOOTER {
@@ -355,7 +354,6 @@ H1 {
 
 	BODY>DIV#app {
 		margin-top: 86px;
-		margin-bottom: 2em;
 	}
 
 	BODY>DIV#app #frag_containers {
