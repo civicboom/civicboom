@@ -37,7 +37,9 @@ def build_schema(*args, **kwargs):
                 from pylons import request
                 schema.chained_validators.append(FieldsMatch('password', 'password_confirm'))
                 
-                if not config['test_mode']: # If in unit_test mode we should bypass captcha validation
+                if config['test_mode'] or not config['online']: # If in test mode we should bypass captcha validation
+                    pass
+                else:
                     schema.fields['recaptcha_challenge_field'] = UnicodeString(not_empty=True)
                     schema.fields['recaptcha_response_field']  = UnicodeString(not_empty=True)
                     schema.chained_validators.append(ReCaptchaValidator(request.environ['REMOTE_ADDR']))

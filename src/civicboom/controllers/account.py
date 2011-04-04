@@ -7,7 +7,7 @@ import civicboom.lib.constants as constants
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
 #from civicboom.lib.web              import cookie_get
-from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password, get_action_objects_for_url, has_account_without_password
+from civicboom.lib.civicboom_lib    import verify_email_hash, associate_janrain_account, set_password, get_action_objects_for_url, has_account_without_password, send_verifiy_email #send_forgot_password_email,
 #from civicboom.lib.database.get_cached import get_member
 
 from civicboom.controllers.register import register_new_janrain_user
@@ -240,7 +240,8 @@ class AccountController(BaseController):
 
         # Step 1: User request link with hash to be sent via email
         if not c.hash:
-            send_forgot_password_email(user)
+            #send_forgot_password_email(user)
+            send_verifiy_email(user, controller='account', action='forgot_password', message=_('reset your password'))
             return action_ok(_('Password reminder sent, please check your email'))
             
         if not verify_email_hash(user, c.hash): # abort if unable to verify user

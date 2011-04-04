@@ -88,12 +88,14 @@
 </%def>
 
 <%def name="password()">
+  % if config['online']:
   <tr>
     <td style="vertical-align: middle;">Please type the text in the image</td>
 		<td>${h.get_captcha(c.lang, 'white')}</td>
 		<td>${invalid('recaptcha_response_field')}</td>
   </tr>
-    <tr>
+  % endif
+  <tr>
 		<td>Password</td>
 		<td><input type="password" name="password"         value="" /></td>
 		<td>${invalid('password')}</td>
