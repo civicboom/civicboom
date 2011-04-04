@@ -1,4 +1,9 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" [
+  <!ENTITY % xhtml-symbol
+    PUBLIC "-//W3C//ENTITIES Symbols for XHTML//EN"
+    "http://www.w3.org/MarkUp/DTD/xhtml-symbol.ent">
+  %%xhtml-symbol;
+]>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie ie6"> <![endif]-->
 <!--[if IE 7 ]>    <html lang="en" class="no-js ie ie7"> <![endif]-->
@@ -17,11 +22,11 @@
 ##----------------------------------------------------------------------------
 	<meta name="description" content="${_("_site_description")}"/>
 	<meta name="keywords"    content="civicboom, social media, community, information, news" />
-	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
+	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling, Greg Miell" />
 	<meta name="robots"      content="all" />
-	<meta name="viewport"    content="width=480, initial-scale=1">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta charset="utf-8">
+	<meta name="viewport"    content="width=480, initial-scale=1" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8" />
 
 ##----------------------------------------------------------------------------
 ## Title
@@ -62,6 +67,7 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 	<!-- jQuery -->
 	<script src="/javascript/jquery-1.5.1.js"></script>
 	<!-- Civicboom -->
+	<script src="/javascript/prototypes.js"></script>
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
