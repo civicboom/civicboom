@@ -28,6 +28,7 @@ cb-website-api.deb: Makefile $(shell find ../admin_scripts ../docs ../selenium .
 	$(call mdcp, api/crontab              , fs-api/etc/cron.d/,cb-website-web )
 	$(call mdcp, api/init.d               , fs-api/etc/init.d/,cb-website     )
 	$(call mdcp, ../admin_scripts/cb-task , fs-api/opt/cb/bin/               )
+	$(call mdcp, ../admin_scripts/gendoc  , fs-api/opt/cb/bin/               )
 	$(call mdcp, ../docs/*                , fs-api/opt/cb/share/doc/website/ )
 	$(call mdcp, ../src/*                 , fs-api/opt/cb/share/website/     )
 	$(call mdcp, ../src/production.ini    , fs-api/opt/cb/share/website-api/     )
