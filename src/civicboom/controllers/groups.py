@@ -183,6 +183,8 @@ class GroupsController(BaseController):
         group_admin.role   = "admin"
         group.members_roles.append(group_admin)
         
+        c.logged_in_persona_role = 'admin'
+        
         # GregM: Create current user as admin of group too to allow them to admin group (until permission tree is sorted!)
         #if isinstance(c.logged_in_persona, Group):
         #    group_admin_user        = GroupMembership()
