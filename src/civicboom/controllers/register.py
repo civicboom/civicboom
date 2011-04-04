@@ -66,7 +66,7 @@ class RegisterController(BaseController):
         c.required_fields = ['username','email','password','dob']
         if not c.logged_in_persona.username.startswith(new_user_prefix):
             c.required_fields.remove('username')
-        if c.logged_in_persona.email:
+        if c.logged_in_persona.email or c.logged_in_persona.email_unverified:
             c.required_fields.remove('email')
         if len(c.logged_in_persona.login_details) > 0:
             c.required_fields.remove('password')

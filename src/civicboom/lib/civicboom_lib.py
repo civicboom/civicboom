@@ -69,11 +69,12 @@ def send_verifiy_email(user, controller='account', action='verify_email', messag
 def verify_email_hash(user, hash, commit=False):
     user = get_member(user)
     if user and user.hash() == hash:
-        if user.email_unverified:
-            user.email            = user.email_unverified
-            user.email_unverified = None
-        if commit:
-            Session.commit()
+        if not config['demo_mode']: # AllanC - Demo mode is ALWAYS offline, there is no way we can validate members emails address's. But the hash is correct so return True
+            if user.email_unverified:
+                user.email            = user.email_unverified
+                user.email_unverified = None
+            if commit:
+                Session.commit()
         return True
     return False
 
