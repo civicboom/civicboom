@@ -292,7 +292,15 @@ class BaseController(WSGIController):
         set_lang(lang)
     
     def __before__(self):
+        
+        # If this is a multiple call to base then abort
+        # Result is always set, so if it is not set then we know this is first call
+        # This is needed because methods like member_actions.py:groups calls members.py:index. This would trigger 2 calls to base
+        if hasattr(c, 'result'):
+            return
+        
         # Setup globals c ------------------------------------------------------
+        c.result = {'status':'ok', 'message':'', 'data':{}} # Default return object
         
         # Request global - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
@@ -302,8 +310,6 @@ class BaseController(WSGIController):
         
         #print "controller=%s action=%s id=%s" % (c.controller, c.action, c.id)
         
-        c.result = {'status':'ok', 'message':'', 'data':{}} # Default return object
-
         c.format                   = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
         c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs     = None
@@ -347,7 +353,7 @@ class BaseController(WSGIController):
             logged_in[field] = session_get(field)
             setattr(c, field, logged_in[field])
         
-        c.logged_in_user         = _get_member(c.logged_in_user)
+        c.logged_in_user         = _get_member(logged_in['logged_in_user'])
         c.logged_in_persona      = c.logged_in_user
         if c.logged_in_user and not c.logged_in_persona_role:
             c.logged_in_persona_role = 'admin'
@@ -358,7 +364,6 @@ class BaseController(WSGIController):
                 if role:
                     c.logged_in_persona      = group_persona
                     c.logged_in_persona_role = role
-                    
             
         for field in login_session_fields:
             request.environ[field] = str(getattr(c,field))

@@ -2,6 +2,7 @@ HEAD=\
 	modernizr-1.7.js \
 	swfobject.js \
 	jquery-1.5.1.js \
+	prototypes.js \
 	misc.js\
 	url_encode.js \
 	cb_frag.js \
@@ -17,6 +18,7 @@ FOOT=\
 	jquery.simple-color-picker.js \
 	jquery.ba-hashchange.min.js \
 	jquery.limit-1.2.js \
+	invite.js \
 	gears_init.js \
 	geo.js \
 	OpenLayers.js \

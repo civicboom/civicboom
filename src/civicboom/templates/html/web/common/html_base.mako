@@ -17,11 +17,13 @@
 ##----------------------------------------------------------------------------
 	<meta name="description" content="${_("_site_description")}"/>
 	<meta name="keywords"    content="civicboom, social media, community, information, news" />
-	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
+	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling, Greg Miell" />
 	<meta name="robots"      content="all" />
+
 	<meta name="viewport"    content="width=480, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=8,chrome=1">
 	<meta charset="utf-8">
+
 
 ##----------------------------------------------------------------------------
 ## Title
@@ -62,6 +64,7 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 	<!-- jQuery -->
 	<script src="/javascript/jquery-1.5.1.js"></script>
 	<!-- Civicboom -->
+	<script src="/javascript/prototypes.js"></script>
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>

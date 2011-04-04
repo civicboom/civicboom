@@ -162,6 +162,8 @@ class InviteController(BaseController):
             if username not in [user['username'] for user in invitee_list.values()]:
                 invitee_list[len(invitee_list)] = invitee_add[username]
         
+        invitee_usernames = [invitee_list[key]['username'] for key in invitee_list.keys()]
+        
         message = None
         error_list = None
         if 'submit-invite' in request.POST:
@@ -205,6 +207,8 @@ class InviteController(BaseController):
             data = type['show'](id = id)['data']
         else:
             data = {}
+        
+        print invitee_usernames
         
         # Overlay any of the invite list's data over any object's data
         data.update( {
@@ -252,6 +256,8 @@ class InviteController(BaseController):
             exclude_members = kwargs.get('exclude-members'),
             **search_type
         )['data']['list']
+        
+        print kwargs.get('exclude-members')
         
         # Overlay any of the invite list's data over any object's data
         data = {
