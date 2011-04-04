@@ -80,8 +80,9 @@ function refreshSearch(element, extra_fields) {
 		ul.children('.search-offset').val()
 	});
 }
-function getValue(element, class) {
-	return element.parents('form').find('.'+class).val() * 1;
+
+function getValue(element, cls) {
+	return element.parents('form').find('.'+cls).val() * 1;
 }
 function listPaginate(ul, offset, limit) {
 	var visible = ul.children('li:eq('+offset+'),li:gt('+offset+')').filter('li:lt('+limit+')').css('display','inline-block');
