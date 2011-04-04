@@ -344,6 +344,11 @@ class ContentsController(BaseController):
         @return 201   content created
                 id    new content id
         @return *     see update return types
+        
+        @comment AllanC The prefered way of posting comments from a remote site is http://test.civicboom.com/contents?type=comment&format=redirect
+                        currently the action being performed is recodnised by the string /contents?type=comment
+                        the format=redirect is a cool way to return you to your site at the end of posting usinging the http_referer
+                        (unless they have to signup, at witch point the redirect will be lost)
         """
         # url('contents') + POST
 
