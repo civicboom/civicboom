@@ -592,7 +592,7 @@ CREATE OR REPLACE FUNCTION update_num_accepted() RETURNS TRIGGER AS $$
         UPDATE content_assignment SET num_accepted = (
             SELECT count(*)
             FROM member_assignment
-            WHERE member_assignment.status = 'accepted' AND content_assignment.id=tmp_content_id
+            WHERE member_assignment.status = 'accepted' AND member_assignment.content_id=tmp_content_id
         ) WHERE id=tmp_content_id;
         RETURN NULL;
     END;

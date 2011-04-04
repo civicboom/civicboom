@@ -10,18 +10,21 @@ from civicboom.lib.database.get_cached import get_membership, get_member #note g
 from pylons.i18n import _ #WHY THE *** IS THIS NEEDED!! .. it's part of lib.base above?! but without it, it's not imported
 
 # Civicboom imports
-from civicboom.model      import User, UserLogin, Member
+from civicboom.model      import User, UserLogin, Member, GroupMembership
 from civicboom.model.meta import Session
+from civicboom.model.member import lowest_role, has_role_required
 
 from civicboom.lib.web     import multidict_to_dict, cookie_set, cookie_remove, cookie_get, cookie_delete
 
 from civicboom.lib.misc import make_username
+
 
 #, current_url, current_referer, 
 #from civicboom.lib.helpers import url_from_widget
 
 
 # Other imports
+from sqlalchemy import or_, and_
 from sqlalchemy.orm import join
 
 # Pyhton package imports
@@ -202,7 +205,8 @@ def signin_user(user, login_provider=None):
     for key, value in session_old.iteritems():
         session[key] = value
     
-    session_set('username', user.username) # Set server session username so we know the actual user regardless of persona
+    session_set('logged_in_user'        , user.username) # Set server session username so we know the actual user regardless of persona
+    #session_set('logged_in_persona_path', user.id      )
     cookie_set("logged_in", "True", secure=False)
     
     user_log.info("logged in with %s" % login_provider)   # Log user login
@@ -236,17 +240,72 @@ def set_persona(persona):
         return True
     elif persona == c.logged_in_user:
         # If trying to fall back to self login then remove persona selection
-        session_remove('username_persona')
+        session_remove('logged_in_persona'     )
+        session_remove('logged_in_persona_role')
+        session_remove('logged_in_persona_path')
         return True
     else:
         membership = get_membership(persona, c.logged_in_persona)
-        #membership = get_membership(persona, c.logged_in_user)
+        
         if not membership:
             raise action_error(_('not a member of this group'), code=403)
         if membership.status != "active":
             raise action_error(_('not an active member of this group'), code=403)
-        #if isintance(persona, Member):
-        #    persona = persona.username
-        session_set('username_persona', persona.username)
+
+        session_set('logged_in_persona'     , persona.username)
+        session_set('logged_in_persona_role', lowest_role(membership.role, c.logged_in_persona_role))
+        
+        persona_path = session_get('logged_in_persona_path') or str(c.logged_in_user.id)
+        persona_path = persona_path.split(',') #if isinstance(persona_path, basestring) else []
+        if str(persona.id) in persona_path:
+            persona_path = persona_path[0:persona_path.index(str(persona.id))] #Truncate the list at the occourance of this usename
+        persona_path.append(persona.id)
+        session_set('logged_in_persona_path', ','.join([str(i) for i in persona_path]))
         return True
     return False
+
+
+def get_lowest_role_for_user(user_list=None):
+    """
+    user_list is a list of integers
+    the first id should always the curent logged in user id (this is appended by base)
+    """
+    if not user_list:
+        user_list = session_get('logged_in_persona_path')
+    
+    if isinstance(user_list, basestring):
+        user_list = [int(i) for i in user_list.split(',')]
+        
+    if not isinstance(user_list, list):
+        return None
+    
+    roles = Session.query(GroupMembership).filter(or_(*[and_(GroupMembership.member_id==user_list[i], GroupMembership.group_id==user_list[i+1]) for i in range(len(user_list)-1)])).all()
+    
+    if len(roles) != len(user_list) - 1:
+        # If not all the records exisit for the user_list given then some of the links could not be found and the route is invalid. No permissions should be returned
+        # Warning is logged - this could mean a permission/membership has changed since the user logged in
+        # AllanC - If the warning is spamming the logs it should be removed, but I wanted to catch the error out of paranoia
+        log.warn('logged_in_persona_path is invalid - preventing return of group role')
+        session_remove('logged_in_persona_path')
+        session_remove('logged_in_persona'     )
+        return None
+    
+    role = 'admin'
+    for r in roles:
+        role = lowest_role(role,r.role)
+    return role
+
+    # AllanC - old and poo recursive way to do this
+    #def role_recurse(user_list, current_lowest_role):
+    #    def first_role(user_list):
+    #        try:
+    #            return Session.query(GroupMembership).filter(GroupMembership.member_id == user_list[0]).filter(GroupMembership.group_id == user_list[1]).one().role
+    #        except:
+    #            return None
+    #    if   len(user_list)> 2:
+    #        return lowest_role(role_recurse(user_list[1:], first_role(user_list)) , current_lowest_role)
+    #    elif len(user_list)==2:
+    #        return lowest_role(                            first_role(user_list)  , current_lowest_role)
+    #    else:
+    #        return 'admin' # if there is only one name in the list they are the user and therefor an admin
+    #return role_recurse(user_list, 'admin')

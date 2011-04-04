@@ -92,7 +92,7 @@ class Filter(object):
         return "Filter()"
 
     def __html__(self):
-        return "<div class='fil'>" + str(self) + "</div>"
+        return "<div class='fil'>%s</div>" % self
 
     def __sql__(self):
         return "(1=1)"
@@ -103,10 +103,10 @@ class LabelFilter(Filter):
         self.label = label
 
     def __repr__(self):
-        return "LabelFilter("+repr(self.label)+")"
+        return "LabelFilter(%s)" % repr(self.label)
 
     def __html__(self):
-        return "<div class='label'>"+self.label+"</div>"
+        return "<div class='label'>%s</div>" % self.label
 
 
 class OrFilter(Filter):
@@ -165,13 +165,13 @@ class TextFilter(Filter):
         self.text = text
 
     def __unicode__(self):
-        return "Content.content.matches('"+self.text+"')"
+        return "Content.content.matches('%s')" % self.text
 
     def __repr__(self):
-        return "TextFilter(" + repr(self.text) + ")"
+        return "TextFilter(%s)" % repr(self.text)
 
     def __sql__(self):
-        return "to_tsvector(content.content) @@ to_tsquery('"+self.text+"')"
+        return "to_tsvector(content.content) @@ to_tsquery('%s')" % self.text
 
 
 class LocationFilter(Filter):
@@ -180,10 +180,10 @@ class LocationFilter(Filter):
         self.rad = rad
 
     def __unicode__(self):
-        return "Content.location.near('"+str(self.loc)+"', "+str(self.rad)+")"
+        return "Content.location.near('%s', %d)" % (self.loc, self.rad)
 
     def __repr__(self):
-        return "LocationFilter(" + repr(self.loc) + ")"
+        return "LocationFilter(%s)" % repr(self.loc)
 
     def __sql__(self):
         return "ST_DWithin(content.location, 'SRID=4326;POINT(%d %d)', %d)" % (self.loc[0], self.loc[1], self.rad)
@@ -194,13 +194,13 @@ class AuthorIDFilter(Filter):
         self.author_id = author_id
 
     def __unicode__(self):
-        return "Content.creator_id = "+str(self.author_id)
+        return "Content.creator_id = %d" % self.author_id
 
     def __repr__(self):
-        return "AuthorFilter(" + repr(self.author_id) + ")"
+        return "AuthorFilter(%d)" % self.author_id
 
     def __sql__(self):
-        return "content.creator_id = "+str(self.author_id)
+        return "content.creator_id = %d" % self.author_id
 
 
 class TagFilter(Filter):
@@ -208,10 +208,10 @@ class TagFilter(Filter):
         self.tag = tag
 
     def __unicode__(self):
-        return "Content.tags.contains('"+self.tag+"')"
+        return "Content.tags.contains('%s')" % self.tag
 
     def __repr__(self):
-        return "TagFilter(" + repr(self.tag) + ")"
+        return "TagFilter(%s)" % repr(self.tag)
 
     def __sql__(self):
-        return "content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = '"+self.tag+"')"
+        return "content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = '%s')" % self.tag

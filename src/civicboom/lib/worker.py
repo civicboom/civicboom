@@ -32,7 +32,7 @@ class MediaThread(Thread):
             task = _media_queue.get()
             try:
                 task_type = task.pop("task")
-                log.info('Starting task: %s (%s) [approx %d left]' % (task_type, str(task), _media_queue.qsize()))
+                log.info('Starting task: %s (%s) [approx %d left]' % (task_type, task, _media_queue.qsize()))
                 if task_type == "process_media":
                     process_media(**task)
                 if task_type == "die":
@@ -79,9 +79,9 @@ def _ffmpeg(args):
     log.info(" ".join(cmd))
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output = proc.communicate()
-    log.debug("stdout: "+output[0])
-    log.debug("stderr: "+output[1])
-    log.debug("return: "+str(proc.returncode))
+    log.debug("stdout: %s", output[0])
+    log.debug("stderr: %s", output[1])
+    log.debug("return: %d", proc.returncode)
 
 
 def _update_media_length(hash, length):

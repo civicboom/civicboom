@@ -22,13 +22,14 @@ from civicboom.lib.database.get_cached import get_member as _get_member, get_gro
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.database.query_helpers import to_apilist
 from civicboom.lib.civicboom_lib       import deny_pending_user
-from civicboom.lib.authentication      import authorize
+from civicboom.lib.authentication      import authorize, get_lowest_role_for_user
 from civicboom.lib.permissions         import account_type, role_required, has_role_required, raise_if_current_role_insufficent
 
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
 
 import json
+import platform
 
 import logging
 log      = logging.getLogger(__name__)
@@ -184,7 +185,7 @@ def get_member(member_search, set_html_action_fallback=False, search_email=False
     # Concept of 'me' in API
     if isinstance(member_search, basestring) and member_search.lower()=='me':
         if not c.logged_in_persona:
-            raise action_error(_("cannot reffer to 'me' when not logged in"), code=400)
+            raise action_error(_("cannot refer to 'me' when not logged in"), code=400)
         member_search = c.logged_in_persona
     member = _get_member(member_search, search_email=search_email)
     if not member:
@@ -197,19 +198,16 @@ def get_member(member_search, set_html_action_fallback=False, search_email=False
     return member
 
 
-def get_group(id, is_admin=False, is_member=False, set_html_action_fallback=False):
+def get_group(id, is_current_persona_admin=False, is_current_persona_member=False, set_html_action_fallback=False):
     """
     Shortcut to return a group and raise not found or permission exceptions automatically (as these are common opertations every time a group is fetched)
     """
     group = get_member(id, set_html_action_fallback=set_html_action_fallback)
-    #if not isinstance(group, Group):
     if group.__type__ != 'group':
         raise action_error(_("%s is not a group" % id), code=404)
-    #if not group:
-    #    raise action_error(_("group not found"), code=404)
-    if is_admin and not group.is_admin(c.logged_in_persona):
-        raise action_error(_("you do not have permission for this group"), code=403)
-    if is_member and not group.get_membership(c.logged_in_persona):
+    if is_current_persona_admin:
+        raise_if_current_role_insufficent('admin', group)
+    if is_current_persona_member and not group.get_membership(c.logged_in_persona):
         raise action_error(_("you are not a member of this group"), code=403)
     return group
 
@@ -294,7 +292,15 @@ class BaseController(WSGIController):
         set_lang(lang)
     
     def __before__(self):
+        
+        # If this is a multiple call to base then abort
+        # Result is always set, so if it is not set then we know this is first call
+        # This is needed because methods like member_actions.py:groups calls members.py:index. This would trigger 2 calls to base
+        if hasattr(c, 'result'):
+            return
+        
         # Setup globals c ------------------------------------------------------
+        c.result = {'status':'ok', 'message':'', 'data':{}} # Default return object
         
         # Request global - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
@@ -302,8 +308,8 @@ class BaseController(WSGIController):
         c.action     = current_request.get("action")
         c.id         = current_request.get("id")
         
-        c.result = {'status':'ok', 'message':'', 'data':{}} # Default return object
-
+        #print "controller=%s action=%s id=%s" % (c.controller, c.action, c.id)
+        
         c.format                   = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
         c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs     = None
@@ -311,9 +317,12 @@ class BaseController(WSGIController):
         c.absolute_links           = False # For gadgets and emails links and static content need to be absolute. this is interprited by civicboom.lib.web:url
         c.host                     = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
 
+        request.environ['app_version'] = app_globals.version
+        request.environ['node_name']   = platform.node()
+
         # Widget default settings
         c.widget = dict(
-            theme      = 'light' ,
+            #theme      = 'light' ,
             width      = 160 ,
             height     = 200 ,
             title      = _('Get involved')  ,
@@ -332,25 +341,34 @@ class BaseController(WSGIController):
         # missing (deleted, expired, something else) but the main session cookie
         # is still there then caching could activate by accident. As such, if
         # the logged_in cookie is missing, force a logout.
-        if session_get('username') and not request.cookies.get("logged_in"):
+        if session_get('logged_in_user') and not request.cookies.get("logged_in"):
             session.invalidate()
 
         # Login ----------------------------------------------------------------
         # Fetch logged in user from session id (if present)
-        username                 = session_get('username')
-        username_persona         = session_get('username_persona')
-        request.environ['logged_in_user']     = username
-        request.environ['logged_in_persona']  = username_persona
         
-        c.logged_in_user         = _get_member(username)
+        login_session_fields = ['logged_in_user', 'logged_in_persona', 'logged_in_persona_path', 'logged_in_persona_role']
+        logged_in = {}
+        for field in login_session_fields:
+            logged_in[field] = session_get(field)
+            setattr(c, field, logged_in[field])
+        
+        c.logged_in_user         = _get_member(logged_in['logged_in_user'])
         c.logged_in_persona      = c.logged_in_user
-        c.logged_in_persona_role = 'admin' #always an admin of yourself
-        if username != username_persona:
-            persona    = _get_group(username_persona)
-            membership = _get_membership_tree(persona ,c.logged_in_user)
-            if membership:
-                c.logged_in_persona      = persona
-                c.logged_in_persona_role = membership.role
+        if c.logged_in_user and not c.logged_in_persona_role:
+            c.logged_in_persona_role = 'admin'
+        if logged_in['logged_in_user'] != logged_in['logged_in_persona']:
+            group_persona = _get_group(logged_in['logged_in_persona'])
+            if group_persona: # and group_persona.id == c.logged_in_persona_path[-1]: #Wanted to double check group permissions matched the group being set
+                role = get_lowest_role_for_user()
+                if role:
+                    c.logged_in_persona      = group_persona
+                    c.logged_in_persona_role = role
+            
+        for field in login_session_fields:
+            request.environ[field] = str(getattr(c,field))
+            #print request.environ[field]
+            
 
         # Setup Langauge -------------------------------------------------------
         #  - there is a way of setting fallback langauges, investigate?

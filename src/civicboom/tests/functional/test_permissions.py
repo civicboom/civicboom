@@ -82,7 +82,10 @@ class TestPermissionsController(TestController):
         )
         
         # comment on draft
-        self.comment(draft_id, 'permission comment')
+        #self.comment(draft_id, 'permission comment')
+        # TODO: This behaviour is incorrect ... observers SHOULD be able to comment on this groups drafts
+        #       however, this creates aditional complications as the c.logged_in_persona is this group.
+        #       we want to have the comment made as the user above, but we dont have this info stored
         
         
         # CONTRIBUTOR ----------------------------------------------------------
@@ -163,6 +166,9 @@ class TestPermissionsController(TestController):
         # Test 'editor'
         self.log_in_as('unitfriend')
         self.set_persona('publish_permission_test')
+        
+        # Comments on the draft
+        self.comment(draft_id, 'permission comment')
         
         # Create article as group persona - should be accepted because role is editor
         response = self.app.post(
