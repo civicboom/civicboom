@@ -62,7 +62,8 @@ def send_verifiy_email(user, controller='account', action='verify_email', messag
     message          = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
     if action=='verify_email':
         send_email(user.email_unverified, subject=subject, content_text=message)
-    user.send_email(subject=subject, content_text=message)
+    else:
+        user.send_email(subject=subject, content_text=message)
     
 
 def verify_email_hash(user, hash, commit=False):
