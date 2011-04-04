@@ -477,6 +477,8 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     #    raise action_error(_('_assignment is not visible to your user and therefor cannot be accepted'), code=403)
     if assignment_previously_accepted_by(assignment, member):
         raise action_error(_('_assignment has been previously accepted and cannot be accepted again'), code=400)
+    #if assignment.creator == member:
+    #    raise action_error(_("cannot accept your own _assignment"), code=400)
 
     
     assignment_accepted        = MemberAssignment()

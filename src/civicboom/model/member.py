@@ -34,15 +34,45 @@ follow_type              = Enum("trusted", "trusted_invite", "normal",        na
 
 def has_role_required(role_required, role_current):
     """
-    returns 1 or more if has permissons
-    returns 0 or less if not permissions
+    returns True  if has permissons
+    returns False if not permissions
+    
+    >>> has_role_required('admin', 'admin')
+    True
+    >>> has_role_required('editor','admin')
+    True
+    >>> has_role_required('editor','observer')
+    False
+    >>> has_role_required('editor','oogyboogly')
+    False
+    >>> has_role_required( None   ,'admin')
+    False
     """
     try:
         permission_index_required = group_member_roles_level.index(role_required)
         permission_index_current  = group_member_roles_level.index(role_current)
-        return permission_index_required - permission_index_current + 1
+        return (permission_index_required - permission_index_current + 1) > 0
     except:
-        return 0
+        return False
+
+def lowest_role(a,b):
+    """
+    >>> lowest_role('admin'  ,'admin'   )
+    'admin'
+    >>> lowest_role('editor' ,'admin'   )
+    'editor'
+    >>> lowest_role('editor' ,'observer')
+    'observer'
+    >>> lowest_role(None     ,'observer')
+    """
+    if not a or not b:
+        return None
+    permission_index_a = group_member_roles_level.index(a)
+    permission_index_b = group_member_roles_level.index(b)
+    if permission_index_a > permission_index_b:
+        return a
+    else:
+        return b
 
 
 class GroupMembership(Base):
@@ -604,12 +634,11 @@ class Group(Member):
 
 
     def is_admin(self, member, membership=None):
+        """
+        NOTE: only checks for member role record in this groups membership - it DOES not check the current users tree
+        """
         if not member:
             return False
-        if self.username == member.username: #originaly self==member but wasnt sure if SQL alchemy calculates equality, they could have differnt object references
-        #    return True
-            from pylons import tmpl_context as c
-            member = c.logged_in_user # HACK!!! SHORT TERM!!! only supports one level deep of permissions
         if not membership:
             membership = self.get_membership(member)
         if membership and membership.member_id==member.id and membership.status=="active" and membership.role=="admin":
