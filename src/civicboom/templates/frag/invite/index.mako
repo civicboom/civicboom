@@ -1,8 +1,8 @@
 <%inherit file="/frag/common/frag.mako"/>
 
 <%!
-    import civicboom.lib.constants as constants
-    rss_url = True
+    rss_url = False
+    auto_georss_link = False
 %>
 
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
@@ -58,6 +58,16 @@
 		        <div class="invite_header">
 	        		<h1>${_('Invitees')}</h1>
 	        		<p>${_('The people below will be invited to...')}</p>
+	        		% if 'roles' in d:
+	        			<p>
+	        				${_('Invite as role:')}
+	        				<select name="role">
+	        				% for role in d['roles']:
+	        					<option value="${role}">${role.capitalize()}</option>
+	        				% endfor
+	        				</select>
+	        			</p>
+	        		% endif
 	        		% if 'error-list' in d:
 	        			<p class="error">${_('Unfortunately there was a problem inviting the people below')}</p>
 	        		% endif

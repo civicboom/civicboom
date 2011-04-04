@@ -100,7 +100,24 @@
           <td colspan="7">${_("Join mode")}</td>
         </tr>
         <style>
-        	.mo-help div { display: none; position: absolute; z-index: 100; width: 175px; background-color: #FFF; border: 12px white solid; }
+        	.mo-help div {
+        		display: none;
+				position: absolute;
+				z-index: 100;
+				width: 200px;
+				background-color: #FFF;
+				padding: 12px;
+				
+				border: 1px solid #2a3a87;
+			
+				border-radius        : 0.2em;
+				-moz-border-radius   : 0.2em;
+				-webkit-border-radius: 0.2em;
+			
+				box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+			}
         	.mo-marker { display: inline-block; font-weight: bold; font-size: 1.25em; width: 1.25em; }
         	.mo-help:hover div { display: block; }
         </style>
@@ -149,7 +166,7 @@
             <span class="mo-help">
             	<span class="mo-marker">?</span>
             	<div class="mo-help-r">
-            		${_('This gives you strictest control of who joins your Hub. It is invite only, and as an administrator you decide who to invite.')}
+            		${_('Members of this group will be visible to anyone who views the Hub, even if they are not a member.')}
             	</div>
             </span>
           </td>
@@ -158,7 +175,7 @@
             <span class="mo-help">
             	<span class="mo-marker">?</span>
             	<div class="mo-help-r">
-            		${_('This gives you strictest control of who joins your Hub. It is invite only, and as an administrator you decide who to invite.')}
+            		${_('Members of the group will be hidden to anyone viewing the Hub, except administrators of the Hub.')}
             	</div>
             </span>
           </td>

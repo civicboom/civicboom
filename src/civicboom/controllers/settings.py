@@ -245,11 +245,8 @@ class SettingsController(BaseController):
         user = get_member(username)  
         if isinstance(user, User):
             user_type = 'member'
-            if not user == c.logged_in_user:
-                raise action_error(code=403, message="No permission")
-        else:
-            if not user.is_admin(c.logged_in_user):
-                raise action_error(code=403, message="No permission")
+        
+        raise_if_current_role_insufficent('admin', group=user)
         
         data = build_meta(user, user_type, panel)
         
@@ -349,14 +346,12 @@ class SettingsController(BaseController):
             username = c.logged_in_persona.username
             id = 'me'
         user_type = 'group'
-        user = get_member(username)  
+        user = get_member(username)
+        
         if isinstance(user, User):
             user_type = 'member'
-            if not user == c.logged_in_user:
-                raise action_error(code=403, message="No permission")
-        else:
-            if not user.is_admin(c.logged_in_persona):
-                raise action_error(code=403, message="No permission")
+        
+        raise_if_current_role_insufficent('admin', group=user)
 
         user_log.info("Saving general settings")
         

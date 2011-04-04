@@ -16,6 +16,7 @@
 		invite_type = d.get('invite')
 		self.attr.frags = [invite]
 		self.attr.frag_col_sizes = [2]
+		
 		if invite_type == 'assignment':
 			self.attr.frags.insert(0, content)
 			self.attr.frag_col_sizes.insert(0, 2)

@@ -75,7 +75,9 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 
 <%namespace name="share" file="/frag/common/share.mako" />
 
-${share.AddThisScript()}
+% if config['online']:
+	${share.AddThisScript()}
+% endif
 
 ##----------------------------------------------------------------------------
 ## Google Analitics (async setup, see scripts_end for more)
