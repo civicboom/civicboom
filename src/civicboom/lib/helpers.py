@@ -474,8 +474,6 @@ def get_object_from_action_url(action_url=None):
     if not action_url:
         action_url = current_url()
 
-    print action_url
-
     for (object_type, re_url) in regex_urls:
         m = re.match(re_url, action_url)
         if m:

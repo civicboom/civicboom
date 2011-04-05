@@ -183,8 +183,6 @@ class GroupsController(BaseController):
         group_admin.role   = "admin"
         group.members_roles.append(group_admin)
         
-        c.logged_in_persona_role = 'admin'
-        
         # GregM: Create current user as admin of group too to allow them to admin group (until permission tree is sorted!)
         #if isinstance(c.logged_in_persona, Group):
         #    group_admin_user        = GroupMembership()
@@ -195,14 +193,25 @@ class GroupsController(BaseController):
         Session.add(group)
         Session.commit()
         
-#        self.update(group.username, **kwargs) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
+        # AllanC - Hack
+        # The group has been created, but the additional feilds handled by the settings controller need to be updated (e.g. description and logo image)
+        # However, we have not set c.logged_in_persona so the call to the settings controller will not have the permissions for the newly created group
+        # We fake the login here
+        # We cant use set_persona as this called the set_persona controller action and calls a redirect
+        logged_in_persona = c.logged_in_persona # have to remeber previous persona to return to or set_persona below thinks were already swiched and will perform no action
+        c.logged_in_persona      = group
+        c.logged_in_persona_role = 'admin'
+        
+        # AllanC - old call? to be removed?
+        # self.update(group.username, **kwargs) # Overlay any additional form fields over the new group object using the update method - also intercepts if format is redirect
         
         # Call settings controller to update group settings!
         kwargs['panel'] = 'general'
-        settings_update(group.username, private=True, **kwargs)
+        settings_update(group, private=True, **kwargs)
         
-        set_persona(group.username)
-
+        c.logged_in_persona = logged_in_persona
+        set_persona(group) # Will redirect if in html or redirect mode
+        
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         
         return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)

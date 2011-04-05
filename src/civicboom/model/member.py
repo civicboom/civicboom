@@ -613,14 +613,19 @@ class Group(Member):
             from civicboom.lib.web import action_error
             raise action_error('cannot remove last admin', code=400)
     
-    def action_list_for(self, member):
+    def action_list_for(self, member=None, role=None):
+        """
+        can be passed a member to return a list tayloyed for that member
+         in an ideal world this would be enough, but we if current logged in user is set then we don't have access to c.logged_in_persona_role
+         a role can be passed
+        """
         action_list = Member.action_list_for(self, member)
         membership = self.get_membership(member)
         join = self.can_join(member, membership)
         if member and (join=="join" or join=="request"):
             action_list.append(join)
         else:
-            if self.is_admin(member, membership):
+            if self.is_admin(member, membership) or has_role_required('admin',role):
                 action_list.append('delete')
                 action_list.append('remove') #AllanC - could be renamed? this means remove member?
                 action_list.append('set_role')
