@@ -321,6 +321,8 @@ class Member(Base):
         return action_list
 
     def send_message(self, m, delay_commit=False):
+        # TODO
+        # This should be a non blocking action and que this in the worker
         import civicboom.lib.communication.messages as messages
         messages.send_message(self, m, delay_commit)
 
@@ -529,6 +531,10 @@ class User(Member):
         return h.hexdigest()
 
     @property
+    def email_normalized(self):
+        return self.email or self.email_unverified
+
+    @property
     def config(self):
         if not self._config:
             # import at the last minute -- importing at the start of the file
@@ -656,6 +662,7 @@ class Group(Member):
         if not membership:
             membership = self.get_membership(member)
         if not membership:
+            #print "join mode is %s" % self.join_mode # AllanC TODO - public groups dont work! .. rrrr
             if self.join_mode=="public":
                 return "join"
             if self.join_mode=="invite_and_request":
@@ -689,6 +696,28 @@ class Group(Member):
     def delete(self):
         from civicboom.lib.database.actions import del_group
         return del_group(self)
+
+    def send_message(self, m, delay_commit=False):
+        """
+        recursivly create a list of all sub members from all sub groups
+        it creates the list putting all members 
+        """
+        Member.send_message(self, m, delay_commit=delay_commit)
+        return
+        # NEVER EXECUTE BELOW UNTIL WE HAVE AUTOMATED TESTS
+        def add_member_list(group, members={}):
+            for member in [mr.member for mr in group.members_roles if mr.member not in members]:
+                if   member.__type__ == 'user':
+                    members[member] = None
+                elif member.__type__ == 'group':
+                    add_member_list(member, members)
+            return members
+        # Get list of all members and sub members - list is guaranteeded to
+        #  - contain only users
+        #  - have no duplicates
+        for member in add_member_list(self).keys():
+            member.send_message(m, delay_commit=False)
+        
     
 
 class UserLogin(Base):

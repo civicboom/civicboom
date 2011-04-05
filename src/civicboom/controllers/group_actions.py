@@ -28,6 +28,7 @@ class GroupActionsController(BaseController):
         group = get_group(id)
 
         # Check permissions
+        print group.can_join(c.logged_in_persona)
         if not group.can_join(c.logged_in_persona):
             raise action_error(_('current user cannot join this group'), code=403)
         
