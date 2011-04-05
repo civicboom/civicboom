@@ -272,36 +272,6 @@ HEADER #signin .button {
     width: 64px;
 }
 
-/*----------------------------------------------------------------------------*/
-/*                               App detail:                                  */
-/*                                Col Body                                    */
-/*----------------------------------------------------------------------------*/
-
-/*
- * sometimes the main page is columned
- */
-#col_left, #col_main, #col_right {
-	/* padding: 0.25em; */
-    /* margin-left: 0.2em; */
-}
-#col_left {
-	float: left;
-	width: 272px;
-	border: 1px solid black;
-}
-#col_right {
-	float: right;
-	width: 272px;
-	border: 1px solid black;
-}
-#col_main {
-	/*border: 1px solid black;*/
-}
-#col_left  ~ #col_main { margin-left:  296px; }
-#col_right ~ #col_main { margin-right: 296px; }
-
-
-
 
 /*----------------------------------------------------------------------------*/
 /*                             Footer detail:                                 */
