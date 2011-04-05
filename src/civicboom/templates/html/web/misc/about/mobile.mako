@@ -1,9 +1,7 @@
 <%inherit file="base.mako"/>
 <%def name="title()">${_("_site_name Mobile")}</%def>
 
-<p>&nbsp;
-
-<img src="/images/about/qr_mobile2.png" style="float: right;">
+<a href="http://market.android.com/details?id=com.civicboom.mobile2"><img src="/images/about/qr_mobile2.png" style="float: right;"></a>
 
 <h1>${_('_site_name Mobile')}</h1>
 

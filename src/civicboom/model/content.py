@@ -299,7 +299,7 @@ class Content(Base):
         AllanC TODO: Derived field - Postgress trigger needed
         """
         from civicboom.lib.text import strip_html_tags
-        return truncate(strip_html_tags(self.content).strip(), length=100, indicator='...', whole_word=True)
+        return truncate(strip_html_tags(self.content).strip(), length=500, indicator='...', whole_word=True)
 
 
 DDL('DROP TRIGGER update_response_count ON content').execute_at('before-drop', Content.__table__)

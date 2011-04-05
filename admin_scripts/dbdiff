@@ -1,0 +1,4 @@
+#!/bin/bash
+ssh -i ~/.ec2/civicboom-key.pem ubuntu@db1.civicboom.com sudo -u postgres pg_dump -U civicboom -h localhost -s > civicboom_live.sql
+PGPASSWORD=civicboom pg_dump -U civicboom -h localhost -s civicboom > civicboom_dev.sql
+java -jar ~/apgdiff-2.3/apgdiff-2.3.jar --add-transaction civicboom_live.sql civicboom_dev.sql > update.sql
