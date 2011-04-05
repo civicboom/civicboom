@@ -4,7 +4,7 @@
     <%
         # OH JESUS!!! WHAT A HACK!!!!
         # Processing in a template = BAD!!!!!
-        d['actions'] = c.group.action_list_for(c.logged_in_persona)
+        d['actions'] = c.group.action_list_for(member=c.logged_in_persona, role=c.logged_in_persona_role)
         d['group']   = {'id':c.group.id}
     %>
     ${parent.group_members_list(d['list']['items'], _('Members'))}
