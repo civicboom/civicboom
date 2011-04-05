@@ -617,9 +617,9 @@
         <span class="separtor"></span>
     % endif
     
-    % if self.content.get('location'):
-        ${parent.georss_link()}
-    % endif
+    ##% if self.content.get('location'):
+    ##    ${parent.georss_link()}
+    ##% endif
 
 </%def>
 
