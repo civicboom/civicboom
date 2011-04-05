@@ -18,6 +18,7 @@ FOOT=\
 	jquery.simple-color-picker.js \
 	jquery.ba-hashchange.min.js \
 	jquery.limit-1.2.js \
+	mobile.js \
 	invite.js \
 	gears_init.js \
 	geo.js \

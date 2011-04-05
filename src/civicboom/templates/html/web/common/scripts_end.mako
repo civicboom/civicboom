@@ -22,6 +22,7 @@
         <script src="/javascript/jquery.simple-color-picker.js"></script>
 		<script src="/javascript/jquery.ba-hashchange.min.js"></script>
 		<script src="/javascript/jquery.limit-1.2.js"></script>
+		<script src="/javascript/mobile.js"></script>
 		<!-- maps -->
         <script src="/javascript/gears_init.js"></script>
         <script src="/javascript/geo.js"></script>
