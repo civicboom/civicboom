@@ -81,6 +81,10 @@ HEADER #persona_select {
 	z-index: 501; /* above the create/explore/manage */
 }
 
+HEADER #persona_select P {
+	margin: 0px;
+}
+
 HEADER #persona_select img {
     width : 28px;
     height: 28px;
