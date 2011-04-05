@@ -154,5 +154,11 @@ else:
     ${popup_frame()}
 	##<%include file="scripts_end.mako"/>
 	${scripts_end.body()}
+
+	<% from pylons import request %>
+	<!--
+	Version: ${request.environ['app_version'] or 'develop'}
+	Node:    ${request.environ['node_name']}
+	-->
 </body>
 </html>
