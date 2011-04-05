@@ -441,8 +441,9 @@
                     <input type="hidden" name="title" value="Re: ${d['content']['title']}">
                     ##<input type="hidden" name="type" value="comment">
                     <textarea name="content" class="comment-${self.id}"></textarea><br />
-                    You have <span class="commentcount-${self.id}">200</span> charaters left.<br />
-                    If you are responding to the requested question you should respond with the button above.<br />
+                    You have <span class="commentcount-${self.id}">200</span> characters left.<br />
+                    Comments are for clarifying details, if you are responding to the request
+					you should use the 'Respond Now' button above.<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Comment')}">
                     <script type="text/javascript">
