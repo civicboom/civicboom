@@ -1,6 +1,10 @@
 
-PYTHONPATH=../lib
-GIT_TAG:=$(shell git describe)
+export PYTHONPATH := ../lib
+export PGHOST     := localhost
+export PGUSER     := civicboom
+export PGPASSWORD := civicboom
+
+GIT_TAG    := $(shell git describe)
 
 help:
 	# Usage: make <target>, where target is
@@ -54,11 +58,10 @@ test-db: skel-db
 test:
 	nosetests
 
-data/live-data.pgdump:
+live-db: skel-db
 	mkdir -p data
-	ssh -C civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump
-
-live-db: skel-db data/live-data.pgdump
+	ssh -i ~/.ec2/civicboom-key.pem -C ubuntu@db1.civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump
+	psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
 	sudo -u postgres pg_restore -d civicboom data/live-data.pgdump
 
 run:
