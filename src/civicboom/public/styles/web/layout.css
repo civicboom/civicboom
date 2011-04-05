@@ -184,6 +184,7 @@ NAV .menuh LI:hover a.top_parent {
 NAV .menuh a.sub_option,
 NAV .menuh a.sub_option:visited,
 NAV .menuh a.parent {
+	display: block;
 	background: white;
 	color: black;
 	border-left: 1px solid #555;
