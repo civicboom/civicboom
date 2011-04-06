@@ -5,8 +5,8 @@
     auto_georss_link = False
 %>
 
-<%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
-<%namespace name="member_includes" file="/html/web/common/member.mako"     />
+<%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
+<%namespace name="member_includes" file="/html/web/common/member.mako" />
 
 ##------------------------------------------------------------------------------
 ## Variables
@@ -21,6 +21,10 @@
         self.attr.title     = invite_types[d['invite']]
         self.attr.icon_type = None
     %>
+</%def>
+
+<%def name="select_item(value, text, current_value)">
+	<option value="${value}" ${'selected="selected"' if value==current_value else ''}>${text}</option>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -61,9 +65,9 @@
 	        		% if 'roles' in d:
 	        			<p>
 	        				${_('Invite as role:')}
-	        				<select name="role">
+	        				<select name="invite-role">
 	        				% for role in d['roles']:
-	        					<option value="${role}">${role.capitalize()}</option>
+	        					${select_item(role, role.capitalize(), d.get('invite-role'))}
 	        				% endfor
 	        				</select>
 	        			</p>
@@ -85,10 +89,6 @@
 
 	</form>
 
-</%def>
-
-<%def name="select_item(value, text, current_value)">
-	<option value="${value}" ${'selected="selected"' if value==current_value else ''}>${text}</option>
 </%def>
 
 <%def name="page_button(name, text, disabled)">

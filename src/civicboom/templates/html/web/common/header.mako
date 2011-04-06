@@ -196,6 +196,18 @@
 ##------------------------------------------------------------------------------
 ## Search
 ##------------------------------------------------------------------------------
+<div id="aboutbtns">
+    <a class="button" href="${url(controller='about', action='civicboom')}">
+        ${_('About')}
+    </a>
+    <a class="button" href="${url(controller='about', action='mobile')}">
+        ${_('Mobile')}
+    </a>
+</div>
+
+##------------------------------------------------------------------------------
+## Search
+##------------------------------------------------------------------------------
 <div id="search">
 	<form action="${h.url('contents')}" method='GET'>
 		<input type="search" class="search_input" name="term" placeholder=" ${_("Search")}" />
