@@ -36,6 +36,11 @@ class MiscController(BaseController):
     @cacheable(time=60)
     @auto_format_output
     def titlepage(self):
+        # caching different pages for different r= params is ok; but can't
+        # cache different content for different UAs :(
+        #if request.GET.get("r") == "qr":
+        #    if "android" in request.environ.get("HTTP_USER_AGENT").lower():
+        #        return redirect("market://details?id=com.civicboom.mobile2")
         return action_ok()
 
     @cacheable(time=600)
