@@ -25,7 +25,7 @@ ${payplans()}
           <ul class="points">
             <li>Up to 5 requests per month</li>
             <li>Audio requests and responses</li>
-            <li>Unlimited hubs</li>
+            <li>Unlimited Hubs</li>
           </ul>
           <div class="buttons">
             <div class="ideal">
@@ -138,5 +138,61 @@ ${payplans()}
 ##        </div>
 ##      </div>
     </div>
+  </div>
+  <div style="text-align: left;">
+  <h1>The Premium plan gives you:</h1>
+  <style>
+  	ul.circle li {
+  		font-size: 1.25em;
+  		list-style: outside circle;
+  		margin-left: 1.5em;
+  		padding-bottom: 0.25em;
+  	}
+  </style>
+  <ul class="circle">
+  <li>
+  	Create open or closed requests - these are your call-to-actions for a
+  	community, audience or customer on any topic, issue or event.
+  </li>
+  <li>
+	Create open or closed Hubs - they are your "brand" identity
+  </li>
+  <li>
+	Collaborate with other Hubs/organisations
+  </li>
+  <li>
+	Know who has accepted a request prior to responding
+  </li>
+  <li>
+	Set deadlines and event dates with automated alerts 
+  </li>
+  <li>
+	Create multiple requests in one go and schedule them for release at 
+  	later dates
+  </li>
+  <li>
+	Add audio to requests and responses, both from your PC and out in the field via your mobile.
+  </li>
+  <li>
+	Filter out weak content/disassociate from "off brand" copy
+  </li>
+  <li>
+	Connect directly with the responder for more info and cross-referencing 
+  </li>
+  <li>
+	Geolocate content/requests and monitor trends 
+  </li>
+  <li>
+	Push out and gather breaking news directly via mobile 
+  </li>
+  <li>
+	Approve content and grab original media files to edit and publish
+	(using creative commons license). 
+  </li>
+  <li>
+	Build on the Civicboom API for your needs - hyperlocal pages, 
+	community engagement/mapping, live feeds into multiple sites.
+  </li>
+  </ul>
   </div>
 </%def>
