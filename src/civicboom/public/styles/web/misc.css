@@ -82,7 +82,7 @@ HTML.js #step_container .step  {position: absolute;}
 /* --- New  Front ---- */
 
 BODY.c-misc.a-titlepage .who_is {
-	width: 90%;
+	width: 80em;
 	text-align: left;
 	margin: 0 auto 0 auto;
 }
