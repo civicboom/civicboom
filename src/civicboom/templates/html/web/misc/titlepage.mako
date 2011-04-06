@@ -29,7 +29,8 @@
 			${new_front_tag()}
 			${new_front_you()}
 			${new_front_tag()}
-			${new_front_plans()}
+			<div style="margin-top: 2em"></div>
+			${new_front_register()}
 		</div>
 	</div>
 </%def>
@@ -155,8 +156,7 @@
 <%def name="new_front_price()">
 	<div class="center">
 		<a class="buttongreen price_banner" href="/about/plans">
-			No long term contracts - free basic version,<br />
-			plug-and-go starts from &pound;50/month
+			No long term contracts<br />Plug-and-go starts from &pound;50/month
 		</a>
 	</div>
 </%def>
@@ -169,29 +169,29 @@
 
 <%def name="new_front_key_elems()">
 	<%def name="new_front_widget()">
-		<iframe name='Civicboom' title='Civicboom Widget' src='http://widget.localhost/contents?w_base_list=content_and_boomed&amp;w_color_font=000&amp;w_color_action_bar=ddd&amp;w_owner=&amp;w_title=Get+involved&amp;w_color_content=eee&amp;w_width=160&amp;w_height=300&amp;w_color_border=ccc&amp;w_color_header=ccc/content_and_boomed?w_title=Get%20involved&w_color_border=ccc&w_color_header=ccc&w_color_action_bar=ddd&w_color_content=ffffff&w_color_font=000&w_width=160&w_height=250' width='160' height='250' scrolling='no' frameborder='0'></iframe>
+		<iframe name='Civicboom' title='Civicboom Widget' src='http://widget.civicboom.com/contents?w_base_list=content_and_boomed&amp;w_color_font=000&amp;w_color_action_bar=ddd&amp;w_owner=&amp;w_title=Get+involved&amp;w_color_content=eee&amp;w_width=160&amp;w_height=300&amp;w_color_border=ccc&amp;w_color_header=ccc/content_and_boomed?w_title=Get%20involved&w_color_border=ccc&w_color_header=ccc&w_color_action_bar=ddd&w_color_content=ffffff&w_color_font=000&w_width=160&w_height=250' width='160' height='250' scrolling='no' frameborder='0'></iframe>
 	</%def>
 	<div style="width: 70em; margin: 0 auto 0 auto;">
 		<div style="float: left;"><img src="/images/misc/mobile_android.png" /></div>
-		<div style="width: 25em; margin: 1em auto 0 auto; font-size: 1.25em;">
+		<div style="text-align:left; width: 25em; margin: 1em auto 0 auto; font-size: 1.5em;">
 			<h3>Mobile</h3>
 			<p>
 				With Civicboom’s mobile app you can respond to requests and notifications, plus set request straight from your phone.
 				You can also respond with an audio recording * – a speedy alternative to text.
 			</p>
 		</div>
-		<div style="clear: both;"></div>
+		<div style="clear: both; padding-top: 2em; border-bottom: 1px solid black; margin-bottom: 2em;"></div>
 		<div style="padding-left: 2em; float: right;">${new_front_widget()}</div>
-		<div style="width: 25em; margin: 1em auto 0 auto; font-size: 1.25em;">
+		<div style="text-align:left; width: 25em; margin: 0 auto 0 auto; font-size: 1.5em;">
 			<h3>Widget</h3>
 			<p>
 				The Civicboom widget is designed to let you explore and display requests associated with your interests directly on your own site.
 				This means your community is never more than a click away from sharing their news and insight with you.
 			</p>
 		</div>
-		<div style="clear: both;"></div>
-		<div style="float: left; "><img src="/images/misc/hub-screen2.png" /></div>
-		<div style="width: 25em; margin: 1em auto 0 auto; font-size: 1.25em;">
+		<div style="clear: both; padding-top: 2em; border-bottom: 1px solid black; margin-bottom: 2em;"></div>
+		<div style="float: left;"><img src="/images/misc/hub-screen2.png" /></div>
+		<div style="text-align:left; width: 25em; margin: 0 auto 0 auto; font-size: 1.5em;">
 			<h3>Hub</h3>
 			<p>
 				Civicboom’s unique Hub system allows you to create a customised
@@ -330,10 +330,15 @@
 
 <%def name="new_front_plans()">
 	<div style="text-align:center;" class="front_center">
-		<a class="button" style="width: 15em; font-size: 2em;" href="/about/plans">See plans and pricing</a>
+		<a class="button" style="width: 15em; font-size: 2em;" href="/about/plans">See full plan and pricing</a>
 	</div>
 </%def>
 
+<%def name="new_front_register()">
+	<div style="text-align:center;" class="front_center">
+		<a class="button" style="width: 15em; font-size: 2em;" href="mailto:sales@civicboom.com">Email to register your interest</a>
+	</div>
+</%def>
 
 ## Beyond this fair comment is the old front scroll
 
