@@ -1,5 +1,0 @@
-Template: cb-website-db/do_backups
-Type: boolean
-Default: false
-Description: Should this node handle backups?
- Only one node in the cluster need handle backups

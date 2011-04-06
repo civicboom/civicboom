@@ -153,3 +153,14 @@
     clear: right;
 }
 */
+
+#frag_containers .frag_container .frag_data.frag_map {
+	height: 100%;
+}
+#frag_containers .frag_container .frag_data.frag_map .frag_col {
+	height: 100%;
+	margin: 0px;
+}
+#frag_containers .frag_container .frag_data.frag_map .frag_col .olMap {
+	border: 0px;
+}

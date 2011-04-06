@@ -6,6 +6,11 @@ function inviteClick(eO) {
 	if (button_name  == 'Invite') return true;
 	var button_action = button_name.split('-',1)[0];
 	var button_key    = button_name.split('-',2)[1];
+	
+	offset = getValue(button,'invitee-offset');
+	limit  = getValue(button,'search-limit');
+	ul     = button.parents('form').find('.invitee_ul');
+	
 	switch (button_action) {
 		case 'add':
 			if (exclude_members.contains(button_key)) {
@@ -36,35 +41,30 @@ function inviteClick(eO) {
 		break;
 		case 'search':
 			refreshSearch(button, [{ 'name':button_name }]);
-			break;
+			return false;
 		case 'invitee':
-			offset = getValue(button,'invitee-offset');
-			limit  = getValue(button,'search-limit');
-			ul     = button.parents('form').find('.invitee_ul');
 			switch (button_key) {
 				case 'next':
-					if (offset + limit <= ul.find('li').count) {
+					//if ((offset + limit) <= ul.find('li').length) {
 						offset = offset + limit;
-						ul.parents('form').find('.invitee-prev').attr('disabled','');
-					} else {
-						ul.parents('form').find('.invitee-prev').attr('disabled','disabled');
-					}
+						console.log (offset);
+						console.log (limit);
+					//}
 				break;
 				case 'prev':
 					if (offset - limit <= 0) {
 						offset = 0;
-						ul.parents('form').find('.invitee-prev').attr('disabled','disabled');
-						
 					} else {
 						offset = offset - limit;
 					}
-					ul.parents('form').find('.invitee-next').attr('disabled','');
 				break;
 			}
-			
-			listPaginate(ul, offset, limit);
-			break;
+		break;
 	}
+	setValue(button,'invitee-offset', offset);
+	setValue(button,'search-limit', limit);
+	listPaginate(ul, offset, limit, form.find('input[name="invitee-prev"]'), form.find('input[name="invitee-next"]'));
+	
 	return false;
 }
 function refreshSearch(element, extra_fields) {
@@ -84,7 +84,24 @@ function refreshSearch(element, extra_fields) {
 function getValue(element, cls) {
 	return element.parents('form').find('.'+cls).val() * 1;
 }
-function listPaginate(ul, offset, limit) {
+function setValue(element, cls, val) {
+	return element.parents('form').find('.'+cls).val(val);
+}
+function listPaginate(ul, offset, limit, prev, next) {
 	var visible = ul.children('li:eq('+offset+'),li:gt('+offset+')').filter('li:lt('+limit+')').css('display','inline-block');
 	var hidden  = ul.children('li').not(visible).css('display','none');
+	
+	if (typeof prev != 'undefined')
+		if (offset > 0) {
+			prev.removeClass('disabled').attr('disabled','');
+		} else {
+			prev.addClass('disabled').attr('disabled','disabled');
+		}
+	if (typeof next != 'undefined')
+		if ((offset + limit) < ul.children('li').length) {
+			next.removeClass('disabled').attr('disabled','');
+		} else {
+			next.addClass('disabled').attr('disabled','disabled');
+		}
+	
 }

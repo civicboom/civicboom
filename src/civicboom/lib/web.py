@@ -115,7 +115,7 @@ def current_referer(protocol=None):
 
 
 def current_protocol():
-    return request.environ.get('HTTP_X_URL_SCHEME', 'http')
+    return request.environ.get('wsgi.url_scheme', 'http')
 
 
 def current_host(protocol=None):

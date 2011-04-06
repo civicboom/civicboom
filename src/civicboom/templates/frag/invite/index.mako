@@ -1,12 +1,12 @@
 <%inherit file="/frag/common/frag.mako"/>
 
 <%!
-    import civicboom.lib.constants as constants
-    rss_url = True
+    rss_url = False
+    auto_georss_link = False
 %>
 
-<%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
-<%namespace name="member_includes" file="/html/web/common/member.mako"     />
+<%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
+<%namespace name="member_includes" file="/html/web/common/member.mako" />
 
 ##------------------------------------------------------------------------------
 ## Variables
@@ -21,6 +21,10 @@
         self.attr.title     = invite_types[d['invite']]
         self.attr.icon_type = None
     %>
+</%def>
+
+<%def name="select_item(value, text, current_value)">
+	<option value="${value}" ${'selected="selected"' if value==current_value else ''}>${text}</option>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -58,6 +62,16 @@
 		        <div class="invite_header">
 	        		<h1>${_('Invitees')}</h1>
 	        		<p>${_('The people below will be invited to...')}</p>
+	        		% if 'roles' in d:
+	        			<p>
+	        				${_('Invite as role:')}
+	        				<select name="invite-role">
+	        				% for role in d['roles']:
+	        					${select_item(role, role.capitalize(), d.get('invite-role'))}
+	        				% endfor
+	        				</select>
+	        			</p>
+	        		% endif
 	        		% if 'error-list' in d:
 	        			<p class="error">${_('Unfortunately there was a problem inviting the people below')}</p>
 	        		% endif
@@ -75,10 +89,6 @@
 
 	</form>
 
-</%def>
-
-<%def name="select_item(value, text, current_value)">
-	<option value="${value}" ${'selected="selected"' if value==current_value else ''}>${text}</option>
 </%def>
 
 <%def name="page_button(name, text, disabled)">

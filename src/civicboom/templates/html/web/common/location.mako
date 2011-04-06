@@ -17,7 +17,7 @@ style = ""
 if not always_show_map:
 	style = style + " display: none; position: absolute; -webkit-box-shadow: 3px 3px 3px #666;"
 %>
-<div style="width: ${width}; height: ${height}; border: 1px solid black; ${style}" id="${field_name}_div"></div>
+<div style="width: ${width}; height: ${height};${style}" id="${field_name}_div"></div>
 <script type="text/javascript">
 $(function() {
 	map = map_picker('${field_name}', {
@@ -30,7 +30,7 @@ $(function() {
 </%def>
 
 <%def name="minimap(lon, lat, zoom=13, name='map', width='250px', height='250px', feeds=[], controls=False)">
-<div style="width: ${width}; height: ${height}; border: 1px solid black;" id="${name}_div"></div>
+<div style="width: ${width}; height: ${height};" id="${name}_div"></div>
 <%
 import json
 %>

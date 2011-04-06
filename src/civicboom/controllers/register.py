@@ -8,7 +8,7 @@ from civicboom.model.member            import User, UserLogin
 from civicboom.lib.database.get_cached import get_member as _get_member
 
 # Communication & Messages
-from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email, associate_janrain_account, set_password
+from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email_hash, validation_url, associate_janrain_account, set_password
 
 # Signin
 from civicboom.lib.authentication import signin_user_and_redirect
@@ -56,7 +56,7 @@ class RegisterController(BaseController):
         # Validate User
         if c.logged_in_persona and c.logged_in_persona == c.new_user: # from janrain login
             pass
-        elif verify_email(c.new_user, kwargs.get('hash')): # or from email hash
+        elif verify_email_hash(c.new_user, kwargs.get('hash')): # or from email hash
             c.logged_in_user    = c.new_user #fake logged in user for rendering template
             c.logged_in_persona = c.new_user
         else:
@@ -66,7 +66,7 @@ class RegisterController(BaseController):
         c.required_fields = ['username','email','password','dob']
         if not c.logged_in_persona.username.startswith(new_user_prefix):
             c.required_fields.remove('username')
-        if c.logged_in_persona.email:
+        if c.logged_in_persona.email or c.logged_in_persona.email_unverified:
             c.required_fields.remove('email')
         if len(c.logged_in_persona.login_details) > 0:
             c.required_fields.remove('password')
@@ -142,16 +142,19 @@ class RegisterController(BaseController):
         Session.add(u)
         Session.commit()
         
-        # Automatically Follow User from config
-        user_to_auto_follow_on_signup = _get_member(config['setting.username_to_auto_follow_on_signup'])
-        if user_to_auto_follow_on_signup:
-            u.follow(user_to_auto_follow_on_signup)
+        # Automatically Follow Users from config
+        for member in [_get_member(username.strip()) for username in config['setting.username_to_auto_follow_on_signup'].split(',')]:
+            if member:
+                u.follow(member)
+        #user_to_auto_follow_on_signup = _get_member(config['setting.username_to_auto_follow_on_signup'])
+        #if user_to_auto_follow_on_signup:
+        #    u.follow(user_to_auto_follow_on_signup)
         
         # Follow the refered_by user if they exisits
         if 'refered_by' in kwargs:
             refered_by = _get_member(kwargs['refered_by'])
             if refered_by and u.follow(refered_by) == True:
-                log.debug("message generation not implmented yet")
+                log.debug("refered_by auto follow message generation not implmented yet")
                 #refered_by.send_message(messages.followed_on_signup(member=u)
         
         # Accept assignment
@@ -165,6 +168,9 @@ class RegisterController(BaseController):
         
         Session.commit()
         
+        if config['demo_mode'] and (c.format=='html' or c.format=='redirect'):
+            return redirect(validation_url(u, controller='register', action='new_user'))
+
         user_log.info("Sending verification email")
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))

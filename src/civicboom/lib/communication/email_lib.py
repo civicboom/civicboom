@@ -27,7 +27,7 @@ def send_email(email_to, subject='', content_text=None, content_html=None, **kwa
     
     # User object passed, get email address
     #  else the email_to is assumed to be a CSV list of email address's
-    if hasattr(email_to, 'email_unverified') and email_to.email_unverified!=None: email_to = email_to.email_unverified
+    if hasattr(email_to, 'email_unverified') and email_to.email_unverified!=None: email_to = email_to.email_unverified # does this need to be here? we have the property email_normalized now .... ?
     if hasattr(email_to, 'email'           ) and email_to.email           !=None: email_to = email_to.email
     email_to = str(email_to)
     
@@ -122,7 +122,7 @@ def send_email_smtp(email_to, subject, content_text, content_html, **kwargs):
         smtp.login(config['email.smtp_username'], config['email.smtp_password'])
         # Assuming the list is comma separated, send the message to each recipient.
         
-        for recipient in email_to.split(','):
+        for recipient in [email.strip() in email_to.split(',')]:
             smtp.sendmail(sender, recipient, msgRoot.as_string())
         smtp.quit()
 

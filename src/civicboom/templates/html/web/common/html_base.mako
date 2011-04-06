@@ -75,7 +75,9 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 
 <%namespace name="share" file="/frag/common/share.mako" />
 
-${share.AddThisScript()}
+% if config['online']:
+	${share.AddThisScript()}
+% endif
 
 ##----------------------------------------------------------------------------
 ## Google Analitics (async setup, see scripts_end for more)
@@ -139,18 +141,16 @@ else:
 	${flash_message()}
 	##<nav><%include file="navigation.mako"/></nav>
 	<header><%include file="header.mako"/></header>
-	<div id="app">
-% if hasattr(next, 'col_left'):
-		<div id="col_left">${next.col_left()}</div>
-% endif
-% if hasattr(next, 'col_right'):
-		<div id="col_right">${next.col_right()}</div>
-% endif
-		<div id="col_main">${next.body()}</div>
-	</div>
+	<div id="app">${next.body()}</div>
 	<footer><%include file="footer.mako"/></footer>
     ${popup_frame()}
 	##<%include file="scripts_end.mako"/>
 	${scripts_end.body()}
+
+	<% from pylons import request %>
+	<!--
+	Version: ${request.environ['app_version'] or 'develop'}
+	Node:    ${request.environ['node_name']}
+	-->
 </body>
 </html>

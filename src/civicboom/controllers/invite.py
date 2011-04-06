@@ -1,13 +1,13 @@
 from civicboom.lib.base import *
 
 from civicboom.controllers.contents       import ContentsController
-from civicboom.controllers.members        import MembersController
+from civicboom.controllers.members        import MembersController, has_role_required
 from civicboom.controllers.member_actions import MemberActionsController
 from civicboom.controllers.group_actions  import GroupActionsController
 
 import copy
 
-from civicboom.model.member import Member, Group
+from civicboom.model.member import Member, Group, group_member_roles
 from civicboom.model.content import AssignmentContent
 
 
@@ -26,6 +26,10 @@ def check_member(member):
 def check_assignment(content):
     return content.editable_by(c.logged_in_persona)
 
+def roles_group(group):
+    roles = group_member_roles.enums
+    roles = [role for role in roles if has_role_required(role, c.logged_in_persona_role)]
+    return roles
 search_limit = 6
 
 invite_types = {
@@ -35,7 +39,8 @@ invite_types = {
         'get'    : get_member,
         'show'   : members_controller.show,
         'check'  : check_member,
-        'method' : 'invite'
+        'method' : 'invite',
+        'roles'  : roles_group,
     },
     'assignment' : {
         'key'    : 'content',
@@ -43,7 +48,7 @@ invite_types = {
         'get'    : get_content,
         'show'   : contents_controller.show,
         'check'  : check_assignment,
-        'method' : 'invite'
+        'method' : 'invite',
     },
     'trusted_follower' : {
         'key'    : 'member',
@@ -51,7 +56,7 @@ invite_types = {
         'get'    : get_member,
         'show'   : members_controller.show,
         'check'  : check_member,
-        'method' : 'follower_invite_trusted'
+        'method' : 'follower_invite_trusted',
     },
 }
 
@@ -66,6 +71,8 @@ def re_key (dictionary):
             
     return dict([ (key_map[key], dictionary[key]) for key in dictionary.keys()] )
 
+def search (**kwargs):
+    pass
 
 class InviteController(BaseController):
     """
@@ -109,6 +116,15 @@ class InviteController(BaseController):
         if not type['check'](item):
             raise action_error('no permission', code=403)
         
+        # Get roles and check current role if applicable
+        roles = type['roles'](item) if type.get('roles') else None
+        role = kwargs.get('invite-role')
+        if role:
+            if not type.get('roles'):
+                role = None
+        if roles and role not in roles:
+            role = item.default_role
+        
         # Get form items
         invitee_list   = {}
         invitee_add    = {}
@@ -116,7 +132,6 @@ class InviteController(BaseController):
         if request.environ['REQUEST_METHOD'] == 'POST':
             for key in request.POST:
                 order = None
-                
                 list, order = key.split('-',1)
                 value       = request.POST[key]
                     
@@ -128,17 +143,6 @@ class InviteController(BaseController):
                     invitee_add[order] = user.to_dict()
                 elif list == 'rem' and order != None:
                     invitee_remove.append(int(order))
-                elif list == 'search':
-                    if   order == 'button':
-                        pass
-                    elif order == 'prev':
-                        search_offset -= search_limit
-                        if search_offset < 0:
-                            search_offset = 0
-                        pass
-                    elif order == 'next':
-                        search_offset += search_limit
-                        pass
                 elif list == 'invitee':
                     if   order == 'button':
                         pass
@@ -174,7 +178,7 @@ class InviteController(BaseController):
                 method = getattr(item, type['method'], None)
                 if method:
                     try:
-                        method(invitee['username'])
+                        method(invitee['username'], role=role)
                     except action_error as error:
                         error.original_dict['data'] = invitee
                         error_list[invitee['username']] = error.original_dict
@@ -188,45 +192,29 @@ class InviteController(BaseController):
                         'items'  : invitee_list,
         }
         
-        # Turn search type into a parameter for index method
-        search_type = {}
-        if not kwargs.get('search-type', '') == '':
-            search_type[kwargs['search-type']] = 'me'
-        
-        invite_list = members_controller.index(
-            type   = None,                                      # could search for users and hubs separately kwargs.get('type')
-            limit  = search_limit,
-            offset = search_offset,
-            name   = kwargs.get('search-name'),
-            exclude_members = ','.join(invitee_usernames),
-            **search_type
-        )['data']['list']
+        # search data
+        data = self.search(**kwargs)['data']
         
         # If we are rendering a static page we need the object's data
         if c.format == 'html':
-            data = type['show'](id = id)['data']
-        else:
-            data = {}
-        
-        print invitee_usernames
+            data.update(type['show'](id = id)['data'])
         
         # Overlay any of the invite list's data over any object's data
         data.update( {
-            'invite_list'     : invite_list,
             'invitee_list'    : invitee_list,
-            'search-name'     : kwargs.get('search-name'),
-            'search-type'     : kwargs.get('search-type'),
-            'search-offset'   : search_offset,
-            'search-limit'    : search_limit,
             'invitee-offset'  : invitee_offset,
             'invite'          : kwargs.get('invite'),
             'id'              : kwargs.get('id'),
             'exclude-members' : ','.join(invitee_usernames),
             'actions'         : [],
+            'invite-role'            : role,
         } )
         
         if error_list:
             data.update( {'error-list': error_list})
+            
+        if roles:
+            data.update( {'roles': roles})
         
         return action_ok(data=data, message=message)
     
@@ -246,7 +234,7 @@ class InviteController(BaseController):
         
         search_type = {}
         if not kwargs.get('search-type', '') == '':
-            search_type[kwargs['search-type']] = 'me'
+            search_type[kwargs['search-type']] = kwargs.get('id')
         
         invite_list = members_controller.index(
             type   = None,                                      # could search for users and hubs separately kwargs.get('type')
@@ -257,9 +245,6 @@ class InviteController(BaseController):
             **search_type
         )['data']['list']
         
-        print kwargs.get('exclude-members')
-        
-        # Overlay any of the invite list's data over any object's data
         data = {
             'invite_list'     : invite_list,
             'search-name'     : kwargs.get('search-name'),
@@ -270,8 +255,3 @@ class InviteController(BaseController):
         }
         
         return action_ok(data=data)
-    
-    @web
-    @authorize
-    def invitee(self, **kwargs):
-        pass

@@ -137,7 +137,7 @@
                     help_url = '/help/' + self.attr.help_frag
                     js_open_help = h.literal("cb_frag($(this), '%s', 'frag_col_1 frag_help');" % help_url) # GregM: Added frag_help class for help fragments
                 %>
-                <a href="${help_url}" onclick="${js_open_help} return false;" class="icon16 i_help" title="${_('Help')}"><span>${_('Help')}</span></a>
+                <a href="${help_url}" class="icon16 i_help" onclick="${js_open_help} return false;" title="${_('Help')}"><span>${_('Help')}</span></a>
                 % if 'help' in kwargs:
                 <script type="text/javascript">${js_open_help}</script>
                 % endif
@@ -145,12 +145,12 @@
             
             ## RSS
             % if self.attr.rss_url:
-                <a href='${self.attr.rss_url}' title='RSS' class="icon16 i_rss"><span>RSS</span></a>
+                <a href='${self.attr.rss_url}' class="icon16 i_rss" title='RSS'><span>RSS</span></a>
             % endif
             
             ## Close
             % if c.format=='frag':
-                <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon16 i_close"><span>${_('Close')}</span></a>
+                <a href='' class="icon16 i_close" onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}'><span>${_('Close')}</span></a>
             % else:
                 <span class="icon"></span>
             % endif
