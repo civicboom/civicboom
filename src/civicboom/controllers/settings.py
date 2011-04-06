@@ -237,14 +237,20 @@ class SettingsController(BaseController):
 #        print url('settings',action='show',id="me", panel="generic")
         if panel=="general" and not c.action in ("panel", "show", "index", "edit"):
             panel=c.action
-        username = id
-        if not username or username == 'me':
-             username = c.logged_in_persona.username
-             id = 'me'
-        user_type = 'group'
-        user = get_member(username)  
+        #username = id
+        #if not username or username == 'me':
+        #     username = c.logged_in_persona.username
+        #     id = 'me'
+        #user_type = 'group'
+        #user = get_member(username)  
+        #if isinstance(user, User):
+        #    user_type = 'member'
+        user = get_member(id)
         if isinstance(user, User):
             user_type = 'member'
+        if isinstance(user, Group):
+            user_type = 'group'
+        
         
         raise_if_current_role_insufficent('admin', group=user)
         
@@ -327,7 +333,7 @@ class SettingsController(BaseController):
     @web
     @authorize
     @role_required('admin')
-    def update(self, id, **kwargs):
+    def update(self, id='me', **kwargs):
         """
         PUT /id: Update an existing item.
         
@@ -341,15 +347,18 @@ class SettingsController(BaseController):
         
         private = kwargs.get('private')
         
-        username = id
-        if not username or username == 'me':
-            username = c.logged_in_persona.username
-            id = 'me'
-        user_type = 'group'
-        user = get_member(username)
+        #username = id
+        #if not username or username == 'me':
+        #    username = c.logged_in_persona.username
+        #    id = 'me'
+        #user_type = 'group'
+        #user = get_member(username)
         
+        user = get_member(id)
         if isinstance(user, User):
             user_type = 'member'
+        if isinstance(user, Group):
+            user_type = 'group'
         
         raise_if_current_role_insufficent('admin', group=user)
 

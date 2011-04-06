@@ -42,7 +42,7 @@
 		-->
 		
 		<form id="form_search" action="${url('contents')}" method="GET"
-              onsubmit="cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
+              onsubmit="unplacehold('#form_search'); cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
             <!--<fieldset style="border: 1px solid black; padding: 4px;">-->
             <fieldset>
                 <!--<legend>${_("Advanced search")}</legend>-->

@@ -32,7 +32,7 @@
         ## Follow
         % elif c.action_objects['action'] == 'follow':
             <%
-                member      = c.action_objects['action_object']['member']
+                member      = c.action_objects['action_object'].get('member')
                 member_name = member['name'] or member['username']
             %>
             ## AllanC: TODO - internationalise this string!
@@ -40,17 +40,22 @@
             
         % elif c.action_objects['action'] == 'boom':
             <%
-                content      = c.action_objects['action_object']['content']
+                content      = c.action_objects['action_object'].get('content')
                 creator_name = content['creator']['name'] or content['creator']['username']
             %>
             ## AllanC: TODO - internationalise this string!
             <p>By signing in/up you will Boom the _content <b>${content['title']}</b> by <b>${creator_name}</b></p>
         %elif  c.action_objects['action'] == 'new_respose':
             <%
-                content      = c.action_objects['action_object']['content']
+                content      = c.action_objects['action_object'].get('content')
                 creator_name = content['creator']['name'] or content['creator']['username']
             %>
             <p>By signing in/up you will respond to the _assignment <b>${content['title']}</b> by <b>${creator_name}</b></p>
+        %elif  c.action_objects['action'] == 'comment':
+            <%
+                content       = c.action_objects['action_object'].get('content')
+            %>
+            <p>By signing in/up you make a comment on <b>${content.get('title')}</b> </p>
         % endif
 
         ##${c.action_objects['description']}

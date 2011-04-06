@@ -595,10 +595,6 @@ If the content is not ok, go to the content list and delete it:
 
 
 def boom_content(content, member, delay_commit=False):
-    #if   content.__type__ == 'article':
-    #    member.send_message_to_followers(messages.boom_article(   member=member, article   =content), delay_commit=True)
-    #elif content.__type__ == 'assignment':
-    #    member.send_message_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
     
     # Validation
     if content.private == True:
@@ -615,6 +611,11 @@ def boom_content(content, member, delay_commit=False):
     boom.content_id = content.id
     boom.member_id  = member.id
     Session.add(boom)
+
+    #if   content.__type__ == 'article':
+    #    member.send_message_to_followers(messages.boom_article(   member=member, article   =content), delay_commit=True)
+    #elif content.__type__ == 'assignment':
+    #    member.send_message_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
     
     if not delay_commit:
         Session.commit()

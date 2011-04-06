@@ -153,9 +153,8 @@ def send_message(member, message_data, delay_commit=False):
         if c == 'c': # Send to Comufy
             pass
         if c == 'e': # Send to Email
-            # groups don't have an email address
-            if hasattr(member, "email"):
-                send_email(member.email, subject=message_data.subject, content_html=message_data.content)
+            if hasattr(member, 'email'):
+                send_email(member, subject=message_data.subject, content_html=message_data.content)
         if c == 't': # Send to Twitter
             pass
         if c == 'n': # Save message in message table (to be seen as a notification)

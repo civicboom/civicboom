@@ -462,7 +462,7 @@ def cb_frag_link(*args, **kwargs):
 # Get object from Civicboom URL
 #-------------------------------------------------------------------------------
 regex_urls = [
-    ('content', re.compile(r'(?:.*?)/contents/new\?parent_id=(\d+)') ),
+    ('content', re.compile(r'(?:.*?)/contents(?:.*?)parent_id=(\d+)')), #OLD - only for responses  - (?:.*?)/contents/new\?(?:.*?)parent_id=(\d+)
     ('content', re.compile(r'(?:.*?)/contents/(\d+)')                ),
     ('member' , re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "$]')     ),
 ]

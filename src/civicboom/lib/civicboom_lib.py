@@ -367,8 +367,10 @@ def get_action_objects_for_url(action_url=None):
     if not action_url:
         action_url = current_url()
     for action_identifyer, action_action, action_description in constants.actions_list:
-        if action_identifyer in action_url:
+        if action_identifyer.search(action_url):
             args, kwargs = get_object_from_action_url( action_url )
+            action_object          = {} # Set this in case we cant recover an action object
+            action_object_frag_url = ''
             if args and kwargs:
                 # Generate action object frag URL
                 kwargs['format'] = 'frag'

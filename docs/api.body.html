@@ -99,6 +99,7 @@
         <li>XML
         <li>Frag
         <li>RSS
+        <li>Redirect
     </ul>
     
     <h4>JSON</h4>
@@ -156,6 +157,14 @@
     <p>Hint: Common use of RSS 'content' lists:
        By default media attachments are not included in the RSS return
        but can be enabled by including the parameter 'include_fields=attachments'</p>
+    
+    <h4>Redirect</h4>
+    <p>Actions can be called with the 'redirect' format. This will perform the action on Civicboom
+       and then redirect back to http_referer.
+    <p>If the request has come from an external site the user will be prompted to confirm they want to perform the action.
+       If they are not currently logged in they will be prompted to signin/signup
+    <p>(NOTE: When undertaking the signup process it may not be possible to return to external sites via http_referer,
+       this will be investigated)
 </div>
 </section>
 

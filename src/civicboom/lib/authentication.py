@@ -235,6 +235,7 @@ def signout_user(user):
 
 
 def set_persona(persona):
+    assert c.logged_in_user
     persona = get_member(persona)
     if   persona == c.logged_in_persona:
         return True
@@ -243,6 +244,8 @@ def set_persona(persona):
         session_remove('logged_in_persona'     )
         session_remove('logged_in_persona_role')
         session_remove('logged_in_persona_path')
+        c.logged_in_persona      = c.logged_in_user
+        c.logged_in_persona_role = 'admin'
         return True
     else:
         membership = get_membership(persona, c.logged_in_persona)
@@ -251,9 +254,11 @@ def set_persona(persona):
             raise action_error(_('not a member of this group'), code=403)
         if membership.status != "active":
             raise action_error(_('not an active member of this group'), code=403)
-
+        
+        role = lowest_role(membership.role, c.logged_in_persona_role)
+        
         session_set('logged_in_persona'     , persona.username)
-        session_set('logged_in_persona_role', lowest_role(membership.role, c.logged_in_persona_role))
+        session_set('logged_in_persona_role', role)
         
         persona_path = session_get('logged_in_persona_path') or str(c.logged_in_user.id)
         persona_path = persona_path.split(',') #if isinstance(persona_path, basestring) else []
@@ -261,6 +266,10 @@ def set_persona(persona):
             persona_path = persona_path[0:persona_path.index(str(persona.id))] #Truncate the list at the occourance of this usename
         persona_path.append(persona.id)
         session_set('logged_in_persona_path', ','.join([str(i) for i in persona_path]))
+        
+        # From this point this user is logged in as this persona
+        c.logged_in_persona      = persona
+        c.logged_in_persona_role = role
         return True
     return False
 
