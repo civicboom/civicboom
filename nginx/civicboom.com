@@ -28,6 +28,8 @@ server {
 	# ssl
 	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
 	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
+	ssl_session_cache    shared:SSL:10m;
+	ssl_session_timeout  10m;
 
 	# proxy settings
 	proxy_pass_header Set-Cookie;

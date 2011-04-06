@@ -15,5 +15,6 @@ if(r && r == "qr") {
 	var uagent = navigator.userAgent.toLowerCase();
 	if(uagent.search("android") > -1) {
 		var url = "market://details?id=com.civicboom.mobile2";
+		window.location = url;
 	}
 }
