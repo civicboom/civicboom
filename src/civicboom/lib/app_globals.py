@@ -30,7 +30,7 @@ class Globals(object):
 
         if os.path.exists(".version"):
             self.version   = file(".version").read().strip()
-        else:
+        else:  # pragma: no cover - all released versions have a version
             self.version   = None
 
         self.cache         = CacheManager(**parse_cache_config_options(config))
