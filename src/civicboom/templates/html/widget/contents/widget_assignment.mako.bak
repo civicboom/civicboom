@@ -45,10 +45,6 @@
         <div style="display: inline-block;"><strong>${_("Due in")}:      </strong>fix</div>
         <div style="display: inline-block;"><strong>${_("Accepted by")}: </strong>${assignment['num_accepted']} ${_('members')}</div>
         <p                                 ><strong>${_("Responses:")}   </strong>${assignment['num_responses']}</p>
-        
-        ##${h.time_ago_first_only(assignment.expiryDate)}
-        ##${h.format_multiple_prefix(assignment.num_accepted_by_members + len(assignment.newsarticles),single=c.terminology['member'])}
-        ##${h.format_multiple_prefix(len(assignment.newsarticles),nothing="Be the first to respond to this!")}
     </div>
 
     <% responses  = c.result['data']['responses'] %>

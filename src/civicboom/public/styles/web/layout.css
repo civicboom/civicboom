@@ -212,6 +212,34 @@ NAV .menuh INPUT {
 
 /*----------------------------------------------------------------------------*/
 /*                             Header detail:                                 */
+/*                             About buttons                                  */
+/*----------------------------------------------------------------------------*/
+
+HEADER #aboutbtns {
+    position: absolute;
+    top: 11px;
+    right: 245px;
+
+    /*
+    width: 54px;
+    height: 18px; /* +2px border 
+    text-align: center;
+    vertical-align: middle;
+    background-color: #eee;
+    border: 1px solid #ccc;
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+    */
+}
+
+HEADER #aboutbtns .button {
+	padding: 0.2em;
+    width: 64px;
+}
+
+/*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
 /*                                Search                                      */
 /*----------------------------------------------------------------------------*/
 

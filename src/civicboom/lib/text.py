@@ -50,39 +50,6 @@ def split_word(text, max_chars):
 
     return new_text
 
-#-------------------------------------------------------------------------------
-
-
-# AllanC - Is this needed now we have internationalisation?
-def format_multiple_prefix(number, **kargs):
-    """
-    prefix a name with a number
-    e.g.
-      23 monkeys
-       1 monkey
-      No monkeys
-    """
-    text = format_multiple(number,**kargs)
-    if number > 0:
-        text = "%s %s" % (number, text)
-    return text
-
-
-def format_multiple(number,nothing="",single="",multiple=None,multiple_addition="s"):
-    """
-    Used to put 's at end of words if there is more than one of them
-    """
-    if number == 0:
-        return nothing
-    if number == 1:
-        return single
-    if number > 1:
-        if multiple == None and single!="":
-            return single+multiple_addition
-        if multiple != None:
-            return multiple
-    return ""
-
 
 #-------------------------------------------------------------------------------
 

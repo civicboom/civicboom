@@ -99,7 +99,7 @@
             ${content_type()}
             ${media()}
             ${location()}
-            ${privacy()}
+            ##${privacy()}
             ${license()}
 			${submit_buttons()}
         ${h.end_form()}

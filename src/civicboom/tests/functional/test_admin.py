@@ -10,14 +10,14 @@ class TestAdminController(TestController):
 
     def test_event_log(self):
         response = self.app.get(url(controller='test', action='fill_log'))
-        response = self.app.get(url(controller='admin', action='event_log'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
         self.assertIn("debug", response)
         # test searching
-        response = self.app.get(url(controller='admin', action='event_log', module='civicboom/controllers/test.py'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
-        response = self.app.get(url(controller='admin', action='event_log', line_num='20'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
-        response = self.app.get(url(controller='admin', action='event_log', username='None'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
-        response = self.app.get(url(controller='admin', action='event_log', address='127.0.0.1'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
-        response = self.app.get(url(controller='admin', action='event_log', url='http://waffle.com'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', module='civicboom/controllers/test.py'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', line_num='20'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', username='None'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', address='127.0.0.1'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', url='http://waffle.com'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
 
     def test_user_list(self):
         response = self.app.get("/admin/User/models")

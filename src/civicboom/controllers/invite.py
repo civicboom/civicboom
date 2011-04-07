@@ -1,15 +1,13 @@
 from civicboom.lib.base import *
 
 from civicboom.controllers.contents       import ContentsController
-from civicboom.controllers.members        import MembersController
+from civicboom.controllers.members        import MembersController, has_role_required
 from civicboom.controllers.member_actions import MemberActionsController
 from civicboom.controllers.group_actions  import GroupActionsController
 
-from civicboom.model.member  import group_member_roles
-
 import copy
 
-from civicboom.model.member import Member, Group
+from civicboom.model.member import Member, Group, group_member_roles
 from civicboom.model.content import AssignmentContent
 
 
@@ -28,6 +26,10 @@ def check_member(member):
 def check_assignment(content):
     return content.editable_by(c.logged_in_persona)
 
+def roles_group(group):
+    roles = group_member_roles.enums
+    roles = [role for role in roles if has_role_required(role, c.logged_in_persona_role)]
+    return roles
 search_limit = 6
 
 invite_types = {
@@ -38,7 +40,7 @@ invite_types = {
         'show'   : members_controller.show,
         'check'  : check_member,
         'method' : 'invite',
-        'roles'  : group_member_roles.enums,
+        'roles'  : roles_group,
     },
     'assignment' : {
         'key'    : 'content',
@@ -47,7 +49,6 @@ invite_types = {
         'show'   : contents_controller.show,
         'check'  : check_assignment,
         'method' : 'invite',
-        'roles'  : None,
     },
     'trusted_follower' : {
         'key'    : 'member',
@@ -56,7 +57,6 @@ invite_types = {
         'show'   : members_controller.show,
         'check'  : check_member,
         'method' : 'follower_invite_trusted',
-        'roles'  : None,
     },
 }
 
@@ -116,6 +116,15 @@ class InviteController(BaseController):
         if not type['check'](item):
             raise action_error('no permission', code=403)
         
+        # Get roles and check current role if applicable
+        roles = type['roles'](item) if type.get('roles') else None
+        role = kwargs.get('invite-role')
+        if role:
+            if not type.get('roles'):
+                role = None
+        if roles and role not in roles:
+            role = item.default_role
+        
         # Get form items
         invitee_list   = {}
         invitee_add    = {}
@@ -169,7 +178,7 @@ class InviteController(BaseController):
                 method = getattr(item, type['method'], None)
                 if method:
                     try:
-                        method(invitee['username'])
+                        method(invitee['username'], role=role)
                     except action_error as error:
                         error.original_dict['data'] = invitee
                         error_list[invitee['username']] = error.original_dict
@@ -198,13 +207,14 @@ class InviteController(BaseController):
             'id'              : kwargs.get('id'),
             'exclude-members' : ','.join(invitee_usernames),
             'actions'         : [],
+            'invite-role'            : role,
         } )
         
         if error_list:
             data.update( {'error-list': error_list})
             
-        if type['roles']:
-            data.update( {'roles': type['roles']})
+        if roles:
+            data.update( {'roles': roles})
         
         return action_ok(data=data, message=message)
     
@@ -235,9 +245,6 @@ class InviteController(BaseController):
             **search_type
         )['data']['list']
         
-        print kwargs.get('exclude-members')
-        
-        # Overlay any of the invite list's data over any object's data
         data = {
             'invite_list'     : invite_list,
             'search-name'     : kwargs.get('search-name'),
