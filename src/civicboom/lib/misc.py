@@ -6,7 +6,7 @@ import UserDict
 import types
 
 import random
-from datetime import date
+from datetime import date, timedelta
 import pprint
 import re
 
@@ -56,8 +56,11 @@ def calculate_age(born):
     >>> ten_ago = date(today.year-10, today.month, today.day)
     >>> calculate_age(ten_ago)
     10
-    >>> born_today = date(today.year, today.month, today.day)
-    >>> calculate_age(born_today)
+    >>> calculate_age(ten_ago - timedelta(days=3))
+    10
+    >>> calculate_age(ten_ago + timedelta(days=3))
+    9
+    >>> calculate_age(date.today())
     0
     >>> born_odd = date(2000, 2, 29)
     >>> calculate_age(born_odd) > 0

@@ -122,7 +122,7 @@ def send_email_smtp(email_to, subject, content_text, content_html, **kwargs):
         smtp.login(config['email.smtp_username'], config['email.smtp_password'])
         # Assuming the list is comma separated, send the message to each recipient.
         
-        for recipient in [email.strip() in email_to.split(',')]:
+        for recipient in [email.strip() for email in email_to.split(',')]:
             smtp.sendmail(sender, recipient, msgRoot.as_string())
         smtp.quit()
 
