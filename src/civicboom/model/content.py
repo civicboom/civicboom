@@ -231,7 +231,16 @@ class Content(Base):
             # GregM: If content is private check member is a trusted follower of content's creator
             #       We NEED to check has accepted, invited etc. for requests
             if self.private == True:
-                return self.creator.is_follower_trusted(member)
+                if self.creator.is_follower_trusted(member):
+                    return True
+                elif self.__type__ == "assignment":
+                    from civicboom.lib.database.get_cached import get_assigned_to
+                    member_assignment = get_assigned_to(self, member)
+                    if not member_assignment:
+                        return False
+                    if not member_assignment.member_viewed:
+                        member_assignment.member_viewed = True
+                        Session.commit()
             return True
         return False
 
@@ -544,7 +553,8 @@ class AssignmentContent(UserVisibleContent):
         from civicboom.lib.database.actions import withdraw_assignemnt
         return withdraw_assignemnt(self, member)
 
-    def invite(self, members):
+    # GregM: Added kwargs to allow for invite controller adding role (needed for group invite, trying to genericise things as much as possible)
+    def invite(self, members, **kwargs):
         """
         For closed assignments we need to invite specific members to participate
         invite can be given a single member or a list of members (as username strings or member object list)

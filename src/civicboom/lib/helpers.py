@@ -230,7 +230,7 @@ def time_ago(from_time):
     if isinstance(from_time, basestring):
         from_time = api_datestr_to_datetime(from_time)
     time_ago = time_ago_in_words(from_time, granularity='minute', round=True)
-    match = re.match("\d+ [a-z]+", time_ago)
+    match = re.match("^(less than ){0,1}\d+ [a-z]+", time_ago)
     if match:
         part = match.group(0)
         part = part.replace("minute", "min")

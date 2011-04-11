@@ -350,7 +350,8 @@ class Member(Base):
         from civicboom.lib.database.actions import follower_distrust
         return follower_distrust(self, member, delay_commit=delay_commit)
         
-    def follower_invite_trusted(self, member, delay_commit=False):
+    # GregM: Added kwargs to allow for invite controller adding role (needed for group invite, trying to genericise things as much as possible)
+    def follower_invite_trusted(self, member, delay_commit=False, **kwargs):
         from civicboom.lib.database.actions import follower_invite_trusted
         return follower_invite_trusted(self, member, delay_commit=delay_commit)
 
