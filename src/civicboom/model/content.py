@@ -236,11 +236,13 @@ class Content(Base):
                 elif self.__type__ == "assignment":
                     from civicboom.lib.database.get_cached import get_assigned_to
                     member_assignment = get_assigned_to(self, member)
-                    if not member_assignment:
-                        return False
-                    if not member_assignment.member_viewed:
-                        member_assignment.member_viewed = True
-                        Session.commit()
+                    if member_assignment:
+                        if not member_assignment.member_viewed:
+                            from civicboom.model.meta import Session
+                            member_assignment.member_viewed = True
+                            Session.commit()
+                        return True
+                return False
             return True
         return False
 
