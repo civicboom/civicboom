@@ -9,7 +9,7 @@ from pylons.i18n.translation  import _
 
 from paste.deploy.converters import asbool
 
-import memcache
+import redis
 from ConfigParser import SafeConfigParser
 
 import os
@@ -36,7 +36,7 @@ class Globals(object):
         self.cache         = CacheManager(**parse_cache_config_options(config))
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
 
-        self.memcache      = memcache.Client(config['service.memcache.server'].split(), debug=0)
+        self.cache         = redis.Redis(config['service.redis.server'], db=1)
 
         self.user_defaults = SafeConfigParser()
         self.user_defaults.read("user_defaults.ini")

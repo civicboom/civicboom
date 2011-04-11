@@ -316,7 +316,7 @@
                     <a href="${media['original_url']}"><!--
                         --><img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
                     --></a>
-					% if app_globals.memcache.get(str("media_processing_"+media['hash'])):
+					% if app_globals.cache.get(str("media_processing_"+media['hash'])):
 						<!-- Media still undergoing proceccesing -->
 						## Clients without javascript could have the current status hard in the HTML text
 						## TODO

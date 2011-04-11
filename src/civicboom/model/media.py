@@ -16,8 +16,6 @@ import os
 
 log = logging.getLogger(__name__)
 
-#memcache_expire = 10*60 # 10 * 60 Seconds = 10 Minuets
-
 
 class Media(Base):
     __tablename__ = "media"
@@ -54,7 +52,7 @@ class Media(Base):
         #'full+actions': copy.deepcopy(__to_dict__['default']) ,
     })
     __to_dict__['full'].update({
-            'processing_status' : lambda media: app_globals.memcache.get(str("media_processing_%s" % media.id)) ,
+            'processing_status' : lambda media: app_globals.cache.get(str("media_processing_%s" % media.id)) ,
     })
 
 
@@ -92,12 +90,7 @@ class Media(Base):
         #        d[key] = config[key]
         #    return d
         
-        memcache_key = str("media_processing_"+self.hash)
-        memcache_val = "que media"
-        log.debug("set media memcache %s:%s")
-        # FIXME: key does not exist in production mode?
-        # app_globals.memcache.set(memcache_key, memcache_val, time=int(config['media.processing.expire_memcache_time'])) # Flag memcache to indicate this media is being processed
-        #app_globals.memcache.set(memcache_key, memcache_val)
+        app_globals.cache.set(str("media_processing_"+self.hash), "Media queued")
 
         worker.add_job({
             "task": "process_media",
