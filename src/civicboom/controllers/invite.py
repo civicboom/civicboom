@@ -132,28 +132,29 @@ class InviteController(BaseController):
         if request.environ['REQUEST_METHOD'] == 'POST':
             for key in request.POST:
                 order = None
-                list, order = key.split('-',1)
-                value       = request.POST[key]
-                    
-                if   list == 'inv' and order:
-                    user = get_member(value)
-                    invitee_list[int(order)] = user.to_dict()
-                elif list == 'add' and order:
-                    user = get_member(order)
-                    invitee_add[order] = user.to_dict()
-                elif list == 'rem' and order != None:
-                    invitee_remove.append(int(order))
-                elif list == 'invitee':
-                    if   order == 'button':
-                        pass
-                    elif order == 'prev':
-                        invitee_offset -= search_limit
-                        if invitee_offset < 0:
-                            invitee_offset = 0
-                        pass
-                    elif order == 'next':
-                        invitee_offset += search_limit
-                        pass
+                if key.count('-') > 0:
+                    list, order = key.split('-',1)
+                    value       = request.POST[key]
+                        
+                    if   list == 'inv' and order:
+                        user = get_member(value)
+                        invitee_list[int(order)] = user.to_dict()
+                    elif list == 'add' and order:
+                        user = get_member(order)
+                        invitee_add[order] = user.to_dict()
+                    elif list == 'rem' and order != None:
+                        invitee_remove.append(int(order))
+                    elif list == 'invitee':
+                        if   order == 'button':
+                            pass
+                        elif order == 'prev':
+                            invitee_offset -= search_limit
+                            if invitee_offset < 0:
+                                invitee_offset = 0
+                            pass
+                        elif order == 'next':
+                            invitee_offset += search_limit
+                            pass
         
         # Remove removed items from invitee list
         invitee_usernames = [invitee_list[key]['username'] for key in invitee_list.keys() if key not in invitee_remove]
@@ -186,6 +187,8 @@ class InviteController(BaseController):
                 message = message + _('except:') + ' ' + ','.join(error_list.keys())
                 invitee_list = dict([(key, invitee_list[key]) for key in invitee_list.keys() if invitee_list[key]['username'] in error_list.keys()])
                 invitee_list = re_key(invitee_list)
+            else:
+                invitee_list = {}
             
         # Process invitee list into near-proper list format
         invitee_list = {'count' : len(invitee_list),
