@@ -378,7 +378,7 @@ class ContentsController(BaseController):
         content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
-        content.private = kwargs.get('private') or c.logged_in_persona.config.get('default_content_visibility', False)
+        content.private = kwargs.get('private') or (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
@@ -710,9 +710,12 @@ class ContentsController(BaseController):
         # Corporate plus customers want to be able to see what members have looked at an assignment
         if content.__type__=='assignment' and content.closed==True:
             member_assignment = get_assigned_to(content, member)
+            if not member_assignment:
+                return False
             if not member_assignment.member_viewed:
                 member_assignment.member_viewed = True
                 Session.commit()
+            return True
         
         return action_ok(data=data)
 
