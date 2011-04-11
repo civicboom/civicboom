@@ -36,7 +36,7 @@ class Globals(object):
         self.cache         = CacheManager(**parse_cache_config_options(config))
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
 
-        self.memcache      = redis.Redis(config['service.redis.server'], db=1)
+        self.memcache      = redis.Redis(config['service.redis.server'])
 
         self.user_defaults = SafeConfigParser()
         self.user_defaults.read("user_defaults.ini")
