@@ -158,7 +158,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         processed.close()
 
     # Get the thumbnail processed and uploaded ASAP
-    m.setex(status_key, "thumbnail", setex_expire)
+    m.setex(status_key, "thumbnail", status_expire)
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
         size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))

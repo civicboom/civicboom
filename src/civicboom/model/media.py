@@ -90,7 +90,7 @@ class Media(Base):
         #        d[key] = config[key]
         #    return d
         
-        app_globals.cache.set(str("media_processing_"+self.hash), "Media queued")
+        app_globals.memcache.set(str("media_processing_"+self.hash), "Media queued")
 
         worker.add_job({
             "task": "process_media",
