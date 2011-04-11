@@ -164,14 +164,20 @@ def authorize(_target, *args, **kwargs):
             if 'signout' in login_redirect_url: ## AllanC - bugfix - impaticent people who click signout beofre the page is loaded, dont allow signout as an actions!!
                 login_redirect_url = None
             if login_redirect_url:
-                session_set('login_redirect', login_redirect_url, login_expire_time) # save timestamp with this url, expire after x min, if they do not complete the login process
                 # save the the session POST data to be reinstated after the redirect
+                login_redirect_action = None
                 if request.POST:
-                    login_redirect_action = json.dumps(multidict_to_dict(request.POST))
+                    try:
+                        login_redirect_action = json.dumps(multidict_to_dict(request.POST))
+                    except:
+                        set_flash_message(_('error saving POST operation, please login and try the action again. If the problem persists please contact us'))
+                        log.error(        _('POST was unable to encode to put in session as the POST has filedata encoded in it'))
                 else:
                     login_redirect_action = json.dumps(dict())
-                login_redirect_action = quote_plus(login_redirect_action)
-                session_set('login_redirect_action', login_redirect_action , login_expire_time) # save timestamp with this url, expire after 5 min, if they do not complete the login process
+                if login_redirect_action:
+                    login_redirect_action = quote_plus(login_redirect_action)
+                    session_set('login_redirect'       , login_redirect_url    , login_expire_time) # save timestamp with this url, expire after x min, if they do not complete the login process
+                    session_set('login_redirect_action', login_redirect_action , login_expire_time)
             return redirect(url(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
         
         # If API request - error unauthorised
