@@ -23,6 +23,10 @@ def load_environment(global_conf, app_conf):
     """
     config = PylonsConfig()
 
+    import beaker
+    import civicboom.lib.redis_ as redis_
+    beaker.cache.clsmap['ext:redis'] = redis_.RedisManager
+
     # Pylons paths
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     paths = dict(root=root,
