@@ -201,12 +201,13 @@ class MembersController(BaseController):
                 results = results.with_polymorphic('*')
             for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
                 results = search_filters[key](results, kwargs[key])
+            results = results.order_by(Member.name.asc())
         
         # Sort
         if 'sort' not in kwargs:
             sort = 'name'
         # TODO: use kwargs['sort']
-        results = results.order_by(Member.name.asc())
+        
         # NOOO!! ... this should be at the end ... and sort all fields ... but this is cant be done with Follow objects ... rarara ... bollox
 
         
