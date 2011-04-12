@@ -54,6 +54,17 @@ server {
 	if ($host = civicboom.com) {
 		rewrite ^(.*) $cb_scheme://www.civicboom.com$1 permanent;
 	}
+
+	# if    https:                    ok
+	# elif  http and (api or widget): ok
+	# else:                           redirect to https
+	if ($cb_sh !~ "(https://[a-z]+|http://api|http://widget).*") {
+		rewrite ^(.*) https://$host$1 permanent;
+	}
+
+	# if   https:         cookies allowed
+	# elif using the API: cookies allowed
+	# else:               strip cookies
 	if ($cb_sh !~ "(https://[a-z]+|http://api).*") {
 		proxy_pass_header Set-Cookie;
 	}

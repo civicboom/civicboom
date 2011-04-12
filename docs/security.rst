@@ -10,9 +10,10 @@ Client Side
 
 Network
 ~~~~~~~
-- The communication between the browser and our server is encrypted
-  throughout (using HTTPS), so login sessions can't be hijacked, and
-  data (eg assignments and responses) can't be sniffed
+- www. and m. are fully encrypted
+- widget. is unencrypted, but no private data is ever sent
+- api. is optionally encrypted (we assume developers know what they're doing)
+
   - Most websites only encrypt the transfer of username & password,
     then send the data back and forth in the clear; this is like
     having an armoured garage, then parking your convertible outside
@@ -50,20 +51,16 @@ Backups
 
 Data locations
 ~~~~~~~~~~~~~~
-- Live web site:
-  - Bytemark's datacenter in Manchester
+- Live web site & Media:
+  - Amazon's datacenter in Dublin
 - Backups:
   - Our office in Kent
-- Media:
-  - Amazon's datacenter in Dublin
+- Extra bits:
+  - Bytemark's datacenter in Manchester
 
 
 Reliability
 ~~~~~~~~~~~
-- Currently we only have one server, so it is unreliable in several ways;
-  however, the software is designed with the future in mind, so as soon as we
-  can afford multiple servers the software will be ready to work with them.
-
 - With multiple servers, they can be taken out of action one at a time, upgrades
   done, and put back into service; that way, the service as a whole is always up
   - Alterations to the database schema require all database servers to be updated
