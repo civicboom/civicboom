@@ -179,6 +179,81 @@ class TestSettingsController(TestController):
         response_json = json.loads(response.body)
         self.assertIn(self.email_address, response) # Email address has changed
         
+    def test_change_password_unverified(self):
+        self.log_in_as('unittest')
+        num_emails = getNumEmails()
+        #Get current email address
+        response = self.app.get(url('settings', id='me', format='json')) #url(controller='settings', action="show", format='json')
+        response_json = json.loads(response.body)
+        self.email_address = response_json['data']['settings']['email']
+        self.assertTrue(self.email_address)
+        
+        #Change email address
+        response = self.app.post(
+            url('setting',id="me",format="frag"),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'email'    : u'test@example.com',
+            },
+            status=200
+        )
+        #Should send an email
+        self.assertEqual(getNumEmails(), num_emails + 1)
+        email_response = getLastEmail()
+        #Email should be sent to new address, get link
+        self.assertIn('test@example.com', email_response.email_to)
+        link = str(re.search(r'https?://(?:.*?)(/.*?)[\'"\s]', email_response.content_text+' ').group(1))
+        
+        response = self.app.get(url('settings', id='me', format='json')) #url(controller='settings', action="show", format='json')
+        
+        # Try changing password
+        response = self.app.post(
+            url('setting',id="me"),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'panel'               : u'general',
+                'password_current'    : u'password',
+                'password_new'        : u'password2',
+                'password_new_confirm': u'password2', # Passwords match
+            },
+            status=400
+        )
+        
+        # Click link
+        self.assertIn('hash', link)
+        response = self.app.get(link,status=302)
+        #Check changed
+        response = self.app.get(url('settings', id='me', format='json'))
+        response_json = json.loads(response.body)
+        self.assertIn('test@example.com', response) # Email address has changed
+        
+        num_emails = getNumEmails()
+        
+        #Change email back
+        response = self.app.post(
+            url('setting',id="me",format="frag"),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'email'    : self.email_address,
+            },
+            status=200
+        )
+        #Should send an email
+        self.assertEqual(getNumEmails(), num_emails + 1)
+        email_response = getLastEmail()
+        #Email should be sent to new address
+        self.assertIn(self.email_address, email_response.email_to)
+        link = str(re.search(r'https?://(?:.*?)(/.*?)[\'"\s]', email_response.content_text+' ').group(1))
+        self.assertIn('hash', link)
+        response = self.app.get(link,status=302)
+        #Check changed
+        response = self.app.get(url('settings', id='me', format='json'))
+        response_json = json.loads(response.body)
+        self.assertIn(self.email_address, response) # Email address has changed
+    
     def test_change_avatar(self):
         self.png1x1 = b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAAXNSR0IArs4c6QAAAApJREFUCNdj+AcAAQAA/8I+2MAAAAAASUVORK5CYII=')
         self.log_in_as('unittest')
@@ -343,6 +418,34 @@ class TestSettingsController(TestController):
                 'website'    : self.old_website,
             },
             status=200
+        )
+        
+    def test_501_actions(self):
+        self.log_in_as('unittest')
+        #Change incorrect url
+        response = self.app.post(
+            url('setting',id="me",format="frag"),
+            params={
+                '_method': 'DELETE',
+                '_authentication_token': self.auth_token,
+            },
+            status=501
+        )
+        response = self.app.post(
+            url('setting',id="new",format="frag"),
+            params={
+                '_method': 'NEW',
+                '_authentication_token': self.auth_token,
+            },
+            status=501
+        )
+        response = self.app.post(
+            url('setting',id="create",format="frag"),
+            params={
+                '_method': 'CREATE',
+                '_authentication_token': self.auth_token,
+            },
+            status=501
         )
         
 #    def these_tests_are_old(self):
