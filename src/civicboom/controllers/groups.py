@@ -207,6 +207,7 @@ class GroupsController(BaseController):
         
         # Call settings controller to update group settings!
         kwargs['panel'] = 'general'
+        
         settings_update(group, private=True, **kwargs)
         
         c.logged_in_persona = logged_in_persona

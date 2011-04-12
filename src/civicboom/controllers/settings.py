@@ -44,7 +44,7 @@ add_setting('name'                      , _('Display name' )             , group
 add_setting('username'                  , _('Username' )                 , group='general/general'    , weight=1  , type='display'         , who='member'                                                    )
 add_setting('description'               , _('Description'  )             , group='general/general'    , weight=2  , type='longstring'      , info=_('Tell the world about you and your interests.')          )
 
-add_setting('default_role'              , _('Default Role')              , group='general/group'      , weight=3  , type='enum'            , who='group' , value='observer,contributor,editor,administrator' )
+add_setting('default_role'              , _('Default Role')              , group='general/group'      , weight=3  , type='enum'            , who='group' , value='observer,contributor,editor,admin'         )
 add_setting('join_mode'                 , _('Join Mode')                 , group='general/group'      , weight=4  , type='enum'            , who='group' , value='public,invite_and_request,invite'          )
 add_setting('member_visibility'         , _('Member Visibility')         , group='general/group'      , weight=5  , type='enum'            , who='group' , value='public,private'                            )
 add_setting('default_content_visibility', _('Default Content Visibility'), group='general/group'      , weight=6  , type='enum'            , who='group' , value='public,private'                            )

@@ -323,8 +323,6 @@ class Member(Base):
         return action_list
 
     def send_message(self, m, delay_commit=False):
-        # TODO
-        # This should be a non blocking action and que this in the worker
         import civicboom.lib.communication.messages as messages
         messages.send_message(self, m, delay_commit)
 
@@ -699,28 +697,6 @@ class Group(Member):
     def delete(self):
         from civicboom.lib.database.actions import del_group
         return del_group(self)
-
-    def send_message(self, m, delay_commit=False):
-        """
-        recursivly create a list of all sub members from all sub groups
-        it creates the list putting all members 
-        """
-        Member.send_message(self, m, delay_commit=delay_commit)
-        return
-        # NEVER EXECUTE BELOW UNTIL WE HAVE AUTOMATED TESTS
-        def add_member_list(group, members={}):
-            for member in [mr.member for mr in group.members_roles if mr.member not in members]:
-                if   member.__type__ == 'user':
-                    members[member] = None
-                elif member.__type__ == 'group':
-                    add_member_list(member, members)
-            return members
-        # Get list of all members and sub members - list is guaranteeded to
-        #  - contain only users
-        #  - have no duplicates
-        for member in add_member_list(self).keys():
-            member.send_message(m, delay_commit=False)
-        
     
 
 class UserLogin(Base):

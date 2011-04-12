@@ -49,6 +49,9 @@ log = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 
 def upgrade_user_to_group(member_to_upgrade_to_group, new_admins_username, new_group_username=None):
+    """
+    SQL level calls to upgrade a member to a group
+    """
     to_group   = get_member(member_to_upgrade_to_group)
     admin_user = get_member(new_admins_username)
     
