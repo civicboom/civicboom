@@ -21,5 +21,8 @@
     )}
 
 	${_(u"Website © Indiconews Ltd, articles © their respective authors")}
+    % if config['development_mode']:
+        <b>Dev</b>
+    % endif
 </div>
 

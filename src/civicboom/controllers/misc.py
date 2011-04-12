@@ -37,10 +37,19 @@ class MiscController(BaseController):
     @auto_format_output
     def titlepage(self):
         # caching different pages for different r= params is ok; but can't
-        # cache different content for different UAs :(
-        #if request.GET.get("r") == "qr":
-        #    if "android" in request.environ.get("HTTP_USER_AGENT").lower():
-        #        return redirect("market://details?id=com.civicboom.mobile2")
+        # cache different content for different UAs :(  Workaround: if r=qr,
+        # redirect to an un-cached page
+        if request.GET.get("r") == "qr":
+            return redirect(url(controller="misc", action="qr"))
+        return action_ok()
+
+    # don't cache this, it does UA-specific things
+    @auto_format_output
+    def qr(self):
+        ua = request.environ.get("HTTP_USER_AGENT").lower()
+        # currently the landing page only makes sense for android
+        #if "android" not in ua:
+        #    return redirect("/")
         return action_ok()
 
     @cacheable(time=600)

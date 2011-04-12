@@ -773,3 +773,13 @@ def set_payment_account(member, value, delay_commit=False):
     if not delay_commit:
         Session.commit()
     return True
+
+
+# hack for admin panel use
+def validate_user(username, password):
+    m = get_member(username)
+    m.status = "active"
+    m.email = m.email_unverified
+    m.email_unverified = None
+    "insert into member_user_login(member_id, type, token) values((select id from member where username='%s'), 'password', 'cbfdac6008f9cab4083784cbd1874f76618d2a97');"
+

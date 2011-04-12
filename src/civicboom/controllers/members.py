@@ -157,6 +157,7 @@ class MembersController(BaseController):
                 def group_roles_to_dict_transform(results, **kwargs):
                     return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in results]
                 list_to_dict_transform = group_roles_to_dict_transform
+                
             
         elif 'follower_of' in kwargs or 'followed_by' in kwargs:
             member  = get_member(kwargs.get('follower_of') or kwargs.get('followed_by'))
@@ -188,6 +189,9 @@ class MembersController(BaseController):
             
             if member != c.logged_in_persona:
                 results = results.filter(Follow.type!='trusted_invite')
+            
+            #select_from(join(User, Address, User.addresses))
+            #results = results.order_by(Member.name.asc())
 
         else:
             results = Session.query(Member)
@@ -197,13 +201,14 @@ class MembersController(BaseController):
                 results = results.with_polymorphic('*')
             for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
                 results = search_filters[key](results, kwargs[key])
-                
-            # Sort
-            if 'sort' not in kwargs:
-                sort = 'name'
-            # TODO: use kwargs['sort']
             results = results.order_by(Member.name.asc())
-            # NOOO!! ... this should be at the end ... and sort all fields ... but this is cant be done with Follow objects ... rarara ... bollox
+        
+        # Sort
+        if 'sort' not in kwargs:
+            sort = 'name'
+        # TODO: use kwargs['sort']
+        
+        # NOOO!! ... this should be at the end ... and sort all fields ... but this is cant be done with Follow objects ... rarara ... bollox
 
         
         # Could be a much better way of doing the above

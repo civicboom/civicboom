@@ -1,5 +1,5 @@
 from civicboom.model.member  import Member, User, Group, GroupMembership
-from civicboom.model.content import Content, Tag, License
+from civicboom.model.content import Content, Tag, License, MemberAssignment
 from civicboom.model.media   import Media
 from civicboom.model.message import Message
 from civicboom.model.meta    import Session
@@ -176,7 +176,7 @@ def get_follower_type(member, follower):
         return None
 
 def get_assigned_to(content, member):
-    content = get_group(content)
+    content = get_content(content)
     member  = get_member(member)
 
     if not (content and member):

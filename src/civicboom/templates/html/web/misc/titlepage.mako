@@ -169,7 +169,7 @@
 
 <%def name="new_front_key_elems()">
 	<%def name="new_front_widget()">
-		<iframe name='Civicboom' title='Civicboom Widget' src='http://widget.civicboom.com/contents?w_base_list=content_and_boomed&amp;w_color_font=000&amp;w_color_action_bar=ddd&amp;w_owner=&amp;w_title=Get+involved&amp;w_color_content=eee&amp;w_width=160&amp;w_height=300&amp;w_color_border=ccc&amp;w_color_header=ccc/content_and_boomed?w_title=Get%20involved&w_color_border=ccc&w_color_header=ccc&w_color_action_bar=ddd&w_color_content=ffffff&w_color_font=000&w_width=160&w_height=250' width='160' height='250' scrolling='no' frameborder='0'></iframe>
+		<iframe name='Civicboom' title='Civicboom Widget' src='https://widget.civicboom.com/contents?w_base_list=content_and_boomed&amp;w_color_font=000&amp;w_color_action_bar=ddd&amp;w_owner=&amp;w_title=Get+involved&amp;w_color_content=eee&amp;w_width=160&amp;w_height=300&amp;w_color_border=ccc&amp;w_color_header=ccc/content_and_boomed?w_title=Get%20involved&w_color_border=ccc&w_color_header=ccc&w_color_action_bar=ddd&w_color_content=ffffff&w_color_font=000&w_width=160&w_height=250' width='160' height='250' scrolling='no' frameborder='0'></iframe>
 	</%def>
 	<div style="width: 70em; margin: 0 auto 0 auto;">
 		<div style="float: left;"><img src="/images/misc/mobile_android.png" /></div>
