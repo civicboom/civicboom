@@ -42,9 +42,9 @@ server {
 	if ($http_x_forwarded_for) {
 		set $cb_remote_addr $http_x_forwarded_for;
 	}
+	set $cb_sh "$cb_scheme://$host";
 
 	# proxy settings
-	proxy_pass_header Set-Cookie;
 	proxy_set_header Host $host;
 	proxy_set_header X-Real-IP $cb_remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -53,6 +53,9 @@ server {
 	# redirect civicboom.com to www.civicboom.com
 	if ($host = civicboom.com) {
 		rewrite ^(.*) $cb_scheme://www.civicboom.com$1 permanent;
+	}
+	if ($cb_sh !~ "(https://[a-z]+|http://api).*") {
+		proxy_pass_header Set-Cookie;
 	}
 
 	# by default, proxy to pylons
