@@ -53,6 +53,9 @@ class TestMiscController(TestController):
     def test_qr(self):
         response = self.app.get(url(controller='misc', action='qr'))
 
+    def test_upgrade_plans(self):
+        response = self.app.get(url(controller='misc', action='upgrade_plans'))
+
     def test_get_widget(self):
         # FIXME: check for things in response
         response = self.app.get(url(controller='misc', action='get_widget'))

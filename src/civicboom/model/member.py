@@ -12,8 +12,9 @@ from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref, dynamic_loader
 from sqlalchemy.schema import DDL
 
-import urllib, hashlib, copy
-
+import urllib
+import hashlib
+import copy
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -54,6 +55,7 @@ def has_role_required(role_required, role_current):
         return (permission_index_required - permission_index_current + 1) > 0
     except:
         return False
+
 
 def lowest_role(a,b):
     """
