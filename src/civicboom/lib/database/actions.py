@@ -48,6 +48,62 @@ log = logging.getLogger(__name__)
 # Member Actions
 #-------------------------------------------------------------------------------
 
+def upgrade_user_to_group(member_to_upgrade_to_group, new_admins_username, new_group_username=None):
+    to_group   = get_member(member_to_upgrade_to_group)
+    admin_user = get_member(new_admins_username)
+    
+    if not to_group or to_group.__type__!='user':
+        # ERROR - is not user!
+        return
+    
+    if get_member(new_group_username):
+        # ERROR - new group username already taken
+        return
+    
+    if admin_user:
+        # ERROR - admin username already taken
+        return
+    
+    # Create new admin user
+    admin_user = User()
+    admin_user.username          = new_admins_username
+    admin_user.status            = 'active'
+    admin_user.email             = to_group.email
+    admin_user.email_unverifyed  = to_group.email_unverifyed
+    Session.add(admin_user)
+    Session.commit() # needs to be commited to get id
+    
+    sql_cmds = []
+    
+    if new_group_username:
+        sql_cmds += [
+            Member.__table__.update().where(Member.__table__.c.id==to_group.id).values(username=new_group_username),
+        ]
+    
+    sql_cmds += [
+        # UPDATE  member set username='gradvine', __type__='group' WHERE id=533;
+        Member.__table__.update().where(Member.__table__.c.id==to_group.id).values(__type__='group'),
+        
+        # Reassign the login details from the old member to the new admin user
+        UserLogin.__table__.update().where(UserLogin.__table__.c.member_id==to_group.id).values(member_id=admin_user.id),
+        
+        # INSERT admin_user as as admin of the group
+        GroupMembership.__table__.insert().values(group_id=to_group.id, member_id=admin_user.id, role='admin', status='active'),
+        
+        # DELETE the matching user record that pairs with the member record
+        User.__table__.delete().where(id.__table__.c.id == to_group.id),
+        
+        # INSERT matching group record to pair group name
+        Group.__table__.insert().values(id=to_group.id, join_mode='invite', member_visibility='private', default_content_visibility='public', default_role='admin', num_members=1),
+    ]
+    
+    for sql_cmd in sql_cmds:
+        Session.execute(sql_cmd)
+    Session.commit()
+    
+    
+
+
 def is_follower(a,b):
     """
     True if 'b' is following 'a'
