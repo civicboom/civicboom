@@ -31,16 +31,28 @@ server {
 	ssl_session_cache    shared:SSL:10m;
 	ssl_session_timeout  10m;
 
+	# normalise the environment
+	set $cb_scheme $scheme;
+	if ($http_x_forwarded_proto) {
+		# if we are behind an amazon load balancer, we only see HTTP
+		# with "https" stored in x-forwarded-proto
+		set $cb_scheme $http_x_forwarded_proto;
+	}
+	set $cb_remote_addr $remote_addr;
+	if ($http_x_forwarded_for) {
+		set $cb_remote_addr $http_x_forwarded_for;
+	}
+
 	# proxy settings
 	proxy_pass_header Set-Cookie;
 	proxy_set_header Host $host;
-	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Real-IP $cb_remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-	proxy_set_header X-Url-Scheme $scheme;
+	proxy_set_header X-Url-Scheme $cb_scheme;
 
 	# redirect civicboom.com to www.civicboom.com
 	if ($host = civicboom.com) {
-		rewrite ^(.*) $scheme://www.civicboom.com$1 permanent;
+		rewrite ^(.*) $cb_scheme://www.civicboom.com$1 permanent;
 	}
 
 	# by default, proxy to pylons
@@ -51,7 +63,7 @@ server {
 		#
 		# DC_CACHING lines are removed by debconf if caching = false
 		proxy_cache "cb"; # DC_CACHING
-		proxy_cache_key "$scheme://$host$uri-cookie:$cookie_logged_in"; # DC_CACHING
+		proxy_cache_key "$cb_scheme://$host$uri-cookie:$cookie_logged_in"; # DC_CACHING
 		proxy_pass http://backends;
 	}
 
