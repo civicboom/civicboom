@@ -22,11 +22,11 @@ class SettingActionsController(SettingsController):
     /settings/me/general   equiv of /settings/me/panel?panel=general
     etc.
     """
-    def __getattribute__(self,name):
+    def __getattribute__(self, name):
         attr = None
         try:
             attr = SettingsController.__getattribute__(self, name)
-        except:
+        except AttributeError:
             pass
         if attr:
             return attr
