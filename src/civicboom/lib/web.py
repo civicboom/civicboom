@@ -178,6 +178,7 @@ def session_get(key):
         return session[key]
     return None
 
+
 def session_keys():
     return [key for key in session.keys() if '_expire' not in key]
 
@@ -208,7 +209,7 @@ def cookie_remove(key):
     return value
 
 
-def cookie_set(key, value, duration=None, secure=None):
+def cookie_set(key, value, duration=3600*24*365, secure=None):
     """
     duration in seconds
     """
@@ -369,6 +370,7 @@ def _find_template(result, type):
     
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
+
 def _find_template_basic(controller=None, action=None, format=None):
     controller = controller or c.controller
     action = action or c.action
@@ -392,7 +394,8 @@ def _find_template_basic(controller=None, action=None, format=None):
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
             return path+".mako"
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (format, controller, action, "", "\n".join(paths)))
-        
+
+
 def setup_format_processors():
     def render_template(result, type):
         overlay_status_message(c.result, result)

@@ -198,6 +198,8 @@ icon_type_descriptions = {
 #    'account_plus': _('plus account') ,
 #    'account_corp': _('corporate account') ,
 }
+
+
 def icon(icon_type, description=None, class_=''):
     if not description and icon_type in icon_type_descriptions:
         description = icon_type_descriptions[icon_type]
@@ -230,7 +232,7 @@ def time_ago(from_time):
     if isinstance(from_time, basestring):
         from_time = api_datestr_to_datetime(from_time)
     time_ago = time_ago_in_words(from_time, granularity='minute', round=True)
-    match = re.match("\d+ [a-z]+", time_ago)
+    match = re.match("^(less than ){0,1}\d+ [a-z]+", time_ago)
     if match:
         part = match.group(0)
         part = part.replace("minute", "min")
@@ -466,6 +468,7 @@ regex_urls = [
     ('content', re.compile(r'(?:.*?)/contents/(\d+)')                ),
     ('member' , re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "$]')     ),
 ]
+
 
 def get_object_from_action_url(action_url=None):
     """

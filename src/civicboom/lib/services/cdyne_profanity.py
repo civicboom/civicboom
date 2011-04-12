@@ -15,7 +15,7 @@ filter_operation_address = "http://ws.cdyne.com/ProfanityWS/Profanity.asmx/Simpl
 #filter_operation_address = "http://ws.cdyne.com/ProfanityWS/Profanity.asmx/ProfanityFilter"
 
 
-def profanity_check(content):
+def profanity_check(content):  # pragma: no cover - online services aren't active in test mode
     """
     Try to check if there is profanity
     if the server is not available return None and log error

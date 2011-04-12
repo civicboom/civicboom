@@ -176,10 +176,10 @@ class AccountController(BaseController):
         id = kwargs.get('id')
         username = id
         if not username or username == 'me':
-             username = c.logged_in_persona.username
-             id = 'me'
+            username = c.logged_in_persona.username
+            id = 'me'
         user_type = 'group'
-        user = get_member(username)  
+        user = get_member(username)
         if isinstance(user, User):
             user_type = 'member'
             if not user == c.logged_in_user:
@@ -281,4 +281,3 @@ class AccountController(BaseController):
             set_password(user, kwargs['password_new'])
             set_flash_message(_('password has been set'))
             redirect(url(controller='account', action='signin'))
-

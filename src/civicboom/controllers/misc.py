@@ -7,7 +7,6 @@ from urllib import quote_plus, unquote_plus
 import os
 
 
-
 class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
@@ -37,10 +36,19 @@ class MiscController(BaseController):
     @auto_format_output
     def titlepage(self):
         # caching different pages for different r= params is ok; but can't
-        # cache different content for different UAs :(
-        #if request.GET.get("r") == "qr":
-        #    if "android" in request.environ.get("HTTP_USER_AGENT").lower():
-        #        return redirect("market://details?id=com.civicboom.mobile2")
+        # cache different content for different UAs :(  Workaround: if r=qr,
+        # redirect to an un-cached page
+        if request.GET.get("r") == "qr":
+            return redirect(url(controller="misc", action="qr"))
+        return action_ok()
+
+    # don't cache this, it does UA-specific things
+    @auto_format_output
+    def qr(self):
+        ua = request.environ.get("HTTP_USER_AGENT").lower()
+        # currently the landing page only makes sense for android
+        #if "android" not in ua:
+        #    return redirect("/")
         return action_ok()
 
     @cacheable(time=600)
@@ -100,7 +108,7 @@ class MiscController(BaseController):
             @authenticate_form
             def submit_feedback(**kwargs):
                 if c.logged_in_user:
-                    kwargs['from'] = (c.logged_in_user.email or c.logged_in_user.email_unverified) # if isinstance(c.logged_in_user, User) else 'noreply@civicboom.com' # AllanC - should never happen, was just a one off problem when user was upgraded by hand
+                    kwargs['from'] = (c.logged_in_user.email or c.logged_in_user.email_unverified)
                 else:
                     if kwargs.get('simple_captcha') != 'xyz':
                         raise action_error('invalid capture')
@@ -111,7 +119,13 @@ class MiscController(BaseController):
                         kwargs['env'] += "%s:%s\n" % (key,value)
                 if kwargs.get('referer'):
                     kwargs['referer'] = unquote_plus(kwargs['referer'])
-                content_text = "%(referer)s\n\n%(category)s\n\n%(from_)s\n\n%(message)s\n\n%(env)s" % dict(message=kwargs.get('message'), env=unquote_plus(kwargs.get('env')), from_=kwargs.get('from'), category=kwargs.get('category'), referer=kwargs.get('referer') )
+                content_text = "%(referer)s\n\n%(category)s\n\n%(from_)s\n\n%(message)s\n\n%(env)s" % dict(
+                    message=kwargs.get('message'),
+                    env=unquote_plus(kwargs.get('env')),
+                    from_=kwargs.get('from'),
+                    category=kwargs.get('category'),
+                    referer=kwargs.get('referer')
+                )
                 send_email(config['email.contact'], subject=_('_site_name feedback'), content_text=content_text, reply_to=kwargs['from'])
                 return action_ok(_("Thank you for your feedback"), code=201)
             return submit_feedback(**kwargs)

@@ -86,12 +86,13 @@ stats:
 
 pep8:
 	# 2XX = whitespace inside lines
+	# 291 = whitespace at end of line
 	# 293 = whitespace at end of line (warning only if blank line)
 	# 301 = expected 1 blank line, found 0
 	# 303 = too many blank lines
 	# 501 = line too long
 	# 701 = multiple statments one line (colons)
-	pep8 -r --ignore=E2,E301,E303,E501,E701,W293 civicboom
+	pep8 -r --ignore=E2,E301,E303,E501,E701,W293,W291 civicboom
 
 api-doc:
 	../admin_scripts/gendoc -i civicboom/controllers/ -t ../docs -o civicboom/public/api.html

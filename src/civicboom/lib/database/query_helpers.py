@@ -14,6 +14,7 @@ limit_default = config['search.default.limit.contents']
 # Public
 #-------------------------------------------------------------------------------
 
+
 def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
 
     def apilist(results, count=0, limit=0, offset=0, obj_type=None):
@@ -64,9 +65,3 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
         )
 
     raise Exception('unsupported list type')
-
-
-#-------------------------------------------------------------------------------
-# Private
-#-------------------------------------------------------------------------------
-

@@ -342,6 +342,7 @@ class BaseController(WSGIController):
         # is still there then caching could activate by accident. As such, if
         # the logged_in cookie is missing, force a logout.
         if session_get('logged_in_user') and not request.cookies.get("logged_in"):
+            log.warning("logged_in_user is set, but logged_in is missing")
             session.invalidate()
 
         # Login ----------------------------------------------------------------

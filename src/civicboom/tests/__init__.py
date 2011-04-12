@@ -340,3 +340,80 @@ class TestController(TestCase):
             if self.logged_in_as != old_user:
                 self.log_in_as(old_user, old_password)
         return response_json['data']['list']['items'][0]
+    
+    def invite_user_to(self, type, id, user):
+        # Test that we can access the invite page
+        response = self.app.get(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': type,
+                'id': id,
+                'format': 'json',
+            },
+            status=200
+        )
+        # Test that searching for user that does not exist returns 0
+        response = self.app.get(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': type,
+                'id': id,
+                'format': 'json',
+                'search-name': user + 'does_not_exist_ever'
+            },
+            status=200
+        )
+        response_json = json.loads(response.body)
+        self.assertEqual(response_json['data']['invite_list']['count'], 0)
+        # Search for user and check we get less results
+        response = self.app.post(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': type,
+                'id': id,
+                'format': 'json',
+                'search-name': user
+            },
+            status=200
+        )
+        response_json = json.loads(response.body)
+        self.assertGreaterEqual(response_json['data']['invite_list']['count'], 1)
+        self.assertLess(response_json['data']['invite_list']['count'], 10)
+        # Add user to invite list
+        response = self.app.post(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': type,
+                'id': id,
+                'format': 'json',
+                'search-name': user,
+                'add-'+user: user
+            },
+            status=200
+        )
+        response_json = json.loads(response.body)
+        self.assertIn(user, response_json['data']['invitee_list']['items']['0']['username'])
+        # Generate extra invite parameters
+        invitees = response_json['data']['invitee_list']['items']
+        invitee_list = dict([('inv-'+key, invitees[key]['username']) for key in invitees.keys()])
+        params = {
+                '_authentication_token': self.auth_token,
+                'invite': type,
+                'id': id,
+                'format': 'json',
+                'search-name': user,
+                'submit-invite': 'Invite',
+            }
+        params.update(invitee_list)
+        response = self.app.post(
+            '/invite',
+            params=params,
+            status=200
+        )
+        response_json = json.loads(response.body)
+        self.assertEqual(response_json['data']['invitee_list']['count'], 0)
+        self.assertEqual(response_json['status'], 'ok')
