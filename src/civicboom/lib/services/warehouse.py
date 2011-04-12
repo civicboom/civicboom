@@ -42,7 +42,7 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
             os.makedirs(os.path.dirname(dest))
         shutil.copy(src, dest)
 
-    elif config["warehouse"] == "s3":
+    elif config["warehouse"] == "s3":  # pragma: no cover - online services aren't active in test mode
         connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
         bucket = connection.get_bucket(config["s3_bucket_name"])
 
@@ -63,15 +63,15 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
             key.set_contents_from_filename(src, headers=metadata)
             key.set_acl('public-read')
 
-    elif config["warehouse"] == "ssh":
+    elif config["warehouse"] == "ssh":  # pragma: no cover - online services aren't active in test mode
         log.error("SSH warehouse not implemented")
         #scp = SCPClient(SSHTransport("static.civicboom.com"))
         #scp.put(src, "~/staticdata/%s/%s/%s/%s" % (warehouse, hash[0:1], hash[2:3], hash))
 
-    elif config["warehouse"] == "null":
+    elif config["warehouse"] == "null":  # pragma: no cover - online services aren't active in test mode
         pass
 
-    else:
+    else:  # pragma: no cover - online services aren't active in test mode
         log.warning("Unknown warehouse type: "+config["warehouse"])
 
 
