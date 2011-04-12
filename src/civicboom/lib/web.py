@@ -278,10 +278,6 @@ class action_error(Exception):
 
 
 def overlay_status_message(master_message, new_message):
-    """
-
-    """
-    
     # Setup master message
     if not master_message:
         master_message = {}
@@ -306,7 +302,6 @@ def overlay_status_message(master_message, new_message):
     # Tidy message whitespace
     master_message['message'] = master_message['message'].strip()
 
-    
     master_message['data'].update(new_message.get('data') or {})
         
     # Pass though all keys that are not already in master
