@@ -480,7 +480,7 @@ class SettingsController(BaseController):
                         setattr(user, setting_name, settings[setting_name].join(''))
                     else:
                         user.config[setting_name] = settings[setting_name].join('')
-                        print setting_name
+                        
                     del settings[setting_name]
                     for setting_value in setting_set[1]:
                         if setting_name+'-'+setting_value in settings:
