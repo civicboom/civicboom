@@ -14,7 +14,7 @@
 <%
     settings_meta = d['settings_meta']
     panels = d['panels']
-    if c.result.get('user_type') == 'member':
+    if c.result.get('user_type') == 'user':
     	panels['janrain'] = {'weight':100, 'title':'Link additional login accounts', 'panel':'link_janrain'}
     panelorder = sorted(panels, key=panels.__getitem__)
     

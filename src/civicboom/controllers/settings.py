@@ -41,7 +41,7 @@ def add_setting(name, description, value='', group=None, **kwargs):
     settings_base[setting['name']]=setting
     
 add_setting('name'                      , _('Display name' )             , group='general/general'    , weight=0  , type='string'                                                                            )
-add_setting('username'                  , _('Username' )                 , group='general/general'    , weight=1  , type='display'         , who='member'                                                    )
+add_setting('username'                  , _('Username' )                 , group='general/general'    , weight=1  , type='display'         , who='user'                                                      )
 add_setting('description'               , _('Description'  )             , group='general/general'    , weight=2  , type='longstring'      , info=_('Tell the world about you and your interests.')          )
 
 add_setting('default_role'              , _('Default Role')              , group='general/group'      , weight=3  , type='enum'            , who='group' , value='observer,contributor,editor,administrator' )
@@ -50,10 +50,10 @@ add_setting('member_visibility'         , _('Member Visibility')         , group
 add_setting('default_content_visibility', _('Default Content Visibility'), group='general/group'      , weight=6  , type='enum'            , who='group' , value='public,private'                            )
 
 add_setting('website'                   , _('Website'      )             , group='general/contact'    , weight=7  , type='url'             , info=_('Optional: add your website or blog etc. to your profile'))
-add_setting('email'                     , _('Email Address')             , group='general/contact'    , weight=8  , type='email'           , who='member'                                                    )
-add_setting('password_current'          , _('Current password')          , group='general/password'   , weight=9  , type='password_current', who='member'                                                    )
-add_setting('password_new'              , _('New password')              , group='general/password'   , weight=10 , type='password'        , who='member'                                                    )
-add_setting('password_new_confirm'      , _('New password again')        , group='general/password'   , weight=11 , type='password'        , who='member'                                                    )
+add_setting('email'                     , _('Email Address')             , group='general/contact'    , weight=8  , type='email'           , who='user'                                                      )
+add_setting('password_current'          , _('Current password')          , group='general/password'   , weight=9  , type='password_current', who='user'                                                      )
+add_setting('password_new'              , _('New password')              , group='general/password'   , weight=10 , type='password'        , who='user'                                                      )
+add_setting('password_new_confirm'      , _('New password again')        , group='general/password'   , weight=11 , type='password'        , who='user'                                                      )
 #add_setting('twitter_username'          , _('Twitter username')          , group='aggregation')
 #add_setting('twitter_auth_key'          , _('Twitter authkey' )          , group='aggregation')
 #add_setting('broadcast_instant_news'    , _('Twitter instant news')      , group='aggregation', type='boolean')
@@ -246,41 +246,37 @@ class SettingsController(BaseController):
         #if isinstance(user, User):
         #    user_type = 'member'
         user = get_member(id)
-        if isinstance(user, User):
-            user_type = 'member'
-        if isinstance(user, Group):
-            user_type = 'group'
         
         
         raise_if_current_role_insufficent('admin', group=user)
         
-        data = build_meta(user, user_type, panel)
+        data = build_meta(user, user.__type__, panel)
         
         # Janrain HACK
-        if user_type == 'member' and panel == 'link_janrain':
+        if user.__type__ == 'user' and panel == 'link_janrain':
             return action_ok(
                 data=data,
                 username=id,
-                user_type=user_type,
+                user_type=user.__type__,
                 template="settings/panel/link_janrain",
             )
             
         if panel not in data['panels']:
-            raise action_error(code=404, message="This panel is not applicable for a " + user_type)
+            raise action_error(code=404, message="This panel is not applicable for a " + user.__type__)
         
         settings_meta  = data['settings_meta']
         # Populate settings dictionary for this user
-        settings       = copy_user_settings(settings_meta, user, user_type)
+        settings       = copy_user_settings(settings_meta, user, user.__type__)
                     
         data['settings'] = settings
         
-        template = find_template(panel, user_type)
+        template = find_template(panel, user.__type__)
         
         return action_ok(
             data=data,
             panel=panel,
             username=id,
-            user_type=user_type,
+            user_type=user.__type__,
             template="settings/panel/"+template,
         )
 
@@ -355,10 +351,6 @@ class SettingsController(BaseController):
         #user = get_member(username)
         
         user = get_member(id)
-        if isinstance(user, User):
-            user_type = 'member'
-        if isinstance(user, Group):
-            user_type = 'group'
         
         raise_if_current_role_insufficent('admin', group=user)
 
@@ -370,7 +362,7 @@ class SettingsController(BaseController):
             del kwargs['panel']
         
         # Find template from panel and user_type
-        template = find_template(panel, user_type)
+        template = find_template(panel, user.__type__)
         
         # variables to store template and redirect urel
         panel_template = ('settings/panel/'+template).encode('ascii','ignore')
@@ -396,9 +388,9 @@ class SettingsController(BaseController):
         if kwargs.get('avatar') == '':
             del kwargs['avatar']
         
-        data = build_meta(user, user_type, panel)
+        data = build_meta(user, user.__type__, panel)
         
-        data['settings'] = copy_user_settings(data['settings_meta'], user, user_type)
+        data['settings'] = copy_user_settings(data['settings_meta'], user, user.__type__)
         
         data['settings'].update(kwargs)
         
@@ -407,7 +399,7 @@ class SettingsController(BaseController):
         # Setup custom schema for this update
         # List validators required
         validators = {}
-        for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings_base[setting_name.split('-')[0]].get('who', user_type) == user_type ]:
+        for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings_base[setting_name.split('-')[0]].get('who', user.__type__) == user.__type__ ]:
             log.debug("adding validator: %s" % validate_fieldname)
             validators[validate_fieldname] = settings_validators[validate_fieldname]
         # Build a dynamic validation schema based on these required fields and validate the form
