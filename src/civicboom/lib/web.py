@@ -208,7 +208,7 @@ def cookie_remove(key):
     return value
 
 
-def cookie_set(key, value, duration=None, secure=None):
+def cookie_set(key, value, duration=3600*24*365, secure=None):
     """
     duration in seconds
     """
