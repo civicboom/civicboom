@@ -38,6 +38,11 @@ server {
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Url-Scheme $scheme;
 
+	# redirect civicboom.com to www.civicboom.com
+	if ($host = civicboom.com) {
+		rewrite ^(.*) $scheme://www.civicboom.com$1 permanent;
+	}
+
 	# by default, proxy to pylons
 	location / {
 		# $request_uri is what the browser sends, $uri is the currently active
@@ -74,16 +79,3 @@ server {
 		deny all;
 	}
 }
-
-server {
-	# listen options are inherited from where the are first defined,
-	# so if two listen commands say eg "use ssl" then we get an error
-	# about duplicate options
-	listen 80;    listen [::]:80;
-	listen 443;   listen [::]:443;
-	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
-	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
-	server_name civicboom.com;
-	rewrite ^(.*) $scheme://www.civicboom.com$1 permanent;
-}
-
