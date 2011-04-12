@@ -511,8 +511,8 @@ def auto_format_output(target, *args, **kwargs):
     try:
         result = target(*args, **kwargs) # Execute the wrapped function
     except action_error as ae:
-        if c.format == "python":
-            raise
+        if not auto_format_output_flag: #c.format == "python":
+            raise ae
         else:
             result = ae.original_dict
             if c.format=="html" or c.format=="redirect":
