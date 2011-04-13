@@ -178,6 +178,7 @@ def session_get(key):
         return session[key]
     return None
 
+
 def session_keys():
     return [key for key in session.keys() if '_expire' not in key]
 
@@ -277,10 +278,6 @@ class action_error(Exception):
 
 
 def overlay_status_message(master_message, new_message):
-    """
-
-    """
-    
     # Setup master message
     if not master_message:
         master_message = {}
@@ -305,7 +302,6 @@ def overlay_status_message(master_message, new_message):
     # Tidy message whitespace
     master_message['message'] = master_message['message'].strip()
 
-    
     master_message['data'].update(new_message.get('data') or {})
         
     # Pass though all keys that are not already in master
@@ -369,6 +365,7 @@ def _find_template(result, type):
     
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
+
 def _find_template_basic(controller=None, action=None, format=None):
     controller = controller or c.controller
     action = action or c.action
@@ -392,7 +389,8 @@ def _find_template_basic(controller=None, action=None, format=None):
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
             return path+".mako"
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (format, controller, action, "", "\n".join(paths)))
-        
+
+
 def setup_format_processors():
     def render_template(result, type):
         overlay_status_message(c.result, result)
@@ -511,8 +509,8 @@ def auto_format_output(target, *args, **kwargs):
     try:
         result = target(*args, **kwargs) # Execute the wrapped function
     except action_error as ae:
-        if c.format == "python":
-            raise
+        if not auto_format_output_flag: #c.format == "python":
+            raise ae
         else:
             result = ae.original_dict
             if c.format=="html" or c.format=="redirect":

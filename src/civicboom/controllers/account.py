@@ -176,10 +176,10 @@ class AccountController(BaseController):
         id = kwargs.get('id')
         username = id
         if not username or username == 'me':
-             username = c.logged_in_persona.username
-             id = 'me'
+            username = c.logged_in_persona.username
+            id = 'me'
         user_type = 'group'
-        user = get_member(username)  
+        user = get_member(username)
         if isinstance(user, User):
             user_type = 'member'
             if not user == c.logged_in_user:
@@ -202,7 +202,7 @@ class AccountController(BaseController):
             associate_janrain_account(c.logged_in_persona, c.auth_info['profile']['providerName'], c.auth_info['profile']['identifier'])
             set_flash_message(action_ok("Account successfully linked to _site_name"))
         else:
-            set_flash_message(action_error("Error linking accounts"))
+            set_flash_message(action_error("Error linking accounts").original_dict)
             
         redirect(url(redirect_url))
 
@@ -220,7 +220,7 @@ class AccountController(BaseController):
             if verify_email_hash(id, request.params['hash'], commit=True):
                 set_flash_message(action_ok(_('email address has been successfully validated')))
             else:
-                set_flash_message(action_error(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again')))
+                set_flash_message(action_error(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again')).original_dict)
             redirect('/')
 
 
@@ -281,4 +281,3 @@ class AccountController(BaseController):
             set_password(user, kwargs['password_new'])
             set_flash_message(_('password has been set'))
             redirect(url(controller='account', action='signin'))
-

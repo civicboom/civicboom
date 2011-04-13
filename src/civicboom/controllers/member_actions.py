@@ -408,5 +408,3 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         """
         return content_search(creator=id, list='assignments_previous',**kwargs)
-
-

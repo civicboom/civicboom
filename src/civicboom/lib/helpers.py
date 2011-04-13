@@ -198,6 +198,8 @@ icon_type_descriptions = {
 #    'account_plus': _('plus account') ,
 #    'account_corp': _('corporate account') ,
 }
+
+
 def icon(icon_type, description=None, class_=''):
     if not description and icon_type in icon_type_descriptions:
         description = icon_type_descriptions[icon_type]
@@ -466,6 +468,7 @@ regex_urls = [
     ('content', re.compile(r'(?:.*?)/contents/(\d+)')                ),
     ('member' , re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "$]')     ),
 ]
+
 
 def get_object_from_action_url(action_url=None):
     """
