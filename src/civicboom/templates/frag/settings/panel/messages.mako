@@ -11,7 +11,7 @@
     ${h.form(h.url('setting', id=c.result.get('username', 'me')), method='PUT')}
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
     <%
-        panel = c.result['panel']
+        panel = c.result.get('panel', 'messages')
         settings_meta = d['settings_meta']
         settings_meta = dict( [ (setting['name'], setting) for setting in settings_meta.values() if setting['group'].split('/')[0] == panel] )
         
@@ -23,7 +23,7 @@
         
         setting_group_order = sorted(setting_group_order.keys(), key=setting_group_order.__getitem__)
         
-        notification_types = settings_meta[0]['value'].split(',')
+        notification_types = settings_meta[0]['value']
         
         user = get_user
         
@@ -42,12 +42,13 @@
             route = d['settings'][name]
           else:
             route = ''
-          if (tech in route) and opt:
-            return 'selected="selected"'
-          elif (not tech in route) and not opt:
-            return 'selected="selected"'
-          else:
-            return ''
+          if route:
+	          if (tech in route) and opt:
+	            return 'selected="selected"'
+	          elif (not tech in route) and not opt:
+	            return 'selected="selected"'
+	          else:
+	            return ''
         
         notif_names = { 'n': 'Notification',
                          'e': 'Email'
@@ -76,9 +77,6 @@
         </tr>
       % endfor
         <tr><td>
-             <a class="button" href    = "${h.url('settings')}" title   = "${_('Back to Settings')}">
-              <span>${_('Back to Settings')}</span>
-             </a>
         </td><td colspan="2"><input class="button" type="submit" value="Save" style="width: 100%"></td></tr>
       </table>
     % endfor

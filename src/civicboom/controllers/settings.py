@@ -11,6 +11,9 @@ Only the form fields that are sent are validated and saved
 
 from civicboom.lib.base import *
 from civicboom.model import User, Group
+
+from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
+
 import civicboom.lib.services.warehouse as wh
 import hashlib
 import copy
@@ -44,10 +47,10 @@ add_setting('name'                      , _('Display name' )             , group
 add_setting('username'                  , _('Username' )                 , group='general/general'    , weight=1  , type='display'         , who='user'                                                      )
 add_setting('description'               , _('Description'  )             , group='general/general'    , weight=2  , type='longstring'      , info=_('Tell the world about you and your interests.')          )
 
-add_setting('default_role'              , _('Default Role')              , group='general/group'      , weight=3  , type='enum'            , who='group' , value='observer,contributor,editor,administrator' )
-add_setting('join_mode'                 , _('Join Mode')                 , group='general/group'      , weight=4  , type='enum'            , who='group' , value='public,invite_and_request,invite'          )
-add_setting('member_visibility'         , _('Member Visibility')         , group='general/group'      , weight=5  , type='enum'            , who='group' , value='public,private'                            )
-add_setting('default_content_visibility', _('Default Content Visibility'), group='general/group'      , weight=6  , type='enum'            , who='group' , value='public,private'                            )
+add_setting('default_role'              , _('Default Role')              , group='general/group'      , weight=3  , type='enum'            , who='group' , value=group_member_roles.enums                    )
+add_setting('join_mode'                 , _('Join Mode')                 , group='general/group'      , weight=4  , type='enum'            , who='group' , value=group_join_mode.enums                       )
+add_setting('member_visibility'         , _('Member Visibility')         , group='general/group'      , weight=5  , type='enum'            , who='group' , value=group_member_visibility.enums               )
+add_setting('default_content_visibility', _('Default Content Visibility'), group='general/group'      , weight=6  , type='enum'            , who='group' , value=group_content_visibility.enums              )
 
 add_setting('website'                   , _('Website'      )             , group='general/contact'    , weight=7  , type='url'             , info=_('Optional: add your website or blog etc. to your profile'))
 add_setting('email'                     , _('Email Address')             , group='general/contact'    , weight=8  , type='email'           , who='user'                                                      )
@@ -74,7 +77,7 @@ ignore_generators = ['msg_test',
 i = 500
 for gen in generators:
     if not gen[0] in ignore_generators:
-        add_setting('route_'+gen[0], str(gen[2]).capitalize(), group='messages/messages', weight=i, type="set", value="n,e", default=gen[1])
+        add_setting('route_'+gen[0], str(gen[2]).capitalize(), group='messages/messages', weight=i, type="set", value=('n','e'), default=gen[1])
         i = i + 1
 
 config_var_list = [
@@ -110,12 +113,12 @@ settings_validators = {}
 for setting in settings_base.values():
     # Special handling for sets (custom Set validator and also separated so we can handle form submissions
     if setting['type'] == 'set':
-        for val in setting['value'].split(','):
+        for val in setting['value']:
             settings_validators[setting['name']+'-'+val] = formencode.validators.OneOf((val, ''))
-        settings_validators[setting['name']] = civicboom.lib.form_validators.base.SetValidator(set=setting['value'].split(',')) #formencode.validators.Set(setting['value'].split(','))
+        settings_validators[setting['name']] = civicboom.lib.form_validators.base.SetValidator(set=setting['value']) #formencode.validators.Set(setting['value'].split(','))
     # Special handling for enums
     elif setting['type'] == 'enum':
-        settings_validators[setting['name']] = formencode.validators.OneOf(setting['value'].split(','))
+        settings_validators[setting['name']] = formencode.validators.OneOf(setting['value'])
     # Anything else from default type_validators
     else:
         settings_validators[setting['name']] = type_validators.get(setting['type'])
@@ -273,11 +276,11 @@ class SettingsController(BaseController):
         template = find_template(panel, user.__type__)
         
         return action_ok(
-            data=data,
-            panel=panel,
-            username=id,
-            user_type=user.__type__,
-            template="settings/panel/"+template,
+            data     = data,
+            panel    = panel,
+            username = id,
+            user_type= user.__type__,
+            template = "settings/panel/"+template,
         )
 
     #---------------------------------------------------------------------------
@@ -471,16 +474,18 @@ class SettingsController(BaseController):
             # AllanC - todo - need message to say check email
         
         # Save validated Sets: Needs cleaning up!
-        for setting_set in [(setting_name, settings_base[setting_name].get('value','').split(',')) for setting_name in settings_base.keys() if settings_base[setting_name].get('type') == 'set']:
+        for setting_set in [(setting_name, settings_base[setting_name].get('value',[])) for setting_name in settings_base.keys() if settings_base[setting_name].get('type') == 'set']:
             setting_name = setting_set[0]
             # If storing using the api route_this = 'en', route_that = 'n', etc.
             if setting_name in settings:
-                if validators.get(setting_name):
+                if setting_name in validators:
                     if hasattr(user, setting_name):
-                        setattr(user, setting_name, settings[setting_name].join(''))
+                        setattr(user, setting_name, settings[setting_name])
                     else:
-                        user.config[setting_name] = settings[setting_name].join('')
-                        
+                        if settings[setting_name] == None:
+                            settings[setting_name] = ['']
+                        user.config[setting_name] = ''.join(settings[setting_name])
+                                                                                    
                     del settings[setting_name]
                     for setting_value in setting_set[1]:
                         if setting_name+'-'+setting_value in settings:
@@ -532,5 +537,6 @@ class SettingsController(BaseController):
         return action_ok(
             message = _('Settings updated') ,
             data    = data ,
+            panel   = panel,
             template= panel_template ,
         )
