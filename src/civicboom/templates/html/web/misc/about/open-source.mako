@@ -99,7 +99,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 	&copy; The PostgreSQL Global Development Group
 
 <p>Cache -
-	<a href="http://www.memcache.org/">Memcache</a> / <a href="http://memcachedb.org/">MemcacheDB</a> -
+	<a href="http://redis.io/">Redis</a>
 	BSD
 
 </div>

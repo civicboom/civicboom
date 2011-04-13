@@ -75,8 +75,3 @@ def add_job(job):
     if not _workers:
         start_worker()
     _worker_queue.put(job)
-
-
-    
-
-

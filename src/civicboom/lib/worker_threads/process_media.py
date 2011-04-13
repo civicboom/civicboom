@@ -37,10 +37,10 @@ def _reformed(name, ext):
 
 
 def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
-    import memcache
-    m               = memcache.Client(config['service.memcache.server'].split(), debug=0)
-    memcache_key    = str("media_processing_"+file_hash)
-    memcache_expire = int(config['media.processing.expire_memcache_time'])
+    import redis
+    m               = redis.Redis(config['service.redis.server'])
+    status_key    = str("media_processing_"+file_hash)
+    status_expire = int(config['media.processing.status_expire_time'])
     
     # temp hack while bulk importing
     from boto.s3.connection import S3Connection
@@ -56,7 +56,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     # AllanC - in time the memcache could be used to update the user with percentage information about the status of the processing
     #          This is returned to the user with a call to the media controller
 
-    m.set(memcache_key, "encoding media", memcache_expire)
+    m.setex(status_key, "encoding media", status_expire)
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
         size = (int(config["media.media.width"]), int(config["media.media.height"]))
@@ -65,13 +65,13 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
             im = im.convert("RGB")
         im.thumbnail(size, Image.ANTIALIAS)
         im.save(processed.name, "JPEG")
-        m.set(memcache_key, "copying image", memcache_expire)
+        m.setex(status_key, "copying image", status_expire)
         wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "jpg"))
         processed.close()
     elif file_type == "audio":
         processed = tempfile.NamedTemporaryFile(suffix=".ogg")
         _ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
-        m.set(memcache_key, "copying audio", memcache_expire)
+        m.setex(status_key, "copying audio", status_expire)
         wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "ogg"))
         processed.close()
     elif file_type == "video":
@@ -86,7 +86,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
             "-s", "%dx%d" % (size[0], size[1]),
             processed.name
         ])
-        m.set(memcache_key, "copying video", memcache_expire)
+        m.setex(status_key, "copying video", status_expire)
         #log.debug("START copying processed video to warehouse %s:%s (%dKB)" % (file_name, processed.name, os.path.getsize(processed.name)/1024))
         wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "flv"))
         #log.debug("END   copying processed video to warehouse %s:%s" % (file_name, processed.name))
@@ -97,7 +97,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         processed.close()
 
     # Get the thumbnail processed and uploaded ASAP
-    m.set(memcache_key, "thumbnail", memcache_expire)
+    m.setex(status_key, "thumbnail", status_expire)
     if file_type == "image":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
         size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
@@ -127,7 +127,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
 
     # least important, the original
     #log.debug("START copying original media to warehouse %s:%s (%dKB)" % (file_name, tmp_file, os.path.getsize(tmp_file)/1024) )
-    m.set(memcache_key, "copying original video", memcache_expire)
+    m.setex(status_key, "copying original video", status_expire)
     wh.copy_to_warehouse(tmp_file, "media-original", file_hash, file_name)
     #log.debug("END   copying original media to warehouse %s:%s" % (file_name, tmp_file) )
 
@@ -135,6 +135,6 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     if delete_tmp:
         os.unlink(tmp_file)
 
-    m.delete(memcache_key)
-    log.debug("deleting memcache %s" % memcache_key)
+    m.delete(status_key)
+    log.debug("deleting status_key %s" % status_key)
 
