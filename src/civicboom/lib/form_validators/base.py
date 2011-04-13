@@ -196,14 +196,14 @@ class SetValidator(validators.FancyValidator):
         }
     def _to_python(self, value, state):
         value = value.strip()
-        values = value.split(separator)
+        values = value.split(self.separator)
         if len(values) == 0 and not_empty:
             raise formencode.Invalid(self.message("empty", state), value, state)
         elif len(values) == 0:
             return values
         
         for value in values:
-            if not value in set:
+            if not value in self.set:
                 raise formencode.Invalid(self.message("invalid", state), value, state)
         return values
 

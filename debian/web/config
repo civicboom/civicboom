@@ -5,8 +5,6 @@
 if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
   db_input high cb-website-web/backends || true
   db_go
-  db_input high cb-website-web/caching || true
-  db_go
   db_input high cb-website-web/timing || true
   db_go
 fi
