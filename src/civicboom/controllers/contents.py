@@ -382,7 +382,6 @@ class ContentsController(BaseController):
         
         # GregM: Set private flag to user or hub setting (or public as default)
         content.private = kwargs.get('private', False)
-        print content.private
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:

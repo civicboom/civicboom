@@ -3,7 +3,7 @@
 		<title>Civicboom QR Landing Page</title>
 <%
 mode = "android"
-ua = request.environ.get("HTTP_USER_AGENT").lower()
+ua = request.environ.get("HTTP_USER_AGENT",'').lower()
 if "android" in ua:
 	mode = "android"
 %>
