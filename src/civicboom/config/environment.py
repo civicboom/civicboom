@@ -1,9 +1,9 @@
 """Pylons environment configuration"""
 import os
 
+import pylons
 from pylons.configuration import PylonsConfig
 from mako.lookup import TemplateLookup
-#from pylons import config
 from pylons.error import handle_mako_error
 from sqlalchemy import engine_from_config
 
@@ -15,6 +15,15 @@ from civicboom.config.routing import make_map
 from civicboom.model import init_model
 from civicboom.lib.civicboom_init import init as civicboom_init  # This will trigger a set of additional initalizers
 
+# for setting up the redis backend to beaker
+import beaker
+import civicboom.lib.redis_ as redis_
+
+# for connecting to the worker queue
+import platform
+from redis import Redis
+import civicboom.lib.worker as worker
+
 
 def load_environment(global_conf, app_conf):
     """
@@ -23,8 +32,6 @@ def load_environment(global_conf, app_conf):
     """
     config = PylonsConfig()
 
-    import beaker
-    import civicboom.lib.redis_ as redis_
     beaker.cache.clsmap['ext:redis'] = redis_.RedisManager
 
     # Pylons paths
@@ -40,7 +47,6 @@ def load_environment(global_conf, app_conf):
     config['routes.map']         = make_map(config)
     config['pylons.app_globals'] = app_globals.Globals(config)
 
-    import pylons
     pylons.cache._push_object(config['pylons.app_globals'].cache)
 
     config['pylons.h'] = civicboom.lib.helpers
@@ -90,9 +96,17 @@ def load_environment(global_conf, app_conf):
 
     # worker and websetup.py both try to access pylons.config before it is
     # officially ready -- so make it unofficially ready and pray (HACK)
-    from pylons import config as pylons_config
     for k, v in list(config.items()):
-        pylons_config[k] = v
+        pylons.config[k] = v
+
+    if pylons.config['worker.queue'] == "inline":
+        worker.init_queue(None)
+    elif pylons.config['worker.queue'] == "threads":
+        worker.start_worker()
+    elif pylons.config['worker.queue'] == "redis":
+        worker.init_queue(redis_.RedisQueue(Redis(config['service.redis.server']), platform.node()))
+    else:
+        log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
 
     civicboom_init() # This will tirgger a set of additional initalizers
 

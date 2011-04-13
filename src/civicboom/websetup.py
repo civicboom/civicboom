@@ -7,8 +7,6 @@ from civicboom.model import meta
 from civicboom.model.meta import Base, Session
 from civicboom.model import License, Tag
 
-from civicboom.lib import worker
-
 import pylons.test
 
 import logging
@@ -195,7 +193,5 @@ CREATE TRIGGER update_rating
         init_base_data()
 
     log.info("Successfully set up tables")
-
-    worker.stop_worker()
 
     log.info("Setup complete")

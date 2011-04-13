@@ -1,4 +1,5 @@
 import logging
+import json
 from beaker.exceptions import InvalidCacheBackendError
 from beaker.container import NamespaceManager, Container
 from beaker.synchronization import file_synchronizer
@@ -16,6 +17,27 @@ except:
     import pickle
 
 log = logging.getLogger(__name__)
+
+
+class RedisQueue(object):
+    """An abstract FIFO queue"""
+    def __init__(self, redis, queue_id=None):
+        self.r = redis
+        self.queue_id = "queue:%s" % (queue_id or self.r.incr("queue_space"))
+
+    def put(self, element):
+        """Push an element to the tail of the queue"""
+        self.r.rpush(self.queue_id, json.dumps(element))
+
+    def get(self):
+        """Pop an element from the head of the queue"""
+        return json.loads(self.r.blpop(self.queue_id)[1])
+
+    def qsize(self):
+        return self.r.llen(self.queue_id)
+
+    def task_done(self):
+        pass
 
 
 class NoSqlManager(NamespaceManager):
