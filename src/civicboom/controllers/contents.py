@@ -580,7 +580,7 @@ class ContentsController(BaseController):
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
             # GregM: Content can now stay private after publishing :)
-            #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
+            content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
             
             # Notifications ----------------------------------------------------
             m = None
