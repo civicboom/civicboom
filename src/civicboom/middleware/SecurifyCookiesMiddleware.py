@@ -44,9 +44,8 @@ class SecurifyCookiesMiddleware(object):
                 # set a secure-as-possible cookie
                 if k.lower() == "set-cookie":
                     if not static:
-                        if config['security.disallow_https_cookie_in_http']:
-                            if "; secure" not in v and environ['wsgi.url_scheme']=="https":
-                                v = v + "; secure"
+                        if "; secure" not in v and environ['wsgi.url_scheme'] == "https":
+                            v = v + "; secure"
                         if "; httponly" not in v:
                             v = v + "; httponly"
                         new_headers.append((k, v))

@@ -110,29 +110,6 @@ def is_valid_user(u):
 # Custom Authentication
 #-------------------------------------------------------------------------------
 
-# Todo - look into how session is verifyed - http://pylonshq.com/docs/en/1.0/sessions/#using-session-in-secure-forms
-#        what is the secure form setting for?
-
-# AllanC - these should look at config['ssl']
-#          do we always want logged_in users to always use HTTPS?
-#          what about the https() decorator on signin paying attention to config['ssl']
-protocol_for_login   = "https"
-protocol_after_login = "https"
-if 'https' in config:
-    if   config['security.https'] == 'default_when_logged_in':
-        pass
-    elif config['security.https'] == 'disabled':
-        protocol_for_login   = "http"
-        protocol_after_login = "http"
-        log.warn('https disabled')
-    elif config['security.https'] == 'login_process_only':
-        protocol_after_login = "http"
-    elif config['security.https'] == 'enforce_when_logged_in':
-        # TODO:
-        # AllanC - this should be equivelent of putting https on the top of every method call, we force logged in users to use https by forcefully redirecting them
-        log.info('config[security.https]=enforce_when_logged_in is set and is currenlty not implemented')
-    
-
 @decorator
 def authorize(_target, *args, **kwargs):
     """
@@ -158,10 +135,10 @@ def authorize(_target, *args, **kwargs):
         # If request was a browser - prompt for login
             #raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
         if c.format=="redirect":
-            session_set('login_action_referer', current_referer(protocol=protocol_after_login), login_expire_time)
+            session_set('login_action_referer', current_referer(), login_expire_time)
             # The redirect auto formater looked for this and redirects as appropriate
         if c.format == "html" or c.format == "redirect":
-            login_redirect_url = current_url(protocol=protocol_after_login)
+            login_redirect_url = current_url()
             if 'signout' in login_redirect_url: ## AllanC - bugfix - impaticent people who click signout beofre the page is loaded, dont allow signout as an actions!!
                 login_redirect_url = None
             if login_redirect_url:
@@ -179,7 +156,7 @@ def authorize(_target, *args, **kwargs):
                     login_redirect_action = quote_plus(login_redirect_action)
                     session_set('login_redirect'       , login_redirect_url    , login_expire_time) # save timestamp with this url, expire after x min, if they do not complete the login process
                     session_set('login_redirect_action', login_redirect_action , login_expire_time)
-            return redirect(url(controller='account', action='signin', protocol=protocol_for_login)) #This uses the from_widget url call to ensure that widget actions preserve the widget env
+            return redirect(url(controller='account', action='signin')) #This uses the from_widget url call to ensure that widget actions preserve the widget env
         
         # If API request - error unauthorised
         else:
