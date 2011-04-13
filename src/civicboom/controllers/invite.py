@@ -18,7 +18,7 @@ group_actions_controller  = GroupActionsController()
 
 
 def check_member(member):
-    if isinstance(member, Group):
+    if member.__type__ == 'group':
         membership = member.get_membership(c.logged_in_user)
         return (has_role_required('editor', membership.role) and membership.status == 'active')
     else:
@@ -38,7 +38,7 @@ search_limit = 6
 invite_types = {
     'group' : {
         'key'    : 'member',
-        'type'   : Group,
+        'type'   : 'group',
         'get'    : get_member,
         'show'   : members_controller.show,
         'check'  : check_member,
@@ -47,7 +47,7 @@ invite_types = {
     },
     'assignment' : {
         'key'    : 'content',
-        'type'   : AssignmentContent,
+        'type'   : 'assignment',
         'get'    : get_content,
         'show'   : contents_controller.show,
         'check'  : check_assignment,
@@ -115,7 +115,7 @@ class InviteController(BaseController):
         
         # Check item type
         if type.get('type'):
-            if not isinstance(item, type['type']):
+            if item.__type__ != type['type']:
                 raise action_error('invite not possible for this object type', code=403)
         
         # Check item permission

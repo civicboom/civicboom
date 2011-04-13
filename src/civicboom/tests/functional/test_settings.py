@@ -488,7 +488,7 @@ class TestSettingsController(TestController):
         
     def test_reflected_action(self):
         self.log_in_as('unittest')
-        response = self.app.get('/'+url('setting_actions', id="me", action="general", format='json'), status=200)
+        response = self.app.get(url('setting_action', id="me", action="general", format='json'), status=200)
         
     def test_set_popup_seen(self):
         response = self.app.post(
@@ -528,7 +528,7 @@ class TestSettingsController(TestController):
         # Check no janrain
         response = self.app.get(url('settings', id="me", panel="link_janrain", format='json'), status=404)
         # Check general settings are correct
-        response = self.app.get('/'+url('setting_actions', id="me", action="general", format='json'), status=200)
+        response = self.app.get(url('setting_action', id="me", action="general", format='json'), status=200)
         assert 'member_visibility' in response.body
         
         response = self.app.delete(

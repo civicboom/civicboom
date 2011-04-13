@@ -117,6 +117,13 @@ class TestAssignAcceptResponseCycleController(TestController):
             status=200
         )
         
+        # Test 2nd time fail
+        response = self.app.post(
+            url('content_action', action='approve'    , id=self.assignment_response_id_1, format='json'),
+            params={'_authentication_token': self.auth_token,},
+            status=403
+        )
+        
         # Check that the emails have been generated and sent to the correct users once approved
         self.assertEqual(getNumEmails(), num_emails + 2)
         emails_sent_when_approved = [
@@ -135,6 +142,13 @@ class TestAssignAcceptResponseCycleController(TestController):
             status=200
         )
         
+        # Test 2nd time fail
+        response = self.app.post(
+            url('content_action', action='disassociate', id=self.assignment_response_id_2, format='json'),
+            params={'_authentication_token': self.auth_token,},
+            status=403
+        )
+        
         # Seen -----------------------------------------------------------------
         
         response = self.app.post(
@@ -142,7 +156,6 @@ class TestAssignAcceptResponseCycleController(TestController):
             params={'_authentication_token': self.auth_token,},
             status=200
         )
-        
         
         # Check Approved and Dissassociate -------------------------------------
         
