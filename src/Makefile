@@ -8,23 +8,25 @@ GIT_TAG    := $(shell git describe)
 
 help:
 	# Usage: make <target>, where target is
-	# site       -- i18n + js + css + libs (this should be done after git clone)
-	# i18n       -- compile the translations
-	# i18n-fr    -- generate a machine-translated french site
-	# js         -- compress javascript into _combined.head.js and foot.js
-	# css        -- compress folders of css into single files
-	# test-db    -- create a blank database and fill it with test data
-	# live-db    -- create a blank database and fill it with live data
-	# run        -- run the site in development mode
-	# clean      -- reset the folder to clean git checkout
-	# gource     -- generate a video of developer activity
-	# profile    -- run the test suite with profiling enabled (slow)
-	# stats      -- run the interactive profile examiner
-	# pep8       -- strict syntax checking
-	# api-doc    -- build civicboom/public/api.html
-	# libs       -- fetch external libraries
-	# shell      -- python shell with the pylons environment loaded
-	# cdnpush    -- push static files to CDN
+	# site          -- i18n + js + css + libs (this should be done after git clone)
+	# i18n          -- compile the translations
+	# i18n-fr       -- generate a machine-translated french site
+	# js            -- compress javascript into _combined.head.js and foot.js
+	# css           -- compress folders of css into single files
+	# test-db       -- create a blank database and fill it with test data
+	# live-db       -- create a blank database and fill it with live data
+	# run           -- run the site in development mode
+	# clean         -- reset the folder to clean git checkout
+	# gource        -- generate a video of developer activity
+	# profile       -- run the test suite with profiling enabled (slow)
+	# stats         -- run the interactive profile examiner
+	# pep8          -- strict syntax checking
+	# api-doc       -- build civicboom/public/api.html
+	# libs          -- fetch external libraries
+	# shell         -- python shell with the pylons environment loaded
+	# cdnpush       -- push static files to CDN
+	# test          -- run all nosetests
+	# test-coverage -- run all nosetests and produce coverage html docs
 
 site: i18n js css libs
 
@@ -54,6 +56,9 @@ skel-db:
 test-db: skel-db
 	paster setup-app development.ini
 	nosetests
+
+test-coverage:
+	nosetests --with-coverage --cover-html --cover-html-dir=../coverage/
 
 test:
 	nosetests
