@@ -298,10 +298,10 @@ class ContentsController(BaseController):
         # TODO: use kwargs['sort']
         results = results.order_by(Content.update_date.desc())
         
-        def merge_snippet(content, snippet):
-            content = content.to_dict(**kwargs)
-            content['content_short'] = snippet
-            return content
+#        def merge_snippet(content, snippet):
+#            content = content.to_dict(**kwargs)
+#            content['content_short'] = snippet
+#            return content
 
         #if not union_query:
         #    results = [merge_snippet(co, sn) for co, sn in results]
