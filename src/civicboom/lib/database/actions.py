@@ -263,12 +263,14 @@ def follower_distrust(followed, follower, delay_commit=False):
         raise action_error(_('not currently following'), code=400)
     
     follow = Session.query(Follow).filter(Follow.member_id==followed.id).filter(Follow.follower_id==follower.id).one()
+    if not follow:
+        raise action_error(_('member is not a follower'), code=404)
     if follow.type == 'trusted':
         follow.type = 'normal'
     elif follow.type == 'trusted_invite':
         raise action_error(_('follower still has pending invite'), code=400)
     elif follow.type == 'normal':
-        raise action_error(_('follower was not trusted'))
+        raise action_error(_('follower was not trusted'), code=400)
     
     follower.send_message(messages.follower_distrusted(member=followed), delay_commit=True)
     

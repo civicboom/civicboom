@@ -45,7 +45,7 @@ class MiscController(BaseController):
     # don't cache this, it does UA-specific things
     @auto_format_output
     def qr(self):
-        ua = request.environ.get("HTTP_USER_AGENT").lower()
+        ua = request.environ.get("HTTP_USER_AGENT",'').lower()
         # currently the landing page only makes sense for android
         #if "android" not in ua:
         #    return redirect("/")

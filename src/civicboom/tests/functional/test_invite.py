@@ -9,6 +9,9 @@ class TestInviteController(TestController):
         self.part_create_private_group()
         self.part_create_private_assignment()
         self.part_create_private_content()
+        
+        self.part_invite_fails()
+        
         self.part_check_assignment_content_group()
         self.part_invite_assignment()
         self.part_invite_group()
@@ -72,6 +75,64 @@ class TestInviteController(TestController):
         self.log_in_as('invite_test_user')
         response = self.app.get(url('content', id=self.my_article_id,   _authentication_token=self.auth_token), status=403)
         response = self.app.get(url('content', id=self.my_assignment_id,_authentication_token=self.auth_token), status=403)
+        
+    def part_invite_fails(self):
+        self.log_in_as('unittest')
+        self.set_persona('test_private_group')
+        # Test parameters required
+        response = self.app.get(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': 'assignment',
+                'format': 'json',
+            },
+            status=500
+        )
+        response = self.app.get(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'id': 'unknown',
+                'format': 'json',
+            },
+            status=500
+        )
+        # Test 404
+        response = self.app.get(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': 'assignment',
+                'id': '99999',
+                'format': 'json',
+            },
+            status=404
+        )
+        # Test 403 No Permission
+        response = self.app.get(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': 'group',
+                'id': 'unittest',
+                'format': 'json',
+            },
+            status=403
+        )
+        # Test invite to group unittest (wrong type)
+        self.set_persona('unittest')
+        response = self.app.get(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': 'group',
+                'id': 'me',
+                'format': 'json',
+            },
+            status=403
+        )
+
     
     def part_invite_assignment(self):
         self.log_in_as('invite_test_user')
