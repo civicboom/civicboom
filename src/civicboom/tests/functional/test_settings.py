@@ -448,6 +448,97 @@ class TestSettingsController(TestController):
             status=501
         )
         
+    def test_messages(self):
+        self.log_in_as('unittest')
+        #Get current
+        response = self.app.get(url('settings', id="me", panel="messages", format='json'))
+        response_json = json.loads(response.body)
+        
+        self.old_route = response_json['data']['settings']['route_assignment_interest_withdrawn']
+        
+        for route in ['', 'e', 'n', 'n,e']:
+            print '##', route
+            response = self.app.post(
+                url('setting',id="me",format="frag"),
+                params={
+                    '_method': 'PUT',
+                    '_authentication_token': self.auth_token,
+                    'panel': 'messages',
+                    'route_assignment_interest_withdrawn': route,
+                },
+                status=200
+            )
+            response = self.app.get(url('settings', id="me", panel="messages", format='json'))
+            response_json = json.loads(response.body)
+            assert response_json['data']['settings']['route_assignment_interest_withdrawn'] == route.replace(',','')
+        response = self.app.post(
+            url('setting',id="me",format="frag"),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'panel': 'messages',
+                'route_assignment_interest_withdrawn': self.old_route,
+            },
+            status=200
+        )
+        
+    def test_janrain_page(self):
+        self.log_in_as('unittest')
+        response = self.app.get(url('settings', id="me", panel="link_janrain", format='json'), status=200)
+        
+    def test_reflected_action(self):
+        self.log_in_as('unittest')
+        response = self.app.get('/'+url('setting_actions', id="me", action="general", format='json'), status=200)
+        
+    def test_set_popup_seen(self):
+        response = self.app.post(
+            url('setting',id="me",format="json"),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'panel': 'messages',
+                'help_popup_created_user': 'True',
+            },
+            status=200
+        )
+        
+    def test_group_settings(self):
+        # general_group settings 200
+        # "general" action 200
+        # edit action 200 (panel & id)
+        # config_var_list
+        
+        self.log_in_as('unittest')
+        # Create Group
+        response = self.app.post(
+            url('groups', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'username'     : 'test_settings_group',
+                'name'         : 'Test group for settings unit tests' ,
+                'description'  : 'This group should not be visible once the tests have completed because it will be removed' ,
+                'default_role' : 'editor' ,
+                'join_mode'    : 'invite_and_request' ,
+                'member_visibility'         : 'public' , #required to test join request later
+                'default_content_visibility': 'public' ,
+            },
+            status=201
+        )
+        self.set_persona('test_settings_group')
+        # Check no janrain
+        response = self.app.get(url('settings', id="me", panel="link_janrain", format='json'), status=404)
+        # Check general settings are correct
+        response = self.app.get('/'+url('setting_actions', id="me", action="general", format='json'), status=200)
+        assert 'member_visibility' in response.body
+        
+        response = self.app.delete(
+            url('group', id='test_settings_group', format='json'),
+            params={
+                '_authentication_token': self.auth_token
+            },
+            status=200
+        )
+        
 #    def these_tests_are_old(self):
 #        return """
 #    def test_need_signin(self):
