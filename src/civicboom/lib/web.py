@@ -453,6 +453,12 @@ def setup_format_processors():
             
         #log.warning("Redirect loop detected for %s" % action_redirect)
         #return redirect("/")
+        
+    def format_ical(result):
+        abort(501)
+        
+    def format_pdf(result):
+        abort(501)
 
     return dict(
         python   = lambda result:result,
@@ -462,6 +468,8 @@ def setup_format_processors():
         html     = format_html,
         frag     = format_frag,
         redirect = format_redirect,
+        ical     = format_ical,
+        pdf      = format_pdf,
     )
 
 
@@ -483,6 +491,8 @@ def auto_format_output(target, *args, **kwargs):
             Used to generate fragments of pages for use with AJAX calls or as a component of a static page
         - PYTHON (just the plain python dict for internal calls)
         - REDIRECT (compatable old borswer action to have session message set and redirected to referer)
+        - ICAL (calender support)
+        - PDF (generate PDF for printing/archiving)
             
     Should be passed a python dictonary containing
         {
