@@ -5,8 +5,7 @@ from pylons.i18n.translation import _
 from civicboom.model.meta import Session
 from civicboom.model         import Rating
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent, Boom, Content
-from civicboom.model.member  import GroupMembership, group_member_roles, PaymentAccount, account_types, Follow
-
+from civicboom.model.member  import *
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content, update_content, update_accepted_assignment, update_member
 
@@ -49,27 +48,27 @@ log = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 
 def upgrade_user_to_group(member_to_upgrade_to_group, new_admins_username, new_group_username=None):
+    """
+    Only to be called by admins/power users
+    This handled the migration of users to groups at an SQL level
+    """
     to_group   = get_member(member_to_upgrade_to_group)
     admin_user = get_member(new_admins_username)
     
+    # Validation
     if not to_group or to_group.__type__!='user':
-        # ERROR - is not user!
-        return
-    
+        raise action_error('member_to_upgrade_to_group not a group', code=404)
     if get_member(new_group_username):
-        # ERROR - new group username already taken
-        return
-    
+        raise action_error('new_group_username already taken', code=404)    
     if admin_user:
-        # ERROR - admin username already taken
-        return
+        raise action_error('new_admins_username already taken', code=404)
     
     # Create new admin user
     admin_user = User()
     admin_user.username          = new_admins_username
     admin_user.status            = 'active'
     admin_user.email             = to_group.email
-    admin_user.email_unverifyed  = to_group.email_unverifyed
+    admin_user.email_unverifyed  = to_group.email_unverified
     Session.add(admin_user)
     Session.commit() # needs to be commited to get id
     
@@ -87,14 +86,14 @@ def upgrade_user_to_group(member_to_upgrade_to_group, new_admins_username, new_g
         # Reassign the login details from the old member to the new admin user
         UserLogin.__table__.update().where(UserLogin.__table__.c.member_id==to_group.id).values(member_id=admin_user.id),
         
-        # INSERT admin_user as as admin of the group
-        GroupMembership.__table__.insert().values(group_id=to_group.id, member_id=admin_user.id, role='admin', status='active'),
-        
         # DELETE the matching user record that pairs with the member record
-        User.__table__.delete().where(id.__table__.c.id == to_group.id),
+        User.__table__.delete().where(User.__table__.c.id == to_group.id),
         
         # INSERT matching group record to pair group name
         Group.__table__.insert().values(id=to_group.id, join_mode='invite', member_visibility='private', default_content_visibility='public', default_role='admin', num_members=1),
+        
+        # INSERT admin_user as as admin of the group
+        GroupMembership.__table__.insert().values(group_id=to_group.id, member_id=admin_user.id, role='admin', status='active'),
     ]
     
     for sql_cmd in sql_cmds:

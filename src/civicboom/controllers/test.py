@@ -196,7 +196,21 @@ class TestController(BaseController):
                 config[key] = value
                 log.info('set config[%s] = %s' % (key, value))
             return '{"%s":"%s"}' % (key, config.get(key))
-            
+
+    #---------------------------------------------------------------------------
+    # Upgrade User to Group
+    #---------------------------------------------------------------------------
+
+    @web_params_to_kwargs
+    def upgrade_user_to_group(self, **kwargs):
+        from civicboom.lib.database.actions import upgrade_user_to_group
+        upgrade_user_to_group(
+            kwargs.get('member_to_upgrade_to_group'),
+            kwargs.get('new_admins_username'),
+            kwargs.get('new_group_username')
+        )
+        redirect_to_referer()
+
 
     #---------------------------------------------------------------------------
     # Upgrade Account
