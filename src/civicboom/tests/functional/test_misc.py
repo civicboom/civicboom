@@ -22,7 +22,7 @@ class TestMiscController(TestController):
 
     def test_titlepage(self):
         response = self.app.get(url(controller='misc', action='titlepage'))
-        response = self.app.get(url(controller='misc', action='titlepage', r="qr"), code=302)
+        response = self.app.get(url(controller='misc', action='titlepage', r="qr"), status=302)
 
     def test_titlepage_cache(self):
         self.log_out()
