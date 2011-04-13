@@ -62,7 +62,7 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
         query_params += karg+"="+str(kargs[karg])
     if query_params != "":
         query_params = urllib.quote_plus("?"+query_params)
-    scheme = current_protocol() #request.environ.get('HTTP_X_URL_SCHEME', 'http')
+    scheme = current_protocol()
     return literal(
         """<iframe src="%s://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (scheme, return_url+query_params, lang)
     )
@@ -121,7 +121,7 @@ def link_to_objects(text):
 
 def wh_url(folder, filename):
     # see /docs/cdn.rst for an explanation of our CDN setup
-    proto = request.environ.get('wsgi.url_scheme', 'https')+"://"
+    proto = current_protocol()+"://"
     if folder == "public":
         if app_globals.version:
             # in production, serve from a domain without cookies, with package version as cache breaker

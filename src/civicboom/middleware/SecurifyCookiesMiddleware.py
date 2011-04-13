@@ -35,6 +35,8 @@ class SecurifyCookiesMiddleware(object):
             for k, v in headers:
                 if k.lower() == "cache-control" and "public" in v:
                     static = True
+                if k.lower() == "host" and "widget" in v:
+                    static = True
 
             new_headers = []
             for k, v in headers:
@@ -42,9 +44,8 @@ class SecurifyCookiesMiddleware(object):
                 # set a secure-as-possible cookie
                 if k.lower() == "set-cookie":
                     if not static:
-                        if config['security.disallow_https_cookie_in_http']:
-                            if "; secure" not in v and environ['wsgi.url_scheme']=="https":
-                                v = v + "; secure"
+                        if "; secure" not in v and environ['wsgi.url_scheme'] == "https":
+                            v = v + "; secure"
                         if "; httponly" not in v:
                             v = v + "; httponly"
                         new_headers.append((k, v))

@@ -49,6 +49,7 @@ server {
 	proxy_set_header X-Real-IP $cb_remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Url-Scheme $cb_scheme;
+	proxy_pass_header Set-Cookie;
 
 	# redirect civicboom.com to www.civicboom.com
 	if ($host = civicboom.com) {
@@ -58,15 +59,8 @@ server {
 	# if    https:                    ok
 	# elif  http and (api or widget): ok
 	# else:                           redirect to https
-	if ($cb_sh !~ "(https://[a-z]+|http://api|http://widget).*") {
+	if ($cb_sh !~ "^(https://|http://api|http://widget).*") {
 		rewrite ^(.*) https://$host$1 permanent;
-	}
-
-	# if   https:         cookies allowed
-	# elif using the API: cookies allowed
-	# else:               strip cookies
-	if ($cb_sh !~ "(https://[a-z]+|http://api).*") {
-		proxy_pass_header Set-Cookie;
 	}
 
 	# by default, proxy to pylons
@@ -74,10 +68,9 @@ server {
 		# $request_uri is what the browser sends, $uri is the currently active
 		# request. This is important when using SSI, as all subrequests have
 		# the same $request_uri and so they clobber eachother in the cache store.
-		#
-		# DC_CACHING lines are removed by debconf if caching = false
-		proxy_cache "cb"; # DC_CACHING
-		proxy_cache_key "$cb_scheme://$host$uri-cookie:$cookie_logged_in"; # DC_CACHING
+		proxy_cache "cb";
+		proxy_cache_key "$cb_scheme://$host$uri-cookie:$cookie_logged_in";
+		proxy_cache_bypass $cookie_nocache;
 		proxy_pass http://backends;
 	}
 
