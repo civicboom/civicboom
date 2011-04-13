@@ -5,8 +5,6 @@ class EnvironMiddleware(object):
         self.app = app
 
     def __call__(self, environ, start_response):
-        #environ['wsgi.url_scheme'] = environ.get('HTTP_X_URL_SCHEME', 'http')
-        #environ['REMOTE_ADDR']     = environ.get('HTTP_X_REAL_IP', environ.get('REMOTE_ADDR', '0.0.0.0'))
-        environ['wsgi.url_scheme'] = environ.get('HTTP_X_FORWARDED_PROTO', 'http')
-        environ['REMOTE_ADDR']     = environ.get('HTTP_X_FORWARDED_FOR', environ.get('REMOTE_ADDR', '0.0.0.0')).split(",")[0]
+        environ['wsgi.url_scheme'] = environ.get('HTTP_X_URL_SCHEME', 'http')
+        environ['REMOTE_ADDR']     = environ.get('HTTP_X_REAL_IP', environ.get('REMOTE_ADDR', '0.0.0.0'))
         return self.app(environ, start_response)
