@@ -215,8 +215,8 @@ def cookie_set(key, value, duration=3600*24*365, secure=None):
     """
     #log.debug("setting %s:%s" %(key, value))
     if secure == None:
-        secure = (request.environ['wsgi.url_scheme']=="https")
-    response.set_cookie(key, value, max_age=duration, secure=secure) #path='/', domain='example.org',
+        secure = (current_protocol() == "https")
+    response.set_cookie(key, value, max_age=duration, secure=secure, path='/', domain=request.environ.get("HTTP_HOST", ""))
 
 
 def cookie_get(key):
