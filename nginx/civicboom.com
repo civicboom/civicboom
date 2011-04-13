@@ -65,9 +65,11 @@ server {
 	# if   https:         cookies allowed
 	# elif using the API: cookies allowed
 	# else:               strip cookies
+	set $cb_sc "X-Bacon";
 	if ($cb_sh !~ "(https://[a-z]+|http://api).*") {
-		proxy_pass_header Set-Cookie;
+		set $cb_sc Set-Cookie;
 	}
+	proxy_pass_header $cb_sc;
 
 	# by default, proxy to pylons
 	location / {
