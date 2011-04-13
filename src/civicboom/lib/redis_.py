@@ -86,7 +86,7 @@ class RedisManager(NoSqlManager):
         NoSqlManager.__init__(self, namespace, url=url, data_dir=data_dir, lock_dir=lock_dir, **params)
 
     def open_connection(self, host, port, **params):
-        self.db_conn = Redis(host=host, port=int(port), **params)
+        self.db_conn = Redis(host=host, port=int(port), db=1, **params)
 
     def __contains__(self, key):
         log.debug('%s contained in redis cache (as %s) : %s'%(key, self._format_key(key), self.db_conn.exists(self._format_key(key))))
