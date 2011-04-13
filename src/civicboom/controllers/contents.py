@@ -361,7 +361,8 @@ class ContentsController(BaseController):
         if   kwargs['type'] == 'draft':
             raise_if_current_role_insufficent('contributor')
             content = DraftContent()
-            kwargs['private'] = kwargs.get('private', True) # Set drafts visability to default to private
+            # GregM: Set private flag to user or hub setting (or public as default)
+            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
         elif kwargs['type'] == 'comment':
             raise_if_current_role_insufficent('editor')
             content = CommentContent()
@@ -378,7 +379,7 @@ class ContentsController(BaseController):
         content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
-        content.private = kwargs.get('private') or (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)
+        content.private = kwargs.get('private')
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
@@ -577,7 +578,7 @@ class ContentsController(BaseController):
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
             # GregM: Content can now stay private after publishing :)
-            #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
+            content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
             
             # Notifications ----------------------------------------------------
             m = None
