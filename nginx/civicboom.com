@@ -68,10 +68,9 @@ server {
 		# $request_uri is what the browser sends, $uri is the currently active
 		# request. This is important when using SSI, as all subrequests have
 		# the same $request_uri and so they clobber eachother in the cache store.
-		#
-		# DC_CACHING lines are removed by debconf if caching = false
-		proxy_cache "cb"; # DC_CACHING
-		proxy_cache_key "$cb_scheme://$host$uri-cookie:$cookie_logged_in"; # DC_CACHING
+		proxy_cache "cb";
+		proxy_cache_key "$cb_scheme://$host$uri-cookie:$cookie_logged_in";
+		proxy_cache_bypass $cookie_nocache;
 		proxy_pass http://backends;
 	}
 

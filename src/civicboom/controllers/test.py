@@ -5,6 +5,7 @@ Locked down for use in development mode only
 """
 
 from civicboom.lib.base import *
+from civicboom.lib.web import cookie_get, cookie_set, cookie_delete
 from time import sleep, time
 
 log = logging.getLogger(__name__)
@@ -196,6 +197,14 @@ class TestController(BaseController):
                 config[key] = value
                 log.info('set config[%s] = %s' % (key, value))
             return '{"%s":"%s"}' % (key, config.get(key))
+
+    def toggle_cache(self):
+        if cookie_get("nocache"):
+            cookie_delete("nocache")
+            return "cache enabled"
+        else:
+            cookie_set("nocache", "caching disabled while this cookie exists")
+            return "cache disabled"
             
 
     #---------------------------------------------------------------------------
