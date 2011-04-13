@@ -29,6 +29,7 @@ publishable_types = ["article", "assignment"]
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 
+
 class ContentTagMapping(Base):
     __tablename__ = "map_content_to_tag"
     content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)

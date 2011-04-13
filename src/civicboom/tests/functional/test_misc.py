@@ -22,6 +22,7 @@ class TestMiscController(TestController):
 
     def test_titlepage(self):
         response = self.app.get(url(controller='misc', action='titlepage'))
+        response = self.app.get(url(controller='misc', action='titlepage', r="qr"), status=302)
 
     def test_titlepage_cache(self):
         self.log_out()
@@ -45,6 +46,15 @@ class TestMiscController(TestController):
     def test_stats(self):
         # FIXME: check JSON output
         response = self.app.get(url(controller='misc', action='stats', format="json"))
+
+    def test_opensearch(self):
+        response = self.app.get(url(controller='misc', action='opensearch', format="xml"))
+
+    def test_qr(self):
+        response = self.app.get(url(controller='misc', action='qr'))
+
+    def test_upgrade_plans(self):
+        response = self.app.get(url(controller='misc', action='upgrade_plans'))
 
     def test_get_widget(self):
         # FIXME: check for things in response

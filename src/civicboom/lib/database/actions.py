@@ -5,8 +5,7 @@ from pylons.i18n.translation import _
 from civicboom.model.meta import Session
 from civicboom.model         import Rating
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent, Boom, Content
-from civicboom.model.member  import GroupMembership, group_member_roles, PaymentAccount, account_types, Follow
-
+from civicboom.model.member  import *
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content, update_content, update_accepted_assignment, update_member
 
@@ -47,6 +46,62 @@ log = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 # Member Actions
 #-------------------------------------------------------------------------------
+
+def upgrade_user_to_group(member_to_upgrade_to_group, new_admins_username, new_group_username=None):
+    """
+    Only to be called by admins/power users
+    This handled the migration of users to groups at an SQL level
+    """
+    to_group   = get_member(member_to_upgrade_to_group)
+    admin_user = get_member(new_admins_username)
+    
+    # Validation
+    if not to_group or to_group.__type__!='user':
+        raise action_error('member_to_upgrade_to_group not a group', code=404)
+    if get_member(new_group_username):
+        raise action_error('new_group_username already taken', code=404)    
+    if admin_user:
+        raise action_error('new_admins_username already taken', code=404)
+    
+    # Create new admin user
+    admin_user = User()
+    admin_user.username          = new_admins_username
+    admin_user.status            = 'active'
+    admin_user.email             = to_group.email
+    admin_user.email_unverifyed  = to_group.email_unverified
+    Session.add(admin_user)
+    Session.commit() # needs to be commited to get id
+    
+    sql_cmds = []
+    
+    if new_group_username:
+        sql_cmds += [
+            Member.__table__.update().where(Member.__table__.c.id==to_group.id).values(username=new_group_username),
+        ]
+    
+    sql_cmds += [
+        # UPDATE  member set username='gradvine', __type__='group' WHERE id=533;
+        Member.__table__.update().where(Member.__table__.c.id==to_group.id).values(__type__='group'),
+        
+        # Reassign the login details from the old member to the new admin user
+        UserLogin.__table__.update().where(UserLogin.__table__.c.member_id==to_group.id).values(member_id=admin_user.id),
+        
+        # DELETE the matching user record that pairs with the member record
+        User.__table__.delete().where(User.__table__.c.id == to_group.id),
+        
+        # INSERT matching group record to pair group name
+        Group.__table__.insert().values(id=to_group.id, join_mode='invite', member_visibility='private', default_content_visibility='public', default_role='admin', num_members=1),
+        
+        # INSERT admin_user as as admin of the group
+        GroupMembership.__table__.insert().values(group_id=to_group.id, member_id=admin_user.id, role='admin', status='active'),
+    ]
+    
+    for sql_cmd in sql_cmds:
+        Session.execute(sql_cmd)
+    Session.commit()
+    
+    
+
 
 def is_follower(a,b):
     """
@@ -208,12 +263,14 @@ def follower_distrust(followed, follower, delay_commit=False):
         raise action_error(_('not currently following'), code=400)
     
     follow = Session.query(Follow).filter(Follow.member_id==followed.id).filter(Follow.follower_id==follower.id).one()
+    if not follow:
+        raise action_error(_('member is not a follower'), code=404)
     if follow.type == 'trusted':
         follow.type = 'normal'
     elif follow.type == 'trusted_invite':
         raise action_error(_('follower still has pending invite'), code=400)
     elif follow.type == 'normal':
-        raise action_error(_('follower was not trusted'))
+        raise action_error(_('follower was not trusted'), code=400)
     
     follower.send_message(messages.follower_distrusted(member=followed), delay_commit=True)
     

@@ -6,13 +6,6 @@ Description: What is the location of the backend servers?
  For a developer, with all packages installed on one desktop /
  laptop, the default should be fine.
 
-Template: cb-website-web/caching
-Type: boolean
-Default: false
-Description: Should the web server cache static data?
- The live server should cache data for performance, but it can be a pain
- when debugging
-
 Template: cb-website-web/timing
 Type: boolean
 Default: false

@@ -155,7 +155,7 @@ list_filters = {
     'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null())) ,
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
-    'drafts'              : lambda results: results.filter(Content.__type__=='draft') ,
+    'drafts'              : lambda results: results.filter(Content.__type__=='draft').filter(Content.creator == c.logged_in_persona) ,
     'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval=='none')),
     'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval!='none')),
 }
@@ -369,17 +369,19 @@ class ContentsController(BaseController):
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = ArticleContent()                  # Create base content
+            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         elif kwargs['type'] == 'assignment':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = AssignmentContent()               # Create base content
+            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
-        content.private = kwargs.get('private')
+        content.private = kwargs.get('private', False)
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:

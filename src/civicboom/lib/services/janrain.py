@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 service_url = 'https://rpxnow.com/api/v2/'
 
 
-def janrain(method, **kargs):
+def janrain(method, **kargs):  # pragma: no cover - online services aren't active in test mode
     """
     Make Janrain API calls from python - more info for each call at https://rpxnow.com/docs
     """

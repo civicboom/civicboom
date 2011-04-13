@@ -93,8 +93,10 @@ class AdminControllerBase(BaseController):
         result = connection.execute(query + where + order + limit, args)
         return render(prefix + "eventlog.mako", extra_vars={"events": list(result)})
 
+
 AdminController = ModelsController(AdminControllerBase,
                                    prefix_name='admin',
                                    member_name='model',
                                    collection_name='models',
                                   )
+

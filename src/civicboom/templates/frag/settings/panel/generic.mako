@@ -50,7 +50,7 @@
                 if 'type' in setting_meta:
                     setting_type  = setting_meta['type']
                 setting_value = ''
-                setting_values = setting_meta.get('value').split(',')
+                setting_values = setting_meta.get('value')
                 if setting_name[0] in d['settings']:
                     setting_value = d['settings'][setting_name[0]]
                 setting_hint = settings_hints.get(setting_name[0])

@@ -178,6 +178,7 @@ def session_get(key):
         return session[key]
     return None
 
+
 def session_keys():
     return [key for key in session.keys() if '_expire' not in key]
 
@@ -212,10 +213,10 @@ def cookie_set(key, value, duration=3600*24*365, secure=None):
     """
     duration in seconds
     """
-    #log.debug("setting %s:%s" %(key, value))
+    #print "COOKIE setting %s:%s" %(key, value)
     if secure == None:
-        secure = (request.environ['wsgi.url_scheme']=="https")
-    response.set_cookie(key, value, max_age=duration, secure=secure) #path='/', domain='example.org',
+        secure = (current_protocol() == "https")
+    response.set_cookie(key, value, max_age=duration, secure=secure, path='/') #, domain=request.environ.get("HTTP_HOST", "") # AllanC - domain remarked because firefox 3.5 was not retaining the logged_in cookie with domain localhost
 
 
 def cookie_get(key):
@@ -277,10 +278,6 @@ class action_error(Exception):
 
 
 def overlay_status_message(master_message, new_message):
-    """
-
-    """
-    
     # Setup master message
     if not master_message:
         master_message = {}
@@ -305,7 +302,6 @@ def overlay_status_message(master_message, new_message):
     # Tidy message whitespace
     master_message['message'] = master_message['message'].strip()
 
-    
     master_message['data'].update(new_message.get('data') or {})
         
     # Pass though all keys that are not already in master
@@ -369,6 +365,7 @@ def _find_template(result, type):
     
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
+
 def _find_template_basic(controller=None, action=None, format=None):
     controller = controller or c.controller
     action = action or c.action
@@ -392,7 +389,8 @@ def _find_template_basic(controller=None, action=None, format=None):
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
             return path+".mako"
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (format, controller, action, "", "\n".join(paths)))
-        
+
+
 def setup_format_processors():
     def render_template(result, type):
         overlay_status_message(c.result, result)
@@ -455,6 +453,12 @@ def setup_format_processors():
             
         #log.warning("Redirect loop detected for %s" % action_redirect)
         #return redirect("/")
+        
+    def format_ical(result):
+        abort(501)
+        
+    def format_pdf(result):
+        abort(501)
 
     return dict(
         python   = lambda result:result,
@@ -464,6 +468,8 @@ def setup_format_processors():
         html     = format_html,
         frag     = format_frag,
         redirect = format_redirect,
+        ical     = format_ical,
+        pdf      = format_pdf,
     )
 
 
@@ -485,6 +491,8 @@ def auto_format_output(target, *args, **kwargs):
             Used to generate fragments of pages for use with AJAX calls or as a component of a static page
         - PYTHON (just the plain python dict for internal calls)
         - REDIRECT (compatable old borswer action to have session message set and redirected to referer)
+        - ICAL (calender support)
+        - PDF (generate PDF for printing/archiving)
             
     Should be passed a python dictonary containing
         {
@@ -511,8 +519,8 @@ def auto_format_output(target, *args, **kwargs):
     try:
         result = target(*args, **kwargs) # Execute the wrapped function
     except action_error as ae:
-        if c.format == "python":
-            raise
+        if not auto_format_output_flag: #c.format == "python":
+            raise ae
         else:
             result = ae.original_dict
             if c.format=="html" or c.format=="redirect":

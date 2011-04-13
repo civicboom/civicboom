@@ -201,6 +201,7 @@ class MembersController(BaseController):
                 results = results.with_polymorphic('*')
             for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
                 results = search_filters[key](results, kwargs[key])
+            
             results = results.order_by(Member.name.asc())
         
         # Sort

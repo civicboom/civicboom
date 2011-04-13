@@ -278,6 +278,10 @@ class TestContentsController(TestController):
         response = self.app.get(url('contents', location='1,51,10', format="frag"))
         #self.assertIn("Here is some text", response)
 
+    def part_content_location_empty(self):
+        response = self.app.get(url('contents', location='', format="frag"))
+        #self.assertIn("Here is some text", response)
+
     def part_content_type(self):
         response = self.app.get(url('contents', type='assignment', format="frag"))
         self.assertIn("There once was", response)
@@ -443,5 +447,3 @@ class TestContentsController(TestController):
     def part_can_delete_article_owned_by_group_i_am_admin_of(self):
         pass
         #warnings.warn("test not implemented")
-    
-    

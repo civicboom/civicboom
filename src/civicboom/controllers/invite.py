@@ -16,15 +16,18 @@ members_controller        = MembersController()
 member_actions_controller = MemberActionsController()
 group_actions_controller  = GroupActionsController()
 
+
 def check_member(member):
-    if isinstance(member, Group):
+    if member.__type__ == 'group':
         membership = member.get_membership(c.logged_in_user)
         return (has_role_required('editor', membership.role) and membership.status == 'active')
     else:
         return member.id == c.logged_in_user.id
 
+
 def check_assignment(content):
     return content.editable_by(c.logged_in_persona)
+
 
 def roles_group(group):
     roles = group_member_roles.enums
@@ -35,7 +38,7 @@ search_limit = 6
 invite_types = {
     'group' : {
         'key'    : 'member',
-        'type'   : Group,
+        'type'   : 'group',
         'get'    : get_member,
         'show'   : members_controller.show,
         'check'  : check_member,
@@ -44,7 +47,7 @@ invite_types = {
     },
     'assignment' : {
         'key'    : 'content',
-        'type'   : AssignmentContent,
+        'type'   : 'assignment',
         'get'    : get_content,
         'show'   : contents_controller.show,
         'check'  : check_assignment,
@@ -60,7 +63,8 @@ invite_types = {
     },
 }
 
-def re_key (dictionary):
+
+def re_key(dictionary):
    # Re-create key numbering
     keys = sorted(dictionary.keys())
     key_map = {}
@@ -71,8 +75,6 @@ def re_key (dictionary):
             
     return dict([ (key_map[key], dictionary[key]) for key in dictionary.keys()] )
 
-def search (**kwargs):
-    pass
 
 class InviteController(BaseController):
     """
@@ -109,7 +111,7 @@ class InviteController(BaseController):
         
         # Check item type
         if type.get('type'):
-            if not isinstance(item, type['type']):
+            if item.__type__ != type['type']:
                 raise action_error('invite not possible for this object type', code=403)
         
         # Check item permission

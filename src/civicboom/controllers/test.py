@@ -5,6 +5,7 @@ Locked down for use in development mode only
 """
 
 from civicboom.lib.base import *
+from civicboom.lib.web import cookie_get, cookie_set, cookie_delete
 from time import sleep, time
 
 log = logging.getLogger(__name__)
@@ -186,6 +187,22 @@ class TestController(BaseController):
     def frag(self, **kwargs):
         return render('/test/test_frag.mako')
 
+
+    def toggle_cache(self):
+        """
+        For development, caching done by nginx can be dissabled
+        """
+        if cookie_get("nocache"):
+            cookie_delete("nocache")
+            return "cache enabled"
+        else:
+            cookie_set("nocache", "caching disabled while this cookie exists")
+            return "cache disabled"
+
+    #---------------------------------------------------------------------------
+    # runtime Config var modification
+    #---------------------------------------------------------------------------
+
     @web_params_to_kwargs
     def config_var(self, key=None, value=None):
         """
@@ -196,7 +213,20 @@ class TestController(BaseController):
                 config[key] = value
                 log.info('set config[%s] = %s' % (key, value))
             return '{"%s":"%s"}' % (key, config.get(key))
-            
+
+    #---------------------------------------------------------------------------
+    # Upgrade User to Group
+    #---------------------------------------------------------------------------
+
+    @web_params_to_kwargs
+    def upgrade_user_to_group(self, **kwargs):
+        from civicboom.lib.database.actions import upgrade_user_to_group
+        upgrade_user_to_group(
+            kwargs.get('member_to_upgrade_to_group'),
+            kwargs.get('new_admins_username'),
+            kwargs.get('new_group_username')
+        )
+        redirect_to_referer()
 
     #---------------------------------------------------------------------------
     # Upgrade Account

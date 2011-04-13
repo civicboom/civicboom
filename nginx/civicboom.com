@@ -31,22 +31,46 @@ server {
 	ssl_session_cache    shared:SSL:10m;
 	ssl_session_timeout  10m;
 
+	# normalise the environment
+	set $cb_scheme $scheme;
+	if ($http_x_forwarded_proto) {
+		# if we are behind an amazon load balancer, we only see HTTP
+		# with "https" stored in x-forwarded-proto
+		set $cb_scheme $http_x_forwarded_proto;
+	}
+	set $cb_remote_addr $remote_addr;
+	if ($http_x_forwarded_for) {
+		set $cb_remote_addr $http_x_forwarded_for;
+	}
+	set $cb_sh "$cb_scheme://$host";
+
 	# proxy settings
-	proxy_pass_header Set-Cookie;
 	proxy_set_header Host $host;
-	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Real-IP $cb_remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-	proxy_set_header X-Url-Scheme $scheme;
+	proxy_set_header X-Url-Scheme $cb_scheme;
+	proxy_pass_header Set-Cookie;
+
+	# redirect civicboom.com to www.civicboom.com
+	if ($host = civicboom.com) {
+		rewrite ^(.*) $cb_scheme://www.civicboom.com$1 permanent;
+	}
+
+	# if    https:                    ok
+	# elif  http and (api or widget): ok
+	# else:                           redirect to https
+	if ($cb_sh !~ "^(https://|http://api|http://widget).*") {
+		rewrite ^(.*) https://$host$1 permanent;
+	}
 
 	# by default, proxy to pylons
 	location / {
 		# $request_uri is what the browser sends, $uri is the currently active
 		# request. This is important when using SSI, as all subrequests have
 		# the same $request_uri and so they clobber eachother in the cache store.
-		#
-		# DC_CACHING lines are removed by debconf if caching = false
-		proxy_cache "cb"; # DC_CACHING
-		proxy_cache_key "$scheme://$host$uri-cookie:$cookie_logged_in"; # DC_CACHING
+		proxy_cache "cb";
+		proxy_cache_key "$cb_scheme://$host$uri?$args-cookie:$cookie_logged_in";
+		proxy_cache_bypass $cookie_nocache;
 		proxy_pass http://backends;
 	}
 
@@ -74,16 +98,3 @@ server {
 		deny all;
 	}
 }
-
-server {
-	# listen options are inherited from where the are first defined,
-	# so if two listen commands say eg "use ssl" then we get an error
-	# about duplicate options
-	listen 80;    listen [::]:80;
-	listen 443;   listen [::]:443;
-	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
-	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
-	server_name civicboom.com;
-	rewrite ^(.*) $scheme://www.civicboom.com$1 permanent;
-}
-

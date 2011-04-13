@@ -13,12 +13,6 @@ chown www-data:www-data /var/log/civicboom-pylons.log
 if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
 	# reset to initial state before configuring
 	cp /opt/cb/share/website-api/production.ini /opt/cb/share/website/production.ini
-	cp /opt/cb/share/website-api/crontab /etc/cron.d/cb-website-api
-
-	db_get cb-website-api/do_timed_tasks
-	if [ "$RET" = "false" ] ; then
-		rm -f /etc/cron.d/cb-website-api
-	fi
 fi
 
 db_get cb-website-api/db_main        && DB_MAIN=$RET

@@ -76,7 +76,7 @@ $('#%(name)s_name').autocomplete({
 
 class DatePickerFieldRenderer(FieldRenderer):
     def render(self):
-        value= self.value or ''
+        value = self.value or ''
         vars = dict(name=self.name, value=value.split(".")[0])
         return """
 <input id="%(name)s" name="%(name)s" type="text" value="%(value)s">
@@ -96,7 +96,7 @@ class EnumFieldRenderer(FieldRenderer):
         if self.field._columns[0].nullable:
             opts = opts + "<option value>None</option>\n"
         for o in self.field._columns[0].type.enums:  # is there a better way? :|
-            sel = " selected" if value==o else ""
+            sel = " selected" if value == o else ""
             opts = opts + ("<option value='%s'%s>%s</option>\n" % (o, sel, o.replace("_", " ")))
         vars = dict(name=self.name, opts=opts)
         return """
@@ -124,10 +124,10 @@ class LocationPickerRenderer(FieldRenderer):
 <div style="width: 100%%; height: 200px; border: 1px solid black; z-index: 0;" id="%(field_name)s_div"></div>
 <script type="text/javascript">
 $(function() {
-	map = map_picker('%(field_name)s', {
+    map = map_picker('%(field_name)s', {
         style: 'wkt',
         %(lonlat_js)s
-	});
+    });
 });
 </script>
 </div>
@@ -409,5 +409,4 @@ MediaGrid.configure(include=[
         MediaGrid.type,
         MediaGrid.attached_to,
         ])
-
 # }}}

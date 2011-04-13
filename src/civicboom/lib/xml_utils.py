@@ -62,11 +62,11 @@ def nodeToDic(node):
     return dic
 
 
-def readXMLFiletoDic(filename):
-    return nodeToDic(parse(filename))
-
-
 def readXMLStringtoDic(xml_string):
+    """
+    >>> readXMLStringtoDic("<xml>moo</xml>")
+    {u'xml': u'moo'}
+    """
     return nodeToDic(parseString(xml_string))
     
 

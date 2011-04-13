@@ -2,46 +2,55 @@ from civicboom.tests import *
 
 
 class TestAdminController(TestController):
-    #AllanC - when isignificantly changed the model so that some of the SQLAlchemy links were no longer needed, this totally broke the admin pannel
-    #       - we can decide if we need to re-instate these links if nessisary, but I would prefer that as many calls as possible used the API, but I know the admin interface is a very differnt kettle of fish
-
     def test_admin(self):
         response = self.app.get(url(controller='admin', action='models')) # "models" is the admin index
 
+
     def test_event_log(self):
         response = self.app.get(url(controller='test', action='fill_log'))
-        response = self.app.get(url(controller='admin', action='event_log'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
         self.assertIn("debug", response)
         # test searching
-        response = self.app.get(url(controller='admin', action='event_log', module='civicboom/controllers/test.py'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
-        response = self.app.get(url(controller='admin', action='event_log', line_num='20'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
-        response = self.app.get(url(controller='admin', action='event_log', username='None'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
-        response = self.app.get(url(controller='admin', action='event_log', address='127.0.0.1'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
-        response = self.app.get(url(controller='admin', action='event_log', url='http://waffle.com'), extra_environ={'HTTP_X_FORWARDED_PROTO': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', module='civicboom/controllers/test.py'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', line_num='20'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', username='None'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', address='127.0.0.1'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+        response = self.app.get(url(controller='admin', action='event_log', url='http://waffle.com'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
+
+
+    def test_admin_search(self):
+        # tests strings
+        response = self.app.get("/admin/User/models?User--username=jammy")
+        # tests ints
+        response = self.app.get("/admin/Group/models?Group--num_members=1")
+
+
+    def test_license_list(self):
+        response = self.app.get("/admin/License/models")
+
+    def test_license_edit(self):
+        response = self.app.get("/admin/License/models/1/edit?")
+
 
     def test_user_list(self):
         response = self.app.get("/admin/User/models")
 
-    #def test_admin_search(self):
-    #    # tests strings
-    #    response = self.app.get("/admin/User/models?User--username=jammy")
-    #    # tests ints
-    #    response = self.app.get("/admin/Group/models?Group--num_members=1")
+    def test_user_new(self):
+        response = self.app.get("/admin/User/models/new")
 
-    #def test_user_edit(self):
-    #    response = self.app.get("/admin/User/models/1/edit?")
+    def test_user_edit(self):
+        response = self.app.get("/admin/User/models/1/edit?")
 
-    #def test_license_list(self):
-    #    response = self.app.get("/admin/License/models")
 
-    #def test_license_edit(self):
-    #    response = self.app.get("/admin/License/models/1/edit?")
+    def test_group_list(self):
+        response = self.app.get("/admin/Group/models")
 
-    #def test_group_new(self):
-    #    response = self.app.get("/admin/Group/models/new")
+    def test_group_new(self):
+        response = self.app.get("/admin/Group/models/new")
 
-    #def test_group_edit(self):
-    #    response = self.app.get("/admin/Group/models/9/edit?")
+    def test_group_edit(self):
+        response = self.app.get("/admin/Group/models/9/edit?")
+
 
     # FIXME: these error out when the pages are empty ._.?
 
