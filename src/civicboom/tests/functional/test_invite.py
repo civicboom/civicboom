@@ -5,11 +5,14 @@ class TestInviteController(TestController):
     
     def test_all(self):
         self.sign_up_as("invite_test_user")
+        self.sign_up_as("invite_test_user_tfollower")
         self.part_create_private_group()
         self.part_create_private_assignment()
         self.part_create_private_content()
         self.part_check_assignment_content_group()
         self.part_invite_assignment()
+        self.part_invite_group()
+        self.part_invite_trusted_follower()
         
     def part_create_private_group(self):
         self.log_in_as('unittest')
@@ -67,8 +70,8 @@ class TestInviteController(TestController):
         
     def part_check_assignment_content_group(self):
         self.log_in_as('invite_test_user')
-        response = self.app.get(url('content', id=self.my_article_id), status=403)
-        response = self.app.get(url('content', id=self.my_assignment_id), status=403)
+        response = self.app.get(url('content', id=self.my_article_id,   _authentication_token=self.auth_token), status=403)
+        response = self.app.get(url('content', id=self.my_assignment_id,_authentication_token=self.auth_token), status=403)
     
     def part_invite_assignment(self):
         self.log_in_as('invite_test_user')
@@ -87,4 +90,80 @@ class TestInviteController(TestController):
             url('content', id=self.my_assignment_id),
             status=200,
         )
+        
+    def part_invite_group(self):
+        self.log_in_as('invite_test_user')
+        self.notifs_invite = self.getNumNotifications()
+        response = self.app.get(
+            url('content', id=self.my_article_id),
+            status=403,
+        )
+        self.log_in_as('unittest')
+        self.set_persona('test_private_group')
+        self.invite_user_to('group', 'me', 'invite_test_user')
+        
+        self.log_in_as('invite_test_user')
+        assert self.getNumNotifications() == self.notifs_invite + 1
+        
+        response = self.app.get(
+            url('member', id='test_private_group', format="json"),
+            status=200,
+        )
+        response_json = json.loads(response.body)
+        me_in_group = None
+        for member in response_json['data']['members']['items']:
+            if member['username'] == 'invite_test_user':
+                me_in_group = member
+        assert me_in_group != None
+        assert me_in_group['status'] == 'invite'
+        
+        self.join('test_private_group')
+        
+        response = self.app.get(
+            url('member', id='test_private_group', format="json"),
+            status=200,
+        )
+        response_json = json.loads(response.body)
+        me_in_group = None
+        for member in response_json['data']['members']['items']:
+            if member['username'] == 'invite_test_user':
+                me_in_group = member
+        assert me_in_group != None
+        assert me_in_group['status'] == 'active'
+        
+        self.set_persona('test_private_group')
+        
+        response = self.app.get(url('content', id=self.my_article_id), status=200)
+        
+    def part_invite_trusted_follower(self):
+        self.log_in_as('invite_test_user_tfollower')
+        self.notifs_invite = self.getNumNotifications()
+        response = self.app.get(
+            url('content', id=self.my_article_id),
+            status=403,
+        )
+        self.log_in_as('unittest')
+        self.set_persona('test_private_group')
+        self.invite_user_to('trusted_follower', 'me', 'invite_test_user_tfollower')
+        
+        self.log_in_as('invite_test_user_tfollower')
+        assert self.getNumNotifications() == self.notifs_invite + 1
+        
+        response = self.app.get(url('content', id=self.my_article_id), status=403)
+        
+        response = self.app.get(
+            url('member', id='test_private_group', format="json"),
+            status=200,
+        )
+        response_json = json.loads(response.body)
+        
+        assert 'follow' in response_json['data']['actions'] and 'unfollow' in response_json['data']['actions']
+        
+        self.follow('test_private_group')
+        
+        response = self.app.get(
+            url('content', id=self.my_article_id),
+            status=200,
+        )
+        #response
         
