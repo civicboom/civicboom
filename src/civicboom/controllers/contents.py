@@ -357,10 +357,6 @@ class ContentsController(BaseController):
         if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
 
-        print c.logged_in_persona.default_content_visibility
-        print c.logged_in_persona.__type__
-        print kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
-
         # Create Content Object
         if   kwargs['type'] == 'draft':
             raise_if_current_role_insufficent('contributor')
