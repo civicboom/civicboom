@@ -186,10 +186,19 @@
         ${member_includes.avatar(member, class_="thumbnail_small")}
     </td>
     <td style="padding-left: 3px">
+        ## AllanC - short term botch to add follow option to member list
+        ${h.secure_link(
+            h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect') ,
+            value           = _('Follow') ,
+            value_formatted = h.literal("<span class='icon16 i_follow' style='float:right;'></span>%s") % '',#_('Follow'),
+            title           = _("Follow %s" % member['name'] or member['username']) ,
+            json_form_complete_actions = "cb_frag_reload('members/%s');" % member['username'] ,
+        )}
+        
         <a href="${h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">
         ${member.get('name') or member.get('username')}
         </a>
-		<br><small>
+		<br/><small>
 			<!-- Following ${member['num_following']}; -->
 			% if member['type'] == 'group' and member['num_members']:
 				${member['num_followers']} followers; ${member['num_members']} members
