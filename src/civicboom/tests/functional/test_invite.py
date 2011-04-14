@@ -36,6 +36,16 @@ class TestInviteController(TestController):
         c = json.loads(response.body)
         #
         self.group_id = int(c['data']['id'])
+        
+        self.log_in_as("invite_test_user")
+        
+        response = self.app.post(
+            url('group_action', action='join', id='test_private_group', format='json') ,
+            params={
+                '_authentication_token': self.auth_token   ,
+            },
+            status=403,
+        )
     
     def part_create_private_assignment(self):
         self.log_in_as('unittest')
