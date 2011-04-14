@@ -107,11 +107,19 @@ ${widget_preview(c.widget_user_preview)}
               
               <table><tr>
               <td style="vertical-align: top; padding-right: 0.5em;">
-                
                 <fieldset><legend>${_("Size")}</legend>
                   <label style="width: 50pt">${_('Width')} </label><input type="text" name="width"  value="${c.widget['width' ]}" size="3" /><br/>
                   <label style="width: 50pt">${_('Height')}</label><input type="text" name="height" value="${c.widget['height']}" size="3" />
                 </fieldset>
+                <%doc>
+                <fieldset><legend>${_("Protocol")}</legend>
+                    ##<label>${_('Protocol')}</label>
+                    <select name='protocol'>
+                      <option value="http" >http </option>
+                      <option value="https">https</option>
+                    </select>
+                </fieldset>
+                </%doc>
               </td>
               <td style="padding-left: 6px;">
                 <fieldset><legend>${_("Colours")}</legend>
@@ -134,12 +142,13 @@ ${widget_preview(c.widget_user_preview)}
               </tr></table>
             <input type="button" value="Preview Widget" onClick="generate_widget_link();" />
             </form>
+            <p>Note: The widget can function in HTTPS is required</p>
         </td>
         <td style="width:300px">
             <p style="font-weight: bold;" class="link_widget_instructions">${_("Copy and paste this code into your website's HTML:")}</p>
             <form name="widget_creator" action="">
                 <textarea name="widget_link" class="link_widget_form_field" style="width: 300px; height: 200px;">${widget_iframe(member)}</textarea>
-            </form>      
+            </form>
         </td>
         </tr></table>
 

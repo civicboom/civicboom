@@ -1,5 +1,10 @@
 # vim:ft=conf
 
+# cache_path needs to be set globally, it doesn't work per-server :(
+proxy_cache_path /tmp/osm-cache   levels=2:2 keys_zone=osm:200m inactive=30d;
+proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:50m inactive=3m;
+proxy_temp_path  /tmp/nginx-temp;
+
 upstream backends {
 	### START MANAGED BY DEBCONF
 	# debconf will remove anything between the start and end
@@ -10,13 +15,16 @@ upstream backends {
 	### END MANAGED BY DEBCONF
 }
 
+log_format cb_timing   '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent $upstream_response_time $request_time p:$pipe';
+log_format cb_combined '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
+
 server {
 	# server stuff
 	listen 80  default;       listen [::]:80  default     ipv6only=on;
 	listen 443 default ssl;   listen [::]:443 default ssl ipv6only=on;
 	server_name *.civicboom.com;
-	access_log /var/log/nginx/civicboom.log;
-	access_log /var/log/nginx/civicboom.timing.log timing; # DC_TIMING
+	access_log /var/log/nginx/civicboom.log cb_combined;
+	access_log /var/log/nginx/civicboom.timing.log cb_timing; # DC_TIMING
 	root /opt/cb/share/website-web/;
 	error_page 500 /errors/50x.html;
 	error_page 502 /errors/502.html;
@@ -24,6 +32,14 @@ server {
 	error_page 504 /errors/504.html;
 	client_max_body_size 100m;
 	ssi on;
+
+	gzip on;
+	gzip_static on;
+	gzip_vary on;
+	gzip_http_version 1.0;
+	gzip_proxied any;
+	gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+	gzip_types text/plain text/css text/xml application/javascript application/x-javascript application/json application/rss+xml; # text/html is implied
 
 	# ssl
 	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
@@ -38,15 +54,15 @@ server {
 		# with "https" stored in x-forwarded-proto
 		set $cb_scheme $http_x_forwarded_proto;
 	}
-	set $cb_remote_addr $remote_addr;
-	if ($http_x_forwarded_for) {
-		set $cb_remote_addr $http_x_forwarded_for;
-	}
-	set $cb_sh "$cb_scheme://$host";
+
+	set_real_ip_from   10.0.0.0/8;
+	set_real_ip_from   192.168.0.0/16;
+	set_real_ip_from   127.0.0.0/8;
+	real_ip_header     X-Forwarded-For;
 
 	# proxy settings
 	proxy_set_header Host $host;
-	proxy_set_header X-Real-IP $cb_remote_addr;
+	proxy_set_header X-Real-IP $remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Url-Scheme $cb_scheme;
 	proxy_pass_header Set-Cookie;
@@ -56,10 +72,21 @@ server {
 		rewrite ^(.*) $cb_scheme://www.civicboom.com$1 permanent;
 	}
 
-	# if    https:                    ok
-	# elif  http and (api or widget): ok
-	# else:                           redirect to https
-	if ($cb_sh !~ "^(https://|http://api|http://widget).*") {
+	# redirect to https, unless things are whitelisted already
+	set $cb_security_checked "fail";
+	if ($cb_scheme = "https") {
+		set $cb_security_checked "ok";
+	}
+	if ($host ~* "^(api|widget)") {
+		set $cb_security_checked "ok";
+	}
+	if ($http_user_agent ~* "ELB-HealthChecker") {
+		set $cb_security_checked "ok";
+	}
+	if ($remote_addr = "127.0.0.1") {
+		set $cb_security_checked "ok";
+	}
+	if ($cb_security_checked != "ok") {
 		rewrite ^(.*) https://$host$1 permanent;
 	}
 
@@ -69,7 +96,7 @@ server {
 		# request. This is important when using SSI, as all subrequests have
 		# the same $request_uri and so they clobber eachother in the cache store.
 		proxy_cache "cb";
-		proxy_cache_key "$cb_scheme://$host$uri-cookie:$cookie_logged_in";
+		proxy_cache_key "$cb_scheme://$host$uri$is_args$args-cookie:$cookie_logged_in";
 		proxy_cache_bypass $cookie_nocache;
 		proxy_pass http://backends;
 	}
