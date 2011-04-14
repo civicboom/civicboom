@@ -191,6 +191,8 @@ class InviteController(BaseController):
                 invitee_list = re_key(invitee_list)
             else:
                 invitee_list = {}
+            invitee_offset = 0
+            invite_offset = 0
             
         # Process invitee list into near-proper list format
         invitee_list = {'count' : len(invitee_list),
@@ -233,19 +235,21 @@ class InviteController(BaseController):
             if search_offset < 0:
                 search_offset = 0
             pass
-        if 'search-next' in request.POST:
+        elif 'search-next' in request.POST:
             search_offset += search_limit
             pass
+        else:
+            search_offset = 0
         
         search_type = {}
         if not kwargs.get('search-type', '') == '':
-            search_type[kwargs['search-type']] = kwargs.get('id')
+            search_type[kwargs['search-type']] = c.logged_in_persona.username
         
         invite_list = members_controller.index(
             type   = None,                                      # could search for users and hubs separately kwargs.get('type')
             limit  = search_limit,
             offset = search_offset,
-            name   = kwargs.get('search-name'),
+            term   = kwargs.get('search-name'),
             exclude_members = kwargs.get('exclude-members'),
             **search_type
         )['data']['list']
