@@ -299,6 +299,20 @@ class BaseController(WSGIController):
         if hasattr(c, 'result'):
             return
         
+        # AllanC - useful for debug
+        #from pylons import session
+        #print ""
+        #print "CALL"
+        #print request.environ.get("pylons.routes_dict")
+        #print "GET"
+        #print request.GET
+        #print "POST"
+        #print request.POST
+        #print "SESSION"
+        #print session
+        #print "COOKIES"
+        #print request.cookies
+        
         # Setup globals c ------------------------------------------------------
         c.result = {'status':'ok', 'message':'', 'data':{}} # Default return object
         

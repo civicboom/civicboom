@@ -14,7 +14,7 @@
 
 <center>
 	<h1>${_("Just checking ...")}</h1>
-	<p>${_("You are about to %s on _site_name; do you want to continue?") % action_description}</p>
+	<p>${_("You are about to <b>%s</b> on _site_name; is this what you want to do?") % action_description}</p>
     
 	${h.form(c.target_url)}
 % for k, v in c.post_values.items():
