@@ -82,10 +82,7 @@ class TestPermissionsController(TestController):
         )
         
         # comment on draft
-        #self.comment(draft_id, 'permission comment')
-        # TODO: This behaviour is incorrect ... observers SHOULD be able to comment on this groups drafts
-        #       however, this creates aditional complications as the c.logged_in_persona is this group.
-        #       we want to have the comment made as the user above, but we dont have this info stored
+        self.comment(draft_id, 'permission comment')
         
         
         # CONTRIBUTOR ----------------------------------------------------------
