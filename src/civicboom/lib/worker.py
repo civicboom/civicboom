@@ -67,12 +67,14 @@ def run_one_job(task):
         log.info('Starting task: %s (%s)' % (task_type, task))
         if task_type in _worker_functions:
             _worker_functions[task_type](**task)
-        #if task_type == "process_media":
+        #elif task_type == "process_media":
         #    process_media(**task)
-        #if task_type == "send_message":
+        #elif task_type == "send_message":
         #    send_message(**task)
-        if task_type == "die":
+        elif task_type == "die":
             live = False
+        else:
+            log.error("Unrecognised task type: %s" % task_type)
     except Exception as e:
         log.exception('Error in worker thread:')
         sleep(3)
