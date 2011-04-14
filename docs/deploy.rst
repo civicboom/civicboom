@@ -20,5 +20,5 @@ Deployment process
   - git checkout develop                           # don't forget to go back to develop before doing more work
 
 - wait a couple of minutes for the packages to be built and signed by buildbot
-- "sudo apt-get dist-upgrade" on the server
+- "sudo apt-get update && sudo apt-get dist-upgrade" on the server
 
