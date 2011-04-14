@@ -60,4 +60,5 @@ OpenLayers.js:
 	cp OpenLayers.cfg ./openlayers/build/
 	cd openlayers/build && ./buildUncompressed.py OpenLayers
 	mv openlayers/build/OpenLayers.js ./
+	patch OpenLayers.js OpenLayers.patch
 	rm -rf openlayers

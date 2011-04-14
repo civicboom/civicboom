@@ -1,5 +1,10 @@
 # vim:ft=conf
 
+# cache_path needs to be set globally, it doesn't work per-server :(
+proxy_cache_path /tmp/osm-cache   levels=2:2 keys_zone=osm:200m inactive=30d;
+proxy_cache_path /tmp/nginx-cache levels=2:2 keys_zone=cb:50m inactive=3m;
+proxy_temp_path  /tmp/nginx-temp;
+
 upstream backends {
 	### START MANAGED BY DEBCONF
 	# debconf will remove anything between the start and end
@@ -10,8 +15,8 @@ upstream backends {
 	### END MANAGED BY DEBCONF
 }
 
-log_format cb_timing   '$cb_remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent $upstream_response_time $request_time p:$pipe';
-log_format cb_combined '$cb_remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
+log_format cb_timing   '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent $upstream_response_time $request_time p:$pipe';
+log_format cb_combined '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
 
 server {
 	# server stuff
@@ -28,6 +33,14 @@ server {
 	client_max_body_size 100m;
 	ssi on;
 
+	gzip on;
+	gzip_static on;
+	gzip_vary on;
+	gzip_http_version 1.0;
+	gzip_proxied any;
+	gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+	gzip_types text/plain text/css text/xml application/javascript application/x-javascript application/json application/rss+xml; # text/html is implied
+
 	# ssl
 	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
 	ssl_certificate_key  /opt/cb/etc/ssl/wild.civicboom.com.key;
@@ -41,14 +54,15 @@ server {
 		# with "https" stored in x-forwarded-proto
 		set $cb_scheme $http_x_forwarded_proto;
 	}
-	set $cb_remote_addr $remote_addr;
-	if ($http_x_forwarded_for) {
-		set $cb_remote_addr $http_x_forwarded_for;
-	}
+
+	set_real_ip_from   10.0.0.0/8;
+	set_real_ip_from   192.168.0.0/16;
+	set_real_ip_from   127.0.0.0/8;
+	real_ip_header     X-Forwarded-For;
 
 	# proxy settings
 	proxy_set_header Host $host;
-	proxy_set_header X-Real-IP $cb_remote_addr;
+	proxy_set_header X-Real-IP $remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Url-Scheme $cb_scheme;
 	proxy_pass_header Set-Cookie;
@@ -67,6 +81,9 @@ server {
 		set $cb_security_checked "ok";
 	}
 	if ($http_user_agent ~* "ELB-HealthChecker") {
+		set $cb_security_checked "ok";
+	}
+	if ($remote_addr = "127.0.0.1") {
 		set $cb_security_checked "ok";
 	}
 	if ($cb_security_checked != "ok") {
