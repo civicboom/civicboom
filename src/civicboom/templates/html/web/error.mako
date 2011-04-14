@@ -31,6 +31,7 @@
         % endif
 
 	% if c.result.get('code') == 404:
+	<!--
 		<hr>
 		<p>
 		<script type="text/javascript">
@@ -40,6 +41,7 @@
 		<script type="text/javascript"
 			src="http://linkhelp.clients.google.com/tbproxy/lh/wm/fixurl.js">
 		</script>
+	-->
 	% endif
 
 		<hr>
