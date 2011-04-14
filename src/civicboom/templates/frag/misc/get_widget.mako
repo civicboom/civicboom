@@ -148,7 +148,7 @@ ${widget_preview(c.widget_user_preview)}
             <p style="font-weight: bold;" class="link_widget_instructions">${_("Copy and paste this code into your website's HTML:")}</p>
             <form name="widget_creator" action="">
                 <textarea name="widget_link" class="link_widget_form_field" style="width: 300px; height: 200px;">${widget_iframe(member)}</textarea>
-            </form>      
+            </form>
         </td>
         </tr></table>
 
