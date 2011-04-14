@@ -40,12 +40,6 @@ def main(argv):
         log.error("Separate worker doesn't make sense for inline or threaded mode")
         return 1
 
-    log.info("Loading job processors")
-    from civicboom.lib.worker_threads.send_message  import send_message
-    from civicboom.lib.worker_threads.process_media import process_media
-    w.add_worker_function('process_media', process_media)
-    w.add_worker_function('send_message' , send_message )
-
     try:
         log.info("Waiting for jobs")
         w.run_worker()
