@@ -188,7 +188,7 @@ class Content(Base):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
-    def action_list_for(self, member):
+    def action_list_for(self, member, **kwargs):
         action_list = []
         if self.editable_by(member):
             action_list.append('edit')
@@ -415,8 +415,8 @@ class UserVisibleContent(Content):
     __to_dict__['full'        ].update(_extra_user_visible_fields)
 
 
-    def action_list_for(self, member):
-        action_list = Content.action_list_for(self, member)
+    def action_list_for(self, member, **kwargs):
+        action_list = Content.action_list_for(self, member, **kwargs)
         if self.is_parent_owner(member) and member.has_permission('plus'):
             if self.approval == 'none':
                 action_list.append('approve')
@@ -520,8 +520,8 @@ class AssignmentContent(UserVisibleContent):
     #})
     #__to_dict__['full+actions'].update(__to_dict__['full'])
 
-    def action_list_for(self, member):
-        action_list = UserVisibleContent.action_list_for(self, member)
+    def action_list_for(self, member, **kwargs):
+        action_list = UserVisibleContent.action_list_for(self, member, **kwargs)
         if self.acceptable_by(member):
             status = self.previously_accepted_by(member)
             if not status:

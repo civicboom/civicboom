@@ -295,7 +295,7 @@ class Member(Base):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
-    def action_list_for(self, member):
+    def action_list_for(self, member, **kwargs):
         action_list = []
         #if self.can_message(member):
         #    action_list.append('editable')
