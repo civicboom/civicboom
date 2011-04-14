@@ -136,6 +136,6 @@ def send_message(member_to, message_data, delay_commit=False):
     
     worker.add_job({
         'task'        : 'send_message',
-        'member'      : member_to,
+        'member'      : member_to.username,
         'message_data': message_data,
     })
