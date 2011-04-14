@@ -8,11 +8,6 @@ m2 = Member()
 m1.send_message(messages.tipoff(member=m2, tipoff="there is a bomb"))
 """
 
-
-#from civicboom.model      import Message
-#from civicboom.model.meta import Session
-import civicboom.lib.worker_threads.send_message
-
 from pylons import config
 from pylons.i18n          import lazy_ugettext as _
 from webhelpers.html      import HTML
@@ -139,14 +134,8 @@ def send_message(member_to, message_data, delay_commit=False):
     if not config['feature.notifications']:
         return
     
-    # In test mode we need messages to be sent immediately as the tests may be checking for the responses
-    if config['test_mode']:
-        civicboom.lib.worker_threads.send_message.send_message(member_to, message_data, delay_commit)
-    
-    # If not in test mode the message is to be threaded
-    else:
-        worker.add_job({
-            'task'        : 'send_message',
-            'member'      : member_to,
-            'message_data': message_data,
-        })
+    worker.add_job({
+        'task'        : 'send_message',
+        'member'      : member_to,
+        'message_data': message_data,
+    })
