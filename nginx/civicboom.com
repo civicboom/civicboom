@@ -10,13 +10,16 @@ upstream backends {
 	### END MANAGED BY DEBCONF
 }
 
+log_format cb_timing   '$cb_remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent $upstream_response_time $request_time p:$pipe';
+log_format cb_combined '$cb_remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
+
 server {
 	# server stuff
 	listen 80  default;       listen [::]:80  default     ipv6only=on;
 	listen 443 default ssl;   listen [::]:443 default ssl ipv6only=on;
 	server_name *.civicboom.com;
-	access_log /var/log/nginx/civicboom.log;
-	access_log /var/log/nginx/civicboom.timing.log timing; # DC_TIMING
+	access_log /var/log/nginx/civicboom.log cb_combined;
+	access_log /var/log/nginx/civicboom.timing.log cb_timing; # DC_TIMING
 	root /opt/cb/share/website-web/;
 	error_page 500 /errors/50x.html;
 	error_page 502 /errors/502.html;
@@ -42,7 +45,6 @@ server {
 	if ($http_x_forwarded_for) {
 		set $cb_remote_addr $http_x_forwarded_for;
 	}
-	set $cb_sh "$cb_scheme://$host";
 
 	# proxy settings
 	proxy_set_header Host $host;
@@ -56,10 +58,18 @@ server {
 		rewrite ^(.*) $cb_scheme://www.civicboom.com$1 permanent;
 	}
 
-	# if    https:                    ok
-	# elif  http and (api or widget): ok
-	# else:                           redirect to https
-	if ($cb_sh !~ "^(https://|http://api|http://widget).*") {
+	# redirect to https, unless things are whitelisted already
+	set $cb_security_checked "fail";
+	if ($cb_scheme = "https") {
+		set $cb_security_checked "ok";
+	}
+	if ($host ~* "^(api|widget)") {
+		set $cb_security_checked "ok";
+	}
+	if ($http_user_agent ~* "ELB-HealthChecker") {
+		set $cb_security_checked "ok";
+	}
+	if ($cb_security_checked != "ok") {
 		rewrite ^(.*) https://$host$1 permanent;
 	}
 
@@ -69,7 +79,7 @@ server {
 		# request. This is important when using SSI, as all subrequests have
 		# the same $request_uri and so they clobber eachother in the cache store.
 		proxy_cache "cb";
-		proxy_cache_key "$cb_scheme://$host$uri?$args-cookie:$cookie_logged_in";
+		proxy_cache_key "$cb_scheme://$host$uri$is_args$args-cookie:$cookie_logged_in";
 		proxy_cache_bypass $cookie_nocache;
 		proxy_pass http://backends;
 	}
