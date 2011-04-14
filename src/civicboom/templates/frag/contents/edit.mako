@@ -179,7 +179,7 @@
         
         ##<p>
             <label for="title_${self.id}">${_('Title')}</label><br />
-            <input style="width: 50%" id="title_${self.id}" name="title" type="text" value="${self.content['title']}" placeholder="${_('Enter a title')}"/><br />
+            <input style="width: 100%" id="title_${self.id}" name="title" type="text" value="${self.content['title']}" placeholder="${_('Enter a title')}"/><br />
             ##${popup(_("extra info"))}
         ##</p>
         

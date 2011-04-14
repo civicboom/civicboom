@@ -76,10 +76,6 @@ def re_key(dictionary):
     return dict([ (key_map[key], dictionary[key]) for key in dictionary.keys()] )
 
 
-def search(**kwargs):
-    pass
-
-
 class InviteController(BaseController):
     """
     a controller which produces a nice graphical invite fragment
