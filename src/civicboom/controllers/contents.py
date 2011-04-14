@@ -364,8 +364,9 @@ class ContentsController(BaseController):
             # GregM: Set private flag to user or hub setting (or public as default)
             kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
         elif kwargs['type'] == 'comment':
-            raise_if_current_role_insufficent('editor')
+            raise_if_current_role_insufficent('observer')
             content = CommentContent()
+            content.creator = c.logged_in_user
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = ArticleContent()                  # Create base content
@@ -378,7 +379,8 @@ class ContentsController(BaseController):
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         
         # Set create to currently logged in user
-        content.creator = c.logged_in_persona
+        if not content.creator:
+            content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
         content.private = kwargs.get('private', False)
