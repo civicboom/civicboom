@@ -58,7 +58,7 @@ test-db: skel-db
 	nosetests
 
 test-coverage:
-	nosetests --with-coverage --cover-html --cover-html-dir=../coverage/
+	nosetests --with-coverage --cover-erase --cover-html --cover-html-dir=../coverage/
 
 test:
 	nosetests
