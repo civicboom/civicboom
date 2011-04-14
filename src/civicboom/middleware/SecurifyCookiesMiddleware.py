@@ -43,6 +43,8 @@ class SecurifyCookiesMiddleware(object):
                 # if the header is set-cookie and we are dynamic,
                 # set a secure-as-possible cookie
                 if k.lower() == "set-cookie":
+                    # if static:
+                    #     pass  # set-cookie is only appropriate for dynamic pages
                     if not static:
                         if "; secure" not in v and environ['wsgi.url_scheme'] == "https":
                             v = v + "; secure"
