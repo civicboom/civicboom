@@ -10,8 +10,8 @@ upstream backends {
 	### END MANAGED BY DEBCONF
 }
 
-log_format cb_timing   '$cb_remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent $upstream_response_time $request_time p:$pipe';
-log_format cb_combined '$cb_remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
+log_format cb_timing   '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent $upstream_response_time $request_time p:$pipe';
+log_format cb_combined '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
 
 server {
 	# server stuff
@@ -41,14 +41,15 @@ server {
 		# with "https" stored in x-forwarded-proto
 		set $cb_scheme $http_x_forwarded_proto;
 	}
-	set $cb_remote_addr $remote_addr;
-	if ($http_x_forwarded_for) {
-		set $cb_remote_addr $http_x_forwarded_for;
-	}
+
+	set_real_ip_from   10.0.0.0/8;
+	set_real_ip_from   192.168.0.0/16;
+	set_real_ip_from   127.0.0.0/8;
+	real_ip_header     X-Forwarded-For;
 
 	# proxy settings
 	proxy_set_header Host $host;
-	proxy_set_header X-Real-IP $cb_remote_addr;
+	proxy_set_header X-Real-IP $remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Url-Scheme $cb_scheme;
 	proxy_pass_header Set-Cookie;
