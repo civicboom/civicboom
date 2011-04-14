@@ -69,6 +69,9 @@ server {
 	if ($http_user_agent ~* "ELB-HealthChecker") {
 		set $cb_security_checked "ok";
 	}
+	if ($remote_addr = "127.0.0.1") {
+		set $cb_security_checked "ok";
+	}
 	if ($cb_security_checked != "ok") {
 		rewrite ^(.*) https://$host$1 permanent;
 	}
