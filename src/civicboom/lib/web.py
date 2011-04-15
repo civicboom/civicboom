@@ -382,6 +382,12 @@ def _find_template(result, type):
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
             return path+".mako"
     
+    # TO BE REMOVED
+    # AllanC - this can be removed at a later date if needed, but the GOOGLE BOT IS DOING MY NUT IN!!!!
+    #          I think the google bot has a list of URL's that it's scanning from months ago .. we dont want server errors for this
+    if type=='rss' and c.action=='get_widget':
+        return 'html/error.mako'
+    
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
 def _find_template_basic(controller=None, action=None, format=None):
