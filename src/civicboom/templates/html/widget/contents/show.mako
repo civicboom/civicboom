@@ -63,8 +63,8 @@
     % for response in d['responses']['items']:
         <%
             response_class = ""
-            if response['approval']:
-                response_class = response['approval']
+            if response.get('approval'):
+                response_class = response.get('approval')
         %>
         <tr class="${response_class}">
             <td class="${response_class}"></td>
