@@ -31,11 +31,16 @@
 ## Member Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-    <style type="text/css" src="/styles/web/invite.css">
-	</style>
-	<script type="text/javascript" src="/javascript/invite.js"></script>
-	<form method="POST" action="/invite?invite=${d.get('invite')}&id=${d.get('id')}">
+	% if c.format=="frag" and c.result.get('message', '') != '':
+		<script type="text/javascript">
+			flash_message({ message: '${c.result['message']}', status: '${c.result['status']}' });
+		</script>
+	% endif
+
+	<form onsubmit="" class="inviteform" method="POST" action="/${h.url('invite')}">
 		<input type="hidden" class="search-limit" name="search-limit" value="${d['search-limit']}" />
+		<input type="hidden" name="id" value="${d.get('id')}" />
+		<input type="hidden" name="invite" value="${d.get('invite')}" />
 	    <div class="frag_right_col">
 	        <div class="frag_col">
 		        <div class="invite_header">
@@ -83,7 +88,7 @@
 	    </div>
 		        <div class="bottom" class="">
 		        	<div class="frag_left_col frag_col ">
-	    			<input class="button" type="submit" name="submit-invite" value="Invite" />
+	    			<input class="button" type="submit" onclick="return postInviteFrag($(this));" name="submit-invite" value="Invite" />
 	    			</div>
 	   			</div>
 
