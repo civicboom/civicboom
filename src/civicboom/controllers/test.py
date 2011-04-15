@@ -8,6 +8,8 @@ from civicboom.lib.base import *
 from civicboom.lib.web import cookie_get, cookie_set, cookie_delete
 from time import sleep, time
 
+from paste.deploy.converters import asbool
+
 log = logging.getLogger(__name__)
 
 
@@ -210,7 +212,13 @@ class TestController(BaseController):
         """
         if isinstance(key, basestring):
             if isinstance(value, basestring):
-                config[key] = value
+                # Preserve the data type of the existing config var
+                if isinstance(config[key], bool):
+                    config[key] = asbool(value)
+                elif isinstance(config[key], int):
+                    config[key] = int(value)
+                else:
+                    config[key] = value
                 log.info('set config[%s] = %s' % (key, value))
             return '{"%s":"%s"}' % (key, config.get(key))
 

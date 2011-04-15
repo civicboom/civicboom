@@ -27,13 +27,36 @@ class TestGroupsController(TestController):
 
 
 
+    def test_create_invalid(self):
+        response = self.app.post(
+            url('groups', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'username'     : 'fail_group' ,
+                'name'         : 'p' ,
+                'default_role' : 'fail_group' ,
+                'join_mode'    : 'fail_group' ,
+                'member_visibility'         : 'fail_group' ,
+                'default_content_visibility': 'fail_group' ,
+            },
+            status=400
+        )
+        self.assertIn('invalid'     , response)
+        self.assertIn('name'        , response)
+        self.assertIn('default_role', response)
+        self.assertIn('join_mode'   , response)
+        self.assertIn('member_visibility', response)
+        self.assertIn('default_content_visibility', response)
+
+
+
+
 
 
 
 
     def test_subtests(self):
         self.subtest_create()
-        self.subtest_create_invalid()
         self.subtest_create_invalid_groupname()
         self.subtest_edit()
         #self.subtest_update() # AllanC - TODO!!!! URGENT! Fails validation!!!!
@@ -71,29 +94,6 @@ class TestGroupsController(TestController):
         self.assertEqual(response_json['data']['member']['default_content_visibility'], 'public' )
         
         
-
-    def subtest_create_invalid(self):
-        response = self.app.post(
-            url('groups', format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-                'username'     : 'fail_group' ,
-                'name'         : 'p' ,
-                'default_role' : 'fail_group' ,
-                'join_mode'    : 'fail_group' ,
-                'member_visibility'         : 'fail_group' ,
-                'default_content_visibility': 'fail_group' ,
-            },
-            status=400
-        )
-        self.assertIn('invalid'     , response)
-        self.assertIn('name'        , response)
-        self.assertIn('default_role', response)
-        self.assertIn('join_mode'   , response)
-        self.assertIn('member_visibility', response)
-        self.assertIn('default_content_visibility', response)
-
-
 
     def subtest_create_invalid_groupname(self):
         # username duplicate

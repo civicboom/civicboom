@@ -334,7 +334,7 @@ class TestController(TestCase):
         if username:
             if self.logged_in_as != old_user:
                 self.log_in_as(old_user, old_password)
-        return response_json['data']['list']['count']
+        return int(response_json['data']['list']['count'])
     
     def getLastNotification(self, username=None, password=None):
         if username:

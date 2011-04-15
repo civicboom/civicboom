@@ -1,0 +1,53 @@
+#!/usr/bin/python
+
+import logging
+logging.basicConfig(
+    level   = logging.INFO,
+    format  = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
+    datefmt = "%H:%M:%S"
+)
+log = logging.getLogger("workmaster")
+log.info("Importing modules")
+
+
+import optparse
+import os
+import sys
+import platform
+from time import sleep
+import pylons
+from redis import Redis
+from civicboom.lib.redis_ import RedisQueue
+import civicboom.lib.worker as w
+
+
+def main(argv):
+    option_parser = optparse.OptionParser()
+    option_parser.add_option('--ini',
+        help='INI file to use for pylons settings',
+        type='str', default='development.ini')
+    options, args = option_parser.parse_args(argv)
+
+    # Initialize the Pylons app
+    log.info("Loading pylons environment")
+    from paste.deploy import appconfig
+    from civicboom.config.environment import load_environment
+    conf = appconfig('config:' + options.ini, relative_to='.')
+    load_environment(conf.global_conf, conf.local_conf)
+    # Now code can be run, the SQLalchemy Session can be used, etc.
+
+    if pylons.config['worker.queue'] in ['inline', 'threads']:
+        log.error("Separate worker doesn't make sense for inline or threaded mode")
+        return 1
+
+    try:
+        log.info("Waiting for jobs")
+        w.run_worker()
+    except KeyboardInterrupt:
+        log.info("Got Ctrl-C, exiting")
+
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
