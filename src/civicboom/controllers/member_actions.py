@@ -152,7 +152,7 @@ class MemberActionsController(BaseController):
         @comment AllanC This is just a list of strings and is not a list object
         """
         member = get_member(id)
-        return action_ok(data={"list": member.action_list_for(c.logged_in_persona)})
+        return action_ok(data={"list": member.action_list_for(member=c.logged_in_persona, role=c.logged_in_persona_role)})
 
 
     #---------------------------------------------------------------------------
