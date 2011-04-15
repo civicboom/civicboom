@@ -18,16 +18,10 @@ group_actions_controller  = GroupActionsController()
 
 
 def check_member(member):
-    if member.__type__ == 'group':
-        membership = member.get_membership(c.logged_in_user)
-        return (has_role_required('editor', membership.role) and membership.status == 'active')
-    else:
-        return member.id == c.logged_in_user.id
-
+    return has_role_required('editor', c.logged_in_persona_role)
 
 def check_assignment(content):
     return content.editable_by(c.logged_in_persona)
-
 
 def roles_group(group):
     roles = group_member_roles.enums
