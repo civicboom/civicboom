@@ -385,11 +385,6 @@ class ContentsController(BaseController):
         # GregM: Set private flag to user or hub setting (or public as default)
         content.private = is_private
         
-        print '#########'
-        print '#', kwargs
-        print '#', content.private
-        print '#########'
-        
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
             # If a license isn't explicitly set, use the parent's preference
