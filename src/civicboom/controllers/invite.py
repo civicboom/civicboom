@@ -175,7 +175,7 @@ class InviteController(BaseController):
         error_list = None
         if 'submit-invite' in request.POST:
             error_list = {}
-            message = _('Invited') + ' '
+            message = (_('Invited') + ' ') if len(invitee_list) > 0 else _('Nobody to invite')
             for key in invitee_list.keys():
                 invitee = copy.deepcopy(invitee_list[key])
                 method = getattr(item, type['method'], None)
