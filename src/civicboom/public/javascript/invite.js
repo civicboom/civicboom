@@ -45,11 +45,7 @@ function inviteClick(eO) {
 		case 'invitee':
 			switch (button_key) {
 				case 'next':
-					//if ((offset + limit) <= ul.find('li').length) {
-						offset = offset + limit;
-						console.log (offset);
-						console.log (limit);
-					//}
+					offset = offset + limit;
 				break;
 				case 'prev':
 					if (offset - limit <= 0) {
@@ -73,14 +69,27 @@ function refreshSearch(element, extra_fields) {
 	var ul = form.find('.invite-list');
 	var formArray = form.serializeArray();
 	if (typeof extra_fields != 'undefined')
-		formArray = formArray.concat(extra_fields)
+		formArray = formArray.concat(extra_fields);
 	formArray.push({'name': 'exclude-members', 'value': exclude_members});
 	$.post('/invite/search.frag', formArray, function (data) {
 		ul.html(data);
 		ul.children('.search-offset').val()
 	});
 }
-
+function postInviteFrag(element, extra_fields) {
+	var form = element.parents('form');
+	var frag = form.parents('.frag_container');
+	var formArray = form.serializeArray();
+	if (typeof extra_fields != 'undefined')
+		formArray = formArray.concat(extra_fields);
+	if (typeof element.attr('name') != 'undefined')
+		formArray.push({'name': element.attr('name'), 'value': element.val()});
+	console.log(formArray);
+	$.post("/invite/index.frag", formArray, function (data) {
+		frag.html(data);
+	});
+	return false;
+}
 function getValue(element, cls) {
 	return element.parents('form').find('.'+cls).val() * 1;
 }
