@@ -18,7 +18,7 @@ group_actions_controller  = GroupActionsController()
 
 
 def check_member(member):
-    return has_role_required('editor', c.logged_in_persona_role)
+    return has_role_required('editor', c.logged_in_persona_role) and member == c.logged_in_persona
 
 def check_assignment(content):
     return content.editable_by(c.logged_in_persona)
