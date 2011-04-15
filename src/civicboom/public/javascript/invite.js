@@ -67,7 +67,7 @@ function refreshSearch(element, extra_fields) {
 	var form = element.parents('form');
 	var exclude_members = form.find('.exclude-members').val().split(',');
 	var ul = form.find('.invite-list');
-	var formArray = form.serializeArray();
+	var formArray = formArrayNoPlaceholders(form);
 	if (typeof extra_fields != 'undefined')
 		formArray = formArray.concat(extra_fields);
 	formArray.push({'name': 'exclude-members', 'value': exclude_members});
@@ -79,7 +79,7 @@ function refreshSearch(element, extra_fields) {
 function postInviteFrag(element, extra_fields) {
 	var form = element.parents('form');
 	var frag = form.parents('.frag_container');
-	var formArray = form.serializeArray();
+	var formArray = formArrayNoPlaceholders(form);
 	if (typeof extra_fields != 'undefined')
 		formArray = formArray.concat(extra_fields);
 	if (typeof element.attr('name') != 'undefined')
@@ -89,6 +89,24 @@ function postInviteFrag(element, extra_fields) {
 		frag.html(data);
 	});
 	return false;
+}
+function formArrayNoPlaceholders(form) {
+	var formArray = form.serializeArray();
+	var placeheld = form.find('input[placeholder]');
+	if (placeheld.count > 0)
+		for (elem in placeheld) {
+			var elemjq = $(elem);
+			if (typeof elemjq.attr('placeholder') != 'undefined') {
+				for (obj in formArray) {
+					if (obj.name == elemjq.attr('name')) {
+						if (obj.value == elemjq.attr('placeholder'))
+							obj.value = '';
+						break;
+					}
+				}
+			}
+		}
+	return formArray;
 }
 function getValue(element, cls) {
 	return element.parents('form').find('.'+cls).val() * 1;
