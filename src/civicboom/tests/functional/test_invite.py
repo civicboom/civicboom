@@ -142,6 +142,37 @@ class TestInviteController(TestController):
             },
             status=403
         )
+        # Test invite no permission
+        response = self.app.get(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': 'group',
+                'id': 'test_private_group',
+                'format': 'json',
+            },
+            status=403
+        )
+        response = self.app.get(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': 'assignment',
+                'id': self.my_assignment_id,
+                'format': 'json',
+            },
+            status=403
+        )
+        response = self.app.get(
+            '/invite',
+            params={
+                '_authentication_token': self.auth_token,
+                'invite': 'trusted_follower',
+                'id': 'test_private_group',
+                'format': 'json',
+            },
+            status=403
+        )
 
     
     def part_invite_assignment(self):
