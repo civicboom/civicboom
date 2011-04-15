@@ -142,7 +142,7 @@ ${widget_preview(c.widget_user_preview)}
               </tr></table>
             <input type="button" value="Preview Widget" onClick="generate_widget_link();" />
             </form>
-            <p>Note: The widget can function in HTTPS is required</p>
+            <p>Note: The widget can function in HTTPS if required</p>
         </td>
         <td style="width:300px">
             <p style="font-weight: bold;" class="link_widget_instructions">${_("Copy and paste this code into your website's HTML:")}</p>

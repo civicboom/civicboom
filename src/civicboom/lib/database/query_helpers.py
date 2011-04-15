@@ -40,7 +40,7 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
             return results
     
     if not results:
-        return apilist([])
+        return apilist([], obj_type=kwargs.get('obj_type'))
     
     limit  = str_to_int(kwargs.get('limit' ), limit_default)
     offset = str_to_int(kwargs.get('offset')               )
