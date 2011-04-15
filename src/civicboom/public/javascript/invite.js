@@ -84,7 +84,6 @@ function postInviteFrag(element, extra_fields) {
 		formArray = formArray.concat(extra_fields);
 	if (typeof element.attr('name') != 'undefined')
 		formArray.push({'name': element.attr('name'), 'value': element.val()});
-	console.log(formArray);
 	$.post("/invite/index.frag", formArray, function (data) {
 		frag.html(data);
 	});
@@ -93,14 +92,14 @@ function postInviteFrag(element, extra_fields) {
 function formArrayNoPlaceholders(form) {
 	var formArray = form.serializeArray();
 	var placeheld = form.find('input[placeholder]');
-	if (placeheld.count > 0)
-		for (elem in placeheld) {
-			var elemjq = $(elem);
+	if (placeheld.length > 0)
+		for (var i = 0; i < placeheld.length; i++) {
+			var elemjq = $(placeheld[i]);
 			if (typeof elemjq.attr('placeholder') != 'undefined') {
-				for (obj in formArray) {
-					if (obj.name == elemjq.attr('name')) {
-						if (obj.value == elemjq.attr('placeholder'))
-							obj.value = '';
+				for (var j = 0; j < formArray.length; j++) {
+					if (formArray[j].name == elemjq.attr('name')) {
+						if (formArray[j].value == elemjq.attr('placeholder'))
+							formArray[j].value = '';
 						break;
 					}
 				}
