@@ -27,13 +27,10 @@ sed -i "s#DEBCONF_DB_LOG#$DB_LOG#"         /opt/cb/share/website/production.ini
 sed -i "s#DEBCONF_MC_SESSION#$MC_SESSION#" /opt/cb/share/website/production.ini
 sed -i "s#DEBCONF_MC_CACHE#$MC_CACHE#"     /opt/cb/share/website/production.ini
 
-update-rc.d cb-website defaults
-invoke-rc.d cb-website restart || invoke-rc.d cb-website start || true
+initctl restart cb-website || initctl start cb-website || true
+initctl restart cb-worker  || initctl start cb-worker  || true
 
 cd /opt/cb/share/website
 find -name "*.pyc" | xargs rm -f
-
-#echo "Copying static data to S3"
-#/opt/cb/bin/cb-task sync_public_to_warehouse >/dev/null
 
 db_stop

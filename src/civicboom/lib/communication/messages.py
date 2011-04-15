@@ -8,13 +8,11 @@ m2 = Member()
 m1.send_message(messages.tipoff(member=m2, tipoff="there is a bomb"))
 """
 
-from civicboom.lib.communication.email_lib import send_email
-from civicboom.model      import Message
-from civicboom.model.meta import Session
-from civicboom.lib.database.get_cached import update_member_messages
 from pylons import config
 from pylons.i18n          import lazy_ugettext as _
 from webhelpers.html      import HTML
+
+import civicboom.lib.worker as worker
 
 import re
 import logging
@@ -131,43 +129,13 @@ for _name, _default_route, _subject, _content in generators:
     globals()[_name] = gen
 
 
-def send_message(member, message_data, delay_commit=False):
-    """
-    private guts to the message system, save and handles propogating the message to different technologies
-    """
+def send_message(member_to, message_data, delay_commit=False):
     # If notifications not enabled return silently
     if not config['feature.notifications']:
         return
-
-    # Get propergate settings - what other technologies is this message going to be sent over
-    # Attempt to get routing settings from the member's config; if that fails, use the
-    # message's default routing
-    message_tech_options = member.config.get("route_"+message_data.name, message_data.default_route)
-
-    # Iterate over each letter of tech_options - each letter is a code for the technology to send it to
-    # e.g 'c'  will send to Comufy
-    #     'et' will send to email and twitter
-    #     'n'  is a normal notification
-    #     ''   will dispose of the message because it has nowhere to go
-    for c in message_tech_options:
-        if c == 'c': # Send to Comufy
-            pass
-        if c == 'e': # Send to Email
-            if hasattr(member, 'email'):
-                send_email(member, subject=message_data.subject, content_html=message_data.content)
-        if c == 't': # Send to Twitter
-            pass
-        if c == 'n': # Save message in message table (to be seen as a notification)
-            m = Message()
-            m.subject = message_data.subject
-            m.content = message_data.content
-            m.target  = member
-            Session.add(m)
-            #member.messages_to.append(m)
-            update_member_messages(member)
-            if not delay_commit:
-                Session.commit()
-
-    log.info("%s was sent the message '%s', routing via %s" % (
-        member.name, message_data.subject, message_tech_options
-    ))
+    
+    worker.add_job({
+        'task'        : 'send_message',
+        'member'      : member_to.username,
+        'message_data': message_data,
+    })
