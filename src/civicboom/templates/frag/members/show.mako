@@ -127,19 +127,22 @@
             h.args_to_tuple('members', followed_by=self.id),
             icon =  'follow'
         )}
+        
         ${frag_list.member_list_thumbnails(
             d['followers'] ,
             _('Followers') ,
             #h.args_to_tuple('member_action', id=self.id, action='followers') ,
             h.args_to_tuple('members', follower_of=self.id),
-            icon =  'follow'
+            icon    = 'follow',
+            actions = h.frag_link('Invite Trusted Followers', class_='icon icon_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='trusted_follower')) if 'invite_trusted_followers' in self.actions else None ,
         )}
         
         ${frag_list.member_list_thumbnails(
             [m for m in d['groups']['items'] if m['status']=='active'],
             _('_Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
-            icon = 'group' ,
+            icon    = 'group' ,
+            actions = h.frag_link('Invite Members', class_='icon icon_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='group')) if 'invite_members' in self.actions else None ,
         )}
         
         ${frag_list.member_list_thumbnails(
@@ -155,7 +158,6 @@
             _('Members'),
             h.args_to_tuple('member_action', id=self.id, action='members') ,
             icon = 'user' ,
-            
         )}
         
         ${frag_list.member_list_thumbnails(

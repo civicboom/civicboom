@@ -255,10 +255,20 @@ def url_pair(*args, **kwargs):
 
     href             = url(*args, **kwargs)
     kwargs['format'] = gen_format
-    href_json        = url(*args, **kwargs)
+    href_formatted   = url(*args, **kwargs)
     
-    return (href, href_json)
+    return (href, href_formatted)
 
+## AllanC - TODO - need to specify frag size as an optional arg
+def frag_link(value, title='', class_='', href_tuple=([],{})): #*args, **kwargs
+    href, href_frag = url_pair(gen_format='frag', *href_tuple[0], **href_tuple[1]) # generate standard and frag URL's
+    return HTML.a(
+        value ,
+        href    = href ,
+        class_  = class_ ,
+        title   = title if title else value,
+        onClick ="cb_frag($(this), '%s'); return false;" % href_frag ,
+    )
 
 #-------------------------------------------------------------------------------
 # Secure Form
@@ -403,7 +413,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
 #
 #          NOTE: setSingleCSSClass is depricated and not implemtned anymore, the method below will need to be fixed
 
-def frag_link(id, frag_url, value, title='', css_class=''):
+def frag_link__(id, frag_url, value, title='', css_class=''):
     """
     Populate an id destination with a fragments source using AJAX
     If AJAX not avalable then provide a static URL that will populate the fragments
@@ -433,7 +443,7 @@ def frag_link(id, frag_url, value, title='', css_class=''):
     return static_link #HTML.span(static_link, class_="frag_link")
 
 
-def frag_div(id, default_frag_url=None, class_=None):
+def frag_div__(id, default_frag_url=None, class_=None):
     """
     Create an HTML div linked to a fragment
     Look in request query sting to populate the div with a fragment (if viewed staticly)
