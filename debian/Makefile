@@ -25,7 +25,8 @@ cb-website-api.deb: Makefile $(shell find ../admin_scripts ../docs ../selenium .
 	cd ../src/ && $(MAKE) api-doc
 	rm -rf fs-api
 	$(call mdcp, api/*                    , fs-api/DEBIAN/                   )
-	$(call mdcp, api/init.d               , fs-api/etc/init.d/,cb-website     )
+	$(call mdcp, api/cb-website.conf      , fs-api/etc/init/                 )
+	$(call mdcp, api/cb-worker.conf       , fs-api/etc/init/                 )
 	$(call mdcp, ../admin_scripts/cb-task , fs-api/opt/cb/bin/               )
 	$(call mdcp, ../admin_scripts/gendoc  , fs-api/opt/cb/bin/               )
 	$(call mdcp, ../docs/*                , fs-api/opt/cb/share/doc/website/ )

@@ -1,52 +1,110 @@
 """
+A genericish worker API
 
-http://chrismoos.com/2009/03/04/pylons-worker-threads/
+for single-node, single-threaded:
+    call add_job() whenever you want a job done
+
+for single-node, multi-threaded:
+    call start_worker() to spawn some background threads
+    call add_job() whenever you want a job done
+
+for multi-node:
+    master node:
+        call init_queue() with a Queue-like object
+        call add_job() whenever you want a job done
+    worker nodes:
+        call init_queue() with a Queue-like object
+        call run_worker() to run all jobs in the queue and wait for more
 """
 
 from Queue import Queue
 from threading import Thread
 from time import sleep
 
-import tempfile
-import Image
-import os
-import os.path
-import subprocess
-import civicboom.lib.services.warehouse as wh
-
-from pylons import config
 
 import logging
 log = logging.getLogger(__name__)
 
-_workers = []
-_media_queue = Queue()
+_workers           = []
+_worker_queue      = None
+_worker_functions = {}
 
 
-class MediaThread(Thread):
-    def run(self):
-        log.info('Media processing thread is running.')
-        live = True
+##############################################################################
+# Shared API
 
-        while live:
-            task = _media_queue.get()
-            try:
-                task_type = task.pop("task")
-                log.info('Starting task: %s (%s) [approx %d left]' % (task_type, task, _media_queue.qsize()))
-                if task_type == "process_media":
-                    process_media(**task)
-                if task_type == "die":
-                    live = False
-            except Exception as e:
-                log.exception('Error in media processor thread:')
-            _media_queue.task_done()
+def add_worker_function(name, f):
+    _worker_functions[name] = f
+
+def init_queue(q):
+    global _worker_queue
+    _worker_queue = q
+
+
+##############################################################################
+# Client API
+
+def add_job(job):
+    """
+    Adds a job to the worker's queue if there is one; if no queues have
+    been initialised, runs the job directly
+    """
+    if _worker_queue:
+        log.info('Adding job to worker queue: %s' % job["task"])
+        _worker_queue.put(job)
+    else:
+        log.info('Running job in foreground: %s' % job["task"])
+        run_one_job(job)
+
+
+##############################################################################
+# Server API
+
+def run_one_job(task):
+    live = True
+    try:
+        task_type = task.pop("task")
+        log.info('Starting task: %s (%s)' % (task_type, task))
+        if task_type in _worker_functions:
+            _worker_functions[task_type](**task)
+        #elif task_type == "process_media":
+        #    process_media(**task)
+        #elif task_type == "send_message":
+        #    send_message(**task)
+        elif task_type == "die":
+            live = False
+        else:
+            log.error("Unrecognised task type: %s" % task_type)
+    except Exception as e:
+        log.exception('Error in worker thread:')
+        sleep(3)
+    return live
+
+
+def run_worker():
+    live = True
+    while live:
+        try:
+            task = _worker_queue.get()
+            live = run_one_job(task)
+            _worker_queue.task_done()
+        except Exception:
+            log.exception("Error talking to queue; sleeping before reconnect")
             sleep(3)
 
 
+class WorkerThread(Thread):
+    def run(self):
+        log.info('Media processing thread is running.')
+        run_worker()
+
+
 def start_worker(count=3):
+    stop_worker()
+    init_queue(Queue())
     log.info('Starting worker threads.')
     for n in range(count):
-        worker = MediaThread()
+        worker = WorkerThread()
         worker.daemon = True
         worker.name = "Worker %d" % (len(_workers)+1)
         worker.start()
@@ -62,138 +120,3 @@ def stop_worker():
             worker.join()
             _workers.remove(worker)
 
-
-def add_job(job):
-    log.info('Adding job to worker queue: %s' % job["task"])
-    if not _workers:
-        start_worker()
-    _media_queue.put(job)
-
-
-def _ffmpeg(args):
-    """
-    Convenience function to run ffmpeg and log the output
-    """
-    ffmpeg = config["media.ffmpeg"]
-    cmd = [ffmpeg, ] + args
-    log.info(" ".join(cmd))
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output = proc.communicate()
-    log.debug("stdout: %s", output[0])
-    log.debug("stderr: %s", output[1])
-    log.debug("return: %d", proc.returncode)
-
-
-def _update_media_length(hash, length):
-    """
-    Placeholder to update media file length in DB
-    """
-    #import database actions
-    # update the record in db
-
-
-def _reformed(name, ext):
-    return os.path.splitext(name)[0] + "." + ext
-
-
-def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
-    import memcache
-    m               = memcache.Client(config['service.memcache.server'].split(), debug=0)
-    memcache_key    = str("media_processing_"+file_hash)
-    memcache_expire = int(config['media.processing.expire_memcache_time'])
-    
-    # temp hack while bulk importing
-    from boto.s3.connection import S3Connection
-    from boto.s3.key import Key
-    connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
-    bucket = connection.get_bucket(config["s3_bucket_name"])
-    key = Key(bucket)
-    key.key = "media-original/"+file_hash
-    if key.exists():
-        log.info("media %s (%s) already processed, skipping" % (file_hash, file_name))
-        return
-
-    # AllanC - in time the memcache could be used to update the user with percentage information about the status of the processing
-    #          This is returned to the user with a call to the media controller
-
-    m.set(memcache_key, "encoding media", memcache_expire)
-    if file_type == "image":
-        processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-        size = (int(config["media.media.width"]), int(config["media.media.height"]))
-        im = Image.open(tmp_file)
-        if im.mode != "RGB":
-            im = im.convert("RGB")
-        im.thumbnail(size, Image.ANTIALIAS)
-        im.save(processed.name, "JPEG")
-        m.set(memcache_key, "copying image", memcache_expire)
-        wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "jpg"))
-        processed.close()
-    elif file_type == "audio":
-        processed = tempfile.NamedTemporaryFile(suffix=".ogg")
-        _ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
-        m.set(memcache_key, "copying audio", memcache_expire)
-        wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "ogg"))
-        processed.close()
-    elif file_type == "video":
-        log.debug("encoding video to flv")
-        processed = tempfile.NamedTemporaryFile(suffix=".flv")
-        size = (int(config["media.media.width"]), int(config["media.media.height"]))
-        _ffmpeg([
-            "-y", "-i", tmp_file,
-            "-ab", "56k", "-ar", "22050",
-            "-qmin", "2", "-qmax", "16",
-            "-b", "320k", "-r", "15",
-            "-s", "%dx%d" % (size[0], size[1]),
-            processed.name
-        ])
-        m.set(memcache_key, "copying video", memcache_expire)
-        #log.debug("START copying processed video to warehouse %s:%s (%dKB)" % (file_name, processed.name, os.path.getsize(processed.name)/1024))
-        wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "flv"))
-        #log.debug("END   copying processed video to warehouse %s:%s" % (file_name, processed.name))
-        # TODO:
-        # for RSS 2.0 'enclosure' we need to know the length of the processed file in bytes
-        # We should include here a call to database to update the length field
-        #_update_media_length(file_hash, os.path.getsize(processed.name))
-        processed.close()
-
-    # Get the thumbnail processed and uploaded ASAP
-    m.set(memcache_key, "thumbnail", memcache_expire)
-    if file_type == "image":
-        processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-        size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
-        im = Image.open(tmp_file)
-        if im.mode != "RGB":
-            im = im.convert("RGB")
-        im.thumbnail(size, Image.ANTIALIAS)
-        im.save(processed.name, "JPEG")
-        wh.copy_to_warehouse(processed.name, "media-thumbnail", file_hash, "thumb.jpg")
-        processed.close()
-    elif file_type == "audio":
-        # audio has no thumb; what is displayed to the user is
-        # a player plugin
-        pass
-    elif file_type == "video":
-        processed = tempfile.NamedTemporaryFile(suffix=".jpg")
-        size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
-        _ffmpeg([
-            "-y", "-i", tmp_file,
-            "-an", "-vframes", "1", "-r", "1",
-            "-s", "%dx%d" % (size[0], size[1]),
-            "-f", "image2", processed.name
-        ])
-        wh.copy_to_warehouse(processed.name, "media-thumbnail", file_hash, "thumb.jpg")
-        processed.close()
-
-
-    # least important, the original
-    #log.debug("START copying original media to warehouse %s:%s (%dKB)" % (file_name, tmp_file, os.path.getsize(tmp_file)/1024) )
-    m.set(memcache_key, "copying original video", memcache_expire)
-    wh.copy_to_warehouse(tmp_file, "media-original", file_hash, file_name)
-    #log.debug("END   copying original media to warehouse %s:%s" % (file_name, tmp_file) )
-
-
-    if delete_tmp:
-        os.unlink(tmp_file)
-
-    m.delete(memcache_key)
-    log.debug("deleting memcache %s" % memcache_key)
