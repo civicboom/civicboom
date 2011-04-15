@@ -199,9 +199,9 @@ class InviteController(BaseController):
         # search data
         data = self.search(**kwargs)['data']
         
-        # If we are rendering a static page we need the object's data
-        if c.format == 'html':
-            data.update(type['show'](id = id)['data'])
+        # If we are rendering a static page we need the object's data GregM: OH NO WE DON'T
+#        if c.format == 'html':
+#            data.update(type['show'](id = id)['data'])
         
         # Overlay any of the invite list's data over any object's data
         data.update( {
