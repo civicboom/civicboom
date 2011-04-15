@@ -23,7 +23,6 @@
 		if invite_type in ['group', 'trusted_follower']:
 			self.attr.frag_url = h.url('member', action='show', id=d['id'], invite=d['invite'], format='frag')
 		endif
-		print self.attr.frag_url
 	%>
 </%def>
 
