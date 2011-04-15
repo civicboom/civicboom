@@ -139,17 +139,16 @@
                 ##% if show_count:
                 <span class="count">${count}</span>
                 ##% endif
-            </h2>
-            % if actions:
-                <% print actions %>
-                <div class="list_actions">
-                % if type(actions) == types.FunctionType:
-                    ${actions()}
-                % else:
-                    ${actions}
+                % if actions:
+                    <div class="list_actions">
+                    % if type(actions) == types.FunctionType:
+                        ${actions()}
+                    % else:
+                        ${actions}
+                    % endif
+                    </div>
                 % endif
-                </div>
-            % endif
+            </h2>
         % endif
             <div class="frag_list_contents">
             <${type_[0]} class="${list_class}">
