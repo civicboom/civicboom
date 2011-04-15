@@ -302,6 +302,7 @@ class Member(Base):
         if self == member:
             action_list.append('settings')
             action_list.append('logout')
+            action_list.append('invite_trusted_followers')
         elif member:
             if self.is_following(member):
                 if member.is_follower_trusted(self):
@@ -636,6 +637,7 @@ class Group(Member):
                 action_list.append('delete')
                 action_list.append('remove') #AllanC - could be renamed? this means remove member?
                 action_list.append('set_role')
+                action_list.append('invite_members')
                 action_list.append('settings_group')
                 if self.num_admins>1:
                     action_list.append('remove_self')
