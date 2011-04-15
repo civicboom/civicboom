@@ -169,22 +169,25 @@ class InviteController(BaseController):
         error_list = None
         if 'submit-invite' in request.POST:
             error_list = {}
-            message = (_('Invited') + ' ') if len(invitee_list) > 0 else _('Nobody to invite')
-            for key in invitee_list.keys():
-                invitee = copy.deepcopy(invitee_list[key])
-                method = getattr(item, type['method'], None)
-                if method:
-                    try:
-                        method(invitee['username'], role=role)
-                    except action_error as error:
-                        error.original_dict['data'] = invitee
-                        error_list[invitee['username']] = error.original_dict
-            if len(error_list) > 0:
-                message = message + _('except:') + ' ' + ','.join(error_list.keys())
-                invitee_list = dict([(key, invitee_list[key]) for key in invitee_list.keys() if invitee_list[key]['username'] in error_list.keys()])
-                invitee_list = re_key(invitee_list)
+            if len(invitee_list) > 0:
+                for key in invitee_list.keys():
+                    invitee = copy.deepcopy(invitee_list[key])
+                    method = getattr(item, type['method'], None)
+                    if method:
+                        try:
+                            method(invitee['username'], role=role)
+                        except action_error as error:
+                            error.original_dict['data'] = invitee
+                            error_list[invitee['username']] = error.original_dict
+                if len(error_list) > 0:
+                    message = _('Invited everyone except:') + ' ' + ','.join(error_list.keys())
+                    invitee_list = dict([(key, invitee_list[key]) for key in invitee_list.keys() if invitee_list[key]['username'] in error_list.keys()])
+                    invitee_list = re_key(invitee_list)
+                else:
+                    message = _('Invited everyone')
+                    invitee_list = {}
             else:
-                invitee_list = {}
+                message = _('Nobody to invite')
             invitee_offset = 0
             invite_offset = 0
             
