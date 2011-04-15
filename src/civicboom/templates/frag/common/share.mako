@@ -20,10 +20,21 @@
     <script type="text/javascript">
       var addthis_share = {
         "data_track_clickback":true,
-##        email_template: 'Check out {{url}} (from @civicboom)',
+        email_template: 'Check out {{url}} on Civicboom',
         templates: {
-                   twitter: 'Check out {{url}} (from @civicboom)'
-               }
+			twitter: 'Check out {{url}} (from @civicboom)'
+		},
+		url_transforms : {
+			shorten: {      
+			    twitter: 'bitly'
+			},
+		},
+	    shorteners : {
+	        bitly : { 
+	            username: 'civicboom',
+	            apiKey: 'R_0bcb2a604c8a101cacff1fa70bbf19c8'
+	        }
+		},
       };
     </script>
     <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>

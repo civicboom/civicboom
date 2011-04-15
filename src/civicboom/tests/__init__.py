@@ -431,3 +431,14 @@ class TestController(TestCase):
         response_json = json.loads(response.body)
         self.assertEqual(response_json['data']['invitee_list']['count'], 0)
         self.assertEqual(response_json['status'], 'ok')
+        
+        # Repeat to check error double inviting
+        response = self.app.post(
+            '/invite',
+            params=params,
+            status=200
+        )
+        response_json = json.loads(response.body)
+        self.assertEqual(response_json['data']['invitee_list']['count'], 1)
+        self.assertEqual(len(response_json['data']['error-list']), 1)
+        self.assertEqual(response_json['status'], 'ok')
