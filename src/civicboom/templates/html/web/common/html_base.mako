@@ -9,16 +9,21 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" href="/images/boom16.ico" />
 	<link rel="apple-touch-icon" href="/images/boom128.png" />
+	<link rel="fluid-icon" href="/images/boom128.png" />
+	<link rel="search" type="application/opensearchdescription+xml" href="/misc/opensearch.xml" title="${_("_site_name")}" />
 
 ##----------------------------------------------------------------------------
 ## Meta Text
 ##----------------------------------------------------------------------------
 	<meta name="description" content="${_("_site_description")}"/>
 	<meta name="keywords"    content="civicboom, social media, community, information, news" />
-	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling" />
+	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling, Greg Miell" />
 	<meta name="robots"      content="all" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<meta name="viewport"    content="width=480, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=8,chrome=1">
 	<meta charset="utf-8">
+
 
 ##----------------------------------------------------------------------------
 ## Title
@@ -59,6 +64,7 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 	<!-- jQuery -->
 	<script src="/javascript/jquery-1.5.1.js"></script>
 	<!-- Civicboom -->
+	<script src="/javascript/prototypes.js"></script>
 	<script src="/javascript/misc.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
@@ -69,7 +75,9 @@ css_all    = [n[len("civicboom/public/"):] for n in css_all]
 
 <%namespace name="share" file="/frag/common/share.mako" />
 
-${share.AddThisScript()}
+% if config['online']:
+	${share.AddThisScript()}
+% endif
 
 ##----------------------------------------------------------------------------
 ## Google Analitics (async setup, see scripts_end for more)
@@ -133,18 +141,16 @@ else:
 	${flash_message()}
 	##<nav><%include file="navigation.mako"/></nav>
 	<header><%include file="header.mako"/></header>
-	<div id="app">
-% if hasattr(next, 'col_left'):
-		<div id="col_left">${next.col_left()}</div>
-% endif
-% if hasattr(next, 'col_right'):
-		<div id="col_right">${next.col_right()}</div>
-% endif
-		<div id="col_main">${next.body()}</div>
-	</div>
+	<div id="app">${next.body()}</div>
 	<footer><%include file="footer.mako"/></footer>
     ${popup_frame()}
 	##<%include file="scripts_end.mako"/>
 	${scripts_end.body()}
+
+	<% from pylons import request %>
+	<!--
+	Version: ${request.environ['app_version'] or 'develop'}
+	Node:    ${request.environ['node_name']}
+	-->
 </body>
 </html>

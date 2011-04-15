@@ -197,11 +197,28 @@ def init_base_data():
 
         # Create first item of content as content_id=1 for automated document examples to use
         a = ArticleContent()
-        a.title   = "Documentation Test"
-        a.content = "API Documentation test content"
+        a.title   = u"API Documentation: Article"
+        a.content = u"test content"
         a.creator = u1
         Session.add(a)
         Session.commit()
+
+        b = CommentContent()
+        b.title   = u"Comment Test"
+        b.content = u"test comment"
+        b.creator = u1
+        b.parent  = a
+        Session.add(b)
+        Session.commit()
+
+        c = ArticleContent()
+        c.title   = u"API Documentation: Response"
+        c.content = u"test response"
+        c.creator = u1
+        c.parent  = a
+        Session.add(c)
+        Session.commit()
+
 
         assert list(Session.query(User).filter(User.id==0)) == []
         assert list(Session.query(User).filter(User.username=="MrNotExists")) == []

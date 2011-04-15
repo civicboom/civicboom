@@ -2,9 +2,12 @@
 
 <%def name="body()">
 	${refresh_fragment_height()}
-    ${google_analytics_end()}
-    ${share.init_janrain_social()}
-    ##${share.share_this_js()}
+
+	% if config['online']:
+	    ${google_analytics_end()}
+	    ${share.init_janrain_social()}
+	    ##${share.share_this_js()}
+	% endif
 
     ## Maps (should be loaded on-demand, but frags confuse that
     % if config['development_mode']:
@@ -18,6 +21,9 @@
 		<script src="/javascript/jquery.uploadify.v2.1.4.js"></script>
         <script src="/javascript/jquery.simple-color-picker.js"></script>
 		<script src="/javascript/jquery.ba-hashchange.min.js"></script>
+		<script src="/javascript/jquery.limit-1.2.js"></script>
+		<script src="/javascript/jquery.getUrlParam.js"></script>
+		<script src="/javascript/mobile.js"></script>
 		<!-- maps -->
         <script src="/javascript/gears_init.js"></script>
         <script src="/javascript/geo.js"></script>

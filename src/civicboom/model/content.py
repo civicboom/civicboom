@@ -29,6 +29,7 @@ publishable_types = ["article", "assignment"]
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 
+
 class ContentTagMapping(Base):
     __tablename__ = "map_content_to_tag"
     content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
@@ -155,10 +156,10 @@ class Content(Base):
             'tags'        : lambda content: [tag.name for tag in content.tags] ,
             #'url'         : None ,
     })
-    #del __to_dict__['full']['content_short'] # This is still useful for aggrigation so it stays in by default
     del __to_dict__['full']['parent_id']
     del __to_dict__['full']['creator_id']
     del __to_dict__['full']['license_id']
+    del __to_dict__['full']['content_short']
     
     
     
@@ -224,6 +225,25 @@ class Content(Base):
         if self.__type__ == "comment":
             return self.parent.viewable_by(member) # if comment, show if we can see the parent article
         if self.visible == True:
+            # GregM: If current content has a root parent then check viewable_by on root parent
+            root = self.root_parent
+            if root:
+                return root.viewable_by(member)
+            # GregM: If content is private check member is a trusted follower of content's creator
+            #       We NEED to check has accepted, invited etc. for requests
+            if self.private == True:
+                if self.creator.is_follower_trusted(member):
+                    return True
+                elif self.__type__ == "assignment":
+                    from civicboom.lib.database.get_cached import get_assigned_to
+                    member_assignment = get_assigned_to(self, member)
+                    if member_assignment:
+                        if not member_assignment.member_viewed:
+                            from civicboom.model.meta import Session
+                            member_assignment.member_viewed = True
+                            Session.commit()
+                        return True
+                return False
             return True
         return False
 
@@ -250,6 +270,13 @@ class Content(Base):
         if self.__type__ == 'article' or self.__type__ == 'assignment':
             return aggregate_via_user(self, self.creator)
     
+    @property
+    def root_parent(self):
+        """
+        Find this piece of content's root parent (or False if this is the root!)
+        """
+        from civicboom.lib.database.actions import find_content_root
+        return find_content_root(self)
     
     @property
     def thumbnail_url(self):
@@ -284,7 +311,8 @@ class Content(Base):
         AllanC TODO: Derived field - Postgress trigger needed
         """
         from civicboom.lib.text import strip_html_tags
-        return truncate(strip_html_tags(self.content), length=100, indicator='...', whole_word=True)
+        return truncate(strip_html_tags(self.content).strip(), length=500, indicator='...', whole_word=True)
+
 
 DDL('DROP TRIGGER update_response_count ON content').execute_at('before-drop', Content.__table__)
 DDL("""
@@ -344,7 +372,8 @@ class DraftContent(Content):
     __to_dict__['full'        ].update(_extra_draft_fields)
 
     def __init__(self):
-        self.private = True
+        #self.private = True # GregM: Removed set to user/hub default in contents controller
+        pass
 
     def clone(self, content):
         Content.clone(self, content)
@@ -527,7 +556,8 @@ class AssignmentContent(UserVisibleContent):
         from civicboom.lib.database.actions import withdraw_assignemnt
         return withdraw_assignemnt(self, member)
 
-    def invite(self, members):
+    # GregM: Added kwargs to allow for invite controller adding role (needed for group invite, trying to genericise things as much as possible)
+    def invite(self, members, **kwargs):
         """
         For closed assignments we need to invite specific members to participate
         invite can be given a single member or a list of members (as username strings or member object list)
@@ -575,7 +605,7 @@ CREATE OR REPLACE FUNCTION update_num_accepted() RETURNS TRIGGER AS $$
         UPDATE content_assignment SET num_accepted = (
             SELECT count(*)
             FROM member_assignment
-            WHERE member_assignment.status = 'accepted' AND content_assignment.id=tmp_content_id
+            WHERE member_assignment.status = 'accepted' AND member_assignment.content_id=tmp_content_id
         ) WHERE id=tmp_content_id;
         RETURN NULL;
     END;

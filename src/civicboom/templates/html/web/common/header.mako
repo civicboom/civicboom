@@ -3,8 +3,8 @@
 ##------------------------------------------------------------------------------
 <h1 id="logo">
 	<a href='/'>
-		<img  class='logo_img'     src='/images/logo.png'                  alt='${_("_site_name")}' />
-        <img  class='beta_overlay' src='/styles/web/logo_beta_overlay.png' alt='${_("Beta")}'       />
+		<img  class='logo_img'     src='${h.wh_url("public", "images/logo.png")}'              alt='${_("_site_name")}' />
+        <img  class='beta_overlay' src='${h.wh_url("public", "images/logo_beta_overlay.png")}' alt='${_("Beta")}'       />
 		<span class='logo_text'>${_("_site_name")}</span>
 	</a>
 </h1>
@@ -192,6 +192,18 @@
 
 </div>
 </nav>
+
+##------------------------------------------------------------------------------
+## Search
+##------------------------------------------------------------------------------
+<div id="aboutbtns">
+    <a class="button" href="${url(controller='about', action='civicboom')}">
+        ${_('About')}
+    </a>
+    <a class="button" href="${url(controller='about', action='mobile')}">
+        ${_('Mobile')}
+    </a>
+</div>
 
 ##------------------------------------------------------------------------------
 ## Search

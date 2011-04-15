@@ -18,7 +18,7 @@ class ContentActionsController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
-    def rate(self, id, rating=None, **kwargs):
+    def rate(self, id, rating=0, **kwargs):
         """
         POST /contents/{id}/rate: rate an article
         @type action
@@ -153,7 +153,7 @@ class ContentActionsController(BaseController):
         @return 200   accepted ok
         @return 500   error accepting
         """
-        assignment = get_content(id, set_html_action_fallback=True)
+        assignment = get_content(id, content_type='assignment', is_viewable=True, set_html_action_fallback=True)
         
         # AllanC - TODO: need message to user as to why they could not accept the assignment
         #         private assingment? not invited?
@@ -161,7 +161,7 @@ class ContentActionsController(BaseController):
 
         if assignment.accept(c.logged_in_persona):
             assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
-            user_log.debug("Accepted Content #%d" % int(id))
+            user_log.debug("Accepted Content #%d" % assignment.id)
             # A convenience feature for flow of new users. If they are following nobody (they are probably a new user), then auto follow the assignment creator
             if c.logged_in_persona.num_following <= 2:
                 try:
@@ -274,15 +274,18 @@ class ContentActionsController(BaseController):
     @web
     def comments(self, id, **kwargs):
         """
-        POST /contents/{id}/comments: Get a list of comments on the article
+        GET /contents/{id}/comments: Get a list of comments on the article
         @type list
         @api contents 1.0 (WIP)
         
         @return list  the list of comments
+        
+        @example http://test.civicboom.com/contents/1/comments.json
         """
         content = get_content(id, is_viewable=True)
-        comments = [c.to_dict() for c in content.comments]
-        return action_ok_list(comments)
+        #comments = [c.to_dict() for c in content.comments]
+        #return action_ok_list(comments)
+        return to_apilist(content.comments, **kwargs)
 
 
     #-----------------------------------------------------------------------------
@@ -291,7 +294,7 @@ class ContentActionsController(BaseController):
     @web
     def accepted_status(self, id, **kwargs):
         """
-        POST /contents/{id}/accepted_status: Get a list of accepted reporters
+        GET /contents/{id}/accepted_status: Get a list of accepted reporters
         @type list
         @api contents 1.0 (WIP)
         
@@ -303,8 +306,8 @@ class ContentActionsController(BaseController):
         
         if hasattr(content, 'assigned_to'):
             assigned_to = [update_dict(a.member.to_dict(), {'status': a.status}) for a in content.assigned_to]  # 'update_date':a.update_date
-            return action_ok_list(assigned_to)
-        return action_ok_list([])
+            return to_apilist(assigned_to, **kwargs) #TODO transform
+        return to_apilist()
 
 
     #-----------------------------------------------------------------------------
@@ -312,6 +315,13 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     @web
     def responses(self, id, **kwargs):
+        """
+        GET /contents/{id}/responses: Get a list of responses
+        @type list
+        @api contents 1.0 (WIP)
+        
+        shotcut to /contents?response_to={id}
+        """
         #content = _get_content(id, is_viewable=True)
         #if 'include_fields' not in kwargs:
         #    kwargs['include_fields']='creator'
@@ -324,5 +334,14 @@ class ContentActionsController(BaseController):
     #-----------------------------------------------------------------------------
     @web
     def contributors(self, id, **kwargs):
+        """
+        GET /contents/{id}/contributors: Get list of contributors (unimplemented)
+        @type list
+        @api contents 1.0 (WIP)
+        
+        shotcut to /contents?response_to={id}
+        
+        @comment AllanC will currently return empty list - unimplemented
+        """
         content = get_content(id, is_viewable=True)
-        return action_ok_list([])
+        return to_apilist()

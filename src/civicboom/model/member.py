@@ -12,8 +12,9 @@ from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref, dynamic_loader
 from sqlalchemy.schema import DDL
 
-import urllib, hashlib, copy
-
+import urllib
+import hashlib
+import copy
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -29,18 +30,51 @@ group_join_mode          = Enum("public", "invite" , "invite_and_request",    na
 group_member_visibility  = Enum("public", "private",                          name="group_member_visibility" )
 group_content_visibility = Enum("public", "private",                          name="group_content_visibility")
 
+follow_type              = Enum("trusted", "trusted_invite", "normal",        name="follow_type")
+
 
 def has_role_required(role_required, role_current):
     """
-    returns 1 or more if has permissons
-    returns 0 or less if not permissions
+    returns True  if has permissons
+    returns False if not permissions
+    
+    >>> has_role_required('admin', 'admin')
+    True
+    >>> has_role_required('editor','admin')
+    True
+    >>> has_role_required('editor','observer')
+    False
+    >>> has_role_required('editor','oogyboogly')
+    False
+    >>> has_role_required( None   ,'admin')
+    False
     """
     try:
         permission_index_required = group_member_roles_level.index(role_required)
         permission_index_current  = group_member_roles_level.index(role_current)
-        return permission_index_required - permission_index_current + 1
+        return (permission_index_required - permission_index_current + 1) > 0
     except:
-        return 0
+        return False
+
+
+def lowest_role(a,b):
+    """
+    >>> lowest_role('admin'  ,'admin'   )
+    'admin'
+    >>> lowest_role('editor' ,'admin'   )
+    'editor'
+    >>> lowest_role('editor' ,'observer')
+    'observer'
+    >>> lowest_role(None     ,'observer')
+    """
+    if not a or not b:
+        return None
+    permission_index_a = group_member_roles_level.index(a)
+    permission_index_b = group_member_roles_level.index(b)
+    if permission_index_a > permission_index_b:
+        return a
+    else:
+        return b
 
 
 class GroupMembership(Base):
@@ -86,6 +120,10 @@ class Follow(Base):
     __tablename__ = "map_member_to_follower"
     member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
     follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    type          = Column(follow_type                          , nullable=False, default="normal")
+    
+    member   = relationship("Member", primaryjoin="Member.id==Follow.member_id"  )
+    follower = relationship("Member", primaryjoin="Member.id==Follow.follower_id")
 
 DDL('DROP TRIGGER IF EXISTS update_follower_count ON map_member_to_follower').execute_at('before-drop', Follow.__table__)
 DDL("""
@@ -98,7 +136,9 @@ CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
             tmp_member_id   := NEW.member_id;
             tmp_follower_id := NEW.follower_id;
         ELSIF (TG_OP = 'UPDATE') THEN
-            RAISE EXCEPTION 'Can''t alter follows, only add or remove';
+            --RAISE EXCEPTION 'Can''t alter follows, only add or remove'; --follows can now have a follow type that could be updated without removing the record
+            tmp_member_id   := NEW.member_id;
+            tmp_follower_id := NEW.follower_id;
         ELSIF (TG_OP = 'DELETE') THEN
             tmp_member_id   := OLD.member_id;
             tmp_follower_id := OLD.follower_id;
@@ -107,13 +147,13 @@ CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
         UPDATE member SET num_followers = (
             SELECT count(*)
             FROM map_member_to_follower
-            WHERE member_id=tmp_member_id
+            WHERE member_id=tmp_member_id AND NOT type='trusted_invite'
         ) WHERE id=tmp_member_id;
         
         UPDATE member SET num_following = (
             SELECT count(*)
             FROM map_member_to_follower
-            WHERE follower_id=tmp_follower_id
+            WHERE follower_id=tmp_follower_id AND NOT type='trusted_invite'
         ) WHERE id=tmp_follower_id;
         
         RETURN NULL;
@@ -165,8 +205,9 @@ class Member(Base):
     feeds                = relationship("Feed"            , backref=backref('member'), cascade="all,delete-orphan")
 
     # AllanC - I wanted to remove these but they are still used by actions.py because they are needed to setup the base test data
-    followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="Member.id==Follow.follower_id", secondary=Follow.__table__)
-    following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="Member.id==Follow.member_id"  , secondary=Follow.__table__)
+    following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="(Member.id==Follow.member_id  ) & (Follow.type!='trusted_invite')", secondary=Follow.__table__)
+    followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="(Member.id==Follow.follower_id) & (Follow.type!='trusted_invite')", secondary=Follow.__table__)
+    #followers_trusted    = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="(Member.id==Follow.follower_id) & (Follow.type=='trusted'       )", secondary=Follow.__table__)
 
     assigments           = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
 
@@ -261,9 +302,18 @@ class Member(Base):
         if self == member:
             action_list.append('settings')
             action_list.append('logout')
-        if member and member.is_following(self):
+        elif member:
+            if self.is_following(member):
+                if member.is_follower_trusted(self):
+                    action_list.append('follower_distrust')
+                else:
+                    action_list.append('follower_trust')
+            elif not member.is_follow_trusted_invitee(self):
+                action_list.append('follower_invite_trusted') # GregM:
+        
+        if member and (member.is_following(self) or member.is_follow_trusted_inviter(self)):
             action_list.append('unfollow')
-        else:
+        if member and (not member.is_following(self) or member.is_follow_trusted_inviter(self)):
             if self != member:
                 action_list.append('follow')
         if self != member:
@@ -273,6 +323,8 @@ class Member(Base):
         return action_list
 
     def send_message(self, m, delay_commit=False):
+        # TODO
+        # This should be a non blocking action and que this in the worker
         import civicboom.lib.communication.messages as messages
         messages.send_message(self, m, delay_commit)
 
@@ -292,6 +344,19 @@ class Member(Base):
         from civicboom.lib.database.actions import unfollow
         return unfollow(self, member, delay_commit=delay_commit)
 
+    def follower_trust(self, member, delay_commit=False):
+        from civicboom.lib.database.actions import follower_trust
+        return follower_trust(self, member, delay_commit=delay_commit)
+
+    def follower_distrust(self, member, delay_commit=False):
+        from civicboom.lib.database.actions import follower_distrust
+        return follower_distrust(self, member, delay_commit=delay_commit)
+        
+    # GregM: Added kwargs to allow for invite controller adding role (needed for group invite, trying to genericise things as much as possible)
+    def follower_invite_trusted(self, member, delay_commit=False, **kwargs):
+        from civicboom.lib.database.actions import follower_invite_trusted
+        return follower_invite_trusted(self, member, delay_commit=delay_commit)
+
     def is_follower(self, member):
         #if not member:
         #    return False
@@ -301,6 +366,18 @@ class Member(Base):
         from civicboom.lib.database.actions import is_follower
         return is_follower(self, member)
     
+    def is_follower_trusted(self, member):
+        from civicboom.lib.database.actions import is_follower_trusted
+        return is_follower_trusted(self, member)
+    
+    def is_follow_trusted_invitee(self, member): # Was: is_follower_invited_trust
+        from civicboom.lib.database.actions import is_follow_trusted_invitee as _is_follow_trusted_invitee
+        return _is_follow_trusted_invitee(self, member)
+    
+    def is_follow_trusted_inviter(self, member): # Was: is_following_invited_trust
+        from civicboom.lib.database.actions import is_follow_trusted_invitee as _is_follow_trusted_invitee
+        return _is_follow_trusted_invitee(member, self)
+        
     def is_following(self, member):
         #if not member:
         #    return False
@@ -457,6 +534,10 @@ class User(Member):
         return h.hexdigest()
 
     @property
+    def email_normalized(self):
+        return self.email or self.email_unverified
+
+    @property
     def config(self):
         if not self._config:
             # import at the last minute -- importing at the start of the file
@@ -541,14 +622,19 @@ class Group(Member):
             from civicboom.lib.web import action_error
             raise action_error('cannot remove last admin', code=400)
     
-    def action_list_for(self, member):
+    def action_list_for(self, member=None, role=None):
+        """
+        can be passed a member to return a list tayloyed for that member
+         in an ideal world this would be enough, but we if current logged in user is set then we don't have access to c.logged_in_persona_role
+         a role can be passed
+        """
         action_list = Member.action_list_for(self, member)
         membership = self.get_membership(member)
         join = self.can_join(member, membership)
         if member and (join=="join" or join=="request"):
             action_list.append(join)
         else:
-            if self.is_admin(member, membership):
+            if self.is_admin(member, membership) or has_role_required('admin',role):
                 action_list.append('delete')
                 action_list.append('remove') #AllanC - could be renamed? this means remove member?
                 action_list.append('set_role')
@@ -562,10 +648,11 @@ class Group(Member):
 
 
     def is_admin(self, member, membership=None):
+        """
+        NOTE: only checks for member role record in this groups membership - it DOES not check the current users tree
+        """
         if not member:
             return False
-        if self.username == member.username: #originaly self==member but wasnt sure if SQL alchemy calculates equality, they could have differnt object references
-            return True
         if not membership:
             membership = self.get_membership(member)
         if membership and membership.member_id==member.id and membership.status=="active" and membership.role=="admin":
@@ -578,6 +665,7 @@ class Group(Member):
         if not membership:
             membership = self.get_membership(member)
         if not membership:
+            #print "join mode is %s" % self.join_mode # AllanC TODO - public groups dont work! .. rrrr
             if self.join_mode=="public":
                 return "join"
             if self.join_mode=="invite_and_request":
@@ -611,6 +699,28 @@ class Group(Member):
     def delete(self):
         from civicboom.lib.database.actions import del_group
         return del_group(self)
+
+    def send_message(self, m, delay_commit=False):
+        """
+        recursivly create a list of all sub members from all sub groups
+        it creates the list putting all members 
+        """
+        Member.send_message(self, m, delay_commit=delay_commit)
+        return
+        # NEVER EXECUTE BELOW UNTIL WE HAVE AUTOMATED TESTS
+        def add_member_list(group, members={}):
+            for member in [mr.member for mr in group.members_roles if mr.member not in members]:
+                if   member.__type__ == 'user':
+                    members[member] = None
+                elif member.__type__ == 'group':
+                    add_member_list(member, members)
+            return members
+        # Get list of all members and sub members - list is guaranteeded to
+        #  - contain only users
+        #  - have no duplicates
+        for member in add_member_list(self).keys():
+            member.send_message(m, delay_commit=False)
+        
     
 
 class UserLogin(Base):

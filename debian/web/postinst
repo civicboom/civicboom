@@ -2,7 +2,11 @@
 
 . /usr/share/debconf/confmodule
 
+mkdir -p /opt/cb/var/www/static/
+chmod 777 /opt/cb/var/www/static/
+
 ln -sf /etc/nginx/sites-available/civicboom.com /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/static.civicboom.com
 rm -f /etc/nginx/sites-enabled/default
 
 if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
@@ -29,14 +33,9 @@ for line in file(sys.argv[1]):
 
 file(sys.argv[1], "w").write("\\n".join(out)+"\\n")
 EOD
+	cp /opt/cb/share/website-web/civicboom.com /etc/nginx/sites-available/civicboom.com
 	python /tmp/update_backends /etc/nginx/sites-available/civicboom.com $backends
 	rm -f /tmp/update_backends
-
-	db_get cb-website-web/caching
-	if [ "$RET" = "false" ] ; then
-		cat /etc/nginx/sites-available/civicboom.com | grep -v "DC_CACHING" > /tmp/uncached
-		mv /tmp/uncached /etc/nginx/sites-available/civicboom.com
-	fi
 
 	db_get cb-website-web/timing
 	if [ "$RET" = "false" ] ; then

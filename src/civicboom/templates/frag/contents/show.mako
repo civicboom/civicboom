@@ -34,7 +34,7 @@
         
         self.attr.frag_data_css_class = 'frag_content'
         
-        if self.content['private'] == False:
+        if self.content['private'] == False and self.content['type'] != 'draft':
             self.attr.share_kwargs = {
                 'url'      : self.attr.html_url ,
                 'title'    : self.content.get('title') ,
@@ -68,6 +68,7 @@
         ${content_media()}
         ${content_content()}
         ${content_map()}
+        ${content_action_buttons()}
         ${content_comments()}
         ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
         <%def name="flag_form()">
@@ -256,12 +257,63 @@
 ##------------------------------------------------------------------------------
 
 <%def name="content_content()">
-
     <div class="content_text">
       ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content']))}
     </div>
 </%def>
 
+
+##------------------------------------------------------------------------------
+## Content Action Buttons
+##------------------------------------------------------------------------------
+<%def name="content_action_buttons()">
+    <div style="padding-top: 20px;" class="acceptrequest">
+      <span class="separtor"></span>
+      % if 'publish' in self.actions:
+          ${h.secure_link(
+              h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
+              method = "PUT" ,
+              css_class = 'button',
+              value           = _('Publish') ,
+              json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+              
+          )}
+          <span class="separtor"></span>
+      % endif
+      ## --- Respond -------------------------------------------------------------
+      % if 'accept' in self.actions:
+          ${h.secure_link(
+              h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
+              css_class = 'button',
+              value           = _('Accept') ,
+              json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+          )}
+          ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
+          <span class="separtor"></span>
+      % endif
+      % if self.content['type'] != 'draft':
+          ${h.secure_link(
+              h.args_to_tuple('new_content', parent_id=self.id) ,
+              css_class = 'button',
+              value           = _("Respond Now") ,
+              json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+          )}
+          ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
+          ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
+          <span class="separtor"></span>
+      % endif
+      
+      % if 'withdraw' in self.actions:
+          ${h.secure_link(
+              h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
+              css_class = 'button',
+              value           = _('Withdraw') ,
+              json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+          )}
+          <span class="separtor"></span>
+      % endif
+    </div>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## License
@@ -346,52 +398,7 @@
     content  = self.content
     comments = d['comments']['items']
 %>
-<div style="padding-top: 20px;" class="acceptrequest">
-  <span class="separtor"></span>
-  % if 'publish' in self.actions:
-      ${h.secure_link(
-          h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
-          method = "PUT" ,
-          css_class = 'button',
-          value           = _('Publish') ,
-          json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-          
-      )}
-      <span class="separtor"></span>
-  % endif
-  ## --- Respond -------------------------------------------------------------
-  % if 'accept' in self.actions:
-      ${h.secure_link(
-          h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
-          css_class = 'button',
-          value           = _('Accept') ,
-          json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-      )}
-      ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
-      <span class="separtor"></span>
-  % endif
-  % if self.content['type'] != 'draft':
-      ${h.secure_link(
-          h.args_to_tuple('new_content', parent_id=self.id) ,
-          css_class = 'button',
-          value           = _("Respond Now") ,
-          json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
-      )}
-      ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
-      ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
-      <span class="separtor"></span>
-  % endif
-  
-  % if 'withdraw' in self.actions:
-      ${h.secure_link(
-          h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
-          css_class = 'button',
-          value           = _('Withdraw') ,
-          json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-      )}
-      <span class="separtor"></span>
-  % endif
-</div>
+
 <div class="comments">
     <h2 style="padding-top: 20px; padding-bottom: 10px;">${_("Comments")}</h2>
 
@@ -407,11 +414,11 @@
                 
                 <p class="comment_content">${comment['content']}</p>
                 
-                ##<b style="float: right;">
+                <p style="float: right;">
                 ##	${comment['creator']['name']}
                     ##${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
-                ##	${str(comment['creation_date'])[0:19]}
-                ##</b>
+                	<i>${h.time_ago(comment['creation_date'])} ${_('ago')}</i>
+                </p>
             </td>
             <td>
                 ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon16 i_flag')}
@@ -425,23 +432,26 @@
                 %endif
             </td>
             <td class="comment">
-            ## GregM: Not displaying comment box if user not logged in until we move all cookies to server side session.
-              % if c.logged_in_persona:
-                ${h.form(h.args_to_tuple('contents', format='redirect'), json_form_complete_actions="cb_frag_reload(current_element);" )}
+                ${h.form(h.args_to_tuple('contents', type='comment', parent_id=content['id'], format='redirect'), json_form_complete_actions="cb_frag_reload(current_element);" )}
                     ##% url("content",id=d['content']['id'])
                     ## AllanC: RAAAAAAAAAAAAR!!! cb_frag_reload($(this)); does not work, because $(this) for forms is not a jQuery object?! so we cant use .parents() etc .. WTF!!!
                     ##         so to get round this I just submit a string to the reload ... not happy!
                     ##         workaround - turns up higher up $(this) works ... so I put it in a variable called current_element that is accessible
-                    <input type="hidden" name="parent_id" value="${d['content']['id']}">
+                    ##<input type="hidden" name="parent_id" value="${d['content']['id']}">
                     <input type="hidden" name="title" value="Re: ${d['content']['title']}">
-                    <input type="hidden" name="type" value="comment">
-                    <textarea name="content"></textarea>
+                    ##<input type="hidden" name="type" value="comment">
+                    <textarea name="content" class="comment-${self.id}"></textarea><br />
+                    You have <span class="commentcount-${self.id}">200</span> characters left.<br />
+                    Comments are for clarifying details, if you are responding to the request
+					you should use the 'Respond Now' button above.<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Comment')}">
+                    <script type="text/javascript">
+                        $(function () {
+                            $('.comment-${self.id}').limit(200, '.commentcount-${self.id}');
+                        });
+                    </script>
                 ${h.end_form()}
-              % else:
-                ${_('Please login to comment')}
-              % endif
             </td>
             <td>
                 ##padding col for flag actions
@@ -593,7 +603,7 @@
             value           = _("Delete"),
             value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
             confirm_text    = _("Are your sure you want to delete this content?"),
-            json_form_complete_actions = "cb_frag_reload('contents/%s'); cb_frag_remove(current_element);" % self.id,
+            json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
         )}
         <span class="separtor"></span>
     % endif
@@ -607,9 +617,9 @@
         <span class="separtor"></span>
     % endif
     
-    % if self.content.get('location'):
-        ${parent.georss_link()}
-    % endif
+    ##% if self.content.get('location'):
+    ##    ${parent.georss_link()}
+    ##% endif
 
 </%def>
 

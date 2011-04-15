@@ -62,7 +62,7 @@ def get_janrain(lang='en', theme='', return_url=None, **kargs):
         query_params += karg+"="+str(kargs[karg])
     if query_params != "":
         query_params = urllib.quote_plus("?"+query_params)
-    scheme = current_protocol() #request.environ.get('HTTP_X_URL_SCHEME', 'http')
+    scheme = current_protocol()
     return literal(
         """<iframe src="%s://civicboom.rpxnow.com/openid/embed?token_url=%s&language_preference=%s"  scrolling="no"  frameBorder="no"  allowtransparency="true"  style="width:400px;height:240px"></iframe>""" % (scheme, return_url+query_params, lang)
     )
@@ -120,22 +120,21 @@ def link_to_objects(text):
 
 
 def wh_url(folder, filename):
-    # pylons' "public" folder is updated pretty frequently, and is associated
-    # with the specific version of the code -- so while we are small and doing
-    # lots of updates, serve the public folder locally
+    # see /docs/cdn.rst for an explanation of our CDN setup
+    proto = current_protocol()+"://"
     if folder == "public":
-        path = os.path.join("civicboom", "public", filename)
-        ut = str(int(os.stat(path).st_mtime))
-        if config['debug']:
-            # in development, serve locally
-            return request.environ.get('wsgi.url_scheme', 'https')+"://"+request.environ.get("HTTP_HOST")+"/"+filename+"?ut="+ut
+        if app_globals.version:
+            # in production, serve from a domain without cookies, with package version as cache breaker
+            return proto+config['cdn_url']+"/"+app_globals.version+"/"+filename
         else:
-            # in production, serve from a domain without cookies
-            return request.environ.get('wsgi.url_scheme', 'https')+"://static.civicboom.com/"+filename+"?ut="+ut
+            # in development, serve locally, with update time as cache breaker
+            path = os.path.join("civicboom", "public", filename)
+            ut = str(int(os.stat(path).st_mtime))
+            return proto+request.environ.get("HTTP_HOST")+"/"+filename+"?ut="+ut
     # all other folders (media, avatars) are served from our beefy-but-slow-to
     # update warehouse (currently amazon S3)
     else:
-        return config["warehouse_url"]+"/"+folder+"/"+filename
+        return proto+config["warehouse_url"]+"/"+folder+"/"+filename
 
 
 def uniqueish_id(*args):
@@ -199,6 +198,8 @@ icon_type_descriptions = {
 #    'account_plus': _('plus account') ,
 #    'account_corp': _('corporate account') ,
 }
+
+
 def icon(icon_type, description=None, class_=''):
     if not description and icon_type in icon_type_descriptions:
         description = icon_type_descriptions[icon_type]
@@ -231,7 +232,7 @@ def time_ago(from_time):
     if isinstance(from_time, basestring):
         from_time = api_datestr_to_datetime(from_time)
     time_ago = time_ago_in_words(from_time, granularity='minute', round=True)
-    match = re.match("\d+ [a-z]+", time_ago)
+    match = re.match("^(less than ){0,1}\d+ [a-z]+", time_ago)
     if match:
         part = match.group(0)
         part = part.replace("minute", "min")
@@ -463,10 +464,11 @@ def cb_frag_link(*args, **kwargs):
 # Get object from Civicboom URL
 #-------------------------------------------------------------------------------
 regex_urls = [
-    ('content', re.compile(r'(?:.*?)/contents/new\?parent_id=(\d+)') ),
+    ('content', re.compile(r'(?:.*?)/contents(?:.*?)parent_id=(\d+)')), #OLD - only for responses  - (?:.*?)/contents/new\?(?:.*?)parent_id=(\d+)
     ('content', re.compile(r'(?:.*?)/contents/(\d+)')                ),
     ('member' , re.compile(r'(?:.*?)/members/(.*?)[/&?#\n. "$]')     ),
 ]
+
 
 def get_object_from_action_url(action_url=None):
     """

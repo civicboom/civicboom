@@ -20,35 +20,38 @@ cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
 	fakeroot dpkg -b fs-meta cb-website_${VERSION}_all.deb
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
-cb-website-api.deb: $(shell find ../admin_scripts ../docs ../selenium ../src -type f)
+cb-website-api.deb: Makefile $(shell find ../admin_scripts ../docs ../selenium ../src ./api -type f)
 	cd ../src/ && $(MAKE) site
 	cd ../src/ && $(MAKE) api-doc
 	rm -rf fs-api
-	$(call mdcp, api/*              , fs-api/DEBIAN/                   )
-	$(call mdcp, api/crontab        , fs-api/etc/cron.d/,cb-website-web )
-	$(call mdcp, api/init.d         , fs-api/etc/init.d/,cb-website     )
-	$(call mdcp, ../admin_scripts/* , fs-api/opt/cb/bin/               )
-	$(call mdcp, ../docs/*          , fs-api/opt/cb/share/doc/website/ )
-	$(call mdcp, ../src/*           , fs-api/opt/cb/share/website/     )
+	$(call mdcp, api/*                    , fs-api/DEBIAN/                   )
+	$(call mdcp, api/init.d               , fs-api/etc/init.d/,cb-website     )
+	$(call mdcp, ../admin_scripts/cb-task , fs-api/opt/cb/bin/               )
+	$(call mdcp, ../admin_scripts/gendoc  , fs-api/opt/cb/bin/               )
+	$(call mdcp, ../docs/*                , fs-api/opt/cb/share/doc/website/ )
+	$(call mdcp, ../src/*                 , fs-api/opt/cb/share/website/     )
+	$(call mdcp, ../src/production.ini    , fs-api/opt/cb/share/website-api/     )
 	sed -i s/VERSION/${VERSION}/ fs-api/DEBIAN/control
+	echo ${VERSION} > fs-api/opt/cb/share/website/.version
 	fakeroot dpkg -b fs-api cb-website-api_${VERSION}_all.deb 
 	ln -sf cb-website-api_${VERSION}_all.deb cb-website-api.deb
 
-cb-website-web.deb: $(shell find ../nginx)
+cb-website-web.deb: Makefile $(shell find ../nginx ./web)
 	rm -rf fs-web
-	$(call mdcp, web/*                         , fs-web/DEBIAN/                    )
-	$(call mdcp, ../nginx/civicboom.com        , fs-web/etc/nginx/sites-available/ )
-	$(call mdcp, ../nginx/errors               , fs-web/opt/cb/share/website-web/  )
-	$(call mdcp, ../ssl/wild.civicboom.com.key , fs-web/opt/cb/etc/ssl/            )
+	$(call mdcp, web/*                          , fs-web/DEBIAN/                    )
+	$(call mdcp, ../nginx/civicboom.com         , fs-web/etc/nginx/sites-available/ )
+	$(call mdcp, ../nginx/errors                , fs-web/opt/cb/share/website-web/  )
+	$(call mdcp, ../nginx/civicboom.com         , fs-web/opt/cb/share/website-web/  )
+	$(call mdcp, ../ssl/wild.civicboom.com.key  , fs-web/opt/cb/etc/ssl/            )
 	cat ../ssl/wild.civicboom.com.crt ../ssl/rapidssl-ca.crt ../ssl/rapidssl-ca-cross.crt > fs-web/opt/cb/etc/ssl/wild.civicboom.com.pem
 	sed -i s/VERSION/${VERSION}/ fs-web/DEBIAN/control
 	fakeroot dpkg -b fs-web cb-website-web_${VERSION}_all.deb 
 	ln -sf cb-website-web_${VERSION}_all.deb cb-website-web.deb
 
-cb-website-db.deb: $(shell find db)
+cb-website-db.deb: Makefile $(shell find ./db)
 	rm -rf fs-db
-	$(call mdcp, db/*       , fs-db/DEBIAN/                    )
-	$(call mdcp, db/crontab , fs-db/etc/cron.d/,cb-website-db  )
+	$(call mdcp, ../admin_scripts/init_cbdb , fs-db/opt/cb/bin/                )
+	$(call mdcp, db/*                       , fs-db/DEBIAN/                    )
 	sed -i s/VERSION/${VERSION}/ fs-db/DEBIAN/control
 	fakeroot dpkg -b fs-db cb-website-db_${VERSION}_all.deb 
 	ln -sf cb-website-db_${VERSION}_all.deb cb-website-db.deb
@@ -58,7 +61,8 @@ python-cbmisc.deb: ../lib/Makefile
 	echo ================================================ >/dev/null
 	echo "Package: python-cbmisc" > fs-env/DEBIAN/control
 	echo "Version: ${VERSION}" >> fs-env/DEBIAN/control
-	echo "Architecture: $(shell dpkg-architecture -qDEB_BUILD_ARCH)" >> fs-env/DEBIAN/control
+	#echo "Architecture: $(shell dpkg-architecture -qDEB_BUILD_ARCH)" >> fs-env/DEBIAN/control
+	echo "Architecture: all" >> fs-env/DEBIAN/control
 	echo "Maintainer: Shish <shish@civicboom.com>" >> fs-env/DEBIAN/control
 	echo "Depends: binutils" >> fs-env/DEBIAN/control
 	echo "Description: a package with some non-debian-packaged python bits in" >> fs-env/DEBIAN/control

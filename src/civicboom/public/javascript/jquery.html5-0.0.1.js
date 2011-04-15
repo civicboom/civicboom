@@ -1,7 +1,15 @@
 // HTML5 feature emulation for older browsers
 
+function unplacehold(container) {
+	$(container).find('input').each(function(i) {
+		if ($(this).val() === $(this).attr('placeholder')) {
+			$(this).val('');
+		}
+	});
+}
+
 function html5ize (jqContainer) {
-	if (typeof jqContainer == 'undefined')
+	if (typeof jqContainer == 'undefined' || jqContainer == null)
 		jqContainer = $('body')
 
 	if (!Modernizr.input.placeholder) {

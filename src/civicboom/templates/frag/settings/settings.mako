@@ -103,14 +103,14 @@
                 </tr>
             % endfor
 ##        GregM: Add the janrain & notifications links to the general group.
-            % if group_name == 'contact':
-              <tr><td>&nbsp;</td><td colspan="2"><br />
-                <a href="${url(controller='account' , action='link_janrain')}">${_("Link Additional Accounts (Facebook, LinkedIn, Google and more)")}</a>
-              </td></tr>
-              <tr><td>&nbsp;</td><td colspan="2"><br />
-                <a href="${url(controller='settings', action='messages')}">${_("Edit Notification Preferences")}</a>
-              </td></tr>
-            % endif
+##            % if group_name == 'contact':
+##              <tr><td>&nbsp;</td><td colspan="2"><br />
+##                <a href="${url(controller='account' , action='link_janrain')}">${_("Link Additional Accounts (Facebook, LinkedIn, Google and more)")}</a>
+##              </td></tr>
+##              <tr><td>&nbsp;</td><td colspan="2"><br />
+##                <a href="${url(controller='settings', action='messages')}">${_("Edit Notification Preferences")}</a>
+##              </td></tr>
+##            % endif
 			</table>
         </div>
     % endfor

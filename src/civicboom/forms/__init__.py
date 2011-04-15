@@ -36,14 +36,15 @@ class Grid(tables.Grid):
 def create_autocompleter(url):
     class AutoCompleteRenderer(FieldRenderer):
         def render(self, options={}):
+            sval = self.value if hasattr(self, 'value') else ''
             cn = ""
             for name, val in options:
-                if str(val) == self.value:
+                if str(val) == sval:
                     cn = name
             vars = dict(
                 url=url,
                 name=self.name,
-                value=self.value,
+                value=sval,
                 value_name=cn,
             )
             return """
@@ -75,7 +76,7 @@ $('#%(name)s_name').autocomplete({
 
 class DatePickerFieldRenderer(FieldRenderer):
     def render(self):
-        value= self.value or ''
+        value = self.value or ''
         vars = dict(name=self.name, value=value.split(".")[0])
         return """
 <input id="%(name)s" name="%(name)s" type="text" value="%(value)s">
@@ -95,7 +96,7 @@ class EnumFieldRenderer(FieldRenderer):
         if self.field._columns[0].nullable:
             opts = opts + "<option value>None</option>\n"
         for o in self.field._columns[0].type.enums:  # is there a better way? :|
-            sel = " selected" if value==o else ""
+            sel = " selected" if value == o else ""
             opts = opts + ("<option value='%s'%s>%s</option>\n" % (o, sel, o.replace("_", " ")))
         vars = dict(name=self.name, opts=opts)
         return """
@@ -107,7 +108,7 @@ class EnumFieldRenderer(FieldRenderer):
 
 class LocationPickerRenderer(FieldRenderer):
     def render(self):
-        if self.raw_value:
+        if hasattr(self, 'raw_value') and self.raw_value:
             lonlatval = location_to_string(self.raw_value)
             lonlat = "lonlat: {lon:%s, lat:%s}," % tuple(lonlatval.split(" "))
         else:
@@ -123,10 +124,10 @@ class LocationPickerRenderer(FieldRenderer):
 <div style="width: 100%%; height: 200px; border: 1px solid black; z-index: 0;" id="%(field_name)s_div"></div>
 <script type="text/javascript">
 $(function() {
-	map = map_picker('%(field_name)s', {
+    map = map_picker('%(field_name)s', {
         style: 'wkt',
         %(lonlat_js)s
-	});
+    });
 });
 </script>
 </div>
@@ -408,5 +409,4 @@ MediaGrid.configure(include=[
         MediaGrid.type,
         MediaGrid.attached_to,
         ])
-
 # }}}

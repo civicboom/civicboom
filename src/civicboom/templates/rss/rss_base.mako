@@ -46,7 +46,7 @@
     <item>
         <title>${content['title']}</title>
         <link>${h.url('content', id=content['id'], subdomain='')}</link> 
-        <description>${content['content_short']}</description> 
+        <description>${content.get('content', content.get('content_short'))}</description> 
         <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate>
         <guid isPermaLink="false">Content #${content['id']}</guid>
         % if 'tags' in content:
@@ -123,7 +123,7 @@
     ##% if content['type'] == 'comment':
     <% name = comment.get('creator', dict()).get('name') or comment.get('creator', dict()).get('username') %>
     <title>${_('Comment by')}: ${name} - ${h.truncate(comment['content'], length=50, whole_word=True, indicator='...')}</title>
-    <description>${comment['content']}</description>
+    <description>${comment.get('content')}</description>
     <pubDate>${h.date_to_rss(comment.get('creation_date'))}</pubDate>
     ## ${datetime.strptime(content['creation_date'][0:19], "%Y-%m-%d %H:%M:%S").strftime("%a, %d %b %Y %H:%M:%S +0000")}
     <dc:creator>${name}</dc:creator>

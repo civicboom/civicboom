@@ -26,9 +26,7 @@
         site_url = h.url('.', protocol='http', subdomain='') ## TODO: line needs testing on live server
     %>
     <body>
-        <a href="${site_url}">
-            <img src="${site_url}/images/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
-        </a>
+        <a href="${site_url}"><img src="${site_url}/images/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/></a>
         <br/>
       
         ${next.body()}

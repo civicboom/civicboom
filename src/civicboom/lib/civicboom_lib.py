@@ -51,31 +51,37 @@ def deny_pending_user(url_to_check):
 # Verify Email
 #-------------------------------------------------------------------------------
 
-def send_verifiy_email(user, controller='account', action='verify_email', message=None):
+def validation_url(user, controller, action):
+    return url(controller=controller, action=action, id=user.username, hash=user.hash(), subdomain='', protocol='https')
+
+def send_verifiy_email(user, controller='account', action='verify_email', message=None, subject=_('verify e-mail address')):
     if not message:
         message = _('verify this email address')
 #    Session.refresh(user)
-    validation_link = url(controller=controller, action=action, id=user.id, hash=user.hash(), subdomain='') # Need https here?
-    message         = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
-    send_email(user.email_unverified, subject=_('verify e-mail address'), content_text=message)
+    validation_link  = validation_url(user, controller, action)
+    message          = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
+    if action=='verify_email':
+        send_email(user.email_unverified, subject=subject, content_text=message)
+    else:
+        user.send_email(subject=subject, content_text=message)
+    
 
-
-def verify_email(user, hash, commit=False):
+def verify_email_hash(user, hash, commit=False):
     user = get_member(user)
     if user and user.hash() == hash:
-        if user.email_unverified:
-            user.email            = user.email_unverified
-            user.email_unverified = None
-        if commit:
-            Session.commit()
+        if not config['demo_mode']: # AllanC - Demo mode is ALWAYS offline, there is no way we can validate members emails address's. But the hash is correct so return True
+            if user.email_unverified:
+                user.email            = user.email_unverified
+                user.email_unverified = None
+            if commit:
+                Session.commit()
         return True
     return False
 
-
-def send_forgot_password_email(user):
-    validation_link = url(controller='account', action='forgot_password', protocol='https', id=user.username, hash=user.hash(), subdomain='')
-    message         = _('Please click or copy the following link into your browser to reset your password: %s' % validation_link)
-    user.send_email(subject=_('reset password'), content_text=message)
+#def send_forgot_password_email(user):
+#    validation_link = url(controller='account', action='forgot_password', id=user.username, hash=user.hash(), subdomain='', protocol='https')
+#    message         = _('Please click or copy the following link into your browser to reset your password: %s' % validation_link)
+#    user.send_email(subject=_('reset password'), content_text=message)
 
 
 #-------------------------------------------------------------------------------
@@ -361,8 +367,10 @@ def get_action_objects_for_url(action_url=None):
     if not action_url:
         action_url = current_url()
     for action_identifyer, action_action, action_description in constants.actions_list:
-        if action_identifyer in action_url:
+        if action_identifyer.search(action_url):
             args, kwargs = get_object_from_action_url( action_url )
+            action_object          = {} # Set this in case we cant recover an action object
+            action_object_frag_url = ''
             if args and kwargs:
                 # Generate action object frag URL
                 kwargs['format'] = 'frag'

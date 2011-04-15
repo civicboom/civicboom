@@ -35,7 +35,7 @@
         %>
         
         ${loc.minimap(
-            width="100%", height="500px",
+            width="100%", height="100%",
             lon = location[0],
             lat = location[1],
             zoom = location[2],

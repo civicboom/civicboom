@@ -280,7 +280,7 @@
         <a href="${h.url('content', id=id)}" ${js_link_to_frag}>
             <p class="content_title">${content['title']}</p>
           % if creator and 'creator' in content:
-            <p style="font-size: 88%" class="content_title">By: ${content['creator']['name'] or content['creator']['username']}</p>
+            <p><small class="content_title">By: ${content['creator']['name'] or content['creator']['username']}</small>
           % endif
         </a>
     </td>
@@ -300,6 +300,12 @@
     </td>
     % endif
 </tr>
+% if request.GET.get('term', '') and 'content_short' in content:
+<tr><td colspan="5">
+	## content_short is stripped of html tags, so any that are in here are search highlights
+	<small class="content_short">${content['content_short']|n}</small>
+</td></tr>
+% endif
 </%def>
 
 ## Content Thumbnail Icons

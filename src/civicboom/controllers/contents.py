@@ -7,7 +7,6 @@ from civicboom.lib.database.get_cached import update_content, get_licenses, get_
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
-from civicboom.lib.misc import str_to_int
 from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
@@ -22,7 +21,7 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
-from sqlalchemy           import or_, and_, null
+from sqlalchemy           import or_, and_, null, func, Unicode
 from sqlalchemy.orm       import join, joinedload, defer
 import datetime
 
@@ -156,7 +155,7 @@ list_filters = {
     'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null())) ,
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
-    'drafts'              : lambda results: results.filter(Content.__type__=='draft') ,
+    'drafts'              : lambda results: results.filter(Content.__type__=='draft').filter(Content.creator == c.logged_in_persona) ,
     'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval=='none')),
     'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval!='none')),
 }
@@ -180,7 +179,8 @@ def sqlalchemy_content_query(include_private=False, **kwargs):
     else:
         results = results.filter(Content.private==False) # public content only
     if 'creator' in kwargs.get('include_fields',[]):
-        results = results.options(joinedload('creator'))
+        #results = results.options(joinedload('creator'))
+        results = results.options(joinedload(Content.creator))
     if 'attachments' in kwargs.get('include_fields',[]):
         results = results.options(joinedload('attachments'))
     if 'tags' in kwargs.get('include_fields',[]):
@@ -271,8 +271,26 @@ class ContentsController(BaseController):
         
         include_private_content = 'private' in kwargs and logged_in_creator
         results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)
+
         if union_query:
             results = results.union(union_query)
+
+        # union and add_column are mutually exclusive; union is functional while
+        # add_column is visual, so disable add_column if union is there
+        #if not union_query:
+        #    if 'term' in kwargs:
+        #        results = results.add_column(
+        #            func.ts_headline('pg_catalog.english',
+        #                func.strip_tags(Content.content),
+        #                func.plainto_tsquery(kwargs['term']),
+        #                'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
+        #                type_= Unicode
+        #            )
+        #        )
+        #    else:
+        #        results = results.add_column(
+        #            func.substr(func.strip_tags(Content.content), 0, 100)
+        #        )
 
         # Sort
         if 'sort' not in kwargs:
@@ -280,25 +298,15 @@ class ContentsController(BaseController):
         # TODO: use kwargs['sort']
         results = results.order_by(Content.update_date.desc())
         
-        # Count
-        count = results.count()
-        
-        # Limit & Offset
-        kwargs['limit']  = str_to_int(kwargs.get('limit'), config['search.default.limit.contents'])
-        kwargs['offset'] = str_to_int(kwargs.get('offset')                                        )
-        results = results.limit(kwargs['limit']).offset(kwargs['offset'])
-        
-        # Return search results
-        return action_ok(
-            data = {'list': {
-                'items' : [content.to_dict(**kwargs) for content in results.all()] ,
-                'count' : count ,
-                'limit' : kwargs['limit'] ,
-                'offset': kwargs['offset'] ,
-                'type'  : 'content' ,
-                }
-            }
-        )
+        def merge_snippet(content, snippet):
+            content = content.to_dict(**kwargs)
+            content['content_short'] = snippet
+            return content
+
+        #if not union_query:
+        #    results = [merge_snippet(co, sn) for co, sn in results]
+
+        return to_apilist(results, obj_type='content', **kwargs)
 
 
     @web
@@ -336,6 +344,11 @@ class ContentsController(BaseController):
         @return 201   content created
                 id    new content id
         @return *     see update return types
+        
+        @comment AllanC The prefered way of posting comments from a remote site is http://test.civicboom.com/contents?type=comment&format=redirect
+                        currently the action being performed is recodnised by the string /contents?type=comment
+                        the format=redirect is a cool way to return you to your site at the end of posting usinging the http_referer
+                        (unless they have to signup, at witch point the redirect will be lost)
         """
         # url('contents') + POST
 
@@ -348,22 +361,27 @@ class ContentsController(BaseController):
         if   kwargs['type'] == 'draft':
             raise_if_current_role_insufficent('contributor')
             content = DraftContent()
+            # GregM: Set private flag to user or hub setting (or public as default)
+            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
         elif kwargs['type'] == 'comment':
             raise_if_current_role_insufficent('editor')
             content = CommentContent()
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = ArticleContent()                  # Create base content
+            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         elif kwargs['type'] == 'assignment':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = AssignmentContent()               # Create base content
+            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         
         # Set create to currently logged in user
         content.creator = c.logged_in_persona
-        print "creator"
-        print content.creator
+        
+        # GregM: Set private flag to user or hub setting (or public as default)
+        content.private = kwargs.get('private', False)
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
@@ -375,6 +393,17 @@ class ContentsController(BaseController):
             if not kwargs.get('title'):
                 if parent and parent.title:
                     content.title = "Re: "+parent.title
+            if kwargs['type'] != 'comment':
+                # If parent is an assignment then 'auto accept' it - ignore all errors, except 403 - propergate it up
+                from civicboom.controllers.content_actions import ContentActionsController
+                content_accept = ContentActionsController().accept
+                try:
+                    content_accept(id=parent)
+                except action_error as ae:
+                    if ae.original_dict.get('code') == 403:
+                        raise ae
+                
+            
 
         # comments are always owned by the writer; ignore settings
         # and parent preferences
@@ -437,7 +466,7 @@ class ContentsController(BaseController):
             if 'parent_id' not in kwargs:
                 kwargs['parent_id'] = ''
         
-        # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic
+        # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic - will raise invalid if needed
         data       = {'content':kwargs}
         data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
         kwargs     = data['content']
@@ -550,6 +579,7 @@ class ContentsController(BaseController):
             # Profanity Check --------------------------------------------------
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
+            # GregM: Content can now stay private after publishing :)
             content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
             
             # Notifications ----------------------------------------------------
@@ -683,9 +713,12 @@ class ContentsController(BaseController):
         # Corporate plus customers want to be able to see what members have looked at an assignment
         if content.__type__=='assignment' and content.closed==True:
             member_assignment = get_assigned_to(content, member)
+            if not member_assignment:
+                return False
             if not member_assignment.member_viewed:
                 member_assignment.member_viewed = True
                 Session.commit()
+            return True
         
         return action_ok(data=data)
 

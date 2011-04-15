@@ -63,6 +63,79 @@ class MemberActionsController(BaseController):
 
 
     #---------------------------------------------------------------------------
+    # Action - Trust Follower
+    #---------------------------------------------------------------------------
+    @web
+    @auth
+    @role_required('editor')
+    def follower_trust(self, id, **kwargs):
+        """
+        POST /members/{name}/trust_follower: trust a follower
+
+        @type action
+        @api members 1.0 (WIP)
+
+        @return 200   follower trusted
+        @return 500   error trusting
+        """
+        member = get_member(id, set_html_action_fallback=True)
+
+        status = c.logged_in_persona.follower_trust(member)
+        if status == True:
+            return action_ok( _('You are now trusting your follower %s') % member.name or member.username )
+        raise action_error(_('Unable to trust member: %s') % status)
+
+
+    #---------------------------------------------------------------------------
+    # Action - DisTrust Follower
+    #---------------------------------------------------------------------------
+    @web
+    @auth
+    @role_required('editor')
+    def follower_distrust(self, id, **kwargs):
+        """
+        POST /members/{name}/distrust_follower: remove trust from a follower
+
+        @type action
+        @api members 1.0 (WIP)
+
+        @return 200   follower trust removed
+        @return 500   error removing trust
+        """
+        member = get_member(id, set_html_action_fallback=True)
+
+        status = c.logged_in_persona.follower_distrust(member)
+        if status == True:
+            return action_ok( _('You have removed trust from your follower %s') % member.name or member.username )
+        raise action_error(_('Unable to distrust: %s') % status)
+
+
+    #---------------------------------------------------------------------------
+    # Action - Invite Trusted Follower
+    #---------------------------------------------------------------------------
+    @web
+    @auth
+    @role_required('editor')
+    def follower_invite_trusted(self, id, **kwargs):
+        """
+        POST /members/{name}/follower_invite: invite someone to follow you and become trusted
+
+        @type action
+        @api members 1.0 (WIP)
+
+        @return 200   trusted follower invite sent
+        @return 400   error sending invite
+        """
+        member = get_member(id, set_html_action_fallback=True)
+
+        status = c.logged_in_persona.follower_invite_trusted(member)
+        if status == True:
+            return action_ok( _('You have invited the member %s to follow you as a trusted follower') % member.name or member.username )
+        raise action_error(_('Unable to invite: %s') % status)
+
+
+
+    #---------------------------------------------------------------------------
     # List - User Actions
     #---------------------------------------------------------------------------
     @web
@@ -194,33 +267,68 @@ class MemberActionsController(BaseController):
     # List - Group Membership
     #---------------------------------------------------------------------------
     
-    def _groups_list_dict(self, group_roles, **kwargs):
-        return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
+    #def _groups_list_dict(self, group_roles, **kwargs):
+    #    return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in group_roles]
 
     @web
     def groups(self, id, **kwargs):
         """
         GET /members/{name}/groups: get a list groups this member belongs to
-
+        
+        if logged in user = id and private=true will show groups membership of groups with hidden membership
+        
         @type list
         @api members 1.0 (WIP)
         
         @return 200    list generated ok
                 list   array of content objects
         @return 404   member not found
-        
-        @comment AllanC not driven by members/index and lacks limit/offset controls etc
         """
+        return member_search(groups_for=id, **kwargs)
+        
+        #member = get_member(id)        
+        #if member == c.logged_in_persona and kwargs.get('private'):
+        #    group_roles = member.groups_roles #self._groups_list_dict(
+        #else:
+        #    group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visibility=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
+        #
+        #groups      = self._groups_list_dict(group_roles, **kwargs)
+        #return to_apilist(groups, obj_type='member') #TODO transform
 
-        member = get_member(id)
+
+    #---------------------------------------------------------------------------
+    # List - Members (group only)
+    #---------------------------------------------------------------------------
+    @web
+    def members(self, id, **kwargs):
+        """
+        GET /members/{name}/members: list of members of this group
         
-        if member == c.logged_in_persona and kwargs.get('private'):
-            group_roles = member.groups_roles #self._groups_list_dict(
-        else:
-            group_roles = [gr for gr in member.groups_roles if gr.status=="active" and gr.group.member_visibility=="public"] # AllanC - Duplicated from members.__to_dict__ .. can this be unifyed
+        groups only
         
-        groups      = self._groups_list_dict(group_roles, **kwargs)
-        return action_ok_list(groups)
+        @type list
+        @api members 1.0 (WIP)
+        
+        @comment AllanC
+        not exactly the best place for this ... but it fits.
+        making a groups_list controler was overkill and compicated members/show ... so I left it here
+        """
+        group = get_member(id)
+        
+        # FIXME!!!!!
+        # AllanC - HACK ALERT - I needed actions for a member list, so I left c.group so the frag template could look at it - horrible!!!
+        c.group = group
+        
+        if group.__type__ == 'group':
+            return member_search(members_of=group)
+        return to_apilist()
+        
+        #if hasattr(group, 'member_visibility'):
+        #if group.member_visibility=="public" or group == c.logged_in_persona or group.get_membership(c.logged_in_persona):
+        #        members = [update_dict(mr.member.to_dict(),{'role':mr.role, 'status':mr.status}) for mr in group.members_roles]
+        #        return to_apilist(members, **kwargs) #TODO tranform
+        #return to_apilist()
+        
 
     #---------------------------------------------------------------------------
     # List shortcuts
@@ -243,7 +351,7 @@ class MemberActionsController(BaseController):
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_accepted]
-        return action_ok_list(contents, obj_type='content')
+        return to_apilist(contents, obj_type='content') #TODO transform .. WTF!!? full? is this needed by mobile?
 
 
     @web
@@ -266,7 +374,8 @@ class MemberActionsController(BaseController):
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_unaccepted]
-        return action_ok_list(contents, obj_type='content')
+        return to_apilist(contents, obj_type='content') #TODO transform .. full? again?
+
 
     @web
     def assignments_active(self, id, **kwargs):
@@ -299,33 +408,3 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         """
         return content_search(creator=id, list='assignments_previous',**kwargs)
-
-
-    #---------------------------------------------------------------------------
-    # List - Members (group only)
-    #---------------------------------------------------------------------------
-    @web
-    def members(self, id, **kwargs):
-        """
-        GET /members/{name}/members: list of members of this group
-        
-        groups only
-
-        @type list
-        @api members 1.0 (WIP)
-        
-        @comment AllanC
-        not exactly the best place for this ... but it fits.
-        making a groups_list controler was overkill and compicated members/show ... so I left it here
-        """
-        group = get_member(id)
-        
-        # FIXME!!!!!
-        # AllanC - HACK ALERT - I needed actions for a member list, so I left c.group so the frag template could look at it - horrible!!!
-        c.group = group
-        
-        if hasattr(group, 'member_visibility'):
-            if group.member_visibility=="public" or group == c.logged_in_persona or group.get_membership(c.logged_in_persona):
-                members = [update_dict(mr.member.to_dict(),{'role':mr.role, 'status':mr.status}) for mr in group.members_roles]
-                return action_ok_list(members)
-        return action_ok_list([])

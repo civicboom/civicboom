@@ -115,7 +115,7 @@ def current_referer(protocol=None):
 
 
 def current_protocol():
-    return request.environ.get('HTTP_X_URL_SCHEME', 'http')
+    return request.environ.get('wsgi.url_scheme', 'http')
 
 
 def current_host(protocol=None):
@@ -134,7 +134,7 @@ def current_url(protocol=None):
 def redirect_to_referer():
     url_to = session_remove('login_action_referer') or current_referer() or '/' #cookie_get('login_action_referer') or
     if url_to == url('current'): # Detect if we are in a redirection loop and abort
-        log.warning("Redirect loop detected for "+str(url_to))
+        log.warning("Redirect loop detected for %s" % url_to)
         #redirect('/')
     #print "yay redirecting to %s" % url_to
     return redirect(url_to)
@@ -178,6 +178,7 @@ def session_get(key):
         return session[key]
     return None
 
+
 def session_keys():
     return [key for key in session.keys() if '_expire' not in key]
 
@@ -208,14 +209,14 @@ def cookie_remove(key):
     return value
 
 
-def cookie_set(key, value, duration=None, secure=None):
+def cookie_set(key, value, duration=3600*24*365, secure=None):
     """
     duration in seconds
     """
-    #log.debug("setting %s:%s" %(key, value))
+    #print "COOKIE setting %s:%s" %(key, value)
     if secure == None:
-        secure = (request.environ['wsgi.url_scheme']=="https")
-    response.set_cookie(key, value, max_age=duration, secure=secure) #path='/', domain='example.org',
+        secure = (current_protocol() == "https")
+    response.set_cookie(key, value, max_age=duration, secure=secure, path='/') #, domain=request.environ.get("HTTP_HOST", "") # AllanC - domain remarked because firefox 3.5 was not retaining the logged_in cookie with domain localhost
 
 
 def cookie_get(key):
@@ -256,16 +257,6 @@ def action_ok(message=None, data={}, code=200, **kwargs):
     return d
 
 
-# AllanC - convenicen metod for returning lists
-def action_ok_list(list, obj_type=None, **kwargs):
-    return action_ok(data={'list': {
-            'items' : list     ,
-            'count' : len(list),
-            'limit' : None     ,
-            'offset': 0        ,
-            'type'  : obj_type ,
-        }
-    }, **kwargs)
 
 
 class action_error(Exception):
@@ -287,10 +278,6 @@ class action_error(Exception):
 
 
 def overlay_status_message(master_message, new_message):
-    """
-
-    """
-    
     # Setup master message
     if not master_message:
         master_message = {}
@@ -315,7 +302,6 @@ def overlay_status_message(master_message, new_message):
     # Tidy message whitespace
     master_message['message'] = master_message['message'].strip()
 
-    
     master_message['data'].update(new_message.get('data') or {})
         
     # Pass though all keys that are not already in master
@@ -329,11 +315,6 @@ def overlay_status_message(master_message, new_message):
 # Auto Format Output
 #-------------------------------------------------------------------------------
 
-def _find_subformat():
-    if request.environ['is_mobile']:
-        return 'mobile'
-    return get_subdomain_format()
-
 
 def _find_template(result, type):
     #If the result status is not OK then use the template for that status
@@ -345,7 +326,7 @@ def _find_template(result, type):
 
     # html is a meta-format -- if we are asked for a html template,
     # redirect to web, mobile or widget depending on the environment
-    subformat = _find_subformat()
+    subformat = get_subdomain_format()
     if type == "html":
         paths = [
             os.path.join("html", subformat, template_part),
@@ -390,12 +371,13 @@ def _find_template(result, type):
     
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
+
 def _find_template_basic(controller=None, action=None, format=None):
     controller = controller or c.controller
     action = action or c.action
     format = format or c.format or "html"
     template_part = '%s/%s' % (controller, action)
-    subformat = _find_subformat()
+    subformat = get_subdomain_format()
     if format == "html":
         paths = [
             os.path.join("html", subformat, template_part),
@@ -413,7 +395,8 @@ def _find_template_basic(controller=None, action=None, format=None):
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
             return path+".mako"
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (format, controller, action, "", "\n".join(paths)))
-        
+
+
 def setup_format_processors():
     def render_template(result, type):
         overlay_status_message(c.result, result)
@@ -474,8 +457,14 @@ def setup_format_processors():
         #if action_redirect and action_redirect.find(url.current())<0: # If the redirector contains the current URL path we are in an infinate loop and need to return just the text rather than a redirect
         #    return redirect(action_redirect)
             
-        #log.warning("Redirect loop detected for "+str(action_redirect))
+        #log.warning("Redirect loop detected for %s" % action_redirect)
         #return redirect("/")
+        
+    def format_ical(result):
+        abort(501)
+        
+    def format_pdf(result):
+        abort(501)
 
     return dict(
         python   = lambda result:result,
@@ -485,6 +474,8 @@ def setup_format_processors():
         html     = format_html,
         frag     = format_frag,
         redirect = format_redirect,
+        ical     = format_ical,
+        pdf      = format_pdf,
     )
 
 
@@ -506,6 +497,8 @@ def auto_format_output(target, *args, **kwargs):
             Used to generate fragments of pages for use with AJAX calls or as a component of a static page
         - PYTHON (just the plain python dict for internal calls)
         - REDIRECT (compatable old borswer action to have session message set and redirected to referer)
+        - ICAL (calender support)
+        - PDF (generate PDF for printing/archiving)
             
     Should be passed a python dictonary containing
         {
@@ -532,8 +525,8 @@ def auto_format_output(target, *args, **kwargs):
     try:
         result = target(*args, **kwargs) # Execute the wrapped function
     except action_error as ae:
-        if c.format == "python":
-            raise
+        if not auto_format_output_flag: #c.format == "python":
+            raise ae
         else:
             result = ae.original_dict
             if c.format=="html" or c.format=="redirect":
@@ -561,7 +554,7 @@ def auto_format_output(target, *args, **kwargs):
         if c.format in format_processors:
             return format_processors[c.format](result)
         else:
-            log.warning("Unknown format: "+str(c.format))
+            log.warning("Unknown format: %s" % c.format)
         
     # If pre-rendered HTML or JSON or unknown format - just pass it through, we can not format it any further
     #log.debug("returning pre-rendered stuff")

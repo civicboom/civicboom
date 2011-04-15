@@ -187,3 +187,16 @@ function refreshProgress (jquery_element) {
     }
   });
 }
+
+function limitInputLength (event, textElement, maxLength) {
+	var textLength = $(textElement).val().length;
+	if (event.keyCode < 1)
+		if ( ($(textElement).val().length >= maxLength) || ($(textElement).text().length >= maxLength) )
+			return false;
+	return true;
+}
+
+function countInputLength (event, textElement, maxLength, statusElement) {
+	var textLength = $(textElement).val().length;
+	if (typeof statusElement != 'undefined') statusElement.text(maxLength - (textLength));
+}

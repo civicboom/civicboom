@@ -56,15 +56,20 @@ generators = [
     # Member actions
     ["followed_by",                          "ne", _("new follower"),                _("%(member)s is now following you")],
     ["followed_on_signup",                   "ne", _("new sign up via widget"),      _("%(member)s has signed up via your widget and is now following you")],
-    ["follow_stop",                          "",   _("lost a follower"),             _("%(member)s has stopped following you")],
+    ["follow_stop",                          "e",   _("lost a follower"),             _("%(member)s has stopped following you")],
+    
+    # GregM: Follow action notifications
+    ["follower_trusted",                     "ne", _("trusted follower"),             _("%(member)s has made you a trusted follower, you can now see their private content")],
+    ["follower_distrusted",                  "ne", _("no longer a trusted follower"), _("%(member)s has stopped you being a trusted follower, you will not be able to see their private content")],
+    ["follow_invite_trusted",                "ne", _("trusted follower invite"),      _("%(member)s has invited you to follow them as a trusted follower, if you accept you will be able see their private content")],
 
     # New Content
     ["article_published_by_followed",        "ne", _("new _article"),                _("%(creator)s has written new _article : %(article)s")],
     ["article_published_by_followed_mobile", "ne", _("new mobile _article"),         _("%(member)s has uploaded mobile _article : %(article)s")],
     
     # Content Actions
-    ["article_rated",                        "",   _("_article rated"),              _("your _article %(article)s was rated a %(rating)s")],
-    ["comment",                              "n",  _("comment made on _article"),    _("%(member)s commented on your _article %(article)s")],  #Also passes comment.contents as a string and could be used here
+    ["article_rated",                        "e",   _("_article rated"),              _("your _article %(article)s was rated a %(rating)s")],
+    ["comment",                              "ne",  _("comment made on _article"),    _("%(member)s commented on your _article %(article)s")],  #Also passes comment.contents as a string and could be used here
 
     # Content Responses
     ["assignment_response_mobile",           "ne", _("_assignment mobile response"), _("%(member)s has uploaded mobile _article titled %(article)s based on your _assignment %(assignment)s")],
@@ -75,7 +80,7 @@ generators = [
     ["assignment_updated",                   "ne", _("_assignment updated"),         _("%(creator)s has updated their _assignment %(assignment)s")],
     ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been cancelled"), _("%(member)s cancel'ed the _assignment %(assignment)s")],
     ["assignment_accepted",                  "ne", _("_assignment accepted"),        _("%(member)s accepted your _assignment %(assignment)s")],
-    ["assignment_interest_withdrawn",        "",   _("_assignment interest withdrawn"), _("%(member)s withdrew their interest in your _assignment %(assignment)s")],
+    ["assignment_interest_withdrawn",        "e",   _("_assignment interest withdrawn"), _("%(member)s withdrew their interest in your _assignment %(assignment)s")],
     ["assignment_invite",                    "ne", _("closed _assignment invitation") , _("%(member)s has invited you to participate in the _assignment %(assignment)s")],
 
     # Assignment Timed Tasks
@@ -88,17 +93,17 @@ generators = [
       # TODO: response seen
 
     # Groups to group
-    ["group_new_member",                     "n" , _("_member joined group"),        _("%(member)s has joined %(group)s")],
-    ["group_role_changed",                   "n" , _("_member role changed"),        _("%(admin)s changed %(member)ss role for %(group)s to %(role)s")],
+    ["group_new_member",                     "ne" , _("_member joined group"),        _("%(member)s has joined %(group)s")],
+    ["group_role_changed",                   "ne" , _("_member role changed"),        _("%(admin)s changed %(member)ss role for %(group)s to %(role)s")],
     ["group_remove_member_to_group",         "ne", _("_member removed from _group"), _("%(admin)s removed %(member)s from %(group)s")],
-    ["group_join_request",                   "n" , _("join request"),                _("%(member)s has requested to join %(group)s")],
+    ["group_join_request",                   "ne" , _("join request"),                _("%(member)s has requested to join %(group)s")],
     
     # Groups to members
     ["group_deleted",                        "ne", _("_group deleted"),              _("The _group %(group)s has been deleted by %(admin)s")],
     ["group_invite",                         "ne", _("_group invitation"),           _("%(admin)s invited you to join %(group)s as a %(role)s")],
-    ["group_request_declined",               "n" , _("_group membership request declined"), _("your membership request to join %(group)s was declined")],
-    ["group_invitation_declined",            ""  , _("_group membership invitation declined"), _("%(member)s declined the invitation to join %(group)s")],
-    ["group_request_accepted",               "n" , _("_group request accepted"),     _("%(admin)s accepted your _group membership request. You are now a member of %(group)s")],
+    ["group_request_declined",               "ne" , _("_group membership request declined"), _("your membership request to join %(group)s was declined")],
+    ["group_invitation_declined",            "e"  , _("_group membership invitation declined"), _("%(member)s declined the invitation to join %(group)s")],
+    ["group_request_accepted",               "ne" , _("_group request accepted"),     _("%(admin)s accepted your _group membership request. You are now a member of %(group)s")],
     ["group_remove_member_to_member",        "ne", _("removed from _group"),         _("%(admin)s removed your membership to %(group)s")],
     
     # Aggregation
@@ -148,9 +153,8 @@ def send_message(member, message_data, delay_commit=False):
         if c == 'c': # Send to Comufy
             pass
         if c == 'e': # Send to Email
-            # groups don't have an email address
-            if hasattr(member, "email"):
-                send_email(member.email, subject=message_data.subject, content_html=message_data.content)
+            if hasattr(member, 'email'):
+                send_email(member, subject=message_data.subject, content_html=message_data.content)
         if c == 't': # Send to Twitter
             pass
         if c == 'n': # Save message in message table (to be seen as a notification)

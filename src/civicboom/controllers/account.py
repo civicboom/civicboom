@@ -7,7 +7,7 @@ import civicboom.lib.constants as constants
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
 #from civicboom.lib.web              import cookie_get
-from civicboom.lib.civicboom_lib    import verify_email as verify_email_hash, associate_janrain_account, send_forgot_password_email, set_password, get_action_objects_for_url, has_account_without_password
+from civicboom.lib.civicboom_lib    import verify_email_hash, associate_janrain_account, set_password, get_action_objects_for_url, has_account_without_password, send_verifiy_email #send_forgot_password_email,
 #from civicboom.lib.database.get_cached import get_member
 
 from civicboom.controllers.register import register_new_janrain_user
@@ -48,7 +48,7 @@ class AccountController(BaseController):
         @return 302   redirect to the front page
         """
         signout_user(c.logged_in_persona)
-        return redirect(url('/', protocol='http', ut=str(time.time())))
+        return redirect(url('/', ut=str(time.time())))
 
 
     #---------------------------------------------------------------------------
@@ -127,7 +127,7 @@ class AccountController(BaseController):
         # AllanC - TODO
         # Check if user does exisit but simply has no 'password' login record accociated with it
         if has_account_without_password(kwargs.get('username')):
-            err = action_error(_('%s has not setup a _site_name password yet, please visit your settings') % kwargs.get('username'), code=403)
+            err = action_error(_('%s has not setup a _site_name password yet, please visit your settings on the website') % kwargs.get('username'), code=403)
         if c.format in ["html", "redirect"]:
             set_flash_message(err.original_dict)
             return redirect_to_referer() #AllanC - TODO .. humm .. this will remove the login_action_referer so if they fail a login first time they cant perform the action thats remembered. This need thinking about.
@@ -176,10 +176,10 @@ class AccountController(BaseController):
         id = kwargs.get('id')
         username = id
         if not username or username == 'me':
-             username = c.logged_in_persona.username
-             id = 'me'
+            username = c.logged_in_persona.username
+            id = 'me'
         user_type = 'group'
-        user = get_member(username)  
+        user = get_member(username)
         if isinstance(user, User):
             user_type = 'member'
             if not user == c.logged_in_user:
@@ -202,7 +202,7 @@ class AccountController(BaseController):
             associate_janrain_account(c.logged_in_persona, c.auth_info['profile']['providerName'], c.auth_info['profile']['identifier'])
             set_flash_message(action_ok("Account successfully linked to _site_name"))
         else:
-            set_flash_message(action_error("Error linking accounts"))
+            set_flash_message(action_error("Error linking accounts").original_dict)
             
         redirect(url(redirect_url))
 
@@ -220,7 +220,7 @@ class AccountController(BaseController):
             if verify_email_hash(id, request.params['hash'], commit=True):
                 set_flash_message(action_ok(_('email address has been successfully validated')))
             else:
-                set_flash_message(action_error(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again')))
+                set_flash_message(action_error(_('email validation failed, if you have changed any user settings since sending the validation email, please validate again')).original_dict)
             redirect('/')
 
 
@@ -240,7 +240,8 @@ class AccountController(BaseController):
 
         # Step 1: User request link with hash to be sent via email
         if not c.hash:
-            send_forgot_password_email(user)
+            #send_forgot_password_email(user)
+            send_verifiy_email(user, controller='account', action='forgot_password', message=_('reset your password'))
             return action_ok(_('Password reminder sent, please check your email'))
             
         if not verify_email_hash(user, c.hash): # abort if unable to verify user
@@ -280,4 +281,3 @@ class AccountController(BaseController):
             set_password(user, kwargs['password_new'])
             set_flash_message(_('password has been set'))
             redirect(url(controller='account', action='signin'))
-

@@ -66,9 +66,10 @@ def load_environment(global_conf, app_conf):
                         'security.disallow_https_cookie_in_http',
                         'online',
                         'test_mode',
+                        'demo_mode',
                         ]
     for varname in boolean_varnames:
-        config[varname] = asbool(config[varname])
+        config[varname] = asbool(config.get(varname))
 
     # Integers in config file
     integer_varnames = ['payment.free.assignment_limit'  ,
@@ -78,6 +79,7 @@ def load_environment(global_conf, app_conf):
                         'search.default.limit.members'   ,
                         'search.default.limit.messages'  ,
                         'setting.session.login_expire_time',
+                        'email.smtp_port',
                         ]
     for varname in integer_varnames:
         config[varname] = int(config[varname].strip())

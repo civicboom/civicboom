@@ -16,7 +16,7 @@ HTML {
 
 HEADER {
 	clear: both;
-	background: url("/styles/web/headerbk.png") 0 -10px;
+	background: url("headerbk.png");
 	position: fixed;
     top  : 0px;
 	left : 0px;
@@ -29,6 +29,11 @@ HEADER {
 	 * 800px screen, overlapping is slightly less bad
 	 * than the Sign In button going off the edge of
 	 * the screen
+	 */
+	/*
+	 * this should never matter, as for thin browsers
+	 * we go into thin mode; but possibly this is still
+	 * useful for IE7/8
 	 */
 	min-width: 780px;
 }
@@ -73,6 +78,11 @@ HEADER #persona_select {
     position: absolute;
     top : 8px;
     left: 155px;
+	z-index: 501; /* above the create/explore/manage */
+}
+
+HEADER #persona_select P {
+	margin: 0px;
 }
 
 HEADER #persona_select img {
@@ -147,11 +157,12 @@ HEADER #home_link {
 NAV {
 	position: absolute;
 	top: 11px;
-	left: 215px;
+	left: 223px;
 }
 
 NAV .menuh>UL {
-	margin-left: 16px;
+	margin-left: 8px;
+	margin-right: 8px;
 	height: 20px;
 }
 NAV .menuh>UL>LI>UL{
@@ -159,7 +170,7 @@ NAV .menuh>UL>LI>UL{
 	padding-top: 0px;
 }
 NAV .menuh ul {
-    width:9em;	/* width of all menu boxes */
+    width: 120px;
 }
 NAV .menuh LI:hover a.top_parent {
 	border-top: 1px solid #555;
@@ -177,6 +188,7 @@ NAV .menuh LI:hover a.top_parent {
 NAV .menuh a.sub_option,
 NAV .menuh a.sub_option:visited,
 NAV .menuh a.parent {
+	display: block;
 	background: white;
 	color: black;
 	border-left: 1px solid #555;
@@ -197,6 +209,34 @@ NAV .menuh INPUT {
 	width: 100%;
 }
 
+
+/*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
+/*                             About buttons                                  */
+/*----------------------------------------------------------------------------*/
+
+HEADER #aboutbtns {
+    position: absolute;
+    top: 11px;
+    right: 245px;
+
+    /*
+    width: 54px;
+    height: 18px; /* +2px border 
+    text-align: center;
+    vertical-align: middle;
+    background-color: #eee;
+    border: 1px solid #ccc;
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+    */
+}
+
+HEADER #aboutbtns .button {
+	padding: 0.2em;
+    width: 64px;
+}
 
 /*----------------------------------------------------------------------------*/
 /*                             Header detail:                                 */
@@ -260,36 +300,6 @@ HEADER #signin .button {
     width: 64px;
 }
 
-/*----------------------------------------------------------------------------*/
-/*                               App detail:                                  */
-/*                                Col Body                                    */
-/*----------------------------------------------------------------------------*/
-
-/*
- * sometimes the main page is columned
- */
-#col_left, #col_main, #col_right {
-	/* padding: 0.25em; */
-    /* margin-left: 0.2em; */
-}
-#col_left {
-	float: left;
-	width: 272px;
-	border: 1px solid black;
-}
-#col_right {
-	float: right;
-	width: 272px;
-	border: 1px solid black;
-}
-#col_main {
-	/*border: 1px solid black;*/
-}
-#col_left  ~ #col_main { margin-left:  296px; }
-#col_right ~ #col_main { margin-right: 296px; }
-
-
-
 
 /*----------------------------------------------------------------------------*/
 /*                             Footer detail:                                 */
@@ -300,6 +310,9 @@ FOOTER A {
     /*vertical-align : middle;*/
 	text-decoration: none;
 	margin-right: 8px;
+}
+FOOTER .links {
+	float: left;
 }
 FOOTER .copyright {
 	float: right;
@@ -316,4 +329,56 @@ H1,H2,H3,H4 {
 }
 H1 {
     font-size: 150%;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                                  Thin Mode                                 */
+/*----------------------------------------------------------------------------*/
+
+@media (max-width: 940px) {
+	HEADER {
+		min-width: 480px;
+		height: 84px;
+	}
+	NAV {
+		top: 53px;
+		left: 0px;
+		right: 0px;
+	}
+	NAV .menuh {
+		width: 400px;
+		margin: auto;
+	}
+	NAV .menuh>UL {
+		margin-left: 4px;
+		margin-right: 4px;
+	}
+
+	BODY>DIV#app {
+		margin-top: 86px;
+	}
+
+	BODY>DIV#app #frag_containers {
+		margin: 0px;
+	}
+	BODY>DIV#app #frag_containers .frag_container {
+		margin: 0px;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+	}
+	BODY>DIV#app #frag_containers .frag_container.frag_col_1 {
+		width: 240px;
+	}
+	BODY>DIV#app #frag_containers .frag_container.frag_col_2 {
+		width: 480px;
+	}
+
+	FOOTER .links, FOOTER .copyright {
+		float: left;
+		clear: both;
+		width: 100%;
+		text-align: center;
+	}
 }

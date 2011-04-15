@@ -1,5 +1,10 @@
 
-PYTHONPATH=../lib
+export PYTHONPATH := ../lib
+export PGHOST     := localhost
+export PGUSER     := civicboom
+export PGPASSWORD := civicboom
+
+GIT_TAG    := $(shell git describe)
 
 help:
 	# Usage: make <target>, where target is
@@ -18,6 +23,8 @@ help:
 	# pep8       -- strict syntax checking
 	# api-doc    -- build civicboom/public/api.html
 	# libs       -- fetch external libraries
+	# shell      -- python shell with the pylons environment loaded
+	# cdnpush    -- push static files to CDN
 
 site: i18n js css libs
 
@@ -51,11 +58,10 @@ test-db: skel-db
 test:
 	nosetests
 
-data/live-data.pgdump:
+live-db: skel-db
 	mkdir -p data
-	ssh -C civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump
-
-live-db: skel-db data/live-data.pgdump
+	ssh -i ~/.ec2/civicboom-key.pem -C ubuntu@db1.civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump
+	psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
 	sudo -u postgres pg_restore -d civicboom data/live-data.pgdump
 
 run:
@@ -80,12 +86,13 @@ stats:
 
 pep8:
 	# 2XX = whitespace inside lines
+	# 291 = whitespace at end of line
 	# 293 = whitespace at end of line (warning only if blank line)
 	# 301 = expected 1 blank line, found 0
 	# 303 = too many blank lines
 	# 501 = line too long
 	# 701 = multiple statments one line (colons)
-	pep8 -r --ignore=E2,E301,E303,E501,E701,W293 civicboom
+	pep8 -r --ignore=E2,E301,E303,E501,E701,W293,W291 civicboom
 
 api-doc:
 	../admin_scripts/gendoc -i civicboom/controllers/ -t ../docs -o civicboom/public/api.html
@@ -94,3 +101,14 @@ py-libs:
 	make -C ../lib
 
 libs: py-libs
+
+shell:
+	paster shell
+
+cdnpush: js css
+	./bundle-static.py \
+		--output static-${GIT_TAG}.zip \
+		--exclude-file civicboom/public/cdn-exclude.txt \
+		civicboom/public
+	scp static-${GIT_TAG}.zip static.civicboom.com:~/
+	ssh static.civicboom.com unzip -o static-${GIT_TAG}.zip -d /opt/cb/var/www/static/${GIT_TAG}

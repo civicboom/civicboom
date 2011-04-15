@@ -2,6 +2,7 @@ HEAD=\
 	modernizr-1.7.js \
 	swfobject.js \
 	jquery-1.5.1.js \
+	prototypes.js \
 	misc.js\
 	url_encode.js \
 	cb_frag.js \
@@ -16,6 +17,10 @@ FOOT=\
 	jquery.uploadify.v2.1.4.js \
 	jquery.simple-color-picker.js \
 	jquery.ba-hashchange.min.js \
+	jquery.limit-1.2.js \
+	jquery.getUrlParam.js \
+	mobile.js \
+	invite.js \
 	gears_init.js \
 	geo.js \
 	OpenLayers.js \
@@ -55,4 +60,5 @@ OpenLayers.js:
 	cp OpenLayers.cfg ./openlayers/build/
 	cd openlayers/build && ./buildUncompressed.py OpenLayers
 	mv openlayers/build/OpenLayers.js ./
+	patch OpenLayers.js OpenLayers.patch
 	rm -rf openlayers
