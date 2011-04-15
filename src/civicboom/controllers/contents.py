@@ -357,25 +357,25 @@ class ContentsController(BaseController):
         if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
 
+        # GregM: Set private flag to user or hub setting (or public as default)
+        is_private = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
+
         # Create Content Object
         if   kwargs['type'] == 'draft':
             raise_if_current_role_insufficent('contributor')
             content = DraftContent()
-            # GregM: Set private flag to user or hub setting (or public as default)
-            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
         elif kwargs['type'] == 'comment':
             raise_if_current_role_insufficent('observer')
             content = CommentContent()
+            is_private = False
             content.creator = c.logged_in_user
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = ArticleContent()                  # Create base content
-            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         elif kwargs['type'] == 'assignment':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = AssignmentContent()               # Create base content
-            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         
         # Set create to currently logged in user
@@ -383,7 +383,12 @@ class ContentsController(BaseController):
             content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
-        content.private = kwargs.get('private', False)
+        content.private = is_private
+        
+        print '#########'
+        print '#', kwargs
+        print '#', content.private
+        print '#########'
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
@@ -582,7 +587,7 @@ class ContentsController(BaseController):
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
             # GregM: Content can now stay private after publishing :)
-            content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
+            #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
             
             # Notifications ----------------------------------------------------
             m = None
