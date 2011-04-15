@@ -123,6 +123,8 @@
             ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status']['items'] if m['status']=='invited'],
                 _("Invited"),
+                hide_if_empty = not 'invite_to_assignment' in self.actions, # Always show this list if invite is avalable
+                actions = h.frag_link(value='', title='Invite Members', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id=self.id, invite='assignment')) if 'invite_to_assignment' in self.actions else None ,
             )}
             ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status']['items'] if m['status']=='withdrawn'],

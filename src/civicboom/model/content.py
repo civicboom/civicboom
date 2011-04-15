@@ -194,6 +194,8 @@ class Content(Base):
             action_list.append('edit')
             if self.__type__=='draft':
                 action_list.append('publish')
+            if self.__type__=='assignment':
+                action_list.append('invite_to_assignment')
         if self.viewable_by(member):
             action_list.append('view')
         if self.private==False and self.creator != member:

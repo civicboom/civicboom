@@ -2,8 +2,9 @@
 
 <%!
     import copy
-    import civicboom.lib.constants as constants
+    import types
     import datetime
+    import civicboom.lib.constants as constants
     
     rss_url = True
 %>
@@ -63,23 +64,23 @@
 ##------------------------------------------------------------------------------
 ## When imported, these are the main methods of use
 <%def name="member_list_thumbnails(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_member_thumbnail, type=('ul','li'), list_class='member'        , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_member_thumbnail, type_=('ul','li'), list_class='member'        , *args, **kwargs)}
 </%def>
 
 <%def name="member_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_member       , type=('table','tr'), list_class='member'        , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_member       , type_=('table','tr'), list_class='member'        , *args, **kwargs)}
 </%def>
 
 <%def name="content_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_content      , type=('table','tr'), list_class='content'       , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_content      , type_=('table','tr'), list_class='content'       , *args, **kwargs)}
 </%def>
 
 <%def name="group_members_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_group_members, type=('table','tr'), list_class='group_members' , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_group_members, type_=('table','tr'), list_class='group_members' , *args, **kwargs)}
 </%def>
 
 <%def name="message_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_message      , type=('ul','li')   , list_class='messages', empty_message=_('You have no messages')      , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_message      , type_=('ul','li')   , list_class='messages', empty_message=_('You have no messages')      , *args, **kwargs)}
 </%def>
 
 
@@ -88,7 +89,7 @@
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(cb_list, title, href=None, show_heading=True, hide_if_empty=True, type=('ul','li'), list_class='', icon='', render_item_function=None, empty_message=None, *args, **kwargs)">
+<%def name="frag_list(cb_list, title, href=None, show_heading=True, hide_if_empty=True, type_=('ul','li'), list_class='', icon='', render_item_function=None, empty_message=None, actions=None, *args, **kwargs)">
     <%
         count = None
         if isinstance(cb_list, dict) and 'items' in cb_list:
@@ -138,21 +139,30 @@
                 ##% if show_count:
                 <span class="count">${count}</span>
                 ##% endif
+                % if actions:
+                    <div class="list_actions">
+                    % if type(actions) == types.FunctionType:
+                        ${actions()}
+                    % else:
+                        ${actions}
+                    % endif
+                    </div>
+                % endif
             </h2>
         % endif
             <div class="frag_list_contents">
-            <${type[0]} class="${list_class}">
+            <${type_[0]} class="${list_class}">
                 ##% for item in items[0:limit]:
                 % if count:
                   % for item in items:
-                  ##<${type[1]}>
+                  ##<${type_[1]}>
                       ${render_item_function(item, *args, **kwargs)}
-                  ##</${type[1]}>
+                  ##</${type_[1]}>
                   % endfor
                 % elif empty_message:
                   <tr><td>${empty_message}</td></tr>
                 % endif
-            </${type[0]}>
+            </${type_[0]}>
             % if href and show_heading and len(items) < count:
             <a href="${href}" ${js_link_to_frag_list} class="link_more">${count-len(items)} more</a>
             % endif
