@@ -15,9 +15,6 @@ make site      # to setup translation files and compile icon map
 make test-db   # to init the db and popuplate with test data
 make run       # run the site
 
-ensure memcachedb is running, it may not start automatically[bug?] 
- sudo /etc/init.d/memcachedb start
-
 Using the site
 ~~~~~~~~~~~~~~
 - Connecting
@@ -27,7 +24,10 @@ Using the site
 - To sign up
   signup with site
   see console for email debug printouts to get validation url
-
+- CSS development requires caching to be disabled
+  this is controlled by a cookie
+  visit http://localhost/test/toggle_cache
+  this cookie should disable cache for a year or until cookies are cleared
 
 Geolocation data (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

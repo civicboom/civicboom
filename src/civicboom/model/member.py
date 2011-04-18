@@ -287,7 +287,7 @@ class Member(Base):
     
     def __link__(self):
         from civicboom.lib.web import url
-        return url('member', id=self.id, subdomain='', absolute=True)
+        return url('member', id=self.username, subdomain='', absolute=True)
 
     def hash(self):
         h = hashlib.md5()
@@ -295,13 +295,14 @@ class Member(Base):
             h.update(str(getattr(self,field)))
         return h.hexdigest()
 
-    def action_list_for(self, member):
+    def action_list_for(self, member, **kwargs):
         action_list = []
         #if self.can_message(member):
         #    action_list.append('editable')
         if self == member:
             action_list.append('settings')
             action_list.append('logout')
+            action_list.append('invite_trusted_followers')
         elif member:
             if self.is_following(member):
                 if member.is_follower_trusted(self):
@@ -323,8 +324,6 @@ class Member(Base):
         return action_list
 
     def send_message(self, m, delay_commit=False):
-        # TODO
-        # This should be a non blocking action and que this in the worker
         import civicboom.lib.communication.messages as messages
         messages.send_message(self, m, delay_commit)
 
@@ -638,6 +637,7 @@ class Group(Member):
                 action_list.append('delete')
                 action_list.append('remove') #AllanC - could be renamed? this means remove member?
                 action_list.append('set_role')
+                action_list.append('invite_members')
                 action_list.append('settings_group')
                 if self.num_admins>1:
                     action_list.append('remove_self')
@@ -699,28 +699,6 @@ class Group(Member):
     def delete(self):
         from civicboom.lib.database.actions import del_group
         return del_group(self)
-
-    def send_message(self, m, delay_commit=False):
-        """
-        recursivly create a list of all sub members from all sub groups
-        it creates the list putting all members 
-        """
-        Member.send_message(self, m, delay_commit=delay_commit)
-        return
-        # NEVER EXECUTE BELOW UNTIL WE HAVE AUTOMATED TESTS
-        def add_member_list(group, members={}):
-            for member in [mr.member for mr in group.members_roles if mr.member not in members]:
-                if   member.__type__ == 'user':
-                    members[member] = None
-                elif member.__type__ == 'group':
-                    add_member_list(member, members)
-            return members
-        # Get list of all members and sub members - list is guaranteeded to
-        #  - contain only users
-        #  - have no duplicates
-        for member in add_member_list(self).keys():
-            member.send_message(m, delay_commit=False)
-        
     
 
 class UserLogin(Base):

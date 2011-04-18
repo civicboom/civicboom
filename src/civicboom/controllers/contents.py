@@ -128,7 +128,7 @@ def _init_search_filters():
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
             content_id = content_id.id
-        return query.filter(Content.parent_id==int(content_id))
+        return query.filter(Content.parent_id==int(content_id)).filter(ArticleContent.approval != 'dissassociated')
 
     def append_search_boomed_by(query, member):
         member = normalize_member(member)
@@ -298,10 +298,10 @@ class ContentsController(BaseController):
         # TODO: use kwargs['sort']
         results = results.order_by(Content.update_date.desc())
         
-        def merge_snippet(content, snippet):
-            content = content.to_dict(**kwargs)
-            content['content_short'] = snippet
-            return content
+#        def merge_snippet(content, snippet):
+#            content = content.to_dict(**kwargs)
+#            content['content_short'] = snippet
+#            return content
 
         #if not union_query:
         #    results = [merge_snippet(co, sn) for co, sn in results]
@@ -357,31 +357,33 @@ class ContentsController(BaseController):
         if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
 
+        # GregM: Set private flag to user or hub setting (or public as default)
+        is_private = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
+
         # Create Content Object
         if   kwargs['type'] == 'draft':
             raise_if_current_role_insufficent('contributor')
             content = DraftContent()
-            # GregM: Set private flag to user or hub setting (or public as default)
-            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
         elif kwargs['type'] == 'comment':
-            raise_if_current_role_insufficent('editor')
+            raise_if_current_role_insufficent('observer')
             content = CommentContent()
+            is_private = False
+            content.creator = c.logged_in_user
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = ArticleContent()                  # Create base content
-            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         elif kwargs['type'] == 'assignment':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = AssignmentContent()               # Create base content
-            kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         
         # Set create to currently logged in user
-        content.creator = c.logged_in_persona
+        if not content.creator:
+            content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
-        content.private = kwargs.get('private', False)
+        content.private = is_private
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
@@ -580,7 +582,7 @@ class ContentsController(BaseController):
             profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
             # GregM: Content can now stay private after publishing :)
-            content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
+            #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
             
             # Notifications ----------------------------------------------------
             m = None

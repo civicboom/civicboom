@@ -37,7 +37,7 @@ class MemberActionsController(BaseController):
         status = c.logged_in_persona.follow(member)
         if status == True:
             return action_ok( _('You are now following %s') % member.name or member.username )
-        raise action_error(_('Unable to follow member: %s') % status)
+        #raise action_error(_('Unable to follow member: %s') % status)
 
     #---------------------------------------------------------------------------
     # Action - Unfollow Member
@@ -59,7 +59,7 @@ class MemberActionsController(BaseController):
         status = c.logged_in_persona.unfollow(member)
         if status == True:
             return action_ok(_('You have stopped following %s') % member.name or member.username)
-        raise action_error(_('Unable to stop following member: %s') % status)
+        #raise action_error(_('Unable to stop following member: %s') % status)
 
 
     #---------------------------------------------------------------------------
@@ -83,7 +83,7 @@ class MemberActionsController(BaseController):
         status = c.logged_in_persona.follower_trust(member)
         if status == True:
             return action_ok( _('You are now trusting your follower %s') % member.name or member.username )
-        raise action_error(_('Unable to trust member: %s') % status)
+        #raise action_error(_('Unable to trust member: %s') % status)
 
 
     #---------------------------------------------------------------------------
@@ -107,7 +107,7 @@ class MemberActionsController(BaseController):
         status = c.logged_in_persona.follower_distrust(member)
         if status == True:
             return action_ok( _('You have removed trust from your follower %s') % member.name or member.username )
-        raise action_error(_('Unable to distrust: %s') % status)
+        #raise action_error(_('Unable to distrust: %s') % status)
 
 
     #---------------------------------------------------------------------------
@@ -131,7 +131,7 @@ class MemberActionsController(BaseController):
         status = c.logged_in_persona.follower_invite_trusted(member)
         if status == True:
             return action_ok( _('You have invited the member %s to follow you as a trusted follower') % member.name or member.username )
-        raise action_error(_('Unable to invite: %s') % status)
+        #raise action_error(_('Unable to invite: %s') % status)
 
 
 
@@ -152,7 +152,7 @@ class MemberActionsController(BaseController):
         @comment AllanC This is just a list of strings and is not a list object
         """
         member = get_member(id)
-        return action_ok(data={"list": member.action_list_for(c.logged_in_persona)})
+        return action_ok(data={"list": member.action_list_for(member=c.logged_in_persona, role=c.logged_in_persona_role)})
 
 
     #---------------------------------------------------------------------------

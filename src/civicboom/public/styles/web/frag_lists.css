@@ -47,12 +47,15 @@
    Frag list contents
    -------------------------- */
 
+#frag_containers .frag_container .frag_data .frag_list .list_actions {
+    float: right;
+}
+
 .frag_list_contents td,
 .frag_list_contents li,
 .frag_list_contents ul {
     padding-bottom: 0.5em;
 }
-
 
 #frag_containers .frag_container .frag_data .frag_list          a ,
 #frag_containers .frag_container .frag_data .frag_list_contents a {

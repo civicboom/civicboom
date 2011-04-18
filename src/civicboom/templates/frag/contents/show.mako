@@ -123,6 +123,8 @@
             ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status']['items'] if m['status']=='invited'],
                 _("Invited"),
+                hide_if_empty = not 'invite_to_assignment' in self.actions, # Always show this list if invite is avalable
+                actions = h.frag_link(value='', title='Invite Members', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id=self.id, invite='assignment')) if 'invite_to_assignment' in self.actions else None ,
             )}
             ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status']['items'] if m['status']=='withdrawn'],
@@ -432,6 +434,7 @@
                 %endif
             </td>
             <td class="comment">
+                % if c.logged_in_persona:
                 ${h.form(h.args_to_tuple('contents', type='comment', parent_id=content['id'], format='redirect'), json_form_complete_actions="cb_frag_reload(current_element);" )}
                     ##% url("content",id=d['content']['id'])
                     ## AllanC: RAAAAAAAAAAAAR!!! cb_frag_reload($(this)); does not work, because $(this) for forms is not a jQuery object?! so we cant use .parents() etc .. WTF!!!
@@ -452,6 +455,9 @@
                         });
                     </script>
                 ${h.end_form()}
+                % else:
+                <p>${_('Please login to comment')}
+                % endif
             </td>
             <td>
                 ##padding col for flag actions

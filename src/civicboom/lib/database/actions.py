@@ -247,8 +247,8 @@ def follower_trust(followed, follower, delay_commit=False):
     if not delay_commit:
         Session.commit()
     
-    # update_member(follower) # GregM: Needed?
-    # update_member(followed) # GregM: Needed?
+    update_member(follower)
+    update_member(followed)
     return True
 
 def follower_distrust(followed, follower, delay_commit=False):

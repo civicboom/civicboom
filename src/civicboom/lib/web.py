@@ -363,6 +363,12 @@ def _find_template(result, type):
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
             return path+".mako"
     
+    # TO BE REMOVED
+    # AllanC - this can be removed at a later date if needed, but the GOOGLE BOT IS DOING MY NUT IN!!!!
+    #          I think the google bot has a list of URL's that it's scanning from months ago .. we dont want server errors for this
+    if type=='rss' and c.action=='get_widget':
+        return 'html/error.mako'
+    
     raise Exception("Failed to find template for %s/%s/%s [%s]. Tried:\n%s" % (type, c.controller, c.action, result.get("template", "-"), "\n".join(paths)))
 
 
@@ -397,14 +403,18 @@ def setup_format_processors():
         return render_mako(_find_template(result, type), extra_vars={"d": c.result['data']} )
         
     def format_json(result):
-        response.headers['Content-type'] = "application/json"
+        response.headers['Content-type'] = "application/json; charset=utf-8"
         for n in list(result):
             if n not in ['status', 'message', 'data']:
                 del result[n]
-        return json.dumps(result)
+        cb = request.GET.get("callback")
+        json_data = json.dumps(result)
+        if cb and re.match("^[a-zA-Z][a-zA-Z0-9_]*$", cb):
+            json_data = u"%s(%s)" % (cb, json_data)
+        return json_data
         
     def format_xml(result):
-        response.headers['Content-type'] = "text/xml"
+        response.headers['Content-type'] = "text/xml; charset=utf-8"
         for n in list(result):
             if n not in ['status', 'message', 'data']:
                 del result[n]

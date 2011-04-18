@@ -334,7 +334,7 @@ class TestController(TestCase):
         if username:
             if self.logged_in_as != old_user:
                 self.log_in_as(old_user, old_password)
-        return response_json['data']['list']['count']
+        return int(response_json['data']['list']['count'])
     
     def getLastNotification(self, username=None, password=None):
         if username:
@@ -430,4 +430,15 @@ class TestController(TestCase):
         )
         response_json = json.loads(response.body)
         self.assertEqual(response_json['data']['invitee_list']['count'], 0)
+        self.assertEqual(response_json['status'], 'ok')
+        
+        # Repeat to check error double inviting
+        response = self.app.post(
+            '/invite',
+            params=params,
+            status=200
+        )
+        response_json = json.loads(response.body)
+        self.assertEqual(response_json['data']['invitee_list']['count'], 1)
+        self.assertEqual(len(response_json['data']['error-list']), 1)
         self.assertEqual(response_json['status'], 'ok')

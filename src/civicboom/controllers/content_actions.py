@@ -264,7 +264,7 @@ class ContentActionsController(BaseController):
         @return 404   not found
         """
         content = get_content(id, is_viewable=True)
-        actions = content.action_list_for(c.logged_in_persona)
+        actions = content.action_list_for(member=c.logged_in_persona, role=c.logged_in_persona_role)
         return action_ok(data={'list': actions})
 
 
