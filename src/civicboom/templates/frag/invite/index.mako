@@ -15,10 +15,15 @@
 <%def name="init_vars()">
     <%
     	invite_types		= { 'trusted_follower' : _('Invite people to become trusted followers'),
-    							'assignment'       : _('Invite people to view this _assignment'),
+    							'assignment'       : _('Invite people to participate in this _assignment'),
     							'group'            : _('Invite people to join this _group'),
     	}
+    	invite_types_desc   = { 'trusted_follower' : _('The people below will be invited to become trusted followers'),
+    							'assignment'       : _('The people below will be invited to participate in this _assignment'),
+    							'group'            : _('The people below will be invited to join this _group'),
+    	}
         self.attr.title     = invite_types[d['invite']]
+        self.attr.desc      = invite_types_desc[d['invite']]
         self.attr.icon_type = None
     %>
 </%def>
@@ -66,7 +71,7 @@
 	        <div class="frag_col">
 		        <div class="invite_header">
 	        		<h1>${_('Invitees')}</h1>
-	        		<p>${_('The people below will be invited to...')}</p>
+	        		<p>${self.attr.desc}</p>
 	        		% if 'roles' in d:
 	        			<p>
 	        				${_('Invite as role:')}
