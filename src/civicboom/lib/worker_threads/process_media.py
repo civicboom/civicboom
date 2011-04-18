@@ -69,8 +69,17 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "jpg"))
         processed.close()
     elif file_type == "audio":
-        processed = tempfile.NamedTemporaryFile(suffix=".ogg")
-        _ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
+        processed = tempfile.NamedTemporaryFile(suffix=".flv") #.ogg
+        # GregM: for now do same conversion as video
+        _ffmpeg([
+            "-y", "-i", tmp_file,
+            "-ab", "56k", "-ar", "22050",
+            "-qmin", "2", "-qmax", "16",
+            "-b", "320k", "-r", "15",
+            "-s", "%dx%d" % (size[0], size[1]),
+            processed.name
+        ])
+        #_ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name]) #.ogg
         m.setex(status_key, "copying audio", status_expire)
         wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "ogg"))
         processed.close()
