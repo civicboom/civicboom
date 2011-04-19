@@ -365,10 +365,10 @@ class ContentsController(BaseController):
             raise_if_current_role_insufficent('contributor')
             content = DraftContent()
         elif kwargs['type'] == 'comment':
-            raise_if_current_role_insufficent('observer')
+            raise_if_current_role_insufficent('observer') # Check role, in adition the content:update method checks for view permission of parent
             content = CommentContent()
-            is_private = False
-            content.creator = c.logged_in_user
+            is_private = False                          # Comments are always public
+            content.creator = c.logged_in_user          # Comments are always made by logged in user
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = ArticleContent()                  # Create base content
