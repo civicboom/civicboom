@@ -403,14 +403,18 @@ def setup_format_processors():
         return render_mako(_find_template(result, type), extra_vars={"d": c.result['data']} )
         
     def format_json(result):
-        response.headers['Content-type'] = "application/json"
+        response.headers['Content-type'] = "application/json; charset=utf-8"
         for n in list(result):
             if n not in ['status', 'message', 'data']:
                 del result[n]
-        return json.dumps(result)
+        cb = request.GET.get("callback")
+        json_data = json.dumps(result)
+        if cb and re.match("^[a-zA-Z][a-zA-Z0-9_]*$", cb):
+            json_data = u"%s(%s)" % (cb, json_data)
+        return json_data
         
     def format_xml(result):
-        response.headers['Content-type'] = "text/xml"
+        response.headers['Content-type'] = "text/xml; charset=utf-8"
         for n in list(result):
             if n not in ['status', 'message', 'data']:
                 del result[n]

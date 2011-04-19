@@ -128,7 +128,7 @@ def _init_search_filters():
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
             content_id = content_id.id
-        return query.filter(Content.parent_id==int(content_id))
+        return query.filter(Content.parent_id==int(content_id)).filter(ArticleContent.approval != 'dissassociated')
 
     def append_search_boomed_by(query, member):
         member = normalize_member(member)

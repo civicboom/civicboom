@@ -80,6 +80,17 @@ class AccountController(BaseController):
                 return render("/html/web/account/signin_frag.mako")
             
             return render("/html/web/account/signin.mako")
+
+        # Without this line, a simple blank POST would see no janrain token,
+        # and no username / password, so it would leave c.logged_in_user
+        # as-is. Then, it would return the CSRF token. This is bad because
+        # it means any random third-party site can automatically get the
+        # token, generate a form, and submit it.
+        #
+        # Thus, we need to only give out the token if the user has supplied
+        # valid auth credentials with the request.
+        if c.logged_in_user:
+            raise action_error("user is logged in already", code=400)
         
         c.auth_info    = None
         login_provider = None
