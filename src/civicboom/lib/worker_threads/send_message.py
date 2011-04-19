@@ -15,10 +15,10 @@ def _send_message_to_user(member, message_data, member_to=None, delay_commit=Fal
     # Get propergate settings - what other technologies is this message going to be sent over
     # Attempt to get routing settings from the member's config; if that fails, use the
     # message's default routing
-    message_tech_options = member.config.get("route_"+message_data.name, message_data.default_route)
+    message_tech_options = member.config.get("route_"+message_data['name'], message_data['default_route'])
     
-    subject = message_data.subject
-    content = message_data.content
+    subject = message_data['subject']
+    content = message_data['content']
     
     # AllanC - bit of a botch here. if a notificaiton is sent to a group and needs to be propergated to members, we nee to record who the message was origninally too.
     if member_to and member_to!=member:
