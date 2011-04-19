@@ -54,6 +54,9 @@ def add_job(job):
         _worker_queue.put(job)
     else:
         log.info('Running job in foreground: %s' % job["task"])
+        # in production, jobs are encoded for the queue; in testing, we want
+        # un-encodable jobs to fail
+        import json; json.dumps(job)
         run_one_job(job)
 
 
