@@ -99,7 +99,7 @@
             ${content_type()}
             ${media()}
             ${location()}
-            ##${privacy()}
+            ${privacy()}
             ${license()}
 			${submit_buttons()}
         ${h.end_form()}
@@ -573,7 +573,7 @@
     <fieldset>
         <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Content Privacy")}</legend>
         <div class="hideable">
-              <div class="padded">You can choose to make your xxx either public for anyone to see or private to you, your trusted followers and anyone you invite to respond to your request.</div>
+              <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either public for anyone to see or private to you, your trusted followers and anyone you invite to respond to your request.</div>
               <div class="padded">
                 <select id="private" name="private">
                 	<option ${selected("False")} value="False">Public</option>

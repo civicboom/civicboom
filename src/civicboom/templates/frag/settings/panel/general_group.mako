@@ -157,7 +157,7 @@
         </tr>
         <tr class="padding">
           <td colspan="4">${_("Member visibility")}</td>
-          <td colspan="3"><!--${_("Default content visibility")}--></td>
+          <td colspan="3">${_("Default content visibility")}</td>
         </tr>
         <tr class="padding">
           <td>&nbsp;</td>
@@ -183,10 +183,10 @@
             ${show_error('member_visibility')}
           </td>
           <td style="width:7em">
-            <!--<input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'public' else ''} value="public" id="content_visibility_public" /><label for="content_visibility_public">${_('Open')}</label>-->
+            <input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'public' else ''} value="public" id="content_visibility_public" /><label for="content_visibility_public">${_('Open')}</label>
           </td>
           <td>&nbsp;
-            <!--<input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'private' else ''} value="private" id="content_visibility_private" /><label for="content_visibility_private">${_('Hidden')}</label>-->
+            <input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'private' else ''} value="private" id="content_visibility_private" /><label for="content_visibility_private">${_('Hidden')}</label>
           </td>
           <td>${show_error('default_content_visibility')}</td>
         </tr>
