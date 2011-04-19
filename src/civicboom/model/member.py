@@ -332,6 +332,9 @@ class Member(Base):
         send_email(self, **kargs)
 
     def send_message_to_followers(self, m, private=False, delay_commit=False):
+        # AllanC - this may not be the most efficent way of sending bulk messages
+        #          it may be a nessisary enchancement to pass to the message que a list of members to send the message too,
+        #          This is problematic for a group if it's a follower, so ive left the algorithum as it is
         followers_to = self.followers
         if private:
             followers_to = self.followers_trusted

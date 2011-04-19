@@ -87,7 +87,7 @@ def send_message(member, message_data, delay_commit=False):
     
     members = []
     if member_to.__type__ == 'user':
-        members.append(member_to.username)
+        members.append(member_to) #.username
     elif member_to.__type__ == 'group':
         members = _get_member_list(member_to)
     
