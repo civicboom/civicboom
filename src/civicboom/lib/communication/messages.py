@@ -46,6 +46,14 @@ class MessageData(object):
             self.subject = u'notification generation diabled'
             self.content = u'notification generation diabled'
 
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "default_route": self.default_route,
+            "subject": self.subject,
+            "content": self.content,
+        }
+
 
 generators = [
     # Testing
@@ -137,5 +145,5 @@ def send_message(member_to, message_data, delay_commit=False):
     worker.add_job({
         'task'        : 'send_message',
         'member'      : member_to.username,
-        'message_data': message_data,
+        'message_data': message_data.to_dict(),
     })
