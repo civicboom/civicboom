@@ -16,9 +16,6 @@ from pygments import highlight
 from pygments.lexers import JavascriptLexer, XmlLexer
 from pygments.formatters import HtmlFormatter
 
-import logging
-log = logging.getLogger(__name__)
-
 
 class Param(object):
     def __init__(self, text):
@@ -58,18 +55,19 @@ class Return(object):
 class Example(object):
     def __init__(self, text):
         self.url = text.strip()
-        http_response = None
-        response      = None
+        self.example = 'error importing live example'
+        response     = 'error reading http response live example'
+
         try:
-            http_response  = urllib2.urlopen(self.url, timeout=10) #urllib.urlencode(kargs)
-            response = http_response.read()
+            response = urllib2.urlopen(self.url, timeout=10).read() #urllib.urlencode(kargs)
         except urllib2.HTTPError as http_error:
             response = http_error.read()
         except:
-            log.error('unable to obtrain return example for %s' % self.url)
-            self.example = 'error importing live example'
+            print 'unable to obtain return example for %s' % self.url
+
         if http_response:
             http_response.close()
+
         try:
             if ".json" in self.url:
                 self.example = json.dumps(json.loads(response), sort_keys=True, indent=4)
@@ -81,8 +79,7 @@ class Example(object):
                 self.example = highlight(self.example, XmlLexer(), HtmlFormatter())
         except Exception as e:
             print "Error loading example (%s): %s" % (self.url, e)
-            self.example = response
-            self.example = self.example.replace('<','&lt;').replace('>','&gt;')
+            self.example = response.replace('<','&lt;').replace('>','&gt;')
         
 
     def __str__(self):
