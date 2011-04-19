@@ -280,7 +280,7 @@ class ContentActionsController(BaseController):
         
         @return list  the list of comments
         
-        @example http://test.civicboom.com/contents/1/comments.json
+        @example https://test.civicboom.com/contents/1/comments.json
         """
         content = get_content(id, is_viewable=True)
         #comments = [c.to_dict() for c in content.comments]

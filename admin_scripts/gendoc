@@ -80,7 +80,7 @@ class Example(object):
                 self.example = "\n".join([n for n in response.split("\n") if len(n.strip()) != 0])
                 self.example = highlight(self.example, XmlLexer(), HtmlFormatter())
         except Exception as e:
-            print "Error loading example:", e
+            print "Error loading example (%s): %s" % (self.url, e)
             self.example = response
             self.example = self.example.replace('<','&lt;').replace('>','&gt;')
         

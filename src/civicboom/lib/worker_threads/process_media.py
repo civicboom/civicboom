@@ -69,10 +69,10 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "jpg"))
         processed.close()
     elif file_type == "audio":
-        processed = tempfile.NamedTemporaryFile(suffix=".ogg")
+        processed = tempfile.NamedTemporaryFile(suffix=".aac")
         _ffmpeg(["-y", "-i", tmp_file, "-ab", "192k", processed.name])
         m.setex(status_key, "copying audio", status_expire)
-        wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "ogg"))
+        wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "aac"))
         processed.close()
     elif file_type == "video":
         log.debug("encoding video to flv")
