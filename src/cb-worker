@@ -12,17 +12,17 @@ def main(argv):
     option_parser.add_option('--ini',
         help='INI file to use for pylons settings',
         type='str', default='development.ini')
-    option_parser.add_option('--log',
+    option_parser.add_option('--log-file',
         help='FILE to log to',
         type='str')
     options, args = option_parser.parse_args(argv)
 
-    if options.log:
+    if options.log_file:
         logging.basicConfig(
             level    = logging.INFO,
             format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
             datefmt  = "%H:%M:%S",
-            filename = options.log
+            filename = options.log_file
         )
     else:
         logging.basicConfig(
