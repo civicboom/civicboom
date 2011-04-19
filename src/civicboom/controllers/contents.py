@@ -613,8 +613,8 @@ class ContentsController(BaseController):
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
             if m:
-                # AllanC: TODO this needs to optimised! see issue #258 bulk messages are a blocking call
-                content.creator.send_message_to_followers(m, delay_commit=True)
+                content.creator.send_message_to_followers(m, private=content.private, delay_commit=True)
+
 
 
         # -- Save to Database --------------------------------------------------

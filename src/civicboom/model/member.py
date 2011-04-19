@@ -207,7 +207,7 @@ class Member(Base):
     # AllanC - I wanted to remove these but they are still used by actions.py because they are needed to setup the base test data
     following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="(Member.id==Follow.member_id  ) & (Follow.type!='trusted_invite')", secondary=Follow.__table__)
     followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="(Member.id==Follow.follower_id) & (Follow.type!='trusted_invite')", secondary=Follow.__table__)
-    #followers_trusted    = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="(Member.id==Follow.follower_id) & (Follow.type=='trusted'       )", secondary=Follow.__table__)
+    followers_trusted    = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="(Member.id==Follow.follower_id) & (Follow.type=='trusted'       )", secondary=Follow.__table__)
 
     assigments           = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
 
@@ -331,8 +331,11 @@ class Member(Base):
         from civicboom.lib.communication.email_lib import send_email
         send_email(self, **kargs)
 
-    def send_message_to_followers(self, m, delay_commit=False):
-        for follower in self.followers:
+    def send_message_to_followers(self, m, private=False, delay_commit=False):
+        followers_to = self.followers
+        if private:
+            followers_to = self.followers_trusted
+        for follower in followers_to:
             follower.send_message(m, delay_commit)
 
     def follow(self, member, delay_commit=False):
