@@ -56,10 +56,12 @@ class Example(object):
     def __init__(self, text):
         self.url = text.strip()
         self.example = 'error importing live example'
+        http_response = None
         response     = 'error reading http response live example'
 
         try:
-            response = urllib2.urlopen(self.url, timeout=10).read() #urllib.urlencode(kargs)
+            http_response = urllib2.urlopen(self.url, timeout=10) #urllib.urlencode(kargs)
+            response = http_response.read()
         except urllib2.HTTPError as http_error:
             response = http_error.read()
         except:
