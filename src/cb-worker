@@ -1,23 +1,9 @@
 #!/usr/bin/python
 
 import logging
-logging.basicConfig(
-    level   = logging.INFO,
-    format  = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
-    datefmt = "%H:%M:%S"
-)
-log = logging.getLogger("workmaster")
-log.info("Importing modules")
-
-
 import optparse
-import os
 import sys
-import platform
-from time import sleep
 import pylons
-from redis import Redis
-from civicboom.lib.redis_ import RedisQueue
 import civicboom.lib.worker as w
 
 
@@ -26,7 +12,25 @@ def main(argv):
     option_parser.add_option('--ini',
         help='INI file to use for pylons settings',
         type='str', default='development.ini')
+    option_parser.add_option('--log',
+        help='FILE to log to',
+        type='str')
     options, args = option_parser.parse_args(argv)
+
+    if options.log:
+        logging.basicConfig(
+            level    = logging.INFO,
+            format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
+            datefmt  = "%H:%M:%S",
+            filename = options.log
+        )
+    else:
+        logging.basicConfig(
+            level    = logging.INFO,
+            format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
+            datefmt  = "%H:%M:%S"
+        )
+    log = logging.getLogger("workmaster")
 
     # Initialize the Pylons app
     log.info("Loading pylons environment")
