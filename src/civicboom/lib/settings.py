@@ -3,6 +3,7 @@ from civicboom.model.meta import Session
 from civicboom.model import MemberSetting
 from sqlalchemy.orm.exc import NoResultFound
 from ConfigParser import NoOptionError
+from ConfigParser import SafeConfigParser
 import UserDict
 import logging
 
