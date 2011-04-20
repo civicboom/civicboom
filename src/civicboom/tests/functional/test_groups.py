@@ -179,7 +179,7 @@ class TestGroupsController(TestController):
         Go though the process of requesting to join a group and the admin accepting the request
         """
         self.log_in_as('unittest')
-        num_notifications = self.getNumNotification()
+        num_notifications = self.getNumNotifications()
         
         self.log_in_as('unitfriend')
         
@@ -199,8 +199,8 @@ class TestGroupsController(TestController):
         self.assertTrue(found)
         
         self.log_in_as('unittest')
-        self.assertEquals(num_notifications + 1, self.getNumNotification()) # Check a request notification is generated for group members
-        self.assertIn('unitfriend', self.getLastNotification()) 
+        self.assertEquals(num_notifications + 1, self.getNumNotifications()) # Check a request notification is generated for group members
+        self.assertIn('unitfriend', self.getLastNotification().get('content')) 
         self.set_persona('test_group')
         # AllanC - groups dont recivce notifications at the moment (see issue #464)
         #self.assertIn('unitfriend', self.getLastNotification()) # Check a request notification is generated for group
@@ -237,8 +237,8 @@ class TestGroupsController(TestController):
         self.assertTrue(found)
         
         self.log_in_as('unittest') # AllanC - would be better to check group got notifcaiton as well .. see issue #464
-        self.assertEqual(num_notifications + 2, self.getNumNotification()) # Check the group got notifyed of the new member, the 2 messages are 'request to join' and 'new member'
-        self.assertIn('unitfriend', self.getLastNotification())            # Check the notification was about unitfriend
+        self.assertEqual(num_notifications + 2, self.getNumNotifications()) # Check the group got notifyed of the new member, the 2 messages are 'request to join' and 'new member'
+        self.assertIn('unitfriend', self.getLastNotification().get('content')) # Check the notification was about unitfriend
     
     
     ## invite ############################################################
