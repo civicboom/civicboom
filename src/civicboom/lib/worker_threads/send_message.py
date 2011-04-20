@@ -53,24 +53,6 @@ def _send_message_to_user(member, message_data, member_to=None, delay_commit=Fal
         member.name, subject, message_tech_options
     ))
 
-def _get_member_list(group, members=None, exclude_list=None):
-    """
-    Get linear list of all members and sub members - list is guaranteeded to
-     - contain only user objects
-     - have no duplicates
-    """
-    if members == None:
-        members = {}
-    if exclude_list == None:
-        exclude_list = []
-    for member in [mr.member for mr in group.members_roles if mr.member.status=='active' and mr.member.username not in members and mr.member.username not in exclude_list]:
-        if   member.__type__ == 'user':
-            members[member.username] = member
-        elif member.__type__ == 'group':
-            exclude_list.append(member.username)
-            _get_member_list(member, members, exclude_list)
-    return members.keys()
-
 
 def send_message(member, message_data, delay_commit=False):
     """
@@ -89,10 +71,10 @@ def send_message(member, message_data, delay_commit=False):
     if member_to.__type__ == 'user':
         members.append(member_to) #.username
     elif member_to.__type__ == 'group':
-        members = _get_member_list(member_to)
+        members = member_to.all_sub_members() #_get_member_username_list(member_to)
     
     for member in members:
-        _send_message_to_user(_get_member(member), message_data, member_to=member_to, delay_commit=True)
+        _send_message_to_user(member, message_data, member_to=member_to, delay_commit=True)
     
     if not delay_commit:
         Session.commit()

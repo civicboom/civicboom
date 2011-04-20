@@ -706,6 +706,10 @@ class Group(Member):
         from civicboom.lib.database.actions import del_group
         return del_group(self)
     
+    def all_sub_members(self):
+        from civicboom.lib.database.get_cached import get_group_members
+        return get_group_members(self)
+
 
 class UserLogin(Base):
     __tablename__    = "member_user_login"

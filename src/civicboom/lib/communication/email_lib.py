@@ -25,16 +25,19 @@ def send_email(email_to, subject='', content_text=None, content_html=None, **kwa
     If email is disabled in the config it is sent to the logger
     """
     
-    # User object passed, get email address
+    # email_to - User object passed, get email address
+    # email_to - Group object passed - get list of all member emails
     #  else the email_to is assumed to be a CSV list of email address's
-    if hasattr(email_to, 'email_unverified') and email_to.email_unverified!=None: email_to = email_to.email_unverified # does this need to be here? we have the property email_normalized now .... ?
-    if hasattr(email_to, 'email'           ) and email_to.email           !=None: email_to = email_to.email
-    email_to = str(email_to)
+    #  or a python list of email address's
+    if hasattr(email_to, 'email_normalized'):
+        email_to = email_to.email_normalized
+    if hasattr(email_to, 'all_sub_members'):
+        email_to = [member.email_normalized for member in email_to.all_sub_members() if hasattr(member, 'email_normalized')] # ",".join() # no need to join as the SMTP is expecting a list
     
     # Check paramiters for validity and throw exception if needed
     if content_text==None and content_html==None:
         raise EmailContentError('email content for plain text or HTML not specifyed')
-
+    
     # Convert plain text into html by:
     #   -autolinking any links
     #   -putting inside html header
@@ -43,18 +46,18 @@ def send_email(email_to, subject='', content_text=None, content_html=None, **kwa
     # Convert html emails into a plain text equivlent
     elif content_html!=None and content_text==None:
         content_text      = convert_html_to_plain_text(content_html)
-  
+    
     # If not already wrapped in HTML header
     if not re.search(r'<body.*</body>',content_html, re.DOTALL + re.IGNORECASE): #If content HTML is not a complete document with a head and body - put it in the standard email template
         c.email_content = content_html
         content_html = render('/email/base_email_from_plaintext.mako')
-  
+    
     # Subject - append site name to subject
     if subject==None or subject=='':
         subject = _("_site_name")
     else:
         subject = _("_site_name")+': '+subject
-  
+    
     if config['online'] and config['feature.aggregate.email']:
         send_email_smtp(email_to, subject, content_text, content_html, **kwargs)
     else:
@@ -62,13 +65,16 @@ def send_email(email_to, subject='', content_text=None, content_html=None, **kwa
         email_log(email_to, subject, content_text, content_html, **kwargs)
 
 
-
 #-------------------------------------------------------------------------------
 # Send Email - SMTP
 #-------------------------------------------------------------------------------
 def send_email_smtp(email_to, subject, content_text, content_html, **kwargs):
     """
-    Takes a comma separated list (email_to) with a subject and message body
+    email_to can be:
+      - a comma separated list (email_to)
+      - a list of email strings
+      
+    with a subject and message body
     and sends it out to all the recipients
     No modification is made to any content
     """
@@ -88,7 +94,7 @@ def send_email_smtp(email_to, subject, content_text, content_html, **kwargs):
     msgRoot['Subject']  = subject
     msgRoot['From']     = sender
     msgRoot['Sender']   = sender
-    msgRoot['To']       = email_to
+    #msgRoot['To']       = email_to
     if 'reply_to' in kwargs:
         msgRoot['Reply-To'] = kwargs.get('reply_to')
     msgRoot.preamble    = 'This is a multi-part message in MIME format.'
@@ -122,7 +128,10 @@ def send_email_smtp(email_to, subject, content_text, content_html, **kwargs):
         smtp.login(config['email.smtp_username'], config['email.smtp_password'])
         # Assuming the list is comma separated, send the message to each recipient.
         
-        for recipient in [email.strip() for email in email_to.split(',')]:
+        if isinstance(email_to, basestring):
+            email_to = [email.strip() for email in email_to.split(',')]
+        
+        for recipient in [email_to]:
             smtp.sendmail(sender, recipient, msgRoot.as_string())
         smtp.quit()
 
