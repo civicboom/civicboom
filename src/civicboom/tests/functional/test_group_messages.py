@@ -91,6 +91,46 @@ class TestGroupsController(TestController):
         self.send_member_message('test_group_messages3', 'test message', 'a message to test to see if messages can be posted to infinately looping chains of groups')
         
         
+        # Check email propergates to all members via approve cycle--------------
+        #   this could be simplifyed by just sending a test email, but going though the cycle is only 6 lines so I kept the cycle in
+        
+        # Create assignment as test_group_3
+        assignment_id = self.create_content(title=u'Email test', content=u'Email test', type='assignment')
+        # Respond
+        self.log_in_as('unitfriend')
+        #self.set_persona('test_group_messages2')
+        response_id = self.create_content(title=u'Email test response', content=u'Email test response', type='article', parent_id=assignment_id)
+        # Approve
+        self.log_in_as('unittest')
+        self.set_persona('test_group_messages1')
+        self.set_persona('test_group_messages2')
+        self.set_persona('test_group_messages3')
+        num_emails = getNumEmails()
+        response = self.app.post(
+            url('content_action', action='approve'    , id=response_id, format='json'),
+            params={'_authentication_token': self.auth_token,},
+            status=200
+        )
+        # The above could be replaced with a call to get_group('test_group_mssages3').send_email('test') # but hey .. the above works
+        
+        # Check that the emails have been generated and sent to the correct users once approved
+        self.assertEqual(getNumEmails(), num_emails + 2) # 2 emals are generated, aprove_organisation and apprve_user, HOWEVER! as the aprover is a group it is sent to the two members unittest and unit friend, so 3 emails are actually sent
+        emails_sent_when_approved = [
+            emails[len(emails)-1],
+            emails[len(emails)-2],
+        ]
+        email_addresss = []
+        for emails_to in [email.email_to for email in emails_sent_when_approved]:
+            if isinstance(emails_to, list):
+                email_addresss += emails_to
+            else:
+                email_addresss.append(emails_to)
+        self.assertEquals(len(email_addresss), 3)
+        self.assertIn('unittest@test.com'  , email_addresss)
+        self.assertIn('unitfriend@test.com', email_addresss)
+        
+        
+        
         # Delete the groups ----------------------------------------------------
         
         self.log_in_as('unittest')

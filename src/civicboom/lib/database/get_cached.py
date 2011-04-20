@@ -124,6 +124,33 @@ def get_membership(group, member):
     except NoResultFound:
         return None
 
+def get_group_member_username_list(group, members=None, exclude_list=None):
+    """
+    Get linear list of all members and sub members - list is guaranteeded to
+     - contain only user objects
+     - have no duplicates
+    """
+    if members == None:
+        members = {}
+    if exclude_list == None:
+        exclude_list = []
+    for member in [mr.member for mr in group.members_roles if mr.member.status=='active' and mr.member.username not in members and mr.member.username not in exclude_list]:
+        if   member.__type__ == 'user':
+            members[member.username] = member
+        elif member.__type__ == 'group':
+            exclude_list.append(member.username)
+            get_group_member_username_list(member, members, exclude_list)
+    return members.keys()
+
+def get_group_members(group):
+    """
+    All user member users (including recursive sub members) of a group
+    """
+    # TODO - optimisation - lazy load settings and other large feilds from these users
+    return Session.query(Member).with_polymorphic('*').filter(
+                Member.username.in_(get_group_member_username_list(group))
+            ).all()
+
 # GregM: Dirty, do not cache, see redmine #414
 def get_membership_tree(group, member, iter = 0):
     if iter > 5:

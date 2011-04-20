@@ -207,7 +207,7 @@ class Member(Base):
     # AllanC - I wanted to remove these but they are still used by actions.py because they are needed to setup the base test data
     following            = relationship("Member"          , primaryjoin="Member.id==Follow.follower_id", secondaryjoin="(Member.id==Follow.member_id  ) & (Follow.type!='trusted_invite')", secondary=Follow.__table__)
     followers            = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="(Member.id==Follow.follower_id) & (Follow.type!='trusted_invite')", secondary=Follow.__table__)
-    #followers_trusted    = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="(Member.id==Follow.follower_id) & (Follow.type=='trusted'       )", secondary=Follow.__table__)
+    followers_trusted    = relationship("Member"          , primaryjoin="Member.id==Follow.member_id"  , secondaryjoin="(Member.id==Follow.follower_id) & (Follow.type=='trusted'       )", secondary=Follow.__table__)
 
     assigments           = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
 
@@ -331,8 +331,14 @@ class Member(Base):
         from civicboom.lib.communication.email_lib import send_email
         send_email(self, **kargs)
 
-    def send_message_to_followers(self, m, delay_commit=False):
-        for follower in self.followers:
+    def send_message_to_followers(self, m, private=False, delay_commit=False):
+        # AllanC - this may not be the most efficent way of sending bulk messages
+        #          it may be a nessisary enchancement to pass to the message que a list of members to send the message too,
+        #          This is problematic for a group if it's a follower, so ive left the algorithum as it is
+        followers_to = self.followers
+        if private:
+            followers_to = self.followers_trusted
+        for follower in followers_to:
             follower.send_message(m, delay_commit)
 
     def follow(self, member, delay_commit=False):
@@ -630,7 +636,7 @@ class Group(Member):
         action_list = Member.action_list_for(self, member)
         membership = self.get_membership(member)
         join = self.can_join(member, membership)
-        if member and (join=="join" or join=="request"):
+        if member and (join=="join" or join=="join_request"):
             action_list.append(join)
         else:
             if self.is_admin(member, membership) or has_role_required('admin',role):
@@ -700,6 +706,10 @@ class Group(Member):
         from civicboom.lib.database.actions import del_group
         return del_group(self)
     
+    def all_sub_members(self):
+        from civicboom.lib.database.get_cached import get_group_members
+        return get_group_members(self)
+
 
 class UserLogin(Base):
     __tablename__    = "member_user_login"
