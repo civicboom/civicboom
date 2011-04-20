@@ -24,7 +24,9 @@ class MemberSettingsManager(UserDict.DictMixin):
             return r.value
         except NoResultFound:
             try:
-                return unicode(app_globals.user_defaults.get("settings", name))
+                user_defaults = SafeConfigParser()
+                user_defaults.read("user_defaults.ini")
+                return unicode(user_defaults.get("settings", name))
             except NoOptionError:
                 raise KeyError(name)
 
