@@ -10,7 +10,6 @@ from pylons.i18n.translation  import _
 from paste.deploy.converters import asbool
 
 import redis
-from ConfigParser import SafeConfigParser
 
 import os
 
