@@ -281,12 +281,23 @@
         )}
         <span class="separtor"></span>
     % endif
-
+    
     % if 'join' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
             value           = _('Join _group') ,
             value_formatted = h.literal("<span class='icon16 i_join'></span>%s") % _('Join _Group'),
+            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+        )}
+        <span class="separtor"></span>
+    % endif
+    
+    ## AllanC - same as above, could be neater but works
+    % if 'join_request' in self.actions:
+        ${h.secure_link(
+            h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
+            value           = _('Request to join _group') ,
+            value_formatted = h.literal("<span class='icon16 i_join'></span>%s") % _('Request to join _group'),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>

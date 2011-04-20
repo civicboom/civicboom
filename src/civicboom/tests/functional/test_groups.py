@@ -178,7 +178,8 @@ class TestGroupsController(TestController):
         """
         Go though the process of requesting to join a group and the admin accepting the request
         """
-        
+        self.log_in_as('unittest')
+        num_notifications = self.getNumNotification()
         
         self.log_in_as('unitfriend')
         
@@ -198,13 +199,20 @@ class TestGroupsController(TestController):
         self.assertTrue(found)
         
         self.log_in_as('unittest')
+        self.assertEquals(num_notifications + 1, self.getNumNotification()) # Check a request notification is generated for group members
+        self.assertIn('unitfriend', self.getLastNotification()) 
         self.set_persona('test_group')
+        # AllanC - groups dont recivce notifications at the moment (see issue #464)
+        #self.assertIn('unitfriend', self.getLastNotification()) # Check a request notification is generated for group
         
         response = self.app.get(url('group', id=self.group_id, format='json'))
         self.assertIn('unitfriend', response)
         self.assertIn('request', response) # successful "join request" in member list
         
         # accept join request
+        
+        # AllanC - notification testing differed till later
+        # num_notifications = self.getNumNotification() #issue 464
         response = self.app.post(
             url('group_action', action='set_role', id=self.group_id, format='json') ,
             params={
@@ -213,7 +221,10 @@ class TestGroupsController(TestController):
             } ,
             status=200
         )
-
+        # AllanC - issue #464
+        #self.assertEqual(num_notifications + 1, self.getNumNotification()) # Check the group got notifyed of the new member
+        #self.assertIn('unitfriend', self.getLastNotification())            # Check the notification was about unitfriend
+        
         self.log_out()
         
         # check member is now part of group
@@ -224,6 +235,10 @@ class TestGroupsController(TestController):
             if member['username'] == 'unitfriend' and member['status']=='active':
                 found = True
         self.assertTrue(found)
+        
+        self.log_in_as('unittest') # AllanC - would be better to check group got notifcaiton as well .. see issue #464
+        self.assertEqual(num_notifications + 2, self.getNumNotification()) # Check the group got notifyed of the new member, the 2 messages are 'request to join' and 'new member'
+        self.assertIn('unitfriend', self.getLastNotification())            # Check the notification was about unitfriend
     
     
     ## invite ############################################################
@@ -232,6 +247,7 @@ class TestGroupsController(TestController):
         pass
         # AllanC - TODO
         #warnings.warn("test not implemented")
+        # must check notifications as well
     
     
     ## setrole ###############################################################
