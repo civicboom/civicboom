@@ -12,6 +12,9 @@ from paste.deploy.converters import asbool
 
 log = logging.getLogger(__name__)
 
+#tt_global = "some global"
+#def tt_func():
+#    return "some function"
 
 class TestController(BaseController):
     
@@ -36,6 +39,87 @@ class TestController(BaseController):
         mc.incr("key")
         log.debug("value: %s" % mc.get("some_key"))
         log.debug("inc  : %s" % mc.get("key"))
+
+    times = """
+    def times(self):
+        import memcache, redis, math
+        from civicboom.model.meta import engine
+        tt_local = "some local"
+        app_globals.tt_app_global = "some app_global"
+        mr = redis.Redis()
+        mc = memcache.Client(['localhost:11211'])
+        md = memcache.Client(['localhost:21201'])
+
+        mr.set('tt_cache', 'some redis variable')
+        mc.set('tt_cache', 'some memcache variable')
+        md.set('tt_cache', 'some memcachedb variable')
+
+        n = 1000
+        a = time()
+        for n in xrange(0, n):
+            t = tt_local
+        b = time()
+        for n in xrange(0, n):
+            t = tt_global
+        c = time()
+        for n in xrange(0, n):
+            t = tt_func()
+        d = time()
+        for n in xrange(0, n):
+            t = app_globals.tt_app_global
+        e = time()
+        for n in xrange(0, n):
+            t = mc.get('tt_cache')
+        f = time()
+        for n in xrange(0, n):
+            t = md.get('tt_cache')
+        g = time()
+        for n in xrange(0, n):
+            t = mr.get('tt_cache')
+        h = time()
+        for n in xrange(0, n):
+            t = engine.execute("SELECT 'some sql variable'").fetchall()
+        i = time()
+
+        mr.delete('tt_cache')
+        mc.delete('tt_cache')
+        md.delete('tt_cache')
+
+        def m1(x):
+            return x * 200
+            #return math.log(x * 1000, 10)
+
+        def m2(x):
+            return x / n * 1000
+
+        return " ""
+            <style>
+            SPAN.bar {
+                display: inline-block;
+                background: grey;
+            }
+            </style>
+            <table>
+            <tr><td> local:      </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
+            <tr><td> global:     </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
+            <tr><td> function:   </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
+            <tr><td> app_global: </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
+            <tr><td> memcache:   </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
+            <tr><td> memcachedb: </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
+            <tr><td> redis:      </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
+            <tr><td> postgres:   </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
+            </table>
+            "" " % (
+            m1(b - a), m2(b - a),
+            m1(c - b), m2(c - b),
+            m1(d - c), m2(d - c),
+            m1(e - d), m2(e - d),
+            m1(f - e), m2(f - e),
+            m1(g - f), m2(g - f),
+            m1(h - g), m2(h - g),
+            m1(i - h), m2(i - h),
+        )
+    """
 
     def session(self):
         flash_message("hello session test")
