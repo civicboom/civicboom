@@ -316,7 +316,7 @@
     % endif
     
 	## GregM: Addition of follower actions
-	% if 'follower_invite_trusted' in self.actions and config['development_mode']:
+	% if 'follower_invite_trusted' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_invite_trusted'  , id=self.id, format='redirect') ,
             value           = _('Invite as a trusted follower') ,
@@ -327,7 +327,7 @@
         <span class="separtor"></span>
     % endif
     
-	% if 'follower_trust' in self.actions and config['development_mode']:
+	% if 'follower_trust' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_trust'  , id=self.id, format='redirect') ,
             value           = _('Trust follower') ,
@@ -336,7 +336,7 @@
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
-	% elif 'follower_distrust' in self.actions and config['development_mode']:
+	% elif 'follower_distrust' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_distrust'  , id=self.id, format='redirect') ,
             value           = _('Distrust follower') ,
