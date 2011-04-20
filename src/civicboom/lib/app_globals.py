@@ -37,15 +37,10 @@ class Globals(object):
 
         self.memcache      = redis.Redis(config['service.redis.server'])
 
-        self.user_defaults = SafeConfigParser()
-        self.user_defaults.read("user_defaults.ini")
-
         self.subdomains = {
             ''      : 'web'    ,
             'www'   : 'web'    ,
             'widget': 'widget' ,
-            #'w'     : 'widget' ,
-            #'mobile': 'mobile' ,
             'm'     : 'mobile' ,
             'api-v1': 'api'    ,
         }
