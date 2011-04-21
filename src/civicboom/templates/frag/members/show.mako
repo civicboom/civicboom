@@ -319,8 +319,8 @@
 	% if 'follower_invite_trusted' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_invite_trusted'  , id=self.id, format='redirect') ,
-            value           = _('Invite as a trusted follower') ,
-            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Invite as a trusted follower'),
+            value           = _('Invite trusted') ,
+            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Invite trusted'),
             title           = _("Invite %s as a trusted follower" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -330,8 +330,8 @@
 	% if 'follower_trust' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_trust'  , id=self.id, format='redirect') ,
-            value           = _('Trust follower') ,
-            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Trust follower'),
+            value           = _('Trust') ,
+            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Trust'),
             title           = _("Trust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -339,8 +339,8 @@
 	% elif 'follower_distrust' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_distrust'  , id=self.id, format='redirect') ,
-            value           = _('Distrust follower') ,
-            value_formatted = h.literal("<span class='icon16 i_unfollow'></span>%s") % _('Distrust follower'),
+            value           = _('Distrust') ,
+            value_formatted = h.literal("<span class='icon16 i_unfollow'></span>%s") % _('Distrust'),
             title           = _("Distrust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
