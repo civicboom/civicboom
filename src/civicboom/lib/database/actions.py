@@ -580,6 +580,41 @@ def withdraw_assignemnt(assignment, member, delay_commit=False):
     return False
 
 
+def respond_assignment(parent_content, member, delay_commit=False):
+    """
+    When creating a response, the accepted record should be flagged as responded
+    """
+    member         = get_member(member)
+    parent_content = get_content(parent_content)
+    
+    if not member:
+        raise action_error(_("cant find user"), code=404)
+    if not parent_content:
+        raise action_error(_("cant find parent content"), code=404)
+        
+    if parent_content.__type__!='assignment':
+        return # Nothing to do if parent is not assignment
+    
+    try:
+        # upgrade an 'accepted' record to 'responded'
+        member_assignment = Session.query(MemberAssignment).filter_by(member_id=member.id, content_id=parent_content.id).one()
+        member_assignment.status = "responded"
+    except:
+        # otherwise create 'responded' record
+        member_assignment         = MemberAssignment()
+        member_assignment.content = parent_content
+        member_assignment.member  = member
+        #assignment_accepted.member_id = member.id
+        member_assignment.status = "responded"
+        Session.add(member_assignment)
+
+    if not delay_commit:
+        Session.commit()
+        
+    update_accepted_assignment(member)
+    return True
+
+    
 
 #-------------------------------------------------------------------------------
 # Content Actions
