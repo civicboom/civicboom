@@ -26,23 +26,24 @@ log      = logging.getLogger(__name__)
 
 new_user_prefix = "newuser__"
 
+"""
+Registration process can be done in 2 ways:
+    1.a) Collect email address and username
+        - this can be done from a variaty of sources (e.g widget, webpage or mobile)
+        - server creates new user record and sends validation email
+    1.b) User forwarded from validation email
+        - validates email hash
+        - collects password and addtional data
+        
+    2.a) Janrain
+    2.b) additional details
+"""
 
 class RegisterController(BaseController):
     """
     @title Register
     @doc register
     @desc register users of civicboom
-    
-    Registration process can be done in 2 ways:
-        1.a) Collect email address and username
-            - this can be done from a variaty of sources (e.g widget, webpage or mobile)
-            - server creates new user record and sends validation email
-        1.b) User forwarded from validation email
-            - validates email hash
-            - collects password and addtional data
-            
-        2.a) Janrain
-        2.b) additional details
     """
 
     #---------------------------------------------------------------------------
@@ -127,29 +128,19 @@ class RegisterController(BaseController):
     @web
     def email(self, **kwargs):
         """
-        POST /register/email: Register a new user
+        POST /register/email: Register a new user via email
         @type action
         @api contents 1.0 (WIP)
-
-        @param follow        a comma separted list of users this registered user will follow on registration
-        @param follow_mutual a comma separted list of users who will follow this user
-
-        @return 201   content created
-                id    new content id
-        @return *     see update return types
         
-        @comment AllanC The prefered way of posting comments from a remote site is http://test.civicboom.com/contents?type=comment&format=redirect
-                        currently the action being performed is recodnised by the string /contents?type=comment
-                        the format=redirect is a cool way to return you to your site at the end of posting usinging the http_referer
-                        (unless they have to signup, at witch point the redirect will be lost)
-
+        @param username
+        @param email
+        @param follow        (optional) a comma separted list of users this registered user will follow on registration
+        @param follow_mutual (optional) a comma separted list of users who will follow this user
         
-        Register - via email (no janrain)
-        User submits a proposed username and email to this action
-        A new skeleton user is created for the user to complete the registration
+        @return 200 registered ok
         An email with a verification hash is sent
         """
-
+        
         # Check the username and email and raise any problems via the flash message session system
         try:
             kwargs = RegisterSchemaEmailUsername().to_python(kwargs) #dict(request.params)
