@@ -33,8 +33,11 @@ sed -i "s#DEBCONF_DB_LOG#$DB_LOG#"         /opt/cb/share/website/production.ini
 sed -i "s#DEBCONF_MC_SESSION#$MC_SESSION#" /opt/cb/share/website/production.ini
 sed -i "s#DEBCONF_MC_CACHE#$MC_CACHE#"     /opt/cb/share/website/production.ini
 
-initctl restart cb-website || initctl start cb-website || true
-initctl restart cb-worker  || initctl start cb-worker  || true
+initctl stop cb-website || true
+initctl stop cb-worker  || true
+
+initctl start cb-website || true
+initctl start cb-worker  || true
 
 cd /opt/cb/share/website
 find -name "*.pyc" | xargs rm -f
