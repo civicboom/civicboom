@@ -27,6 +27,7 @@ help:
 	# test          -- run all nosetests
 	# test-coverage -- run all nosetests and produce coverage html docs
 	# test-profile  -- run the test suite with profiling enabled (slow)
+	# schemadiff    -- write out sql to upgrade the live schema
 
 site: i18n js css libs
 
@@ -117,3 +118,8 @@ cdnpush: js css
 		civicboom/public
 	scp static-${GIT_TAG}.zip static.civicboom.com:~/
 	ssh static.civicboom.com unzip -o static-${GIT_TAG}.zip -d /opt/cb/var/www/static/${GIT_TAG}
+
+schemadiff:
+	pg_dump -U civicboom -h localhost -s civicboom > civicboom_dev.sql
+	ssh -i ~/.ec2/civicboom-key.pem ubuntu@db1.civicboom.com sudo -u postgres pg_dump -s civicboom > civicboom_live.sql
+	java -jar ~/apgdiff-2.3/apgdiff-2.3.jar --add-transaction civicboom_live.sql civicboom_dev.sql > update.sql

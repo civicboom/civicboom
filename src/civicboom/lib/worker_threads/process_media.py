@@ -70,7 +70,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         processed.close()
     elif file_type == "audio":
         processed = tempfile.NamedTemporaryFile(suffix=".flv")
-        _ffmpeg(["-y", "-i", tmp_file, processed.name])
+        _ffmpeg(["-y", "-i", tmp_file, "-ar", "44100", processed.name])
         m.setex(status_key, "copying audio", status_expire)
         wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "flv"))
         processed.close()

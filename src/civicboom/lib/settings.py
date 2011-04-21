@@ -3,6 +3,7 @@ from civicboom.model.meta import Session
 from civicboom.model import MemberSetting
 from sqlalchemy.orm.exc import NoResultFound
 from ConfigParser import NoOptionError
+from ConfigParser import SafeConfigParser
 import UserDict
 import logging
 
@@ -24,7 +25,9 @@ class MemberSettingsManager(UserDict.DictMixin):
             return r.value
         except NoResultFound:
             try:
-                return unicode(app_globals.user_defaults.get("settings", name))
+                user_defaults = SafeConfigParser()
+                user_defaults.read("user_defaults.ini")
+                return unicode(user_defaults.get("settings", name))
             except NoOptionError:
                 raise KeyError(name)
 
