@@ -158,12 +158,15 @@ class ContentActionsController(BaseController):
         # AllanC - TODO: need message to user as to why they could not accept the assignment
         #         private assingment? not invited?
         #         already withdraw before so cannot accept again
-
+        
+        # TODO: limit accepting to over 16's only
+        
         if assignment.accept(c.logged_in_persona):
             assignment.creator.send_message(messages.assignment_accepted(member=c.logged_in_persona, assignment=assignment))
             user_log.debug("Accepted Content #%d" % assignment.id)
             # A convenience feature for flow of new users. If they are following nobody (they are probably a new user), then auto follow the assignment creator
-            if c.logged_in_persona.num_following <= 2:
+            #if c.logged_in_persona.num_following <= 2:
+            if c.logged_in_persona.config['auto_follow_on_accept']:
                 try:
                     c.logged_in_persona.follow(assignment.creator)
                 except:

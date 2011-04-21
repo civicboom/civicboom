@@ -10,7 +10,7 @@ from civicboom.model.content           import _content_type as content_types, pu
 from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
-
+from civicboom.lib.database.actions             import respond_assignment
 
 # Validation
 import formencode
@@ -598,6 +598,9 @@ class ContentsController(BaseController):
                     content.parent.creator.send_message(
                         messages.new_response(member = content.creator, content = content, parent = content.parent), delay_commit=True
                     )
+                    
+                    # if it is a response, mark the accepted status as 'responded'
+                    respond_assignment(content.parent, content.creator, delay_commit=True)
                 
                 content.comments = [] # Clear comments when upgraded from draft to published content? we dont want observers comments 
                 
