@@ -29,6 +29,10 @@ new_user_prefix = "newuser__"
 
 class RegisterController(BaseController):
     """
+    @title Register
+    @doc register
+    @desc register users of civicboom
+    
     Registration process can be done in 2 ways:
         1.a) Collect email address and username
             - this can be done from a variaty of sources (e.g widget, webpage or mobile)
@@ -123,6 +127,23 @@ class RegisterController(BaseController):
     @web
     def email(self, **kwargs):
         """
+        POST /register/email: Register a new user
+        @type action
+        @api contents 1.0 (WIP)
+
+        @param follow        a comma separted list of users this registered user will follow on registration
+        @param follow_mutual a comma separted list of users who will follow this user
+
+        @return 201   content created
+                id    new content id
+        @return *     see update return types
+        
+        @comment AllanC The prefered way of posting comments from a remote site is http://test.civicboom.com/contents?type=comment&format=redirect
+                        currently the action being performed is recodnised by the string /contents?type=comment
+                        the format=redirect is a cool way to return you to your site at the end of posting usinging the http_referer
+                        (unless they have to signup, at witch point the redirect will be lost)
+
+        
         Register - via email (no janrain)
         User submits a proposed username and email to this action
         A new skeleton user is created for the user to complete the registration
@@ -142,20 +163,16 @@ class RegisterController(BaseController):
         Session.add(u)
         Session.commit()
         
-        # Automatically Follow Users from config
-        for member in [_get_member(username.strip()) for username in config['setting.username_to_auto_follow_on_signup'].split(',')]:
+        # Automatically Follow Users from config and referers from other sites
+        follow_username_list = []
+        for username_list in [config['setting.username_to_auto_follow_on_signup'], kwargs.get('follow',''), kwargs.get('follow_mutual','')]:
+            follow_username_list += username_list.split(',')
+        for member in [_get_member(username.strip()) for username in follow_username_list                     ]:
             if member:
                 u.follow(member)
-        #user_to_auto_follow_on_signup = _get_member(config['setting.username_to_auto_follow_on_signup'])
-        #if user_to_auto_follow_on_signup:
-        #    u.follow(user_to_auto_follow_on_signup)
-        
-        # Follow the refered_by user if they exisits
-        if 'refered_by' in kwargs:
-            refered_by = _get_member(kwargs['refered_by'])
-            if refered_by and u.follow(refered_by) == True:
-                log.debug("refered_by auto follow message generation not implmented yet")
-                #refered_by.send_message(messages.followed_on_signup(member=u)
+        for member in [_get_member(username.strip()) for username in kwargs.get('follow_mutual','').split(',')]:
+            if member and member.config['allow_registration_follows']:
+                member.follow(u)
         
         # Accept assignment
         if 'accept_assignment' in kwargs:
