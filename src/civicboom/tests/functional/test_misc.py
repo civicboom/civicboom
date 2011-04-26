@@ -71,9 +71,11 @@ class TestMiscController(TestController):
         response = self.app.get(url(controller='misc', action='feedback'))
 
     def test_robots(self):
-        # test that static content is cachable
-        response = self.app.get("/robots.txt")
-        # FIXME: test that responses are different for www. and api-v1.
+        response = self.app.get("/robots.txt", extra_environ={'HTTP_HOST': 'www.civicboom.com'})
+        self.assertNotIn("Disallow: /", response.body)
+
+        response = self.app.get("/robots.txt", extra_environ={'HTTP_HOST': 'api-v1.civicboom.com'})
+        self.assertIn("Disallow: /", response.body)
 
 
     # other misc bits that aren't part of the misc controller, but are just misc
