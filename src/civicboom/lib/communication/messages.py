@@ -12,6 +12,11 @@ from pylons import config
 from pylons.i18n          import lazy_ugettext as _
 from webhelpers.html      import HTML
 
+from civicboom.model                   import Message
+from civicboom.model.meta              import Session
+from civicboom.lib.database.get_cached import get_member as _get_member, update_member_messages
+from civicboom.lib.communication.email_lib import render_email
+
 import civicboom.lib.worker as worker
 
 import re
@@ -138,19 +143,89 @@ for _name, _default_route, _subject, _content in generators:
     globals()[_name] = gen
 
 
-def send_notification(member_to, message_data, delay_commit=False):
+
+def setup_message_format_processors():
+    """
+    Each processor should return a string representaion of the message
+    """
+
+    def format_email(message_obj):
+        return render_email(
+            subject      = message_obj.subject,
+            content_html = message_obj.content,
+        )
+    
+    def format_notification(message_obj):
+        return dict(
+            subject = message_obj.subject ,
+            content = message_obj.content ,
+        )
+
+    def format_comufy(message_obj):
+        return
+
+    return dict(
+        e = format_email ,
+        n = format_notification ,
+        #c = format_comufy ,
+    )
+
+message_format_processors = setup_message_format_processors()
+
+
+def send_notification(member, message_obj, delay_commit=False):
     # If notifications not enabled return silently
     if not config['feature.notifications']:
         return
+
+    # get member object
+    member = _get_member(member)
+    if not member:
+        log.error('unable to find member (%s) to send a message to' % 'TODO')
+        return
+
+    # Save the notification for this member
+    #  - although the message will be threaded to agregate, we need to save the notification for the actual destination user (without the appended str bits)
+    #  - see 'if user' below for remove notification from thred aggregation for single member
+    m = Message()
+    m.subject = message_obj.subject
+    m.content = message_obj.content
+    m.target  = member
+    Session.add(m)
+    update_member_messages(member)
+    if not delay_commit:
+        Session.commit()
+    
+    # Pre generate list of members 'too'
+    members = []
+    if member.__type__ == 'user':
+        members.append(member)
+    elif member.__type__ == 'group':
+        members = member.all_sub_members()
+    # Convert member objects into username strings
+    members = [m.username for m in members]
+    
+    # AllanC - bit of a botch here. if a notificaiton is sent to a group and needs to be propergated to members, we nee to record who the message was origninally too.
+    message_obj.subject = str(member)+': '+message_obj.subject
+    message_obj.content = str(member)+': '+message_obj.content
     
     # Pre render all known output message types
+    # They cant be rendered in the thread because they don't have access to pylons features like template rendering, url() and c
+    rendered_message = {}
+    # Each dict entry may contain another dict datastructure for that message type
+    for message_format, message_format_processor in message_format_processors.iteritems():
+        rendered_message[message_format] = message_format_processor(message_obj)
     
-    # Pre generate list of members too
+    # Because we saved the actual notification above, if we have a single user we don't need to save the notification in the worker thread
+    if member.__type__ == 'user':
+        del rendered_message['n']
     
     # Thread the send operation
     # Each member object is retreved and there message preferences observed (by the message thread) for each type of message
     worker.add_job({
-        'task'        : 'send_notification',
-        'member'      : member_to.username,
-        'message_data': message_data.to_dict(),
+        'task'            : 'send_notification' ,
+        'members'         : members ,
+        'rendered_message': rendered_message ,
+        'default_route'   : message_obj.default_route ,
+        'name'            : message_obj.name ,
     })
