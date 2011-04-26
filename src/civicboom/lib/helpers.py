@@ -40,6 +40,44 @@ import logging
 user_log = logging.getLogger("user")
 
 
+def guess_hcard_name(name):
+    """
+    Looks at a string and attempts to return the best hCard formatted representation
+
+    >>> guess_hcard_name("Unit Testson")
+    literal(u"<span class='given-name'>Unit</span> <span class='family-name'>Testson</span>")
+    >>> guess_hcard_name("Mr. U. Test")
+    literal(u"<span class='honorific-prefix'>Mr.</span> <span class='given-name'>U.</span> <span class='family-name'>Test</span>")
+    >>> guess_hcard_name("The Waffle Eater")
+    literal(u"<span class='given-name'>The Waffle Eater</span>")
+    """
+    parts = name.split()
+    if len(parts) == 2:
+        return (
+            literal("<span class='given-name'>")+
+            parts[0]+
+            literal("</span> <span class='family-name'>")+
+            parts[1]+
+            literal("</span>")
+        )
+    elif len(parts) == 3 and parts[0].lower().strip(".") in ["mr", "mrs", "sir", "ms", "lord"]:
+        return (
+            literal("<span class='honorific-prefix'>")+
+            parts[0]+
+            literal("</span> <span class='given-name'>")+
+            parts[1]+
+            literal("</span> <span class='family-name'>")+
+            parts[2]+
+            literal("</span>")
+        )
+    else:
+        return (
+            literal("<span class='given-name'>")+
+            name+
+            literal("</span>")
+        )
+
+
 def get_captcha(lang='en', theme='red'):
     """
     Generate reCAPTCHA html

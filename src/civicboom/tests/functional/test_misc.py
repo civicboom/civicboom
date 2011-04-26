@@ -70,12 +70,19 @@ class TestMiscController(TestController):
         # FIXME: check POST
         response = self.app.get(url(controller='misc', action='feedback'))
 
+    def test_robots(self):
+        response = self.app.get("/robots.txt", extra_environ={'HTTP_HOST': 'www.civicboom.com'})
+        self.assertNotIn("Disallow: /", response.body)
+
+        response = self.app.get("/robots.txt", extra_environ={'HTTP_HOST': 'api-v1.civicboom.com'})
+        self.assertIn("Disallow: /", response.body)
+
 
     # other misc bits that aren't part of the misc controller, but are just misc
 
     def test_static(self):
         # test that static content is cachable
-        response = self.app.get("/robots.txt")
+        response = self.app.get("/crossdomain.xml")
         # FIXME: test that "Cache-Control: public" is set
 
     def test_semi_static(self):

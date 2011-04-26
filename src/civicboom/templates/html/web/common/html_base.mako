@@ -6,24 +6,22 @@
 <!--[if IE 9 ]>    <html lang="en" class="no-js ie ie9"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="shortcut icon" href="/images/boom16.ico" />
-	<link rel="apple-touch-icon" href="/images/boom128.png" />
-	<link rel="fluid-icon" href="/images/boom128.png" />
-	<link rel="search" type="application/opensearchdescription+xml" href="/misc/opensearch.xml" title="${_("_site_name")}" />
-
 ##----------------------------------------------------------------------------
 ## Meta Text
 ##----------------------------------------------------------------------------
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=8,chrome=1">
 	<meta name="description" content="${_("_site_description")}"/>
 	<meta name="keywords"    content="civicboom, social media, community, information, news" />
 	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling, Greg Miell" />
 	<meta name="robots"      content="all" />
-
 	<meta name="viewport"    content="width=480, initial-scale=1">
-	<meta http-equiv="X-UA-Compatible" content="IE=8,chrome=1">
-	<meta charset="utf-8">
 
+	<link rel="shortcut icon" href="/images/boom16.ico" />
+	<link rel="apple-touch-icon" href="/images/boom128.png" />
+	<link rel="fluid-icon" href="/images/boom128.png" />
+	<link rel="search" type="application/opensearchdescription+xml" href="/misc/opensearch.xml" title="${_("_site_name")}" />
+	<link rel="profile" href="http://microformats.org/profile/hcard">
 
 ##----------------------------------------------------------------------------
 ## Title

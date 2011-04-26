@@ -210,7 +210,7 @@
 ##------------------------------------------------------------------------------
 <div id="search">
 	<form action="${h.url('contents')}" method='GET'>
-		<input type="search" class="search_input" name="term" placeholder=" ${_("Search")}" />
+		<input type="search" class="search_input" name="term" placeholder="${_("Search Content")}" />
 		<input type="submit" class="button" value="GO">
 	</form>
 </div>

@@ -93,6 +93,14 @@ class MiscController(BaseController):
 <moz:SearchForm>https://www.civicboom.com/contents</moz:SearchForm>
 </OpenSearchDescription>""" % (base64.b64encode(file("civicboom/public/images/boom16.ico").read()), )
 
+    def robots(self):
+        response.headers['Content-type'] = "text/plain"
+        subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
+        if subdomain in ["api-v1", ]:
+            return "User-agent: *\nDisallow: /\n"
+        else:
+            return "User-agent: *\nDisallow:\n"
+
     @web
     def upgrade_plans(self):
         c.upgrade_plans_title = 'You have reached your Basic account limit for this month.'
