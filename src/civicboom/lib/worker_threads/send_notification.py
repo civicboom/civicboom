@@ -1,7 +1,7 @@
 import logging
 log = logging.getLogger(__name__)
 
-def _send_message_to_user(member, message_data, member_to=None, delay_commit=False):
+def _send_notification_to_user(member, message_data, member_to=None, delay_commit=False):
     """
     Internal call
     Must be passed member object
@@ -54,7 +54,7 @@ def _send_message_to_user(member, message_data, member_to=None, delay_commit=Fal
     ))
 
 
-def send_message(member, message_data, delay_commit=False):
+def send_notification(member, message_data, delay_commit=False):
     """
     Threaded message system, save and handles propogating the message to different technologies for all members of a group or an indvidual
     """
@@ -74,7 +74,7 @@ def send_message(member, message_data, delay_commit=False):
         members = member_to.all_sub_members() #_get_member_username_list(member_to)
     
     for member in members:
-        _send_message_to_user(member, message_data, member_to=member_to, delay_commit=True)
+        _send_notification_to_user(member, message_data, member_to=member_to, delay_commit=True)
     
     if not delay_commit:
         Session.commit()

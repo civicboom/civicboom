@@ -6,7 +6,9 @@ import json
 from sqlalchemy.orm       import join, joinedload
 from sqlalchemy           import or_, and_, null
 
-from civicboom.lib.form_validators.base import DefaultSchema, MemberValidator
+import civicboom.lib.form_validators.base
+from civicboom.lib.form_validators.dict_overlay import validate_dict
+
 import formencode
 
 log = logging.getLogger(__name__)
@@ -18,12 +20,16 @@ log = logging.getLogger(__name__)
 # Form Schema
 #-------------------------------------------------------------------------------
 
-class NewMessageSchema(DefaultSchema):
+class NewMessageSchema(civicboom.lib.form_validators.base.DefaultSchema):
+    filter_extra_fields = False
     #source                     = MemberValidator()
-    target                     = MemberValidator()
-    subject                    = formencode.validators.String(not_empty=False, max=255)
-    content                    = formencode.validators.String(not_empty=False)
+    #target                     = MemberValidator()
+    #subject                    = formencode.validators.String(not_empty=False, max=255)
+    #content                    = formencode.validators.String(not_empty=False)
+    subject = civicboom.lib.form_validators.base.UnicodeStripHTMLValidator(not_empty=True, max=255) 
+    content = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True)
 
+new_message_schema = NewMessageSchema()
 
 #-------------------------------------------------------------------------------
 # Global Functions
@@ -124,47 +130,55 @@ class MessagesController(BaseController):
 
     @web
     @auth
-    def create(self, target=None, subject=None, content=None, **kwargs):
+    def create(self, **kwargs):
         """
         POST /messages: Create a new item.
         
         @api messages 1.0 (WIP)
         
-        @param target   the username of the target user
+        @param target   the username of the target user (can be comma separated list)
         @param subject  message subject
         @param content  message body
         
         @return 201   message sent
-                id    the ID of the created message
-        @return 400   missing required field
-        @return 404   target user doesn't exist
+                id    list of message id's created
+        @return 400   
+        @return invalid missing required field
         
         @comment Shish  do we want some sort of "too many messages, stop spamming" response?
-        @comment Shish  do we want to support multiple names in the 'target' box?
+        @comment AllanC yes we do, to be implemented - raised on Redmine #474
         """
         # url('messages')
         
-        if not (target and subject and content):
-            raise action_error('missing / incorrect paramaters', code=400)
-        target = get_member(target, set_html_action_fallback=True)
-        #if not target:
-        #    raise action_error('user does not exist', code=404)
+        # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic - will raise invalid if needed
+        data       = {'message':kwargs}
+        data       = validate_dict(data, new_message_schema, dict_to_validate_key='message', template_error='messages/new')
+        kwargs     = data['message']
         
-        m = Message()
-        m.source  = c.logged_in_persona
-        m.target  = target
-        m.subject = subject
-        m.content = content
-        Session.add(m)
+        #member_to = get_member(kwargs.get('target'), set_html_action_fallback=True)
+        
+        messages_sent = []
+        for member in get_members(kwargs.get('target'), expand_group_members=False):
+            m = Message()
+            m.source  = c.logged_in_persona
+            m.target  = member
+            m.subject = kwargs.get('subject')
+            m.content = kwargs.get('content')
+            Session.add(m)
+            messages_sent.append(m)
+            
+            # Alert via email, MSN, etc - NOTE the message route for message_recived does not generate a notification by default
+            m.target.send_notification(messages.message_received(member=m.source, message=m.content))
+        
         Session.commit()
         
-        m1 = get_member(target)
-        m1.send_message(messages.message_received(member=c.logged_in_persona))
+        #user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
+        user_log.debug("Sent message to %s" % kwargs.get('target'))
         
-        user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
+        if not messages_sent:
+            raise action_error(_("Message failed to send"), code=400)
         
-        return action_ok(_("Message sent"), code=201, data={'id': m.id})
-
+        return action_ok(_("Message sent"), code=201, data={'id': [m.id for m in messages_sent]}) #data={'id': m.id}
 
 
     @web
@@ -234,7 +248,6 @@ class MessagesController(BaseController):
         # url('message', id=ID)
         
         #c.viewing_user = c.logged_in_persona - swiching persona will mean that logged_in_user is group
-        
         message = get_message(id, is_target_or_source=True)
         if not message.read and message.target_id==c.logged_in_persona.id:
             message.read = True

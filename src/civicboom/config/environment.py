@@ -100,10 +100,10 @@ def load_environment(global_conf, app_conf):
         pylons.config[k] = v
 
     # set up worker processors
-    from civicboom.lib.worker_threads.send_message  import send_message
-    from civicboom.lib.worker_threads.process_media import process_media
-    worker.add_worker_function('process_media', process_media)
-    worker.add_worker_function('send_message' , send_message )
+    from civicboom.lib.worker_threads.send_notification  import send_notification
+    from civicboom.lib.worker_threads.process_media      import process_media
+    worker.add_worker_function('process_media'     , process_media    )
+    worker.add_worker_function('send_notification' , send_notification)
 
     # set up worker queue
     if pylons.config['worker.queue'] == "inline":

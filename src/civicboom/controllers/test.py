@@ -193,7 +193,7 @@ class TestController(BaseController):
         from civicboom.model.member import Member
         import civicboom.lib.communication.messages as messages
         m = Session.query(Member).first()
-        m.send_message(messages.msg_test(text="hello o/"))
+        m.send_notification(messages.msg_test(text="hello o/"))
 
     def send_email(self):
         from civicboom.lib.database.get_cached import get_member

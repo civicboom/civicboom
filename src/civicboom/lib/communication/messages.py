@@ -5,7 +5,7 @@ import civicboom.lib.communication.messages as messages
 
 m1 = Member()
 m2 = Member()
-m1.send_message(messages.tipoff(member=m2, tipoff="there is a bomb"))
+m1.send_notification(messages.tipoff(member=m2, tipoff="there is a bomb"))
 """
 
 from pylons import config
@@ -78,7 +78,7 @@ generators = [
     ["comment",                              "ne",  _("comment made on _article"),    _("%(member)s commented on your _article %(article)s")],  #Also passes comment.contents as a string and could be used here
 
     # Content Responses
-    ["assignment_response_mobile",           "ne", _("_assignment mobile response"), _("%(member)s has uploaded mobile _article titled %(article)s based on your _assignment %(assignment)s")],
+    # AllanC- we don't distingusih mobile responses anymore #["assignment_response_mobile",           "ne", _("_assignment mobile response"), _("%(member)s has uploaded mobile _article titled %(article)s based on your _assignment %(assignment)s")],
     ["new_response",                         "ne", _("new response"),                _("%(member)s has published a response to your content %(parent)s called %(content)s ")],
     
     # Assignment Actions
@@ -86,7 +86,7 @@ generators = [
     ["assignment_updated",                   "ne", _("_assignment updated"),         _("%(creator)s has updated their _assignment %(assignment)s")],
     ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been cancelled"), _("%(member)s cancel'ed the _assignment %(assignment)s")],
     ["assignment_accepted",                  "ne", _("_assignment accepted"),        _("%(member)s accepted your _assignment %(assignment)s")],
-    ["assignment_interest_withdrawn",        "e",   _("_assignment interest withdrawn"), _("%(member)s withdrew their interest in your _assignment %(assignment)s")],
+    ["assignment_interest_withdrawn",        "ne", _("_assignment interest withdrawn"), _("%(member)s withdrew their interest in your _assignment %(assignment)s")],
     ["assignment_invite",                    "ne", _("closed _assignment invitation") , _("%(member)s has invited you to participate in the _assignment %(assignment)s")],
 
     # Assignment Timed Tasks
@@ -94,6 +94,7 @@ generators = [
     ["assignment_due_1day",                  "ne", _("_assignment alert: due tomorrow"),    _("The _assignment you accepted %(assignment)s is due tomorrow")],
 
     # Response Actions
+    # NOTE: Don't set these to default email because these action create emails themselfs - AllanC
     ["article_disassociated_from_assignment","n",  _("_article disassociated from _assignment"), _("%(member)s disassociated your _article %(article)s from the _assignment %(assignment)s")],
     ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved your _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
       # TODO: response seen
@@ -137,13 +138,19 @@ for _name, _default_route, _subject, _content in generators:
     globals()[_name] = gen
 
 
-def send_message(member_to, message_data, delay_commit=False):
+def send_notification(member_to, message_data, delay_commit=False):
     # If notifications not enabled return silently
     if not config['feature.notifications']:
         return
     
+    # Pre render all known output message types
+    
+    # Pre generate list of members too
+    
+    # Thread the send operation
+    # Each member object is retreved and there message preferences observed (by the message thread) for each type of message
     worker.add_job({
-        'task'        : 'send_message',
+        'task'        : 'send_notification',
         'member'      : member_to.username,
         'message_data': message_data.to_dict(),
     })

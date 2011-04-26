@@ -595,7 +595,7 @@ class ContentsController(BaseController):
                 
                 # if this is a response - notify parent content creator
                 if content.parent:
-                    content.parent.creator.send_message(
+                    content.parent.creator.send_notification(
                         messages.new_response(member = content.creator, content = content, parent = content.parent), delay_commit=True
                     )
                     
