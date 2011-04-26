@@ -193,6 +193,33 @@ class RegisterController(BaseController):
 # Regisration Utilitys (for import by other modules)
 #-------------------------------------------------------------------------------
 
+def _fetch_avatar(url):
+    try:
+        import urllib2
+        import tempfile
+        import civicboom.lib.services.warehouse as wh
+        import Image
+
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
+            data = urllib2.urlopen(url).read()
+            original.write(data)
+
+            h = wh.hash_file(original.name)
+            wh.copy_to_warehouse(original.name, "avatars-original", h, a.filename)
+
+            with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
+                size = (160, 160)
+                im = Image.open(original.name)
+                if im.mode != "RGB":
+                    im = im.convert("RGB")
+                im.thumbnail(size, Image.ANTIALIAS)
+                im.save(processed.name, "JPEG")
+                wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
+            return h
+    except Exception, e:
+        log.exception("Error fetching janrain user's avatar")
+        return None
+
 def register_new_janrain_user(profile):
     """
     With a Janrain user dictonary create a new user with whatever data has been provided as best we can
@@ -212,7 +239,7 @@ def register_new_janrain_user(profile):
     
     u.name          = profile.get('name', dict()).get('formatted')
     u.status        = "pending"
-    #u.avatar        = profile.get('photo') # AllanC - disabled because we cant guarantee https - we need our server to auto copy this and upload it to our own S3 store
+    u.avatar        = _fetch_avatar(profile.get('photo'))
     #u.location      = get_location_from_json(profile.get('address'))
     
     Session.add(u)
