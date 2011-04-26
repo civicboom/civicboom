@@ -36,11 +36,3 @@ class Globals(object):
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
 
         self.memcache      = redis.Redis(config['service.redis.server'])
-
-        self.subdomains = {
-            ''      : 'web'    ,
-            'www'   : 'web'    ,
-            'widget': 'widget' ,
-            'm'     : 'mobile' ,
-            'api-v1': 'api'    ,
-        }
