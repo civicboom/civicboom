@@ -37,7 +37,21 @@ def multidict_to_dict(multidict):
 # Subdomain format
 #-------------------------------------------------------------------------------
 
+subdomain_formats = {
+    ''      : 'web'    ,
+    'www'   : 'web'    ,
+    'widget': 'widget' ,
+    'm'     : 'mobile' ,
+    'api-v1': 'api'    ,
+}
+
 def get_subdomain_format():
+    """
+    hardcoded list of ifs, because this function is called millions of times,
+    and dictionary lookups (especially from globals (10x especially from
+    app_globals)) are comparatively slow (only 0.01ms vs 0.1ms, but over a
+    million calls it adds up)
+    """
     subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
     if subdomain == "w" or subdomain == "widget":
         return "widget"
@@ -76,13 +90,13 @@ def url(*args, **kwargs):
     #  remove all known subdomains from URL and instate the new provided one
     if 'subdomain' in kwargs:
         subdomain = str(kwargs.pop('subdomain'))
-        assert subdomain in app_globals.subdomains.keys()
+        assert subdomain in subdomain_formats.keys()
         if 'localhost' not in c.host and subdomain == '': #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
             subdomain = 'www'
         if subdomain:
             subdomain += '.'
         host = c.host
-        for possible_subdomain in app_globals.subdomains.keys():
+        for possible_subdomain in subdomain_formats.keys():
             if possible_subdomain:
                 #host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
                 host = re.sub('^'+possible_subdomain+r'\.', '', host)
