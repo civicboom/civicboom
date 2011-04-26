@@ -13,6 +13,7 @@ from pylons import tmpl_context as c #for current user password validator
 
 from civicboom.lib.authentication import encode_plain_text_password, get_user_and_check_password
 
+from civicboom.lib.text import clean_html_markup, strip_html_tags
 
 # Misc Imports
 import datetime
@@ -23,6 +24,11 @@ import re
 class DefaultSchema(formencode.Schema):
     allow_extra_fields  = True
     filter_extra_fields = True
+
+class UnicodeStripHTMLValidator(validators.UnicodeString):
+    def _to_python(self, value, state):
+        value = validators.UnicodeString._to_python(self, value, state)
+        return strip_html_tags(value).strip()
 
 
 class MemberValidator(validators.FancyValidator):
@@ -92,7 +98,6 @@ class ContentUnicodeValidator(validators.UnicodeString):
     strip     = True
     def _to_python(self, value, state):
         value = validators.UnicodeString._to_python(self, value, state)
-        from civicboom.lib.text import clean_html_markup
         return clean_html_markup(value)
 
 

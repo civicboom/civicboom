@@ -323,9 +323,9 @@ class Member(Base):
                 action_list.append('invite')
         return action_list
 
-    def send_message(self, m, delay_commit=False):
+    def send_notification(self, m, delay_commit=False):
         import civicboom.lib.communication.messages as messages
-        messages.send_message(self, m, delay_commit)
+        messages.send_notification(self, m, delay_commit)
 
     def send_email(self, **kargs):
         from civicboom.lib.communication.email_lib import send_email
@@ -339,7 +339,7 @@ class Member(Base):
         if private:
             followers_to = self.followers_trusted
         for follower in followers_to:
-            follower.send_message(m, delay_commit)
+            follower.send_notification(m, delay_commit)
 
     def follow(self, member, delay_commit=False):
         from civicboom.lib.database.actions import follow
@@ -707,8 +707,8 @@ class Group(Member):
         return del_group(self)
     
     def all_sub_members(self):
-        from civicboom.lib.database.get_cached import get_group_members
-        return get_group_members(self)
+        from civicboom.lib.database.get_cached import get_members
+        return get_members(self)
 
 
 class UserLogin(Base):

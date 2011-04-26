@@ -49,7 +49,7 @@ def add_job(job):
     Adds a job to the worker's queue if there is one; if no queues have
     been initialised, runs the job directly
     """
-    if _worker_queue and job["task"] != "send_message":
+    if _worker_queue and job["task"] != "send_notification":
         log.info('Adding job to worker queue: %s' % job["task"])
         _worker_queue.put(job)
     else:
