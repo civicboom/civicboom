@@ -90,7 +90,7 @@
                     ${h.secure_link(
                         h.url(controller='account', action='set_persona', id=member.username, format='html') ,
                         ##args_to_tuple(
-                        'swtich user',
+                        'switch user',
                         css_class="persona_link",
                         ##json_form_complete_actions = 'window.location.replace(\'%s\');' % url(controller='profile', action='index', host=app_globals.site_host) ,
                         ## AllanC TODO: non javascript users need to be forwarded to there profile page
@@ -210,7 +210,7 @@
 ##------------------------------------------------------------------------------
 <div id="search">
 	<form action="${h.url('contents')}" method='GET'>
-		<input type="search" class="search_input" name="term" placeholder=" ${_("Search")}" />
+		<input type="search" class="search_input" name="term" placeholder="${_("Search Content")}" />
 		<input type="submit" class="button" value="GO">
 	</form>
 </div>

@@ -578,7 +578,7 @@ class AssignmentContent(UserVisibleContent):
 
 class MemberAssignment(Base):
     __tablename__ = "member_assignment"
-    _assignment_status = Enum("pending", "accepted", "withdrawn", name="assignment_status")
+    _assignment_status = Enum("pending", "accepted", "withdrawn", "responded", name="assignment_status")
     content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')            , nullable=False, primary_key=True)
     status        = Column(_assignment_status,  nullable=False)

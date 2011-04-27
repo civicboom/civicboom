@@ -3,7 +3,7 @@ from civicboom.tests import *
 #import json
 import warnings
 
-#self.group_id = 0
+
 
 
 class TestGroupsController(TestController):
@@ -85,7 +85,7 @@ class TestGroupsController(TestController):
         self.group_id = int(c['data']['id'])
         self.assertNotEqual(self.group_id, 0)
         
-        response = self.app.get(url('group', id=self.group_id, format='json'))
+        response = self.app.get(url('group', id='test_group', format='json'))
         response_json = json.loads(response.body)
         self.assertEqual(response_json['data']['member']['username']                  , 'test_group')
         self.assertEqual(response_json['data']['member']['join_mode']                 , 'invite_and_request')
@@ -141,12 +141,12 @@ class TestGroupsController(TestController):
         
         response = self.app.get(url('edit_group', id=1       ), status=404)
         self.assertNotEqual(self.group_id, 0)
-        response = self.app.get(url('settings', id=self.group_id, format="json"), status=200)
+        response = self.app.get(url('settings', id='test_group', format="json"), status=200)
         self.assertIn('Test group for unit tests', response)
         self.log_out()
-        response = self.app.get(url('settings', id=self.group_id), status=302) # redirect to login page as not logged in
+        response = self.app.get(url('settings', id='test_group'), status=302) # redirect to login page as not logged in
         self.log_in_as('unitfriend')
-        response = self.app.get(url('settings', id=self.group_id), status=403) # permission denied not a group admin
+        response = self.app.get(url('settings', id='test_group'), status=403) # permission denied not a group admin
 
         self.log_out()
 
@@ -157,7 +157,7 @@ class TestGroupsController(TestController):
         self.log_in_as('unittest')
         
         response = self.app.put(
-            url('settings', id=self.group_id, format='json'),
+            url('settings', id='test_group', format='json'),
             params={
                 '_authentication_token': self.auth_token,
                 'name'         : 'Test group for unit tests (ALRIGHT!)' ,
@@ -178,18 +178,19 @@ class TestGroupsController(TestController):
         """
         Go though the process of requesting to join a group and the admin accepting the request
         """
-        
+        self.log_in_as('unittest')
+        num_notifications = self.getNumNotifications()
         
         self.log_in_as('unitfriend')
         
         # Create a join request (as group is invite and request and unitfriend is not a member)
-        self.join(self.group_id)
+        self.join('test_group')
         
         self.log_out()
         
         # check member is actually part of group
         #   - member visibility is public so the join request should be visible even when viewed by a logged_out user
-        response = self.app.get(url('group', id=self.group_id, format='json'))
+        response = self.app.get(url('group', id='test_group', format='json'))
         response_json = json.loads(response.body)
         found = False
         for member in response_json['data']['members']['items']:
@@ -198,32 +199,46 @@ class TestGroupsController(TestController):
         self.assertTrue(found)
         
         self.log_in_as('unittest')
+        self.assertEquals(num_notifications + 1, self.getNumNotifications()) # Check a request notification is generated for group members
+        self.assertIn('unitfriend', self.getLastNotification().get('content')) 
         self.set_persona('test_group')
+        # AllanC - groups dont recivce notifications at the moment (see issue #464)
+        #self.assertIn('unitfriend', self.getLastNotification()) # Check a request notification is generated for group
         
-        response = self.app.get(url('group', id=self.group_id, format='json'))
+        response = self.app.get(url('group', id='test_group', format='json'))
         self.assertIn('unitfriend', response)
         self.assertIn('request', response) # successful "join request" in member list
         
         # accept join request
+        
+        # AllanC - notification testing differed till later
+        # num_notifications = self.getNumNotification() #issue 464
         response = self.app.post(
-            url('group_action', action='set_role', id=self.group_id, format='json') ,
+            url('group_action', action='set_role', id='test_group', format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unitfriend',
             } ,
             status=200
         )
-
+        # AllanC - issue #464
+        #self.assertEqual(num_notifications + 1, self.getNumNotification()) # Check the group got notifyed of the new member
+        #self.assertIn('unitfriend', self.getLastNotification())            # Check the notification was about unitfriend
+        
         self.log_out()
         
         # check member is now part of group
-        response = self.app.get(url('group', id=self.group_id, format='json'))
+        response = self.app.get(url('group', id='test_group', format='json'))
         response_json = json.loads(response.body)
         found = False
         for member in response_json['data']['members']['items']:
             if member['username'] == 'unitfriend' and member['status']=='active':
                 found = True
         self.assertTrue(found)
+        
+        self.log_in_as('unittest') # AllanC - would be better to check group got notifcaiton as well .. see issue #464
+        self.assertEqual(num_notifications + 2, self.getNumNotifications()) # Check the group got notifyed of the new member, the 2 messages are 'request to join' and 'new member'
+        self.assertIn('unitfriend', self.getLastNotification().get('content')) # Check the notification was about unitfriend
     
     
     ## invite ############################################################
@@ -232,6 +247,7 @@ class TestGroupsController(TestController):
         pass
         # AllanC - TODO
         #warnings.warn("test not implemented")
+        # must check notifications as well
     
     
     ## setrole ###############################################################
@@ -244,7 +260,7 @@ class TestGroupsController(TestController):
         
         # Cannot set own role as unittest is the only admin - error will be thrown
         response = self.app.post(
-            url('group_action', action='set_role', id=self.group_id, format='json') ,
+            url('group_action', action='set_role', id='test_group', format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unittest',
@@ -256,7 +272,7 @@ class TestGroupsController(TestController):
         
         # Upgrade 'unitfriend' to admin
         response = self.app.post(
-            url('group_action', action='set_role', id=self.group_id, format='json') ,
+            url('group_action', action='set_role', id='test_group', format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unitfriend',
@@ -267,7 +283,7 @@ class TestGroupsController(TestController):
         
         # Now downgrade self to observer
         response = self.app.post(
-            url('group_action', action='set_role', id=self.group_id, format='json') ,
+            url('group_action', action='set_role', id='test_group', format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unittest',
@@ -280,7 +296,7 @@ class TestGroupsController(TestController):
         # NOTE: because the permissions check is done every load of base this permissions should take effect imediately
         # If we eveer just store role in the session then this test will fail because the user has not logged in and out to refresh the role
         response = self.app.post(
-            url('group_action', action='set_role', id=self.group_id, format='json') ,
+            url('group_action', action='set_role', id='test_group', format='json') ,
             params={
                 '_authentication_token': self.auth_token ,
                 'member': 'unittest',
@@ -304,7 +320,7 @@ class TestGroupsController(TestController):
         
         # Try deleting when logged in as 'unittest' ... should fail as 'unittest' is not an admin anymore
         response = self.app.delete(
-            url('group', id=self.group_id, format='json'),
+            url('group', id='test_group', format='json'),
             params={
                 '_authentication_token': self.auth_token
             },
@@ -315,7 +331,7 @@ class TestGroupsController(TestController):
         self.set_persona('test_group')
         
         response = self.app.delete(
-            url('group', id=self.group_id, format='json'),
+            url('group', id='test_group', format='json'),
             params={
                 '_authentication_token': self.auth_token
             },
@@ -325,4 +341,4 @@ class TestGroupsController(TestController):
         self.log_out()
         
         # The group should not exist
-        response = self.app.get(url('group', id=self.group_id, format='json'), status=404)
+        response = self.app.get(url('group', id='test_group', format='json'), status=404)

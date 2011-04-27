@@ -89,7 +89,7 @@ class AccountController(BaseController):
         #
         # Thus, we need to only give out the token if the user has supplied
         # valid auth credentials with the request.
-        if c.logged_in_user:
+        if c.logged_in_user and False: # Shish: temp hack, mobile relies on the old behaviour
             raise action_error("user is logged in already", code=400)
         
         c.auth_info    = None

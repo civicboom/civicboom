@@ -37,7 +37,21 @@ def multidict_to_dict(multidict):
 # Subdomain format
 #-------------------------------------------------------------------------------
 
+subdomain_formats = {
+    ''      : 'web'    ,
+    'www'   : 'web'    ,
+    'widget': 'widget' ,
+    'm'     : 'mobile' ,
+    'api-v1': 'api'    ,
+}
+
 def get_subdomain_format():
+    """
+    hardcoded list of ifs, because this function is called millions of times,
+    and dictionary lookups (especially from globals (10x especially from
+    app_globals)) are comparatively slow (only 0.01ms vs 0.1ms, but over a
+    million calls it adds up)
+    """
     subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
     if subdomain == "w" or subdomain == "widget":
         return "widget"
@@ -76,13 +90,13 @@ def url(*args, **kwargs):
     #  remove all known subdomains from URL and instate the new provided one
     if 'subdomain' in kwargs:
         subdomain = str(kwargs.pop('subdomain'))
-        assert subdomain in app_globals.subdomains.keys()
+        assert subdomain in subdomain_formats.keys()
         if 'localhost' not in c.host and subdomain == '': #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
             subdomain = 'www'
         if subdomain:
             subdomain += '.'
         host = c.host
-        for possible_subdomain in app_globals.subdomains.keys():
+        for possible_subdomain in subdomain_formats.keys():
             if possible_subdomain:
                 #host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
                 host = re.sub('^'+possible_subdomain+r'\.', '', host)
@@ -570,13 +584,13 @@ def auto_format_output(target, *args, **kwargs):
 #-------------------------------------------------------------------------------
 
 @decorator
-def authenticate_form(target, *args, **kwargs):
+def authenticate_form(_target, *args, **kwargs):
     """
     slightly hacked version of pylons.decorators.secure.authenticated_form to
     support authenticated PUT and DELETE requests
     """
     if c.authenticated_form:
-        return target(*args, **kwargs) # If already authenticated, pass through
+        return _target(*args, **kwargs) # If already authenticated, pass through
     
     request  = get_pylons(args).request
     response = get_pylons(args).response
@@ -607,7 +621,7 @@ def authenticate_form(target, *args, **kwargs):
         if secure_form.token_key in kwargs:
             del kwargs[secure_form.token_key]
         c.authenticated_form = True
-        return target(*args, **kwargs)
+        return _target(*args, **kwargs)
 
     # no token = can't be sure the user really intended to post this, ask them
     else:
@@ -642,7 +656,7 @@ def cacheable(time=60*60*24*365, anon_only=True):
 
 
 @decorator
-def web_params_to_kwargs(target, *args, **kwargs):
+def web_params_to_kwargs(_target, *args, **kwargs):
     """
     converts any params from a form submission or query string into kwargs
     Security notice - Developers should be aware that kwargs could be passed by the user and override kwargs set in the orrigninal method call
@@ -687,10 +701,10 @@ def web_params_to_kwargs(target, *args, **kwargs):
     -1 4
     """
     if c.web_params_to_kwargs:
-        return target(*args, **kwargs) # If already processed, pass through
+        return _target(*args, **kwargs) # If already processed, pass through
     
     
-    arg_names = target.func_code.co_varnames[:target.func_code.co_argcount]
+    arg_names = _target.func_code.co_varnames[:_target.func_code.co_argcount]
     params = request.params
     new_args = []
     new_kwargs = {}
@@ -699,7 +713,7 @@ def web_params_to_kwargs(target, *args, **kwargs):
         new_kwargs[k] = v
     # FIXME: need to detect if the function accepts a "**" type, as this could be "**foo" rather than "**kwargs"
     # NOTE: ** types aren't counted towards the function's argument count, so arg_names cuts it off
-    if "kwargs" in target.func_code.co_varnames:
+    if "kwargs" in _target.func_code.co_varnames:
         new_kwargs.update(params)
 
     exclude_fields = ['pylons', 'environ', 'start_response']
@@ -720,4 +734,4 @@ def web_params_to_kwargs(target, *args, **kwargs):
     #user_log.info("calling "+target.func_name+", given param names, defaults, kwargs, web params are "+pformat(arg_names)+pformat(args)+pformat(kwargs)+pformat(params))
     #user_log.info("calling "+target.func_name+", now have param values and kwargs "+pformat(new_args)+pformat(new_kwargs))
     c.web_params_to_kwargs = (new_args, new_kwargs)
-    return target(*new_args, **new_kwargs) # Execute the wrapped function
+    return _target(*new_args, **new_kwargs) # Execute the wrapped function

@@ -197,11 +197,10 @@ class SettingsController(BaseController):
     @title Settings
     @doc settings
     @desc REST controller for Settings
-    
-    AllanC- unneed?
-    http://wiki.pylonshq.com/display/pylonscookbook/How+map.resource+enables+controllers+as+services    
-    needs in config/routing.py -> map.resource('setting', 'settings')
     """
+
+    #http://wiki.pylonshq.com/display/pylonscookbook/How+map.resource+enables+controllers+as+services    
+    #needs in config/routing.py -> map.resource('setting', 'settings')
     
     #---------------------------------------------------------------------------
     # REST Actions - simple passthrough actions

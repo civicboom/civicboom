@@ -95,7 +95,7 @@ class TestMessagesController(TestController):
                 'subject': 'arrr, a subject',
                 'content': 'I am content',
             },
-            status=404
+            status=400
         )
 
     def part_create_no_content(self):

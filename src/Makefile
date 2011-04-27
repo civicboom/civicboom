@@ -18,7 +18,6 @@ help:
 	# run           -- run the site in development mode
 	# clean         -- reset the folder to clean git checkout
 	# gource        -- generate a video of developer activity
-	# profile       -- run the test suite with profiling enabled (slow)
 	# stats         -- run the interactive profile examiner
 	# pep8          -- strict syntax checking
 	# api-doc       -- build civicboom/public/api.html
@@ -27,6 +26,8 @@ help:
 	# cdnpush       -- push static files to CDN
 	# test          -- run all nosetests
 	# test-coverage -- run all nosetests and produce coverage html docs
+	# test-profile  -- run the test suite with profiling enabled (slow)
+	# schemadiff    -- write out sql to upgrade the live schema
 
 site: i18n js css libs
 
@@ -58,10 +59,13 @@ test-db: skel-db
 	nosetests
 
 test-coverage:
-	nosetests --with-coverage --cover-erase --cover-html --cover-html-dir=../coverage/
+	nosetests --verbose --with-coverage --cover-erase --cover-html --cover-html-dir=../coverage/
+
+test-profile:
+	time python -m cProfile -o /tmp/prof.out /usr/bin/nosetests --verbose
 
 test:
-	nosetests
+	nosetests --verbose
 
 live-db: skel-db
 	mkdir -p data
@@ -82,9 +86,6 @@ gource:
 		--file-filter tinymce --highlight-all-users \
 		--multi-sampling -1280x720 --stop-at-end --output-ppm-stream - ../ | \
 		ffmpeg -y -b 3000K -r 24 -f image2pipe -vcodec ppm -i - -vcodec mpeg4 gource.mp4
-
-profile:
-	time python -m cProfile -o /tmp/prof.out /usr/bin/nosetests
 
 stats:
 	python -m pstats /tmp/prof.out
@@ -117,3 +118,8 @@ cdnpush: js css
 		civicboom/public
 	scp static-${GIT_TAG}.zip static.civicboom.com:~/
 	ssh static.civicboom.com unzip -o static-${GIT_TAG}.zip -d /opt/cb/var/www/static/${GIT_TAG}
+
+schemadiff:
+	pg_dump -U civicboom -h localhost -s civicboom > civicboom_dev.sql
+	ssh -i ~/.ec2/civicboom-key.pem ubuntu@db1.civicboom.com sudo -u postgres pg_dump -s civicboom > civicboom_live.sql
+	java -jar ~/apgdiff-2.3/apgdiff-2.3.jar --add-transaction civicboom_live.sql civicboom_dev.sql > update.sql

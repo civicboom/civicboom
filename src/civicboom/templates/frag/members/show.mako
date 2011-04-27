@@ -69,15 +69,19 @@
 <%def name="body()">
     
     <div class="frag_left_col">
-        <div class="frag_col">
+        <div class="frag_col vcard">
         ## Member Details
-		<h1>${self.member['name'] or self.member['username']}</h1><br />
+		% if self.member['type'] == "group":
+			<h1 class="fn org">${self.member['name'] or self.member['username']}</h1><br />
+		% else:
+			<h1 class="fn n">${h.guess_hcard_name(self.member['name'] or self.member['username'])}</h1><br />
+		% endif
         <div>
-          <span style="float:left; padding-right: 3px;">${member_avatar()}</span>
+          <div style="float:left; padding-right: 3px;">${member_avatar(img_class='photo')}</div>
           <div style="padding-left: 92px" >
-          	${_('Username')}: <br />${self.member['username']}<br />
+          	${_('Username')}: <br /><span class="uid nickname">${self.member['username']}</span><br />
             % if self.member.get('website'):
-              ${_('Website')}: <br /><a href="${self.member['website']}" target="_blank">${self.member['website']}</a><br />
+              ${_('Website')}: <br /><a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
             % endif
             Joined: ${self.member['join_date']}<br />
             % if self.current_user:
@@ -110,9 +114,9 @@
         % if self.member.get('description'):
           <div style="clear:left; height: 3px;">&nbsp;</div>
           <div style="clear:left;" class="frag_list">
-            <h2><span class="icon16 i_${self.attr.icon_type}"><span>descrition</span><div style="display:inline-block;padding-left:19px">Description</div></span></h2>
+            <h2><span class="icon16 i_${self.attr.icon_type}"><span>Description</span><span style="display:inline-block;padding-left:19px">Description</span></span></h2>
             <div class="frag_list_contents">
-              <div class="content" style="padding-bottom: 3px;">
+              <div class="content note" style="padding-bottom: 3px;">
                 ${self.member['description']}
               </div>
             </div>
@@ -281,12 +285,23 @@
         )}
         <span class="separtor"></span>
     % endif
-
+    
     % if 'join' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
             value           = _('Join _group') ,
             value_formatted = h.literal("<span class='icon16 i_join'></span>%s") % _('Join _Group'),
+            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+        )}
+        <span class="separtor"></span>
+    % endif
+    
+    ## AllanC - same as above, could be neater but works
+    % if 'join_request' in self.actions:
+        ${h.secure_link(
+            h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
+            value           = _('Request to join _group') ,
+            value_formatted = h.literal("<span class='icon16 i_join'></span>%s") % _('Request to join _group'),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
@@ -305,31 +320,31 @@
     % endif
     
 	## GregM: Addition of follower actions
-	% if 'follower_invite_trusted' in self.actions and config['development_mode']:
+	% if 'follower_invite_trusted' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_invite_trusted'  , id=self.id, format='redirect') ,
-            value           = _('Invite as a trusted follower') ,
-            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Invite as a trusted follower'),
+            value           = _('Invite trusted') ,
+            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Invite trusted'),
             title           = _("Invite %s as a trusted follower" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
     % endif
     
-	% if 'follower_trust' in self.actions and config['development_mode']:
+	% if 'follower_trust' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_trust'  , id=self.id, format='redirect') ,
-            value           = _('Trust follower') ,
-            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Trust follower'),
+            value           = _('Trust') ,
+            value_formatted = h.literal("<span class='icon16 i_follow'></span>%s") % _('Trust'),
             title           = _("Trust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
-	% elif 'follower_distrust' in self.actions and config['development_mode']:
+	% elif 'follower_distrust' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_distrust'  , id=self.id, format='redirect') ,
-            value           = _('Distrust follower') ,
-            value_formatted = h.literal("<span class='icon16 i_unfollow'></span>%s") % _('Distrust follower'),
+            value           = _('Distrust') ,
+            value_formatted = h.literal("<span class='icon16 i_unfollow'></span>%s") % _('Distrust'),
             title           = _("Distrust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -389,8 +404,8 @@
 ##------------------------------------------------------------------------------
 ## Avatar
 ##------------------------------------------------------------------------------
-<%def name="member_avatar()">
-    ${member_includes.avatar(self.member, class_='thumbnail_large')}
+<%def name="member_avatar(img_class='')">
+    ${member_includes.avatar(self.member, class_='thumbnail_large', img_class=img_class)}
 </%def>
 
 

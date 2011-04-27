@@ -26,19 +26,24 @@ log      = logging.getLogger(__name__)
 
 new_user_prefix = "newuser__"
 
+"""
+Registration process can be done in 2 ways:
+    1.a) Collect email address and username
+        - this can be done from a variaty of sources (e.g widget, webpage or mobile)
+        - server creates new user record and sends validation email
+    1.b) User forwarded from validation email
+        - validates email hash
+        - collects password and addtional data
+        
+    2.a) Janrain
+    2.b) additional details
+"""
 
 class RegisterController(BaseController):
     """
-    Registration process can be done in 2 ways:
-        1.a) Collect email address and username
-            - this can be done from a variaty of sources (e.g widget, webpage or mobile)
-            - server creates new user record and sends validation email
-        1.b) User forwarded from validation email
-            - validates email hash
-            - collects password and addtional data
-            
-        2.a) Janrain
-        2.b) additional details
+    @title Register
+    @doc register
+    @desc register users of civicboom
     """
 
     #---------------------------------------------------------------------------
@@ -123,12 +128,22 @@ class RegisterController(BaseController):
     @web
     def email(self, **kwargs):
         """
-        Register - via email (no janrain)
-        User submits a proposed username and email to this action
-        A new skeleton user is created for the user to complete the registration
+        POST /register/email: Register a new user via email
+        @type action
+        @api contents 1.0 (WIP)
+        
+        @param username
+        @param email
+        @param follow        (optional) a comma separted list of users this registered user will follow on registration
+        @param follow_mutual (optional) a comma separted list of users who will follow this user
+        
+        @return 200 registered ok
         An email with a verification hash is sent
+        
+        @comment AllanC follow_mutual will not function unless allow_registration_follows is set in user settings for that user
+        @comment AllanC GET triggers HTML page
         """
-
+        
         # Check the username and email and raise any problems via the flash message session system
         try:
             kwargs = RegisterSchemaEmailUsername().to_python(kwargs) #dict(request.params)
@@ -142,20 +157,16 @@ class RegisterController(BaseController):
         Session.add(u)
         Session.commit()
         
-        # Automatically Follow Users from config
-        for member in [_get_member(username.strip()) for username in config['setting.username_to_auto_follow_on_signup'].split(',')]:
+        # Automatically Follow Users from config and referers from other sites
+        follow_username_list = []
+        for username_list in [config['setting.username_to_auto_follow_on_signup'], kwargs.get('follow',''), kwargs.get('follow_mutual','')]:
+            follow_username_list += username_list.split(',')
+        for member in [_get_member(username.strip()) for username in follow_username_list                     ]:
             if member:
                 u.follow(member)
-        #user_to_auto_follow_on_signup = _get_member(config['setting.username_to_auto_follow_on_signup'])
-        #if user_to_auto_follow_on_signup:
-        #    u.follow(user_to_auto_follow_on_signup)
-        
-        # Follow the refered_by user if they exisits
-        if 'refered_by' in kwargs:
-            refered_by = _get_member(kwargs['refered_by'])
-            if refered_by and u.follow(refered_by) == True:
-                log.debug("refered_by auto follow message generation not implmented yet")
-                #refered_by.send_message(messages.followed_on_signup(member=u)
+        for member in [_get_member(username.strip()) for username in kwargs.get('follow_mutual','').split(',')]:
+            if member and member.config['allow_registration_follows']:
+                member.follow(u)
         
         # Accept assignment
         if 'accept_assignment' in kwargs:
@@ -164,7 +175,7 @@ class RegisterController(BaseController):
             #assignment = get_assignment(request.params['accept_assignment'])
             #accept_assignment_status = accept_assignment(new_member, assignment)
             #if accept_assignment_status == True:
-            #    refered_by_member.send_message(messages.assignment_accepted(member=new_member, assignment=assignment))
+            #    refered_by_member.send_notification(messages.assignment_accepted(member=new_member, assignment=assignment))
         
         Session.commit()
         
@@ -181,6 +192,33 @@ class RegisterController(BaseController):
 #-------------------------------------------------------------------------------
 # Regisration Utilitys (for import by other modules)
 #-------------------------------------------------------------------------------
+
+def _fetch_avatar(url):
+    try:
+        import urllib2
+        import tempfile
+        import civicboom.lib.services.warehouse as wh
+        import Image
+
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
+            data = urllib2.urlopen(url).read()
+            original.write(data)
+
+            h = wh.hash_file(original.name)
+            wh.copy_to_warehouse(original.name, "avatars-original", h, a.filename)
+
+            with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
+                size = (160, 160)
+                im = Image.open(original.name)
+                if im.mode != "RGB":
+                    im = im.convert("RGB")
+                im.thumbnail(size, Image.ANTIALIAS)
+                im.save(processed.name, "JPEG")
+                wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
+            return h
+    except Exception, e:
+        log.exception("Error fetching janrain user's avatar")
+        return None
 
 def register_new_janrain_user(profile):
     """
@@ -201,7 +239,7 @@ def register_new_janrain_user(profile):
     
     u.name          = profile.get('name', dict()).get('formatted')
     u.status        = "pending"
-    #u.avatar        = profile.get('photo') # AllanC - disabled because we cant guarantee https - we need our server to auto copy this and upload it to our own S3 store
+    u.avatar        = _fetch_avatar(profile.get('photo'))
     #u.location      = get_location_from_json(profile.get('address'))
     
     Session.add(u)

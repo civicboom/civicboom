@@ -10,7 +10,6 @@ from pylons.i18n.translation  import _
 from paste.deploy.converters import asbool
 
 import redis
-from ConfigParser import SafeConfigParser
 
 import os
 
@@ -37,16 +36,3 @@ class Globals(object):
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
 
         self.memcache      = redis.Redis(config['service.redis.server'])
-
-        self.user_defaults = SafeConfigParser()
-        self.user_defaults.read("user_defaults.ini")
-
-        self.subdomains = {
-            ''      : 'web'    ,
-            'www'   : 'web'    ,
-            'widget': 'widget' ,
-            #'w'     : 'widget' ,
-            #'mobile': 'mobile' ,
-            'm'     : 'mobile' ,
-            'api-v1': 'api'    ,
-        }

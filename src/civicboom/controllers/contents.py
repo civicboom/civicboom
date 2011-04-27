@@ -10,7 +10,7 @@ from civicboom.model.content           import _content_type as content_types, pu
 from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
-
+from civicboom.lib.database.actions             import respond_assignment
 
 # Validation
 import formencode
@@ -239,9 +239,9 @@ class ContentsController(BaseController):
         @return 200      list ok
             list list of content objects
         
-        @example http://test.civicboom.com/contents.json?creator=unittest&limit=2
-        @example http://test.civicboom.com/contents.rss?list=assignments_active&limit=2
-        @example http://test.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
+        @example https://test.civicboom.com/contents.json?creator=unittest&limit=2
+        @example https://test.civicboom.com/contents.rss?list=assignments_active&limit=2
+        @example https://test.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
         
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
@@ -365,10 +365,10 @@ class ContentsController(BaseController):
             raise_if_current_role_insufficent('contributor')
             content = DraftContent()
         elif kwargs['type'] == 'comment':
-            raise_if_current_role_insufficent('observer')
+            raise_if_current_role_insufficent('observer') # Check role, in adition the content:update method checks for view permission of parent
             content = CommentContent()
-            is_private = False
-            content.creator = c.logged_in_user
+            is_private = False                          # Comments are always public
+            content.creator = c.logged_in_user          # Comments are always made by logged in user
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = ArticleContent()                  # Create base content
@@ -595,9 +595,12 @@ class ContentsController(BaseController):
                 
                 # if this is a response - notify parent content creator
                 if content.parent:
-                    content.parent.creator.send_message(
+                    content.parent.creator.send_notification(
                         messages.new_response(member = content.creator, content = content, parent = content.parent), delay_commit=True
                     )
+                    
+                    # if it is a response, mark the accepted status as 'responded'
+                    respond_assignment(content.parent, content.creator, delay_commit=True)
                 
                 content.comments = [] # Clear comments when upgraded from draft to published content? we dont want observers comments 
                 
@@ -613,8 +616,8 @@ class ContentsController(BaseController):
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
             if m:
-                # AllanC: TODO this needs to optimised! see issue #258 bulk messages are a blocking call
-                content.creator.send_message_to_followers(m, delay_commit=True)
+                content.creator.send_message_to_followers(m, private=content.private, delay_commit=True)
+
 
 
         # -- Save to Database --------------------------------------------------
@@ -681,8 +684,8 @@ class ContentsController(BaseController):
         @return 403      permission denied
         @return 404      content not found
         
-        @example http://test.civicboom.com/contents/1.json
-        @example http://test.civicboom.com/contents/1.rss
+        @example https://test.civicboom.com/contents/1.json
+        @example https://test.civicboom.com/contents/1.rss
         """
         # url('content', id=ID)
         
