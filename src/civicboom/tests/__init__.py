@@ -273,7 +273,11 @@ class TestController(TestCase):
             },
             status=201
         )
-        return json.loads(response.body)['data']['id']
+        message_id_list = json.loads(response.body)['data']['id']
+        # AllanC - the id feild now returns a list of all messages created .. is this needed?
+        if len(message_id_list)==1:
+            return message_id_list[0]
+        return message_id_list
 
     def boom_content(self, content_id):
         response = self.app.post(

@@ -19,14 +19,14 @@ class Email:
         self.content_html = content_html
 
 
-def email_log(email_to, subject, content_text, content_html, **kwargs):
-    log.info("--Email Send Disabled-- To: %s Subject: %s" % (email_to, subject))
-    log.debug("Message (content_text): %s" % content_text)
+def email_log(email_to, **kwargs): #subject, content_text, content_html,
+    log.info("--Email Send Disabled-- To: %s Subject: %s" % (email_to, kwargs.get('subject')) )
+    log.debug("Message (content_text): %s" % kwargs.get('content_text') )
     #log.debug("Message (content_html): %s" % content_html)
     
     if config['test_mode']:
         #print "Email: %s - %s" %(email_to, subject)
-        emails.append(Email(email_to, subject, content_text, content_html))
+        emails.append(Email(email_to, **kwargs)) #subject, content_text, content_html
     
 
 def getNumEmails():

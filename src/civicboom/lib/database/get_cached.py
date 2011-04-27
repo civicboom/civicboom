@@ -142,13 +142,39 @@ def get_group_member_username_list(group, members=None, exclude_list=None):
             get_group_member_username_list(member, members, exclude_list)
     return members.keys()
 
-def get_group_members(group):
+def get_members(members, expand_group_members=True):
     """
-    All user member users (including recursive sub members) of a group
+    members can be
+      group object - All user member users (including recursive sub members) of a group
+      list of username strings
+      a comma separated list of strings
+      
+    AllanC - Note ignors and dose not error on members that do not exisit? is this right?
+    
+    TODO - optimisation - lazy load settings and other large feilds from these users
     """
-    # TODO - optimisation - lazy load settings and other large feilds from these users
+    # split comma list of string members
+    if isinstance(members, basestring):
+        members = members.split(',')
+        if len(members) == 1 and expand_group_members: # member list has one member, check if this single member is a group
+            member = get_member(members[0])
+            if member and member.__type__ == 'group':
+                members = member
+            # else it's a user and is valid, do nothing
+    
+    if isinstance(members, Group) and expand_group_members:
+        members = get_group_member_username_list(members)
+    
+    # No need to process members list if members is a single member
+    #  note: any group object will have been converted into a member list above is needed
+    if isinstance(members, Member):
+        return [members]
+
+    if not members:
+        return []
+
     return Session.query(Member).with_polymorphic('*').filter(
-                Member.username.in_(get_group_member_username_list(group))
+                Member.username.in_(members)
             ).all()
 
 # GregM: Dirty, do not cache, see redmine #414

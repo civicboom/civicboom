@@ -61,7 +61,7 @@ class TestGroupsController(TestController):
         # check "new user joined" notifcation
         self.log_in_as('unittest')
         self.assertEquals(self.getNumNotifications(), unittest_num_notifications + 1)
-        
+        self.assertIn('test_group_messages2', self.getLastNotification()['content']) # Ensure that the group unitfriend joined is reflected in the content
         
         # message get sent to sub group and should propergate up the chain
         #self.log_in_as('unittest')

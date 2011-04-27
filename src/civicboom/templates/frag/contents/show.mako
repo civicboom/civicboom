@@ -325,7 +325,7 @@
     % if 'license' in self.content:
     <% license = self.content['license'] %>
     <div class="padded" style="margin-top:14px">
-      <a href="${license['url']}" target="_blank" title="${license['description']}">
+      <a href="${license['url']}" target="_blank" rel="license" title="${license['description']}">
         <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
       </a>
     </div>

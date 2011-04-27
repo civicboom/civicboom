@@ -60,6 +60,7 @@ def make_map(config):
 
     # CUSTOM ROUTES HERE
     map.connect('/', controller='misc', action='titlepage')
+    map.connect('/robots.txt', controller='misc', action='robots')
     map.connect('/about/{id}' , controller='misc', action="about")
     map.connect('/help/{id}'  , controller='misc', action="help", format="frag")
     map.connect('/settings/{id}/{panel}.{format}', controller='settings', action='panel')
