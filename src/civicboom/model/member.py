@@ -21,6 +21,7 @@ import copy
 # say "I am joined to other table X using mapping Y as defined above"
 member_type              = Enum("user", "group",                     name="member_type"  )
 account_types            = Enum("free", "plus", "corp", "corp_plus", name="account_types")
+account_types_level      =     ("free", "plus", "corporate") # the order of account levels e.g plus has higher privilages than free
 
 group_member_roles_level =     ("admin", "editor", "contributor", "observer") # the order of permissions e.g admin has higher privilages than editor
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
@@ -33,7 +34,16 @@ group_content_visibility = Enum("public", "private",                          na
 follow_type              = Enum("trusted", "trusted_invite", "normal",        name="follow_type")
 
 
-def has_role_required(role_required, role_current):
+def _enum_level_comparison(required, current, values):
+    try:
+        index_required = values.index(required)
+        index_current  = values.index(current)
+        return (index_required - index_current + 1) > 0
+    except:
+        return False
+    
+
+def has_role_required(required, current):
     """
     returns True  if has permissons
     returns False if not permissions
@@ -49,12 +59,7 @@ def has_role_required(role_required, role_current):
     >>> has_role_required( None   ,'admin')
     False
     """
-    try:
-        permission_index_required = group_member_roles_level.index(role_required)
-        permission_index_current  = group_member_roles_level.index(role_current)
-        return (permission_index_required - permission_index_current + 1) > 0
-    except:
-        return False
+    return _enum_level_comparison(required, current, group_member_roles_level)
 
 
 def lowest_role(a,b):
@@ -75,6 +80,24 @@ def lowest_role(a,b):
         return a
     else:
         return b
+
+def has_account_required(required, current):
+    """
+    returns True  if has account
+    returns False if not account
+    
+    >>> has_account_required('free', 'plus')
+    True
+    >>> has_account_required('plus', 'plus')
+    True
+    >>> has_account_required('plus', 'free')
+    False
+    >>> has_account_required(None, 'plus')
+    False
+    >>> has_role_required('corporate' , None)
+    False
+    """
+    return _enum_level_comparison(required, current, account_types_level)
 
 
 class GroupMembership(Base):
@@ -302,8 +325,9 @@ class Member(Base):
         if self == member:
             action_list.append('settings')
             action_list.append('logout')
-            action_list.append('invite_trusted_followers')
-        elif member:
+            if member.has_account_required('plus'):
+                action_list.append('invite_trusted_followers')
+        elif member and member.has_account_required('plus'):
             if self.is_following(member):
                 if member.is_follower_trusted(self):
                     action_list.append('follower_distrust')
@@ -319,7 +343,7 @@ class Member(Base):
                 action_list.append('follow')
         if self != member:
             action_list.append('message')
-            if member and member.__type__ == 'group'  and not member.get_membership(self):
+            if member and member.__type__ == 'group'  and not member.get_membership(self): # If the observing member is a group, show invite to my group action
                 action_list.append('invite')
         return action_list
 
@@ -411,14 +435,8 @@ class Member(Base):
         from civicboom.lib.database.actions import add_to_interests
         return add_to_interests(self, content)
     
-    def has_permission(self, required_account_type):
-        member_account_type = self.account_type
-        #AllanC TODO: This may need updating to use something more sophisticated than just monkey if statements
-        #             need > ... we want corp customers to do what the plus customers can do
-        if required_account_type == member_account_type:
-            return True
-        #return False
-        return True # lizze needs to demo plus features on a newly created account...
+    def has_account_required(self, required_account_type):
+        return has_account_required(required_account_type, self.account_type)
 
     
     def can_publish_assignment(self):
@@ -429,14 +447,13 @@ class Member(Base):
         # if not member.payment_level:
         
         limit = None
-        account_type = self.account_type
         
         from pylons import config
-        if account_type == 'free':
+        if self.account_type == 'free':
             limit = config['payment.free.assignment_limit']
-        elif account_type == 'plus':
+        elif has_account_required('plus', self.account_type):
             limit = config['payment.plus.assignment_limit']
-            
+        
         if not limit:
             return True
         if len(self.active_assignments_period) > limit:
@@ -451,6 +468,7 @@ class Member(Base):
         #self._payment_account = value
         from civicboom.lib.database.actions import set_payment_account
         set_payment_account(self, value, delay_commit)
+        
     @property
     # AllanC - TODO this needs to be a derrived field
     def account_type(self):

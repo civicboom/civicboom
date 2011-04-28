@@ -419,7 +419,7 @@ class UserVisibleContent(Content):
 
     def action_list_for(self, member, **kwargs):
         action_list = Content.action_list_for(self, member, **kwargs)
-        if self.is_parent_owner(member) and member.has_permission('plus'):
+        if self.is_parent_owner(member):# and member.has_account_required('plus'): # Originally locked as paid for feature
             if self.approval == 'none':
                 action_list.append('approve')
                 action_list.append('seen')
