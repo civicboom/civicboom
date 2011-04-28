@@ -429,8 +429,8 @@
         % endfor
         <tr>
             <td class="comment_avatar">
-                % if c.logged_in_persona:
-                ${member_includes.avatar(c.logged_in_persona.to_dict())}
+                % if c.logged_in_user:
+                ${member_includes.avatar(c.logged_in_user.to_dict())}
                 %endif
             </td>
             <td class="comment">
