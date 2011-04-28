@@ -110,6 +110,8 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         # Approve --------------------------------------------------------------
         
+        #self.set_account_type('plus') # Double enforce that unittest is a plus user
+        
         num_emails = getNumEmails()
         
         response = self.app.post(

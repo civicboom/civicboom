@@ -224,7 +224,7 @@ class Member(Base):
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
-    payment_account      = relationship("PaymentAccount", cascade="delete,delete-orphan", single_parent=True) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
+    payment_account      = relationship("PaymentAccount", cascade="all,delete-orphan", single_parent=True) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
 
     groups_roles         = relationship("GroupMembership" , backref="member", cascade="all,delete-orphan", lazy='joined') #AllanC- TODO: needs eagerload group? does lazy=joined do it?
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
@@ -752,7 +752,7 @@ class MemberSetting(Base):
 class PaymentAccount(Base):
     __tablename__    = "payment_account"
     id          = Column(Integer(), primary_key=True)
-    type        = Column(account_types, nullable=True, default="free")
+    type        = Column(account_types, nullable=False, default="free")
     
     
     
