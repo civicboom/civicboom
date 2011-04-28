@@ -121,7 +121,7 @@
 <%def name="rss_comment_item(comment)">
 <item>
     ##% if content['type'] == 'comment':
-    <% name = comment.get('creator', dict()).get('name') or comment.get('creator', dict()).get('username') %>
+    <% name = comment.get('creator', dict()).get('name') %>
     <title>${_('Comment by')}: ${name} - ${h.truncate(comment['content'], length=50, whole_word=True, indicator='...')}</title>
     <description>${comment.get('content')}</description>
     <pubDate>${h.date_to_rss(comment.get('creation_date'))}</pubDate>
@@ -137,7 +137,7 @@
 
 <%def name="rss_member_item(member)">
     <item> 
-        <title>${member['name'] or member['username']}</title> 
+        <title>${member['name']}</title> 
         <link>${h.url('member', id=member['username'], subdomain='')}</link>
         <category>${member['type']}</category>
         % if 'description' in member:

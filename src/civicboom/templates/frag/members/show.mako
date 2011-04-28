@@ -17,7 +17,7 @@
     <%
         self.member    = d['member']
         self.id        = self.member['username']
-        self.name      = self.member.get('name') or self.member.get('username')
+        self.name      = self.member.get('name')
         self.actions   = d.get('actions', [])
         
         self.num_unread_messages = d.get('num_unread_messages', 0);
@@ -72,9 +72,9 @@
         <div class="frag_col vcard">
         ## Member Details
 		% if self.member['type'] == "group":
-			<h1 class="fn org">${self.member['name'] or self.member['username']}</h1><br />
+			<h1 class="fn org">${self.member['name']}</h1><br />
 		% else:
-			<h1 class="fn n">${h.guess_hcard_name(self.member['name'] or self.member['username'])}</h1><br />
+			<h1 class="fn n">${h.guess_hcard_name(self.member['name'])}</h1><br />
 		% endif
         <div>
           <div style="float:left; padding-right: 3px;">${member_avatar(img_class='photo')}</div>

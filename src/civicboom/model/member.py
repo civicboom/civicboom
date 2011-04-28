@@ -239,7 +239,7 @@ class Member(Base):
     __to_dict__.update({
         'default': {
             'id'                : None ,
-            'name'              : None ,
+            'name'              : lambda member: member.name if member.name else member.username , # Normalize the member name and return username if name not present
             'username'          : None ,
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
