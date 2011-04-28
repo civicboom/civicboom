@@ -473,6 +473,12 @@ class ContentsController(BaseController):
         data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
         kwargs     = data['content']
 
+        # AllanC
+        # TODO!!! - PLEASE MOVE THIS!!
+        # This should be part of the private validator
+        if not c.logged_in_persona.has_account_required('plus'):
+            kwargs['private'] = False
+
         # -- Decode Action -----------------------------------------------------
         #
         # Takes the form field 'submit_????' and decides operation:

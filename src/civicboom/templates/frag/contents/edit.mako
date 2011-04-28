@@ -565,6 +565,7 @@
 ## Privacy
 ##------------------------------------------------------------------------------
 <%def name="privacy()">
+    % if c.logged_in_persona.has_account_required('plus'):
 	<%def name="selected(private)">
 		%if private == self.content.get('private'):
 			selected="selected"
@@ -582,6 +583,7 @@
               </div>
         </div>
     </fieldset>
+    % endif
 </%def>
 
 
