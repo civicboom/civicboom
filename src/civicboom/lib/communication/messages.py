@@ -173,41 +173,57 @@ def setup_message_format_processors():
 message_format_processors = setup_message_format_processors()
 
 
-def send_notification(member, message_obj, delay_commit=False):
+def send_notification(members, message_obj, delay_commit=False):
+    """
+    Takes - either
+        a comma separated list of members as string
+        a list of member objets
+        a single member - if group get all sub members
+    """
     # If notifications not enabled return silently
     if not config['feature.notifications']:
         return
-
-    # get member object
-    member = _get_member(member)
-    if not member:
-        log.error('unable to find member (%s) to send a message to' % 'TODO')
-        return
-
-    # Save the notification for this member
-    #  - although the message will be threaded to agregate, we need to save the notification for the actual destination user (without the appended str bits)
-    #  - see 'if user' below for remove notification from thred aggregation for single member
-    m = Message()
-    m.subject = message_obj.subject
-    m.content = message_obj.content
-    m.target  = member
-    Session.add(m)
-    update_member_messages(member)
-    if not delay_commit:
-        Session.commit()
     
-    # Pre generate list of members 'too'
-    members = []
-    if member.__type__ == 'user':
-        members.append(member)
-    elif member.__type__ == 'group':
-        members = member.all_sub_members()
+    single_member = None
+    
+    if isinstance(members, basestring):
+        members = members.split(',')
+        if len(members) == 1:
+            members = members[0]
+    
+    if not isinstance(members, list):
+        # get member object
+        member = _get_member(members)
+        single_member = member
+        if not member:
+            log.error('unable to find member (%s) to send a message to' % 'TODO')
+            return
+    
+        # Save the notification for this member
+        #  - although the message will be threaded to agregate, we need to save the notification for the actual destination user (without the appended str bits)
+        #  - see 'if user' below for remove notification from thred aggregation for single member
+        m = Message()
+        m.subject = message_obj.subject
+        m.content = message_obj.content
+        m.target  = member
+        Session.add(m)
+        update_member_messages(member)
+        if not delay_commit:
+            Session.commit()
+        
+        # AllanC - bit of a botch here. if a notificaiton is sent to a group and needs to be propergated to members, we nee to record who the message was origninally too.
+        message_obj.subject = str(member)+': '+message_obj.subject
+        message_obj.content = str(member)+': '+message_obj.content
+        
+        # Pre generate list of members 'too'
+        members = []
+        if member.__type__ == 'user':
+            members.append(member)
+        elif member.__type__ == 'group':
+            members = member.all_sub_members()
+        
     # Convert member objects into username strings
-    members = [m.username for m in members]
-    
-    # AllanC - bit of a botch here. if a notificaiton is sent to a group and needs to be propergated to members, we nee to record who the message was origninally too.
-    message_obj.subject = str(member)+': '+message_obj.subject
-    message_obj.content = str(member)+': '+message_obj.content
+    members = [m.username if hasattr(m,'username') else m for m in members]
     
     # Pre render all known output message types
     # They cant be rendered in the thread because they don't have access to pylons features like template rendering, url() and c
@@ -217,7 +233,7 @@ def send_notification(member, message_obj, delay_commit=False):
         rendered_message[message_format] = message_format_processor(message_obj)
     
     # Because we saved the actual notification above, if we have a single user we don't need to save the notification in the worker thread
-    if member.__type__ == 'user':
+    if single_member and single_member.__type__ == 'user':
         del rendered_message['n']
     
     # Thread the send operation

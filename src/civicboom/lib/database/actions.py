@@ -704,10 +704,11 @@ def boom_content(content, member, delay_commit=False):
     boom.member_id  = member.id
     Session.add(boom)
 
+    # AllanC - TODO Boom notifications?
     #if   content.__type__ == 'article':
-    #    member.send_message_to_followers(messages.boom_article(   member=member, article   =content), delay_commit=True)
+    #    member.send_notification_to_followers(messages.boom_article(   member=member, article   =content), delay_commit=True)
     #elif content.__type__ == 'assignment':
-    #    member.send_message_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
+    #    member.send_notification_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
     
     if not delay_commit:
         Session.commit()

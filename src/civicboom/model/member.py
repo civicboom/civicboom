@@ -224,7 +224,7 @@ class Member(Base):
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
-    payment_account       = relationship("PaymentAccount", cascade="delete,delete-orphan", single_parent=True) #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
+    payment_account      = relationship("PaymentAccount", cascade="delete,delete-orphan", single_parent=True) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
 
     groups_roles         = relationship("GroupMembership" , backref="member", cascade="all,delete-orphan", lazy='joined') #AllanC- TODO: needs eagerload group? does lazy=joined do it?
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
@@ -351,23 +351,20 @@ class Member(Base):
                 action_list.append('invite')
         return action_list
 
-    def send_notification(self, m, delay_commit=False):
-        import civicboom.lib.communication.messages as messages
-        messages.send_notification(self, m, delay_commit)
-
     def send_email(self, **kargs):
         from civicboom.lib.communication.email_lib import send_email
         send_email(self, **kargs)
 
-    def send_message_to_followers(self, m, private=False, delay_commit=False):
-        # AllanC - this may not be the most efficent way of sending bulk messages
-        #          it may be a nessisary enchancement to pass to the message que a list of members to send the message too,
-        #          This is problematic for a group if it's a follower, so ive left the algorithum as it is
+    def send_notification(self, m, delay_commit=False):
+        import civicboom.lib.communication.messages as messages
+        messages.send_notification(self, m, delay_commit)
+
+    def send_notification_to_followers(self, m, private=False, delay_commit=False):
         followers_to = self.followers
         if private:
             followers_to = self.followers_trusted
-        for follower in followers_to:
-            follower.send_notification(m, delay_commit)
+        import civicboom.lib.communication.messages as messages
+        messages.send_notification(followers_to, m, delay_commit)
 
     def follow(self, member, delay_commit=False):
         from civicboom.lib.database.actions import follow
