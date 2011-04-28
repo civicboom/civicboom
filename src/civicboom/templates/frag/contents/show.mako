@@ -412,7 +412,7 @@
                 ${member_includes.avatar(comment['creator'])}
             </td>
             <td class="comment">
-                <p class="comment_by"     >${comment['creator']['name'] or comment['creator']['username']}</p>
+                <p class="comment_by"     >${comment['creator']['name']}</p>
                 
                 <p class="comment_content">${comment['content']}</p>
                 

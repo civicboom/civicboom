@@ -206,7 +206,7 @@
         )}
         
         <a href="${h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">
-        ${member.get('name') or member.get('username')}
+        ${member.get('name')}
         </a>
 		<br/><small>
 			<!-- Following ${member['num_following']}; -->
@@ -299,7 +299,7 @@
         <a href="${h.url('content', id=id)}" ${js_link_to_frag}>
             <p class="content_title">${content['title']}</p>
           % if creator and 'creator' in content:
-            <p><small class="content_title">By: ${content['creator']['name'] or content['creator']['username']}</small>
+            <p><small class="content_title">By: ${content['creator']['name']}</small>
           % endif
         </a>
     </td>
