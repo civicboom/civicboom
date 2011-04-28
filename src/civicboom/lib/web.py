@@ -584,13 +584,13 @@ def auto_format_output(target, *args, **kwargs):
 #-------------------------------------------------------------------------------
 
 @decorator
-def authenticate_form(target, *args, **kwargs):
+def authenticate_form(_target, *args, **kwargs):
     """
     slightly hacked version of pylons.decorators.secure.authenticated_form to
     support authenticated PUT and DELETE requests
     """
     if c.authenticated_form:
-        return target(*args, **kwargs) # If already authenticated, pass through
+        return _target(*args, **kwargs) # If already authenticated, pass through
     
     request  = get_pylons(args).request
     response = get_pylons(args).response
@@ -621,7 +621,7 @@ def authenticate_form(target, *args, **kwargs):
         if secure_form.token_key in kwargs:
             del kwargs[secure_form.token_key]
         c.authenticated_form = True
-        return target(*args, **kwargs)
+        return _target(*args, **kwargs)
 
     # no token = can't be sure the user really intended to post this, ask them
     else:
@@ -656,7 +656,7 @@ def cacheable(time=60*60*24*365, anon_only=True):
 
 
 @decorator
-def web_params_to_kwargs(target, *args, **kwargs):
+def web_params_to_kwargs(_target, *args, **kwargs):
     """
     converts any params from a form submission or query string into kwargs
     Security notice - Developers should be aware that kwargs could be passed by the user and override kwargs set in the orrigninal method call
@@ -701,10 +701,10 @@ def web_params_to_kwargs(target, *args, **kwargs):
     -1 4
     """
     if c.web_params_to_kwargs:
-        return target(*args, **kwargs) # If already processed, pass through
+        return _target(*args, **kwargs) # If already processed, pass through
     
     
-    arg_names = target.func_code.co_varnames[:target.func_code.co_argcount]
+    arg_names = _target.func_code.co_varnames[:_target.func_code.co_argcount]
     params = request.params
     new_args = []
     new_kwargs = {}
@@ -713,7 +713,7 @@ def web_params_to_kwargs(target, *args, **kwargs):
         new_kwargs[k] = v
     # FIXME: need to detect if the function accepts a "**" type, as this could be "**foo" rather than "**kwargs"
     # NOTE: ** types aren't counted towards the function's argument count, so arg_names cuts it off
-    if "kwargs" in target.func_code.co_varnames:
+    if "kwargs" in _target.func_code.co_varnames:
         new_kwargs.update(params)
 
     exclude_fields = ['pylons', 'environ', 'start_response']
@@ -734,4 +734,4 @@ def web_params_to_kwargs(target, *args, **kwargs):
     #user_log.info("calling "+target.func_name+", given param names, defaults, kwargs, web params are "+pformat(arg_names)+pformat(args)+pformat(kwargs)+pformat(params))
     #user_log.info("calling "+target.func_name+", now have param values and kwargs "+pformat(new_args)+pformat(new_kwargs))
     c.web_params_to_kwargs = (new_args, new_kwargs)
-    return target(*new_args, **new_kwargs) # Execute the wrapped function
+    return _target(*new_args, **new_kwargs) # Execute the wrapped function

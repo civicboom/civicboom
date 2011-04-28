@@ -257,9 +257,9 @@ class MembersController(BaseController):
                 'responses',
                 
                 # Other
-                'assignments_accepted',
+                'assignments_accepted', #TODO need to limit to 'search.default.limit.sub_list' .. maybe?
                 'actions',
-                'boomed' ,
+                'boomed' , #TODO need to limit to 'search.default.limit.sub_list' .. maybe?
             ]
         
         data = {'member': member.to_dict(list_type='full', **kwargs)}

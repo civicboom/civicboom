@@ -61,7 +61,7 @@ class TestGroupsController(TestController):
         # check "new user joined" notifcation
         self.log_in_as('unittest')
         self.assertEquals(self.getNumNotifications(), unittest_num_notifications + 1)
-        
+        self.assertIn('test_group_messages2', self.getLastNotification()['content']) # Ensure that the group unitfriend joined is reflected in the content
         
         # message get sent to sub group and should propergate up the chain
         #self.log_in_as('unittest')
@@ -106,6 +106,7 @@ class TestGroupsController(TestController):
         self.set_persona('test_group_messages2')
         self.set_persona('test_group_messages3')
         num_emails = getNumEmails()
+        self.set_account_type('plus') # test_group_messages3 needs to be upgraded to plus account
         response = self.app.post(
             url('content_action', action='approve'    , id=response_id, format='json'),
             params={'_authentication_token': self.auth_token,},

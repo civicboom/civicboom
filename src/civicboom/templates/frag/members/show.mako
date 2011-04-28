@@ -17,7 +17,7 @@
     <%
         self.member    = d['member']
         self.id        = self.member['username']
-        self.name      = self.member.get('name') or self.member.get('username')
+        self.name      = self.member.get('name')
         self.actions   = d.get('actions', [])
         
         self.num_unread_messages = d.get('num_unread_messages', 0);
@@ -69,15 +69,19 @@
 <%def name="body()">
     
     <div class="frag_left_col">
-        <div class="frag_col">
+        <div class="frag_col vcard">
         ## Member Details
-		<h1>${self.member['name'] or self.member['username']}</h1><br />
+		% if self.member['type'] == "group":
+			<h1 class="fn org">${self.member['name']}</h1><br />
+		% else:
+			<h1 class="fn n">${h.guess_hcard_name(self.member['name'])}</h1><br />
+		% endif
         <div>
-          <span style="float:left; padding-right: 3px;">${member_avatar()}</span>
+          <div style="float:left; padding-right: 3px;">${member_avatar(img_class='photo')}</div>
           <div style="padding-left: 92px" >
-          	${_('Username')}: <br />${self.member['username']}<br />
+          	${_('Username')}: <br /><span class="uid nickname">${self.member['username']}</span><br />
             % if self.member.get('website'):
-              ${_('Website')}: <br /><a href="${self.member['website']}" target="_blank">${self.member['website']}</a><br />
+              ${_('Website')}: <br /><a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
             % endif
             Joined: ${self.member['join_date']}<br />
             % if self.current_user:
@@ -110,9 +114,9 @@
         % if self.member.get('description'):
           <div style="clear:left; height: 3px;">&nbsp;</div>
           <div style="clear:left;" class="frag_list">
-            <h2><span class="icon16 i_${self.attr.icon_type}"><span>descrition</span><div style="display:inline-block;padding-left:19px">Description</div></span></h2>
+            <h2><span class="icon16 i_${self.attr.icon_type}"><span>Description</span><span style="display:inline-block;padding-left:19px">Description</span></span></h2>
             <div class="frag_list_contents">
-              <div class="content" style="padding-bottom: 3px;">
+              <div class="content note" style="padding-bottom: 3px;">
                 ${self.member['description']}
               </div>
             </div>
@@ -400,8 +404,8 @@
 ##------------------------------------------------------------------------------
 ## Avatar
 ##------------------------------------------------------------------------------
-<%def name="member_avatar()">
-    ${member_includes.avatar(self.member, class_='thumbnail_large')}
+<%def name="member_avatar(img_class='')">
+    ${member_includes.avatar(self.member, class_='thumbnail_large', img_class=img_class)}
 </%def>
 
 

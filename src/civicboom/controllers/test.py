@@ -193,7 +193,7 @@ class TestController(BaseController):
         from civicboom.model.member import Member
         import civicboom.lib.communication.messages as messages
         m = Session.query(Member).first()
-        m.send_message(messages.msg_test(text="hello o/"))
+        m.send_notification(messages.msg_test(text="hello o/"))
 
     def send_email(self):
         from civicboom.lib.database.get_cached import get_member
@@ -323,10 +323,13 @@ class TestController(BaseController):
     #---------------------------------------------------------------------------
     # Upgrade Account
     #---------------------------------------------------------------------------
-    def upgrade_account(self, id):
+    @web_params_to_kwargs
+    def set_account_type(self, id, account_type='plus'):
         """
         this is tempory measure for upgrading accounts
         It is used by the automated tests and should never be triggered by an actual user
+        
+        TODO needs to be upgraded to take param of account it is going too
         """
-        get_member(id).set_payment_account('plus')
-        return 'ok'
+        if get_member(id).set_payment_account(account_type):
+            return 'ok'

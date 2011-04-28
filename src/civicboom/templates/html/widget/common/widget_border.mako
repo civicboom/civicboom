@@ -36,7 +36,7 @@
         <div class="padding">
         <table><tr>
             <%
-                owner_name = owner['name'] or owner['username']
+                owner_name = owner['name']
                 owner_url  = h.url('/', subdomain='')
                 if owner['username']:
                     owner_url = h.url('member', id=owner['username'], subdomain='')

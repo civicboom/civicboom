@@ -68,6 +68,7 @@ class MemberActionsController(BaseController):
     @web
     @auth
     @role_required('editor')
+    @account_type('plus')
     def follower_trust(self, id, **kwargs):
         """
         POST /members/{name}/trust_follower: trust a follower
@@ -92,6 +93,7 @@ class MemberActionsController(BaseController):
     @web
     @auth
     @role_required('editor')
+    @account_type('plus')
     def follower_distrust(self, id, **kwargs):
         """
         POST /members/{name}/distrust_follower: remove trust from a follower
@@ -116,6 +118,7 @@ class MemberActionsController(BaseController):
     @web
     @auth
     @role_required('editor')
+    @account_type('plus')
     def follower_invite_trusted(self, id, **kwargs):
         """
         POST /members/{name}/follower_invite: invite someone to follow you and become trusted

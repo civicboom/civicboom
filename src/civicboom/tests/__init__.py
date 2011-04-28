@@ -113,6 +113,11 @@ class TestController(TestCase):
             self.logged_in_as = None
         self.app.reset()
 
+    def set_account_type(self, account_type):
+        # AllanC TODO - do somthing with account_type var
+        response = self.app.get(url(controller='test', action='set_account_type', id=self.logged_in_as, account_type=account_type))
+        self.assertIn('ok', response.body)
+
     def set_persona(self, username_group):
         response = self.app.post(
             url(controller='account', action='set_persona', id=username_group, format='json'),
@@ -123,6 +128,7 @@ class TestController(TestCase):
         )
         response_json = json.loads(response.body)
         self.assertEqual(response_json['status'], 'ok')
+        self.logged_in_as = username_group
 
     def join(self, username_group):
         response = self.app.post(
@@ -273,7 +279,11 @@ class TestController(TestCase):
             },
             status=201
         )
-        return json.loads(response.body)['data']['id']
+        message_id_list = json.loads(response.body)['data']['id']
+        # AllanC - the id feild now returns a list of all messages created .. is this needed?
+        if len(message_id_list)==1:
+            return message_id_list[0]
+        return message_id_list
 
     def boom_content(self, content_id):
         response = self.app.post(

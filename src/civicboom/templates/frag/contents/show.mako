@@ -325,7 +325,7 @@
     % if 'license' in self.content:
     <% license = self.content['license'] %>
     <div class="padded" style="margin-top:14px">
-      <a href="${license['url']}" target="_blank" title="${license['description']}">
+      <a href="${license['url']}" target="_blank" rel="license" title="${license['description']}">
         <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
       </a>
     </div>
@@ -412,7 +412,7 @@
                 ${member_includes.avatar(comment['creator'])}
             </td>
             <td class="comment">
-                <p class="comment_by"     >${comment['creator']['name'] or comment['creator']['username']}</p>
+                <p class="comment_by"     >${comment['creator']['name']}</p>
                 
                 <p class="comment_content">${comment['content']}</p>
                 
@@ -429,8 +429,8 @@
         % endfor
         <tr>
             <td class="comment_avatar">
-                % if c.logged_in_persona:
-                ${member_includes.avatar(c.logged_in_persona.to_dict())}
+                % if c.logged_in_user:
+                ${member_includes.avatar(c.logged_in_user.to_dict())}
                 %endif
             </td>
             <td class="comment">

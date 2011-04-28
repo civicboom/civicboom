@@ -473,6 +473,12 @@ class ContentsController(BaseController):
         data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
         kwargs     = data['content']
 
+        # AllanC
+        # TODO!!! - PLEASE MOVE THIS!!
+        # This should be part of the private validator
+        if not c.logged_in_persona.has_account_required('plus'):
+            kwargs['private'] = False
+
         # -- Decode Action -----------------------------------------------------
         #
         # Takes the form field 'submit_????' and decides operation:
@@ -595,7 +601,7 @@ class ContentsController(BaseController):
                 
                 # if this is a response - notify parent content creator
                 if content.parent:
-                    content.parent.creator.send_message(
+                    content.parent.creator.send_notification(
                         messages.new_response(member = content.creator, content = content, parent = content.parent), delay_commit=True
                     )
                     
@@ -616,7 +622,7 @@ class ContentsController(BaseController):
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
             if m:
-                content.creator.send_message_to_followers(m, private=content.private, delay_commit=True)
+                content.creator.send_notification_to_followers(m, private=content.private, delay_commit=True)
 
 
 

@@ -9,6 +9,7 @@ log = logging.getLogger(__name__)
 
 class TestAssignAcceptResponseCycleController(TestController):
 
+
     #---------------------------------------------------------------------------
     # Open Assignment Cycle
     #---------------------------------------------------------------------------
@@ -108,6 +109,8 @@ class TestAssignAcceptResponseCycleController(TestController):
         self.assertEqual(len(response_json['data']['responses']['items']), 3)
         
         # Approve --------------------------------------------------------------
+        
+        #self.set_account_type('plus') # Double enforce that unittest is a plus user
         
         num_emails = getNumEmails()
         
