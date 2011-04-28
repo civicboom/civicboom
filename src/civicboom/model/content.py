@@ -192,10 +192,6 @@ class Content(Base):
         action_list = []
         if self.editable_by(member):
             action_list.append('edit')
-            if self.__type__=='draft':
-                action_list.append('publish')
-            if self.__type__=='assignment':
-                action_list.append('invite_to_assignment')
         if self.viewable_by(member):
             action_list.append('view')
         if self.private==False and self.creator != member:
@@ -380,7 +376,11 @@ class DraftContent(Content):
     def clone(self, content):
         Content.clone(self, content)
         self.publish_id = content.id
-
+        
+    def action_list_for(self, member, **kwargs):
+        action_list = Content.action_list_for(self, member, **kwargs)
+        action_list.append('publish')
+        return action_list
 
 class CommentContent(Content):
     __tablename__   = "content_comment"
@@ -419,7 +419,7 @@ class UserVisibleContent(Content):
 
     def action_list_for(self, member, **kwargs):
         action_list = Content.action_list_for(self, member, **kwargs)
-        if self.is_parent_owner(member):# and member.has_account_required('plus'): # Originally locked as paid for feature
+        if self.is_parent_owner(member) and member.has_account_required('plus'): # observing member need a paid account
             if self.approval == 'none':
                 action_list.append('approve')
                 action_list.append('seen')
@@ -524,6 +524,7 @@ class AssignmentContent(UserVisibleContent):
 
     def action_list_for(self, member, **kwargs):
         action_list = UserVisibleContent.action_list_for(self, member, **kwargs)
+        action_list.append('invite_to_assignment')
         if self.acceptable_by(member):
             status = self.previously_accepted_by(member)
             if not status:

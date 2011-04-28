@@ -221,6 +221,9 @@ class TestPermissionsController(TestController):
         )
 
 
+    #---------------------------------------------------------------------------
+    # Priavte Content Viewing
+    #---------------------------------------------------------------------------
 
     def test_private_content_viewing_permissions(self):
         # Tests GregM - moved from test_contents by AllanC
@@ -292,3 +295,14 @@ class TestPermissionsController(TestController):
         self.follower_trust("private_content_trusted")
         response = self.app.get(url('content', id=self.my_private_article_id), status=200)
         response = self.app.get(url('content', id=self.my_private_assignment_id), status=200)
+
+
+    #---------------------------------------------------------------------------
+    # Plus Services Permissions
+    #---------------------------------------------------------------------------
+    
+    def test_aprove_disasociate_permissions(self):
+        """
+        TODO
+        """
+        pass

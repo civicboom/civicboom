@@ -31,8 +31,7 @@ class TestAssignmentLimitController(TestController):
         response = self.create_assignment('Dont allow this assignment', status=402)
         
         # Upgrade account
-        response = self.app.get(url(controller='test', action='upgrade_account', id='assign_limit'))
-        self.assertIn('ok', response.body)
+        self.set_account_type('plus')
         
         # Set a new assignment
         response = self.create_assignment('Assignment Limit > Paid')

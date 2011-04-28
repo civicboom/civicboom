@@ -9,6 +9,7 @@ log = logging.getLogger(__name__)
 
 class TestAssignAcceptResponseCycleController(TestController):
 
+
     #---------------------------------------------------------------------------
     # Open Assignment Cycle
     #---------------------------------------------------------------------------

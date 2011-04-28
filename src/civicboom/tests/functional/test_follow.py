@@ -79,7 +79,23 @@ class TestFollowController(TestController):
         
         # Trusted Followers ----------------------------------------------------
         
-        self.log_in_as('unittest')        
+        self.logged_in_as('follow_test')
+        
+        # Normal users cant trust followers - should reject due to permissions
+        response = self.app.post(
+            url('member_action', action='follower_trust', id='unittest', format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+            },
+            status=403
+        )
+        
+        # Upgrade acount type - trusted followers needs paid for account
+        self.set_account_type('plus')
+        
+        self.log_in_as('unittest')
+        #self.set_account_type('plus') # unittest is already a plus account at creation
+        
         
         # Invite follow_test as a trusted follower
         check_follow(following=num_unittest_following, followers=num_unittest_followers)

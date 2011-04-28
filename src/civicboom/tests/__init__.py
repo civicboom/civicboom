@@ -113,6 +113,11 @@ class TestController(TestCase):
             self.logged_in_as = None
         self.app.reset()
 
+    def set_account_type(account_type):
+        # AllanC TODO - do somthing with account_type var
+        response = self.app.get(url(controller='test', action='set_account_type', id=self.logged_in_as, account_type=account_type))
+        self.assertIn('ok', response.body)
+
     def set_persona(self, username_group):
         response = self.app.post(
             url(controller='account', action='set_persona', id=username_group, format='json'),
