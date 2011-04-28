@@ -331,5 +331,5 @@ class TestController(BaseController):
         
         TODO needs to be upgraded to take param of account it is going too
         """
-        get_member(id).set_payment_account(account_type)
-        return 'ok'
+        if get_member(id).set_payment_account(account_type):
+            return 'ok'

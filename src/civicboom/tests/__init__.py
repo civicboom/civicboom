@@ -113,7 +113,7 @@ class TestController(TestCase):
             self.logged_in_as = None
         self.app.reset()
 
-    def set_account_type(account_type):
+    def set_account_type(self, account_type):
         # AllanC TODO - do somthing with account_type var
         response = self.app.get(url(controller='test', action='set_account_type', id=self.logged_in_as, account_type=account_type))
         self.assertIn('ok', response.body)
@@ -128,6 +128,7 @@ class TestController(TestCase):
         )
         response_json = json.loads(response.body)
         self.assertEqual(response_json['status'], 'ok')
+        self.logged_in_as = username_group
 
     def join(self, username_group):
         response = self.app.post(

@@ -855,13 +855,17 @@ def find_content_root(content):
 def set_payment_account(member, value, delay_commit=False):
     member = get_member(member)
     account = None
+    
     if isinstance(value, PaymentAccount):
-        account = value
+        member.payment_account = value
     elif value in account_types.enums:
         account = PaymentAccount()
         account.type = value
-        Session.add(account)
-    member.payment_account = account
+        #Session.add(account)
+        member.payment_account = account
+        # TODO - this is not setting ... even when commited ... investigate
+    else:
+        raise action_error('unknown account type: %s' % value)
     if not delay_commit:
         Session.commit()
     return True

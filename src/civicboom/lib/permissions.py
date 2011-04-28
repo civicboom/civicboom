@@ -15,6 +15,7 @@ def account_type(required_account_type):
     """
     @decorator
     def wrapper(_target, *args, **kwargs):
+        #print "user: %s account: %s required: %s" % (c.logged_in_persona.username, c.logged_in_persona.account_type, required_account_type)
         if c.logged_in_persona.has_account_required(required_account_type):
             result = _target(*args, **kwargs)
             return result

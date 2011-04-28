@@ -79,7 +79,7 @@ class TestFollowController(TestController):
         
         # Trusted Followers ----------------------------------------------------
         
-        self.logged_in_as('follow_test')
+        self.log_in_as('follow_test')
         
         # Normal users cant trust followers - should reject due to permissions
         response = self.app.post(
@@ -87,7 +87,7 @@ class TestFollowController(TestController):
             params={
                 '_authentication_token': self.auth_token ,
             },
-            status=403
+            status=402
         )
         
         # Upgrade acount type - trusted followers needs paid for account

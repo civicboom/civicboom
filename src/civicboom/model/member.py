@@ -21,7 +21,7 @@ import copy
 # say "I am joined to other table X using mapping Y as defined above"
 member_type              = Enum("user", "group",                     name="member_type"  )
 account_types            = Enum("free", "plus", "corp", "corp_plus", name="account_types")
-account_types_level      =     ("free", "plus", "corporate") # the order of account levels e.g plus has higher privilages than free
+account_types_level      =     ("corp", "premium", "plus", "free") # the order of account levels e.g plus has higher privilages than free
 
 group_member_roles_level =     ("admin", "editor", "contributor", "observer") # the order of permissions e.g admin has higher privilages than editor
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
@@ -88,13 +88,17 @@ def has_account_required(required, current):
     
     >>> has_account_required('free', 'plus')
     True
+    >>> has_account_required('free', 'corp')
+    True
     >>> has_account_required('plus', 'plus')
     True
     >>> has_account_required('plus', 'free')
     False
+    >>> has_account_required('corp', 'plus')
+    False
     >>> has_account_required(None, 'plus')
     False
-    >>> has_role_required('corporate' , None)
+    >>> has_role_required('corp' , None)
     False
     """
     return _enum_level_comparison(required, current, account_types_level)
@@ -467,7 +471,7 @@ class Member(Base):
     def set_payment_account(self, value, delay_commit=False):
         #self._payment_account = value
         from civicboom.lib.database.actions import set_payment_account
-        set_payment_account(self, value, delay_commit)
+        return set_payment_account(self, value, delay_commit)
         
     @property
     # AllanC - TODO this needs to be a derrived field
