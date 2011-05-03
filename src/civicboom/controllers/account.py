@@ -246,8 +246,8 @@ class AccountController(BaseController):
         c.hash = kwargs.get('hash')
         
         user = get_member(id or kwargs.get('username') or kwargs.get('email'), search_email=True)
-        #if not user:
-        #    raise action_error('user not found', code=404)
+        if user.__type__ == 'group':
+            raise action_error('a _group cannot have a password set, please switch the the _group persona', code=404)
 
         # Step 1: User request link with hash to be sent via email
         if not c.hash:
