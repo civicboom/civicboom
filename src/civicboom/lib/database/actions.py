@@ -298,8 +298,8 @@ def follower_invite_trusted(followed, follower, delay_commit=False):
         raise action_error(_('already invited to follow as trusted'))
     
     follow = Follow()
-    follow.member_id   = followed.id
-    follow.follower_id = follower.id
+    follow.member   = followed
+    follow.follower = follower
     follow.type        = 'trusted_invite'
     Session.add(follow)
     
@@ -700,8 +700,10 @@ def boom_content(content, member, delay_commit=False):
         raise action_error(_("You have previously boomed this _content"), code=400)
     
     boom = Boom()
-    boom.content_id = content.id
-    boom.member_id  = member.id
+    #boom.content_id = content.id
+    #boom.member_id  = member.id
+    boom.content = content
+    boom.member  = member
     Session.add(boom)
 
     # AllanC - TODO Boom notifications?
