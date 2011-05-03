@@ -456,6 +456,8 @@ class TestSettingsController(TestController):
         
         self.old_route = response_json['data']['settings']['route_assignment_interest_withdrawn']
         
+        self.old_route = ",".join(list(self.old_route))
+        
         for route in ['', 'e', 'n', 'n,e']:
             print '##', route
             response = self.app.post(
@@ -471,6 +473,7 @@ class TestSettingsController(TestController):
             response = self.app.get(url('settings', id="me", panel="messages", format='json'))
             response_json = json.loads(response.body)
             assert response_json['data']['settings']['route_assignment_interest_withdrawn'] == route.replace(',','')
+            print self.old_route
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
