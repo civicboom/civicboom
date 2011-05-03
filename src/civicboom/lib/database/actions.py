@@ -181,8 +181,8 @@ def follow(follower, followed, delay_commit=False):
     else:
         #follower.following.append(followed)
         follow = Follow()
-        follow.member_id   = followed.id
-        follow.follower_id = follower.id
+        follow.member   = followed
+        follow.follower = follower
         Session.add(follow)
     
     followed.send_notification(messages.followed_by(member=follower), delay_commit=True)
@@ -540,7 +540,7 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     
     assignment_accepted        = MemberAssignment()
     assignment.assigned_to.append(assignment_accepted)
-    assignment_accepted.member_id = member.id
+    assignment_accepted.member = member
     assignment_accepted.status = status
     Session.add(assignment_accepted)
     
