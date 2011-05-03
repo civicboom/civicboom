@@ -38,11 +38,11 @@ class ContentTagMapping(Base):
 
 class Boom(Base):
     __tablename__ = "map_booms"
-    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
+    content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
+    member_id     = Column(Integer(),    ForeignKey('member.id') , nullable=False, primary_key=True)
     timestamp     = Column(DateTime(),   nullable=False, default=func.now())
-    #member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
-    #content       = relationship("Content", primaryjoin='Content.id==Boom.content_id')
+    member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
+    content       = relationship("Content", primaryjoin='Content.id==Boom.content_id') # AllanC - could we enforce that content is user visible at the DB level here?
 
 
 class Rating(Base):

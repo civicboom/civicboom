@@ -181,8 +181,8 @@ def follow(follower, followed, delay_commit=False):
     else:
         #follower.following.append(followed)
         follow = Follow()
-        follow.member_id   = followed.id
-        follow.follower_id = follower.id
+        follow.member   = followed
+        follow.follower = follower
         Session.add(follow)
     
     followed.send_notification(messages.followed_by(member=follower), delay_commit=True)
@@ -298,8 +298,8 @@ def follower_invite_trusted(followed, follower, delay_commit=False):
         raise action_error(_('already invited to follow as trusted'))
     
     follow = Follow()
-    follow.member_id   = followed.id
-    follow.follower_id = follower.id
+    follow.member   = followed
+    follow.follower = follower
     follow.type        = 'trusted_invite'
     Session.add(follow)
     
@@ -540,7 +540,7 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     
     assignment_accepted        = MemberAssignment()
     assignment.assigned_to.append(assignment_accepted)
-    assignment_accepted.member_id = member.id
+    assignment_accepted.member = member
     assignment_accepted.status = status
     Session.add(assignment_accepted)
     
@@ -700,8 +700,10 @@ def boom_content(content, member, delay_commit=False):
         raise action_error(_("You have previously boomed this _content"), code=400)
     
     boom = Boom()
-    boom.content_id = content.id
-    boom.member_id  = member.id
+    #boom.content_id = content.id
+    #boom.member_id  = member.id
+    boom.content = content
+    boom.member  = member
     Session.add(boom)
 
     # AllanC - TODO Boom notifications?
