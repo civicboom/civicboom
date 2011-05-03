@@ -570,7 +570,7 @@ class ContentsController(BaseController):
         # Tags
         if 'tags_string' in kwargs:
             separator = config['setting.content.tag_string_separator']
-            tags_new     = [tag.strip() for tag in kwargs['tags_string'].split(separator) if tag!=""] # Get tags from form removing any empty strings
+            tags_new     = [tag.strip().lower() for tag in kwargs['tags_string'].split(separator) if tag!=""] # Get tags from form removing any empty strings
             tags_current = [tag.name for tag in content.tags] # Get tags form current content object
             # Add any new tag objects
             tags_created = [] # AllanC - fix for people creating mytiple tags with the same name.
