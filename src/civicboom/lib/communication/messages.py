@@ -149,19 +149,19 @@ def setup_message_format_processors():
     Each processor should return a string representaion of the message
     """
 
-    def format_email(message_obj):
+    def format_email(message_dict):
         return render_email(
-            subject      = message_obj.subject,
-            content_html = message_obj.content,
+            subject      = message_dict.get('subject'),
+            content_html = message_dict.get('content'),
         )
     
-    def format_notification(message_obj):
+    def format_notification(message_dict):
         return dict(
-            subject = message_obj.subject ,
-            content = message_obj.content ,
+            subject = message_dict.get('subject') ,
+            content = message_dict.get('content') ,
         )
 
-    def format_comufy(message_obj):
+    def format_comufy(message_dict):
         return
 
     return dict(
@@ -173,51 +173,85 @@ def setup_message_format_processors():
 message_format_processors = setup_message_format_processors()
 
 
-def send_notification(member, message_obj, delay_commit=False):
+def send_notification(members, message, delay_commit=False):
+    """
+    Takes - either
+        a comma separated list of members as string
+            (WARNING if this strings contains group names the notification wont propergate to all members,
+            if passing a string list it is assumed that all group links have been followed)
+        a list of member objets (this can contains groups and will call this method recursivly)
+        a single member - if group get all sub members
+        
+    message can be a MessageData object or a dict with name, default_route, subject and content
+    """
     # If notifications not enabled return silently
     if not config['feature.notifications']:
         return
-
-    # get member object
-    member = _get_member(member)
-    if not member:
-        log.error('unable to find member (%s) to send a message to' % 'TODO')
-        return
-
-    # Save the notification for this member
-    #  - although the message will be threaded to agregate, we need to save the notification for the actual destination user (without the appended str bits)
-    #  - see 'if user' below for remove notification from thred aggregation for single member
-    m = Message()
-    m.subject = message_obj.subject
-    m.content = message_obj.content
-    m.target  = member
-    Session.add(m)
-    update_member_messages(member)
-    if not delay_commit:
-        Session.commit()
     
-    # Pre generate list of members 'too'
-    members = []
-    if member.__type__ == 'user':
-        members.append(member)
-    elif member.__type__ == 'group':
-        members = member.all_sub_members()
+    single_member = None
+    
+    # Get message as dict and shallow copy defensivly if nessisary
+    if hasattr(message, 'to_dict'):
+        message = message.to_dict()
+    if isinstance(message, dict):
+        message = message.copy()
+    
+    # If going to string, split into usenames
+    if isinstance(members, basestring):
+        members = members.split(',')
+        if len(members) == 1:
+            members = members[0] # Single member
+    
+    # If 'members' is not a list it is either a sting username or a member object
+    #  deal with a single member
+    #  if a group, get list of all submembers
+    if not isinstance(members, list):
+        # get member object
+        member = _get_member(members)
+        single_member = member
+        if not member:
+            log.error('unable to find member (%s) to send a message to' % 'TODO')
+            return
+    
+        # Save the notification for this member
+        #  - although the message will be threaded to agregate, we need to save the notification for the actual destination user (without the appended str bits)
+        #  - see 'if user' below for remove notification from thred aggregation for single member
+        m = Message()
+        m.subject = message.get('subject')
+        m.content = message.get('content')
+        m.target  = member
+        Session.add(m)
+        update_member_messages(member)
+        
+        # AllanC - bit of a botch here. if a notificaiton is sent to a group and needs to be propergated to members, we nee to record who the message was origninally too.
+        message['subject'] = str(member)+': '+message.get('subject')
+        message['content'] = str(member)+': '+message.get('content')
+        
+        # Pre generate list of members 'too'
+        members = []
+        if member.__type__ == 'user':
+            members.append(member)
+        elif member.__type__ == 'group':
+            members = member.all_sub_members()
+    
+    # If there are any groups in the list of members too, then send to all submembers recursivly
+    # As the message dict subject and contnet gets appended too for each group
+    for group in [m for m in members if hasattr(m, 'all_sub_members')]:
+        send_notification(group, message, delay_commit=True)
+        members.remove(group) # no need to have group in this send list any longer as all members have been notifyed by the call above
+        
     # Convert member objects into username strings
-    members = [m.username for m in members]
-    
-    # AllanC - bit of a botch here. if a notificaiton is sent to a group and needs to be propergated to members, we nee to record who the message was origninally too.
-    message_obj.subject = str(member)+': '+message_obj.subject
-    message_obj.content = str(member)+': '+message_obj.content
+    members = [m.username if hasattr(m,'username') else m for m in members]
     
     # Pre render all known output message types
     # They cant be rendered in the thread because they don't have access to pylons features like template rendering, url() and c
     rendered_message = {}
     # Each dict entry may contain another dict datastructure for that message type
     for message_format, message_format_processor in message_format_processors.iteritems():
-        rendered_message[message_format] = message_format_processor(message_obj)
+        rendered_message[message_format] = message_format_processor(message)
     
     # Because we saved the actual notification above, if we have a single user we don't need to save the notification in the worker thread
-    if member.__type__ == 'user':
+    if single_member and single_member.__type__ == 'user':
         del rendered_message['n']
     
     # Thread the send operation
@@ -226,6 +260,9 @@ def send_notification(member, message_obj, delay_commit=False):
         'task'            : 'send_notification' ,
         'members'         : members ,
         'rendered_message': rendered_message ,
-        'default_route'   : message_obj.default_route ,
-        'name'            : message_obj.name ,
+        'default_route'   : message.get('default_route') ,
+        'name'            : message.get('name') ,
     })
+
+    if not delay_commit:
+        Session.commit()

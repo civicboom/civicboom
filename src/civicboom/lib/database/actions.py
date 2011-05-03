@@ -704,10 +704,11 @@ def boom_content(content, member, delay_commit=False):
     boom.member_id  = member.id
     Session.add(boom)
 
+    # AllanC - TODO Boom notifications?
     #if   content.__type__ == 'article':
-    #    member.send_message_to_followers(messages.boom_article(   member=member, article   =content), delay_commit=True)
+    #    member.send_notification_to_followers(messages.boom_article(   member=member, article   =content), delay_commit=True)
     #elif content.__type__ == 'assignment':
-    #    member.send_message_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
+    #    member.send_notification_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
     
     if not delay_commit:
         Session.commit()
@@ -856,12 +857,15 @@ def set_payment_account(member, value, delay_commit=False):
     member = get_member(member)
     account = None
     if isinstance(value, PaymentAccount):
-        account = value
+        member.payment_account = value
     elif value in account_types.enums:
         account = PaymentAccount()
         account.type = value
         Session.add(account)
-    member.payment_account = account
+        member.payment_account = account
+        # TODO - this is not setting for groups... even when commited ... investigate
+    else:
+        raise action_error('unknown account type: %s' % value)
     if not delay_commit:
         Session.commit()
     return True

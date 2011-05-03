@@ -21,6 +21,7 @@ import copy
 # say "I am joined to other table X using mapping Y as defined above"
 member_type              = Enum("user", "group",                     name="member_type"  )
 account_types            = Enum("free", "plus", "corp", "corp_plus", name="account_types")
+account_types_level      =     ("corp", "premium", "plus", "free") # the order of account levels e.g plus has higher privilages than free
 
 group_member_roles_level =     ("admin", "editor", "contributor", "observer") # the order of permissions e.g admin has higher privilages than editor
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
@@ -33,7 +34,16 @@ group_content_visibility = Enum("public", "private",                          na
 follow_type              = Enum("trusted", "trusted_invite", "normal",        name="follow_type")
 
 
-def has_role_required(role_required, role_current):
+def _enum_level_comparison(required, current, values):
+    try:
+        index_required = values.index(required)
+        index_current  = values.index(current)
+        return (index_required - index_current + 1) > 0
+    except:
+        return False
+    
+
+def has_role_required(required, current):
     """
     returns True  if has permissons
     returns False if not permissions
@@ -49,12 +59,7 @@ def has_role_required(role_required, role_current):
     >>> has_role_required( None   ,'admin')
     False
     """
-    try:
-        permission_index_required = group_member_roles_level.index(role_required)
-        permission_index_current  = group_member_roles_level.index(role_current)
-        return (permission_index_required - permission_index_current + 1) > 0
-    except:
-        return False
+    return _enum_level_comparison(required, current, group_member_roles_level)
 
 
 def lowest_role(a,b):
@@ -75,6 +80,28 @@ def lowest_role(a,b):
         return a
     else:
         return b
+
+def has_account_required(required, current):
+    """
+    returns True  if has account
+    returns False if not account
+    
+    >>> has_account_required('free', 'plus')
+    True
+    >>> has_account_required('free', 'corp')
+    True
+    >>> has_account_required('plus', 'plus')
+    True
+    >>> has_account_required('plus', 'free')
+    False
+    >>> has_account_required('corp', 'plus')
+    False
+    >>> has_account_required(None, 'plus')
+    False
+    >>> has_role_required('corp' , None)
+    False
+    """
+    return _enum_level_comparison(required, current, account_types_level)
 
 
 class GroupMembership(Base):
@@ -197,7 +224,7 @@ class Member(Base):
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
-    payment_account       = relationship("PaymentAccount", cascade="delete,delete-orphan", single_parent=True) #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
+    payment_account      = relationship("PaymentAccount", cascade="all,delete-orphan", single_parent=True) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
 
     groups_roles         = relationship("GroupMembership" , backref="member", cascade="all,delete-orphan", lazy='joined') #AllanC- TODO: needs eagerload group? does lazy=joined do it?
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
@@ -239,7 +266,7 @@ class Member(Base):
     __to_dict__.update({
         'default': {
             'id'                : None ,
-            'name'              : None ,
+            'name'              : lambda member: member.name if member.name else member.username , # Normalize the member name and return username if name not present
             'username'          : None ,
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
@@ -302,8 +329,9 @@ class Member(Base):
         if self == member:
             action_list.append('settings')
             action_list.append('logout')
-            action_list.append('invite_trusted_followers')
-        elif member:
+            if member.has_account_required('plus'):
+                action_list.append('invite_trusted_followers')
+        elif member and member.has_account_required('plus'):
             if self.is_following(member):
                 if member.is_follower_trusted(self):
                     action_list.append('follower_distrust')
@@ -319,27 +347,24 @@ class Member(Base):
                 action_list.append('follow')
         if self != member:
             action_list.append('message')
-            if member and member.__type__ == 'group'  and not member.get_membership(self):
+            if member and member.__type__ == 'group'  and not member.get_membership(self): # If the observing member is a group, show invite to my group action
                 action_list.append('invite')
         return action_list
-
-    def send_notification(self, m, delay_commit=False):
-        import civicboom.lib.communication.messages as messages
-        messages.send_notification(self, m, delay_commit)
 
     def send_email(self, **kargs):
         from civicboom.lib.communication.email_lib import send_email
         send_email(self, **kargs)
 
-    def send_message_to_followers(self, m, private=False, delay_commit=False):
-        # AllanC - this may not be the most efficent way of sending bulk messages
-        #          it may be a nessisary enchancement to pass to the message que a list of members to send the message too,
-        #          This is problematic for a group if it's a follower, so ive left the algorithum as it is
+    def send_notification(self, m, delay_commit=False):
+        import civicboom.lib.communication.messages as messages
+        messages.send_notification(self, m, delay_commit)
+
+    def send_notification_to_followers(self, m, private=False, delay_commit=False):
         followers_to = self.followers
         if private:
             followers_to = self.followers_trusted
-        for follower in followers_to:
-            follower.send_notification(m, delay_commit)
+        import civicboom.lib.communication.messages as messages
+        messages.send_notification(followers_to, m, delay_commit)
 
     def follow(self, member, delay_commit=False):
         from civicboom.lib.database.actions import follow
@@ -411,14 +436,8 @@ class Member(Base):
         from civicboom.lib.database.actions import add_to_interests
         return add_to_interests(self, content)
     
-    def has_permission(self, required_account_type):
-        member_account_type = self.account_type
-        #AllanC TODO: This may need updating to use something more sophisticated than just monkey if statements
-        #             need > ... we want corp customers to do what the plus customers can do
-        if required_account_type == member_account_type:
-            return True
-        #return False
-        return True # lizze needs to demo plus features on a newly created account...
+    def has_account_required(self, required_account_type):
+        return has_account_required(required_account_type, self.account_type)
 
     
     def can_publish_assignment(self):
@@ -429,14 +448,13 @@ class Member(Base):
         # if not member.payment_level:
         
         limit = None
-        account_type = self.account_type
         
         from pylons import config
-        if account_type == 'free':
+        if self.account_type == 'free':
             limit = config['payment.free.assignment_limit']
-        elif account_type == 'plus':
+        elif has_account_required('plus', self.account_type):
             limit = config['payment.plus.assignment_limit']
-            
+        
         if not limit:
             return True
         if len(self.active_assignments_period) > limit:
@@ -450,7 +468,8 @@ class Member(Base):
     def set_payment_account(self, value, delay_commit=False):
         #self._payment_account = value
         from civicboom.lib.database.actions import set_payment_account
-        set_payment_account(self, value, delay_commit)
+        return set_payment_account(self, value, delay_commit)
+        
     @property
     # AllanC - TODO this needs to be a derrived field
     def account_type(self):
@@ -733,7 +752,7 @@ class MemberSetting(Base):
 class PaymentAccount(Base):
     __tablename__    = "payment_account"
     id          = Column(Integer(), primary_key=True)
-    type        = Column(account_types, nullable=True, default="free")
+    type        = Column(account_types, nullable=False, default="free")
     
     
     

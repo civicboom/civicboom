@@ -134,7 +134,7 @@ def get_group_member_username_list(group, members=None, exclude_list=None):
         members = {}
     if exclude_list == None:
         exclude_list = []
-    for member in [mr.member for mr in group.members_roles if mr.member.status=='active' and mr.member.username not in members and mr.member.username not in exclude_list]:
+    for member in [mr.member for mr in group.members_roles if mr.status=='active' and mr.member.status=='active' and mr.member.username not in members and mr.member.username not in exclude_list]:
         if   member.__type__ == 'user':
             members[member.username] = member
         elif member.__type__ == 'group':
