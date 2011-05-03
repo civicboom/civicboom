@@ -20,5 +20,5 @@ def error_role():
     return action_error(
             status   = 'error' ,
             code     = 403 ,
-            message  = _('member requires role with sutable privilages') ,
+            message  = _('current persona does not posses the role required to perform this operation') ,
         )
