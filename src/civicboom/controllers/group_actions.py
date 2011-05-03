@@ -54,13 +54,12 @@ class GroupActionsController(BaseController):
         @api groups 1.0 (WIP)
         """
         member = kwargs.get('member', None)
-        
-        group  = get_group(id, is_current_persona_admin=True)
         member = get_member(member)
-        # permissions check
-        #if member!=c.logged_in_persona and not group.is_admin(c.logged_in_persona):
-        #    raise action_error('current user has no permissions for this group', code=403)
-        # remove action
+        group  = get_group(id)
+        
+        if member != c.logged_in_persona: # If not removing self, check group permissions
+            raise_if_current_role_insufficent('admin', group)
+        
         if group.remove_member(member):
             user_log.info("Removed Member #%d (%s) from Group #%d (%s)" % (member.id, member.username, group.id, group.username))
             return action_ok(message='member removed sucessfully')
