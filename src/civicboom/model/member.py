@@ -658,7 +658,10 @@ class Group(Member):
         if member and (join=="join" or join=="join_request"):
             action_list.append(join)
         else:
-            if self.is_admin(member, membership) or has_role_required('admin',role):
+            # AllanC - because we now swich persona to the group, If we provide a deep check of user membership here, but don't on the operations, this provides a problem
+            #          for now - we check to see if member == self .. 
+            #if self.is_admin(member, membership) or has_role_required('admin',role):
+            if (member == self and not role) or (member == self and has_role_required('admin',role)):
                 action_list.append('delete')
                 action_list.append('remove') #AllanC - could be renamed? this means remove member?
                 action_list.append('set_role')
@@ -667,7 +670,7 @@ class Group(Member):
                 if self.num_admins>1:
                     action_list.append('remove_self')
                     action_list.append('set_role_self')
-            else:
+            if membership:
                 action_list.append('remove_self')
         return action_list
 
@@ -678,6 +681,8 @@ class Group(Member):
         """
         if not member:
             return False
+        if member == self:
+            return True
         if not membership:
             membership = self.get_membership(member)
         if membership and membership.member_id==member.id and membership.status=="active" and membership.role=="admin":
