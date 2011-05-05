@@ -12,10 +12,6 @@ from paste.deploy.converters import asbool
 
 log = logging.getLogger(__name__)
 
-#tt_global = "some global"
-#def tt_func():
-#    return "some function"
-
 class TestController(BaseController):
     
     # Only allow these actions if in development mode
@@ -40,87 +36,6 @@ class TestController(BaseController):
         log.debug("value: %s" % mc.get("some_key"))
         log.debug("inc  : %s" % mc.get("key"))
 
-    times = """
-    def times(self):
-        import memcache, redis, math
-        from civicboom.model.meta import engine
-        tt_local = "some local"
-        app_globals.tt_app_global = "some app_global"
-        mr = redis.Redis()
-        mc = memcache.Client(['localhost:11211'])
-        md = memcache.Client(['localhost:21201'])
-
-        mr.set('tt_cache', 'some redis variable')
-        mc.set('tt_cache', 'some memcache variable')
-        md.set('tt_cache', 'some memcachedb variable')
-
-        n = 1000
-        a = time()
-        for n in xrange(0, n):
-            t = tt_local
-        b = time()
-        for n in xrange(0, n):
-            t = tt_global
-        c = time()
-        for n in xrange(0, n):
-            t = tt_func()
-        d = time()
-        for n in xrange(0, n):
-            t = app_globals.tt_app_global
-        e = time()
-        for n in xrange(0, n):
-            t = mc.get('tt_cache')
-        f = time()
-        for n in xrange(0, n):
-            t = md.get('tt_cache')
-        g = time()
-        for n in xrange(0, n):
-            t = mr.get('tt_cache')
-        h = time()
-        for n in xrange(0, n):
-            t = engine.execute("SELECT 'some sql variable'").fetchall()
-        i = time()
-
-        mr.delete('tt_cache')
-        mc.delete('tt_cache')
-        md.delete('tt_cache')
-
-        def m1(x):
-            return x * 200
-            #return math.log(x * 1000, 10)
-
-        def m2(x):
-            return x / n * 1000
-
-        return " ""
-            <style>
-            SPAN.bar {
-                display: inline-block;
-                background: grey;
-            }
-            </style>
-            <table>
-            <tr><td> local:      </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
-            <tr><td> global:     </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
-            <tr><td> function:   </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
-            <tr><td> app_global: </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
-            <tr><td> memcache:   </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
-            <tr><td> memcachedb: </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
-            <tr><td> redis:      </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
-            <tr><td> postgres:   </td><td> <span class="bar" style='width: %fpx'>%f</span> </td></tr>
-            </table>
-            "" " % (
-            m1(b - a), m2(b - a),
-            m1(c - b), m2(c - b),
-            m1(d - c), m2(d - c),
-            m1(e - d), m2(e - d),
-            m1(f - e), m2(f - e),
-            m1(g - f), m2(g - f),
-            m1(h - g), m2(h - g),
-            m1(i - h), m2(i - h),
-        )
-    """
-
     def session(self):
         flash_message("hello session test")
         return redirect('/')
@@ -128,28 +43,6 @@ class TestController(BaseController):
     @authorize
     def logged_in(self):
         return "you are logged in"
-
-    def time_gsdf(self):
-        """
-        example of timer test function
-        """
-        """
-        from civicboom.lib.web import get_subdomain_format, get_subdomain_format2, get_subdomain_format3, get_subdomain_format4
-        a = time()
-        for n in xrange(0, 100000):
-            get_subdomain_format()
-        b = time()
-        for n in xrange(0, 100000):
-            get_subdomain_format2()
-        c = time()
-        for n in xrange(0, 100000):
-            get_subdomain_format3()
-        d = time()
-        for n in xrange(0, 100000):
-            get_subdomain_format4()
-        e = time()
-        return "1:%f 2:%f 3:%f 4:%f" % (b-a, c-b, d-c, e-d)
-        """
 
     def db_read(self):
         from civicboom.lib.database.get_cached import get_licenses
@@ -230,26 +123,6 @@ class TestController(BaseController):
     def content_morph(self):
         from civicboom.lib.database.polymorphic_helpers import morph_content_to
         morph_content_to(2, "article")
-
-    def ssi(self):
-        return '[Start] <!--#include virtual="/test/include1"--> <!--#include virtual="/test/include2"--> [End]'
-
-    def psi(self):
-        return "[Start] "+self.include1()+" "+self.include2()+" [End]"
-
-    @cacheable(time=10)
-    def include1(self):
-        sleep(3)
-        return "hello"
-
-    @cacheable(time=10)
-    def include2(self):
-        sleep(3)
-        return "world"
-
-    #@cacheable(time=10)
-    def include3(self):
-        return "speed"
 
     def abort(self, id):
         return abort(int(id))
