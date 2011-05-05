@@ -131,6 +131,17 @@ class LicenseValidator(validators.FancyValidator):
             return license
         return license.id
 
+class PrivateContentValidator(validators.StringBool):
+    messages = {
+        'not_account_type': _('unable to use private content features without account upgrade'),
+    }
+    def _to_python(self, value, state):
+        value = validators.StringBool._to_python(self, value, state)
+        from pylons import tmpl_context as c
+        if value and not c.logged_in_persona.has_account_required('plus'):
+            raise formencode.Invalid(self.message('not_account_type', state), value, state)
+        return value
+
 
 class CurrentUserPasswordValidator(validators.FancyValidator):
     not_empty    = True
