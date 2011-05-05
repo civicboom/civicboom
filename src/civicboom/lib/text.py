@@ -242,6 +242,7 @@ whole_explicits = set([
     'ass',
     'faggot',
     'niger',
+    'nigger',
     'tard',
     'hardon',
     'bastard',
@@ -282,7 +283,7 @@ def profanity_check(text):
     def inc_profanity():
         profanity_response['FoundProfanity']  = True
         profanity_response['ProfanityCount'] += 1
-        
+    
     text_words = text.split(' ')
     for i in range(len(text_words)):
         word_normalized = unicodedata.normalize('NFKD', text_words[i].lower()).encode('ascii','ignore')
