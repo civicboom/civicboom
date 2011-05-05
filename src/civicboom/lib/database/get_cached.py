@@ -273,6 +273,7 @@ def get_tag(tag):
     If it does not appear in the database then return a new tag object
     If it does exisit in the data then return the database object
     """
+    tag = tag.lower()
     try:
         return Session.query(Tag).filter_by(name=unicode(tag)).one()
     except NoResultFound as nrf:

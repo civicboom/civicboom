@@ -197,8 +197,8 @@
 ## Search
 ##------------------------------------------------------------------------------
 <div id="aboutbtns">
-    <a class="button" href="${url(controller='about', action='civicboom')}">
-        ${_('About')}
+    <a class="button" href="${url(controller='about', action='howto')}">
+        ${_('How to')}
     </a>
     <a class="button" href="${url(controller='about', action='mobile')}">
         ${_('Mobile')}

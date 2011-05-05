@@ -76,7 +76,7 @@ $('#%(name)s_name').autocomplete({
 
 class DatePickerFieldRenderer(FieldRenderer):
     def render(self):
-        value = self.value or ''
+        value = self.value if hasattr(self, 'value') else ''
         vars = dict(name=self.name, value=value.split(".")[0])
         return """
 <input id="%(name)s" name="%(name)s" type="text" value="%(value)s">
@@ -88,10 +88,7 @@ $('#%(name)s').datepicker({dateFormat: 'yy-mm-dd'})
 
 class EnumFieldRenderer(FieldRenderer):
     def render(self):
-        if hasattr(self, "value") and self.value:
-            value = self.value
-        else:
-            value = ''
+        value = self.value if hasattr(self, 'value') else ''
         opts = ""
         if self.field._columns[0].nullable:
             opts = opts + "<option value>None</option>\n"
