@@ -17,13 +17,13 @@ from civicboom.lib.database.actions             import del_content
 
 
 from civicboom.lib.services.janrain         import janrain
-from civicboom.lib.services.cdyne_profanity import profanity_check
 from civicboom.lib.services.twitter_global  import status as twitter_global_status
 from civicboom.lib.services.tiny_url        import tiny_url
 
 from civicboom.lib.text          import clean_html_markup, strip_html_tags, safe_python_strings
 from civicboom.lib.helpers       import truncate
 
+import civicboom.lib.worker as worker
 
 from sets import Set # may not be needed in Python 2.7+
 import hashlib
@@ -307,40 +307,19 @@ def twitter_global(content):
 # Content Management
 #-------------------------------------------------------------------------------
 
-
-#------------------------------
-# Profanity Check
-#------------------------------
-def profanity_filter(content, delay_commit=False):
-    """
-    Checks content for profanity using the CDYNE web service
-    If there is a profanity, replace the content with the cleaned version
-    """
-    content = get_content(content)
-    if not content                           : return
+def profanity_filter(content):
     if not config['online']                  : return
     if not config['feature.profanity_filter']: return
     
-    # TODO: this could fire off a thead to perform the profanity checking? (Raised as Feature #55)
+    if hasattr(content, 'id'):
+        content = content.id
 
-    # maybe we could profanity check drafts and tell users that the content has raised an issue before they publish it?
-    
-    profanity_response = profanity_check(content.content)
-    if not profanity_response:
-        content.flag(comment=u"automatic profanity check failed, please manually inspect")
-    elif profanity_response['FoundProfanity']:
-        content.content = profanity_response['CleanText']
-        content.flag(comment=u"found %s" % profanity_response['ProfanityCount'])
-        #send_email(config['email.moderator'],
-        #    subject=_('profanity detected'),
-        #    content_text="%s" % (url(controller='content', action='view', id=content.id))
-        #    )
-        #content.status = "pending"
-        #if not delay_commit:
-        #    Session.commit()
-        #update_content(content)
-        #return False
-    #return True
+    worker.add_job({
+        'task'     : 'profanity_check' ,
+        'content'  : content ,
+        'url_base' : url('',absolute=True) #'http://www.civicboom.com/' , # AllanC - get this from the ENV instead please
+    })
+
 
 
 

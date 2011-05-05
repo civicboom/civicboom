@@ -219,3 +219,17 @@ def safe_python_strings(d):
         for key in d.keys():
             d[key] = safe_python_strings(d[key])
     return d
+
+
+#-------------------------------------------------------------------------------
+
+def profanity_check(text):
+    """
+    Simple profanity check
+    [Explicit]
+
+    """
+    #import unicodedata
+    #>>> unicodedata.normalize('NFKD', title).encode('ascii','ignore')
+    #'Kluft skrams infor pa federal electoral groe'
+    return text

@@ -102,8 +102,10 @@ def load_environment(global_conf, app_conf):
     # set up worker processors
     from civicboom.lib.worker_threads.send_notification  import send_notification
     from civicboom.lib.worker_threads.process_media      import process_media
+    from civicboom.lib.worker_threads.profanity_check    import profanity_check
     worker.add_worker_function('process_media'     , process_media    )
     worker.add_worker_function('send_notification' , send_notification)
+    worker.add_worker_function('profanity_check'   , profanity_check  )
 
     # set up worker queue
     if pylons.config['worker.queue'] == "inline":
