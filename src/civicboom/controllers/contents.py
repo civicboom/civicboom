@@ -47,7 +47,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     content     = civicboom.lib.form_validators.base.ContentUnicodeValidator()
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=False)
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
-    private     = formencode.validators.StringBool(not_empty=False)
+    private     = civicboom.lib.form_validators.base.PrivateContentValidator(not_empty=False) #formencode.validators.StringBool(not_empty=False)
     license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused?
     tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False)
@@ -353,12 +353,12 @@ class ContentsController(BaseController):
         # url('contents') + POST
 
         user_log.info("Creating new content")
-
+        
         if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
 
         # GregM: Set private flag to user or hub setting (or public as default)
-        is_private = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
+        kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
 
         # Create Content Object
         if   kwargs['type'] == 'draft':
@@ -367,7 +367,7 @@ class ContentsController(BaseController):
         elif kwargs['type'] == 'comment':
             raise_if_current_role_insufficent('observer') # Check role, in adition the content:update method checks for view permission of parent
             content = CommentContent()
-            is_private = False                          # Comments are always public
+            kwargs['private'] = False                          # Comments are always public
             content.creator = c.logged_in_user          # Comments are always made by logged in user
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
@@ -383,7 +383,7 @@ class ContentsController(BaseController):
             content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
-        content.private = is_private
+        #content.private = is_private
         
         parent = _get_content(kwargs.get('parent_id'))
         if parent:
@@ -472,13 +472,7 @@ class ContentsController(BaseController):
         data       = {'content':kwargs}
         data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
         kwargs     = data['content']
-
-        # AllanC
-        # TODO!!! - PLEASE MOVE THIS!!
-        # This should be part of the private validator
-        if not c.logged_in_persona.has_account_required('plus'):
-            kwargs['private'] = False
-
+        
         # -- Decode Action -----------------------------------------------------
         #
         # Takes the form field 'submit_????' and decides operation:
@@ -581,14 +575,10 @@ class ContentsController(BaseController):
             # Remove any missing tag objects
             content.tags = [tag for tag in content.tags if tag.name in tags_new]
         
-        
         # -- Publishing --------------------------------------------------------
         if  submit_type=='publish'     and \
             permissions['can_publish'] and \
             content.__type__ in publishable_types:
-            
-            # Profanity Check --------------------------------------------------
-            profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
             # GregM: Content can now stay private after publishing :)
             #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
@@ -626,14 +616,16 @@ class ContentsController(BaseController):
                 #user_log.info("updated published Content #%d" % (content.id, ))
             if m:
                 content.creator.send_notification_to_followers(m, private=content.private, delay_commit=True)
-
-
-
+        
         # -- Save to Database --------------------------------------------------
         Session.add(content)
         Session.commit()
         update_content(content)  # Invalidate any cache associated with this content
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
+        
+        # Profanity Check --------------------------------------------------
+        if submit_type=='publish':
+            profanity_filter(content) # Filter any naughty words and alert moderator
         
         # -- Redirect (if needed)-----------------------------------------------
 

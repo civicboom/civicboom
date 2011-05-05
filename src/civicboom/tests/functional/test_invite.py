@@ -33,9 +33,8 @@ class TestInviteController(TestController):
             },
             status=201
         )
-        c = json.loads(response.body)
-        #
-        self.group_id = int(c['data']['id'])
+        response_json = json.loads(response.body)
+        self.group_id = int(response_json['data']['id'])
         
         self.log_in_as("invite_test_user")
         
@@ -50,6 +49,21 @@ class TestInviteController(TestController):
     def part_create_private_assignment(self):
         self.log_in_as('unittest')
         self.set_persona('test_private_group')
+        
+        # Should fail to post as this group does not have a 'plus' account - validation will fail on content being default 'private'
+        response = self.app.post(
+            url('contents', format="json"),
+            params={
+                '_authentication_token': self.auth_token,
+                'title': "A test private assignment for test_private_group",
+                'type': "assignment",
+                'content': "This is my private assignment.",
+                'license': 'CC-BY',
+                'location': "1.0707 51.2999",
+            },
+            status=400
+        )
+        self.set_account_type('plus')
         response = self.app.post(
             url('contents', format="json"),
             params={
@@ -62,6 +76,7 @@ class TestInviteController(TestController):
             },
             status=201
         )
+        
         self.my_assignment_id = json.loads(response.body)["data"]["id"]
     
     def part_create_private_content(self):
@@ -80,7 +95,7 @@ class TestInviteController(TestController):
             status=201
         )
         self.my_article_id = json.loads(response.body)["data"]["id"]
-        
+    
     def part_check_assignment_content_group(self):
         self.log_in_as('invite_test_user')
         response = self.app.get(url('content', id=self.my_article_id,   _authentication_token=self.auth_token), status=403)

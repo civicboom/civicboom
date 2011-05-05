@@ -370,8 +370,8 @@ class DraftContent(Content):
     __to_dict__['full'        ].update(_extra_draft_fields)
 
     def __init__(self):
-        #self.private = True # GregM: Removed set to user/hub default in contents controller
-        pass
+        self.private  = True # AllanC? hu? - GregM: Removed set to user/hub default in contents controller
+        self.__type__ = 'draft'
 
     def clone(self, content):
         Content.clone(self, content)
@@ -396,6 +396,8 @@ class CommentContent(Content):
     }
     __to_dict__['full']         = copy.deepcopy(__to_dict__['default'])
 
+    def __init__(self):
+        self.__type__ = 'comment'
 
 
 class UserVisibleContent(Content):
@@ -464,6 +466,8 @@ class ArticleContent(UserVisibleContent):
     __to_dict__['default'     ].update(_extra_article_fields)
     __to_dict__['full'        ].update(_extra_article_fields)
 
+    def __init__(self):
+        self.__type__ = 'article'
 
     def rate(self, member, rating):
         from civicboom.lib.database.actions import rate_content
@@ -521,6 +525,9 @@ class AssignmentContent(UserVisibleContent):
     #        'withdrawn': lambda content: [a.member.to_dict() for a in content.assigned_to if a.status=="withdrawn"] ,
     #})
     #__to_dict__['full+actions'].update(__to_dict__['full'])
+
+    def __init__(self):
+        self.__type__ = 'assignment'
 
     def action_list_for(self, member, **kwargs):
         action_list = UserVisibleContent.action_list_for(self, member, **kwargs)
