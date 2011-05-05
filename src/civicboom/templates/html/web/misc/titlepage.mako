@@ -47,12 +47,12 @@
 									</a>
 									(Android OS)
 								</div>
-								<div style="float:left; width: 10em;">
-									<h3>Browser Widget</h3>
-									<a class="button" href="/about/mobile">
-										Download now
-									</a>
-								</div>
+##								<div style="float:left; width: 10em;">
+##									<h3>Browser Widget</h3>
+##									<a class="button" href="/about/mobile">
+##										Download now
+##									</a>
+##								</div>
 							</div>
 						</div>
 					</div>
@@ -61,7 +61,7 @@
 						<div class="partners" style="background-color:#FFF;padding: 0.5em;height: 4em;">
 							<div style="width: 10em;float:left">
 								##<h3>Media</h3>
-								<a href="http://www.gradvine.com"><img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" /></a>
+								<a href="http://www.kentuni.com/news/"><img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" /></a>
 							</div>
 							<div style="width: 10em;float:left">
 								##<h3>Business</h3>
@@ -85,10 +85,10 @@
 
 <%def name="new_front_headline()">
 	<div style="margin: 5em auto 0 auto; width: 61em;">
-		<h1 class="headline" style="padding:0;font-size: 400%; text-align: left; color: #333">
-			Generating news just got easier
+		<h1 class="headline" style="padding:0;margin:0;font-size: 285%; text-align: left; color: #333">
+			Generating and sharing news just got easier
 		</h1>
-		<h2 style="padding: 0em 0 1.5em 0;text-align: left; color: #666">
+		<h2 style="padding: 0em 0 0.5em 0;text-align: left; color: #666; font-size: 175%; font-weight: normal;">
 			Respond to requests and generate news or feature content for your needs.
 		</h2>
 	</div>
@@ -98,7 +98,7 @@
 	<script>
 		$(function() {
 			$('.tab-title').each(function (index, element) {
-				$(element).css('top', (index * 1.5)+"em");
+				$(element).css('top', (index * 2)+"em");
 			});
 			//$('#signupnow').css('top', (($('.tab-title').length+1)*5) + "em");
 			$('.tab-title').mouseover(function () {
@@ -119,21 +119,22 @@
 			left: 0;
 			width: 6.75em;
 			padding: 0.25em 0 0.25em 0.25em;
-			z-index: 0;
+			font-weight: bold;
 		}
 		.tab-title.hilite {
-			background-color: #DDD;
+			background-color: #cee2fa; /*adcef7 cee2fa*/
 		}
 		.tab-page {
 			padding-left: 14em;
 		}
 		.tab-page .content {
-			background-color: #EEE;
+			background-color: #cee2fa;
 			padding: 1em 0 0 1em;
-			height: 15em;
+			height: 18em;
 		}
 		.tab-page .content .left {
 			width: 18em;
+			padding-left: 1em;
 			float: left;
 		}
 		.tab-page .content .right {
@@ -143,8 +144,9 @@
 		.tab-page .content ul li {
 			padding-bottom: 1em;
 		}
-		.tab-page .content ol li {
+		.tab-page .content ol {
 			list-style-position: outside;
+			margin-left: -1.5em;
 		}
 		.tab-page .content .larger {
 			font-size: 125%;
@@ -153,11 +155,24 @@
 			color: #c77b01;
 			font-weight: bold;
 		}
+		
+		.tab-page .content input {
+			margin: 0.5em 0 0.5em 0;
+		}
+		
 		.tab-page .content .indent {
-			padding-left: 2em;
+			padding-left: 0em;
+		}
+		.tab-page .content iframe {
+			border: 0;
+			padding: 0;
+			margin: 0;
+			position: relative;
+			top: -0.75em;
+			left: -5.75em;
 		}
 	</style>
-	<div style="margin: 0 auto 0 auto; width: 61em; text-align: left;">
+	<div style="margin: 1em auto 0 auto; width: 61em; text-align: left;">
 		<div style="height:15em;">
 			<div style="position: absolute">
 				<div class="tab-page" id="tab-page-orgs">
@@ -183,9 +198,9 @@
 							<span class="hilite larger">Get started!</span><br/>
 							<ol style="height: 10em; width: 100%;border-left: 2em;">
 								<li>Sign up as a user.</li>
-								<li>Create a Hub for your organisation, title, publication, etc.</li>
+								<li>Create a Hub for your organisation, title, publication...</li>
 								<li>Create a request.</li>
-								<li>Embed unique widget on your site for your community to respond to!</li>
+								<li>Embed the unique widget containing your requests on websites and blogs for your community to respond to!</li>
 							</ol>
 						</div>
 					</div>
@@ -214,24 +229,37 @@
 							<ol style="height: 10em; width: 100%;border-left: 2em;">
 								<li>Sign up as a user.</li>
 								<li>Browse requests.</li>
-								<li>Respond.</li>
-								<li>You can also set requests for other's to respond to & upload your news content to share.</li>
+								<li>Respond and share your news.</li>
+								<li>Set requests for other's to respond to & upload your news content to share.</li>
 							</ol>
 						</div>
 					</div>
 				</div>
-				<div id="signupnow" style="position: absolute;">
-					<div style="font-size: 200%;font-weight:bold">Sign up now</div>
-					<div>
-						<form style="padding: 0.25em 0 0.5em 0" method="post" action="/register/email.redirect">
-						Username:
-						<input id="username_register" type="text" placeholder="Your desired username" name="username">
-						Email address:
-						<input id="email_signup" type="email" placeholder="Your email address" name="email"> 
-						<input class="button" type="submit" value="Sign up" name="submit">
-						</form>
-						<a class="button" style="font-size:115%; width: 51em" href="/account/signin">Or if you have Facebook, Twitter, Linked In, Google Mail or similar click here and sign in straight away!</a>
+				<div class="tab-page" id="tab-page-signup">
+					<a class="tab-title" id="tab-title-signup" style="color:#c77b01">Sign up now!</a>
+					<div class="content">
+						<div class="left" style="width: 20em; float: left;">
+							<form method="post" action="/register/email.redirect">
+							<span style="font-size: 150%; font-weight: bold;">Username</span><br />
+							<input id="username_register" type="text" placeholder="Your desired username" name="username"><br />
+							<span style="font-size: 150%; font-weight: bold;">Email address</span><br />
+							<input id="email_signup" type="email" placeholder="Your email address" name="email"><br />
+							<input class="button" type="submit" value="Sign up" name="submit">
+							</form>
+						</div>
+						<div class="right" style="font-size: 125%">
+							% if 'api_key.janrain' in config:
+								% if config['online']:
+									${h.get_janrain(lang=c.lang)}
+								% else:
+									<img src="/images/test/janrain.png">
+								% endif
+							% endif
+						</div>
 					</div>
+				</div>
+				<div style="text-align: right; font-size: 175%; font-weight: bold; margin-top: 0.5em;">
+					Don't just read it. Feed it.
 				</div>
 			</div>
 		</div>
