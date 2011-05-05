@@ -20,5 +20,31 @@ Deployment process
   - git checkout develop                           # don't forget to go back to develop before doing more work
 
 - wait a couple of minutes for the packages to be built and signed by buildbot
-- "sudo apt-get update && sudo apt-get dist-upgrade" on the server
 
+- upgrade the servers (web / api nodes)
+  - log into the ec2 control panel
+    - https://console.aws.amazon.com/ec2/home?region=eu-west-1
+    - civicboom@gmail.com
+  - upgrade each server
+    - instances -> select one -> instance actions -> connect -> run the shell command (but with user "ubuntu" rather than "root")
+    - sudo apt-get update
+    - sudo apt-get dist-upgrade
+	- check that the site is working by viewing that specific server (eg http://webapi2.civicboom.com/contents.json)
+	  - (Doing one at a time means that the load balancer always has at least one active server to point to)
+
+- upgrade the servers (database nodes)
+  - on your dev box
+    - make schemadiff
+	- view update.sql
+	  - schema updating is a PITA; if there are updates to be made, it may be a good idea to
+	    do it in an off-peak period
+  - log in as above
+  - sudo apt-get update
+  - sudo apt-get upgrade
+  - psql -U civicboom -h localhost civicboom
+    - run the commands in update.sql
+	  - somehow the feeds ID generator always wants updating, ignore this bit...
+	  - large alterations (dropping / creating tables, etc) may require locking
+	    the database, which pretty much means you need to disconnect other users
+		(ie, log into the API nodes and turn them off during the upgrade. Don't
+		forget to turn them back on once it's done!)
