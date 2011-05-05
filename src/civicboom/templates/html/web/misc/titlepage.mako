@@ -12,25 +12,69 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	<div class="new_front">
+	<div class="new_front" style="margin-bottom: 20em;">
 		${new_front_headline()}
-		${new_front_who_is()}
-		<div class="front_sub">
-			${new_front_price()}
-			${new_front_tag()}
-		</div>
-			${new_front_key_elems()}
-		<div class="front_sub">
-			${new_front_plans()}
-			${new_front_how_title()}
-		</div>
-		${new_front_how()}
-		<div class="front_sub">
-			${new_front_tag()}
-			${new_front_you()}
-			${new_front_tag()}
-			<div style="margin-top: 2em"></div>
-			${new_front_register()}
+		${new_front_about()}
+##		${new_front_who_is()}
+##		<div class="front_sub">
+##			${new_front_price()}
+##			${new_front_tag()}
+##		</div>
+##			${new_front_key_elems()}
+##		<div class="front_sub">
+##			${new_front_plans()}
+##			${new_front_how_title()}
+##		</div>
+##		${new_front_how()}
+##		<div class="front_sub">
+##			${new_front_tag()}
+##			${new_front_you()}
+##			${new_front_tag()}
+##			<div style="margin-top: 2em"></div>
+##			${new_front_register()}
+##		</div>
+		<div style="width:100%;left:0;bottom:17px;position:fixed;padding:1.5em 0 0 0;background-color:#cee2fa;">
+			<div style="width:100%;height:10em;background-color:#adcef7;">
+				<div style="width:61em;padding:1em 0 1em 0;margin: auto;">
+					<div style="float: left; width: 30em">
+						<h2 style="text-align:left;">Downloads</h2>
+						<div style="width: 20em; margin: 0;">
+							<div style="position: absolute;">
+								<div style="float:left; width: 10em;">
+									<h3>Mobile App</h3>
+									<a class="button" href="/about/mobile">
+										Download now
+									</a>
+									(Android OS)
+								</div>
+##								<div style="float:left; width: 10em;">
+##									<h3>Browser Widget</h3>
+##									<a class="button" href="/about/mobile">
+##										Download now
+##									</a>
+##								</div>
+							</div>
+						</div>
+					</div>
+					<div style="text-align:left;float: right; width: 22em;">
+						<h2>Who's using us?</h2>
+						<div class="partners" style="background-color:#FFF;padding: 0.5em;height: 4em;">
+							<div style="width: 10em;float:left">
+								##<h3>Media</h3>
+								<a href="http://www.kentuni.com/news/"><img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" /></a>
+							</div>
+							<div style="width: 10em;float:left">
+								##<h3>Business</h3>
+								<a href="http://www.fxcompared.com/civic-boom.php"><img style="width:100%" src="/images/client-logo/fx-compared.jpg" alt="FX Compared" /></a>
+							</div>
+##							<div style="width: 10em;float:left">
+##								<h3>Media</h3>
+##								<img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" />
+##							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </%def>
@@ -40,9 +84,186 @@
 ##------------------------------------------------------------------------------
 
 <%def name="new_front_headline()">
-	<h1 class="headline">
-		Civicboom empowers organisations to collaborate with their audience in generating real-time news, content and insight
-	</h1>
+	<div style="margin: 5em auto 0 auto; width: 61em;">
+		<h1 class="headline" style="padding:0;margin:0;font-size: 285%; text-align: left; color: #333">
+			Generating and sharing news just got easier
+		</h1>
+		<h2 style="padding: 0em 0 0.5em 0;text-align: left; color: #666; font-size: 175%; font-weight: normal;">
+			Respond to requests and generate news or feature content for your needs.
+		</h2>
+	</div>
+</%def>
+
+<%def name="new_front_about()">
+	<script>
+		$(function() {
+			$('.tab-title').each(function (index, element) {
+				$(element).css('top', (index * 2)+"em");
+			});
+			//$('#signupnow').css('top', (($('.tab-title').length+1)*5) + "em");
+			$('.tab-title').mouseover(function () {
+				$(this).addClass('hilite');
+				$('.tab-title').not(this).removeClass('hilite');
+				var tag = '#tab-page-' + $(this).attr('id').replace('tab-title-','');
+				$(tag).find('.content').show();
+				$('.tab-page').not(tag).find('.content').hide();
+			});
+			$('.tab-title:first').trigger('mouseover');
+		});
+	</script>
+	<style>
+		.tab-title {
+			display: inline;
+			font-size: 200%;
+			position: absolute;
+			left: 0;
+			width: 6.75em;
+			padding: 0.25em 0 0.25em 0.25em;
+			font-weight: bold;
+		}
+		.tab-title.hilite {
+			background-color: #cee2fa; /*adcef7 cee2fa*/
+		}
+		.tab-page {
+			padding-left: 14em;
+		}
+		.tab-page .content {
+			background-color: #cee2fa;
+			padding: 1em 0 0 1em;
+			height: 18em;
+		}
+		.tab-page .content .left {
+			width: 18em;
+			padding-left: 1em;
+			float: left;
+		}
+		.tab-page .content .right {
+			padding-left: 18em;
+			width: 18em;
+		}
+		.tab-page .content ul li {
+			padding-bottom: 1em;
+		}
+		.tab-page .content ol {
+			list-style-position: outside;
+			margin-left: -1.5em;
+		}
+		.tab-page .content .larger {
+			font-size: 125%;
+		}
+		.tab-page .content .hilite {
+			color: #c77b01;
+			font-weight: bold;
+		}
+		
+		.tab-page .content input {
+			margin: 0.5em 0 0.5em 0;
+		}
+		
+		.tab-page .content .indent {
+			padding-left: 0em;
+		}
+		.tab-page .content iframe {
+			border: 0;
+			padding: 0;
+			margin: 0;
+			position: relative;
+			top: -0.75em;
+			left: -5.75em;
+		}
+	</style>
+	<div style="margin: 1em auto 0 auto; width: 61em; text-align: left;">
+		<div style="height:15em;">
+			<div style="position: absolute">
+				<div class="tab-page" id="tab-page-orgs">
+					<a class="tab-title" id="tab-title-orgs">Organisations</a>
+					<div class="content">
+						<div class="left" style="width: 20em; float: left;">
+							<ul style="font-size: 125%">
+								<li>
+									<span class="larger"><span class="hilite">Multi-media</span> interaction</span><br />
+									<span class="indent">with your audience.</span>
+								</li>
+								<li>
+									<span class="larger"><span class="hilite">Secure</span> communication</span><br />
+									<span class="indent">from trusted followers.</span>
+								</li>
+								<li>
+									<span class="larger"><span class="hilite">Real-time</span> contribution</span><br />
+									<span class="indent">from your users.</span>
+								</li>
+							</ul>
+						</div>
+						<div class="right" style="font-size: 125%">
+							<span class="hilite larger">Get started!</span><br/>
+							<ol style="height: 10em; width: 100%;border-left: 2em;">
+								<li>Sign up as a user.</li>
+								<li>Create a Hub for your organisation, title, publication...</li>
+								<li>Create a request.</li>
+								<li>Embed the unique widget containing your requests on websites and blogs for your community to respond to!</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<div class="tab-page" id="tab-page-indvs">
+					<a class="tab-title" id="tab-title-indvs">Individuals</a>
+					<div class="content">
+						<div class="left" style="width: 20em; float: left;">
+							<ul style="font-size: 125%">
+								<li>
+									<span class="larger"><span class="hilite">Participate</span> and share</span><br />
+									<span class="indent">your local news.</span>
+								</li>
+								<li>
+									<span class="larger"><span class="hilite">Interact</span> and respond</span><br />
+									<span class="indent">to breaking news requests.</span>
+								</li>
+								<li>
+									<span class="larger"><span class="hilite">Gain</span> recognition</span><br />
+									<span class="indent">from content publishers.</span>
+								</li>
+							</ul>
+						</div>
+						<div class="right" style="font-size: 125%">
+							<span class="hilite larger">Get started!</span><br/>
+							<ol style="height: 10em; width: 100%;border-left: 2em;">
+								<li>Sign up as a user.</li>
+								<li>Browse requests.</li>
+								<li>Respond and share your news.</li>
+								<li>Set requests for other's to respond to & upload your news content to share.</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<div class="tab-page" id="tab-page-signup">
+					<a class="tab-title" id="tab-title-signup" style="color:#c77b01">Sign up now!</a>
+					<div class="content">
+						<div class="left" style="width: 20em; float: left;">
+							<form method="post" action="/register/email.redirect">
+							<span style="font-size: 150%; font-weight: bold;">Username</span><br />
+							<input id="username_register" type="text" placeholder="Your desired username" name="username"><br />
+							<span style="font-size: 150%; font-weight: bold;">Email address</span><br />
+							<input id="email_signup" type="email" placeholder="Your email address" name="email"><br />
+							<input class="button" type="submit" value="Sign up" name="submit">
+							</form>
+						</div>
+						<div class="right" style="font-size: 125%">
+							% if 'api_key.janrain' in config:
+								% if config['online']:
+									${h.get_janrain(lang=c.lang)}
+								% else:
+									<img src="/images/test/janrain.png">
+								% endif
+							% endif
+						</div>
+					</div>
+				</div>
+				<div style="text-align: right; font-size: 175%; font-weight: bold; margin-top: 0.5em;">
+					Don't just read it. Feed it.
+				</div>
+			</div>
+		</div>
+	</div>
 </%def>
 
 ##------------------------------------------------------------------------------
