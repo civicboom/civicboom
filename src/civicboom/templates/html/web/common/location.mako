@@ -1,6 +1,6 @@
 <%def name="location_picker(field_name='location', width='250px', height='250px', always_show_map=False, label_class=None, lon=None, lat=None)">
 <%
-field_id = uniqueish_id(field_name)
+field_id = h.uniqueish_id(field_name)
 %>
 <!--<label${' class=%s' % label_class if label_class else ''} for="${field_name}_name">${_("Location name")}</label><br />-->
 <input id="${field_id}_name" name="${field_name}_name" type="search" placeholder="Search for location" style="width: ${width}">

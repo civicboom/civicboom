@@ -66,7 +66,7 @@ class FeedsController(BaseController):
             Session.commit()
             user_log.info("Created Feed #%d (%s)" % (f.id, f.name))
             return action_ok(_("Feed created"), code=201, data={'id': f.id})
-        except Exception, e:
+        except Exception as e:
             raise action_error(_("Error creating feed"), code=500)
 
     @auto_format_output
@@ -128,7 +128,7 @@ class FeedsController(BaseController):
 
         results = Session.query(Content)
         results = results.filter(sql(f.query))
-        results = filter(lambda content: content.viewable_by(c.logged_in_persona), results)
+        results = [content for content in results if content.viewable_by(c.logged_in_persona)]
         results = results[0:20]
         return action_ok(
             data={"name": f.name, "results": results}
