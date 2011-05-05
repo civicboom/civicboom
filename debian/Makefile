@@ -68,9 +68,9 @@ python-cbmisc.deb: ../lib/Makefile
 	echo "Depends: binutils" >> fs-env/DEBIAN/control
 	echo "Description: a package with some non-debian-packaged python bits in" >> fs-env/DEBIAN/control
 	echo ================================================ >/dev/null
-	mkdir -p fs-env/usr/local/lib/python2.6/dist-packages
+	mkdir -p fs-env/usr/local/lib/python2.7/dist-packages
 	make -C ../lib
-	cp -r ../lib/* fs-env/usr/local/lib/python2.6/dist-packages/
+	cp -r ../lib/* fs-env/usr/local/lib/python2.7/dist-packages/
 	echo ================================================ >/dev/null
 	fakeroot dpkg -b fs-env python-cbmisc_${VERSION}.deb
 	ln -sf python-cbmisc_${VERSION}.deb python-cbmisc.deb
