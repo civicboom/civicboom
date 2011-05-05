@@ -353,7 +353,7 @@ class ContentsController(BaseController):
         # url('contents') + POST
 
         user_log.info("Creating new content")
-
+        
         if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
 
@@ -575,14 +575,10 @@ class ContentsController(BaseController):
             # Remove any missing tag objects
             content.tags = [tag for tag in content.tags if tag.name in tags_new]
         
-        
         # -- Publishing --------------------------------------------------------
         if  submit_type=='publish'     and \
             permissions['can_publish'] and \
             content.__type__ in publishable_types:
-            
-            # Profanity Check --------------------------------------------------
-            profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
             # GregM: Content can now stay private after publishing :)
             #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
@@ -620,14 +616,16 @@ class ContentsController(BaseController):
                 #user_log.info("updated published Content #%d" % (content.id, ))
             if m:
                 content.creator.send_notification_to_followers(m, private=content.private, delay_commit=True)
-
-
-
+        
         # -- Save to Database --------------------------------------------------
         Session.add(content)
         Session.commit()
         update_content(content)  # Invalidate any cache associated with this content
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
+        
+        # Profanity Check --------------------------------------------------
+        if submit_type=='publish':
+            profanity_filter(content) # Filter any naughty words and alert moderator
         
         # -- Redirect (if needed)-----------------------------------------------
 

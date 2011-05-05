@@ -116,4 +116,4 @@ class TestFlagContentController(TestController):
         
         # Set config vars back to origninal settings
         #config_var('online'                  , config_online          )
-        config_var('feature.profanity_filter', config_profanity_filter)
+        self.config_var('feature.profanity_filter', config_profanity_filter)

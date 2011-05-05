@@ -627,7 +627,7 @@ def del_content(content):
     Session.commit()
     
 
-def flag_content(content, member=None, type="automated", comment=None, url_base=None):
+def flag_content(content, member=None, type="automated", comment=None, url_base=None, delay_commit=False):
     """
     if url_base is included an alternate URL generator to avert the use of the pylons one
     """
@@ -637,7 +637,8 @@ def flag_content(content, member=None, type="automated", comment=None, url_base=
     flag.comment = strip_html_tags(comment)
     flag.type    = type
     Session.add(flag)
-    Session.commit()
+    if not delay_commit:
+        Session.commit()
     
     # Send email to alert moderator
     member_username = 'profanity_filter'
@@ -655,7 +656,7 @@ def flag_content(content, member=None, type="automated", comment=None, url_base=
             url_string = ""
             for arg in args:
                 url_string += arg
-            id = kwargs.pop('id')
+            id = kwargs.pop('id', None)
             if id:
                 url_string += '/'+str(id)
             url_string += '?'

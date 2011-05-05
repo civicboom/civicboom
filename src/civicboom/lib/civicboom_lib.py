@@ -308,11 +308,14 @@ def twitter_global(content):
 #-------------------------------------------------------------------------------
 
 def profanity_filter(content):
-    if not config['online']                  : return
+    #if not config['online']                  : return
     if not config['feature.profanity_filter']: return
-    
+
     if hasattr(content, 'id'):
         content = content.id
+
+    if not content:
+        raise Exception('content cannot be profanity checked without a content.id')
 
     worker.add_job({
         'task'     : 'profanity_check' ,
