@@ -84,17 +84,10 @@ class Media(Base):
             if mtype:
                 self.type, self.subtype = mtype.split("/")
 
-        #def copy_config():
-        #    d = {}
-        #    for key in config.keys():
-        #        d[key] = config[key]
-        #    return d
-        
         app_globals.memcache.set(str("media_processing_"+self.hash), "Media queued")
 
         worker.add_job({
             "task": "process_media",
-            #"config": copy_config(),
             "tmp_file": my_file,
             "file_hash": self.hash,
             "file_type": self.type,
