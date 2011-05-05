@@ -149,7 +149,7 @@ class TestController(BaseController):
 
     def toggle_cache(self):
         """
-        For development, caching done by nginx can be dissabled
+        For development, caching done by nginx can be disabled
         """
         if cookie_get("nocache"):
             cookie_delete("nocache")
