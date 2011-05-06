@@ -80,6 +80,9 @@ for gen in generators:
         add_setting('route_'+gen[0], str(gen[2]).capitalize(), group='messages/messages', weight=i, type="set", value=('n','e'), default=gen[1])
         i = i + 1
 
+add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='miscellaneous/miscellaneous', weight=700, type='boolean')
+add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='miscellaneous/miscellaneous', weight=701, type='boolean', info=_('Please speak to our team before you change this option!'))
+
 config_var_list = [
     'help_popup_created_user',
     'help_popup_created_group',
@@ -106,6 +109,7 @@ type_validators = { 'string':           formencode.validators.UnicodeString(),
                     'password_current': civicboom.lib.form_validators.base.CurrentUserPasswordValidator(),
                     'file':             formencode.validators.FieldStorageUploadConverter(),
                     'location':         civicboom.lib.form_validators.base.LocationValidator(),
+                    'boolean':          formencode.validators.UnicodeString(max=10, strip=True),
 }
 
 settings_validators = {}
@@ -397,6 +401,8 @@ class SettingsController(BaseController):
         data['settings'].update(kwargs)
         
         settings = kwargs
+        
+        print settings
         
         # Setup custom schema for this update
         # List validators required
