@@ -33,6 +33,7 @@ LICENSE:
 
 import operator
 from time import time
+import sys
 
 import nose
 from nose.plugins.base import Plugin
@@ -92,4 +93,4 @@ class TestTimer(Plugin):
 
 
 if __name__ == '__main__':
-    nose.main(addplugins=[TestTimer()])
+    sys.exit(nose.main(addplugins=[TestTimer()]))

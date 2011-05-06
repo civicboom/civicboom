@@ -353,7 +353,7 @@ class ContentsController(BaseController):
         # url('contents') + POST
 
         user_log.info("Creating new content")
-
+        
         if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
 
@@ -564,22 +564,21 @@ class ContentsController(BaseController):
         # Tags
         if 'tags_string' in kwargs:
             separator = config['setting.content.tag_string_separator']
-            tags_new     = [tag.strip() for tag in kwargs['tags_string'].split(separator) if tag!=""] # Get tags from form removing any empty strings
+            tags_new     = [tag.strip().lower() for tag in kwargs['tags_string'].split(separator) if tag!=""] # Get tags from form removing any empty strings
             tags_current = [tag.name for tag in content.tags] # Get tags form current content object
             # Add any new tag objects
+            tags_created = [] # AllanC - fix for people creating mytiple tags with the same name.
             for tag in Set(tags_new).difference(tags_current):
-                content.tags.append(get_tag(tag))
+                if tag not in tags_created:
+                    content.tags.append(get_tag(tag))
+                    tags_created.append(tag)
             # Remove any missing tag objects
             content.tags = [tag for tag in content.tags if tag.name in tags_new]
-        
         
         # -- Publishing --------------------------------------------------------
         if  submit_type=='publish'     and \
             permissions['can_publish'] and \
             content.__type__ in publishable_types:
-            
-            # Profanity Check --------------------------------------------------
-            profanity_filter(content) # Filter any naughty words and alert moderator TODO: needs to be threaded (raised on redmine)
             
             # GregM: Content can now stay private after publishing :)
             #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
@@ -617,14 +616,16 @@ class ContentsController(BaseController):
                 #user_log.info("updated published Content #%d" % (content.id, ))
             if m:
                 content.creator.send_notification_to_followers(m, private=content.private, delay_commit=True)
-
-
-
+        
         # -- Save to Database --------------------------------------------------
         Session.add(content)
         Session.commit()
         update_content(content)  # Invalidate any cache associated with this content
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
+        
+        # Profanity Check --------------------------------------------------
+        if submit_type=='publish' and content.private==False:
+            profanity_filter(content) # Filter any naughty words and alert moderator
         
         # -- Redirect (if needed)-----------------------------------------------
 

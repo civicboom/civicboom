@@ -199,7 +199,7 @@ class MembersController(BaseController):
             # TODO
             if False: # if fields in include_fields are in User or Group only
                 results = results.with_polymorphic('*')
-            for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
+            for key in [key for key in search_filters if key in kwargs]: # Append filters to results query based on kwarg params
                 results = search_filters[key](results, kwargs[key])
             
             results = results.order_by(Member.name.asc())
@@ -272,7 +272,7 @@ class MembersController(BaseController):
         member_actions_controller = MemberActionsController()
         
         # Content Lists
-        for list in [list for list in lists if list in list_filters.keys()]:
+        for list in [list for list in lists if list in list_filters]:
             data[list] = contents_controller.index(creator=member.username, list=list, limit=config['search.default.limit.sub_list'], **kwargs)['data']['list']
         
         # Member Lists

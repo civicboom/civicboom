@@ -14,20 +14,12 @@ setup(
     author_email='',
     url='',
     install_requires=[
-        "SQLAlchemy>=0.6.5", # debian experimental has 0.6.6
-        "Pylons>=1.0.0",     # debian experimental
-        "Mako>=0.3.4",       # debian experimental has 0.3.6
-        #"recaptcha-client", # AllanC - I wrote our own one out of frustration, turned out to be the validator triggering twice :(
-        #"GeoFormAlchemy",   # Shish - now using a custom geometry renderer with our own location picker component
-        #"python_magic",     # Shish - now bundled by hand (see lib/)
-        #"FormAlchemy",      #  "  "
-        #"GeoAlchemy",       #  "  "
-        #"twitter>=1.4.2",   #  "  "
-        "pyDNS",
-        "python_memcached",
-        "boto",
-        "Babel",
-        "PIL",
+        # for a full list of dependencies, see
+        # - debian/api/control (for packaged things)
+        # - lib/ (for things bundled into python-cbmisc)
+        "SQLAlchemy",
+        "Pylons",
+        "Mako",
     ],
 
     setup_requires=["PasteScript>=1.6.3"],

@@ -92,7 +92,7 @@ class RegisterController(BaseController):
         
         #try: # Form validation
         #    form = schema.to_python(kwargs) #dict(request.params)
-        #except formencode.Invalid, error:  # If the form has errors overlay those errors over the previously rendered form
+        #except formencode.Invalid as error:  # If the form has errors overlay those errors over the previously rendered form
         #    form_result = error.value
         #    form_errors = error.error_dict or {}
             # htmlfill does not work with HTML5 ... bugger
@@ -147,7 +147,7 @@ class RegisterController(BaseController):
         # Check the username and email and raise any problems via the flash message session system
         try:
             kwargs = RegisterSchemaEmailUsername().to_python(kwargs) #dict(request.params)
-        except formencode.Invalid, error:
+        except formencode.Invalid as error:
             raise action_error(status='invalid', message=error.msg, code=400)
         
         # Create new user
@@ -216,7 +216,7 @@ def _fetch_avatar(url):
                 im.save(processed.name, "JPEG")
                 wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
             return h
-    except Exception, e:
+    except Exception as e:
         log.exception("Error fetching janrain user's avatar")
         return None
 

@@ -4,7 +4,7 @@ A collection of text processing tools for Text, HTML and JSON
 
 import re
 import xml.sax.saxutils as saxutils
-
+import unicodedata
 
 #-------------------------------------------------------------------------------
 
@@ -219,3 +219,93 @@ def safe_python_strings(d):
         for key in d.keys():
             d[key] = safe_python_strings(d[key])
     return d
+
+
+#-------------------------------------------------------------------------------
+explicit  = '[Explicit]'
+part_explicits = set([
+    'fuck',
+    'shit',
+])
+whole_explicits = set([
+    'piss',
+    'slut',
+    'whore',
+    'slag',
+    'slut',
+    'cock',
+    'dick',
+    'bollocks',
+    'bollox',
+    'cunt',
+    'wanker',
+    'ass',
+    'faggot',
+    'niger',
+    'nigger',
+    'tard',
+    'hardon',
+    'bastard',
+    'dildo',
+    'penis',
+])
+def profanity_check(text):
+    """
+    Simple profanity check
+
+    normalizes uniode characters and performs common l33t number replacements
+    only checks for whole words
+    
+    >>> profanity_check(u'hello! how was your day?')['CleanText']
+    u'hello! how was your day?'
+    >>> profanity_check(u'hello! fuckballz')['CleanText']
+    u'hello! [Explicit]ballz'
+    >>> profanity_check(u'hello! penis boy')['CleanText']
+    u'hello! [Explicit] boy'
+    >>> profanity_check(u'hello! f@g.g0t')['CleanText']
+    u'hello! [Explicit]'
+    """
+    if isinstance(text,str):
+        text = unicode(text)
+    
+    profanity_response = {
+        'FoundProfanity' : False,
+        'ProfanityCount' : 0,
+        'CleanText'      : text,
+    }
+    
+    def replace_part_explicit(word):
+        for part_explicit in part_explicits:
+            if part_explicit in word:
+                return word.replace(part_explicit, explicit)
+        return word
+    
+    def inc_profanity():
+        profanity_response['FoundProfanity']  = True
+        profanity_response['ProfanityCount'] += 1
+    
+    text_words = text.split(' ')
+    for i in range(len(text_words)):
+        word_normalized = unicodedata.normalize('NFKD', text_words[i].lower()).encode('ascii','ignore')
+        word_normalized = word_normalized  \
+                         .replace('@','a') \
+                         .replace('0','o') \
+                         .replace('1','l') \
+                         .replace('3','e') \
+                         .replace('4','a') \
+                         .replace('5','s') \
+                         .replace('9','g')
+        word_normalized = re.sub('\W','', word_normalized)
+        if word_normalized in whole_explicits:
+            text_words[i] = explicit
+            inc_profanity()
+        else:
+            word_normalized_replaced = replace_part_explicit(word_normalized)
+            if word_normalized_replaced != word_normalized:
+                text_words[i] = word_normalized_replaced
+                inc_profanity()
+    
+    if profanity_response['FoundProfanity']:
+        profanity_response['CleanText'] = ' '.join(text_words)
+    
+    return profanity_response
