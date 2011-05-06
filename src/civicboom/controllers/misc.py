@@ -56,11 +56,6 @@ class MiscController(BaseController):
     def georss(self):
         return action_ok()
 
-    @cacheable(time=600)
-    @auto_format_output
-    def upgrade_account(self):
-        return action_ok()
-
     @cacheable(time=30)
     @auto_format_output
     def stats(self):
@@ -102,10 +97,16 @@ class MiscController(BaseController):
             return "User-agent: *\nDisallow:\n"
 
     @web
-    def upgrade_plans(self):
-        c.upgrade_plans_title = 'You have reached your Basic account limit for this month.'
-        c.upgrade_plans_subtitle = 'If you want to get more from Civicboom you can choose premium or above:'
-        return action_ok()
+    @auth
+    def upgrade_request(self, **kwargs):
+        if not request.POST:
+            return
+        
+        from civicboom.lib.communication.email_lib import send_email
+        import pprint
+        send_email(config['email.contact'], content_text='upgrade account request: '+pprint.pprint(kwargs, width=1, indent=2))
+        
+        return action_ok(_('upgrade request sent'))
     
     @web
     def feedback(self, **kwargs):
