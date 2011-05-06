@@ -225,6 +225,7 @@ def safe_python_strings(d):
 explicit  = '[Explicit]'
 part_explicits = set([
     'fuck',
+    'shit',
 ])
 whole_explicits = set([
     'piss',
@@ -241,9 +242,9 @@ whole_explicits = set([
     'ass',
     'faggot',
     'niger',
+    'nigger',
     'tard',
     'hardon',
-    'shit',
     'bastard',
     'dildo',
     'penis',
@@ -255,13 +256,18 @@ def profanity_check(text):
     normalizes uniode characters and performs common l33t number replacements
     only checks for whole words
     
-    >>> profanity_check('hello! how was your day?')['CleanText']
-    'hello! how was your day?'
-    >>> profanity_check('hello! fuckballz')['CleanText']
-    'hello! [Explicit]ballz'
-    >>> profanity_check('hello! penis boy')['CleanText']
-    'hello! [Explicit] boy'
+    >>> profanity_check(u'hello! how was your day?')['CleanText']
+    u'hello! how was your day?'
+    >>> profanity_check(u'hello! fuckballz')['CleanText']
+    u'hello! [Explicit]ballz'
+    >>> profanity_check(u'hello! penis boy')['CleanText']
+    u'hello! [Explicit] boy'
+    >>> profanity_check(u'hello! f@g.g0t')['CleanText']
+    u'hello! [Explicit]'
     """
+    if isinstance(text,str):
+        text = unicode(text)
+    
     profanity_response = {
         'FoundProfanity' : False,
         'ProfanityCount' : 0,
@@ -277,18 +283,19 @@ def profanity_check(text):
     def inc_profanity():
         profanity_response['FoundProfanity']  = True
         profanity_response['ProfanityCount'] += 1
-        
+    
     text_words = text.split(' ')
     for i in range(len(text_words)):
         word_normalized = unicodedata.normalize('NFKD', text_words[i].lower()).encode('ascii','ignore')
-        word_normalized.replace('\W','')
-        word_normalized.replace('@','a')
-        word_normalized.replace('4','a')
-        word_normalized.replace('3','e')
-        word_normalized.replace('0','o')
-        word_normalized.replace('1','l')
-        word_normalized.replace('5','s')
-        word_normalized.replace('9','g')
+        word_normalized = word_normalized  \
+                         .replace('@','a') \
+                         .replace('0','o') \
+                         .replace('1','l') \
+                         .replace('3','e') \
+                         .replace('4','a') \
+                         .replace('5','s') \
+                         .replace('9','g')
+        word_normalized = re.sub('\W','', word_normalized)
         if word_normalized in whole_explicits:
             text_words[i] = explicit
             inc_profanity()

@@ -61,12 +61,16 @@ class MediaController(BaseController):
     @web
     def delete(self, id):
         """DELETE /media/id: Delete an existing item"""
-        m = Session.query(Media).filter(Feed.hash==id).first()
+        m = None
+        try:
+            m = Session.query(Media).filter(Media.hash==id).first()
+        except:
+            pass
         if not m:
             raise action_error(_("No such media"), code=404)
-        if m.content.owner != c.logged_in_persona:
+        if m.attached_to.creator != c.logged_in_persona:
             raise action_error(_("Not your media"), code=403)
-
+        
         user_log.info("Deleting Media #%d" % (media.id, ))
         Session.delete(m)
         Session.commit()

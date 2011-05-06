@@ -624,7 +624,7 @@ class ContentsController(BaseController):
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
         # Profanity Check --------------------------------------------------
-        if submit_type=='publish':
+        if submit_type=='publish' and content.private==False:
             profanity_filter(content) # Filter any naughty words and alert moderator
         
         # -- Redirect (if needed)-----------------------------------------------
