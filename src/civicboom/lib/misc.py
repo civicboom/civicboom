@@ -107,7 +107,7 @@ def obj_to_dict(obj, dict_fields):
     Exception: Object types are not allowed in object dictionaries [c]
     """
     d = {}
-    for field_name in dict_fields.keys():
+    for field_name in dict_fields:
         field_processor = dict_fields[field_name]
         field_value     = None
         if field_processor == None:

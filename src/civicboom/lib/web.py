@@ -28,7 +28,7 @@ def multidict_to_dict(multidict):
     from webob.multidict import UnicodeMultiDict
     dict = {}
     if isinstance(multidict, UnicodeMultiDict):
-        for key in multidict.keys():
+        for key in multidict:
             dict[key] = multidict[key]
     return dict
 
@@ -90,13 +90,13 @@ def url(*args, **kwargs):
     #  remove all known subdomains from URL and instate the new provided one
     if 'subdomain' in kwargs:
         subdomain = str(kwargs.pop('subdomain'))
-        assert subdomain in subdomain_formats.keys()
+        assert subdomain in subdomain_formats
         if 'localhost' not in c.host and subdomain == '': #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
             subdomain = 'www'
         if subdomain:
             subdomain += '.'
         host = c.host
-        for possible_subdomain in subdomain_formats.keys():
+        for possible_subdomain in subdomain_formats:
             if possible_subdomain:
                 #host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
                 host = re.sub('^'+possible_subdomain+r'\.', '', host)
@@ -194,7 +194,7 @@ def session_get(key):
 
 
 def session_keys():
-    return [key for key in session.keys() if '_expire' not in key]
+    return [key for key in session if '_expire' not in key]
 
 #-------------------------------------------------------------------------------
 # Cookie Timed Keys Management
@@ -319,7 +319,7 @@ def overlay_status_message(master_message, new_message):
     master_message['data'].update(new_message.get('data') or {})
         
     # Pass though all keys that are not already in master
-    for key in [key for key in new_message.keys() if key not in master_message]:
+    for key in [key for key in new_message if key not in master_message]:
         master_message[key] = new_message[key]
 
     return master_message

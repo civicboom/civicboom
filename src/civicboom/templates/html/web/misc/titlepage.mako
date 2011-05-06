@@ -85,8 +85,8 @@
 
 <%def name="new_front_headline()">
 	<div style="margin: 5em auto 0 auto; width: 61em;">
-		<h1 class="headline" style="padding:0;margin:0;font-size: 285%; text-align: left; color: #333">
-			Generating and sharing news just got easier
+		<h1 class="headline" style="padding:0;margin:0;font-size: 300%; text-align: left; color: #333">
+			Sourcing and sharing news just got easier
 		</h1>
 		<h2 style="padding: 0em 0 0.5em 0;text-align: left; color: #666; font-size: 175%; font-weight: normal;">
 			Respond to requests and generate news or feature content for your needs.
@@ -230,7 +230,7 @@
 								<li>Sign up as a user.</li>
 								<li>Browse requests.</li>
 								<li>Respond and share your news.</li>
-								<li>Set requests for other's to respond to & upload your news content to share.</li>
+								<li>Set requests for others to respond to & upload your news content to share.</li>
 							</ol>
 						</div>
 					</div>
