@@ -531,7 +531,8 @@ class AssignmentContent(UserVisibleContent):
 
     def action_list_for(self, member, **kwargs):
         action_list = UserVisibleContent.action_list_for(self, member, **kwargs)
-        action_list.append('invite_to_assignment')
+        if self.creator == member:
+            action_list.append('invite_to_assignment')
         if self.acceptable_by(member):
             status = self.previously_accepted_by(member)
             if not status:
