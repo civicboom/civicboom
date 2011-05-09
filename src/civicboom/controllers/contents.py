@@ -312,6 +312,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    @role_required('contributor')
     def new(self, **kwargs):
         """
         GET /contents/new: Form to create a new item
@@ -333,6 +334,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    @role_required('contributor')
     def create(self, **kwargs):
         """
         POST /contents: Create a new item
@@ -431,6 +433,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    @role_required('contributor')
     def update(self, id, **kwargs):
         """
         PUT /contents/{id}: Update an existing item
@@ -733,6 +736,7 @@ class ContentsController(BaseController):
 
     @web
     @authorize
+    @role_required('contributor')
     def edit(self, id, **kwargs):
         """
         GET /contents/{id}/edit: Form to edit an existing item
