@@ -2,7 +2,7 @@
 
 <%namespace name="loc" file="/html/web/common/location.mako" />
 
-<%!
+<%!    
     share_url        = False
     rss_url          = False
     auto_georss_link = False
@@ -18,6 +18,7 @@
     <%
         self.content = d['content']
         self.id      = d['content']['id']
+        self.actions = d.get('actions', [])
         
         self.type          = self.content['type']
         self.selected_type = self.type
@@ -34,6 +35,7 @@
         if self.selected_type == 'article' and self.content.get('parent'):
             self.attr.help_frag = 'create_response'
         
+        ##if has_role_required('editor', c.logged_in_persona_role) # AllanC - humm .. is this needed? ['actions'] has a 'publish' thing in it?
     %>
 </%def>
 
@@ -121,20 +123,24 @@
 <%def name="actions_common()">
     % if self.id:
         <a href="${h.url('content', id=self.id)}"
-           class="icon16 i_close_edit"
            title="${_('Discard Changes and view')}"
            onclick="if (confirm('${_('View _content without saving your changes?')}')) {cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');} return false;"
-        ><span>${_("Discard Changes and view")}</span></a>
+        ><span class="icon16 i_close_edit"></span>${_("Discard Changes and view")}</a>
         
+        <span class="separtor"></span>
+        
+        % if 'publish' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
             method="DELETE" ,
-            value="" ,
-            title=_("Delete") ,
-            css_class="icon16 i_delete" ,
+            value=_('Delete') ,
+            value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
             confirm_text=_("Are your sure you want to delete this content?") ,
             json_form_complete_actions = "cb_frag_remove($(this));" ,
         )}
+        <span class="separtor"></span>
+        % endif
+        
     % endif
 </%def>
 
@@ -607,7 +613,8 @@
                 class   = "button submit_preview"
                 value   = "${_("Preview")}"
                 onclick = "add_onclick_submit_field($(this)); submit_complete_${self.id}_url='${url('content', id=self.id, format='frag')}';"
-            />            
+            />
+            % if 'publish' in self.actions:
             <input
                 type    = "submit"
                 name    = "submit_publish"
@@ -615,7 +622,9 @@
                 value   = "${_("Publish")}"
                 onclick = "add_onclick_submit_field($(this)); submit_complete_${self.id}_url='${url('content', id=self.id, format='frag')}';"
             />
+            % endif
         % else:
+            % if 'publish' in self.actions:
             <input
                 type    = "submit"
                 name    = "submit_publish"
@@ -623,6 +632,7 @@
                 value   = "${_("Update")}"
                 onclick = "add_onclick_submit_field($(this)); submit_complete_${self.id}_url='${url('content', id=self.id, format='frag')}';"
             />
+            % endif
 			<a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
         % endif
     </div>

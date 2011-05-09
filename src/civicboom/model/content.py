@@ -1,6 +1,6 @@
 
 from civicboom.model.meta import Base, location_to_string
-from civicboom.model.member import Member
+from civicboom.model.member import Member, has_role_required
 from civicboom.model.media import Media
 
 from sqlalchemy import Column, ForeignKey
@@ -203,6 +203,8 @@ class Content(Base):
     def editable_by(self, member):
         """
         Check to see if a member object has the rights to edit this content
+        
+        NOTE: This does not take into account the logged_in_personas role
         """
         if self.edit_lock:
             return False
@@ -379,7 +381,8 @@ class DraftContent(Content):
         
     def action_list_for(self, member, **kwargs):
         action_list = Content.action_list_for(self, member, **kwargs)
-        action_list.append('publish')
+        if has_role_required('editor', kwargs.get('role', 'admin')):
+            action_list.append('publish')
         return action_list
 
 class CommentContent(Content):
@@ -422,10 +425,11 @@ class UserVisibleContent(Content):
     def action_list_for(self, member, **kwargs):
         action_list = Content.action_list_for(self, member, **kwargs)
         if self.is_parent_owner(member) and member.has_account_required('plus'): # observing member need a paid account
-            if self.approval == 'none':
-                action_list.append('approve')
-                action_list.append('seen')
-                action_list.append('dissasociate')
+            if has_role_required('editor', kwargs.get('role', 'admin')):
+                if self.approval == 'none':
+                    action_list.append('approve')
+                    action_list.append('seen')
+                    action_list.append('dissasociate')
         #AllanC: TODO - if has not boomed before - check boom list:
         if self.creator != member:
             action_list.append('boom')

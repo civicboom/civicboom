@@ -655,6 +655,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    @role_required('editor')
     def delete(self, id, **kwargs):
         """
         DELETE /contents/{id}: Delete an existing item
@@ -742,4 +743,9 @@ class ContentsController(BaseController):
         
         #c.content                  = form_to_content(kwargs, c.content)
         
-        return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template
+        return action_ok(
+            data={
+                'content': c.content.to_dict(list_type='full'),
+                'actions': c.content.action_list_for(c.logged_in_persona, role=c.logged_in_persona_role),
+            }
+        ) # Automatically finds edit template
