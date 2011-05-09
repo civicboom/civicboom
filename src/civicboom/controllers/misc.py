@@ -103,8 +103,10 @@ class MiscController(BaseController):
             return
         
         from civicboom.lib.communication.email_lib import send_email
-        import pprint
-        send_email(config['email.contact'], content_text='upgrade account request: '+pprint.pprint(kwargs, width=1, indent=2))
+        form_string = ''
+        for key,value in kwargs.iteritems():
+            form_string += '\n%s: %s' % (key,value)
+        send_email(config['email.contact'], subject='Civicboom', content_text='upgrade account request: %s' % form_string)
         
         return action_ok(_('upgrade request sent'))
     

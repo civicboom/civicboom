@@ -29,7 +29,7 @@
     <p>So if you have any problems, suggestions or are just tearing your hair out, hit the Feedback button at the bottom right of every page and share with our team. We're here to help!</p>
 
 <h2>Need more help?</h2>
-    <p>Check out the "How to" videos HERE [link to video page]</p>
+    <p>Check out the <a href="${h.url(controller='misc', action='about', id='howto', absolute=True)}">"How to" videos</a></p>
 
 <p>
 Thanks!<br/>

@@ -2,10 +2,20 @@
 <%def name="title()">${_("Payment Plans")}</%def>
 
 <%def name="body()">
-    ##Hold up!
-    ##<p>You're trying to perform an action that is a paid-for service as part of the Premium account</p>
-    
-    <p>cost £50.00 per month (no lengthy contracts - pay as you go).</p>
+    <h1>Get more from Civicboom</h1>
+    ${upgrade_details()}
+</%def>
+
+
+<%def name="popup()">
+    <h1>Hold up!</h1>
+    <p>You're trying to perform an action that is a paid-for service as part of the Premium account</p>
+    ${upgrade_details()}
+</%def>
+
+
+<%def name="upgrade_details()">
+    <p>£50.00 per month (no lengthy contracts - pay as you go).</p>
     <p>Why upgrade? In addition to the basic system, Premium account gives you: </p>
     <ul>
         <li>Unlimited requests - ask what you want, whenever you want.</li>
@@ -14,20 +24,42 @@
         <li>Filter out weak content - disassociate from "off brand" copy...</li>
         <li>Schedule requests - plan multiple requests for campaigns, set deadlines and event dates with automated alerts</li>
     </ul>
+    
+    % if not c.logged_in_user:
+    <p>Please sign in to upgrade you account.</p>
+    % else:
     <p>If you want to upgrade, simply fill in the form below and one of our team will be in touch asap!</p>
     
     ${h.form(h.args_to_tuple(controller='misc', action='upgrade_request', format='redirect'), method='post', json_form_complete_actions="cb_frag_remove(current_element);")}
-        Name:    <input type="text" name="name"     /><br/>
-        Company: <input type="text" name="company"  />(optional)<br/>
-        Phone:   <input type="text" name="phone"    /><br/>
-        email:   <input type="text" name="email"    /><br/>
-        Industry:<input type="text" name="industry" />(optional)<br/>
-        <input type="submit"/>
+        <%
+        upgrade_form_meta = (
+            ('name'    , _('Name')    , ''),
+            ('company' , _('Company') , '(optinonal)'),
+            ('phone'   , _('Phone')   , ''),
+            ('email'   , _('email')   , ''),
+            ('inductry', _('Industry'), '(optinonal)'),
+        )
+        %>
+        <table>
+        % for name, title, extra in upgrade_form_meta:
+        <tr>
+            <td>
+                <label for="upgrade_${name}">${title}:</label>
+            </td>
+            <td>
+                <input type="text" id="upgrade_${name}" name="${name}"/>${extra}<br/>
+            </td>
+        </tr>
+        % endfor
+        </table>
     ${h.end_form()}
+    <input type="submit" value="Request Upgrade"/>
+    % endif
     
-    <p>We promise we'll be in touch within 24 hours - or you get a free Premium upgrade!</p>
-    <p>Civicboom Team</p>
+    ##<p>We promise we'll be in touch within 24 hours - or you get a free Premium upgrade!</p>
+    ##<p>Civicboom Team</p>
 </%def>
+
 
 
 
@@ -37,23 +69,6 @@
   c.upgrade_plans_title = None
   c.upgrade_plans_subtitle = None
   %>
-<h1 class="centre" style="font-size: 250%">Get more from Civicboom</h1>
-<div style="display: block; text-align: center; width: 100%; margin: auto;">
-  <%include file="/frag/misc/upgrade_plans.mako"/>
-</div>
-
-<!-- hack to widen the table up to its max-width, while remaining shrinkable -->
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-
 
 
 <%def name="init_vars()">
