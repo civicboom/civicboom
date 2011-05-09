@@ -399,7 +399,6 @@ class SettingsController(BaseController):
         
         settings = kwargs
         
-        print settings
         
         # Setup custom schema for this update
         # List validators required
