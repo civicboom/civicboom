@@ -29,8 +29,8 @@ class TestMiscController(TestController):
         response = self.app.get(url(controller='misc', action='titlepage'))
         # FIXME: test that generated-but-static content has cache headers set
 
-    def test_upgrade_account(self):
-        response = self.app.get(url(controller='misc', action='upgrade_account'))
+    def test_upgrade_popup(self):
+        response = self.app.get(url(controller='misc', action='upgrade_popup', format='frag'))
 
     def test_georss(self):
         response = self.app.get(url(controller='misc', action='georss'))

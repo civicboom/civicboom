@@ -24,7 +24,7 @@ class TestAssignmentLimitController(TestController):
         
         # Set the number of assignments a normal user is limited too
         created_assignments = []
-        for i in range(config['payment.free.assignment_limit']):
+        for i in range(config['payment.free.assignment_limit']-1):
             created_assignments.append(self.create_assignment('Assignment Limit %d' % i))
             
         # Try to set one over the limit
@@ -39,7 +39,7 @@ class TestAssignmentLimitController(TestController):
         # Double check that all the assimgments appear in this users content list
         response = self.app.get(url('member_action', id='assign_limit', action='content', list='assignments',format='json'))
         response_json = json.loads(response.body)
-        title_check = [] + [str(i) for i in range(config['payment.free.assignment_limit'])] + ['Paid']
+        title_check = [] + [str(i) for i in range(config['payment.free.assignment_limit']-1)] + ['Paid']
         for assignment in response_json['data']['list']['items']:
             for title in title_check:
                 if title in assignment['title']:

@@ -109,6 +109,11 @@ class MiscController(BaseController):
         send_email(config['email.contact'], subject='Civicboom', content_text='upgrade account request: %s' % form_string)
         
         return action_ok(_('upgrade request sent'))
+
+    @web
+    def upgrade_popup(self, **kwargs):
+        return action_ok()
+
     
     @web
     def feedback(self, **kwargs):
