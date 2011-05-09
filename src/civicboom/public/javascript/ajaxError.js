@@ -34,7 +34,7 @@ $(document).ajaxError(function(event, request, settings, exception) {
 
 	// GregM: Upgrade Required
 	if (request.status == 402) {
-		popup('Upgrade plans', '/misc/upgrade_plans.frag');
+		popup('Upgrade plans', '/misc/upgrade_popup.frag');
 	}
 
     /**

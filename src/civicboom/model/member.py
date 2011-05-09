@@ -454,10 +454,10 @@ class Member(Base):
             limit = config['payment.free.assignment_limit']
         elif has_account_required('plus', self.account_type):
             limit = config['payment.plus.assignment_limit']
-        
+
         if not limit:
             return True
-        if len(self.active_assignments_period) > limit:
+        if len(self.active_assignments_period) >= limit:
             return False
         return True
 
