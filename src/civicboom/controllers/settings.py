@@ -80,12 +80,12 @@ for gen in generators:
         add_setting('route_'+gen[0], str(gen[2]).capitalize(), group='messages/messages', weight=i, type="set", value=('n','e'), default=gen[1])
         i = i + 1
 
-config_var_list = [
-    'help_popup_created_user',
-    'help_popup_created_group',
-    'help_popup_created_assignment',
-]
+add_setting('help_popup_created_user', _('Hide the help popup shown upon login to the site'), group='miscellaneous/help_popups', weight=700, type='boolean')
+add_setting('help_popup_created_group', _('Hide the help popup shown upon switching to a group'), group='miscellaneous/help_popups', weight=701, type='boolean')
+add_setting('help_popup_created_assignment', _('Hide the help popup shown upon creating an assignment'), group='miscellaneous/help_popups', weight=702, type='boolean')
 
+add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='miscellaneous/miscellaneous', weight=703, type='boolean')
+add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='miscellaneous/miscellaneous', weight=704, type='boolean', info=_('Please speak to our team before you change this option!'))
 
 #---------------------------------------------------------------------------
 # Setting Validators (for dynamic scema construction)
@@ -106,6 +106,7 @@ type_validators = { 'string':           formencode.validators.UnicodeString(),
                     'password_current': civicboom.lib.form_validators.base.CurrentUserPasswordValidator(),
                     'file':             formencode.validators.FieldStorageUploadConverter(),
                     'location':         civicboom.lib.form_validators.base.LocationValidator(),
+                    'boolean':          formencode.validators.UnicodeString(max=10, strip=True),
 }
 
 settings_validators = {}
@@ -398,6 +399,7 @@ class SettingsController(BaseController):
         
         settings = kwargs
         
+        
         # Setup custom schema for this update
         # List validators required
         validators = {}
@@ -519,11 +521,6 @@ class SettingsController(BaseController):
                             pass
                     else:
                         user.config[setting_name] = settings[setting_name]
-        
-        # AllanC - an validatorless hack for config vars .. the whole settings framework needs looking at and cleaning
-        for setting_name in [key for key in kwargs if key in config_var_list]:
-            log.debug("saving config var %s" % setting_name)
-            user.config[setting_name] = kwargs[setting_name]
         
         Session.commit()
         

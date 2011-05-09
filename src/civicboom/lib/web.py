@@ -549,7 +549,7 @@ def auto_format_output(target, *args, **kwargs):
             result = ae.original_dict
             if c.format=="html" or c.format=="redirect":
                 if result.get('code') == 402:
-                    return redirect(url(controller='misc', action='upgrade_account'))
+                    return redirect(url(controller='misc', action='about', id='upgrade_plans'))
                 if c.html_action_fallback_url:
                     set_flash_message(result) # Set flash message
                     return redirect(c.html_action_fallback_url)

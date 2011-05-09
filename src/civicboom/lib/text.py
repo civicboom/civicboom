@@ -248,6 +248,7 @@ whole_explicits = set([
     'bastard',
     'dildo',
     'penis',
+    'asshole',
 ])
 def profanity_check(text):
     """

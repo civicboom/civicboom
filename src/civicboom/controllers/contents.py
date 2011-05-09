@@ -178,6 +178,7 @@ def sqlalchemy_content_query(include_private=False, **kwargs):
         pass # allow private content
     else:
         results = results.filter(Content.private==False) # public content only
+        results = results.filter(Content.__type__!='draft')
     if 'creator' in kwargs.get('include_fields',[]):
         #results = results.options(joinedload('creator'))
         results = results.options(joinedload(Content.creator))
