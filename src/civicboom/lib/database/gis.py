@@ -59,4 +59,4 @@ def find_locations(q, limit=100):
             AND t.place is not null
         LIMIT %s
     """
-    return get_engine().execute(query, [q+"%", limit])
+    return get_engine().execute(query, [q+"%", limit]).fetchall()
