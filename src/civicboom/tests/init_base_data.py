@@ -219,6 +219,14 @@ def init_base_data():
         Session.add(c)
         Session.commit()
 
+        # Set settings var's so in development we dont get the popups all the time
+        member_config      = [u1, u2]
+        member_config_vars = ['help_popup_created_user',
+                              'help_popup_created_group',
+                              'help_popup_created_assignment',]
+        for member_config_var in member_config_vars:
+            for member in member_config:
+                member.config[member_config_var] = 'init'
 
         assert list(Session.query(User).filter(User.id==0)) == []
         assert list(Session.query(User).filter(User.username=="MrNotExists")) == []

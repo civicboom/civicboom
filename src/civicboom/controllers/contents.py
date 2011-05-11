@@ -312,6 +312,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    @role_required('contributor')
     def new(self, **kwargs):
         """
         GET /contents/new: Form to create a new item
@@ -333,6 +334,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    @role_required('contributor')
     def create(self, **kwargs):
         """
         POST /contents: Create a new item
@@ -431,6 +433,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    @role_required('contributor')
     def update(self, id, **kwargs):
         """
         PUT /contents/{id}: Update an existing item
@@ -655,6 +658,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    @role_required('editor')
     def delete(self, id, **kwargs):
         """
         DELETE /contents/{id}: Delete an existing item
@@ -732,6 +736,7 @@ class ContentsController(BaseController):
 
     @web
     @authorize
+    @role_required('contributor')
     def edit(self, id, **kwargs):
         """
         GET /contents/{id}/edit: Form to edit an existing item
@@ -742,4 +747,9 @@ class ContentsController(BaseController):
         
         #c.content                  = form_to_content(kwargs, c.content)
         
-        return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template
+        return action_ok(
+            data={
+                'content': c.content.to_dict(list_type='full'),
+                'actions': c.content.action_list_for(c.logged_in_persona, role=c.logged_in_persona_role),
+            }
+        ) # Automatically finds edit template
