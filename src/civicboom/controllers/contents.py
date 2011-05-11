@@ -636,7 +636,8 @@ class ContentsController(BaseController):
             else:
                 # Send notifications about previously published content has been UPDATED
                 if   content.__type__ == "assignment":
-                    m = messages.assignment_updated           (creator=content.creator, assignment=content)
+                    if content.update_date < datetime.datetime.now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
+                        m = messages.assignment_updated(creator=content.creator, assignment=content)
                 # going straight to publish, content may not have an ID as it's
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
