@@ -250,7 +250,7 @@
 						<div class="right" style="font-size: 125%">
 							% if 'api_key.janrain' in config:
 								% if config['online']:
-									${h.get_janrain(lang=c.lang)}
+									${h.get_janrain(lang=c.lang, return_url=h.url(controller='account', host=c.host, protocol='https', action='signin'))}
 								% else:
 									<img src="/images/test/janrain.png">
 								% endif
