@@ -21,8 +21,6 @@ def get_engine():
 
 class UserLogHandler(logging.Handler):
     def emit(self, record):
-        db_engine = get_engine()
-
         id = uuid()
         node = platform.node()
         username = "None"
@@ -38,10 +36,7 @@ class UserLogHandler(logging.Handler):
         line_num = record.lineno
         message  = record.getMessage()
 
-        connection = db_engine.connect()
-        connection.execute(text("""
+        get_engine().execute(text("""
             INSERT INTO events(id, node, module, line_num, username, persona, url, address, priority, message)
             VALUES(:id, :node, :module, :line_num, :username, :persona, :url, :address, :priority, :message)
         """), id=str(id), node=node, module=module, line_num=line_num, username=username, persona=persona, url=url, address=addr, priority=priority, message=message)
-        # connection.commit()
-        connection.close()
