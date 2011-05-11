@@ -36,3 +36,26 @@ def get_location_by_name(name):
             return None
 
     return None
+
+def find_locations(q):
+    query = """
+        SELECT
+            t.name as name,
+            ST_AsText(t.way) AS location,
+            t.place as type,
+            (
+                SELECT c.name AS county
+                FROM osm_point c
+                WHERE c.place='county'
+                -- ORDER BY t.way <-> c.way   -- Postgres 9.1 uses knngist to make this one faster?
+                                              -- possibly postgis 2.0 would do this internally anyway?
+                ORDER BY ST_Distance(t.way, c.way) -- docs for 9.0 explicitly say "doesn't use indexes"
+                LIMIT 1
+            ) AS county
+        FROM
+            osm_point t
+        WHERE
+            t.name ILIKE %s
+            AND t.place is not null
+    """
+    return get_engine().execute(query, [q+"%", ])
