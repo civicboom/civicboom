@@ -300,6 +300,10 @@ def update_content(content):
     if not issubclass(content.__class__, Content):
         content = get_content_nocache(content)
     
+    if not content:
+        # need to invalidate
+        return
+    
     etag_key_incement("content",content.id)
     #cache_test.invalidate(get_content, '', content.id)
     

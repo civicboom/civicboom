@@ -62,7 +62,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
 
 class ContentCommentSchema(ContentSchema):
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=True, empty=_('comments must have a valid parent'))
-    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'))
+    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'), max=config['setting.content.max_comment_length'])
 
 
 #-------------------------------------------------------------------------------
@@ -334,7 +334,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
-    @role_required('contributor')
+    #@role_required('contributor') # AllanC - this is handled internally and would have prevented observers from commenting
     def create(self, **kwargs):
         """
         POST /contents: Create a new item
@@ -433,7 +433,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
-    @role_required('contributor')
+    #@role_required('contributor') - AllanC see comment for cretate
     def update(self, id, **kwargs):
         """
         PUT /contents/{id}: Update an existing item
@@ -531,6 +531,28 @@ class ContentsController(BaseController):
         # -- Set Content fields ------------------------------------------------
         
         # TODO: dont allow licence type change after publication - could this be part of validators?
+        
+        # Auto Convert Responses to comments if too short. - AllanC -
+        # Special behaviour for updating drafts to articles. Some users don't understand the concept of responses are deep responsese.
+        # IF
+        # 1.) Draft -> Article
+        # 2.) Has parent
+        # 3.) publishing
+        # 4.) No Media attached
+        # 5.) content length <= comment max length
+        # THEN
+        # make it a comment rather than an article
+        #
+        # NOTE: This is the ONLY way comments can be made from a group.
+        # This was also made with the asumption that users of the API would use the site properly - this code will trigger a 'not in db' warning from polymorphic helpers
+        #   maybe bits need to be added to 'create' to avoid this issue
+        if content.__type__ == 'draft' and kwargs.get('type')=='article' and \
+           content.parent_id and \
+           submit_type == 'publish' and \
+           not content.attachments and not kwargs.get('media_file') and \
+           len(kwargs.get('content', content.content)) <= config['setting.content.max_comment_length']:
+            kwargs['type'] = 'comment' # This will trigger polymorphic helpers below to convert it to a comment
+            
         
         # Morph Content type - if needed (only appropriate for data already in DB)
         if 'type' in kwargs:
