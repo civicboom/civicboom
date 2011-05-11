@@ -37,7 +37,7 @@ def get_location_by_name(name):
 
     return None
 
-def find_locations(q):
+def find_locations(q, limit=100):
     query = """
         SELECT
             t.name as name,
@@ -57,5 +57,6 @@ def find_locations(q):
         WHERE
             t.name ILIKE %s
             AND t.place is not null
+        LIMIT %s
     """
-    return get_engine().execute(query, [q+"%", ])
+    return get_engine().execute(query, [q+"%", limit])
