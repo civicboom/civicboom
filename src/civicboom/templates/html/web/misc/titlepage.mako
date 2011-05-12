@@ -56,9 +56,12 @@
 							</div>
 						</div>
 					</div>
-					<div style="text-align:left;float: right; width: 22em;">
+					<div style="text-align:left;float: right; width: 28em;">
 						<h2>Who's using us?</h2>
 						<div class="partners" style="background-color:#FFF;padding: 0.5em;height: 4em;">
+							<div style="width: 6em;float:left; padding-right: 1em;">
+								<a href="http://www.kentonline.co.uk"><img style="width:100%" src="/images/client-logo/km.png" alt="Kent Messenger" /></a>
+							</div>
 							<div style="width: 10em;float:left">
 								##<h3>Media</h3>
 								<a href="http://www.kentuni.com/news/"><img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" /></a>
@@ -250,7 +253,7 @@
 						<div class="right" style="font-size: 125%">
 							% if 'api_key.janrain' in config:
 								% if config['online']:
-									${h.get_janrain(lang=c.lang)}
+									${h.get_janrain(lang=c.lang, return_url=h.url(controller='account', host=c.host, protocol='https', action='signin'))}
 								% else:
 									<img src="/images/test/janrain.png">
 								% endif

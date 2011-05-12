@@ -62,7 +62,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
 
 class ContentCommentSchema(ContentSchema):
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=True, empty=_('comments must have a valid parent'))
-    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'))
+    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'), max=config['setting.content.max_comment_length'])
 
 
 #-------------------------------------------------------------------------------
@@ -312,6 +312,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    @role_required('contributor')
     def new(self, **kwargs):
         """
         GET /contents/new: Form to create a new item
@@ -333,6 +334,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    #@role_required('contributor') # AllanC - this is handled internally and would have prevented observers from commenting
     def create(self, **kwargs):
         """
         POST /contents: Create a new item
@@ -431,6 +433,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    #@role_required('contributor') - AllanC see comment for cretate
     def update(self, id, **kwargs):
         """
         PUT /contents/{id}: Update an existing item
@@ -529,6 +532,28 @@ class ContentsController(BaseController):
         
         # TODO: dont allow licence type change after publication - could this be part of validators?
         
+        # Auto Convert Responses to comments if too short. - AllanC -
+        # Special behaviour for updating drafts to articles. Some users don't understand the concept of responses are deep responsese.
+        # IF
+        # 1.) Draft -> Article
+        # 2.) Has parent
+        # 3.) publishing
+        # 4.) No Media attached
+        # 5.) content length <= comment max length
+        # THEN
+        # make it a comment rather than an article
+        #
+        # NOTE: This is the ONLY way comments can be made from a group.
+        # This was also made with the asumption that users of the API would use the site properly - this code will trigger a 'not in db' warning from polymorphic helpers
+        #   maybe bits need to be added to 'create' to avoid this issue
+        if content.__type__ == 'draft' and kwargs.get('type')=='article' and \
+           content.parent_id and \
+           submit_type == 'publish' and \
+           not content.attachments and not kwargs.get('media_file') and \
+           len(kwargs.get('content', content.content)) <= config['setting.content.max_comment_length']:
+            kwargs['type'] = 'comment' # This will trigger polymorphic helpers below to convert it to a comment
+            
+        
         # Morph Content type - if needed (only appropriate for data already in DB)
         if 'type' in kwargs:
             if kwargs.get('type') not in publishable_types or \
@@ -611,7 +636,8 @@ class ContentsController(BaseController):
             else:
                 # Send notifications about previously published content has been UPDATED
                 if   content.__type__ == "assignment":
-                    m = messages.assignment_updated           (creator=content.creator, assignment=content)
+                    if content.update_date < datetime.datetime.now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
+                        m = messages.assignment_updated(creator=content.creator, assignment=content)
                 # going straight to publish, content may not have an ID as it's
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
@@ -655,6 +681,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
+    @role_required('editor')
     def delete(self, id, **kwargs):
         """
         DELETE /contents/{id}: Delete an existing item
@@ -732,6 +759,7 @@ class ContentsController(BaseController):
 
     @web
     @authorize
+    @role_required('contributor')
     def edit(self, id, **kwargs):
         """
         GET /contents/{id}/edit: Form to edit an existing item
@@ -742,4 +770,9 @@ class ContentsController(BaseController):
         
         #c.content                  = form_to_content(kwargs, c.content)
         
-        return action_ok(data={'content':c.content.to_dict(list_type='full')}) # Automatically finds edit template
+        return action_ok(
+            data={
+                'content': c.content.to_dict(list_type='full'),
+                'actions': c.content.action_list_for(c.logged_in_persona, role=c.logged_in_persona_role),
+            }
+        ) # Automatically finds edit template
