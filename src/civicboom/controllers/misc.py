@@ -7,31 +7,6 @@ from urllib import quote_plus, unquote_plus
 import os
 
 
-def _get_info(frame):
-    reqinfo = 'Unknown'
-    f = frame
-    while f is not None:
-        if f.f_code.co_filename.endswith('/SocketServer.py') and f.f_code.co_name == 'handle_request':
-            reqinfo = "Server"
-            break
-        if f.f_code.co_filename.endswith('/threading.py') and f.f_code.co_name == 'wait':
-            reqinfo = "Idle Worker"
-            break
-        if f.f_code.co_filename.endswith('/reloader.py') and f.f_code.co_name == 'periodic_reload':
-            reqinfo = "Pylons Reloader"
-            break
-        if f.f_code.co_filename.endswith('/lib/base.py') and f.f_code.co_name == '__call__':
-            request = f.f_globals.get('request')
-            if request is not None:
-                reqinfo = (request.environ.get('REQUEST_METHOD', '') + ' ' + request.environ.get('PATH_INFO', ''))
-                qs = request.environ.get('QUERY_STRING')
-                if qs:
-                    reqinfo += '?'+qs
-            break
-        f = f.f_back
-    return reqinfo
-
-
 class MiscController(BaseController):
     @cacheable(time=600)
     @auto_format_output
@@ -94,31 +69,6 @@ class MiscController(BaseController):
             'articles':  Session.query(Content).filter(Content.__type__=="article").filter(Content.parent_id==None).count(),
             'comments':  Session.query(Content).filter(Content.__type__=="comment").count(),
         })
-
-    def threads(self):
-        import sys
-        import traceback
-        items = sys._current_frames().items()
-        dumps = []
-        for thread, frame in items:
-            dumps.append({
-                "id": str(thread),
-                "info": _get_info(frame),
-                "trace": "\n".join(traceback.format_stack(frame)),
-            })
-
-        from webhelpers.html import HTML, literal
-        out = literal()
-        out += str(len(items))+" threads:\n"
-        for data in dumps:
-            out += HTML.br()
-            out += HTML.a(data["info"], href="#"+data["id"])
-        for data in dumps:
-            out += HTML.hr()
-            out += HTML.a(data["id"]+": "+HTML.b(data["info"]), name=data["id"])
-            out += HTML.p()
-            out += HTML.pre(data["trace"])
-        return out
 
     @web
     def get_widget(self, id=None):
