@@ -147,7 +147,9 @@ def strip_html_tags(text):
     #import webhelpers.markdown.HtmlBlockPreprocessor - using proper modules to do this would be good, couldnt work out how to use this HTML processor
     #text = webhelpers.html.converters.markdown(text)
     ##return re.sub(r'&lt;(.*?)&gt;', " ", saxutils.escape(text))
-    return re.sub(r'<(.*?)>', " ", text)
+    text = re.sub(r'<(.*?)>', ' ', text)
+    text = re.sub(r'[ \t]+' , ' ', text)
+    return text.strip()
     
 #-------------------------------------------------------------------------------
    
@@ -222,10 +224,11 @@ def safe_python_strings(d):
 
 
 #-------------------------------------------------------------------------------
-explicit  = '[Explicit]'
+explicit_replacement  = '[Explicit]'
 part_explicits = set([
     'fuck',
     'shit',
+    'cunt',
 ])
 whole_explicits = set([
     'piss',
@@ -234,12 +237,18 @@ whole_explicits = set([
     'slag',
     'slut',
     'cock',
+    'cocksucker',
+    'cocklover',
+    'cockfag',
+    'cockbite',
     'dick',
+    'dickhead',
     'bollocks',
     'bollox',
-    'cunt',
+    'wank',
     'wanker',
     'ass',
+    'asswipe'
     'faggot',
     'niger',
     'nigger',
@@ -249,7 +258,72 @@ whole_explicits = set([
     'dildo',
     'penis',
     'asshole',
+    'cum',
+    'cumshot',
+    'twat',
+    'turd',
+    'boobs',
+    'fudgepacker',
+    'spic',
+    'wog',
+    'beaner',
+    'asshole',
+    'wang',
+    'schlong',
+    'boner',
+    'douche',
+    'prick',
+    'retard',
+    'tits',
+    'tit',
+    'rape',
+    'porn',
+    'blowjob',
+    'rimjob',
+    'handjob',
+    'bitch',
+    'knob',
+    'chink',
+    'nutsack',
+    'ballsack',
+    'dickweed',
+    'pubes',
+    'pubic',
+    'foreskin',
+    'vagina',
+    'testicles',
+    'testicle',
+    'dong',
+    'pecker',
+    'gaywad',
+    'gaylord',
+    'poontang',
+    'skeet',
+    'tosser',
+    'lesbo',
+    'jizz',
+    'junglebunny',
+    'gay',
+    'fag',
+    'tranny',
+    'firing',
+    'humping',
+    'queer',
+    'queef',
+    'spac',
+    'spactard',
+    'kunt',
+    'wankstain',
+    'polesmoker',
+    'deepthroat',
+    'anal',
+    'cooch',
+    'clit',
+    'coon',
+    'fellatio',
+    'cunnilingus',
 ])
+
 def profanity_check(text):
     """
     Simple profanity check
@@ -260,11 +334,15 @@ def profanity_check(text):
     >>> profanity_check(u'hello! how was your day?')['CleanText']
     u'hello! how was your day?'
     >>> profanity_check(u'hello! fuckballz')['CleanText']
-    u'hello! [Explicit]ballz'
+    u'hello! [Explicit]'
     >>> profanity_check(u'hello! penis boy')['CleanText']
     u'hello! [Explicit] boy'
     >>> profanity_check(u'hello! f@g.g0t')['CleanText']
     u'hello! [Explicit]'
+    >>> profanity_check(u'hello! <p>cock</p>')['CleanText']
+    u'hello! <p>[Explicit]</p>'
+    >>> profanity_check(u'hello! gay!!!! yeah!')['CleanText']
+    u'hello! [Explicit] yeah!'
     """
     if isinstance(text,str):
         text = unicode(text)
@@ -274,6 +352,12 @@ def profanity_check(text):
         'ProfanityCount' : 0,
         'CleanText'      : text,
     }
+    
+    def contains_part_explicit(word):
+        for explicit in part_explicits:
+            if explicit in word:
+                return True
+        return False
     
     def replace_part_explicit(word):
         for part_explicit in part_explicits:
@@ -285,7 +369,8 @@ def profanity_check(text):
         profanity_response['FoundProfanity']  = True
         profanity_response['ProfanityCount'] += 1
     
-    text_words = text.split(' ')
+    text_words = text.replace('<', ' -lt- ').replace('>', ' -gt- ').split(' ') # escape all html tags and split by spaces
+    
     for i in range(len(text_words)):
         word_normalized = unicodedata.normalize('NFKD', text_words[i].lower()).encode('ascii','ignore')
         word_normalized = word_normalized  \
@@ -297,16 +382,16 @@ def profanity_check(text):
                          .replace('5','s') \
                          .replace('9','g')
         word_normalized = re.sub('\W','', word_normalized)
-        if word_normalized in whole_explicits:
-            text_words[i] = explicit
+        if word_normalized in whole_explicits or contains_part_explicit(word_normalized):
+            text_words[i] = explicit_replacement
             inc_profanity()
-        else:
-            word_normalized_replaced = replace_part_explicit(word_normalized)
-            if word_normalized_replaced != word_normalized:
-                text_words[i] = word_normalized_replaced
-                inc_profanity()
+        #else:
+            #word_normalized_replaced = replace_part_explicit(word_normalized)
+            #if word_normalized_replaced != word_normalized:
+            #    text_words[i] = word_normalized_replaced
+            #    inc_profanity()
     
     if profanity_response['FoundProfanity']:
-        profanity_response['CleanText'] = ' '.join(text_words)
+        profanity_response['CleanText'] = ' '.join(text_words).replace(' -lt- ', '<').replace(' -gt- ', '>') # unescape the '<' '>' back
     
     return profanity_response

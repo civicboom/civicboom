@@ -85,13 +85,12 @@ class AdminControllerBase(BaseController):
             wheres.append("url = %s")
             args.append(request.params["url"])
 
-        connection = get_engine().connect()
         query = "SELECT * FROM events WHERE "
         where = " AND ".join(wheres)
         order = " ORDER BY date_sent DESC"
         limit = " LIMIT 50"
-        result = connection.execute(query + where + order + limit, args)
-        return render(prefix + "eventlog.mako", extra_vars={"events": list(result)})
+        result = get_engine().execute(query + where + order + limit, args).fetchall()
+        return render(prefix + "eventlog.mako", extra_vars={"events": result})
 
 
 AdminController = ModelsController(AdminControllerBase,

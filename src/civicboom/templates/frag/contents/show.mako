@@ -24,7 +24,8 @@
     <%
         self.content   = d['content']
         self.id        = self.content['id']
-        self.actions   = d['actions']
+        self.actions   = d.get('actions', [])
+        
         force = _('_draft')
         if self.content['type'] == 'draft':
             self.attr.title     = _('_Draft') + ' ' + _('_'+self.content['target_type'])
@@ -53,6 +54,7 @@
         
         if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment' and not c.logged_in_persona.config['help_popup_created_assignment']:
             self.attr.popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
+        
     %>
 </%def>
 
@@ -444,14 +446,14 @@
                     <input type="hidden" name="title" value="Re: ${d['content']['title']}">
                     ##<input type="hidden" name="type" value="comment">
                     <textarea name="content" class="comment-${self.id}"></textarea><br />
-                    You have <span class="commentcount-${self.id}">200</span> characters left.<br />
+                    You have <span class="commentcount-${self.id}">${config['setting.content.max_comment_length']}</span> characters left.<br />
                     Comments are for clarifying details, if you are responding to the request
 					you should use the 'Respond Now' button above.<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Comment')}">
                     <script type="text/javascript">
                         $(function () {
-                            $('.comment-${self.id}').limit(200, '.commentcount-${self.id}');
+                            $('.comment-${self.id}').limit(${config['setting.content.max_comment_length']}, '.commentcount-${self.id}');
                         });
                     </script>
                 ${h.end_form()}
@@ -502,7 +504,6 @@
             value           = _('Publish') ,
             value_formatted = h.literal("<span class='icon16 i_publish'></span>%s") % _('Publish') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-            
         )}
         <span class="separtor"></span>
     % endif
@@ -603,6 +604,7 @@
         ><span class="icon16 i_edit"></span>${_("Edit")}</a>
         <span class="separtor"></span>
         
+        % if 'publish' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
             method = "DELETE",
@@ -612,6 +614,7 @@
             json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
         )}
         <span class="separtor"></span>
+        % endif
     % endif
 
     % if 'aggregate' in self.actions:
