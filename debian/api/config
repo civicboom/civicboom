@@ -3,8 +3,6 @@
 . /usr/share/debconf/confmodule
 
 if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
-  db_input high cb-website-api/do_timed_tasks || true
-  db_go
   db_input high cb-website-api/db_main || true
   db_go
   db_input high cb-website-api/db_geo || true
