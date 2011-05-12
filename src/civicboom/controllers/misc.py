@@ -80,10 +80,19 @@ class MiscController(BaseController):
             reqinfo = ''
             f = frame
             while f is not None:
+                if f.f_code.co_filename.endswith('/SocketServer.py') and f.f_code.co_name == 'handle_request':
+                    reqinfo = "Server"
+                    break
+                if f.f_code.co_filename.endswith('/threading.py') and f.f_code.co_name == 'wait':
+                    reqinfo = "Idle Worker"
+                    break
+                if f.f_code.co_filename.endswith('/reloader.py') and f.f_code.co_name == 'periodic_reload':
+                    reqinfo = "Pylons Reloader"
+                    break
                 if f.f_code.co_filename.endswith('/lib/base.py') and f.f_code.co_name == '__call__':
                     request = f.f_globals.get('request')
                     if request is not None:
-                        reqinfo += (request.environ.get('REQUEST_METHOD', '') + ' ' + request.environ.get('PATH_INFO', ''))
+                        reqinfo = (request.environ.get('REQUEST_METHOD', '') + ' ' + request.environ.get('PATH_INFO', ''))
                         qs = request.environ.get('QUERY_STRING')
                         if qs:
                             reqinfo += '?'+qs
