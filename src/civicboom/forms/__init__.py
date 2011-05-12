@@ -259,6 +259,7 @@ User.configure(include=[
         User.name,
         User.join_date,
         User.email,
+        User.email_unverified,
         User.status,
         ])
 
