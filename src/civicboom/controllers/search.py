@@ -1,5 +1,5 @@
 from civicboom.lib.base   import *
-from civicboom.lib.database.gis import get_engine
+from civicboom.lib.database.gis import find_locations
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_
 from sqlalchemy.orm       import join
@@ -19,31 +19,9 @@ class SearchController(BaseController):
         Used in location autocomplete
         """
         if "term" in request.GET:
-            q = request.GET["term"]
-            connection = get_engine().connect()
-            query = """
-                SELECT
-                    t.name as name,
-                    ST_AsText(t.way) AS location,
-                    t.place as place,
-                    (
-                        SELECT c.name AS county
-                        FROM osm_point c
-                        WHERE c.place='county'
-                        -- ORDER BY t.way <-> c.way   -- Postgres 9.1 uses knngist to make this one faster?
-                                                      -- possibly postgis 2.0 would do this internally anyway?
-                        ORDER BY ST_Distance(t.way, c.way) -- docs for 9.0 explicitly say "doesn't use indexes"
-                        LIMIT 1
-                    ) AS county
-                FROM
-                    osm_point t
-                WHERE
-                    t.name ILIKE %s
-                    AND t.place is not null
-            """
-            result = connection.execute(query, [q+"%", ])
+            result = find_locations(request.GET["term"])
         else:
             result = []
 
-        json_rows = [{"name": "%s (%s)" % (row.name, row.county), "location": row.location, "type": row.place} for row in result]
+        json_rows = [{"name": "%s (%s)" % (row.name, row.county), "location": row.location, "type": row.type} for row in result]
         return action_ok(data={"locations":json_rows})
