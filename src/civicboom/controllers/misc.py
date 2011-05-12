@@ -77,8 +77,30 @@ class MiscController(BaseController):
         items = sys._current_frames().items()
         out = str(len(items))+" threads:\n"
         for thread, frame in items:
-            out = out + "\n"+("-"*79)+"\n"+str(thread)+"\n\n"
-            out = out + "\n".join(traceback.format_stack(frame))
+            reqinfo = ''
+            f = frame
+            while f is not None:
+                if f.f_code.co_filename.endswith('/lib/base.py') and f.f_code.co_name == '__call__':
+                    request = f.f_globals.get('request')
+                    if request is not None:
+                        reqinfo += (request.environ.get('REQUEST_METHOD', '') + ' ' + request.environ.get('PATH_INFO', ''))
+                        qs = request.environ.get('QUERY_STRING')
+                        if qs:
+                            reqinfo += '?'+qs
+                    break
+                f = f.f_back
+            out = out + """
+%(bar)s
+
+%(id)s: %(info)s
+
+%(trace)s
+            """ % {
+                "info": reqinfo,
+                "bar": ("-"*79),
+                "id": str(thread),
+                "trace": "\n".join(traceback.format_stack(frame)),
+            }
         return out
 
     @web
