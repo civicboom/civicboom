@@ -25,7 +25,7 @@ class TestAutoDraftToComment(TestController):
         
         # Create draft to above assignment - with less than config[setting.content.max_comment_length]
         draft_id_1 =self.create_content(title     = 'auto_draft_to_comment_response',
-                                        content   = 'auto_draft_to_comment_response',
+                                        content   = '<p>auto_draft_to_comment_response</p>', # The HTML should be removed because comments should not have HTML in
                                         type      = 'draft',
                                         parent_id = assignment_id)
         

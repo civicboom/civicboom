@@ -237,13 +237,10 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
         raise action_error(_("The _content you requested was not %s" % content_type), code=404)
     if is_viewable:
         if not content.viewable_by(c.logged_in_persona):
-            raise action_error(_("The _content you requested is not viewable"), code=403)
+            raise errors.error_view_permission()
+            #raise action_error(_("The _content you requested is not viewable"), code=403)
         if content.__type__ == "comment":
             user_log.debug("Attempted to view a comment as an article")
-            #raise action_error(_("_content not found"), code=404)
-            # AllanC - originaly viewing a comment was an error, we may want in the future to display comments and sub comments, for now we redirect to parent
-            if c.format == 'html' or c.format == 'redirect':
-                return redirect(url('content', id=content.parent.id))
             raise action_error(_('Attempted to view a comment as _article'))
     if is_editable and not content.editable_by(c.logged_in_persona):
         # AllanC TODO: need to check role in group to see if they can do this

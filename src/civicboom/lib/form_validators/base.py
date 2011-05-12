@@ -96,9 +96,16 @@ class ContentObjectValidator(validators.FancyValidator):
 class ContentUnicodeValidator(validators.UnicodeString):
     not_empty = False
     strip     = True
+    def __init__(self, html='clean_html_markup', *args, **kwargs):
+        self.html = html
+        return validators.UnicodeString.__init__(self, *args, **kwargs)
     def _to_python(self, value, state):
         value = validators.UnicodeString._to_python(self, value, state)
-        return clean_html_markup(value)
+        if self.html=='clean_html_markup':
+            return clean_html_markup(value)
+        if self.html=='strip_html_tags':
+            return strip_html_tags(value)
+        raise Exception('validator not setup correctly')
 
 
 class ContentTagsValidator(validators.FancyValidator):

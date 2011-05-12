@@ -17,6 +17,7 @@ import formencode
 import civicboom.lib.form_validators.base
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
+
 # Search imports
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
@@ -27,7 +28,7 @@ import datetime
 
 # Other imports
 from sets import Set # may not be needed in Python 2.7+
-
+from civicboom.lib.text import strip_html_tags
 
 # Logging setup
 log      = logging.getLogger(__name__)
@@ -62,7 +63,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
 
 class ContentCommentSchema(ContentSchema):
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=True, empty=_('comments must have a valid parent'))
-    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'), max=config['setting.content.max_comment_length'])
+    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'), max=config['setting.content.max_comment_length'], html='strip_html_tags')
 
 
 #-------------------------------------------------------------------------------
@@ -551,8 +552,8 @@ class ContentsController(BaseController):
            submit_type == 'publish' and \
            not content.attachments and not kwargs.get('media_file') and \
            len(kwargs.get('content', content.content)) <= config['setting.content.max_comment_length']:
-            kwargs['type'] = 'comment' # This will trigger polymorphic helpers below to convert it to a comment
-            
+            kwargs['type']    = 'comment' # This will trigger polymorphic helpers below to convert it to a comment
+            kwargs['content'] = strip_html_tags(kwargs.get('content', content.content)) # HACK - AllanC - because the content validator has already triggered so I  manually force the removal of html tags - we dont want html in comments
         
         # Morph Content type - if needed (only appropriate for data already in DB)
         if 'type' in kwargs:
@@ -651,7 +652,7 @@ class ContentsController(BaseController):
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
         # Profanity Check --------------------------------------------------
-        if submit_type=='publish' and content.private==False:
+        if (submit_type=='publish' and content.private==False) or content.__type__ == 'comment':
             profanity_filter(content) # Filter any naughty words and alert moderator
         
         # -- Redirect (if needed)-----------------------------------------------
@@ -717,8 +718,17 @@ class ContentsController(BaseController):
         @example https://test.civicboom.com/contents/1.rss
         """
         # url('content', id=ID)
+       
+        content = get_content(id) #, is_viewable=True) # This is done manually below we needed some special handling for comments
         
-        content = get_content(id, is_viewable=True)
+        if content.__type__ == 'comment':
+            if c.format == 'html' or c.format == 'redirect':
+                return redirect(url('content', id=content.parent.id))
+            if c.format == 'frag':
+                content = content.parent # Bit of a HACK - if we try to read a content frag for a comment, just return the parent
+        
+        if not content.viewable_by(c.logged_in_persona):
+            raise errors.error_view_permission()
         
         if 'lists' not in kwargs:
             kwargs['lists'] = 'comments, responses, contributors, actions, accepted_status'
