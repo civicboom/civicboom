@@ -168,7 +168,7 @@ class MessagesController(BaseController):
             messages_sent.append(m)
             
             # Alert via email, MSN, etc - NOTE the message route for message_recived does not generate a notification by default
-            m.target.send_notification(messages.message_received(member=m.source, message=m.content))
+            m.target.send_notification(messages.message_received(member=m.source, message=m.content, you=m.target))
         
         Session.commit()
         

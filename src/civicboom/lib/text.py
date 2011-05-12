@@ -248,7 +248,7 @@ whole_explicits = set([
     'wank',
     'wanker',
     'ass',
-    'asswipe'
+    'asswipe',
     'faggot',
     'niger',
     'nigger',
