@@ -43,6 +43,9 @@ class TestMiscController(TestController):
         # FIXME: tests for GET and POST variables
         response = self.app.get(url(controller='misc', action='echo', format="json"))
 
+    def test_threads(self):
+        response = self.app.get(url(controller='misc', action='threads'))
+
     def test_stats(self):
         # FIXME: check JSON output
         response = self.app.get(url(controller='misc', action='stats', format="json"))
