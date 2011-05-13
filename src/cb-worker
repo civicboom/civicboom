@@ -49,7 +49,7 @@ def main(argv):
         import platform
         w.init_queue(redis_.RedisQueue(Redis(w.config['service.redis.server']), platform.node()))
     else:
-        log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
+        log.error("Invalid worker type: %s" % w.config['worker.queue'])
 
     set_up_environment()
     run()
@@ -117,7 +117,30 @@ def run():
             'delete_tmp': False,
             'file_type': 'image',
             'file_name': u'seeking.png',
-            'file_hash': '054fc3b4a725b4f2c85522d52c76477a404520d0'
+            'file_hash': '054fc3b4a725b4f2c85522d52c76477a404520d0',
+        })
+        w.add_job({
+            'task': 'profanity_check',
+            'content': 76,
+            'url_base': 'https://vm.civicboom.com/',
+        })
+        from webhelpers.html import literal
+        w.add_job({
+            'task': 'send_notification',
+            'default_route': 'ne',
+            'name': 'article_published_by_followed',
+            'members': [u'unitfriend', u'follow_test'],
+            'rendered_message': {
+                'e': {
+                    'subject': u'Civicboom: new content',
+                    'content_text': u'Testing User (https://...) has written new content : Untitled (https://...)',
+                    'content_html': literal(u'<!DOCTYPE html>...'),
+                },
+                'n': {
+                    'subject': u'new content',
+                    'content': u'Testing User has written new content : <a href="https://www.vm.civicboom.com/contents/75">Untitled</a>',
+                }
+            }
         })
         log.info("Waiting for jobs")
         w.run_worker()
