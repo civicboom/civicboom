@@ -14,6 +14,7 @@ import civicboom.lib.helpers
 from civicboom.config.routing import make_map
 from civicboom.model import init_model
 from civicboom.lib.civicboom_init import init as civicboom_init  # This will trigger a set of additional initalizers
+import civicboom.lib.services.warehouse as wh
 
 # for setting up the redis backend to beaker
 import beaker
@@ -99,6 +100,9 @@ def load_environment(global_conf, app_conf):
     # officially ready -- so make it unofficially ready and pray (HACK)
     for k, v in list(config.items()):
         pylons.config[k] = v
+
+    # configure the warehouse
+    wh.configure(pylons.config)
 
     # set up worker processors
     from civicboom.lib.worker_threads.send_notification  import send_notification
