@@ -597,44 +597,49 @@
 ## Submit buttons
 ##------------------------------------------------------------------------------
 <%def name="submit_buttons()">
+
+    ## AllanC - note the class selectors are used by jQuery to simulate clicks
+    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False)">
+        <%
+            button_id = "submit_%s_%s" % (name, self.id)
+            if not title_text:
+                title_text = _(name)
+        %>
+        <input
+            type    = "submit"
+            id      = "${button_id}"
+            name    = "submit_${name}"
+            class   = "submit_${name} button"
+            value   = "${title_text}"
+            onclick = "
+                ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
+                if (!$(this).hasClass('disabled')) {
+                    $(this).addClass('disabled');
+                    add_onclick_submit_field($(this));
+                    % if show_content_frag_on_submit_complete:
+                    submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                    % endif
+                    setTimeout('$(\'#${button_id}\').removeClass(\'disabled\');', 1000);
+                }
+                else {
+                    return false;
+                }
+            "
+        />
+    </%def>
+    
     <div style="text-align: right;">
         % if self.content['type'] == "draft":
-			## AllanC - note the class selectors are used by jQuery to simulate clicks
-			<input
-                type    = "submit"
-                name    = "submit_draft"
-                class   = "button submit_draft"
-                value   = "${_("Save")}"
-                onclick = "add_onclick_submit_field($(this));"
-            />
-			<input
-                type    = "submit"
-                name    = "submit_preview"
-                class   = "button submit_preview"
-                value   = "${_("Preview")}"
-                onclick = "add_onclick_submit_field($(this)); submit_complete_${self.id}_url='${url('content', id=self.id, format='frag')}';"
-            />
+            ${submit_button('draft'  , _("Save")                                               )}
+            ${submit_button('preview', _("Preview"), show_content_frag_on_submit_complete=True )}
             % if 'publish' in self.actions:
-            <input
-                type    = "submit"
-                name    = "submit_publish"
-                class   = "button"
-                value   = "${_("Publish")}"
-                onclick = "add_onclick_submit_field($(this)); submit_complete_${self.id}_url='${url('content', id=self.id, format='frag')}';"
-            />
+            ${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True )}
             % endif
         % else:
             % if 'publish' in self.actions:
-            <input
-                type    = "submit"
-                name    = "submit_publish"
-                class   = "button"
-                value   = "${_("Update")}"
-                onclick = "add_onclick_submit_field($(this)); submit_complete_${self.id}_url='${url('content', id=self.id, format='frag')}';"
-            />
+            ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
             % endif
-			<a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
+            <a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
         % endif
     </div>
 </%def>
-
