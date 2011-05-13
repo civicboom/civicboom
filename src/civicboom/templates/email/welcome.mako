@@ -2,7 +2,7 @@
 
 <%def name="body()">
 
-<h1>Welcome to <a href="${h.url('', absolute=True)}">_site_name!</a></h1>
+<h1>Welcome to <a href="${h.url('', absolute=True)}">${_('_site_name')}!</a></h1>
 
 <p>What you can do next:</p>
 

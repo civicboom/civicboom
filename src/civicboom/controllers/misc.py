@@ -70,17 +70,6 @@ class MiscController(BaseController):
             'comments':  Session.query(Content).filter(Content.__type__=="comment").count(),
         })
 
-    def threads(self):
-        import sys
-        import traceback
-        response.headers['Content-type'] = "text/plain"
-        items = sys._current_frames().items()
-        out = str(len(items))+" threads:\n"
-        for thread, frame in items:
-            out = out + "\n"+("-"*79)+"\n"+str(thread)+"\n\n"
-            out = out + "\n".join(traceback.format_stack(frame))
-        return out
-
     @web
     def get_widget(self, id=None):
         c.widget_user_preview = _get_member(id)

@@ -185,13 +185,13 @@ def follow(follower, followed, delay_commit=False):
         follow.follower = follower
         Session.add(follow)
     
-    followed.send_notification(messages.followed_by(member=follower), delay_commit=True)
-    
     if not delay_commit:
         Session.commit()
     
     update_member(follower)
     update_member(followed)
+
+    followed.send_notification(messages.followed_by(member=follower, you=followed))
 
     return True
 
@@ -212,14 +212,14 @@ def unfollow(follower, followed, delay_commit=False):
     #follower.following.remove(followed)
     follow = Session.query(Follow).filter(Follow.member_id==followed.id).filter(Follow.follower_id==follower.id).one()
     Session.delete(follow)
-        
-    followed.send_notification(messages.follow_stop(member=follower), delay_commit=True)
     
     if not delay_commit:
         Session.commit()
     
     update_member(follower)
     update_member(followed)
+
+    followed.send_notification(messages.follow_stop(member=follower, you=followed))
 
     return True
 
@@ -241,14 +241,15 @@ def follower_trust(followed, follower, delay_commit=False):
         raise action_error(_('follower still has pending invite'), code=400)
     elif follow.type == 'trusted':
         raise action_error(_('follower already trusted'), code=400)
-    
-    follower.send_notification(messages.follower_trusted(member=followed), delay_commit=True)
-    
+       
     if not delay_commit:
         Session.commit()
     
     update_member(follower)
     update_member(followed)
+    
+    follower.send_notification(messages.follower_trusted(member=followed, you=follower))
+    
     return True
 
 def follower_distrust(followed, follower, delay_commit=False):
@@ -272,13 +273,14 @@ def follower_distrust(followed, follower, delay_commit=False):
     elif follow.type == 'normal':
         raise action_error(_('follower was not trusted'), code=400)
     
-    follower.send_notification(messages.follower_distrusted(member=followed), delay_commit=True)
-    
     if not delay_commit:
         Session.commit()
     
     # update_member(follower) # GregM: Needed?
     # update_member(followed) # GregM: Needed?
+    
+    follower.send_notification(messages.follower_distrusted(member=followed, you=follower))
+    
     return True
 
 def follower_invite_trusted(followed, follower, delay_commit=False):
@@ -302,14 +304,15 @@ def follower_invite_trusted(followed, follower, delay_commit=False):
     follow.follower = follower
     follow.type        = 'trusted_invite'
     Session.add(follow)
-    
-    follower.send_notification(messages.follow_invite_trusted(member=followed), delay_commit=True)
-    
+   
     if not delay_commit:
         Session.commit()
     
     update_member(follower)
     update_member(followed)
+    
+    follower.send_notification(messages.follow_invite_trusted(member=followed, you=follower))
+    
     return True
 
 #-------------------------------------------------------------------------------
@@ -354,7 +357,7 @@ def join_group(group, member, delay_commit=False):
         if group.join_mode == "invite_and_request":
             membership.status = "request"
             return_value = "request"
-            group.send_notification(messages.group_join_request(member=member, group=group), delay_commit=True)
+            group.send_notification(messages.group_join_request(member=member, group=group))
             
     # If user has actually become a member (open or reply to invite) then notify group
     if return_value == True:
@@ -392,12 +395,12 @@ def remove_member(group, member, delay_commit=False):
     if membership.status == "active": # member removed
         from pylons import tmpl_context as c
         if member!=c.logged_in_user:
-            membership.member.send_notification(messages.group_remove_member_to_member(admin=c.logged_in_user, group=group), delay_commit=True)
-        group.send_notification(messages.group_remove_member_to_group( admin=c.logged_in_user, group=group, member=member), delay_commit=True)
+            membership.member.send_notification(messages.group_remove_member_to_member(admin=c.logged_in_user, group=group))
+        group.send_notification(messages.group_remove_member_to_group( admin=c.logged_in_user, group=group, member=member))
     elif membership.status == "invite": # invitation declined
-        group.send_notification(messages.group_invitation_declined(member=member, group=group), delay_commit=True)
+        group.send_notification(messages.group_invitation_declined(member=member, group=group))
     elif membership.status == "request": # request declined
-        membership.member.send_notification(messages.group_request_declined(group=group), delay_commit=True)
+        membership.member.send_notification(messages.group_request_declined(group=group))
     
     Session.delete(membership)
     
@@ -437,7 +440,7 @@ def invite(group, member, role, delay_commit=False):
     
     # Notification of invitation
     from pylons import tmpl_context as c
-    member.send_notification(messages.group_invite(admin=c.logged_in_user, group=group, role=membership.role), delay_commit=True)
+    member.send_notification(messages.group_invite(admin=c.logged_in_user, group=group, role=membership.role, you=member))
     
     if not delay_commit:
         Session.commit()
@@ -473,10 +476,10 @@ def set_role(group, member, role, delay_commit=False):
     membership.role = role
     if membership.status=="request":
         membership.status = "active"
-        member.send_notification(messages.group_request_accepted(admin=c.logged_in_user, group=group))
+        member.send_notification(messages.group_request_accepted(admin=c.logged_in_user, group=group, you=member))
         group.send_notification(messages.group_new_member(member=member, group=group))
     else:
-        group.send_notification(messages.group_role_changed(admin=c.logged_in_user, member=member, group=group, role=role), delay_commit=True)
+        group.send_notification(messages.group_role_changed(admin=c.logged_in_user, member=member, group=group, role=role))
 
     if not delay_commit:
         Session.commit()
@@ -491,7 +494,7 @@ def del_group(group):
     group = get_group(group)
     from pylons import tmpl_context as c
     for member in [member_role.member for member_role in group.members_roles]:
-        member.send_notification(messages.group_deleted(group=group, admin=c.logged_in_user), delay_commit=True)
+        member.send_notification(messages.group_deleted(group=group, admin=c.logged_in_user)) # AllanC - We cant use the standard group.send_notification because the group wont exisit after this line!
     Session.delete(group)
     Session.commit()
     update_member(group)
@@ -543,16 +546,16 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     assignment_accepted.member = member
     assignment_accepted.status = status
     Session.add(assignment_accepted)
-    
-    if status=="accepted":
-        assignment.creator.send_notification(messages.assignment_accepted(member=member, assignment=assignment), delay_commit=True)
-    if status=="pending":
-        member.send_notification(messages.assignment_invite  (member=assignment.creator, assignment=assignment), delay_commit=True)
-    
+
     if not delay_commit:
         Session.commit()
-        
     update_accepted_assignment(member)
+    
+    if status=="accepted":
+        assignment.creator.send_notification(messages.assignment_accepted(member=member, assignment=assignment, you=assignment.creator))
+    if status=="pending":
+        member.send_notification(messages.assignment_invite  (member=assignment.creator, assignment=assignment, you=member)            )
+    
     return True
 
 
@@ -569,11 +572,11 @@ def withdraw_assignemnt(assignment, member, delay_commit=False):
         assignment_accepted = Session.query(MemberAssignment).filter_by(member_id=member.id, content_id=assignment.id, status="accepted").one()
         assignment_accepted.status = "withdrawn"
         #Session.update(assignment_accepted)
-        
-        assignment.creator.send_notification(messages.assignment_interest_withdrawn(member=member, assignment=assignment), delay_commit=True)
-        
         Session.commit()
         update_accepted_assignment(member)
+        
+        assignment.creator.send_notification(messages.assignment_interest_withdrawn(member=member, assignment=assignment, you=assignment.creator))
+        
         return True
     except:
         pass
@@ -622,6 +625,7 @@ def respond_assignment(parent_content, member, delay_commit=False):
 
 def del_content(content):
     content = get_content(content)
+    # TODO - AllanC - send notification to group members?
     update_content(content) #invalidate the cache
     Session.delete(content)
     Session.commit()
@@ -731,14 +735,15 @@ def boom_content(content, member, delay_commit=False):
     boom.member  = member
     Session.add(boom)
 
-    # AllanC - TODO Boom notifications?
-    #if   content.__type__ == 'article':
-    #    member.send_notification_to_followers(messages.boom_article(   member=member, article   =content), delay_commit=True)
-    #elif content.__type__ == 'assignment':
-    #    member.send_notification_to_followers(messages.boom_assignment(member=member, assignment=content), delay_commit=True)
-    
     if not delay_commit:
         Session.commit()
+
+    if   content.__type__ == 'article':
+        member.send_notification_to_followers(messages.boom_article(   member=member, article   =content))
+    elif content.__type__ == 'assignment':
+        member.send_notification_to_followers(messages.boom_assignment(member=member, assignment=content))
+    
+
 
 
 def parent_seen(content, delay_commit=False):
@@ -767,7 +772,7 @@ def parent_approve(content, delay_commit=False):
 
     # Email content creator
     content.creator.send_email(subject=_('content approved'), content_html=render('/email/corporate/lock_article_to_member.mako'))
-    content.creator.send_notification(messages.article_approved(member=content.parent.creator, parent=content.parent, content=content), delay_commit=True)
+    #content.creator.send_notification(messages.article_approved(member=content.parent.creator, parent=content.parent, content=content), delay_commit=True)
 
     if not delay_commit:
         Session.commit()
@@ -783,8 +788,8 @@ def parent_disassociate(content, delay_commit=False):
     # Update has to be done before the commit in this case bcause the parent is needed
     update_content(content.parent) # Could update responses in the future, but for now we just invalidate the whole content
     update_content(content)        # this currently has code to update parents reponses, is the line above needed?
-    
-    content.creator.send_notification(messages.article_disassociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent), delay_commit=True)
+
+    content.creator.send_notification(messages.article_disassociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent))
     
     content.parent = None
     content.approval = "dissassociated"
@@ -833,6 +838,8 @@ def rate_content(content, member, rating):
             Session.add(r)
             Session.commit()
 
+    # AllanC - TODO - rate notification needed
+    
 
 def add_to_interests(member, content, delay_commit=False):
     content = get_content(content)

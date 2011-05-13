@@ -157,8 +157,8 @@ list_filters = {
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
     'drafts'              : lambda results: results.filter(Content.__type__=='draft').filter(Content.creator == c.logged_in_persona) ,
-    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval=='none')),
-    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval!='none')),
+    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id==null())),
+    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id!=null())),
 }
 
 
@@ -467,7 +467,7 @@ class ContentsController(BaseController):
 
         # Select Validation Schema (based on content type)
         schema = ContentSchema()
-        if kwargs.get('type') == 'comment':
+        if kwargs.get('type', content.__type__) == 'comment':
             schema = ContentCommentSchema()
             # AllanC - HACK! the validators cant handle missing fields .. so we botch an empty string field in here
             if 'parent_id' not in kwargs:
@@ -475,7 +475,7 @@ class ContentsController(BaseController):
         
         # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic - will raise invalid if needed
         data       = {'content':kwargs}
-        data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
+        data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='contents/edit')
         kwargs     = data['content']
         
         # -- Decode Action -----------------------------------------------------
@@ -611,6 +611,7 @@ class ContentsController(BaseController):
             #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
             
             # Notifications ----------------------------------------------------
+            # AllanC - as notifications not need commit anymore this can be done after?
             m = None
             if starting_content_type != content.__type__:
                 # Send notifications about NEW published content
@@ -622,7 +623,7 @@ class ContentsController(BaseController):
                 # if this is a response - notify parent content creator
                 if content.parent:
                     content.parent.creator.send_notification(
-                        messages.new_response(member = content.creator, content = content, parent = content.parent), delay_commit=True
+                        messages.new_response(member=content.creator, content=content, parent=content.parent, you=content.parent.creator)
                     )
                     
                     # if it is a response, mark the accepted status as 'responded'
@@ -643,7 +644,7 @@ class ContentsController(BaseController):
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
             if m:
-                content.creator.send_notification_to_followers(m, private=content.private, delay_commit=True)
+                content.creator.send_notification_to_followers(m, private=content.private)
         
         # -- Save to Database --------------------------------------------------
         Session.add(content)

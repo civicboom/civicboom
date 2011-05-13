@@ -97,13 +97,13 @@ class TaskController(BaseController):
             responded_member_ids = get_responded(assignment)                                                         #   Get a list of all the members that have responded to this assignment
             for member in assignment.accepted_by:                                                                    #   For all members accepted this assignment
                 if member.id not in responded_member_ids:                                                            #     Check if they have responded with an article
-                    member.send_notification( messages.assignment_due_7days(member, assignment=assignment) )              #     if not send a reminder notification
+                    member.send_notification( messages.assignment_due_7days(you=member, assignment=assignment) )              #     if not send a reminder notification
                     
         for assignment in get_assignments_by_date(date_start=date_1days_time, date_end=date_1days_time + date_1day): #Same as above but on day before
             responded_member_ids = get_responded(assignment)
             for member in assignment.accepted_by:
                 if member.id not in responded_member_ids:
-                    member.send_notification( messages.assignment_due_1day(member, assignment=assignment) )
+                    member.send_notification( messages.assignment_due_1day(you=member, assignment=assignment) )
                     
         Session.commit()
         return response_completed_ok

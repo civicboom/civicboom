@@ -16,6 +16,7 @@
 	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling, Greg Miell" />
 	<meta name="robots"      content="all" />
 	<meta name="viewport"    content="width=480, initial-scale=1">
+	<meta name="google-site-verification" content="IeUt8MCUCpzq14C8DaxD5w8c-5iiRB1V5E4uh7nq3NY" />
 
 	<link rel="shortcut icon" href="/images/boom16.ico" />
 	<link rel="apple-touch-icon" href="/images/boom128.png" />
