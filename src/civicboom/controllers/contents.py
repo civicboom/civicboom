@@ -475,7 +475,7 @@ class ContentsController(BaseController):
         
         # Validation needs to be overlayed oved a data dictonary, so we wrap kwargs in the data dic - will raise invalid if needed
         data       = {'content':kwargs}
-        data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='content/edit')
+        data       = validate_dict(data, schema, dict_to_validate_key='content', template_error='contents/edit')
         kwargs     = data['content']
         
         # -- Decode Action -----------------------------------------------------
