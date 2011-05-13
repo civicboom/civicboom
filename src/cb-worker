@@ -111,6 +111,13 @@ def run():
             "task": "test",
             "lang": "fr"
         })
+        w.add_job({
+            'tmp_file': '/home/shish/website/src/data/temp/media-054fc3b4a725b4f2c85522d52c76477a404520d0',
+            'delete_tmp': False,
+            'file_type': 'image',
+            'file_name': u'seeking.png',
+            'file_hash': '054fc3b4a725b4f2c85522d52c76477a404520d0'
+        })
         log.info("Waiting for jobs")
         w.run_worker()
     except KeyboardInterrupt:
