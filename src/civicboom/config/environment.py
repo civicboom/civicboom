@@ -18,7 +18,7 @@ import civicboom.lib.services.warehouse as wh
 
 # for setting up the redis backend to beaker
 import beaker
-import civicboom.lib.redis_ as redis_
+import cbutils.redis_ as redis_
 
 # for connecting to the worker queue
 import platform
