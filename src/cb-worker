@@ -5,7 +5,7 @@ import optparse
 import sys
 
 from ConfigParser import SafeConfigParser
-import civicboom.worker.api as w
+import cbutils.worker as w
 
 
 log = logging.getLogger("workmaster")

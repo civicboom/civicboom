@@ -23,7 +23,7 @@ import civicboom.lib.redis_ as redis_
 # for connecting to the worker queue
 import platform
 from redis import Redis
-import civicboom.worker.api as worker
+import cbutils.worker as worker
 
 
 def load_environment(global_conf, app_conf):

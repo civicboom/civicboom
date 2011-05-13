@@ -5,7 +5,7 @@ import os.path
 import subprocess
 
 import civicboom.lib.services.warehouse as wh
-from civicboom.worker.api import config
+from cbutils.worker import config
 
 import logging
 log = logging.getLogger(__name__)
