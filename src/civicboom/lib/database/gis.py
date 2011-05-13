@@ -1,6 +1,5 @@
 
 from pylons import config
-from pylons import request, response, session, tmpl_context as c, url
 
 from sqlalchemy import engine_from_config
 from sqlalchemy.sql import text
@@ -36,6 +35,7 @@ def get_location_by_name(name):
             return None
 
     return None
+
 
 def find_locations(q, limit=100):
     query = """
