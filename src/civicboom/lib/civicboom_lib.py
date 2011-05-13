@@ -18,10 +18,9 @@ from civicboom.lib.database.actions             import del_content
 
 from civicboom.lib.services.janrain         import janrain
 from civicboom.lib.services.twitter_global  import status as twitter_global_status
-from civicboom.lib.services.tiny_url        import tiny_url
-
+from civicboom.lib.helpers                  import truncate
+from cbutils.tiny_url            import tiny_url
 from cbutils.text                import clean_html_markup, strip_html_tags, safe_python_strings
-from civicboom.lib.helpers       import truncate
 
 import civicboom.lib.worker as worker
 
