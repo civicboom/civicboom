@@ -20,7 +20,7 @@ from civicboom.lib.form_validators.registration      import RegisterSchemaEmailU
 from formencode import validators#, htmlfill
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
-from civicboom.lib.misc import random_string
+from cbutils.misc import random_string
 
 log      = logging.getLogger(__name__)
 

@@ -38,7 +38,7 @@ def to_dict(self, list_type='default', include_fields=None, exclude_fields=None,
     """
     describe
     """
-    from civicboom.lib.misc import obj_to_dict
+    from cbutils.misc import obj_to_dict
     
     if list_type=='empty': # Don't copy a base list if empty list is requested
         fields = {}

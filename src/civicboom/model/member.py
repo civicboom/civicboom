@@ -1,7 +1,7 @@
 
 from civicboom.model.meta import Base, location_to_string
 from civicboom.model.message import Message
-from civicboom.lib.misc import update_dict
+from cbutils.misc import update_dict
 from civicboom.lib.helpers import wh_url
 
 from sqlalchemy import Column, ForeignKey

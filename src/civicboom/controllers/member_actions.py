@@ -1,7 +1,7 @@
 from civicboom.lib.base import *
 from civicboom.controllers.members  import MembersController 
 from civicboom.controllers.contents import ContentsController, sqlalchemy_content_query
-from civicboom.lib.misc import update_dict
+from cbutils.misc import update_dict
 
 content_search = ContentsController().index
 member_search  = MembersController().index

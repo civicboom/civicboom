@@ -102,7 +102,7 @@ class TestController(BaseController):
     def new_random_user(self):
         from civicboom.model.member import User, UserLogin
         from civicboom.lib.authentication import encode_plain_text_password
-        from civicboom.lib.misc import random_string
+        from cbutils.misc import random_string
         
         u = User()
         u.username = unicode(random_string())
