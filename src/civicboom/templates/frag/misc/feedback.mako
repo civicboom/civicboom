@@ -55,7 +55,16 @@ TABLE.feedback SELECT {
             <tr>
                 <td>${_('Message')}</td>
                 <td style="padding: 3px 0 0 3px">
-                    <textarea name="message" style="width: 450px; height: 300px;" placeholder="${_('Please tell us about your experience/problems to help us improve _site_name')}"></textarea>
+                    <p>${_('Tell us about your experience/problems to help us improve _site_name.')}</p>
+                    <p>${_('Please provide as much detail as possible')}</p>
+                    <textarea name="message" style="width: 450px; height: 200px;" placeholder="">
+${_('What were you previously doing:')}
+
+${_('What were you trying to do:')}
+
+${_('What did you expect to happen:')}
+
+                    </textarea>
                 </td>
             </tr>
             
