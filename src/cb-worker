@@ -3,8 +3,12 @@
 import logging
 import optparse
 import sys
-import pylons
-import civicboom.lib.worker as w
+
+from ConfigParser import SafeConfigParser
+import civicboom.worker.api as w
+
+
+log = logging.getLogger("workmaster")
 
 
 def main(argv):
@@ -30,27 +34,87 @@ def main(argv):
             format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
             datefmt  = "%H:%M:%S"
         )
-    log = logging.getLogger("workmaster")
 
-    # Initialize the Pylons app
-    log.info("Loading pylons environment")
-    from paste.deploy import appconfig
-    from civicboom.config.environment import load_environment
-    conf = appconfig('config:' + options.ini, relative_to='.')
-    load_environment(conf.global_conf, conf.local_conf)
-    # Now code can be run, the SQLalchemy Session can be used, etc.
+    c = SafeConfigParser()
+    c.read(options.ini)
+    w.config = c.defaults()
+    w.config["sqlalchemy.main.url"] = c.get("app:main", "sqlalchemy.main.url")
 
-    if pylons.config['worker.queue'] in ['inline', 'threads']:
+    if w.config['worker.queue'] in ['inline', 'threads']:
         log.error("Separate worker doesn't make sense for inline or threaded mode")
         return 1
+    elif w.config['worker.queue'] == "redis":
+        import civicboom.lib.redis_ as redis_
+        from redis import Redis
+        import platform
+        w.init_queue(redis_.RedisQueue(Redis(w.config['service.redis.server']), platform.node()))
+    else:
+        log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
 
+    set_up_environment()
+    run()
+
+    return 0
+
+
+def set_up_environment():
+    # give the worker some functions
+    log.info("Init functions")
+    from civicboom.worker.functions.send_notification import send_notification
+    from civicboom.worker.functions.process_media     import process_media
+    from civicboom.worker.functions.profanity_check   import profanity_check
+    from civicboom.worker.functions.test              import test
+    w.add_worker_function('process_media'     , process_media    )
+    w.add_worker_function('send_notification' , send_notification)
+    w.add_worker_function('profanity_check'   , profanity_check  )
+    w.add_worker_function('test'              , test             )
+
+    # make sure that the database is open before each job, and closed after it
+    log.info("Init database")
+    from sqlalchemy import create_engine
+    import civicboom.model as model
+    from civicboom.model.meta import Session
+    model.init_model(create_engine(w.config['sqlalchemy.main.url']))
+
+    # set the language for each job
+    log.info("Init i18n")
+    import gettext
+    langs = {
+        "en": gettext.translation("civicboom", "./civicboom/i18n", languages=['en']),
+    }
+    langs["en"].install()
+
+    # configure the warehouse
+    import civicboom.lib.services.warehouse as wh
+    wh.configure(worker.config)
+
+    # attach the things above to the worker
+    log.info("Init callbacks")
+    def setup(job):
+        if "lang" in job:
+            lang = job.pop("lang")
+            if lang in langs:
+                langs[lang].install()
+            else:
+                log.warning("Job with invalid language '%s': %s" % (lang, job))
+
+    def teardown(job):
+        Session.commit()
+
+    w.setup = setup
+    w.teardown = teardown
+
+
+def run():
     try:
+        w.add_job({
+            "task": "test",
+            "lang": "fr"
+        })
         log.info("Waiting for jobs")
         w.run_worker()
     except KeyboardInterrupt:
         log.info("Got Ctrl-C, exiting")
-
-    return 0
 
 
 if __name__ == '__main__':

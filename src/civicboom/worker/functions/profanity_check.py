@@ -1,13 +1,10 @@
 import logging
 log = logging.getLogger(__name__)
 
-#import civicboom.lib.services.cdyne_profanity
 from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import get_content
 
 from civicboom.lib.text import profanity_check as _profanity_check
-
-# TODO: this could fire off a thead to perform the profanity checking? (Raised as Feature #55)
 
 
 def profanity_check(content, url_base):

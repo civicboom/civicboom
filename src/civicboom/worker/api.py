@@ -29,6 +29,10 @@ _workers           = []
 _worker_queue      = None
 _worker_functions = {}
 
+config = {}
+setup = None
+teardown = None
+
 
 ##############################################################################
 # Shared API
@@ -66,14 +70,12 @@ def add_job(job):
 def run_one_job(task):
     live = True
     try:
+        if setup:
+            setup(task)
         task_type = task.pop("task")
         log.info('Starting task: %s (%s)' % (task_type, task))
         if task_type in _worker_functions:
             _worker_functions[task_type](**task)
-        #elif task_type == "process_media":
-        #    process_media(**task)
-        #elif task_type == "send_message":
-        #    send_message(**task)
         elif task_type == "die":
             live = False
         else:
@@ -81,6 +83,9 @@ def run_one_job(task):
     except Exception as e:
         log.exception('Error in worker thread:')
         sleep(3)
+    finally:
+        if teardown:
+            teardown(task)
     return live
 
 
