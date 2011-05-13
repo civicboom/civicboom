@@ -7,7 +7,7 @@ http://www.webserviceshare.com/reference/language/tools/service/CDYNE-Profanity-
 import urllib, urllib2, logging
 from paste.deploy.converters import asbool
 
-from civicboom.lib.xml_utils import readXMLStringtoDic
+from cbutils.cbxml import readXMLStringtoDic
 
 log = logging.getLogger(__name__)
 

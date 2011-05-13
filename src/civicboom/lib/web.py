@@ -3,7 +3,7 @@ from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
 from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
 
-from civicboom.lib.xml_utils import dictToXMLString
+from cbutils.cbxml import dictToXMLString
 
 
 from webhelpers.html import literal
