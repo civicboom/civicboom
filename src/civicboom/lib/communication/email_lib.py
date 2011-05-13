@@ -3,7 +3,7 @@ from pylons import config
 from webhelpers.html.tools import auto_link
 from webhelpers.html       import literal
 
-from civicboom.lib.text                    import convert_html_to_plain_text
+from cbutils.text                          import convert_html_to_plain_text
 from civicboom.lib.communication.email_log import email_log
 
 import re

@@ -28,7 +28,7 @@ import datetime
 
 # Other imports
 from sets import Set # may not be needed in Python 2.7+
-from civicboom.lib.text import strip_html_tags
+from cbutils.text import strip_html_tags
 
 # Logging setup
 log      = logging.getLogger(__name__)

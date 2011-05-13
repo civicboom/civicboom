@@ -12,7 +12,7 @@ from civicboom.lib.database.get_cached import get_member, get_group, get_members
 from civicboom.lib.communication           import messages
 from civicboom.lib.communication.email_lib import send_email
 
-from civicboom.lib.text import strip_html_tags
+from cbutils.text import strip_html_tags
 from civicboom.lib.web  import action_error, url
 
 from sqlalchemy.orm.exc import NoResultFound
