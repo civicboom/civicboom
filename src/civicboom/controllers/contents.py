@@ -19,7 +19,7 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 
 # Search imports
-from civicboom.lib.search import *
+from civicboom.model.filters import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null, func, Unicode
