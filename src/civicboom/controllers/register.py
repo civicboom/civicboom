@@ -197,7 +197,7 @@ def _fetch_avatar(url):
     try:
         import urllib2
         import tempfile
-        import civicboom.lib.services.warehouse as wh
+        import cbutils.warehouse as wh
         import Image
 
         with tempfile.NamedTemporaryFile(suffix=".jpg") as original:

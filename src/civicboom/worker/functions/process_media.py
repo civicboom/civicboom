@@ -4,7 +4,7 @@ import os
 import os.path
 import subprocess
 
-import civicboom.lib.services.warehouse as wh
+import cbutils.warehouse as wh
 from cbutils.worker import config
 
 import logging

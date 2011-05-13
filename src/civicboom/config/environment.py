@@ -14,7 +14,7 @@ import civicboom.lib.helpers
 from civicboom.config.routing import make_map
 from civicboom.model import init_model
 from civicboom.lib.civicboom_init import init as civicboom_init  # This will trigger a set of additional initalizers
-import civicboom.lib.services.warehouse as wh
+import cbutils.warehouse as wh
 
 # for setting up the redis backend to beaker
 import beaker

@@ -3,7 +3,7 @@ from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
 
 from civicboom.model.meta import Base
-import civicboom.lib.services.warehouse as wh
+import cbutils.warehouse as wh
 import cbutils.worker as worker
 
 from pylons import config, app_globals # used in generation of URL's for media
