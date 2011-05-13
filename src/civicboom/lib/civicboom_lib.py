@@ -21,8 +21,7 @@ from civicboom.lib.services.twitter_global  import status as twitter_global_stat
 from civicboom.lib.helpers                  import truncate
 from cbutils.tiny_url            import tiny_url
 from cbutils.text                import clean_html_markup, strip_html_tags, safe_python_strings
-
-import civicboom.lib.worker as worker
+import cbutils.worker as worker
 
 from sets import Set # may not be needed in Python 2.7+
 import hashlib
