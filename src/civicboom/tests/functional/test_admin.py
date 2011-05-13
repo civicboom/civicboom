@@ -6,6 +6,9 @@ class TestAdminController(TestController):
         response = self.app.get(url(controller='admin', action='models')) # "models" is the admin index
 
 
+    def test_threads(self):
+        response = self.app.get(url(controller='admin', action='threads'))
+
     def test_event_log(self):
         response = self.app.get(url(controller='test', action='fill_log'))
         response = self.app.get(url(controller='admin', action='event_log'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})

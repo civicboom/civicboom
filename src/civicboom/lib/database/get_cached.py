@@ -149,17 +149,21 @@ def get_members(members, expand_group_members=True):
       list of username strings
       a comma separated list of strings
       
-    AllanC - Note ignors and dose not error on members that do not exisit? is this right?
+    AllanC - Note ignors and does not error on members that do not exist? is this right?
     
     TODO - optimisation - lazy load settings and other large feilds from these users
     """
+    
+    if not members:
+        return []
+    
     # split comma list of string members
     if isinstance(members, basestring):
         members = members.split(',')
-        if len(members) == 1 and expand_group_members: # member list has one member, check if this single member is a group
-            member = get_member(members[0])
-            if member and member.__type__ == 'group':
-                members = member
+        #if len(members) == 1 and expand_group_members: # member list has one member, check if this single member is a group
+        #    member = get_member(members[0])
+        #    if member and member.__type__ == 'group':
+        #        members = member
             # else it's a user and is valid, do nothing
     
     if isinstance(members, Group) and expand_group_members:
@@ -170,12 +174,16 @@ def get_members(members, expand_group_members=True):
     if isinstance(members, Member):
         return [members]
 
-    if not members:
-        return []
-
-    return Session.query(Member).with_polymorphic('*').filter(
-                Member.username.in_(members)
-            ).all()
+    member_objects = Session.query(Member).with_polymorphic('*').filter(Member.username.in_(members)).all()
+    
+    if expand_group_members:
+        group_members = []
+        for member in [member for member in member_objects if isinstance(member, Group)]:
+            group_members += get_group_member_username_list(member) # , exclude_list=group_members
+        member_objects += get_members(list(set(group_members)))
+        member_objects =              list(set(member_objects))
+    
+    return member_objects
 
 # GregM: Dirty, do not cache, see redmine #414
 def get_membership_tree(group, member, iter = 0):
@@ -299,6 +307,10 @@ def update_member(member):
 def update_content(content):
     if not issubclass(content.__class__, Content):
         content = get_content_nocache(content)
+    
+    if not content:
+        # need to invalidate
+        return
     
     etag_key_incement("content",content.id)
     #cache_test.invalidate(get_content, '', content.id)

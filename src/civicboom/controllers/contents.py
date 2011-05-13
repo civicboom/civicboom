@@ -17,6 +17,7 @@ import formencode
 import civicboom.lib.form_validators.base
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
+
 # Search imports
 from civicboom.lib.search import *
 from civicboom.lib.database.gis import get_engine
@@ -27,7 +28,7 @@ import datetime
 
 # Other imports
 from sets import Set # may not be needed in Python 2.7+
-
+from civicboom.lib.text import strip_html_tags
 
 # Logging setup
 log      = logging.getLogger(__name__)
@@ -62,7 +63,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
 
 class ContentCommentSchema(ContentSchema):
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=True, empty=_('comments must have a valid parent'))
-    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'))
+    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'), max=config['setting.content.max_comment_length'], html='strip_html_tags')
 
 
 #-------------------------------------------------------------------------------
@@ -156,8 +157,8 @@ list_filters = {
     'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
     'drafts'              : lambda results: results.filter(Content.__type__=='draft').filter(Content.creator == c.logged_in_persona) ,
-    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval=='none')),
-    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.approval!='none')),
+    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id==null())),
+    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id!=null())),
 }
 
 
@@ -334,7 +335,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
-    @role_required('contributor')
+    #@role_required('contributor') # AllanC - this is handled internally and would have prevented observers from commenting
     def create(self, **kwargs):
         """
         POST /contents: Create a new item
@@ -433,7 +434,7 @@ class ContentsController(BaseController):
 
     @web
     @auth
-    @role_required('contributor')
+    #@role_required('contributor') - AllanC see comment for cretate
     def update(self, id, **kwargs):
         """
         PUT /contents/{id}: Update an existing item
@@ -466,7 +467,7 @@ class ContentsController(BaseController):
 
         # Select Validation Schema (based on content type)
         schema = ContentSchema()
-        if kwargs.get('type') == 'comment':
+        if kwargs.get('type', content.__type__) == 'comment':
             schema = ContentCommentSchema()
             # AllanC - HACK! the validators cant handle missing fields .. so we botch an empty string field in here
             if 'parent_id' not in kwargs:
@@ -532,6 +533,28 @@ class ContentsController(BaseController):
         
         # TODO: dont allow licence type change after publication - could this be part of validators?
         
+        # Auto Convert Responses to comments if too short. - AllanC -
+        # Special behaviour for updating drafts to articles. Some users don't understand the concept of responses are deep responsese.
+        # IF
+        # 1.) Draft -> Article
+        # 2.) Has parent
+        # 3.) publishing
+        # 4.) No Media attached
+        # 5.) content length <= comment max length
+        # THEN
+        # make it a comment rather than an article
+        #
+        # NOTE: This is the ONLY way comments can be made from a group.
+        # This was also made with the asumption that users of the API would use the site properly - this code will trigger a 'not in db' warning from polymorphic helpers
+        #   maybe bits need to be added to 'create' to avoid this issue
+        if content.__type__ == 'draft' and kwargs.get('type')=='article' and \
+           content.parent_id and \
+           submit_type == 'publish' and \
+           not content.attachments and not kwargs.get('media_file') and \
+           len(kwargs.get('content', content.content)) <= config['setting.content.max_comment_length']:
+            kwargs['type']    = 'comment' # This will trigger polymorphic helpers below to convert it to a comment
+            kwargs['content'] = strip_html_tags(kwargs.get('content', content.content)) # HACK - AllanC - because the content validator has already triggered so I  manually force the removal of html tags - we dont want html in comments
+        
         # Morph Content type - if needed (only appropriate for data already in DB)
         if 'type' in kwargs:
             if kwargs.get('type') not in publishable_types or \
@@ -588,6 +611,7 @@ class ContentsController(BaseController):
             #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
             
             # Notifications ----------------------------------------------------
+            # AllanC - as notifications not need commit anymore this can be done after?
             m = None
             if starting_content_type != content.__type__:
                 # Send notifications about NEW published content
@@ -599,7 +623,7 @@ class ContentsController(BaseController):
                 # if this is a response - notify parent content creator
                 if content.parent:
                     content.parent.creator.send_notification(
-                        messages.new_response(member = content.creator, content = content, parent = content.parent), delay_commit=True
+                        messages.new_response(member=content.creator, content=content, parent=content.parent, you=content.parent.creator)
                     )
                     
                     # if it is a response, mark the accepted status as 'responded'
@@ -614,12 +638,13 @@ class ContentsController(BaseController):
             else:
                 # Send notifications about previously published content has been UPDATED
                 if   content.__type__ == "assignment":
-                    m = messages.assignment_updated           (creator=content.creator, assignment=content)
+                    if content.update_date < datetime.datetime.now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
+                        m = messages.assignment_updated(creator=content.creator, assignment=content)
                 # going straight to publish, content may not have an ID as it's
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
             if m:
-                content.creator.send_notification_to_followers(m, private=content.private, delay_commit=True)
+                content.creator.send_notification_to_followers(m, private=content.private)
         
         # -- Save to Database --------------------------------------------------
         Session.add(content)
@@ -628,7 +653,7 @@ class ContentsController(BaseController):
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
         # Profanity Check --------------------------------------------------
-        if submit_type=='publish' and content.private==False:
+        if (submit_type=='publish' and content.private==False) or content.__type__ == 'comment':
             profanity_filter(content) # Filter any naughty words and alert moderator
         
         # -- Redirect (if needed)-----------------------------------------------
@@ -694,8 +719,17 @@ class ContentsController(BaseController):
         @example https://test.civicboom.com/contents/1.rss
         """
         # url('content', id=ID)
+       
+        content = get_content(id) #, is_viewable=True) # This is done manually below we needed some special handling for comments
         
-        content = get_content(id, is_viewable=True)
+        if content.__type__ == 'comment':
+            if c.format == 'html' or c.format == 'redirect':
+                return redirect(url('content', id=content.parent.id))
+            if c.format == 'frag':
+                content = content.parent # Bit of a HACK - if we try to read a content frag for a comment, just return the parent
+        
+        if not content.viewable_by(c.logged_in_persona):
+            raise errors.error_view_permission()
         
         if 'lists' not in kwargs:
             kwargs['lists'] = 'comments, responses, contributors, actions, accepted_status'

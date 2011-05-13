@@ -5,6 +5,12 @@ from pylons.i18n.translation  import _
 
 from civicboom.lib.web import action_error
 
+def error_view_permission():
+    return action_error(
+            status   = 'error' ,
+            code     = 403 ,
+            message  = _('The _content you requested is not viewable') ,
+        )
 
 #@property
 def error_account_level():

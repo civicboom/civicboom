@@ -355,16 +355,16 @@ class Member(Base):
         from civicboom.lib.communication.email_lib import send_email
         send_email(self, **kargs)
 
-    def send_notification(self, m, delay_commit=False):
+    def send_notification(self, m):
         import civicboom.lib.communication.messages as messages
-        messages.send_notification(self, m, delay_commit)
+        messages.send_notification(self, m)
 
-    def send_notification_to_followers(self, m, private=False, delay_commit=False):
+    def send_notification_to_followers(self, m, private=False):
         followers_to = self.followers
         if private:
             followers_to = self.followers_trusted
         import civicboom.lib.communication.messages as messages
-        messages.send_notification(followers_to, m, delay_commit)
+        messages.send_notification(followers_to, m)
 
     def follow(self, member, delay_commit=False):
         from civicboom.lib.database.actions import follow

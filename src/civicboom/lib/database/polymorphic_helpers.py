@@ -6,7 +6,7 @@ we need to do some raw SQL processing to change the database level data and then
 """
 
 from civicboom.lib.database.get_cached import get_content, update_content
-from civicboom.model.content import Content, DraftContent, ArticleContent, AssignmentContent, UserVisibleContent
+from civicboom.model.content import Content, DraftContent, ArticleContent, AssignmentContent, UserVisibleContent, CommentContent
 
 from civicboom.model.meta import Session
 
@@ -24,6 +24,18 @@ from civicboom.model.meta import Session
 # the functions return a list of SQL commands to be executed to perform the morph at the database level
 
 morph_sql = {
+    "draft:comment": lambda id: [
+            # SQL to remove draft record but leave the main Content object still in tact
+            DraftContent.__table__.delete().where(DraftContent.__table__.c.id == id),
+            
+            # SQL to insert blank comment record
+            CommentContent.__table__.insert().values(id=id),
+            
+            # SQL set object content type content.__type__ = "comment"
+            Content.__table__.update().where(Content.__table__.c.id==id).values(__type__="comment"),
+        ],
+
+    
     "draft:article": lambda id: [
             # SQL to remove draft record but leave the main Content object still in tact
             DraftContent.__table__.delete().where(DraftContent.__table__.c.id == id),
@@ -95,7 +107,7 @@ def morph_content_to(content, after_type):
     
     if content.id == None: #If the content has not been commited to the DB, then return an object of the correct type
         # todo?
-        log.info('content to morph not in DB? investigate')
+        log.warn('content to morph not in DB? investigate')
         pass
     
     id                = content.id
@@ -104,9 +116,12 @@ def morph_content_to(content, after_type):
     if sql_generator_key not in morph_sql:
         raise Exception('unable to morph content from %s to %s' % (content.__type__, after_type) )
     
+    Session.expunge(content) # Remove content from SQLAlchemys scope
     for sql_cmd in morph_sql[sql_generator_key](id):
         Session.execute(sql_cmd)
     Session.commit()
     
     update_content(id) # Invalidate cache for this content and update etag
-    return get_content(id)
+    content = get_content(id)
+    assert content.__type__ == after_type # If this is not true then something has gone very wrong!
+    return content
