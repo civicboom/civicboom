@@ -63,11 +63,11 @@ def set_up_environment():
     from civicboom.worker.functions.send_notification import send_notification
     from civicboom.worker.functions.process_media     import process_media
     from civicboom.worker.functions.profanity_check   import profanity_check
-    from civicboom.worker.functions.test              import test
+    from civicboom.worker.functions.worker_workout    import worker_workout
     w.add_worker_function('process_media'     , process_media    )
     w.add_worker_function('send_notification' , send_notification)
     w.add_worker_function('profanity_check'   , profanity_check  )
-    w.add_worker_function('test'              , test             )
+    w.add_worker_function('worker_workout'    , worker_workout   )
 
     # make sure that the database is open before each job, and closed after it
     log.info("Init database")
@@ -108,10 +108,11 @@ def set_up_environment():
 def run():
     try:
         w.add_job({
-            "task": "test",
-            "lang": "fr"
+            "task": "worker_workout",
+            #"lang": "fr",
         })
         w.add_job({
+            'task': 'process_media',
             'tmp_file': '/home/shish/website/src/data/temp/media-054fc3b4a725b4f2c85522d52c76477a404520d0',
             'delete_tmp': False,
             'file_type': 'image',
