@@ -76,6 +76,9 @@ live-db: skel-db
 run:
 	paster serve --reload development.ini
 
+run-worker:
+	./cb-worker
+
 clean:
 	git clean -d -f -x
 	rm -f /tmp/prof.out
