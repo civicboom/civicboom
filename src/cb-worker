@@ -85,8 +85,8 @@ def set_up_environment():
     langs["en"].install()
 
     # configure the warehouse
-    import civicboom.lib.services.warehouse as wh
-    wh.configure(worker.config)
+    import cbutils.warehouse as wh
+    wh.configure(w.config)
 
     # attach the things above to the worker
     log.info("Init callbacks")
