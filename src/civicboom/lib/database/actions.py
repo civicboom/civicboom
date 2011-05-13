@@ -17,7 +17,7 @@ from civicboom.lib.web  import action_error, url
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from civicboom.lib.sqla_hierarchy import *
+from sqla_hierarchy import *
 
 from sqlalchemy import select
 
