@@ -381,7 +381,7 @@ class DraftContent(Content):
         
     def action_list_for(self, member, **kwargs):
         action_list = Content.action_list_for(self, member, **kwargs)
-        if has_role_required('editor', kwargs.get('role', 'admin')):
+        if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
             action_list.append('publish')
         return action_list
 
@@ -424,6 +424,8 @@ class UserVisibleContent(Content):
 
     def action_list_for(self, member, **kwargs):
         action_list = Content.action_list_for(self, member, **kwargs)
+        if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
+            action_list.append('publish')
         if self.is_parent_owner(member) and member.has_account_required('plus'): # observing member need a paid account
             if has_role_required('editor', kwargs.get('role', 'admin')):
                 if self.approval == 'none':
