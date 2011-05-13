@@ -35,6 +35,8 @@ from civicboom.lib.web import _find_template_basic
 
 log = logging.getLogger(__name__)
 
+
+# This also appears in Group Controller
 class PrivateGroupValidator(formencode.validators.FancyValidator):
     messages = {
         'invalid'           : _('Value must be one of: public; private'),

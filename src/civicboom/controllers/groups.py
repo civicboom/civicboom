@@ -34,6 +34,7 @@ log      = logging.getLogger(__name__)
 # Form Schema
 #-------------------------------------------------------------------------------
 
+# This also appears in Setting Controller
 class PrivateGroupValidator(formencode.validators.FancyValidator):
     messages = {
         'invalid'           : _('Value must be one of: public; private'),
