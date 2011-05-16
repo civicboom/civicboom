@@ -643,6 +643,8 @@ def flag_content(content, member=None, type="automated", comment=None, url_base=
     Session.add(flag)
     if not delay_commit:
         Session.commit()
+    else:
+        Session.flush()
     
     # Send email to alert moderator
     member_username = 'profanity_filter'
