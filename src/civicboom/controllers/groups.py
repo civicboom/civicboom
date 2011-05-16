@@ -162,6 +162,7 @@ class GroupsController(BaseController):
 
     @web
     @auth
+    @role_required('admin')
     def create(self, **kwargs):
         """
         POST /groups: Create a new group
@@ -197,6 +198,9 @@ class GroupsController(BaseController):
         group_admin.member = c.logged_in_persona
         group_admin.role   = "admin"
         group.members_roles.append(group_admin)
+        group.payment_account = c.logged_in_persona.payment_account # The group is allocated the same payment account as the creator. All groups are free but if they want the plus features like approval and private content then this is needed
+        
+        #AllanC - TODO - limit number of groups a payment account can support - the could be the differnece between plus and corporate
         
         # GregM: Create current user as admin of group too to allow them to admin group (until permission tree is sorted!)
         #if isinstance(c.logged_in_persona, Group):
@@ -238,6 +242,7 @@ class GroupsController(BaseController):
     @web
     #@auth ? need token?
     @authorize
+    @role_required('admin')
     def new(self, **kwargs):
         """
         GET /groups/new: Form to create a new item
@@ -251,6 +256,7 @@ class GroupsController(BaseController):
 
     @web
     @auth
+    @role_required('admin')
     def update(self, id, **kwargs):
         """
         PUT /groups/{id}: Depricated!
@@ -307,6 +313,7 @@ class GroupsController(BaseController):
 
     @web
     @auth
+    @role_required('admin')
     def delete(self, id, **kwargs):
         """
         DELETE /group/{id}: Delete an existing group
@@ -345,6 +352,7 @@ class GroupsController(BaseController):
     @web
     #@auth ? need token
     @authorize
+    @role_required('admin')
     def edit(self, id, **kwargs):
         """
         GET /contents/{id}/edit: Form to edit an existing item
