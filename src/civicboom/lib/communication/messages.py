@@ -220,6 +220,3 @@ def send_notification(members, message):
         'default_route'   : message.get('default_route') ,
         'name'            : message.get('name') ,
     })
-
-    if not delay_commit:
-        Session.commit()
