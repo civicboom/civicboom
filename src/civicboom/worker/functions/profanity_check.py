@@ -28,7 +28,7 @@ def profanity_check(content_id, url_base):
     if not profanity_response:
         content.flag(comment=u"automatic profanity check failed, please manually inspect", url_base=url_base)
     elif profanity_response['FoundProfanity']:
+        content.flag(comment=u"found %s profanities" % profanity_response['ProfanityCount'], url_base=url_base, delay_commit=True)
         content.content = profanity_response['CleanText']
-        content.flag(comment=u"found %s" % profanity_response['ProfanityCount'], url_base=url_base, delay_commit=True)
     
     return True
