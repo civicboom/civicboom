@@ -96,8 +96,14 @@ def set_up_environment():
             else:
                 log.warning("Job with invalid language '%s': %s" % (lang, job))
 
-    def teardown(job):
-        Session.commit()
+    def teardown(job, success, exception):
+        if success:
+            Session.commit()
+        else:
+            Session.rollback()
+        if exception:
+            log.exception('Error in worker thread:')
+            sleep(3)
 
     w.setup = setup
     w.teardown = teardown
