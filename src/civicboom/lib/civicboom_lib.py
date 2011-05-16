@@ -319,7 +319,7 @@ def profanity_filter(content):
 
     worker.add_job({
         'task'     : 'profanity_check' ,
-        'content'  : content ,
+        'content_id': content ,
         'url_base' : url('',absolute=True) #'http://www.civicboom.com/' , # AllanC - get this from the ENV instead please
     })
 
