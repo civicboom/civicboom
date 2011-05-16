@@ -19,7 +19,7 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 
 # Search imports
-from civicboom.lib.search import *
+from civicboom.model.filters import *
 from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null, func, Unicode
@@ -28,7 +28,7 @@ import datetime
 
 # Other imports
 from sets import Set # may not be needed in Python 2.7+
-from civicboom.lib.text import strip_html_tags
+from cbutils.text import strip_html_tags
 
 # Logging setup
 log      = logging.getLogger(__name__)

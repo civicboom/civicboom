@@ -1,3 +1,21 @@
+"""
+Warehouse module
+
+Dependencies:
+  Python 2.6
+  Boto 1.9b
+
+Use:
+  import warehouse as wh
+  wh.configure({
+      "warehouse":      "s3",
+      "aws_access_key": "q456w5ysh54dgrtg",
+      "aws_secret_key": "1345etywertywr65",
+      "s3_bucket_name": "my-bucket",
+  })
+  key = wh.copy_to_warehouse("/home/shish/demo.avi", "movies")
+  print "Uploaded to my-bucket.s3.amazonaws.com/movies/%s" % key
+"""
 
 import os
 import shutil
@@ -9,9 +27,14 @@ import re
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
-from pylons import config
 
 log = logging.getLogger(__name__)
+config = None
+
+
+def configure(c):
+    global config
+    config = c
 
 
 def copy_cgi_file(cgi_fileobj, dest_filename):
@@ -28,15 +51,18 @@ def copy_cgi_file(cgi_fileobj, dest_filename):
         shutil.copyfile(cgi_fileobj, dest_filename)
 
 
-def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
+def copy_to_warehouse(src, warehouse, hash=None, filename=None, placeholder=False):
     """
     copy a local file (eg /tmp/pylons-upload-245145.dat) to the warehouse
     (eg S3:cb-wh:media/cade1361, ./civicboom/public/warehouse/media/ca/de/cade1361)
     """
 
+    if not hash:
+        hash = hash_file(src)
+
     log.info("Copying %s/%s (%s) to %s warehouse" % (warehouse, hash, filename, config["warehouse"]))
 
-    if config["warehouse"] == "local" or not config['online']:
+    if config["warehouse"] == "local" or not config.get('online', True):
         dest = "/tmp/warehouse/%s/%s" % (warehouse, hash)
         if not os.path.exists(os.path.dirname(dest)):
             os.makedirs(os.path.dirname(dest))
@@ -73,6 +99,8 @@ def copy_to_warehouse(src, warehouse, hash, filename=None, placeholder=False):
 
     else:  # pragma: no cover - online services aren't active in test mode
         log.warning("Unknown warehouse type: "+config["warehouse"])
+
+    return hash
 
 
 def hash_file(file, method="sha1"):

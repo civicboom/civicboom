@@ -4,7 +4,6 @@ from civicboom.lib.base import *
 from civicboom.controllers.members        import MembersController
 #from civicboom.controllers.member_actions import MemberActionsController
 #from civicboom.controllers.messages       import MessagesController
-#from civicboom.controllers.search   import SearchController
 #from civicboom.controllers.groups   import GroupsController
 #from civicboom.controllers.contents import ContentsController
 

@@ -12,12 +12,12 @@ from civicboom.lib.database.get_cached import get_member, get_group, get_members
 from civicboom.lib.communication           import messages
 from civicboom.lib.communication.email_lib import send_email
 
-from civicboom.lib.text import strip_html_tags
+from cbutils.text import strip_html_tags
 from civicboom.lib.web  import action_error, url
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from civicboom.lib.sqla_hierarchy import *
+from sqla_hierarchy import *
 
 from sqlalchemy import select
 
@@ -643,6 +643,8 @@ def flag_content(content, member=None, type="automated", comment=None, url_base=
     Session.add(flag)
     if not delay_commit:
         Session.commit()
+    else:
+        Session.flush()
     
     # Send email to alert moderator
     member_username = 'profanity_filter'

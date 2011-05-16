@@ -14,15 +14,16 @@ import civicboom.lib.helpers
 from civicboom.config.routing import make_map
 from civicboom.model import init_model
 from civicboom.lib.civicboom_init import init as civicboom_init  # This will trigger a set of additional initalizers
+import cbutils.warehouse as wh
 
 # for setting up the redis backend to beaker
 import beaker
-import civicboom.lib.redis_ as redis_
+import cbutils.redis_ as redis_
 
 # for connecting to the worker queue
 import platform
 from redis import Redis
-import civicboom.lib.worker as worker
+import cbutils.worker as worker
 
 
 def load_environment(global_conf, app_conf):
@@ -95,18 +96,37 @@ def load_environment(global_conf, app_conf):
     for varname in integer_varnames:
         config[varname] = int(config[varname].strip())
 
-    # worker and websetup.py both try to access pylons.config before it is
+    # websetup.py tries to access pylons.config before it is
     # officially ready -- so make it unofficially ready and pray (HACK)
     for k, v in list(config.items()):
         pylons.config[k] = v
 
+    # configure modules that used to require pylons.config
+    wh.configure(pylons.config)
+
+    import civicboom.lib.communication.email_lib as email
+    email.configure(pylons.config)
+
     # set up worker processors
-    from civicboom.lib.worker_threads.send_notification  import send_notification
-    from civicboom.lib.worker_threads.process_media      import process_media
-    from civicboom.lib.worker_threads.profanity_check    import profanity_check
-    worker.add_worker_function('process_media'     , process_media    )
-    worker.add_worker_function('send_notification' , send_notification)
-    worker.add_worker_function('profanity_check'   , profanity_check  )
+    if pylons.config['worker.queue'] in ["inline", "threads"]:
+        from civicboom.worker.functions.send_notification import send_notification
+        from civicboom.worker.functions.process_media     import process_media
+        from civicboom.worker.functions.profanity_check   import profanity_check
+        worker.add_worker_function('process_media'     , process_media    )
+        worker.add_worker_function('send_notification' , send_notification)
+        worker.add_worker_function('profanity_check'   , profanity_check  )
+        worker.config = pylons.config
+
+        # HACK: Shish: this results in jobs causing commits mid-process for pages
+        def teardown(job, success, exception):
+            from civicboom.model.meta import Session
+            if success:
+                Session.commit()
+            else:
+                Session.rollback()
+            if exception:
+                log.exception('Error in worker:')
+        worker.teardown = teardown
 
     # set up worker queue
     if pylons.config['worker.queue'] == "inline":
@@ -118,6 +138,6 @@ def load_environment(global_conf, app_conf):
     else:
         log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
 
-    civicboom_init() # This will tirgger a set of additional initalizers
+    civicboom_init() # This will trigger a set of additional initalizers
 
     return config

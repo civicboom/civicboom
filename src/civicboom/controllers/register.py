@@ -20,7 +20,7 @@ from civicboom.lib.form_validators.registration      import RegisterSchemaEmailU
 from formencode import validators#, htmlfill
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
-from civicboom.lib.misc import random_string
+from cbutils.misc import random_string
 
 log      = logging.getLogger(__name__)
 
@@ -197,7 +197,7 @@ def _fetch_avatar(url):
     try:
         import urllib2
         import tempfile
-        import civicboom.lib.services.warehouse as wh
+        import cbutils.warehouse as wh
         import Image
 
         with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
