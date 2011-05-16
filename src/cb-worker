@@ -23,7 +23,7 @@ def main(argv):
 
     log_opts = dict(
         level    = logging.INFO,
-        format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
+        format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] %(message)s",
         datefmt  = "%H:%M:%S",
     )
     if options.log_file:
