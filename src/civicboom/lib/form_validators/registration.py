@@ -92,7 +92,8 @@ class UniqueEmailValidator(validators.Email):
 
 class MinimumAgeValidator(IsoFormatDateConverter):
     """Checks that date is ok and doesn't allow under 16"""
-    age_min = 16
+    from pylons import config
+    age_min = config['setting.age.min_signup'] #16
     messages = {
         'empty'        : _('Please enter a date of birth') ,
         'under_min_age': _("Sorry, you have to be over %d to use this site") % age_min,

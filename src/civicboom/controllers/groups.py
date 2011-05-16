@@ -34,13 +34,28 @@ log      = logging.getLogger(__name__)
 # Form Schema
 #-------------------------------------------------------------------------------
 
+# This also appears in Setting Controller
+class PrivateGroupValidator(formencode.validators.FancyValidator):
+    messages = {
+        'invalid'           : _('Value must be one of: public; private'),
+        'require_upgrade'   : _('You require a paid account to use the private content feature, please contact us!'),
+        }
+
+    def _to_python(self, value, state):
+        if value not in ['public', 'private']:
+            raise formencode.Invalid(self.message('invalid', state), value, state)
+        if value == "private" and not c.logged_in_persona.has_account_required('plus'):
+            raise formencode.Invalid(self.message('require_upgrade', state), value, state)
+        return value
+        
+
 class GroupSchema(DefaultSchema):
     name                       = formencode.validators.String(max=255, min=4               , not_empty=False)
     description                = formencode.validators.String(max=4096, min=0              , not_empty=False)
     default_role               = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
     join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
     member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
-    default_content_visibility = formencode.validators.OneOf(group_content_visibility.enums, not_empty=False)
+    default_content_visibility = PrivateGroupValidator()
 
 
 class CreateGroupSchema(GroupSchema):
@@ -147,6 +162,7 @@ class GroupsController(BaseController):
 
     @web
     @auth
+    @role_required('admin')
     def create(self, **kwargs):
         """
         POST /groups: Create a new group
@@ -182,6 +198,9 @@ class GroupsController(BaseController):
         group_admin.member = c.logged_in_persona
         group_admin.role   = "admin"
         group.members_roles.append(group_admin)
+        group.payment_account = c.logged_in_persona.payment_account # The group is allocated the same payment account as the creator. All groups are free but if they want the plus features like approval and private content then this is needed
+        
+        #AllanC - TODO - limit number of groups a payment account can support - the could be the differnece between plus and corporate
         
         # GregM: Create current user as admin of group too to allow them to admin group (until permission tree is sorted!)
         #if isinstance(c.logged_in_persona, Group):
@@ -199,6 +218,7 @@ class GroupsController(BaseController):
         # We fake the login here
         # We cant use set_persona as this called the set_persona controller action and calls a redirect
         logged_in_persona = c.logged_in_persona # have to remeber previous persona to return to or set_persona below thinks were already swiched and will perform no action
+        logged_in_persona_role = c.logged_in_persona_role
         c.logged_in_persona      = group
         c.logged_in_persona_role = 'admin'
         
@@ -211,6 +231,7 @@ class GroupsController(BaseController):
         settings_update(group, private=True, **kwargs)
         
         c.logged_in_persona = logged_in_persona
+        c.logged_in_persona_role = logged_in_persona_role
         set_persona(group) # Will redirect if in html or redirect mode
         
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
@@ -221,6 +242,7 @@ class GroupsController(BaseController):
     @web
     #@auth ? need token?
     @authorize
+    @role_required('admin')
     def new(self, **kwargs):
         """
         GET /groups/new: Form to create a new item
@@ -234,6 +256,7 @@ class GroupsController(BaseController):
 
     @web
     @auth
+    @role_required('admin')
     def update(self, id, **kwargs):
         """
         PUT /groups/{id}: Depricated!
@@ -290,6 +313,7 @@ class GroupsController(BaseController):
 
     @web
     @auth
+    @role_required('admin')
     def delete(self, id, **kwargs):
         """
         DELETE /group/{id}: Delete an existing group
@@ -328,6 +352,7 @@ class GroupsController(BaseController):
     @web
     #@auth ? need token
     @authorize
+    @role_required('admin')
     def edit(self, id, **kwargs):
         """
         GET /contents/{id}/edit: Form to edit an existing item

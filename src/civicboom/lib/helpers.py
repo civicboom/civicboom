@@ -425,7 +425,16 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         href    = href,
         class_  = css_class,
         title   = title,
-        onClick = "if (%(confirm_text)s) {var e = document.getElementById('form_%(hhash)s'); if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} } return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        # AllanC - the beast onclick even below does the following:
+        #   - put yes/no proceed message up if specifyed
+        #   - check if link has NOT class='disabled'
+        #     - set class 'disablked'
+        #     - perform AJAX form post
+        #       - in preference call the 'onsubmit' function (this is not call is used jQuery is used to submit form)
+        #       - if not just serilze the form and submit
+        #     - set timer so that in 1 seconds time the link 'disabled class is removed'
+        #  - return false and ensure that the normal list is not followed
+        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled')) {$(this).addClass('disabled'); var e = document.getElementById('form_%(hhash)s'); if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout('$(\"#link_%(hhash)s\").removeClass(\"disabled\");', 1000);} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
     # $('#form_%(hhash)s').onsubmit();
     

@@ -2,7 +2,7 @@ from civicboom.tests import *
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_content, get_membership
 
-from civicboom.model         import Boom, Content, Media, Member, Follow, GroupMembership, Message, Tag, MemberAssignment
+from civicboom.model         import Boom, Content, Media, Member, Follow, GroupMembership, Message, Tag, MemberAssignment, PaymentAccount
 from civicboom.model.meta    import Session
 
 from base64 import b64encode, b64decode
@@ -171,6 +171,10 @@ class TestDeleteCascadesController(TestController):
         self.group_id = int(response_json['data']['id'])
         self.assertNotEqual(self.group_id, 0)
         
+        self.set_account_type('plus') # Create an account record associated with this user
+        self.delete_cascade_payment_account_id = Session.query(Member).filter_by(id = self.delete_cascade_member_id).one().payment_account_id # Get payment account id
+        
+        
         #-----------------------------------------------------------------------
         # Step 2: check data is in database
         #-----------------------------------------------------------------------
@@ -195,6 +199,9 @@ class TestDeleteCascadesController(TestController):
         self.assertEqual(Session.query(Message         ).filter_by(  source_id = self.delete_cascade_member_id).count(), 1)
         
         self.assertEqual(Session.query(Tag             ).filter_by(       name = u'delete_cascade'            ).count(), 1)
+        
+        self.assertEqual(Session.query(Member          ).filter_by(payment_account_id = self.delete_cascade_payment_account_id).count(), 1)
+        
         
         #-----------------------------------------------------------------------
         # Step 3: Delete objects
@@ -240,6 +247,9 @@ class TestDeleteCascadesController(TestController):
         self.assertEqual(Session.query(Message         ).filter_by(  source_id = self.delete_cascade_member_id).count(), 0)
         
         self.assertEqual(Session.query(Tag             ).filter_by(       name = u'delete_cascade'            ).count(), 1) #Tag remains at the end, this could be tidyed witha  delete orphan cascade
+        
+        self.assertEqual(Session.query(Member          ).filter_by(payment_account_id = self.delete_cascade_payment_account_id).count(), 0)
+        self.assertEqual(Session.query(PaymentAccount  ).filter_by(                id = self.delete_cascade_payment_account_id).count(), 1) # The cascade dose not remove the payment account
         
         # Step 5: cleanup
         unittest_assignment = get_content(unittest_assingment_id)

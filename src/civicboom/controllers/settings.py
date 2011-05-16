@@ -15,10 +15,12 @@ from civicboom.model import User, Group
 from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
 
 import cbutils.warehouse as wh
+
 import hashlib
 import copy
 import tempfile
 import Image
+import formencode
 
 from civicboom.lib.communication.messages import generators
 
@@ -31,6 +33,21 @@ from civicboom.model.meta import location_to_string
 from civicboom.lib.web import _find_template_basic
 
 log = logging.getLogger(__name__)
+
+
+# This also appears in Group Controller
+class PrivateGroupValidator(formencode.validators.FancyValidator):
+    messages = {
+        'invalid'           : _('Value must be one of: public; private'),
+        'require_upgrade'   : _('You require a paid account to use the private content feature, please contact us!'),
+        }
+
+    def _to_python(self, value, state):
+        if value not in ['public', 'private']:
+            raise formencode.Invalid(self.message('invalid', state), value, state)
+        if value == "private" and not c.logged_in_persona.has_account_required('plus'):
+            raise formencode.Invalid(self.message('require_upgrade', state), value, state)
+        return value
 
 
 #---------------------------------------------------------------------------
@@ -119,7 +136,11 @@ for setting in settings_base.values():
         settings_validators[setting['name']] = civicboom.lib.form_validators.base.SetValidator(set=setting['value']) #formencode.validators.Set(setting['value'].split(','))
     # Special handling for enums
     elif setting['type'] == 'enum':
-        settings_validators[setting['name']] = formencode.validators.OneOf(setting['value'])
+        # HACK ALERT: GregM: Stupid Validator needed for private content
+        if setting['name'] == 'default_content_visibility':
+            settings_validators[setting['name']] = PrivateGroupValidator()
+        else:
+            settings_validators[setting['name']] = formencode.validators.OneOf(setting['value'])
     # Anything else from default type_validators
     else:
         settings_validators[setting['name']] = type_validators.get(setting['type'])

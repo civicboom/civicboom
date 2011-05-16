@@ -28,3 +28,10 @@ def error_role():
             code     = 403 ,
             message  = _('current persona does not posses the role required to perform this operation') ,
         )
+
+def error_age():
+    return action_error(
+            status   = 'error' ,
+            code     = 403 ,
+            message  = _('current user is not a sutable age to perform this operation') ,
+        )

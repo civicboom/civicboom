@@ -144,6 +144,7 @@ class ContentActionsController(BaseController):
     @web
     @auth
     @role_required('editor')
+    @age_required(config['setting.age.accept'])
     def accept(self, id=None, **kwargs):
         """
         POST /contents/{id}/accept: accept an assignment

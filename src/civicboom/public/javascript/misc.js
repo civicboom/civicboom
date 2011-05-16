@@ -159,6 +159,17 @@ function setAttrIf(element, name, val) {
   if (element.attr(name)) element.attr(name, val);
 }
 
+function removeMedia(jquery_element) {
+	var url = "/media/"+jquery_element.attr('name').split('_')[2]+".json";
+	var post = [{name: "id", value: jquery_element.attr('name').split('_')[2]},
+				{name: "_method", value: "DELETE"},
+				{name: "_authentication_token", value: jquery_element.parents('form').find('#_authentication_token').val()}];
+	$.post( url, post, function(data) {
+		jquery_element.parents('li').remove();
+	});
+	return false;
+}
+
 function refreshProgress (jquery_element) {
   var url = jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href').replace(/\.frag$/, '.json');
   $.getJSON( url, function (data) {

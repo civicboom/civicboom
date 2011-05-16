@@ -20,7 +20,11 @@ from civicboom.lib.form_validators.registration      import RegisterSchemaEmailU
 from formencode import validators#, htmlfill
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
-from cbutils.misc import random_string
+from cbutils.misc import random_string, calculate_age
+
+from civicboom.lib.form_validators.base import IsoFormatDateConverter
+api_datestr_to_datetime = IsoFormatDateConverter().to_python
+#from civicboom.lib.helpers import api_datestr_to_datetime #This is not suffience because some of the DOB's are not in API form. We may need to normaliz this in future
 
 log      = logging.getLogger(__name__)
 
@@ -203,10 +207,10 @@ def _fetch_avatar(url):
         with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
             data = urllib2.urlopen(url).read()
             original.write(data)
-
+            
             h = wh.hash_file(original.name)
-            wh.copy_to_warehouse(original.name, "avatars-original", h, a.filename)
-
+            wh.copy_to_warehouse(original.name, "avatars-original", h)
+            
             with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
                 size = (160, 160)
                 im = Image.open(original.name)
@@ -214,7 +218,7 @@ def _fetch_avatar(url):
                     im = im.convert("RGB")
                 im.thumbnail(size, Image.ANTIALIAS)
                 im.save(processed.name, "JPEG")
-                wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
+                wh.copy_to_warehouse(processed.name, "avatars", h)
             return h
     except Exception as e:
         log.exception("Error fetching janrain user's avatar")
@@ -255,7 +259,14 @@ def register_new_janrain_user(profile):
     
     u.config['dob']     = profile.get('birthday') #Config vars? auto commiting?
     u.config['website'] = profile.get('url')
-
+    
+    try:
+        age = calculate_age(api_datestr_to_datetime(u.config['dob']))
+        if age < config['setting.age.min_signup']:
+            log.info('janrain dob is lower than min age: %s' % u.config['dob'])
+            raise Exception('janrain dob is lower than min age')
+    except:
+        del u.config['dob']
     
     # Future addition and enhancements
     #   with janrain we could get a list of friends/contnact and automatically follow them?

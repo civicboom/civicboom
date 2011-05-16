@@ -5,8 +5,16 @@ from pylons.controllers.util  import redirect
 
 import civicboom.lib.errors as errors
 
-from civicboom.model.member import has_role_required as has_role_required
+from civicboom.model.member             import has_role_required as has_role_required
 
+
+from civicboom.lib.misc                 import calculate_age
+from civicboom.lib.form_validators.base import IsoFormatDateConverter
+api_datestr_to_datetime = IsoFormatDateConverter().to_python
+#from civicboom.lib.helpers import api_datestr_to_datetime #This is not suffience because some of the DOB's are not in API form. We may need to normaliz this in future
+
+import logging
+log = logging.getLogger(__name__)
 
 def account_type(required_account_type):
     """
@@ -40,6 +48,30 @@ def role_required(role_required):
         return result
     
     return wrapper
+
+
+def age_required(age_required):
+    """
+    Decorator to protect actions with an age limit
+    """
+    age_required = int(age_required)
+    
+    @decorator
+    def wrapper(_target, *args, **kwargs):
+        if c.logged_in_persona.config.get('dob'):
+            dob_str = c.logged_in_persona.config.get('dob')
+            age     = age_required
+            try:
+                age = calculate_age(api_datestr_to_datetime(dob_str))
+            except:
+                log.warn('tryed to convert member.config[dob] to datetime and failed for user %s, please investigate: %s' % (c.logged_in_persona.username, dob_str))
+            if age < age_required:
+                raise errors.error_age()
+        result = _target(*args, **kwargs)
+        return result
+    
+    return wrapper
+
     
 
 def raise_if_current_role_insufficent(role_required, group=None):
@@ -47,3 +79,4 @@ def raise_if_current_role_insufficent(role_required, group=None):
         if has_role_required(role_required, c.logged_in_persona_role):
             return
     raise errors.error_role()
+
