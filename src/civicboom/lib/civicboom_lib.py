@@ -307,7 +307,9 @@ def twitter_global(content):
 
 def profanity_filter(content):
     #if not config['online']                  : return
-    if not config['feature.profanity_filter']: return
+    if not config['feature.profanity_filter']:
+        log.info("Profanity filter disabled, returning null")
+        return
 
     if hasattr(content, 'id'):
         content = content.id
