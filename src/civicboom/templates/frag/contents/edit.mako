@@ -345,6 +345,11 @@
             <!-- End list existing media -->
             
             <!-- Add media -->
+            % if c.logged_in_user.username == "unittest" or c.logged_in_persona.username == "video-capture-beta-testers":
+            <li class="hide_if_nojs">
+            	${media_recorder()}
+            </li>
+            % endif
             
             <!-- Add media javascript - visible to JS enabled borwsers -->
             <li class="hide_if_nojs">
@@ -392,6 +397,28 @@
         </ul>
         </div>
     </fieldset>
+</%def>
+
+##------------------------------------------------------------------------------
+## Flash Media Recorder
+##------------------------------------------------------------------------------
+<%def name="media_recorder()">
+	<script type="text/javascript">
+		function cbFlashMedia${self.id}_DoFSCommand(command, args) {
+			var args = args.split(',');
+			if (command == 'flashresize') {
+				aHeight = (args[0]*1)+5; 
+				aWidth  = (args[1]*1)+14;
+				$('#media_recorder_${self.id}').css('width', aWidth).css('height', aHeight);
+			} else if (command == 'uploadcomplete') {
+				refreshProgress($('form#edit_$(self.id}'));
+			}
+		}
+		swfobject.embedSWF("https://bm1.civicboom.com:9443/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % c.content.id)}"});
+	</script>
+	<div class="media_recorder" style="left:0px;width:360px;height:371px;" id="media_recorder_${self.id}">
+		<div id="cbFlashMedia${self.id}">${_('If you see this text your browser is incompatible with our media recorder, please upload a video or audio file below')}</div>
+	</div>
 </%def>
 
 ##------------------------------------------------------------------------------
