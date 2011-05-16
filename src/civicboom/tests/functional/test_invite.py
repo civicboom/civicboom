@@ -49,7 +49,7 @@ class TestInviteController(TestController):
     def part_create_private_assignment(self):
         self.log_in_as('unittest')
         self.set_persona('test_private_group')
-        
+        self.set_account_type('free') # Because of #513 groups are now created with the account of there parent - we need to reset the account type to free for the next test to fail
         # Should fail to post as this group does not have a 'plus' account - validation will fail on content being default 'private'
         response = self.app.post(
             url('contents', format="json"),

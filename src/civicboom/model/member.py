@@ -759,7 +759,7 @@ class PaymentAccount(Base):
     id          = Column(Integer(), primary_key=True)
     type        = Column(account_types, nullable=False, default="free")
     
-    members = relationship("Member", backref=backref('payment_account', cascade="all,delete-orphan", single_parent=True)) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
+    members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
     #cascade="all,delete-orphan"
     
     

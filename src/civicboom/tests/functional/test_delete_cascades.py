@@ -249,7 +249,7 @@ class TestDeleteCascadesController(TestController):
         self.assertEqual(Session.query(Tag             ).filter_by(       name = u'delete_cascade'            ).count(), 1) #Tag remains at the end, this could be tidyed witha  delete orphan cascade
         
         self.assertEqual(Session.query(Member          ).filter_by(payment_account_id = self.delete_cascade_payment_account_id).count(), 0)
-        self.assertEqual(Session.query(PaymentAccount  ).filter_by(                id = self.delete_cascade_payment_account_id).count(), 0)
+        self.assertEqual(Session.query(PaymentAccount  ).filter_by(                id = self.delete_cascade_payment_account_id).count(), 1) # The cascade dose not remove the payment account
         
         # Step 5: cleanup
         unittest_assignment = get_content(unittest_assingment_id)
