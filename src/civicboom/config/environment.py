@@ -91,6 +91,8 @@ def load_environment(global_conf, app_conf):
                         'setting.session.login_expire_time',
                         'email.smtp_port',
                         'setting.content.max_comment_length',
+                        'setting.age.min_signup',
+                        'setting.age.accept',
                         ]
     for varname in integer_varnames:
         config[varname] = int(config[varname].strip())

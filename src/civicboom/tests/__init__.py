@@ -142,7 +142,7 @@ class TestController(TestCase):
         #self.assertIn('request', response) # successful "join request" in response
 
 
-    def sign_up_as(self, username, password=u'password'):
+    def sign_up_as(self, username, password=u'password', dob=u'1/1/1980'):
         """
         A function that can be called from other automated tests to call the signup proccess and generate a new user
         """
@@ -171,10 +171,10 @@ class TestController(TestCase):
         response = self.app.post(
             link,
             params={
-                'password'        : password,
-                'password_confirm': password,
-                'dob'             : u'1/1/1980',
-                'terms'           : u'checked'
+                'password'        : password  ,
+                'password_confirm': password  ,
+                'dob'             : dob       ,
+                'terms'           : u'checked',
             },
         )
         self.assertEqual(getNumEmails(), num_emails + 1)

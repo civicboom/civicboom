@@ -23,7 +23,7 @@ from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.database.query_helpers import to_apilist
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, get_lowest_role_for_user
-from civicboom.lib.permissions         import account_type, role_required, has_role_required, raise_if_current_role_insufficent
+from civicboom.lib.permissions         import account_type, role_required, age_required, has_role_required, raise_if_current_role_insufficent
 
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
@@ -54,7 +54,7 @@ __all__ = [
     "cacheable",
     "web",
     "auth",
-    "account_type", "role_required",
+    "account_type", "role_required", "age_required",
     #"account_types", #types for use with with account_type decorator
     
     #errors
