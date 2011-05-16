@@ -104,7 +104,7 @@ def load_environment(global_conf, app_conf):
     # configure modules that used to require pylons.config
     wh.configure(pylons.config)
 
-    import lib.communication.email_lib as email
+    import civicboom.lib.communication.email_lib as email
     email.configure(pylons.config)
 
     # set up worker processors
