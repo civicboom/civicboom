@@ -101,8 +101,11 @@ def load_environment(global_conf, app_conf):
     for k, v in list(config.items()):
         pylons.config[k] = v
 
-    # configure the warehouse
+    # configure modules that used to require pylons.config
     wh.configure(pylons.config)
+
+    import lib.communication.email_lib as email
+    email.configure(pylons.config)
 
     # set up worker processors
     if pylons.config['worker.queue'] in ["inline", "threads"]:

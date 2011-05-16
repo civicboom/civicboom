@@ -1,5 +1,3 @@
-from pylons import config
-
 from webhelpers.html.tools import auto_link
 from webhelpers.html       import literal
 
@@ -10,6 +8,14 @@ import re
 
 import logging
 log = logging.getLogger(__name__)
+
+
+config = {}
+
+def configure(c):
+    global config
+    config = c
+
 
 #-------------------------------------------------------------------------------
 # Render Email

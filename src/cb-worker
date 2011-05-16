@@ -84,9 +84,12 @@ def set_up_environment():
     }
     langs["en"].install()
 
-    # configure the warehouse
+    # configure modules that used to require pylons.config
     import cbutils.warehouse as wh
     wh.configure(w.config)
+
+    import civicboom.lib.communication.email_lib as email
+    email.configure(w.config)
 
     # attach the things above to the worker
     log.info("Init callbacks")
