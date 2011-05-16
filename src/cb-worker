@@ -21,19 +21,14 @@ def main(argv):
         type='str')
     options, args = option_parser.parse_args(argv)
 
+    log_opts = dict(
+        level    = logging.INFO,
+        format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
+        datefmt  = "%H:%M:%S",
+    )
     if options.log_file:
-        logging.basicConfig(
-            level    = logging.INFO,
-            format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
-            datefmt  = "%H:%M:%S",
-            filename = options.log_file
-        )
-    else:
-        logging.basicConfig(
-            level    = logging.INFO,
-            format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
-            datefmt  = "%H:%M:%S"
-        )
+        log_opts["filename"] = options.log_file
+    logging.basicConfig(**log_opts)
 
     c = SafeConfigParser()
     c.read(options.ini)
