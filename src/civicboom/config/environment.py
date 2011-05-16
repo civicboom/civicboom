@@ -117,6 +117,17 @@ def load_environment(global_conf, app_conf):
         worker.add_worker_function('profanity_check'   , profanity_check  )
         worker.config = pylons.config
 
+        # HACK: Shish: this results in jobs causing commits mid-process for pages
+        def teardown(job, success, exception):
+            from civicboom.model.meta import Session
+            if success:
+                Session.commit()
+            else:
+                Session.rollback()
+            if exception:
+                log.exception('Error in worker:')
+        worker.teardown = teardown
+
     # set up worker queue
     if pylons.config['worker.queue'] == "inline":
         worker.init_queue(None)
