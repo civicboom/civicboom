@@ -393,6 +393,10 @@ class BaseController(WSGIController):
             self._set_lang(session_get('lang')) # Lang set for this users session
         #elif c.logged_in_persona has lang:
         #    self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
+        #elif request.environ.get("Accept-Language"):
+        #   langs = request.environ.get("Accept-Language").split(";")[0]
+        #   for lang in langs:
+        #       ...
         else:
             self._set_lang(        config['lang']) # Default lang in config file
         
