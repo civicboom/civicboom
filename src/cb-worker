@@ -128,7 +128,7 @@ def add_test_jobs():
     })
     w.add_job({
         'task': 'profanity_check',
-        'content': 76,
+        'content_id': 1,
         'url_base': 'https://vm.civicboom.com/',
     })
     from webhelpers.html import literal
@@ -145,7 +145,7 @@ def add_test_jobs():
             },
             'n': {
                 'subject': u'new content',
-                'content': u'Testing User has written new content : <a href="https://www.vm.civicboom.com/contents/75">Untitled</a>',
+                'content': u'Testing User has written new content [...]',
             }
         }
     })
