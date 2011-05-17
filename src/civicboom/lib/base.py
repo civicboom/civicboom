@@ -399,7 +399,7 @@ class BaseController(WSGIController):
         # User pending regisration? --------------------------------------------
         # redirect to complete registration process
         if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url('current')):
-            set_flash_message(_('Please complete the regisration process'))
+            set_flash_message(_('Please complete the registration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 
         # Session Flash Message ------------------------------------------------
