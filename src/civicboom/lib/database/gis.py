@@ -16,11 +16,11 @@ def get_engine():
     return gis_engine
 
 
-def get_location_by_name(name):
+def get_location_by_name(name):  # pragma: no cover
     # NOTE: use of the google geocoding and other APIs require that the results
     # are displayed using google maps, using google maps on a for-profit website
     # requires a commercial license
-    if False: # pragma: no cover -- we don't have a license for this
+    if False:  # we don't have a license for this
         import urllib2, json
         log.debug("Looking up location for %s" % addr)
         data = urllib2.urlopen("http://maps.google.com/maps/api/geocode/json?sensor=false&address=%s" % addr).read()
