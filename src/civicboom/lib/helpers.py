@@ -159,7 +159,7 @@ def wh_url(folder, filename):
         if app_globals.version:
             # in production, serve from a domain without cookies, with package version as cache breaker
             return proto+config['cdn_url']+"/"+app_globals.version+"/"+filename
-        else:
+        else:  # pragma: no cover - only the production setup is tested
             # in development, serve locally, with update time as cache breaker
             path = os.path.join("civicboom", "public", filename)
             ut = str(int(os.stat(path).st_mtime))
