@@ -314,7 +314,7 @@ class BaseController(WSGIController):
         #print request.cookies
         
         # Setup globals c ------------------------------------------------------
-        c.result = {'status':'ok', 'message':'', 'data':{}} # Default return object
+        c.result = action_ok()  # Default return object
         
         # Request global - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
