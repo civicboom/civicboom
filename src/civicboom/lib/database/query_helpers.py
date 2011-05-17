@@ -1,7 +1,7 @@
 from pylons import config
 import sqlalchemy.orm.query
 
-from civicboom.lib.misc import str_to_int
+from cbutils.misc import str_to_int
 from civicboom.lib.web import action_ok
 
 __all__ = [

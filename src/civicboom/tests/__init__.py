@@ -19,7 +19,7 @@ from routes.util import URLGenerator
 # XXX: Paste's TestApp supports app.delete() with params
 #from webtest import TestApp
 from paste.fixture import TestApp
-from civicboom.lib import worker
+import cbutils.worker as worker
 
 from civicboom.lib.communication.email_log import getLastEmail, getNumEmails, emails
 import re
@@ -142,7 +142,7 @@ class TestController(TestCase):
         #self.assertIn('request', response) # successful "join request" in response
 
 
-    def sign_up_as(self, username, password=u'password'):
+    def sign_up_as(self, username, password=u'password', dob=u'1/1/1980'):
         """
         A function that can be called from other automated tests to call the signup proccess and generate a new user
         """
@@ -171,10 +171,10 @@ class TestController(TestCase):
         response = self.app.post(
             link,
             params={
-                'password'        : password,
-                'password_confirm': password,
-                'dob'             : u'1/1/1980',
-                'terms'           : u'checked'
+                'password'        : password  ,
+                'password_confirm': password  ,
+                'dob'             : dob       ,
+                'terms'           : u'checked',
             },
         )
         self.assertEqual(getNumEmails(), num_emails + 1)
@@ -200,6 +200,17 @@ class TestController(TestCase):
         content_id = int(response_json['data']['id'])
         self.assertGreater(content_id, 0)
         return content_id
+
+    def update_content(self, id, **kwargs):
+        params={
+            '_authentication_token': self.auth_token
+        }
+        params.update(kwargs)
+        response = self.app.put(
+            url('content', id=id, format='json'),
+            params = params ,
+            status = 200    ,
+        )
 
     def delete_content(self, id):
         response = self.app.delete(

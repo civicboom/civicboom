@@ -29,6 +29,17 @@ _workers           = []
 _worker_queue      = None
 _worker_functions = {}
 
+config = {}
+setup = None
+teardown = None
+
+def _default_teardown(task, success, exception):
+    if not success:
+        log.exception('Error in worker thread:')
+        sleep(3)
+
+teardown = _default_teardown
+
 
 ##############################################################################
 # Shared API
@@ -49,7 +60,7 @@ def add_job(job):
     Adds a job to the worker's queue if there is one; if no queues have
     been initialised, runs the job directly
     """
-    if _worker_queue and job["task"] not in ["send_notification", "profanity_check"]:
+    if _worker_queue:
         log.info('Adding job to worker queue: %s' % job["task"])
         _worker_queue.put(job)
     else:
@@ -65,22 +76,27 @@ def add_job(job):
 
 def run_one_job(task):
     live = True
+    job_success = None
+    exception = None
     try:
+        if setup:
+            setup(task)
         task_type = task.pop("task")
         log.info('Starting task: %s (%s)' % (task_type, task))
         if task_type in _worker_functions:
-            _worker_functions[task_type](**task)
-        #elif task_type == "process_media":
-        #    process_media(**task)
-        #elif task_type == "send_message":
-        #    send_message(**task)
+            job_success = _worker_functions[task_type](**task)
         elif task_type == "die":
             live = False
+            job_success = True
         else:
             log.error("Unrecognised task type: %s" % task_type)
+            job_success = True
     except Exception as e:
-        log.exception('Error in worker thread:')
-        sleep(3)
+        job_success = False
+        exception = e
+    finally:
+        if teardown:
+            teardown(task, job_success, exception)
     return live
 
 

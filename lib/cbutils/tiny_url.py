@@ -3,7 +3,7 @@ import urllib
 apiurl = "http://tinyurl.com/api-create.php?url="
 
 
-def tiny_url(url): # pragma: no cover - testing shouldn't hit external servers
+def tiny_url(url):
     """ Make a tinyurl for """
     try:
         return urllib.urlopen(apiurl + url).read()

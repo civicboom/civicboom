@@ -23,7 +23,7 @@ from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.database.query_helpers import to_apilist
 from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, get_lowest_role_for_user
-from civicboom.lib.permissions         import account_type, role_required, has_role_required, raise_if_current_role_insufficent
+from civicboom.lib.permissions         import account_type, role_required, age_required, has_role_required, raise_if_current_role_insufficent
 
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
@@ -54,7 +54,7 @@ __all__ = [
     "cacheable",
     "web",
     "auth",
-    "account_type", "role_required",
+    "account_type", "role_required", "age_required",
     #"account_types", #types for use with with account_type decorator
     
     #errors
@@ -314,7 +314,7 @@ class BaseController(WSGIController):
         #print request.cookies
         
         # Setup globals c ------------------------------------------------------
-        c.result = {'status':'ok', 'message':'', 'data':{}} # Default return object
+        c.result = action_ok()  # Default return object
         
         # Request global - have the system able to easly view request details as globals
         current_request = request.environ.get("pylons.routes_dict")
@@ -393,13 +393,17 @@ class BaseController(WSGIController):
             self._set_lang(session_get('lang')) # Lang set for this users session
         #elif c.logged_in_persona has lang:
         #    self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
+        #elif request.environ.get("Accept-Language"):
+        #   langs = request.environ.get("Accept-Language").split(";")[0]
+        #   for lang in langs:
+        #       ...
         else:
             self._set_lang(        config['lang']) # Default lang in config file
         
         # User pending regisration? --------------------------------------------
         # redirect to complete registration process
         if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url('current')):
-            set_flash_message(_('Please complete the regisration process'))
+            set_flash_message(_('Please complete the registration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 
         # Session Flash Message ------------------------------------------------

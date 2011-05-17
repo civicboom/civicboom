@@ -17,7 +17,7 @@ from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import get_member as _get_member, update_member_messages
 from civicboom.lib.communication.email_lib import render_email
 
-import civicboom.lib.worker as worker
+import cbutils.worker as worker
 
 import re
 import logging

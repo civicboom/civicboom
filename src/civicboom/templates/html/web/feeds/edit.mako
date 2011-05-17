@@ -13,6 +13,6 @@
 </style>
 
 <%
-from civicboom.lib.search import html
+from civicboom.model.filters import html
 %>
 ${html(d['feed'].query)|n}

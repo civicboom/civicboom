@@ -3,7 +3,7 @@ from civicboom.lib.base import *
 #from civicboom.controllers.contents import _normalize_member
 
 
-from civicboom.lib.misc import update_dict
+from cbutils.misc import update_dict
 
 # AllanC - for members autocomplete index
 from civicboom.model      import Member, Follow, GroupMembership, Group

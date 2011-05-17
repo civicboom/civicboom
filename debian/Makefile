@@ -57,7 +57,7 @@ cb-website-db.deb: Makefile $(shell find ./db)
 	fakeroot dpkg -b fs-db cb-website-db_${VERSION}_all.deb 
 	ln -sf cb-website-db_${VERSION}_all.deb cb-website-db.deb
 
-python-cbmisc.deb: Makefile ../lib/Makefile
+python-cbmisc.deb: Makefile ../lib/Makefile ../lib/cbutils/
 	rm -rf fs-env
 	mkdir -p fs-env/DEBIAN/
 	echo ================================================ >/dev/null

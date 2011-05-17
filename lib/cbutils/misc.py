@@ -19,11 +19,9 @@ def random_string(length=8):
     Generate a random string of a-z A-Z 0-9
     (Without vowels to stop bad words from being generated!)
 
-    >>> a = random_string()
-    >>> len(a)
+    >>> len(random_string())
     8
-    >>> b = random_string(10)
-    >>> len(b)
+    >>> len(random_string(10))
     10
 
     If random, it should compress pretty badly:
@@ -40,11 +38,22 @@ def random_string(length=8):
 
 
 def str_to_int(text, default=0):
+    """
+    >>> str_to_int("3")
+    3
+    >>> str_to_int("moo")
+    0
+    >>> str_to_int(None)
+    0
+    >>> str_to_int(str_to_int)
+    0
+    >>> str_to_int("cake", default=6)
+    6
+    """
     try:
         return int(text)
-    except:
-        pass
-    return default
+    except (ValueError, TypeError):
+        return default
 
 
 def calculate_age(born):
@@ -82,6 +91,10 @@ def calculate_age(born):
 def update_dict(dict_a, dict_b):
     """
     Because dict.update(d) does not return the new dict
+
+    >>> a = {'a': 1, 'b': 2}
+    >>> update_dict(a, {'b': 3, 'c': 3})
+    {'a': 1, 'c': 3, 'b': 3}
     """
     dict_a.update(dict_b)
     return dict_a
@@ -129,6 +142,16 @@ def obj_to_dict(obj, dict_fields):
 
 
 def args_to_tuple(*args, **kwargs):
+    """
+    >>> args_to_tuple()
+    ((), {})
+
+    >>> args_to_tuple("hello?")
+    (('hello?',), {})
+
+    >>> args_to_tuple("hello", name="dave")
+    (('hello',), {'name': 'dave'})
+    """
     return (args, kwargs)
 
 

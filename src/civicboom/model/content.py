@@ -310,7 +310,7 @@ class Content(Base):
         """
         AllanC TODO: Derived field - Postgress trigger needed
         """
-        from civicboom.lib.text import strip_html_tags
+        from cbutils.text import strip_html_tags
         return truncate(strip_html_tags(self.content).strip(), length=500, indicator='...', whole_word=True)
 
 

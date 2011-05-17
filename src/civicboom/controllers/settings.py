@@ -14,9 +14,8 @@ from civicboom.model import User, Group
 
 from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
 
-#from civicboom.controllers.groups import PrivateGroupValidator 
+import cbutils.warehouse as wh
 
-import civicboom.lib.services.warehouse as wh
 import hashlib
 import copy
 import tempfile
