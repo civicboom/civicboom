@@ -122,11 +122,13 @@ def load_environment(global_conf, app_conf):
         # HACK: Shish: this results in jobs causing commits mid-process for pages
         def teardown(job, success, exception):
             from civicboom.model.meta import Session
+            import logging
             if success:
                 Session.commit()
             else:
                 Session.rollback()
             if exception:
+                log = logging.getLogger("cbutils.worker")
                 log.exception('Error in worker:')
         worker.teardown = teardown
 
