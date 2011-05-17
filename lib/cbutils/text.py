@@ -10,7 +10,7 @@ import unicodedata
 
 def split_word(text, max_chars):
     """
-    used to split long usernames with spaces, seeks capitals as a prefernce to split with
+    used to split long usernames with spaces, seeks capitals as a preference to split with
 
     >>> split_word("IAmAWaffleFiend", 6)
     'IAmA Waffle Fiend'
@@ -209,8 +209,8 @@ def get_html_links(text):
 
 def safe_python_strings(d):
     """
-    Recursivly steps though a python dictionary
-    Identifys strings and removes/replaces harmful/unwanted characters + collapses white space
+    Recursively steps though a python dictionary
+    Identifies strings and removes/replaces harmful/unwanted characters + collapses white space
     """
     if isinstance(d, basestring):
         d = re.sub("'"   , "`", d)
@@ -226,16 +226,15 @@ def safe_python_strings(d):
 #-------------------------------------------------------------------------------
 explicit_replacement  = '[Explicit]'
 part_explicits = set([
+    'cunt',
     'fuck',
     'shit',
-    'cunt',
 ])
 whole_explicits = set([
     'piss',
     'slut',
     'whore',
     'slag',
-    'slut',
     'cock',
     'cocksucker',
     'cocklover',

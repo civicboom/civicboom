@@ -1,5 +1,5 @@
 from civicboom.lib.base import *
-from civicboom.lib.misc import make_username
+from cbutils.misc import make_username
 
 from civicboom.controllers.account import AccountController
 set_persona = AccountController().set_persona

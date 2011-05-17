@@ -19,7 +19,7 @@ from routes.util import URLGenerator
 # XXX: Paste's TestApp supports app.delete() with params
 #from webtest import TestApp
 from paste.fixture import TestApp
-from civicboom.lib import worker
+import cbutils.worker as worker
 
 from civicboom.lib.communication.email_log import getLastEmail, getNumEmails, emails
 import re

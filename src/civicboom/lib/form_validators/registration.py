@@ -12,7 +12,7 @@ from civicboom.model.meta              import Session
 from civicboom.model.member            import User, Member
 
 # Other utils
-from civicboom.lib.misc           import calculate_age, make_username
+from cbutils.misc           import calculate_age, make_username
 
 # Other libs
 #import recaptcha.client.captcha as librecaptcha

@@ -1,5 +1,5 @@
 from civicboom.lib.base import *
-from civicboom.lib.misc import make_username
+from cbutils.misc import make_username
 from civicboom.model import User, Group
 
 import civicboom.lib.constants as constants

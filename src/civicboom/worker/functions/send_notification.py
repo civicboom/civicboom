@@ -42,7 +42,7 @@ def _send_notification_to_user(member, name='', default_route='', rendered_messa
             update_member_messages(member)
     
     log.info("%s was sent the message '%s', routing via %s" % (
-        member.name, name, message_tech_options
+        member.username, name, message_tech_options
     ))
 
 

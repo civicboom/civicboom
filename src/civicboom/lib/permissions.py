@@ -8,7 +8,7 @@ import civicboom.lib.errors as errors
 from civicboom.model.member             import has_role_required as has_role_required
 
 
-from civicboom.lib.misc                 import calculate_age
+from cbutils.misc                 import calculate_age
 from civicboom.lib.form_validators.base import IsoFormatDateConverter
 api_datestr_to_datetime = IsoFormatDateConverter().to_python
 #from civicboom.lib.helpers import api_datestr_to_datetime #This is not suffience because some of the DOB's are not in API form. We may need to normaliz this in future

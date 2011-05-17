@@ -67,5 +67,5 @@ class TestAdminController(TestController):
     #    response = self.app.get("/admin/User/models?User--status=pending")
     #    response = self.app.get("/admin/User/models?User--status=suspended")
 
-    #def test_datepicker_and_usercompleter(self):
-    #    response = self.app.get("/admin/ArticleContent/models/2/edit?")
+    def test_datepicker_and_enummer_and_usercompleter(self):
+        response = self.app.get("/admin/ArticleContent/models/2/edit?")

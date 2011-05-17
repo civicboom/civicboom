@@ -1,7 +1,7 @@
 from civicboom.lib.base import *
 from civicboom.controllers.contents import ContentsController
 from civicboom.lib.communication    import messages
-from civicboom.lib.misc import update_dict
+from cbutils.misc import update_dict
 
 content_search = ContentsController().index
 

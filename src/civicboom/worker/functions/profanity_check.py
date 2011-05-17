@@ -1,21 +1,22 @@
 import logging
 log = logging.getLogger(__name__)
 
-#import civicboom.lib.services.cdyne_profanity
 from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import get_content
 
-from civicboom.lib.text import profanity_check as _profanity_check
-
-# TODO: this could fire off a thead to perform the profanity checking? (Raised as Feature #55)
+from cbutils.text import profanity_check as _profanity_check
 
 
-def profanity_check(content, url_base):
+def profanity_check(content_id, url_base):
     """
     Checks content for profanity using the CDYNE web service
     If there is a profanity, replace the content with the cleaned version
     """
-    content = get_content(content)
+    content = get_content(content_id)
+
+    if not content:
+        log.warning("Content not found: %s" % str(content_id))
+        return False
     
     # maybe we could profanity check drafts and tell users that the content has raised an issue before they publish it?
     
@@ -27,6 +28,7 @@ def profanity_check(content, url_base):
     if not profanity_response:
         content.flag(comment=u"automatic profanity check failed, please manually inspect", url_base=url_base)
     elif profanity_response['FoundProfanity']:
+        content.flag(comment=u"found %s profanities" % profanity_response['ProfanityCount'], url_base=url_base, delay_commit=True)
         content.content = profanity_response['CleanText']
-        content.flag(comment=u"found %s" % profanity_response['ProfanityCount'], url_base=url_base, delay_commit=True)
-        Session.commit()
+    
+    return True

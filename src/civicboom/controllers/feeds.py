@@ -1,7 +1,7 @@
 
-from civicboom.lib.base   import *
-from civicboom.lib.search import *
-from civicboom.model      import Feed, Content
+from civicboom.lib.base      import *
+from civicboom.model.filters import *
+from civicboom.model         import Feed, Content
 
 log = logging.getLogger(__name__)
 

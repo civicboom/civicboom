@@ -1,6 +1,5 @@
 
-from pylons import config
-from pylons import request, response, session, tmpl_context as c, url
+from pylons import config, request, tmpl_context as c
 
 from sqlalchemy import engine_from_config
 from sqlalchemy.sql import text

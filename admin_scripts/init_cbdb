@@ -13,6 +13,7 @@ echo "Removing old data"
 echo "DROP OWNED BY civicboom CASCADE" | psql -q
 dropdb civicboom     # civicboom doesn't completely own these databases,
 dropdb civicboom_gis # postgres owns the GIS metadata
+dropdb civicboom_log # why was this not here? :S
 dropuser civicboom
 
 
@@ -100,12 +101,5 @@ CREATE INDEX events__module ON events(module);
 CREATE INDEX events__username ON events(username);
 CREATE INDEX events__priority ON events(priority);
 " | psql -U civicboom -d civicboom_log -h localhost >/dev/null
-
-##############################################################################
-# civicboom_ses
-
-# sessions now stored in memcachedb
-#echo "Creating civicboom_ses database"
-#createdb -E utf8 -O civicboom civicboom_ses
 
 exit 0
