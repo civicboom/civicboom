@@ -234,9 +234,10 @@ icon_type_descriptions = {
 
 
 def icon(icon_type, description=None, class_=''):
+    print "ICON %s - %s - %s" % (icon_type, description, class_)
     if not description and icon_type in icon_type_descriptions:
         description = icon_type_descriptions[icon_type]
-    return HTML.div(HTML.span(description), class_=class_+" icon icon_"+icon_type, title=description)
+    return HTML.div(HTML.span(description), class_=class_+" icon16 i_"+icon_type, title=description)
 
 
 #-------------------------------------------------------------------------------
