@@ -45,7 +45,7 @@ class TestDeleteCascadesController(TestController):
             'title'         : title ,
             'contents'      : content ,
             'type'          : type ,
-            'tags'          : tags ,
+            'tags_string'   : tags ,
             #'submit_publish': u'publish' ,
         }
         if parent_id:
@@ -103,7 +103,7 @@ class TestDeleteCascadesController(TestController):
                 'title'         : u'Testing delete_cascade' ,
                 'contents'      : u'delete_cascade delete_cascade' ,
                 'type'          : u'assignment' ,
-                'tags'          : u'delete_cascade' ,
+                'tags_string'   : u'delete_cascade' ,
                 #'submit_publish': u'publish' ,
             },
             upload_files = [("media_file", "1x1.png", self.png1x1)],

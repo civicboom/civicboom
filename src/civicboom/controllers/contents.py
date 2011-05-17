@@ -51,7 +51,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     private     = civicboom.lib.form_validators.base.PrivateContentValidator(not_empty=False) #formencode.validators.StringBool(not_empty=False)
     license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused?
-    tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False)
+    #tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False) # not needed, handled by update method
     # Draft Fields
     target_type = formencode.validators.OneOf(content_types.enums, not_empty=False)
     # Assignment Fields
@@ -464,7 +464,7 @@ class ContentsController(BaseController):
         assert content
         
         # -- Validate ----------------------------------------------------------
-
+        
         # Select Validation Schema (based on content type)
         schema = ContentSchema()
         if kwargs.get('type', content.__type__) == 'comment':
@@ -587,20 +587,15 @@ class ContentsController(BaseController):
             media.load_from_file(tmp_file=form_file, original_name=form_file.filename, caption=kwargs.get('media_caption'), credit=kwargs.get('media_credit'))
             content.attachments.append(media)
             #Session.add(media) # is this needed as it is appended to content and content is in the session?
-
+        
         # Tags
         if 'tags_string' in kwargs:
-            separator = config['setting.content.tag_string_separator']
-            tags_new     = [tag.strip().lower() for tag in kwargs['tags_string'].split(separator) if tag!=""] # Get tags from form removing any empty strings
-            tags_current = [tag.name for tag in content.tags] # Get tags form current content object
-            # Add any new tag objects
-            tags_created = [] # AllanC - fix for people creating mytiple tags with the same name.
-            for tag in Set(tags_new).difference(tags_current):
-                if tag not in tags_created:
-                    content.tags.append(get_tag(tag))
-                    tags_created.append(tag)
-            # Remove any missing tag objects
-            content.tags = [tag for tag in content.tags if tag.name in tags_new]
+            tags_input   = set([tag.strip().lower() for tag in kwargs['tags_string'].split(config['setting.content.tag_string_separator']) if tag!=""]) # Get tags from form removing any empty strings
+            tags_current = set([tag.name for tag in content.tags]) # Get tags form current content object
+            content.tags = [tag for tag in content.tags if not tag.name in tags_current - tags_input] # remove unneeded tags
+            for new_tag_name in tags_input - tags_current: # add new tags
+                content.tags.append(get_tag(new_tag_name))
+        
         
         # -- Publishing --------------------------------------------------------
         if  submit_type=='publish'     and \

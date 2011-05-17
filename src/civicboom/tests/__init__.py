@@ -201,6 +201,17 @@ class TestController(TestCase):
         self.assertGreater(content_id, 0)
         return content_id
 
+    def update_content(self, id, **kwargs):
+        params={
+            '_authentication_token': self.auth_token
+        }
+        params.update(kwargs)
+        response = self.app.put(
+            url('content', id=id, format='json'),
+            params = params ,
+            status = 200    ,
+        )
+
     def delete_content(self, id):
         response = self.app.delete(
             url('content', id=id, format="json"),
