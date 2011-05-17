@@ -5,7 +5,7 @@ from civicboom.model.meta import location_to_string
 def create_autocompleter(url):
     class AutoCompleteRenderer(FieldRenderer):
         def render(self, options={}):
-            sval = self.value if hasattr(self, 'value') else ''
+            sval = self._value if hasattr(self, '_value') else ''
             cn = ""
             for name, val in options:
                 if str(val) == sval:
@@ -45,7 +45,7 @@ $('#%(name)s_name').autocomplete({
 
 class DatePickerFieldRenderer(FieldRenderer):
     def render(self):
-        value = self.value if hasattr(self, 'value') else ''
+        value = self._value if hasattr(self, '_value') else ''
         vars = dict(name=self.name, value=value.split(".")[0])
         return """
 <input id="%(name)s" name="%(name)s" type="text" value="%(value)s">
@@ -57,7 +57,7 @@ $('#%(name)s').datepicker({dateFormat: 'yy-mm-dd'})
 
 class EnumFieldRenderer(FieldRenderer):
     def render(self):
-        value = self.value if hasattr(self, 'value') else ''
+        value = self._value if hasattr(self, '_value') else ''
         opts = ""
         if self.field._columns[0].nullable:
             opts = opts + "<option value>None</option>\n"
