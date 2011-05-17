@@ -111,16 +111,28 @@ def load_environment(global_conf, app_conf):
 
     # set up worker processors
     if pylons.config['worker.queue'] in ["inline", "threads"]:
+        worker.config = pylons.config
         from civicboom.worker.functions.send_notification import send_notification
         from civicboom.worker.functions.process_media     import process_media
         from civicboom.worker.functions.profanity_check   import profanity_check
         worker.add_worker_function('process_media'     , process_media    )
         worker.add_worker_function('send_notification' , send_notification)
         worker.add_worker_function('profanity_check'   , profanity_check  )
-        worker.config = pylons.config
 
         # HACK: Shish: this results in jobs causing commits mid-process for pages
+        def setup(job):
+            """
+            pre-commit, so that content.new() is finished before media is added
+            """
+            from civicboom.model.meta import Session
+            Session.commit()
+        worker.setup = setup
+
         def teardown(job, success, exception):
+            """
+            post-commit, so that profanity_check() is finished before content is
+            returned for checking
+            """
             from civicboom.model.meta import Session
             import logging
             if success:
