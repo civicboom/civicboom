@@ -139,7 +139,7 @@ def load_environment(global_conf, app_conf):
                 Session.commit()
             else:
                 Session.rollback()
-            if exception:
+            if exception:  # pragma: no cover -- exceptions shouldn't happen in testing, if they do, tests stop anyway
                 log = logging.getLogger("cbutils.worker")
                 log.exception('Error in worker:')
         worker.teardown = teardown
@@ -147,11 +147,11 @@ def load_environment(global_conf, app_conf):
     # set up worker queue
     if pylons.config['worker.queue'] == "inline":
         worker.init_queue(None)
-    elif pylons.config['worker.queue'] == "threads":
+    elif pylons.config['worker.queue'] == "threads":  # pragma: no cover
         worker.start_worker()
-    elif pylons.config['worker.queue'] == "redis":
+    elif pylons.config['worker.queue'] == "redis":  # pragma: no cover
         worker.init_queue(redis_.RedisQueue(Redis(config['service.redis.server']), platform.node()))
-    else:
+    else:  # pragna: no cover
         log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
 
     civicboom_init() # This will trigger a set of additional initalizers
