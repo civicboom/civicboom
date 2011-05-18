@@ -120,6 +120,35 @@ class TaskController(BaseController):
         """
         pass
 
+    #---------------------------------------------------------------------------
+    # New Users and Groups Summary
+    #---------------------------------------------------------------------------
+
+    def email_new_user_summary(self, timedelta=datetime.timedelta(day=1)):
+        """
+        query for all users in last <timedelta> and email 
+        """
+        
+        members = Session.query(Member) \
+                    .with_polymorphic('*') \
+                    .filter(join_date>=datetime.datetime.now()-timedelta) \
+                    .all()
+        
+        from civicboom.lib.communication.email_lib import send_email
+        send_email(
+            config['email.event_alert'],
+            subject      ='new user registration summary',
+            content_html = render(
+                            '/email/admin/summary_new_users.mako',
+                            extra_vars = {
+                                "members"   : members   ,
+                                "timedelta" : timedelta ,
+                            }
+                        ),
+        )
+        
+        return response_completed_ok
+
 
     #---------------------------------------------------------------------------
     # Sync Warehouse Media
