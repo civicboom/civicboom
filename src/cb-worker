@@ -19,6 +19,9 @@ def main(argv):
     option_parser.add_option('--log-file',
         help='FILE to log to',
         type='str')
+    option_parser.add_option('--test',
+        help='add some test jobs', default=False,
+        action="store_true")
     options, args = option_parser.parse_args(argv)
 
     log_opts = dict(
@@ -47,6 +50,8 @@ def main(argv):
         log.error("Invalid worker type: %s" % w.config['worker.queue'])
 
     set_up_environment()
+    if options.test:
+        add_test_jobs()
     run()
 
     return 0
@@ -108,43 +113,49 @@ def set_up_environment():
     w.teardown = teardown
 
 
+def add_test_jobs():
+    w.add_job({
+        "task": "worker_workout",
+        #"lang": "fr",
+    })
+    w.add_job({
+        'task': 'process_media',
+        'tmp_file': '/home/shish/website/src/data/temp/media-054fc3b4a725b4f2c85522d52c76477a404520d0',
+        'delete_tmp': False,
+        'file_type': 'image',
+        'file_name': u'seeking.png',
+        'file_hash': '054fc3b4a725b4f2c85522d52c76477a404520d0',
+    })
+    w.add_job({
+        'task': 'profanity_check',
+        'content_id': 1,
+        'url_base': 'https://vm.civicboom.com/',
+    })
+    from webhelpers.html import literal
+    w.add_job({
+        'task': 'send_notification',
+        'default_route': 'ne',
+        'name': 'article_published_by_followed',
+        'members': [u'unitfriend', u'follow_test'],
+        'rendered_message': {
+            'e': {
+                'subject': u'Civicboom: new content',
+                'content_text': u'Testing User (https://...) has written new content : Untitled (https://...)',
+                'content_html': literal(u'<!DOCTYPE html>...'),
+            },
+            'n': {
+                'subject': u'new content',
+                'content': u'Testing User has written new content [...]',
+            }
+        }
+    })
+    w.add_job({
+        'task': 'die',
+    })
+
+
 def run():
     try:
-        w.add_job({
-            "task": "worker_workout",
-            #"lang": "fr",
-        })
-        w.add_job({
-            'task': 'process_media',
-            'tmp_file': '/home/shish/website/src/data/temp/media-054fc3b4a725b4f2c85522d52c76477a404520d0',
-            'delete_tmp': False,
-            'file_type': 'image',
-            'file_name': u'seeking.png',
-            'file_hash': '054fc3b4a725b4f2c85522d52c76477a404520d0',
-        })
-        w.add_job({
-            'task': 'profanity_check',
-            'content': 76,
-            'url_base': 'https://vm.civicboom.com/',
-        })
-        from webhelpers.html import literal
-        w.add_job({
-            'task': 'send_notification',
-            'default_route': 'ne',
-            'name': 'article_published_by_followed',
-            'members': [u'unitfriend', u'follow_test'],
-            'rendered_message': {
-                'e': {
-                    'subject': u'Civicboom: new content',
-                    'content_text': u'Testing User (https://...) has written new content : Untitled (https://...)',
-                    'content_html': literal(u'<!DOCTYPE html>...'),
-                },
-                'n': {
-                    'subject': u'new content',
-                    'content': u'Testing User has written new content : <a href="https://www.vm.civicboom.com/contents/75">Untitled</a>',
-                }
-            }
-        })
         log.info("Waiting for jobs")
         w.run_worker()
     except KeyboardInterrupt:
