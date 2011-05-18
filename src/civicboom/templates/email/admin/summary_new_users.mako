@@ -4,6 +4,14 @@
     
     <h1>New Members Summary</h1>
     <p>Since ${timedelta}</p>
+
+    ##--------------------------------------------------------------------------
+    <%def name="member_link(member)">\
+        <a href="${member.__link__()}">${user}</a>\
+        % if hasattr(member, 'email_normalized')
+        (<a href="mailto:${member.email_normalized}?Subject=${_('_site_name')}">${member.email_normalized}</a>)\
+        % endif
+    </%def>
     
     ##--------------------------------------------------------------------------
     
@@ -11,7 +19,7 @@
     <ul>
     % for user in [member for member in members if member.__type__ == 'user']:
         <li>
-            <a href="${user.__link__()}">${user}</a>: ${user.join_date}
+            ${member_link(user)}: ${user.join_date}
         </li>
     % endfor
     </ul>
@@ -25,7 +33,7 @@
             <a href="${group.__link__()}">${group}</a>: ${group.join_date}
             <ul>
             % for member, role in [(mr.member, mr.role) for mr in group.members_roles]:
-                <li><a href="${member.__link__()}">${member}</a>: ${role}</li>
+                <li>${member_link(member)}: ${role}</li>
             % endfor
             </ul>
         </li>
