@@ -7,14 +7,17 @@ Locked down for use in development mode only
 from civicboom.lib.base import *
 from civicboom.lib.web import cookie_get, cookie_set, cookie_delete
 
-from cbutils.misc import normalize_datestring, set_now
+from cbutils.misc import set_now
 
 from paste.deploy.converters import asbool
 
 import datetime
 from time import sleep, time
+from dateutil.parser import parse as parse_date
+
 
 log = logging.getLogger(__name__)
+
 
 class TestController(BaseController):
     
@@ -193,8 +196,7 @@ class TestController(BaseController):
         Used to get set date for automated tests
         """
         if new_now:
-            date_object = datetime.strptime(normalize_datestring(new_datetime), '%d/%m/%y') #('Jun 1 2005  1:33PM', '%b %d %Y %I:%M%p')
-            set_now(date_object)
+            set_now(parse_date(new_datetime))
         
         return '{"datetime":"%s"}' % now()
 
