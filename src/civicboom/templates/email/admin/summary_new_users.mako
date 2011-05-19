@@ -8,7 +8,7 @@
     ##--------------------------------------------------------------------------
     <%def name="member_link(member)">\
         <a href="${member.__link__()}">${user}</a>\
-        % if hasattr(member, 'email_normalized')
+        % if hasattr(member, 'email_normalized'):
         (<a href="mailto:${member.email_normalized}?Subject=${_('_site_name')}">${member.email_normalized}</a>)\
         % endif
     </%def>
