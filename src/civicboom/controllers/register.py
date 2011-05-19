@@ -13,6 +13,9 @@ from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email_h
 # Signin
 from civicboom.lib.authentication import signin_user_and_redirect
 
+# Email - to be removed - this was a short term import
+from civicboom.lib.communication.email_lib import send_email
+
 # Form Validators
 import formencode
 from civicboom.lib.form_validators.validator_factory import build_schema
@@ -20,7 +23,11 @@ from civicboom.lib.form_validators.registration      import RegisterSchemaEmailU
 from formencode import validators#, htmlfill
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
-from civicboom.lib.misc import random_string
+from cbutils.misc import random_string, calculate_age
+
+from civicboom.lib.form_validators.base import IsoFormatDateConverter
+api_datestr_to_datetime = IsoFormatDateConverter().to_python
+#from civicboom.lib.helpers import api_datestr_to_datetime #This is not suffience because some of the DOB's are not in API form. We may need to normaliz this in future
 
 log      = logging.getLogger(__name__)
 
@@ -116,6 +123,11 @@ class RegisterController(BaseController):
         
         c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako'))
         
+        # AllanC - Temp email alert for new user
+        #import datetime
+        #from civicboom.controllers.task import TaskController
+        #TaskController().email_new_user_summary(datetime.timedelta(minutes=1))
+        
         user_log.info("Registered new user")
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))
         signin_user_and_redirect(c.logged_in_persona, 'registration')
@@ -197,16 +209,16 @@ def _fetch_avatar(url):
     try:
         import urllib2
         import tempfile
-        import civicboom.lib.services.warehouse as wh
+        import cbutils.warehouse as wh
         import Image
 
         with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
             data = urllib2.urlopen(url).read()
             original.write(data)
-
+            
             h = wh.hash_file(original.name)
-            wh.copy_to_warehouse(original.name, "avatars-original", h, a.filename)
-
+            wh.copy_to_warehouse(original.name, "avatars-original", h)
+            
             with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
                 size = (160, 160)
                 im = Image.open(original.name)
@@ -214,7 +226,7 @@ def _fetch_avatar(url):
                     im = im.convert("RGB")
                 im.thumbnail(size, Image.ANTIALIAS)
                 im.save(processed.name, "JPEG")
-                wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
+                wh.copy_to_warehouse(processed.name, "avatars", h)
             return h
     except Exception as e:
         log.exception("Error fetching janrain user's avatar")
@@ -255,7 +267,14 @@ def register_new_janrain_user(profile):
     
     u.config['dob']     = profile.get('birthday') #Config vars? auto commiting?
     u.config['website'] = profile.get('url')
-
+    
+    try:
+        age = calculate_age(api_datestr_to_datetime(u.config['dob']))
+        if age < config['setting.age.min_signup']:
+            log.info('janrain dob is lower than min age: %s' % u.config['dob'])
+            raise Exception('janrain dob is lower than min age')
+    except:
+        del u.config['dob']
     
     # Future addition and enhancements
     #   with janrain we could get a list of friends/contnact and automatically follow them?

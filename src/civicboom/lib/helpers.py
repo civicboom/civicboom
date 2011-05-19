@@ -14,13 +14,8 @@ from webhelpers.text import truncate
 from webhelpers.html.tags import end_form
 from webhelpers.date import time_ago_in_words
 
-from civicboom.lib.text import strip_html_tags
-
-from civicboom.lib.misc import args_to_tuple
-
-# use relative import so that "import helpers" works
-#from civicboom.lib.text import scan_for_embedable_view_and_autolink
-from text import scan_for_embedable_view_and_autolink
+from cbutils.text import strip_html_tags, scan_for_embedable_view_and_autolink
+from cbutils.misc import args_to_tuple
 from civicboom.lib.web import current_url, url, current_protocol
 
 import webhelpers.html.tags as html
@@ -164,7 +159,7 @@ def wh_url(folder, filename):
         if app_globals.version:
             # in production, serve from a domain without cookies, with package version as cache breaker
             return proto+config['cdn_url']+"/"+app_globals.version+"/"+filename
-        else:
+        else:  # pragma: no cover - only the production setup is tested
             # in development, serve locally, with update time as cache breaker
             path = os.path.join("civicboom", "public", filename)
             ut = str(int(os.stat(path).st_mtime))
@@ -241,7 +236,7 @@ icon_type_descriptions = {
 def icon(icon_type, description=None, class_=''):
     if not description and icon_type in icon_type_descriptions:
         description = icon_type_descriptions[icon_type]
-    return HTML.div(HTML.span(description), class_=class_+" icon icon_"+icon_type, title=description)
+    return HTML.div(HTML.span(description), class_=class_+" icon16 i_"+icon_type, title=description)
 
 
 #-------------------------------------------------------------------------------

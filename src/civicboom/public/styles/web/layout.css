@@ -341,6 +341,9 @@ H1 {
 		min-width: 480px;
 		height: 84px;
 	}
+	HEADER #aboutbtns {
+		display: none;
+	}
 	NAV {
 		top: 53px;
 		left: 0px;

@@ -85,6 +85,9 @@ class TestMiscController(TestController):
         response = self.app.get("/crossdomain.xml")
         # FIXME: test that "Cache-Control: public" is set
 
+        response = self.app.get("/contents", extra_environ={'HTTP_HOST': 'widget.civicboom.com'})
+        # FIXME: test that widget doesn't set cookies
+
     def test_semi_static(self):
         response = self.app.get("/misc/titlepage")
         # FIXME: test that "Cache-Control: public" is NOT set (for logged in user)

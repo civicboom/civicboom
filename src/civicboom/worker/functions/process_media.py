@@ -3,12 +3,13 @@ import Image
 import os
 import os.path
 import subprocess
-import civicboom.lib.services.warehouse as wh
 
-from pylons import config
+import cbutils.warehouse as wh
+from cbutils.worker import config
 
 import logging
 log = logging.getLogger(__name__)
+
 
 def _ffmpeg(args):
     """
@@ -134,4 +135,3 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
 
     m.delete(status_key)
     log.debug("deleting status_key %s" % status_key)
-

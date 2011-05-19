@@ -3,8 +3,12 @@
 import logging
 import optparse
 import sys
-import pylons
-import civicboom.lib.worker as w
+
+from ConfigParser import SafeConfigParser
+import cbutils.worker as w
+
+
+log = logging.getLogger("workmaster")
 
 
 def main(argv):
@@ -15,42 +19,147 @@ def main(argv):
     option_parser.add_option('--log-file',
         help='FILE to log to',
         type='str')
+    option_parser.add_option('--test',
+        help='add some test jobs', default=False,
+        action="store_true")
     options, args = option_parser.parse_args(argv)
 
+    log_opts = dict(
+        level    = logging.INFO,
+        format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] %(message)s",
+        datefmt  = "%H:%M:%S",
+    )
     if options.log_file:
-        logging.basicConfig(
-            level    = logging.INFO,
-            format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
-            datefmt  = "%H:%M:%S",
-            filename = options.log_file
-        )
-    else:
-        logging.basicConfig(
-            level    = logging.INFO,
-            format   = "%(asctime)s,%(msecs)03d %(levelname)-5.5s [%(name)s] [%(threadName)s] %(message)s",
-            datefmt  = "%H:%M:%S"
-        )
-    log = logging.getLogger("workmaster")
+        log_opts["filename"] = options.log_file
+    logging.basicConfig(**log_opts)
 
-    # Initialize the Pylons app
-    log.info("Loading pylons environment")
-    from paste.deploy import appconfig
-    from civicboom.config.environment import load_environment
-    conf = appconfig('config:' + options.ini, relative_to='.')
-    load_environment(conf.global_conf, conf.local_conf)
-    # Now code can be run, the SQLalchemy Session can be used, etc.
+    c = SafeConfigParser()
+    c.read(options.ini)
+    w.config = c.defaults()
+    w.config["sqlalchemy.main.url"] = c.get("app:main", "sqlalchemy.main.url")
 
-    if pylons.config['worker.queue'] in ['inline', 'threads']:
+    if w.config['worker.queue'] in ['inline', 'threads']:
         log.error("Separate worker doesn't make sense for inline or threaded mode")
         return 1
+    elif w.config['worker.queue'] == "redis":
+        import cbutils.redis_ as redis_
+        from redis import Redis
+        import platform
+        w.init_queue(redis_.RedisQueue(Redis(w.config['service.redis.server']), platform.node()))
+    else:
+        log.error("Invalid worker type: %s" % w.config['worker.queue'])
 
+    set_up_environment()
+    if options.test:
+        add_test_jobs()
+    run()
+
+    return 0
+
+
+def set_up_environment():
+    # give the worker some functions
+    log.info("Init functions")
+    from civicboom.worker.functions.send_notification import send_notification
+    from civicboom.worker.functions.process_media     import process_media
+    from civicboom.worker.functions.profanity_check   import profanity_check
+    from civicboom.worker.functions.worker_workout    import worker_workout
+    w.add_worker_function('process_media'     , process_media    )
+    w.add_worker_function('send_notification' , send_notification)
+    w.add_worker_function('profanity_check'   , profanity_check  )
+    w.add_worker_function('worker_workout'    , worker_workout   )
+
+    # make sure that the database is open before each job, and closed after it
+    log.info("Init database")
+    from sqlalchemy import create_engine
+    import civicboom.model as model
+    from civicboom.model.meta import Session
+    model.init_model(create_engine(w.config['sqlalchemy.main.url']))
+
+    # set the language for each job
+    log.info("Init i18n")
+    import gettext
+    langs = {
+        "en": gettext.translation("civicboom", "./civicboom/i18n", languages=['en']),
+    }
+    langs["en"].install()
+
+    # configure modules that used to require pylons.config
+    import cbutils.warehouse as wh
+    wh.configure(w.config)
+
+    import civicboom.lib.communication.email_lib as email
+    email.configure(w.config)
+
+    # attach the things above to the worker
+    log.info("Init callbacks")
+    def setup(job):
+        if "lang" in job:
+            lang = job.pop("lang")
+            if lang in langs:
+                langs[lang].install()
+            else:
+                log.warning("Job with invalid language '%s': %s" % (lang, job))
+
+    def teardown(job, success, exception):
+        if success:
+            Session.commit()
+        else:
+            Session.rollback()
+        if exception:
+            log.exception('Error in worker:')
+
+    w.setup = setup
+    w.teardown = teardown
+
+
+def add_test_jobs():
+    w.add_job({
+        "task": "worker_workout",
+        #"lang": "fr",
+    })
+    w.add_job({
+        'task': 'process_media',
+        'tmp_file': '/home/shish/website/src/data/temp/media-054fc3b4a725b4f2c85522d52c76477a404520d0',
+        'delete_tmp': False,
+        'file_type': 'image',
+        'file_name': u'seeking.png',
+        'file_hash': '054fc3b4a725b4f2c85522d52c76477a404520d0',
+    })
+    w.add_job({
+        'task': 'profanity_check',
+        'content_id': 1,
+        'url_base': 'https://vm.civicboom.com/',
+    })
+    from webhelpers.html import literal
+    w.add_job({
+        'task': 'send_notification',
+        'default_route': 'ne',
+        'name': 'article_published_by_followed',
+        'members': [u'unitfriend', u'follow_test'],
+        'rendered_message': {
+            'e': {
+                'subject': u'Civicboom: new content',
+                'content_text': u'Testing User (https://...) has written new content : Untitled (https://...)',
+                'content_html': literal(u'<!DOCTYPE html>...'),
+            },
+            'n': {
+                'subject': u'new content',
+                'content': u'Testing User has written new content [...]',
+            }
+        }
+    })
+    w.add_job({
+        'task': 'die',
+    })
+
+
+def run():
     try:
         log.info("Waiting for jobs")
         w.run_worker()
     except KeyboardInterrupt:
         log.info("Got Ctrl-C, exiting")
-
-    return 0
 
 
 if __name__ == '__main__':

@@ -16,7 +16,7 @@ from civicboom.model.member import lowest_role, has_role_required
 
 from civicboom.lib.web     import multidict_to_dict, cookie_set, cookie_remove, cookie_get, cookie_delete
 
-from civicboom.lib.misc import make_username
+from cbutils.misc import make_username
 
 
 #, current_url, current_referer, 

@@ -342,13 +342,14 @@
 ## Content Thumbnail Icons
 <%def name="content_thumbnail_icons(content)">
     <div class="icons">
-        % if content.get('private'):
+        ## AllanC - HACK!! please remove type==draft after issue #515 is fixed
+        % if content.get('private') or content.get('type')=='draft':
             ${h.icon('private')}
         % endif
         % if content.get('edit_lock'):
             ${h.icon('edit_lock')}
         % endif
-        % if content.get('approval'):
+        % if content.get('approval') and content.get('approval') != 'none':
             ${h.icon(content.get('approval'))}
         % endif
     </div>

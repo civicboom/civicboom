@@ -8,7 +8,7 @@ from sqlalchemy.orm     import join, joinedload
 from sqlalchemy         import and_, or_, not_
 from sqlalchemy.orm.exc import NoResultFound
 
-from civicboom.lib.misc import make_username
+from cbutils.misc import make_username
 
 import logging
 log = logging.getLogger(__name__)

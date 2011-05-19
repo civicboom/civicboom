@@ -1,7 +1,7 @@
 from civicboom.lib.base import *
 from civicboom.controllers.contents import ContentsController
 from civicboom.lib.communication    import messages
-from civicboom.lib.misc import update_dict
+from cbutils.misc import update_dict
 
 content_search = ContentsController().index
 
@@ -144,6 +144,7 @@ class ContentActionsController(BaseController):
     @web
     @auth
     @role_required('editor')
+    @age_required(config['setting.age.accept'])
     def accept(self, id=None, **kwargs):
         """
         POST /contents/{id}/accept: accept an assignment

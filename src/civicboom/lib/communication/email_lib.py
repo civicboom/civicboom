@@ -1,9 +1,7 @@
-from pylons import config
-
 from webhelpers.html.tools import auto_link
 from webhelpers.html       import literal
 
-from civicboom.lib.text                    import convert_html_to_plain_text
+from cbutils.text                          import convert_html_to_plain_text
 from civicboom.lib.communication.email_log import email_log
 
 import re
@@ -11,14 +9,24 @@ import re
 import logging
 log = logging.getLogger(__name__)
 
+
+config = {}
+
+def configure(c):
+    global config
+    config = c
+
+
 #-------------------------------------------------------------------------------
 # Render Email
 #-------------------------------------------------------------------------------
 
-def render_email(subject='', content_text=None, content_html=None, **kwargs):
+def render_email(subject='', content_text=None, content_html=None, html_template='/email/base_email_from_plaintext.mako', **kwargs):
 
-    from pylons             import tmpl_context as c
-    from pylons.templating  import render_mako as render
+    # TODO!!! AllanC - This needs to be made thead safe and not use pylons libs
+
+    #from pylons             import tmpl_context as c
+    from pylons.templating  import render_mako
     from pylons.i18n.translation import _
     
     # Check paramiters for validity and throw exception if needed
@@ -36,8 +44,8 @@ def render_email(subject='', content_text=None, content_html=None, **kwargs):
     
     # If not already wrapped in HTML header
     if not re.search(r'<body.*</body>',content_html, re.DOTALL + re.IGNORECASE): #If content HTML is not a complete document with a head and body - put it in the standard email template
-        c.email_content = content_html
-        content_html = render('/email/base_email_from_plaintext.mako')
+        #c.email_content = content_html
+        content_html = render_mako(html_template, extra_vars={"content_html": content_html}) # AllanC TODO - the render call here should pass params
     
     # Subject - append site name to subject
     if subject==None or subject=='':

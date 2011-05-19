@@ -17,7 +17,7 @@ from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import get_member as _get_member, update_member_messages
 from civicboom.lib.communication.email_lib import render_email
 
-import civicboom.lib.worker as worker
+import cbutils.worker as worker
 
 import re
 import logging
@@ -162,8 +162,9 @@ def setup_message_format_processors():
 
     def format_email(message_dict):
         return render_email(
-            subject      = message_dict.get('subject'),
-            content_html = message_dict.get('content'),
+            subject       = message_dict.get('subject'),
+            content_html  = message_dict.get('content'),
+            html_template = '/email/base_notification.mako',
         )
     
     def format_notification(message_dict):

@@ -18,12 +18,10 @@ from civicboom.lib.database.actions             import del_content
 
 from civicboom.lib.services.janrain         import janrain
 from civicboom.lib.services.twitter_global  import status as twitter_global_status
-from civicboom.lib.services.tiny_url        import tiny_url
-
-from civicboom.lib.text          import clean_html_markup, strip_html_tags, safe_python_strings
-from civicboom.lib.helpers       import truncate
-
-import civicboom.lib.worker as worker
+from civicboom.lib.helpers                  import truncate
+from cbutils.tiny_url            import tiny_url
+from cbutils.text                import clean_html_markup, strip_html_tags, safe_python_strings
+import cbutils.worker as worker
 
 from sets import Set # may not be needed in Python 2.7+
 import hashlib
@@ -309,7 +307,9 @@ def twitter_global(content):
 
 def profanity_filter(content):
     #if not config['online']                  : return
-    if not config['feature.profanity_filter']: return
+    if not config['feature.profanity_filter']:
+        log.info("Profanity filter disabled, returning null")
+        return
 
     if hasattr(content, 'id'):
         content = content.id
@@ -319,7 +319,7 @@ def profanity_filter(content):
 
     worker.add_job({
         'task'     : 'profanity_check' ,
-        'content'  : content ,
+        'content_id': content ,
         'url_base' : url('',absolute=True) #'http://www.civicboom.com/' , # AllanC - get this from the ENV instead please
     })
 
