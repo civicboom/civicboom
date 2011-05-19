@@ -114,7 +114,7 @@ def calculate_age(born):
     http://www.fabent.co.uk/blog/2007/08/04/calculating-age-in-python/
 
     >>> today = datetime.date.today()
-    >>> ten_ago = date(today.year-10, today.month, today.day)
+    >>> ten_ago = datetime.date(today.year-10, today.month, today.day)
     >>> calculate_age(ten_ago)
     10
     >>> calculate_age(ten_ago - datetime.timedelta(days=3))
