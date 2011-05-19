@@ -140,16 +140,16 @@
         <title>${member['name']}</title> 
         <link>${h.url('member', id=member['username'], subdomain='')}</link>
         <category>${member['type']}</category>
+        <guid isPermaLink="false">Member #${member['id']}</guid>
         % if 'description' in member:
         <description>${member['description']}</description>
         % endif
-        ##<pubDate>${h.datetime_to_rss(h.api_datestr_to_datetime(content['creation_date']))}</pubDate> 
-        <guid isPermaLink="false">Member #${member['id']}</guid>
-
-    ##% if 'thumbnail_url' in member:
-    ##    <enclosure url="${member['thumbnail_url']}" type="image/jpeg" />
-    ##% endif
-        
+        % if 'join_date' in member:
+        <pubDate>${member['join_date']}</pubDate>
+        % endif
+        % if 'avatar_url' in member:
+        <enclosure url="${member['avatar_url']}" type="image/jpeg" />
+        % endif
         ## locaiton?
     </item>
 </%def>
