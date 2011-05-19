@@ -38,8 +38,8 @@
 
                 <p><label for="sort">Order By</label><br/>
 				<select name="sort" style="width: 100%;">
-					<option value="-id">Join Date</option>
-					<option value="name">Name</option>
+					<option value="-id">Newest First</option>
+					<option value="name">Display Name</option>
 				</select>
 
                 <p>&nbsp;<br>
