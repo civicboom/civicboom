@@ -76,6 +76,8 @@ class TestSignup(TestController):
             },
             status=400
         )
+        self.assertNotIn('Invalid date'   , response)
+        self.assertIn   ('do not match'   , response)
         
         response = self.app.post(
             link,
@@ -87,6 +89,8 @@ class TestSignup(TestController):
             },
             status=400
         )
+        self.assertNotIn('Invalid date'   , response)
+        self.assertIn   ('have to be over', response)
         
         response = self.app.post(
             link,
@@ -98,6 +102,8 @@ class TestSignup(TestController):
             },
             status=400
         )
+        self.assertNotIn('Invalid date'   , response)
+        self.assertIn('agree to the terms', response)
         
         num_emails = getNumEmails()
         response = self.app.post(
