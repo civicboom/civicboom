@@ -1,5 +1,5 @@
 <%inherit file="base_email.mako"/>
-
+## Could content_html be passed as a parmiter to body? and render_mako_def be called?
 <%def name="body()">
     % if hasattr(self,'plaintext_before'):
     ${self.plaintext_before()}
