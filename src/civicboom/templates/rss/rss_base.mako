@@ -26,11 +26,8 @@
         <description  >${self.description()}</description>
         <pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
         <lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
-        <generator    >http://www.civicboom.com/</generator>
-        <image url  ="/images/rss_large.png"
-               link ="${h.url('current', subdomain='')}"
-               title="${_('_site_name')}"
-        />
+        <generator    >${h.url('', subdomain='', absolute=True)}</generator>
+        <image url  ="/images/rss_large.png" link ="${h.url('current', subdomain='', absolute=True)}" title="${_('_site_name')}" />
         
         ${next.body()}
         
