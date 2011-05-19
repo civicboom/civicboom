@@ -29,45 +29,6 @@ def set_now(new_now_override):
         now_override = new_now_override
 
 
-def normalize_datestring(value):
-    """
-    Dates can be given in a varity of string formats
-    This attempts to normalize a date string regardless of style.
-    NOTE! this just normalizes the string, it does not check to see see if it's correct or convert it to another format
-    
-    >>> normalize_datestring('not a date')
-    'not a date'
-    >>> normalize_datestring('1/1/1980')
-    '1/1/1980'
-    >>> normalize_datestring('15-15-1980')
-    '15/15/1980'
-    >>> normalize_datestring('80\\\\1\\\\1')
-    '1/1/1980'
-    >>> normalize_datestring('01-01-01')
-    '01/01/01'
-    >>> normalize_datestring('01-01-01 10:53')
-    '01-01-01 10:53'
-    """
-    def split_date_by(value, split_value):
-        try:
-            date_sections = [int(date_section.strip()) for date_section in value.split(split_value)]
-        except:
-            date_sections = []
-        if len(date_sections)==3:
-            if date_sections[0]>date_sections[2]: # Reverse if in the format d m y to make y m d
-                date_sections.reverse()
-            # AllanC - may have to enfoce multiple didgets e.g 1 converts to string 01 etc
-            return '/'.join([str(d) for d in date_sections])
-        return None
-
-    date_strings = [split_date_by(value,split_value) for split_value in ['-','/','\\',' ']]
-    date_strings = [date_string for date_string in date_strings if date_string != None]     # Filter null entries
-    if len(date_strings)>=1:
-        value = date_strings[0]
-        
-    return value
-
-
 def random_string(length=8):
     """
     Generate a random string of a-z A-Z 0-9

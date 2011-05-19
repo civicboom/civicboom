@@ -248,6 +248,7 @@ class InviteController(BaseController):
             offset = search_offset,
             term   = kwargs.get('search-name'),
             exclude_members = kwargs.get('exclude-members'),
+            sort   = 'name',
             **search_type
         )['data']['list']
         
