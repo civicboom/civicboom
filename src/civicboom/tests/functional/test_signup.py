@@ -71,7 +71,7 @@ class TestSignup(TestController):
             params={
                 'password'        : u'password',
                 'password_confirm': u'password2', # Passwords dont match
-                'dob'             : u'1980-01-01',
+                'dob'             : u'01-01-1980',
                 'terms'           : u'checked'
             },
             status=400
@@ -93,7 +93,7 @@ class TestSignup(TestController):
             params={
                 'password'        : u'password',
                 'password_confirm': u'password',
-                'dob'             : u'1980-01-01',
+                'dob'             : u'1980/01/01',
                                                    # No terms checked
             },
             status=400
