@@ -28,6 +28,7 @@ def set_now(new_now_override):
     if isinstance(new_now_override, datetime.datetime):
         now_override = new_now_override
 
+
 def normalize_datestring(value):
     """
     Dates can be given in a varity of string formats
@@ -40,7 +41,7 @@ def normalize_datestring(value):
     '1/1/1980'
     >>> normalize_datestring('15-15-1980')
     '15/15/1980'
-    >>> normalize_datestring(r'80\1\1')
+    >>> normalize_datestring('80\\1\\1')
     '1/1/1980'
     >>> normalize_datestring('01-01-01')
     '01/01/01'
@@ -65,6 +66,7 @@ def normalize_datestring(value):
         value = date_strings[0]
         
     return value
+
 
 def random_string(length=8):
     """
