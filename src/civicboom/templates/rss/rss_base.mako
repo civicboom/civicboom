@@ -59,13 +59,10 @@
         <wfw:commentRss>${h.url('content_action', action='comments', id=content['id'], format='rss', subdomain='')}</wfw:commentRss>
         <!-- <creativeCommons:license>license url here</creativeCommons:license> -->
 		##
-        ##% if 'thumbnail_url' in content:
-            ## AllanC :( Broken  .. WHY!!! WHY!!!
-            ## With this line enabled ... it wont show up in firefox .. the entire entry is not displayed
-            ##<enclosure url="${content['thumbnail_url']}" length="0" type="image/png"/>
-            ## cant guaranete that it's a jpeg because placeholders are pngs :(
-        ##% endif
-        ##
+        % if 'thumbnail_url' in content:
+        <media:thumbnail url="${content['thumbnail_url']}" />
+        ##width="80" height="60"
+        % endif
         % if 'attachments' in content:
             % for media in content['attachments']:
             <%doc>
@@ -145,7 +142,8 @@
         <pubDate>${member['join_date']}</pubDate>
         % endif
         % if 'avatar_url' in member:
-        <enclosure url="${member['avatar_url']}" type="image/jpeg" />
+        <media:thumbnail url="${member['avatar_url']}" />
+        ##<enclosure url="${member['avatar_url']}" type="image/jpeg" />
         % endif
         ## locaiton?
     </item>
