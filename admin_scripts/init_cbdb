@@ -10,10 +10,15 @@ export PGOPTIONS='--client-min-messages=warning'
 # clear
 
 echo "Removing old data"
+echo "- owned by civicboom"
 echo "DROP OWNED BY civicboom CASCADE" | psql -q
+echo "- civicboom"
 dropdb civicboom     # civicboom doesn't completely own these databases,
+echo "- civicboom_gis"
 dropdb civicboom_gis # postgres owns the GIS metadata
+echo "- civicboom_log"
 dropdb civicboom_log # why was this not here? :S
+echo "- user"
 dropuser civicboom
 
 
