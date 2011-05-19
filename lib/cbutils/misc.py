@@ -41,7 +41,7 @@ def normalize_datestring(value):
     '1/1/1980'
     >>> normalize_datestring('15-15-1980')
     '15/15/1980'
-    >>> normalize_datestring('80\\1\\1')
+    >>> normalize_datestring('80\\\\1\\\\1')
     '1/1/1980'
     >>> normalize_datestring('01-01-01')
     '01/01/01'
