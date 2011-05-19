@@ -10,15 +10,15 @@
 <%def name="body()"><?xml version="1.0" encoding="utf-8"?>
 <rss
 	version="2.0"
-	xmlns:media="http://search.yahoo.com/mrss/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:media  = "http://search.yahoo.com/mrss/"
+	xmlns:dc     = "http://purl.org/dc/elements/1.1/"
 	xmlns:creativeCommons="http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html"
 	## Reference http://www.georss.org/Main_Page
-	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
-	xmlns:georss="http://www.georss.org/georss"
-	xmlns:gml="http://www.opengis.net/gml"
-	xmlns:woe="http://where.yahooapis.com/v1/schema.rng"
-	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:geo    = "http://www.w3.org/2003/01/geo/wgs84_pos#"
+	xmlns:georss = "http://www.georss.org/georss"
+	xmlns:gml    = "http://www.opengis.net/gml"
+	xmlns:woe    = "http://where.yahooapis.com/v1/schema.rng"
+	xmlns:wfw    = "http://wellformedweb.org/CommentAPI/"
 >
     <channel>
         <title        >${self.title()}</title>
@@ -55,19 +55,14 @@
         % endif
         <dc:creator>${content.get('creator',dict()).get('name')} (${content.get('creator',dict()).get('username')})</dc:creator>
         ## Comments - http://wellformedweb.org/news/wfw_namespace_elements/
-        ##<wfw:comment   >${h.url('contents', parent_id=content['id'], type='comment', format='rss', host=app_globals.site_host)}</wfw:comment>
         <wfw:commentRss>${h.url('content_action', action='comments', id=content['id'], format='rss', subdomain='')}</wfw:commentRss>
-        <!-- <creativeCommons:license>license url here</creativeCommons:license> -->
-		##
+        ##<!-- <creativeCommons:license>license url here</creativeCommons:license> -->
         % if 'thumbnail_url' in content:
         <media:thumbnail url="${content['thumbnail_url']}" />
         ##width="80" height="60"
         % endif
         % if 'attachments' in content:
             % for media in content['attachments']:
-            <%doc>
-            <!-- having both types of attachment means that it shows up twice in RSS readers; do we need both? -->
-            <!--
             ## http://video.search.yahoo.com/mrss
             <media:content url="${media['media_url']}" fileSize="${media['filesize']}" type="${media['type']}/${media['subtype']}" expression="full">
                 <media:thumbnail url="${media['thumbnail_url']}" />
@@ -92,11 +87,10 @@
                 </media:location>
             % endif
             </media:content>
-            -->
-            </%doc>
-            ##
+            ## 
+            ## <!-- having both types of attachment means that it shows up twice in RSS readers; do we need both? -->
             ## Standard RSS 2.0 Media enclosure
-            <enclosure url="${media['media_url']}" length="${media['filesize']}" type="${media['type']}/${media['subtype']}" />
+            ##<enclosure url="${media['media_url']}" length="${media['filesize']}" type="${media['type']}/${media['subtype']}" />
             % endfor
         % endif
 		##
@@ -105,7 +99,7 @@
         <georss:point>${lat} ${lon}</georss:point>
         <geo:lat>${lat}</geo:lat><geo:long>${lon}</geo:long>
         % endif
-    </item>
+    </item>\
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -119,7 +113,6 @@
     <title>${_('Comment by')}: ${name} - ${h.truncate(comment['content'], length=50, whole_word=True, indicator='...')}</title>
     <description>${comment.get('content')}</description>
     <pubDate>${h.date_to_rss(comment.get('creation_date'))}</pubDate>
-    ## ${datetime.strptime(content['creation_date'][0:19], "%Y-%m-%d %H:%M:%S").strftime("%a, %d %b %Y %H:%M:%S +0000")}
     <dc:creator>${name}</dc:creator>
 </item>
 </%def>
