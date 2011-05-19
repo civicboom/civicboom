@@ -80,6 +80,21 @@ class TestController(TestCase):
         )
         return json.loads(response.body)[key]
 
+    def server_datetime(self, new_datetime=None):
+        """
+        Used to get and set server date for tests
+        """
+        response = self.app.get(
+            url(controller='test', action='server_datetime'),
+            params={
+                'new_datetime': new_datetime ,
+            },
+            status=200
+        )
+        return json.loads(response.body)['datetime']
+
+
+
     def log_in(self):
         self.log_in_as('unittest')
 

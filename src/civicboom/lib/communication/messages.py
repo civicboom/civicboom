@@ -162,8 +162,9 @@ def setup_message_format_processors():
 
     def format_email(message_dict):
         return render_email(
-            subject      = message_dict.get('subject'),
-            content_html = message_dict.get('content'),
+            subject       = message_dict.get('subject'),
+            content_html  = message_dict.get('content'),
+            html_template = '/email/base_notification.mako',
         )
     
     def format_notification(message_dict):

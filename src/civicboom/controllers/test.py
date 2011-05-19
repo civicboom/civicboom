@@ -6,9 +6,13 @@ Locked down for use in development mode only
 
 from civicboom.lib.base import *
 from civicboom.lib.web import cookie_get, cookie_set, cookie_delete
-from time import sleep, time
+
+from cbutils.misc import normalize_datestring, set_now
 
 from paste.deploy.converters import asbool
+
+import datetime
+from time import sleep, time
 
 log = logging.getLogger(__name__)
 
@@ -178,6 +182,22 @@ class TestController(BaseController):
                     config[key] = value
                 log.info('set config[%s] = %s' % (key, value))
             return '{"%s":"%s"}' % (key, config.get(key))
+
+    #---------------------------------------------------------------------------
+    # Runtime server_datetime modification - for automated tests
+    #---------------------------------------------------------------------------
+
+    @web_params_to_kwargs
+    def server_datetime(self, new_datetime=None):
+        """
+        Used to get set date for automated tests
+        """
+        if new_now:
+            date_object = datetime.strptime(normalize_datestring(new_datetime), '%d/%m/%y') #('Jun 1 2005  1:33PM', '%b %d %Y %I:%M%p')
+            set_now(date_object)
+        
+        return '{"datetime":"%s"}' % now()
+
 
     #---------------------------------------------------------------------------
     # Upgrade User to Group
