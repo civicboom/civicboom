@@ -33,10 +33,17 @@
                 <br/>
 				-->
                 <% args, kwargs = c.web_params_to_kwargs %>
-                <label for="term">Name</label><br/>
+                <p><label for="term">Name</label><br/>
                 <input type="text" style="width: 210px" name="term" value="${kwargs.get('term')}"/>
-                <br/><br />
-                <input type="submit" value="Search" class="button"/>
+
+                <p><label for="sort">Order By</label><br/>
+				<select name="sort" style="width: 100%;">
+					<option value="-id">Join Date</option>
+					<option value="name">Name</option>
+				</select>
+
+                <p>&nbsp;<br>
+                <input type="submit" value="Search" class="button" style="width: 100%;"/>
             </fieldset>
         </form>
     </div>
