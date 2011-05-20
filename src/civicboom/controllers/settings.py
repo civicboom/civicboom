@@ -352,7 +352,6 @@ class SettingsController(BaseController):
     
     @web
     @authorize
-    @role_required('admin')
     def update(self, id='me', **kwargs):
         """
         PUT /id: Update an existing item.
@@ -364,6 +363,9 @@ class SettingsController(BaseController):
         """
         # Check permissions on object, find actual username and store in username
         # id will always contain me if it was passed
+        
+        if id != c.logged_in_user.username:
+            raise_if_current_role_insufficent('admin')
         
         private = kwargs.get('private')
         
