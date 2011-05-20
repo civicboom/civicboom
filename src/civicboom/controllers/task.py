@@ -9,6 +9,8 @@ setup a cron job to run these tasks
 
 from civicboom.lib.base import *
 
+from sqlalchemy import and_
+
 import datetime
 
 log = logging.getLogger(__name__)
@@ -51,23 +53,46 @@ class TaskController(BaseController):
 
 
     #---------------------------------------------------------------------------
-    # Remove Ghost Users
+    # Remind Pending users after 1 day
+    #---------------------------------------------------------------------------
+    def remind_pending_users(self, frequency_of_time_task=1):
+        """
+        Users who try to sign up but don't complete the registration within one day get a reminder email
+        to be run once every 24 hours
+        """
+        from civicboom.model.member import User
+        from civicboom.lib.civicboom_lib import validation_url
+        
+        frequency_of_timed_task = datetime.timedelta(days=frequency_of_timed_task)
+        reminder_start = datetime.datetime.now() - datetime.timedelta(days=1)
+        for user in Session.query(User).filter(User.status=='pending').filter(~User.login_details.any()).filter(and_(User.join_date > reminder_start - frequency_of_timed_task, User.join_date < reminder_start)).all():
+            log.info('Reminding pending user %s - %s' % (user.username, user.normalize_email))
+            register_url = validation_url(user, controller='register', action='new_user')
+            user.send_email(content_html=render('/email/user_pending_reminder.mako', extra_vars={'register_url':register_url}))
+        return response_completed_ok
+
+
+    
+    #---------------------------------------------------------------------------
+    # Prune Pending users if not completed registration in 7 days
     #---------------------------------------------------------------------------
 
-    def remove_ghost_user(self):
+    def remove_pending_users(self):
         """
         Users who do not complete the signup process by entering an email
         address that is incorrect or a bots or cant use email should be
-        removed if they have still not signed up after 4 Days
+        removed if they have still not signed up after 7 Days
         """
         from civicboom.model.member import User
-        ghost_expire = datetime.datetime.now() - datetime.timedelta(days=4)
-        for u in Session.query(User).filter(~User.login_details.any()).filter(User.join_date < ghost_expire).all():
-            Session.delete(u)
+        ghost_expire = datetime.datetime.now() - datetime.timedelta(days=7)
+        for user in Session.query(User).filter(~User.login_details.any()).filter(User.join_date < ghost_expire).all(): #filter(User.status=='pending').
+            Session.delete(user)
+            log.info('Deleting pending user %s - %s' % (user.username, user.normalize_email))
             # It may be nice to log numbers here to aid future business desctions
         Session.commit()
         # AllanC - the method above could be inefficent. could just do it at the DB side?
         return response_completed_ok
+
 
 
     #---------------------------------------------------------------------------
@@ -80,7 +105,6 @@ class TaskController(BaseController):
         question should be reminded via a notification that the assingment
         has not long left
         """
-        from sqlalchemy import and_
         from civicboom.model.content import AssignmentContent
         
         def get_assignments_by_date(date_start, date_end):

@@ -53,6 +53,23 @@ function cb_frag(current_element, url, list_type, from_history, callback) {
 	frag_div.after('<div id="'+frag_div_id_next+'" class="'+new_fragment_class+'">'+fragment_div_loading_placeholder+'</div>'); // Append new '.frag' div populated with with load placeholder data //$(fragment_containers_id).append 
 	frag_loading = $('#'+frag_div_id_next);
 	
+	// AllanC - Hack for IE7 Frag rendering
+	//  1.) Make frag float:left
+	//  2.) Calculate size of all divs in frag_container
+	//  3.) Manually force the size of frag_container to fit all child divs
+    // WHY did we bother! ... IE7 is TOTALLY broken ... we dont support it
+	//if ($('html').hasClass('ie7')) {
+	//	//frag_loading.attr('style', 'float:left;'); // A conditioal in CSS rule is now in place
+	//	total_width = 0;
+	//	$(fragment_containers_id).children().each(function(index, element) {
+	//		element_width = document.defaultView.getComputedStyle(element, null).width
+	//		element_width = parseInt(element_width.replace('px',''));
+    //   	element_width+= 5; //TODO fake border size, needs to be replaced by actual border/margin size
+	//		total_width  += element_width;
+	//	});
+	//	$(fragment_containers_id).attr('style', 'width:'+total_width+'px;');
+	//}
+    
 	// Start scrolling to new element
 	// Scroll (smoothly)
 	//  - http://plugins.jquery.com/project/ScrollTo
