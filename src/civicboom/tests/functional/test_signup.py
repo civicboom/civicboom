@@ -71,11 +71,13 @@ class TestSignup(TestController):
             params={
                 'password'        : u'password',
                 'password_confirm': u'password2', # Passwords dont match
-                'dob'             : u'1980-01-01',
+                'dob'             : u'01-01-1980',
                 'terms'           : u'checked'
             },
             status=400
         )
+        self.assertNotIn('Invalid date'   , response)
+        self.assertIn   ('do not match'   , response)
         
         response = self.app.post(
             link,
@@ -87,17 +89,21 @@ class TestSignup(TestController):
             },
             status=400
         )
+        self.assertNotIn('Invalid date'   , response)
+        self.assertIn   ('have to be over', response)
         
         response = self.app.post(
             link,
             params={
                 'password'        : u'password',
                 'password_confirm': u'password',
-                'dob'             : u'1980-01-01',
+                'dob'             : u'1980/01/01',
                                                    # No terms checked
             },
             status=400
         )
+        self.assertNotIn('Invalid date'   , response)
+        self.assertIn('agree to the terms', response)
         
         num_emails = getNumEmails()
         response = self.app.post(

@@ -34,10 +34,10 @@
         <%
         upgrade_form_meta = (
             ('name'    , _('Name')    , ''),
-            ('company' , _('Company') , '(optinonal)'),
+            ('company' , _('Company') , '(optional)'),
             ('phone'   , _('Phone')   , ''),
             ('email'   , _('email')   , ''),
-            ('inductry', _('Industry'), '(optinonal)'),
+            ('industry', _('Industry'), '(optional)'),
         )
         %>
         <table>

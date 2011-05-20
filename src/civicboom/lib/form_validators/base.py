@@ -14,10 +14,10 @@ from pylons import tmpl_context as c #for current user password validator
 from civicboom.lib.authentication import encode_plain_text_password, get_user_and_check_password
 
 from cbutils.text import clean_html_markup, strip_html_tags
-from cbutils.misc import normalize_datestring
 
 # Misc Imports
 import datetime
+from dateutil.parser import parse as parse_date
 import hashlib
 import re
 
@@ -191,8 +191,12 @@ class IsoFormatDateConverter(validators.DateConverter):
     month_style = 'dd/mm/yyyy'
 
     def _to_python(self, value, state):
-        value = normalize_datestring(value)
+        try:
+            value = parse_date(value).strftime("%d/%m/%Y")
+        except ValueError:
+            raise formencode.Invalid("Invalid date", value, state)
         return super(IsoFormatDateConverter, self)._to_python(value, state)
+
 
 class SetValidator(validators.FancyValidator):
     not_empty    = False

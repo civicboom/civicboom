@@ -5,6 +5,7 @@ from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import get_content
 
 from cbutils.text import profanity_check as _profanity_check
+from cbutils.worker import config
 
 
 def profanity_check(content_id, url_base):
@@ -26,9 +27,13 @@ def profanity_check(content_id, url_base):
     profanity_response = _profanity_check(content.content)
     
     if not profanity_response:
-        content.flag(comment=u"automatic profanity check failed, please manually inspect", url_base=url_base)
+        log.debug("Profanity check failed")
+        content.flag(comment=u"automatic profanity check failed, please manually inspect", url_base=url_base, moderator_address=config['email.moderator'])
     elif profanity_response['FoundProfanity']:
-        content.flag(comment=u"found %s profanities" % profanity_response['ProfanityCount'], url_base=url_base, delay_commit=True)
+        log.debug("Profanity found")
+        content.flag(comment=u"found %s profanities" % profanity_response['ProfanityCount'], url_base=url_base, delay_commit=True, moderator_address=config['email.moderator'])
         content.content = profanity_response['CleanText']
+    else:
+        log.debug("No profanity found")
     
     return True

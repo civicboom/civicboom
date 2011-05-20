@@ -1,4 +1,3 @@
-from pylons import config
 from pylons.templating  import render_mako as render #for rendering emails
 from pylons.i18n.translation import _
 
@@ -631,7 +630,7 @@ def del_content(content):
     Session.commit()
     
 
-def flag_content(content, member=None, type="automated", comment=None, url_base=None, delay_commit=False):
+def flag_content(content, member=None, type="automated", comment=None, url_base=None, delay_commit=False, moderator_address=None):
     """
     if url_base is included an alternate URL generator to avert the use of the pylons one
     """
@@ -674,7 +673,7 @@ def flag_content(content, member=None, type="automated", comment=None, url_base=
         
     
     send_email(
-        config['email.moderator'],
+        moderator_address,
         subject      = _('flagged content ['+type+']'),
         content_text = """
 --- Report ---
