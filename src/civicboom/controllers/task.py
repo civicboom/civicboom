@@ -35,7 +35,7 @@ class TaskController(BaseController):
                 request.environ['REMOTE_ADDR'] == request.environ.get('SERVER_ADDR', '0.0.0.0')
             ):
             return abort(403)
-        user_log.info("Performing task '%s'" % (action, ))
+        #user_log.info("Performing task '%s'" % (action, )) #AllanC - these can be activated without a logged in user
         BaseController.__before__(self)
 
 
@@ -119,6 +119,39 @@ class TaskController(BaseController):
         need to be removed automatically from the db
         """
         pass
+
+    #---------------------------------------------------------------------------
+    # New Users and Groups Summary
+    #---------------------------------------------------------------------------
+
+    def email_new_user_summary(self, timedelta=datetime.timedelta(days=1)):
+        """
+        query for all users in last <timedelta> and email 
+        """
+        from civicboom.model import Member
+        members = Session.query(Member) \
+                    .with_polymorphic('*') \
+                    .filter(Member.join_date>=datetime.datetime.now()-timedelta) \
+                    .all()
+        
+        if not members:
+            log.debug('Report not generated: no new members in %s' % timedelta)
+            return response_completed_ok
+        
+        from civicboom.lib.communication.email_lib import send_email
+        send_email(
+            config['email.event_alert'],
+            subject      ='new user registration summary',
+            content_html = render(
+                            '/email/admin/summary_new_users.mako',
+                            extra_vars = {
+                                "members"   : members   ,
+                                "timedelta" : timedelta ,
+                            }
+                        ),
+        )
+        
+        return response_completed_ok
 
 
     #---------------------------------------------------------------------------

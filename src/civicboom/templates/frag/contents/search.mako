@@ -55,7 +55,7 @@
                 % endfor
 				</select>
 
-				<label>Talking about</label><br>
+				<p><label>Talking about</label><br>
                 <input type="search" style="width: 100%;" name="term" placeholder="Enter key words" value="${kwargs.get('term')}"/>
 
                 <p><label>Near to</label>

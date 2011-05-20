@@ -6,12 +6,27 @@ import UserDict
 import types
 
 import random
-from datetime import date, timedelta
+import datetime
 import pprint
 import re
 
 import logging
 log = logging.getLogger(__name__)
+
+
+now_override = None
+def now():
+    """
+    A passthough to get now()
+    We can override this so that automated tests can fake the current datetime
+    """
+    if now_override:
+        return now_override
+    return datetime.datetime.now()
+def set_now(new_now_override):
+    now_override = None
+    if isinstance(new_now_override, datetime.datetime):
+        now_override = new_now_override
 
 
 def random_string(length=8):
@@ -61,26 +76,26 @@ def calculate_age(born):
     Calculate the age of a user.
     http://www.fabent.co.uk/blog/2007/08/04/calculating-age-in-python/
 
-    >>> today = date.today()
-    >>> ten_ago = date(today.year-10, today.month, today.day)
+    >>> today = datetime.date.today()
+    >>> ten_ago = datetime.date(today.year-10, today.month, today.day)
     >>> calculate_age(ten_ago)
     10
-    >>> calculate_age(ten_ago - timedelta(days=3))
+    >>> calculate_age(ten_ago - datetime.timedelta(days=3))
     10
-    >>> calculate_age(ten_ago + timedelta(days=3))
+    >>> calculate_age(ten_ago + datetime.timedelta(days=3))
     9
-    >>> calculate_age(date.today())
+    >>> calculate_age(datetime.date.today())
     0
-    >>> born_odd = date(2000, 2, 29)
+    >>> born_odd = datetime.date(2000, 2, 29)
     >>> calculate_age(born_odd) > 0
     True
     """
-    today = date.today()
+    today = datetime.date.today()
     
     try:
-        birthday = date(today.year, born.month, born.day    )
+        birthday = datetime.date(today.year, born.month, born.day    )
     except ValueError:
-        birthday = date(today.year, born.month, born.day - 1) # Raised when person was born on 29 February and the current year is not a leap year.
+        birthday = datetime.date(today.year, born.month, born.day - 1) # Raised when person was born on 29 February and the current year is not a leap year.
     
     if birthday > today:
         return today.year - born.year - 1

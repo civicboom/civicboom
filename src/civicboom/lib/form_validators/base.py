@@ -17,6 +17,7 @@ from cbutils.text import clean_html_markup, strip_html_tags
 
 # Misc Imports
 import datetime
+from dateutil.parser import parse as parse_date
 import hashlib
 import re
 
@@ -190,24 +191,12 @@ class IsoFormatDateConverter(validators.DateConverter):
     month_style = 'dd/mm/yyyy'
 
     def _to_python(self, value, state):
-
-        def split_date_by(value, split_value):
-            try:
-                date_sections = [int(date_section.strip()) for date_section in value.split(split_value)]
-            except:
-                date_sections = []
-            if len(date_sections)==3:
-                if date_sections[0]>date_sections[2]: # Reverse if in the format d m y to make y m d
-                    date_sections.reverse()
-                # AllanC - may have to enfoce multiple didgets e.g 1 converts to string 01 etc
-                return '/'.join([str(d) for d in date_sections])
-            return None
-
-        date_strings = [split_date_by(value,split_value) for split_value in ['-','/','\\',' ']]
-        date_strings = [date_string for date_string in date_strings if date_string != None]     # Filter null entries
-        if len(date_strings)>=1:
-            value = date_strings[0]
+        try:
+            value = parse_date(value).strftime("%d/%m/%Y")
+        except ValueError:
+            raise formencode.Invalid("Invalid date", value, state)
         return super(IsoFormatDateConverter, self)._to_python(value, state)
+
 
 class SetValidator(validators.FancyValidator):
     not_empty    = False

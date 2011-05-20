@@ -13,6 +13,9 @@ from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email_h
 # Signin
 from civicboom.lib.authentication import signin_user_and_redirect
 
+# Email - to be removed - this was a short term import
+from civicboom.lib.communication.email_lib import send_email
+
 # Form Validators
 import formencode
 from civicboom.lib.form_validators.validator_factory import build_schema
@@ -119,6 +122,11 @@ class RegisterController(BaseController):
             set_flash_message(_('Please check your email to validate your email address'))
         
         c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako'))
+        
+        # AllanC - Temp email alert for new user
+        #import datetime
+        #from civicboom.controllers.task import TaskController
+        #TaskController().email_new_user_summary(datetime.timedelta(minutes=1))
         
         user_log.info("Registered new user")
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))

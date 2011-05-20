@@ -25,6 +25,8 @@ from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, get_lowest_role_for_user
 from civicboom.lib.permissions         import account_type, role_required, age_required, has_role_required, raise_if_current_role_insufficent
 
+from cbutils.misc import now
+
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
 
@@ -90,6 +92,7 @@ __all__ = [
     "overlay_status_message",
     "current_url", "current_referer",
     "to_apilist",
+    "now", # passthough to get datetime.datetime.now() but can be overridden by automted tests and is the prefered way of getting now()
     
 ]
 

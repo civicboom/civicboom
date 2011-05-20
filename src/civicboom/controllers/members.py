@@ -191,7 +191,6 @@ class MembersController(BaseController):
                 results = results.filter(Follow.type!='trusted_invite')
             
             #select_from(join(User, Address, User.addresses))
-            #results = results.order_by(Member.name.asc())
 
         else:
             results = Session.query(Member)
@@ -201,13 +200,13 @@ class MembersController(BaseController):
                 results = results.with_polymorphic('*')
             for key in [key for key in search_filters if key in kwargs]: # Append filters to results query based on kwarg params
                 results = search_filters[key](results, kwargs[key])
-            
-            results = results.order_by(Member.name.asc())
         
-        # Sort
-        if 'sort' not in kwargs:
-            sort = 'name'
-        # TODO: use kwargs['sort']
+            # Sort
+            sort = kwargs.get('sort', '-id')
+            if sort[0] == "-":
+                results = results.order_by(getattr(Member, sort[1:]).desc())
+            else:
+                results = results.order_by(getattr(Member, sort).asc())
         
         # NOOO!! ... this should be at the end ... and sort all fields ... but this is cant be done with Follow objects ... rarara ... bollox
 
