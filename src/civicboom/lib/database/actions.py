@@ -674,7 +674,7 @@ def flag_content(content, member=None, type="automated", comment=None, url_base=
     
     send_email(
         moderator_address,
-        subject      = _('flagged content ['+type+']'),
+        subject      = 'flagged content [%s]' % type,
         content_text = """
 --- Report ---
 
