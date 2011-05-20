@@ -190,6 +190,7 @@ class TestController(TestCase):
                 'password_confirm': password  ,
                 'dob'             : dob       ,
                 'terms'           : u'checked',
+                'name'            : username + "'s Full Name",
             },
         )
         self.assertEqual(getNumEmails(), num_emails + 1)
