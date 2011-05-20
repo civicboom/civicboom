@@ -369,3 +369,17 @@ def get_action_objects_for_url(action_url=None):
                 frag_url      = action_object_frag_url ,
             )
     return {}
+
+
+#-------------------------------------------------------------------------------
+# Admin CSV output
+#-------------------------------------------------------------------------------
+def user_emails_csv():
+    """
+    Output CSV of all users ov civicboom
+    """
+    from civicboom.model import User
+    csv = []
+    for user in Session.query(User).all():
+        csv.append(','.join([user.username, user.name or "", user.email_normalized or ""]))
+    return "\n".join(csv)

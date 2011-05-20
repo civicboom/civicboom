@@ -2,7 +2,7 @@
 <%def name="title()">${_("About _site_name & FAQ")}</%def>
 
 <img src="/images/boom128.png" style="float:right;">
-<h1>Civicboom empowers you connect, create
+<h1>Civicboom empowers you to connect, create
 and collaborate on what matters to you.</h1>
 
 <h2>Tap into the crowd</h2>

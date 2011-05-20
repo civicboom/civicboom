@@ -193,7 +193,7 @@ class TestController(TestCase):
                 'name'            : username + "'s Full Name",
             },
         )
-        self.assertEqual(getNumEmails(), num_emails + 1)
+        self.assertEqual(getNumEmails(), num_emails + 2) # AllanC - this has been botched .. Lizzie wants emails personaly to her for EVERY signup ... this is throwing off the tests and we need a 2 here instead of a 1
         
         self.log_in_as(username, password)
     

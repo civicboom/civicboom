@@ -122,12 +122,10 @@ class RegisterController(BaseController):
             send_verifiy_email(c.logged_in_persona)
             set_flash_message(_('Please check your email to validate your email address'))
         
-        c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako'))
+        c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako', extra_vars={'registered_user':c.logged_in_persona}))
         
         # AllanC - Temp email alert for new user
-        #import datetime
-        #from civicboom.controllers.task import TaskController
-        #TaskController().email_new_user_summary(datetime.timedelta(minutes=1))
+        send_email(config['email.event_alert'], subject='new signup', content_text='%s - %s - %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_persona.email_normalized))
         
         user_log.info("Registered new user")
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))

@@ -129,7 +129,7 @@ class TestSignup(TestController):
                 'terms'           : u'checked'
             },
         )
-        self.assertEqual(getNumEmails(), num_emails + 1) # Check welcome email sent
+        self.assertEqual(getNumEmails(), num_emails + 2) # Check welcome email sent # and lizzies email for every member signup
         #email_response = getLastEmail()
         #self.assertIn('civicboom', email_response.content_text)
         

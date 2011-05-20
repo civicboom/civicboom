@@ -44,6 +44,7 @@ css_common = glob("civicboom/public/styles/common/*.css")
 css_web    = glob("civicboom/public/styles/web/*.css")
 css_all    = css_common + css_web
 css_all    = [n[len("civicboom/public/"):] for n in css_all]
+css_all.sort()
 %>
 % for css in css_all:
 	<link rel="stylesheet" type="text/css" href="${h.wh_url("public", css)}" />
@@ -136,7 +137,7 @@ if c.logged_in_persona:
 else:
 	u = "anon"
 %>
-<body class="c-${c.controller} a-${c.action} u-${u}">
+<body class="c-${c.controller} a-${c.action} u-${u}">    
 	${flash_message()}
 	##<nav><%include file="navigation.mako"/></nav>
 	<header><%include file="header.mako"/></header>
@@ -145,6 +146,14 @@ else:
     ${popup_frame()}
 	##<%include file="scripts_end.mako"/>
 	${scripts_end.body()}
+
+    <!--[if lt IE 8 ]>
+    <script type="text/javascript">
+            if ($.cookie('allow_lt_ie8')!='True') {
+                window.location="${url(controller='misc', action='browser_unsupported')}";
+            }
+    </script>
+    <![endif]-->
 
 	<% from pylons import request %>
 	<!--
