@@ -104,7 +104,20 @@ class TestSignup(TestController):
         )
         self.assertNotIn('Invalid date'   , response)
         self.assertIn('agree to the terms', response)
-        
+
+        response = self.app.post(
+            link,
+            params={
+                'password'        : u'password',
+                'password_confirm': u'password',
+                'dob'             : u'1980-01-01',
+                'terms'           : u'checked'
+            },
+            status=400
+        )
+
+        self.assertIn('Please give us your full name', response)
+
         num_emails = getNumEmails()
         response = self.app.post(
             link,
@@ -112,6 +125,7 @@ class TestSignup(TestController):
                 'password'        : u'password',
                 'password_confirm': u'password',
                 'dob'             : u'1980-01-01',
+                'name'            : u'This is my full name',
                 'terms'           : u'checked'
             },
         )
