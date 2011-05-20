@@ -242,7 +242,7 @@
 					<a class="tab-title" id="tab-title-signup" style="color:#c77b01">Sign up now!</a>
 					<div class="content">
 						<div class="left" style="width: 20em; float: left;">
-							<form method="post" action="/register/email.redirect">
+							<form method="post" action="/register/email">
 							<span style="font-size: 150%; font-weight: bold;">Username</span><br />
 							<input id="username_register" type="text" placeholder="Your desired username" name="username"><br />
 							<span style="font-size: 150%; font-weight: bold;">Email address</span><br />
