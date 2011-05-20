@@ -31,10 +31,5 @@
 <h2>Need more help?</h2>
     <p>Check out the <a href="${h.url(controller='misc', action='about', id='howto', absolute=True)}">"How to" videos</a></p>
 
-<p>
-Thanks!<br/>
-Civicboom Team<br/>
-<a href="${h.url('', absolute=True)}">${_('_site_name')}</a>
-</p>
-
+${self.footer()}
 </%def>

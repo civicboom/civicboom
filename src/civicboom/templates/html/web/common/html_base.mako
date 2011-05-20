@@ -139,6 +139,7 @@ else:
 %>
 <body class="c-${c.controller} a-${c.action} u-${u}">
 	${flash_message()}
+    <!--[if lt IE 8 ]><script>window.location="${url(controller='misc', action='browser_unsupported')}";</script><![endif]-->
 	##<nav><%include file="navigation.mako"/></nav>
 	<header><%include file="header.mako"/></header>
 	<div id="app">${next.body()}</div>

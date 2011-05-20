@@ -114,6 +114,9 @@ class MiscController(BaseController):
     def upgrade_popup(self, **kwargs):
         return action_ok()
 
+    @web
+    def browser_unsupported(self, **kwargs):
+        return action_ok()
     
     @web
     def feedback(self, **kwargs):

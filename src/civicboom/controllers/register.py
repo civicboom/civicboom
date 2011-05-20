@@ -122,7 +122,7 @@ class RegisterController(BaseController):
             send_verifiy_email(c.logged_in_persona)
             set_flash_message(_('Please check your email to validate your email address'))
         
-        c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako'))
+        c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako', extra_vars={'registered_user':c.logged_in_persona}))
         
         # AllanC - Temp email alert for new user
         #import datetime
