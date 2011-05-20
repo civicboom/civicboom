@@ -671,11 +671,7 @@ def flag_content(content, member=None, type="automated", comment=None, url_base=
         else:
             return url(*args, **kwargs)
         
-    
-    send_email(
-        moderator_address,
-        subject      = 'flagged content [%s]' % type,
-        content_text = """
+    content_text = """
 --- Report ---
 
 Reporter: %(reporter)s
@@ -702,17 +698,23 @@ If the content is ok, visit the list of reports and delete this one:
 If the content is not ok, go to the content list and delete it:
   %(action_delete)s
 """ % {
-            "reporter"     : member_username,
-            "type"         : type,
-            "comment"      : flag.comment,
-            "member_name"  : flag.content.creator.username,
-            "member_url"   : _url('member', id=flag.content.creator.username, subdomain="www"),
-            "content_url"  : _url('content', id=flag.content.id, subdomain="www"),
-            "content_title": flag.content.title,
-            "content_body" : flag.content.content,
-            "action_ignore": _url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), subdomain="www"),
-            "action_delete": _url("admin/Content/models?Content--id="+str(flag.content.id), subdomain="www"),
-        },
+        "reporter"     : member_username,
+        "type"         : type,
+        "comment"      : flag.comment,
+        "member_name"  : flag.content.creator.username,
+        "member_url"   : _url('member', id=flag.content.creator.username, subdomain="www"),
+        "content_url"  : _url('content', id=flag.content.id, subdomain="www"),
+        "content_title": flag.content.title,
+        "content_body" : flag.content.content,
+        "action_ignore": _url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), subdomain="www"),
+        "action_delete": _url("admin/Content/models?Content--id="+str(flag.content.id), subdomain="www"),
+    }
+    
+    send_email(
+        moderator_address,
+        subject      = 'flagged content [%s]' % type,
+        content_text = content_text,
+        content_html = "<pre>"+content_text+"</pre>",
     )
 
 
