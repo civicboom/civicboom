@@ -699,7 +699,7 @@ ${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', subdomain
             <div style="text-align: center; margin-top: 3em;"><img src="/images/boom193.png" alt="${_("_site_name logo")}" width="193" height="193" /></div>
         </%def>
         <%def name="description()">
-            <p style="font-weight: bold; font-size: 120%;">${_("_site_name empowers you connect, create and collaborate on what matters to you.")}</p>
+            <p style="font-weight: bold; font-size: 120%;">${_("_site_name empowers you to connect, create and collaborate on what matters to you.")}</p>
         </%def>
     </%self:step>
     </%doc>

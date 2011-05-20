@@ -23,6 +23,7 @@
 		<script src="/javascript/jquery.ba-hashchange.min.js"></script>
 		<script src="/javascript/jquery.limit-1.2.js"></script>
 		<script src="/javascript/jquery.getUrlParam.js"></script>
+        <script src="/javascript/jquery.cookie.js"></script>
 		<script src="/javascript/invite.js"></script>
 		<script src="/javascript/mobile.js"></script>
 		<!-- maps -->
