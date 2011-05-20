@@ -75,7 +75,7 @@ class RegisterController(BaseController):
             abort(403)
         
         # Build required fields list from current user data - the template will then display these and a custom validator will be created for them
-        c.required_fields = ['username','email','password','dob']
+        c.required_fields = ['username','email','password','name','dob']
         if not c.logged_in_persona.username.startswith(new_user_prefix):
             c.required_fields.remove('username')
         if c.logged_in_persona.email or c.logged_in_persona.email_unverified:
@@ -92,7 +92,7 @@ class RegisterController(BaseController):
         # Build a dynamic validation scema based on these required fields and validate the form
         schema = build_schema(*c.required_fields)
         schema.fields['terms'] = validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'}) # In addtion to required fields add the terms checkbox validator
-        
+        schema.fields['name']  = validators.NotEmpty(messages={'missing': 'Please give us your full name as you wish it to appear on your profile'})
         data = {'register':kwargs}
         data = validate_dict(data, schema, dict_to_validate_key='register', template_error='account/register')
         form = data['register']
@@ -108,6 +108,7 @@ class RegisterController(BaseController):
         # If the validator has not forced a page render
         # then the data is fine - save the new user data
         if 'username' in form: c.logged_in_persona.username         = form['username']
+        if 'name'     in form: c.logged_in_persona.name             = form['name']
         if 'dob'      in form: c.logged_in_persona.config['dob']    = form['dob']
         if 'email'    in form: c.logged_in_persona.email_unverified = form['email']
         if 'password' in form:
@@ -133,6 +134,9 @@ class RegisterController(BaseController):
         signin_user_and_redirect(c.logged_in_persona, 'registration')
         ##redirect('/')
 
+    @web
+    def check_email(self, **kwargs):
+        return action_ok(code=200, template="account/check_email")
 
     #---------------------------------------------------------------------------
     # Register - via email (no janrain)
@@ -197,6 +201,9 @@ class RegisterController(BaseController):
         user_log.info("Sending verification email")
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
+        
+        if c.format=="html":
+            return redirect(url(controller="register", action="check_email"))
         
         return action_ok(_("Thank you. Please check your email to complete the registration process"))
         

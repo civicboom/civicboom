@@ -22,6 +22,9 @@
             % if field=='username':
               ${username()}
             % endif
+            % if field=='name':
+              ${name()}
+            % endif
             % if field=='email':
               ${email()}
             % endif
@@ -65,6 +68,19 @@
 		<td>Username</td>
 		<td><input type="text" name="username" value="${h.get_data_value('username','register',c.logged_in_persona.username)}" /></td>
 		<td>${invalid('username')}</td>
+	</tr>
+</%def>
+
+<%def name="name()">
+	<tr>
+		<td colspan="3">
+			<p>Please provide us with your full name as you would like it to appear on your profile</p>
+		</td>
+	</tr>
+	<tr>
+		<td>Full Name:</td>
+		<td><input type="text" name="name" value="${h.get_data_value('name','register',c.logged_in_persona.name)}" /></td>
+		<td>${invalid('name')}</td>
 	</tr>
 </%def>
 
