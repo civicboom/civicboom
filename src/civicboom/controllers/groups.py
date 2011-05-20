@@ -19,6 +19,8 @@ from civicboom.controllers.settings import SettingsController
 
 import re
 
+from civicboom.lib.communication.email_lib import send_email
+
 settings_update = SettingsController().update
 
 log      = logging.getLogger(__name__)
@@ -237,7 +239,7 @@ class GroupsController(BaseController):
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         
         # AllanC - Temp email alert for new group
-        #send_email(config['email.event_alert'], subject='new group', content_text='%s - %s by %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_user.username))
+        send_email(config['email.event_alert'], subject='new group', content_text='%s - %s by %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_user.username))
         
         return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)
 
