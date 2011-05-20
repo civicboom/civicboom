@@ -237,9 +237,7 @@ class GroupsController(BaseController):
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         
         # AllanC - Temp email alert for new group
-        #import datetime
-        #from civicboom.controllers.task import TaskController
-        #TaskController().email_new_user_summary(datetime.timedelta(minutes=1))
+        #send_email(config['email.event_alert'], subject='new group', content_text='%s - %s by %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_user.username))
         
         return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)
 

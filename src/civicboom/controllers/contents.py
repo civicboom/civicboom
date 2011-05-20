@@ -153,8 +153,8 @@ search_filters = _init_search_filters()
 
 list_filters = {
     'all'                 : lambda results: results ,
-    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=datetime.datetime.now(),AssignmentContent.due_date==null())) ,
-    'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< datetime.datetime.now())) ,
+    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=now(),AssignmentContent.due_date==null())) ,
+    'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< now())) ,
     'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
     'drafts'              : lambda results: results.filter(Content.__type__=='draft').filter(Content.creator == c.logged_in_persona) ,
     'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id==null())),
@@ -633,7 +633,7 @@ class ContentsController(BaseController):
             else:
                 # Send notifications about previously published content has been UPDATED
                 if   content.__type__ == "assignment":
-                    if content.update_date < datetime.datetime.now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
+                    if content.update_date < now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
                         m = messages.assignment_updated(creator=content.creator, assignment=content)
                 # going straight to publish, content may not have an ID as it's
                 # not been added and committed yet (this happens below)

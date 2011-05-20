@@ -9,6 +9,8 @@ def init():
     I'm unsure as to wether the problem was with the version of SQLAlchemy but with the string method it was not possible to specify multiple conditions under the primary join param even though the SQL created was correct
     In the future it may be possible to intigrate these with the main class defentions
     """
+    from cbutils.misc import now
+    
     from civicboom.model.content import Content, AssignmentContent, MemberAssignment, Interest, Boom
     from civicboom.model.member  import Member
     
@@ -39,7 +41,7 @@ def init():
     
     period_in_days = 30
     
-    Member.active_assignments_period  = relationship(AssignmentContent, primaryjoin=and_(AssignmentContent.creator_id == Member.id, AssignmentContent.creation_date > (datetime.datetime.now() - datetime.timedelta(days=period_in_days))), order_by=AssignmentContent.update_date.desc())
+    Member.active_assignments_period  = relationship(AssignmentContent, primaryjoin=and_(AssignmentContent.creator_id == Member.id, AssignmentContent.creation_date > (now() - datetime.timedelta(days=period_in_days))), order_by=AssignmentContent.update_date.desc())
     
     Member.interest = dynamic_loader(Content,
                                         primaryjoin=Member.id==Interest.member_id,
