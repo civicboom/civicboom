@@ -16,3 +16,14 @@ class TestTimedTasksController(TestController):
         check correct notifications are generated
         """
         pass
+
+    
+    #---------------------------------------------------------------------------
+    # Remind and remove pending users
+    #---------------------------------------------------------------------------
+    def test_remind_and_remove_pending(self):
+        """
+        """
+        pass
+
+    

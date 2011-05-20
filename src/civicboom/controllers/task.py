@@ -64,7 +64,7 @@ class TaskController(BaseController):
         from civicboom.lib.civicboom_lib import validation_url
         
         frequency_of_timed_task = datetime.timedelta(days=frequency_of_timed_task)
-        reminder_start = datetime.datetime.now() - datetime.timedelta(days=1)
+        reminder_start = now() - datetime.timedelta(days=1)
         for user in Session.query(User).filter(User.status=='pending').filter(~User.login_details.any()).filter(and_(User.join_date > reminder_start - frequency_of_timed_task, User.join_date < reminder_start)).all():
             log.info('Reminding pending user %s - %s' % (user.username, user.normalize_email))
             register_url = validation_url(user, controller='register', action='new_user')
@@ -84,7 +84,7 @@ class TaskController(BaseController):
         removed if they have still not signed up after 7 Days
         """
         from civicboom.model.member import User
-        ghost_expire = datetime.datetime.now() - datetime.timedelta(days=7)
+        ghost_expire = now() - datetime.timedelta(days=7)
         for user in Session.query(User).filter(~User.login_details.any()).filter(User.join_date < ghost_expire).all(): #filter(User.status=='pending').
             Session.delete(user)
             log.info('Deleting pending user %s - %s' % (user.username, user.normalize_email))
@@ -113,9 +113,9 @@ class TaskController(BaseController):
         def get_responded(assignment):
             return [response.creator_id for response in assignment.responses]
             
-        date_7days_time = datetime.datetime.now() + datetime.timedelta(days=6)
-        date_1days_time = datetime.datetime.now() # + datetime.timedelta(days=1)
-        date_1day       =                           datetime.timedelta(days=1)
+        date_7days_time = now() + datetime.timedelta(days=6)
+        date_1days_time = now() # + datetime.timedelta(days=1)
+        date_1day       =         datetime.timedelta(days=1)
         
         for assignment in get_assignments_by_date(date_start=date_7days_time, date_end=date_7days_time + date_1day): # Get all assignments due in 7 days
             responded_member_ids = get_responded(assignment)                                                         #   Get a list of all the members that have responded to this assignment
@@ -155,7 +155,7 @@ class TaskController(BaseController):
         from civicboom.model import Member
         members = Session.query(Member) \
                     .with_polymorphic('*') \
-                    .filter(Member.join_date>=datetime.datetime.now()-timedelta) \
+                    .filter(Member.join_date>=now()-timedelta) \
                     .all()
         
         if not members:

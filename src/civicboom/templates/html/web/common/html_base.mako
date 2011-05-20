@@ -137,9 +137,8 @@ if c.logged_in_persona:
 else:
 	u = "anon"
 %>
-<body class="c-${c.controller} a-${c.action} u-${u}">
+<body class="c-${c.controller} a-${c.action} u-${u}">    
 	${flash_message()}
-    <!--[if lt IE 8 ]><script>window.location="${url(controller='misc', action='browser_unsupported')}";</script><![endif]-->
 	##<nav><%include file="navigation.mako"/></nav>
 	<header><%include file="header.mako"/></header>
 	<div id="app">${next.body()}</div>
@@ -147,6 +146,14 @@ else:
     ${popup_frame()}
 	##<%include file="scripts_end.mako"/>
 	${scripts_end.body()}
+
+    <!--[if lt IE 8 ]>
+    <script type="text/javascript">
+            if ($.cookie('allow_lt_ie8')!='True') {
+                window.location="${url(controller='misc', action='browser_unsupported')}";
+            }
+    </script>
+    <![endif]-->
 
 	<% from pylons import request %>
 	<!--
