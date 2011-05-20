@@ -44,6 +44,7 @@ css_common = glob("civicboom/public/styles/common/*.css")
 css_web    = glob("civicboom/public/styles/web/*.css")
 css_all    = css_common + css_web
 css_all    = [n[len("civicboom/public/"):] for n in css_all]
+css_all.sort()
 %>
 % for css in css_all:
 	<link rel="stylesheet" type="text/css" href="${h.wh_url("public", css)}" />
