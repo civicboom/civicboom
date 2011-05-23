@@ -151,7 +151,7 @@ def load_environment(global_conf, app_conf):
         worker.start_worker()
     elif pylons.config['worker.queue'] == "redis":  # pragma: no cover
         worker.init_queue(redis_.RedisQueue(Redis(config['service.redis.server']), platform.node()))
-    else:  # pragna: no cover
+    else:  # pragma: no cover
         log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
 
     civicboom_init() # This will trigger a set of additional initalizers
