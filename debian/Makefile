@@ -49,7 +49,7 @@ cb-website-web.deb: Makefile $(shell find ../nginx ./web)
 	fakeroot dpkg -b fs-web cb-website-web_${VERSION}_all.deb 
 	ln -sf cb-website-web_${VERSION}_all.deb cb-website-web.deb
 
-cb-website-db.deb: Makefile $(shell find ./db)
+cb-website-db.deb: Makefile $(shell find ./db ../admin_scripts)
 	rm -rf fs-db
 	$(call mdcp, ../admin_scripts/init_cbdb , fs-db/opt/cb/bin/                )
 	$(call mdcp, db/*                       , fs-db/DEBIAN/                    )

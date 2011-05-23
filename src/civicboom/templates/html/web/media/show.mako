@@ -17,12 +17,14 @@
         <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="30">
             <param name="movie" value="/flash/player_flv_maxi.swf" />
             <param name="allowFullScreen" value="true" />
+            <param name="wmode" value="transparent" />
             <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;showvolume=1&amp;showplayer=always&amp;showloading=always" />
         </object>
     % elif type == "video":
         <object type="application/x-shockwave-flash" data="/flash/player_flv_maxi.swf" width="${media_width}" height="${media_height}">
             <param name="movie" value="/flash/player_flv_maxi.swf" />
             <param name="allowFullScreen" value="true" />
+            <param name="wmode" value="transparent" />
             <param name="FlashVars" value="flv=${media['media_url']}&amp;title=${media['caption']}\n${media['credit']}&amp;startimage=${media['thumbnail_url']}&amp;showvolume=1&amp;showfullscreen=1" />
         </object>
     % else:

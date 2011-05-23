@@ -3,5 +3,8 @@
 <%def name="body()"></%def>
 
 <%def name="plaintext_after()">
-    <p>${_('To alter your notificaiton settings click ')}<a href="${h.url('setting_action', id='me', action='notifications', absolute=True)}">${_('here')}</a></p>
+    <%
+        username = 'me'
+    %>
+    <p>${_('To alter your notificaitons visit your ')}<a href="${h.url('setting_action', id=username, action='notifications', absolute=True)}">${_('notification settings')}</a></p>
 </%def>

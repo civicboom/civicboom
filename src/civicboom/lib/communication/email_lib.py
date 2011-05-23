@@ -1,6 +1,7 @@
 from webhelpers.html.tools import auto_link
 from webhelpers.html       import literal
 
+from cbutils.misc                          import update_dict
 from cbutils.text                          import convert_html_to_plain_text
 from civicboom.lib.communication.email_log import email_log
 
@@ -45,7 +46,7 @@ def render_email(subject='', content_text=None, content_html=None, html_template
     # If not already wrapped in HTML header
     if not re.search(r'<body.*</body>',content_html, re.DOTALL + re.IGNORECASE): #If content HTML is not a complete document with a head and body - put it in the standard email template
         #c.email_content = content_html
-        content_html = render_mako(html_template, extra_vars={"content_html": content_html}) # AllanC TODO - the render call here should pass params
+        content_html = render_mako(html_template, extra_vars={"kwargs": kwargs, "content_html": content_html} )
     
     # Subject - append site name to subject
     if subject==None or subject=='':
