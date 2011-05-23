@@ -228,11 +228,3 @@ class TestController(BaseController):
         """
         if get_member(id).set_payment_account(account_type):
             return 'ok'
-
-    #---------------------------------------------------------------------------
-    # CSV all user emails test
-    #---------------------------------------------------------------------------
-    def user_emails_csv(self):
-        from civicboom.lib.civicboom_lib import user_emails_csv
-        response.headers['Content-type'] = "text/csv; charset=utf-8"
-        return user_emails_csv()

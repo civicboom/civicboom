@@ -6,6 +6,9 @@ class TestAdminController(TestController):
         response = self.app.get(url(controller='admin', action='models')) # "models" is the admin index
 
 
+    #---------------------------------------------------------------------------
+    # Custom pages
+
     def test_threads(self):
         response = self.app.get(url(controller='admin', action='threads'))
 
@@ -20,6 +23,21 @@ class TestAdminController(TestController):
         response = self.app.get(url(controller='admin', action='event_log', address='127.0.0.1'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
         response = self.app.get(url(controller='admin', action='event_log', url='http://waffle.com'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
 
+    def test_user_emails_csv(self):
+        response = self.app.get(url(controller='test', action='user_emails_csv'))
+        
+        found_unittest = False
+        for line in response.body.split('\n'):
+            for item in line.split(','):
+                item = item.strip()
+                if item=='unittest':
+                    found_unittest = True
+        
+        assert found_unittest
+
+
+    #---------------------------------------------------------------------------
+    # Formalchemy bits
 
     def test_admin_search(self):
         # tests strings

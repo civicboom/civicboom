@@ -69,6 +69,7 @@ from pylons import url
 		<td>
 			<ul>
 				<li><a href="/admin/event_log">${_("Event Log")}</a></li>
+				<li><a href="/admin/user_emails.csv">${_("User Email List")}</a></li>
 			</ul>
 		</td>
 	</tr>

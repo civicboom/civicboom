@@ -89,6 +89,11 @@ class AdminControllerBase(BaseController):
         collection = options.pop('collection')
         return Page(collection, **options)
 
+
+    #---------------------------------------------------------------------------
+    # custom pages
+    #---------------------------------------------------------------------------
+
     def threads(self):
         import sys
         import traceback
@@ -141,6 +146,11 @@ class AdminControllerBase(BaseController):
         limit = " LIMIT 50"
         result = get_engine().execute(query + where + order + limit, args).fetchall()
         return render(prefix + "eventlog.mako", extra_vars={"events": result})
+
+    def user_emails(self, format):
+        from civicboom.lib.civicboom_lib import user_emails_csv
+        response.headers['Content-type'] = "text/csv; charset=utf-8"
+        return user_emails_csv()
 
 
 AdminController = ModelsController(AdminControllerBase,
