@@ -170,7 +170,7 @@
 <%def name="init_janrain_social()">
     <!-- Janrain Social Publish Widget -->
     <script type="text/javascript">
-      var rpxJsHost = (("https:" == document.location.protocol) ? "https://" : "http://static.");
+      var rpxJsHost = (("https:" == document.location.protocol) ? "https://s3.amazonaws.com/static." : "http://static.");
       document.write(unescape("%3Cscript src='" + rpxJsHost + "rpxnow.com/js/lib/rpx.js' type='text/javascript'%3E%3C/script%3E"));
     </script>
     <script type="text/javascript">
@@ -242,6 +242,98 @@
             video_item.setVideoTitle('${clean(video.get('caption'))}');
             activity.setMediaItem(video_item);
         % endfor
+        
+        
+        ##addLinkProperty(name, text, url)
+        ##addProviderUrl('${_('_site_name')}', '${content_dict['url']}');
+        
+        
+        var finished = function(results) {
+          // Process results of publishing.
+        }
+        <%! import hashlib, hmac, base64, time %>        
+        <%
+            # Generate signiture
+            # Reference - https://rpxnow.com/docs/social_publish_activity#OptionsParameter
+            #           - http://stackoverflow.com/questions/1306550/calculating-a-sha-hash-with-a-string-secret-key-in-python
+            if c.logged_in_persona:
+                apiKey     = config['api_key.janrain']
+                timestamp  = int(time.time())
+                primaryKey = c.logged_in_persona.id
+                message    = '%s|%s' % (timestamp,primaryKey)
+                signature  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
+        %>
+        
+        var options = {
+                        finishCallback: finished,
+                        ##exclusionList: ["facebook", "yahoo"],
+                        urlShortening: true,
+                        % if c.logged_in_persona:
+                        primaryKey: '${primaryKey}',
+                        timestamp :  ${timestamp}  ,
+                        signature : '${signature}'
+                        % endif
+                       }
+        
+        RPXNOW.Social.publishActivity(activity, options);
+
+    });
+</%def>
+
+<%def name="janrain_social_js_generic(url, share_display='', action_description='')">
+    RPXNOW.loadAndRun(['Social'], function () {
+        
+        ## Get a summary python dictionary of this content
+        ## This uses the same JSON generation as the Janrain API but contructs the data for the Jainrain social widget
+        <%
+            def clean(s):
+                if isinstance(s, basestring):
+                    return s.replace("'", "\\'")
+                return ''
+        %>
+        
+        var activity = new RPXNOW.Social.Activity('${clean(share_display)}',
+                                                  '${clean(action_description)}',
+                                                  '${clean(url)}'
+                                                  );
+        
+        activity.setTitle               ('title1243');
+        activity.setDescription         ('desc5478');
+        activity.setUserGeneratedContent('usergen456645');
+        
+##        % for action_link in cd['action_links']:
+##            activity.addActionLink('${clean(action_link.get('text'))}', '${clean(action_link.get('href'))}');
+##        % endfor
+        
+##        % for property in cd['properties'].keys():
+##            activity.addTextProperty('${clean(property)}', '${clean(cd['properties'][property])}');
+##        % endfor
+        
+##        <% images = [image for image in cd['media'] if image['type']=='image'] %>
+##        % if images:
+##        var images = new RPXNOW.Social.ImageMediaCollection();
+##        % for image in images:
+##            images.addImage('${clean(image['src'])}', '${clean(image['href'])}');
+##        % endfor
+##        activity.setMediaItem(images);
+##        % endif
+        
+##        % for media in cd['media']:
+##            % if media['type'] == 'mp3':
+##                activity.setMediaItem(new RPXNOW.Social.Mp3MediaItem('${clean(media['src'])}')); //title, artist, album
+##            % endif
+##        % endfor
+        
+        ## ?? the auto aggregate JSON does not have support for video? but the widget does? hu?
+        ## AllanC - because the janrain social widget and the janrain json aggregator dont agree, I have added video here directly form the content obj
+##        %for video in [media for media in content.get('attachments',dict()) if media.get('type')=='video']:
+##            var video_item = new RPXNOW.Social.VideoMediaItem(
+##                '${clean(video.get('original_url') )}' ,
+##                '${clean(video.get('thumbnail_url'))}'
+##            );
+##            video_item.setVideoTitle('${clean(video.get('caption'))}');
+##            activity.setMediaItem(video_item);
+##        % endfor
         
         
         ##addLinkProperty(name, text, url)
