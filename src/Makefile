@@ -84,10 +84,10 @@ clean:
 	rm -f /tmp/prof.out
 
 gource:
-	gource \
+	cd .. && gource \
 		-s 0.03 --auto-skip-seconds 0.1 --file-idle-time 500 --max-files 500 \
 		--file-filter tinymce --highlight-all-users \
-		--multi-sampling -1280x720 --stop-at-end --output-ppm-stream - ../ | \
+		--multi-sampling -1280x720 --stop-at-end --output-ppm-stream - | \
 		ffmpeg -y -b 3000K -r 24 -f image2pipe -vcodec ppm -i - -vcodec mpeg4 gource.mp4
 
 stats:
