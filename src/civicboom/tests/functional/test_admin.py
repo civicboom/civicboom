@@ -23,8 +23,8 @@ class TestAdminController(TestController):
         response = self.app.get(url(controller='admin', action='event_log', address='127.0.0.1'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
         response = self.app.get(url(controller='admin', action='event_log', url='http://waffle.com'), extra_environ={'HTTP_X_URL_SCHEME': 'https'})
 
-    def test_user_emails_csv(self):
-        response = self.app.get(url(controller='test', action='user_emails_csv'))
+    def test_user_emails(self):
+        response = self.app.get(url(controller='test', action='user_emails', format='csv'))
         
         found_unittest = False
         for line in response.body.split('\n'):
