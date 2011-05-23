@@ -629,6 +629,11 @@ def del_content(content):
     Session.delete(content)
     Session.commit()
     
+def del_member(member):
+    member = get_member(member)
+    update_member(member) #invalidate the cache
+    Session.delete(member)
+    Session.commit()
 
 def flag_content(content, member=None, type="automated", comment=None, url_base=None, delay_commit=False, moderator_address=None):
     """

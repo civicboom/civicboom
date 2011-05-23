@@ -235,6 +235,17 @@ class TestController(TestCase):
             status=200
         )
 
+    def delete_member(self, username=None):
+        """
+        Not an API call .. this remove the user from the database! - used to stop there being 100's of test users after the tests have run
+        """
+        if not username:
+            username = self.logged_in_as
+            self.log_out()
+        from civicboom.lib.database.get_cached import get_member
+        member = get_member(username)
+        member.delete()
+        
 
     def follow(self, username):
         response = self.app.post(
