@@ -15,8 +15,8 @@ upstream backends {
 	### END MANAGED BY DEBCONF
 }
 
-log_format cb_timing   '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent $upstream_response_time $request_time';
-log_format cb_combined '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
+log_format cb_timing   '$remote_addr $host $remote_user [$time_local] "$request" $status $body_bytes_sent $upstream_response_time $request_time';
+log_format cb_combined '$remote_addr $host $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent"';
 
 server {
 	# server stuff
