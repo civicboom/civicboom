@@ -15,9 +15,10 @@
 ##    <p>INVALID:</p>
 ##    <pre>${c.result['data']['invalid']}</pre>
 ##    % endif
-
+<div style="width:61em;margin:auto;text-align:left;">
+	<h1>Just a few more details and you're done!</h1>
     <form action="" method="post">
-		<table class="form">
+		<table class="newform">
         % for field in c.required_fields:
             % if field=='username':
               ${username()}
@@ -37,7 +38,7 @@
             ##${eval(field)} wanted to just eval the field name but mako defs use differnt python names :( it's going to have to be a set of IF's
         % endfor
 			<tr>
-				<td>Agree to <a href="/about/terms" target="_blank">terms</a></td>
+				<td class="newformtitle">Agree to <a href="/about/terms" target="_blank">terms</a></td>
 				<td><input type="checkbox" name="terms" value="checked" /></td>
         		<td>${invalid('terms')}</td>
 			</tr>
@@ -47,6 +48,7 @@
 			</td>
 		</table>
     </form>
+</div>
 
 </%def>
 
@@ -63,9 +65,9 @@
 </%def>
 
 <%def name="username()">
-    <p>could not allocate your prefered username as it has already been taken, if you are xxx then you can link accounts</p>
+    <p>We could not allocate your preferred username as it has already been taken, if you have signed up once before check your email.</p>
 	<tr>
-		<td>Username</td>
+		<td class="newformtitle">Username</td>
 		<td><input type="text" name="username" value="${h.get_data_value('username','register',c.logged_in_persona.username)}" /></td>
 		<td>${invalid('username')}</td>
 	</tr>
@@ -73,12 +75,7 @@
 
 <%def name="name()">
 	<tr>
-		<td colspan="3">
-			<p>Please provide us with your full name as you would like it to appear on your profile</p>
-		</td>
-	</tr>
-	<tr>
-		<td>Full Name:</td>
+		<td class="newformtitle">Display name:</td>
 		<td><input type="text" name="name" value="${h.get_data_value('name','register',c.logged_in_persona.name)}" /></td>
 		<td>${invalid('name')}</td>
 	</tr>
@@ -86,38 +83,45 @@
 
 <%def name="email()">
 	<tr>
-		<td>Email Address</td>
+		<td class="newformtitle">Email address:</td>
 		<td><input type="text" name="email" value="${h.get_data_value('email','register',c.logged_in_persona.email)}" /></td>
 		<td>${invalid('email')}</td>
 	</tr>
 </%def>
 
 <%def name="dob()">
-  <tr>
-		<td>Date of Birth</td>
+  	<tr>
+		<td class="newformtitle">Date of birth:</td>
 		<td>
 		  <input id="datepicker" type="date" name="dob"   value="${h.get_data_value('dob','register' ,c.logged_in_persona.config['dob'])}"><br />
-		  ${_('Please pick your year and month of birth before selecting the day.')}
 		</td>
 		<td>${invalid('dob')}</td>
+	</tr>
+  	<tr>
+		<td class="newformtitle"></td>
+		<td>
+		   <b>${_('Please pick your YEAR and MONTH of birth BEFORE selecting the day.')}</b><br />
+		   <span class="smaller">Civicboom has age restrictions for some features, See <a href="/about/terms" target="_blank">Terms</a>.</span>
+		</td>
+		<td></td>
 	</tr>
 </%def>
 
 <%def name="password()">
   % if config['online']:
   <tr>
-    <td style="vertical-align: middle;">Please type the text in the image</td>
+    <td style="vertical-align: middle;" class="newformtitle"> Please type the text in the box:</td>
 		<td>${h.get_captcha(c.lang, 'white')}</td>
 		<td>${invalid('recaptcha_response_field')}</td>
   </tr>
   % endif
   <tr>
-		<td>Password</td>
+		<td class="newformtitle">Password <span class="smaller">(minimum of 5 characters):</span></td>
 		<td><input type="password" name="password"         value="" /></td>
 		<td>${invalid('password')}</td>
   </tr>
   <tr>
-		<td>Password Confirm</td>
+		<td class="newformtitle">Confirm password:</td>
 		<td><input type="password" name="password_confirm" value="" /></td>
 		<td>${invalid('password_confirm')}</td>
   </tr>
