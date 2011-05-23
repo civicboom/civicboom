@@ -19,8 +19,9 @@ FOOT=\
 	jquery.ba-hashchange.min.js \
 	jquery.limit-1.2.js \
 	jquery.getUrlParam.js \
-	mobile.js \
+        jquery.cookie.js \
 	invite.js \
+	mobile.js \
 	gears_init.js \
 	geo.js \
 	OpenLayers.js \
