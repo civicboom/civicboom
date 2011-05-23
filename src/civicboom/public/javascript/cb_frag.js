@@ -91,17 +91,14 @@ function cb_frag(current_element, url, list_type, from_history, callback) {
 		    	if (typeof callback != 'undefined') callback(false);
 		    }
 		    if (frag_loading) {
-  				frag_loading.fadeTo(0, 0.01); // Set opacity to 0.01 with a delay of 0, this could be replaced with a setOpacity call? I think this is creating animtion headaches
-  				//frag_loading.width(0); // animating width buggers up scrolling
-  				//frag_loading.animate({width: '500px', opacity: 1.0}, scroll_duration);
-  				frag_loading.animate({opacity: 1.0}, scroll_duration);
-  				//frag_loading.fadeIn(scroll_duration);
-  				//frag_loading.toggle(scroll_duration);
+                frag_loading.fadeTo(0, 0.01); // Set opacity to 0.01 with a delay of 0, this could be replaced with a setOpacity call? I think this is creating animtion headaches
+                //frag_loading.width(0); // animating width buggers up scrolling
+                //frag_loading.animate({width: '500px', opacity: 1.0}, scroll_duration);
+                frag_loading.animate({opacity: 1.0}, scroll_duration, function() { $(this).removeAttr('style'); }); // Once the animation is complete remove the opacity element because IE disabled antialiasing when this is set
+                //frag_loading.fadeIn(scroll_duration);
+                //frag_loading.toggle(scroll_duration);
   				
   				if (! from_history) cb_frag_remove_sibblings(frag_loading, frag_update_history);
-				
-  				// remove the "opacity" setting, as IE doesn't antialias filtered stuff
-  				frag_loading.animate({opacity: null}, 0);
   				
   				frag_loading = null;
   				html5ize(frag_loading);
