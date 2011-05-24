@@ -47,21 +47,10 @@ class TaskController(BaseController):
 
 
     #---------------------------------------------------------------------------
-    # Expire Syndication Content
-    #---------------------------------------------------------------------------
-
-    def expire_syndication_articles(self):
-        """
-        Description to follow
-        """
-        pass
-
-
-    #---------------------------------------------------------------------------
     # Remind Pending users after 1 day
     #---------------------------------------------------------------------------
     @web_params_to_kwargs
-    def remind_pending_users(self, frequency_of_timed_task="hours=1", remind_after="hours=24"):
+    def remind_pending_users(self, remind_after="hours=24", frequency_of_timed_task="hours=1"):
         """
         Users who try to sign up but don't complete the registration within one day get a reminder email
         to be run once every 24 hours
@@ -87,7 +76,7 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     # Prune Pending users if not completed registration in 7 days
     #---------------------------------------------------------------------------
-
+    @web_params_to_kwargs
     def remove_pending_users(self, delete_older_than="days=7"):
         """
         Users who do not complete the signup process by entering an email
@@ -111,8 +100,8 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     # Assignment Reminder Notifications
     #---------------------------------------------------------------------------
-
-    def assignment_near_expire(self, frequency_of_timed_task="hours=24"):
+    @web_params_to_kwargs
+    def assignment_near_expire(self, frequency_of_timed_task="days=1"):
         """
         Users who have accepted assigments but have not posted response
         question should be reminded via a notification that the assingment
@@ -160,19 +149,21 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     # New Users and Groups Summary
     #---------------------------------------------------------------------------
-
-    def email_new_user_summary(self, timedelta=datetime.timedelta(days=1)):
+    @web_params_to_kwargs
+    def email_new_user_summary(self, frequency_of_timed_task="days=1"):
         """
         query for all users in last <timedelta> and email 
         """
+        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        
         from civicboom.model import Member
         members = Session.query(Member) \
                     .with_polymorphic('*') \
-                    .filter(Member.join_date>=now()-timedelta) \
+                    .filter(Member.join_date>=normalize_datetime(now()) - frequency_of_timed_task) \
                     .all()
         
         if not members:
-            log.debug('Report not generated: no new members in %s' % timedelta)
+            log.debug('Report not generated: no new members in %s' % frequency_of_timed_task)
             return response_completed_ok
         
         from civicboom.lib.communication.email_lib import send_email
@@ -182,8 +173,8 @@ class TaskController(BaseController):
             content_html = render(
                             '/email/admin/summary_new_users.mako',
                             extra_vars = {
-                                "members"   : members   ,
-                                "timedelta" : timedelta ,
+                                "members"   : members                 ,
+                                "timedelta" : frequency_of_timed_task ,
                             }
                         ),
         )
