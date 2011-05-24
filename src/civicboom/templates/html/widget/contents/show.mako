@@ -13,7 +13,7 @@
 %>
 
 
-<a class="content_preview" href="${h.url('content',id=id, subdomain='')}" target="_blank">
+<a class="content_preview" href="${h.url('content',id=id, sub_domain='www')}" target="_blank">
   <h1>${content['title']}</h1>
   <img src=${content['thumbnail_url']}  style="max-width:40%; float: left;"/>
   <p>${h.truncate(h.strip_html_tags(content['content']), length=180, indicator='...', whole_word=True)}<strong>more</strong></p>
@@ -36,12 +36,12 @@
     <table><tr>
         <td class="action">
             <div class="padding" style="background-color: #${c.widget['color_header']}; margin-right: 1em;">
-            <a href="${h.url('content_action', id=id, action='accept', subdomain='')}" target="_blank">${_('Accept _assignment')}</a>
+            <a href="${h.url('content_action', id=id, action='accept', sub_domain='www')}" target="_blank">${_('Accept _assignment')}</a>
             </div>
         </td>
         <td class="action">
             <div class="padding" style="background-color: #${c.widget['color_header']};">
-            <a href="${h.url('new_content', parent_id=id, subdomain='')}" target="_blank">${_("Respond now!")}</a>
+            <a href="${h.url('new_content', parent_id=id, sub_domain='www')}" target="_blank">${_("Respond now!")}</a>
             </div>
         </td>
     </tr></table>
@@ -69,8 +69,8 @@
         <tr class="${response_class}">
             <td class="${response_class}"></td>
             <td><img src="${response['thumbnail_url']}" alt="${response['title']}" style="border: 1px solid #${c.widget['color_border']}; margin-right: 0.5em;"/></td>
-            <td><a href="${h.url('content', id=response['id']                 , subdomain='')}" target="_blank">${response['title']}</a></td>
-            <td><a href="${h.url('member' , id=response['creator']['username'], subdomain='')}" target="_blank"><img src="${response['creator']['avatar_url']}" alt="${response['creator']['name'] or response['creator']['username']}" style="border: 1px solid #${c.widget['color_border']};"/></a></td>
+            <td><a href="${h.url('content', id=response['id']                 , sub_domain='www')}" target="_blank">${response['title']}</a></td>
+            <td><a href="${h.url('member' , id=response['creator']['username'], sub_domain='www')}" target="_blank"><img src="${response['creator']['avatar_url']}" alt="${response['creator']['name'] or response['creator']['username']}" style="border: 1px solid #${c.widget['color_border']};"/></a></td>
         </tr>
     % endfor
 </table>

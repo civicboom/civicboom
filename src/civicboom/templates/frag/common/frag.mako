@@ -85,12 +85,12 @@
         if self.attr.html_url == True:
             if 'format' in kwargs:
                 del kwargs['format']
-            if 'subdomain' in kwargs:
-                #log.debug('old subdomain = %s' % kwargs['subdomain'])
+            if 'sub_domain' in kwargs:
+                #log.debug('old subdomain = %s' % kwargs['sub_domain'])
                 # AllanC - annoyingly this should never happen ... but somhow the subdomain is leaking out of the URL generator - probably because somewhere there is a still a call to pylons.url rather than web.url
-                del kwargs['subdomain']
+                del kwargs['sub_domain']
                 
-            self.attr.html_url = h.url('current', subdomain='', **kwargs)
+            self.attr.html_url = h.url('current', sub_domain='www', **kwargs)
         
         # Gen RSS URL
         if self.attr.rss_url == True:

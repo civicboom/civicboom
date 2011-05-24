@@ -578,7 +578,7 @@
     c.widget['height'] = 250
 %>
 ##<div style="padding: 1em;">
-${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', subdomain='widget', list='assignments_active'))}
+${get_widget.widget_iframe(protocol=None, iframe_url=h.url('contents', sub_domain='widget', list='assignments_active'))}
 ##</div>
 </%def>
 
