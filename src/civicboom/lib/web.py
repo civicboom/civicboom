@@ -68,6 +68,12 @@ def url(*args, **kwargs):
     """
     Passthough for Pylons URL generator with a few new features
     """
+    import cbutils.worker as w
+    if hasattr(w, 'url'):
+        _url = w.url
+    else:
+        _url = url_pylons
+
     # BUGFIX - if protocol is passed as None it goes baddgy ... this remove is ... seems unnessisary because url shoud deal with it (sigh)
     if 'protocol' in kwargs and not isinstance(kwargs['protocol'], basestring):
         del kwargs['protocol']
@@ -102,12 +108,6 @@ def url(*args, **kwargs):
                 host = re.sub('^'+possible_subdomain+r'\.', '', host)
         kwargs['host'] = subdomain + host
         
-
-    import cbutils.worker as w
-    if hasattr(w, 'url'):
-        _url = w.url
-    else:
-        _url = url_pylons
 
     args = list(args)
     if 'current' in args:
