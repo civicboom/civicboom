@@ -94,9 +94,12 @@ def set_up_environment():
             },
             'debug': True,
         }),
-        {}
+        {
+            'wsgi.url_scheme': 'https',
+            'HTTP_HOST': 'www.civicboom.com',
+        }
     )
-    worker.url = url
+    w.url = url
 
     # configure modules that used to require pylons.config
     import cbutils.warehouse as wh
