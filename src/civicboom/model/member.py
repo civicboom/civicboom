@@ -477,6 +477,13 @@ class Member(Base):
             return self.payment_account.type
         return 'free'
 
+    def delete(self):
+        """
+        Not to be called in normal operation - this a convenience method for automated tests
+        """
+        from civicboom.lib.database.actions import del_member
+        del_member(self)
+
     def check_action_key(self, action, key):
         """
         Check that this member was the one who generated the key to
