@@ -9,6 +9,8 @@ setup a cron job to run these tasks
 
 from civicboom.lib.base import *
 
+from cbutils.misc import timedelta_str
+
 from sqlalchemy import and_
 
 import datetime
@@ -55,7 +57,8 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     # Remind Pending users after 1 day
     #---------------------------------------------------------------------------
-    def remind_pending_users(self, frequency_of_time_task=1):
+    @web_params_to_kwargs
+    def remind_pending_users(self, frequency_of_timed_task="hours=1", remind_after="hours=24"):
         """
         Users who try to sign up but don't complete the registration within one day get a reminder email
         to be run once every 24 hours
@@ -63,12 +66,17 @@ class TaskController(BaseController):
         from civicboom.model.member import User
         from civicboom.lib.civicboom_lib import validation_url
         
-        frequency_of_timed_task = datetime.timedelta(days=frequency_of_timed_task)
-        reminder_start = now() - datetime.timedelta(days=1)
-        for user in Session.query(User).filter(User.status=='pending').filter(~User.login_details.any()).filter(and_(User.join_date > reminder_start - frequency_of_timed_task, User.join_date < reminder_start)).all():
-            log.info('Reminding pending user %s - %s' % (user.username, user.normalize_email))
+        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        remind_after            = timedelta_str(remind_after           )
+        
+        reminder_start = (now()          - remind_after           ).replace(minute=0, second=0, microsecond=0)
+        reminder_end   = (reminder_start + frequency_of_timed_task).replace(minute=0, second=0, microsecond=0)
+        
+        users_to_remind = Session.query(User).filter(User.status=='pending').filter(and_(User.join_date <= reminder_end, User.join_date >= reminder_start)).all() #.filter(~User.login_details.any()).
+        for user in users_to_remind:
+            log.info('Reminding pending user %s - %s' % (user.username, user.email_normalized))
             register_url = validation_url(user, controller='register', action='new_user')
-            user.send_email(content_html=render('/email/user_pending_reminder.mako', extra_vars={'register_url':register_url}))
+            user.send_email(subject=_('_site_name: reminder'), content_html=render('/email/user_pending_reminder.mako', extra_vars={'register_url':register_url}))
         return response_completed_ok
 
 
@@ -77,17 +85,19 @@ class TaskController(BaseController):
     # Prune Pending users if not completed registration in 7 days
     #---------------------------------------------------------------------------
 
-    def remove_pending_users(self):
+    def remove_pending_users(self, delete_older_than="days=7"):
         """
         Users who do not complete the signup process by entering an email
         address that is incorrect or a bots or cant use email should be
         removed if they have still not signed up after 7 Days
         """
         from civicboom.model.member import User
-        ghost_expire = now() - datetime.timedelta(days=7)
-        for user in Session.query(User).filter(~User.login_details.any()).filter(User.join_date < ghost_expire).all(): #filter(User.status=='pending').
+        
+        ghost_expire = (now() - timedelta_str(delete_older_than)).replace(minute=0, second=0, microsecond=0)
+        
+        for user in Session.query(User).filter(User.status=='pending').filter(User.join_date <= ghost_expire).all(): # .filter(~User.login_details.any()).
             Session.delete(user)
-            log.info('Deleting pending user %s - %s' % (user.username, user.normalize_email))
+            log.info('Deleting pending user %s - %s' % (user.username, user.email_normalized))
             # It may be nice to log numbers here to aid future business desctions
         Session.commit()
         # AllanC - the method above could be inefficent. could just do it at the DB side?

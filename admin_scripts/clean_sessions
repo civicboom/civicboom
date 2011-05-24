@@ -1,0 +1,45 @@
+#!/usr/bin/python
+
+from redis import Redis
+import cPickle as pickle
+from time import time
+
+r = Redis(db=1)
+now = time()
+buf = ""
+
+for n, k in enumerate(r.keys("beaker:*")):
+    u = pickle.loads(r.get(k))
+
+    # check for sessions where the creation time = accessed time (ie, only one page view)
+    # and older than an hour, so we don't kill sessions that were only just created
+    if (
+        u.get('_accessed_time') - u.get('_creation_time') < 10 and
+        u.get('_accessed_time') < now - 60 * 60 * 1
+    ):
+        r.delete(k)
+        buf += "s"  # single hit
+
+    # kill anon sessions that haven't been accessed for two hours
+    elif (
+        u.get('logged_in_user') == None and
+        u.get('_accessed_time') < now - 60 * 60 * 2
+    ):
+        r.delete(k)
+        buf += "a"  # anon
+
+    # sessions that haven't been accessed in a week
+    elif u.get('_accessed_time') < now - 60 * 60 * 24 * 7:
+        r.delete(k)
+        buf += "o"  # old
+
+    # keep the rest
+    else:
+        buf += "."  # normal
+
+    if n % 70 == 69:
+        print buf
+        buf = ""
+
+if buf:
+    print buf
