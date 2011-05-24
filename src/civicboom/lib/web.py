@@ -80,6 +80,11 @@ def url(*args, **kwargs):
     if 'protocol' in kwargs and not isinstance(kwargs['protocol'], basestring):
         del kwargs['protocol']
 
+    # workaround for routes bug where it can't handle sub_domain=None or unspecified
+    # https://bitbucket.org/bbangert/routes/issue/50
+    if 'sub_domain' not in kwargs:
+        kwargs['sub_domain'] = _url.environ.get("HTTP_HOST", "").split(".")[0]
+
     # shortcut for absolute URL
     if 'absolute' in kwargs:
         kwargs['host'] = _url.environ.get("HTTP_HOST")
