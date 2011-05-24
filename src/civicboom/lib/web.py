@@ -102,12 +102,19 @@ def url(*args, **kwargs):
                 host = re.sub('^'+possible_subdomain+r'\.', '', host)
         kwargs['host'] = subdomain + host
         
+
+    import cbutils.worker as w
+    if hasattr(w, 'url'):
+        _url = w.url
+    else:
+        _url = url_pylons
+
     args = list(args)
     if 'current' in args:
         args.remove('current')
-        return url_pylons.current(*args, **kwargs)
+        return _url.current(*args, **kwargs)
     else:
-        return url_pylons(        *args, **kwargs)
+        return _url(        *args, **kwargs)
 
 
 
