@@ -364,9 +364,6 @@ class SettingsController(BaseController):
         # Check permissions on object, find actual username and store in username
         # id will always contain me if it was passed
         
-        if id != c.logged_in_user.username:
-            raise_if_current_role_insufficent('admin')
-        
         private = kwargs.get('private')
         
         #username = id
@@ -378,7 +375,8 @@ class SettingsController(BaseController):
         
         user = get_member(id)
         
-        raise_if_current_role_insufficent('admin', group=user)
+        if user.username != c.logged_in_user.username:
+            raise_if_current_role_insufficent('admin', group=user)
 
         user_log.info("Saving general settings")
         
