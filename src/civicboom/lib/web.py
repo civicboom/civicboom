@@ -45,14 +45,16 @@ subdomain_formats = {
     'api-v1': 'api'    ,
 }
 
-def get_subdomain_format():
+def get_subdomain_format(environ=None):
     """
     hardcoded list of ifs, because this function is called millions of times,
     and dictionary lookups (especially from globals (10x especially from
     app_globals)) are comparatively slow (only 0.01ms vs 0.1ms, but over a
     million calls it adds up)
     """
-    subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
+    if not environ:
+        environ = request.environ
+    subdomain = environ.get("HTTP_HOST", "").split(".")[0]
     if subdomain == "w" or subdomain == "widget":
         return "widget"
     if subdomain == "m" or subdomain == "mobile":
@@ -85,7 +87,7 @@ def url(*args, **kwargs):
         del kwargs['absolute']
 
     # Encode current widget state into URL if in widget mode
-    if kwargs.get('subdomain')=='widget' or (get_subdomain_format()=='widget' and 'subdomain' not in kwargs): # If widget and not linking to new subdomain
+    if kwargs.get('subdomain')=='widget' or (get_subdomain_format(_url.environ)=='widget' and 'subdomain' not in kwargs): # If widget and not linking to new subdomain
         widget_var_prefix = config["setting.widget.var_prefix"]
         for key, value in c.widget.iteritems():
             if isinstance(value, dict) and 'username' in value: # the owner may be a dict, convert it back to a username
