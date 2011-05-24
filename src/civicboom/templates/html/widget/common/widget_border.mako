@@ -141,6 +141,8 @@
                         del kwargs[key]
                     if 'format' in kwargs:
                         del kwargs['format']
+                    if 'sub_domain' in kwargs:
+                        del kwargs['sub_domain']
                     rss_url = h.url('current', format='rss', sub_domain='www', **kwargs)
                     
                     #rss_url = ''
