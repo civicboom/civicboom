@@ -662,7 +662,7 @@ def flag_content(content, member=None, type="automated", comment=None, url_base=
         # This can be replaced when we get routes working in threads
         # This is not a fully functional URL system, but just enough for the flag email
         if url_base:
-            kwargs.pop('subdomain') # dont need this key
+            kwargs.pop('sub_domain') # dont need this key
             url_string = ""
             for arg in args:
                 url_string += arg
@@ -707,12 +707,12 @@ If the content is not ok, go to the content list and delete it:
         "type"         : type,
         "comment"      : flag.comment,
         "member_name"  : flag.content.creator.username,
-        "member_url"   : _url('member', id=flag.content.creator.username, subdomain="www"),
-        "content_url"  : _url('content', id=flag.content.id, subdomain="www"),
+        "member_url"   : _url('member', id=flag.content.creator.username, sub_domain="www"),
+        "content_url"  : _url('content', id=flag.content.id, sub_domain="www"),
         "content_title": flag.content.title,
         "content_body" : flag.content.content,
-        "action_ignore": _url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), subdomain="www"),
-        "action_delete": _url("admin/Content/models?Content--id="+str(flag.content.id), subdomain="www"),
+        "action_ignore": _url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), sub_domain="www"),
+        "action_delete": _url("admin/Content/models?Content--id="+str(flag.content.id), sub_domain="www"),
     }
     
     send_email(

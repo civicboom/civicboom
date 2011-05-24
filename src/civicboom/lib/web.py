@@ -87,29 +87,12 @@ def url(*args, **kwargs):
         del kwargs['absolute']
 
     # Encode current widget state into URL if in widget mode
-    if kwargs.get('subdomain')=='widget' or (get_subdomain_format(_url.environ)=='widget' and 'subdomain' not in kwargs): # If widget and not linking to new subdomain
+    if kwargs.get('sub_domain')=='widget' or (get_subdomain_format(_url.environ)=='widget' and 'sub_domain' not in kwargs): # If widget and not linking to new subdomain
         widget_var_prefix = config["setting.widget.var_prefix"]
         for key, value in c.widget.iteritems():
             if isinstance(value, dict) and 'username' in value: # the owner may be a dict, convert it back to a username
                 value = value['username']
             kwargs[widget_var_prefix+key] = value
-        
-    # Moving between subdomains
-    #  remove all known subdomains from URL and instate the new provided one
-    if 'subdomain' in kwargs:
-        subdomain = str(kwargs.pop('subdomain'))
-        assert subdomain in subdomain_formats
-        if 'localhost' not in c.host and subdomain == '': #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
-            subdomain = 'www'
-        if subdomain:
-            subdomain += '.'
-        host = c.host
-        for possible_subdomain in subdomain_formats:
-            if possible_subdomain:
-                #host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
-                host = re.sub('^'+possible_subdomain+r'\.', '', host)
-        kwargs['host'] = subdomain + host
-        
 
     args = list(args)
     if 'current' in args:

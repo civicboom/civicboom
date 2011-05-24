@@ -33,18 +33,18 @@ ${widget_preview(c.widget_user_preview)}
 % if iframe_url:
  src='${iframe_url}'\
 % elif c.widget['base_list'] and member_username:
- src='${h.url('member_action', id=member_username, action=c.widget['base_list'], subdomain='widget', protocol=protocol)}'\
+ src='${h.url('member_action', id=member_username, action=c.widget['base_list'], sub_domain='widget', protocol=protocol)}'\
 % elif member_username:
- src='${h.url('member'       , id=member_username,                               subdomain='widget', protocol=protocol)}'\
+ src='${h.url('member'       , id=member_username,                               sub_domain='widget', protocol=protocol)}'\
 % else:
- src='${h.url('contents'     ,                                                   subdomain='widget', protocol=protocol)}'\
+ src='${h.url('contents'     ,                                                   sub_domain='widget', protocol=protocol)}'\
 % endif
  width='${c.widget['width']}'\
  height='${c.widget['height']}'\
  scrolling='no'\
  frameborder='0'\
 >\
-<a href='${h.url('member', id=member_username, subdomain='')}'>${_('%s on _site_name' % member_username)}</a>\
+<a href='${h.url('member', id=member_username, sub_domain='www')}'>${_('%s on _site_name' % member_username)}</a>\
 </iframe>\
 </%def>
 
@@ -159,9 +159,9 @@ ${widget_preview(c.widget_user_preview)}
             # generate the URL used for the IFRAME but dicard everything pased the "?"
             # the first bit of the url is needed for the javascript to generate the IFRAME settings
             # remeber this is duplicated in the widget_iframe
-            widget_url = h.url('contents', subdomain='widget', protocol='http')
+            widget_url = h.url('contents', sub_domain='widget', protocol='http')
             if member_username:
-                widget_url = h.url('member', id=member_username, subdomain='widget', protocol='http')
+                widget_url = h.url('member', id=member_username, sub_domain='widget', protocol='http')
                 widget_url = widget_url.split('?')[0]
             
         %>
@@ -190,7 +190,7 @@ ${widget_preview(c.widget_user_preview)}
                 link += "${var_prefix}height=" + height;
                 link += "' width='"+width+"' height='"+height+"' scrolling='no' frameborder='0'>";
                 % if member_username:
-                link += "<a href='${h.url('member', id=member_username, subdomain='')}'>${_('%s on _site_name' % member_username)}</a>";
+                link += "<a href='${h.url('member', id=member_username, sub_domain='www')}'>${_('%s on _site_name' % member_username)}</a>";
                 % endif
                 link += "</iframe>";
                 

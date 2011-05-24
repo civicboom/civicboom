@@ -37,9 +37,9 @@
         <table><tr>
             <%
                 owner_name = owner['name']
-                owner_url  = h.url('/', subdomain='')
+                owner_url  = h.url('/', sub_domain='www')
                 if owner['username']:
-                    owner_url = h.url('member', id=owner['username'], subdomain='')
+                    owner_url = h.url('member', id=owner['username'], sub_domain='www')
             %>
             <td>
                 <a href="${owner_url}" target="_blank" title="${_('%s on _site_name') % owner_name}">
@@ -90,11 +90,11 @@
                 <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
             </a>
         % elif owner['username']:
-            <a href="${h.url('member_action', id=owner['username'], action='follow', subdomain='')}" target="_blank">
+            <a href="${h.url('member_action', id=owner['username'], action='follow', sub_domain='www')}" target="_blank">
                 ${_("Sign up/Sign in")}
             </a>
         % else:
-            <a href="${h.url(controller='account', action='signin', subdomain='')}" target="_blank">
+            <a href="${h.url(controller='account', action='signin', sub_domain='www')}" target="_blank">
                 ${_("Sign up/Sign in")}
                 ##to <span class="icon16 i_boom" title="${_('_site_name')}"></span>
                 ##<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
@@ -122,14 +122,14 @@
     ##----------------------------------------
     <div class="widget_footer" style="height:${size_footer}px; background-color:#${c.widget['color_header']}; border-top: 1px solid #${c.widget['color_border']}">
         <div class="padding">
-            <a class="icon16 i_boom"      title="${_('Powered by _site_name')}" target="_blank" href="${h.url('/', subdomain='')}" style="float:right;"><span>${_('_site_name')}</span></a>
-            <a class="icon16 i_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='about', id='mobile', subdomain='')}"><span>Mobile</span></a>
+            <a class="icon16 i_boom"      title="${_('Powered by _site_name')}" target="_blank" href="${h.url('/', sub_domain='www')}" style="float:right;"><span>${_('_site_name')}</span></a>
+            <a class="icon16 i_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='about', id='mobile', sub_domain='www')}"><span>Mobile</span></a>
             <a class="icon16 i_widget"    title="${_('Embed this widget')}"                     href="${h.url(controller='misc', action='get_widget')}"><span>Embed</span></a>
             <%
                 rss_url = ''
                 
                 if owner['username']:
-                    rss_url = h.url('member', id=owner['username'], format='rss', subdomain='')
+                    rss_url = h.url('member', id=owner['username'], format='rss', sub_domain='www')
                     
                 elif '/misc' not in h.current_url(): #do not show RSS link for misc pages as they are static
                     # Get current URL deatils - set format to RSS and remove widget variables
@@ -141,7 +141,7 @@
                         del kwargs[key]
                     if 'format' in kwargs:
                         del kwargs['format']
-                    rss_url = h.url('current', format='rss', subdomain='', **kwargs)
+                    rss_url = h.url('current', format='rss', sub_domain='www', **kwargs)
                     
                     #rss_url = ''
                     #(args, kwargs)  = h.get_object_from_action_url()
