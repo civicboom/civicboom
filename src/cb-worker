@@ -84,6 +84,20 @@ def set_up_environment():
     }
     langs["en"].install()
 
+    # routing
+    from civicboom.config.routing import make_map
+    import routes.util
+    url = routes.util.URLGenerator(
+        make_map({
+            'pylons.paths': {
+                'controllers': 'civicboom/controllers',
+            },
+            'debug': True,
+        }),
+        {}
+    )
+    worker.url = url
+
     # configure modules that used to require pylons.config
     import cbutils.warehouse as wh
     wh.configure(w.config)
