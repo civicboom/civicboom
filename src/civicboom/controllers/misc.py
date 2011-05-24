@@ -94,7 +94,10 @@ class MiscController(BaseController):
         if subdomain in ["api-v1", ]:
             return "User-agent: *\nDisallow: /\n"
         else:
-            return "User-agent: *\nDisallow:\n"
+            return """
+User-agent: *
+Disallow: /misc/get_widget/
+"""
 
     @web
     @auth
