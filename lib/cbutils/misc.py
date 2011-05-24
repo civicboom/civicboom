@@ -36,7 +36,7 @@ def timedelta_str(string_args):
     True
     >>> timedelta_str("days = 10, hours = 10") == datetime.timedelta(days=10, hours=10)
     True
-    >>> timedelta_str(datetime.timedelta(minuets=1)) == datetime.timedelta(minuets=1)
+    >>> timedelta_str(datetime.timedelta(minutes=1)) == datetime.timedelta(minutes=1)
     True
     """
     if isinstance(string_args, basestring):
