@@ -1,6 +1,6 @@
 #!/bin/bash
 export PYTHONPATH=../lib
-if [$1 = ""]
+if [ $1 = "" ]
 then
   nosetests
 else

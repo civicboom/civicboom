@@ -19,6 +19,9 @@ log = logging.getLogger(__name__)
 
 response_completed_ok = "task:ok" #If this is changed please update tasks.py to reflect the same "task ok" string
 
+def normalize_datetime(datetime):
+    return datetime.replace(minute=0, second=0, microsecond=0)
+    
 
 class TaskController(BaseController):
     
@@ -69,8 +72,8 @@ class TaskController(BaseController):
         frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
         remind_after            = timedelta_str(remind_after           )
         
-        reminder_start = (now()          - remind_after           ).replace(minute=0, second=0, microsecond=0)
-        reminder_end   = (reminder_start + frequency_of_timed_task).replace(minute=0, second=0, microsecond=0)
+        reminder_start = normalize_datetime(now()          - remind_after           )
+        reminder_end   = normalize_datetime(reminder_start + frequency_of_timed_task)
         
         users_to_remind = Session.query(User).filter(User.status=='pending').filter(and_(User.join_date <= reminder_end, User.join_date >= reminder_start)).all() #.filter(~User.login_details.any()).
         for user in users_to_remind:
@@ -93,7 +96,7 @@ class TaskController(BaseController):
         """
         from civicboom.model.member import User
         
-        ghost_expire = (now() - timedelta_str(delete_older_than)).replace(minute=0, second=0, microsecond=0)
+        ghost_expire = normalize_datetime(now() - timedelta_str(delete_older_than))
         
         for user in Session.query(User).filter(User.status=='pending').filter(User.join_date <= ghost_expire).all(): # .filter(~User.login_details.any()).
             Session.delete(user)
@@ -109,36 +112,36 @@ class TaskController(BaseController):
     # Assignment Reminder Notifications
     #---------------------------------------------------------------------------
 
-    def assignment_near_expire(self):
+    def assignment_near_expire(self, frequency_of_timed_task="hours=24"):
         """
         Users who have accepted assigments but have not posted response
         question should be reminded via a notification that the assingment
         has not long left
         """
-        from civicboom.model.content import AssignmentContent
+        from civicboom.model.content     import AssignmentContent
+        from civicboom.lib.communication import messages
         
         def get_assignments_by_date(date_start, date_end):
             return Session.query(AssignmentContent).filter(and_(AssignmentContent.due_date >= date_start, AssignmentContent.due_date <= date_end)).all()
-
+        
         def get_responded(assignment):
             return [response.creator_id for response in assignment.responses]
-            
-        date_7days_time = now() + datetime.timedelta(days=6)
-        date_1days_time = now() # + datetime.timedelta(days=1)
-        date_1day       =         datetime.timedelta(days=1)
         
-        for assignment in get_assignments_by_date(date_start=date_7days_time, date_end=date_7days_time + date_1day): # Get all assignments due in 7 days
-            responded_member_ids = get_responded(assignment)                                                         #   Get a list of all the members that have responded to this assignment
-            for member in assignment.accepted_by:                                                                    #   For all members accepted this assignment
-                if member.id not in responded_member_ids:                                                            #     Check if they have responded with an article
-                    member.send_notification( messages.assignment_due_7days(you=member, assignment=assignment) )              #     if not send a reminder notification
-                    
-        for assignment in get_assignments_by_date(date_start=date_1days_time, date_end=date_1days_time + date_1day): #Same as above but on day before
+        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        
+        date_7days_time = normalize_datetime(now() + datetime.timedelta(days=7))
+        date_1days_time = normalize_datetime(now() + datetime.timedelta(days=1))
+        
+        for assignment in get_assignments_by_date(date_start=date_7days_time, date_end=date_7days_time + frequency_of_timed_task): # Get all assignments due in 7 days
+            responded_member_ids = get_responded(assignment)                                                              #   Get a list of all the members that have responded to this assignment
+            for member in [member for member in assignment.accepted_by if member.id not in responded_member_ids]:         #   For all members accepted this assignment #     Check if they have responded with an article
+                member.send_notification( messages.assignment_due_7days(you=member, assignment=assignment) )              #     if not send a reminder notification
+        
+        for assignment in get_assignments_by_date(date_start=date_1days_time, date_end=date_1days_time + frequency_of_timed_task): #Same as above but on day before
             responded_member_ids = get_responded(assignment)
-            for member in assignment.accepted_by:
-                if member.id not in responded_member_ids:
-                    member.send_notification( messages.assignment_due_1day(you=member, assignment=assignment) )
-                    
+            for member in [member for member in assignment.accepted_by if member.id not in responded_member_ids]:
+                member.send_notification( messages.assignment_due_1day (you=member, assignment=assignment) )
+        
         Session.commit()
         return response_completed_ok
 
