@@ -5,7 +5,7 @@ from civicboom.model.media import Media
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
-from sqlalchemy import Enum, Integer, Date, DateTime, Boolean, Float
+from sqlalchemy import Enum, Integer, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref

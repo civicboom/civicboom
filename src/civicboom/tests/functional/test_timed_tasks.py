@@ -1,9 +1,13 @@
 from civicboom.tests import *
 
+from civicboom.model      import User
+from civicboom.model.meta import Session
 
 from civicboom.controllers.task import response_completed_ok
 
 from civicboom.lib.database.get_cached import get_member
+
+import datetime
 
 
 class TestTimedTasksController(TestController):
@@ -29,7 +33,7 @@ class TestTimedTasksController(TestController):
         """
         
         def count_pending_members():
-            return Session.query(User).filter(status=='pending').count()
+            return Session.query(User).filter(User.status=='pending').count()
         
         def set_join_date(username, join_date=None, timedelta=None):
             remind_pending_member = get_member(username)
@@ -38,12 +42,12 @@ class TestTimedTasksController(TestController):
             remind_pending_member.join_date = join_date
             Session.commit()
         
-        def remind_pending_users():
-            response = self.app.get(url(controller='task', action='remind_pending_users', frequency_of_timed_task="hours=3"))
+        def remind_pending_users(**kwargs):
+            response = self.app.get(url(controller='task', action='remind_pending_users', **kwargs))
             self.assertIn(response_completed_ok, response)
         
-        def remove_pending_users():
-            response = self.app.get(url(controller='task', action='remind_pending_users', delete_older_than      ="days=7" ))
+        def remove_pending_users(**kwargs):
+            response = self.app.get(url(controller='task', action='remove_pending_users', **kwargs))
             self.assertIn(response_completed_ok, response)
         
         num_pending = count_pending_members()
@@ -72,10 +76,10 @@ class TestTimedTasksController(TestController):
         set_join_date('pending_test', join_date=datetime.datetime.now() - datetime.timedelta(days=1) )
         
         # Reminder signup email should be generated
-        remind_pending_users()
-        self.assertEqual(num_emails + 1, getNumEmails())
+        remind_pending_users(frequency_of_timed_task="hours=1", remind_after="hours=24")
+        self.assertEqual(getNumEmails(), num_emails + 1)
         email_response = getLastEmail()
-        self.assertIn  (email_response.subject, 'reminder')
+        self.assertIn  ('reminder', email_response.subject)
         self.assertTrue(email_response.content_text       )
         num_emails += 1
         
@@ -83,7 +87,7 @@ class TestTimedTasksController(TestController):
         set_join_date('pending_test', join_date=datetime.datetime.now() - datetime.timedelta(days=5) ) # join date back a day
         
         num_emails = getNumEmails()
-        remind_pending_users()
+        remind_pending_users(frequency_of_timed_task="hours=1", remind_after="hours=24")
         self.assertEqual(num_emails + 0, getNumEmails()) # No emails should be sent again
         
         self.assertEquals(count_pending_members(), num_pending) # Member should still be pending at the end of this test
@@ -92,13 +96,13 @@ class TestTimedTasksController(TestController):
         
         # Remove Pending users -------------------------------------------------
         
-        remove_pending_users() # set to 7 days
+        remove_pending_users(delete_older_than="days=7")
         self.assertEquals(count_pending_members(), num_pending) # no users should have changed
         self.assertEquals(getNumEmails()         , num_emails ) # no emails should have been sent
         
         set_join_date('pending_test', join_date=datetime.datetime.now() - datetime.timedelta(days=8) )
         
-        remove_pending_users() # set to 7 days
+        remove_pending_users(delete_older_than="days=7")
         self.assertEquals(count_pending_members(), num_pending - 1) # user removed
         self.assertEquals(getNumEmails()         , num_emails     ) # no email sent
         num_pending += -1

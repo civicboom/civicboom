@@ -6,7 +6,7 @@ from civicboom.lib.helpers import wh_url
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
-from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
+from sqlalchemy import Enum, Integer, DateTime, Boolean
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref, dynamic_loader
@@ -207,7 +207,7 @@ class Member(Base):
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
     name            = Column(Unicode(250),   nullable=False, default=u"")
-    join_date       = Column(Date(),         nullable=False, default=func.now())
+    join_date       = Column(DateTime(),     nullable=False, default=func.now())
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(String(40),     nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
