@@ -11,7 +11,9 @@
 ##----------------------------------------------------------------------------
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=8,chrome=1">
-	<meta name="description" content="${_("_site_description")}"/>
+
+<%def name="description()">${_("_site_description")}</%def>
+	<meta name="description" content="${self.description()}"/>
 	<meta name="keywords"    content="civicboom, social media, community, information, news" />
 	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling, Greg Miell" />
 	<meta name="robots"      content="all" />
