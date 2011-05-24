@@ -19,9 +19,6 @@
         </style>
     </head>
     
-    ##<%
-        ##absolute_links_state = c.absolute_links
-        ##c.absolute_links     = True # For the duration of the email All links in emails are absolute
     <%
         site_url = h.url('.', protocol='http', subdomain='') ## TODO: line needs testing on live server
     %>
@@ -30,9 +27,6 @@
         <br/>
         ${next.body()}
     </body>
-    ##<%
-    ##    c.absolute_links = absolute_links_state
-    ##%>
 </html>
 </%def>
 

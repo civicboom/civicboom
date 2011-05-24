@@ -81,7 +81,7 @@ def url(*args, **kwargs):
         del kwargs['protocol']
 
     # shortcut for absolute URL
-    if 'absolute' in kwargs or c.absolute_links:
+    if 'absolute' in kwargs:
         kwargs['host'] = c.host
     if 'absolute' in kwargs:
         del kwargs['absolute']
