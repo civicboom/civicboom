@@ -100,6 +100,7 @@ class MembersController(BaseController):
         @param location     find members with a public location near to this point
         @param followed_by  find members followed by the specified member
         @param follower_of  find members who are a follower of the specified member
+        @param sort         comma separated list of fields, prefixed by '-' for decending order (default) '-id' 
         @param *            (see common list return controls)
     
         @return 200      list ok
@@ -202,12 +203,12 @@ class MembersController(BaseController):
                 results = search_filters[key](results, kwargs[key])
         
             # Sort
-            sort = kwargs.get('sort', '-id')
-            if sort[0] == "-":
-                results = results.order_by(getattr(Member, sort[1:]).desc())
-            else:
-                results = results.order_by(getattr(Member, sort).asc())
-        
+            for sort_field in kwargs.get('sort', '-id').split(','):
+                if sort_field[0] == "-":
+                    results = results.order_by(getattr(Member, sort_field[1:]).desc())
+                else:
+                    results = results.order_by(getattr(Member, sort_field    ).asc() )
+            
         # NOOO!! ... this should be at the end ... and sort all fields ... but this is cant be done with Follow objects ... rarara ... bollox
 
         

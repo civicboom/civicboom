@@ -6,6 +6,11 @@ from civicboom.lib.communication.email_lib import send_email
 from urllib import quote_plus, unquote_plus
 import os
 
+from civicboom.controllers.contents import ContentsController
+content_search = ContentsController().index
+import datetime
+import random
+
 
 class MiscController(BaseController):
     @cacheable(time=600)
@@ -151,3 +156,35 @@ Disallow: /misc/get_widget/
                 send_email(config['email.contact'], subject=_('_site_name feedback'), content_text=content_text, reply_to=kwargs['from'])
                 return action_ok(_("Thank you for your feedback"), code=201)
             return submit_feedback(**kwargs)
+
+
+    #---------------------------------------------------------------------------
+    # Featured content query
+    #---------------------------------------------------------------------------
+    @web
+    #@cacheable(time=600)
+    def featured(self):
+        """
+        Make a numer of querys to get the top interesting content
+        The results are randomised so single highest results don't dominate
+        """
+        featured_content = []
+        
+        def rnd_content_item(return_items=1, **kwargs):
+            if 'limit' not in kwargs:
+                kwargs['limit'] = 3
+            if 'after' not in kwargs:
+                kwargs['after'] = now() - datetime.timedelta(days=7)
+            kwargs['exclude_content'] = [content['id'] for content in featured_content] #",".join([str(
+            content_items = content_search(**kwargs)['data']['list']['items']
+            random.shuffle( content_items )
+            if content_items:
+                for i in range(return_items):
+                    featured_content.append(
+                        content_items.pop()
+                    )
+        
+        rnd_content_item(return_items=1, sort='-views'        , limit=3)
+        rnd_content_item(return_items=2, sort='-num_responses', limit=5)
+        
+        return to_apilist(featured_content, obj_type='content')

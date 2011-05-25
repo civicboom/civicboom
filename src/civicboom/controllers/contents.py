@@ -2,7 +2,7 @@
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom
+from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom, UserVisibleContent
 from civicboom.lib.database.get_cached import update_content, get_licenses, get_license, get_tag, get_assigned_to, get_content as _get_content
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
@@ -25,6 +25,7 @@ from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null, func, Unicode
 from sqlalchemy.orm       import join, joinedload, defer
 import datetime
+from dateutil.parser import parse as parse_date
 
 # Other imports
 from sets import Set # may not be needed in Python 2.7+
@@ -136,14 +137,32 @@ def _init_search_filters():
         #return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
         return query.filter(Content.id.in_(Session.query(Boom.content_id).filter(Boom.member_id==member)))
 
+    def append_search_before(query, date):
+        if isinstance(date, basestring):
+            date = parse_date(date).strftime("%d/%m/%Y")
+        return query.filter(Content.update_date <= date)
+    
+    def append_search_after(query, date):
+        if isinstance(date, basestring):
+            date = parse_date(date).strftime("%d/%m/%Y")
+        return query.filter(Content.update_date >= date)
+        
+    def append_exclude_content(query, ids):
+        if isinstance(ids, basestring):
+            ids = [int(id) for id in ids.split(',')]
+        return query.filter(~Content.id.in_(ids))
+
     search_filters = {
-        'id'         : append_search_id ,
-        'creator'    : append_search_creator ,
-        'term'       : append_search_text ,
-        'location'   : append_search_location ,
-        'type'       : append_search_type ,
-        'response_to': append_search_response_to ,
-        'boomed_by'  : append_search_boomed_by ,
+        'id'             : append_search_id          ,
+        'creator'        : append_search_creator     ,
+        'term'           : append_search_text        ,
+        'location'       : append_search_location    ,
+        'type'           : append_search_type        ,
+        'response_to'    : append_search_response_to ,
+        'boomed_by'      : append_search_boomed_by   ,
+        'before'         : append_search_before      ,
+        'after'          : append_search_after       ,
+        'exclude_content': append_exclude_content    ,
     }
     
     return search_filters
@@ -234,8 +253,11 @@ class ContentsController(BaseController):
             'draft'
         @param response_to  content_id of parent
         @param boomed_by    username or user_id of booming user
+        @param before       update date before "%d/%m/%Y"
+        @param after        update date after  "%d/%m/%Y"
+        @param exclude_content a list of comma separated content id's to exclude from the content returned
         @param private      if set and creator==logged_in_persona both public and private content will be returned
-        @param sort         (default) 'update_date' (currently no other sorting fields are implemented)
+        @param sort         comma separated list of fields, prefixed by '-' for decending order (default) '-update_date'
         @param * (see common list return controls)
         
         @return 200      list ok
@@ -293,12 +315,20 @@ class ContentsController(BaseController):
         #        results = results.add_column(
         #            func.substr(func.strip_tags(Content.content), 0, 100)
         #        )
-
-        # Sort
-        if 'sort' not in kwargs:
-            sort = 'update_date'
-        # TODO: use kwargs['sort']
-        results = results.order_by(Content.update_date.desc())
+        
+        def get_content_field(field):
+            if hasattr(Content           , field):
+                return getattr(Content           , field)
+            if hasattr(UserVisibleContent, field):
+                return getattr(UserVisibleContent, field)
+            if hasattr(AssignmentContent, field):
+                return getattr(AssignmentContent, field)
+        
+        for sort_field in kwargs.get('sort', '-update_date').split(','):
+            if sort_field[0] == "-":
+                results = results.order_by(get_content_field(sort_field[1:]).desc())
+            else:
+                results = results.order_by(get_content_field(sort_field    ).asc() )
         
 #        def merge_snippet(content, snippet):
 #            content = content.to_dict(**kwargs)
