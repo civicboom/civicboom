@@ -42,7 +42,10 @@ class TaskController(BaseController):
                 request.environ['REMOTE_ADDR'] == request.environ.get('SERVER_ADDR', '0.0.0.0')
             ):
             return abort(403)
-        #user_log.info("Performing task '%s'" % (action, )) #AllanC - these can be activated without a logged in user
+        # AllanC - these can be activated without a logged in user
+        # Shish  - then they get logged as "anonymous"; it's still good to
+        #          have the logging go to the central place
+        user_log.info("Performing task '%s'" % (action, ))
         BaseController.__before__(self)
 
 
