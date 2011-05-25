@@ -86,7 +86,7 @@ def url(*args, **kwargs):
         kwargs['sub_domain'] = _url.environ.get("HTTP_HOST", "").split(".")[0]
 
     # shortcut for absolute URL
-    if 'absolute' in kwargs:
+    if 'absolute' in kwargs and 'sub_domain' not in kwargs and 'host' not in kwargs:
         kwargs['host'] = _url.environ.get("HTTP_HOST")
         del kwargs['absolute']
 
