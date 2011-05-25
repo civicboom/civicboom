@@ -52,9 +52,10 @@
         
         self.attr.auto_georss_link = True
         
-        if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment' and not c.logged_in_user.config['help_popup_created_assignment']:
-            self.attr.popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
-        
+        # GregM: Removed popups as we have the janrain share popup now :D
+        #if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment' and not c.logged_in_user.config['help_popup_created_assignment']:
+        #    self.attr.popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
+        print '####', request.params.get('prompt_aggregate')
     %>
 </%def>
 
@@ -63,7 +64,11 @@
 ## Content Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-
+	% if c.logged_in_persona.username == self.content['creator']['username'] and request.params.get('prompt_aggregate')=='True':
+	<script>
+		${share.janrain_social_call_content(self.content, 'new_'+(self.content['type'] if not self.content['parent'] else 'response')) | n }
+	</script>
+	% endif
     <div class="frag_left_col">
         <div class="frag_col">
         ${content_title()}
