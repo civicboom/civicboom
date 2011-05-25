@@ -168,7 +168,7 @@ class Content(Base):
 
     def __link__(self):
         from civicboom.lib.web import url
-        return url('content', id=self.id, subdomain='', absolute=True)
+        return url('content', id=self.id, sub_domain='www', absolute=True)
 
     def clone(self, content):
         if content and content.id:

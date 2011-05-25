@@ -49,9 +49,9 @@
                     self.attr.popup_url = url(controller='misc', action='help', id='created_user', format='frag')
             
             self.attr.share_kwargs.update({
-                'url'  : h.url('member', id=self.id, protocol='http', subdomain='') ,
+                'url'  : h.url('member', id=self.id, protocol='http', sub_domain='www') ,
             })
-            self.attr.rss_url = h.url('formatted_member', id=self.id, format='rss', subdomain='')
+            self.attr.rss_url = h.url('formatted_member', id=self.id, format='rss', sub_domain='www')
         
         self.attr.frag_data_css_class = 'frag_member'
         

@@ -56,6 +56,9 @@ def make_map(config):
     map = Mapper(directory=config['pylons.paths']['controllers'],
                  always_scan=config['debug'])
     map.minimization = False
+    map.sub_domains = True
+    #map.sub_domains_ignore = "www"
+
 
     # CUSTOM ROUTES HERE
     map.connect('/', controller='misc', action='titlepage')

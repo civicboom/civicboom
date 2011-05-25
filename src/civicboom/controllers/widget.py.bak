@@ -110,7 +110,6 @@ class WidgetController(BaseController):
     @auto_format_output #not really approriate, but needed for the recursive calls
     def assignment(self, id):
         cache_key = gen_cache_key(member=c.widget_owner.id, content=id)
-        c.absolute_links           = True
         c.links_open_in_new_window = True
         overlay_status_message(c.result, content_controller.show(id))
         return render(prefix + 'widget_assignment.mako', cache_key=cache_key, cache_expire=template_expire)
@@ -128,13 +127,11 @@ class WidgetController(BaseController):
     # Static get widget page
     def get_widget(self):
         cache_key = gen_cache_key(member=c.widget_owner.id)
-        c.absolute_links           = True
         c.links_open_in_new_window = True
         return render(prefix + 'widget_get_widget.mako', cache_key=cache_key, cache_expire=template_expire)
     
     # Static get mobile page
     def get_mobile(self):
         cache_key = gen_cache_key(member=c.widget_owner.id)
-        c.absolute_links           = True
         c.links_open_in_new_window = True
         return render(prefix + 'widget_get_mobile.mako', cache_key=cache_key, cache_expire=template_expire)
