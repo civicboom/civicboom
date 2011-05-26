@@ -19,6 +19,9 @@ log = logging.getLogger(__name__)
 
 response_completed_ok = "task:ok" #If this is changed please update tasks.py to reflect the same "task ok" string
 
+def normalize_datetime(datetime):
+    return datetime.replace(minute=0, second=0, microsecond=0)
+    
 
 class TaskController(BaseController):
     
@@ -44,21 +47,10 @@ class TaskController(BaseController):
 
 
     #---------------------------------------------------------------------------
-    # Expire Syndication Content
-    #---------------------------------------------------------------------------
-
-    def expire_syndication_articles(self):
-        """
-        Description to follow
-        """
-        pass
-
-
-    #---------------------------------------------------------------------------
     # Remind Pending users after 1 day
     #---------------------------------------------------------------------------
     @web_params_to_kwargs
-    def remind_pending_users(self, frequency_of_timed_task="hours=1", remind_after="hours=24"):
+    def remind_pending_users(self, remind_after="hours=24", frequency_of_timed_task="hours=1"):
         """
         Users who try to sign up but don't complete the registration within one day get a reminder email
         to be run once every 24 hours
@@ -69,8 +61,8 @@ class TaskController(BaseController):
         frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
         remind_after            = timedelta_str(remind_after           )
         
-        reminder_start = (now()          - remind_after           ).replace(minute=0, second=0, microsecond=0)
-        reminder_end   = (reminder_start + frequency_of_timed_task).replace(minute=0, second=0, microsecond=0)
+        reminder_start = normalize_datetime(now()          - remind_after           )
+        reminder_end   = normalize_datetime(reminder_start + frequency_of_timed_task)
         
         users_to_remind = Session.query(User).filter(User.status=='pending').filter(and_(User.join_date <= reminder_end, User.join_date >= reminder_start)).all() #.filter(~User.login_details.any()).
         for user in users_to_remind:
@@ -84,7 +76,7 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     # Prune Pending users if not completed registration in 7 days
     #---------------------------------------------------------------------------
-
+    @web_params_to_kwargs
     def remove_pending_users(self, delete_older_than="days=7"):
         """
         Users who do not complete the signup process by entering an email
@@ -93,7 +85,7 @@ class TaskController(BaseController):
         """
         from civicboom.model.member import User
         
-        ghost_expire = (now() - timedelta_str(delete_older_than)).replace(minute=0, second=0, microsecond=0)
+        ghost_expire = normalize_datetime(now() - timedelta_str(delete_older_than))
         
         for user in Session.query(User).filter(User.status=='pending').filter(User.join_date <= ghost_expire).all(): # .filter(~User.login_details.any()).
             Session.delete(user)
@@ -108,37 +100,37 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     # Assignment Reminder Notifications
     #---------------------------------------------------------------------------
-
-    def assignment_near_expire(self):
+    @web_params_to_kwargs
+    def assignment_near_expire(self, frequency_of_timed_task="days=1"):
         """
         Users who have accepted assigments but have not posted response
         question should be reminded via a notification that the assingment
         has not long left
         """
-        from civicboom.model.content import AssignmentContent
+        from civicboom.model.content     import AssignmentContent
+        from civicboom.lib.communication import messages
         
         def get_assignments_by_date(date_start, date_end):
             return Session.query(AssignmentContent).filter(and_(AssignmentContent.due_date >= date_start, AssignmentContent.due_date <= date_end)).all()
-
+        
         def get_responded(assignment):
             return [response.creator_id for response in assignment.responses]
-            
-        date_7days_time = now() + datetime.timedelta(days=6)
-        date_1days_time = now() # + datetime.timedelta(days=1)
-        date_1day       =         datetime.timedelta(days=1)
         
-        for assignment in get_assignments_by_date(date_start=date_7days_time, date_end=date_7days_time + date_1day): # Get all assignments due in 7 days
-            responded_member_ids = get_responded(assignment)                                                         #   Get a list of all the members that have responded to this assignment
-            for member in assignment.accepted_by:                                                                    #   For all members accepted this assignment
-                if member.id not in responded_member_ids:                                                            #     Check if they have responded with an article
-                    member.send_notification( messages.assignment_due_7days(you=member, assignment=assignment) )              #     if not send a reminder notification
-                    
-        for assignment in get_assignments_by_date(date_start=date_1days_time, date_end=date_1days_time + date_1day): #Same as above but on day before
+        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        
+        date_7days_time = normalize_datetime(now() + datetime.timedelta(days=7))
+        date_1days_time = normalize_datetime(now() + datetime.timedelta(days=1))
+        
+        for assignment in get_assignments_by_date(date_start=date_7days_time, date_end=date_7days_time + frequency_of_timed_task): # Get all assignments due in 7 days
+            responded_member_ids = get_responded(assignment)                                                              #   Get a list of all the members that have responded to this assignment
+            for member in [member for member in assignment.accepted_by if member.id not in responded_member_ids]:         #   For all members accepted this assignment #     Check if they have responded with an article
+                member.send_notification( messages.assignment_due_7days(you=member, assignment=assignment) )              #     if not send a reminder notification
+        
+        for assignment in get_assignments_by_date(date_start=date_1days_time, date_end=date_1days_time + frequency_of_timed_task): #Same as above but on day before
             responded_member_ids = get_responded(assignment)
-            for member in assignment.accepted_by:
-                if member.id not in responded_member_ids:
-                    member.send_notification( messages.assignment_due_1day(you=member, assignment=assignment) )
-                    
+            for member in [member for member in assignment.accepted_by if member.id not in responded_member_ids]:
+                member.send_notification( messages.assignment_due_1day (you=member, assignment=assignment) )
+        
         Session.commit()
         return response_completed_ok
 
@@ -157,19 +149,21 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     # New Users and Groups Summary
     #---------------------------------------------------------------------------
-
-    def email_new_user_summary(self, timedelta=datetime.timedelta(days=1)):
+    @web_params_to_kwargs
+    def email_new_user_summary(self, frequency_of_timed_task="days=1"):
         """
         query for all users in last <timedelta> and email 
         """
+        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        
         from civicboom.model import Member
         members = Session.query(Member) \
                     .with_polymorphic('*') \
-                    .filter(Member.join_date>=now()-timedelta) \
+                    .filter(Member.join_date>=normalize_datetime(now()) - frequency_of_timed_task) \
                     .all()
         
         if not members:
-            log.debug('Report not generated: no new members in %s' % timedelta)
+            log.debug('Report not generated: no new members in %s' % frequency_of_timed_task)
             return response_completed_ok
         
         from civicboom.lib.communication.email_lib import send_email
@@ -179,8 +173,8 @@ class TaskController(BaseController):
             content_html = render(
                             '/email/admin/summary_new_users.mako',
                             extra_vars = {
-                                "members"   : members   ,
-                                "timedelta" : timedelta ,
+                                "members"   : members                 ,
+                                "timedelta" : frequency_of_timed_task ,
                             }
                         ),
         )

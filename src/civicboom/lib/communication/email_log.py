@@ -35,3 +35,6 @@ def getNumEmails():
 
 def getLastEmail():
     return emails[-1]
+
+def getEmailSubjects():
+    return [email.email_to +':'+ email.subject for email in emails]

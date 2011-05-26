@@ -72,7 +72,7 @@ class TestMiscController(TestController):
 
     def test_robots(self):
         response = self.app.get("/robots.txt", extra_environ={'HTTP_HOST': 'www.civicboom.com'})
-        self.assertNotIn("Disallow: /", response.body)
+        self.assertNotIn("Disallow: /\n", response.body)
 
         response = self.app.get("/robots.txt", extra_environ={'HTTP_HOST': 'api-v1.civicboom.com'})
         self.assertIn("Disallow: /", response.body)

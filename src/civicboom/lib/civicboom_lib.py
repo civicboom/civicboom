@@ -50,7 +50,7 @@ def deny_pending_user(url_to_check):
 #-------------------------------------------------------------------------------
 
 def validation_url(user, controller, action):
-    return url(controller=controller, action=action, id=user.username, hash=user.hash(), subdomain='', protocol='https')
+    return url(controller=controller, action=action, id=user.username, hash=user.hash(), sub_domain='www', protocol='https')
 
 def send_verifiy_email(user, controller='account', action='verify_email', message=None, subject=_('verify e-mail address')):
     if not message:
@@ -77,7 +77,7 @@ def verify_email_hash(user, hash, commit=False):
     return False
 
 #def send_forgot_password_email(user):
-#    validation_link = url(controller='account', action='forgot_password', id=user.username, hash=user.hash(), subdomain='', protocol='https')
+#    validation_link = url(controller='account', action='forgot_password', id=user.username, hash=user.hash(), sub_domain='www', protocol='https')
 #    message         = _('Please click or copy the following link into your browser to reset your password: %s' % validation_link)
 #    user.send_email(subject=_('reset password'), content_text=message)
 
@@ -178,7 +178,7 @@ def aggregation_dict(content, safe_strings=True):
     
     content_preview = {}
     
-    content_url          = url('content', id=content['id'], subdomain='')
+    content_url          = url('content', id=content['id'], sub_domain='www')
     content_creator_name = content.get('creator',{}).get('name', '')
 
     def action(content):
@@ -191,9 +191,9 @@ def aggregation_dict(content, safe_strings=True):
 
     def action_links(content):
         action_links = []
-        action_links.append(    {'href':url('new_content'   ,                  parent_id=content['id'], subdomain=''), 'text':_('Write a response')  })
+        action_links.append(    {'href':url('new_content'   ,                  parent_id=content['id'], sub_domain='www'), 'text':_('Write a response')  })
         if content.get('type') == "assignment":
-            action_links.append({'href':url('content_action', action='accept', id       =content['id'], subdomain=''), 'text':_('Accept _assignment')})
+            action_links.append({'href':url('content_action', action='accept', id       =content['id'], sub_domain='www'), 'text':_('Accept _assignment')})
         return action_links
     
     def media(content):

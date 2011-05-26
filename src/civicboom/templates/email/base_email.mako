@@ -19,20 +19,14 @@
         </style>
     </head>
     
-    ##<%
-        ##absolute_links_state = c.absolute_links
-        ##c.absolute_links     = True # For the duration of the email All links in emails are absolute
     <%
-        site_url = h.url('.', protocol='http', subdomain='') ## TODO: line needs testing on live server
+        site_url = h.url('.', protocol='http', sub_domain='www') ## TODO: line needs testing on live server
     %>
     <body>
         <a href="${site_url}"><img src="${site_url}/images/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/></a>
         <br/>
         ${next.body()}
     </body>
-    ##<%
-    ##    c.absolute_links = absolute_links_state
-    ##%>
 </html>
 </%def>
 
