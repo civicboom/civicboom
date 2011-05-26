@@ -24,6 +24,7 @@ from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null, func, Unicode
 from sqlalchemy.orm       import join, joinedload, defer
+from geoalchemy import Point
 import datetime
 from dateutil.parser import parse as parse_date
 
@@ -33,7 +34,6 @@ from cbutils.text import strip_html_tags
 
 # Logging setup
 log      = logging.getLogger(__name__)
-
 
 
 #-------------------------------------------------------------------------------
@@ -96,17 +96,22 @@ def _init_search_filters():
             plainto_tsquery(:text)
         """).params(text=text)
     
-    def append_search_location(query, location_text):
-        parts = location_text.split(",")
-        (lon, lat, radius) = (None, None, None)
-        if len(parts) == 2:
-            (lon, lat) = parts
-            radius = 10
-        elif len(parts) == 3:
-            (lon, lat, radius) = parts
+    def append_search_location(query, location):
+        (lon, lat, radius) = (None, None, 10)
         zoom = 10 # FIXME: inverse of radius? see bug #50
+        
+        if isinstance(location, basestring):
+            location_tuple = [i.strip() for i in location.split(",")]
+            if   len(location_tuple) == 2:
+                (lon, lat        ) = location_tuple
+            elif len(location_tuple) == 3:
+                (lon, lat, radius) = location_tuple
+        else:
+        #if isinstance(location, Point):
+            log.warn('location search with objects is not implemented yet')
+        
         if lon and lat and radius:
-            location = (lon, lat, zoom)
+            location = (lon, lat, zoom) # AllanC - ? um? how is this used in the string below?
             return query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
         else:
             return query
@@ -246,7 +251,7 @@ class ContentsController(BaseController):
             'responses'              articles that have a parent
         @param creator      username or user_id of creator
         @param term         text to search for (searchs title and body text)
-        @param location     TODO
+        @param location     TODO use 'me' to use logged in personas current location
         @param type
             'article'
             'assignment'
@@ -282,6 +287,21 @@ class ContentsController(BaseController):
             if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
         
+        # Location - 'me' - replace 'me' with current location
+        # NOTE: Cache warning! this is not a public cacheable item
+        if kwargs.get('location') == 'me':
+            location = None
+            if c.logged_in_persona:
+                location = c.logged_in_persona.location_home
+            if hasattr(c.logged_in_persona, 'location_current') and c.logged_in_persona.location_updated > now() - datetime.timedelta(days=2):
+                location = c.logged_in_persona.location_current
+            if location:
+                kwargs['location'] = location
+            else:
+                return to_apilist(None, obj_type='content', **kwargs) # AllanC - if no location and 'me' specifyed return nothing as it would be confising to return seeming random content
+        
+        # --- the below should be publicly cacheable ---
+        
         # Setup search criteria
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
@@ -292,6 +312,7 @@ class ContentsController(BaseController):
         if 'creator' not in kwargs and 'creator' not in kwargs['exclude_fields']:
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
+        
         
         include_private_content = 'private' in kwargs and logged_in_creator
         results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)

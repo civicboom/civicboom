@@ -168,9 +168,10 @@ Disallow: /misc/get_widget/
         Make a numer of querys to get the top interesting content
         The results are randomised so single highest results don't dominate
         """
+        
         featured_content = []
         
-        def rnd_content_item(return_items=1, **kwargs):
+        def rnd_content_items(return_items=1, **kwargs):
             if 'limit' not in kwargs:
                 kwargs['limit'] = 3
             if 'after' not in kwargs:
@@ -178,13 +179,22 @@ Disallow: /misc/get_widget/
             kwargs['exclude_content'] = [content['id'] for content in featured_content] #",".join([str(
             content_items = content_search(**kwargs)['data']['list']['items']
             random.shuffle( content_items )
-            if content_items:
-                for i in range(return_items):
-                    featured_content.append(
-                        content_items.pop()
-                    )
+            return_list = []
+            for i in range(return_items):
+                if content_items:
+                    content_item = content_items.pop()
+                    featured_content.append(content_item)
+                    return_list     .append(content_item)
+            return return_list
         
-        rnd_content_item(return_items=1, sort='-views'        , limit=3)
-        rnd_content_item(return_items=2, sort='-num_responses', limit=5)
+        #return to_apilist(featured_content, obj_type='content') # AllanC - a liniear list of featured contebt
         
-        return to_apilist(featured_content, obj_type='content')
+        return action_ok(
+            data={
+                'top_viewed_assignments' : rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5),
+                'most_responses'         : rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5),
+                'near_me'                : rnd_content_items(return_items=2,                        location='me'    , limit=5),
+                'recent_assignments'     : rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5),
+                'recent'                 : rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5),
+            }
+        )
