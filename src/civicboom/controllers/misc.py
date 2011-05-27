@@ -162,11 +162,12 @@ Disallow: /misc/get_widget/
     # Featured content query
     #---------------------------------------------------------------------------
     @web
-    #@cacheable(time=600)
+    #@cacheable(time=600) # can't really be cashed because of the use of 'me'
     def featured(self):
         """
         Make a numer of querys to get the top interesting content
         The results are randomised so single highest results don't dominate
+        A list is kept of all the content before. There should never be any duplicated items
         """
         
         featured_content = []
