@@ -41,7 +41,7 @@ def _send_notification_to_user(member, name='', default_route='', rendered_messa
             #member.messages_to.append(m)
             update_member_messages(member)
     
-    log.info("%s was sent the message '%s', routing via %s" % (
+    log.debug("%s was sent the message '%s', routing via %s" % (
         member.username, name, message_tech_options
     ))
 
@@ -50,6 +50,8 @@ def send_notification(members, **kwargs): #members, rendered_message
     """
     Threaded message system, save and handles propogating the message to different technologies for all members of a group or an indvidual
     """
+    #print members
+    #print kwargs['rendered_message']['n']['subject']
     
     #rendered_message['n']['subject'] = str(member)+': '+rendered_message['n']['subject']
     #rendered_message['n']['content'] = str(member)+': '+rendered_message['n']['content']

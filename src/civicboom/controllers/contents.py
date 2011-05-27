@@ -474,7 +474,6 @@ class ContentsController(BaseController):
         # AllanC - if the update fails on validation we do not want a ghost record commited
         
         # Use update behaviour to save and commit object
-        
         update_response = self.update(id=content, **kwargs)
         
         if update_response['status'] != 'ok':
@@ -578,6 +577,7 @@ class ContentsController(BaseController):
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
             error                      = errors.error_account_level()
+            user_log.info('insufficent prvilages to - publish assignment %d' % content.id)
             
         
         # -- Set Content fields ------------------------------------------------

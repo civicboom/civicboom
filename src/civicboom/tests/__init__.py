@@ -16,6 +16,10 @@ from pylons import url
 #from civicboom.lib.web import url
 from routes.util import URLGenerator
 
+from civicboom.model      import Message
+from civicboom.model.meta import Session
+from sqlalchemy           import or_, and_, null
+
 # XXX: Paste's TestApp supports app.delete() with params
 #from webtest import TestApp
 from paste.fixture import TestApp
@@ -363,6 +367,11 @@ class TestController(TestCase):
             status=200
         )
         self.assertIn('withdrawn', response)
+
+    def getNumNotificationsInDB(self):
+        return Session.query(Message).filter(Message.source_id==null()).count()
+    def getNotificationsFromDB(self, limit=10):
+        return Session.query(Message).filter(Message.source_id==null()).order_by(Message.id.desc()).limit(limit).all()
 
 
     def getNumNotifications(self, username=None, password=None):

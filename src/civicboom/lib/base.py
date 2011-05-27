@@ -382,11 +382,13 @@ class BaseController(WSGIController):
                     c.logged_in_persona      = group_persona
                     c.logged_in_persona_role = role
             
+        # Set Env - In the event of a server error these will be visable
         for field in login_session_fields:
             request.environ[field] = str(getattr(c,field))
             #print request.environ[field]
-            
-
+        if c.logged_in_user:
+            request.environ['logged_in_user_email'] = c.logged_in_user.email_normalized
+        
         # Setup Langauge -------------------------------------------------------
         #  - there is a way of setting fallback langauges, investigate?
         if 'lang' in request.params:
