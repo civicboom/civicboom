@@ -137,7 +137,7 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'email'    : u'test@example.com',
+                'email'    : u'test+settings@civicboom.com',
             },
             status=200
         )
@@ -145,14 +145,14 @@ class TestSettingsController(TestController):
         self.assertEqual(getNumEmails(), num_emails + 1)
         email_response = getLastEmail()
         #Email should be sent to new address
-        self.assertIn('test@example.com', email_response.email_to)
+        self.assertIn('test+settings@civicboom.com', email_response.email_to)
         link = str(re.search(r'https?://(?:.*?)(/.*?)[\'"\s]', email_response.content_text+' ').group(1))
         self.assertIn('hash', link)
         response = self.app.get(link,status=302)
         #Check changed
         response = self.app.get(url('settings', id='me', format='json'))
         response_json = json.loads(response.body)
-        self.assertIn('test@example.com', response) # Email address has changed
+        self.assertIn('test+settings@civicboom.com', response) # Email address has changed
         
         num_emails = getNumEmails()
         
@@ -194,7 +194,7 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'email'    : u'test@example.com',
+                'email'    : u'test+settings@civicboom.com',
             },
             status=200
         )
@@ -202,7 +202,7 @@ class TestSettingsController(TestController):
         self.assertEqual(getNumEmails(), num_emails + 1)
         email_response = getLastEmail()
         #Email should be sent to new address, get link
-        self.assertIn('test@example.com', email_response.email_to)
+        self.assertIn('test+settings@civicboom.com', email_response.email_to)
         link = str(re.search(r'https?://(?:.*?)(/.*?)[\'"\s]', email_response.content_text+' ').group(1))
         
         response = self.app.get(url('settings', id='me', format='json')) #url(controller='settings', action="show", format='json')
@@ -227,7 +227,7 @@ class TestSettingsController(TestController):
         #Check changed
         response = self.app.get(url('settings', id='me', format='json'))
         response_json = json.loads(response.body)
-        self.assertIn('test@example.com', response) # Email address has changed
+        self.assertIn('test+settings@civicboom.com', response) # Email address has changed
         
         num_emails = getNumEmails()
         
@@ -388,7 +388,7 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'website'    : u'mailto:test@example.com',
+                'website'    : u'mailto:test+settings@civicboom.com',
             },
             status=400
         )
@@ -400,7 +400,7 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'website'    : u'http://cb.example.com',
+                'website'    : u'http://cb.shishnet.org',
             },
             status=200
         )

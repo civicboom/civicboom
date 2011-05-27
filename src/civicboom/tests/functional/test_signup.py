@@ -34,7 +34,7 @@ class TestSignup(TestController):
             url(controller='register', action='email', format="json"),
             params={
                 'username': u'unittest2',
-                'email'   : u'unittest@test.com'
+                'email'   : u'test+unittest@civicboom.com'
             },
             status=400,
         )
