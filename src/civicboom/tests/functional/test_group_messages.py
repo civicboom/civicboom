@@ -127,8 +127,8 @@ class TestGroupsController(TestController):
             else:
                 email_addresss.append(emails_to)
         self.assertEquals(len(email_addresss), 3)
-        self.assertIn('unittest@test.com'  , email_addresss)
-        self.assertIn('unitfriend@test.com', email_addresss)
+        self.assertIn('test+unittest@civicboom.com'  , email_addresss)
+        self.assertIn('test+unitfriend@civicboom.com', email_addresss)
         
         
         

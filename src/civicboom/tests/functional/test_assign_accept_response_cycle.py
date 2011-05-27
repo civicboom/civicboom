@@ -127,8 +127,8 @@ class TestAssignAcceptResponseCycleController(TestController):
             emails[len(emails)-2],
         ]
         emails_to = [email.email_to for email in emails_sent_when_approved]
-        self.assertIn('unittest@test.com'  , emails_to)
-        self.assertIn('unitfriend@test.com', emails_to)
+        self.assertIn('test+unittest@civicboom.com'  , emails_to)
+        self.assertIn('test+unitfriend@civicboom.com', emails_to)
         
         # Disassociate ---------------------------------------------------------
         
