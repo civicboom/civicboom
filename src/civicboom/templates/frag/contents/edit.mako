@@ -663,7 +663,7 @@
             ${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True )}
             % endif
         % else:
-            % if 'publish' in self.actions:
+            % if 'update' in self.actions:
             ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
             % endif
             <a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
