@@ -144,6 +144,11 @@ def get_group_member_username_list(group, members=None, exclude_list=None):
 
 def get_members(members, expand_group_members=True):
     """
+    Aquire a list of all submembers e.g
+    Group Test1 has 3 members
+    Group Test2 has 2 members
+    passing [Test1,Test2] will return 5 member objects of the submembers
+    
     members can be
       group object - All user member users (including recursive sub members) of a group
       list of username strings

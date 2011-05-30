@@ -499,3 +499,11 @@ class TestController(TestCase):
         self.assertEqual(response_json['data']['invitee_list']['count'], 1)
         self.assertEqual(len(response_json['data']['error-list']), 1)
         self.assertEqual(response_json['status'], 'ok')
+
+    def assertSubStringIn(self, substring, string_list):
+        found = False
+        for i in string_list:
+            if substring in i:
+                fount = True
+                return True
+        raise AssertionError('%s not found in subelements of %s' % (substring, string_list))

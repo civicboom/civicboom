@@ -114,11 +114,18 @@ class TestGroupsController(TestController):
         
         response_id = self.create_content(title=u'Email test response', content=u'Email test response', type='article', parent_id=assignment_id)
         
-        self.assertEquals(self.getNumNotificationsInDB(), num_notifications + (3 * 3)) # 3 notifications should be generated (accepted, new follow, new response) for 3 users test_group_3 + unittest (as member of test_group_1) + unitfriend (is member of test_group_2)
-        notification_subjects = [message.subject for message in self.getNotificationsFromDB(3 * 3)]
-        self.assertIn('follow', notification_subjects)
-        self.assertIn('accept', notification_subjects)
-        self.assertIn('respon', notification_subjects)
+        # 'unitfriend' will have followers that will be alerted to the new content
+        # these need to be considered when checking the number of notifications generated
+        # NOTE: if unitfriend has any GROUPS as followers this automated test WILL break - as we dont know how many notifications will be generated
+        response      = self.app.get(url('member', id='unitfriend', format='json'), status=200)
+        response_json = json.loads(response.body)
+        num_unitfriend_followers = response_json['data']['member']['num_followers']
+        
+        notification_subjects = [message.subject for message in self.getNotificationsFromDB( (3*3) + num_unitfriend_followers )]
+        self.assertSubStringIn('follow', notification_subjects)
+        self.assertSubStringIn('accept', notification_subjects)
+        self.assertSubStringIn('respon', notification_subjects)
+        self.assertEquals(self.getNumNotificationsInDB(), num_notifications + (3*3) + num_unitfriend_followers ) # 3 notifications should be generated (accepted, new follow, new response) for 3 users test_group_3 + unittest (as member of test_group_1) + unitfriend (is member of test_group_2) 
         
         # Approve
         self.log_in_as('unittest')

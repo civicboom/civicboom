@@ -506,9 +506,16 @@ class ContentsController(BaseController):
         content_redirect = None
         error            = None
         
+        # AllanC - there was confution over when content was 'created'
+        #  It used to be done by checking if the content object type had changed e.g. draft -> article
+        #  this is insufficent for objects created directly as 'assignmen' etc.
+        #  This variable stores if this call to updae has come from a create method.
+        called_from_create_method = False 
+        
         # -- Get Content -------------------------------------------------------
         if isinstance(id, Content):
             content = id
+            called_from_create_method = True # AllanC - see above - only create calls pass the id as a content object
         else:
             content = get_content(id, is_editable=True)
         assert content
@@ -658,13 +665,13 @@ class ContentsController(BaseController):
             
             # Notifications ----------------------------------------------------
             # AllanC - as notifications not need commit anymore this can be done after?
-            m = None
-            if starting_content_type != content.__type__:
+            message_to_all_creator_followers = None
+            if starting_content_type != content.__type__ or called_from_create_method:
                 # Send notifications about NEW published content
                 if   content.__type__ == "article"   :
-                    m = messages.article_published_by_followed(creator=content.creator, article   =content)
+                    message_to_all_creator_followers = messages.article_published_by_followed(creator=content.creator, article   =content)
                 elif content.__type__ == "assignment":
-                    m = messages.assignment_created           (creator=content.creator, assignment=content)
+                    message_to_all_creator_followers = messages.assignment_created           (creator=content.creator, assignment=content)
                 
                 # if this is a response - notify parent content creator
                 if content.parent:
@@ -685,12 +692,12 @@ class ContentsController(BaseController):
                 # Send notifications about previously published content has been UPDATED
                 if   content.__type__ == "assignment":
                     if content.update_date < now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
-                        m = messages.assignment_updated(creator=content.creator, assignment=content)
+                        message_to_all_creator_followers = messages.assignment_updated(creator=content.creator, assignment=content)
                 # going straight to publish, content may not have an ID as it's
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
-            if m:
-                content.creator.send_notification_to_followers(m, private=content.private)
+            if message_to_all_creator_followers:
+                content.creator.send_notification_to_followers(message_to_all_creator_followers, private=content.private)
         
         # -- Save to Database --------------------------------------------------
         Session.add(content)
