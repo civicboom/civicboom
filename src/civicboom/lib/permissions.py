@@ -27,8 +27,7 @@ def account_type(required_account_type):
         if c.logged_in_persona.has_account_required(required_account_type):
             result = _target(*args, **kwargs)
             return result
-        # user log
-        user_log.info('Insufficent prvilages for - %s-%s-%s' % (c.controller, c.action, c.id))
+        # user_log.info('Insufficent prvilages for - %s-%s-%s' % (c.controller, c.action, c.id)) # AllanC - unneeded as we log all errors in @auto_format_output now
         # The auto formater will redirect to the upgrade account page on account_level errors
         raise errors.error_account_level()
     

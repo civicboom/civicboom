@@ -543,6 +543,7 @@ def auto_format_output(target, *args, **kwargs):
             raise ae
         else:
             result = ae.original_dict
+            user_log.error('%s: %s' % (result.get('code',''), result.get('message'))) # Log Error 
             if c.format=="html" or c.format=="redirect":
                 if result.get('code') == 402:
                     return redirect(url(controller='misc', action='about', id='upgrade_plans'))

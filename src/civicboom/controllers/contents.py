@@ -584,7 +584,7 @@ class ContentsController(BaseController):
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
             error                      = errors.error_account_level()
-            user_log.info('insufficent prvilages to - publish assignment %d' % content.id)
+            #user_log.info('insufficent prvilages to - publish assignment %d' % content.id) # AllanC - unneeded as we log all errors in @auto_format_output now
             
         
         # -- Set Content fields ------------------------------------------------

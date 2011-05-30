@@ -45,6 +45,7 @@ class TaskController(BaseController):
         # AllanC - these can be activated without a logged in user
         # Shish  - then they get logged as "anonymous"; it's still good to
         #          have the logging go to the central place
+        # AllanC - automated tests seems to be failing as c.logged_in_user is not set. should lib/database/userlog.py be modifyed to cope with this? advice on loggin needed. This is strange because c.logged_in_user is ALWAYS inited even if it is None see base.py line 373 _get_member() always returns None
         user_log.info("Performing task '%s'" % (action, ))
         BaseController.__before__(self)
 

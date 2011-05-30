@@ -135,7 +135,7 @@ Disallow: /misc/get_widget/
             @authenticate_form
             def submit_feedback(**kwargs):
                 if c.logged_in_user:
-                    kwargs['from'] = (c.logged_in_user.email or c.logged_in_user.email_unverified)
+                    kwargs['from'] = request.environ['logged_in_user_email']
                 else:
                     if kwargs.get('simple_captcha') != 'xyz':
                         raise action_error('invalid capture')

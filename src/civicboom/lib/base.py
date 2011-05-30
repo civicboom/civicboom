@@ -386,6 +386,7 @@ class BaseController(WSGIController):
         for field in login_session_fields:
             request.environ[field] = str(getattr(c,field))
             #print request.environ[field]
+        
         if c.logged_in_user:
             request.environ['logged_in_user_email'] = c.logged_in_user.email_normalized
         
