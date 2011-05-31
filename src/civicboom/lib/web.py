@@ -88,6 +88,7 @@ def url(*args, **kwargs):
     # shortcut for absolute URL
     if 'absolute' in kwargs and 'sub_domain' not in kwargs and 'host' not in kwargs:
         kwargs['host'] = _url.environ.get("HTTP_HOST")
+    if 'absolute' in kwargs:
         del kwargs['absolute']
 
     # Encode current widget state into URL if in widget mode

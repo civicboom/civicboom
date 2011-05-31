@@ -52,8 +52,12 @@ class MessageData(object):
                 else:
                     linked['your'] = linked['you']+"'s"
             
-            self.subject = unicode(self.subject) % linked
-            self.content = unicode(self.content) % linked
+            try:
+                self.subject = unicode(self.subject) % linked
+                self.content = unicode(self.content) % linked
+            except ValueError as e:
+                log.error("Error formatting message: %s: %s [%s]" % (self.subject, self.content, linked))
+                raise
         else:
             self.subject = u'notification generation diabled'
             self.content = u'notification generation diabled'
@@ -128,8 +132,8 @@ generators = [
     # Aggregation
     #["boom_article",                         "ne", _("_article boomed"),               _("%(member)s thinks %(you)s might find this _article interesting %(article)s")],
     #["boom_assignment",                      "ne", _("_assignment boomed"),            _("%(member)s thinks %(you)s might want to add your opinion to this _assignment %(assignment)s")],
-    ["boom_article",                         "ne", _("interesting _article"),               _("%(member) wants to share %(article) with you")],
-    ["boom_assignment",                      "ne", _("get involved with this _assignment"), _("%(member) wants you to get involved with %(assignment)s")],
+    ["boom_article",                         "ne", _("interesting _article"),               _("%(member)s wants to share %(article)s with you")],
+    ["boom_assignment",                      "ne", _("get involved with this _assignment"), _("%(member)s wants you to get involved with %(assignment)s")],
 
     # Syndication
     #["syndicate_accept",                     "n",  _("_article was syndicated"),     _("%(member)s has accepted %(your)s syndication request for _article %(article)s. Check your email for the details")],
