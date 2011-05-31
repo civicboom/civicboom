@@ -407,7 +407,7 @@ class ContentsController(BaseController):
         """
         # url('contents') + POST
 
-        user_log.info("Creating new content")
+        user_log.info("Creating new content: %s" % kwargs.get('title', '[no title]'))
         
         if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
