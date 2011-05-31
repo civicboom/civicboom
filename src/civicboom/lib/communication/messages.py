@@ -52,8 +52,12 @@ class MessageData(object):
                 else:
                     linked['your'] = linked['you']+"'s"
             
-            self.subject = unicode(self.subject) % linked
-            self.content = unicode(self.content) % linked
+            try:
+                self.subject = unicode(self.subject) % linked
+                self.content = unicode(self.content) % linked
+            except ValueError as e:
+                log.error("Error formatting message: %s: %s [%s]" % (self.subject, self.content, linked))
+                raise
         else:
             self.subject = u'notification generation diabled'
             self.content = u'notification generation diabled'
