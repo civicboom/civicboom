@@ -2,7 +2,7 @@
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom
+from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom, UserVisibleContent
 from civicboom.lib.database.get_cached import update_content, get_licenses, get_license, get_tag, get_assigned_to, get_content as _get_content
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
@@ -24,7 +24,9 @@ from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null, func, Unicode
 from sqlalchemy.orm       import join, joinedload, defer
+from geoalchemy import Point
 import datetime
+from dateutil.parser import parse as parse_date
 
 # Other imports
 from sets import Set # may not be needed in Python 2.7+
@@ -32,7 +34,6 @@ from cbutils.text import strip_html_tags
 
 # Logging setup
 log      = logging.getLogger(__name__)
-
 
 
 #-------------------------------------------------------------------------------
@@ -95,17 +96,22 @@ def _init_search_filters():
             plainto_tsquery(:text)
         """).params(text=text)
     
-    def append_search_location(query, location_text):
-        parts = location_text.split(",")
-        (lon, lat, radius) = (None, None, None)
-        if len(parts) == 2:
-            (lon, lat) = parts
-            radius = 10
-        elif len(parts) == 3:
-            (lon, lat, radius) = parts
+    def append_search_location(query, location):
+        (lon, lat, radius) = (None, None, 10)
         zoom = 10 # FIXME: inverse of radius? see bug #50
+        
+        if isinstance(location, basestring):
+            location_tuple = [i.strip() for i in location.split(",")]
+            if   len(location_tuple) == 2:
+                (lon, lat        ) = location_tuple
+            elif len(location_tuple) == 3:
+                (lon, lat, radius) = location_tuple
+        else:
+        #if isinstance(location, Point):
+            log.warn('location search with objects is not implemented yet')
+        
         if lon and lat and radius:
-            location = (lon, lat, zoom)
+            location = (lon, lat, zoom) # AllanC - ? um? how is this used in the string below?
             return query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
         else:
             return query
@@ -136,14 +142,32 @@ def _init_search_filters():
         #return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
         return query.filter(Content.id.in_(Session.query(Boom.content_id).filter(Boom.member_id==member)))
 
+    def append_search_before(query, date):
+        if isinstance(date, basestring):
+            date = parse_date(date).strftime("%d/%m/%Y")
+        return query.filter(Content.update_date <= date)
+    
+    def append_search_after(query, date):
+        if isinstance(date, basestring):
+            date = parse_date(date).strftime("%d/%m/%Y")
+        return query.filter(Content.update_date >= date)
+        
+    def append_exclude_content(query, ids):
+        if isinstance(ids, basestring):
+            ids = [int(id) for id in ids.split(',')]
+        return query.filter(~Content.id.in_(ids))
+
     search_filters = {
-        'id'         : append_search_id ,
-        'creator'    : append_search_creator ,
-        'term'       : append_search_text ,
-        'location'   : append_search_location ,
-        'type'       : append_search_type ,
-        'response_to': append_search_response_to ,
-        'boomed_by'  : append_search_boomed_by ,
+        'id'             : append_search_id          ,
+        'creator'        : append_search_creator     ,
+        'term'           : append_search_text        ,
+        'location'       : append_search_location    ,
+        'type'           : append_search_type        ,
+        'response_to'    : append_search_response_to ,
+        'boomed_by'      : append_search_boomed_by   ,
+        'before'         : append_search_before      ,
+        'after'          : append_search_after       ,
+        'exclude_content': append_exclude_content    ,
     }
     
     return search_filters
@@ -227,15 +251,18 @@ class ContentsController(BaseController):
             'responses'              articles that have a parent
         @param creator      username or user_id of creator
         @param term         text to search for (searchs title and body text)
-        @param location     TODO
+        @param location     TODO use 'me' to use logged in personas current location
         @param type
             'article'
             'assignment'
             'draft'
         @param response_to  content_id of parent
         @param boomed_by    username or user_id of booming user
+        @param before       update date before "%d/%m/%Y"
+        @param after        update date after  "%d/%m/%Y"
+        @param exclude_content a list of comma separated content id's to exclude from the content returned
         @param private      if set and creator==logged_in_persona both public and private content will be returned
-        @param sort         (default) 'update_date' (currently no other sorting fields are implemented)
+        @param sort         comma separated list of fields, prefixed by '-' for decending order (default) '-update_date'
         @param * (see common list return controls)
         
         @return 200      list ok
@@ -260,6 +287,21 @@ class ContentsController(BaseController):
             if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
         
+        # Location - 'me' - replace 'me' with current location
+        # NOTE: Cache warning! this is not a public cacheable item
+        if kwargs.get('location') == 'me':
+            location = None
+            if c.logged_in_persona:
+                location = c.logged_in_persona.location_home
+            if hasattr(c.logged_in_persona, 'location_current') and c.logged_in_persona.location_updated > now() - datetime.timedelta(days=2):
+                location = c.logged_in_persona.location_current
+            if location:
+                kwargs['location'] = location
+            else:
+                return to_apilist(None, obj_type='content', **kwargs) # AllanC - if no location and 'me' specifyed return nothing as it would be confising to return seeming random content
+        
+        # --- the below should be publicly cacheable ---
+        
         # Setup search criteria
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
@@ -270,6 +312,7 @@ class ContentsController(BaseController):
         if 'creator' not in kwargs and 'creator' not in kwargs['exclude_fields']:
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
+        
         
         include_private_content = 'private' in kwargs and logged_in_creator
         results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)
@@ -293,12 +336,20 @@ class ContentsController(BaseController):
         #        results = results.add_column(
         #            func.substr(func.strip_tags(Content.content), 0, 100)
         #        )
-
-        # Sort
-        if 'sort' not in kwargs:
-            sort = 'update_date'
-        # TODO: use kwargs['sort']
-        results = results.order_by(Content.update_date.desc())
+        
+        def get_content_field(field):
+            if hasattr(Content           , field):
+                return getattr(Content           , field)
+            if hasattr(UserVisibleContent, field):
+                return getattr(UserVisibleContent, field)
+            if hasattr(AssignmentContent, field):
+                return getattr(AssignmentContent, field)
+        
+        for sort_field in kwargs.get('sort', '-update_date').split(','):
+            if sort_field[0] == "-":
+                results = results.order_by(get_content_field(sort_field[1:]).desc())
+            else:
+                results = results.order_by(get_content_field(sort_field    ).asc() )
         
 #        def merge_snippet(content, snippet):
 #            content = content.to_dict(**kwargs)
@@ -356,7 +407,7 @@ class ContentsController(BaseController):
         """
         # url('contents') + POST
 
-        user_log.info("Creating new content")
+        user_log.info("Creating new content: %s" % kwargs.get('title', '[no title]'))
         
         if kwargs.get('type') == None:
             kwargs['type'] = 'draft'
@@ -416,14 +467,12 @@ class ContentsController(BaseController):
         if type == 'comment':
             content.license = get_license(None)
 
-        # Commit to database to get ID field
-        # DEPRICATED
-        #Session.add(content)
-        #Session.commit()
+        # Flush to database to get ID field
         # AllanC - if the update fails on validation we do not want a ghost record commited
+        # Shish - the "no id" error is back, adding a flush seems to fix it, and doesn't commit
+        Session.flush()
         
         # Use update behaviour to save and commit object
-        
         update_response = self.update(id=content, **kwargs)
         
         if update_response['status'] != 'ok':
@@ -456,9 +505,16 @@ class ContentsController(BaseController):
         content_redirect = None
         error            = None
         
+        # AllanC - there was confution over when content was 'created'
+        #  It used to be done by checking if the content object type had changed e.g. draft -> article
+        #  this is insufficent for objects created directly as 'assignmen' etc.
+        #  This variable stores if this call to updae has come from a create method.
+        called_from_create_method = False 
+        
         # -- Get Content -------------------------------------------------------
         if isinstance(id, Content):
             content = id
+            called_from_create_method = True # AllanC - see above - only create calls pass the id as a content object
         else:
             content = get_content(id, is_editable=True)
         assert content
@@ -527,6 +583,7 @@ class ContentsController(BaseController):
         if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
             permissions['can_publish'] = False
             error                      = errors.error_account_level()
+            #user_log.info('insufficent prvilages to - publish assignment %d' % content.id) # AllanC - unneeded as we log all errors in @auto_format_output now
             
         
         # -- Set Content fields ------------------------------------------------
@@ -607,13 +664,13 @@ class ContentsController(BaseController):
             
             # Notifications ----------------------------------------------------
             # AllanC - as notifications not need commit anymore this can be done after?
-            m = None
-            if starting_content_type != content.__type__:
+            message_to_all_creator_followers = None
+            if starting_content_type != content.__type__ or called_from_create_method:
                 # Send notifications about NEW published content
                 if   content.__type__ == "article"   :
-                    m = messages.article_published_by_followed(creator=content.creator, article   =content)
+                    message_to_all_creator_followers = messages.article_published_by_followed(creator=content.creator, article   =content)
                 elif content.__type__ == "assignment":
-                    m = messages.assignment_created           (creator=content.creator, assignment=content)
+                    message_to_all_creator_followers = messages.assignment_created           (creator=content.creator, assignment=content)
                 
                 # if this is a response - notify parent content creator
                 if content.parent:
@@ -634,12 +691,12 @@ class ContentsController(BaseController):
                 # Send notifications about previously published content has been UPDATED
                 if   content.__type__ == "assignment":
                     if content.update_date < now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
-                        m = messages.assignment_updated(creator=content.creator, assignment=content)
+                        message_to_all_creator_followers = messages.assignment_updated(creator=content.creator, assignment=content)
                 # going straight to publish, content may not have an ID as it's
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
-            if m:
-                content.creator.send_notification_to_followers(m, private=content.private)
+            if message_to_all_creator_followers:
+                content.creator.send_notification_to_followers(message_to_all_creator_followers, private=content.private)
         
         # -- Save to Database --------------------------------------------------
         Session.add(content)

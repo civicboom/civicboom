@@ -45,14 +45,16 @@ subdomain_formats = {
     'api-v1': 'api'    ,
 }
 
-def get_subdomain_format():
+def get_subdomain_format(environ=None):
     """
     hardcoded list of ifs, because this function is called millions of times,
     and dictionary lookups (especially from globals (10x especially from
     app_globals)) are comparatively slow (only 0.01ms vs 0.1ms, but over a
     million calls it adds up)
     """
-    subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
+    if not environ:
+        environ = request.environ
+    subdomain = environ.get("HTTP_HOST", "").split(".")[0]
     if subdomain == "w" or subdomain == "widget":
         return "widget"
     if subdomain == "m" or subdomain == "mobile":
@@ -68,46 +70,41 @@ def url(*args, **kwargs):
     """
     Passthough for Pylons URL generator with a few new features
     """
+    import cbutils.worker as w
+    if hasattr(w, 'url'):
+        _url = w.url
+    else:
+        _url = url_pylons
+
     # BUGFIX - if protocol is passed as None it goes baddgy ... this remove is ... seems unnessisary because url shoud deal with it (sigh)
     if 'protocol' in kwargs and not isinstance(kwargs['protocol'], basestring):
         del kwargs['protocol']
 
+    # workaround for routes bug where it can't handle sub_domain=None or unspecified
+    # https://bitbucket.org/bbangert/routes/issue/50
+    if 'sub_domain' not in kwargs:
+        kwargs['sub_domain'] = _url.environ.get("HTTP_HOST", "").split(".")[0]
+
     # shortcut for absolute URL
-    if 'absolute' in kwargs or c.absolute_links:
-        kwargs['host'] = c.host
+    if 'absolute' in kwargs and 'sub_domain' not in kwargs and 'host' not in kwargs:
+        kwargs['host'] = _url.environ.get("HTTP_HOST")
     if 'absolute' in kwargs:
         del kwargs['absolute']
 
     # Encode current widget state into URL if in widget mode
-    if kwargs.get('subdomain')=='widget' or (get_subdomain_format()=='widget' and 'subdomain' not in kwargs): # If widget and not linking to new subdomain
+    if kwargs.get('sub_domain')=='widget' or (get_subdomain_format(_url.environ)=='widget' and 'sub_domain' not in kwargs): # If widget and not linking to new subdomain
         widget_var_prefix = config["setting.widget.var_prefix"]
         for key, value in c.widget.iteritems():
             if isinstance(value, dict) and 'username' in value: # the owner may be a dict, convert it back to a username
                 value = value['username']
             kwargs[widget_var_prefix+key] = value
-        
-    # Moving between subdomains
-    #  remove all known subdomains from URL and instate the new provided one
-    if 'subdomain' in kwargs:
-        subdomain = str(kwargs.pop('subdomain'))
-        assert subdomain in subdomain_formats
-        if 'localhost' not in c.host and subdomain == '': #AllanC - bugfix, live site always points to www.civicboom.com and never civicboom.com
-            subdomain = 'www'
-        if subdomain:
-            subdomain += '.'
-        host = c.host
-        for possible_subdomain in subdomain_formats:
-            if possible_subdomain:
-                #host = host.replace(possible_subdomain+'.', '') # Remove all known subdomains
-                host = re.sub('^'+possible_subdomain+r'\.', '', host)
-        kwargs['host'] = subdomain + host
-        
+
     args = list(args)
     if 'current' in args:
         args.remove('current')
-        return url_pylons.current(*args, **kwargs)
+        return _url.current(*args, **kwargs)
     else:
-        return url_pylons(        *args, **kwargs)
+        return _url(        *args, **kwargs)
 
 
 
@@ -547,6 +544,7 @@ def auto_format_output(target, *args, **kwargs):
             raise ae
         else:
             result = ae.original_dict
+            user_log.error('%s: %s' % (result.get('code',''), result.get('message'))) # Log Error 
             if c.format=="html" or c.format=="redirect":
                 if result.get('code') == 402:
                     return redirect(url(controller='misc', action='about', id='upgrade_plans'))

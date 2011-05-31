@@ -545,7 +545,7 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     assignment_accepted.member = member
     assignment_accepted.status = status
     Session.add(assignment_accepted)
-
+    
     if not delay_commit:
         Session.commit()
     update_accepted_assignment(member)
@@ -629,6 +629,11 @@ def del_content(content):
     Session.delete(content)
     Session.commit()
     
+def del_member(member):
+    member = get_member(member)
+    update_member(member) #invalidate the cache
+    Session.delete(member)
+    Session.commit()
 
 def flag_content(content, member=None, type="automated", comment=None, url_base=None, delay_commit=False, moderator_address=None):
     """
@@ -652,25 +657,6 @@ def flag_content(content, member=None, type="automated", comment=None, url_base=
     except:
         pass
     
-    def _url(*args, **kwargs):
-        # A cunning override of URL that wont use the Pylons URL generator
-        # This can be replaced when we get routes working in threads
-        # This is not a fully functional URL system, but just enough for the flag email
-        if url_base:
-            kwargs.pop('subdomain') # dont need this key
-            url_string = ""
-            for arg in args:
-                url_string += arg
-            id = kwargs.pop('id', None)
-            if id:
-                url_string += '/'+str(id)
-            url_string += '?'
-            for key, value in kwargs.iteritems():
-                url_string += '%s=%s&' % (key,value)
-            return url_base + url_string
-        else:
-            return url(*args, **kwargs)
-        
     content_text = """
 --- Report ---
 
@@ -702,12 +688,12 @@ If the content is not ok, go to the content list and delete it:
         "type"         : type,
         "comment"      : flag.comment,
         "member_name"  : flag.content.creator.username,
-        "member_url"   : _url('member', id=flag.content.creator.username, subdomain="www"),
-        "content_url"  : _url('content', id=flag.content.id, subdomain="www"),
+        "member_url"   : url('member', id=flag.content.creator.username, sub_domain="www"),
+        "content_url"  : url('content', id=flag.content.id, sub_domain="www"),
         "content_title": flag.content.title,
         "content_body" : flag.content.content,
-        "action_ignore": _url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), subdomain="www"),
-        "action_delete": _url("admin/Content/models?Content--id="+str(flag.content.id), subdomain="www"),
+        "action_ignore": url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), sub_domain="www"),
+        "action_delete": url("admin/Content/models?Content--id="+str(flag.content.id), sub_domain="www"),
     }
     
     send_email(

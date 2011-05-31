@@ -331,7 +331,6 @@ class BaseController(WSGIController):
         c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs     = None
         c.html_action_fallback_url = None # Some actions like 'follow' and 'accept' do not have templates - a fallback can be set and @auto_format interperits this as a redirect fallback
-        c.absolute_links           = False # For gadgets and emails links and static content need to be absolute. this is interprited by civicboom.lib.web:url
         c.host                     = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
 
         request.environ['app_version'] = app_globals.version
@@ -383,11 +382,14 @@ class BaseController(WSGIController):
                     c.logged_in_persona      = group_persona
                     c.logged_in_persona_role = role
             
+        # Set Env - In the event of a server error these will be visable
         for field in login_session_fields:
             request.environ[field] = str(getattr(c,field))
             #print request.environ[field]
-            
-
+        
+        if c.logged_in_user:
+            request.environ['logged_in_user_email'] = c.logged_in_user.email_normalized
+        
         # Setup Langauge -------------------------------------------------------
         #  - there is a way of setting fallback langauges, investigate?
         if 'lang' in request.params:

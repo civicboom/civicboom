@@ -28,6 +28,20 @@ def set_now(new_now_override):
     if isinstance(new_now_override, datetime.datetime):
         now_override = new_now_override
 
+def timedelta_str(string_args):
+    """
+    Convert a string containing comma separted timedelta kwargs into a timedeta object
+    
+    >>> timedelta_str(           "hours=10"  ) == datetime.timedelta(         hours=10)
+    True
+    >>> timedelta_str("days = 10, hours = 10") == datetime.timedelta(days=10, hours=10)
+    True
+    >>> timedelta_str(datetime.timedelta(minutes=1)) == datetime.timedelta(minutes=1)
+    True
+    """
+    if isinstance(string_args, basestring):
+        return datetime.timedelta(**dict([(kwarg.split('=')[0].strip(), int(kwarg.split('=')[1].strip())) for kwarg in string_args.split(',')]))
+    return string_args
 
 def random_string(length=8):
     """

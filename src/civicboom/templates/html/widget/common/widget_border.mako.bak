@@ -53,7 +53,7 @@
 		<table><tr>
 			##<td>${member.avatar(owner, new_window=True)}</td>
             <td>
-                <a href="${h.url('member', id=owner['id'], subdomain='')}" target="_blank" alt="${_('%s on _site_name') % owner['name'] or owner['username']}"><img src="${owner['avatar_url']}" alt="${owner['username']}"/></a>
+                <a href="${h.url('member', id=owner['id'], sub_domain='www')}" target="_blank" alt="${_('%s on _site_name') % owner['name'] or owner['username']}"><img src="${owner['avatar_url']}" alt="${owner['username']}"/></a>
             </td>
 			<td class="title">	
 				<a href="${h.url('member', id=owner['username'])}" target="_blank">
@@ -95,7 +95,7 @@
 				<img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default_avatar.png"'/>
               </a>
           % else:
-              <a href="${h.url(controller='account', action='signin', subdomain='')}" target="_blank">
+              <a href="${h.url(controller='account', action='signin', sub_domain='www')}" target="_blank">
 				${_("Sign up or Sign in to")}
 				<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
 			  </a>
@@ -134,7 +134,7 @@
 	<!--widget_footer-->
     <div class="widget_footer" style="height:${size_footer}px;"><div class="widget_header_footer">
         <div class="powered_by">
-            ${_('Powered by')} <br/><a href="${h.url('/',subdomain='')}" target="_blank"><img src="/images/logo.png" alt="${_('_site_name')} Logo" style="max-height: 1em;"/><span style="display: none;">${_('_site_name')}</span></a>
+            ${_('Powered by')} <br/><a href="${h.url('/',sub_domain='www')}" target="_blank"><img src="/images/logo.png" alt="${_('_site_name')} Logo" style="max-height: 1em;"/><span style="display: none;">${_('_site_name')}</span></a>
         </div>
       
         % if owner:
@@ -158,7 +158,7 @@
         ##----------------------------------------
         
         <ul class="widget_icon_list">
-            <li><a target="_blank" class="icon16 i_rss" href="${h.url('member', id=owner['username'], format='rss', subdomain='')}" title="${owner['username']} RSS Feed"><span>RSS</span></a></li>
+            <li><a target="_blank" class="icon16 i_rss" href="${h.url('member', id=owner['username'], format='rss', sub_domain='www')}" title="${owner['username']} RSS Feed"><span>RSS</span></a></li>
             ##% if c.widget_owner.twitter_username:
             ##  <li><a target="_blank" class="icon16 i_twitter" href="http://twitter.com/${c.widget_owner.twitter_username}" title="${c.widget_owner.username} on twitter"><span>twitter</span></a></li>
             ##% endif

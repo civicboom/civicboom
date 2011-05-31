@@ -46,6 +46,11 @@
         These should be stored and retrieved as normal cookies.
     <li>PUT and DELETE can be emulated with POST, having the form variable "_method" set
         to PUT or DELETE respectively
+    <li>API users should use the subdomain http://api-v1.civicboom.com/
+        <ul>
+            <li>If http://www.civicboom.com/ is used the client will be redirected to https://www.civicboom.com
+            <li>In the future the API may evolve to api-v2. This could break compatability if a clients use uses www.civicboom.com. We will attempt to ensure compatability for depricated versions of the API via the subdomain
+        <ul>
     <li>HTTP status codes are used:
         <ul>
           <li>200 - generic success

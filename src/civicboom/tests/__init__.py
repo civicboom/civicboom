@@ -16,6 +16,10 @@ from pylons import url
 #from civicboom.lib.web import url
 from routes.util import URLGenerator
 
+from civicboom.model      import Message
+from civicboom.model.meta import Session
+from sqlalchemy           import or_, and_, null
+
 # XXX: Paste's TestApp supports app.delete() with params
 #from webtest import TestApp
 from paste.fixture import TestApp
@@ -51,7 +55,10 @@ class TestController(TestCase):
         wsgiapp = pylons.test.pylonsapp
         config = wsgiapp.config
         self.app = TestApp(wsgiapp, extra_environ={'REMOTE_ADDR': '0.0.0.0'})
-        url._push_object(URLGenerator(config['routes.map'], environ))
+        url._push_object(URLGenerator(config['routes.map'], {
+            'wsgi.url_scheme': 'https',
+            'HTTP_HOST': 'www.civicboom.com',
+        }))
         TestCase.__init__(self, *args, **kwargs)
 
     def setUp(self):
@@ -235,6 +242,17 @@ class TestController(TestCase):
             status=200
         )
 
+    def delete_member(self, username=None):
+        """
+        Not an API call .. this remove the user from the database! - used to stop there being 100's of test users after the tests have run
+        """
+        if not username:
+            username = self.logged_in_as
+            self.log_out()
+        from civicboom.lib.database.get_cached import get_member
+        member = get_member(username)
+        member.delete()
+        
 
     def follow(self, username):
         response = self.app.post(
@@ -352,6 +370,11 @@ class TestController(TestCase):
             status=200
         )
         self.assertIn('withdrawn', response)
+
+    def getNumNotificationsInDB(self):
+        return Session.query(Message).filter(Message.source_id==null()).count()
+    def getNotificationsFromDB(self, limit=10):
+        return Session.query(Message).filter(Message.source_id==null()).order_by(Message.id.desc()).limit(limit).all()
 
 
     def getNumNotifications(self, username=None, password=None):
@@ -479,3 +502,11 @@ class TestController(TestCase):
         self.assertEqual(response_json['data']['invitee_list']['count'], 1)
         self.assertEqual(len(response_json['data']['error-list']), 1)
         self.assertEqual(response_json['status'], 'ok')
+
+    def assertSubStringIn(self, substring, string_list):
+        found = False
+        for i in string_list:
+            if substring in i:
+                fount = True
+                return True
+        raise AssertionError('%s not found in subelements of %s' % (substring, string_list))

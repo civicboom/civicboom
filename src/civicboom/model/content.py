@@ -5,7 +5,7 @@ from civicboom.model.media import Media
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
-from sqlalchemy import Enum, Integer, Date, DateTime, Boolean, Float
+from sqlalchemy import Enum, Integer, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref
@@ -168,7 +168,7 @@ class Content(Base):
 
     def __link__(self):
         from civicboom.lib.web import url
-        return url('content', id=self.id, subdomain='', absolute=True)
+        return url('content', id=self.id, sub_domain='www', absolute=True)
 
     def clone(self, content):
         if content and content.id:
@@ -425,7 +425,7 @@ class UserVisibleContent(Content):
     def action_list_for(self, member, **kwargs):
         action_list = Content.action_list_for(self, member, **kwargs)
         if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
-            action_list.append('publish')
+            action_list.append('update')
         if self.is_parent_owner(member) and member.has_account_required('plus'): # observing member need a paid account
             if has_role_required('editor', kwargs.get('role', 'admin')):
                 if self.approval == 'none':

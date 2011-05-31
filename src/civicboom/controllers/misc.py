@@ -6,6 +6,11 @@ from civicboom.lib.communication.email_lib import send_email
 from urllib import quote_plus, unquote_plus
 import os
 
+from civicboom.controllers.contents import ContentsController
+content_search = ContentsController().index
+import datetime
+import random
+
 
 class MiscController(BaseController):
     @cacheable(time=600)
@@ -94,7 +99,10 @@ class MiscController(BaseController):
         if subdomain in ["api-v1", ]:
             return "User-agent: *\nDisallow: /\n"
         else:
-            return "User-agent: *\nDisallow:\n"
+            return """
+User-agent: *
+Disallow: /misc/get_widget/
+"""
 
     @web
     @auth
@@ -127,7 +135,7 @@ class MiscController(BaseController):
             @authenticate_form
             def submit_feedback(**kwargs):
                 if c.logged_in_user:
-                    kwargs['from'] = (c.logged_in_user.email or c.logged_in_user.email_unverified)
+                    kwargs['from'] = request.environ['logged_in_user_email']
                 else:
                     if kwargs.get('simple_captcha') != 'xyz':
                         raise action_error('invalid capture')
@@ -148,3 +156,46 @@ class MiscController(BaseController):
                 send_email(config['email.contact'], subject=_('_site_name feedback'), content_text=content_text, reply_to=kwargs['from'])
                 return action_ok(_("Thank you for your feedback"), code=201)
             return submit_feedback(**kwargs)
+
+
+    #---------------------------------------------------------------------------
+    # Featured content query
+    #---------------------------------------------------------------------------
+    @web
+    #@cacheable(time=600) # can't really be cashed because of the use of 'me'
+    def featured(self):
+        """
+        Make a numer of querys to get the top interesting content
+        The results are randomised so single highest results don't dominate
+        A list is kept of all the content before. There should never be any duplicated items
+        """
+        
+        featured_content = []
+        
+        def rnd_content_items(return_items=1, **kwargs):
+            if 'limit' not in kwargs:
+                kwargs['limit'] = 3
+            if 'after' not in kwargs:
+                kwargs['after'] = now() - datetime.timedelta(days=7)
+            kwargs['exclude_content'] = [content['id'] for content in featured_content] #",".join([str(
+            content_items = content_search(**kwargs)['data']['list']['items']
+            random.shuffle( content_items )
+            return_list = []
+            for i in range(return_items):
+                if content_items:
+                    content_item = content_items.pop()
+                    featured_content.append(content_item)
+                    return_list     .append(content_item)
+            return return_list
+        
+        #return to_apilist(featured_content, obj_type='content') # AllanC - a liniear list of featured contebt
+        
+        return action_ok(
+            data={
+                'top_viewed_assignments' : rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5),
+                'most_responses'         : rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5),
+                'near_me'                : rnd_content_items(return_items=2,                        location='me'    , limit=5),
+                'recent_assignments'     : rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5),
+                'recent'                 : rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5),
+            }
+        )

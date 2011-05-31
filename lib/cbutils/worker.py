@@ -82,7 +82,7 @@ def run_one_job(task):
         if setup:
             setup(task)
         task_type = task.pop("task")
-        log.info('Starting task: %s (%s)' % (task_type, task))
+        log.debug('Starting task: %s (%s)' % (task_type, task))
         if task_type in _worker_functions:
             job_success = _worker_functions[task_type](**task)
         elif task_type == "die":

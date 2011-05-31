@@ -9,6 +9,8 @@ setup a cron job to run these tasks
 
 from civicboom.lib.base import *
 
+from cbutils.misc import timedelta_str
+
 from sqlalchemy import and_
 
 import datetime
@@ -17,6 +19,9 @@ log = logging.getLogger(__name__)
 
 response_completed_ok = "task:ok" #If this is changed please update tasks.py to reflect the same "task ok" string
 
+def normalize_datetime(datetime):
+    return datetime.replace(minute=0, second=0, microsecond=0)
+    
 
 class TaskController(BaseController):
     
@@ -37,25 +42,19 @@ class TaskController(BaseController):
                 request.environ['REMOTE_ADDR'] == request.environ.get('SERVER_ADDR', '0.0.0.0')
             ):
             return abort(403)
-        #user_log.info("Performing task '%s'" % (action, )) #AllanC - these can be activated without a logged in user
+        # AllanC - these can be activated without a logged in user
+        # Shish  - then they get logged as "anonymous"; it's still good to
+        #          have the logging go to the central place
+        # AllanC - automated tests seems to be failing as c.logged_in_user is not set. should lib/database/userlog.py be modifyed to cope with this? advice on loggin needed. This is strange because c.logged_in_user is ALWAYS inited even if it is None see base.py line 373 _get_member() always returns None
+        user_log.info("Performing task '%s'" % (action, ))
         BaseController.__before__(self)
-
-
-    #---------------------------------------------------------------------------
-    # Expire Syndication Content
-    #---------------------------------------------------------------------------
-
-    def expire_syndication_articles(self):
-        """
-        Description to follow
-        """
-        pass
 
 
     #---------------------------------------------------------------------------
     # Remind Pending users after 1 day
     #---------------------------------------------------------------------------
-    def remind_pending_users(self, frequency_of_time_task=1):
+    @web_params_to_kwargs
+    def remind_pending_users(self, remind_after="hours=24", frequency_of_timed_task="hours=1"):
         """
         Users who try to sign up but don't complete the registration within one day get a reminder email
         to be run once every 24 hours
@@ -63,12 +62,17 @@ class TaskController(BaseController):
         from civicboom.model.member import User
         from civicboom.lib.civicboom_lib import validation_url
         
-        frequency_of_timed_task = datetime.timedelta(days=frequency_of_timed_task)
-        reminder_start = now() - datetime.timedelta(days=1)
-        for user in Session.query(User).filter(User.status=='pending').filter(~User.login_details.any()).filter(and_(User.join_date > reminder_start - frequency_of_timed_task, User.join_date < reminder_start)).all():
-            log.info('Reminding pending user %s - %s' % (user.username, user.normalize_email))
+        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        remind_after            = timedelta_str(remind_after           )
+        
+        reminder_start = normalize_datetime(now()          - remind_after           )
+        reminder_end   = normalize_datetime(reminder_start + frequency_of_timed_task)
+        
+        users_to_remind = Session.query(User).filter(User.status=='pending').filter(and_(User.join_date <= reminder_end, User.join_date >= reminder_start)).all() #.filter(~User.login_details.any()).
+        for user in users_to_remind:
+            log.info('Reminding pending user %s - %s' % (user.username, user.email_normalized))
             register_url = validation_url(user, controller='register', action='new_user')
-            user.send_email(content_html=render('/email/user_pending_reminder.mako', extra_vars={'register_url':register_url}))
+            user.send_email(subject=_('_site_name: reminder'), content_html=render('/email/user_pending_reminder.mako', extra_vars={'register_url':register_url}))
         return response_completed_ok
 
 
@@ -76,18 +80,20 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     # Prune Pending users if not completed registration in 7 days
     #---------------------------------------------------------------------------
-
-    def remove_pending_users(self):
+    @web_params_to_kwargs
+    def remove_pending_users(self, delete_older_than="days=7"):
         """
         Users who do not complete the signup process by entering an email
         address that is incorrect or a bots or cant use email should be
         removed if they have still not signed up after 7 Days
         """
         from civicboom.model.member import User
-        ghost_expire = now() - datetime.timedelta(days=7)
-        for user in Session.query(User).filter(~User.login_details.any()).filter(User.join_date < ghost_expire).all(): #filter(User.status=='pending').
+        
+        ghost_expire = normalize_datetime(now() - timedelta_str(delete_older_than))
+        
+        for user in Session.query(User).filter(User.status=='pending').filter(User.join_date <= ghost_expire).all(): # .filter(~User.login_details.any()).
             Session.delete(user)
-            log.info('Deleting pending user %s - %s' % (user.username, user.normalize_email))
+            log.info('Deleting pending user %s - %s' % (user.username, user.email_normalized))
             # It may be nice to log numbers here to aid future business desctions
         Session.commit()
         # AllanC - the method above could be inefficent. could just do it at the DB side?
@@ -98,37 +104,37 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     # Assignment Reminder Notifications
     #---------------------------------------------------------------------------
-
-    def assignment_near_expire(self):
+    @web_params_to_kwargs
+    def assignment_near_expire(self, frequency_of_timed_task="days=1"):
         """
         Users who have accepted assigments but have not posted response
         question should be reminded via a notification that the assingment
         has not long left
         """
-        from civicboom.model.content import AssignmentContent
+        from civicboom.model.content     import AssignmentContent
+        from civicboom.lib.communication import messages
         
         def get_assignments_by_date(date_start, date_end):
             return Session.query(AssignmentContent).filter(and_(AssignmentContent.due_date >= date_start, AssignmentContent.due_date <= date_end)).all()
-
+        
         def get_responded(assignment):
             return [response.creator_id for response in assignment.responses]
-            
-        date_7days_time = now() + datetime.timedelta(days=6)
-        date_1days_time = now() # + datetime.timedelta(days=1)
-        date_1day       =         datetime.timedelta(days=1)
         
-        for assignment in get_assignments_by_date(date_start=date_7days_time, date_end=date_7days_time + date_1day): # Get all assignments due in 7 days
-            responded_member_ids = get_responded(assignment)                                                         #   Get a list of all the members that have responded to this assignment
-            for member in assignment.accepted_by:                                                                    #   For all members accepted this assignment
-                if member.id not in responded_member_ids:                                                            #     Check if they have responded with an article
-                    member.send_notification( messages.assignment_due_7days(you=member, assignment=assignment) )              #     if not send a reminder notification
-                    
-        for assignment in get_assignments_by_date(date_start=date_1days_time, date_end=date_1days_time + date_1day): #Same as above but on day before
+        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        
+        date_7days_time = normalize_datetime(now() + datetime.timedelta(days=7))
+        date_1days_time = normalize_datetime(now() + datetime.timedelta(days=1))
+        
+        for assignment in get_assignments_by_date(date_start=date_7days_time, date_end=date_7days_time + frequency_of_timed_task): # Get all assignments due in 7 days
+            responded_member_ids = get_responded(assignment)                                                              #   Get a list of all the members that have responded to this assignment
+            for member in [member for member in assignment.accepted_by if member.id not in responded_member_ids]:         #   For all members accepted this assignment #     Check if they have responded with an article
+                member.send_notification( messages.assignment_due_7days(you=member, assignment=assignment) )              #     if not send a reminder notification
+        
+        for assignment in get_assignments_by_date(date_start=date_1days_time, date_end=date_1days_time + frequency_of_timed_task): #Same as above but on day before
             responded_member_ids = get_responded(assignment)
-            for member in assignment.accepted_by:
-                if member.id not in responded_member_ids:
-                    member.send_notification( messages.assignment_due_1day(you=member, assignment=assignment) )
-                    
+            for member in [member for member in assignment.accepted_by if member.id not in responded_member_ids]:
+                member.send_notification( messages.assignment_due_1day (you=member, assignment=assignment) )
+        
         Session.commit()
         return response_completed_ok
 
@@ -147,19 +153,21 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     # New Users and Groups Summary
     #---------------------------------------------------------------------------
-
-    def email_new_user_summary(self, timedelta=datetime.timedelta(days=1)):
+    @web_params_to_kwargs
+    def email_new_user_summary(self, frequency_of_timed_task="days=1"):
         """
         query for all users in last <timedelta> and email 
         """
+        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        
         from civicboom.model import Member
         members = Session.query(Member) \
                     .with_polymorphic('*') \
-                    .filter(Member.join_date>=now()-timedelta) \
+                    .filter(Member.join_date>=normalize_datetime(now()) - frequency_of_timed_task) \
                     .all()
         
         if not members:
-            log.debug('Report not generated: no new members in %s' % timedelta)
+            log.debug('Report not generated: no new members in %s' % frequency_of_timed_task)
             return response_completed_ok
         
         from civicboom.lib.communication.email_lib import send_email
@@ -169,54 +177,13 @@ class TaskController(BaseController):
             content_html = render(
                             '/email/admin/summary_new_users.mako',
                             extra_vars = {
-                                "members"   : members   ,
-                                "timedelta" : timedelta ,
+                                "members"   : members                 ,
+                                "timedelta" : frequency_of_timed_task ,
                             }
                         ),
         )
         
         return response_completed_ok
-
-
-    #---------------------------------------------------------------------------
-    # Sync Warehouse Media
-    #---------------------------------------------------------------------------
-
-    def sync_public_to_warehouse(self):
-        """
-        Copies files in the public data folder (should just be CSS / small images)
-        to whatever warehouse we're using (eg Amazon S3). Should be called whenever
-        the server software package is upgraded.
-        """
-        from boto.s3.connection import S3Connection
-        from boto.s3.key import Key
-        import magic
-        import os
-        import hashlib
-
-        done = []
-        if config["warehouse"] == "s3":
-            log.info("Syncing /public to s3")
-            connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
-            bucket = connection.get_bucket(config["s3_bucket_name"])
-            bucket.set_acl('public-read')
-            #bucket.configure_versioning(True)
-            for dirpath, subdirs, filenames in os.walk("./civicboom/public/"):
-                for fname in filenames:
-                    fname = os.path.join(dirpath, fname)
-                    kname = fname[fname.find("public"):]
-                    k = bucket.get_key(kname)
-                    if k and k.etag.strip('"') == hashlib.md5(file(fname).read()).hexdigest():
-                        done.append("No change: "+kname)
-                        continue
-                    k = Key(bucket)
-                    k.key = kname
-                    k.set_metadata('Cache-Control', 'public')
-                    k.set_metadata('Content-Type', magic.from_file(fname, mime=True))
-                    k.set_contents_from_filename(fname)
-                    k.set_acl('public-read')
-                    done.append("Synced: "+kname)
-        return "\n".join(done)
 
 
     def purge_unneeded_warehouse_media(self):

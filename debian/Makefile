@@ -51,8 +51,9 @@ cb-website-web.deb: Makefile $(shell find ../nginx ./web)
 
 cb-website-db.deb: Makefile $(shell find ./db ../admin_scripts)
 	rm -rf fs-db
-	$(call mdcp, ../admin_scripts/init_cbdb , fs-db/opt/cb/bin/                )
-	$(call mdcp, db/*                       , fs-db/DEBIAN/                    )
+	$(call mdcp, ../admin_scripts/init_cbdb      , fs-db/opt/cb/bin/   )
+	$(call mdcp, ../admin_scripts/clean_sessions , fs-db/opt/cb/bin/   )
+	$(call mdcp, db/*                            , fs-db/DEBIAN/       )
 	sed -i s/VERSION/${VERSION}/ fs-db/DEBIAN/control
 	fakeroot dpkg -b fs-db cb-website-db_${VERSION}_all.deb 
 	ln -sf cb-website-db_${VERSION}_all.deb cb-website-db.deb

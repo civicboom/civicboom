@@ -6,7 +6,7 @@ from civicboom.lib.helpers import wh_url
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
-from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
+from sqlalchemy import Enum, Integer, DateTime, Boolean
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref, dynamic_loader
@@ -21,7 +21,7 @@ import copy
 # say "I am joined to other table X using mapping Y as defined above"
 member_type              = Enum("user", "group",                     name="member_type"  )
 account_types            = Enum("free", "plus", "corp", "corp_plus", name="account_types")
-account_types_level      =     ("corp", "premium", "plus", "free") # the order of account levels e.g plus has higher privilages than free
+account_types_level      =     ("corp_plus", "corp", "plus", "free") # the order of account levels e.g plus has higher privilages than free
 
 group_member_roles_level =     ("admin", "editor", "contributor", "observer") # the order of permissions e.g admin has higher privilages than editor
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
@@ -207,7 +207,7 @@ class Member(Base):
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
     name            = Column(Unicode(250),   nullable=False, default=u"")
-    join_date       = Column(Date(),         nullable=False, default=func.now())
+    join_date       = Column(DateTime(),     nullable=False, default=func.now())
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(String(40),     nullable=True)
     utc_offset      = Column(Integer(),      nullable=False, default=0)
@@ -314,7 +314,7 @@ class Member(Base):
     
     def __link__(self):
         from civicboom.lib.web import url
-        return url('member', id=self.username, subdomain='', absolute=True)
+        return url('member', id=self.username, sub_domain='www', absolute=True)
 
     def hash(self):
         h = hashlib.md5()
@@ -450,11 +450,13 @@ class Member(Base):
         limit = None
         
         from pylons import config
-        if self.account_type == 'free':
-            limit = config['payment.free.assignment_limit']
+        if has_account_required('corp', self.account_type):
+            pass
         elif has_account_required('plus', self.account_type):
             limit = config['payment.plus.assignment_limit']
-
+        elif has_account_required('free', self.account_type): #self.account_type == 'free':
+            limit = config['payment.free.assignment_limit']
+        
         if not limit:
             return True
         if len(self.active_assignments_period) >= limit:
@@ -476,6 +478,13 @@ class Member(Base):
         if self.payment_account and self.payment_account.type:
             return self.payment_account.type
         return 'free'
+
+    def delete(self):
+        """
+        Not to be called in normal operation - this a convenience method for automated tests
+        """
+        from civicboom.lib.database.actions import del_member
+        del_member(self)
 
     def check_action_key(self, action, key):
         """
