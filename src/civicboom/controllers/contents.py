@@ -467,11 +467,10 @@ class ContentsController(BaseController):
         if type == 'comment':
             content.license = get_license(None)
 
-        # Commit to database to get ID field
-        # DEPRICATED
-        #Session.add(content)
-        #Session.commit()
+        # Flush to database to get ID field
         # AllanC - if the update fails on validation we do not want a ghost record commited
+        # Shish - the "no id" error is back, adding a flush seems to fix it, and doesn't commit
+        Session.flush()
         
         # Use update behaviour to save and commit object
         update_response = self.update(id=content, **kwargs)
