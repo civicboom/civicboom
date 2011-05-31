@@ -24,9 +24,9 @@ class UserLogHandler(logging.Handler):
         node = platform.node()
         username = "None"
         persona = "None"
-        if c.logged_in_user:
+        if hasattr(c, "logged_in_user") and c.logged_in_user:
             username = c.logged_in_user.username
-        if c.logged_in_persona:
+        if hasattr(c, "logged_in_persona") and c.logged_in_persona:
             persona = c.logged_in_persona.username
         url      = request.url
         addr     = request.environ["REMOTE_ADDR"]
