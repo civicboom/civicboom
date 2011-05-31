@@ -204,6 +204,13 @@ class TestController(TestCase):
         
         self.log_in_as(username, password)
     
+    def get_member(self, username=None):
+        if not username:
+            username = self.logged_in_as
+        response      = self.app.get(url('member', id=username, format='json'), status=200)
+        response_json = json.loads(response.body)
+        return response_json['data']
+    
     def create_content(self, title=u'Test', content=u'Test', type='article', **kwargs):
         params={
             '_authentication_token': self.auth_token,
