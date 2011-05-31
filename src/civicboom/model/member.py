@@ -21,7 +21,7 @@ import copy
 # say "I am joined to other table X using mapping Y as defined above"
 member_type              = Enum("user", "group",                     name="member_type"  )
 account_types            = Enum("free", "plus", "corp", "corp_plus", name="account_types")
-account_types_level      =     ("corp", "premium", "plus", "free") # the order of account levels e.g plus has higher privilages than free
+account_types_level      =     ("corp_plus", "corp", "plus", "free") # the order of account levels e.g plus has higher privilages than free
 
 group_member_roles_level =     ("admin", "editor", "contributor", "observer") # the order of permissions e.g admin has higher privilages than editor
 group_member_roles       = Enum("admin", "editor", "contributor", "observer", name="group_member_roles")
@@ -450,11 +450,13 @@ class Member(Base):
         limit = None
         
         from pylons import config
-        if self.account_type == 'free':
-            limit = config['payment.free.assignment_limit']
+        if has_account_required('corp', self.account_type):
+            pass
         elif has_account_required('plus', self.account_type):
             limit = config['payment.plus.assignment_limit']
-
+        elif has_account_required('free', self.account_type): #self.account_type == 'free':
+            limit = config['payment.free.assignment_limit']
+        
         if not limit:
             return True
         if len(self.active_assignments_period) >= limit:

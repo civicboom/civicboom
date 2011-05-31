@@ -176,3 +176,15 @@ class TestGroupsController(TestController):
         self.set_persona( 'unittest')
         self.set_persona( 'test_group_messages1')
         self.delete_group('test_group_messages1')
+
+
+    def test_message_followers(self):
+        """
+        Have a member with followers to test message propergation
+        The end user should not be messaged twice
+        """
+        self.create_group('message_test')
+        
+        # AllanC - TODO
+        
+        self.delete_group('message_test')
