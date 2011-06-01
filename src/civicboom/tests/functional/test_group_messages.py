@@ -117,9 +117,7 @@ class TestGroupsController(TestController):
         # 'unitfriend' will have followers that will be alerted to the new content
         # these need to be considered when checking the number of notifications generated
         # NOTE: if unitfriend has any GROUPS as followers this automated test WILL break - as we dont know how many notifications will be generated
-        response      = self.app.get(url('member', id='unitfriend', format='json'), status=200)
-        response_json = json.loads(response.body)
-        num_unitfriend_followers = response_json['data']['member']['num_followers']
+        num_unitfriend_followers = self.get_member('unitfriend')['member']['num_followers']
         
         notification_subjects = [message.subject for message in self.getNotificationsFromDB( (3*3) + num_unitfriend_followers )]
         self.assertSubStringIn('follow', notification_subjects)
@@ -183,8 +181,24 @@ class TestGroupsController(TestController):
         Have a member with followers to test message propergation
         The end user should not be messaged twice
         """
+        # Setup
+        # 'unitfriend' should have 2 followers: 'unittest' and 'message_test'(that unittest is a member of)
+        self.log_in_as('unittest')
+        self.assertIn('unitfriend', [following['username'] for following in self.get_member()['following']['items']]) # Check unittest is a follower of unitfriend
         self.create_group('message_test')
+        self.set_persona('message_test')
+        self.follow('unitfriend')
         
-        # AllanC - TODO
+        self.log_in_as('unitfriend')
+        num_notifications = self.getNumNotificationsInDB()
+        num_emails        =      getNumEmails()
+        num_unitfriend_followers = self.get_member('unitfriend')['member']['num_followers'] # NOTE: all followers MUST be users appart from one group (added above) or this test will fail
         
+        self.boom_content(1) # Boom API doc guaranteed to be content 1
+        
+        self.assertEquals(self.getNumNotificationsInDB(), num_notifications + num_unitfriend_followers    )
+        self.assertEquals(     getNumEmails()           , num_emails        + num_unitfriend_followers - 1)
+        
+        self.log_in_as('unittest')
+        self.set_persona('message_test')
         self.delete_group('message_test')
