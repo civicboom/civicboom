@@ -85,12 +85,6 @@ def url(*args, **kwargs):
     if 'sub_domain' not in kwargs:
         kwargs['sub_domain'] = _url.environ.get("HTTP_HOST", "").split(".")[0]
 
-    # shortcut for absolute URL
-    if 'absolute' in kwargs and 'sub_domain' not in kwargs and 'host' not in kwargs:
-        kwargs['host'] = _url.environ.get("HTTP_HOST")
-    if 'absolute' in kwargs:
-        del kwargs['absolute']
-
     # Encode current widget state into URL if in widget mode
     if kwargs.get('sub_domain')=='widget' or (get_subdomain_format(_url.environ)=='widget' and 'sub_domain' not in kwargs): # If widget and not linking to new subdomain
         widget_var_prefix = config["setting.widget.var_prefix"]

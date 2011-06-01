@@ -19,15 +19,23 @@ class TestRoutes(TestController):
             url(sub_domain="m", controller='contents', action='show', id=123),
             "https://m.civicboom.com/contents/123"
         )
-        self.assertEqual(  # same subdomain = don't have full URL?
+        self.assertEqual(  # same subdomain = don't have full URL
             url(sub_domain="www", controller='contents', action='show', id=123),
             "/contents/123"
+        )
+        self.assertEqual(  # unless qualified=True
+            url(sub_domain="www", controller='contents', action='show', id=123, qualified=True),
+            "https://www.civicboom.com/contents/123"
         )
 
     def test_host(self):
         self.assertEqual(
             url(host="pie.civicboom.com", controller='contents', action='show', id=123),
             "https://pie.civicboom.com/contents/123"
+        )
+        self.assertEqual(
+            url(host="www.civicboom.com", controller='contents', action='show', id=123, qualified=True),
+            "https://www.civicboom.com/contents/123"
         )
 
     def test_rest_routes(self):
