@@ -66,6 +66,16 @@ class TestRoutes(TestController):
 
     def test_rest_formats(self):
         self.assertEqual(
+            url(controller='members', action="show", id='shish'),
+            "/members/shish"
+        )
+
+        self.assertEqual(
+            url('member', id='shish'),
+            "/members/shish"
+        )
+
+        self.assertEqual(
             url('member_action', id='shish', action='follow'),
             "/members/shish/follow.html"
         )
