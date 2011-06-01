@@ -168,7 +168,7 @@ class Content(Base):
 
     def __link__(self):
         from civicboom.lib.web import url
-        return url('content', id=self.id, sub_domain='www', absolute=True)
+        return url('content', id=self.id, sub_domain='www', qualified=True)
 
     def clone(self, content):
         if content and content.id:
@@ -303,7 +303,7 @@ class Content(Base):
     @property
     def url(self):
         from pylons import url, app_globals
-        return url('content', id=self.id, absolute=True)
+        return url('content', id=self.id, qualified=True)
 
     @property
     def content_short(self):
