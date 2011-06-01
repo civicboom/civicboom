@@ -23,7 +23,7 @@ Description: Where is the log database?
 
 Template: cb-website-api/mc_session
 Type: string
-Default: 127.0.0.1:21201
+Default: 127.0.0.1
 Description: Where is the session cache?
  This should be the host:port of a memcachedb server which can be used
  for storing session data. A regular memcache server could be used,
@@ -32,7 +32,7 @@ Description: Where is the session cache?
 
 Template: cb-website-api/mc_cache
 Type: string
-Default: 127.0.0.1:11211
+Default: 127.0.0.1:6379
 Description: Where is the memcache server?
  This should be a space-separated list of host:port pairs for a
  set of memcache servers. For the cache to work efficiently, all
