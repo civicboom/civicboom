@@ -26,7 +26,7 @@
         <description  >${self.description()}</description>
         <pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
         <lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
-        <generator    >${h.url('', sub_domain='www', absolute=True)}</generator>
+        <generator    >${h.url(controller='misc', action='titlepage', sub_domain='www', absolute=True)}</generator>
         <image url  ="/images/rss_large.png" link ="${h.url('current', sub_domain='www', absolute=True)}" title="${_('_site_name')}" />
         
         ${next.body()}
