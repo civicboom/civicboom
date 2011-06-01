@@ -314,7 +314,7 @@ class Member(Base):
     
     def __link__(self):
         from civicboom.lib.web import url
-        return url('member', id=self.username, sub_domain='www', absolute=True)
+        return url('member', id=self.username, sub_domain='www', qualified=True)
 
     def hash(self):
         h = hashlib.md5()
@@ -420,7 +420,7 @@ class Member(Base):
     @property
     def url(self):
         from civicboom.lib.web import url
-        return url('member', id=self.username, absolute=True)
+        return url('member', id=self.username, qualified=True)
 
     @property
     def avatar_url(self, size=80):
