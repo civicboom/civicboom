@@ -196,6 +196,9 @@ NAV .menuh a.parent {
 	border-right: 1px solid #555;
 	border-bottom: 1px solid #ddd;
 }
+NAV .menuh a.sub_option:hover {
+	background: #eef;
+}
 NAV .menuh LI:last-child>a.sub_option {
 	border-bottom: 1px solid #555;
 
