@@ -15,7 +15,7 @@ def cb_resource(mapper, single, plural, **kwargs):
     # lists
     # GET/POST /foo.json
     mapper.connect(plural, '/'+plural+'{.format}',                             controller=plural, action='index',  conditions=dict(method=['GET']))
-    mapper.connect(        '/'+plural+'{.format}',                             controller=plural, action='create', conditions=dict(method=['POST']))
+    mapper.connect(None,   '/'+plural+'{.format}',                             controller=plural, action='create', conditions=dict(method=['POST']))
 
     # list actions (needs to come before items, as /foo/new needs to be before /foo/{id})
     # GET /foo/new.json
@@ -24,8 +24,8 @@ def cb_resource(mapper, single, plural, **kwargs):
     # items
     # GET/PUT/DELETE for /foo/42.json, /foo/42
     mapper.connect(single, '/'+plural+'/{id}{.format}',                        controller=plural, action='show',   conditions=dict(method=['GET']))
-    mapper.connect(        '/'+plural+'/{id}{.format}',                        controller=plural, action='update', conditions=dict(method=['PUT']))
-    mapper.connect(        '/'+plural+'/{id}{.format}',                        controller=plural, action='delete', conditions=dict(method=['DELETE']))
+    mapper.connect(None,   '/'+plural+'/{id}{.format}',                        controller=plural, action='update', conditions=dict(method=['PUT']))
+    mapper.connect(None,   '/'+plural+'/{id}{.format}',                        controller=plural, action='delete', conditions=dict(method=['DELETE']))
 
     # item actions (edit is special, it lives in the main controller rather than _actions)
     mapper.connect('edit_'+single,   '/'+plural+'/{id}/edit{.format}',         controller=plural, action='edit',   conditions=dict(method=['GET']))
