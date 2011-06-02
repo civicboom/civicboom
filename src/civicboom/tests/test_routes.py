@@ -15,7 +15,7 @@ class TestRoutes(TestController):
         )
 
     def test_subdomain(self):
-        self.assertEqual(
+        self.assertEqual(  # different subdomain = do have full URL
             url(sub_domain="m", controller='contents', action='show', id=123),
             "https://m.civicboom.com/contents/123"
         )
@@ -35,7 +35,7 @@ class TestRoutes(TestController):
         )
         self.assertEqual(
             url(host="www.civicboom.com", controller='contents', action='show', id=123),
-            "/contents/123"
+            "https://www.civicboom.com/contents/123"
         )
         self.assertEqual(
             url(host="www.civicboom.com", controller='contents', action='show', id=123, qualified=True),
@@ -78,12 +78,22 @@ class TestRoutes(TestController):
             "/"
         )
         self.assertEqual(
-            url(''),
+            url('/', qualified=True),
+            "https://www.civicboom.com/"
+        )
+        self.assertEqual(
+            url(controller='misc', action='titlepage'),
             "/"
         )
         self.assertEqual(
-            url('/', qualified=True),
+            url(controller='misc', action='titlepage', qualified=True),
             "https://www.civicboom.com/"
+        )
+
+    def test_blank(self):
+        self.assertEqual(
+            url(''),
+            ""
         )
         self.assertEqual(
             url('', qualified=True),
