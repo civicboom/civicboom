@@ -6,5 +6,5 @@
     <%
         username = 'me'
     %>
-    <p>${_('To alter your notificaitons visit your ')}<a href="${h.url('setting_action', id=username, action='messages', sub_domain='www', qualified=True)}">${_('notification settings')}</a></p>
+    <p>${_('To alter your notificaitons visit your ')}<a href="${h.url('setting_action', id=username, action='messages', protocol='https', sub_domain='www', qualified=True)}">${_('notification settings')}</a></p>
 </%def>
