@@ -216,7 +216,7 @@
                 $.ajax({
                     type    : 'POST',
                     dataType: 'json',
-                    url     : "${url('formatted_content', id=self.id, format='json')}",
+                    url     : "${url('content', id=self.id, format='json')}",
                     data    : {
                         "_method": 'PUT',
                         "content": ed.getContent(),

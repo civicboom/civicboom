@@ -8,7 +8,7 @@ class TestMediaController(TestController):
         # Test response...
 
     #def test_index_as_xml(self):
-    #    response = self.app.get(url('formatted_media', format='xml'))
+    #    response = self.app.get(url('media', format='xml'))
 
     #def test_create(self):
     #    response = self.app.post(url('media'))
@@ -17,7 +17,7 @@ class TestMediaController(TestController):
     #    response = self.app.get(url('new_medium'))
 
     #def test_new_as_xml(self):
-    #    response = self.app.get(url('formatted_new_medium', format='xml'))
+    #    response = self.app.get(url('new_medium', format='xml'))
 
     #def test_update(self):
     #    response = self.app.put(url('medium', id=1))
@@ -35,11 +35,11 @@ class TestMediaController(TestController):
     #    response = self.app.get(url('medium', id=1))
 
     #def test_show_as_xml(self):
-    #    response = self.app.get(url('formatted_medium', id=1, format='json'))
+    #    response = self.app.get(url('medium', id=1, format='json'))
 
     #def test_edit(self):
     #    response = self.app.get(url('edit_medium', id=1))
 
     #def test_edit_as_xml(self):
-    #    response = self.app.get(url('formatted_edit_medium', id=1, format='xml'))
+    #    response = self.app.get(url('edit_medium', id=1, format='xml'))
     """
