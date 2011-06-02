@@ -72,6 +72,24 @@ class TestRoutes(TestController):
             "/"
         )
 
+    def test_front_page_synonyms(self):
+        self.assertEqual(
+            url('/'),
+            "/"
+        )
+        self.assertEqual(
+            url(''),
+            "/"
+        )
+        self.assertEqual(
+            url('/', qualified=True),
+            "https://www.civicboom.com/"
+        )
+        self.assertEqual(
+            url('', qualified=True),
+            "https://www.civicboom.com/"
+        )
+
     def test_normal_formats(self):
         self.assertEqual(
             url(controller='mobile', action='media_init', format="json"),
