@@ -56,8 +56,11 @@ class TestController(TestCase):
         config = wsgiapp.config
         self.app = TestApp(wsgiapp, extra_environ={'REMOTE_ADDR': '0.0.0.0'})
         url._push_object(URLGenerator(config['routes.map'], {
+            # pretend we are in an HTTP request
             'wsgi.url_scheme': 'https',
             'HTTP_HOST': 'www.civicboom.com',
+            # pretend routes middleware has added stuff
+            'wsgiorg.routing_args': (None, {'action': u'titlepage', 'controller': u'misc', 'sub_domain': 'www'})
         }))
         TestCase.__init__(self, *args, **kwargs)
 
