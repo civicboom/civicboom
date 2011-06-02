@@ -22,7 +22,7 @@
 >
     <channel>
         <title        >${self.title()}</title>
-        <link         >${h.url('current', sub_domain='www')}</link>
+        <link         >${h.url('current', qualified=True)}</link>
         <description  >${self.description()}</description>
         <pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
         <lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
