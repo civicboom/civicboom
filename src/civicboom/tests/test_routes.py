@@ -6,41 +6,41 @@ from civicboom.lib.web import url
 class TestRoutes(TestController):
     def test_proto(self):
         self.assertEqual(
-            url('content', id=123, protocol="http"),
-            "http://www.civicboom.com/contents/123"
+            url(controller='misc', action='foo', protocol="http"),
+            "http://www.civicboom.com/misc/foo"
         )
         self.assertEqual(
-            url('content', id=123, protocol="https"),
-            "https://www.civicboom.com/contents/123"
+            url(controller='misc', action='foo', protocol="https"),
+            "https://www.civicboom.com/misc/foo"
         )
 
     def test_subdomain(self):
         self.assertEqual(  # different subdomain = do have full URL
-            url('content', id=123, sub_domain="m"),
-            "https://m.civicboom.com/contents/123"
+            url(controller='misc', action='foo', sub_domain="m"),
+            "https://m.civicboom.com/misc/foo"
         )
         self.assertEqual(  # same subdomain = don't have full URL
-            url('content', id=123, sub_domain="www"),
-            "/contents/123"
+            url(controller='misc', action='foo', sub_domain="www"),
+            "/misc/foo"
         )
         self.assertEqual(  # unless qualified=True
-            url('content', id=123, sub_domain="www", qualified=True),
-            "https://www.civicboom.com/contents/123"
+            url(controller='misc', action='foo', sub_domain="www", qualified=True),
+            "https://www.civicboom.com/misc/foo"
         )
 
     def test_host(self):
         # setting hosts is broken weirdly
         self.assertEqual(
-            url('content', id=123, host="pie.civicboom.com"),
-            "https://pie.civicboom.com/contents/123"
+            url(controller='misc', action='foo', host="pie.civicboom.com"),
+            "https://pie.civicboom.com/misc/foo"
         )
         self.assertEqual(
-            url('content', id=123, host="www.civicboom.com"),
-            "https://www.civicboom.com/contents/123"
+            url(controller='misc', action='foo', host="www.civicboom.com"),
+            "https://www.civicboom.com/misc/foo"
         )
         self.assertEqual(
-            url('content', id=123, host="www.civicboom.com", qualified=True, sub_domain="www"),
-            "https://www.civicboom.com/contents/123"
+            url(controller='misc', action='foo', host="www.civicboom.com", qualified=True, sub_domain="www"),
+            "https://www.civicboom.com/misc/foo"
         )
 
     def test_rest_routes(self):
