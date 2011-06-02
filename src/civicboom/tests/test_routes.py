@@ -34,8 +34,22 @@ class TestRoutes(TestController):
             "https://pie.civicboom.com/contents/123"
         )
         self.assertEqual(
+            url(host="www.civicboom.com", controller='contents', action='show', id=123),
+            "/contents/123"
+        )
+        self.assertEqual(
             url(host="www.civicboom.com", controller='contents', action='show', id=123, qualified=True),
             "https://www.civicboom.com/contents/123"
+        )
+
+    def test_current(self):
+        self.assertEqual(
+            url('current'),
+            "/"
+        )
+        self.assertEqual(
+            url('current', qualified=True),
+            "https://www.civicboom.com/"
         )
 
     def test_rest_routes(self):
