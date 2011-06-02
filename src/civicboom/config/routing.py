@@ -57,7 +57,7 @@ def make_map(config):
                  always_scan=config['debug'])
     map.minimization = False
     map.sub_domains = True
-    #map.sub_domains_ignore = "www"
+    #map.sub_domains_ignore = ["www", ]
 
 
     # CUSTOM ROUTES HERE
