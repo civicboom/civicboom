@@ -255,38 +255,34 @@ types that it is useful to know about.
 	can have letters, numbers, and underscores in them.
 
     <p>JSON data format:
-    <pre>
-    {
-        "status" : "ok" / "error" / "invalid",                 (required)
-        "message": "string to show in app status bar / popup", (required; can be null if status=ok)
-        "data"   : {                                           (required; blank dictionary if there is no data)
-            "foo": "bar", # function-specific data
-            "baz": "qux",
-            ...
-        }
+    <pre>{
+    "status" : "ok" / "error" / "invalid",                 (required)
+    "message": "string to show in app status bar / popup", (required; can be null if status=ok)
+    "data"   : {                                           (required; blank dictionary if there is no data)
+        "foo": "bar", # function-specific data
+        "baz": "qux",
+        ...
     }
-    </pre>
+}</pre>
     
     <p>JSON list format:
-    <pre>
-    {
-        "status" : "ok",
-        "message": null,
-        "data"   : {
-            "list": {
-                "items": [
-                    {...},
-                    {...},
-                    {...}
-                ],
-                "type"  : "content" / "member" / "message",
-                "offset":  0,
-                "limit" : 20,
-                "count" :  3
-            }
+    <pre>{
+    "status" : "ok",
+    "message": null,
+    "data"   : {
+        "list": {
+        "items": [
+            {...},
+            {...},
+            {...}
+        ],
+        "type"  : "content" / "member" / "message",
+        "offset":  0,
+        "limit" : 20,
+        "count" :  3
         }
     }
-    </pre>
+}</pre>
     
     <h4>XML</h4>
     <p>The same as JSON, just in XML.</p>
@@ -376,20 +372,18 @@ types that it is useful to know about.
 <h3 id="validation"><span>(1.0 WIP)</span>Validation</h3>
 <div>
     <p>If an invalid request is made the following structure will be returned.
-    <pre>
-    {
-        "status" : "invalid",
-        "message": "description of invalid state", 
-        "data"   : {
-            "foo": "bar",
-            "baz": "qux",
-            ...
-            "invalid": {
-                "foo": "description of validation error"
-            }
+    <pre>{
+    "status" : "invalid",
+    "message": "description of invalid state", 
+    "data"   : {
+        "foo": "bar",
+        "baz": "qux",
+        ...
+        "invalid": {
+            "foo": "description of validation error"
         }
     }
-    </pre>
+}</pre>
     <p>Invalid fields are listed in the 'invalid' dictionary with a text description of why the validation failed</p>
 </div>
 </section>
