@@ -18,7 +18,7 @@ from routes.util import URLGenerator
 
 from civicboom.model      import Message
 from civicboom.model.meta import Session
-from sqlalchemy           import or_, and_, null
+from sqlalchemy           import or_, and_, not_, null
 
 # XXX: Paste's TestApp supports app.delete() with params
 #from webtest import TestApp
@@ -340,6 +340,14 @@ class TestController(TestCase):
             return message_id_list[0]
         return message_id_list
 
+    def get_messages(self, username=None):
+        if not username:
+            username = self.logged_in_as
+        response      = self.app.get(url('messages', list='to', format='json'), status=200)
+        response_json = json.loads(response.body)
+        return response_json['data']
+
+
     def boom_content(self, content_id):
         response = self.app.post(
             url('content_action', action='boom', id=content_id, format='json'),
@@ -385,6 +393,11 @@ class TestController(TestCase):
         return Session.query(Message).filter(Message.source_id==null()).count()
     def getNotificationsFromDB(self, limit=10):
         return Session.query(Message).filter(Message.source_id==null()).order_by(Message.id.desc()).limit(limit).all()
+
+    def getNumMessagesInDB(self):
+        return Session.query(Message).filter(not_(Message.source_id==null())).filter(not_(Message.target_id==null())).count()
+    def getMessagesFromDB(self, limit=10):
+        return Session.query(Message).filter(not_(Message.source_id==null())).filter(not_(Message.target_id==null())).order_by(Message.id.desc()).limit(limit).all()
 
 
     def getNumNotifications(self, username=None, password=None):

@@ -20,6 +20,8 @@ from civicboom.lib.communication.email_lib import render_email
 import cbutils.worker as worker
 
 import re
+import os
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -141,7 +143,7 @@ generators = [
     #["syndicate_expire",                     "ne", _("_article was not syndicated"), _("Your syndication request for %(article)s was unsuccessful. Your _article is now publicly visible")],
     
     # Inter-user messages
-    ["message_received",                     "e",  _("message received from another member"), _("%(you)s have received a message from %(member)s, please login to Civicboom and check your messages")],
+    ["message_received",                     "e",  _("message received from another member"), _("%(you)s has received a message from %(member)s, '$(message)s'. Respond ")],
 ]
 
 #
@@ -156,35 +158,6 @@ for _name, _default_route, _subject, _content in generators:
     globals()[_name] = gen
 
 
-
-def setup_message_format_processors():
-    """
-    Each processor should return a string representaion of the message
-    """
-
-    def format_email(message_dict):
-        return render_email(
-            subject       = message_dict.get('subject'),
-            content_html  = message_dict.get('content'),
-            html_template = '/email/base_notification.mako',
-        )
-    
-    def format_notification(message_dict):
-        return dict(
-            subject = message_dict.get('subject') ,
-            content = message_dict.get('content') ,
-        )
-
-    def format_comufy(message_dict):
-        return
-
-    return dict(
-        e = format_email ,
-        n = format_notification ,
-        #c = format_comufy ,
-    )
-
-message_format_processors = setup_message_format_processors()
 
 
 def send_notification(members, message):
@@ -207,19 +180,14 @@ def send_notification(members, message):
     if hasattr(message, 'to_dict'):
         message = message.to_dict()
     
-    # Pre render all known output message types
-    # They cant be rendered in the thread because they don't have access to pylons features like template rendering, url() and c
-    rendered_message = {}
-    # Each dict entry may contain another dict datastructure for that message type
-    for message_format, message_format_processor in message_format_processors.iteritems():
-        rendered_message[message_format] = message_format_processor(message)
 
     # Thread the send operation
     # Each member object is retreved and there message preferences observed (by the message thread) for each type of message
     worker.add_job({
         'task'            : 'send_notification' ,
         'members'         : members ,
-        'rendered_message': rendered_message ,
-        'default_route'   : message.get('default_route') ,
-        'name'            : message.get('name') ,
+        'message'         : message ,
+        #'rendered_message': rendered_message ,
+        #'default_route'   : message.get('default_route') ,
+        #'name'            : message.get('name') ,
     })
