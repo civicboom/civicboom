@@ -829,13 +829,11 @@ class ContentsController(BaseController):
         """
         # url('edit_content', id=ID)
         
-        c.content = get_content(id, is_editable=True)
-        
-        #c.content                  = form_to_content(kwargs, c.content)
+        content = get_content(id, is_editable=True)
         
         return action_ok(
             data={
-                'content': c.content.to_dict(list_type='full'),
-                'actions': c.content.action_list_for(c.logged_in_persona, role=c.logged_in_persona_role),
+                'content': content.to_dict(list_type='full'),
+                'actions': content.action_list_for(c.logged_in_persona, role=c.logged_in_persona_role),
             }
         ) # Automatically finds edit template
