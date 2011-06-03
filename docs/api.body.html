@@ -1,4 +1,5 @@
 </ul>
+</article>
 
 <article>
 <h2><a name="notes">Notes about this document:</a></h2>
@@ -204,15 +205,22 @@ Member can be part of a Group (i.e., Groups can be nested)
 </tr></table>
 </div>
 
-<div style="background: #ddf">
-<h4>Message</h4>
-A short bit of text; either from one Member to another (for private messaging),
-or from nobody (for system notifications)
-</div>
-
-<div style="background: #fdf">
-<h4>Media</h4>
-An attachment to some Content
+<div style="background: #fff">
+<h4>Other Bits</h4>
+Content and Members are the core focus of Civicboom, but there are some other data
+types that it is useful to know about.
+<table><tr><td style="width: 50%">
+	<div style="background: #ddf">
+	<h4>Message</h4>
+	A short bit of text; either from one Member to another (for private messaging),
+	or from nobody (for system notifications)
+	</div>
+</td><td style="width: 50%">
+	<div style="background: #ffd">
+	<h4>Media</h4>
+	An attachment to some Content
+	</div>
+</td></tr></table>
 </div>
 
 </div>
@@ -286,7 +294,7 @@ An attachment to some Content
     <h4>RSS</h4>
     <p>Objects and Lists can be returned as RSS feeds
     <p>Some of the fields are not relevant for an RSS output.
-       The list is fields returned in the RSS often a subset of the JSON/XML output.
+       The list of fields returned in the RSS is often a subset of the JSON/XML output.
     <p><!--It is part of the RSS standard that clients can sort items by date.
        Some objects may return lists of items that are not in date order.-->
 	   Note that entries are not necessarily in order, i.e. a member object will
