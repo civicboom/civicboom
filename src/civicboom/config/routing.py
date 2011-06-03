@@ -13,51 +13,74 @@ def cb_resource(mapper, single, plural, **kwargs):
     #    return mapper.resource(single, plural, **kwargs)
 
     # lists
-    # GET /foo.json
-    mapper.connect('formatted_'+plural, '/'+plural+'.{format}',                controller=plural, action='index',  conditions=dict(method=['GET']))
-    mapper.connect(plural, '/'+plural,                                         controller=plural, action='index',  conditions=dict(method=['GET']))
-
-    # POST /foo.json
-    mapper.connect('formatted_'+plural, '/'+plural+'.{format}',                controller=plural, action='create', conditions=dict(method=['POST']))
-    mapper.connect('/'+plural,                                                 controller=plural, action='create', conditions=dict(method=['POST']))
+    # GET/POST /foo.json
+    mapper.connect(plural, '/'+plural+'{.format}',                             controller=plural, action='index',  conditions=dict(method=['GET']))
+    mapper.connect(None,   '/'+plural+'{.format}',                             controller=plural, action='create', conditions=dict(method=['POST']))
 
     # list actions (needs to come before items, as /foo/new needs to be before /foo/{id})
-    # /foo/new.json
-    mapper.connect('formatted_new_'+single, '/'+plural+'/new.{format}',        controller=plural, action='new',    conditions=dict(method=['GET']))
-    mapper.connect('new_'+single, '/'+plural+'/new',                           controller=plural, action='new',    conditions=dict(method=['GET']))
+    # GET /foo/new.json
+    mapper.connect('new_'+single, '/'+plural+'/new{.format}',                  controller=plural, action='new',    conditions=dict(method=['GET']))
 
     # items
     # GET/PUT/DELETE for /foo/42.json, /foo/42
-    mapper.connect('formatted_'+single, '/'+plural+'/{id}.{format}',           controller=plural, action='show',   conditions=dict(method=['GET']))
-    mapper.connect(single, '/'+plural+'/{id}',                                 controller=plural, action='show',   conditions=dict(method=['GET']))
+    mapper.connect(single, '/'+plural+'/{id}{.format}',                        controller=plural, action='show',   conditions=dict(method=['GET']))
+    mapper.connect(None,   '/'+plural+'/{id}{.format}',                        controller=plural, action='update', conditions=dict(method=['PUT']))
+    mapper.connect(None,   '/'+plural+'/{id}{.format}',                        controller=plural, action='delete', conditions=dict(method=['DELETE']))
 
-    mapper.connect('/'+plural+'/{id}.{format}',                                controller=plural, action='update', conditions=dict(method=['PUT']))
-    mapper.connect('/'+plural+'/{id}',                                         controller=plural, action='update', conditions=dict(method=['PUT']))
+    # item actions (edit is special, it lives in the main controller rather than _actions)
+    mapper.connect('edit_'+single,   '/'+plural+'/{id}/edit{.format}',         controller=plural, action='edit',   conditions=dict(method=['GET']))
+    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}{.format}',     controller=single+'_actions',       conditions=dict(method=['GET', 'POST', 'PUT', 'DELETE']))
 
-    mapper.connect('/'+plural+'/{id}.{format}',                                controller=plural, action='delete', conditions=dict(method=['DELETE']))
-    mapper.connect('/'+plural+'/{id}',                                         controller=plural, action='delete', conditions=dict(method=['DELETE']))
 
-    # item actions
-    # /foo/{id}/edit
-    # - part of the main controller by tradition, but do we want it there?
-    # - if we put edit into foo_actions, then lots of controllers that currently only have edit as their
-    #   one action would need to be split into two files
-    mapper.connect('formatted_edit_'+single, '/'+plural+'/{id}/edit.{format}', controller=plural, action='edit',   conditions=dict(method=['GET']))
-    mapper.connect('edit_'+single, '/'+plural+'/{id}/edit',                    controller=plural, action='edit',   conditions=dict(method=['GET']))
-
-    # /foo/42/activate
-    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions', format='redirect', conditions=dict(method=['POST', 'PUT', 'DELETE']))
-    mapper.connect(single+'_action', '/'+plural+'/{id}/{action}.{format}',     controller=single+'_actions', format='html'    , conditions=dict(method=['GET']))
-    mapper.connect('/'+plural+'/{id}/{action}',                                controller=single+'_actions', format='html')
+import re
+def _subdomain_check(kargs, mapper, environ):
+    """Screen the kargs for a subdomain and alter it appropriately depending
+    on the current subdomain or lack therof.
+    
+    Monkeypatch by Shish - if we have a subdomain currently, and it isn't
+    in the ignore list, and we aren't explicitly removing it, don't remove it
+    """
+    if mapper.sub_domains:
+        subdomain_specified = 'sub_domain' in kargs
+        subdomain = kargs.pop('sub_domain', None)
+        if isinstance(subdomain, unicode):
+            subdomain = str(subdomain)
+        
+        fullhost = environ.get('HTTP_HOST') or environ.get('SERVER_NAME')
+        
+        # In case environ defaulted to {}
+        if not fullhost:
+            return kargs
+        
+        hostmatch = fullhost.split(':')
+        host = hostmatch[0]
+        port = ''
+        if len(hostmatch) > 1:
+            port += ':' + hostmatch[1]
+        sub_match = re.compile('^.+?\.(%s)$' % mapper.domain_match)
+        domain = re.sub(sub_match, r'\1', host)
+        if subdomain and not host.startswith(subdomain) and \
+            subdomain not in mapper.sub_domains_ignore:
+            kargs['_host'] = subdomain + '.' + domain + port
+        elif (subdomain in mapper.sub_domains_ignore or \
+            (subdomain_specified and subdomain is None)) and domain != host:
+            kargs['_host'] = domain + port
+        return kargs
+    else:
+        return kargs
 
 
 def make_map(config):
     """Create, configure and return the routes Mapper"""
+
+    import routes.util
+    routes.util._subdomain_check = _subdomain_check
+
     map = Mapper(directory=config['pylons.paths']['controllers'],
                  always_scan=config['debug'])
     map.minimization = False
     map.sub_domains = True
-    #map.sub_domains_ignore = "www"
+    #map.sub_domains_ignore = ["www", ]
 
 
     # CUSTOM ROUTES HERE

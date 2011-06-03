@@ -22,12 +22,12 @@
 >
     <channel>
         <title        >${self.title()}</title>
-        <link         >${h.url('current', sub_domain='www')}</link>
+        <link         >${h.url('current', qualified=True)}</link>
         <description  >${self.description()}</description>
         <pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
         <lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
         <generator    >${h.url(controller='misc', action='titlepage', sub_domain='www', qualified=True)}</generator>
-        <image url  ="/images/rss_large.png" link ="${h.url('current', sub_domain='www', qualified=True)}" title="${_('_site_name')}" />
+        <image url="/images/rss_large.png" link="${h.url(controller='misc', action='titlepage', sub_domain='www', qualified=True)}" title="${_('_site_name')}" />
         
         ${next.body()}
         
@@ -42,7 +42,7 @@
 <%def name="rss_content_item(content)">
     <item>
         <title>${content['title']}</title>
-        <link>${h.url('content', id=content['id'], sub_domain='www')}</link> 
+        <link>${h.url('content', id=content['id'], qualified=True)}</link> 
         <description>${content.get('content', content.get('content_short'))}</description> 
         <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate>
         <guid isPermaLink="false">Content #${content['id']}</guid>
@@ -55,7 +55,7 @@
         % endif
         <dc:creator>${content.get('creator',dict()).get('name')} (${content.get('creator',dict()).get('username')})</dc:creator>
         ## Comments - http://wellformedweb.org/news/wfw_namespace_elements/
-        <wfw:commentRss>${h.url('content_action', action='comments', id=content['id'], format='rss', sub_domain='www')}</wfw:commentRss>
+        <wfw:commentRss>${h.url('content_action', action='comments', id=content['id'], format='rss', qualified=True)}</wfw:commentRss>
         ##<!-- <creativeCommons:license>license url here</creativeCommons:license> -->
         % if 'thumbnail_url' in content:
         <media:thumbnail url="${content['thumbnail_url']}" />
@@ -125,7 +125,7 @@
 <%def name="rss_member_item(member)">
     <item> 
         <title>${member['name']}</title> 
-        <link>${h.url('member', id=member['username'], sub_domain='www')}</link>
+        <link>${h.url('member', id=member['username'], qualified=True)}</link>
         <category>${member['type']}</category>
         <guid isPermaLink="false">Member #${member['id']}</guid>
         % if 'description' in member:

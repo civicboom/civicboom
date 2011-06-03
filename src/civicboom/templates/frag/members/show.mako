@@ -51,7 +51,7 @@
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', sub_domain='www') ,
             })
-            self.attr.rss_url = h.url('formatted_member', id=self.id, format='rss', sub_domain='www')
+            self.attr.rss_url = h.url('member', id=self.id, format='rss', sub_domain='www')
         
         self.attr.frag_data_css_class = 'frag_member'
         
@@ -428,7 +428,7 @@
             description = d['member'].get('description') or '' ,
         )}
         
-        ##<a href='${url('formatted_member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon16 i_rss"  ><span>RSS</span></a>
+        ##<a href='${url('member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon16 i_rss"  ><span>RSS</span></a>
         <a href='${url.current(format='rss')}' title='RSS' class="icon16 i_rss"><span>RSS</span></a>
         <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon16 i_close"><span>${_('Close')}</span></a>
     </div>
