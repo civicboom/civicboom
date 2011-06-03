@@ -45,7 +45,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     filter_extra_fields = False
     ignore_key_missing  = True
     type        = formencode.validators.OneOf(content_types.enums, not_empty=False)
-    title       = formencode.validators.String(not_empty=False, strip=True, max=250, min=2)
+    title       = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=False, strip=True, max=250, min=2, html='strip_html_tags')
     content     = civicboom.lib.form_validators.base.ContentUnicodeValidator()
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=False)
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
@@ -718,6 +718,7 @@ class ContentsController(BaseController):
 
         if not content_redirect:
             if   submit_type == 'publish' and permissions['can_publish']:
+                # Added prompt aggregate to new content url
                 content_redirect = url('content', id=content.id, prompt_aggregate=True)
             elif submit_type == 'preview':
                 content_redirect = url('content', id=content.id)

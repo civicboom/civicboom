@@ -234,7 +234,8 @@ class GroupsController(BaseController):
         
         c.logged_in_persona = logged_in_persona
         c.logged_in_persona_role = logged_in_persona_role
-        set_persona(group) # Will redirect if in html or redirect mode
+        # GregM: prompt_aggregate for new group :)
+        set_persona(group, prompt_aggregate=True) # Will redirect if in html or redirect mode
         
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         

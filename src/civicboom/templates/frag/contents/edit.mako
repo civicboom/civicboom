@@ -626,7 +626,7 @@
 <%def name="submit_buttons()">
 
     ## AllanC - note the class selectors are used by jQuery to simulate clicks
-    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False)">
+    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False)">
         <%
             button_id = "submit_%s_%s" % (name, self.id)
             if not title_text:
@@ -644,7 +644,7 @@
                     $(this).addClass('disabled');
                     add_onclick_submit_field($(this));
                     % if show_content_frag_on_submit_complete:
-                    submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                    submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag', prompt_aggregate=prompt_aggregate)}';
                     % endif
                     setTimeout('$(\'#${button_id}\').removeClass(\'disabled\');', 1000);
                 }
@@ -660,7 +660,7 @@
             ${submit_button('draft'  , _("Save")                                               )}
             ${submit_button('preview', _("Preview"), show_content_frag_on_submit_complete=True )}
             % if 'publish' in self.actions:
-            ${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True )}
+            ${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True, prompt_aggregate=True )}
             % endif
         % else:
             % if 'update' in self.actions:
