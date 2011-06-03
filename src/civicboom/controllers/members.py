@@ -224,7 +224,7 @@ class MembersController(BaseController):
     @web
     def show(self, id, **kwargs):
         """
-        GET /members/{id}: Show a specific item
+        GET /members/{name}: Show a specific item
         
         @api members 1.0 (WIP)
         
