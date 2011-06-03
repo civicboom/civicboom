@@ -129,7 +129,7 @@
         
         <span class="separtor"></span>
         
-        % if 'publish' in self.actions:
+        % if 'delete' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
             method="DELETE" ,
@@ -229,7 +229,7 @@
                     },
                     error: function (jqXHR, status, error) {
                         ed.setProgressState(0);
-                        flash_message('${_('Error automatically saving your content')}');
+                        flash_message({status:'error', message:'${_('Error automatically saving your content')}'});
                     },
                 });
             }
@@ -362,7 +362,7 @@
 							'scriptData' : {
 								'content_id': ${self.id},
 								'member_id' : ${c.logged_in_persona.id},
-								'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % c.content.id)}'
+								'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % self.id)}'
 							},
 							'cancelImg'  : '/images/cancel.png',
 							'folder'     : '/uploads',
@@ -414,7 +414,7 @@
 				refreshProgress($('form#edit_$(self.id}'));
 			}
 		}
-		swfobject.embedSWF("https://bm1.civicboom.com:9443/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % c.content.id)}"});
+		swfobject.embedSWF("https://bm1.civicboom.com:9443/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"});
 	</script>
 	<div class="media_recorder" style="left:0px;width:360px;height:371px;" id="media_recorder_${self.id}">
 		<div id="cbFlashMedia${self.id}">${_('If you see this text your browser is incompatible with our media recorder, please upload a video or audio file below')}</div>

@@ -607,8 +607,9 @@
            onclick="cb_frag_load($(this), '${h.url('edit_content', id=self.id, format='frag')}'); return false;"
         ><span class="icon16 i_edit"></span>${_("Edit")}</a>
         <span class="separtor"></span>
-        
-        % if 'publish' in self.actions:
+    % endif
+
+    % if 'delete' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
             method = "DELETE",
@@ -618,8 +619,8 @@
             json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
         )}
         <span class="separtor"></span>
-        % endif
     % endif
+
 
     % if 'aggregate' in self.actions:
         ##${share.janrain_social(self.content, 'janrain', class_='icon16 i_share')}

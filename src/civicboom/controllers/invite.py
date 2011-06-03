@@ -81,7 +81,7 @@ class InviteController(BaseController):
         """
         GET /index: Get an invite fragment
 
-        @api invite 1.0 (WIP)
+        @a-pi invite 1.0 (WIP)
 
         @return 200      page ok
         @return 500      invalid parameters

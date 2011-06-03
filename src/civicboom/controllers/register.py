@@ -145,7 +145,7 @@ class RegisterController(BaseController):
         """
         POST /register/email: Register a new user via email
         @type action
-        @api contents 1.0 (WIP)
+        @api register 1.0 (WIP)
         
         @param username
         @param email
