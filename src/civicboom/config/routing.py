@@ -88,9 +88,8 @@ def make_map(config):
     map.connect('/robots.txt', controller='misc', action='robots')
     map.connect('/about/{id}' , controller='misc', action="about")
     map.connect('/help/{id}'  , controller='misc', action="help", format="frag")
-    map.connect('/settings/{id}/{panel}.{format}', controller='settings', action='panel')
-    map.connect('/settings/{id}/{panel}', controller='settings', action='panel')
-    
+    map.connect('/settings/{id}/{panel}{.format}', controller='settings', action='panel', format="html")
+
     cb_resource(map, 'content', 'contents')
     cb_resource(map, 'message', 'messages')
     cb_resource(map, 'member',  'members' )
@@ -112,12 +111,8 @@ def make_map(config):
     #map.redirect('/{controller}/'         , '/{controller}'         )
     #map.redirect('/{controller}/{action}/', '/{controller}/{action}')
 
-    # the first route that matches url() args is the one that's generated,
-    # so put routes without slashes first
-    map.connect('/{controller}/{action}/{id}.{format}')  # CAFI
-    map.connect('/{controller}/{action}/{id}')           # CAI
-    map.connect('/{controller}/{action}.{format}')       # CAF
-    map.connect('/{controller}/{action}')                # CA
-    map.connect('/{controller}' , action="index")        # C
+    map.connect('/{controller}/{action}/{id}{.format}')
+    map.connect('/{controller}/{action}{.format}')
+    map.connect('/{controller}{.format}', action="index")
 
     return map
