@@ -216,9 +216,9 @@ def copy_user_settings(settings_meta, user, user_type):
 
 class SettingsController(BaseController):
     """
-    @title Settings
-    @doc settings
-    @desc REST controller for Settings
+    @t-itle Settings
+    @d-oc settings
+    @d-esc REST controller for Settings
     """
 
     #http://wiki.pylonshq.com/display/pylonscookbook/How+map.resource+enables+controllers+as+services    
