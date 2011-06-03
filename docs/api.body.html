@@ -1,17 +1,24 @@
+</ul>
+</article>
+
 <article>
-<h2>Notes about this document:</h2>
+<h2><a name="notes">Notes about this document:</a></h2>
 
 <section>
-<h3>Terminology</h3>
+<h3>Implementation Indicators</h3>
 <div>
-    <h4>Implementation Indicators</h4>
     <ul>
-    <li>"WIP" = "Work in Progress; first attempt to get something that works at all"
-    <li>"Draft" = "It seems to work, waiting for the whole team + consultants to say Yay"
+    <li>"WIP" = "Work in Progress; first attempt to get something that works at all, change is likely, removal is possible"
+    <li>"Draft" = "It seems to work, waiting for the whole team + consultants to say Yay, change is possible"
     <li>"Untested" = "automated tests are incomplete"
     <li>Just a number = "Ready to be used -- team + consultants like the design and it is tested"
     </ul>
-    <h4>Terminology Note</h4>
+</div>
+</section>
+
+<section>
+<h3>Terminology Note</h3>
+<div>
     <p>The API is abstracted from the presentation of the Civicboom website.
        There may be some discrepancies e.g. 'groups' in the API are referred to as 'Hubs' on the website.
        The API terminology is fixed. The website front-end terminology is subject to change.</p>
@@ -19,12 +26,9 @@
 </section>
 
 <section>
-<h3>Development Server</h3>
+<h3>Contacts</h3>
 <div>
-    <p>Developers are encouraged to test the use of the API on a dedicated test server.
-    <p><a href="https://test.civicboom.com">https://test.civicboom.com</a>
-    <p>The data on the test server will be periodically reset.
-    <p>The test server is not a guaranteed service and may have periods of unavailability.
+	For technical questions and comments, email <a href="mailto:developers@civicboom.com">developers@civicboom.com</a>
 </div>
 </section>
 
@@ -32,7 +36,26 @@
 
 
 <article>
-<h2>Things common to all requests:</h2>
+<h2><a name="common">Things common to all requests:</a></h2>
+
+<section>
+<h3>Servers</h3>
+<div>
+    <p><a href="http://api-v1.civicboom.com/">http://api-v1.civicboom.com/</a> - Clients
+	should use this rather than www.civicboom.com - www
+	will always be running the latest code and may sometimes break compatability in major
+	ways. If a major break is necessary, we will try and keep older versions of the API
+	available on the API domains long enough for people to transition to the new one.
+	<p>The API servers allow HTTP as well as HTTPS; it is presumed that anyone writing an
+	API client will know the costs and benefits of an unencrypted connection and can make
+	and informed decision for themselves.
+
+    <p><a href="https://test.civicboom.com">https://test.civicboom.com</a> - 
+    Developers are encouraged to test the use of the API on the dedicated test server.
+    The data on the test server will be periodically reset.
+    <p>The test server is not a guaranteed service and may have periods of unavailability.
+</div>
+</section>
 
 <section>
 <h3><span>(1.0 WIP)</span>Transport</h3>
@@ -46,11 +69,6 @@
         These should be stored and retrieved as normal cookies.
     <li>PUT and DELETE can be emulated with POST, having the form variable "_method" set
         to PUT or DELETE respectively
-    <li>API users should use the subdomain http://api-v1.civicboom.com/
-        <ul>
-            <li>If http://www.civicboom.com/ is used the client will be redirected to https://www.civicboom.com
-            <li>In the future the API may evolve to api-v2. This could break compatability if a clients use uses www.civicboom.com. We will attempt to ensure compatability for depricated versions of the API via the subdomain
-        <ul>
     <li>HTTP status codes are used:
         <ul>
           <li>200 - generic success
@@ -68,23 +86,143 @@
 
 
 <section>
-<h3><span>(1.0 WIP)</span>Object types overview</h3>
-<div>
-    <p>The Civicboom API has 3 core object types. An overview is provided here but
-       the details of these types are given in detail with the call definitions.
-    
-    TODO:-auto list fields in model? default/full-
-    
-    <h4>Content</h4>
-    
-    article
-    assignment
-    
-    <h4>Member</h4>
-    user
-    group
-    
-    <h4>Message</h4>
+<h3><span>(1.0 WIP)</span><a name="objects">Object types overview</a></h3>
+<style>
+#model TABLE {
+	width: 100%;
+}
+#model DIV {
+	border: 2px solid #abbccd;
+	margin: 16px;
+	padding: 0px 16px 16px 16px;
+
+	-moz-box-shadow: 6px 6px 4px #888;
+	-webkit-box-shadow: 6px 6px 4px #888;
+	box-shadow: 6px 6px 4px #888;
+
+	-moz-border-radius: 32px;
+	border-radius: 32px;
+}
+#model>DIV {
+	margin: auto;
+	margin-bottom: 16px;
+	max-width: 1000px;
+}
+#model TD {
+	vertical-align: top;
+}
+#model H4 {
+	background: none;
+	border: none;
+	text-align: center;
+	margin-top: 8px;
+}
+</style>
+<div id="model">
+
+<div style="background: #fdd">
+<h4>Content</h4>
+Content is the main point of Civicboom - each bit of Content can have a title,
+text, attachments, location, a creator, the date it was created, if it is a
+reply to something else, a redistribution license, etc etc.
+<table><tr>
+	<td style="width: 50%;">
+		<div style="background: #dbb">
+		<h4>Draft</h4>
+		Content that is being worked on privately. Notably, it has a target_type
+		field which determines what type of Content it will become after the
+		user hits "Publish"
+		</div>
+	</td>
+	<td style="width: 50%;">
+		<div style="background: #dbb">
+		<h4>Comment</h4>
+		A short comment attached to another bit of Content, normally used to
+		request more details or clarify points in a request
+		</div>
+	</td>
+</tr><tr>
+	<td colspan="2">
+		<div style="background: #dbb">
+		<h4>Visible Content</h4>
+		A bit of content designed to be viewed as a stand-alone unit. Will keep
+		track of the number of times it gets viewed and boomed.
+		<table><tr>
+			<td style="width: 50%;">
+				<div style="background: #b99">
+				<h4>Article</h4>
+				A stand-alone article; possibly in response to an Assignment
+				(if parent_id is set). Can have a rating (e.g. 1-5 stars).
+				If it is in response to an Assignment, the assigner can
+				approve or reject it.
+				</div>
+			</td>
+			<td style="width: 50%;">
+				<div style="background: #b99">
+				<h4>Assignment</h4>
+				A question to be responded to; can have an event date (e.g.
+				the date of a festival to report on) and a due date (e.g. a
+				couple of days later, so the responders have time to write
+				and organise media)
+				</div>
+			</td>
+			<!--
+			<td style="width: 33%;">
+				<div style="background: #b99">
+				<h4>Syndicated (Not implemented)</h4>
+				An article that a user has written and wants a newspaper to
+				pay for
+				</div>
+			</td>
+			-->
+		</tr></table>
+		</div>
+	</td>
+</tr></table>
+</div>
+
+<div style="background: #dfd">
+<h4>Member</h4>
+Most actions in Civicboom can be applied to Users and Groups equally; e.g.
+any Member can contribute to Content, any Member can be sent a Message, any
+Member can be part of a Group (i.e., Groups can be nested)
+<table><tr>
+	<td style="width: 50%;">
+		<div style="background: #bdb">
+		<h4>User</h4>
+		A User represents an individual person, somebody who signs in to the
+		site. Even when somebody wants an account for their organisation,
+		they still sign in as themselves before switching to control the
+		Group persona.
+	</td>
+	<td style="width: 50%;">
+		<div style="background: #bdb">
+		<h4>Group</h4>
+		A Group is a collection of Members (either Users or other Groups). A
+		Group essentially acts and does things the same way that a User does,
+		but it can be controlled by multiple people at once.
+	</td>
+</tr></table>
+</div>
+
+<div style="background: #fff">
+<h4>Other Bits</h4>
+Content and Members are the core focus of Civicboom, but there are some other data
+types that it is useful to know about.
+<table><tr><td style="width: 50%">
+	<div style="background: #ddf">
+	<h4>Message</h4>
+	A short bit of text; either from one Member to another (for private messaging),
+	or from nobody (for system notifications)
+	</div>
+</td><td style="width: 50%">
+	<div style="background: #ffd">
+	<h4>Media</h4>
+	An attachment to some Content
+	</div>
+</td></tr></table>
+</div>
+
 </div>
 </section>
 
@@ -102,11 +240,13 @@
     <ul>
         <li>JSON
         <li>XML
-        <li>Frag
         <li>RSS
         <li>Redirect
+		<!--
+        <li>Frag
         <li>iCal
         <li>PDF
+		-->
     </ul>
     
     <h4>JSON</h4>
@@ -115,56 +255,47 @@
 	can have letters, numbers, and underscores in them.
 
     <p>JSON data format:
-    <pre>
-    {
-        "status" : "ok" / "error" / "invalid",                 (required)
-        "message": "string to show in app status bar / popup", (required; can be null if status=ok)
-        "data"   : {                                           (required; blank dictionary if there is no data)
-            "foo": "bar", # function-specific data
-            "baz": "qux",
-            ...
-        }
+    <pre>{
+    "status" : "ok" / "error" / "invalid",                 (required)
+    "message": "string to show in app status bar / popup", (required; can be null if status=ok)
+    "data"   : {                                           (required; blank dictionary if there is no data)
+        "foo": "bar", # function-specific data
+        "baz": "qux",
+        ...
     }
-    </pre>
+}</pre>
     
     <p>JSON list format:
-    <pre>
-    {
-        "status" : "ok",
-        "message": null,
-        "data"   : {
-            "list": {
-                "items": [
-                    {...},
-                    {...},
-                    {...}
-                ],
-                "type"  : "content" / "member" / "message",
-                "limit" : 20,
-                "offset":  0,
-                "count" :  3
-            }
+    <pre>{
+    "status" : "ok",
+    "message": null,
+    "data"   : {
+        "list": {
+        "items": [
+            {...},
+            {...},
+            {...}
+        ],
+        "type"  : "content" / "member" / "message",
+        "offset":  0,
+        "limit" : 20,
+        "count" :  3
         }
     }
-    </pre>
+}</pre>
     
     <h4>XML</h4>
     <p>The same as JSON, just in XML.</p>
     
-    <h4>Frag</h4>
-    <p>Fragments are chunks of HTML data with marked up with class's for use with
-       injecting content directly into existing web pages. The developer can then
-       style this injected HTML simply with standard CSS rules
-    <p>WIP NOTE: Currently .frag returns HTML specific to the Civicboom site and is
-       not generic enough for mainstream use. Work is currently underway to make the
-       .frag a generic tool for developers. (tentatively May 2011)
-    
     <h4>RSS</h4>
     <p>Objects and Lists can be returned as RSS feeds
     <p>Some of the fields are not relevant for an RSS output.
-       The list is fields returned in the RSS often a subset of the JSON/XML output.
-    <p>It is part of the RSS standard that clients can sort items by date.
-       Some objects may return lists of items that are not in date order.
+       The list of fields returned in the RSS is often a subset of the JSON/XML output.
+    <p><!--It is part of the RSS standard that clients can sort items by date.
+       Some objects may return lists of items that are not in date order.-->
+	   Note that entries are not necessarily in order, i.e. a member object will
+	   be built of several smaller lists (e.g. top 3 requests + top 3 articles +
+	   top 3 boomed).
     <p>Hint: Common use of RSS 'content' lists:
        By default media attachments are not included in the RSS return
        but can be enabled by including the parameter 'include_fields=attachments'</p>
@@ -177,11 +308,21 @@
     <p>(NOTE: When undertaking the signup process it may not be possible to return to external sites via http_referer,
        this will be investigated)
        
+	<!--
+    <h4>Frag</h4>
+    <p>Fragments are chunks of HTML data with marked up with classes for use with
+       injecting content directly into existing web pages. The developer can then
+       style this injected HTML simply with standard CSS rules
+    <p>WIP NOTE: Currently .frag returns HTML specific to the Civicboom site and is
+       not generic enough for mainstream use. Work is currently underway to make the
+       .frag a generic tool for developers. (tentatively May 2011)
+    
     <h4>iCal</h4>
     <p>Pending implementation</p>
     
     <h4>PDF</h4>
     <p>Pending implementation</p>
+	-->
 </div>
 </section>
 
@@ -231,22 +372,19 @@
 <h3 id="validation"><span>(1.0 WIP)</span>Validation</h3>
 <div>
     <p>If an invalid request is made the following structure will be returned.
-    <pre>
-    {
-        "status" : "invalid",
-        "message": "description of invalid state", 
-        "data"   : {
-            "foo": "bar",
-            "baz": "qux",
-            ...
-            "invalid": {
-                "foo": "description of validation error"
-            }
+    <pre>{
+    "status" : "invalid",
+    "message": "description of invalid state", 
+    "data"   : {
+        "foo": "bar",
+        "baz": "qux",
+        ...
+        "invalid": {
+            "foo": "description of validation error"
         }
     }
-    </pre>
+}</pre>
     <p>Invalid fields are listed in the 'invalid' dictionary with a text description of why the validation failed</p>
-
 </div>
 </section>
 
@@ -263,7 +401,7 @@
 </div>
 </section>
 
-
+<!--
 <section>
 <h3><span>(1.0 WIP)</span>Global Settings</h3>
 <div>
@@ -278,6 +416,6 @@
     </ol>
 </div>
 </section>
-
+-->
 
 </article>

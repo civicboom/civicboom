@@ -22,13 +22,9 @@ def configure(c):
 # Render Email
 #-------------------------------------------------------------------------------
 
-def render_email(subject='', content_text=None, content_html=None, html_template='/email/base_email_from_plaintext.mako', **kwargs):
+def render_email(subject='', content_text=None, content_html=None, html_template='/email/base_email_content.mako', **kwargs):
 
-    # TODO!!! AllanC - This needs to be made thead safe and not use pylons libs
-
-    #from pylons             import tmpl_context as c
-    from pylons.templating  import render_mako
-    from pylons.i18n.translation import _
+    # TODO!!! AllanC - This needs to be made thead safe and not use pylons libs    
     
     # Check paramiters for validity and throw exception if needed
     if content_text==None and content_html==None:
@@ -44,15 +40,17 @@ def render_email(subject='', content_text=None, content_html=None, html_template
         content_text      = convert_html_to_plain_text(content_html)
     
     # If not already wrapped in HTML header
-    if not re.search(r'<body.*</body>',content_html, re.DOTALL + re.IGNORECASE): #If content HTML is not a complete document with a head and body - put it in the standard email template
-        #c.email_content = content_html
+    # If content HTML is not a complete document with a head and body - put it in the standard email template
+    if not re.search(r'<body.*</body>',content_html, re.DOTALL + re.IGNORECASE):
+        from pylons.templating  import render_mako
         content_html = render_mako(html_template, extra_vars={"kwargs": kwargs, "content_html": content_html} )
     
     # Subject - append site name to subject
-    if subject==None or subject=='':
-        subject = _("_site_name")
-    else:
-        subject = _("_site_name")+': '+subject
+    #from pylons.i18n.translation import _
+    #if not subject:
+    #    subject = _("_site_name")
+    #else:
+    #    subject = _("_site_name")+': '+subject
     
     return dict(
         subject=subject,

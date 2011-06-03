@@ -86,8 +86,8 @@ def url(*args, **kwargs):
     #   https://bitbucket.org/bbangert/routes/issue/50
     # - also workaround for some weirdness - url('members') turns into a fully qualified
     #   URL with no subdomain without this o_O
-    if 'sub_domain' not in kwargs:
-        kwargs['sub_domain'] = _url.environ.get("HTTP_HOST", "").split(".")[0]
+    #if 'sub_domain' not in kwargs:
+    #    kwargs['sub_domain'] = _url.environ.get("HTTP_HOST", "").split(".")[0]
 
     # Encode current widget state into URL if in widget mode
     if kwargs.get('sub_domain')=='widget' or (get_subdomain_format(_url.environ)=='widget' and 'sub_domain' not in kwargs): # If widget and not linking to new subdomain
@@ -532,7 +532,7 @@ def auto_format_output(target, *args, **kwargs):
         current_request = request.environ.get("pylons.routes_dict")
         # config breaks in production?
         #c.format     = current_request.get("format", request.params.get('format', config['default_format'] ) )
-        c.format        = request.params.get("format", current_request.get("format", "html" ) )
+        c.format        = request.params.get("format") or current_request.get("format") or "html"
         auto_format_output_flag = True
 
     try:

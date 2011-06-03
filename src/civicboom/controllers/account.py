@@ -150,7 +150,7 @@ class AccountController(BaseController):
     #---------------------------------------------------------------------------
     @web
     @auth
-    def set_persona(self, id, **kwargs):
+    def set_persona(self, id, prompt_aggregate=None, **kwargs):
         """
         POST /account/set_persona/{id}: change the currently active persona
 
@@ -163,8 +163,12 @@ class AccountController(BaseController):
             user_log.info("Switched to persona %s" % id)
             # AllanC - not a sutable solution - I wanted an AJAX working version
             #          I have put a hack in here to force html requests to be redirected
+            # GregM: addded prompt aggregate (internal use only) to the redirect
             if c.format=='html':
-                return redirect(url(controller='profile', action='index'))
+                if prompt_aggregate:
+                    return redirect(url(controller='profile', action='index', prompt_aggregate=prompt_aggregate))
+                else:
+                    return redirect(url(controller='profile', action='index'))
             return action_ok("switched persona")
         else:
             user_log.info("Failed to switch to persona %s" % id)

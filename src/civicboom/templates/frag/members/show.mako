@@ -8,6 +8,7 @@
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
+<%namespace name="share"           file="/frag/common/share.mako"          />
 
 ##------------------------------------------------------------------------------
 ## Variables
@@ -35,23 +36,24 @@
         }
         
         if self.current_user:
+        # GregM: Removed popups as we have the janrain share popup now :D
             if self.member['type'] == 'group':
                 self.attr.title     = _('Current _Group Persona')
                 self.attr.icon_type = 'group'
                 self.attr.help_frag = 'group_persona'
-                if c.logged_in_user and not c.logged_in_user.config['help_popup_created_group']:
-                    self.attr.popup_url = url(controller='misc', action='help', id='created_group', format='frag')
+            #    if c.logged_in_user and not c.logged_in_user.config['help_popup_created_group']:
+            #        self.attr.popup_url = url(controller='misc', action='help', id='created_group', format='frag')
             else:
                 self.attr.title     = _('Current User')
                 self.attr.icon_type = 'current_user'
                 self.attr.help_frag = 'profile'
-                if c.logged_in_user and not c.logged_in_user.config['help_popup_created_user']:
-                    self.attr.popup_url = url(controller='misc', action='help', id='created_user', format='frag')
+            #    if c.logged_in_user and not c.logged_in_user.config['help_popup_created_user']:
+            #        self.attr.popup_url = url(controller='misc', action='help', id='created_user', format='frag')
             
             self.attr.share_kwargs.update({
                 'url'  : h.url('member', id=self.id, protocol='http', sub_domain='www') ,
             })
-            self.attr.rss_url = h.url('formatted_member', id=self.id, format='rss', sub_domain='www')
+            self.attr.rss_url = h.url('member', id=self.id, format='rss', sub_domain='www')
         
         self.attr.frag_data_css_class = 'frag_member'
         
@@ -67,7 +69,11 @@
 ## Member Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-    
+	% if (c.logged_in_persona.username or c.logged_in_user.username) == self.member['username'] and request.params.get('prompt_aggregate')=='True':
+	<script>
+		${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }
+	</script>
+	% endif
     <div class="frag_left_col">
         <div class="frag_col vcard">
         ## Member Details
@@ -428,7 +434,7 @@
             description = d['member'].get('description') or '' ,
         )}
         
-        ##<a href='${url('formatted_member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon16 i_rss"  ><span>RSS</span></a>
+        ##<a href='${url('member', id=d['member']['username'], format='rss')}' title='RSS for ${d['member']['username']}' class="icon16 i_rss"  ><span>RSS</span></a>
         <a href='${url.current(format='rss')}' title='RSS' class="icon16 i_rss"><span>RSS</span></a>
         <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon16 i_close"><span>${_('Close')}</span></a>
     </div>
