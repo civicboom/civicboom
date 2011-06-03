@@ -42,7 +42,11 @@ class TaskController(BaseController):
                 request.environ['REMOTE_ADDR'] == request.environ.get('SERVER_ADDR', '0.0.0.0')
             ):
             return abort(403)
-        #user_log.info("Performing task '%s'" % (action, )) #AllanC - these can be activated without a logged in user
+        # AllanC - these can be activated without a logged in user
+        # Shish  - then they get logged as "anonymous"; it's still good to
+        #          have the logging go to the central place
+        # AllanC - automated tests seems to be failing as c.logged_in_user is not set. should lib/database/userlog.py be modifyed to cope with this? advice on loggin needed. This is strange because c.logged_in_user is ALWAYS inited even if it is None see base.py line 373 _get_member() always returns None
+        user_log.info("Performing task '%s'" % (action, ))
         BaseController.__before__(self)
 
 
@@ -180,47 +184,6 @@ class TaskController(BaseController):
         )
         
         return response_completed_ok
-
-
-    #---------------------------------------------------------------------------
-    # Sync Warehouse Media
-    #---------------------------------------------------------------------------
-
-    def sync_public_to_warehouse(self):
-        """
-        Copies files in the public data folder (should just be CSS / small images)
-        to whatever warehouse we're using (eg Amazon S3). Should be called whenever
-        the server software package is upgraded.
-        """
-        from boto.s3.connection import S3Connection
-        from boto.s3.key import Key
-        import magic
-        import os
-        import hashlib
-
-        done = []
-        if config["warehouse"] == "s3":
-            log.info("Syncing /public to s3")
-            connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
-            bucket = connection.get_bucket(config["s3_bucket_name"])
-            bucket.set_acl('public-read')
-            #bucket.configure_versioning(True)
-            for dirpath, subdirs, filenames in os.walk("./civicboom/public/"):
-                for fname in filenames:
-                    fname = os.path.join(dirpath, fname)
-                    kname = fname[fname.find("public"):]
-                    k = bucket.get_key(kname)
-                    if k and k.etag.strip('"') == hashlib.md5(file(fname).read()).hexdigest():
-                        done.append("No change: "+kname)
-                        continue
-                    k = Key(bucket)
-                    k.key = kname
-                    k.set_metadata('Cache-Control', 'public')
-                    k.set_metadata('Content-Type', magic.from_file(fname, mime=True))
-                    k.set_contents_from_filename(fname)
-                    k.set_acl('public-read')
-                    done.append("Synced: "+kname)
-        return "\n".join(done)
 
 
     def purge_unneeded_warehouse_media(self):

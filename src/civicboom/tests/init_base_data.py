@@ -56,7 +56,7 @@ def init_base_data():
         u1.name          = u"Mr U. Test"
         u1.join_date     = datetime.datetime.now()
         u1.status        = "active"
-        u1.email         = u"unittest@test.com"
+        u1.email         = u"test+unittest@civicboom.com"
         u1.location_home = "SRID=4326;POINT(1.0652 51.2976)"
         u1.location_current = "SRID=4326;POINT(1.0803 51.2789)"
         u1.config['home_location'] = u"The Moon"
@@ -83,7 +83,7 @@ def init_base_data():
         u2.username      = u"unitfriend"
         u2.name          = u"Mr U's Friend"
         u2.status        = "active"
-        u2.email         = u"unitfriend@test.com"
+        u2.email         = u"test+unitfriend@civicboom.com"
 
         u2_login = UserLogin()
         u2_login.user   = u2
@@ -104,7 +104,7 @@ def init_base_data():
         u3.username      = u"kitten"
         u3.name          = u"Amy M. Kitten"
         u3.status        = "active"
-        u3.email         = u"AmyMAnderson@example.com"
+        u3.email         = u"test+kitten@civicboom.com"
         u3.avatar        = u"f86c68ccab304eb232102ac27ba5da061559fde5"
 
         u3_login = UserLogin()
@@ -116,7 +116,7 @@ def init_base_data():
         u4.username      = u"puppy"
         u4.name          = u"Jamie L. Puppy"
         u4.status        = "active"
-        u4.email         = u"waffleking@example.com"
+        u4.email         = u"test+puppy@civicboom.com"
         u4.avatar        = u"64387ac53e446d1c93d11eec777cc7fbf4413f63"
 
         u5 = User()
@@ -134,7 +134,7 @@ def init_base_data():
         u6.username      = u"kentmessenger"
         u6.name          = u"Kent Messenger"
         u6.status        = "active"
-        u6.email         = u"admin@civicboom.com"
+        u6.email         = u"test+kentmessenger@civicboom.com"
         u6.avatar        = u"c6de15ac51375c845b275229b9666afff96bebe8"
 
         u6_login = UserLogin()
@@ -146,7 +146,7 @@ def init_base_data():
         u7.username      = u"mobiletest"
         u7.name          = u"Mr. Mobile User"
         u7.status        = "active"
-        u7.email         = u"admin@civicboom.com"
+        u7.email         = u"test+mobiletest@civicboom.com"
         u7.avatar        = u"585c9c9f719fe5e09fe656e7b8212f8ac32e17ba"
 
         u7_login = UserLogin()
@@ -172,7 +172,7 @@ def init_base_data():
         u8.username      = u"cfirst"
         u8.name          = u"Commercial First"
         u8.status        = "active"
-        u8.email         = u"admin@civicboom.com"
+        u8.email         = u"test+cfirst@civicboom.com"
         u8.avatar        = u"a1763e442301d1434304fa10b0af986445d697c9"
 
         u8_login = UserLogin()

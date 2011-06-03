@@ -77,18 +77,17 @@ def url(*args, **kwargs):
         _url = url_pylons
 
     # BUGFIX - if protocol is passed as None it goes baddgy ... this remove is ... seems unnessisary because url shoud deal with it (sigh)
-    if 'protocol' in kwargs and not isinstance(kwargs['protocol'], basestring):
-        del kwargs['protocol']
+    #if 'protocol' in kwargs and not isinstance(kwargs['protocol'], basestring):
+    #    del kwargs['protocol']
+    # if protocol is None, something has gone weird, so complain loudly...
+    assert (('protocol' not in kwargs) or isinstance(kwargs['protocol'], basestring))
 
-    # workaround for routes bug where it can't handle sub_domain=None or unspecified
-    # https://bitbucket.org/bbangert/routes/issue/50
-    if 'sub_domain' not in kwargs:
-        kwargs['sub_domain'] = _url.environ.get("HTTP_HOST", "").split(".")[0]
-
-    # shortcut for absolute URL
-    if 'absolute' in kwargs and 'sub_domain' not in kwargs and 'host' not in kwargs:
-        kwargs['host'] = _url.environ.get("HTTP_HOST")
-        del kwargs['absolute']
+    # - workaround for routes bug where it can't handle sub_domain=None or unspecified
+    #   https://bitbucket.org/bbangert/routes/issue/50
+    # - also workaround for some weirdness - url('members') turns into a fully qualified
+    #   URL with no subdomain without this o_O
+    #if 'sub_domain' not in kwargs:
+    #    kwargs['sub_domain'] = _url.environ.get("HTTP_HOST", "").split(".")[0]
 
     # Encode current widget state into URL if in widget mode
     if kwargs.get('sub_domain')=='widget' or (get_subdomain_format(_url.environ)=='widget' and 'sub_domain' not in kwargs): # If widget and not linking to new subdomain
@@ -533,7 +532,7 @@ def auto_format_output(target, *args, **kwargs):
         current_request = request.environ.get("pylons.routes_dict")
         # config breaks in production?
         #c.format     = current_request.get("format", request.params.get('format', config['default_format'] ) )
-        c.format        = request.params.get("format", current_request.get("format", "html" ) )
+        c.format        = request.params.get("format") or current_request.get("format") or "html"
         auto_format_output_flag = True
 
     try:
@@ -543,6 +542,7 @@ def auto_format_output(target, *args, **kwargs):
             raise ae
         else:
             result = ae.original_dict
+            user_log.error('%s: %s' % (result.get('code',''), result.get('message'))) # Log Error 
             if c.format=="html" or c.format=="redirect":
                 if result.get('code') == 402:
                     return redirect(url(controller='misc', action='about', id='upgrade_plans'))

@@ -545,7 +545,7 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     assignment_accepted.member = member
     assignment_accepted.status = status
     Session.add(assignment_accepted)
-
+    
     if not delay_commit:
         Session.commit()
     update_accepted_assignment(member)

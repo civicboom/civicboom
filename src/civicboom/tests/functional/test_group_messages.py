@@ -56,11 +56,14 @@ class TestGroupsController(TestController):
         # unitfirend should not receve messages intended for test_1 as they are a member half way down the chain
         self.log_in_as('unitfriend')
         self.join('test_group_messages2')
+        self.assertEquals(self.getNumNotifications(), unitfriend_num_notifications + 1) # the join notification when they first joined (anoying I know)
+        unitfriend_num_notifications += 1
         
         
         # check "new user joined" notifcation
         self.log_in_as('unittest')
         self.assertEquals(self.getNumNotifications(), unittest_num_notifications + 1)
+        unittest_num_notifications += 1
         self.assertIn('test_group_messages2', self.getLastNotification()['content']) # Ensure that the group unitfriend joined is reflected in the content
         
         # message get sent to sub group and should propergate up the chain
@@ -71,11 +74,13 @@ class TestGroupsController(TestController):
         # the follow message should propergate to unittests notifications
         self.follow('test_group_messages3')
         self.follow('test_group_messages1')
-        self.assertEquals(self.getNumNotifications(), unittest_num_notifications   + 3)
+        self.assertEquals(self.getNumNotifications(), unittest_num_notifications   + 2)
+        unittest_num_notifications += 2
         
-        # unitfriend should have 2 notifications - 1, the join notification when they first joined (anoying I know) 2. the follow of test_3
+        # unitfriend should have 2 notifications - the follow of test_3
         self.log_in_as('unitfriend')
-        self.assertEquals(self.getNumNotifications(), unitfriend_num_notifications + 2)
+        self.assertEquals(self.getNumNotifications(), unitfriend_num_notifications + 1)
+        unitfriend_num_notifications += 1
         
         # chec number of messages to check all members and sub members recive it
         
@@ -99,7 +104,27 @@ class TestGroupsController(TestController):
         # Respond
         self.log_in_as('unitfriend')
         #self.set_persona('test_group_messages2')
+        
+        # 'unitfriend' is now going to respond
+        # This will:
+        #  - Accept the assignment 'accepted' notification
+        #    - Will auto follow 'test_group_messages3' - 'new follower' notification
+        #  - Create a new response notification 'response' notification
+        num_notifications = self.getNumNotificationsInDB()
+        
         response_id = self.create_content(title=u'Email test response', content=u'Email test response', type='article', parent_id=assignment_id)
+        
+        # 'unitfriend' will have followers that will be alerted to the new content
+        # these need to be considered when checking the number of notifications generated
+        # NOTE: if unitfriend has any GROUPS as followers this automated test WILL break - as we dont know how many notifications will be generated
+        num_unitfriend_followers = self.get_member('unitfriend')['member']['num_followers']
+        
+        notification_subjects = [message.subject for message in self.getNotificationsFromDB( (3*3) + num_unitfriend_followers )]
+        self.assertSubStringIn('follow', notification_subjects)
+        self.assertSubStringIn('accept', notification_subjects)
+        self.assertSubStringIn('respon', notification_subjects)
+        self.assertEquals(self.getNumNotificationsInDB(), num_notifications + (3*3) + num_unitfriend_followers ) # 3 notifications should be generated (accepted, new follow, new response) for 3 users test_group_3 + unittest (as member of test_group_1) + unitfriend (is member of test_group_2) 
+        
         # Approve
         self.log_in_as('unittest')
         self.set_persona('test_group_messages1')
@@ -127,8 +152,8 @@ class TestGroupsController(TestController):
             else:
                 email_addresss.append(emails_to)
         self.assertEquals(len(email_addresss), 3)
-        self.assertIn('unittest@test.com'  , email_addresss)
-        self.assertIn('unitfriend@test.com', email_addresss)
+        self.assertIn('test+unittest@civicboom.com'  , email_addresss)
+        self.assertIn('test+unitfriend@civicboom.com', email_addresss)
         
         
         
@@ -149,3 +174,31 @@ class TestGroupsController(TestController):
         self.set_persona( 'unittest')
         self.set_persona( 'test_group_messages1')
         self.delete_group('test_group_messages1')
+
+
+    def test_message_followers(self):
+        """
+        Have a member with followers to test message propergation
+        The end user should not be messaged twice
+        """
+        # Setup
+        # 'unitfriend' should have 2 followers: 'unittest' and 'message_test'(that unittest is a member of)
+        self.log_in_as('unittest')
+        self.assertIn('unitfriend', [following['username'] for following in self.get_member()['following']['items']]) # Check unittest is a follower of unitfriend
+        self.create_group('message_test')
+        self.set_persona('message_test')
+        self.follow('unitfriend')
+        
+        self.log_in_as('unitfriend')
+        num_notifications = self.getNumNotificationsInDB()
+        num_emails        =      getNumEmails()
+        num_unitfriend_followers = self.get_member('unitfriend')['member']['num_followers'] # NOTE: all followers MUST be users appart from one group (added above) or this test will fail
+        
+        self.boom_content(1) # Boom API doc guaranteed to be content 1
+        
+        self.assertEquals(self.getNumNotificationsInDB(), num_notifications + num_unitfriend_followers    )
+        self.assertEquals(     getNumEmails()           , num_emails        + num_unitfriend_followers - 1)
+        
+        self.log_in_as('unittest')
+        self.set_persona('message_test')
+        self.delete_group('message_test')

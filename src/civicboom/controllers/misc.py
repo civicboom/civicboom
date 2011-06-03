@@ -135,7 +135,7 @@ Disallow: /misc/get_widget/
             @authenticate_form
             def submit_feedback(**kwargs):
                 if c.logged_in_user:
-                    kwargs['from'] = (c.logged_in_user.email or c.logged_in_user.email_unverified)
+                    kwargs['from'] = request.environ['logged_in_user_email']
                 else:
                     if kwargs.get('simple_captcha') != 'xyz':
                         raise action_error('invalid capture')
@@ -162,11 +162,12 @@ Disallow: /misc/get_widget/
     # Featured content query
     #---------------------------------------------------------------------------
     @web
-    #@cacheable(time=600)
+    #@cacheable(time=600) # can't really be cashed because of the use of 'me'
     def featured(self):
         """
         Make a numer of querys to get the top interesting content
         The results are randomised so single highest results don't dominate
+        A list is kept of all the content before. There should never be any duplicated items
         """
         
         featured_content = []

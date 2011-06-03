@@ -205,11 +205,11 @@ class TestContentsController(TestController):
     ## index -> show #########################################################
 
     def part_index(self):
-        response = self.app.get(url('formatted_contents', format="json"))
+        response = self.app.get(url('contents', format="json"))
         # Test response...
 
     def part_index_as_xml(self):
-        response = self.app.get(url('formatted_contents', format='xml'))
+        response = self.app.get(url('contents', format='xml'))
 
 
     def part_can_show_own_article(self):
@@ -234,7 +234,7 @@ class TestContentsController(TestController):
         # AllanC - currently redirects to parent ... could be considered in the future with threaded comments (see Shish's comment)
 
     def part_show_as_xml(self):
-        response = self.app.get(url('formatted_content', id=self.my_article_id, format='xml'))
+        response = self.app.get(url('content', id=self.my_article_id, format='xml'))
 
 
     ##########################################################################
@@ -379,7 +379,7 @@ class TestContentsController(TestController):
         response = self.app.get(url('edit_content', id=self.my_article_id))
 
     def part_edit_as_xml(self):
-        response = self.app.get(url('formatted_edit_content', id=self.my_article_id, format='xml'))
+        response = self.app.get(url('edit_content', id=self.my_article_id, format='xml'))
 
     def part_edit_no_perm(self):
         response = self.app.get(url('edit_content', id=self.his_article_id), status=403)

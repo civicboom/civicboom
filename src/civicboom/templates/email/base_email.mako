@@ -20,7 +20,7 @@
     </head>
     
     <%
-        site_url = h.url('.', protocol='http', sub_domain='www') ## TODO: line needs testing on live server
+		site_url = h.url(controller='misc', action='titlepage', protocol='https', sub_domain='www', qualified=True)
     %>
     <body>
         <a href="${site_url}"><img src="${site_url}/images/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/></a>

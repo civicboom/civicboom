@@ -34,7 +34,7 @@ class TestSignup(TestController):
             url(controller='register', action='email', format="json"),
             params={
                 'username': u'unittest2',
-                'email'   : u'unittest@test.com'
+                'email'   : u'test+unittest@civicboom.com'
             },
             status=400,
         )
@@ -161,7 +161,8 @@ class TestSignup(TestController):
         )
         
         # 2 emails should be generated, the welcome! and the 'new_follower' email to unittest
-        self.assertEqual(getNumEmails(), num_emails + 2)
+        # AllanC -  ADDITION - the default is that new follower is not a default email alert, so we are only checking for 'welcome'
+        self.assertEqual(getNumEmails(), num_emails + 1)
 
         from civicboom.lib.database.get_cached import get_member
         get_member('test_signup_follow').delete()

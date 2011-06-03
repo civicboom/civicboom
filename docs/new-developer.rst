@@ -17,6 +17,9 @@ make run       # run the site
 
 Using the site
 ~~~~~~~~~~~~~~
+- Setup hosts file
+  Add the following line to the bottom of the /etc/hosts file
+  127.1.0.1	www.localhost widget.localhost m.localhost
 - Connecting
   http://localhost:5000/
 - To sign in

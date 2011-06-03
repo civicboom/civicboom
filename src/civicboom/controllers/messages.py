@@ -158,19 +158,32 @@ class MessagesController(BaseController):
         #member_to = get_member(kwargs.get('target'), set_html_action_fallback=True)
         
         messages_sent = []
-        for member in get_members(kwargs.get('target'), expand_group_members=False):
+        
+        # Construct special message (rather than using a prefab from messages.'message_name')
+        message = dict(
+            name          = 'message'            ,
+            default_route = 'e'                  ,
+            source        = c.logged_in_persona.username ,
+            target        = kwargs.get('target') ,
+            subject       = kwargs.get('subject'),
+            content       = kwargs.get('content'),
+        )
+        
+        members = get_members(kwargs.get('target'), expand_group_members=False)
+        for member in members:
             m = Message()
-            m.source  = c.logged_in_persona
             m.target  = member
-            m.subject = kwargs.get('subject')
-            m.content = kwargs.get('content')
+            m.source  = c.logged_in_persona
+            m.subject = message['subject']
+            m.content = message['content']
             Session.add(m)
             messages_sent.append(m)
-            
-            # Alert via email, MSN, etc - NOTE the message route for message_recived does not generate a notification by default
-            m.target.send_notification(messages.message_received(member=m.source, message=m.content, you=m.target))
         
         Session.commit()
+        
+        # Alert via email, MSN, etc - NOTE the message route for message_recived does not generate a notification by default
+        messages.send_notification(members, message)
+        #send_notification(messages.message_received(member=m.source, message=m, you=m.target))
         
         #user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
         user_log.debug("Sent message to %s" % kwargs.get('target'))

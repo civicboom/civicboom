@@ -144,6 +144,11 @@ def get_group_member_username_list(group, members=None, exclude_list=None):
 
 def get_members(members, expand_group_members=True):
     """
+    Aquire a list of all submembers e.g
+    Group Test1 has 3 members
+    Group Test2 has 2 members
+    passing [Test1,Test2] will return 5 member objects of the submembers
+    
     members can be
       group object - All user member users (including recursive sub members) of a group
       list of username strings
@@ -159,7 +164,7 @@ def get_members(members, expand_group_members=True):
     
     # split comma list of string members
     if isinstance(members, basestring):
-        members = members.split(',')
+        members = [member.strip() for member in members.split(',')]
         #if len(members) == 1 and expand_group_members: # member list has one member, check if this single member is a group
         #    member = get_member(members[0])
         #    if member and member.__type__ == 'group':
@@ -173,13 +178,16 @@ def get_members(members, expand_group_members=True):
     #  note: any group object will have been converted into a member list above is needed
     if isinstance(members, Member):
         return [members]
-
+        
+    # normalize member names
+    members = [member if not hasattr(member, 'username') else member.username for member in members]
+    
     member_objects = Session.query(Member).with_polymorphic('*').filter(Member.username.in_(members)).all()
     
     if expand_group_members:
         group_members = []
-        for member in [member for member in member_objects if isinstance(member, Group)]:
-            group_members += get_group_member_username_list(member) # , exclude_list=group_members
+        for group in [member for member in member_objects if isinstance(member, Group)]:
+            group_members += get_group_member_username_list(group) # , exclude_list=group_members
         member_objects += get_members(list(set(group_members)))
         member_objects =              list(set(member_objects))
     

@@ -168,7 +168,7 @@ class Content(Base):
 
     def __link__(self):
         from civicboom.lib.web import url
-        return url('content', id=self.id, sub_domain='www', absolute=True)
+        return url('content', id=self.id, sub_domain='www', qualified=True)
 
     def clone(self, content):
         if content and content.id:
@@ -303,7 +303,7 @@ class Content(Base):
     @property
     def url(self):
         from pylons import url, app_globals
-        return url('content', id=self.id, absolute=True)
+        return url('content', id=self.id, qualified=True)
 
     @property
     def content_short(self):
@@ -425,7 +425,7 @@ class UserVisibleContent(Content):
     def action_list_for(self, member, **kwargs):
         action_list = Content.action_list_for(self, member, **kwargs)
         if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
-            action_list.append('publish')
+            action_list.append('update')
         if self.is_parent_owner(member) and member.has_account_required('plus'): # observing member need a paid account
             if has_role_required('editor', kwargs.get('role', 'admin')):
                 if self.approval == 'none':

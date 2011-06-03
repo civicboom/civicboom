@@ -16,6 +16,10 @@ from pylons import url
 #from civicboom.lib.web import url
 from routes.util import URLGenerator
 
+from civicboom.model      import Message
+from civicboom.model.meta import Session
+from sqlalchemy           import or_, and_, not_, null
+
 # XXX: Paste's TestApp supports app.delete() with params
 #from webtest import TestApp
 from paste.fixture import TestApp
@@ -51,7 +55,13 @@ class TestController(TestCase):
         wsgiapp = pylons.test.pylonsapp
         config = wsgiapp.config
         self.app = TestApp(wsgiapp, extra_environ={'REMOTE_ADDR': '0.0.0.0'})
-        url._push_object(URLGenerator(config['routes.map'], environ))
+        url._push_object(URLGenerator(config['routes.map'], {
+            # pretend we are in an HTTP request
+            'wsgi.url_scheme': 'https',
+            'HTTP_HOST': 'www.civicboom.com',
+            # pretend routes middleware has added stuff
+            'wsgiorg.routing_args': (None, {'action': u'titlepage', 'controller': u'misc', 'sub_domain': 'www'})
+        }))
         TestCase.__init__(self, *args, **kwargs)
 
     def setUp(self):
@@ -197,6 +207,13 @@ class TestController(TestCase):
         
         self.log_in_as(username, password)
     
+    def get_member(self, username=None):
+        if not username:
+            username = self.logged_in_as
+        response      = self.app.get(url('member', id=username, format='json'), status=200)
+        response_json = json.loads(response.body)
+        return response_json['data']
+    
     def create_content(self, title=u'Test', content=u'Test', type='article', **kwargs):
         params={
             '_authentication_token': self.auth_token,
@@ -323,6 +340,14 @@ class TestController(TestCase):
             return message_id_list[0]
         return message_id_list
 
+    def get_messages(self, username=None):
+        if not username:
+            username = self.logged_in_as
+        response      = self.app.get(url('messages', list='to', format='json'), status=200)
+        response_json = json.loads(response.body)
+        return response_json['data']
+
+
     def boom_content(self, content_id):
         response = self.app.post(
             url('content_action', action='boom', id=content_id, format='json'),
@@ -363,6 +388,16 @@ class TestController(TestCase):
             status=200
         )
         self.assertIn('withdrawn', response)
+
+    def getNumNotificationsInDB(self):
+        return Session.query(Message).filter(Message.source_id==null()).count()
+    def getNotificationsFromDB(self, limit=10):
+        return Session.query(Message).filter(Message.source_id==null()).order_by(Message.id.desc()).limit(limit).all()
+
+    def getNumMessagesInDB(self):
+        return Session.query(Message).filter(not_(Message.source_id==null())).filter(not_(Message.target_id==null())).count()
+    def getMessagesFromDB(self, limit=10):
+        return Session.query(Message).filter(not_(Message.source_id==null())).filter(not_(Message.target_id==null())).order_by(Message.id.desc()).limit(limit).all()
 
 
     def getNumNotifications(self, username=None, password=None):
@@ -490,3 +525,11 @@ class TestController(TestCase):
         self.assertEqual(response_json['data']['invitee_list']['count'], 1)
         self.assertEqual(len(response_json['data']['error-list']), 1)
         self.assertEqual(response_json['status'], 'ok')
+
+    def assertSubStringIn(self, substring, string_list):
+        found = False
+        for i in string_list:
+            if substring in i:
+                fount = True
+                return True
+        raise AssertionError('%s not found in subelements of %s' % (substring, string_list))
