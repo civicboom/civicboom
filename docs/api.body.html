@@ -166,8 +166,11 @@
     <p>Objects and Lists can be returned as RSS feeds
     <p>Some of the fields are not relevant for an RSS output.
        The list is fields returned in the RSS often a subset of the JSON/XML output.
-    <p>It is part of the RSS standard that clients can sort items by date.
-       Some objects may return lists of items that are not in date order.
+    <p><!--It is part of the RSS standard that clients can sort items by date.
+       Some objects may return lists of items that are not in date order.-->
+	   Note that entries are not necessarily in order, i.e. a member object will
+	   be built of several smaller lists (e.g. top 3 requests + top 3 articles +
+	   top 3 boomed).
     <p>Hint: Common use of RSS 'content' lists:
        By default media attachments are not included in the RSS return
        but can be enabled by including the parameter 'include_fields=attachments'</p>
