@@ -18,21 +18,27 @@
 </div>
 </section>
 
-<section>
-<h3>Development Server</h3>
-<div>
-    <p>Developers are encouraged to test the use of the API on a dedicated test server.
-    <p><a href="https://test.civicboom.com">https://test.civicboom.com</a>
-    <p>The data on the test server will be periodically reset.
-    <p>The test server is not a guaranteed service and may have periods of unavailability.
-</div>
-</section>
-
 </article>
 
 
 <article>
 <h2>Things common to all requests:</h2>
+
+<section>
+<h3>Servers</h3>
+<div>
+    <p>Developers are encouraged to test the use of the API on a dedicated test server.
+    <p><a href="https://test.civicboom.com">https://test.civicboom.com</a>
+    <p>The data on the test server will be periodically reset.
+    <p>The test server is not a guaranteed service and may have periods of unavailability.
+
+    <p>API users should use the subdomain <a href="http://api-v1.civicboom.com/"
+	>http://api-v1.civicboom.com/</a> - www.civicboom.com
+	will always be running the latest code and may sometimes break compatability in major
+	ways. If a major break is necessary, we will try and keep older versions of the API
+	available on the API domains long enough for people to transition to the new one.
+</div>
+</section>
 
 <section>
 <h3><span>(1.0 WIP)</span>Transport</h3>
@@ -46,14 +52,6 @@
         These should be stored and retrieved as normal cookies.
     <li>PUT and DELETE can be emulated with POST, having the form variable "_method" set
         to PUT or DELETE respectively
-    <li>API users should use the subdomain http://api-v1.civicboom.com/
-        <ul>
-            <li>If http://www.civicboom.com/ is used the client will be redirected to https://www.civicboom.com
-            <li>In the future the API may evolve to api-v2. This could break
-            compatibility if a clients use uses www.civicboom.com. We will
-            attempt to ensure compatibility for deprecated versions of the
-            API via the subdomain
-        <ul>
     <li>HTTP status codes are used:
         <ul>
           <li>200 - generic success
