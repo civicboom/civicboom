@@ -8,7 +8,7 @@
 src/data
 src/.coverage
 src/civicboom/public/warehouse
-src/civicboom/public/api.html
+src/civicboom/public/doc
 
 # files created while package building
 debian/*.deb
