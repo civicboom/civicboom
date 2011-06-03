@@ -71,23 +71,136 @@
 
 
 <section>
-<h3><span>(1.0 WIP)</span>Object types overview</h3>
-<div>
-    <p>The Civicboom API has 3 core object types. An overview is provided here but
-       the details of these types are given in detail with the call definitions.
-    
-    TODO:-auto list fields in model? default/full-
-    
-    <h4>Content</h4>
-    
-    article
-    assignment
-    
-    <h4>Member</h4>
-    user
-    group
-    
-    <h4>Message</h4>
+<h3><span>(1.0 WIP)</span><a name="objects">Object types overview</a></h3>
+<style>
+#model TABLE {
+	width: 100%;
+}
+#model DIV {
+	border: 2px solid #abbccd;
+	margin: 16px;
+	padding: 0px 16px 16px 16px;
+
+	-moz-box-shadow: 6px 6px 4px #888;
+	-webkit-box-shadow: 6px 6px 4px #888;
+	box-shadow: 6px 6px 4px #888;
+
+	-moz-border-radius: 32px;
+	border-radius: 32px;
+}
+#model>DIV {
+	margin: auto;
+	margin-bottom: 16px;
+	max-width: 1000px;
+}
+#model TD {
+	vertical-align: top;
+}
+#model H4 {
+	background: none;
+	border: none;
+	text-align: center;
+	margin-top: 8px;
+}
+</style>
+<div id="model">
+
+<div style="background: #fdd">
+<h4>Content</h4>
+Content is the main point of Civicboom - each bit of Content can have a title,
+text, attachments, location, a creator, the date it was created, if it is a
+reply to something else, a redistribution license, etc etc.
+<table><tr>
+	<td style="width: 50%;">
+		<div style="background: #dbb">
+		<h4>Draft</h4>
+		Content that is being worked on privately. Notably, it has a target_type
+		field which determines what type of Content it will become after the
+		user hits "Publish"
+		</div>
+	</td>
+	<td style="width: 50%;">
+		<div style="background: #dbb">
+		<h4>Comment</h4>
+		A short comment attached to another bit of Content, normally used to
+		request more details or clarify points in a request
+		</div>
+	</td>
+</tr><tr>
+	<td colspan="2">
+		<div style="background: #dbb">
+		<h4>Visible Content</h4>
+		A bit of content designed to be viewed as a stand-alone unit. Will keep
+		track of the number of times it gets viewed and boomed.
+		<table><tr>
+			<td style="width: 50%;">
+				<div style="background: #b99">
+				<h4>Article</h4>
+				A stand-alone article; possibly in response to an Assignment
+				(if parent_id is set). Can have a rating (e.g. 1-5 stars).
+				If it is in response to an Assignment, the assigner can
+				approve or reject it.
+				</div>
+			</td>
+			<td style="width: 50%;">
+				<div style="background: #b99">
+				<h4>Assignment</h4>
+				A question to be responded to; can have an event date (e.g.
+				the date of a festival to report on) and a due date (e.g. a
+				couple of days later, so the responders have time to write
+				and organise media)
+				</div>
+			</td>
+			<!--
+			<td style="width: 33%;">
+				<div style="background: #b99">
+				<h4>Syndicated (Not implemented)</h4>
+				An article that a user has written and wants a newspaper to
+				pay for
+				</div>
+			</td>
+			-->
+		</tr></table>
+		</div>
+	</td>
+</tr></table>
+</div>
+
+<div style="background: #dfd">
+<h4>Member</h4>
+Most actions in Civicboom can be applied to Users and Groups equally; e.g.
+any Member can contribute to Content, any Member can be sent a Message, any
+Member can be part of a Group (i.e., Groups can be nested)
+<table><tr>
+	<td style="width: 50%;">
+		<div style="background: #bdb">
+		<h4>User</h4>
+		A User represents an individual person, somebody who signs in to the
+		site. Even when somebody wants an account for their organisation,
+		they still sign in as themselves before switching to control the
+		Group persona.
+	</td>
+	<td style="width: 50%;">
+		<div style="background: #bdb">
+		<h4>Group</h4>
+		A Group is a collection of Members (either Users or other Groups). A
+		Group essentially acts and does things the same way that a User does,
+		but it can be controlled by multiple people at once.
+	</td>
+</tr></table>
+</div>
+
+<div style="background: #ddf">
+<h4>Message</h4>
+A short bit of text; either from one Member to another (for private messaging),
+or from nobody (for system notifications)
+</div>
+
+<div style="background: #fdf">
+<h4>Media</h4>
+An attachment to some Content
+</div>
+
 </div>
 </section>
 
