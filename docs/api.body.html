@@ -29,16 +29,19 @@
 <section>
 <h3>Servers</h3>
 <div>
-    <p>Developers are encouraged to test the use of the API on a dedicated test server.
-    <p><a href="https://test.civicboom.com">https://test.civicboom.com</a>
-    <p>The data on the test server will be periodically reset.
-    <p>The test server is not a guaranteed service and may have periods of unavailability.
-
-    <p>API users should use the subdomain <a href="http://api-v1.civicboom.com/"
-	>http://api-v1.civicboom.com/</a> - www.civicboom.com
+    <p><a href="http://api-v1.civicboom.com/">http://api-v1.civicboom.com/</a> - Clients
+	should use this rather than www.civicboom.com - www
 	will always be running the latest code and may sometimes break compatability in major
 	ways. If a major break is necessary, we will try and keep older versions of the API
 	available on the API domains long enough for people to transition to the new one.
+	<p>The API servers allow HTTP as well as HTTPS; it is presumed that anyone writing an
+	API client will know the costs and benefits of an unencrypted connection and can make
+	and informed decision for themselves.
+
+    <p><a href="https://test.civicboom.com">https://test.civicboom.com</a> - 
+    Developers are encouraged to test the use of the API on the dedicated test server.
+    The data on the test server will be periodically reset.
+    <p>The test server is not a guaranteed service and may have periods of unavailability.
 </div>
 </section>
 
