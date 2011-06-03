@@ -104,7 +104,8 @@ pep8:
 	pep8 -r --ignore=E2,E301,E303,E501,E701,W293,W291 civicboom
 
 api-doc:
-	../admin_scripts/gendoc -i civicboom/controllers/ -t ../docs -o civicboom/public/api.html
+	mkdir -p civicboom/public/doc/
+	../admin_scripts/gendoc -i civicboom/controllers/ -t ../docs -o civicboom/public/doc/index.html
 
 py-libs:
 	make -C ../lib

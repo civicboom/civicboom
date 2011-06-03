@@ -89,6 +89,7 @@ def make_map(config):
     map.connect('/about/{id}' , controller='misc', action="about")
     map.connect('/help/{id}'  , controller='misc', action="help", format="frag")
     map.connect('/settings/{id}/{panel}{.format}', controller='settings', action='panel', format="html")
+    map.redirect('/api.html', '/doc/')
 
     cb_resource(map, 'content', 'contents')
     cb_resource(map, 'message', 'messages')
