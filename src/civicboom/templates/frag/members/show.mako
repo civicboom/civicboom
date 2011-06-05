@@ -70,7 +70,7 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     ## AllanC!?! (c.logged_in_persona.username or c.logged_in_user.username) this is a meaninless statement because or returns one or the other? logged_in_persona always not null if logged_in_user
-	% if c.logged_in_persona and (c.logged_in_persona.username == self.member['username'] and request.params.get('prompt_aggregate')=='True':
+	% if c.logged_in_persona and c.logged_in_persona.username == self.member['username'] and request.params.get('prompt_aggregate')=='True':
 	<script>
 		${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }
 	</script>
