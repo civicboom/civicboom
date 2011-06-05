@@ -55,7 +55,6 @@
         # GregM: Removed popups as we have the janrain share popup now :D
         #if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment' and not c.logged_in_user.config['help_popup_created_assignment']:
         #    self.attr.popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
-        print '####', request.params.get('prompt_aggregate')
     %>
 </%def>
 
