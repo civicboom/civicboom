@@ -69,7 +69,7 @@
 ## Member Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-	% if (c.logged_in_persona.username or c.logged_in_user.username) == self.member['username'] and request.params.get('prompt_aggregate')=='True':
+	% if c.logged_in_persona and (c.logged_in_persona.username or c.logged_in_user.username) == self.member['username'] and request.params.get('prompt_aggregate')=='True':
 	<script>
 		${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }
 	</script>
