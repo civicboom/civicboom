@@ -64,7 +64,7 @@
 ## Content Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-	% if c.logged_in_persona.username == self.content['creator']['username'] and request.params.get('prompt_aggregate')=='True':
+	% if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and request.params.get('prompt_aggregate')=='True':
 	<script>
 		${share.janrain_social_call_content(self.content, 'new_'+(self.content['type'] if not self.content['parent'] else 'response')) | n }
 	</script>
