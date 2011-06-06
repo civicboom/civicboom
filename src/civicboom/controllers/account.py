@@ -48,7 +48,7 @@ class AccountController(BaseController):
         @return 302   redirect to the front page
         """
         signout_user(c.logged_in_persona)
-        return redirect(url('/', ut=str(time.time())))
+        return redirect(url(controller='misc', action='titlepage', ut=str(time.time())))
 
 
     #---------------------------------------------------------------------------
