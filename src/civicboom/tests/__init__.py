@@ -207,12 +207,22 @@ class TestController(TestCase):
         
         self.log_in_as(username, password)
     
-    def get_member(self, username=None):
+    def get_member(self, username=None, format='json'):
         if not username:
             username = self.logged_in_as
-        response      = self.app.get(url('member', id=username, format='json'), status=200)
-        response_json = json.loads(response.body)
-        return response_json['data']
+        response      = self.app.get(url('member', id=username, format=format), status=200)
+        if format=='json':
+            response_json = json.loads(response.body)
+            return response_json['data']
+        return response
+
+    def get_content(self, content_id, format='json'):
+        response      = self.app.get(url('content', id=content_id, format=format), status=200)
+        if format=='json':
+            response_json = json.loads(response.body)
+            return response_json['data']
+        return response
+
     
     def create_content(self, title=u'Test', content=u'Test', type='article', **kwargs):
         params={
