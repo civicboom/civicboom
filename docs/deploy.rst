@@ -1,6 +1,8 @@
 Deployment process
 ==================
 
+Push to master to build packages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - for pushing all of develop
   - git tag                                        # list tags so you can see the most recent one, and pick a number one higher
   - git flow release start <tag name, eg 0.6.5>
@@ -21,29 +23,35 @@ Deployment process
 
 - wait a couple of minutes for the packages to be built and signed by buildbot
 
-- upgrade the servers (web / api nodes)
-  - log into the ec2 control panel
+
+Install the packages
+~~~~~~~~~~~~~~~~~~~~
+- get a list of servers
+  - as of this writing we have webapi1, webapi2, db1.civicboom.com
+  - for a realtime list, log into the ec2 control panel
     - https://console.aws.amazon.com/ec2/home?region=eu-west-1
     - civicboom@gmail.com
-  - upgrade each server
     - instances -> select one -> instance actions -> connect -> run the shell command (but with user "ubuntu" rather than "root")
-    - sudo apt-get update
-    - sudo apt-get dist-upgrade
-	- check that the site is working by viewing that specific server (eg http://webapi2.civicboom.com/contents.json)
-	  - (Doing one at a time means that the load balancer always has at least one active server to point to)
+
+- upgrade the servers (web / api nodes)
+  - ssh into the server
+  - sudo apt-get update && sudo apt-get dist-upgrade
+  - check that the site is working by viewing that specific server (eg http://webapi2.civicboom.com/contents.json)
+    - (Doing one at a time means that the load balancer always has at least one active server to point to)
+	- sometimes nginx needs a second kick - /etc/init.d/nginx restart
 
 - upgrade the servers (database nodes)
+  - note that the database rarely needs updating, and doing it is a pain, so
+    most of the time I leave it as is
   - on your dev box
     - make schemadiff
 	- view update.sql
-	  - schema updating is a PITA; if there are updates to be made, it may be a good idea to
-	    do it in an off-peak period
+      - schema updating is a PITA; if there are updates to be made, it may be
+        a good idea to do it in an off-peak period
   - log in as above
-  - sudo apt-get update
-  - sudo apt-get upgrade
+  - sudo apt-get update && sudo apt-get dist-upgrade
   - psql -U civicboom -h localhost civicboom
     - run the commands in update.sql
-	  - somehow the feeds ID generator always wants updating, ignore this bit...
 	  - large alterations (dropping / creating tables, etc) may require locking
 	    the database, which pretty much means you need to disconnect other users
 		(ie, log into the API nodes and turn them off during the upgrade. Don't
