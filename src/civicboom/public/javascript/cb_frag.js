@@ -313,7 +313,7 @@ function loadStateObj(stateObj) {
         //frag_container = cb_frag(frag_previous.find('.'+fragment_source_class).first(), stat_href, undefined, true, waiter); //$($('.'+fragment_container_class)[i-1]).find('.'+fragment_source_class)
         break;
       } else if (frag_href != stat_href) {
-        frag_container.attr('class', stateObj.blocks[i].classes);
+        frag_container.removeClass().addClass(stateObj.blocks[i].classes);
         frag_container.find('.'+fragment_source_class).first().attr('href', stat_href);
         cb_frag_reload (frag_container);
       }

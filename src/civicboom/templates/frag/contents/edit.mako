@@ -345,7 +345,7 @@
             <!-- End list existing media -->
             
             <!-- Add media -->
-            % if c.logged_in_user.username == "unittest" or c.logged_in_persona.username == "video-capture-beta-testers":
+            % if c.logged_in_user.username == "unittest" or ( self.content.get('parent') and self.content.get('parent').get('creator').get('username') == 'video-capture-beta-testers' ):
             <li class="hide_if_nojs">
             	${media_recorder()}
             </li>
