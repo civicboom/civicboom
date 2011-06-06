@@ -3,6 +3,10 @@
 
 <%!
 	import json
+	import time
+	import base64
+	import hmac
+	import hashlib
 	
 	def __(s):
 		return s

@@ -113,8 +113,12 @@ def shorten_url(url):
 
     >>> shorten_url("/waffo/waffo")
     '/waffo/waffo'
+
+    also set an absolute length limit
+    >>> len(shorten_url("a"*1000))
+    100
     """
-    return re.sub("https?://[^/]+", "", url)
+    return re.sub("https?://[^/]+", "", url)[:100]
 
 
 def shorten_module(mod):
