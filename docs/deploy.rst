@@ -8,8 +8,7 @@ Push to master to build packages
   - git flow release start <tag name, eg 0.6.5>
   - <any final changes specific to this release>   # normally nothing needs to be done
   - git flow release finish <tag name>
-  - git push --tags                                # push the new tag
-  - git push                                       # push the actual changes
+  - git push <tag name>                            # push the new tag and associated changes
   - git checkout develop                           # don't forget to go back to develop before doing more work
 
 - for fixing individual urgent bugs
@@ -17,8 +16,7 @@ Push to master to build packages
   - git flow hotfix start <tag name, eg 0.6.5>
   - <fix the bug>
   - git flow hotfix finish <tag name>
-  - git push --tags                                # push the new tag
-  - git push                                       # push the actual changes
+  - git push <tag name>                            # push the new tag and associated changes
   - git checkout develop                           # don't forget to go back to develop before doing more work
 
 - wait a couple of minutes for the packages to be built and signed by buildbot
