@@ -88,7 +88,7 @@
           <div style="padding-left: 92px" >
           	${_('Username')}: <br /><span class="uid nickname">${self.member['username']}</span><br />
             % if self.member.get('website'):
-              ${_('Website')}: <br /><a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
+              ${_('Website')}: <br /><a href="${self.member['website']}" class="url" target="_blank">${h.nicen_url(self.member['website'])}</a><br />
             % endif
             Joined: ${self.member['join_date'].split()[0]}<br />
             % if self.current_user:
