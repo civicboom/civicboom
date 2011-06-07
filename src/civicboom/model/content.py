@@ -383,6 +383,7 @@ class DraftContent(Content):
         action_list = Content.action_list_for(self, member, **kwargs)
         if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
             action_list.append('publish')
+            action_list.append('delete')
         return action_list
 
 class CommentContent(Content):
@@ -426,6 +427,7 @@ class UserVisibleContent(Content):
         action_list = Content.action_list_for(self, member, **kwargs)
         if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
             action_list.append('update')
+            action_list.append('delete')
         if self.is_parent_owner(member) and member.has_account_required('plus'): # observing member need a paid account
             if has_role_required('editor', kwargs.get('role', 'admin')):
                 if self.approval == 'none':

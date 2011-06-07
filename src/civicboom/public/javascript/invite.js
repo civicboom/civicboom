@@ -5,7 +5,7 @@ function inviteClick(eO) {
 	var button_name   = button.attr('name');
 	if (button_name  == 'Invite') return true;
 	var button_action = button_name.split('-',1)[0];
-	var button_key    = button_name.split('-',2)[1];
+	var button_key    = button_name.substring(button_name.search('-')+1)
 	
 	offset = getValue(button,'invitee-offset');
 	limit  = getValue(button,'search-limit');

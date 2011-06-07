@@ -1,70 +1,143 @@
 import logging
 log = logging.getLogger(__name__)
 
-from civicboom.lib.database.get_cached import get_members
+from civicboom.lib.database.get_cached import get_member, get_members
+
 
 from civicboom.model.meta              import Session
 from civicboom.model.message           import Message
 from civicboom.lib.database.get_cached import update_member_messages
 from civicboom.lib.communication.email_lib import send_email
 
-
-def _send_notification_to_user(member, name='', default_route='', rendered_message={}, **kwargs):
-    """
-    Internal call
-    Must be passed member object
-    Actually sends a message
-    """
-    
-    # Get propergate settings - what other technologies is this message going to be sent over
-    # Attempt to get routing settings from the member's config; if that fails, use the
-    # message's default routing
-    message_tech_options = member.config.get("route_"+name, default_route)
-    
-    # Iterate over each letter of tech_options - each letter is a code for the technology to send it to
-    # e.g 'c'  will send to Comufy
-    #     'et' will send to email and twitter
-    #     'n'  is a normal notification
-    #     ''   will dispose of the message because it has nowhere to go
-    for route in message_tech_options:
-        if route == 'c': # Send to Comufy
-            pass
-        if route == 'e' and 'e' in rendered_message: # Send to Email
-            if member.__type__ == 'user': # Only send emails to individual users
-                send_email(member, **rendered_message['e'])
-        if route == 'n' and 'n' in rendered_message: # Save message in message table (to be seen as a notification)
-            m = Message()
-            m.subject = rendered_message['n']['subject']
-            m.content = rendered_message['n']['content']
-            m.target  = member
-            Session.add(m)
-            #member.messages_to.append(m)
-            update_member_messages(member)
-    
-    log.debug("%s was sent the message '%s', routing via %s" % (
-        member.username, name, message_tech_options
-    ))
+import collections
+import os
 
 
-def send_notification(members, **kwargs): #members, rendered_message
+from pylons.templating  import render_mako # AllanC - this needs to be a setable function that can be called from mako directyly
+from pylons             import config
+
+
+def send_notification(members, message): #members, rendered_message
     """
-    Threaded message system, save and handles propogating the message to different technologies for all members of a group or an indvidual
+    Threaded message system
+    Save and handles propogating the message to different technologies for all members of a group or an indvidual
     """
+
+    message['source'] = get_member(message.get('source')) or message.get('source') # Attempt to normalize source member
+
+    # Multiple memebrs
+    if isinstance(members, collections.Iterable):
+        
+        for member in get_members(members, expand_group_members=True):
+            message['target_username'] = member.username # Overlay the direct target member of this message as an additional param
+            send_notification(member, message)
+            #if member.__type__ == 'group':
+            #    send_notification(get_group_member_username_list(member), **kwargs)
+        Session.commit()
+        
+    # Single member
+    else:
+        member = get_member(members)
+        
+        # Get propergate settings - what other technologies is this message going to be sent over
+        # Attempt to get routing settings from the member's config; if that fails, use the
+        # message's default routing
+        message_tech_options = member.config.get("route_"+message.get('name','default'), message.get('default_route'))
+        
+        # Iterate over each letter of tech_options - each letter is a code for the technology to send it to
+        # e.g 'c'  will send to Comufy
+        #     'et' will send to email and twitter
+        #     'n'  is a normal notification
+        #     ''   will dispose of the message because it has nowhere to go
+        for route in message_tech_options:
+            
+            # -- Comufy --------------------------------------------------------
+            if route == 'c':
+                pass
+            
+            # -- Email ---------------------------------------------------------
+            if route == 'e':
+                if member.__type__ == 'user': # Only send emails to individual users
+                    
+                    # Feature #498 - Check for existing email template and attempt to render
+                    def notification_template(template):
+                        template_path = os.path.join("email", "notifications", template+".mako")
+                        if os.path.exists(os.path.join(config['path.templates'], template_path)):
+                            return template_path
+                        return 'email/notifications/default.mako'
+                    
+                    send_email(
+                        member,
+                        subject      = message.get('subject'), #, _('_site_name notification')
+                        content_html = render_mako(
+                                            notification_template(message.get('name')) ,
+                                            extra_vars ={
+                                                "kwargs"      : message       ,
+                                                #"content_html": content_html ,
+                                            }
+                                        ),
+                    )
+            
+            # -- Notification --------------------------------------------------
+            # Save message in message table (to be seen as a notification)
+            if route == 'n':
+                m = Message()
+                m.subject = message['subject']
+                m.content = message['content']
+                m.target  = member
+                Session.add(m)
+                #member.messages_to.append(m)
+                update_member_messages(member)
+            
+            # ------------------------------------------------------------------
+        
+        log.debug("%s was sent the message '%s', routing via %s" % (
+            member.username, message.get('name'), message_tech_options
+        ))
+
+
+
+#-------------------------------------------------------------------------------
+
     #print members
     #print kwargs['rendered_message']['n']['subject']
     
     #rendered_message['n']['subject'] = str(member)+': '+rendered_message['n']['subject']
     #rendered_message['n']['content'] = str(member)+': '+rendered_message['n']['content']
-    
-    for member in get_members(members, expand_group_members=True):
-        # TODO - append 'to' to messages
-        _send_notification_to_user(member, **kwargs)
-        #if member.__type__ == 'group':
-        #    send_notification(get_group_member_username_list(member), **kwargs)
-            
-    
-    Session.commit()
 
+
+    # Pre render all known output message types
+    # They cant be rendered in the thread because they don't have access to pylons features like template rendering, url() and c
+    #rendered_message = {}
+    # Each dict entry may contain another dict datastructure for that message type
+    #for message_format, message_format_processor in message_format_processors.iteritems():
+    #    rendered_message[message_format] = message_format_processor(message)
+
+
+def setup_message_format_processors():
+    """
+    Each processor should return a string representaion of the message
+    """
+    
+    def format_email(message_dict):
+        pass
+    
+    def format_notification(message_dict):
+        return dict(
+            subject = message_dict.get('subject') ,
+            content = message_dict.get('content') ,
+        )
+    
+    def format_comufy(message_dict):
+        return
+
+    return dict(
+        e = format_email ,
+        n = format_notification ,
+        #c = format_comufy ,
+    )
+
+message_format_processors = setup_message_format_processors()
 
 
 #-------------------------------------------------------------------------------

@@ -49,13 +49,13 @@ class TestFeedsController(TestController):
         # Test response...
 
     def part_index_as_xml(self):
-        response = self.app.get(url('formatted_feeds', format='xml'))
+        response = self.app.get(url('feeds', format='xml'))
 
     def part_show(self):
         response = self.app.get(url('feed', id=self.f1_id))
 
     def part_show_as_xml(self):
-        response = self.app.get(url('formatted_feed', id=self.f1_id, format='xml'))
+        response = self.app.get(url('feed', id=self.f1_id, format='xml'))
 
 
     def part_edit(self):

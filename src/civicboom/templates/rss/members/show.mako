@@ -1,8 +1,15 @@
 <%inherit file="/rss/rss_base.mako"/>
-<%def name="title()">${d['member']['name']}</%def>
+
+<%def name="title()">\
+    % if d['member']['name']==d['member']['username']:
+${d['member']['name']}
+    % else:
+${d['member']['name']} (${d['member']['username']})
+    %endif
+</%def>
 
 <%def name="body()">
-    ##please use ${url('contents', creator=d['member']['username'], format='rss')}
+    ##please use ${h.url('contents', creator=d['member']['username'], format='rss', qualified=True)}
     
     ##% for content in d['content']['items']:
     ##    ${self.rss_content_item(content)}

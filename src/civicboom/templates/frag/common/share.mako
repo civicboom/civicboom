@@ -1,6 +1,39 @@
 ## Methods for shareing/aggregating links
 ## 2 alternate companys are implemnted here should we need to swich.
 
+<%!
+	import json
+	import time
+	import base64
+	import hmac
+	import hashlib
+	
+	def __(s):
+		return s
+	
+	share_types = {
+		'new_assignment': "I just created the request %(title)s on _site_name. Respond now!",
+		'new_response'  : "I just responded to a request by %(owner)s on _site_name. Get involved & add your voice too!",
+		'new_group'     : "I just created the %(name)s Hub on _site_name. Get involved and follow it now!",
+		'new_user'		: "I just signed up to _site_name to get my news published, you can too!",
+		'new_article'   : "I just created the content %(title)s on _site_name, check it out here!",
+	}
+	share_taglines = {
+		'new_assignment': "Share your _assignment with your friends and followers:",
+		'new_response'  : "Share your response with your friends and followers:",
+		'new_group'     : "Share your _group with your friends and followers:",
+		'new_user'		: "Share your news with your friends and followers:",
+		'new_article'   : "Share your _article with your friends and followers:",
+	}
+	share_descs = {
+		'new_assignment': 'New _assignment on _site_name',
+		'new_response'  : 'New _article on _site_name',
+		'new_group'     : 'New _hub on _site_name',
+		'new_user'      : "I'm on _site_name",
+		'new_article'   : 'New _article on _site_name',
+	}
+%>
+
 ##------------------------------------------------------------------------------
 ## Share (using default method)
 ##------------------------------------------------------------------------------
@@ -176,202 +209,153 @@
     <script type="text/javascript">
       RPXNOW.init({appId: '${config['app_id.janrain']}',
         xdReceiver: '/rpx_xdcomm.html'});
-    </script>
+      
+		## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
+		function janrain_popup_share(url, options, variables) {
+			RPXNOW.loadAndRun(['Social'], function () {
+				if (typeof options != 'object') options = {};
+		        var activity = new RPXNOW.Social.Activity(variables.share_display,
+		                                                  variables.action_share_description,
+		                                                  url
+		                                                  );
+		        
+		        activity.setTitle               (variables.action_page_title);
+		        activity.setDescription         (variables.action_page_description);
+		        activity.setUserGeneratedContent(variables.share_usergen_default);
+		        
+		        if (typeof variables.action_links == 'object') {
+		        	for (i=0; i<variables.action_links.length; i++) {
+			            activity.addActionLink(variables.action_links[i].text, variables.action_links[i].href);
+			        }
+			    }
+			    
+		        ##if (typeof variables.properties == 'object') {
+		        ##	for (i=0; i<variables.properties.length; i++) {
+			    ##        activity.addTextProperty(variables.properties[i].text, variables.properties[i].value);
+			    ##    }
+			    ##}
+			    
+			    if (typeof variables.media == 'object') {
+			    	var rpx_images;
+			    	for (i=0; i<variables.media.length; i++) {
+			    		var media = variables.media[i];
+			    		if (media.type=='image') {
+			    			if (typeof rpx_images == 'undefined')
+			    				rpx_images = new RPXNOW.Social.ImageMediaCollection();
+			    			rpx_images.addImage(media.src, media.href);
+			    		} else if (media.type=='audio') {
+			    			activity.setMediaItem(new RPXNOW.Social.Mp3MediaItem(media.src));
+			    		} else if (media.type=='video') {
+			        		var rpx_video = new RPXNOW.Social.VideoMediaItem(
+			        			media.original_url,
+			        			media.thumbnail_url
+			        		);
+			        		rpx_video.setVideoTitle(variables.video[i].caption);
+			        		activity.setMediaItem(rpx_video);
+			        	}
+			        }
+			        if (typeof rpx_images != 'undefined')
+			        	activity.setMediaItem(rpx_images); 
+			    }
+		        
+		        var finished = function(results) {
+		          // Process results of publishing.
+		        }
+		        
+		        options.finishCallback = finished;
+		        options.urlShortening = true;
+		        
+		        RPXNOW.Social.publishActivity(activity, options);
+		
+		    });
+		}
+	</script>
 </%def>
-
 
 <%def name="janrain_social(content, value='Janrain Social', class_='')">
     <a href='' class='${class_}' onclick="${janrain_social_js(content)} return false;"><span>${value}</span></a>
 </%def>
 
-
-<%def name="janrain_social_js(content, share_display='Share this _content', action_description='')">
-    RPXNOW.loadAndRun(['Social'], function () {
-        
-        ## Get a summary python dictionary of this content
-        ## This uses the same JSON generation as the Janrain API but contructs the data for the Jainrain social widget
-        <%
-            from civicboom.lib.civicboom_lib import aggregation_dict
-            cd = aggregation_dict(content, safe_strings=True)
-            
-            def clean(s):
-                if isinstance(s, basestring):
-                    return s.replace("'", "\'")
-                return ''
-        %>
-        
-        var activity = new RPXNOW.Social.Activity('${clean(share_display      or cd.get('action')      )}',
-                                                  '${clean(action_description or cd.get('description') )}',
-                                                  '${clean(cd.get('url'))}'
-                                                  );
-        
-        activity.setTitle               ('${clean(cd.get('title')                 )}');
-        activity.setDescription         ('${clean(cd.get('description')           )}');
-        activity.setUserGeneratedContent('${clean(cd.get('user_generated_content'))}');
-        
-        % for action_link in cd['action_links']:
-            activity.addActionLink('${clean(action_link.get('text'))}', '${clean(action_link.get('href'))}');
-        % endfor
-        
-        % for property in cd['properties'].keys():
-            activity.addTextProperty('${clean(property)}', '${clean(cd['properties'][property])}');
-        % endfor
-        
-        <% images = [image for image in cd['media'] if image['type']=='image'] %>
-        % if images:
-        var images = new RPXNOW.Social.ImageMediaCollection();
-        % for image in images:
-            images.addImage('${clean(image['src'])}', '${clean(image['href'])}');
-        % endfor
-        activity.setMediaItem(images);
-        % endif
-        
-        % for media in cd['media']:
-            % if media['type'] == 'mp3':
-                activity.setMediaItem(new RPXNOW.Social.Mp3MediaItem('${clean(media['src'])}')); //title, artist, album
-            % endif
-        % endfor
-        
-        ## ?? the auto aggregate JSON does not have support for video? but the widget does? hu?
-        ## AllanC - because the janrain social widget and the janrain json aggregator dont agree, I have added video here directly form the content obj
-        %for video in [media for media in content.get('attachments',dict()) if media.get('type')=='video']:
-            var video_item = new RPXNOW.Social.VideoMediaItem(
-                '${clean(video.get('original_url') )}' ,
-                '${clean(video.get('thumbnail_url'))}'
-            );
-            video_item.setVideoTitle('${clean(video.get('caption'))}');
-            activity.setMediaItem(video_item);
-        % endfor
-        
-        
-        ##addLinkProperty(name, text, url)
-        ##addProviderUrl('${_('_site_name')}', '${content_dict['url']}');
-        
-        
-        var finished = function(results) {
-          // Process results of publishing.
-        }
-        <%! import hashlib, hmac, base64, time %>        
-        <%
-            # Generate signiture
-            # Reference - https://rpxnow.com/docs/social_publish_activity#OptionsParameter
-            #           - http://stackoverflow.com/questions/1306550/calculating-a-sha-hash-with-a-string-secret-key-in-python
-            if c.logged_in_persona:
-                apiKey     = config['api_key.janrain']
-                timestamp  = int(time.time())
-                primaryKey = c.logged_in_persona.id
-                message    = '%s|%s' % (timestamp,primaryKey)
-                signature  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
-        %>
-        
-        var options = {
-                        finishCallback: finished,
-                        ##exclusionList: ["facebook", "yahoo"],
-                        urlShortening: true,
-                        % if c.logged_in_persona:
-                        primaryKey: '${primaryKey}',
-                        timestamp :  ${timestamp}  ,
-                        signature : '${signature}'
-                        % endif
-                       }
-        
-        RPXNOW.Social.publishActivity(activity, options);
-
-    });
+<%def name="janrain_options()">
+    <%
+        # Generate signiture
+        # Reference - https://rpxnow.com/docs/social_publish_activity#OptionsParameter
+        #           - http://stackoverflow.com/questions/1306550/calculating-a-sha-hash-with-a-string-secret-key-in-python
+        options = {}
+        if c.logged_in_persona:
+            apiKey     = config['api_key.janrain']
+            options['timestamp']  = int(time.time())
+            options['primaryKey'] = str(c.logged_in_persona.id)
+            message    = '%s|%s' % (options['timestamp'],options['primaryKey'])
+            options['signature']  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
+    %>
+    ${json.dumps(options) | n}
 </%def>
 
-<%def name="janrain_social_js_generic(url, share_display='', action_description='')">
-    RPXNOW.loadAndRun(['Social'], function () {
-        
-        ## Get a summary python dictionary of this content
-        ## This uses the same JSON generation as the Janrain API but contructs the data for the Jainrain social widget
-        <%
-            def clean(s):
-                if isinstance(s, basestring):
-                    return s.replace("'", "\\'")
-                return ''
-        %>
-        
-        var activity = new RPXNOW.Social.Activity('${clean(share_display)}',
-                                                  '${clean(action_description)}',
-                                                  '${clean(url)}'
-                                                  );
-        
-        activity.setTitle               ('title1243');
-        activity.setDescription         ('desc5478');
-        activity.setUserGeneratedContent('usergen456645');
-        
-##        % for action_link in cd['action_links']:
-##            activity.addActionLink('${clean(action_link.get('text'))}', '${clean(action_link.get('href'))}');
-##        % endfor
-        
-##        % for property in cd['properties'].keys():
-##            activity.addTextProperty('${clean(property)}', '${clean(cd['properties'][property])}');
-##        % endfor
-        
-##        <% images = [image for image in cd['media'] if image['type']=='image'] %>
-##        % if images:
-##        var images = new RPXNOW.Social.ImageMediaCollection();
-##        % for image in images:
-##            images.addImage('${clean(image['src'])}', '${clean(image['href'])}');
-##        % endfor
-##        activity.setMediaItem(images);
-##        % endif
-        
-##        % for media in cd['media']:
-##            % if media['type'] == 'mp3':
-##                activity.setMediaItem(new RPXNOW.Social.Mp3MediaItem('${clean(media['src'])}')); //title, artist, album
-##            % endif
-##        % endfor
-        
-        ## ?? the auto aggregate JSON does not have support for video? but the widget does? hu?
-        ## AllanC - because the janrain social widget and the janrain json aggregator dont agree, I have added video here directly form the content obj
-##        %for video in [media for media in content.get('attachments',dict()) if media.get('type')=='video']:
-##            var video_item = new RPXNOW.Social.VideoMediaItem(
-##                '${clean(video.get('original_url') )}' ,
-##                '${clean(video.get('thumbnail_url'))}'
-##            );
-##            video_item.setVideoTitle('${clean(video.get('caption'))}');
-##            activity.setMediaItem(video_item);
-##        % endfor
-        
-        
-        ##addLinkProperty(name, text, url)
-        ##addProviderUrl('${_('_site_name')}', '${content_dict['url']}');
-        
-        
-        var finished = function(results) {
-          // Process results of publishing.
-        }
-        <%! import hashlib, hmac, base64, time %>        
-        <%
-            # Generate signiture
-            # Reference - https://rpxnow.com/docs/social_publish_activity#OptionsParameter
-            #           - http://stackoverflow.com/questions/1306550/calculating-a-sha-hash-with-a-string-secret-key-in-python
-            if c.logged_in_persona:
-                apiKey     = config['api_key.janrain']
-                timestamp  = int(time.time())
-                primaryKey = c.logged_in_persona.id
-                message    = '%s|%s' % (timestamp,primaryKey)
-                signature  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
-        %>
-        
-        var options = {
-                        finishCallback: finished,
-                        ##exclusionList: ["facebook", "yahoo"],
-                        urlShortening: true,
-                        % if c.logged_in_persona:
-                        primaryKey: '${primaryKey}',
-                        timestamp :  ${timestamp}  ,
-                        signature : '${signature}'
-                        % endif
-                       }
-        
-        RPXNOW.Social.publishActivity(activity, options);
-
-    });
+<%def name="janrain_social_call_content(content, share_type)">
+	## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
+    <%
+from civicboom.lib.civicboom_lib import aggregation_dict
+cd = aggregation_dict(content, safe_strings=True)
+def clean(s):
+	if isinstance(s, basestring):
+		return s.replace("'", "\\'")
+	return ''
+share_usergen_default = clean(_(share_types[share_type]) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
+print share_usergen_default
+    %>
+	$(function() {
+		var content   = ${json.dumps(cd) | n};
+		var url       = content.url;
+		var variables = {
+			share_display:				'${_(share_taglines[share_type])}',
+			action_share_description:   '${_(share_descs[share_type])}',
+			share_usergen_default:		'${share_usergen_default | n}',
+			action_page_title:       	content.title,
+			action_page_description: 	content.user_generated_content,
+			action_links: 				content.action_links,
+			action:						content.action,
+			media:						content.media,
+		};
+		janrain_popup_share(url, ${janrain_options() | n}, variables);
+	});
 </%def>
 
+<%def name="janrain_social_call_member(member, share_type)">
+	## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
+    <%
+cd = {
+		'url':						h.url('member', id=member['username'], absolute=True),
+		'title':					member['name'],
+		'user_generated_content': 	member['description'],
+		'media':					[ {
+										'type': 'image',
+										'src':  member['avatar_url'],
+										'href': h.url('member', id=member['username'], absolute=True),
+									}, ],
+}
+def clean(s):
+	if isinstance(s, basestring):
+		return s.replace("'", "\\'")
+	return ''
+share_usergen_default = clean(_(share_types[share_type]) % {'name': cd['title']})
+    %>
+	$(function() {
+		var content   = ${json.dumps(cd) | n};
+		var url       = content.url;
+		var variables = {
+			share_display:				'${clean(_(share_taglines[share_type]))}',
+			action_share_description:   '${clean(_(share_descs[share_type]))}',
+			share_usergen_default:		'${clean(share_usergen_default) | n}',
+			action_page_title:       	content.title,
+			action_page_description: 	content.user_generated_content,
+			action_links: 				content.action_links,
+			action:						content.action,
+			media:						content.media,
+		};
+		janrain_popup_share(url, ${janrain_options() | n}, variables);
+	});
+</%def>
 
 <%doc>
     % if request.params.get('prompt_aggregate')=='True':

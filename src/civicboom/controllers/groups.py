@@ -174,8 +174,24 @@ class GroupsController(BaseController):
 
         @api groups 1.0 (WIP)
         
-        @param username  a unique username, cannot clash with existing usernames
-        @param *         see "POST /groups"
+        @param username                   a unique username, cannot clash with existing usernames
+        @param name                       display name
+        @param description                description of groups purpose
+        @param default_role
+            admin
+            editor
+            contributor
+            observer
+        @param join_mode
+            public
+            invite
+            invite_and_request
+        @param member_visibility
+            public
+            private 
+        @param default_content_visibility (plus account required)
+            public
+            private 
         
         @return 400  data invalid (ie, username that already exisits)
         @return 201  group created, data.id = new group id
@@ -234,7 +250,8 @@ class GroupsController(BaseController):
         
         c.logged_in_persona = logged_in_persona
         c.logged_in_persona_role = logged_in_persona_role
-        set_persona(group) # Will redirect if in html or redirect mode
+        # GregM: prompt_aggregate for new group :)
+        set_persona(group, prompt_aggregate=True) # Will redirect if in html or redirect mode
         
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         
