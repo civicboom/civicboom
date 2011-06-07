@@ -81,16 +81,16 @@ ${_("Scan the barcode (opposite) into your phone by using the barcode reader on 
 </div>
 
 
-<div class="hide_if_js">
-	<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-		<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
-			<span itemprop="title">About</span>
-		</a>
-	</span>
-	&rarr;
-	<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-		<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
-			<span itemprop="title">Company</span>
-		</a>
-	</span>
-</div>
+<%def name="breadcrumbs()">
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
+		<span itemprop="title">About</span>
+	</a>
+</span>
+&rarr;
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
+		<span itemprop="title">Company</span>
+	</a>
+</span>
+</%def>

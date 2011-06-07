@@ -35,16 +35,16 @@
 <p>Last updated January 2011.
 
 
-<div class="hide_if_js">
-	<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-		<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
-			<span itemprop="title">About</span>
-		</a>
-	</span>
-	&rarr;
-	<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-		<a href="${h.url(controller='misc', action='about', id='terms')}" itemprop="url">
-			<span itemprop="title">Legal</span>
-		</a>
-	</span>
-</div>
+<%def name="breadcrumbs()">
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
+		<span itemprop="title">About</span>
+	</a>
+</span>
+&rarr;
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url(controller='misc', action='about', id='terms')}" itemprop="url">
+		<span itemprop="title">Legal</span>
+	</a>
+</span>
+</%def>
