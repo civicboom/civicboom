@@ -147,6 +147,10 @@ else:
 	<header><%include file="header.mako"/></header>
 	<div id="app">${next.body()}</div>
 	<footer><%include file="footer.mako"/></footer>
+
+<%def name="breadcrumbs()"></%def>
+<div class="hide_if_js">${self.breadcrumbs()}</div>
+
     ${popup_frame()}
 	##<%include file="scripts_end.mako"/>
 	${scripts_end.body()}
