@@ -301,14 +301,14 @@
     %>
 
     <td>
-        <a class="thumbnail" href="${h.url('content', id=id)}" ${js_link_to_frag}>
+        <a class="thumbnail" href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
             ${content_thumbnail_icons(content)}
             <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
         </a>
     </td>
     
     <td style="width:100%;">
-        <a href="${h.url('content', id=id)}" ${js_link_to_frag}>
+        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
             <p class="content_title">${content['title']}</p>
           % if creator and 'creator' in content:
             <p><small class="content_title">By: ${content['creator']['name']}</small>
