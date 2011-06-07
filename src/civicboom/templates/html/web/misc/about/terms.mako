@@ -195,3 +195,18 @@
 <p>v0.2 - Date of latest amendment January 2011
 <p>The Service Limited registered office: 37 Warren Street, London, W1T 6AD
 <p>Company Number: 06045754.
+
+
+<div class="hide_if_js">
+	<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+		<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
+			<span itemprop="title">About</span>
+		</a>
+	</span>
+	&rarr;
+	<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+		<a href="${h.url(controller='misc', action='about', id='terms')}" itemprop="url">
+			<span itemprop="title">Legal</span>
+		</a>
+	</span>
+</div>

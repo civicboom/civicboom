@@ -156,3 +156,18 @@ ${payplans()}
 
   
 </%doc>
+
+
+<div class="hide_if_js">
+	<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+		<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
+			<span itemprop="title">About</span>
+		</a>
+	</span>
+	&rarr;
+	<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+		<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
+			<span itemprop="title">Company</span>
+		</a>
+	</span>
+</div>

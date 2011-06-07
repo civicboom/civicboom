@@ -154,3 +154,18 @@ Creative Commons License
 <p>
     <a href="http://www.softicons.com/free-icons/toolbar-icons/16x16-free-toolbar-icons-by-aha-soft/mobile-icon">Aha-Soft</a> mobile icon
 </p>
+
+
+<div class="hide_if_js">
+	<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+		<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
+			<span itemprop="title">About</span>
+		</a>
+	</span>
+	&rarr;
+	<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+		<a href="${h.url(controller='misc', action='about', id='developers')}" itemprop="url">
+			<span itemprop="title">Technology</span>
+		</a>
+	</span>
+</div>
