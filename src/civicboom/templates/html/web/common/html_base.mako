@@ -142,7 +142,13 @@ else:
 <body class="c-${c.controller} a-${c.action} u-${u}">    
 	${flash_message()}
 	##<nav><%include file="navigation.mako"/></nav>
-	<header><%include file="header.mako"/></header>
+        <header>
+            % if hasattr(next, 'header'):
+                ${next.header()}
+            % else:
+                <%include file="header.mako"/>
+            % endif
+        </header>
 	<div id="app">${next.body()}</div>
 	<footer><%include file="footer.mako"/></footer>
     ${popup_frame()}

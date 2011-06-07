@@ -4,79 +4,60 @@
 
 <%def name="title()">${_("Welcome")}</%def>
 
-
-
-
 ##------------------------------------------------------------------------------
 ## Body
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
 	<div class="new_front" style="margin-bottom: 20em;">
-		${new_front_headline()}
-		${new_front_about()}
-##		${new_front_who_is()}
-##		<div class="front_sub">
-##			${new_front_price()}
-##			${new_front_tag()}
-##		</div>
-##			${new_front_key_elems()}
-##		<div class="front_sub">
-##			${new_front_plans()}
-##			${new_front_how_title()}
-##		</div>
-##		${new_front_how()}
-##		<div class="front_sub">
-##			${new_front_tag()}
-##			${new_front_you()}
-##			${new_front_tag()}
-##			<div style="margin-top: 2em"></div>
-##			${new_front_register()}
-##		</div>
+		${front_headline()}
+		${front_windows()}
+		${front_about()}
 		<div style="width:100%;left:0;bottom:17px;position:fixed;padding:1.5em 0 0 0;background-color:#cee2fa;">
 			<div style="width:100%;height:10em;background-color:#adcef7;">
 				<div style="width:61em;padding:1em 0 1em 0;margin: auto;">
-					<div style="float: left; width: 30em">
-						<h2 style="text-align:left;">Downloads</h2>
-						<div style="width: 20em; margin: 0;">
-							<div style="position: absolute;">
-								<div style="float:left; width: 10em;">
-									<h3>Mobile App</h3>
-									<a class="button" href="/about/mobile">
-										Download now
-									</a>
-									(Android OS)
-								</div>
-##								<div style="float:left; width: 10em;">
-##									<h3>Browser Widget</h3>
-##									<a class="button" href="/about/mobile">
-##										Download now
-##									</a>
-##								</div>
-							</div>
-						</div>
-					</div>
-					<div style="text-align:left;float: right; width: 28em;">
-						<h2>Who's using us?</h2>
-						<div class="partners" style="background-color:#FFF;padding: 0.5em;height: 4em;">
-							<div style="width: 6em;float:left; padding-right: 1em;">
-								<a href="http://www.kentonline.co.uk"><img style="width:100%" src="/images/client-logo/km.png" alt="Kent Messenger" /></a>
-							</div>
-							<div style="width: 10em;float:left">
-								##<h3>Media</h3>
-								<a href="http://www.kentuni.com/news/"><img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" /></a>
-							</div>
-							<div style="width: 10em;float:left">
-								##<h3>Business</h3>
-								<a href="http://www.fxcompared.com/civic-boom.php"><img style="width:100%" src="/images/client-logo/fx-compared.jpg" alt="FX Compared" /></a>
-							</div>
-##							<div style="width: 10em;float:left">
-##								<h3>Media</h3>
-##								<img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" />
-##							</div>
-						</div>
-					</div>
+					${partners()}
+					${downloads()}
 				</div>
+			</div>
+		</div>
+	</div>
+</%def>
+
+##------------------------------------------------------------------------------
+## Download / Mobile App
+##------------------------------------------------------------------------------
+<%def name="downloads()">
+	<div class="downloads">
+		<h2>Downloads</h2>
+		<div class="downloads-android">
+			<h3>Mobile App</h3>
+			<a class="button" href="/about/mobile">
+				Download now
+			</a>
+			(Android OS)
+		</div>
+	</div>
+</%def>
+
+##------------------------------------------------------------------------------
+## Partners
+##------------------------------------------------------------------------------
+
+<%def name="partners()">
+	<div class="using-us">
+		<h2>Who's using us?</h2>
+		<div class="partners">
+			<div class="partner" style="width: 10em; padding-right: 1em;">
+				<a href="http://www.kentonline.co.uk"><img style="width:100%" src="/images/client-logo/km.png" alt="Kent Messenger" /></a>
+			</div>
+			<div class="partner" style="width: 18em; padding-right: 1em;">
+				##<h3>Media</h3>
+				<a href="http://www.kentuni.com/news/"><img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" /></a>
+			</div>
+			<div class="partner" style="width: 18em; padding-right: 1em;">
+				##<h3>Business</h3>
+				<a href="http://www.fxcompared.com/civic-boom.php"><img style="width:100%" src="/images/client-logo/fx-compared.jpg" alt="FX Compared" /></a>
 			</div>
 		</div>
 	</div>
@@ -86,12 +67,127 @@
 ## New Front Title
 ##------------------------------------------------------------------------------
 
-<%def name="new_front_headline()">
-	<div style="margin: 5em auto 0 auto; width: 61em;">
-		<h1 class="headline" style="padding:0;margin:0;font-size: 300%; text-align: left; color: #333">
+<%def name="header()">
+	<style type="text/css">
+		HEADER {
+			background-image: none;
+			background-color: #FFF;
+			width: 65em;
+			margin: 0 auto 0 auto;
+		}
+	</style>
+	<div class="slimline-header">
+		<div class="logo">
+			<a href='/'>
+				<img  class='logo_img' src='${h.wh_url("public", "images/logo.png")}' alt='${_("_site_name")}' />
+				## <img  class='beta_overlay' src='${h.wh_url("public", "images/logo_beta_overlay.png")}' alt='${_("Beta")}' />
+				## <span class='logo_text'>${_("_site_name")}</span>
+			</a>
+		</div>
+		<div id="signin">
+			% if c.logged_in_persona:
+			    ${h.secure_link(
+				h.url(controller='account', action='signout'),
+				_('Sign out'),
+				css_class="button"
+			    )}
+			% else:
+			    <a class="button" href="${url(controller='account', action='signin')}">
+				##<img src="/styles/web/login.png" alt="${_("Log in")}" width="68" height="17">
+				${_('Sign in')}
+			    </a>
+			% endif
+		</div>
+		<div class="search">
+			<form action="${h.url('contents')}" method='GET'>
+				<input type="search" class="search_input" name="term" placeholder="${_("Search Content")}" />
+				<input type="submit" class="button" value="GO">
+			</form>
+		</div>
+	</div>
+</%def>
+
+<%def name="front_headline()">
+	<div class="title-box">
+		<h1 class="headline">
 			Sourcing and sharing news just got easier
 		</h1>
-		<h2 style="padding: 0em 0 0.5em 0;text-align: left; color: #666; font-size: 175%; font-weight: normal;">
+		<h2 class="tagline">
+			${_('_Respond to _requests and generate news or feature _content for your needs.')}
+		</h2>
+	</div>
+</%def>
+
+<%def name="front_windows()">
+	<div class="windows">
+		<div id="window-orgs" class="window">
+			<div class="window-content">
+				<ul class="content-list">
+					<li>
+						<span class="larger"><span class="hilite">Multi-media</span> interaction</span><br />
+						<span class="indent">with your audience.</span>
+					</li>
+					<li>
+						<span class="larger"><span class="hilite">Secure</span> communication</span><br />
+						<span class="indent">from trusted followers.</span>
+					</li>
+					<li>
+						<span class="larger"><span class="hilite">Real-time</span> contribution</span><br />
+						<span class="indent">from your users.</span>
+					</li>
+				</ul>
+			</div>
+			<div class="window-tab">Organisations</div>
+		</div>
+		<div id="window-indvs" class="window">
+			<div class="window-content">		
+				<ul class="content-list">
+					<li>
+						<span class="larger"><span class="hilite">Participate</span> and share</span><br />
+						<span class="indent">your local news.</span>
+					</li>
+					<li>
+						<span class="larger"><span class="hilite">Interact</span> and respond</span><br />
+						<span class="indent">to breaking news requests.</span>
+					</li>
+					<li>
+						<span class="larger"><span class="hilite">Gain</span> recognition</span><br />
+						<span class="indent">from content publishers.</span>
+					</li>
+				</ul>
+			</div>
+			<div class="window-tab">Individuals</div>
+		</div>
+		<a class="signup-link" href="${url(controller='account', action='signin')}">
+			<div id="window-signup" class="window">
+				<div class="window-content">
+					<div class="signup-link hilite">Sign up now!</div>
+				</div>
+			</div>
+		</a>
+	</div>
+</%def>
+	
+<%def name="front_about()">
+	<div class="about">
+		<a href="">Get started!</a><br />
+		<a href="">Sign up as a user.</a><br />
+		<a href="">${_('Browse _requests.')}</a><br />
+		<a href="">${_('_Respond and share your news.')}</a><br />
+		<a href="">${_('Set _requests for other to _respond to & upload your news _content to share.')}</a><br />
+	</div>
+</%def>
+	
+##------------------------------------------------------------------------------
+## New Front Title
+##------------------------------------------------------------------------------
+
+<%def name="new_front_headline()">
+	<div class="title-box">
+		<h1 class="headline">
+			Sourcing and sharing news just got easier
+		</h1>
+		<h2 class="tagline">
 			Respond to requests and generate news or feature content for your needs.
 		</h2>
 	</div>
@@ -114,6 +210,7 @@
 			$('.tab-title:first').trigger('mouseover');
 		});
 	</script>
+
 	<style>
 		.tab-title {
 			display: inline;
@@ -175,6 +272,7 @@
 			left: -5.75em;
 		}
 	</style>
+
 	<div style="margin: 1em auto 0 auto; width: 61em; text-align: left;">
 		<div style="height:15em;">
 			<div style="position: absolute">

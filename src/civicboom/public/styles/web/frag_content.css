@@ -14,6 +14,28 @@
 
 /*----------------------------Content Comments--------------------------------*/
 
+#frag_containers .frag_container .frag_content .new-comment {
+    visibility: hidden;
+}
+
+.no-js #frag_containers .frag_container .frag_content .new-comment {
+    visibility: visible;
+}
+
+#frag_containers .frag_container .frag_content .comments-option {
+    color: #666;
+}
+
+.no-js #frag_containers .frag_container .frag_content .comments-option {
+    display: none;
+}
+
+#frag_containers .frag_container .frag_content .show-comments {
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 #frag_containers .frag_container .frag_content .comments table {
     width: 100%;
 }
@@ -30,14 +52,14 @@
 
 #frag_containers .frag_container .frag_content .comments textarea {
     width: 100%;
-	min-height: 60px;
+    min-height: 60px;
 }
 #frag_containers .frag_container .frag_content .comments input {
     width: 100%;
 }
 
 #frag_containers .frag_container .frag_content .comment_avatar {
-	width: 40px;
+    width: 40px;
 }
 #frag_containers .frag_container .frag_content .comment {
     padding-left  : 1em;

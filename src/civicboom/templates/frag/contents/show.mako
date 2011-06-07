@@ -71,6 +71,7 @@
         ${content_content()}
         ${content_map()}
         ${content_action_buttons()}
+	${content_why_resond()}
         ${content_comments()}
         ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
         <%def name="flag_form()">
@@ -285,25 +286,26 @@
           <span class="separtor"></span>
       % endif
       ## --- Respond -------------------------------------------------------------
-      % if 'accept' in self.actions:
-          ${h.secure_link(
-              h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
-              css_class = 'button',
-              value           = _('Accept') ,
-              json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-          )}
-          ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
-          <span class="separtor"></span>
-      % endif
       % if self.content['type'] != 'draft':
           ${h.secure_link(
               h.args_to_tuple('new_content', parent_id=self.id) ,
               css_class = 'button',
-              value           = _("Respond Now") ,
+              value           = _("_Respond now!") ,
               json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
           )}
           ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
           ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
+          <span class="separtor"></span>
+      % endif
+      
+      % if 'accept' in self.actions:
+          ${h.secure_link(
+              h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
+              css_class = '',##'button',
+              value           = _('_Respond later') ,
+              json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+          )}
+          ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
           <span class="separtor"></span>
       % endif
       
@@ -393,6 +395,25 @@
     % endif
 </%def>
 
+##------------------------------------------------------------------------------
+## Why Respond?
+##------------------------------------------------------------------------------
+<%def name="content_why_resond()">
+    <style type="text/css">
+	.why-respond {
+	    color: #666;
+	    margin: 1.5em auto 0 0.5em;
+	}
+    </style>
+    <div class="why-respond">
+	<h2>${_("Why should you _respond?")}</h2>
+	<ul>
+	    <li>Get recognition!</li>
+	    <li>Get you videos & images published!</li>
+	    <li>Be the news!</li>
+	</ul>
+    </div>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Comments
@@ -403,8 +424,20 @@
     comments = d['comments']['items']
 %>
 
+<script>
+    $('.show-comments').click(function() {
+	var $vis = $('.new-comment').css("visibility");
+	if ($vis == "hidden") {
+	    $('.new-comment').css("visibility", "visible");
+	    $('.comment-${self.id}').focus();
+        }
+	else { $('.new-comment').css("visibility", "hidden"); }
+	
+    });
+</script>
+
 <div class="comments">
-    <h2 style="padding-top: 20px; padding-bottom: 10px;">${_("Comments")}</h2>
+    <h2 style="padding-top: 20px; padding-bottom: 10px;">${_("Additional info request)}</h2>
 
     <table>
         <tr style="display: none;"><th>${_('Member')}</th><th>${_('Comment')}</th></tr>
@@ -429,7 +462,18 @@
             </td>
         </tr>
         % endfor
-        <tr>
+	<tr>
+	    <td colspan="2">
+		<span class="comments-option">
+		    % if c.logged_in_user:
+		    ${_("Need more info on this _content? ")}<span class="show-comments">Ask here...</span>
+		    % else:
+		    To comment on this content, please <a href="${url(controller='account', action='signin')}">sign up or log in!</a>
+		    % endif
+		</span>
+	    </td>
+	</tr>
+        <tr class="new-comment">
             <td class="comment_avatar">
                 % if c.logged_in_user:
                 ${member_includes.avatar(c.logged_in_user.to_dict())}
@@ -450,7 +494,7 @@
                     Comments are for clarifying details, if you are responding to the request
 					you should use the 'Respond Now' button above.<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
-                    <br /><input type="submit" class="button" name="submit_response" value="${_('Comment')}">
+                    <br /><input type="submit" class="button" name="submit_response" value="${_('Ask')}">
                     <script type="text/javascript">
                         $(function () {
                             $('.comment-${self.id}').limit(${config['setting.content.max_comment_length']}, '.commentcount-${self.id}');

@@ -44,6 +44,41 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
 
+    ## Proto - Styling for mouse over help on submit buttons
+    ##         needs moving into proper external file
+    <style type="text/css">
+        .mo-help { position: relative; }
+        .mo-help .mo-help-r {
+            display: none;
+            position: absolute;
+            z-index: 100;
+            width: 200px;
+            background-color: #FFF;
+            padding: 12px;
+            border: 1px solid #2a3a87;
+            text-align: left;
+            bottom: 5em;
+            text-align: center;
+            
+            opacity: 0.8;
+            filter:alpha(opacity=8);
+
+            border-radius        : 0.2em;
+            -moz-border-radius   : 0.2em;
+            -webkit-border-radius: 0.2em;
+
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            
+            -moz-box-shadow: 0px 0px 15px #888;
+            -webkit-box-shadow: 0px 0px 15px #888;
+            box-shadow: 0px 0px 15px #888;
+        }
+        ## .mo-marker { display: inline-block; } ##font-weight: bold; font-size: 1.25em; width: 1.25em; }
+        .mo-help:hover .mo-help-r { display: block; }
+    </style>
+
     <div class="frag_col">
         
         <!-- Toggle Section -->
@@ -103,7 +138,8 @@
             ${location()}
             ${privacy()}
             ${license()}
-			${submit_buttons()}
+	    ${submit_buttons()}
+            ${what_next()}
         ${h.end_form()}
     </div>
 </%def>
@@ -619,6 +655,27 @@
     % endif
 </%def>
 
+##------------------------------------------------------------------------------
+## What Happens Next?
+##------------------------------------------------------------------------------
+<%def name="what_next()">
+    <style type="text/css">
+        .what-next {
+            color: #666;
+            margin: 1.5em auto 0 0.5em;
+            font-size: 105%;
+        }
+    </style>
+    <div class="what-next">
+        <h2>What happens once I publish?</h2>
+        <p>This request will appear...</p>
+        <ol>
+            <li>${_("In your _widget for your community to _respond to.")}</li>
+            <li>Your followers notification stream.</li>
+            <li>${_("On the _site_name _request stream.")}</li>
+        </ol>
+    </div>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Submit buttons
@@ -626,41 +683,51 @@
 <%def name="submit_buttons()">
 
     ## AllanC - note the class selectors are used by jQuery to simulate clicks
-    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False)">
+    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, mo_text=None)">
         <%
             button_id = "submit_%s_%s" % (name, self.id)
             if not title_text:
                 title_text = _(name)
         %>
-        <input
-            type    = "submit"
-            id      = "${button_id}"
-            name    = "submit_${name}"
-            class   = "submit_${name} button"
-            value   = "${title_text}"
-            onclick = "
-                ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
-                if (!$(this).hasClass('disabled')) {
-                    $(this).addClass('disabled');
-                    add_onclick_submit_field($(this));
-                    % if show_content_frag_on_submit_complete:
-                    submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
-                    % endif
-                    setTimeout('$(\'#${button_id}\').removeClass(\'disabled\');', 1000);
-                }
-                else {
-                    return false;
-                }
-            "
-        />
+        % if mo_text:
+            <span class="mo-help">
+            <div class="mo-help-r">
+                <h2>${title_text}</h2>
+                <p>${_(mo_text)}</p>
+            </div>
+        % endif
+                <input
+                    type    = "submit"
+                    id      = "${button_id}"
+                    name    = "submit_${name}"
+                    class   = "submit_${name} button"
+                    value   = "${title_text}"
+                    onclick = "
+                        ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
+                        if (!$(this).hasClass('disabled')) {
+                            $(this).addClass('disabled');
+                            add_onclick_submit_field($(this));
+                            % if show_content_frag_on_submit_complete:
+                            submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                            % endif
+                            setTimeout('$(\'#${button_id}\').removeClass(\'disabled\');', 1000);
+                        }
+                        else {
+                            return false;
+                        }
+                    "
+                />
+        % if mo_text:
+            </span>
+        % endif
     </%def>
     
     <div style="text-align: right;">
         % if self.content['type'] == "draft":
-            ${submit_button('draft'  , _("Save")                                               )}
-            ${submit_button('preview', _("Preview"), show_content_frag_on_submit_complete=True )}
+            ${submit_button('draft'  , _("Save"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}
+            ${submit_button('preview', _("Preview"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once published." )}
             % if 'publish' in self.actions:
-            ${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True )}
+            ${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True, mo_text="Ask the world!" )}
             % endif
         % else:
             % if 'update' in self.actions:

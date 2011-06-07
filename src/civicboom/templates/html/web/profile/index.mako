@@ -4,14 +4,14 @@
 
 <%def name="body()">
 	<%
-        #self.attr.frags = [profile, featured]
-        #self.attr.frag_col_sizes = [2,2]
-        #self.attr.frag_classes   = [None, None]
+        self.attr.frags = [profile, featured]
+        self.attr.frag_col_sizes = [2,2]
+        self.attr.frag_classes   = [None, None]
         
         # old profile page
-        self.attr.frags = [profile, assignments, help]
-        self.attr.frag_col_sizes = [2,1,1]
-        self.attr.frag_classes   = [None, None, 'flag_help']
+        #self.attr.frags = [profile, assignments, help]
+        #self.attr.frag_col_sizes = [2,1,1]
+        #self.attr.frag_classes   = [None, None, 'flag_help']
     %>
 </%def>
 

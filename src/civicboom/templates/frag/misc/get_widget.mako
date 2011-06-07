@@ -29,7 +29,7 @@ ${widget_preview(c.widget_user_preview)}
 <iframe \
  name='${_("_site_name")}'\
  id='CivicboomWidget'\
- title='${_("_site_name Widget")}'\
+ title='${_("_site_name _widget")}'\
 % if iframe_url:
  src='${iframe_url}'\
 % elif c.widget['base_list'] and member_username:
@@ -61,15 +61,15 @@ ${widget_preview(c.widget_user_preview)}
     <td style="width: 600px;">
         
         
-        <h1>${_('Grab your widget and get your community to respond to your requests! ')}</h1>
-        <p>${_('Through the widget, your community and audience can:')}</p>
+        <h1>${_('Grab your _widget and get your community to respond to your requests! ')}</h1>
+        <p>${_('Through the _widget, your community and audience can:')}</p>
         <ul style="padding-top: 6px; padding-bottom: 6px;">
             <li>${_('Read your requests')}</li>
             <li>${_('Respond to them immediately')}</li>
             <li>${_('Accept to complete at a later date')}</li>
         </ul>
-        <p>${_('Anyone who is not Following you on the _site_name system, but clicks on "Accept" or "Respond" via your widget will automatically become a Follower of you. This means every time you send out a request, they will get alerted.')}</p>
-        <p style="padding-top: 6px; padding-bottom: 6px;">${_("Others can also copy and paste this widget's code into their own website's HTML and show it on their site. This can help amplify your reach to a wider audience.")}</p>
+        <p>${_('Anyone who is not Following you on the _site_name system, but clicks on "Accept" or "Respond" via your _widget will automatically become a Follower of you. This means every time you send out a request, they will get alerted.')}</p>
+        <p style="padding-top: 6px; padding-bottom: 6px;">${_("Others can also copy and paste this _widget's code into their own website's HTML and show it on their site. This can help amplify your reach to a wider audience.")}</p>
 
 
         <table><tr>
@@ -80,7 +80,7 @@ ${widget_preview(c.widget_user_preview)}
             ## this is because the IFRAME can work without javascript and so "should" (sigh) the main site.
             
             <form name="widget_customisation" action="" style="padding: 0.5em;">
-              <h2>${_('Customise this widget')}</h2>
+              <h2>${_('Customise this _widget')}</h2>
               <fieldset><legend>${_("Title")}</legend>
                 <input type="text"    name="title"     value="${c.widget['title']    }" size="30"/><br/>
                 <%
@@ -140,9 +140,9 @@ ${widget_preview(c.widget_user_preview)}
                 </fieldset>
               </td>
               </tr></table>
-            <input type="button" value="Preview Widget" onClick="generate_widget_link();" />
+            <input type="button" value=${_("Preview _widget")} onClick="generate_widget_link();" />
             </form>
-            <p>Note: The widget can function in HTTPS if required</p>
+            <p>${_("Note: The _widget can function in HTTPS if required")}</p>
         </td>
         <td style="width:300px">
             <p style="font-weight: bold;" class="link_widget_instructions">${_("Copy and paste this code into your website's HTML:")}</p>

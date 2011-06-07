@@ -14,7 +14,7 @@
 %>
 
 <%def name="body()">
-    <div class="frag_col">
+    <div class="frag_col help_frag">
     ${next.body()}
     </div>
 </%def>

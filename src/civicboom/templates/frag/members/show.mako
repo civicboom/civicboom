@@ -389,8 +389,8 @@
 
     ${popup.link(
         h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
-        title = _('Get widget'),
-        text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get widget'),
+        title = _('Get _widget'),
+        text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get _widget'),
     )}
     <span class="separtor"></span>
     
