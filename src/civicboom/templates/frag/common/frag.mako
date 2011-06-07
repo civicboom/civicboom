@@ -75,6 +75,8 @@
             args, kwargs = c.web_params_to_kwargs
             args   = copy.copy(args)
             kwargs = copy.copy(kwargs)
+            self.args   = args
+            self.kwargs = kwargs
         
         # Gen frag URL
         if self.attr.frag_url == True:

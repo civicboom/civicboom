@@ -26,7 +26,9 @@
         self.id        = self.content['id']
         self.actions   = d.get('actions', [])
         
-        force = _('_draft')
+        #force = _('_draft') # This var is unused?
+        
+        # Title
         if self.content['type'] == 'draft':
             self.attr.title     = _('_Draft') + ' ' + _('_'+self.content['target_type'])
         else:
@@ -35,6 +37,7 @@
         
         self.attr.frag_data_css_class = 'frag_content'
         
+        # Agregation dict
         if self.content['private'] == False and self.content['type'] != 'draft':
             self.attr.share_kwargs = {
                 'url'      : self.attr.html_url ,
@@ -46,9 +49,15 @@
                 'author'   : self.content.get('creator', dict()).get('name') ,
             }
         
+        # Help Frag
         self.attr.help_frag = self.content['type']
         if self.attr.help_frag == 'draft':
             self.attr.help_frag = 'create_'+self.content['target_type']
+        
+        # Manipulate Action List
+        # - remove actions in exclude_actions kwarg
+        if self.kwargs.get('exclude_actions'):
+            self.actions = list(set(self.actions) - set(self.kwargs.get('exclude_actions', '').split(',')))
         
         self.attr.auto_georss_link = True
         
@@ -277,6 +286,8 @@
 <%def name="content_action_buttons()">
     <div style="padding-top: 20px;" class="acceptrequest">
       <span class="separtor"></span>
+      
+      ## --- Publish -----------------------------------------------------------
       % if 'publish' in self.actions:
           ${h.secure_link(
               h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
@@ -288,18 +299,9 @@
           )}
           <span class="separtor"></span>
       % endif
-      ## --- Respond -------------------------------------------------------------
-      % if 'accept' in self.actions:
-          ${h.secure_link(
-              h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
-              css_class = 'button',
-              value           = _('Accept') ,
-              json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-          )}
-          ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
-          <span class="separtor"></span>
-      % endif
-      % if self.content['type'] != 'draft':
+
+      ## --- Respond -----------------------------------------------------------
+      % if 'respond' in self.actions:
           ${h.secure_link(
               h.args_to_tuple('new_content', parent_id=self.id) ,
               css_class = 'button',
@@ -311,6 +313,19 @@
           <span class="separtor"></span>
       % endif
       
+      ## --- Accept ------------------------------------------------------------
+      % if 'accept' in self.actions:
+          ${h.secure_link(
+              h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
+              css_class = 'button',
+              value           = _('Accept') ,
+              json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+          )}
+          ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
+          <span class="separtor"></span>
+      % endif
+      
+      ## --- Withdraw ----------------------------------------------------------
       % if 'withdraw' in self.actions:
           ${h.secure_link(
               h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
@@ -515,7 +530,7 @@
 
     ## --- Respond -------------------------------------------------------------
 
-    % if self.content['type'] != 'draft':
+    % if 'respond' in self.actions: #self.content['type'] != 'draft'
         ${h.secure_link(
             h.args_to_tuple('new_content', parent_id=self.id) ,
             value           = _("Respond") ,

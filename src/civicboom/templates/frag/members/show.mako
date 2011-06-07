@@ -35,6 +35,7 @@
             'image'    : self.member['avatar_url'] ,
         }
         
+        # Customize layout based on logged in user or group
         if self.current_user:
         # GregM: Removed popups as we have the janrain share popup now :D
             if self.member['type'] == 'group':
@@ -54,6 +55,11 @@
                 'url'  : h.url('member', id=self.id, protocol='http', sub_domain='www') ,
             })
             self.attr.rss_url = h.url('member', id=self.id, format='rss', sub_domain='www')
+        
+        # Manipulate Action List
+        # - remove actions in exclude_actions kwarg
+        if self.kwargs.get('exclude_actions'):
+            self.actions = list(set(self.actions) - set(self.kwargs.get('exclude_actions', '').split(',')))
         
         self.attr.frag_data_css_class = 'frag_member'
         
