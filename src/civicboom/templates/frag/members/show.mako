@@ -90,11 +90,22 @@
             % if self.member.get('website'):
               ${_('Website')}: <br /><a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
             % endif
-            Joined: ${self.member['join_date']}<br />
+            Joined: ${self.member['join_date'].split()[0]}<br />
             % if self.current_user:
               ${_('Type')}: ${_('_' + self.member['account_type']).capitalize()}
             % endif
             <br />
+			<span class="organisation"><span class="value-title" title="Civicboom"></span></span>
+			<span class="role"><span class="value-title" title="Member"></span></span>
+			% if self.member['type'] == "group" and self.member['location_home']:
+				<%
+				lon, lat = self.member['location_home'].split()
+				%>
+				<span class="geo">
+					<span class="latitude"><span class="value-title" title="${lat}"></span></span>
+					<span class="longitude"><span class="value-title" title="${lon}"></span></span>
+				</span>
+			% endif
             % if 'follow' in self.actions:
                 ${h.secure_link(
                     h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
