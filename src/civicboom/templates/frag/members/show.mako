@@ -94,15 +94,36 @@
           <div style="padding-left: 92px" >
           	${_('Username')}: <br /><span class="uid nickname">${self.member['username']}</span><br />
             % if self.member.get('website'):
-              ${_('Website')}: <br /><a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
+              ${_('Website')}: <br /><a href="${self.member['website']}" class="url" target="_blank">${h.nicen_url(self.member['website'])}</a><br />
             % endif
-            Joined: ${self.member['join_date']}<br />
+            Joined: ${self.member['join_date'].split()[0]}<br />
             % if self.current_user:
               ${_('Type')}: ${_('_' + self.member['account_type']).capitalize()}
             % endif
             <br />
-			<span style="display: none;" class="organisation">Civicboom</span>
-			<span style="display: none;" class="role">Member</span>
+			<%
+			groups = d['groups']['items']
+			if len(groups) == 0:
+				role = _("_"+d['member']['type'])
+				org = "Civicboom"
+			elif len(groups) == 1:
+				role = groups[0]['role'].capitalize()
+				org = groups[0]['name'] or groups[0]['username']
+			else:
+				role = "Contributor"
+				org = _("%s groups") % len(groups)
+			%>
+			<span class="org"><span class="value-title" title="${org}"></span></span>
+			<span class="role"><span class="value-title" title="${role}"></span></span>
+			% if self.member['type'] == "group" and self.member['location_home']:
+				<%
+				lon, lat = self.member['location_home'].split()
+				%>
+				<span class="geo">
+					<span class="latitude"><span class="value-title" title="${lat}"></span></span>
+					<span class="longitude"><span class="value-title" title="${lon}"></span></span>
+				</span>
+			% endif
             % if 'follow' in self.actions:
                 ${h.secure_link(
                     h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,

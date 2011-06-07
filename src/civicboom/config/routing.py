@@ -84,11 +84,12 @@ def make_map(config):
 
 
     # CUSTOM ROUTES HERE
-    map.connect('/', controller='misc', action='titlepage')
-    map.connect('/robots.txt', controller='misc', action='robots')
-    map.connect('/about/{id}' , controller='misc', action="about")
-    map.connect('/help/{id}'  , controller='misc', action="help", format="frag")
-    map.connect('/settings/{id}/{panel}{.format}', controller='settings', action='panel', format="html")
+    map.connect(None, '/', controller='misc', action='titlepage')
+    map.connect(None, '/robots.txt', controller='misc', action='robots')
+    map.connect(None, '/about/{id}' , controller='misc', action="about")
+    map.connect(None, '/help/{id}'  , controller='misc', action="help", format="frag")
+    map.connect(None, '/settings/{id}/{panel}{.format}', controller='settings', action='panel', format="html")
+    map.connect(None, '/contents/{id}{.format}/-/{title}', controller='contents', action='show', conditions=dict(method=['GET']))
     map.redirect('/api.html', '/doc/')
 
     cb_resource(map, 'content', 'contents')
