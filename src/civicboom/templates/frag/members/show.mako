@@ -95,6 +95,8 @@
               ${_('Type')}: ${_('_' + self.member['account_type']).capitalize()}
             % endif
             <br />
+			<span style="display: none;" class="organisation">Civicboom</span>
+			<span style="display: none;" class="role">Member</span>
             % if 'follow' in self.actions:
                 ${h.secure_link(
                     h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
