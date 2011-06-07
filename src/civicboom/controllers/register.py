@@ -129,7 +129,8 @@ class RegisterController(BaseController):
         
         user_log.info("Registered new user")
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))
-        signin_user_and_redirect(c.logged_in_persona, 'registration')
+        # GregM: prompt_aggregate on new user :D
+        signin_user_and_redirect(c.logged_in_persona, 'registration', prompt_aggregate=True)
         ##redirect('/')
 
     @web
@@ -144,7 +145,7 @@ class RegisterController(BaseController):
         """
         POST /register/email: Register a new user via email
         @type action
-        @api contents 1.0 (WIP)
+        @api register 1.0 (WIP)
         
         @param username
         @param email

@@ -214,7 +214,7 @@ ${widget_preview(c.widget_user_preview)}
     </td>
   
     <td id="widget_container" style="width: 300px; vertical-align: middle; text-align: center;">
-        ${widget_iframe(member_username, protocol=None)}
+        ${widget_iframe(member_username, protocol=current_protocol())}
     </td>
 
   </tr></table>

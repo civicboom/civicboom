@@ -129,7 +129,7 @@
         
         <span class="separtor"></span>
         
-        % if 'publish' in self.actions:
+        % if 'delete' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
             method="DELETE" ,
@@ -216,7 +216,7 @@
                 $.ajax({
                     type    : 'POST',
                     dataType: 'json',
-                    url     : "${url('formatted_content', id=self.id, format='json')}",
+                    url     : "${url('content', id=self.id, format='json')}",
                     data    : {
                         "_method": 'PUT',
                         "content": ed.getContent(),
@@ -229,7 +229,7 @@
                     },
                     error: function (jqXHR, status, error) {
                         ed.setProgressState(0);
-                        flash_message('${_('Error automatically saving your content')}');
+                        flash_message({status:'error', message:'${_('Error automatically saving your content')}'});
                     },
                 });
             }
@@ -345,7 +345,7 @@
             <!-- End list existing media -->
             
             <!-- Add media -->
-            % if c.logged_in_user.username == "unittest" or c.logged_in_persona.username == "video-capture-beta-testers":
+            % if c.logged_in_user.username == "unittest" or ( self.content.get('parent') and self.content.get('parent').get('creator').get('username') == 'video-capture-beta-testers' ):
             <li class="hide_if_nojs">
             	${media_recorder()}
             </li>
@@ -362,7 +362,7 @@
 							'scriptData' : {
 								'content_id': ${self.id},
 								'member_id' : ${c.logged_in_persona.id},
-								'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % c.content.id)}'
+								'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % self.id)}'
 							},
 							'cancelImg'  : '/images/cancel.png',
 							'folder'     : '/uploads',
@@ -414,7 +414,7 @@
 				refreshProgress($('form#edit_$(self.id}'));
 			}
 		}
-		swfobject.embedSWF("https://bm1.civicboom.com:9443/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % c.content.id)}"});
+		swfobject.embedSWF("https://bm1.civicboom.com:9443/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"});
 	</script>
 	<div class="media_recorder" style="left:0px;width:360px;height:371px;" id="media_recorder_${self.id}">
 		<div id="cbFlashMedia${self.id}">${_('If you see this text your browser is incompatible with our media recorder, please upload a video or audio file below')}</div>
@@ -626,7 +626,7 @@
 <%def name="submit_buttons()">
 
     ## AllanC - note the class selectors are used by jQuery to simulate clicks
-    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False)">
+    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False)">
         <%
             button_id = "submit_%s_%s" % (name, self.id)
             if not title_text:
@@ -644,7 +644,7 @@
                     $(this).addClass('disabled');
                     add_onclick_submit_field($(this));
                     % if show_content_frag_on_submit_complete:
-                    submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                    submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag', prompt_aggregate=prompt_aggregate)}';
                     % endif
                     setTimeout('$(\'#${button_id}\').removeClass(\'disabled\');', 1000);
                 }
@@ -660,7 +660,7 @@
             ${submit_button('draft'  , _("Save")                                               )}
             ${submit_button('preview', _("Preview"), show_content_frag_on_submit_complete=True )}
             % if 'publish' in self.actions:
-            ${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True )}
+            ${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True, prompt_aggregate=True )}
             % endif
         % else:
             % if 'update' in self.actions:

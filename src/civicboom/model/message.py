@@ -48,6 +48,13 @@ class Message(Base):
             'target_name'  : lambda message: str(message.target),
     })
 
+    def __unicode__(self):
+        return "%s: %s" % (self.subject, self.content)
+
+    def __link__(self):
+        from civicboom.lib.web import url
+        return url('message', id=self.id, sub_domain='www', qualified=True)
+
     def delete(self):
         from civicboom.lib.database.actions import del_message
         return del_message(self)

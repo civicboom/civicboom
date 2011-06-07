@@ -164,7 +164,7 @@ def get_members(members, expand_group_members=True):
     
     # split comma list of string members
     if isinstance(members, basestring):
-        members = members.split(',')
+        members = [member.strip() for member in members.split(',')]
         #if len(members) == 1 and expand_group_members: # member list has one member, check if this single member is a group
         #    member = get_member(members[0])
         #    if member and member.__type__ == 'group':

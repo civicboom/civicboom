@@ -70,7 +70,7 @@ class TestMessagesController(TestController):
         response = self.app.get(url('new_message', format='json'))
 
     def part_new_frag(self):
-        response = self.app.get(url('formatted_new_message', format='frag'))
+        response = self.app.get(url('new_message', format='frag'))
 
     def part_create(self):
         self.send_member_message('unittest', 'arrr, a subject', 'I am content')
@@ -113,27 +113,27 @@ class TestMessagesController(TestController):
     ## index -> show #########################################################
 
     def part_index(self):
-        response = self.app.get(url('formatted_messages', format="frag"))
+        response = self.app.get(url('messages', format="frag"))
         self.assertIn("Re: Re: singing", response)
 
     def part_index_lists(self):
-        response = self.app.get(url('formatted_messages', format="json", list="notification"))
-        response = self.app.get(url('formatted_messages', format="json", list="to"))
-        response = self.app.get(url('formatted_messages', format="json", list="sent"))
+        response = self.app.get(url('messages', format="json", list="notification"))
+        response = self.app.get(url('messages', format="json", list="to"))
+        response = self.app.get(url('messages', format="json", list="sent"))
         # TODO: need asserts here to check is actual messages are included
-        response = self.app.get(url('formatted_messages', format="json", list="whgarbl"), status=400)
+        response = self.app.get(url('messages', format="json", list="whgarbl"), status=400)
 
     def part_index_as_json(self):
-        response = self.app.get(url('formatted_messages', format='json'))
+        response = self.app.get(url('messages', format='json'))
         self.assertIn("Re: Re: singing", response)
 
     def part_show(self):
-        response = self.app.get(url('formatted_message', id=self.m2_id, format="frag"))
+        response = self.app.get(url('message', id=self.m2_id, format="frag"))
         # TODO - check read status after viewing
         self.assertIn("truncation", response)
 
     def part_show_as_json(self):
-        response = self.app.get(url('formatted_message', id=self.m2_id, format='json'))
+        response = self.app.get(url('message', id=self.m2_id, format='json'))
         self.assertIn("truncation", response)
 
     def part_show_someone_elses(self):
@@ -152,7 +152,7 @@ class TestMessagesController(TestController):
         response = self.app.get(url('edit_message', id=1), status=501)
 
     def part_edit_as_json(self):
-        response = self.app.get(url('formatted_edit_message', id=1, format='json'), status=501)
+        response = self.app.get(url('edit_message', id=1, format='json'), status=501)
 
     def part_update(self):
         response = self.app.put(url('message', id=1), status=501)

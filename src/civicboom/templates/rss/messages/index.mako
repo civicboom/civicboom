@@ -12,7 +12,7 @@
 <%def name="message_item(message)">
     <item> 
         <title>${message.get('subject')}</title> 
-        <link>${h.url('message', id=message['id'])}</link>
+        <link>${h.url('message', id=message['id'], qualified=True)}</link>
         <description>${message.get('content')}</description> 
         <pubDate>${h.date_to_rss(message.get('timestamp'))}</pubDate> 
         <guid isPermaLink="false">Civicboom Message #${message['id']}</guid>
