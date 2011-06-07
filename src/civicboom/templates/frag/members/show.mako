@@ -106,7 +106,7 @@
             % if self.member.get('website'):
               <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
             % endif
-            <span class="detail-title">Joined:</span> ${self.member['join_date']}<br />
+            <span class="detail-title">Joined:</span> ${self.member['join_date'].split()[0]}<br />
             % if self.current_user:
               <span class="detail-title">${_('Type')}:</span> ${_('_' + self.member['account_type']).capitalize()}
             % endif
