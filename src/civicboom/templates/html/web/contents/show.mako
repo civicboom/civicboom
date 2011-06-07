@@ -18,6 +18,7 @@
 
 <%def name="title()">${d['content']['title']}</%def>
 <%def name="description()">${h.strip_html_tags(d['content']['content'])[:300]}</%def>
+<%def name="canonical_url()">${h.url(controller='contents', action='show', id=d['content']['id'], title=h.make_username(d['content']['title']), sub_domain='www', protocol='https', qualified=True)}</%def>
 
 ##------------------------------------------------------------------------------
 ## Body
