@@ -8,8 +8,7 @@ Push to master to build packages
   - git flow release start <tag name, eg 0.6.5>
   - <any final changes specific to this release>   # normally nothing needs to be done
   - git flow release finish <tag name>
-  - git push --tags                                # push the new tag
-  - git push                                       # push the actual changes
+  - git push origin master <tag name>              # push the new tag and associated changes
   - git checkout develop                           # don't forget to go back to develop before doing more work
 
 - for fixing individual urgent bugs
@@ -17,8 +16,7 @@ Push to master to build packages
   - git flow hotfix start <tag name, eg 0.6.5>
   - <fix the bug>
   - git flow hotfix finish <tag name>
-  - git push --tags                                # push the new tag
-  - git push                                       # push the actual changes
+  - git push origin master <tag name>              # push the new tag and associated changes
   - git checkout develop                           # don't forget to go back to develop before doing more work
 
 - wait a couple of minutes for the packages to be built and signed by buildbot
@@ -31,11 +29,12 @@ Install the packages
   - for a realtime list, log into the ec2 control panel
     - https://console.aws.amazon.com/ec2/home?region=eu-west-1
     - civicboom@gmail.com
-    - instances -> select one -> instance actions -> connect -> run the shell command (but with user "ubuntu" rather than "root")
+    - instances -> select one -> instance actions -> connect (note: user "ubuntu" rather than "root")
 
 - upgrade the servers (web / api nodes)
   - ssh into the server
-  - sudo apt-get update && sudo apt-get dist-upgrade
+  - cb-install
+    - follow prompts to upgrade (or downgrade) the installed packages
   - check that the site is working by viewing that specific server (eg http://webapi2.civicboom.com/contents.json)
     - (Doing one at a time means that the load balancer always has at least one active server to point to)
 	- sometimes nginx needs a second kick - /etc/init.d/nginx restart
