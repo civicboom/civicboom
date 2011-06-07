@@ -13,7 +13,7 @@
 ## Title - Override
 ##------------------------------------------------------------------------------
 
-<%def name="title()">${d['member']['name']} [${d['member']['username']}]</%def>
+<%def name="title()">${d['member']['name'] or d['member']['username']}</%def>
 <%def name="description()">${h.strip_html_tags(d['member']['description'])[:300]}</%def>
 <%def name="breadcrumbs()">
 <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
