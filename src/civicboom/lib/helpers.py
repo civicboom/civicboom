@@ -132,6 +132,24 @@ def shorten_module(mod):
     return re.sub("civicboom/(.*).py", "\\1", mod).replace("/", ".")
 
 
+def nicen_url(url):
+    """
+    Make a URL nicer for human readers
+
+    >>> nicen_url("http://www.shishnet.org/~shish")
+    'shishnet.org/~shish'
+    >>> nicen_url("http://www.shishnet.org/")
+    'shishnet.org'
+    >>> nicen_url("http://www.shishnet.org")
+    'shishnet.org'
+    >>> nicen_url("http://shishnet.org")
+    'shishnet.org'
+    >>> nicen_url("shishnet.org")
+    'shishnet.org'
+    """
+    return re.sub("^(http://|)?(www\.|)?(.*?)/?$", "\\3", url)
+
+
 def link_to_objects(text):
     """
     Scan a string for "blah blah Content #42 blah blah" and replace
