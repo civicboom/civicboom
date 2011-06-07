@@ -98,7 +98,7 @@
 			<%
 			groups = d['groups']['items']
 			if len(groups) == 0:
-				role = "Contributor"
+				role = _("_"+d['member']['type'])
 				org = "Civicboom"
 			elif len(groups) == 1:
 				role = groups[0]['role'].capitalize()
