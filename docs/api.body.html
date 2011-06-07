@@ -5,6 +5,14 @@
 <h2><a name="notes">Notes about this document:</a></h2>
 
 <section>
+<h3>Contacts</h3>
+<div>
+	For technical questions and comments, email <a href="mailto:developers@civicboom.com">developers@civicboom.com</a>
+</div>
+</section>
+
+
+<section>
 <h3>Implementation Indicators</h3>
 <div>
     <ul>
@@ -22,13 +30,19 @@
     <p>The API is abstracted from the presentation of the Civicboom website.
        There may be some discrepancies e.g. 'groups' in the API are referred to as 'Hubs' on the website.
        The API terminology is fixed. The website front-end terminology is subject to change.</p>
-</div>
-</section>
-
-<section>
-<h3>Contacts</h3>
-<div>
-	For technical questions and comments, email <a href="mailto:developers@civicboom.com">developers@civicboom.com</a>
+    <h4>API/Website Terminology Glossary</h4>
+    <table class="api-table">
+        <tr><th>API Term</th><th>Website Term</th><th>Description</th></tr>
+        <tr><td>content   </td><td>request, content, comment, draft</td><td>All extend from the base 'content' object</td></tr>
+        <tr><td>assignment</td><td>request                         </td><td>A question to members. Assignments can be 'accepted'. Accepted assignments act like a members todo list</td></tr>
+        <tr><td>article   </td><td>content, response               </td><td>Standalone items of content. When given a parent content item are reffered to as a 'response'</td></tr>
+        <tr><td>member    </td><td>user, group                     </td><td>Members can be individuals or groups</td></tr>
+        <tr><td>user      </td><td>                                </td><td>An individual user</td></tr>
+        <tr><td>group     </td><td>hub                             </td><td>Members can take the 'persona' of a group and puppeter that groups actions (see set_persona)</td></tr>
+        <tr><td>widget    </td><td>boombox                         </td><td>An iFrame that can be embedded on external websites</td></tr>
+        <tr><td>message   </td><td>notification, message           </td><td>User to user messages are reffered to as 'message's </br>System to user messages are reffered to as 'notification's</td></tr>
+        <tr><td>boom      </td><td>                                </td><td>Send notifications to all current users followers</td></tr>
+    </table>
 </div>
 </section>
 
