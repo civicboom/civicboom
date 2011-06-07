@@ -95,8 +95,20 @@
               ${_('Type')}: ${_('_' + self.member['account_type']).capitalize()}
             % endif
             <br />
-			<span class="organisation"><span class="value-title" title="Civicboom"></span></span>
-			<span class="role"><span class="value-title" title="Member"></span></span>
+			<%
+			groups = d['groups']['items']
+			if len(groups) == 0:
+				role = "Contributor"
+				org = "Civicboom"
+			elif len(groups) == 1:
+				role = groups[0]['role'].capitalize()
+				org = groups[0]['name'] or groups[0]['username']
+			else:
+				role = "Contributor"
+				org = _("%s groups") % len(groups)
+			%>
+			<span class="org"><span class="value-title" title="${org}"></span></span>
+			<span class="role"><span class="value-title" title="${role}"></span></span>
 			% if self.member['type'] == "group" and self.member['location_home']:
 				<%
 				lon, lat = self.member['location_home'].split()
