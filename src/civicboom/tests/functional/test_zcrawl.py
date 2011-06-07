@@ -19,7 +19,10 @@ class TestCrawlSite(TestController):
         pass
     
     def test_crawl(self):
-        self.crawl('/', None)
+        self.crawl('/', None)       # Crawl when not logged in
+        self.log_in_as('unittest')
+        self.count = 0              # Reset counter
+        self.crawl('/', None)       # Crawl when logged in
         
     def crawl(self, url, prev_url):
         self.crawled.append(url)
