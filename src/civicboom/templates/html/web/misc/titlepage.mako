@@ -68,23 +68,17 @@
 ##------------------------------------------------------------------------------
 
 <%def name="header()">
-	<style type="text/css">
-		HEADER {
-			background-image: none;
-			background-color: #FFF;
-			width: 65em;
-			margin: 0 auto 0 auto;
-		}
-	</style>
-	<div class="slimline-header">
-		<div class="logo">
+	<table><tr>
+		<td colspan="4" class="how-to"><a href="">How to | Mobile</a></td>
+	</tr><tr>
+		<td class="logo">
 			<a href='/'>
 				<img  class='logo_img' src='${h.wh_url("public", "images/logo.png")}' alt='${_("_site_name")}' />
 				## <img  class='beta_overlay' src='${h.wh_url("public", "images/logo_beta_overlay.png")}' alt='${_("Beta")}' />
 				## <span class='logo_text'>${_("_site_name")}</span>
 			</a>
-		</div>
-		<div id="signin">
+		</td>
+		<td class="signin">
 			% if c.logged_in_persona:
 			    ${h.secure_link(
 				h.url(controller='account', action='signout'),
@@ -97,14 +91,17 @@
 				${_('Sign in')}
 			    </a>
 			% endif
-		</div>
-		<div class="search">
+		</td>
+		<td class="links">
+			<a href="">What to explore first?</a>
+		</td>
+		<td class="search">
 			<form action="${h.url('contents')}" method='GET'>
 				<input type="search" class="search_input" name="term" placeholder="${_("Search Content")}" />
 				<input type="submit" class="button" value="GO">
 			</form>
-		</div>
-	</div>
+		</td>
+	</tr></table>
 </%def>
 
 <%def name="front_headline()">

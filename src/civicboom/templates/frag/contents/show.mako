@@ -429,19 +429,16 @@
 %>
 
 <script>
+    $('.new-comment').hide();
+    $('.new-comment').css("visibility", "visible");
     $('.show-comments').click(function() {
-	var $vis = $('.new-comment').css("visibility");
-	if ($vis == "hidden") {
-	    $('.new-comment').css("visibility", "visible");
-	    $('.comment-${self.id}').focus();
-        }
-	else { $('.new-comment').css("visibility", "hidden"); }
-	
+	$('.new-comment').slideToggle();
+	$('.comment-${self.id}').focus();
     });
 </script>
 
 <div class="comments">
-    <h2 style="padding-top: 20px; padding-bottom: 10px;">${_("Additional info request)}</h2>
+    <h2 style="padding-top: 20px; padding-bottom: 10px;">${_("Additional info request")}</h2>
 
     <table>
         <tr style="display: none;"><th>${_('Member')}</th><th>${_('Comment')}</th></tr>

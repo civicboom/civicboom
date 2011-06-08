@@ -43,42 +43,6 @@
 ## Edit Content Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-
-    ## Proto - Styling for mouse over help on submit buttons
-    ##         needs moving into proper external file
-    <style type="text/css">
-        .mo-help { position: relative; }
-        .mo-help .mo-help-r {
-            display: none;
-            position: absolute;
-            z-index: 100;
-            width: 200px;
-            background-color: #FFF;
-            padding: 12px;
-            border: 1px solid #2a3a87;
-            text-align: left;
-            bottom: 5em;
-            text-align: center;
-            
-            opacity: 0.8;
-            filter:alpha(opacity=8);
-
-            border-radius        : 0.2em;
-            -moz-border-radius   : 0.2em;
-            -webkit-border-radius: 0.2em;
-
-            box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            -webkit-box-sizing: border-box;
-            
-            -moz-box-shadow: 0px 0px 15px #888;
-            -webkit-box-shadow: 0px 0px 15px #888;
-            box-shadow: 0px 0px 15px #888;
-        }
-        ## .mo-marker { display: inline-block; } ##font-weight: bold; font-size: 1.25em; width: 1.25em; }
-        .mo-help:hover .mo-help-r { display: block; }
-    </style>
-
     <div class="frag_col">
         
         <!-- Toggle Section -->
@@ -100,7 +64,7 @@
         </script>
         
         % if self.content.get('parent'):
-            <h1>${_("Responding to: %s") % self.content['parent']['title']}</h1>
+            <h1>${_("You are responding to: %s") % self.content['parent']['title']}</h1>
         % endif
         
         ## pre_onsubmit is needed to save the contents of the TinyMCE component back to the text area
@@ -220,7 +184,7 @@
         ##${form_instruction(_("Got an opinion? want to ask a question?"))}
         
         ##<p>
-            <label for="title_${self.id}">${_('Title')}</label><br />
+            <label for="title_${self.id}">${_('Add your title')}</label><br />
             <input style="width: 100%" id="title_${self.id}" name="title" type="text" value="${self.content['title']}" placeholder="${_('Enter a title')}"/><br />
             ##${popup(_("extra info"))}
         ##</p>
@@ -229,7 +193,7 @@
 		<%
 		area_id = h.uniqueish_id("content")
 		%>
-		<label for="${area_id}">Content</label><br />
+		<label for="${area_id}">Add your content</label><br />
 		<textarea class="editor" name="content" id="${area_id}">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
         

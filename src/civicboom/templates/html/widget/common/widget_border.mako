@@ -124,7 +124,7 @@
         <div class="padding">
             <a class="icon16 i_boom"      title="${_('Powered by _site_name')}" target="_blank" href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" style="float:right;"><span>${_('_site_name')}</span></a>
             <a class="icon16 i_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='about', id='mobile', sub_domain='www')}"><span>Mobile</span></a>
-            <a class="icon16 i_widget"    title="${_('Embed this widget')}"                     href="${h.url(controller='misc', action='get_widget')}"><span>Embed</span></a>
+            <a class="icon16 i_widget"    title="${_('Embed this _widget')}"                     href="${h.url(controller='misc', action='get_widget')}"><span>Embed</span></a>
             <%
                 rss_url = ''
                 

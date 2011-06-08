@@ -21,11 +21,11 @@
 
     <%
         list_names = dict(
-            top_viewed_assignments  = _('Top _Requests'),
+            top_viewed_assignments  = _('Top _requests'),
             most_responses          = _('What people are getting involved in'),
-            near_me                 = _('Near Me'),
-            recent_assignments      = _('Recent _Requests'),
-            recent                  = _('Just Happened'),
+            near_me                 = _('Near me'),
+            recent_assignments      = _('Recent _requests'),
+            recent                  = _('Just happened'),
         )
     %>
 
@@ -37,10 +37,10 @@
             % endfor
         </div>
     </div>
-    
+
     <div class="frag_right_col">
         <div class="frag_col">
-            <p>contribute via your mobile</p>
+            <p>Contribute via your mobile</p>
         </div>
     </div>
 
