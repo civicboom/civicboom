@@ -35,6 +35,8 @@
             'image'    : self.member['avatar_url'] ,
         }
         
+        self.advert_list = [] # List of advert/info box to display (empty by default, populated below)
+        
         # Customize layout based on logged in user or group
         if self.current_user:
         # GregM: Removed popups as we have the janrain share popup now :D
@@ -55,11 +57,19 @@
                 'url'  : h.url('member', id=self.id, protocol='http', sub_domain='www') ,
             })
             self.attr.rss_url = h.url('member', id=self.id, format='rss', sub_domain='www')
+            
+            # Adverts/info boxs
+            # Logic for mini advert/info fragments from user prefs- used in the same way as the action_list - the logic is here, the display is in the template
+            if not c.logged_in_user.config['advert_profile_mobile']:
+                self.advert_list.append('advert_profile_mobile')
+            if not c.logged_in_user.config['advert_profile_group']:
+                self.advert_list.append('advert_profile_group')
         
         # Manipulate Action List
         # - remove actions in exclude_actions kwarg
         if self.kwargs.get('exclude_actions'):
             self.actions = list(set(self.actions) - set(self.kwargs.get('exclude_actions', '').split(',')))
+        
         
         self.attr.frag_data_css_class = 'frag_member'
         
@@ -69,6 +79,21 @@
         
         self.attr.auto_georss_link = True
     %>
+</%def>
+
+##------------------------------------------------------------------------------
+## Advert disable link
+##------------------------------------------------------------------------------
+
+## Used for setting user settings to not display this chunk again
+<%def name="advert_disable_link(config_key)">
+    ${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().toggle(500, function(){current_element.parent().remove();});")}
+        ##${_("Don't show me this again")}
+        ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
+        ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
+        <input type='hidden' name='${config_key}' value='True'/>
+        <input class='hide_advert_submit' type='submit' name='submit' value='hide'/>
+    </form>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -210,6 +235,18 @@
         % endif
         
         ${member_map()}
+        
+        % if 'advert_profile_mobile' in self.advert_list:
+            <div>
+            mobile ${advert_disable_link('advert_profile_mobile')}
+            </div>
+        % endif
+        
+        % if 'advert_profile_group' in self.advert_list:
+            <div>
+            group ${advert_disable_link('advert_profile_group')}
+            </div>
+        % endif
         </div>
     </div>
     
