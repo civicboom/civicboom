@@ -4,7 +4,7 @@
 <%!
     from sets import Set
     rss_url   = False
-    help_frag = 'settings'
+    help_frag = None #'settings'
 %>
 
 <%namespace name="loc" file="/html/web/common/location.mako"/>
