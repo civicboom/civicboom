@@ -30,7 +30,7 @@
         self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
 
         self.attr.share_kwargs = {
-            'url'      : self.attr.html_url ,
+            'url'      : h.url('member', id=self.id, qualified=True) ,
             'title'    : self.name ,
             'image'    : self.member['avatar_url'] ,
         }
@@ -104,7 +104,7 @@
 			<%
 			groups = d['groups']['items']
 			if len(groups) == 0:
-				role = _("_"+d['member']['type'])
+				role = _("_"+d['member']['type'].capitalize())
 				org = "Civicboom"
 			elif len(groups) == 1:
 				role = groups[0]['role'].capitalize()

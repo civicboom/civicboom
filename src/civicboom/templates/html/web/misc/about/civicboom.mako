@@ -53,13 +53,13 @@ Civicboom to life for yourself.
 
 <%def name="breadcrumbs()">
 <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-	<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
+	<a href="${h.url(controller='misc', action='about', id='index')}" itemprop="url">
 		<span itemprop="title">About</span>
 	</a>
 </span>
 &rarr;
 <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-	<a href="${h.url(controller='misc', action='about', id='civicboom')}" itemprop="url">
+	<a href="${h.url(controller='misc', action='about', id='index')}" itemprop="url">
 		<span itemprop="title">Company</span>
 	</a>
 </span>
