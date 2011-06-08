@@ -25,6 +25,8 @@
 	<link rel="fluid-icon" href="/images/boom128.png" />
 	<link rel="search" type="application/opensearchdescription+xml" href="/misc/opensearch.xml" title="${_("_site_name")}" />
 	<link rel="profile" href="http://microformats.org/profile/hcard">
+<%def name="canonical_url()">${h.url('current', sub_domain='www', protocol='https', qualified=True)}</%def>
+	<link rel="canonical" href="${self.canonical_url()}"/>
 
 ##----------------------------------------------------------------------------
 ## Title
@@ -145,6 +147,10 @@ else:
 	<header><%include file="header.mako"/></header>
 	<div id="app">${next.body()}</div>
 	<footer><%include file="footer.mako"/></footer>
+
+<%def name="breadcrumbs()"></%def>
+<div class="hide_if_js">${self.breadcrumbs()}</div>
+
     ${popup_frame()}
 	##<%include file="scripts_end.mako"/>
 	${scripts_end.body()}

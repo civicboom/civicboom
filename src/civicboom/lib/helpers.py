@@ -15,7 +15,7 @@ from webhelpers.html.tags import end_form
 from webhelpers.date import time_ago_in_words
 
 from cbutils.text import strip_html_tags, scan_for_embedable_view_and_autolink
-from cbutils.misc import args_to_tuple
+from cbutils.misc import args_to_tuple, make_username
 from civicboom.lib.web import current_url, url, current_protocol
 
 import webhelpers.html.tags as html
@@ -134,6 +134,24 @@ def shorten_module(mod):
     'lib.helpers'
     """
     return re.sub("civicboom/(.*).py", "\\1", mod).replace("/", ".")
+
+
+def nicen_url(url):
+    """
+    Make a URL nicer for human readers
+
+    >>> nicen_url("http://www.shishnet.org/~shish")
+    'shishnet.org/~shish'
+    >>> nicen_url("http://www.shishnet.org/")
+    'shishnet.org'
+    >>> nicen_url("http://www.shishnet.org")
+    'shishnet.org'
+    >>> nicen_url("http://shishnet.org")
+    'shishnet.org'
+    >>> nicen_url("shishnet.org")
+    'shishnet.org'
+    """
+    return re.sub("^(http://|)?(www\.|)?(.*?)/?$", "\\3", url)
 
 
 def link_to_objects(text):

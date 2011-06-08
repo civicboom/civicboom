@@ -35,6 +35,7 @@
             'image'    : self.member['avatar_url'] ,
         }
         
+        # Customize layout based on logged in user or group
         if self.current_user:
         # GregM: Removed popups as we have the janrain share popup now :D
             if self.member['type'] == 'group':
@@ -54,6 +55,11 @@
                 'url'  : h.url('member', id=self.id, protocol='http', sub_domain='www') ,
             })
             self.attr.rss_url = h.url('member', id=self.id, format='rss', sub_domain='www')
+        
+        # Manipulate Action List
+        # - remove actions in exclude_actions kwarg
+        if self.kwargs.get('exclude_actions'):
+            self.actions = list(set(self.actions) - set(self.kwargs.get('exclude_actions', '').split(',')))
         
         self.attr.frag_data_css_class = 'frag_member'
         
@@ -88,15 +94,27 @@
           <div style="padding-left: 92px" >
           	${_('Username')}: <br /><span class="uid nickname">${self.member['username']}</span><br />
             % if self.member.get('website'):
-              ${_('Website')}: <br /><a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
+              ${_('Website')}: <br /><a href="${self.member['website']}" class="url" target="_blank">${h.nicen_url(self.member['website'])}</a><br />
             % endif
             Joined: ${self.member['join_date'].split()[0]}<br />
             % if self.current_user:
               ${_('Type')}: ${_('_' + self.member['account_type']).capitalize()}
             % endif
             <br />
-			<span class="organisation"><span class="value-title" title="Civicboom"></span></span>
-			<span class="role"><span class="value-title" title="Member"></span></span>
+			<%
+			groups = d['groups']['items']
+			if len(groups) == 0:
+				role = _("_"+d['member']['type'])
+				org = "Civicboom"
+			elif len(groups) == 1:
+				role = groups[0]['role'].capitalize()
+				org = groups[0]['name'] or groups[0]['username']
+			else:
+				role = "Contributor"
+				org = _("%s groups") % len(groups)
+			%>
+			<span class="org"><span class="value-title" title="${org}"></span></span>
+			<span class="role"><span class="value-title" title="${role}"></span></span>
 			% if self.member['type'] == "group" and self.member['location_home']:
 				<%
 				lon, lat = self.member['location_home'].split()

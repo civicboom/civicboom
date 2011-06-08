@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
-from sqlalchemy import Enum, Integer, Date, DateTime, Boolean
+from sqlalchemy import Enum, Integer
 
 from civicboom.model.meta import Base
 import cbutils.warehouse as wh

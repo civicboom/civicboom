@@ -18,6 +18,16 @@
 
 <%def name="title()">${d['content']['title']}</%def>
 <%def name="description()">${h.strip_html_tags(d['content']['content'])[:300]}</%def>
+<%def name="canonical_url()">${h.url(controller='contents', action='show', id=d['content']['id'], title=h.make_username(d['content']['title']), sub_domain='www', protocol='https', qualified=True)}</%def>
+<%def name="breadcrumbs()">
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url('contents')}" itemprop="url"><span itemprop="title">Content</span></a>
+</span>
+&rarr;
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url('contents', type=d['content']['type'])}" itemprop="url"><span itemprop="title">${_("_%ss" % d['content']['type'].capitalize())}</span></a>
+</span>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Body
