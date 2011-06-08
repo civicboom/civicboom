@@ -104,18 +104,15 @@
 
 /*----------------------------- Messages -------------------------------------*/
 
-.frag_list_contents .messages li {
-    margin-bottom: 0.5em;
-    /*border-bottom: 1px solid #ccc;*/
+.frag_list_contents .messages {
+	li {
+		margin-bottom: 0.5em;
+		/*border-bottom: 1px solid #ccc;*/
+	}
+	.unread      {background-color: #eee;}
+	.source      {float: left;}
+	.target      {float: left;}
+	.subject     {font-weight: bold; background-color: #ccc;}
+	.content a   {font-weight: bold;}
+	.icon_delete {float: right;}
 }
-.frag_list_contents .messages .unread      {background-color: #eee;}
-.frag_list_contents .messages .source      {float: left;}
-.frag_list_contents .messages .target      {float: left;}
-.frag_list_contents .messages .subject     {font-weight: bold; background-color: #ccc;}
-.frag_list_contents .messages .content a   {font-weight: bold;}
-.frag_list_contents .messages .icon_delete {float: right;}
-
-
-
-
-
