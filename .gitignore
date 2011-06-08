@@ -26,3 +26,4 @@ tmp/
 .project
 .pydevproject
 .settings/*
+.sass-cache
