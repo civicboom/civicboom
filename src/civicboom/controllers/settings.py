@@ -101,8 +101,11 @@ add_setting('help_popup_created_user', _('Hide the help popup shown upon login t
 add_setting('help_popup_created_group', _('Hide the help popup shown upon switching to a group'), group='miscellaneous/help_popups', weight=701, type='boolean')
 add_setting('help_popup_created_assignment', _('Hide the help popup shown upon creating an assignment'), group='miscellaneous/help_popups', weight=702, type='boolean')
 
-add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='miscellaneous/miscellaneous', weight=703, type='boolean')
-add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='miscellaneous/miscellaneous', weight=704, type='boolean', info=_('Please speak to our team before you change this option!'))
+add_setting('advert_profile_mobile', _('Hide the info box encouraging the use of the mobile app'), group='miscellaneous/advert', weight=703, type='boolean')
+add_setting('advert_profile_group', _('Hide the info box encouraging the use of _groups'), group='miscellaneous/advert', weight=704, type='boolean')
+
+add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='miscellaneous/miscellaneous', weight=705, type='boolean')
+add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='miscellaneous/miscellaneous', weight=706, type='boolean', info=_('Please speak to our team before you change this option!'))
 
 #---------------------------------------------------------------------------
 # Setting Validators (for dynamic scema construction)
