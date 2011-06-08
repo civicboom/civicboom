@@ -115,15 +115,15 @@
 			<h1 class="fn n">${h.guess_hcard_name(self.member['name'])}</h1><br />
 		% endif
         <div>
-          <div style="float:left; padding-right: 3px;">${member_avatar(img_class='photo')}</div>
-          <div style="padding-left: 92px" >
-          	${_('Username')}: <br /><span class="uid nickname">${self.member['username']}</span><br />
+          <div class="avatar">${member_avatar(img_class='photo')}</div>
+          <div class="user-details">
+          	<span class="detail-title">${_('Username')}:</span> <span class="uid nickname">${self.member['username']}</span><br />
             % if self.member.get('website'):
-              ${_('Website')}: <br /><a href="${self.member['website']}" class="url" target="_blank">${h.nicen_url(self.member['website'])}</a><br />
+              <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
             % endif
-            Joined: ${self.member['join_date'].split()[0]}<br />
+            <span class="detail-title">Joined:</span> ${self.member['join_date']}<br />
             % if self.current_user:
-              ${_('Type')}: ${_('_' + self.member['account_type']).capitalize()}
+              <span class="detail-title">${_('Type')}:</span> ${_('_' + self.member['account_type']).capitalize()}
             % endif
             <br />
 			<%
@@ -236,6 +236,10 @@
         
         ${member_map()}
         
+        ## --- adverts --- ##
+        ${advert("Don't forget you can get involved on your Android mobile!", href="127.0.0.1", icon="mobile")}
+        ${advert("Are you an organisation? GET STARTED!", href="127.0.0.1", icon="user")}
+        ${advert("Get published! Get Recognition! Get in the news!", icon="email")}
         % if 'advert_profile_mobile' in self.advert_list:
             <div>
             mobile ${advert_disable_link('advert_profile_mobile')}
@@ -247,6 +251,12 @@
             group ${advert_disable_link('advert_profile_group')}
             </div>
         % endif
+
+	
+
+
+	
+
         </div>
     </div>
     
@@ -320,6 +330,7 @@
         )}
         
         </div>
+	${advert("Don't forget you can get involved on your Android mobile!", href="127.0.0.1", icon="mobile")}
     </div>
 
 </%def>
@@ -506,4 +517,22 @@
         <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon16 i_close"><span>${_('Close')}</span></a>
     </div>
 </%doc>
-
+    
+##------------------------------------------------------------------------------
+## Advert
+##------------------------------------------------------------------------------
+<%def name="advert(content, href=None, icon=None)">
+    <div class="advert">
+	% if icon:
+	    <a class="icon16 i_${icon} icon"></a>
+	% endif
+	<div class="box">
+	    % if href:
+		<a href="${href}"><span class="content">${content}</span></a>
+	    % else:
+		<span class="content">${content}</span>
+	    % endif
+	    <a class="icon16 i_close"></a>
+	</div>
+    </div>
+</%def>
