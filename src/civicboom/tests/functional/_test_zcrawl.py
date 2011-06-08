@@ -26,7 +26,7 @@ class TestCrawlSite(TestController):
         
     def crawl(self, url, prev_url):
         self.crawled.append(url)
-        #print url, 'from', prev_url
+        print url, 'from', prev_url
         response = self.app.get(url, status='*')
         if response.status not in [200, 301, 302]:
             print 'Got response', response.status
