@@ -13,8 +13,18 @@
 ## Title - Override
 ##------------------------------------------------------------------------------
 
-<%def name="title()">${d['member']['name']} [${d['member']['username']}]</%def>
+<%def name="title()">${d['member']['name'] or d['member']['username']}</%def>
 <%def name="description()">${h.strip_html_tags(d['member']['description'])[:300]}</%def>
+<%def name="breadcrumbs()">
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url('members')}" itemprop="url"><span itemprop="title">Members</span></a>
+</span>
+&rarr;
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url('members', type=d['member']['type'])}" itemprop="url"><span itemprop="title">${_("_%ss" % d['member']['type'].capitalize())}</span></a>
+</span>
+</%def>
+
 
 
 ##------------------------------------------------------------------------------
