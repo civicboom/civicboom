@@ -425,6 +425,7 @@ class UserVisibleContent(Content):
 
     def action_list_for(self, member, **kwargs):
         action_list = Content.action_list_for(self, member, **kwargs)
+        action_list.append('respond')
         if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
             action_list.append('update')
             action_list.append('delete')

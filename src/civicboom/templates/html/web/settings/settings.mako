@@ -4,8 +4,8 @@
 
 <%def name="body()">
 	<%
-        self.attr.frags = [settings, help]
-        self.attr.frag_col_sizes = [2,1]
+        self.attr.frags = [settings]
+        self.attr.frag_col_sizes = [2]
     %>
 </%def>
 
@@ -14,5 +14,5 @@
 </%def>
 
 <%def name="help()">
-	<!--#include file="/help/settings"-->
+##	<!--#include file="/help/settings"-->
 </%def>

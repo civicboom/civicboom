@@ -174,8 +174,24 @@ class GroupsController(BaseController):
 
         @api groups 1.0 (WIP)
         
-        @param username  a unique username, cannot clash with existing usernames
-        @param *         see "POST /groups"
+        @param username                   a unique username, cannot clash with existing usernames
+        @param name                       display name
+        @param description                description of groups purpose
+        @param default_role
+            admin
+            editor
+            contributor
+            observer
+        @param join_mode
+            public
+            invite
+            invite_and_request
+        @param member_visibility
+            public
+            private 
+        @param default_content_visibility (plus account required)
+            public
+            private 
         
         @return 400  data invalid (ie, username that already exisits)
         @return 201  group created, data.id = new group id

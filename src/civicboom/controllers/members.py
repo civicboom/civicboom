@@ -257,9 +257,9 @@ class MembersController(BaseController):
                 'responses',
                 
                 # Other
-                'assignments_accepted', #TODO need to limit to 'search.default.limit.sub_list' .. maybe?
+                'assignments_accepted', # AllanC - see limit imposed below
                 'actions',
-                'boomed' , #TODO need to limit to 'search.default.limit.sub_list' .. maybe?
+                'boomed' ,              # AllanC - see limit imposed below
             ]
         
         data = {'member': member.to_dict(list_type='full', **kwargs)}
@@ -277,6 +277,9 @@ class MembersController(BaseController):
         
         # Member Lists
         for list in [list for list in lists if hasattr(member_actions_controller, list)]:
-            data[list] = getattr(member_actions_controller, list)(member, **kwargs)['data']['list']
+            limit = None
+            if list in ['boomed', 'assignments_accepted']: # AllanC - we dont want to limit member lists, but we do want to limit content lists to 3
+                limit = config['search.default.limit.sub_list']
+            data[list] = getattr(member_actions_controller, list)(member, limit=limit, **kwargs)['data']['list']
         
         return action_ok(data=data)
