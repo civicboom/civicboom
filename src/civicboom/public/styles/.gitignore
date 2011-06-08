@@ -4,3 +4,5 @@
 /common/icons.png
 /common/icons.css
 /*.png
+*.css
+.sass-cache
