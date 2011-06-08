@@ -84,21 +84,22 @@ HTML SELECT {
 .zebra {
 	width: 100%;
 	border: 1px solid black;
-}
-.zebra TH {
-	font-weight: bold;
-}
-.zebra THEAD TR                 {background: #888;}
-.zebra TBODY TR:nth-child(odd)  {background: #CCC;}
-.zebra TBODY TR:nth-child(even) {background: #EEE;}
 
-.zebra THEAD TR            {border-bottom: 1px solid black;}
-.zebra TBODY TR            {border-bottom: 1px solid #999;}
-.zebra TBODY TR:last-child {border-bottom: none;}
+	TH {
+		font-weight: bold;
+	}
+	THEAD TR                 {background: #888;}
+	TBODY TR:nth-child(odd)  {background: #CCC;}
+	TBODY TR:nth-child(even) {background: #EEE;}
 
-.zebra THEAD TH,
-.zebra TBODY TD {
-	padding: 2px;
+	THEAD TR            {border-bottom: 1px solid black;}
+	TBODY TR            {border-bottom: 1px solid #999;}
+	TBODY TR:last-child {border-bottom: none;}
+
+	THEAD TH,
+	TBODY TD {
+		padding: 2px;
+	}
 }
 
 
@@ -106,26 +107,28 @@ HTML SELECT {
 /* Table - Simple name:value forms                                            */
 /*----------------------------------------------------------------------------*/
 
-.form TH {
-	font-weight: bold;
-	text-align: center;
-	padding: 2px;
-}
-.form TD {
-	padding: 2px;
-}
-.form TD INPUT[type="text"],
-.form TD INPUT[type="submit"],
-.form TD INPUT[type="email"],
-.form TD INPUT[type="search"],
-.form TD INPUT[type="password"],
-.form TD SELECT,
-.form TD TEXTAREA {
-	width: 100%;
-}
-.form TD:first-child {
-	text-align: right;
-	vertical-align: top;
+.form {
+	TH {
+		font-weight: bold;
+		text-align: center;
+		padding: 2px;
+	}
+	TD {
+		padding: 2px;
+	}
+	TD INPUT[type="text"],
+	TD INPUT[type="submit"],
+	TD INPUT[type="email"],
+	TD INPUT[type="search"],
+	TD INPUT[type="password"],
+	TD SELECT,
+	TD TEXTAREA {
+		width: 100%;
+	}
+	TD:first-child {
+		text-align: right;
+		vertical-align: top;
+	}
 }
 
 /* HACK because for some reason, input fields in TDs overflow :/  */
