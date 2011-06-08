@@ -257,9 +257,9 @@ class MembersController(BaseController):
                 'responses',
                 
                 # Other
-                'assignments_accepted', 
+                'assignments_accepted', # AllanC - see limit imposed below
                 'actions',
-                'boomed' ,
+                'boomed' ,              # AllanC - see limit imposed below
             ]
         
         data = {'member': member.to_dict(list_type='full', **kwargs)}
