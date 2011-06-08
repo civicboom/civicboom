@@ -87,7 +87,7 @@
 
 ## Used for setting user settings to not display this chunk again
 <%def name="advert_disable_link(config_key)">
-    ${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().toggle(500, function(){current_element.parent().remove();});")}
+    ${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
         ##${_("Don't show me this again")}
         ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
         ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
@@ -237,25 +237,8 @@
         ${member_map()}
         
         ## --- adverts --- ##
-        ${advert("Don't forget you can get involved on your Android mobile!", href="127.0.0.1", icon="mobile")}
-        ${advert("Are you an organisation? GET STARTED!", href="127.0.0.1", icon="user")}
-        ${advert("Get published! Get Recognition! Get in the news!", icon="email")}
-        % if 'advert_profile_mobile' in self.advert_list:
-            <div>
-            mobile ${advert_disable_link('advert_profile_mobile')}
-            </div>
-        % endif
-        
-        % if 'advert_profile_group' in self.advert_list:
-            <div>
-            group ${advert_disable_link('advert_profile_group')}
-            </div>
-        % endif
-
-	
-
-
-	
+        ${advert("Don't forget you can get involved on your Android mobile!", href="127.0.0.1", icon="mobile", config_key="advert_profile_mobile")}
+        ${advert("Are you an organisation? GET STARTED!", href="127.0.0.1", icon="user", config_key="advert_profile_group")}
 
         </div>
     </div>
@@ -330,7 +313,6 @@
         )}
         
         </div>
-	${advert("Don't forget you can get involved on your Android mobile!", href="127.0.0.1", icon="mobile")}
     </div>
 
 </%def>
@@ -521,18 +503,23 @@
 ##------------------------------------------------------------------------------
 ## Advert
 ##------------------------------------------------------------------------------
-<%def name="advert(content, href=None, icon=None)">
+<%def name="advert(content, href=None, icon=None, config_key=None)">
+    % if config_key and config_key in self.advert_list:
     <div class="advert">
 	% if icon:
 	    <a class="icon16 i_${icon} icon"></a>
 	% endif
 	<div class="box">
+	    ## Display content with href is supplied
 	    % if href:
 		<a href="${href}"><span class="content">${content}</span></a>
 	    % else:
 		<span class="content">${content}</span>
 	    % endif
-	    <a class="icon16 i_close"></a>
+	    ## Display advert disable link
+	    ${advert_disable_link(config_key)}
+	    ## <a class="icon16 i_close"></a>
 	</div>
     </div>
+    % endif
 </%def>

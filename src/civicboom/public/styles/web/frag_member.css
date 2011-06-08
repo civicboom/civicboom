@@ -67,8 +67,11 @@
   margin-left: 4px;
 }
 
-#frag_containers .frag_container .frag_member .advert .i_close {
-  position: relative;
-  z-index: 1;
-  display: block;
+#frag_containers .frag_container .frag_member .advert .hide_advert_submit {
+  margin-top: 5px;
+  
+  /* --- Cross browser border rounding --- */
+  border-radius        : 0.5em;
+  -moz-border-radius   : 0.5em;
+  -webkit-border-radius: 0.5em;
 }
