@@ -40,7 +40,7 @@
         # Agregation dict
         if self.content['private'] == False and self.content['type'] != 'draft':
             self.attr.share_kwargs = {
-                'url'      : self.attr.html_url ,
+                'url'      : h.url('content', id=self.id, qualified=True) ,
                 'title'    : self.content.get('title') ,
                 'summary'  : self.content.get('content_short') ,
                 'image'    : self.content.get('thumbnail_url') ,
