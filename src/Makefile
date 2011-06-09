@@ -57,7 +57,7 @@ skel-db:
 
 sass:
 	cd civicboom/public/styles
-	sass --watch .:. >/tmp/sass.log 2>&1 &
+	sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
 
 test-db: skel-db
 	paster setup-app development.ini
