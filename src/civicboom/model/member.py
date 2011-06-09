@@ -426,7 +426,10 @@ class Member(Base):
     def avatar_url(self, size=80):
         if self.avatar:
             return wh_url("avatars", self.avatar)
-        return wh_url("public", "images/default/avatar.png")
+        if self.type == "user":
+            return wh_url("public", "images/default/avatar.png")
+        else:
+            return wh_url("public", "images/default/avatar_group.png")
 
     def delete(self):
         from civicboom.lib.database.actions import del_member
@@ -586,8 +589,8 @@ class User(Member):
         email = self.email or self.email_unverified
         if email:
             hash    = hashlib.md5(email.lower()).hexdigest()
-            default = "identicon"
-            #default = "http://www.civicboom.com/images/default/avatar.jpg"
+            #default = "identicon"
+            default =  wh_url("public", "images/default/avatar.png")
             args    = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
             return "https://secure.gravatar.com/avatar/%s?%s" % (hash, args)
         return Member.avatar_url
