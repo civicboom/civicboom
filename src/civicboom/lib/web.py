@@ -624,11 +624,7 @@ def authenticate_form(_target, *args, **kwargs):
         #abort(403, detail=csrf_detected_message)
         response.status_int = 403
         
-        format = c.format
-        if args[-1] in format_processors:
-            format = args[-1]
-        
-        if format in ['html','redirect']:
+        if c.format in ['html','redirect']:
             c.target_url = current_url()
             c.post_values = param_dict
             return render_mako("html/web/misc/confirmpost.mako")
