@@ -421,7 +421,7 @@ class ContentsController(BaseController):
             if c.format == 'redirect' or c.format == 'html':
                 return redirect(current_referer())
             else:
-                raise action_error(message=flash_message['message'], code=403)
+                raise action_error(message=flash_message['message'], code=400)
 
         # Create Content Object
         if   kwargs['type'] == 'draft':
