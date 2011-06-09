@@ -463,7 +463,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         #     - set timer so that in 1 seconds time the link 'disabled class is removed'
         #  - return false and ensure that the normal list is not followed
         # GregM: This now looks for jquery relative span > form instead of unique id
-        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled')) {$(this).addClass('disabled'); var e = $(this).siblings('span').children('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout('$(\"#link_%(hhash)s\").removeClass(\"disabled\");', 1000);} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled')) {$(this).addClass('disabled'); var e = $(this).siblings('span').children('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} function removeDisabled(elem) {elem.removeClass('disabled');} setTimeout(removeDisabled, 1000, $(this));} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
     # $('#form_%(hhash)s').onsubmit();
     
