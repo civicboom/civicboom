@@ -426,7 +426,7 @@ class Member(Base):
     def avatar_url(self, size=80):
         if self.avatar:
             return wh_url("avatars", self.avatar)
-        if self.type == "user":
+        if self.__type__ == "user":
             return wh_url("public", "images/default/avatar.png")
         else:
             return wh_url("public", "images/default/avatar_group.png")
