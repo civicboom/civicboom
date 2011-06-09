@@ -11,8 +11,8 @@ import re
 contents_list_titles = [
     #list name , icon, description
     ('all'                 , 'article'    , _('all').capitalize()                   ),
-    ('drafts'              , 'draft'      , _('drafts').capitalize()                ),
-    ('assignments_active'  , 'assignment' , _('active _assignments').capitalize()   ),
+    ('drafts'              , 'draft'      , _("What I'm working on")                ),
+    ('assignments_active'  , 'assignment' , _("What I've asked")   ),
     ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
     ('responses'           , 'response'   , _('responses').capitalize()             ),
     ('articles'            , 'article'    , _('_articles').capitalize()             ),
@@ -28,7 +28,7 @@ def get_list_titles(list_name):
 
 actions_list = [
     # url identifyer , action, description
-    (re.compile('/accept'                                   ) , 'accept'     , _('Accept an _assignment')),
+    (re.compile('/accept'                                   ) , 'accept'     , _('Accept a _assignment')),
     (re.compile('/follow'                                   ) , 'follow'     , _('Follow a _member')     ),
     (re.compile('/boom'                                     ) , 'boom'       , _('Boom _content')        ),
     (re.compile('/contents/new\?parent_id='                 ) , 'new_respose', _('Create a response')    ),

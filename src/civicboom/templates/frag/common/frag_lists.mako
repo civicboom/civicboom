@@ -311,7 +311,7 @@
         <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
             <p class="content_title">${content['title']}</p>
           % if creator and 'creator' in content:
-            <p><small class="content_title">By: ${content['creator']['name']}</small>
+            <p><small class="content_by">By: ${content['creator']['name']}</small>
           % endif
         </a>
     </td>

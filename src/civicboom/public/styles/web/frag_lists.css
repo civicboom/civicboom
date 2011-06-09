@@ -91,8 +91,17 @@
 .frag_list_contents .content .content_title {
     padding-left: 0.25em;
     padding-top : 0.25em;
+    
+    /* --- Style rework --- */
+    font-size: 110%;
+    font-weight: bold;
 }
 
+.frag_list_contents .content .content_by {
+    padding-left: 0.5em;
+    padding-top : 0.5em;
+    font-size: 100%;
+}
 
 /*------------------------------ Members -------------------------------------*/
 
