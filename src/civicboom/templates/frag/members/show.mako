@@ -30,7 +30,7 @@
         self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
 
         self.attr.share_kwargs = {
-            'url'      : h.url('member', id=self.id, qualified=True) ,
+            'url'      : self.attr.html_url ,
             'title'    : self.name ,
             'image'    : self.member['avatar_url'] ,
         }
@@ -82,21 +82,6 @@
 </%def>
 
 ##------------------------------------------------------------------------------
-## Advert disable link
-##------------------------------------------------------------------------------
-
-## Used for setting user settings to not display this chunk again
-<%def name="advert_disable_link(config_key)">
-    ${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
-        ##${_("Don't show me this again")}
-        ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
-        ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
-        <input type='hidden' name='${config_key}' value='True'/>
-        <input class='hide_advert_submit' type='submit' name='submit' value='hide'/>
-    </form>
-</%def>
-
-##------------------------------------------------------------------------------
 ## Member Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
@@ -129,7 +114,7 @@
 			<%
 			groups = d['groups']['items']
 			if len(groups) == 0:
-				role = _("_"+d['member']['type'].capitalize())
+				role = _("_"+d['member']['type'])
 				org = "Civicboom"
 			elif len(groups) == 1:
 				role = groups[0]['role'].capitalize()
@@ -175,7 +160,7 @@
         % if self.member.get('description'):
           <div style="clear:left; height: 3px;">&nbsp;</div>
           <div style="clear:left;" class="frag_list">
-            <h2><span class="icon16 i_${self.attr.icon_type}"><span>Description</span><span style="display:inline-block;padding-left:19px">Description</span></span></h2>
+            <h2><span class="icon16 i_${self.attr.icon_type}"><span>About</span><span style="display:inline-block;padding-left:19px">Description</span></span></h2>
             <div class="frag_list_contents">
               <div class="content note" style="padding-bottom: 3px;">
                 ${self.member['description']}
@@ -237,8 +222,8 @@
         ${member_map()}
         
         ## --- adverts --- ##
-        ${advert("Don't forget you can get involved on your Android mobile!", href="127.0.0.1", icon="mobile", config_key="advert_profile_mobile")}
-        ${advert("Are you an organisation? GET STARTED!", href="127.0.0.1", icon="user", config_key="advert_profile_group")}
+        ${advert("Don't forget you can get involved on your Android mobile!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
+        ${advert("Are you an organisation? GET STARTED!", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
 
         </div>
     </div>
@@ -282,7 +267,7 @@
         
         ${frag_list.content_list(
             d['assignments_accepted'] ,
-            _('Accepted _assignments') ,
+            _('My to-do'), #_('Accepted _assignments') ,
             h.args_to_tuple('member_action', id=self.id, action='assignments_accepted') ,
             creator = True ,
             icon = 'assignment' ,
@@ -305,7 +290,7 @@
         
         ${frag_list.content_list(
             d['boomed'],
-            _('Boomed content'),
+            _('Boomed _content'),
             #h.args_to_tuple('member_action', id=self.id, action='boomed') ,
             h.args_to_tuple('contents', boomed_by=self.id) ,
             creator = True ,
@@ -510,7 +495,7 @@
 	    <a class="icon16 i_${icon} icon"></a>
 	% endif
 	<div class="box">
-	    ## Display content with href is supplied
+	    ## Display content with href if supplied
 	    % if href:
 		<a href="${href}"><span class="content">${content}</span></a>
 	    % else:
@@ -522,4 +507,19 @@
 	</div>
     </div>
     % endif
+</%def>
+    
+##------------------------------------------------------------------------------
+## Advert disable link
+##------------------------------------------------------------------------------
+
+## Used for setting user settings to not display this chunk again
+<%def name="advert_disable_link(config_key)">
+    ${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
+        ##${_("Don't show me this again")}
+        ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
+        ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
+        <input type='hidden' name='${config_key}' value='True'/>
+        <input class='hide_advert_submit' type='submit' name='submit' value='hide'/>
+    </form>
 </%def>
