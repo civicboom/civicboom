@@ -83,13 +83,16 @@
     ${frag_list(render_item_function=render_item_message      , type_=('ul','li')   , list_class='messages', empty_message=_('You have no messages')      , *args, **kwargs)}
 </%def>
 
+<%def name="sponsored_list(*args, **kwargs)">
+    ${frag_list(render_item_function=render_item_sponsored, type_=('table','tr'),   content_class="sponsored_content",  list_class='content',   *args,  **kwargs)}
+</%def>
 
 
 ##------------------------------------------------------------------------------
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(cb_list, title, href=None, show_heading=True, hide_if_empty=True, type_=('ul','li'), list_class='', icon='', render_item_function=None, empty_message=None, actions=None, *args, **kwargs)">
+<%def name="frag_list(cb_list, title, href=None, show_heading=True, hide_if_empty=True, type_=('ul','li'), content_class=None, list_class='', icon='', render_item_function=None, empty_message=None, actions=None, *args, **kwargs)">
     <%
         count = None
         if isinstance(cb_list, dict) and 'items' in cb_list:
@@ -150,7 +153,11 @@
                 % endif
             </h2>
         % endif
-            <div class="frag_list_contents">
+            % if content_class:
+                <div class=${content_class}>
+            % else:
+                <div class="frag_list_contents">
+            % endif
             <${type_[0]} class="${list_class}">
                 ##% for item in items[0:limit]:
                 % if count:
@@ -421,4 +428,75 @@
     </div>
     
 </li>
+</%def>
+
+##------------------------------------------------------------------------------
+## Sponsored Content Item
+##------------------------------------------------------------------------------
+
+<%def name="render_item_sponsored(content, location=False, stats=False, creator=False)">
+<tr>
+    <%
+        id = content['id']
+    
+        js_link_to_frag = True
+        if js_link_to_frag:
+            js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('content', id=id, format='frag'))
+        else:
+            js_link_to_frag = ''
+    %>
+
+    <td>
+        <a class="thumbnail" href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+            ${content_thumbnail_icons(content)}
+            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
+        </a>
+    </td>
+    
+    <td style="width:100%;">
+        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+            <p class="content_title">${content['title']}</p>
+          % if creator and 'creator' in content:
+            <p><small class="content_by">By: ${content['creator']['name']}</small>
+          % endif
+        </a>
+    </td>
+    % if location:
+    <td>
+        flag
+    </td>
+    % endif
+    % if stats:
+    <td>
+        rating <br/> comments
+    </td>
+    % endif
+    % if creator and 'creator' in content:
+    <td class="creator">
+        ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+    </td>
+    % endif
+</tr>
+% if request.GET.get('term', '') and 'content_short' in content:
+<tr><td colspan="5">
+	## content_short is stripped of html tags, so any that are in here are search highlights
+	<small class="content_short">${content['content_short']|n}</small>
+</td></tr>
+% endif
+</%def>
+
+## Content Thumbnail Icons
+<%def name="content_thumbnail_icons(content)">
+    <div class="icons">
+        ## AllanC - HACK!! please remove type==draft after issue #515 is fixed
+        % if content.get('private') or content.get('type')=='draft':
+            ${h.icon('private')}
+        % endif
+        % if content.get('edit_lock'):
+            ${h.icon('edit_lock')}
+        % endif
+        % if content.get('approval') and content.get('approval') != 'none':
+            ${h.icon(content.get('approval'))}
+        % endif
+    </div>
 </%def>
