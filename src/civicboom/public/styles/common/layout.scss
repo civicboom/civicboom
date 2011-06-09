@@ -243,9 +243,11 @@ HTML.no-js #flash_message {
 /* Common widgets                                                             */
 /*----------------------------------------------------------------------------*/
 
+@import "palette";
+
 .button {
 	display: inline-block;
-	background: #4974b8;
+	background: $button-top;
 
 	border-radius        : 0.2em;
 	-moz-border-radius   : 0.2em;
@@ -273,12 +275,6 @@ DIV#app .button {
 	padding: 0.25em 0.5em;
 	/* display: inline-block; */
 }
-
-$cb-lightblue: #4974b8;
-$cb-darkblue: #3a4a97;
-
-$button-top: $cb-lightblue;
-$button-bot: $cb-darkblue;
 
 .button,
 .title_bar {
