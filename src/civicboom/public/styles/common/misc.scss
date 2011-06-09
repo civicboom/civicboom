@@ -44,14 +44,14 @@ BODY.c-misc.a-about {
 
 .toc {
 	padding-top: 32px;
-}
-.toc LI A {
-	display: block;
-	width: 128px;
-	margin: 4px;
-}
-.toc A {
-	color: white;
+	LI A {
+		display: block;
+		width: 128px;
+		margin: 4px;
+	}
+	A {
+		color: white;
+	}
 }
 
 /*

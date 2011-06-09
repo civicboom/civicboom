@@ -115,19 +115,20 @@ HTML SELECT {
 	}
 	TD {
 		padding: 2px;
-	}
-	TD INPUT[type="text"],
-	TD INPUT[type="submit"],
-	TD INPUT[type="email"],
-	TD INPUT[type="search"],
-	TD INPUT[type="password"],
-	TD SELECT,
-	TD TEXTAREA {
-		width: 100%;
-	}
-	TD:first-child {
-		text-align: right;
-		vertical-align: top;
+
+		INPUT[type="text"],
+		INPUT[type="submit"],
+		INPUT[type="email"],
+		INPUT[type="search"],
+		INPUT[type="password"],
+		SELECT,
+		TEXTAREA {
+			width: 100%;
+		}
+		&:first-child {
+			text-align: right;
+			vertical-align: top;
+		}
 	}
 }
 
