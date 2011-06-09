@@ -10,18 +10,18 @@
 	}
 
 	/*---------------------------Frag Member Avatar-------------------------------*/
-	.frag_left_col .user-avatar {
-	  
+	.avatar {
+		text-align: center;
 	}
 
 	/*---------------------------Frag Member User Details-------------------------*/
-	.frag_left_col .user-details {
+	.user-details {
 		margin-top: 10px;
 		margin-left: 5px;
-	}
 
-	.frag_left_col .user-details .detail-title {
-		font-weight: bold;
+		.detail-title {
+			font-weight: bold;
+		}
 	}
 
 	/*---------------------------Frag Member Adverts------------------------------*/
