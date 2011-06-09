@@ -1,81 +1,82 @@
-#frag_containers .frag_container .frag_content .frag_right_col {
-  width: 33%;
-  float: right;
-}
+#frag_containers .frag_container .frag_content {
+	.frag_right_col {
+		width: 33%;
+		float: right;
+	}
 
-/*-------------------------- Content -----------------------------------------*/
+	/*----------------------------Content Comments--------------------------------*/
 
+	.new-comment {
+		visibility: hidden;
+	}
 
+	.comments-option {
+		color: #666;
+	}
 
-/*----------------------------Content Comments--------------------------------*/
+	.show-comments {
+		font-weight: bold;
+		text-decoration: underline;
+		cursor: pointer;
+	}
 
-#frag_containers .frag_container .frag_content .new-comment {
-    visibility: hidden;
-}
+	.comments table {
+		width: 100%;
+	}
 
-.no-js #frag_containers .frag_container .frag_content .new-comment {
-    visibility: visible;
-}
+	.comments h2 {
+		font-size: 150%;
+	}
 
-#frag_containers .frag_container .frag_content .comments-option {
-    color: #666;
-}
+	.comments td {
+		vertical-align: top;
+		color: #444;
+		padding-bottom: 1em;
+	}
 
-.no-js #frag_containers .frag_container .frag_content .comments-option {
-    display: none;
-}
+	.comments textarea {
+		width: 100%;
+		min-height: 60px;
+	}
+	.comments input {
+		width: 100%;
+	}
 
-#frag_containers .frag_container .frag_content .show-comments {
-    font-weight: bold;
-    text-decoration: underline;
-    cursor: pointer;
-}
+	.comment_avatar {
+		width: 40px;
+	}
+	.comment {
+		padding-left  : 1em;
+	}
+	.comment .comment_by {
+		font-weight: bold;
+		margin-bottom: 0.25em;
+	}
+	.comment .comment_content        {
+		font-size:  88%;
+		line-height: 1em;
 
-#frag_containers .frag_container .frag_content .comments table {
-    width: 100%;
-}
-
-#frag_containers .frag_container .frag_content .comments h2 {
-    font-size: 150%;
-}
-
-#frag_containers .frag_container .frag_content .comments td {
-    vertical-align: top;
-    color: #444;
-    padding-bottom: 1em;
-}
-
-#frag_containers .frag_container .frag_content .comments textarea {
-    width: 100%;
-    min-height: 60px;
-}
-#frag_containers .frag_container .frag_content .comments input {
-    width: 100%;
-}
-
-#frag_containers .frag_container .frag_content .comment_avatar {
-    width: 40px;
-}
-#frag_containers .frag_container .frag_content .comment {
-    padding-left  : 1em;
-}
-#frag_containers .frag_container .frag_content .comment .comment_by {
-    font-weight: bold;
-    margin-bottom: 0.25em;
-}
-#frag_containers .frag_container .frag_content .comment .comment_content        {
-	font-size:  88%;
-	line-height: 1em;
-
-	/* stop over-wide comments */
-	max-width: 228px;
-	word-wrap: break-word;
-}
+		/* stop over-wide comments */
+		max-width: 228px;
+		word-wrap: break-word;
+	}
 /*
- could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
-#frag_containers .frag_container .frag_content .comment .comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
-#frag_containers .frag_container .frag_content .comment .comment_content:after  {font-size: 120%; font-weight: bold; content: close-quote;}
+	 could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
+	.comment .comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
+	.comment .comment_content:after  {font-size: 120%; font-weight: bold; content: close-quote;}
 */
+}
+
+.no-js #frag_containers .frag_container .frag_content {
+	.new-comment {
+		visibility: visible;
+	}
+
+	.comments-option {
+		display: none;
+	}
+}
+
 
 /*--------------------------Content Mouse Over Help--------------------------*/
 

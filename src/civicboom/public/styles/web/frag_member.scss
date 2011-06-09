@@ -1,77 +1,79 @@
-/*-------------------------- Frag Member Cols---------------------------------*/
-#frag_containers .frag_container .frag_member .frag_left_col {
-  width: 33%;
-  float: left;
-}
-#frag_containers .frag_container .frag_member .frag_right_col {
-  width: 66%;
-  float: right;
-}
+#frag_containers .frag_container .frag_member {
+	/*-------------------------- Frag Member Cols---------------------------------*/
+	.frag_left_col {
+		width: 33%;
+		float: left;
+	}
+	.frag_right_col {
+		width: 66%;
+		float: right;
+	}
 
-/*---------------------------Frag Member Avatar-------------------------------*/
-#frag_containers .frag_container .frag_member .frag_left_col .user-avatar {
-  
-}
+	/*---------------------------Frag Member Avatar-------------------------------*/
+	.frag_left_col .user-avatar {
+	  
+	}
 
-/*---------------------------Frag Member User Details-------------------------*/
-#frag_containers .frag_container .frag_member .frag_left_col .user-details {
-  margin-top: 10px;
-  margin-left: 5px;
-}
+	/*---------------------------Frag Member User Details-------------------------*/
+	.frag_left_col .user-details {
+		margin-top: 10px;
+		margin-left: 5px;
+	}
 
-#frag_containers .frag_container .frag_member .frag_left_col .user-details .detail-title {
-  font-weight: bold;
-}
+	.frag_left_col .user-details .detail-title {
+		font-weight: bold;
+	}
 
-/*---------------------------Frag Member Adverts------------------------------*/
-#frag_containers .frag_container .frag_member .advert {
-  padding: 0;
-  margin-top: 1em;
-}
+	/*---------------------------Frag Member Adverts------------------------------*/
+	.advert {
+		padding: 0;
+		margin-top: 1em;
 
-#frag_containers .frag_container .frag_member .advert a {
-  text-decoration: none;
-  color: #fff;
-}
+		a {
+			text-decoration: none;
+			color: #fff;
+		}
 
-#frag_containers .frag_container .frag_member .advert .box {
-  position: relative;
-  /* min-height: 4em; */
-  border: 1px solid black;
-  top: 5px;
-  padding: 5px;
-  
-  color: #fff;
-  font-size: 85%;
-  font-weight: bold;
-  text-align: right;
-  
-  /* --- Cross browser border rounding --- */
-  border-radius        : 0.5em;
-  -moz-border-radius   : 0.5em;
-  -webkit-border-radius: 0.5em;
-  
-  /* --- Cross browser gradient --- */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#668dab', endColorstr='#2a5576'); /* for IE */
-  background: -webkit-gradient(linear, left top, left bottom, from(#668dab), to(#2a5576)); /* for webkit browsers */
-  background: -moz-linear-gradient(top,  #668dab,  #2a5576); /* for firefox 3.6+ */ 
-}
+		.box {
+			position: relative;
+			/* min-height: 4em; */
+			border: 1px solid black;
+			top: 5px;
+			padding: 5px;
 
-#frag_containers .frag_container .frag_member .advert .content {
-  margin-left: 15px;
-}
+			color: #fff;
+			font-size: 85%;
+			font-weight: bold;
+			text-align: right;
 
-#frag_containers .frag_container .frag_member .advert .icon {
-  position: absolute;
-  z-index: 1;
-  margin-left: 4px;
-}
+			/* --- Cross browser border rounding --- */
+			border-radius        : 0.5em;
+			-moz-border-radius   : 0.5em;
+			-webkit-border-radius: 0.5em;
 
-#frag_containers .frag_container .frag_member .advert .hide_advert_submit {
-  margin-top: 5px;
-  
-  /* --- Cross browser border rounding --- */
-  border-radius        : 0.5em;
-  -moz-border-radius   : 0.5em;
-  -webkit-border-radius: 0.5em;
+			/* --- Cross browser gradient --- */
+			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#668dab', endColorstr='#2a5576'); /* for IE */
+			background: -webkit-gradient(linear, left top, left bottom, from(#668dab), to(#2a5576)); /* for webkit browsers */
+			background: -moz-linear-gradient(top,  #668dab,  #2a5576); /* for firefox 3.6+ */ 
+		}
+
+		.content {
+			margin-left: 15px;
+		}
+
+		.icon {
+			position: absolute;
+			z-index: 1;
+			margin-left: 4px;
+		}
+
+		.hide_advert_submit {
+			margin-top: 5px;
+
+			/* --- Cross browser border rounding --- */
+			border-radius        : 0.5em;
+			-moz-border-radius   : 0.5em;
+			-webkit-border-radius: 0.5em;
+		}
+	}
 }
