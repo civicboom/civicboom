@@ -288,10 +288,12 @@
 ## Content Item
 ##------------------------------------------------------------------------------
 
-<%def name="render_item_content(content, location=False, stats=False, creator=False)">
+<%def name="render_item_content(content, extra_info=False, creator=False)">
 <tr>
     <%
         id = content['id']
+    
+        item_url = h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))
     
         js_link_to_frag = True
         if js_link_to_frag:
@@ -301,33 +303,76 @@
     %>
 
     <td>
-        <a class="thumbnail" href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+        <a class="thumbnail" href="${item_url}" ${js_link_to_frag}>
             ${content_thumbnail_icons(content)}
             <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
         </a>
     </td>
     
-    <td style="width:100%;">
-        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
-            <p class="content_title">${content['title']}</p>
-          % if creator and 'creator' in content:
-            <p><small class="content_by">By: ${content['creator']['name']}</small>
-          % endif
+    <td class="content_details">
+        <a href="${item_url}" ${js_link_to_frag}>
+            <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
+        
+        % if extra_info:
+            % if   content['type']=='article'   :
+                <p>
+                ${_('Views')}:${content['views']}
+                % if content.get('tags'):
+                , ${_('Tags')}:${content['tags'][:3]}
+                % endif
+                </p>
+            % elif content['type']=='assignment':
+                <p><a href="${h.url('contents', response_to=id, include_fields='creator')}" onclick="cb_frag($(this), '${h.url('contents', response_to=id, include_fields='creator', format='frag')}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
+            % endif
+        % endif
+        
+        <p class="timestamp">
+        % if content['type']=='assignment':
+            <% publish = h.time_ago(content['publish_date']) %>
+            % if   content['event_date'] and content['event_date'] > h.now():
+                ${_('Set %s ago, Event in %s time') % (publish, h.time_ago(content['event_date']) )}
+            % elif content['due_date'  ] and content['due_date'  ] > h.now():
+                ${_('Set %s ago, Due in %s time'  ) % (publish, h.time_ago(content['due_date']  ) )}
+            % else:
+                ${_('Set %s ago'                  ) % (publish                                    )}
+            % endif
+        % elif content['type']=='draft':
+            % if content.get('parent'):
+                % if   content['parent']['event_date'] and content['parent']['event_date'] > h.now():
+                    ${_('Event in %s time'  ) % h.time_ago(content['parent']['event_date'])}
+                % elif content['parent']['due_date'  ] and content['parent']['due_date'  ] > h.now():
+                    ${_('Due in %s time'  ) % h.time_ago(content['parent']['event_date'])}
+                % endif
+            % endif
+            % if content.get('sceduled_publish_date'):
+                ${_('Will be published in %s time'  ) % h.time_ago(content['sceduled_publish_date'])}
+            % endif
+        % else:
+            ${_('%s ago') % h.time_ago(content['update_date'])}
+        % endif
+        </p>
     </td>
-    % if location:
-    <td>
-        flag
-    </td>
-    % endif
-    % if stats:
-    <td>
-        rating <br/> comments
-    </td>
-    % endif
+
+    <%doc>
+        % if creator and 'creator' in content:
+          <p><small class="content_by">By: ${content['creator']['name']}</small>
+        % endif
+    </%doc>
+
     % if creator and 'creator' in content:
     <td class="creator">
+        ## Creator avatar
         ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+        ## Responses show parent Creator
+        % if extra_info and content['type']=='article':
+            <br/>
+            % if content.get('parent'):
+            ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
+            % else:
+            ## TODO Articles - country or county flag of location goes here?
+            % endif
+        % endif
     </td>
     % endif
 </tr>
