@@ -6,7 +6,7 @@ class CBTestCase(unittest.TestCase):
     def setUp(self):
         # connect
         self.verificationErrors = []
-        self.selenium = selenium("localhost", 4444, "*chrome /usr/lib/firefox-3.6.9/firefox-bin", "http://test.civicboom.com/")
+        self.selenium = selenium("test-browser-linux-master", 4444, "*chrome /usr/lib/firefox-3.6.9/firefox-bin", "http://test.civicboom.com/")
         self.selenium.start()
 
         # log in
