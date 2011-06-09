@@ -1,0 +1,31 @@
+/*
+ * composer (/messages/new)
+ */
+.message_composer {
+	width: 200pt;
+	height: 200pt;
+	text-align: right;
+
+	INPUT, TEXTAREA {
+		width: 100%;
+	}
+
+	TEXTAREA {
+		height: 150pt;
+	}
+}
+
+/*
+ * list (/messages)
+ */
+.message_list {
+	.from {
+		width: 16em;
+	}
+	.date {
+		width: 16em;
+	}
+	.action {
+		width: 8em;
+	}
+}

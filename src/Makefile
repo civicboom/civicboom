@@ -13,6 +13,7 @@ help:
 	# i18n-fr       -- generate a machine-translated french site
 	# js            -- compress javascript into _combined.head.js and foot.js
 	# css           -- compress folders of css into single files
+	# sass          -- run a daemon to turn scss into css
 	# test-db       -- create a blank database and fill it with test data
 	# live-db       -- create a blank database and fill it with live data
 	# run           -- run the site in development mode
@@ -53,6 +54,10 @@ css:
 
 skel-db:
 	../admin_scripts/init_cbdb
+
+sass:
+	cd civicboom/public/styles
+	sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
 
 test-db: skel-db
 	paster setup-app development.ini

@@ -1,34 +1,35 @@
 /*
  * about page, lots of text with a couple of custom bits
  */
-BODY.c-misc.a-about .layout {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 940px;
-}
-BODY.c-misc.a-about TD.body,
-BODY.c-misc.a-about TD.nav {
-	vertical-align: top;
-	padding: 16px;
-	padding-bottom: 32px;
-}
+BODY.c-misc.a-about {
+	.layout {
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 940px;
+	}
+	TD.body,
+	TD.nav {
+		vertical-align: top;
+		padding: 16px;
+		padding-bottom: 32px;
+	}
 
-BODY.c-misc.a-about P {
-	margin: 1em 0px;
-}
-BODY.c-misc.a-about ARTICLE {
-	margin: 32px;
-	padding-top: 32px;
-	padding-bottom: 32px;
-}
-BODY.c-misc.a-about ARTICLE TIME {
-	border-bottom: 1px solid black;
-	margin-bottom: 0.5em;
-}
+	P {
+		margin: 1em 0px;
+	}
+	ARTICLE {
+		margin: 32px;
+		padding-top: 32px;
+		padding-bottom: 32px;
+	}
+	ARTICLE TIME {
+		border-bottom: 1px solid black;
+		margin-bottom: 0.5em;
+	}
 
-
-BODY.c-misc.a-about OL.legal {
-	font-size: 0.75em;
+	OL.legal {
+		font-size: 0.75em;
+	}
 }
 
 .error {
@@ -43,14 +44,14 @@ BODY.c-misc.a-about OL.legal {
 
 .toc {
 	padding-top: 32px;
-}
-.toc LI A {
-	display: block;
-	width: 128px;
-	margin: 4px;
-}
-.toc A {
-	color: white;
+	LI A {
+		display: block;
+		width: 128px;
+		margin: 4px;
+	}
+	A {
+		color: white;
+	}
 }
 
 /*

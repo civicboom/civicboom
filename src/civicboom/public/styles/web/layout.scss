@@ -64,9 +64,11 @@ FOOTER {
 /*                                Logo                                        */
 /*----------------------------------------------------------------------------*/
 
-HEADER #logo .logo_img     {position: absolute; left:  12px; top:  6px; width: 128px;}
-HEADER #logo .beta_overlay {position: absolute; left: 113px; top: 30px; width:  24px;}
-HEADER #logo .logo_text    {display: none;}
+HEADER #logo {
+	.logo_img     {position: absolute; left:  12px; top:  6px; width: 128px;}
+	.beta_overlay {position: absolute; left: 113px; top: 30px; width:  24px;}
+	.logo_text    {display: none;}
+}
 
 
 /*----------------------------------------------------------------------------*/
@@ -79,61 +81,61 @@ HEADER #persona_select {
     top : 8px;
     left: 155px;
 	z-index: 499; /* below the create/explore/manage */
-}
 
-HEADER #persona_select P {
-	margin: 0px;
-}
+	P {
+		margin: 0px;
+	}
 
-HEADER #persona_select img {
-    width : 28px;
-    height: 28px;
-    border: 1px solid #888;
-    border-radius        : 0.1em;
-	-moz-border-radius   : 0.1em;
-	-webkit-border-radius: 0.1em;
-}
+	img {
+		width : 28px;
+		height: 28px;
+		border: 1px solid #888;
+		border-radius        : 0.1em;
+		-moz-border-radius   : 0.1em;
+		-webkit-border-radius: 0.1em;
+	}
 
-HEADER #persona_select table {
-    display: none;
-    border: 1px solid #ccc; /*#e9e9e9*/
-    border-top: none;
-    position: relative;
-    left: -0.5em;
-    font-size: 88%;
-    background-color: white;
-}
-HEADER #persona_select:hover table {display: block;}
-HEADER #persona_select .current_persona {background-color: #e9e9e9;}
-HEADER #persona_select .name {font-weight: bold;}
+	table {
+		display: none;
+		border: 1px solid #ccc; /*#e9e9e9*/
+		border-top: none;
+		position: relative;
+		left: -0.5em;
+		font-size: 88%;
+		background-color: white;
+	}
+	&:hover table {display: block;}
+	.current_persona {background-color: #e9e9e9;}
+	.name {font-weight: bold;}
 
-HEADER #persona_select table td {
-    padding: 0.5em;
-    vertical-align: top;
-}
-HEADER #persona_select .info {
-    font-size: 88%;
-}
+	table td {
+		padding: 0.5em;
+		vertical-align: top;
+	}
+	.info {
+		font-size: 88%;
+	}
 
-HEADER #persona_select .selectable:hover {
-    background-color: #e9e9e9;
-    cursor: pointer;
-}
+	.selectable:hover {
+		background-color: #e9e9e9;
+		cursor: pointer;
+	}
 
-HEADER #persona_select #persona_holder {
-  vertical-align: center;
-}
+	#persona_holder {
+	  vertical-align: center;
+	}
 
-HEADER #persona_select #persona_holder #message_holder {
-  position: relative;
-  top: -3px;
-  vertical-align: center;
-  height: 32px;
-  display: inline-block;
-}
+	#persona_holder #message_holder {
+	  position: relative;
+	  top: -3px;
+	  vertical-align: center;
+	  height: 32px;
+	  display: inline-block;
+	}
 
-HEADER #persona_select #persona_holder #message_holder .icon_overlay_red {
-  font-size: 88%;
+	#persona_holder #message_holder .icon_overlay_red {
+	  font-size: 88%;
+	}
 }
 
 /*----------------------------------------------------------------------------*/
@@ -159,58 +161,58 @@ NAV {
 	top: 11px;
 	left: 223px;
 	z-index: 500;
-}
 
-NAV .menuh>UL {
-	margin-left: 8px;
-	margin-right: 8px;
-	height: 20px;
-}
-NAV .menuh>UL>LI>UL{
-	margin-top: 0px;
-	padding-top: 0px;
-}
-NAV .menuh ul {
-    width: 120px;
-}
-NAV .menuh LI:hover a.top_parent {
-	border-top: 1px solid #555;
-	border-left: 1px solid #555;
-	border-right: 1px solid #555;
+	.menuh>UL {
+		margin-left: 8px;
+		margin-right: 8px;
+		height: 20px;
+	}
+	.menuh>UL>LI>UL{
+		margin-top: 0px;
+		padding-top: 0px;
+	}
+	.menuh ul {
+		width: 120px;
+	}
+	.menuh LI:hover a.top_parent {
+		border-top: 1px solid #555;
+		border-left: 1px solid #555;
+		border-right: 1px solid #555;
 
-	/* remove rounding when drop-downs are shown, so the
-	 * button corner lines up with the menu */
-	border-bottom-left-radius: 0px;
-	-webkit-border-bottom-left-radius: 0px;
-	border-bottom-right-radius: 0px;
-	-webkit-border-bottom-right-radius: 0px;
-	-moz-border-radius: 0.2em 0.2em 0px 0px;
-}
-NAV .menuh a.sub_option,
-NAV .menuh a.sub_option:visited,
-NAV .menuh a.parent {
-	display: block;
-	background: white;
-	color: black;
-	border-left: 1px solid #555;
-	border-right: 1px solid #555;
-	border-bottom: 1px solid #ddd;
-}
-NAV .menuh a.sub_option:hover {
-	background: #eef;
-}
-NAV .menuh LI:last-child>a.sub_option {
-	border-bottom: 1px solid #555;
+		/* remove rounding when drop-downs are shown, so the
+		 * button corner lines up with the menu */
+		border-bottom-left-radius: 0px;
+		-webkit-border-bottom-left-radius: 0px;
+		border-bottom-right-radius: 0px;
+		-webkit-border-bottom-right-radius: 0px;
+		-moz-border-radius: 0.2em 0.2em 0px 0px;
+	}
+	.menuh a.sub_option,
+	.menuh a.sub_option:visited,
+	.menuh a.parent {
+		display: block;
+		background: white;
+		color: black;
+		border-left: 1px solid #555;
+		border-right: 1px solid #555;
+		border-bottom: 1px solid #ddd;
+	}
+	.menuh a.sub_option:hover {
+		background: #eef;
+	}
+	.menuh LI:last-child>a.sub_option {
+		border-bottom: 1px solid #555;
 
-	border-bottom-left-radius         : 0.2em;
-	border-bottom-right-radius        : 0.2em;
-	-webkit-border-bottom-right-radius: 0.2em;
-    -webkit-border-bottom-left-radius : 0.2em;
-	-moz-border-radius                : 0px 0px 0.2em 0.2em;
+		border-bottom-left-radius         : 0.2em;
+		border-bottom-right-radius        : 0.2em;
+		-webkit-border-bottom-right-radius: 0.2em;
+		-webkit-border-bottom-left-radius : 0.2em;
+		-moz-border-radius                : 0px 0px 0.2em 0.2em;
 
-}
-NAV .menuh INPUT {
-	width: 100%;
+	}
+	.menuh INPUT {
+		width: 100%;
+	}
 }
 
 
@@ -253,27 +255,28 @@ HEADER #search {
 	right: 86px;
 	width: 150px;
 	height: 20px;
-}
-HEADER #search .search_input {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	border: none;
-	border-radius: 10px;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-}
-HEADER #search .button {
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	width: 30px;
-	height: 100%;
-	border-radius: 10px;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
+
+	.search_input {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+		height: 100%;
+		border: none;
+		border-radius: 10px;
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
+	}
+	.button {
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		width: 30px;
+		height: 100%;
+		border-radius: 10px;
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
+	}
 }
 
 /*----------------------------------------------------------------------------*/
@@ -310,16 +313,18 @@ HEADER #signin .button {
 /*                            Links & copyright                               */
 /*----------------------------------------------------------------------------*/
 
-FOOTER A {
-    /*vertical-align : middle;*/
-	text-decoration: none;
-	margin-right: 8px;
-}
-FOOTER .links {
-	float: left;
-}
-FOOTER .copyright {
-	float: right;
+FOOTER {
+	A {
+		/*vertical-align : middle;*/
+		text-decoration: none;
+		margin-right: 8px;
+	}
+	.links {
+		float: left;
+	}
+	.copyright {
+		float: right;
+	}
 }
 
 

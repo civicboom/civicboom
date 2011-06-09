@@ -1,7 +1,0 @@
-BODY .avatar_thumbnail_list {
-    padding-top: 0.2em;
-}
-
-BODY .avatar_thumbnail_list LI {
-    display: inline-block;
-}

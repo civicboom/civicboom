@@ -1,0 +1,30 @@
+HTML.ie7 {
+	.frag_content_edit .media_preview,
+	.frag_content_edit .media_fields,
+	.frag_content_edit .media_fields label,
+	.frag_content_edit .media_actions,
+	.frag_content_edit label,
+	.frag_content_edit span.padded,
+	.inviteform .invite_area li,
+	.payplan .planpoints .buttons,
+	HEADER #persona_select #persona_holder #message_holder,
+	BODY .avatar_thumbnail_list LI,
+	#frag_containers .frag_container,
+	.thumbnail,
+	.tooltip,
+	#app .button,
+	.buttongreen,
+	.icon_overlay_red,
+	.icon16,
+	.icon32,
+	.icon40,
+	.ie7inline {
+		zoom: 1;
+		*display: inline !important;
+	}
+
+	BODY .avatar_thumbnail_list LI,
+	.ie7inline {
+		_width: 20px;
+	}
+}

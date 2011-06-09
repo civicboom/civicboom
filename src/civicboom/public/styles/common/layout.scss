@@ -84,21 +84,22 @@ HTML SELECT {
 .zebra {
 	width: 100%;
 	border: 1px solid black;
-}
-.zebra TH {
-	font-weight: bold;
-}
-.zebra THEAD TR                 {background: #888;}
-.zebra TBODY TR:nth-child(odd)  {background: #CCC;}
-.zebra TBODY TR:nth-child(even) {background: #EEE;}
 
-.zebra THEAD TR            {border-bottom: 1px solid black;}
-.zebra TBODY TR            {border-bottom: 1px solid #999;}
-.zebra TBODY TR:last-child {border-bottom: none;}
+	TH {
+		font-weight: bold;
+	}
+	THEAD TR                 {background: #888;}
+	TBODY TR:nth-child(odd)  {background: #CCC;}
+	TBODY TR:nth-child(even) {background: #EEE;}
 
-.zebra THEAD TH,
-.zebra TBODY TD {
-	padding: 2px;
+	THEAD TR            {border-bottom: 1px solid black;}
+	TBODY TR            {border-bottom: 1px solid #999;}
+	TBODY TR:last-child {border-bottom: none;}
+
+	THEAD TH,
+	TBODY TD {
+		padding: 2px;
+	}
 }
 
 
@@ -106,26 +107,29 @@ HTML SELECT {
 /* Table - Simple name:value forms                                            */
 /*----------------------------------------------------------------------------*/
 
-.form TH {
-	font-weight: bold;
-	text-align: center;
-	padding: 2px;
-}
-.form TD {
-	padding: 2px;
-}
-.form TD INPUT[type="text"],
-.form TD INPUT[type="submit"],
-.form TD INPUT[type="email"],
-.form TD INPUT[type="search"],
-.form TD INPUT[type="password"],
-.form TD SELECT,
-.form TD TEXTAREA {
-	width: 100%;
-}
-.form TD:first-child {
-	text-align: right;
-	vertical-align: top;
+.form {
+	TH {
+		font-weight: bold;
+		text-align: center;
+		padding: 2px;
+	}
+	TD {
+		padding: 2px;
+
+		INPUT[type="text"],
+		INPUT[type="submit"],
+		INPUT[type="email"],
+		INPUT[type="search"],
+		INPUT[type="password"],
+		SELECT,
+		TEXTAREA {
+			width: 100%;
+		}
+		&:first-child {
+			text-align: right;
+			vertical-align: top;
+		}
+	}
 }
 
 /* HACK because for some reason, input fields in TDs overflow :/  */
@@ -270,26 +274,32 @@ DIV#app .button {
 	/* display: inline-block; */
 }
 
+$cb-lightblue: #4974b8;
+$cb-darkblue: #3a4a97;
+
+$button-top: $cb-lightblue;
+$button-bot: $cb-darkblue;
+
 .button,
 .title_bar {
-	background: #4974b8; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4974b8', endColorstr='#3a4a97'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #4974b8), color-stop(0.81, #3a4a97)); /* for webkit browsers */
-	background: -moz-linear-gradient(top, #4974b8, #3a4a97 81%); /* for firefox 3.6+ */
+	background: $button-top; /* for non-css3 browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-top}', endColorstr='#{$button-bot}'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-top), color-stop(0.81, $button-bot)); /* for webkit browsers */
+	background: -moz-linear-gradient(top, $button-top, $button-bot 81%); /* for firefox 3.6+ */
 	color: white;
 }
 .button:hover {
-	background: #5984c8; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5984c8', endColorstr='#4a5aa7'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #5984c8), color-stop(0.81, #4a5aa7)); /* for webkit browsers */
-	background: -moz-linear-gradient(top, #5984c8, #4a5aa7 81%); /* for firefox 3.6+ */
+	background: $button-top + #101010; /* for non-css3 browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-top + #101010}', endColorstr='#{$button-bot + #101010}'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-top + #101010), color-stop(0.81, $button-bot + #101010)); /* for webkit browsers */
+	background: -moz-linear-gradient(top, $button-top + #101010, $button-bot + #101010 81%); /* for firefox 3.6+ */
 	color: white;
 }
 .button:active {
-	background: #4974b8; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3a4a97', endColorstr='#4974b8'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, #3a4a97), color-stop(1.0, #4974b8)); /* for webkit browsers */
-	background: -moz-linear-gradient(top, #3a4a97 19%, #4974b8); /* for firefox 3.6+ */
+	background: $button-top; /* for non-css3 browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-bot}', endColorstr='#{$button-top}'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, $button-bot), color-stop(1.0, $button-top)); /* for webkit browsers */
+	background: -moz-linear-gradient(top, $button-bot 19%, $button-top); /* for firefox 3.6+ */
 }
 
 .button_large {
