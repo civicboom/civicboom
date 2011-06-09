@@ -84,11 +84,12 @@
     <div class="frag_left_col">
         <div class="frag_col vcard">
         ## Member Details
-		% if self.member['type'] == "group":
-			<h1 class="fn org">${self.member['name']}</h1><br />
-		% else:
+		## the org format is correct, but google only shows rich snippets for individuals...
+		##% if self.member['type'] == "group":
+		##	<h1 class="fn org">${self.member['name']}</h1><br />
+		##% else:
 			<h1 class="fn n">${h.guess_hcard_name(self.member['name'])}</h1><br />
-		% endif
+		##% endif
         <div>
           <div style="float:left; padding-right: 3px;">${member_avatar(img_class='photo')}</div>
           <div style="padding-left: 92px" >
