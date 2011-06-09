@@ -530,9 +530,7 @@ def auto_format_output(target, *args, **kwargs):
     auto_format_output_flag = False
     if not c.format:
         current_request = request.environ.get("pylons.routes_dict")
-        # config breaks in production?
-        #c.format     = current_request.get("format", request.params.get('format', config['default_format'] ) )
-        c.format        = request.params.get("format") or current_request.get("format") or "html"
+        c.format        = current_request.get("format") or "html"
         auto_format_output_flag = True
 
     try:
