@@ -323,7 +323,10 @@
                 % endif
                 </p>
             % elif content['type']=='assignment':
-                <p><a href="${h.url('contents', response_to=id, include_fields='creator')}" onclick="cb_frag($(this), '${h.url('contents', response_to=id, include_fields='creator', format='frag')}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
+                <%
+                    (response_url_static, response_url_frag) = h.url_pair('contents', response_to=id, include_fields='creator,parent', gen_format='frag')
+                %>
+                <p><a href="${response_url_static}" onclick="cb_frag($(this), '${response_url_frag}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
             % endif
         % endif
         
@@ -360,21 +363,18 @@
         % endif
     </%doc>
 
-    % if creator and 'creator' in content:
+    
     <td class="creator">
         ## Creator avatar
-        ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+        % if creator and 'creator' in content:
+            ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+        % endif
         ## Responses show parent Creator
-        % if extra_info and content['type']=='article':
-            <br/>
-            % if content.get('parent'):
-            ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
-            % else:
-            ## TODO Articles - country or county flag of location goes here?
-            % endif
+        % if content.get('parent'):
+        ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
         % endif
     </td>
-    % endif
+    
 </tr>
 % if request.GET.get('term', '') and 'content_short' in content:
 <tr><td colspan="5">
