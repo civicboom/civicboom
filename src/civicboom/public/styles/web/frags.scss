@@ -40,49 +40,41 @@
 
 	/*-----------------------------Action bar -----------------------------------*/
 	.frag_container {
-		.action_bar {
-		  height: 1.35em;
-		  overflow: hidden;
-		  color: black;
-		  
-		  font-size: .9em;
-		  font-weight: bold;
-		  
-		  border-bottom: 0.1em solid #888; /* to match */
-		  
-		  background-color: #CCC;
-		  padding: 0.25em;
-		}
-
 		.icon {
-		  padding-right: 2px;
+			padding-right: 2px;
 		}
 
-		.action_bar .object_actions_common {
-			float: right;
-		}
+		.action_bar {
+			height: 1.35em;
+			overflow: hidden;
+			color: black;
 
-		.action_bar .object_actions_specific {
-			float: left;
-		}
+			font-size: .9em;
+			font-weight: bold;
 
-		.action_bar a {
-		  color: inherit;
-		  text-decoration: inherit;
-		}
+			border-bottom: 0.1em solid #888; /* to match */
 
-		.action_bar .separtor {
-			border-left: 1px solid #AAA;
-			margin: 0em 0.5em;
-		}
+			background-color: #CCC;
+			padding: 0.25em;
 
+			.object_actions_common {
+				float: right;
+			}
 
-		/* 
-		.action_bar li {
-		  display: inline;
-		  border-left: 1px solid blue;
+			.object_actions_specific {
+				float: left;
+			}
+
+			a {
+				color: inherit;
+				text-decoration: inherit;
+			}
+
+			.separtor {
+				border-left: 1px solid #AAA;
+				margin: 0em 0.5em;
+			}
 		}
-		*/
 
 		/*----------------------------------------------------------------------------*/
 		/* Fragment Data
