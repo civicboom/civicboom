@@ -159,8 +159,10 @@
         <div style="clear: both;"></div>
         % if self.member.get('description'):
           <div style="clear:left; height: 3px;">&nbsp;</div>
-          <div style="clear:left;" class="frag_list">
-            <h2><span class="icon16 i_${self.attr.icon_type}"><span>About</span><span style="display:inline-block;padding-left:19px">Description</span></span></h2>
+          <div class="frag_list">
+            ##style="clear:left;" 
+            <h2><span class="icon16 i_${self.attr.icon_type}"></span>Description</h2>
+            ##<span>About</span><span style="display:inline-block;padding-left:19px">Description</span></span>
             <div class="frag_list_contents">
               <div class="content note" style="padding-bottom: 3px;">
                 ${self.member['description']}

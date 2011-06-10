@@ -1,3 +1,5 @@
+@import "../common/_palette.scss";
+
 /*----------------------------------------------------------------------------*/
 /* Fragment Lists
 /*----------------------------------------------------------------------------*/
@@ -6,26 +8,27 @@
 	.frag_list {
 		font-size: 88%;
 
-		border: 0.1em solid #ccc;
-		border-radius        : 0.2em;
-		-moz-border-radius   : 0.2em;
-		-webkit-border-radius: 0.2em;
+		/* border: 0.1em solid $frag-list-border; /* AllanC - removed border for experimenting */
+		border-radius        : 0.4em;
+		-moz-border-radius   : 0.4em;
+		-webkit-border-radius: 0.4em;
 		
 		margin-top: 1.5em;
 
-		background: #eee; /* for non-css3 browsers */
-		filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff'); /* for IE */
-		background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, #eee), color-stop(1.0, #fff)); /* for webkit browsers */
-		background: -moz-linear-gradient(top, #eee 19%, #fff); /* for firefox 3.6+ */
+        color: $frag-list-title-txt;
+
+		background: $frag-list-top; /* for non-css3 browsers */
+		filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='$frag-list-top', endColorstr='$frag-list-bot'); /* for IE */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, $frag-list-top), color-stop(1.0, $frag-list-bot)); /* for webkit browsers */
+		background: -moz-linear-gradient(top, $frag-list-top 19%, $frag-list-bot); /* for firefox 3.6+ */
 
 		/* --------------------------
 		   Frag list Headings (for lists in content and member frags)
 		   -------------------------- */
 		h2 {
 			margin: 0em;
-			background-color: #ccc;
+			background-color: $frag-list-title;
 			padding : 0.25em;
-
 		}
 		h2 .count {
 			padding: 0.25em;
@@ -67,7 +70,7 @@
 
 		.link_more {
 			float: right;
-			background: #ccc;
+			background-color: $frag-list-border; 
 			
 			padding: 0.2em;
 			
@@ -89,11 +92,11 @@
             p {
                 padding-top : 0.25em;
                 padding-left: 0.4em;
-                color: #666;
+                color: lighten($frag-list-txt, 30%);
             }
             
             .content_title {
-                color: inherit;
+                color: $frag-list-txt;
             }
         }
 
