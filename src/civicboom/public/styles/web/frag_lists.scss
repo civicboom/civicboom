@@ -8,10 +8,10 @@
 	.frag_list {
 		font-size: 88%;
 
-		border: 0.1em solid $frag-list-border;
-		border-radius        : 0.2em;
-		-moz-border-radius   : 0.2em;
-		-webkit-border-radius: 0.2em;
+		/* border: 0.1em solid $frag-list-border; /* AllanC - removed border for experimenting */
+		border-radius        : 0.4em;
+		-moz-border-radius   : 0.4em;
+		-webkit-border-radius: 0.4em;
 		
 		margin-top: 1.5em;
 
@@ -29,7 +29,6 @@
 			margin: 0em;
 			background-color: $frag-list-title;
 			padding : 0.25em;
-
 		}
 		h2 .count {
 			padding: 0.25em;
@@ -71,7 +70,7 @@
 
 		.link_more {
 			float: right;
-			background: $frag-list-border;
+			background-color: $frag-list-border; 
 			
 			padding: 0.2em;
 			

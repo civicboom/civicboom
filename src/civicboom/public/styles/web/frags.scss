@@ -28,15 +28,6 @@
 		/*bottom: 0em;
 		position: relative;
 		*/
-		
-		/* Following allows word breaking in content frag contents to
-		   stop long strings without white space overflowing */
-		.frag_col {
-			.content_text {
-				width: 100%;
-				word-wrap: break-word;
-			}
-		}
 	}
 
 	/* No support for IE7 NO!!! GOD NO!!
@@ -51,22 +42,6 @@
 
 	/*-----------------------------Action bar -----------------------------------*/
 	.frag_container {
-		background-color: #e2e9ef;
-	
-		.action_bar {
-		  height: 1.35em;
-		  overflow: hidden;
-		  color: black;
-		  
-		  font-size: .9em;
-		  /* font-weight: bold; */
-		  
-		  border-bottom: 0.1em solid #888; /* to match */
-		  
-		  background-color: #EEE;
-		  padding: 0.25em;
-		}
-
 		.icon {
 			padding-right: 2px;
 		}
@@ -78,7 +53,7 @@
 
 			font-size: .9em;
 
-			border-bottom: 0.1em solid #888; /* to match */
+			border-bottom: 0.1em solid darken($frag-action-bar, 30%);
 
 			background-color: $frag-action-bar;
 			padding: 0.25em;
@@ -97,7 +72,7 @@
 			}
 
 			.separtor {
-				border-left: 1px solid $frag-action-bar-separator;
+				border-left: 1px solid darken($frag-action-bar, 10%);
 				margin: 0em 0.5em;
 			}
 		}
