@@ -295,10 +295,12 @@
 ## Content Item
 ##------------------------------------------------------------------------------
 
-<%def name="render_item_content(content, location=False, stats=False, creator=False)">
+<%def name="render_item_content(content, extra_info=False, creator=False)">
 <tr>
     <%
         id = content['id']
+    
+        item_url = h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))
     
         js_link_to_frag = True
         if js_link_to_frag:
@@ -308,35 +310,90 @@
     %>
 
     <td>
-        <a class="thumbnail" href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+        <a class="thumbnail" href="${item_url}" ${js_link_to_frag}>
             ${content_thumbnail_icons(content)}
             <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
         </a>
     </td>
     
-    <td style="width:100%;">
-        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
-            <p class="content_title">${content['title']}</p>
-          % if creator and 'creator' in content:
-            <p><small class="content_by">By: ${content['creator']['name']}</small>
-          % endif
+    <td class="content_details">
+        <a href="${item_url}" ${js_link_to_frag}>
+            <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
+        
+        % if extra_info:
+            % if   content['type']=='article' and (content.get('parent_id') or content.get('parent')):
+                <%
+                    (parent_url_static, parent_url_frag) = h.url_pair('content', id=content.get('parent_id') or content['parent']['id'], gen_format='frag')
+                %>
+                <p>${_('In response to:')}
+                    <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
+                        % if content.get('parent'):
+                        ${h.truncate(content['parent']['title'], length=30, indicator='...', whole_word=True)}
+                        % else:
+                        content
+                        % endif
+                    </a>
+                </p>
+            % elif content['type']=='article'   :
+                <p>
+                ${_('Views')}:${content['views']}
+                % if content.get('tags'):
+                , ${_('Tags')}:${content['tags'][:3]}
+                % endif
+                </p>
+            % elif content['type']=='assignment':
+                <%
+                    (response_url_static, response_url_frag) = h.url_pair('contents', response_to=id, include_fields='creator,parent', gen_format='frag')
+                %>
+                <p><a href="${response_url_static}" onclick="cb_frag($(this), '${response_url_frag}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
+            % endif
+        % endif
+        
+        <p class="timestamp">
+        % if content['type']=='assignment':
+            <% publish = h.time_ago(content['publish_date']) %>
+            % if   content['event_date'] and content['event_date'] > h.now():
+                ${_('Set %s ago, Event in %s time') % (publish, h.time_ago(content['event_date']) )}
+            % elif content['due_date'  ] and content['due_date'  ] > h.now():
+                ${_('Set %s ago, Due in %s time'  ) % (publish, h.time_ago(content['due_date']  ) )}
+            % else:
+                ${_('Set %s ago'                  ) % (publish                                    )}
+            % endif
+        % elif content['type']=='draft':
+            % if content.get('parent'):
+                % if   content['parent']['event_date'] and content['parent']['event_date'] > h.now():
+                    ${_('Event in %s time'  ) % h.time_ago(content['parent']['event_date'])}
+                % elif content['parent']['due_date'  ] and content['parent']['due_date'  ] > h.now():
+                    ${_('Due in %s time'  ) % h.time_ago(content['parent']['event_date'])}
+                % endif
+            % endif
+            % if content.get('sceduled_publish_date'):
+                ${_('Will be published in %s time'  ) % h.time_ago(content['sceduled_publish_date'])}
+            % endif
+        % else:
+            ${_('%s ago') % h.time_ago(content['update_date'])}
+        % endif
+        </p>
     </td>
-    % if location:
-    <td>
-        flag
-    </td>
-    % endif
-    % if stats:
-    <td>
-        rating <br/> comments
-    </td>
-    % endif
-    % if creator and 'creator' in content:
+
+    <%doc>
+        % if creator and 'creator' in content:
+          <p><small class="content_by">By: ${content['creator']['name']}</small>
+        % endif
+    </%doc>
+
     <td class="creator">
-        ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+        ## Creator avatar
+        % if creator and 'creator' in content:
+            ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+        % endif
+        ## Responses show parent Creator
+        ##% if content.get('parent') and content['parent'].get('creator'):
+        ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
+        ##% endif
     </td>
-    % endif
+    
 </tr>
 % if request.GET.get('term', '') and 'content_short' in content:
 <tr><td colspan="5">

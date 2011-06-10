@@ -49,6 +49,9 @@
 		padding       : 0.5em;
 		padding-bottom: 0em; /* see rule below for each element adding there own bottom padding */
 
+        .thumbnail       {font-size: 45px;} /* AllanC - humm ... horrible hack to just notch up the size of the thumbnail in content lists to match the text. This not a long term solution */
+        .thumbnail_small {font-size: 20px;} /* dont override small size ... jesus this is a HACK */
+
 		td, li, ul {
 			padding-bottom: 0.5em;
 		}
@@ -80,10 +83,19 @@
 
 
 		/*------------------------------ Content -------------------------------------*/
-		.content .content_title {
-			padding-left: 0.25em;
-			padding-top : 0.25em;
-		}
+		.content_details {
+            width: 100%;
+            
+            p {
+                padding-top : 0.25em;
+                padding-left: 0.4em;
+                color: #666;
+            }
+            
+            .content_title {
+                color: inherit;
+            }
+        }
 
 
 		/*------------------------------ Members -------------------------------------*/

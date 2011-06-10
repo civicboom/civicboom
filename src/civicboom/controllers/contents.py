@@ -312,6 +312,9 @@ class ContentsController(BaseController):
         if 'creator' not in kwargs and 'creator' not in kwargs['exclude_fields']:
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
+        # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
+        if kwargs.get('list') == 'responses':
+            kwargs['include_fields'] += ",parent"
         
         
         include_private_content = 'private' in kwargs and logged_in_creator
