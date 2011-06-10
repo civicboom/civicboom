@@ -20,54 +20,53 @@
 		cursor: pointer;
 	}
 
-	.comments table {
-		width: 100%;
-	}
+	.comments {
+		table {
+			width: 100%;
+		}
+		h2 {
+			font-size: 150%;
+		}
+		td {
+			vertical-align: top;
+			color: #444;
+			padding-bottom: 1em;
+		}
+		textarea {
+			width: 100%;
+			min-height: 60px;
+		}
+		input {
+			width: 100%;
+		}
 
-	.comments h2 {
-		font-size: 150%;
-	}
+		.comment_avatar {
+			width: 40px;
+		}
 
-	.comments td {
-		vertical-align: top;
-		color: #444;
-		padding-bottom: 1em;
-	}
+		.comment {
+			padding-left: 1em;
 
-	.comments textarea {
-		width: 100%;
-		min-height: 60px;
-	}
-	.comments input {
-		width: 100%;
-	}
+			.comment_by {
+				font-weight: bold;
+				margin-bottom: 0.25em;
+			}
+			.comment_content {
+				font-size:  88%;
+				line-height: 1em;
 
-	.comment_avatar {
-		width: 40px;
+				/* stop over-wide comments */
+				max-width: 228px;
+				word-wrap: break-word;
+			}
+			//could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
+			//.comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
+			//.comment_content:after  {font-size: 120%; font-weight: bold; content: close-quote;}
+		}
 	}
-	.comment {
-		padding-left  : 1em;
-	}
-	.comment .comment_by {
-		font-weight: bold;
-		margin-bottom: 0.25em;
-	}
-	.comment .comment_content        {
-		font-size:  88%;
-		line-height: 1em;
-
-		/* stop over-wide comments */
-		max-width: 228px;
-		word-wrap: break-word;
-	}
-/*
-	 could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
-	.comment .comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
-	.comment .comment_content:after  {font-size: 120%; font-weight: bold; content: close-quote;}
-*/
 }
 
-.no-js #frag_containers .frag_container .frag_content {
+HTML.no-js #frag_containers .frag_container .frag_content {
 	.new-comment {
 		visibility: visible;
 	}
