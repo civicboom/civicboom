@@ -47,6 +47,16 @@ class TestController(BaseController):
         flash_message("hello session test")
         return redirect('/')
 
+    def extra(self):
+        from civicboom.model import Content
+        c = Session.query(Content).get(1)
+        #c.extra_fields['moo'] = 'cake'
+        #c.extra_fields['pie'] = 3.14159
+        c.extra_fields['hits'] = c.extra_fields.get('hits', 0) + 1
+        #c.extra_fields['hits'] = 42
+        Session.commit()
+        return str(c.extra_fields)
+
     @authorize
     def logged_in(self):
         return "you are logged in"
