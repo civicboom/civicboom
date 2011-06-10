@@ -315,7 +315,20 @@
         </a>
         
         % if extra_info:
-            % if   content['type']=='article'   :
+            % if   content['type']=='article' and (content.get('parent_id') or content.get('parent')):
+                <%
+                    (parent_url_static, parent_url_frag) = h.url_pair('content', id=content.get('parent_id') or content['parent']['id'], gen_format='frag')
+                %>
+                <p>${_('In response to:')}
+                    <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
+                        % if content.get('parent'):
+                        ${h.truncate(content['parent']['title'], length=30, indicator='...', whole_word=True)}
+                        % else:
+                        content
+                        % endif
+                    </a>
+                </p>
+            % elif content['type']=='article'   :
                 <p>
                 ${_('Views')}:${content['views']}
                 % if content.get('tags'):
@@ -363,16 +376,15 @@
         % endif
     </%doc>
 
-    
     <td class="creator">
         ## Creator avatar
         % if creator and 'creator' in content:
             ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
         % endif
         ## Responses show parent Creator
-        % if content.get('parent'):
-        ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
-        % endif
+        ##% if content.get('parent') and content['parent'].get('creator'):
+        ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
+        ##% endif
     </td>
     
 </tr>
