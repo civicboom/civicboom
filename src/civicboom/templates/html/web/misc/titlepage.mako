@@ -107,7 +107,7 @@
 <%def name="front_headline()">
 	<div class="title-box">
 		<h1 class="headline">
-			Sourcing and sharing news just got easier
+			The new way to source and share news
 		</h1>
 		<h2 class="tagline">
 			${_('_Respond to _requests and generate news or feature _content for your needs.')}
