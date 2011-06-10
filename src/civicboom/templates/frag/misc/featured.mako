@@ -34,14 +34,13 @@
 
     <div class="frag_left_col">
         <div class="frag_col">
-            % for (title, cb_list) in d.iteritems():
-                % if title.startswith('sponsored_'):
-                    <% title = list_names.get(title, title) %>
-                    ${frag_lists.sponsored_list(cb_list, title)}
-                % else:
-                    <% title = list_names.get(title, title) %>
-                    ${frag_lists.content_list(cb_list, title)}
-                % endif
+            % for (title, cb_list) in d['sponsored'].iteritems():
+                <% title = list_names.get(title, title) %>
+                ${frag_lists.sponsored_list(cb_list, title)}
+            % endfor
+            % for (title, cb_list) in d['featured'].iteritems():
+                <% title = list_names.get(title, title) %>
+                ${frag_lists.content_list(cb_list, title)}
             % endfor
         </div>
     </div>
