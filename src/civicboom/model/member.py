@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base, location_to_string
+from civicboom.model.meta import Base, location_to_string, JSONType
 from civicboom.model.message import Message
 from cbutils.misc import update_dict
 from civicboom.lib.helpers import wh_url
@@ -214,6 +214,7 @@ class Member(Base):
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
+    extra_fields    = Column(JSONType(mutable=True), nullable=False, default={})
 
     num_following            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
@@ -299,12 +300,7 @@ class Member(Base):
 
     @property
     def config(self):
-        if not self._config:
-            # import at the last minute -- importing at the start of the file
-            # causes a dependency loop
-            from civicboom.lib.settings import MemberSettingsManager
-            self._config = MemberSettingsManager(self)
-        return self._config
+        return self.extra_fields
 
     def __unicode__(self):
         return self.name or self.username
