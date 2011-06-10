@@ -635,8 +635,9 @@
         <p>This request will appear...</p>
         <ol>
             <li>${_("In your _widget for your community to _respond to.")}</li>
-            <li>Your followers notification stream.</li>
+            <li>${_(In your follower's notification stream.</li>
             <li>${_("On the _site_name _request stream.")}</li>
+			
         </ol>
     </div>
 </%def>
