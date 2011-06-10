@@ -172,7 +172,7 @@ Disallow: /*.frag$
         """
         
         featured_content = []
-        
+               
         def rnd_content_items(return_items=1, **kwargs):
             if 'limit' not in kwargs:
                 kwargs['limit'] = 3
@@ -180,7 +180,7 @@ Disallow: /*.frag$
                 kwargs['after'] = now() - datetime.timedelta(days=7)
             kwargs['exclude_content'] = [content['id'] for content in featured_content] #",".join([str(
             content_items = content_search(**kwargs)['data']['list']['items']
-            random.shuffle( content_items )
+            if random: random.shuffle( content_items )
             return_list = []
             for i in range(return_items):
                 if content_items:
@@ -190,13 +190,14 @@ Disallow: /*.frag$
             return return_list
         
         #return to_apilist(featured_content, obj_type='content') # AllanC - a liniear list of featured contebt
-        
         return action_ok(
             data={
-                'top_viewed_assignments' : rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5),
-                'most_responses'         : rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5),
-                'near_me'                : rnd_content_items(return_items=2,                        location='me'    , limit=5),
-                'recent_assignments'     : rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5),
-                'recent'                 : rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5),
+                'sponsored_assignment'  :   rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 ),
+                'sponsored_responded'   :   rnd_content_items(return_items=1, sort='-num_responses',              limit=3 ),
+            #    'top_viewed_assignments' : rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5),
+            #    'most_responses'         : rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5),
+            #    'near_me'                : rnd_content_items(return_items=2,                        location='me'    , limit=5),
+            #    'recent_assignments'     : rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5),
+            #    'recent'                 : rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5),
             }
         )

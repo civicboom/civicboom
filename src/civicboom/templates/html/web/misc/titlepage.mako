@@ -168,10 +168,10 @@
 <%def name="front_about()">
 	<div class="about">
 		<a href="">Get started!</a><br />
-		<a href="">Sign up as a user.</a><br />
+		<a href="${url(controller='account', action='signin')}">Sign up as a user.</a><br />
 		<a href="">${_('Browse _requests.')}</a><br />
-		<a href="">${_('_Respond and share your news.')}</a><br />
-		<a href="">${_('Set _requests for other to _respond to & upload your news _content to share.')}</a><br />
+		<a href="">${_('Respond and share your news.')}</a><br />
+		<a href="">${_('Set _requests for other to respond to & upload your news _content to share.')}</a><br />
 	</div>
 </%def>
 	

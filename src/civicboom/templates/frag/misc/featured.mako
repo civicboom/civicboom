@@ -21,6 +21,9 @@
 
     <%
         list_names = dict(
+            sponsored_assignment    = _('Top _request'),
+            sponsored_responded     = _('Most responded'),
+            
             top_viewed_assignments  = _('Top _requests'),
             most_responses          = _('What people are getting involved in'),
             near_me                 = _('Near me'),
@@ -32,8 +35,13 @@
     <div class="frag_left_col">
         <div class="frag_col">
             % for (title, cb_list) in d.iteritems():
-                <% title = list_names.get(title, title) %>
-                ${frag_lists.content_list(cb_list, title)}
+                % if title.startswith('sponsored_'):
+                    <% title = list_names.get(title, title) %>
+                    ${frag_lists.sponsored_list(cb_list, title)}
+                % else:
+                    <% title = list_names.get(title, title) %>
+                    ${frag_lists.content_list(cb_list, title)}
+                % endif
             % endfor
         </div>
     </div>

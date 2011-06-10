@@ -27,7 +27,7 @@
 	/*---------------------------Frag Member Adverts------------------------------*/
 	.advert {
 		padding: 0;
-		margin-top: 1em;
+		margin-top: 0.5em;
 
 		a {
 			text-decoration: none;
@@ -38,7 +38,6 @@
 			position: relative;
 			/* min-height: 4em; */
 			border: 1px solid black;
-			top: 5px;
 			padding: 5px;
 
 			color: #fff;
@@ -62,9 +61,10 @@
 		}
 
 		.icon {
-			position: absolute;
+			position: relative;
 			z-index: 1;
-			margin-left: 4px;
+			left: 5px;
+			top: 8px;
 		}
 
 		.hide_advert_submit {

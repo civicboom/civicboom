@@ -122,4 +122,50 @@
 			.icon_delete {float: right;}
 		}
 	}
+	
+	/* --- Sponsored Feature Content --- */
+	.sponsored_content {
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		display: block;
+		min-height: 15em;
+		
+		.thumbnail {
+			min-width: 125px;
+			max-width: 125px;
+			min-height: 125px;
+			max-height: 125px;
+			margin: 0.25em;
+			
+			img {
+				height: 100%;
+			}
+		}
+		
+		.content_title {
+			text-align: center;
+			font-size: 120%;
+			top: 0.25em;
+		}
+		
+		.content {
+			text-align: left;
+			min-width: 305px;
+			max-width: 305px;
+			color: #333;
+			font-size: 105%;
+			word-wrap: break-word;
+			
+			p {
+				margin-top: 10px;
+				margin-bottom: 10px;
+			}
+		}
+		
+		.creator, .view, .responses, .comments {
+			display: inline;
+			margin: 0 5px 5px 5px;
+		}
+	}
 }
