@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base, location_to_string
+from civicboom.model.meta import Base, location_to_string, JSONType
 from civicboom.model.member import Member, has_role_required
 from civicboom.model.media import Media
 
@@ -7,14 +7,12 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
-from sqlalchemy import PickleType
 from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import DDL
 
 import hashlib
 import copy
-import json
 from webhelpers.text import truncate
 
 #-------------------------------------------------------------------------------
@@ -23,6 +21,7 @@ from webhelpers.text import truncate
 _content_type = Enum("comment", "draft", "article", "assignment", "syndicate", name="content_type")
 
 publishable_types = ["article", "assignment"]
+
 
 #-------------------------------------------------------------------------------
 # Objects
@@ -97,7 +96,7 @@ class Content(Base):
     license_id      = Column(Unicode(32),      ForeignKey('license.id'), nullable=False, default=u"CC-BY")
     visible         = Column(Boolean(),        nullable=False, default=True)
     edit_lock       = Column(_edit_lock,       nullable=True , default=None)
-    extra_fields    = Column(PickleType(pickler=json), nullable=False, default={})
+    extra_fields    = Column(JSONType(mutable=True), nullable=False, default={})
 
     num_responses   = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
     num_comments    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
