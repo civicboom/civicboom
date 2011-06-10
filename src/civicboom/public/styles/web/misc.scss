@@ -53,13 +53,17 @@ BODY.c-misc.a-titlepage {
 		.logo a {
 			text-decoration: none;
 		}
+		
+		.button {
+		    padding: 3px;
+		}
 	}
 
 	/* --- Title-box --- */
 
 	.title-box {
 		padding: 0;
-		margin: 8em auto 8em auto;
+		margin: 8em auto 6em auto;
 		width: 65em;
 
 		.headline {
@@ -90,14 +94,14 @@ BODY.c-misc.a-titlepage {
 		}
 
 		.window {
-			width: 19.8em;
+			width: 251px;
 			float: left;
 			position: relative;
 		}
 
 		.window .window-content {
-			width: 19.8em;
-			height: 17em;
+			width: 251px;
+			height: 198px;
 			border: 0.3em solid #ffda6b;
 			-moz-border-radius: 10px;
 			border-radius: 5px;  
@@ -119,6 +123,10 @@ BODY.c-misc.a-titlepage {
 			font-size: 175%;
 			font-weight: bold;
 			padding-top: 0.5em;
+			
+			b {
+			    font-weight: bolder;
+			}
 		}
 
 		.window .hilite {
@@ -142,14 +150,13 @@ BODY.c-misc.a-titlepage {
 			font-size: 225%;
 			font-weight: bold;
 			text-decoration: none;
-			margin: 3.1em auto;
+			margin: 2.9em auto;
 		}
 	}
 
 	.about {
-		position: relative;
 		clear: both;
-		margin: 37.5em auto 0 auto;
+		margin: 33em auto 0 auto;
 		text-align: left;
 		width: 65em;
 	}

@@ -50,9 +50,10 @@
             <%
                 assignment   = c.action_objects['action_object']['content']
                 creator_name = assignment['creator']['name'] or assignment['creator']['username']
+                content_title = assignment['title'] or None
             %>
             ## AllanC: TODO - internationalise this string!
-            ${content_why(creator_name, assignment)}
+            ${content_why(creator_name, content_title, assignment)}
             ## <p>By signing  in/up you will accept the <b>${assignment['title']}</b> request that has been set by <b>${creator_name}</b></p>
             
         ## Follow
@@ -110,10 +111,14 @@
 ##------------------------------------------------------------------------------
 ## Signin Fragment
 ##------------------------------------------------------------------------------
-<%def name="content_why(creator_name=None, content=None)">
+<%def name="content_why(creator_name=None, content_title=None, content=None)">
     <div class="content_why">
         <h1>Get involved!</h1>
-        <p>Sign in/up and respond NOW to <b>${creator_name}'s</b> REQUEST and:</p><br />
+        <p>Sign in/up and respond NOW to <b>${creator_name}
+        % if content_title:
+            's ${content_title}
+        % endif
+        </b> and:</p><br />
         <ol>
             <li>Get published!</li>
             <li>Get recognition!</li>

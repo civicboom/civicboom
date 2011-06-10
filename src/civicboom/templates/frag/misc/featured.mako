@@ -33,11 +33,15 @@
     %>
 
     <div class="frag_left_col">
+        ##<div class="featured-mobile">
+        ##    <a href="${url(controller='misc', action='about', id='mobile')}">Did you know you can also contribute with your Android mobile?</a>
+        ##</div>
         <div class="frag_col">
             % for (title, cb_list) in d['sponsored'].iteritems():
                 <% title = list_names.get(title, title) %>
                 ${frag_lists.sponsored_list(cb_list, title)}
             % endfor
+
             % for (title, cb_list) in d['featured'].iteritems():
                 <% title = list_names.get(title, title) %>
                 ${frag_lists.content_list(cb_list, title)}
@@ -45,10 +49,6 @@
         </div>
     </div>
 
-    <div class="frag_right_col">
-        <div class="frag_col">
-            <p>Contribute via your mobile</p>
-        </div>
-    </div>
+
 
 </%def>

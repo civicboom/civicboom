@@ -18,9 +18,7 @@
 		color: $frag-list-title-txt;
 
 		background: $frag-list-top; /* for non-css3 browsers */
-		filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='$frag-list-top', endColorstr='$frag-list-bot'); /* for IE */
-		background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, $frag-list-top), color-stop(1.0, $frag-list-bot)); /* for webkit browsers */
-		background: -moz-linear-gradient(top, $frag-list-top 19%, $frag-list-bot); /* for firefox 3.6+ */
+
 
 		/* --------------------------
 		   Frag list Headings (for lists in content and member frags)

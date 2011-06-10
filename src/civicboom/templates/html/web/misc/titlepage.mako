@@ -69,7 +69,7 @@
 
 <%def name="header()">
 	<table><tr>
-		<td colspan="4" class="how-to"><a href="">How to | Mobile</a></td>
+		<td colspan="4" class="how-to"><a>How to</a> | <a href="href="${url(controller='misc', action='about', id='mobile')}"">Mobile</a></td>
 	</tr><tr>
 		<td class="logo">
 			<a href='/'>
@@ -93,7 +93,7 @@
 			% endif
 		</td>
 		<td class="links">
-			<a href="">What to explore first?</a>
+			<a href="${url(controller='content', action='index', list='assignments_active')}">What to explore first?</a>
 		</td>
 		<td class="search">
 			<form action="${h.url('contents')}" method='GET'>
@@ -107,7 +107,7 @@
 <%def name="front_headline()">
 	<div class="title-box">
 		<h1 class="headline">
-			The new way to source and share news
+			The simple way to source and share news
 		</h1>
 		<h2 class="tagline">
 			${_('_Respond to _requests and generate news or feature _content for your needs.')}
@@ -119,7 +119,8 @@
 	<div class="windows">
 		<div id="window-orgs" class="window">
 			<div class="window-content">
-				<ul class="content-list">
+				<img src="/images/misc/titlepage/phone_window.png" />
+				<%doc><ul class="content-list">
 					<li>
 						<span class="larger"><span class="hilite">Multi-media</span> interaction</span><br />
 						<span class="indent">with your audience.</span>
@@ -132,13 +133,14 @@
 						<span class="larger"><span class="hilite">Real-time</span> contribution</span><br />
 						<span class="indent">from your users.</span>
 					</li>
-				</ul>
+				</ul></%doc>
 			</div>
-			<div class="window-tab">Organisations</div>
+			<div class="window-tab"><b>Leverage</b> our platform from your phone</div>
 		</div>
 		<div id="window-indvs" class="window">
-			<div class="window-content">		
-				<ul class="content-list">
+			<div class="window-content">
+				<img src="/images/misc/titlepage/you_window.png" />
+				<%doc><ul class="content-list">
 					<li>
 						<span class="larger"><span class="hilite">Participate</span> and share</span><br />
 						<span class="indent">your local news.</span>
@@ -151,9 +153,9 @@
 						<span class="larger"><span class="hilite">Gain</span> recognition</span><br />
 						<span class="indent">from content publishers.</span>
 					</li>
-				</ul>
+				</ul></%doc>
 			</div>
-			<div class="window-tab">Individuals</div>
+			<div class="window-tab"><b>You</b> become the source of information</div>
 		</div>
 		<a class="signup-link" href="${url(controller='account', action='signin')}">
 			<div id="window-signup" class="window">
@@ -167,11 +169,11 @@
 	
 <%def name="front_about()">
 	<div class="about">
-		<a href="">Get started!</a><br />
+		<a>Get started!</a><br />
 		<a href="${url(controller='account', action='signin')}">Sign up as a user.</a><br />
-		<a href="">${_('Browse _requests.')}</a><br />
-		<a href="">${_('Respond and share your news.')}</a><br />
-		<a href="">${_('Set _requests for other to respond to & upload your news _content to share.')}</a><br />
+		<a href="${url(controller='content', action='index', list='assignments_active')}">${_('Browse _requests.')}</a><br />
+		<a>${_('Respond and share your news.')}</a><br />
+		<a>${_('Set _requests for other to respond to & upload your news _content to share.')}</a><br />
 	</div>
 </%def>
 	

@@ -180,7 +180,7 @@ Disallow: /*.frag$
                 kwargs['after'] = now() - datetime.timedelta(days=7)
             kwargs['exclude_content'] = [content['id'] for content in featured_content] #",".join([str(
             content_items = content_search(**kwargs)['data']['list']['items']
-            if random: random.shuffle( content_items )
+            random.shuffle( content_items )
             return_list = []
             for i in range(return_items):
                 if content_items:

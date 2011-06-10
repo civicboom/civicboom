@@ -217,8 +217,6 @@
           <span style="float: right;">${iconify('edit_lock', 'Locked for editing', 'icon16 i_edit_lock')}</span>
         </div>
     </div>
-
-
 </%def>
 
 
@@ -419,12 +417,6 @@
 ## Why Respond?
 ##------------------------------------------------------------------------------
 <%def name="content_why_resond()">
-    <style type="text/css">
-	.why-respond {
-	    color: #666;
-	    margin: 1.5em auto 0 0.5em;
-	}
-    </style>
     <div class="why-respond">
 	<h2>${_("Why should you _respond?")}</h2>
 	<ul>
@@ -443,15 +435,6 @@
     content  = self.content
     comments = d['comments']['items']
 %>
-
-<script>
-    $('.new-comment').hide();
-    $('.new-comment').css("visibility", "visible");
-    $('.show-comments').click(function() {
-	$('.new-comment').slideToggle();
-	$('.comment-${self.id}').focus();
-    });
-</script>
 
 <div class="comments">
     <h2 style="padding-top: 20px; padding-bottom: 10px;">${_("Additional info request")}</h2>
@@ -489,6 +472,14 @@
 		    % endif
 		</span>
 	    </td>
+	    <script>
+		$('.new-comment').hide();
+		$('.new-comment').css("display", "block");
+		$('.show-comments').click(function() {
+		    $('.new-comment').toggle();
+		    $('.comment-${self.id}').focus();
+		});
+	    </script>
 	</tr>
         <tr class="new-comment">
             <td class="comment_avatar">
@@ -646,7 +637,7 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
             value           = _('Disassociate') ,
-            value_formatted = h.literal("<span class='icon16 i_dissasociate'></span>%s") % _('Disasociate'),
+            value_formatted = h.literal("<span class='icon16 i_dissasociate'></span>%s") % _('Disassociate'),
             title           = _("Dissacociate your content from this response") ,
             confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,

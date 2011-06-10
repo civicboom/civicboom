@@ -1,67 +1,99 @@
-#frag_containers .frag_container .frag_content {
-	.frag_right_col {
-		width: 33%;
-		float: right;
-	}
-
-	/*----------------------------Content Comments--------------------------------*/
-
-	.new-comment {
-		visibility: hidden;
-	}
-
-	.comments-option {
-		color: #666;
-	}
-
-	.show-comments {
-		font-weight: bold;
-		text-decoration: underline;
-		cursor: pointer;
-	}
-
-	.comments {
-		table {
+#frag_containers {
+	.frag_container {
+		.what-next, .why-respond {
+		    color: #666;
+		    margin: 1.5em auto 0 0.5em;
+		    font-size: 105%;
+		}
+		
+		.featured-mobile {
 			width: 100%;
-		}
-		h2 {
-			font-size: 150%;
-		}
-		td {
-			vertical-align: top;
-			color: #444;
-			padding-bottom: 1em;
-		}
-		textarea {
-			width: 100%;
-			min-height: 60px;
-		}
-		input {
-			width: 100%;
-		}
-
-		.comment_avatar {
-			width: 40px;
-		}
-
-		.comment {
-			padding-left: 1em;
-
-			.comment_by {
-				font-weight: bold;
-				margin-bottom: 0.25em;
+			font-size: 120%;
+			text-align: center;
+			font-weight: bold;
+			padding-top: 15px;
+			
+			a {
+				color: #333;
+				text-decoration: none;
 			}
-			.comment_content {
-				font-size:  88%;
-				line-height: 1em;
-
-				/* stop over-wide comments */
-				max-width: 228px;
+		}
+	
+		.frag_content {
+			.frag_left_col {
+				width: 66%;
+				float: left;
+			}
+		
+			.frag_right_col {
+				width: 33%;
+				float: right;
+			}
+			
+			.content_text {
 				word-wrap: break-word;
 			}
-			//could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
-			//.comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
-			//.comment_content:after  {font-size: 120%; font-weight: bold; content: close-quote;}
+		
+			/*----------------------------Content Comments--------------------------------*/
+		
+			.new-comment {
+				display: none;
+			}
+		
+			.comments-option {
+				color: #666;
+			}
+		
+			.show-comments {
+				font-weight: bold;
+				text-decoration: underline;
+				cursor: pointer;
+			}
+		
+			.comments {
+				table {
+					width: 100%;
+				}
+				h2 {
+					font-size: 150%;
+				}
+				td {
+					vertical-align: top;
+					color: #444;
+					padding-bottom: 1em;
+				}
+				textarea {
+					width: 100%;
+					min-height: 60px;
+				}
+				input {
+					width: 100%;
+				}
+		
+				.comment_avatar {
+					width: 40px;
+				}
+		
+				.comment {
+					padding-left: 1em;
+		
+					.comment_by {
+						font-weight: bold;
+						margin-bottom: 0.25em;
+					}
+					.comment_content {
+						font-size:  88%;
+						line-height: 1em;
+		
+						/* stop over-wide comments */
+						max-width: 228px;
+						word-wrap: break-word;
+					}
+					//could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
+					//.comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
+					//.comment_content:after  {font-size: 120%; font-weight: bold; content: close-quote;}
+				}
+			}
 		}
 	}
 }

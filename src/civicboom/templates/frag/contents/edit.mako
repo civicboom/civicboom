@@ -623,21 +623,13 @@
 ## What Happens Next?
 ##------------------------------------------------------------------------------
 <%def name="what_next()">
-    <style type="text/css">
-        .what-next {
-            color: #666;
-            margin: 1.5em auto 0 0.5em;
-            font-size: 105%;
-        }
-    </style>
     <div class="what-next">
         <h2>What happens once I publish?</h2>
         <p>This request will appear...</p>
         <ol>
-            <li>${_("In your _widget for your community to _respond to.")}</li>
-            <li>${_(In your follower's notification stream.</li>
+            <li>${_("In your _widget for your community to respond to.")}</li>
+            <li>${_("In your follower's notification stream.")}</li>
             <li>${_("On the _site_name _request stream.")}</li>
-			
         </ol>
     </div>
 </%def>
