@@ -7,12 +7,14 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
+from sqlalchemy import PickleType
 from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import DDL
 
 import hashlib
 import copy
+import json
 from webhelpers.text import truncate
 
 #-------------------------------------------------------------------------------
@@ -93,9 +95,9 @@ class Content(Base):
     update_date     = Column(DateTime(),       nullable=False, default=func.now(), doc="Controlled by postgres trigger")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     license_id      = Column(Unicode(32),      ForeignKey('license.id'), nullable=False, default=u"CC-BY")
-    
     visible         = Column(Boolean(),        nullable=False, default=True)
     edit_lock       = Column(_edit_lock,       nullable=True , default=None)
+    extra_fields    = Column(PickleType(pickler=json), nullable=False, default={})
 
     num_responses   = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
     num_comments    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
