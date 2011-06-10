@@ -351,29 +351,7 @@
         % endif
         
         <p class="timestamp">
-        % if content['type']=='assignment':
-            <% publish = h.time_ago(content['publish_date']) %>
-            % if   content['event_date'] and content['event_date'] > h.now():
-                ${_('Set %s ago, Event in %s time') % (publish, h.time_ago(content['event_date']) )}
-            % elif content['due_date'  ] and content['due_date'  ] > h.now():
-                ${_('Set %s ago, Due in %s time'  ) % (publish, h.time_ago(content['due_date']  ) )}
-            % else:
-                ${_('Set %s ago'                  ) % (publish                                    )}
-            % endif
-        % elif content['type']=='draft':
-            % if content.get('parent'):
-                % if   content['parent']['event_date'] and content['parent']['event_date'] > h.now():
-                    ${_('Event in %s time'  ) % h.time_ago(content['parent']['event_date'])}
-                % elif content['parent']['due_date'  ] and content['parent']['due_date'  ] > h.now():
-                    ${_('Due in %s time'  ) % h.time_ago(content['parent']['event_date'])}
-                % endif
-            % endif
-            % if content.get('sceduled_publish_date'):
-                ${_('Will be published in %s time'  ) % h.time_ago(content['sceduled_publish_date'])}
-            % endif
-        % else:
-            ${_('%s ago') % h.time_ago(content['update_date'])}
-        % endif
+            ${timestamp(content)}
         </p>
     </td>
 
@@ -490,8 +468,6 @@
 ##------------------------------------------------------------------------------
 ## Sponsored Content Item
 ##------------------------------------------------------------------------------
-## Proto - This is pretty much a direct copy of the normal content render function
-## I'll fix that~
 <%def name="render_item_sponsored(content, location=False, stats=False, creator=False)">
 <tr style="width: 100%;">
     <%
@@ -506,15 +482,20 @@
 
     <td colspan="2" class="content_title">
         <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
-            <p>${content['title']}</p>
+            <p>${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
+        % if content and 'creator' in content:
+            <div class="creator-avatar">
+                ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+            </div>
+        % endif
     </td>
 </tr>
 <tr>
     <td class="thumbnail" >
         <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
             ${content_thumbnail_icons(content)}
-            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img is_this_even_working"/>
+            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
         </a>
     </td>
     
@@ -526,30 +507,34 @@
     
 </tr>
 <tr>
-    <td colspan="2">    
-    ## % if creator and 'creator' in content:
-        <div class="creator">
-            <small class="content_by">By: ${content['creator']['name']}</small>
+    <td colspan="2" class="content-info">
+        % if content and 'creator' in content:
+            <div class="creator">
+                <small class="content_by">By: ${content['creator']['name']}</small>
+            </div>
+        % endif
+        
+        <div class="timestamp">
+            <small>${timestamp(content)}</small>
         </div>
-    ##% endif
-    
-    ##% if creator and 'views' in content:
-        <div class="views">
-            <small>${content['views']} views</small>
-        </div>
-    ##% endif
-    
-    ##% if creator and 'num_responses' in content:
-        <div class="responses">
-            <small>${content['num_responses']} responses</small>
-        </div>
-    ##% endif
-    
-    ##% if creator and 'num_comments' in content:
-        <div class="comments">
-            <small>${content['num_comments']} comments</small>
-        </div>
-    ##% endif
+        
+        % if content and 'views' in content:
+            <div class="views">
+                <small>${content['views']} views</small>
+            </div>
+        % endif
+        
+        % if content and 'num_responses' in content:
+            <div class="responses">
+                <small>${content['num_responses']} responses</small>
+            </div>
+        % endif
+        
+        % if content and 'num_comments' in content:
+            <div class="comments">
+                <small>${content['num_comments']} comments</small>
+            </div>
+        % endif
     </td>
 </tr>
 <tr>
@@ -575,4 +560,33 @@
 	<small class="content_short">${content['content_short']|n}</small>
 </td></tr>
 % endif
+</%def>
+
+##------------------------------------------------------------------------------
+## Timestamp
+##------------------------------------------------------------------------------
+<%def name="timestamp(content)">
+    % if content['type']=='assignment':
+        <% publish = h.time_ago(content['publish_date']) %>
+        % if   content['event_date'] and content['event_date'] > h.now():
+            ${_('Set %s ago, Event in %s time') % (publish, h.time_ago(content['event_date']) )}
+        % elif content['due_date'  ] and content['due_date'  ] > h.now():
+            ${_('Set %s ago, Due in %s time'  ) % (publish, h.time_ago(content['due_date']  ) )}
+        % else:
+            ${_('Set %s ago'                  ) % (publish                                    )}
+        % endif
+    % elif content['type']=='draft':
+        % if content.get('parent'):
+            % if   content['parent']['event_date'] and content['parent']['event_date'] > h.now():
+                ${_('Event in %s time'  ) % h.time_ago(content['parent']['event_date'])}
+            % elif content['parent']['due_date'  ] and content['parent']['due_date'  ] > h.now():
+                ${_('Due in %s time'  ) % h.time_ago(content['parent']['event_date'])}
+            % endif
+        % endif
+        % if content.get('sceduled_publish_date'):
+            ${_('Will be published in %s time'  ) % h.time_ago(content['sceduled_publish_date'])}
+        % endif
+    % else:
+        ${_('%s ago') % h.time_ago(content['update_date'])}
+    % endif
 </%def>

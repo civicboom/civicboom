@@ -190,14 +190,23 @@ Disallow: /*.frag$
             return return_list
         
         #return to_apilist(featured_content, obj_type='content') # AllanC - a liniear list of featured contebt
+        
+        # Sponsored content dictionary
+        sponsored =  {
+            'sponsored_assignment'  :   rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 ),
+            'sponsored_responded'   :   rnd_content_items(return_items=1, sort='-num_responses',              limit=3 ),
+        }
+        # Featured content dictionary
+        featured =  {
+            'top_viewed_assignments' : rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5),
+            'most_responses'         : rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5),
+            'near_me'                : rnd_content_items(return_items=2,                        location='me'    , limit=5),
+            'recent_assignments'     : rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5),
+            'recent'                 : rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5),
+        }
         return action_ok(
             data={
-                'sponsored_assignment'  :   rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 ),
-                'sponsored_responded'   :   rnd_content_items(return_items=1, sort='-num_responses',              limit=3 ),
-            #    'top_viewed_assignments' : rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5),
-            #    'most_responses'         : rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5),
-            #    'near_me'                : rnd_content_items(return_items=2,                        location='me'    , limit=5),
-            #    'recent_assignments'     : rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5),
-            #    'recent'                 : rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5),
+                'sponsored' : sponsored,
+                'featured' : featured,
             }
         )

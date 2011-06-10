@@ -14,9 +14,7 @@
 		margin-top: 1.5em;
 
 		background: #eee; /* for non-css3 browsers */
-		filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff'); /* for IE */
-		background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, #eee), color-stop(1.0, #fff)); /* for webkit browsers */
-		background: -moz-linear-gradient(top, #eee 19%, #fff); /* for firefox 3.6+ */
+
 
 		/* --------------------------
 		   Frag list Headings (for lists in content and member frags)
@@ -143,6 +141,26 @@
 			text-align: center;
 			font-size: 120%;
 			top: 0.25em;
+			
+			a {
+				display: inline;
+				float: left;
+				margin-top: 5px;
+				margin-left: 10px;
+			}
+			
+			.creator-avatar {
+				display: inline;
+				float: right;
+				margin-right: 5px;
+				width: 40px;
+				height: 40px;
+				
+				img, .thumbnail, .thumbnail_small {
+					width: 40px;
+					height: 40px;
+				}
+			}
 		}
 		
 		.content {
@@ -159,9 +177,13 @@
 			}
 		}
 		
-		.creator, .view, .responses, .comments {
+		.content-info {
+		}
+		
+		.content-info div {
 			display: inline;
-			margin: 0 5px 5px 5px;
+			float: left;
+			margin: 0 5px 5px 15px;
 		}
 	}
 }
