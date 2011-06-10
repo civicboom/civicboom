@@ -22,7 +22,7 @@
     <%
         list_names = dict(
             sponsored_assignment    = _('Top _request'),
-            sponsored_responded     = _('Most _responded'),
+            sponsored_responded     = _('Most responded'),
             
             top_viewed_assignments  = _('Top _requests'),
             most_responses          = _('What people are getting involved in'),

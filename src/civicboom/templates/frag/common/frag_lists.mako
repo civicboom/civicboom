@@ -84,7 +84,7 @@
 </%def>
 
 <%def name="sponsored_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_sponsored, type_=('table','tr'),   content_class="sponsored_content",  list_class='content',   *args,  **kwargs)}
+    ${frag_list(render_item_function=render_item_sponsored, type_=('table','tr'),   content_class='sponsored_content',  list_class='content',   *args,  **kwargs)}
 </%def>
 
 
@@ -433,9 +433,10 @@
 ##------------------------------------------------------------------------------
 ## Sponsored Content Item
 ##------------------------------------------------------------------------------
-
+## Proto - This is pretty much a direct copy of the normal content render function
+## I'll fix that~
 <%def name="render_item_sponsored(content, location=False, stats=False, creator=False)">
-<tr>
+<tr style="width: 100%;">
     <%
         id = content['id']
     
@@ -446,21 +447,55 @@
             js_link_to_frag = ''
     %>
 
-    <td>
-        <a class="thumbnail" href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+    <td colspan="2" class="content_title">
+        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+            <p>${content['title']}</p>
+        </a>
+    </td>
+</tr>
+<tr>
+    <td class="thumbnail" >
+        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
             ${content_thumbnail_icons(content)}
-            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
+            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img is_this_even_working"/>
         </a>
     </td>
     
-    <td style="width:100%;">
-        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
-            <p class="content_title">${content['title']}</p>
-          % if creator and 'creator' in content:
-            <p><small class="content_by">By: ${content['creator']['name']}</small>
-          % endif
-        </a>
+    <td class="content">
+        % if content and 'content_short' in content:
+            <p>"${content['content_short']}"</p>
+        % endif
     </td>
+    
+</tr>
+<tr>
+    <td colspan="2">    
+    ## % if creator and 'creator' in content:
+        <div class="creator">
+            <small class="content_by">By: ${content['creator']['name']}</small>
+        </div>
+    ##% endif
+    
+    ##% if creator and 'views' in content:
+        <div class="views">
+            <small>${content['views']} views</small>
+        </div>
+    ##% endif
+    
+    ##% if creator and 'num_responses' in content:
+        <div class="responses">
+            <small>${content['num_responses']} responses</small>
+        </div>
+    ##% endif
+    
+    ##% if creator and 'num_comments' in content:
+        <div class="comments">
+            <small>${content['num_comments']} comments</small>
+        </div>
+    ##% endif
+    </td>
+</tr>
+<tr>
     % if location:
     <td>
         flag
@@ -483,20 +518,4 @@
 	<small class="content_short">${content['content_short']|n}</small>
 </td></tr>
 % endif
-</%def>
-
-## Content Thumbnail Icons
-<%def name="content_thumbnail_icons(content)">
-    <div class="icons">
-        ## AllanC - HACK!! please remove type==draft after issue #515 is fixed
-        % if content.get('private') or content.get('type')=='draft':
-            ${h.icon('private')}
-        % endif
-        % if content.get('edit_lock'):
-            ${h.icon('edit_lock')}
-        % endif
-        % if content.get('approval') and content.get('approval') != 'none':
-            ${h.icon(content.get('approval'))}
-        % endif
-    </div>
 </%def>
