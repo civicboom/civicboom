@@ -1,5 +1,25 @@
 $cb-lightblue: #4974b8;
 $cb-darkblue: #3a4a97;
 
+/* -------------------------------------- */
+
 $button-top: $cb-lightblue;
 $button-bot: $cb-darkblue;
+$button-txt: white;
+
+$titlebar-top: $cb-lightblue;
+$titlebar-bot: $cb-darkblue;
+$titlebar-txt: white;
+
+$frag-border    : #4a73b8;
+$frag-background: #e2e9ef;
+
+$frag-action-bar-txt      : black;
+$frag-action-bar          : #EEE;
+
+$frag-list-title    : #8aadd7;
+$frag-list-title-txt: darken($frag-list-title, 60%);
+$frag-list-top      : #eeeeee;
+$frag-list-bot      : #ffffff;
+$frag-list-txt      : #111;
+$frag-list-border   : darken($frag-list-bot  , 15%);

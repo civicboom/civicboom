@@ -11,10 +11,10 @@ import re
 contents_list_titles = [
     #list name , icon, description
     ('all'                 , 'article'    , _('all').capitalize()                   ),
-    ('drafts'              , 'draft'      , _("What I'm working on")                ),
+    ('drafts'              , 'draft'      , _("Drafts I'm working on")              ),
     ('assignments_active'  , 'assignment' , _("What I've asked")                    ),
     ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
-    ('responses'           , 'response'   , _('responses').capitalize()             ),
+    ('responses'           , 'response'   , _("Responses I've written")             ),
     ('articles'            , 'article'    , _('_articles').capitalize()             ),
 ]
 
