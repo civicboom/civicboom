@@ -1,3 +1,5 @@
+@import "../common/_palette.scss";
+
 #frag_containers {
 	/*overflow-x : scroll;*/
 	white-space: nowrap;
@@ -18,7 +20,7 @@
 		/* margin     : 0.25em;*/
 		margin-left: 0.2em;
 
-		border: 0.1em solid #4a73b8;
+		border: 0.1em solid $frag-border;
 		border-radius        : 0.2em;
 		-webkit-border-radius: 0.2em;
 		-moz-border-radius   : 0.2em;
@@ -47,14 +49,13 @@
 		.action_bar {
 			height: 1.35em;
 			overflow: hidden;
-			color: black;
+			color: $frag-action-bar-txt;
 
 			font-size: .9em;
-			font-weight: bold;
 
 			border-bottom: 0.1em solid #888; /* to match */
 
-			background-color: #CCC;
+			background-color: $frag-action-bar;
 			padding: 0.25em;
 
 			.object_actions_common {
@@ -71,7 +72,7 @@
 			}
 
 			.separtor {
-				border-left: 1px solid #AAA;
+				border-left: 1px solid $frag-action-bar-separator;
 				margin: 0em 0.5em;
 			}
 		}
@@ -83,6 +84,7 @@
 		  overflow-y: scroll;
 		  overflow-x: hidden;
 		  
+          background-color: $frag-background;
 		  
 		  /*
 		  background: -webkit-gradient(
@@ -140,7 +142,7 @@
 	height: 1.25em;
 	overflow: hidden;
 	color: white;
-	border-bottom: 0.1em solid #4a73b8; /* to match .frag_container */
+	border-bottom: 0.1em solid $frag-border; /* to match .frag_container */
 	padding: 0.25em;
 
 	.common_actions {
