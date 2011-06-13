@@ -99,15 +99,6 @@ class TestController(BaseController):
         m.config["height"] = 43
         return m.config["height"]
 
-    def convert_settings(self):
-        from civicboom.model.member import Member
-        for member in Session.query(Member):
-            from civicboom.lib.settings import MemberSettingsManager
-            _config = MemberSettingsManager(member)
-            for key in _config:
-                member.config[key] = _config[key]
-        return "ok"
-
     def send_message(self):
         from civicboom.model.member import Member
         import civicboom.lib.communication.messages as messages
