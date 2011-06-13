@@ -440,7 +440,11 @@
     <h2 style="padding-top: 20px; padding-bottom: 10px;">${_("Additional info request")}</h2>
 
     <table>
-        <tr style="display: none;"><th>${_('Member')}</th><th>${_('Comment')}</th></tr>
+        <tr style="display: none;">
+			<th>${_('Member')}</th>
+			<th>${_('Comment')}</th>
+			<th>${_('Actions')}</th>
+		</tr>
         % for comment in comments:
         <tr>
             <td class="comment_avatar">
@@ -463,7 +467,7 @@
         </tr>
         % endfor
 	<tr>
-	    <td colspan="2">
+	    <td colspan="3">
 		<span class="comments-option">
 		    % if c.logged_in_user:
 		    ${_("Need more info on this _content? ")}<span class="show-comments">Ask here...</span>
