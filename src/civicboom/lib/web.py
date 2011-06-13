@@ -530,9 +530,7 @@ def auto_format_output(target, *args, **kwargs):
     auto_format_output_flag = False
     if not c.format:
         current_request = request.environ.get("pylons.routes_dict")
-        # config breaks in production?
-        #c.format     = current_request.get("format", request.params.get('format', config['default_format'] ) )
-        c.format        = request.params.get("format") or current_request.get("format") or "html"
+        c.format        = current_request.get("format") or "html"
         auto_format_output_flag = True
 
     try:
@@ -626,11 +624,7 @@ def authenticate_form(_target, *args, **kwargs):
         #abort(403, detail=csrf_detected_message)
         response.status_int = 403
         
-        format = c.format
-        if args[-1] in format_processors:
-            format = args[-1]
-        
-        if format in ['html','redirect']:
+        if c.format in ['html','redirect']:
             c.target_url = current_url()
             c.post_values = param_dict
             return render_mako("html/web/misc/confirmpost.mako")
