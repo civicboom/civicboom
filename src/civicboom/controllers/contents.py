@@ -415,6 +415,14 @@ class ContentsController(BaseController):
         # GregM: Set private flag to user or hub setting (or public as default)
         kwargs['private'] = kwargs.get('private', (c.logged_in_persona.default_content_visibility == 'private' if c.logged_in_persona.__type__ == 'group' else False)) # Set drafts visability to default to private
 
+        if c.logged_in_persona.__type__ == 'group' and kwargs['private'] and not c.logged_in_persona.has_account_required('plus'):
+            flash_message = {'status':'error', 'message':_('Your group is set to create private content, however you need to upgrade your account in order to use the private content feature')}
+            set_flash_message(flash_message)
+            if c.format == 'redirect' or c.format == 'html':
+                return redirect(current_referer())
+            else:
+                raise action_error(message=flash_message['message'], code=400)
+
         # Create Content Object
         if   kwargs['type'] == 'draft':
             raise_if_current_role_insufficent('contributor')

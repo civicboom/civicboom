@@ -79,3 +79,18 @@ ${_("Scan the barcode (opposite) into your phone by using the barcode reader on 
     <div class="abs ${'hov' if image[3] else ''}" id="h-${image[0]}"><div id="m-${image[0]}"></div><img src="/images/about/mobile/${image[0]}.png" /></div>
   % endfor
 </div>
+
+
+<%def name="breadcrumbs()">
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url(controller='misc', action='about', id='index')}" itemprop="url">
+		<span itemprop="title">About</span>
+	</a>
+</span>
+&rarr;
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url(controller='misc', action='about', id='index')}" itemprop="url">
+		<span itemprop="title">Company</span>
+	</a>
+</span>
+</%def>

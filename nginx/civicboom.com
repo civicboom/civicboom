@@ -77,7 +77,7 @@ server {
 	if ($cb_scheme = "https") {
 		set $cb_security_checked "ok";
 	}
-	if ($host ~* "^(api|widget)") {
+	if ($host ~* "^(api|widget|test)") {
 		set $cb_security_checked "ok";
 	}
 	if ($http_user_agent ~* "ELB-HealthChecker") {

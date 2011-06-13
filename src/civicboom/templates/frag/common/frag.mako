@@ -75,6 +75,8 @@
             args, kwargs = c.web_params_to_kwargs
             args   = copy.copy(args)
             kwargs = copy.copy(kwargs)
+            self.args   = args
+            self.kwargs = kwargs
         
         # Gen frag URL
         if self.attr.frag_url == True:
@@ -152,7 +154,7 @@
             % if c.format=='frag':
                 <a href='' class="icon16 i_close" onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}'><span>${_('Close')}</span></a>
             % else:
-                <span class="icon"></span>
+                <span class="icon16 i_blank"></span>
             % endif
         </div>
     </div>

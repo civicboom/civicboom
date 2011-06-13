@@ -102,6 +102,10 @@ class MiscController(BaseController):
             return """
 User-agent: *
 Disallow: /misc/get_widget/
+Disallow: /misc/about/
+Disallow: /misc/help/
+Disallow: /media/
+Disallow: /*.frag$
 """
 
     @web

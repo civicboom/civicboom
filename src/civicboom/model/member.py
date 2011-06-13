@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base, location_to_string
+from civicboom.model.meta import Base, location_to_string, JSONType
 from civicboom.model.message import Message
 from cbutils.misc import update_dict
 from civicboom.lib.helpers import wh_url
@@ -214,6 +214,7 @@ class Member(Base):
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
+    extra_fields    = Column(JSONType(mutable=True), nullable=False, default={})
 
     num_following            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
@@ -285,7 +286,7 @@ class Member(Base):
             'utc_offset'          : None ,
             'join_date'           : None ,
             'website'             : lambda member: member.config.get('website') ,
-            'description'         : lambda member: member.config.get('description') ,
+            'description'         : lambda member: member.config.get('description') or '',
             #'url'                 : None ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
@@ -299,12 +300,7 @@ class Member(Base):
 
     @property
     def config(self):
-        if not self._config:
-            # import at the last minute -- importing at the start of the file
-            # causes a dependency loop
-            from civicboom.lib.settings import MemberSettingsManager
-            self._config = MemberSettingsManager(self)
-        return self._config
+        return self.extra_fields
 
     def __unicode__(self):
         return self.name or self.username
@@ -426,7 +422,10 @@ class Member(Base):
     def avatar_url(self, size=80):
         if self.avatar:
             return wh_url("avatars", self.avatar)
-        return wh_url("public", "images/default/avatar.png")
+        if self.__type__ == "user":
+            return wh_url("public", "images/default/avatar.png")
+        else:
+            return wh_url("public", "images/default/avatar_group.png")
 
     def delete(self):
         from civicboom.lib.database.actions import del_member
@@ -586,8 +585,8 @@ class User(Member):
         email = self.email or self.email_unverified
         if email:
             hash    = hashlib.md5(email.lower()).hexdigest()
-            default = "identicon"
-            #default = "http://www.civicboom.com/images/default/avatar.jpg"
+            #default = "identicon"
+            default =  wh_url("public", "images/default/avatar.png")
             args    = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
             return "https://secure.gravatar.com/avatar/%s?%s" % (hash, args)
         return Member.avatar_url

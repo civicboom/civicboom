@@ -50,3 +50,17 @@ Civicboom to life for yourself.
 <p><h1><a href="/account/signin" class="button" style="float:right;"> Sign up </a></h1>
 <h1>Don't just read it. Feed it.</h1>
 
+
+<%def name="breadcrumbs()">
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url(controller='misc', action='about', id='index')}" itemprop="url">
+		<span itemprop="title">About</span>
+	</a>
+</span>
+&rarr;
+<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+	<a href="${h.url(controller='misc', action='about', id='index')}" itemprop="url">
+		<span itemprop="title">Company</span>
+	</a>
+</span>
+</%def>

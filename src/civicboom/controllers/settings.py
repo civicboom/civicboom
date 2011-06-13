@@ -39,7 +39,7 @@ log = logging.getLogger(__name__)
 class PrivateGroupValidator(formencode.validators.FancyValidator):
     messages = {
         'invalid'           : _('Value must be one of: public; private'),
-        'require_upgrade'   : _('You require a paid account to use the private content feature, please contact us!'),
+        'require_upgrade'   : _('You require a paid account to use this feature, please contact us!'),
         }
 
     def _to_python(self, value, state):
@@ -137,7 +137,7 @@ for setting in settings_base.values():
     # Special handling for enums
     elif setting['type'] == 'enum':
         # HACK ALERT: GregM: Stupid Validator needed for private content
-        if setting['name'] == 'default_content_visibility':
+        if setting['name'] in ['default_content_visibility', 'member_visibility']:
             settings_validators[setting['name']] = PrivateGroupValidator()
         else:
             settings_validators[setting['name']] = formencode.validators.OneOf(setting['value'])
