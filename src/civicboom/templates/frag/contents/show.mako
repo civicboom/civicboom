@@ -477,11 +477,13 @@
 		</span>
 	    </td>
 	    <script>
-		$('.new-comment').hide();
-		$('.new-comment').css("display", "table-row");
-		$('.show-comments').click(function() {
-		    $('.new-comment').toggle();
-		    $('.comment-${self.id}').focus();
+		$(function() {
+			$('.new-comment').hide();
+			$('.new-comment').css("display", "table-row");
+			$('.show-comments').click(function() {
+				$('.new-comment').toggle();
+				$('.comment-${self.id}').focus();
+			});
 		});
 	    </script>
 	</tr>
