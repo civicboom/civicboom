@@ -144,12 +144,12 @@ def _init_search_filters():
 
     def append_search_before(query, date):
         if isinstance(date, basestring):
-            date = parse_date(date).strftime("%d/%m/%Y")
+            date = parse_date(date, dayfirst=True).strftime("%d/%m/%Y")
         return query.filter(Content.update_date <= date)
     
     def append_search_after(query, date):
         if isinstance(date, basestring):
-            date = parse_date(date).strftime("%d/%m/%Y")
+            date = parse_date(date, dayfirst=True).strftime("%d/%m/%Y")
         return query.filter(Content.update_date >= date)
         
     def append_exclude_content(query, ids):
