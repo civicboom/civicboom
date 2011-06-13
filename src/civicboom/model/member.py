@@ -198,6 +198,32 @@ def _generate_salt():
     return os.urandom(256)
 
 
+import UserDict
+from ConfigParser import SafeConfigParser, NoOptionError
+class _ConfigManager(UserDict.DictMixin):
+    def __init__(self, base):
+        self.base = base
+
+    def __getitem__(self, name):
+        if name in self.base:
+            return self.base[name]
+        try:
+            user_defaults = SafeConfigParser()
+            user_defaults.read("user_defaults.ini")
+            return unicode(user_defaults.get("settings", name))
+        except NoOptionError:
+            raise KeyError(name)
+
+    def __setitem__(self, name, value):
+        self.base[name] = value
+
+    def __delitem__(self, name):
+        del self.base[name]
+
+    def keys(self):
+        return self.base.keys()
+
+
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
@@ -284,7 +310,7 @@ class Member(Base):
             'utc_offset'          : None ,
             'join_date'           : None ,
             'website'             : lambda member: member.extra_fields.get('website') ,
-            'description'         : lambda member: member.extra_fields.get('description') or '',
+            'description'         : lambda member: member.extra_fields.get('description') ,
             #'url'                 : None ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
@@ -296,9 +322,15 @@ class Member(Base):
     })
     
 
+    _config = None
+
     @property
     def config(self):
-        return self.extra_fields
+        if not self.extra_fields:
+            self.extra_fields = {}
+        if not self._config:
+            self._config = _ConfigManager(self.extra_fields)
+        return self._config
 
     def __unicode__(self):
         return self.name or self.username
@@ -566,10 +598,6 @@ class User(Member):
     @property
     def email_normalized(self):
         return self.email or self.email_unverified
-
-    @property
-    def config(self):
-        return self.extra_fields
 
     @property
     def avatar_url(self, size=80):
