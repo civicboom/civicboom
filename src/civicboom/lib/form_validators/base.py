@@ -192,7 +192,7 @@ class IsoFormatDateConverter(validators.DateConverter):
 
     def _to_python(self, value, state):
         try:
-            value = parse_date(value).strftime("%d/%m/%Y")
+            value = parse_date(value, dayfirst=True).strftime("%d/%m/%Y")
         except ValueError:
             raise formencode.Invalid("Invalid date", value, state)
         return super(IsoFormatDateConverter, self)._to_python(value, state)

@@ -261,8 +261,6 @@ class Member(Base):
     #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
 
 
-    _config = None
-
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'default': {
@@ -285,8 +283,8 @@ class Member(Base):
             'num_followers'       : None ,
             'utc_offset'          : None ,
             'join_date'           : None ,
-            'website'             : lambda member: member.config.get('website') ,
-            'description'         : lambda member: member.config.get('description') ,
+            'website'             : lambda member: member.extra_fields.get('website') ,
+            'description'         : lambda member: member.extra_fields.get('description') or '',
             #'url'                 : None ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
@@ -571,12 +569,7 @@ class User(Member):
 
     @property
     def config(self):
-        if not self._config:
-            # import at the last minute -- importing at the start of the file
-            # causes a dependency loop
-            from civicboom.lib.settings import MemberSettingsManager
-            self._config = MemberSettingsManager(self)
-        return self._config
+        return self.extra_fields
 
     @property
     def avatar_url(self, size=80):
@@ -751,15 +744,6 @@ class UserLogin(Base):
     #type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
     type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time
     token       = Column(String(250),  nullable=False)
-
-
-class MemberSetting(Base):
-    __tablename__    = "member_setting"
-    member_id   = Column(Integer(),     ForeignKey('member.id'), primary_key=True, index=True)
-    name        = Column(String(250),   primary_key=True)
-    value       = Column(UnicodeText(), nullable=False)
-
-    member      = relationship("Member", backref=backref('settings', cascade="all,delete-orphan"))
 
 
 class PaymentAccount(Base):
