@@ -579,9 +579,9 @@
 <%def name="timestamp(content)">
     % if content['type']=='assignment':
         <%
-            publish = h.time_ago(content['publish_date'])
-            event_date = api_datestr_to_datetime(content['event_date'])
-            due_date   = api_datestr_to_datetime(content['due_date']  )
+            publish    = h.time_ago(content['publish_date'])
+            event_date = h.api_datestr_to_datetime(content['event_date'])
+            due_date   = h.api_datestr_to_datetime(content['due_date']  )
         %>
         % if   event_date and event_date > h.now():
             ${_('Set %s ago, Event in %s time') % (publish, h.time_ago(event_date))}
@@ -593,8 +593,8 @@
     % elif content['type']=='draft':
         % if content.get('parent'):
             <%
-                event_date = content['parent']['event_date']
-                due_date   = content['parent']['due_date']
+                event_date = h.api_datestr_to_datetime(content['parent']['event_date'])
+                due_date   = h.api_datestr_to_datetime(content['parent']['due_date']  )
             %>
             % if   event_date and event_date > h.now():
                 ${_('Event in %s time'  ) % h.time_ago(event_date)}
