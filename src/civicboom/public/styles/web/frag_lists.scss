@@ -54,7 +54,7 @@
         .thumbnail_small {font-size: 20px;} /* dont override small size ... jesus this is a HACK */
 
 		td, li, ul {
-			padding-bottom: 0.5em;
+			padding-bottom: 0.3em;
 		}
 
 		a {
@@ -101,7 +101,7 @@
 
 		/*------------------------------ Members -------------------------------------*/
 		.member li {
-			display: inline;
+			display: inline-block;
 		}
 
 
