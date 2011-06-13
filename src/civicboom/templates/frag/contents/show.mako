@@ -478,7 +478,7 @@
 	    </td>
 	    <script>
 		$('.new-comment').hide();
-		$('.new-comment').css("display", "block");
+		$('.new-comment').css("display", "table-row");
 		$('.show-comments').click(function() {
 		    $('.new-comment').toggle();
 		    $('.comment-${self.id}').focus();
