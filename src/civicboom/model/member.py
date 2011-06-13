@@ -326,6 +326,8 @@ class Member(Base):
 
     @property
     def config(self):
+        if not self.extra_fields:
+            self.extra_fields = {}
         if not self._config:
             self._config = _ConfigManager(self.extra_fields)
         return self._config
