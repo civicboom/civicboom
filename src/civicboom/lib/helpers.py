@@ -270,6 +270,8 @@ def icon(icon_type, description=None, class_=''):
 #-------------------------------------------------------------------------------
 
 def api_datestr_to_datetime(date_str):
+    if not date_str:
+        return None
     return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
 
 

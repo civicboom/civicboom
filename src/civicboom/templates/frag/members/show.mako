@@ -30,7 +30,7 @@
         self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
 
         self.attr.share_kwargs = {
-            'url'      : self.attr.html_url ,
+            'url'      : h.url('member', id=self.id, qualified=True) ,
             'title'    : self.name ,
             'image'    : self.member['avatar_url'] ,
         }
@@ -94,11 +94,12 @@
     <div class="frag_left_col">
         <div class="frag_col vcard">
         ## Member Details
-		% if self.member['type'] == "group":
-			<h1 class="fn org">${self.member['name']}</h1><br />
-		% else:
+		## the org format is correct, but google only shows rich snippets for individuals...
+		##% if self.member['type'] == "group":
+		##	<h1 class="fn org">${self.member['name']}</h1><br />
+		##% else:
 			<h1 class="fn n">${h.guess_hcard_name(self.member['name'])}</h1><br />
-		% endif
+		##% endif
         <div>
           <div class="avatar">${member_avatar(img_class='photo')}</div>
           <div class="user-details">
@@ -114,7 +115,7 @@
 			<%
 			groups = d['groups']['items']
 			if len(groups) == 0:
-				role = _("_"+d['member']['type'])
+				role = _("_"+d['member']['type'].capitalize())
 				org = "Civicboom"
 			elif len(groups) == 1:
 				role = groups[0]['role'].capitalize()

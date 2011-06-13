@@ -69,7 +69,7 @@
 
 <%def name="header()">
 	<table><tr>
-		<td colspan="4" class="how-to"><a>How to</a> | <a href="href="${url(controller='misc', action='about', id='mobile')}"">Mobile</a></td>
+		<td colspan="4" class="how-to"><a>How to</a> | <a href="${url(controller='misc', action='about', id='mobile')}">Mobile</a></td>
 	</tr><tr>
 		<td class="logo">
 			<a href='/'>
@@ -93,7 +93,8 @@
 			% endif
 		</td>
 		<td class="links">
-			<a href="${url(controller='contents', action='index', list='assignments_active')}">What to explore first?</a>
+			<a href="${url('contents', list='assignments_active')}">What to explore first?</a>
+
 		</td>
 		<td class="search">
 			<form action="${h.url('contents')}" method='GET'>

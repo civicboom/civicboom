@@ -411,7 +411,14 @@
 %>
 <li class="${read_status}">
     ##<a href="${url('message', id=message['id'])}">
-    
+    <div style="float:right;">
+    	
+      <a href    = "${url('message', id=message['id'])}"
+         onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
+         class   = "icon16 i_message" title="Open / Reply"
+      >
+      </a>
+    	
     % if list!='sent':
         ${h.secure_link(
             h.args_to_tuple('message', id=message['id'], format='redirect') ,
@@ -422,7 +429,7 @@
             json_form_complete_actions = "cb_frag_reload(current_element);" ,
         )}
     % endif
-    
+    </div>
     % if message.get('source') and list!='sent':
         ${member_includes.avatar(message['source'], class_="thumbnail_small source")}
     % elif list=='notification':
@@ -435,7 +442,11 @@
     <div style="margin-left: 22px;">
       % if 'content' in message:
   
-          <p class="subject">${message['subject']}</p>
+		  <a href    = "${url('message', id=message['id'])}"
+             onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
+          >
+              <p class="subject" style="height:16px;">${message['subject']}</p>
+          </a>
           % if list=='notification':
           ## It is safe to use literal here as notifications only come from the system
           <p class="content">${h.literal(h.links_to_frag_links(message['content']))}</p>
@@ -448,7 +459,7 @@
           <a href    = "${url('message', id=message['id'])}"
              onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
           >
-              <p class="subject">${message['subject']}</p>
+              <p class="subject" style="height:16px;">${message['subject']}</p>
           </a>
       % endif
       <p class="timestamp">
@@ -567,20 +578,28 @@
 ##------------------------------------------------------------------------------
 <%def name="timestamp(content)">
     % if content['type']=='assignment':
-        <% publish = h.time_ago(content['publish_date']) %>
-        % if   content['event_date'] and content['event_date'] > h.now():
-            ${_('Set %s ago, Event in %s time') % (publish, h.time_ago(content['event_date']) )}
-        % elif content['due_date'  ] and content['due_date'  ] > h.now():
-            ${_('Set %s ago, Due in %s time'  ) % (publish, h.time_ago(content['due_date']  ) )}
+        <%
+            publish    = h.time_ago(content['publish_date'])
+            event_date = h.api_datestr_to_datetime(content['event_date'])
+            due_date   = h.api_datestr_to_datetime(content['due_date']  )
+        %>
+        % if   event_date and event_date > h.now():
+            ${_('Set %s ago, Event in %s time') % (publish, h.time_ago(event_date))}
+        % elif due_date   and due_date   > h.now():
+            ${_('Set %s ago, Due in %s time'  ) % (publish, h.time_ago(due_date  ))}
         % else:
-            ${_('Set %s ago'                  ) % (publish                                    )}
+            ${_('Set %s ago'                  ) % (publish                        )}
         % endif
     % elif content['type']=='draft':
         % if content.get('parent'):
-            % if   content['parent']['event_date'] and content['parent']['event_date'] > h.now():
-                ${_('Event in %s time'  ) % h.time_ago(content['parent']['event_date'])}
-            % elif content['parent']['due_date'  ] and content['parent']['due_date'  ] > h.now():
-                ${_('Due in %s time'  ) % h.time_ago(content['parent']['event_date'])}
+            <%
+                event_date = h.api_datestr_to_datetime(content['parent']['event_date'])
+                due_date   = h.api_datestr_to_datetime(content['parent']['due_date']  )
+            %>
+            % if   event_date and event_date > h.now():
+                ${_('Event in %s time'  ) % h.time_ago(event_date)}
+            % elif due_date   and due_date > h.now():
+                ${_('Due in %s time'    ) % h.time_ago(due_date  )}
             % endif
         % endif
         % if content.get('sceduled_publish_date'):
