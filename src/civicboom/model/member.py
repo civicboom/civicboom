@@ -211,7 +211,7 @@ class _ConfigManager(UserDict.DictMixin):
             user_defaults = SafeConfigParser()
             user_defaults.read("user_defaults.ini")
             return unicode(user_defaults.get("settings", name))
-        except NoOptionError:
+        except ConfigParser.NoOptionError:
             raise KeyError(name)
 
     def __setitem__(self, name, value):
