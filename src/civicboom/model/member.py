@@ -199,7 +199,7 @@ def _generate_salt():
 
 
 import UserDict
-from ConfigParser import SafeConfigParser
+from ConfigParser import SafeConfigParser, NoOptionError
 class _ConfigManager(UserDict.DictMixin):
     def __init__(self, base):
         self.base = base
@@ -211,7 +211,7 @@ class _ConfigManager(UserDict.DictMixin):
             user_defaults = SafeConfigParser()
             user_defaults.read("user_defaults.ini")
             return unicode(user_defaults.get("settings", name))
-        except ConfigParser.NoOptionError:
+        except NoOptionError:
             raise KeyError(name)
 
     def __setitem__(self, name, value):
