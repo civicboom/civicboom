@@ -215,7 +215,7 @@ class TestController(BaseController):
         Used to get set date for automated tests
         """
         if new_now:
-            set_now(parse_date(new_datetime))
+            set_now(parse_date(new_datetime, dayfirst=True))
         
         return '{"datetime":"%s"}' % now()
 
