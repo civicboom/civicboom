@@ -462,12 +462,11 @@ class TestController(TestCase):
         )
         # Test that searching for user that does not exist returns 0
         response = self.app.get(
-            '/invite',
+            '/invite.json',
             params={
                 '_authentication_token': self.auth_token,
                 'invite': type,
                 'id': id,
-                'format': 'json',
                 'search-name': user + 'does_not_exist_ever'
             },
             status=200
@@ -476,12 +475,11 @@ class TestController(TestCase):
         self.assertEqual(response_json['data']['invite_list']['count'], 0)
         # Search for user and check we get less results
         response = self.app.post(
-            '/invite',
+            '/invite.json',
             params={
                 '_authentication_token': self.auth_token,
                 'invite': type,
                 'id': id,
-                'format': 'json',
                 'search-name': user
             },
             status=200
@@ -491,12 +489,11 @@ class TestController(TestCase):
         self.assertLess(response_json['data']['invite_list']['count'], 10)
         # Add user to invite list
         response = self.app.post(
-            '/invite',
+            '/invite.json',
             params={
                 '_authentication_token': self.auth_token,
                 'invite': type,
                 'id': id,
-                'format': 'json',
                 'search-name': user,
                 'add-'+user: user
             },
@@ -511,13 +508,12 @@ class TestController(TestCase):
                 '_authentication_token': self.auth_token,
                 'invite': type,
                 'id': id,
-                'format': 'json',
                 'search-name': user,
                 'submit-invite': 'Invite',
             }
         params.update(invitee_list)
         response = self.app.post(
-            '/invite',
+            '/invite.json',
             params=params,
             status=200
         )
@@ -527,7 +523,7 @@ class TestController(TestCase):
         
         # Repeat to check error double inviting
         response = self.app.post(
-            '/invite',
+            '/invite.json',
             params=params,
             status=200
         )
