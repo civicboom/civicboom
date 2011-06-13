@@ -93,7 +93,7 @@
 			% endif
 		</td>
 		<td class="links">
-			<a href="${url(controller='content', action='index', list='assignments_active')}">What to explore first?</a>
+			<a href="${url('contents', list='assignments_active')}">What to explore first?</a>
 		</td>
 		<td class="search">
 			<form action="${h.url('contents')}" method='GET'>
