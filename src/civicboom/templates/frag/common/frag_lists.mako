@@ -411,7 +411,14 @@
 %>
 <li class="${read_status}">
     ##<a href="${url('message', id=message['id'])}">
-    
+    <div style="float:right;">
+    	
+      <a href    = "${url('message', id=message['id'])}"
+         onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
+         class   = "icon16 i_message" title="Open / Reply"
+      >
+      </a>
+    	
     % if list!='sent':
         ${h.secure_link(
             h.args_to_tuple('message', id=message['id'], format='redirect') ,
@@ -422,7 +429,7 @@
             json_form_complete_actions = "cb_frag_reload(current_element);" ,
         )}
     % endif
-    
+    </div>
     % if message.get('source') and list!='sent':
         ${member_includes.avatar(message['source'], class_="thumbnail_small source")}
     % elif list=='notification':
@@ -435,7 +442,11 @@
     <div style="margin-left: 22px;">
       % if 'content' in message:
   
-          <p class="subject">${message['subject']}</p>
+		  <a href    = "${url('message', id=message['id'])}"
+             onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
+          >
+              <p class="subject" style="height:16px;">${message['subject']}</p>
+          </a>
           % if list=='notification':
           ## It is safe to use literal here as notifications only come from the system
           <p class="content">${h.literal(h.links_to_frag_links(message['content']))}</p>
@@ -448,7 +459,7 @@
           <a href    = "${url('message', id=message['id'])}"
              onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
           >
-              <p class="subject">${message['subject']}</p>
+              <p class="subject" style="height:16px;">${message['subject']}</p>
           </a>
       % endif
       <p class="timestamp">

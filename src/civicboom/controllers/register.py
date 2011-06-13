@@ -221,7 +221,7 @@ def _fetch_avatar(url):
         with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
             data = urllib2.urlopen(url).read()
             original.write(data)
-            
+            original.flush()
             h = wh.hash_file(original.name)
             wh.copy_to_warehouse(original.name, "avatars-original", h)
             
