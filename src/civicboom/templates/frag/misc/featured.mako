@@ -41,14 +41,12 @@
                 <% title = list_names.get(title, title) %>
                 ${frag_lists.sponsored_list(cb_list, title)}
             % endfor
-
+            
             % for (title, cb_list) in d['featured'].iteritems():
                 <% title = list_names.get(title, title) %>
                 ${frag_lists.content_list(cb_list, title)}
             % endfor
         </div>
     </div>
-
-
 
 </%def>

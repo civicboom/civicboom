@@ -163,7 +163,7 @@
                 % if count:
                   % for item in items:
                   ##<${type_[1]}>
-                      ${render_item_function(item, *args, **kwargs)}
+                    ${render_item_function(item, *args, **kwargs)}
                   ##</${type_[1]}>
                   % endfor
                 % elif empty_message:

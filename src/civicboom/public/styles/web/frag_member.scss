@@ -31,16 +31,16 @@
 
 		a {
 			text-decoration: none;
-			color: #fff;
+			color: #666;
 		}
 
 		.box {
 			position: relative;
 			/* min-height: 4em; */
-			border: 1px solid black;
+			/* border: 1px solid black; */
 			padding: 5px;
 
-			color: #fff;
+			color: #666;
 			font-size: 85%;
 			font-weight: bold;
 			text-align: right;
@@ -49,11 +49,8 @@
 			border-radius        : 0.5em;
 			-moz-border-radius   : 0.5em;
 			-webkit-border-radius: 0.5em;
-
-			/* --- Cross browser gradient --- */
-			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#668dab', endColorstr='#2a5576'); /* for IE */
-			background: -webkit-gradient(linear, left top, left bottom, from(#668dab), to(#2a5576)); /* for webkit browsers */
-			background: -moz-linear-gradient(top,  #668dab,  #2a5576); /* for firefox 3.6+ */ 
+			
+			background-color: #fff;
 		}
 
 		.content {

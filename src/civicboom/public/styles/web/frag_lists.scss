@@ -145,6 +145,7 @@
 			font-size: 120%;
 			top: 0.25em;
 			
+			
 			a {
 				display: inline;
 				float: left;
@@ -158,8 +159,10 @@
 				margin-right: 5px;
 				width: 40px;
 				height: 40px;
+				border: none;
 				
 				img, .thumbnail, .thumbnail_small {
+					border: none;
 					width: 40px;
 					height: 40px;
 				}
