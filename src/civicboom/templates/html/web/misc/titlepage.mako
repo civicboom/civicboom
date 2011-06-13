@@ -69,7 +69,7 @@
 
 <%def name="header()">
 	<table><tr>
-		<td colspan="4" class="how-to"><a>How to</a> | <a href="href="${url(controller='misc', action='about', id='mobile')}"">Mobile</a></td>
+		<td colspan="4" class="how-to"><a>How to</a> | <a href="${url(controller='misc', action='about', id='mobile')}">Mobile</a></td>
 	</tr><tr>
 		<td class="logo">
 			<a href='/'>
