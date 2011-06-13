@@ -40,7 +40,12 @@ def _init_search_filters():
 
     def append_search_name(query, name):
         if name:
-            return query.filter(or_(Member.name.ilike("%"+name+"%"), Member.username.ilike("%"+name+"%")))
+            parts = []
+            for word in name.split():
+                parts.append(Member.name.ilike("%"+word+"%"))
+                parts.append(Member.username.ilike("%"+word+"%"))
+                #parts.append(Member.description.ilike("%"+word+"%"))
+            return query.filter(or_(*parts))
         return query
     
     def append_search_type(query, type_text):
