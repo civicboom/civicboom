@@ -59,7 +59,10 @@
 		        			${select_item('followed_by', 'Following', d.get('search-type'))}
 		        		</select>
 		        		<input name="search-name" placeholder="Enter your search here..." type="text" value="${d.get('search-name')}" />
-		        		<div class="pad_top align_right"><input class="button" onclick="return inviteClick(this)" type="submit" name="search-button" value="Search" /></div>
+		        		<div class="pad_top align_right">
+			        		<input class="button" onclick="return postInviteFrag($(this))" type="submit" name="submit-everyone" value="Add All" />
+			        		<input class="button" onclick="return inviteClick(this)" type="submit" name="search-button" value="Search" />
+			        	</div>
 		        	</div>
 		        </div>
 	        	<div class="invite_area invite-list">
