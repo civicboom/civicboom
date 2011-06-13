@@ -479,7 +479,7 @@
 	    <script>
 		$(function() {
 			$('.new-comment').hide();
-			$('.new-comment').css("display", "table-row");
+			//$('.new-comment').css("display", "table-row");
 			$('.show-comments').click(function() {
 				$('.new-comment').toggle();
 				$('.comment-${self.id}').focus();
