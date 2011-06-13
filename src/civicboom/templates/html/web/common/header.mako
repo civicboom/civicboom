@@ -143,6 +143,13 @@
 <nav class="menuh-container">
     
 <div class="menuh">
+	<ul>
+		<li>${h.secure_link(h.url('new_content', target_type='assignment'), _("Ask for news"), css_class="top_parent button")}</li>
+	</ul>
+	<ul>
+		<li>${h.secure_link(h.url('new_content', target_type='article'   ), _("Post my news")   , css_class="top_parent button")}</li>
+	</ul>
+	<%doc>
     <ul>
         <li><a href="#" class="top_parent button">${_("Create")}</a>
         <ul>
@@ -152,9 +159,10 @@
         </ul>
         </li>
     </ul>
+    </%doc>
 
     <ul>
-        <li><a href="#" class="top_parent button">${_("Explore")}</a>
+        <li><a href="#" class="top_parent buttonesque_link">${_("Explore...")}</a>
         <ul>
             <!--<li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="${_("Quick Search")}"></form></li>-->
 % if c.logged_in_persona:
@@ -176,6 +184,7 @@
         </ul>
         </li>
     </ul>
+<%doc>
 % if c.logged_in_persona:
     <ul>
         <li><a href="#" class="top_parent button">${_("Manage")}</a>
@@ -189,6 +198,7 @@
         </li>
     </ul>
 % endif
+</%doc>
 
 </div>
 </nav>
@@ -197,10 +207,10 @@
 ## Search
 ##------------------------------------------------------------------------------
 <div id="aboutbtns">
-    <a class="button" href="${url(controller='about', action='howto')}">
+    <a class="buttonesque_link" style="padding: 0 5px;" href="${url(controller='about', action='howto')}">
         ${_('How to')}
     </a>
-    <a class="button" href="${url(controller='about', action='mobile')}">
+    <a class="buttonesque_link" href="${url(controller='about', action='mobile')}">
         ${_('Mobile')}
     </a>
 </div>
@@ -208,12 +218,14 @@
 ##------------------------------------------------------------------------------
 ## Search
 ##------------------------------------------------------------------------------
+<%doc>
 <div id="search">
 	<form action="${h.url('contents')}" method='GET'>
 		<input type="search" class="search_input" name="term" placeholder="${_("Search Content")}" />
 		<input type="submit" class="button" value="GO">
 	</form>
 </div>
+</%doc>
 
 
 ##------------------------------------------------------------------------------
