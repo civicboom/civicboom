@@ -110,6 +110,13 @@ server {
 		proxy_set_header Host tile.openstreetmap.org;
 		proxy_pass http://193.63.75.26/;
 	}
+	location /misc/nominatim/ {
+		expires 30d;
+		proxy_cache "osm";
+		proxy_cache_key "$request_uri";
+		proxy_set_header Host nominatim.openstreetmap.org;
+		proxy_pass http://128.40.168.106/;
+	}
 
 	# for errors, don't proxy to pylons, just serve static files
 	location /errors/ {
