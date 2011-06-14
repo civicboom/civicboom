@@ -26,6 +26,7 @@ Base = declarative_base()
 from sqlalchemy import PickleType, UnicodeText
 import json
 
+
 class JSONType(PickleType):
     """
     fff. json dumps to str by default, and unicodetext complains

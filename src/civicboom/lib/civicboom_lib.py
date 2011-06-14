@@ -32,12 +32,15 @@ import datetime
 import logging
 log      = logging.getLogger(__name__)
 
+
 #-------------------------------------------------------------------------------
 # Pending Users Allowed URL
 #-------------------------------------------------------------------------------
 # Users in pending status are forced to complete the registration process.
 #   some urls have to be made avalable to pending users (such as signout, etc)
 pending_user_allowed_list = ['register/new_user','account/','widget/', 'misc/', '/accept']
+
+
 def deny_pending_user(url_to_check):
     for url_safe in pending_user_allowed_list:
         if url_to_check.find(url_safe)>=0:
@@ -51,6 +54,7 @@ def deny_pending_user(url_to_check):
 
 def validation_url(user, controller, action):
     return url(controller=controller, action=action, id=user.username, hash=user.hash(), sub_domain='www', protocol='https')
+
 
 def send_verifiy_email(user, controller='account', action='verify_email', message=None, subject=_('verify e-mail address')):
     if not message:
@@ -149,6 +153,7 @@ def set_password(user, new_token, delay_commit=False):
     
     if not delay_commit:
         Session.commit()
+
 
 def has_account_without_password(user):
     user = get_member(user, search_email=True)
@@ -300,6 +305,7 @@ def twitter_global(content):
         twitter_global_status(twitter_post)
     else:
         log.info('twitter_global aggregation disabled: \n%s' % twitter_post)
+
 
 #-------------------------------------------------------------------------------
 # Content Management

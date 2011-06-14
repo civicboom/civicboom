@@ -174,7 +174,7 @@
         ## Comunity ----------------------------------------
         
         ${frag_list.member_list_thumbnails(
-            [f for f in d['following']['items'] if f['follow_type']!='trusted_invite'],
+            [f for f in d['following']['items'] if f.get('follow_type')!='trusted_invite'],
             _('Following'),
             #h.args_to_tuple('member_action', id=self.id, action='following'),
             h.args_to_tuple('members', followed_by=self.id),
@@ -182,14 +182,14 @@
         )}
         
         ${frag_list.member_list_thumbnails(
-            [f for f in d['following']['items'] if f['follow_type']=='trusted_invite'],
+            [f for f in d['following']['items'] if f.get('follow_type')=='trusted_invite'],
             _('Pending trusted follower invitations'),
             #h.args_to_tuple('members', followed_by=self.id),
             icon =  'invite'
         )}
         
         ${frag_list.member_list_thumbnails(
-            [f for f in d['followers']['items'] if f['follow_type']!='trusted_invite'],
+            [f for f in d['followers']['items'] if f.get('follow_type')!='trusted_invite'],
             _('Followers') ,
             #h.args_to_tuple('member_action', id=self.id, action='followers') ,
             h.args_to_tuple('members', follower_of=self.id),
@@ -198,7 +198,7 @@
         )}
         
         ${frag_list.member_list_thumbnails(
-            [f for f in d['followers']['items'] if f['follow_type']=='trusted_invite'],
+            [f for f in d['followers']['items'] if f.get('follow_type')=='trusted_invite'],
             _('Trusted follower invitations sent') ,
             #h.args_to_tuple('members', follower_of=self.id),
             icon    = 'invite',

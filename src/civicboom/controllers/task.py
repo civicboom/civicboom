@@ -19,6 +19,7 @@ log = logging.getLogger(__name__)
 
 response_completed_ok = "task:ok" #If this is changed please update tasks.py to reflect the same "task ok" string
 
+
 def normalize_datetime(datetime):
     return datetime.replace(minute=0, second=0, microsecond=0)
     

@@ -157,5 +157,3 @@ class TestFollowController(TestController):
         self.follower_distrust('follow_test') # Should negate previous state
         self.assertEquals(get_following_count(follow_type='trusted_invite'), 0)
         self.assertEquals(get_following_count(follow_type='trusted'       ), 0)
-        
-

@@ -387,6 +387,7 @@ class DraftContent(Content):
             action_list.append('delete')
         return action_list
 
+
 class CommentContent(Content):
     __tablename__   = "content_comment"
     __mapper_args__ = {'polymorphic_identity': 'comment'}
