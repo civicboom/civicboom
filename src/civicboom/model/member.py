@@ -560,7 +560,7 @@ class Member(Base):
 
 GeometryDDL(Member.__table__)
 
-DDL("CREATE INDEX member_fts_idx ON content USING gin(to_tsvector('english', username || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
+DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', username || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
 
 
 class User(Member):
