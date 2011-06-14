@@ -39,9 +39,10 @@ def _init_search_filters():
             return query.filter(Member.id       == normalize_member(member))
 
     def append_search_name(query, name):
-        if name:
-            return query.filter(or_(Member.name.ilike("%"+name+"%"), Member.username.ilike("%"+name+"%")))
-        return query
+        return query.filter("""
+            to_tsvector('english', username || ' ' || name || ' ' || description) @@
+            plainto_tsquery(:text)
+        """).params(text=name)
     
     def append_search_type(query, type_text):
         if type_text:
