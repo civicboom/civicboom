@@ -15,12 +15,17 @@
     % if config['development_mode']:
     <link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-reset-fonts.css" />
     <link rel="stylesheet" type="text/css" href="/styles/common/icons.css" />
-    ##<link rel="stylesheet" type="text/css" href="/styles/common/thumbnails.css" />
     <link rel="stylesheet" type="text/css" href="/styles/widget/layout.css" />
     ##<link rel="stylesheet" type="text/css" href="/styles/widget/widget_size_wide.css" />
     % else:
     <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/widget.css")}" />
     % endif
+
+    ##----------------------------------------------------------------------
+    ## Scripts
+    ##----------------------------------------------------------------------
+    <script type='text/javascript' src='/javascript/jquery-1.5.1.js'        ></script>
+    <script type='text/javascript' src='/javascript/jquery.jcarousel.min.js'></script>
 
     ##----------------------------------------------------------------------
     ## Google Analitics (async setup, see scripts_end for more)

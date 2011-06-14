@@ -6,7 +6,8 @@
     size_action_bar = 13
     size_content    = c.widget['height'] - size_header - size_footer - size_action_bar - 5 #there are 4 * 1px borders
     size_avatar     = 20
-  
+    
+    self.size_content = size_content
     
     #if not c.widget['owner']:
     #    c.widget['owner'] = d.get('content',dict()).get('creator')
@@ -123,11 +124,11 @@
     <div class="widget_footer" style="height:${size_footer}px; background-color:#${c.widget['color_header']}; border-top: 1px solid #${c.widget['color_border']}">
         <div class="padding">
             <div style="float:right;">
-            	<a class="icon16 i_help"      title="${_('About _site_name')}" target="_blank" href="${h.url(controller='misc', action='about')}"><span>${_('_site_name')}</span></a>
-            	<a class="icon16 i_boom"      title="${_('Powered by _site_name')}" target="_blank" href="${h.url(controller='misc', action='titlepage', sub_domain='www')}"><span>${_('_site_name')}</span></a>
+            	<a class="icon16 i_help"  title="${_('About _site_name')}"      href="${h.url(controller='misc', action='about')                      }"                ><span>${_('About _site_name')     }</span></a>
+            	<a class="icon16 i_boom"  title="${_('Powered by _site_name')}" href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_blank"><span>${_('Powered by _site_name')}</span></a>
             </div>
-            <a class="icon16 i_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='about', id='mobile', sub_domain='www')}"><span>Mobile</span></a>
-            <a class="icon16 i_widget"    title="${_('Embed this widget')}"                     href="${h.url(controller='misc', action='get_widget')}"><span>Embed</span></a>
+            <a class="icon16 i_mobile"    title="${_('Mobile reporting')}"   href="${h.url(controller='misc', action='about', id='mobile', sub_domain='www')}" target="_blank"><span>Mobile</span></a>
+            <a class="icon16 i_widget"    title="${_('Embed this widget')}"  href="${h.url(controller='misc', action='get_widget')                          }"                ><span>Embed </span></a>
             <%
                 rss_url = ''
                 
