@@ -123,7 +123,7 @@
     <div class="widget_footer" style="height:${size_footer}px; background-color:#${c.widget['color_header']}; border-top: 1px solid #${c.widget['color_border']}">
         <div class="padding">
             <div style="float:right;">
-            	<a class="icon16 i_help"      title="${_('About _site_name')}" target="_blank" href="${h.url(controller='misc', action='about')}"><span>${_('_site_name')}</span></a>
+            	<a class="icon16 i_help"      title="${_('About _site_name')}" href="${h.url(controller='misc', action='about')}"><span>${_('_site_name')}</span></a>
             	<a class="icon16 i_boom"      title="${_('Powered by _site_name')}" target="_blank" href="${h.url(controller='misc', action='titlepage', sub_domain='www')}"><span>${_('_site_name')}</span></a>
             </div>
             <a class="icon16 i_mobile"    title="${_('Mobile reporting')}"      target="_blank" href="${h.url(controller='misc', action='about', id='mobile', sub_domain='www')}"><span>Mobile</span></a>
