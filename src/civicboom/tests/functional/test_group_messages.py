@@ -2,6 +2,7 @@ from civicboom.tests import *
 
 import warnings
 
+
 class TestGroupsController(TestController):
 
     def create_group(self, group_name):

@@ -1,3 +1,16 @@
+"""
+Registration process can be done in 2 ways:
+    1.a) Collect email address and username
+        - this can be done from a variaty of sources (e.g widget, webpage or mobile)
+        - server creates new user record and sends validation email
+    1.b) User forwarded from validation email
+        - validates email hash
+        - collects password and addtional data
+        
+    2.a) Janrain
+    2.b) additional details
+"""
+
 from civicboom.lib.base import *
 
 # Database Objects
@@ -33,18 +46,6 @@ log      = logging.getLogger(__name__)
 
 new_user_prefix = "newuser__"
 
-"""
-Registration process can be done in 2 ways:
-    1.a) Collect email address and username
-        - this can be done from a variaty of sources (e.g widget, webpage or mobile)
-        - server creates new user record and sends validation email
-    1.b) User forwarded from validation email
-        - validates email hash
-        - collects password and addtional data
-        
-    2.a) Janrain
-    2.b) additional details
-"""
 
 class RegisterController(BaseController):
     """
@@ -237,6 +238,7 @@ def _fetch_avatar(url):
     except Exception as e:
         log.exception("Error fetching janrain user's avatar")
         return None
+
 
 def register_new_janrain_user(profile):
     """

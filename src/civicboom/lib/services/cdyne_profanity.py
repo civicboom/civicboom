@@ -4,11 +4,13 @@ http://wiki.cdyne.com/wiki/index.php?title=Profanity_Filter
 http://www.webserviceshare.com/reference/language/tools/service/CDYNE-Profanity-Filter-FREE.htm
 """
 
-import urllib, urllib2, logging
+import urllib
+import urllib2
 from paste.deploy.converters import asbool
 
 from cbutils.cbxml import readXMLStringtoDic
 
+import logging
 log = logging.getLogger(__name__)
 
 filter_operation_address = "http://ws.cdyne.com/ProfanityWS/Profanity.asmx/SimpleProfanityFilter"

@@ -81,6 +81,7 @@ def lowest_role(a,b):
     else:
         return b
 
+
 def has_account_required(required, current):
     """
     returns True  if has account
@@ -200,6 +201,8 @@ def _generate_salt():
 
 import UserDict
 from ConfigParser import SafeConfigParser, NoOptionError
+
+
 class _ConfigManager(UserDict.DictMixin):
     def __init__(self, base):
         self.base = base

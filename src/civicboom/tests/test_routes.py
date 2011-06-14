@@ -172,4 +172,3 @@ class TestRoutes(TestController):
             url(controller='mobile', action='media_init', format="json"),
             "/mobile/media_init.json"
         )
-

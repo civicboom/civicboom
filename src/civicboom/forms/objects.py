@@ -3,6 +3,7 @@ from civicboom.lib.base import render
 from formalchemy import forms, templates, fields
 from civicboom.forms.renderers import *
 
+
 class FieldSet(forms.FieldSet):
     pass
 
@@ -11,9 +12,11 @@ class FieldSet(forms.FieldSet):
 #Foo = FieldSet(model.Foo)
 #Reflected = FieldSet(Reflected)
 
+
 class TemplateEngine(templates.TemplateEngine):
     def render(self, name, **kwargs):
         return render('/admin/formalchemy/%s.mako' % name, extra_vars=kwargs)
+
 
 class CustomTemplateEngine(TemplateEngine):
     def __init__(self, template):

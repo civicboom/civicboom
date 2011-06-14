@@ -215,8 +215,10 @@ def get_group(id, is_current_persona_admin=False, is_current_persona_member=Fals
         raise action_error(_("you are not a member of this group"), code=403)
     return group
 
+
 #def get_membership(group,member):
 #    return _get_membership(group,member)
+
 
 def get_message(message, is_target=False, is_target_or_source=False):
     message = _get_message(message)
