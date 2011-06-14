@@ -1,6 +1,7 @@
 from civicboom.tests import *
 #import json
 
+
 class TestInviteController(TestController):
     
     def test_all(self):
@@ -283,4 +284,3 @@ class TestInviteController(TestController):
             status=200,
         )
         #response
-        

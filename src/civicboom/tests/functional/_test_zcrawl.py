@@ -4,6 +4,7 @@ from BeautifulSoup import BeautifulSoup
 # This regexp will match any url starting with http(s):// not within civicboom.com or just # or mailto:*
 not_civicboom = re.compile(r'((http(s{0,1})://(?!(www\.){0,1}civicboom\.com))|#|mailto\:.*).*')
 
+
 class TestCrawlSite(TestController):
     """
     Controller to crawl the site and follow all links with hrefs starting from / 
@@ -41,4 +42,3 @@ class TestCrawlSite(TestController):
                 self.crawl(href, url)
         if not prev_url:
             print 'Crawled', self.count
-            
