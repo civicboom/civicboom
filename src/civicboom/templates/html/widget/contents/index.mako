@@ -34,6 +34,7 @@
                 % if 'creator' in content and c.widget['owner']['username'] != content['creator']['username']:
                 <p class="creator">${member_includes.by_member(content['creator'], link=False)}</p>
                 % endif
+                <p class="content">${content['content_short']}</p>
             </a>
         </td>
     </tr>

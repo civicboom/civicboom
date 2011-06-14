@@ -39,6 +39,7 @@ link_matcher = re.compile(r'\A(http[s]{0,1}://[\w\.\-\_]*)/{0,1}')
 # Regex to match any non html id/class safe chars
 funky_chars  = re.compile(r'[^\w]+')
 
+
 def guess_hcard_name(name):
     """
     Looks at a string and attempts to return the best hCard formatted representation
@@ -318,6 +319,7 @@ def url_pair(*args, **kwargs):
     
     return (href, href_formatted)
 
+
 ## AllanC - TODO - need to specify frag size as an optional arg
 def frag_link(value, title='', class_='', href_tuple=([],{})): #*args, **kwargs
     href, href_frag = url_pair(gen_format='frag', *href_tuple[0], **href_tuple[1]) # generate standard and frag URL's
@@ -328,6 +330,7 @@ def frag_link(value, title='', class_='', href_tuple=([],{})): #*args, **kwargs
         title   = title if title else value,
         onClick ="cb_frag($(this), '%s'); return false;" % href_frag ,
     )
+
 
 #-------------------------------------------------------------------------------
 # Secure Form

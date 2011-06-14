@@ -3,6 +3,7 @@ from civicboom.tests import *
 from civicboom.model         import Tag
 from civicboom.model.meta    import Session
 
+
 class TestTags(TestController):
 
     tags_used = set() # Keep track of all tags used in this automated test
