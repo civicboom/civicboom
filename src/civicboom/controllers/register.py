@@ -109,7 +109,7 @@ class RegisterController(BaseController):
         # then the data is fine - save the new user data
         if 'username' in form: c.logged_in_persona.username         = form['username']
         if 'name'     in form: c.logged_in_persona.name             = form['name']
-        if 'dob'      in form: c.logged_in_persona.config['dob']    = form['dob']
+        if 'dob'      in form: c.logged_in_persona.config['dob']    = str(form['dob'])
         if 'email'    in form: c.logged_in_persona.email_unverified = form['email']
         if 'password' in form:
             set_password(c.logged_in_persona, form['password'], delay_commit=True)

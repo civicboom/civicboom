@@ -199,7 +199,7 @@ def _generate_salt():
 
 
 import UserDict
-from ConfigParser import SafeConfigParser
+from ConfigParser import SafeConfigParser, NoOptionError
 class _ConfigManager(UserDict.DictMixin):
     def __init__(self, base):
         self.base = base
@@ -240,6 +240,7 @@ class Member(Base):
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
+    description     = Column(UnicodeText(),  nullable=False, default=u"")
     extra_fields    = Column(JSONType(mutable=True), nullable=False, default={})
 
     num_following            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
@@ -310,7 +311,7 @@ class Member(Base):
             'utc_offset'          : None ,
             'join_date'           : None ,
             'website'             : lambda member: member.extra_fields.get('website') ,
-            'description'         : lambda member: member.extra_fields.get('description') ,
+            'description'         : None ,
             #'url'                 : None ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
@@ -326,6 +327,8 @@ class Member(Base):
 
     @property
     def config(self):
+        if not self.extra_fields:
+            self.extra_fields = {}
         if not self._config:
             self._config = _ConfigManager(self.extra_fields)
         return self._config
@@ -556,6 +559,8 @@ class Member(Base):
         return hashlib.sha1(str(self.id)+action+self.salt).hexdigest()
 
 GeometryDDL(Member.__table__)
+
+DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', username || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
 
 
 class User(Member):
