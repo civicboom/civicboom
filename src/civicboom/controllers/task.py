@@ -201,3 +201,14 @@ class TaskController(BaseController):
 
     def test(self):
         return "<task happened>"
+
+
+    #---------------------------------------------------------------------------
+    # One-off things
+    #---------------------------------------------------------------------------
+
+    def convert_descriptions(self):
+        from civicboom.model.member import Member
+        for m in Session.query(Member):
+            m.description = m.config.get("description", "")
+            yield m.username + "\n"
