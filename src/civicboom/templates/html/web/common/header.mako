@@ -18,20 +18,25 @@
 	from civicboom.model import Group
 %>
 <script type="text/javascript">
-	var icons = {num_unread_messages: $('#msg_c_m'),
-				 num_unread_notifications: $('#msg_c_n')
-				}
+	var icons;
 	function refreshMessages() {
 		$.getJSON('/profile.json',function(data) {
 			if (typeof data['data'] != 'undefined') {
 				for (var key in icons) {
-					if (typeof data.data[key] != 'undefined')
-						icons[key].text(data.data[key]);
+					if (typeof data.data[key] != 'undefined') {
+						//alert (icons[key].html());
+						icons[key].html('&nbsp;' + data.data[key] + '&nbsp;');
+					}
 				}
 			}
 		});
 	}
-	setInterval(refreshMessages, 1000);
+	$(function() {
+		icons = {num_unread_messages: $('#msg_c_m'),
+				 num_unread_notifications: $('#msg_c_n')
+				}
+		setInterval(refreshMessages, 60000);
+	});
 </script>
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
