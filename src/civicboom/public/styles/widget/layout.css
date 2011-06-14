@@ -39,14 +39,14 @@
   /* margin-bottom: 0.5em; */
   clear: both;
 }
+
+/* UL-LI widget list */
 #CivicboomWidget .widget_content .content_list LI {
     padding: 0.5em 0em 0.5em 0em;
     clear: both;
 }
 #CivicboomWidget .widget_content .content_list LI .thumbnail {width: 3em; float: left;}
-#CivicboomWidget .widget_content .content_list LI .details {
-    margin-left: 4em;
-}
+#CivicboomWidget .widget_content .content_list LI .details   {margin-left: 4em;}
 
 /* Old table styles
 #CivicboomWidget .widget_content .content_list TD            {vertical-align: top; padding-top: 0.25em; padding-bottom: 0.25em;}
