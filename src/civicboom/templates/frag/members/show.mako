@@ -187,40 +187,47 @@
 	<div style="clear: both;"></div></%doc>
 	## Community ----------------------------------------
 	
-	        ## Sharing
-          <div class="frag_list">
-            ##style="clear:left;" 
-            <h2><span class="icon16 i_${self.attr.icon_type}"></span>${_('Social Sharing')}</h2>
-            ##<span>About</span><span style="display:inline-block;padding-left:19px">Description</span></span>
-            <div class="frag_list_contents">
-              <div class="content note" style="padding-bottom: 3px;">
-			    ${popup.link(
-			        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
-			        title = _('Get _widget'),
-			        text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get _widget'),
-			    )}<br />
-			    <%def name="sharebutton(type, **kwargs)">
-			    <li><a class="addthis_button_${type} ${kwargs.get('extraclass','')}"
-			        % for k,v in self.attr.share_kwargs.iteritems():
-			            addthis:${k}="${v.replace('\"','') if v else ""}"
-			        % endfor
-			    ></a></li>
-			   	</%def>
-			    <ul class="member sharing">
-			    	% for name in ['email', 'facebook', 'twitter', 'linkedin']:
-			    		${sharebutton(name)}
-			    	% endfor
-			    </ul>
-			    <style>
-			    	.link_more_hide span {
-			    		width:0; height:0;
-			    	}
-			    </style>
-			    <a class="addthis_button_compact link_more link_more_hide">more</a>
-              </div>
-            </div>
+    ## Sharing
+      <div class="frag_list">
+        <h2>${_('Social Sharing')}</h2>
+        <div class="frag_list_contents">
+          <div class="content note addthis_toolbox" style="padding-bottom: 0px;">
+		    <div style="height: 24px;">${popup.link(
+		        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+		        title = _('Get _widget'),
+		        text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get _widget'),
+		    )}</div>
+		    <%def name="sharebutton(type, **kwargs)">
+		    <li><div class="thumbnail thumbnail_small"><a class="at addthis_button_${type} ${kwargs.get('extraclass','')}"
+		        % for k,v in self.attr.share_kwargs.iteritems():
+		            addthis:${k}="${v.replace('\"','') if v else ""}"
+		        % endfor
+		    ></a></div></li>
+		   	</%def>
+		    <ul class="member">
+		    	% for name in ['email', 'facebook', 'twitter', 'linkedin', 'tumblr']:
+		    		${sharebutton(name)}
+		    	% endfor
+		    </ul>
+		    <style>
+		    	.link_more_hide span {
+		    		width:0; height:0;
+		    	}
+		    	.atclear {
+		    		clear: none;
+		    		display: none;
+		    	}
+		    </style>
+		    <a class="at addthis_button_compact link_more link_more_hide">more</a>
+		    <script>
+		    	$(function(){
+		    		addthis.toolbox('.addthis_toolbox');
+		    	});
+		    </script>
           </div>
-        ## End of Sharing
+        </div>
+      </div>
+    ## End of Sharing
 	
 	${frag_list.member_list_thumbnails(
 	    d['following'],
@@ -470,7 +477,7 @@
         )}
         <span class="separtor"></span>
     % endif
-    
+    <%doc>
     % if 'settings_group' in self.actions:
         <a href="${h.url('edit_group', id=self.id)}" title="${_('_group Settings').capitalize()}"><span class="icon16 i_group"></span>${_('_group Settings').capitalize()}</a>
         <span class="separtor"></span>
@@ -480,7 +487,7 @@
         <a href="${h.url('settings')}" title="${_('Settings')}"><span class="icon16 i_settings"></span>${_('Settings')}</a>
         <span class="separtor"></span>
     % endif
-    
+    </%doc>
     <%doc>
     % if 'delete' in self.actions and self.member['type'] == 'group':
         ${h.secure_link(
@@ -494,9 +501,6 @@
         <span class="separtor"></span>
     % endif
     </%doc>
-
-
-    <span class="separtor"></span>
     
     % if self.member.get('location_current') or self.member.get('location_home'):
         ##${parent.georss_link()}
