@@ -12,7 +12,7 @@
         #self.attr.frags = [profile, assignments, help]
         #self.attr.frag_col_sizes = [2,1,1]
         #self.attr.frag_classes   = [None, None, 'flag_help']
-    %>
+        %>
 </%def>
 
 <%def name="profile()">

@@ -9,9 +9,9 @@
 		font-size: 88%;
 
 		/* border: 0.1em solid $frag-list-border; /* AllanC - removed border for experimenting */
-		border-radius        : 0.4em;
-		-moz-border-radius   : 0.4em;
-		-webkit-border-radius: 0.4em;
+		border-radius        : 0.3em;
+		-moz-border-radius   : 0.3em;
+		-webkit-border-radius: 0.3em;
 		
 		margin-top: 1.5em;
 
@@ -24,18 +24,21 @@
 		   Frag list Headings (for lists in content and member frags)
 		   -------------------------- */
 		h2 {
+			font-size: 150%;
 			margin: 0em;
-			background-color: $frag-list-title;
-			padding : 0.25em;
+			background-color: #fff; /* $frag-list-title; */
+			padding: 0.5em 0.5em 0.25em 0.5em;
 		}
+		
 		h2 .count {
-			padding: 0.25em;
+			color: $frag-list-count;
 			float: right;
 		}
 
 		.list_actions {
 			float: right;
 		}
+		
 		a {
 			text-decoration: none;
 			color: inherit;
@@ -48,13 +51,14 @@
 	   -------------------------- */
 	.frag_list_contents {
 		padding       : 0.5em;
+		padding-left: 1em;
 		padding-bottom: 0em; /* see rule below for each element adding there own bottom padding */
 
-        .thumbnail       {font-size: 45px;} /* AllanC - humm ... horrible hack to just notch up the size of the thumbnail in content lists to match the text. This not a long term solution */
-        .thumbnail_small {font-size: 20px;} /* dont override small size ... jesus this is a HACK */
+		.thumbnail       {font-size: 45px;} /* AllanC - humm ... horrible hack to just notch up the size of the thumbnail in content lists to match the text. This not a long term solution */
+		.thumbnail_small {font-size: 20px;} /* dont override small size ... jesus this is a HACK */
 
 		td, li, ul {
-			padding-bottom: 0.3em;
+			padding-bottom: 1em;
 		}
 
 		a {
@@ -85,23 +89,38 @@
 
 		/*------------------------------ Content -------------------------------------*/
 		.content_details {
-            width: 100%;
-            
-            p {
-                padding-top : 0.25em;
-                padding-left: 0.4em;
-                color: lighten($frag-list-txt, 30%);
-            }
-            
-            .content_title {
-                color: $frag-list-txt;
-            }
-        }
+			width: 100%;
+			
+			p {
+			    padding-top : 0.1em;
+			    padding-left: 0.4em;
+			}
+			
+			.content_title {
+			    font-size: 120%;
+			    color: lighten($frag-list-txt, 20%);
+			}
+			
+			.timestamp {
+			font-size: 105%;
+			    color: lighten($frag-list-txt, 30%);
+			}
+			
+			.extra {
+			    color: lighten($frag-list-txt, 40%);
+			}
+		    }
 
 
 		/*------------------------------ Members -------------------------------------*/
-		.member li {
-			display: inline-block;
+		.member {
+			li {
+				display: inline;
+				
+				.thumbnail {
+					margin-bottom: 0.2em;
+				}
+			}
 		}
 
 

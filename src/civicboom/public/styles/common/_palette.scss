@@ -12,14 +12,18 @@ $titlebar-bot: $cb-darkblue;
 $titlebar-txt: white;
 
 $frag-border    : #4a73b8;
-$frag-background: #e2e9ef;
+$frag-background: lighten($cb-lightblue, 40%);
 
 $frag-action-bar-txt      : black;
 $frag-action-bar          : #EEE;
 
 $frag-list-title    : #8aadd7;
-$frag-list-title-txt: darken($frag-list-title, 60%);
+$frag-list-title-txt: #666;
 $frag-list-top      : #ffffff;
 $frag-list-bot      : #ffffff;
 $frag-list-txt      : #111;
 $frag-list-border   : darken($frag-list-bot  , 15%);
+$frag-list-count    : lighten($frag-list-title-txt, 20%);
+
+$profile-description-title  :   #666;
+$profile-description-txt    :   #333;
