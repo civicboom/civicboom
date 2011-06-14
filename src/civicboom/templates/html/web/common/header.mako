@@ -17,6 +17,22 @@
 <%
 	from civicboom.model import Group
 %>
+<script type="text/javascript">
+	var icons = {num_unread_messages: $('#msg_c_m'),
+				 num_unread_notifications: $('#msg_c_n')
+				}
+	function refreshMessages() {
+		$.getJSON('/profile.json',function(data) {
+			if (typeof data['data'] != 'undefined') {
+				for (var key in icons) {
+					if (typeof data.data[key] != 'undefined')
+						icons[key].text(data.data[key]);
+				}
+			}
+		});
+	}
+	setInterval(refreshMessages, 1000);
+</script>
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
       <a class="name" href="${url(controller='profile', action='index')}"><!--
@@ -26,9 +42,9 @@
 	  	${c.logged_in_persona.name}<br />
 	  	<a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
 	  </div>
-      <%def name="messageIcon(messages)">
+      <%def name="messageIcon(messages, id)">
         % if messages > 0:
-          <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
+          <div id="${id}" class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
         % endif
       </%def>
       <div id="message_holder">
@@ -38,14 +54,14 @@
            onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
         ><span>${_('Messages')}</span>
         </a>
-        ${messageIcon(c.logged_in_persona.num_unread_messages)}<br />
+        ${messageIcon(c.logged_in_persona.num_unread_messages, "msg_c_m")}<br />
         <a class   = "icon16 i_notification"
            href    = "${h.url('messages',list='notification')}"
-           title   = "${_('Notification')}"
+           title   = "${_('Notifications')}"
            onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
         ><span>${_('Notifications')}</span>
         </a>
-        ${messageIcon(c.logged_in_persona.num_unread_notifications)}
+        ${messageIcon(c.logged_in_persona.num_unread_notifications, "msg_c_n")}
       </div>
     </div>
     <table>
@@ -80,14 +96,14 @@
                      onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
                   ><span>${_('Messages')}</span>
                   </a>
-                  ${messageIcon(member.num_unread_messages)}<br />
+                  ${messageIcon(member.num_unread_messages, "msg_%s_m" % (member.id))}<br />
                   <a class   = "icon16 i_notification"
                      href    = "${h.url('messages',list='notification')}"
                      title   = "${_('Notifications')}"
                      onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
                   ><span>${_('Notifications')}</span>
                   </a>
-                  ${messageIcon(member.num_unread_notifications)}
+                  ${messageIcon(member.num_unread_notifications, "msg_%s_n" % (member.id))}
                 </td>
                 <td class="hide_if_js">
                     % if not current_persona:
