@@ -5,6 +5,8 @@ BODY.c-misc.a-about {
 	.layout {
 		margin-left: auto;
 		margin-right: auto;
+		padding-top: 32px;
+		padding-bottom: 48px;
 		max-width: 940px;
 	}
 	TD.body,
@@ -12,6 +14,11 @@ BODY.c-misc.a-about {
 		vertical-align: top;
 		padding: 16px;
 		padding-bottom: 32px;
+	}
+
+	TD.body {
+		background: white;
+		border-radius: 16px;
 	}
 
 	P {
@@ -43,7 +50,10 @@ BODY.c-misc.a-about {
 }
 
 .toc {
-	padding-top: 32px;
+	margin-top: 32px;
+	background: rgba(255, 255, 255, 0.5);
+	border-radius: 8px;
+	padding: 2px;
 	LI A {
 		display: block;
 		width: 128px;
