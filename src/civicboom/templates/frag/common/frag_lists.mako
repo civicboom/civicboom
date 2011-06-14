@@ -131,9 +131,9 @@
         % if show_heading:
         <div class='frag_list'>
             <h2>
-                % if icon:
-                <span class="icon16 i_${icon}"><span>${icon}</span></span>
-                % endif
+                ##% if icon:
+                ##<span class="icon16 i_${icon}"><span>${icon}</span></span>
+                ##% endif
                 % if href:
                 <a href="${href}" ${js_link_to_frag_list}>${title}</a>
                 % else:
@@ -320,13 +320,15 @@
         <a href="${item_url}" ${js_link_to_frag}>
             <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
-        
+        <p class="timestamp">
+            ${timestamp(content)}
+        </p>
         % if extra_info:
             % if   content['type']=='article' and (content.get('parent_id') or content.get('parent')):
                 <%
                     (parent_url_static, parent_url_frag) = h.url_pair('content', id=content.get('parent_id') or content['parent']['id'], gen_format='frag')
                 %>
-                <p>${_('In response to:')}
+                <p class="extra">${_('In response to:')}
                     <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
                         % if content.get('parent'):
                         ${h.truncate(content['parent']['title'], length=30, indicator='...', whole_word=True)}
@@ -336,7 +338,7 @@
                     </a>
                 </p>
             % elif content['type']=='article'   :
-                <p>
+                <p class="extra">
                 ${_('Views')}:${content['views']}
                 % if content.get('tags'):
                 , ${_('Tags')}:${content['tags'][:3]}
@@ -346,13 +348,9 @@
                 <%
                     (response_url_static, response_url_frag) = h.url_pair('contents', response_to=id, include_fields='creator,parent', gen_format='frag')
                 %>
-                <p><a href="${response_url_static}" onclick="cb_frag($(this), '${response_url_frag}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
+                <p class="extra"><a href="${response_url_static}" onclick="cb_frag($(this), '${response_url_frag}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
             % endif
         % endif
-        
-        <p class="timestamp">
-            ${timestamp(content)}
-        </p>
     </td>
 
     <%doc>

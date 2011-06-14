@@ -1,5 +1,44 @@
+@import "../common/_palette.scss";
+
 #frag_containers .frag_container .frag_member {
 	/*-------------------------- Frag Member Cols---------------------------------*/
+	.frag_top_row {
+		padding: 0.5em 0.9em 0 0.9em;
+		color: #333;
+		
+		h1 {
+			margin-left: 0.5em;
+			margin-bottom: 0.5em;
+		}
+			
+		.about_me {
+			/* --- Cross browser border rounding --- */
+			border-radius        : 0.5em;
+			-moz-border-radius   : 0.5em;
+			-webkit-border-radius: 0.5em;
+			background-color: #fff;
+			padding: 1em;
+			font-size: 88%;
+			
+			.avatar .thumbnail {
+				margin-right: 0.1em;
+			}
+			
+			h2 {
+				font-size: 150%;
+				color: #666;
+			}
+				
+			.content {
+				color: #333;
+				
+				div {
+					margin-left: 0.5em;
+				}
+			}
+		}
+	}
+	
 	.frag_left_col {
 		width: 33%;
 		float: left;
