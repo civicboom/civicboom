@@ -36,15 +36,25 @@
 
 /* Widget List */
 #CivicboomWidget .widget_content .content_list {
-  /* font-size: 110%; */
-  margin-bottom: 0.5em;
+  /* margin-bottom: 0.5em; */
   clear: both;
 }
+#CivicboomWidget .widget_content .content_list LI {
+    padding: 0.5em 0em 0.5em 0em;
+    clear: both;
+}
+#CivicboomWidget .widget_content .content_list LI .thumbnail {width: 3em; float: left;}
+#CivicboomWidget .widget_content .content_list LI .details {
+    margin-left: 4em;
+}
+
+/* Old table styles
 #CivicboomWidget .widget_content .content_list TD            {vertical-align: top; padding-top: 0.25em; padding-bottom: 0.25em;}
 #CivicboomWidget .widget_content .content_list TD .thumbnail {height: 3em; margin-right: 0.25em;}
 #CivicboomWidget .widget_content .content_list TD .title     {font-weight: bold;}
 #CivicboomWidget .widget_content .content_list TD .creator   {float: right; text-align: right;}
 #CivicboomWidget .widget_content .content_list TD .content   {display: none;}
+*/
 
 /* Widget Content */
 
