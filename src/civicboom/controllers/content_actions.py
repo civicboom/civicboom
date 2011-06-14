@@ -319,10 +319,11 @@ class ContentActionsController(BaseController):
     def responses(self, id, **kwargs):
         """
         GET /contents/{id}/responses: Get a list of responses
+
+        shortcut to /contents?response_to={id}
+
         @type list
         @api contents 1.0 (WIP)
-        
-        shotcut to /contents?response_to={id}
         """
         #content = _get_content(id, is_viewable=True)
         #if 'include_fields' not in kwargs:
@@ -338,10 +339,11 @@ class ContentActionsController(BaseController):
     def contributors(self, id, **kwargs):
         """
         GET /contents/{id}/contributors: Get list of contributors (unimplemented)
+
+        shortcut to /contents?response_to={id}
+
         @type list
         @api contents 1.0 (WIP)
-        
-        shotcut to /contents?response_to={id}
         
         @comment AllanC will currently return empty list - unimplemented
         """
