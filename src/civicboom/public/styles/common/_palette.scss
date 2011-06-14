@@ -11,6 +11,8 @@ $titlebar-top: $cb-lightblue;
 $titlebar-bot: $cb-darkblue;
 $titlebar-txt: white;
 
+$page-background: lighten($cb-lightblue, 20%);
+
 $frag-border    : #4a73b8;
 $frag-background: lighten($cb-lightblue, 40%);
 
