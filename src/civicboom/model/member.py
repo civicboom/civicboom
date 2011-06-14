@@ -221,7 +221,8 @@ class _ConfigManager(UserDict.DictMixin):
         self.base[name] = value
 
     def __delitem__(self, name):
-        del self.base[name]
+        if name in self.base:
+            del self.base[name]
 
     def keys(self):
         return self.base.keys()
