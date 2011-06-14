@@ -60,7 +60,7 @@ def init_base_data():
         u1.location_home = "SRID=4326;POINT(1.0652 51.2976)"
         u1.location_current = "SRID=4326;POINT(1.0803 51.2789)"
         u1.config['home_location'] = u"The Moon"
-        u1.config['description']   = u"A user for automated tests to log in as"
+        u1.description   = u"A user for automated tests to log in as"
 
         u1_login = UserLogin()
         u1_login.user   = u1
