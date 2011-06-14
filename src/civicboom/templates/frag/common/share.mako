@@ -78,7 +78,7 @@
     %>
     <div class="addthis_toolbox addthis_cb_style ${area_id}" style="display: inline-block;"
         % for k,v in kwargs.iteritems():
-            addthis:${k}="${v.replace('"','') if v else ""}"
+            addthis:${k}="${v.replace('\"','') if v else ""}"
         % endfor
     >
     <a class="addthis_button_email"></a>

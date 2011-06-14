@@ -171,6 +171,43 @@
             </div>
           </div>
         % endif
+        
+        ## Sharing
+          <div style="clear:left; height: 3px;">&nbsp;</div>
+          <div class="frag_list">
+            ##style="clear:left;" 
+            <h2><span class="icon16 i_${self.attr.icon_type}"></span>${_('Social Sharing')}</h2>
+            ##<span>About</span><span style="display:inline-block;padding-left:19px">Description</span></span>
+            <div class="frag_list_contents">
+              <div class="content note" style="padding-bottom: 3px;">
+			    ${popup.link(
+			        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+			        title = _('Get _widget'),
+			        text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get _widget'),
+			    )}<br />
+			    <%def name="sharebutton(type, **kwargs)">
+			    <li><a class="addthis_button_${type} ${kwargs.get('extraclass','')}"
+			        % for k,v in self.attr.share_kwargs.iteritems():
+			            addthis:${k}="${v.replace('\"','') if v else ""}"
+			        % endfor
+			    ></a></li>
+			   	</%def>
+			    <ul class="member sharing">
+			    	% for name in ['email', 'facebook', 'twitter', 'linkedin']:
+			    		${sharebutton(name)}
+			    	% endfor
+			    </ul>
+			    <style>
+			    	.link_more_hide span {
+			    		width:0; height:0;
+			    	}
+			    </style>
+			    <a class="addthis_button_compact link_more link_more_hide">more</a>
+              </div>
+            </div>
+          </div>
+        ## End of Sharing
+        
         ## Comunity ----------------------------------------
         
         ${frag_list.member_list_thumbnails(
@@ -458,11 +495,7 @@
     % endif
     </%doc>
 
-    ${popup.link(
-        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
-        title = _('Get _widget'),
-        text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get _widget'),
-    )}
+
     <span class="separtor"></span>
     
     % if self.member.get('location_current') or self.member.get('location_home'):
