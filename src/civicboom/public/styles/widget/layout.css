@@ -44,6 +44,7 @@
 #CivicboomWidget .widget_content .content_list TD .thumbnail {height: 3em; margin-right: 0.25em;}
 #CivicboomWidget .widget_content .content_list TD .title     {font-weight: bold;}
 #CivicboomWidget .widget_content .content_list TD .creator   {float: right; text-align: right;}
+#CivicboomWidget .widget_content .content_list TD .content   {display: none;}
 
 /* Widget Content */
 
