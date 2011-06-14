@@ -78,9 +78,9 @@ HEADER #logo {
 /*----------------------------------------------------------------------------*/
 
 HEADER #persona_select {
-    position: absolute;
-    top : 8px;
-    left: 155px;
+  position: absolute;
+  top : 8px;
+  left: 155px;
 	z-index: 499; /* below the create/explore/manage */
 
 	P {
@@ -133,6 +133,19 @@ HEADER #persona_select {
 	  height: 32px;
 	  display: inline-block;
 	}
+	
+  #persona_holder #persona_details {
+    position: relative;
+    top: -3px;
+    vertical-align: center;
+    height: 32px;
+    display: inline-block;
+    width: 8em;
+    overflow: hidden;
+    #settings {
+      font-size: 88%;
+    }
+  }
 
 	#persona_holder #message_holder .icon_overlay_red {
 	  font-size: 88%;
@@ -160,7 +173,7 @@ HEADER #home_link {
 NAV {
 	position: absolute;
 	top: 11px;
-	left: 223px;
+	left: 340px;
 	z-index: 500;
 
 	.menuh>UL {

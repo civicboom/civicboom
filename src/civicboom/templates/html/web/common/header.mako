@@ -22,6 +22,10 @@
       <a class="name" href="${url(controller='profile', action='index')}"><!--
 	  	--><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' /><!--
 	  --></a>
+	  <div id="persona_details">
+	  	${c.logged_in_persona.name}<br />
+	  	<a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
+	  </div>
       <%def name="messageIcon(messages)">
         % if messages > 0:
           <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
@@ -203,6 +207,7 @@
 </div>
 </nav>
 
+<%doc>
 ##------------------------------------------------------------------------------
 ## Search
 ##------------------------------------------------------------------------------
@@ -214,6 +219,7 @@
         ${_('Mobile')}
     </a>
 </div>
+</%doc>
 
 ##------------------------------------------------------------------------------
 ## Search
@@ -232,6 +238,13 @@
 ## Logout
 ##------------------------------------------------------------------------------
 <div id="signin">
+    <a class="buttonesque_link" style="padding: 0 5px;" href="${url(controller='about', action='howto')}">
+        ${_('How to')}
+    </a>
+    <a class="buttonesque_link" href="${url(controller='about', action='mobile')}">
+        ${_('Mobile')}
+    </a>
+	
 % if c.logged_in_persona:
     ${h.secure_link(
         h.url(controller='account', action='signout'),
