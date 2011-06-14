@@ -56,10 +56,13 @@ class PrivateGroupValidator(formencode.validators.FancyValidator):
 # Define settings groups, default values and display text
 
 settings_base = {}
+
+
 def add_setting(name, description, value='', group=None, **kwargs):
     setting = dict(name=name, description=description, value=value, group=group, **kwargs)
     settings_base[setting['name']]=setting
-    
+
+
 add_setting('name'                      , _('Display name' )             , group='general/general'    , weight=0  , type='string'                                                                            )
 add_setting('username'                  , _('Username' )                 , group='general/general'    , weight=1  , type='display'         , who='user'                                                      )
 add_setting('description'               , _('Description'  )             , group='general/general'    , weight=2  , type='longstring'      , info=_('Tell the world about you and your interests.')          )
@@ -145,6 +148,7 @@ for setting in settings_base.values():
     else:
         settings_validators[setting['name']] = type_validators.get(setting['type'])
 
+
 def build_meta(user, user_type, panel):
     settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
     panels = dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title':setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] )
@@ -178,6 +182,7 @@ def build_meta(user, user_type, panel):
     )
     return data
 
+
 def find_template(panel, user_type):
     try:
         # panel_user_type?
@@ -192,6 +197,7 @@ def find_template(panel, user_type):
             # default to generic
             template = 'generic'
     return template
+
 
 def copy_user_settings(settings_meta, user, user_type):
     settings = {}
@@ -210,6 +216,8 @@ def copy_user_settings(settings_meta, user, user_type):
             else:
                 settings[setting_name_repl] = location_to_string(v)
     return settings
+
+
 #---------------------------------------------------------------------------
 # REST Controller
 #---------------------------------------------------------------------------

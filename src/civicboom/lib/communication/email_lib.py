@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 config = {}
 
+
 def configure(c):
     global config
     config = c

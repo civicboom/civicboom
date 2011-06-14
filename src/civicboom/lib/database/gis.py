@@ -21,7 +21,8 @@ def get_location_by_name(name):  # pragma: no cover
     # are displayed using google maps, using google maps on a for-profit website
     # requires a commercial license
     if False:  # we don't have a license for this
-        import urllib2, json
+        import urllib2
+        import json
         log.debug("Looking up location for %s" % addr)
         data = urllib2.urlopen("http://maps.google.com/maps/api/geocode/json?sensor=false&address=%s" % addr).read()
         j = json.loads(data)

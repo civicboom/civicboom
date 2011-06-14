@@ -45,6 +45,7 @@ subdomain_formats = {
     'api-v1': 'api'    ,
 }
 
+
 def get_subdomain_format(environ=None):
     """
     hardcoded list of ifs, because this function is called millions of times,
