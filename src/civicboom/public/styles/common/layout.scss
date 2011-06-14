@@ -263,6 +263,22 @@ HTML.no-js #flash_message {
 	cursor: pointer;
 }
 
+.buttonesque_link {
+  display: inline-block;
+  color: #000;
+
+  border-radius        : 0.2em;
+  -moz-border-radius   : 0.2em;
+  -webkit-border-radius: 0.2em;
+
+  border: 1px solid transparent;
+
+  text-align: center;
+  text-decoration: underline !important;
+
+  cursor: pointer;
+}
+
 .acceptrequest {
 	width: 100%;
 	text-align: center;

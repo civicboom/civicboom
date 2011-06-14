@@ -108,8 +108,6 @@
 		    <td class="content">
 			% if self.member.get('description'):
 			<div>${self.member['description']}</div>
-			% else:
-			    This user has not added a description of themselves, get in touch and tell them to or something!
 			% endif
 		    </td>
 		    
@@ -129,64 +127,64 @@
     
     ## Left col
     <div class="frag_left_col">
-	<div class="frag_col vcard">
-	<div>
-	  <%doc><div class="user-details">
+	<div class="frag_col">
+	<%doc><div class="frag_col vcard">
+	    <div class="user-details">
 		<span class="detail-title">${_('Username')}:</span> <span class="uid nickname">${self.member['username']}</span><br />
-	    % if self.member.get('website'):
-	      <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
-	    % endif
-	    <span class="detail-title">Joined:</span> ${_('%s ago') % h.time_ago(self.member['join_date'])  }<br />
-	    % if self.current_user:
-	      <span class="detail-title">${_('Type')}:</span> ${_('_' + self.member['account_type']).capitalize()}
-	    % endif
-	    <br />
-			<%
-			groups = d['groups']['items']
-			if len(groups) == 0:
-				role = _("_"+d['member']['type'].capitalize())
-				org = "Civicboom"
-			elif len(groups) == 1:
-				role = groups[0]['role'].capitalize()
-				org = groups[0]['name'] or groups[0]['username']
-			else:
-				role = "Contributor"
-				org = _("%s groups") % len(groups)
-			%>
-			<span class="org"><span class="value-title" title="${org}"></span></span>
-			<span class="role"><span class="value-title" title="${role}"></span></span>
-			% if self.member['type'] == "group" and self.member['location_home']:
-				<%
-				lon, lat = self.member['location_home'].split()
-				%>
-				<span class="geo">
-					<span class="latitude"><span class="value-title" title="${lat}"></span></span>
-					<span class="longitude"><span class="value-title" title="${lon}"></span></span>
-				</span>
-			% endif
-	    % if 'follow' in self.actions:
-		${h.secure_link(
-		    h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
-		    value           = _('Follow') ,
-		    css_class = 'button button_large',
-		    title           = _("Follow %s" % self.name) ,
-		    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
-		)}
-		<span class="separtor"></span>
-	    % endif
-	    % if 'unfollow' in self.actions:
-		${h.secure_link(
-		    h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
-		    value           = _('Unfollow') if 'follow' not in self.actions else _('Ignore invite') ,
-		    css_class = 'button button_large',
-		    title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
-		    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
-		)}
-		<span class="separtor"></span>
-	    % endif
-    </div></%doc>
+		% if self.member.get('website'):
+		  <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
+		% endif
+		<span class="detail-title">Joined:</span> ${_('%s ago') % h.time_ago(self.member['join_date'])  }<br />
+		% if self.current_user:
+		  <span class="detail-title">${_('Type')}:</span> ${_('_' + self.member['account_type']).capitalize()}
+		% endif
+		<br />
+		<%
+		groups = d['groups']['items']
+		if len(groups) == 0:
+		    role = _("_"+d['member']['type'].capitalize())
+		    org = "Civicboom"
+		elif len(groups) == 1:
+		    role = groups[0]['role'].capitalize()
+		    org = groups[0]['name'] or groups[0]['username']
+		else:
+		    role = "Contributor"
+		    org = _("%s groups") % len(groups)
+		%>
+		<span class="org"><span class="value-title" title="${org}"></span></span>
+		<span class="role"><span class="value-title" title="${role}"></span></span>
+		% if self.member['type'] == "group" and self.member['location_home']:
+		    <%
+		    lon, lat = self.member['location_home'].split()
+		    %>
+		    <span class="geo">
+			    <span class="latitude"><span class="value-title" title="${lat}"></span></span>
+			    <span class="longitude"><span class="value-title" title="${lon}"></span></span>
+		    </span>
+		% endif
+		% if 'follow' in self.actions:
+		    ${h.secure_link(
+			h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
+			value           = _('Follow') ,
+			css_class = 'button button_large',
+			title           = _("Follow %s" % self.name) ,
+			json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+		    )}
+		    <span class="separtor"></span>
+		% endif
+		% if 'unfollow' in self.actions:
+		    ${h.secure_link(
+			h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
+			value           = _('Unfollow') if 'follow' not in self.actions else _('Ignore invite') ,
+			css_class = 'button button_large',
+			title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
+			json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+		    )}
+		    <span class="separtor"></span>
+		% endif
+	    </div>
 	</div>
-	<div style="clear: both;"></div>
+	<div style="clear: both;"></div></%doc>
 	## Community ----------------------------------------
 	
 	${frag_list.member_list_thumbnails(
@@ -226,7 +224,7 @@
 	    _('Members'),
 	    h.args_to_tuple('member_action', id=self.id, action='members') ,
 	    icon = 'user' ,
-			actions = h.frag_link(value='', title='Invite Members', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='group')) if 'invite_members' in self.actions else None ,
+	    actions = h.frag_link(value='', title='Invite Members', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='group')) if 'invite_members' in self.actions else None ,
 	)}
 	
 	${frag_list.member_list_thumbnails(
@@ -243,8 +241,7 @@
 	## --- adverts --- ##
 	${advert("Don't forget you can get involved on your Android mobile!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
 	${advert("Are you an organisation? GET STARTED!", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
-
-	</div>
+    </div>
     </div>
     
     ## Right col

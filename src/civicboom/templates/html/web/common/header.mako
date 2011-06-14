@@ -17,14 +17,39 @@
 <%
 	from civicboom.model import Group
 %>
+<script type="text/javascript">
+	var icons;
+	function refreshMessages() {
+		$.getJSON('/profile.json',function(data) {
+			if (typeof data['data'] != 'undefined') {
+				for (var key in icons) {
+					if (typeof data.data[key] != 'undefined') {
+						//alert (icons[key].html());
+						icons[key].html('&nbsp;' + data.data[key] + '&nbsp;');
+					}
+				}
+			}
+		});
+	}
+	$(function() {
+		icons = {num_unread_messages: $('#msg_c_m'),
+				 num_unread_notifications: $('#msg_c_n')
+				}
+		setInterval(refreshMessages, 60000);
+	});
+</script>
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
       <a class="name" href="${url(controller='profile', action='index')}"><!--
 	  	--><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' /><!--
 	  --></a>
-      <%def name="messageIcon(messages)">
+	  <div id="persona_details">
+	  	${c.logged_in_persona.name}<br />
+	  	<a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
+	  </div>
+      <%def name="messageIcon(messages, id)">
         % if messages > 0:
-          <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
+          <div id="${id}" class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
         % endif
       </%def>
       <div id="message_holder">
@@ -34,14 +59,14 @@
            onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
         ><span>${_('Messages')}</span>
         </a>
-        ${messageIcon(c.logged_in_persona.num_unread_messages)}<br />
+        ${messageIcon(c.logged_in_persona.num_unread_messages, "msg_c_m")}<br />
         <a class   = "icon16 i_notification"
            href    = "${h.url('messages',list='notification')}"
-           title   = "${_('Notification')}"
+           title   = "${_('Notifications')}"
            onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
         ><span>${_('Notifications')}</span>
         </a>
-        ${messageIcon(c.logged_in_persona.num_unread_notifications)}
+        ${messageIcon(c.logged_in_persona.num_unread_notifications, "msg_c_n")}
       </div>
     </div>
     <table>
@@ -76,14 +101,14 @@
                      onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
                   ><span>${_('Messages')}</span>
                   </a>
-                  ${messageIcon(member.num_unread_messages)}<br />
+                  ${messageIcon(member.num_unread_messages, "msg_%s_m" % (member.id))}<br />
                   <a class   = "icon16 i_notification"
                      href    = "${h.url('messages',list='notification')}"
                      title   = "${_('Notifications')}"
                      onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
                   ><span>${_('Notifications')}</span>
                   </a>
-                  ${messageIcon(member.num_unread_notifications)}
+                  ${messageIcon(member.num_unread_notifications, "msg_%s_n" % (member.id))}
                 </td>
                 <td class="hide_if_js">
                     % if not current_persona:
@@ -143,6 +168,13 @@
 <nav class="menuh-container">
     
 <div class="menuh">
+	<ul>
+		<li>${h.secure_link(h.url('new_content', target_type='assignment'), _("Ask for news"), css_class="top_parent button")}</li>
+	</ul>
+	<ul>
+		<li>${h.secure_link(h.url('new_content', target_type='article'   ), _("Post my news")   , css_class="top_parent button")}</li>
+	</ul>
+	<%doc>
     <ul>
         <li><a href="#" class="top_parent button">${_("Create")}</a>
         <ul>
@@ -152,9 +184,10 @@
         </ul>
         </li>
     </ul>
+    </%doc>
 
     <ul>
-        <li><a href="#" class="top_parent button">${_("Explore")}</a>
+        <li><a href="#" class="top_parent buttonesque_link">${_("Explore...")}</a>
         <ul>
             <!--<li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="${_("Quick Search")}"></form></li>-->
 % if c.logged_in_persona:
@@ -176,6 +209,7 @@
         </ul>
         </li>
     </ul>
+<%doc>
 % if c.logged_in_persona:
     <ul>
         <li><a href="#" class="top_parent button">${_("Manage")}</a>
@@ -189,37 +223,49 @@
         </li>
     </ul>
 % endif
+</%doc>
 
 </div>
 </nav>
 
+<%doc>
 ##------------------------------------------------------------------------------
 ## Search
 ##------------------------------------------------------------------------------
 <div id="aboutbtns">
-    <a class="button" href="${url(controller='about', action='howto')}">
+    <a class="buttonesque_link" style="padding: 0 5px;" href="${url(controller='about', action='howto')}">
         ${_('How to')}
     </a>
-    <a class="button" href="${url(controller='about', action='mobile')}">
+    <a class="buttonesque_link" href="${url(controller='about', action='mobile')}">
         ${_('Mobile')}
     </a>
 </div>
+</%doc>
 
 ##------------------------------------------------------------------------------
 ## Search
 ##------------------------------------------------------------------------------
+<%doc>
 <div id="search">
 	<form action="${h.url('contents')}" method='GET'>
 		<input type="search" class="search_input" name="term" placeholder="${_("Search Content")}" />
 		<input type="submit" class="button" value="GO">
 	</form>
 </div>
+</%doc>
 
 
 ##------------------------------------------------------------------------------
 ## Logout
 ##------------------------------------------------------------------------------
 <div id="signin">
+    <a class="buttonesque_link" style="padding: 0 5px;" href="${url(controller='about', action='howto')}">
+        ${_('How to')}
+    </a>
+    <a class="buttonesque_link" href="${url(controller='about', action='mobile')}">
+        ${_('Mobile')}
+    </a>
+	
 % if c.logged_in_persona:
     ${h.secure_link(
         h.url(controller='account', action='signout'),

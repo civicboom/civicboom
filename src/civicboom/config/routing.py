@@ -5,6 +5,7 @@ may take precedent over the more generic routes. For more information
 refer to the routes manual at http://routes.groovie.org/docs/
 """
 from routes import Mapper
+import re
 
 
 def cb_resource(mapper, single, plural, **kwargs):
@@ -32,7 +33,6 @@ def cb_resource(mapper, single, plural, **kwargs):
     mapper.connect(single+'_action', '/'+plural+'/{id}/{action}{.format}',     controller=single+'_actions',       conditions=dict(method=['GET', 'POST', 'PUT', 'DELETE']))
 
 
-import re
 def _subdomain_check(kargs, mapper, environ):
     """Screen the kargs for a subdomain and alter it appropriately depending
     on the current subdomain or lack therof.

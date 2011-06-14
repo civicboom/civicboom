@@ -26,6 +26,7 @@ class DefaultSchema(formencode.Schema):
     allow_extra_fields  = True
     filter_extra_fields = True
 
+
 class UnicodeStripHTMLValidator(validators.UnicodeString):
     def _to_python(self, value, state):
         value = validators.UnicodeString._to_python(self, value, state)
@@ -139,6 +140,7 @@ class LicenseValidator(validators.FancyValidator):
             return license
         return license.id
 
+
 class PrivateContentValidator(validators.StringBool):
     messages = {
         'not_account_type': _('unable to use private content features without account upgrade'),
@@ -192,7 +194,7 @@ class IsoFormatDateConverter(validators.DateConverter):
 
     def _to_python(self, value, state):
         try:
-            value = parse_date(value).strftime("%d/%m/%Y")
+            value = parse_date(value, dayfirst=True).strftime("%d/%m/%Y")
         except ValueError:
             raise formencode.Invalid("Invalid date", value, state)
         return super(IsoFormatDateConverter, self)._to_python(value, state)
@@ -218,6 +220,7 @@ class SetValidator(validators.FancyValidator):
             if not value in self.set:
                 raise formencode.Invalid(self.message("invalid", state), value, state)
         return values
+
 
 class EmptyValidator(validators.FancyValidator):
     messages = {
