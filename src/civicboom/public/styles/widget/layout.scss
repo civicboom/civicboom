@@ -38,11 +38,21 @@
 	/* Widget Content */
 
 	.widget_content {
+
 		.content_list {
 			/* font-size: 110%; */
 			margin-bottom: 0.5em;
 			clear: both;
 
+            /* UL-LI widget list */
+            LI {
+                padding: 0.5em 0em 0.5em 0em;
+                clear: both;
+                .thumbnail {width: 3em; float: left;}
+                .details   {margin-left: 4em;}
+            }
+
+            /* Old table styles
 			TD {
 				vertical-align: top;
 				padding-top: 0.25em;
@@ -53,6 +63,7 @@
 				.creator   {float: right; text-align: right;}
 				.content   {display: none;}
 			}
+            */
 		}
 
 		.content_preview {
