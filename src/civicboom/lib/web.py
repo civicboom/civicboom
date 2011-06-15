@@ -342,6 +342,9 @@ def _find_template(result, type):
             os.path.join("html", subformat, template_part),
             os.path.join("html", "web",     template_part),
         ]
+        if subformat=='widget':
+            # AllanC - widgets have a special case and can have multiple themes
+            paths.insert(0, os.path.join("html", subformat, c.widget['theme'], template_part))
         ## AllanC: TODO
         ## if there is no web template but there is a frag for this template part
         ## wrap the fragment in a frag_container.mako
