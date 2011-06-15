@@ -1,4 +1,4 @@
-<%inherit file="./widget_base.mako"/>
+<%inherit file="/html/widget/widget_base.mako"/>
 <%
     size_font       =  9
     size_header     = 24

@@ -343,8 +343,7 @@ def _find_template(result, type):
             os.path.join("html", "web",     template_part),
         ]
         if subformat=='widget':
-            # AllanC - widgets have a special case and can have multiple themes
-            paths.insert(0, os.path.join("html", subformat, c.widget['theme'], template_part))
+            paths.insert(0, os.path.join("html", subformat, c.widget['theme'], template_part)) # AllanC - widgets have a special case and can have multiple themes - see addtion for list types below as well
         ## AllanC: TODO
         ## if there is no web template but there is a frag for this template part
         ## wrap the fragment in a frag_container.mako
@@ -371,6 +370,10 @@ def _find_template(result, type):
                 os.path.join("html", subformat, list_part) ,
                 os.path.join("html", "web"    , list_part) ,
             ]
+            # HACK - AllanC - insert 1 so it's after os.path.join(type, list_part)
+            if subformat=='widget':
+                paths.insert(1, os.path.join("html", subformat, c.widget['theme'], list_part)) # AllanC - widgets have a special case and can have multiple themes - hack here to inset at item 1
+            
     
     for path in paths:
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):

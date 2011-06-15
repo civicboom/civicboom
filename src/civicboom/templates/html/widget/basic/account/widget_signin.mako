@@ -1,4 +1,4 @@
-<%inherit file="./widget_content.mako"/>
+<%inherit file="../common/widget_content.mako"/>
 
 
 ##------------------------------------------------------------------------------

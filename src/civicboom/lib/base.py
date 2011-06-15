@@ -351,7 +351,7 @@ class BaseController(WSGIController):
             color_header     = 'ccc' ,
             color_action_bar = 'ddd' ,
             color_content    = 'eee' ,
-            theme            = 'gradient',
+            theme            = 'basic',
         )
         setup_widget_env()
 
