@@ -350,11 +350,21 @@ def get_action_objects_for_url(action_url=None):
     content_show = ContentsController().show
     member_show  = MembersController().show
 
-    
+    actions_list = [
+        # url identifyer , action, description
+        (re.compile('/accept'                                   ) , 'accept'     , _('Accept an _assignment')),
+        (re.compile('/follow'                                   ) , 'follow'     , _('Follow a _member')     ),
+        (re.compile('/boom'                                     ) , 'boom'       , _('Boom _content')        ),
+        (re.compile('/contents/new\?parent_id='                 ) , 'new_respose', _('Create a response')    ),
+        (re.compile('/contents?(.*?)type=comment(.*?)parent_id=') , 'comment'    , _('make a comment')       ), #AllanC - I weep at the inefficency and code duplication
+        (re.compile('/contents?(.*?)parent_id=(.*?)type=comment') , 'comment'    , _('make a comment')       ),
+        #/contents/new?parent_id=26&type=comment
+    ]
+
     # If performing an action we may want to display a custom message with the login
     if not action_url:
         action_url = current_url()
-    for action_identifyer, action_action, action_description in constants.get_actions_list():
+    for action_identifyer, action_action, action_description in actions_list:
         if action_identifyer.search(action_url):
             args, kwargs = get_object_from_action_url( action_url )
             action_object          = {} # Set this in case we cant recover an action object
