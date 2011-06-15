@@ -45,7 +45,7 @@ HEADER {
 BODY>DIV#app {
 	position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
 	z-index: 0;
-    margin-top: 44px;
+    top: 49px;
 }
 
 FOOTER {
