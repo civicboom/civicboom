@@ -39,6 +39,9 @@ def _init_search_filters():
             return query.filter(Member.id       == normalize_member(member))
 
     def append_search_name(query, text):
+        if not text:  # o_O
+            return query
+
         parts = []
         for word in text.split():
             word = re.sub("[^a-zA-Z0-9]", "", word)
