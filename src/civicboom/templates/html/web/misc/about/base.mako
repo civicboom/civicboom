@@ -4,7 +4,13 @@
 <div class="layout">
 <table><tr>
 
-<td class="body">${next.body()}</td>
+<td class="body">
+	${next.body()}
+	<p><!-- hack to widen the table up to its max-width, while remaining shrinkable -->
+	% for n in range(0, 50):
+		&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+	% endfor
+</td>
 
 <td class="nav">
 <ul class='toc'>

@@ -214,4 +214,5 @@ class TaskController(BaseController):
             if not m.description and "description" in m.config:
                 m.description = m.config.get("description", "")
                 del m.config['description']
-            yield m.username + "\n"
+            yield str(m.username + "\n")
+        Session.commit()

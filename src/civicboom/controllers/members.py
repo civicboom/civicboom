@@ -2,8 +2,8 @@ from civicboom.lib.base import *
 
 #from civicboom.controllers.contents import _normalize_member
 
-
 from cbutils.misc import update_dict
+import re
 
 # AllanC - for members autocomplete index
 from civicboom.model      import Member, Follow, GroupMembership, Group
@@ -38,12 +38,22 @@ def _init_search_filters():
         else:
             return query.filter(Member.id       == normalize_member(member))
 
-    def append_search_name(query, name):
-        return query.filter("""
-            to_tsvector('english', username || ' ' || name || ' ' || description) @@
-            plainto_tsquery(:text)
-        """).params(text=name)
-    
+    def append_search_name(query, text):
+        parts = []
+        for word in text.split():
+            word = re.sub("[^a-zA-Z0-9]", "", word)
+            if word:
+                parts.append(word)
+
+        if parts:
+            text = " | ".join(parts)
+            return query.filter("""
+                to_tsvector('english', username || ' ' || name || ' ' || description) @@
+                to_tsquery(:text)
+            """).params(text=text)
+        else:
+            return query
+
     def append_search_type(query, type_text):
         if type_text:
             return query.filter(Member.__type__==type_text)
