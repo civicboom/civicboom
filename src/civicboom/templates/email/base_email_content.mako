@@ -24,6 +24,6 @@
     % endif
     
     % if hasattr(self,'content_after'):
-    ${self.content_after()}
+        ${self.content_after()}
     % endif
 </%def>
