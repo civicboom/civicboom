@@ -6,10 +6,20 @@ $cb-darkblue: #3a4a97;
 $button-top: $cb-lightblue;
 $button-bot: $cb-darkblue;
 $button-txt: white;
+$button-border: #333;
 
-$titlebar-top: $cb-lightblue;
-$titlebar-bot: $cb-darkblue;
+$button-member-top: #eee;
+$button-member-bot: #ddd;
+$button-member-txt: #444;
+$button-member-border: #ccc;
+
+$titlebar-top: #48689D; /*lighten($cb-darkblue, 30%);*/
+$titlebar-bot: $titlebar-top;
 $titlebar-txt: white;
+
+$actionbar-back: $titlebar-top;
+
+$page-background: lighten($cb-lightblue, 20%);
 
 $frag-border    : #4a73b8;
 $frag-background: lighten($cb-lightblue, 40%);
