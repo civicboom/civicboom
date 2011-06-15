@@ -3,7 +3,6 @@ Set of helpers specific to the Civicboom project
   (these are not part of misc because misc continas more genereal functions that could be used in a range of projects)
 """
 
-import civicboom.lib.constants as constants
 from civicboom.lib.base import url, app_globals, c, config, _, current_url
 
 
