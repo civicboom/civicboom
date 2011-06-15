@@ -31,6 +31,7 @@ Using the site
   this is controlled by a cookie
   visit http://localhost/test/toggle_cache
   this cookie should disable cache for a year or until cookies are cleared
+  this needs to be done for all subdomains e.g. widget.localhost if needed
 
 Geolocation data (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
