@@ -7,6 +7,8 @@ from civicboom.lib.database.get_cached import get_content
 from cbutils.text import profanity_check as _profanity_check
 from cbutils.worker import config
 
+from civicboom.lib.civicboom_lib import twitter_global
+
 
 def profanity_check(content_id, url_base):
     """
@@ -35,5 +37,6 @@ def profanity_check(content_id, url_base):
         content.content = profanity_response['CleanText']
     else:
         log.debug("No profanity found")
+        twitter_global(content) # TODO? diseminate new or updated content?
     
     return True

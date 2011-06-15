@@ -705,7 +705,6 @@ class ContentsController(BaseController):
                 user_log.info("published new Content #%d" % (content.id, ))
                 # Aggregate new content
                 content.aggregate_via_creator() # Agrigate content over creators known providers
-                twitter_global(content) # TODO? diseminate new or updated content?
             else:
                 # Send notifications about previously published content has been UPDATED
                 if   content.__type__ == "assignment":
