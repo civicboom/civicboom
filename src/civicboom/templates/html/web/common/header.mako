@@ -259,6 +259,9 @@
 ## Logout
 ##------------------------------------------------------------------------------
 <div id="signin">
+    <a class="buttonesque_link" style="padding: 0 5px;" href="${url(controller='about', action='groups')}">
+        ${_('Organisations / _Groups')}
+    </a>
     <a class="buttonesque_link" style="padding: 0 5px;" href="${url(controller='about', action='howto')}">
         ${_('How to')}
     </a>
