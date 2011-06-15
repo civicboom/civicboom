@@ -45,6 +45,8 @@ class MiscController(BaseController):
         # redirect to an un-cached page
         if request.GET.get("r") == "qr":
             return redirect(url(controller="misc", action="qr"))
+        if c.logged_in_user:
+            return redirect(url(controller="profile", action="index"))
         return action_ok()
 
     # don't cache this, it does UA-specific things
