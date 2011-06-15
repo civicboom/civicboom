@@ -117,42 +117,7 @@
           </div>
         </div>
         
-    ## Sharing
-      <div class="frag_list">
-        <h2>${_('Social Sharing')}</h2>
-        <div class="frag_list_contents">
-          <div class="content note addthis_toolbox" style="padding-bottom: 0px;">
-		    <%def name="sharebutton(type, **kwargs)">
-		    <li><div class="thumbnail thumbnail_small"><a class="at addthis_button_${type} ${kwargs.get('extraclass','')}"
-		        % for k,v in self.attr.share_kwargs.iteritems():
-		            addthis:${k}="${v.replace('\"','') if v else ""}"
-		        % endfor
-		    ></a></div></li>
-		   	</%def>
-		    <ul class="member">
-		    	% for name in ['email', 'facebook', 'twitter', 'linkedin', 'tumblr']:
-		    		${sharebutton(name)}
-		    	% endfor
-		    </ul>
-		    <style>
-		    	.link_more_hide span {
-		    		width:0; height:0;
-		    	}
-		    	.atclear {
-		    		clear: none;
-		    		display: none;
-		    	}
-		    </style>
-		    <a class="at addthis_button_compact link_more link_more_hide">more</a>
-		    <script>
-		    	$(function(){
-		    		addthis.toolbox('.addthis_toolbox');
-		    	});
-		    </script>
-          </div>
-        </div>
-      </div>
-    ## End of Sharing
+        ${share.AddThisFragList(**self.attr.share_kwargs)}
         
         ##<h2>${_("Content by")}</h2>
         ${content_details_foot()}

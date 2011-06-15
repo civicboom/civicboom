@@ -89,9 +89,57 @@
     </div>
     ## Initialise toolbox on fragment load (Greg)
     <script type="text/javascript">
-      addthis.toolbox('.${area_id}');
+      addthis.toolbox('.addthis_toolbox');
     </script>
     <!-- AddThis Button END -->
+</%def>
+
+<%def name="AddThisFragList(*args, **kwargs)">
+    <%
+        custom_share = kwargs.get('custom_share')
+        if custom_share:
+            del kwargs['custom_share']
+    %>
+    <%def name="sharebutton(type, **kwargs)">
+        <li><div class="thumbnail thumbnail_small"><a class="at addthis_button_${type} ${kwargs.get('extraclass','')}"
+            % for k,v in kwargs.iteritems():
+                addthis:${k}="${v.replace('\"','') if v else ""}"
+            % endfor
+        ></a></div></li>
+    </%def>
+	
+    <div class="frag_list">
+        <h2>${_('Social Sharing')}</h2>
+        <div class="frag_list_contents">
+            <div class="content note addthis_toolbox" style="padding-bottom: 0px;">
+                % if custom_share:
+                    <div style="height: 24px">
+                        ${custom_share()}
+                    </div>
+                % endif
+                <ul class="member">
+                    % for name in ['email', 'facebook', 'twitter', 'linkedin', 'tumblr']:
+                        ${sharebutton(name, **kwargs)}
+                    % endfor
+                </ul>
+                <style>
+                    .link_more_hide span {
+                        width:0; height:0;
+                    }
+                    .atclear {
+                        clear: none;
+                        display: none;
+                    }
+                </style>
+                <a class="at addthis_button_compact link_more link_more_hide">more</a>
+                <script>
+                    $(function(){
+                        addthis.toolbox('.addthis_toolbox');
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
 </%def>
 
 ##------------------------------------------------------------------------------

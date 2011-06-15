@@ -29,10 +29,18 @@
         
         self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
 
+        def custom_share():
+            popup.link(
+                h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+                title = _('Get _widget'),
+                text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get _widget'),
+            )
+            
         self.attr.share_kwargs = {
-            'url'      : h.url('member', id=self.id, qualified=True) ,
-            'title'    : self.name ,
-            'image'    : self.member['avatar_url'] ,
+            'url'           : h.url('member', id=self.id, qualified=True) ,
+            'title'         : self.name ,
+            'image'         : self.member['avatar_url'] ,
+            'custom_share'  : custom_share
         }
         
         self.advert_list = [] # List of advert/info box to display (empty by default, populated below)
@@ -186,48 +194,8 @@
 	    </div>
 	    <div style="clear: both;"></div></%doc>
 	    ## Community ----------------------------------------
-	
-    ## Sharing
-      <div class="frag_list">
-        <h2>${_('Social Sharing')}</h2>
-        <div class="frag_list_contents">
-          <div class="content note addthis_toolbox" style="padding-bottom: 0px;">
-		    <div style="height: 24px;">${popup.link(
-		        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
-		        title = _('Get _widget'),
-		        text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get _widget'),
-		    )}</div>
-		    <%def name="sharebutton(type, **kwargs)">
-		    <li><div class="thumbnail thumbnail_small"><a class="at addthis_button_${type} ${kwargs.get('extraclass','')}"
-		        % for k,v in self.attr.share_kwargs.iteritems():
-		            addthis:${k}="${v.replace('\"','') if v else ""}"
-		        % endfor
-		    ></a></div></li>
-		   	</%def>
-		    <ul class="member">
-		    	% for name in ['email', 'facebook', 'twitter', 'linkedin', 'tumblr']:
-		    		${sharebutton(name)}
-		    	% endfor
-		    </ul>
-		    <style>
-		    	.link_more_hide span {
-		    		width:0; height:0;
-		    	}
-		    	.atclear {
-		    		clear: none;
-		    		display: none;
-		    	}
-		    </style>
-		    <a class="at addthis_button_compact link_more link_more_hide">more</a>
-		    <script>
-		    	$(function(){
-		    		addthis.toolbox('.addthis_toolbox');
-		    	});
-		    </script>
-          </div>
-        </div>
-      </div>
-    ## End of Sharing
+	    
+	${share.AddThisFragList(**self.attr.share_kwargs)}
 	
 	${frag_list.member_list_thumbnails(
 	    d['following'],
