@@ -249,11 +249,11 @@ HTML.no-js #flash_message {
 	display: inline-block;
 	background: $button-top;
 
-	border-radius        : 0.2em;
-	-moz-border-radius   : 0.2em;
-	-webkit-border-radius: 0.2em;
-
-	border: 1px solid #2a3a87;
+	border-radius        : 0.1em;
+	-moz-border-radius   : 0.1em;
+	-webkit-border-radius: 0.1em;
+	
+	border: 1px solid $button-border;
 
 	color: white;
 	text-align: center;
