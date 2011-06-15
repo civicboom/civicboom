@@ -72,6 +72,8 @@
     ##</div>
     
     <script type="text/javascript">
+        ## http://sorgalla.com/projects/jcarousel/
+        
         function widget_carousel_initCallback(carousel) {
             // Disable autoscrolling if the user clicks the prev or next button.
             carousel.buttonNext.bind('click', function() {carousel.startAuto(0);});
