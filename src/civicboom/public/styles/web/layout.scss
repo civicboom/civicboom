@@ -1,3 +1,5 @@
+@import "../common/_palette.scss";
+
 /*----------------------------------------------------------------------------*/
 /*                                Top Level                                   */
 /*                         There is one HTML / BODY                           */
@@ -6,6 +8,7 @@
 HTML {
     overflow-x: scroll;
     /* overflow-y: hidden; */
+	background: $page-background;
 }
 
 

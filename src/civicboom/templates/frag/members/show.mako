@@ -186,62 +186,106 @@
 	    </div>
 	    <div style="clear: both;"></div></%doc>
 	    ## Community ----------------------------------------
-	    
-	    ${frag_list.member_list_thumbnails(
-		d['following'],
-		_('Following'),
-		#h.args_to_tuple('member_action', id=self.id, action='following'),
-		h.args_to_tuple('members', followed_by=self.id),
-		icon =  'follow'
-	    )}
-	    
-	    ${frag_list.member_list_thumbnails(
-		d['followers'] ,
-		_('Followers') ,
-		#h.args_to_tuple('member_action', id=self.id, action='followers') ,
-		h.args_to_tuple('members', follower_of=self.id),
-		icon    = 'follow',
-		actions = h.frag_link(value='', title='Invite Trusted Followers', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='trusted_follower')) if 'invite_trusted_followers' in self.actions else None ,
-	    )}
-	    
-	    ${frag_list.member_list_thumbnails(
-		[m for m in d['groups']['items'] if m['status']=='active'],
-		_('_Groups') ,
-		h.args_to_tuple('member_action', id=self.id, action='groups') ,
-		icon    = 'group' ,
-	    )}
-	    
-	    ${frag_list.member_list_thumbnails(
-		[m for m in d['groups']['items'] if m['status']=='invite'] ,
-		_('Pending group invitations') ,
-		h.args_to_tuple('member_action', id=self.id, action='groups') ,
-		icon = 'group' ,
-	    )}
-	    
-	    % if self.member['type']=='group':
-	    ${frag_list.member_list_thumbnails(
-		[m for m in d['members']['items'] if m['status']=='active'],
-		_('Members'),
-		h.args_to_tuple('member_action', id=self.id, action='members') ,
-		icon = 'user' ,
-		actions = h.frag_link(value='', title='Invite Members', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='group')) if 'invite_members' in self.actions else None ,
-	    )}
-	    
-	    ${frag_list.member_list_thumbnails(
-		[m for m in d['members']['items'] if m['status']=='invite'],
-		_('Invited Members'),
-		h.args_to_tuple('member_action', id=self.id, action='members') ,
-		icon = 'invite' ,
-	    )}
-    
-	    % endif
-	    
-	    ${member_map()}
-	    
-	    ## --- adverts --- ##
-	    ${advert("Don't forget you can get involved on your Android mobile!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
-	    ${advert("Are you an organisation? GET STARTED!", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
-	</div>
+	
+    ## Sharing
+      <div class="frag_list">
+        <h2>${_('Social Sharing')}</h2>
+        <div class="frag_list_contents">
+          <div class="content note addthis_toolbox" style="padding-bottom: 0px;">
+		    <div style="height: 24px;">${popup.link(
+		        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+		        title = _('Get _widget'),
+		        text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get _widget'),
+		    )}</div>
+		    <%def name="sharebutton(type, **kwargs)">
+		    <li><div class="thumbnail thumbnail_small"><a class="at addthis_button_${type} ${kwargs.get('extraclass','')}"
+		        % for k,v in self.attr.share_kwargs.iteritems():
+		            addthis:${k}="${v.replace('\"','') if v else ""}"
+		        % endfor
+		    ></a></div></li>
+		   	</%def>
+		    <ul class="member">
+		    	% for name in ['email', 'facebook', 'twitter', 'linkedin', 'tumblr']:
+		    		${sharebutton(name)}
+		    	% endfor
+		    </ul>
+		    <style>
+		    	.link_more_hide span {
+		    		width:0; height:0;
+		    	}
+		    	.atclear {
+		    		clear: none;
+		    		display: none;
+		    	}
+		    </style>
+		    <a class="at addthis_button_compact link_more link_more_hide">more</a>
+		    <script>
+		    	$(function(){
+		    		addthis.toolbox('.addthis_toolbox');
+		    	});
+		    </script>
+          </div>
+        </div>
+      </div>
+    ## End of Sharing
+	
+	${frag_list.member_list_thumbnails(
+	    d['following'],
+	    _('Following'),
+	    #h.args_to_tuple('member_action', id=self.id, action='following'),
+	    h.args_to_tuple('members', followed_by=self.id),
+	    icon =  'follow'
+	)}
+	
+	${frag_list.member_list_thumbnails(
+	    d['followers'] ,
+	    _('Followers') ,
+	    #h.args_to_tuple('member_action', id=self.id, action='followers') ,
+	    h.args_to_tuple('members', follower_of=self.id),
+	    icon    = 'follow',
+	    actions = h.frag_link(value='', title='Invite Trusted Followers', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='trusted_follower')) if 'invite_trusted_followers' in self.actions else None ,
+	)}
+	
+	${frag_list.member_list_thumbnails(
+	    [m for m in d['groups']['items'] if m['status']=='active'],
+	    _('_Groups') ,
+	    h.args_to_tuple('member_action', id=self.id, action='groups') ,
+	    icon    = 'group' ,
+	)}
+	
+	${frag_list.member_list_thumbnails(
+	    [m for m in d['groups']['items'] if m['status']=='invite'] ,
+	    _('Pending group invitations') ,
+	    h.args_to_tuple('member_action', id=self.id, action='groups') ,
+	    icon = 'group' ,
+	)}
+	
+	% if self.member['type']=='group':
+	${frag_list.member_list_thumbnails(
+	    [m for m in d['members']['items'] if m['status']=='active'],
+	    _('Members'),
+	    h.args_to_tuple('member_action', id=self.id, action='members') ,
+	    icon = 'user' ,
+	    actions = h.frag_link(value='', title='Invite Members', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='group')) if 'invite_members' in self.actions else None ,
+	)}
+	
+	${frag_list.member_list_thumbnails(
+	    [m for m in d['members']['items'] if m['status']=='invite'],
+	    _('Invited Members'),
+	    h.args_to_tuple('member_action', id=self.id, action='members') ,
+	    icon = 'invite' ,
+	)}
+
+
+	% endif
+	
+	${member_map()}
+	
+	## --- adverts --- ##
+	${advert("Don't forget you can get involved on your Android mobile!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
+	${advert("Are you an organisation? GET STARTED!", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
+    </div>
+
     </div>
     
     ## Right col
@@ -434,7 +478,7 @@
         )}
         <span class="separtor"></span>
     % endif
-    
+    <%doc>
     % if 'settings_group' in self.actions:
         <a href="${h.url('edit_group', id=self.id)}" title="${_('_group Settings').capitalize()}"><span class="icon16 i_group"></span>${_('_group Settings').capitalize()}</a>
         <span class="separtor"></span>
@@ -444,7 +488,7 @@
         <a href="${h.url('settings')}" title="${_('Settings')}"><span class="icon16 i_settings"></span>${_('Settings')}</a>
         <span class="separtor"></span>
     % endif
-    
+    </%doc>
     <%doc>
     % if 'delete' in self.actions and self.member['type'] == 'group':
         ${h.secure_link(
@@ -458,13 +502,6 @@
         <span class="separtor"></span>
     % endif
     </%doc>
-
-    ${popup.link(
-        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
-        title = _('Get _widget'),
-        text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Get _widget'),
-    )}
-    <span class="separtor"></span>
     
     % if self.member.get('location_current') or self.member.get('location_home'):
         ##${parent.georss_link()}
