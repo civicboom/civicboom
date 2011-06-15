@@ -2,8 +2,6 @@ from civicboom.lib.base import *
 from cbutils.misc import make_username
 from civicboom.model import User, Group
 
-import civicboom.lib.constants as constants
-
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
 #from civicboom.lib.web              import cookie_get
