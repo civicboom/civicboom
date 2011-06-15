@@ -30,6 +30,7 @@ from dateutil.parser import parse as parse_date
 
 # Other imports
 from sets import Set # may not be needed in Python 2.7+
+import re
 from cbutils.text import strip_html_tags
 
 # Logging setup
@@ -91,10 +92,20 @@ class ContentCommentSchema(ContentSchema):
 
 def _init_search_filters():
     def append_search_text(query, text):
-        return query.filter("""
-            to_tsvector('english', title || ' ' || content) @@
-            plainto_tsquery(:text)
-        """).params(text=text)
+        parts = []
+        for word in text.split():
+            word = re.sub("[^a-zA-Z0-9]", "", word)
+            if word:
+                parts.append(word)
+
+        if parts:
+            text = " | ".join(parts)
+            return query.filter("""
+                to_tsvector('english', title || ' ' || content) @@
+                to_tsquery(:text)
+            """).params(text=text)
+        else:
+            return query
     
     def append_search_location(query, location):
         (lon, lat, radius) = (None, None, 10)
@@ -471,7 +482,6 @@ class ContentsController(BaseController):
                     if ae.original_dict.get('code') == 403:
                         raise ae
                 
-            
 
         # comments are always owned by the writer; ignore settings
         # and parent preferences
@@ -664,6 +674,11 @@ class ContentsController(BaseController):
             for new_tag_name in tags_input - tags_current: # add new tags
                 content.tags.append(get_tag(new_tag_name))
         
+        # Extra fields
+        # AllanC - not used yet .. but could be in future
+        for extra_field in []:
+            if extra_field in kwargs: # AllanC - could these have validators at somepoint?
+                content.extra_fields[extra_field] = kwargs[extra_field]
         
         # -- Publishing --------------------------------------------------------
         if  submit_type=='publish'     and \
@@ -697,7 +712,6 @@ class ContentsController(BaseController):
                 user_log.info("published new Content #%d" % (content.id, ))
                 # Aggregate new content
                 content.aggregate_via_creator() # Agrigate content over creators known providers
-                twitter_global(content) # TODO? diseminate new or updated content?
             else:
                 # Send notifications about previously published content has been UPDATED
                 if   content.__type__ == "assignment":

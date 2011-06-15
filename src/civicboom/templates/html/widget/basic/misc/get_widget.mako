@@ -1,4 +1,4 @@
-<%inherit file="/html/widget/common/widget_content.mako"/>
+<%inherit file="../common/widget_content.mako"/>
 
 <%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
 

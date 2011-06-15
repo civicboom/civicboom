@@ -126,6 +126,9 @@
             </div>
           </div>
         </div>
+        
+        ${share.AddThisFragList(**self.attr.share_kwargs)}
+        
         ##<h2>${_("Content by")}</h2>
         ${content_details_foot()}
         ${content_details()}

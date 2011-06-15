@@ -1,4 +1,4 @@
-<%inherit file="/html/widget/common/widget_content.mako"/>
+<%inherit file="../common/widget_content.mako"/>
 
 <h2>${_("What is _site_name?")}</h2>
 <ul>

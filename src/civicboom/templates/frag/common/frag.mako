@@ -122,14 +122,14 @@
                         <a href='' class="icon16 i_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
                         <span class="icon"></span>
                     % endif
-                    
+                    <%doc>
                     ## Share
                     % if self.attr.share_kwargs:
                         ${share.share(**self.attr.share_kwargs)}
                         ## padding
                         <span class="icon"></span>
                     % endif
-                    
+                    </%doc>
                     ## Help
                     % if self.attr.help_frag:
                         <%

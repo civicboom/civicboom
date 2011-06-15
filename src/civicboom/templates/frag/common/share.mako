@@ -72,6 +72,7 @@
     </script>
     <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
 </%def>
+    <%doc>
 <%def name="AddThis(*args, **kwargs)">
     <%
     area_id = h.uniqueish_id("addthis_tb")
@@ -89,9 +90,61 @@
     </div>
     ## Initialise toolbox on fragment load (Greg)
     <script type="text/javascript">
-      addthis.toolbox('.${area_id}');
+      addthis.toolbox('.addthis_toolbox');
     </script>
     <!-- AddThis Button END -->
+    </%def>
+</%doc>
+<%def name="AddThisFragList(*args, **kwargs)">
+    <%
+        custom_share_line = kwargs.get('custom_share_line')
+        custom_share      = kwargs.get('custom_share')
+        if custom_share_line:   del kwargs['custom_share_line']
+        if custom_share:        del kwargs['custom_share']
+    %>
+    <%def name="sharebutton(type, **kwargs)">
+        <li><div class="thumbnail thumbnail_small"><a class="at addthis_button_${type} ${kwargs.get('extraclass','')}"
+            % for k,v in kwargs.iteritems():
+                addthis:${k}="${v.replace('\"','') if v else ""}"
+            % endfor
+        ></a></div></li>
+    </%def>
+	
+    <div class="frag_list">
+        <h2>${_('Social sharing')}</h2>
+        <div class="frag_list_contents">
+            <div class="content note addthis_toolbox" style="padding-bottom: 0px;">
+                % if custom_share:
+                    <div style="height: 24px">
+                        ${custom_share_line()}
+                    </div>
+                % endif
+                <ul class="member">
+                    % for name in ['email', 'facebook', 'twitter', 'linkedin']:
+                        ${sharebutton(name, **kwargs)}
+                    % endfor
+                    % if custom_share:
+                        ${custom_share() | n}
+                    % endif
+                </ul>
+                <style>
+                    .link_more_hide span {
+                        width:0; height:0;
+                    }
+                    .atclear {
+                        clear: none;
+                        display: none;
+                    }
+                </style>
+                <a class="at addthis_button_compact link_more link_more_hide">more</a>
+                <script>
+                    $(function(){
+                        addthis.toolbox('.addthis_toolbox');
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
 </%def>
 
 ##------------------------------------------------------------------------------
