@@ -354,7 +354,7 @@ def get_action_objects_for_url(action_url=None):
     # If performing an action we may want to display a custom message with the login
     if not action_url:
         action_url = current_url()
-    for action_identifyer, action_action, action_description in constants.actions_list:
+    for action_identifyer, action_action, action_description in constants.get_actions_list():
         if action_identifyer.search(action_url):
             args, kwargs = get_object_from_action_url( action_url )
             action_object          = {} # Set this in case we cant recover an action object
