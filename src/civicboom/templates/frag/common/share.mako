@@ -96,9 +96,10 @@
 
 <%def name="AddThisFragList(*args, **kwargs)">
     <%
-        custom_share = kwargs.get('custom_share')
-        if custom_share:
-            del kwargs['custom_share']
+        custom_share_line = kwargs.get('custom_share_line')
+        custom_share      = kwargs.get('custom_share')
+        if custom_share_line:   del kwargs['custom_share_line']
+        if custom_share:        del kwargs['custom_share']
     %>
     <%def name="sharebutton(type, **kwargs)">
         <li><div class="thumbnail thumbnail_small"><a class="at addthis_button_${type} ${kwargs.get('extraclass','')}"
@@ -109,18 +110,21 @@
     </%def>
 	
     <div class="frag_list">
-        <h2>${_('Social Sharing')}</h2>
+        <h2>${_('Social sharing')}</h2>
         <div class="frag_list_contents">
             <div class="content note addthis_toolbox" style="padding-bottom: 0px;">
                 % if custom_share:
                     <div style="height: 24px">
-                        ${custom_share()}
+                        ${custom_share_line()}
                     </div>
                 % endif
                 <ul class="member">
-                    % for name in ['email', 'facebook', 'twitter', 'linkedin', 'tumblr']:
+                    % for name in ['email', 'facebook', 'twitter', 'linkedin']:
                         ${sharebutton(name, **kwargs)}
                     % endfor
+                    % if custom_share:
+                        ${custom_share() | n}
+                    % endif
                 </ul>
                 <style>
                     .link_more_hide span {

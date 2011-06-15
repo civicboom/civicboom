@@ -14,6 +14,10 @@
 ## Variables
 ##------------------------------------------------------------------------------
 
+<%def name="custom_share()">
+    <a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }" class="icon16 i_share"><span>Janrain</span></a>
+</%def>
+
 <%def name="init_vars()">
     <%
         self.member    = d['member']
@@ -29,7 +33,7 @@
         
         self.current_user = c.logged_in_persona and self.member['username'] == c.logged_in_persona.username
 
-        def custom_share():
+        def custom_share_line():
             popup.link(
                 h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
                 title = _('Get _widget'),
@@ -37,10 +41,11 @@
             )
             
         self.attr.share_kwargs = {
-            'url'           : h.url('member', id=self.id, qualified=True) ,
-            'title'         : self.name ,
-            'image'         : self.member['avatar_url'] ,
-            'custom_share'  : custom_share
+            'url'               : h.url('member', id=self.id, qualified=True) ,
+            'title'             : self.name ,
+            'image'             : self.member['avatar_url'] ,
+            'custom_share_line' : custom_share_line,
+            'custom_share'      : custom_share
         }
         
         self.advert_list = [] # List of advert/info box to display (empty by default, populated below)
