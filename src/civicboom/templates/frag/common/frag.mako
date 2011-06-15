@@ -126,12 +126,14 @@
                 <span class="icon"></span>
             % endif
             
+            <%doc>
             ## Share
             % if self.attr.share_kwargs:
                 ${share.share(**self.attr.share_kwargs)}
                 ## padding
                 <span class="icon"></span>
             % endif
+            </%doc>
             
             ## Help
             % if self.attr.help_frag:
