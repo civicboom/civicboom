@@ -12,13 +12,14 @@
     ##----------------------------------------------------------------------
     ## Styles
     ##----------------------------------------------------------------------
-    % if config['development_mode']:
+    ##% if config['development_mode']:
     <link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-reset-fonts.css" />
-    <link rel="stylesheet" type="text/css" href="/styles/common/icons.css"                 />
-    <link rel="stylesheet" type="text/css" href="/styles/widget/layout.css"                />
-    % else:
-    <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/widget.css")}" />
-    % endif
+    <link rel="stylesheet" type="text/css" href="/styles/common/icons.css" />
+    <link rel="stylesheet" type="text/css" href="/styles/widget/layout_${c.widget['theme']}.css" />
+    ## AllanC - A temp rem until we can concatinate compiled .css files for each theme
+    ##% else:
+    ##<link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/widget.css")}" />
+    ##% endif
 
     ##----------------------------------------------------------------------
     ## Scripts
