@@ -30,6 +30,7 @@ from dateutil.parser import parse as parse_date
 
 # Other imports
 from sets import Set # may not be needed in Python 2.7+
+import re
 from cbutils.text import strip_html_tags
 
 # Logging setup
@@ -91,10 +92,20 @@ class ContentCommentSchema(ContentSchema):
 
 def _init_search_filters():
     def append_search_text(query, text):
-        return query.filter("""
-            to_tsvector('english', title || ' ' || content) @@
-            plainto_tsquery(:text)
-        """).params(text=text)
+        parts = []
+        for word in text.split():
+            word = re.sub("[^a-zA-Z0-9]", "", word)
+            if word:
+                parts.append(word)
+
+        if parts:
+            text = " | ".join(parts)
+            return query.filter("""
+                to_tsvector('english', title || ' ' || content) @@
+                to_tsquery(:text)
+            """).params(text=text)
+        else:
+            return query
     
     def append_search_location(query, location):
         (lon, lat, radius) = (None, None, 10)
