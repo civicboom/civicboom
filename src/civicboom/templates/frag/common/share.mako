@@ -302,7 +302,6 @@ def clean(s):
 		return s.replace("'", "\\'")
 	return ''
 share_usergen_default = clean(_(share_types[share_type]) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
-print share_usergen_default
     %>
 	$(function() {
 		var content   = ${json.dumps(cd) | n};
