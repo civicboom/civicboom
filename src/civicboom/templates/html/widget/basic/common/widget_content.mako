@@ -1,4 +1,4 @@
-<%inherit file="./widget_border.mako"/>
+<%inherit file="widget_border.mako"/>
 
 <%!
     from civicboom.lib.web import current_referer

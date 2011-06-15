@@ -12,14 +12,14 @@
     ##----------------------------------------------------------------------
     ## Styles
     ##----------------------------------------------------------------------
-    % if config['development_mode']:
+    ##% if config['development_mode']:
     <link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-reset-fonts.css" />
     <link rel="stylesheet" type="text/css" href="/styles/common/icons.css" />
-    <link rel="stylesheet" type="text/css" href="/styles/widget/layout.css" />
-    ##<link rel="stylesheet" type="text/css" href="/styles/widget/widget_size_wide.css" />
-    % else:
-    <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/widget.css")}" />
-    % endif
+    <link rel="stylesheet" type="text/css" href="/styles/widget/layout_${c.widget['theme']}.css" />
+    ## AllanC - A temp rem until we can concatinate compiled .css files for each theme
+    ##% else:
+    ##<link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/widget.css")}" />
+    ##% endif
 
     ##----------------------------------------------------------------------
     ## Scripts
@@ -31,14 +31,6 @@
     ## Google Analitics (async setup, see scripts_end for more)
     ##----------------------------------------------------------------------
     ${scripts_end.google_analytics_head()}
-
-    
-    <%doc>
-        ## debug
-    <meta http-Equiv="Cache-Control" Content="no-cache">
-    <meta http-Equiv="Pragma" Content="no-cache">
-    <meta http-Equiv="Expires" Content="0">
-    </%doc>
     
     <style type="text/css">
         ## AllanC - IE7 does not support CSS inheritence so they have to be specified manually
@@ -49,15 +41,12 @@
 </head>
 
 <%
-additonal_layout = ""
+additonal_layout_class = ""
 #if isinstance(c.widget_width, basestring) and int(c.widget_width) >= 280:
-#    additonal_layout = "wide"
+#    additonal_layout_class = "wide"
 %>
-<body id="CivicboomWidget" style="width:${c.widget['width']}px; height:${c.widget['height']}px;">
-    ##<div class="theme_${c.widget['theme']} ${additonal_layout}" style="width:${c.widget['width']}px;">
+<body id="CivicboomWidget" class="${additonal_layout_class}" style="width:${c.widget['width']}px; height:${c.widget['height']}px;">
     ${next.body()}
-    ##</div>
+    ${scripts_end.google_analytics_end()}
 </body>
-
-${scripts_end.google_analytics_end()}
 </html>

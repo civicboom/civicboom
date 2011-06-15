@@ -1,6 +1,6 @@
 <%inherit file="../common/widget_content.mako"/>
 
-<%namespace name="member_includes" file="/html/widget/common/member.mako"/>
+<%namespace name="member_includes" file="../common/member.mako"/>
 
 
 ##------------------------------------------------------------------------------

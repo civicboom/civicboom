@@ -1,6 +1,6 @@
 <%inherit file="../common/widget_border.mako"/>
 
-<%namespace name="member_includes" file="/html/widget/common/member.mako"/>
+<%namespace name="member_includes" file="../common/member.mako"/>
 
 % if d['list']['count'] == 0:
     ${_('No content')}
