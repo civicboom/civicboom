@@ -179,7 +179,7 @@ class TestController(TestCase):
             url(controller='register', action='email', format="json"),
             params={
                 'username': username,
-                'email'   : username+'@moose.com',
+                'email'   : 'test+'+username+'@civicboom.com',
             },
         )
         
