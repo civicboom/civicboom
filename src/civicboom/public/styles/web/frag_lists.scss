@@ -8,6 +8,8 @@
 	.frag_list {
 		font-size: 88%;
 
+		background: $frag-list-top; /* for non-css3 browsers */
+
 		/* border: 0.1em solid $frag-list-border; /* AllanC - removed border for experimenting */
 		border-radius        : 0.3em;
 		-moz-border-radius   : 0.3em;
@@ -16,9 +18,6 @@
 		margin-top: 1.5em;
 
 		color: $frag-list-title-txt;
-
-		background: $frag-list-top; /* for non-css3 browsers */
-
 
 		/* --------------------------
 		   Frag list Headings (for lists in content and member frags)

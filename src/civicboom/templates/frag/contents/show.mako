@@ -20,6 +20,10 @@
 ## Variables
 ##------------------------------------------------------------------------------
 
+<%def name="custom_share()">
+    <a href="#" onclick="${share.janrain_social_call_content(self.content, 'new_'+(self.content['type'] if not self.content['parent'] else 'response')) | n }; return false;" class="icon16 i_share"><span>Janrain</span></a> 
+</%def>
+
 <%def name="init_vars()">
     <%
         self.content   = d['content']
@@ -40,13 +44,14 @@
         # Agregation dict
         if self.content['private'] == False and self.content['type'] != 'draft':
             self.attr.share_kwargs = {
-                'url'      : h.url('content', id=self.id, qualified=True) ,
-                'title'    : self.content.get('title') ,
-                'summary'  : self.content.get('content_short') ,
-                'image'    : self.content.get('thumbnail_url') ,
-                'published': self.content.get('publish_date') ,
-                'updated'  : self.content.get('update_date') ,
-                'author'   : self.content.get('creator', dict()).get('name') ,
+                'url'           : h.url('content', id=self.id, qualified=True) ,
+                'title'         : self.content.get('title') ,
+                'summary'       : self.content.get('content_short') ,
+                'image'         : self.content.get('thumbnail_url') ,
+                'published'     : self.content.get('publish_date') ,
+                'updated'       : self.content.get('update_date') ,
+                'author'        : self.content.get('creator', dict()).get('name') ,
+                'custom_share'  : custom_share,
             }
         
         # Help Frag
@@ -77,26 +82,36 @@
 		${share.janrain_social_call_content(self.content, 'new_'+(self.content['type'] if not self.content['parent'] else 'response')) | n }
 	</script>
 	% endif
+    ## --- redesign --- ##
+    <div class="frag_top_row">
+	<div class="frag_col">
+	    <div class="content_box">
+		${content_title()}
+		${content_media()}
+		${content_content()}
+		${content_map()}
+		${content_action_buttons()}
+		## ${content_why_resond()}
+		## ${content_comments()}
+		## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
+		<%def name="flag_form()">
+		    ${flag.flag_form(self.id)}
+		</%def>
+		${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
+	    </div>
+	</div>
+    </div>
+	
     <div class="frag_left_col">
         <div class="frag_col">
-        ${content_title()}
-        ${content_media()}
-        ${content_content()}
-        ${content_map()}
-        ${content_action_buttons()}
-	${content_why_resond()}
-        ${content_comments()}
-        ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
-        <%def name="flag_form()">
-            ${flag.flag_form(self.id)}
-        </%def>
-        ${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
+
         </div>
     </div>
+    
     <div class="frag_right_col">
       <div class="frag_col">
         <div style="clear:left;" class="frag_list">
-          <h2><span class="icon16 i_${self.content['creator']['type']}"><span>${self.content['creator']['type']}</span><div style="display:inline-block;padding-left:19px; width: 100%">Created&nbsp;by</div></span></h2>
+          <h2>Set&nbsp;by</h2>
           <div class="frag_list_contents">
             <div class="content">
               <div>
@@ -287,7 +302,8 @@
 ##------------------------------------------------------------------------------
 <%def name="content_action_buttons()">
     <div style="padding-top: 20px;" class="acceptrequest">
-      <span class="separtor"></span>
+	<div class="tip">Make the news!</div>
+	<span class="separtor"></span>
       
       ## --- Publish -----------------------------------------------------------
       % if 'publish' in self.actions:
@@ -339,6 +355,7 @@
           )}
           <span class="separtor"></span>
       % endif
+      <div class="tip"><a href="">Why should you get involved?</a></div>
     </div>
 </%def>
 

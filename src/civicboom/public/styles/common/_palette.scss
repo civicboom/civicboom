@@ -3,10 +3,10 @@ $cb-darkblue: #3a4a97;
 
 /* -------------------------------------- */
 
-$button-top: $cb-lightblue;
-$button-bot: $cb-darkblue;
-$button-txt: white;
-$button-border: #333;
+$button-top: #eee; /*$cb-lightblue;*/
+$button-bot: #ddd; /*$cb-darkblue;*/
+$button-txt: #444; /*white;*/
+$button-border: #ccc; /*#333;*/
 
 $button-member-top: #eee;
 $button-member-bot: #ddd;
@@ -19,10 +19,10 @@ $titlebar-txt: white;
 
 $actionbar-back: $titlebar-top;
 
-$page-background: lighten($cb-lightblue, 20%);
+$page-background: lighten($cb-lightblue, 40%);
 
 $frag-border    : #4a73b8;
-$frag-background: lighten($cb-lightblue, 40%);
+$frag-background: lighten($cb-lightblue, 30%);
 
 $frag-action-bar-txt      : black;
 $frag-action-bar          : #EEE;

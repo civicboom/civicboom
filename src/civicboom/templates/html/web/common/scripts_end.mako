@@ -54,7 +54,7 @@
 				dialog.overlay.fadeOut('slow');
 				dialog.container.fadeOut('slow');
 				dialog.data.fadeOut('slow', function () {$.modal.close();});
-			},
+			}
 		});
 	</script>
 

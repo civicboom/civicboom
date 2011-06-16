@@ -1,159 +1,111 @@
 @import "../common/_palette.scss";
 
-#frag_containers .frag_container .frag_member {
-	/*-------------------------- Frag Member Cols---------------------------------*/
-	.frag_top_row {
-		padding: 0.5em 0.9em 0 0.9em;
-		color: #333;
-		
-		h1 {
-			margin-left: 0.5em;
-			margin-bottom: 0.5em;
-		}
+#frag_containers .frag_container {
+	.frag_member {
+		/*-------------------------- Frag Member Cols---------------------------------*/
+		.frag_top_row {
+			padding: 0.5em 0.9em 0 0.9em;
+			color: #333;
 			
-		.about_me {
-			/* --- Cross browser border rounding --- */
-			border-radius        : 0.5em;
-			-moz-border-radius   : 0.5em;
-			-webkit-border-radius: 0.5em;
-			background-color: #fff;
-			padding: 1em;
-			font-size: 88%;
-			
-			table {
-				width: 100%;
+			h1 {
+				margin-left: 0.5em;
+				margin-bottom: 0.5em;
 			}
-			
-			.avatar {
-				width: 90px;
 				
-				.thumbnail {
-					margin-right: 0.1em;
+			.about_me {
+				/* --- Cross browser border rounding --- */
+				border-radius        : 0.5em;
+				-moz-border-radius   : 0.5em;
+				-webkit-border-radius: 0.5em;
+				background-color: #fff;
+				padding: 1em;
+				font-size: 88%;
+				
+				table {
+					width: 100%;
 				}
-			}
-			
-			h2 {
-				font-size: 150%;
-				color: #666;
-			}
 				
-			.content {
-				color: #333;
-				
-				div {
-					margin-left: 0.5em;
-					padding-right: 1em;
-				}
-			}
-			
-			.actions {
-				width: 90px;
-				text-align: right;
-				
-				a {
-					text-decoration: none;
-				}
-			
-				.button {
-					font-size: 110%;
-					display: block;
-					margin-top: 0.5em;
+				.avatar {
+					width: 90px;
 					
-					border-color: $button-member-border;
-					background: $button-member-top; /* for non-css3 browsers */
-					filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-member-top}', endColorstr='#{$button-member-bot}'); /* for IE */
-					background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-member-top), color-stop(0.81, $button-member-bot)); /* for webkit browsers */
-					background: -moz-linear-gradient(top, $button-member-top, $button-member-bot 81%); /* for firefox 3.6+ */
-					color: $button-member-txt;
-					
-					-moz-box-shadow: 1px 1px 1px #666;
-					-webkit-box-shadow: 1px 1px 1px #666;
-					box-shadow: 1px 1px 1px #666;
+					.thumbnail {
+						margin-right: 0.1em;
+					}
 				}
 				
-				.button:hover {
-
-					background: lighten($button-member-top, 5%); /* for non-css3 browsers */
-					filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{lighten($button-member-top, 5%)}', endColorstr='#{lighten($button-member-bot, 5%)}'); /* for IE */
-					background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, lighten($button-member-top, 5%)), color-stop(0.81, lighten($button-member-bot, 5%))); /* for webkit browsers */
-					background: -moz-linear-gradient(top, lighten($button-member-top, 5%), lighten($button-member-bot, 5%) 81%); /* for firefox 3.6+ */
-					color: lighten($button-member-txt, 5%);
+				h2 {
+					font-size: 150%;
+					color: #666;
 				}
-			}
-		}
-	}
+					
+				.content {
+					color: #333;
+					
+					div {
+						margin-left: 0.5em;
+						padding-right: 1em;
+					}
+				}
+				
+				.actions {
+					width: 90px;
+					text-align: right;
+					
+					a {
+						text-decoration: none;
+					}
+				
+					.button {
+						font-size: 110%;
+						display: block;
+						margin-top: 0.5em;
+						
+						border-color: $button-member-border;
+						background: $button-member-top; /* for non-css3 browsers */
+						filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-member-top}', endColorstr='#{$button-member-bot}'); /* for IE */
+						background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-member-top), color-stop(0.81, $button-member-bot)); /* for webkit browsers */
+						background: -moz-linear-gradient(top, $button-member-top, $button-member-bot 81%); /* for firefox 3.6+ */
+						color: $button-member-txt;
+						
+						-moz-box-shadow: 1px 1px 1px #666;
+						-webkit-box-shadow: 1px 1px 1px #666;
+						box-shadow: 1px 1px 1px #666;
+					}
+					
+					.button:hover {
 	
-	.frag_left_col {
-		width: 33%;
-		float: left;
-	}
-	.frag_right_col {
-		width: 66%;
-		float: right;
-	}
-
-	/*---------------------------Frag Member Avatar-------------------------------*/
-	.avatar {
-		text-align: center;
-	}
-
-	/*---------------------------Frag Member User Details-------------------------*/
-	.user-details {
-		margin-top: 10px;
-		margin-left: 5px;
-
-		.detail-title {
-			font-weight: bold;
+						background: lighten($button-member-top, 5%); /* for non-css3 browsers */
+						filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{lighten($button-member-top, 5%)}', endColorstr='#{lighten($button-member-bot, 5%)}'); /* for IE */
+						background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, lighten($button-member-top, 5%)), color-stop(0.81, lighten($button-member-bot, 5%))); /* for webkit browsers */
+						background: -moz-linear-gradient(top, lighten($button-member-top, 5%), lighten($button-member-bot, 5%) 81%); /* for firefox 3.6+ */
+						color: lighten($button-member-txt, 5%);
+					}
+				}
+			}
 		}
-	}
-
-	/*---------------------------Frag Member Adverts------------------------------*/
-	.advert {
-		padding: 0;
-		margin-top: 0.5em;
-
-		a {
-			text-decoration: none;
-			color: #666;
+	
+		.frag_left_col {
+			width: 33%;
+			float: left;
+		}
+		.frag_right_col {
+			width: 66%;
+			float: right;
 		}
 
-		.box {
-			position: relative;
-			/* min-height: 4em; */
-			/* border: 1px solid black; */
-			padding: 5px;
-
-			color: #666;
-			font-size: 85%;
-			font-weight: bold;
-			text-align: right;
-
-			/* --- Cross browser border rounding --- */
-			border-radius        : 0.5em;
-			-moz-border-radius   : 0.5em;
-			-webkit-border-radius: 0.5em;
-			
-			background-color: #fff;
+		/*---------------------------Frag Member Avatar-------------------------------*/
+		.avatar {
+			text-align: center;
 		}
-
-		.content {
-			margin-left: 15px;
-		}
-
-		.icon {
-			position: relative;
-			z-index: 1;
-			left: 5px;
-			top: 8px;
-		}
-
-		.hide_advert_submit {
-			margin-top: 5px;
-
-			/* --- Cross browser border rounding --- */
-			border-radius        : 0.5em;
-			-moz-border-radius   : 0.5em;
-			-webkit-border-radius: 0.5em;
+	
+		/*---------------------------Frag Member User Details-------------------------*/
+		.user-details {
+			margin-top: 10px;
+			margin-left: 5px;
+	
+			.detail-title {
+				font-weight: bold;
+			}
 		}
 	}
 }
