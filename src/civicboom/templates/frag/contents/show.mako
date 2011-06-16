@@ -93,13 +93,21 @@
 		    ${flag.flag_form(self.id)}
 		</%def>
 		${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
+		${content_details_foot()}
+		${content_details()}
+		<span style="display: block; clear: both;"></span>
 	    </div>
 	</div>
     </div>
 	
     <div class="frag_left_col">
         <div class="frag_col">
-
+	    ${frag_lists.content_list(
+		d['responses'],
+		_("Responses"),
+		href=h.args_to_tuple('contents', response_to=self.id),
+		creator=True
+	    )}
         </div>
     </div>
     
@@ -130,19 +138,10 @@
         ${share.AddThisFragList(**self.attr.share_kwargs)}
         
         ##<h2>${_("Content by")}</h2>
-        ${content_details_foot()}
-        ${content_details()}
-        ${content_license()}
+        
         % if self.content['parent']:
             ${frag_lists.content_list(self.content['parent'], _("Parent content"), creator=True)}
         % endif
-        
-        ${frag_lists.content_list(
-            d['responses'],
-            _("Responses"),
-            href=h.args_to_tuple('contents', response_to=self.id),
-            creator=True
-        )}
         
         % if 'accepted_status' in d:
             ${frag_lists.member_list_thumbnails(
@@ -160,7 +159,7 @@
                 _("Withdrawn"),
             )}
         % endif
-        
+        ${content_license()}
         </div>
     </div>
 
@@ -173,6 +172,7 @@
 <%def name="content_title()">
     ##----Title----
     <h1>${self.content['title']}</h1>
+    <div style="margin: 0 0 1em 0.5em;">By: ${self.content['creator']['name']}</div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -181,7 +181,7 @@
 <%def name="content_details()">
     <% content = self.content %>
 
-    <div class="details">
+    <div class="details" style="float: right;">
         
         <%def name="detail(field_name)">
             % if content.get(field_name):
@@ -191,7 +191,6 @@
         <%def name="format_date_if(title, date_input, fuzzy=True)">
           % if date_input:
             <tr>
-              <td><span class="icon16 i_date" title="${title}"><span>&nbsp;</span></span></td>
               <td>${title}</td>
               % if fuzzy:
                 <td colspan="4">${h.time_ago(date_input)}</td>
@@ -212,10 +211,9 @@
         </style>
         <table class="content">
           <tr>
-            <td><span class="icon16 i_boom"><span>Boom</span></span></td>
             <td>Booms</td>
             <td>${content['boom_count'] if 'boom_count' in content else '0'}</td>
-            <td class="x"><span class="icon16 i_seen"><span>Views</span></span></td>
+	    <td><span class="separator"></span></td>
             <td>Views</td>
             <td>${content['views'] if 'views' in content else '0'}</td>
           </tr>
@@ -238,7 +236,7 @@
 ##------------------------------------------------------------------------------
 <%def name="content_details_foot()">
     <% content = self.content %>
-    <div class="details">
+    <div class="details" style="float: left;">
       <%def name="detail(field_name)">
           % if content.get(field_name):
           <p>${field_name}: ${content[field_name]}</p>
@@ -247,7 +245,6 @@
         <%def name="format_date_if(title, date_input, fuzzy=True, trclass=None)">
           % if date_input:
             <tr${' class=%s' % trclass if trclass else ''}>
-              <td><span class="icon16 i_date"><span>&nbsp;</span></span></td>
               <td>${title}</td>
               % if fuzzy:
                 <td>${_('%s ago') % h.time_ago(date_input)}</td>
@@ -276,10 +273,7 @@
         ${format_date_if('Due By'    , content.get('due_date'), False, 'bold'  )}
       </table>
     </div>
-
-
 </%def>
-
 
 ##------------------------------------------------------------------------------
 ## Content
@@ -297,60 +291,62 @@
 ##------------------------------------------------------------------------------
 <%def name="content_action_buttons()">
     <div style="padding-top: 20px;" class="acceptrequest">
-	<div class="tip">Make the news!</div>
-	<span class="separtor"></span>
+	<table>
+	    <tr>
+		<td class="tip"><div>Make the news!</div></td>
+		<td>
+		## --- Publish -----------------------------------------------------------
+		% if 'publish' in self.actions:
+		    ${h.secure_link(
+			h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
+			method = "PUT" ,
+			css_class = 'button',
+			value           = _('Publish') ,
+			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+			
+		    )}
+		% endif
       
-      ## --- Publish -----------------------------------------------------------
-      % if 'publish' in self.actions:
-          ${h.secure_link(
-              h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
-              method = "PUT" ,
-              css_class = 'button',
-              value           = _('Publish') ,
-              json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-              
-          )}
-          <span class="separtor"></span>
-      % endif
-
-      ## --- Respond -----------------------------------------------------------
-      % if 'respond' in self.actions:
-          ${h.secure_link(
-              h.args_to_tuple('new_content', parent_id=self.id) ,
-              css_class = 'button',
-              value           = _("_Respond now!") ,
-              json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
-          )}
-          ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
-          ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
-          <span class="separtor"></span>
-      % endif
+		## --- Respond -----------------------------------------------------------
+		% if 'respond' in self.actions:
+		    ${h.secure_link(
+			h.args_to_tuple('new_content', parent_id=self.id) ,
+			css_class = 'button',
+			value           = _("Share your story") ,
+			json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+		    )}
+		    ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
+		    ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
+		% endif
+		
       
-
-    ## --- Accept ------------------------------------------------------------
-      % if 'accept' in self.actions:
-          ${h.secure_link(
-              h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
-              css_class = '',##'button',
-              value           = _('_Respond later') ,
-              json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-          )}
-          ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
-          <span class="separtor"></span>
-      % endif
-      
-    
-      ## --- Withdraw ----------------------------------------------------------
-      % if 'withdraw' in self.actions:
-          ${h.secure_link(
-              h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
-              css_class = 'button',
-              value           = _('Withdraw') ,
-              json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-          )}
-          <span class="separtor"></span>
-      % endif
-      <div class="tip"><a href="">Why should you get involved?</a></div>
+	      ## --- Accept ------------------------------------------------------------
+		% if 'accept' in self.actions:
+		    ${h.secure_link(
+			h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
+			css_class = '',##'button',
+			value           = _('_Respond later') ,
+			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+		    )}
+		    ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
+		% endif
+		
+	      
+		## --- Withdraw ----------------------------------------------------------
+		% if 'withdraw' in self.actions:
+		    ${h.secure_link(
+			h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
+			css_class = '',##'button',
+			value           = _('Withdraw') ,
+			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+		    )}
+		% endif
+		</td>
+		<td class="tip"><div>
+		    ${get_involved_popup()}   
+		</div></td>
+	    </tr>
+	</table>
     </div>
 </%def>
 
@@ -361,7 +357,7 @@
 <%def name="content_license()">
     % if 'license' in self.content:
     <% license = self.content['license'] %>
-    <div class="padded" style="margin-top:14px">
+    <div class="padded license" style="margin-top:14px">
       <a href="${license['url']}" target="_blank" rel="license" title="${license['description']}">
         <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
       </a>
@@ -429,20 +425,6 @@
 </%def>
 
 ##------------------------------------------------------------------------------
-## Why Respond?
-##------------------------------------------------------------------------------
-<%def name="content_why_resond()">
-    <div class="why-respond">
-	<h2>${_("Why should you _respond?")}</h2>
-	<ul>
-	    <li>Get recognition!</li>
-	    <li>Get you videos & images published!</li>
-	    <li>Be the news!</li>
-	</ul>
-    </div>
-</%def>
-
-##------------------------------------------------------------------------------
 ## Comments
 ##------------------------------------------------------------------------------
 <%def name="content_comments()">
@@ -485,7 +467,7 @@
 	    <td colspan="3">
 		<span class="comments-option">
 		    % if c.logged_in_user:
-		    ${_("Need more info on this _content? ")}<span class="show-comments">Ask here...</span>
+		    ${_("Need more info on this request? ")}<span class="show-comments">Ask here...</span>
 		    % else:
 		    To comment on this content, please <a href="${url(controller='account', action='signin')}">sign up or log in!</a>
 		    % endif
@@ -519,9 +501,9 @@
                     <input type="hidden" name="title" value="Re: ${d['content']['title']}">
                     ##<input type="hidden" name="type" value="comment">
                     <textarea name="content" class="comment-${self.id}"></textarea><br />
-                    You have <span class="commentcount-${self.id}">${config['setting.content.max_comment_length']}</span> characters left.<br />
-                    Comments are for clarifying details, if you are responding to the request
-					you should use the 'Respond Now' button above.<br />
+                    <span class="commentcount-${self.id}" style="text-align: right; font-size: 120%;">${config['setting.content.max_comment_length']}</span><br />
+                    Ask <b>${content['creator']['name']}</b> for more information about this request. Note: your question and/or answers will be publically visible.
+		    If you want to share your story please use the "share your story" button above.<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Ask')}">
                     <script type="text/javascript">
@@ -705,8 +687,39 @@
     ##% endif
 
 </%def>
+	
+##------------------------------------------------------------------------------
+## Get involved popup
+##------------------------------------------------------------------------------
+<%def name="get_involved_popup()">
+    <a>Why should you get involved?</a>
+    ${popup.popup_static(title="Why get involved", content=get_involved, html_id="get_involved")}
+</%def>
 
-
+##------------------------------------------------------------------------------
+## Get involved
+##------------------------------------------------------------------------------
+<%def name="get_involved()">
+    <div class="get_involved">
+        <div class="title">
+            Why should you get involved?
+        </div>
+        <div class="message">
+            By sharing your story with <strong>${self.content['creator']['name']}</strong> as video, images or augio, you can:
+            <ol>
+                <li>Get published</li>
+                <li>Get recognition</li>
+                <li>Make the news!</li>
+            </ol>
+        </div>
+        <div class="tag-line">
+            Don't just read it. Feed it.
+        </div>
+        <div class="actions">
+            JUNK
+        </div>
+    </div>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Other Actions (to be refined)

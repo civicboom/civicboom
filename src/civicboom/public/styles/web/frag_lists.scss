@@ -54,8 +54,9 @@
 	   Frag list contents
 	   -------------------------- */
 	.frag_list_contents {
+		background-color: white;
+	
 		padding       : 0.5em;
-		padding-left: 1em;
 		padding-bottom: 0em; /* see rule below for each element adding there own bottom padding */
 
 		.thumbnail       {font-size: 45px;} /* AllanC - humm ... horrible hack to just notch up the size of the thumbnail in content lists to match the text. This not a long term solution */

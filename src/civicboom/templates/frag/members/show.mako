@@ -100,14 +100,13 @@
 	
     ## Top row (avatar/about me)
     <div class="frag_top_row">
-	<h1 class="fn n">${h.guess_hcard_name(self.member['name'])}</h1>
 	<div  class="about_me">
 	    <table>
 		<tr>
 		    <td class="avatar" rowspan="2">${member_avatar(img_class='photo')}</td>
 		    
 		    <td>
-			<h2>About me</h2>
+			<h2 class="fn n">${h.guess_hcard_name(self.member['name'])}</h2>
 		    </td>
 		    <td class="actions" rowspan="2">${actions_buttons()}</td>
 		</tr><tr>

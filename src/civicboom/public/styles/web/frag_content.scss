@@ -40,19 +40,36 @@
 					font-size: 125%;
 					display: inline;
 					
-					.tip {
-						position: relative;
-						font-size: 80%;
-						color: #666;
-						display: inline;
+					table {
+						text-align: center;
+						width: 100%;
+						
+						.button {
+							color: #000;
+							width: 250px;
+							padding: 10px;
+						}
+						
+						.tip {
+							font-size: 85%;
+							color: #666;
+							width: 75px;
+						}
 						
 						a {
 							color: inherit;
 						}
 					}
 				}
-
-
+				
+				.details {
+					color: #666;
+					display: inline;
+				
+					.separator {
+						padding-left: 1em;
+					}
+				}
 			}
 			
 			.frag_left_col {
@@ -63,6 +80,16 @@
 			.frag_right_col {
 				width: 33%;
 				float: right;
+				
+				.license {
+					text-align: right;
+				}
+			}
+			
+			.content_box {
+				.media {
+					text-align: center;
+				}
 			}
 			
 			.content_text {
