@@ -48,7 +48,7 @@
             'custom_share'      : custom_share
         }
         
-        self.advert_list = [] # List of advert/info box to display (empty by default, populated below)
+        
         
         # Customize layout based on logged in user or group
         if self.current_user:
@@ -70,13 +70,6 @@
                 'url'  : h.url('member', id=self.id, protocol='http', sub_domain='www') ,
             })
             self.attr.rss_url = h.url('member', id=self.id, format='rss', sub_domain='www')
-            
-            # Adverts/info boxs
-            # Logic for mini advert/info fragments from user prefs- used in the same way as the action_list - the logic is here, the display is in the template
-            if not c.logged_in_user.config['advert_profile_mobile']:
-                self.advert_list.append('advert_profile_mobile')
-            if not c.logged_in_user.config['advert_profile_group']:
-                self.advert_list.append('advert_profile_group')
         
         # Manipulate Action List
         # - remove actions in exclude_actions kwarg
@@ -253,10 +246,6 @@
 	% endif
 	
 	${member_map()}
-	
-	## --- adverts --- ##
-	${advert("Don't forget you can get involved on your Android mobile!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
-	${advert("Are you an organisation? GET STARTED!", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
     </div>
 
     </div>
@@ -515,42 +504,3 @@
         <a href='' onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}' class="icon16 i_close"><span>${_('Close')}</span></a>
     </div>
 </%doc>
-    
-##------------------------------------------------------------------------------
-## Advert
-##------------------------------------------------------------------------------
-<%def name="advert(content, href=None, icon=None, config_key=None)">
-    % if config_key and config_key in self.advert_list:
-    <div class="advert">
-	% if icon:
-	    <a class="icon16 i_${icon} icon"></a>
-	% endif
-	<div class="box">
-	    ## Display content with href if supplied
-	    % if href:
-		<a href="${href}"><span class="content">${content}</span></a>
-	    % else:
-		<span class="content">${content}</span>
-	    % endif
-	    ## Display advert disable link
-	    ${advert_disable_link(config_key)}
-	    ## <a class="icon16 i_close"></a>
-	</div>
-    </div>
-    % endif
-</%def>
-    
-##------------------------------------------------------------------------------
-## Advert disable link
-##------------------------------------------------------------------------------
-
-## Used for setting user settings to not display this chunk again
-<%def name="advert_disable_link(config_key)">
-    ${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
-        ##${_("Don't show me this again")}
-        ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
-        ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
-        <input type='hidden' name='${config_key}' value='True'/>
-        <input class='hide_advert_submit' type='submit' name='submit' value='hide'/>
-    </form>
-</%def>

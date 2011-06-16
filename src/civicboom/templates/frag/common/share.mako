@@ -218,6 +218,7 @@
     </script>
     <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
 </%def>
+    <%doc>
 <%def name="AddThis(*args, **kwargs)">
     <%
     area_id = h.uniqueish_id("addthis_tb")
@@ -238,8 +239,8 @@
       addthis.toolbox('.addthis_toolbox');
     </script>
     <!-- AddThis Button END -->
-</%def>
-
+    </%def>
+</%doc>
 <%def name="AddThisFragList(*args, **kwargs)">
     <%
         custom_share_line = kwargs.get('custom_share_line')
