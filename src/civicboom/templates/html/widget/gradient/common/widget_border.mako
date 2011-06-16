@@ -9,11 +9,11 @@
     /*color    : #${c.widget['color_font']};*/
     width : ${c.widget['width' ]}px;
     height: ${c.widget['height']}px;
- 
     
     border: 0.1em solid #c4cdd2;
     ##${c.widget['color_border']};
- 
+
+
 }
     
     
