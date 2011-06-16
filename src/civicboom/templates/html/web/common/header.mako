@@ -22,18 +22,23 @@
 	function refreshMessages() {
 		$.getJSON('/profile.json',function(data) {
 			if (typeof data['data'] != 'undefined') {
+			    var _total = 0;
 				for (var key in icons) {
 					if (typeof data.data[key] != 'undefined') {
 						//alert (icons[key].html());
 						icons[key].html('&nbsp;' + data.data[key] + '&nbsp;');
+						_total += (data.data[key] * 1);
 					}
 				}
+				if (typeof icons['_total'] != 'undefined')
+				    icons['_total'].html('&nbsp;' + _total + '&nbsp;')
 			}
 		});
 	}
 	$(function() {
 		icons = {num_unread_messages: $('#msg_c_m'),
-				 num_unread_notifications: $('#msg_c_n')
+				 num_unread_notifications: $('#msg_c_n'),
+				 _total: $('#msg_c_o')
 				}
 		setInterval(refreshMessages, 60000);
 	});
@@ -53,20 +58,13 @@
         % endif
       </%def>
       <div id="message_holder">
-        <a class   = "icon16 i_message"
-           href    = "${h.url('messages',list='to')}"
-           title   = "${_('Messages')}"
-           onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
-        ><span>${_('Messages')}</span>
+##        <a class   = "icon16 i_message"
+##           href    = "${h.url('messages',list='to')}"
+##           title   = "${_('Messages')}"
+##           onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
+##        ><span>${_('Messages')}</span>
         </a>
-        ${messageIcon(c.logged_in_persona.num_unread_messages, "msg_c_m")}<br />
-        <a class   = "icon16 i_notification"
-           href    = "${h.url('messages',list='notification')}"
-           title   = "${_('Notifications')}"
-           onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
-        ><span>${_('Notifications')}</span>
-        </a>
-        ${messageIcon(c.logged_in_persona.num_unread_notifications, "msg_c_n")}
+        ${messageIcon(c.logged_in_persona.num_unread_messages + c.logged_in_persona.num_unread_notifications, "msg_c_o")}
       </div>
     </div>
     <table>
@@ -101,14 +99,14 @@
                      onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
                   ><span>${_('Messages')}</span>
                   </a>
-                  ${messageIcon(member.num_unread_messages, "msg_%s_m" % (member.id))}<br />
+                  ${messageIcon(member.num_unread_messages, "msg_%s_m" % ('c' if current_persona else member.id))}<br />
                   <a class   = "icon16 i_notification"
                      href    = "${h.url('messages',list='notification')}"
                      title   = "${_('Notifications')}"
                      onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
                   ><span>${_('Notifications')}</span>
                   </a>
-                  ${messageIcon(member.num_unread_notifications, "msg_%s_n" % (member.id))}
+                  ${messageIcon(member.num_unread_notifications, "msg_%s_n" % ('c' if current_persona else member.id))}
                 </td>
                 <td class="hide_if_js">
                     % if not current_persona:

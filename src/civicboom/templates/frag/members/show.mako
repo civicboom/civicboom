@@ -15,7 +15,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="custom_share()">
-    <a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }" class="icon16 i_share"><span>Janrain</span></a>
+    <a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;" class="icon16 i_share"><span>Janrain</span></a>
 </%def>
 
 <%def name="init_vars()">

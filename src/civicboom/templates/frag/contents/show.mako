@@ -20,6 +20,10 @@
 ## Variables
 ##------------------------------------------------------------------------------
 
+<%def name="custom_share()">
+    <a href="#" onclick="${share.janrain_social_call_content(self.content, 'new_'+(self.content['type'] if not self.content['parent'] else 'response')) | n }; return false;" class="icon16 i_share"><span>Janrain</span></a> 
+</%def>
+
 <%def name="init_vars()">
     <%
         self.content   = d['content']
@@ -40,13 +44,14 @@
         # Agregation dict
         if self.content['private'] == False and self.content['type'] != 'draft':
             self.attr.share_kwargs = {
-                'url'      : h.url('content', id=self.id, qualified=True) ,
-                'title'    : self.content.get('title') ,
-                'summary'  : self.content.get('content_short') ,
-                'image'    : self.content.get('thumbnail_url') ,
-                'published': self.content.get('publish_date') ,
-                'updated'  : self.content.get('update_date') ,
-                'author'   : self.content.get('creator', dict()).get('name') ,
+                'url'           : h.url('content', id=self.id, qualified=True) ,
+                'title'         : self.content.get('title') ,
+                'summary'       : self.content.get('content_short') ,
+                'image'         : self.content.get('thumbnail_url') ,
+                'published'     : self.content.get('publish_date') ,
+                'updated'       : self.content.get('update_date') ,
+                'author'        : self.content.get('creator', dict()).get('name') ,
+                'custom_share'  : custom_share,
             }
         
         # Help Frag
