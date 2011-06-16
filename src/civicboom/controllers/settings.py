@@ -431,11 +431,24 @@ class SettingsController(BaseController):
         
         settings = kwargs
         
+        for delete in ['action', 'controller', 'sub_domain', 'format', '_authentication_token', 'submit', '_method']:
+            try:
+                del settings[delete]
+            except:
+                pass
+        
+        print data['settings']
+        
+        if len(settings) == 0:
+            raise action_error(code=400, message=_("No settings to update"))
         
         # Setup custom schema for this update
         # List validators required
         validators = {}
-        for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings_base[setting_name.split('-')[0]].get('who', user.__type__) == user.__type__ ]:
+        if len(set(settings.keys()) - set(settings_validators.keys())) > 0:
+            print set(settings.keys()) - set(settings_validators.keys())
+            raise action_error(code=400, message=_("You are trying to update a setting that does not exist!"))
+        for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings_base[setting_name.split('-')[0]].get('who', user.__type__) == user.__type__]:
             log.debug("adding validator: %s" % validate_fieldname)
             validators[validate_fieldname] = settings_validators[validate_fieldname]
         # Build a dynamic validation schema based on these required fields and validate the form
