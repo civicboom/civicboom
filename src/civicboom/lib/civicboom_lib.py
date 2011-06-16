@@ -3,7 +3,7 @@ Set of helpers specific to the Civicboom project
   (these are not part of misc because misc continas more genereal functions that could be used in a range of projects)
 """
 
-from civicboom.lib.base import url, c, config, _, current_url
+from civicboom.lib.base import url, _, current_url
 import re
 
 import logging

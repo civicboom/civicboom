@@ -3,11 +3,10 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom, UserVisibleContent
-from civicboom.lib.database.get_cached import update_content, get_licenses, get_license, get_tag, get_assigned_to, get_content as _get_content
+from civicboom.lib.database.get_cached import update_content, get_license, get_tag, get_assigned_to, get_content as _get_content
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
-from civicboom.lib.aggregation   import twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.database.actions             import respond_assignment
@@ -20,7 +19,6 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 # Search imports
 from civicboom.model.filters import *
-from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null, func, Unicode
 from sqlalchemy.orm       import join, joinedload, defer

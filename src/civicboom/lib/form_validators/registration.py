@@ -1,6 +1,6 @@
 # Formencode
 import formencode
-from formencode import validators, compound
+from formencode import validators
 
 from base import DefaultSchema, IsoFormatDateConverter
 
@@ -18,7 +18,6 @@ from cbutils.misc           import calculate_age, make_username
 #import recaptcha.client.captcha as librecaptcha
 from civicboom.lib.services.reCAPTCHA import reCAPTCHA_verify
 
-import datetime
 import re
 
 import logging
@@ -86,6 +85,7 @@ class UniqueEmailValidator(validators.Email):
 #
 #    def _to_python(self, value, state):
 #         try:
+#             import datetime
 #             date = datetime.datetime.strptime(value, '%d/%m/%Y')
 #         except ValueError:
 #              raise formencode.Invalid(_("Please enter your date of birth with the format DD/MM/YYYY"), value, state)

@@ -386,7 +386,7 @@ class BaseController(WSGIController):
             
         # Set Env - In the event of a server error these will be visable
         for field in login_session_fields:
-            request.environ[field] = str(getattr(c,field))
+            request.environ[field] = str(getattr(c, field))
             #print request.environ[field]
         
         if c.logged_in_user:
@@ -409,7 +409,7 @@ class BaseController(WSGIController):
         
         # User pending regisration? --------------------------------------------
         # redirect to complete registration process
-        if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url('current')):
+        if c.logged_in_user and c.logged_in_user.status == 'pending' and deny_pending_user(url('current')):
             set_flash_message(_('Please complete the registration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 

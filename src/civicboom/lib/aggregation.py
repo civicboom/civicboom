@@ -5,7 +5,7 @@ from civicboom.lib.services.janrain        import janrain
 from civicboom.lib.helpers                 import truncate
 from civicboom.model.meta import Session
 from cbutils.tiny_url import tiny_url
-from cbutils.text     import clean_html_markup, strip_html_tags, safe_python_strings
+from cbutils.text     import strip_html_tags, safe_python_strings
 
 import json
 
@@ -28,7 +28,7 @@ def aggregation_dict(content, safe_strings=True):
     content_preview = {}
     
     content_url          = url('content', id=content['id'], sub_domain='www')
-    content_creator_name = content.get('creator',{}).get('name', '')
+    content_creator_name = content.get('creator', {}).get('name', '')
 
     def action(content):
         if content.get('type') == "assignment":
@@ -104,7 +104,7 @@ def aggregate_via_user(content, user):
         
     if config['online'] and config['feature.aggregate.janrain']:
         # AllanC: Q Does this need to be done for each login method? or does janrain handle this?
-        for login in [login for login in user.login_details if login.type!='password']:
+        for login in [login for login in user.login_details if login.type != 'password']:
             janrain('activity', identifier=login.token, activity=content_json, location=location)
     else:
         log.info('janrain aggregation disabled: \n%s' % content_json)

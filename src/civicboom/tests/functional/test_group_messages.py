@@ -1,7 +1,5 @@
 from civicboom.tests import *
 
-import warnings
-
 
 class TestGroupsController(TestController):
 

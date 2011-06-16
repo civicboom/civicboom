@@ -3,7 +3,6 @@
 import optparse
 import os
 
-import tempfile
 import zipfile
 import fnmatch
 import gzip

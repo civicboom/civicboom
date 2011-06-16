@@ -9,7 +9,7 @@ from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
 from sqlalchemy import Enum, Integer, DateTime, Boolean
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
-from sqlalchemy.orm import relationship, backref, dynamic_loader
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import DDL
 
 import urllib
@@ -62,7 +62,7 @@ def has_role_required(required, current):
     return _enum_level_comparison(required, current, group_member_roles_level)
 
 
-def lowest_role(a,b):
+def lowest_role(a, b):
     """
     >>> lowest_role('admin'  ,'admin'   )
     'admin'
@@ -349,8 +349,8 @@ class Member(Base):
 
     def hash(self):
         h = hashlib.md5()
-        for field in ("id","username","name","join_date","status","avatar","utc_offset"): #TODO: includes relationship fields in list?
-            h.update(str(getattr(self,field)))
+        for field in ("id", "username", "name", "join_date", "status", "avatar", "utc_offset"): #TODO: includes relationship fields in list?
+            h.update(str(getattr(self, field)))
         return h.hexdigest()
 
     def action_list_for(self, member, **kwargs):
@@ -597,7 +597,7 @@ class User(Member):
     def hash(self):
         h = hashlib.md5(Member.hash(self))
         for field in ("email",):
-            h.update(str(getattr(self,field)))
+            h.update(str(getattr(self, field)))
         for login in self.login_details:
             h.update(login.token)
         return h.hexdigest()
@@ -697,13 +697,13 @@ class Group(Member):
             # AllanC - because we now swich persona to the group, If we provide a deep check of user membership here, but don't on the operations, this provides a problem
             #          for now - we check to see if member == self .. 
             #if self.is_admin(member, membership) or has_role_required('admin',role):
-            if (member == self and not role) or (member == self and has_role_required('admin',role)):
+            if (member == self and not role) or (member == self and has_role_required('admin', role)):
                 action_list.append('delete')
                 action_list.append('remove') #AllanC - could be renamed? this means remove member?
                 action_list.append('set_role')
                 action_list.append('invite_members')
                 action_list.append('settings_group')
-                if self.num_admins>1:
+                if self.num_admins > 1:
                     action_list.append('remove_self')
                     action_list.append('set_role_self')
             if membership:

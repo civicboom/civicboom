@@ -173,8 +173,8 @@ class Content(Base):
 
     def clone(self, content):
         if content and content.id:
-            for field in ["title","content","creator","parent_id","location","creation_date","private","license_id"]:
-                setattr(self,field,getattr(content,field))
+            for field in ["title", "content", "creator", "parent_id", "location", "creation_date", "private", "license_id"]:
+                setattr(self, field, getattr(content, field))
 
     def hash(self):
         h = hashlib.md5()
@@ -185,8 +185,8 @@ class Content(Base):
         #          solutions on a postcard?
         # is there a way in SQLAlchemy to force and object to resolve ID's without a commit?
         # need to add hash to sub objects? like Media etc
-        for field in ("id","title","content","creator","parent","update_date","status","private","license","attachments"): # AllanC: unfinished field list? include relations?
-            h.update(str(getattr(self,field)))
+        for field in ("id", "title", "content", "creator", "parent", "update_date", "status", "private", "license", "attachments"): # AllanC: unfinished field list? include relations?
+            h.update(str(getattr(self, field)))
         return h.hexdigest()
 
     def action_list_for(self, member, **kwargs):
@@ -195,9 +195,9 @@ class Content(Base):
             action_list.append('edit')
         if self.viewable_by(member):
             action_list.append('view')
-        if self.private==False and self.creator != member:
+        if self.private == False and self.creator != member:
             action_list.append('flag')
-        if self.private==False:
+        if self.private == False:
             action_list.append('aggregate')
         return action_list
 
@@ -295,7 +295,7 @@ class Content(Base):
                 return thumbnail_url
 
         thumbnail_type = self.__type__
-        if thumbnail_type=='article' and self.approval != None:
+        if thumbnail_type == 'article' and self.approval != None:
             thumbnail_type = 'response'
 
         from civicboom.lib.helpers import wh_url
@@ -554,12 +554,12 @@ class AssignmentContent(UserVisibleContent):
     
     def hash(self):
         h = hashlib.md5(UserVisibleContent.hash(self))
-        for field in ("event_date","due_date","closed"): #TODO: includes assigned_to in list?
-            h.update(str(getattr(self,field)))
+        for field in ("event_date", "due_date", "closed"): #TODO: includes assigned_to in list?
+            h.update(str(getattr(self, field)))
         return h.hexdigest()
 
     def acceptable_by(self, member):
-        if self.creator==member:
+        if self.creator == member:
             return False
         if self.closed:
             return False #TODO - finish - "closed and not in assinged_to list"

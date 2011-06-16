@@ -3,7 +3,7 @@ from civicboom.model import User, Group, Media, Content
 from civicboom.lib.database.get_cached import get_member as _get_member
 
 from civicboom.lib.communication.email_lib import send_email
-from urllib import quote_plus, unquote_plus
+from urllib import unquote_plus
 import os
 
 from civicboom.controllers.contents import ContentsController

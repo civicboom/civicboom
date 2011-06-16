@@ -10,13 +10,12 @@ Only the form fields that are sent are validated and saved
 """
 
 from civicboom.lib.base import *
-from civicboom.model import User, Group
+from civicboom.model import User
 
 from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
 
 import cbutils.warehouse as wh
 
-import hashlib
 import copy
 import tempfile
 import Image

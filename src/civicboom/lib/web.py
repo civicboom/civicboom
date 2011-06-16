@@ -1,19 +1,15 @@
-from pylons import url as url_pylons, session, request, response, config, tmpl_context as c, app_globals
+from pylons import url as url_pylons, session, request, response, config, tmpl_context as c
 from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
-from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
+from pylons.decorators.secure import authenticated_form, get_pylons, secure_form
 
 from cbutils.cbxml import dictToXMLString
 
-
-from webhelpers.html import literal
-import formencode
 import os
 import time
 import json
 import re
 from decorator import decorator
-from pprint import pformat
 import logging
 import urllib
 
@@ -543,7 +539,7 @@ def auto_format_output(target, *args, **kwargs):
         else:
             result = ae.original_dict
             user_log.debug('%s: %s' % (result.get('code',''), result.get('message'))) # Log big user error as small server error
-            if c.format=="html" or c.format=="redirect":
+            if c.format == "html" or c.format == "redirect":
                 if result.get('code') == 402:
                     return redirect(url(controller='misc', action='about', id='upgrade_plans'))
                 if c.html_action_fallback_url:
@@ -553,7 +549,7 @@ def auto_format_output(target, *args, **kwargs):
     
     # After
     # Is result a dict with data?
-    if auto_format_output_flag and isinstance(result,dict): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
+    if auto_format_output_flag and isinstance(result, dict): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
         # set the HTTP status code
         if 'code' in result:
             response.status = int(result['code'])
@@ -642,7 +638,6 @@ def cacheable(time=60*60*24*365, anon_only=True):
             response.headers["Vary"] = "cookie"
             if "Pragma" in response.headers:
                 del response.headers["Pragma"]
-            #log.info(pprint.pformat(response.headers))
         return func(*args, **kwargs)
     return decorator(_cacheable)
 
@@ -723,7 +718,5 @@ def web_params_to_kwargs(_target, *args, **kwargs):
         if varname in new_kwargs:
             del new_kwargs[varname]
 
-    #user_log.info("calling "+target.func_name+", given param names, defaults, kwargs, web params are "+pformat(arg_names)+pformat(args)+pformat(kwargs)+pformat(params))
-    #user_log.info("calling "+target.func_name+", now have param values and kwargs "+pformat(new_args)+pformat(new_kwargs))
     c.web_params_to_kwargs = (new_args, new_kwargs)
     return _target(*new_args, **new_kwargs) # Execute the wrapped function

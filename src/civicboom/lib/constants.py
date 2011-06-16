@@ -22,4 +22,4 @@ def get_list_titles(list_name):
     for (list, icon, description) in contents_list_titles:
         if list == list_name:
             return (icon, description)
-    return (list_name,list_name)
+    return (list_name, list_name)

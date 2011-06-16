@@ -1,7 +1,6 @@
 import logging
 log = logging.getLogger(__name__)
 
-from civicboom.model.meta              import Session
 from civicboom.lib.database.get_cached import get_content
 
 from cbutils.text import profanity_check as _profanity_check

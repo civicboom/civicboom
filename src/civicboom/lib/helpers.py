@@ -82,7 +82,7 @@ def get_captcha(lang='en', theme='red'):
     """
     Generate reCAPTCHA html
     """
-    return literal(reCAPTCHA_html(lang,theme))
+    return literal(reCAPTCHA_html(lang, theme))
     # Old use of pythonrecaptcha
     # (currently the python-recaptcha API does not support the lang or theme option, but these are fields in the html, maybe we need a modifyed version, see the django example for more info)
     # http://k0001.wordpress.com/2007/11/15/using-recaptcha-with-python-and-django/
@@ -321,7 +321,7 @@ def url_pair(*args, **kwargs):
 
 
 ## AllanC - TODO - need to specify frag size as an optional arg
-def frag_link(value, title='', class_='', href_tuple=([],{})): #*args, **kwargs
+def frag_link(value, title='', class_='', href_tuple=([], {})): #*args, **kwargs
     href, href_frag = url_pair(gen_format='frag', *href_tuple[0], **href_tuple[1]) # generate standard and frag URL's
     return HTML.a(
         value ,
@@ -566,7 +566,7 @@ def get_object_from_action_url(action_url=None):
         m = re.match(re_url, action_url)
         if m:
             return ( [object_type], dict(id=m.group(1)) )
-    return (None,None)
+    return (None, None)
 
 #-------------------------------------------------------------------------------
 # Notification "Links" to "Frag Links"

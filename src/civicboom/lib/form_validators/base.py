@@ -4,7 +4,7 @@ Base Formencode Validators
 
 # Formencode Imports
 import formencode
-from formencode import validators, compound, Invalid
+from formencode import validators
 
 from pylons.i18n.translation import _
 
@@ -16,9 +16,7 @@ from civicboom.lib.authentication import encode_plain_text_password, get_user_an
 from cbutils.text import clean_html_markup, strip_html_tags
 
 # Misc Imports
-import datetime
 from dateutil.parser import parse as parse_date
-import hashlib
 import re
 
 

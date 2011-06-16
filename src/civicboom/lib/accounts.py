@@ -12,12 +12,12 @@ log      = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 # Users in pending status are forced to complete the registration process.
 #   some urls have to be made avalable to pending users (such as signout, etc)
-pending_user_allowed_list = ['register/new_user','account/','widget/', 'misc/', '/accept']
+pending_user_allowed_list = ['register/new_user', 'account/', 'widget/', 'misc/', '/accept']
 
 
 def deny_pending_user(url_to_check):
     for url_safe in pending_user_allowed_list:
-        if url_to_check.find(url_safe)>=0:
+        if url_to_check.find(url_safe) >= 0:
             return False
     return True
 
@@ -38,7 +38,7 @@ def send_verifiy_email(user, controller='account', action='verify_email', messag
 #    Session.refresh(user)
     validation_link  = validation_url(user, controller, action)
     message          = _('Please %s by clicking on, or copying the following link into your browser: %s') % (message, validation_link)
-    if action=='verify_email':
+    if action == 'verify_email':
         send_email(user.email_unverified, subject=subject, content_text=message)
     else:
         user.send_email(subject=subject, content_text=message)
@@ -112,13 +112,13 @@ def set_password(user, new_token, delay_commit=False):
     # search for existing record and remove it
     #
     try:
-        for existing_login in [login for login in user.login_details if login.type=='password']:
+        for existing_login in [login for login in user.login_details if login.type == 'password']:
             log.debug("removing password for %s" % user.username)
             #if existing_login.token == old_token: raise Exception('old password token does not match - aborting password change')
             Session.delete(existing_login)
             log.debug("removed ok")
     #try: Session.execute(UserLogin.__table__.delete().where(and_(UserLogin.__table__.c.member_id == user.id, UserLogin.__table__.c.token == token)))
-    except:
+    except Exception:
         pass
     # Set new password
     u_login = UserLogin()
@@ -137,7 +137,7 @@ def has_account_without_password(user):
     if user:
         try:
             password_login = Session.query(UserLogin).filter(UserLogin.user==user).filter(UserLogin.type  == 'password').one()
-        except:
+        except Exception:
             pass
         if not password_login:
             return True

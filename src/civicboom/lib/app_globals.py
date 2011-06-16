@@ -3,14 +3,9 @@
 from beaker.cache import CacheManager
 from beaker.util import parse_cache_config_options
 
-from pylons import config
-from pylons.i18n.translation  import _
-
-
 from paste.deploy.converters import asbool
 
 import redis
-
 import os
 
 

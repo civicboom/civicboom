@@ -12,15 +12,7 @@ from pylons import config
 from pylons.i18n          import lazy_ugettext as _
 from webhelpers.html      import HTML
 
-from civicboom.model                   import Message
-from civicboom.model.meta              import Session
-from civicboom.lib.database.get_cached import get_member as _get_member, update_member_messages
-from civicboom.lib.communication.email_lib import render_email
-
 import cbutils.worker as worker
-
-import re
-import os
 
 import logging
 log = logging.getLogger(__name__)
