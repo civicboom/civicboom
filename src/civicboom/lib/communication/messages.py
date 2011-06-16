@@ -150,6 +150,8 @@ generators = [
 # Turn the table into classes
 #
 for _name, _default_route, _subject, _content in generators:
+    # a blank line because pep8 says so
+
     class gen(MessageData):
         name          = _name
         default_route = _default_route

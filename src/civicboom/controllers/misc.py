@@ -136,6 +136,7 @@ Disallow: /*.frag$
             return action_ok() # Render the feedback form by autolocating the template
         else:
             user_log.info("Sending feedback")
+
             @authenticate_form
             def submit_feedback(**kwargs):
                 if c.logged_in_user:

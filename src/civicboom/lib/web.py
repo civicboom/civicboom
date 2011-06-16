@@ -283,6 +283,7 @@ class action_error(Exception):
         self.original_dict.update(kwargs)
         #if template:
         #    self.original_dict["template"] = template
+
     def __str__( self ):
         return str(self.original_dict)
 

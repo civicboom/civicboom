@@ -47,6 +47,7 @@ def profanity_check(content):  # pragma: no cover - online services aren't activ
         #'UseNumberFilter': 'True'  ,
     })
     request = urllib2.Request(filter_operation_address, data)
+
     def do_request(request):
         try:
             response = urllib2.urlopen(request, timeout=10)

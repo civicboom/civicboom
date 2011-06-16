@@ -588,8 +588,10 @@ class AssignmentContent(UserVisibleContent):
         """
         from civicboom.lib.database.actions import accept_assignment
         from civicboom.model.meta import Session
+
         def invite_member(member):
             return accept_assignment(self, member, status="pending", delay_commit=True)
+
         if isinstance(members, list):
             for member in members:
                 invite_member(member)

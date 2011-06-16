@@ -48,6 +48,7 @@ def gen_cache_key(**kargs):
         if c.logged_in_persona:
             return c.logged_in_persona.username
         return ""
+
     def getsafe_flash_message():
         #if 'flash_message' in session: return session['flash_message']
         return ""

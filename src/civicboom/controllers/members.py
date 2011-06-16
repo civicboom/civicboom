@@ -150,6 +150,7 @@ class MembersController(BaseController):
                     results = results.filter(GroupMembership.group_id==normalize_member(group))
                 else:
                     results = None
+
                 # to_dict transform
                 def member_roles_to_dict_transform(results, **kwargs):
                     return [update_dict(member_role.member.to_dict(**kwargs),{'role':member_role.role, 'status':member_role.status}) for member_role in results]
@@ -168,6 +169,7 @@ class MembersController(BaseController):
                 else:
                     results = results.filter(GroupMembership.status  == 'active')
                     results = results.filter(Group.member_visibility == 'public')
+
                 # to_dict transform
                 def group_roles_to_dict_transform(results, **kwargs):
                     return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in results]
@@ -181,10 +183,13 @@ class MembersController(BaseController):
             if 'followed_by' in kwargs:
                 results.options(joinedload(Follow.member))
                 results = results.filter(Follow.follower==member)
+
                 def me_followed_by_to_dict_transform(results, **kwargs):
                     return [update_dict(follow.member.to_dict(**kwargs), {'follow_type':follow.type}) for follow in results]
+
                 def followed_by_to_dict_transform(results, **kwargs):
                     return [follow.member.to_dict(**kwargs) for follow in results]
+
                 if member == c.logged_in_persona:
                     list_to_dict_transform = me_followed_by_to_dict_transform
                 else:
@@ -193,10 +198,13 @@ class MembersController(BaseController):
             if 'follower_of' in kwargs:
                 results.options(joinedload(Follow.follower))
                 results = results.filter(Follow.member==member)
+
                 def me_follower_of_to_dict_transform(results, **kwargs):
                     return [update_dict(follow.follower.to_dict(**kwargs), {'follow_type':follow.type}) for follow in results]
+
                 def follower_of_to_dict_transform(results, **kwargs):
                     return [follow.follower.to_dict(**kwargs) for follow in results]
+
                 if member == c.logged_in_persona:
                     list_to_dict_transform = me_follower_of_to_dict_transform
                 else:

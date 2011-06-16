@@ -401,14 +401,15 @@ class TestController(TestCase):
 
     def getNumNotificationsInDB(self):
         return Session.query(Message).filter(Message.source_id==null()).count()
+
     def getNotificationsFromDB(self, limit=10):
         return Session.query(Message).filter(Message.source_id==null()).order_by(Message.id.desc()).limit(limit).all()
 
     def getNumMessagesInDB(self):
         return Session.query(Message).filter(not_(Message.source_id==null())).filter(not_(Message.target_id==null())).count()
+
     def getMessagesFromDB(self, limit=10):
         return Session.query(Message).filter(not_(Message.source_id==null())).filter(not_(Message.target_id==null())).order_by(Message.id.desc()).limit(limit).all()
-
 
     def getNumNotifications(self, username=None, password=None):
         if username:

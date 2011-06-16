@@ -38,7 +38,8 @@ class UniqueUsernameValidator(validators.FancyValidator):
         'too_long'      : _('Your username must be shorter than %(max)i characters'),
         'username_taken': _('The username %(name)s is no longer available, please try a different one'),
         'illegal_chars' : _('Usernames may only contain alphanumeric characters or underscores'),
-        }
+    }
+
     def _to_python(self, value, state):
         value = make_username(unicode(value.strip()))
         if not re.search("^[\w-]*$", value):
@@ -58,12 +59,14 @@ class UniqueUsernameValidator(validators.FancyValidator):
 
 class UniqueEmailValidator(validators.Email):
     not_empty = True
+
     def __init__(self, *args, **kwargs):
         from pylons import config
         kwargs['resolve_domain'] = False
         if config['online']:
             kwargs['resolve_domain'] = True
         validators.Email.__init__(self, *args, **kwargs)
+
     def _to_python(self, value, state):
         value = unicode(value)
         from pylons import tmpl_context as c
@@ -98,6 +101,7 @@ class MinimumAgeValidator(IsoFormatDateConverter):
         'empty'        : _('Please enter a date of birth') ,
         'under_min_age': _("Sorry, you have to be over %d to use this site") % age_min,
     }
+
     def _to_python(self, value, state):
         date = super(MinimumAgeValidator, self)._to_python(value, state)
         if calculate_age(date) < self.age_min:
