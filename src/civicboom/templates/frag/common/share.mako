@@ -2,36 +2,182 @@
 ## 2 alternate companys are implemnted here should we need to swich.
 
 <%!
-	import json
-	import time
-	import base64
-	import hmac
-	import hashlib
+    import json
+    import time
+    import base64
+    import hmac
+    import hashlib
 	
-	def __(s):
-		return s
+    def __(s):
+        return s
+		
+    share_data = {
+        'user' : {
+	       'new': {
+	           'type': {
+                    'assignment': "I just created the request %(title)s on _site_name. Respond now!",
+                    'response'  : "I just responded to a request by %(owner)s on _site_name. Get involved & add your voice too!",
+                    'group'     : "I just created the %(name)s Hub on _site_name. Get involved and follow it now!",
+                    'user'      : "I just signed up to _site_name to get my news published, you can too!",
+                    'article'   : "I just created the content %(title)s on _site_name, check it out here!",
+                },
+                'tag': {
+                    'new_assignment': "Share your _assignment with your friends and followers:",
+                    'new_response'  : "Share your response with your friends and followers:",
+                    'new_group'     : "Share your _group with your friends and followers:",
+                    'new_user'      : "Share your news with your friends and followers:",
+                    'new_article'   : "Share your _article with your friends and followers:",
+                },
+                'desc': {
+                    'new_assignment': 'New _assignment on _site_name',
+                    'new_response'  : 'New _article on _site_name',
+                    'new_group'     : 'New _hub on _site_name',
+                    'new_user'      : "I'm on _site_name",
+                    'new_article'   : 'New _article on _site_name',
+                },
+            },
+            'existing': {
+               'type': {
+                    'assignment': "Take a look at my request %(title)s on _site_name. Respond now!",
+                    'response'  : "Take a look at my response to a request by %(owner)s on _site_name. Get involved & add your voice too!",
+                    'group'     : "Take a look at my %(name)s Hub on _site_name. Get involved and follow it now!",
+                    'user'      : "Take a look at my profile on _site_name, join to get your news published!",
+                    'article'   : "Take a look at my content %(title)s on _site_name!",
+                },
+                'tag': {
+                    'new_assignment': "Share your _assignment with your friends and followers:",
+                    'new_response'  : "Share your response with your friends and followers:",
+                    'new_group'     : "Share your _group with your friends and followers:",
+                    'new_user'      : "Share your profile with your friends and followers:",
+                    'new_article'   : "Share your _article with your friends and followers:",
+                },
+                'desc': {
+                    'new_assignment': 'My _assignment on _site_name',
+                    'new_response'  : 'My _article on _site_name',
+                    'new_group'     : 'My _hub on _site_name',
+                    'new_user'      : "I'm on _site_name",
+                    'new_article'   : 'My _article on _site_name',
+                },
+            },
+            'other': {
+               'type': {
+                    'assignment': "I just found the request %(title)s on _site_name. Take a look and respond now!",
+                    'response'  : "I just found a response to a request by %(owner)s on _site_name. Get involved & add your voice too!",
+                    'group'     : "I just found the %(name)s Hub on _site_name. Get involved and follow it now!",
+                    'user'      : "I just found %(title) on _site_name to getting their news published, you can too!",
+                    'article'   : "I just found the content %(title)s on _site_name, check it out here!",
+                },
+                'tag': {
+                    'new_assignment': "Share this _assignment with your friends and followers:",
+                    'new_response'  : "Share this response with your friends and followers:",
+                    'new_group'     : "Share this _group with your friends and followers:",
+                    'new_user'      : "Share this news with your friends and followers:",
+                    'new_article'   : "Share this _article with your friends and followers:",
+                },
+                'desc': {
+                    'new_assignment': '_Assignment on _site_name',
+                    'new_response'  : '_Article on _site_name',
+                    'new_group'     : '_Hub on _site_name',
+                    'new_user'      : "Profile on _site_name",
+                    'new_article'   : '_Article on _site_name',
+                },
+            },
+        },
+        'group' : {
+           'new': {
+               'type': {
+                    'assignment': "We just created the request %(title)s on _site_name. Respond now!",
+                    'response'  : "We just responded to a request by %(owner)s on _site_name. Get involved & add your voice too!",
+                    'group'     : "We just created the %(name)s Hub on _site_name. Get involved and follow it now!",
+                    'user'      : "We just signed up to _site_name to get my news published, you can too!",
+                    'article'   : "We just created the content %(title)s on _site_name, check it out here!",
+                },
+                'tag': {
+                    'new_assignment': "Share your _assignment with your friends and followers:",
+                    'new_response'  : "Share your response with your friends and followers:",
+                    'new_group'     : "Share your _group with your friends and followers:",
+                    'new_user'      : "Share your news with your friends and followers:",
+                    'new_article'   : "Share your _article with your friends and followers:",
+                },
+                'desc': {
+                    'new_assignment': 'New _assignment on _site_name',
+                    'new_response'  : 'New _article on _site_name',
+                    'new_group'     : 'New _hub on _site_name',
+                    'new_user'      : "I'm on _site_name",
+                    'new_article'   : 'New _article on _site_name',
+                },
+            },
+            'existing': {
+               'type': {
+                    'assignment': "Take a look at our request %(title)s on _site_name. Respond now!",
+                    'response'  : "Take a look at our response to a request by %(owner)s on _site_name. Get involved & add your voice too!",
+                    'group'     : "Take a look at our %(name)s Hub on _site_name. Get involved and follow it now!",
+                    'user'      : "Take a look at our profile on _site_name, join to get your news published!",
+                    'article'   : "Take a look at our content %(title)s on _site_name!",
+                },
+                'tag': {
+                    'new_assignment': "Share your _assignment with your friends and followers:",
+                    'new_response'  : "Share your response with your friends and followers:",
+                    'new_group'     : "Share your _group with your friends and followers:",
+                    'new_user'      : "Share your profile with your friends and followers:",
+                    'new_article'   : "Share your _article with your friends and followers:",
+                },
+                'desc': {
+                    'new_assignment': 'Our _assignment on _site_name',
+                    'new_response'  : 'Our _article on _site_name',
+                    'new_group'     : 'Our _hub on _site_name',
+                    'new_user'      : "We're on _site_name",
+                    'new_article'   : 'Our _article on _site_name',
+                },
+            },
+            'other': {
+               'type': {
+                    'assignment': "We just found the request %(title)s on _site_name. Take a look and respond now!",
+                    'response'  : "We just found a response to a request by %(owner)s on _site_name. Get involved & add your voice too!",
+                    'group'     : "We just found the %(name)s Hub on _site_name. Get involved and follow it now!",
+                    'user'      : "We just found %(title) on _site_name to getting their news published, you can too!",
+                    'article'   : "We just found the content %(title)s on _site_name, check it out here!",
+                },
+                'tag': {
+                    'new_assignment': "Share this _assignment with your friends and followers:",
+                    'new_response'  : "Share this response with your friends and followers:",
+                    'new_group'     : "Share this _group with your friends and followers:",
+                    'new_user'      : "Share this news with your friends and followers:",
+                    'new_article'   : "Share this _article with your friends and followers:",
+                },
+                'desc': {
+                    'new_assignment': '_Assignment on _site_name',
+                    'new_response'  : '_Article on _site_name',
+                    'new_group'     : '_Hub on _site_name',
+                    'new_user'      : "Profile on _site_name",
+                    'new_article'   : '_Article on _site_name',
+                },
+            },
+        }
+    }
+        
 	
-	share_types = {
-		'new_assignment': "I just created the request %(title)s on _site_name. Respond now!",
-		'new_response'  : "I just responded to a request by %(owner)s on _site_name. Get involved & add your voice too!",
-		'new_group'     : "I just created the %(name)s Hub on _site_name. Get involved and follow it now!",
-		'new_user'		: "I just signed up to _site_name to get my news published, you can too!",
-		'new_article'   : "I just created the content %(title)s on _site_name, check it out here!",
-	}
-	share_taglines = {
-		'new_assignment': "Share your _assignment with your friends and followers:",
-		'new_response'  : "Share your response with your friends and followers:",
-		'new_group'     : "Share your _group with your friends and followers:",
-		'new_user'		: "Share your news with your friends and followers:",
-		'new_article'   : "Share your _article with your friends and followers:",
-	}
-	share_descs = {
-		'new_assignment': 'New _assignment on _site_name',
-		'new_response'  : 'New _article on _site_name',
-		'new_group'     : 'New _hub on _site_name',
-		'new_user'      : "I'm on _site_name",
-		'new_article'   : 'New _article on _site_name',
-	}
+    share_types = {
+        'new_assignment': "I just created the request %(title)s on _site_name. Respond now!",
+        'new_response'  : "I just responded to a request by %(owner)s on _site_name. Get involved & add your voice too!",
+        'new_group'     : "I just created the %(name)s Hub on _site_name. Get involved and follow it now!",
+        'new_user'		: "I just signed up to _site_name to get my news published, you can too!",
+        'new_article'   : "I just created the content %(title)s on _site_name, check it out here!",
+    }
+    share_taglines = {
+        'new_assignment': "Share your _assignment with your friends and followers:",
+        'new_response'  : "Share your response with your friends and followers:",
+        'new_group'     : "Share your _group with your friends and followers:",
+        'new_user'		: "Share your news with your friends and followers:",
+        'new_article'   : "Share your _article with your friends and followers:",
+    }
+    share_descs = {
+        'new_assignment': 'New _assignment on _site_name',
+        'new_response'  : 'New _article on _site_name',
+        'new_group'     : 'New _hub on _site_name',
+        'new_user'      : "I'm on _site_name",
+        'new_article'   : 'New _article on _site_name',
+    }
 %>
 
 ##------------------------------------------------------------------------------
@@ -113,7 +259,7 @@
         <h2>${_('Social sharing')}</h2>
         <div class="frag_list_contents">
             <div class="content note addthis_toolbox" style="padding-bottom: 0px;">
-                % if custom_share:
+                % if custom_share_line:
                     <div style="height: 24px">
                         ${custom_share_line()}
                     </div>
@@ -341,7 +487,7 @@
             message    = '%s|%s' % (options['timestamp'],options['primaryKey'])
             options['signature']  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
     %>
-    ${json.dumps(options) | n}
+    ${json.dumps(options).replace('\\\"', "\\\'").replace('"', "'")}
 </%def>
 
 <%def name="janrain_social_call_content(content, share_type)">
@@ -356,7 +502,7 @@ def clean(s):
 share_usergen_default = clean(_(share_types[share_type]) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
     %>
 	$(function() {
-		var content   = ${json.dumps(cd) | n};
+		var content   = ${json.dumps(cd).replace('\\\"', "\\\'").replace('"', "'")};
 		var url       = content.url;
 		var variables = {
 			share_display:				'${_(share_taglines[share_type])}',
@@ -368,7 +514,7 @@ share_usergen_default = clean(_(share_types[share_type]) % {'title': cd.get('tit
 			action:						content.action,
 			media:						content.media,
 		};
-		janrain_popup_share(url, ${janrain_options() | n}, variables);
+		janrain_popup_share(url, ${janrain_options()}, variables);
 	});
 </%def>
 
@@ -376,13 +522,13 @@ share_usergen_default = clean(_(share_types[share_type]) % {'title': cd.get('tit
 	## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
 cd = {
-		'url':						h.url('member', id=member['username'], absolute=True),
+		'url':						h.url('member', id=member['username'], qualified=True),
 		'title':					member['name'],
 		'user_generated_content': 	member['description'],
 		'media':					[ {
 										'type': 'image',
 										'src':  member['avatar_url'],
-										'href': h.url('member', id=member['username'], absolute=True),
+										'href': h.url('member', id=member['username'], qualified=True),
 									}, ],
 }
 def clean(s):
@@ -392,7 +538,7 @@ def clean(s):
 share_usergen_default = clean(_(share_types[share_type]) % {'name': cd['title']})
     %>
 	$(function() {
-		var content   = ${json.dumps(cd) | n};
+		var content   = ${json.dumps(cd).replace('\\\"', "\\\'").replace('"', "'")};
 		var url       = content.url;
 		var variables = {
 			share_display:				'${clean(_(share_taglines[share_type]))}',
