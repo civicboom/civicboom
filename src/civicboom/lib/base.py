@@ -416,8 +416,10 @@ class BaseController(WSGIController):
         # Session Flash Message ------------------------------------------------
         flash_message_session = session_remove('flash_message')
         if flash_message_session:
-            try:               overlay_status_message(c.result, json.loads(flash_message_session))
-            except ValueError: overlay_status_message(c.result,            flash_message_session )
+            try:
+                overlay_status_message(c.result, json.loads(flash_message_session))
+            except ValueError:
+                overlay_status_message(c.result,            flash_message_session )
             
 
     def __call__(self, environ, start_response):

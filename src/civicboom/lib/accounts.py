@@ -142,5 +142,3 @@ def has_account_without_password(user):
         if not password_login:
             return True
     return False
-
-

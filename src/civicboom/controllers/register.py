@@ -108,10 +108,14 @@ class RegisterController(BaseController):
         
         # If the validator has not forced a page render
         # then the data is fine - save the new user data
-        if 'username' in form: c.logged_in_persona.username         = form['username']
-        if 'name'     in form: c.logged_in_persona.name             = form['name']
-        if 'dob'      in form: c.logged_in_persona.config['dob']    = str(form['dob'])
-        if 'email'    in form: c.logged_in_persona.email_unverified = form['email']
+        if 'username' in form:
+            c.logged_in_persona.username         = form['username']
+        if 'name'     in form:
+            c.logged_in_persona.name             = form['name']
+        if 'dob'      in form:
+            c.logged_in_persona.config['dob']    = str(form['dob'])
+        if 'email'    in form:
+            c.logged_in_persona.email_unverified = form['email']
         if 'password' in form:
             set_password(c.logged_in_persona, form['password'], delay_commit=True)
         c.logged_in_persona.status = "active"
@@ -248,14 +252,20 @@ def register_new_janrain_user(profile):
     Session.flush() # AllanC - for some mythical reason the commit below wont function because the database is in an odd state, this flush makes the commit below work, more investigation may be needed or maybe a newer version of SQL alchemy will fix this issue
     
     u = User()
-    try   : u.username         = UniqueUsernameValidator().to_python(profile.get('displayName'))
-    except: u.username         = UniqueUsernameValidator().to_python(new_user_prefix+random_string())
+    try:
+        u.username         = UniqueUsernameValidator().to_python(profile.get('displayName'))
+    except Exception:
+        u.username         = UniqueUsernameValidator().to_python(new_user_prefix+random_string())
     
-    try   : u.email            = UniqueEmailValidator().to_python(profile.get('verifiedEmail'))
-    except: pass
+    try:
+        u.email            = UniqueEmailValidator().to_python(profile.get('verifiedEmail'))
+    except Exception:
+        pass
     
-    try   : u.email_unverified = UniqueEmailValidator().to_python(profile.get('email'))
-    except: pass
+    try:
+        u.email_unverified = UniqueEmailValidator().to_python(profile.get('email'))
+    except Exception:
+        pass
     
     u.name          = profile.get('name', dict()).get('formatted')
     u.status        = "pending"

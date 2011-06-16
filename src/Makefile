@@ -111,7 +111,7 @@ pep8:
 	# 303 = too many blank lines
 	# 501 = line too long
 	# 701 = multiple statments one line (colons)
-	pep8 -r --ignore=E2,E301,E303,E501,E701,W293,W291 civicboom
+	pep8 -r --ignore=E2,E301,E303,E501,W293,W291 civicboom
 
 api-doc:
 	mkdir -p civicboom/public/doc/

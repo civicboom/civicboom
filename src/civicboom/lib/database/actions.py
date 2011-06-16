@@ -866,7 +866,8 @@ def find_content_root(content):
     if not content:
         raise action_error(_('unable to find content'), code=404)
     
-    if not content.parent: return False
+    if not content.parent:
+        return False
     
     qry = Hierarchy(
         Session,

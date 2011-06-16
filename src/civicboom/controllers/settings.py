@@ -553,7 +553,8 @@ class SettingsController(BaseController):
         
         Session.commit()
         
-        if private: return
+        if private:
+            return
         
         if c.format == 'html':
             set_flash_message(action_ok(_('Settings updated')))

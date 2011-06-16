@@ -36,8 +36,10 @@ def profanity_check(content):  # pragma: no cover - online services aren't activ
     if not content:
         return
 
-    try                : content = content.encode('utf-8')
-    except UnicodeError: pass
+    try:
+        content = content.encode('utf-8')
+    except UnicodeError:
+        pass
 
     data  = urllib.urlencode({
         'Text'           : content ,

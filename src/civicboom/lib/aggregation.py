@@ -31,9 +31,12 @@ def aggregation_dict(content, safe_strings=True):
     content_creator_name = content.get('creator',{}).get('name', '')
 
     def action(content):
-        if   content.get('type'  ) == "assignment": return content_creator_name + _("Created a _assignment")
-        elif content.get('parent')                : return content_creator_name + _("Wrote a response"  )
-        elif content.get('type'  ) == "article"   : return content_creator_name + _("Wrote _article" )
+        if content.get('type') == "assignment":
+            return content_creator_name + _("Created a _assignment")
+        elif content.get('parent'):
+            return content_creator_name + _("Wrote a response"  )
+        elif content.get('type') == "article":
+            return content_creator_name + _("Wrote _article" )
     
     def description(content):
         return "%s: %s" % (action(content), content.get('title'))

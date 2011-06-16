@@ -559,8 +559,10 @@ class AssignmentContent(UserVisibleContent):
         return h.hexdigest()
 
     def acceptable_by(self, member):
-        if self.creator==member: return False
-        if self.closed         : return False #TODO - finish - "closed and not in assinged_to list"
+        if self.creator==member:
+            return False
+        if self.closed:
+            return False #TODO - finish - "closed and not in assinged_to list"
         #if member has accepted before? (will this break templates?)
         return True
         
