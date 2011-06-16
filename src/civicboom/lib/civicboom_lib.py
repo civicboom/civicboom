@@ -27,6 +27,7 @@ import hashlib
 import random
 import json
 import datetime
+import re
 
 import logging
 log      = logging.getLogger(__name__)
