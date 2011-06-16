@@ -21,7 +21,7 @@ from civicboom.model.member            import User, UserLogin
 from civicboom.lib.database.get_cached import get_member as _get_member
 
 # Communication & Messages
-from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email_hash, validation_url, associate_janrain_account, set_password
+from civicboom.lib.accounts       import send_verifiy_email, verify_email_hash, validation_url, associate_janrain_account, set_password
 
 # Signin
 from civicboom.lib.authentication import signin_user_and_redirect

@@ -27,7 +27,7 @@ from civicboom.lib.communication.messages import generators
 from civicboom.lib.form_validators.validator_factory import build_schema
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
-from civicboom.lib.civicboom_lib import set_password, send_verifiy_email
+from civicboom.lib.accounts import set_password, send_verifiy_email
 from civicboom.model.meta import location_to_string
 
 from civicboom.lib.web import _find_template_basic

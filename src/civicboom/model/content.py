@@ -267,7 +267,7 @@ class Content(Base):
         """
         Aggregate a summary of this content to Twitter, Facebook, LinkedIn, etc via the content creators user account
         """
-        from civicboom.lib.civicboom_lib import aggregate_via_user
+        from civicboom.lib.aggregation import aggregate_via_user
         if self.__type__ == 'article' or self.__type__ == 'assignment':
             return aggregate_via_user(self, self.creator)
     

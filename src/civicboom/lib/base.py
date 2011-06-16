@@ -23,6 +23,7 @@ from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.database.query_helpers import to_apilist
 from civicboom.lib.authentication      import authorize, get_lowest_role_for_user
 from civicboom.lib.permissions         import account_type, role_required, age_required, has_role_required, raise_if_current_role_insufficent
+from civicboom.lib.accounts import deny_pending_user
 
 from cbutils.misc import now
 
@@ -408,7 +409,6 @@ class BaseController(WSGIController):
         
         # User pending regisration? --------------------------------------------
         # redirect to complete registration process
-        from civicboom.lib.civicboom_lib import deny_pending_user  # import late to avoid dependency loop
         if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url('current')):
             set_flash_message(_('Please complete the registration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))

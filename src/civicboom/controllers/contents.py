@@ -7,7 +7,8 @@ from civicboom.lib.database.get_cached import update_content, get_licenses, get_
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
-from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
+from civicboom.lib.civicboom_lib import profanity_filter
+from civicboom.lib.aggregation   import twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.database.actions             import respond_assignment
