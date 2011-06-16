@@ -79,9 +79,9 @@
                     <%
                         selected = setting_value and setting_value!=''
                     %>
-            		<select name="${setting_name[0]}" ${readonly()} id="${setting_name[0]}">
-            			<option value="True" ${'selected="selected"' if selected else ''}>Yes</option>
-            			<option value="" ${'selected="selected"' if not selected else ''}>No</option>
+            		<select class="yesno" name="${setting_name[0]}" ${readonly()} id="${setting_name[0]}">
+            			<option class="yes" value="True" ${'selected="selected"' if selected else ''}>Yes</option>
+            			<option class="no" value="" ${'selected="selected"' if not selected else ''}>No</option>
             		</select>
                 % elif setting_type == 'longstring':
                     <textarea name="${setting_name[0]}" ${readonly()} ${placeholder()} rows="4">${setting_value}</textarea>

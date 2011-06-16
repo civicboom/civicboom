@@ -108,6 +108,7 @@ function cb_frag(current_element, url, list_type, from_history, callback) {
                   //$(window)._scrollable().scrollTo('100%',0, {duration: scroll_duration});
                   //$.scrollTo(frag_loading, {duration: scroll_duration}); //(fragment_containers_id)
                   //$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});    
+                  $(convertYesNoCheckbox);
             }
         }
     );
