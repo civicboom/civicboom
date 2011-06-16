@@ -1,3 +1,5 @@
+@import "../common/_palette.scss";
+
 /*
  * If we have javascript, hide the things that are shown using javascript
  */
@@ -59,7 +61,7 @@ INPUT[type="email"],
 INPUT[type="password"],
 SELECT,
 TEXTAREA {
-	border: 1px solid #2a3a87;
+	border: 1px solid $input-border;
 
 	border-radius        : 0.2em;
 	-moz-border-radius   : 0.2em;
