@@ -4,34 +4,10 @@ Set of helpers specific to the Civicboom project
 """
 
 from civicboom.lib.base import url, c, config, _, current_url
-import cbutils.worker as worker
 import re
 
 import logging
 log      = logging.getLogger(__name__)
-
-
-#-------------------------------------------------------------------------------
-# Content Management
-#-------------------------------------------------------------------------------
-
-def profanity_filter(content):
-    #if not config['online']                  : return
-    if not config['feature.profanity_filter']:
-        log.info("Profanity filter disabled, returning null")
-        return
-
-    if hasattr(content, 'id'):
-        content = content.id
-
-    if not content:
-        raise Exception('content cannot be profanity checked without a content.id')
-
-    worker.add_job({
-        'task'     : 'profanity_check' ,
-        'content_id': content ,
-        'url_base' : url('',qualified=True) #'http://www.civicboom.com/' , # AllanC - get this from the ENV instead please
-    })
 
 
 #-------------------------------------------------------------------------------

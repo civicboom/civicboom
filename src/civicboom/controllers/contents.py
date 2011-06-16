@@ -7,7 +7,6 @@ from civicboom.lib.database.get_cached import update_content, get_licenses, get_
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
-from civicboom.lib.civicboom_lib import profanity_filter
 from civicboom.lib.aggregation   import twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
@@ -33,6 +32,7 @@ from dateutil.parser import parse as parse_date
 from sets import Set # may not be needed in Python 2.7+
 import re
 from cbutils.text import strip_html_tags
+import cbutils.worker as worker
 
 # Logging setup
 log      = logging.getLogger(__name__)
@@ -724,8 +724,13 @@ class ContentsController(BaseController):
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
         # Profanity Check --------------------------------------------------
-        if (submit_type=='publish' and content.private==False) or content.__type__ == 'comment':
-            profanity_filter(content) # Filter any naughty words and alert moderator
+        if config['feature.profanity_filter']:
+            if (submit_type=='publish' and content.private==False) or content.__type__ == 'comment':
+                worker.add_job({
+                    'task'     : 'profanity_check',
+                    'content_id': content.id,
+                    'url_base' : url('',qualified=True) #'http://www.civicboom.com/' , # AllanC - get this from the ENV instead please
+                })
         
         # -- Redirect (if needed)-----------------------------------------------
 
