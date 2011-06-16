@@ -29,7 +29,6 @@ import datetime
 from dateutil.parser import parse as parse_date
 
 # Other imports
-from sets import Set # may not be needed in Python 2.7+
 import re
 from cbutils.text import strip_html_tags
 import cbutils.worker as worker
