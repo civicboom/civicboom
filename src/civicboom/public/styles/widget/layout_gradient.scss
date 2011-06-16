@@ -1,0 +1,141 @@
+$border-size: 0.1em;
+
+$widget-header-txt : #000000;
+$widget-content-txt: #666666;
+
+$button-border: #a7c7d9;
+$button-top: #f1f6f9;
+$button-bot: #d8edf8;
+
+
+$header-border: #d2e7f3;
+$header-top   : #ffffff;
+$header-bot   : #e5edf3;
+
+$content-border : #e1eaf3;
+$content-top-bot: #f1f7fa;
+$content-mid    : #e5edf3;
+
+$content-thumbnail-border: #ebeef1;
+
+@mixin horiz_gradient($top, $bot) {
+    background: $bot;
+    background: -moz-linear-gradient(top                      ,                 $top,                   $bot 81% );
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $top), color-stop(0.81, $bot    ));
+    filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='$top', endColorstr='$bot');
+
+}
+@mixin horiz_gradient_mid($top-bot, $mid) {
+    background: #e5edf3;
+    background: -moz-linear-gradient(top                      ,                 $top-bot,                  $mid 50% ,                 $top-bot 100% );
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $top-bot), color-stop(0.5, $mid    ), color-stop(1.0, $top-bot     ));
+    /* filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-bot', endColorstr='$mid'); */
+}
+
+@mixin border_radius($rad) {
+    border-radius        : $rad;
+    -moz-border-radius   : $rad;
+    -webkit-border-radius: $rad;
+}
+
+/* -------------------------------------------------------------------------- */
+
+a {color: inherit;}
+
+.button {
+    border    : 0.08em solid $button-border;
+    @include horiz_gradient($button-top, $button-bot);
+    @include border_radius(0.4em);
+    
+    color: #157df0;
+    
+    font-size: 50%;
+    font-weight: bold;
+    
+    text-decoration: none;
+    padding: 0.4em;
+    padding-top: 0.45em;
+    
+    
+    
+
+}
+.button:hover {
+    @include horiz_gradient($button-bot, $button-top);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+.widget_border {
+    position: relative;
+    .padding {
+        padding: 0.1em;
+    }
+}
+
+.widget_header {
+    position: relative;
+    
+    margin-bottom: 0.1em;
+    height: 2.2em;
+    
+    letter-spacing: 0.08em;
+    
+    border: $border-size solid $header_border;
+    @include horiz_gradient($header-top, $header-bot);
+    
+    color: $widget-header-txt;
+    
+    .padding {
+        padding: 0.15em;
+        padding-left: 0.4em;
+    }
+    
+    .logo {
+        position: absolute;
+        bottom: 0.1em;
+        right : 0.1em;
+        opacity: 0.5;
+        width: 3.5em;
+    }
+}
+
+.widget_content {
+    border: $border-size solid $content-border;
+
+    @include horiz_gradient_mid($content-top-bot,$content-mid);
+    
+    position: absolute;
+    top   : 2.6em;
+    bottom: 0.1em;
+    left  : 0.1em;
+    right : 0.1em;
+    
+    overflow  : hidden;
+    overflow-y: scroll;
+    
+    color: $widget-content-txt;
+    
+    $widget_content_padding: 0.2em;
+    .padding {
+        padding: $widget_content_padding;
+    }
+    
+    LI {
+        border: 1px dashed red;
+        margin-bottom: $widget_content_padding;
+        
+        .thumbnail {
+            width: 25%;
+            float: left;
+            border: $border-size solid $content-thumbnail-border;
+            background-color: #ffffff;
+        }
+        .details {
+            width: 70%;
+            float: right;
+        }
+        
+    }
+}
