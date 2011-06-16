@@ -63,9 +63,9 @@ SELECT,
 TEXTAREA {
 	border: 1px solid $input-border;
 
-	border-radius        : 0.2em;
-	-moz-border-radius   : 0.2em;
-	-webkit-border-radius: 0.2em;
+	border-radius        : $input-radius;
+	-moz-border-radius   : $input-radius;
+	-webkit-border-radius: $input-radius;
 
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -245,15 +245,13 @@ HTML.no-js #flash_message {
 /* Common widgets                                                             */
 /*----------------------------------------------------------------------------*/
 
-@import "palette";
-
 .button {
 	display: inline-block;
 	background: $button-top;
 
-	border-radius        : 0.1em;
-	-moz-border-radius   : 0.1em;
-	-webkit-border-radius: 0.1em;
+	border-radius        : $button-radius;
+	-moz-border-radius   : $button-radius;
+	-webkit-border-radius: $button-radius;
 	
 	border: 1px solid $button-border;
 
@@ -269,9 +267,9 @@ HTML.no-js #flash_message {
   display: inline-block;
   color: #000;
 
-  border-radius        : 0.2em;
-  -moz-border-radius   : 0.2em;
-  -webkit-border-radius: 0.2em;
+  border-radius        : $button-radius;
+  -moz-border-radius   : $button-radius;
+  -webkit-border-radius: $button-radius;
 
   border: 1px solid transparent;
 

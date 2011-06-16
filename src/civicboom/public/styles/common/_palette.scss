@@ -7,6 +7,7 @@ $button-top: #eee; /*$cb-lightblue;*/
 $button-bot: #ddd; /*$cb-darkblue;*/
 $button-txt: #444; /*white;*/
 $button-border: #ccc; /*#333;*/
+$button-radius: 0.2em;
 
 $button-member-top: #eee;
 $button-member-bot: #ddd;
@@ -14,6 +15,7 @@ $button-member-txt: #444;
 $button-member-border: #ccc;
 
 $input-border: $button-border;
+$input-radius: $button-radius;
 
 $titlebar-top: #48689D; /*lighten($cb-darkblue, 30%);*/
 $titlebar-bot: $titlebar-top;
