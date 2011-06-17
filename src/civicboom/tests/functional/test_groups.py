@@ -1,9 +1,6 @@
 from civicboom.tests import *
 
-#import json
 import warnings
-
-
 
 
 class TestGroupsController(TestController):

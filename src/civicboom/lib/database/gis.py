@@ -2,9 +2,9 @@
 from pylons import config
 
 from sqlalchemy import engine_from_config
-from sqlalchemy.sql import text
 
 import logging
+log = logging.getLogger(__name__)
 
 gis_engine = None
 

@@ -148,7 +148,11 @@ function map_picker(field_name, options) {
 				// to jQueryUI formatted ('suggestions')
 				var suggestions = [];
 				$.each(response, function(i, val) {
-					suggestions.push({"label": val.display_name, "value": "POINT("+val.lon+" "+val.lat+")"});
+					suggestions.push({
+						"label": val.display_name,
+						"value": "POINT("+val.lon+" "+val.lat+")",
+						"bbox": val.boundingbox
+					});
 				});
 				respond(suggestions);
 			});

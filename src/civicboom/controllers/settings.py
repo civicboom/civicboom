@@ -10,13 +10,12 @@ Only the form fields that are sent are validated and saved
 """
 
 from civicboom.lib.base import *
-from civicboom.model import User, Group
+from civicboom.model import User
 
 from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
 
 import cbutils.warehouse as wh
 
-import hashlib
 import copy
 import tempfile
 import Image
@@ -27,7 +26,7 @@ from civicboom.lib.communication.messages import generators
 from civicboom.lib.form_validators.validator_factory import build_schema
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
-from civicboom.lib.civicboom_lib import set_password, send_verifiy_email
+from civicboom.lib.accounts import set_password, send_verifiy_email
 from civicboom.model.meta import location_to_string
 
 from civicboom.lib.web import _find_template_basic
@@ -553,7 +552,8 @@ class SettingsController(BaseController):
         
         Session.commit()
         
-        if private: return
+        if private:
+            return
         
         if c.format == 'html':
             set_flash_message(action_ok(_('Settings updated')))

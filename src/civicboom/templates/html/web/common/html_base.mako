@@ -25,7 +25,7 @@
 	<link rel="fluid-icon" href="/images/boom128.png" />
 	<link rel="search" type="application/opensearchdescription+xml" href="/misc/opensearch.xml" title="${_("_site_name")}" />
 	<link rel="profile" href="http://microformats.org/profile/hcard">
-<%def name="canonical_url()">${h.url('current', sub_domain='www', protocol='https', qualified=True)}</%def>
+<%def name="canonical_url()">${h.url('current', sub_domain='www', protocol='https', qualified=True, format=None)}</%def>
 	<link rel="canonical" href="${self.canonical_url()}"/>
 
 ##----------------------------------------------------------------------------

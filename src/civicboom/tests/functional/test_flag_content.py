@@ -2,9 +2,6 @@ from civicboom.tests import *
 
 from pylons import config
 
-#import json
-import datetime
-
 
 class TestFlagContentController(TestController):
 

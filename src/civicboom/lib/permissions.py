@@ -1,7 +1,6 @@
 from decorator import decorator
 
-from pylons import tmpl_context as c, url, request
-from pylons.controllers.util  import redirect
+from pylons import tmpl_context as c
 
 import civicboom.lib.errors as errors
 

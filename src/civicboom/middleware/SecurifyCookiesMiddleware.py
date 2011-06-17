@@ -21,8 +21,6 @@ set-cookie, and all users behind the proxy would get the
 same session ID
 """
 
-from pylons import config
-
 
 class SecurifyCookiesMiddleware(object):
     def __init__(self, app):
