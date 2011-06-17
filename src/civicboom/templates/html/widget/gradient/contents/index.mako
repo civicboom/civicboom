@@ -8,13 +8,12 @@
 
 
 <%def name="content_list(contents)">
-<div id="widget_carousel_fallback_container" class="content_list">
     <ul id="widget_carousel" class="jcarousel-skin-tango">
     % for content in contents:
         ${content_item(content)}
     % endfor
     </ul>
-</div>
+    <a href="" class="more_link">See more requests >></a>
 </%def>
 
 
@@ -29,7 +28,7 @@
                 ##% endif
                 <p class="content">${content['content_short']}</p>
             </div>
-            <a href="" class="button">Click to share your story</a>
+            <p class="respond"><a href="" class="button">Click to share your story</a></p>
         </a>
         <div style="clear:both;"></div>
     </li>

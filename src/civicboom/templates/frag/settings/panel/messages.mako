@@ -44,9 +44,9 @@
             route = ''
           if route:
 	          if (tech in route) and opt:
-	            return 'selected="selected"'
+	            return 'selected=selected'
 	          elif (not tech in route) and not opt:
-	            return 'selected="selected"'
+	            return 'selected=selected'
 	          else:
 	            return ''
         
@@ -68,9 +68,9 @@
           <td>${d['settings_meta'][setting_name[0]]['description']}</td>
           % for notif_type in notification_types:
             <td>
-              <select name="${setting_name[0]}-${notif_type[0]}">
-                <option ${select(setting_name[0],notif_type[0],True )} value="${notif_type[0]}">Yes</option>
-                <option ${select(setting_name[0],notif_type[0],False)} value="">No</option>
+              <select class="yesno" name="${setting_name[0]}-${notif_type[0]}">
+                <option class="yes" ${select(setting_name[0],notif_type[0],True )} value="${notif_type[0]}">Yes</option>
+                <option class="no"  ${select(setting_name[0],notif_type[0],False)} value="">No</option>
               </select>
             </td>
           % endfor
