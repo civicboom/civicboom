@@ -174,6 +174,7 @@ class RegisterController(BaseController):
         u = User()
         u.username         = kwargs['username']
         u.email_unverified = kwargs['email']
+        u.name             = u.username  # display name will be asked for in step #2. For now, copying username is a good enough space filler
         Session.add(u)
         Session.commit()
         
