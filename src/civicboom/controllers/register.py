@@ -201,8 +201,8 @@ class RegisterController(BaseController):
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
         
-        #if c.format=="html":
-        return redirect(url(controller="register", action="check_email"))
+        if c.format in ["html", "redirect"]:
+            return redirect(url(controller="register", action="check_email"))
         
         return action_ok(_("Thank you. Please check your email to complete the registration process"))
         
