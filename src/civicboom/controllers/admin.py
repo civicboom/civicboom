@@ -158,4 +158,3 @@ AdminController = ModelsController(AdminControllerBase,
                                    member_name='model',
                                    collection_name='models',
                                   )
-

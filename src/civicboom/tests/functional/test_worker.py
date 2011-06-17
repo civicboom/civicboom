@@ -2,6 +2,7 @@ from civicboom.tests import *
 
 import warnings
 
+
 class TestWorker(TestController):
     
     def test_worker_message(self):

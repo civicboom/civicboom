@@ -8,28 +8,34 @@ GIT_TAG    := $(shell git describe)
 
 help:
 	# Usage: make <target>, where target is
-	# site          -- i18n + js + css + libs (this should be done after git clone)
-	# i18n          -- compile the translations
-	# i18n-fr       -- generate a machine-translated french site
-	# js            -- compress javascript into _combined.head.js and foot.js
-	# css           -- compress folders of css into single files
+	# site          -- the three below (this should be done after git clone)
+	#   i18n        -- compile the translations
+	#   js          -- compress javascript into _combined.head.js and foot.js
+	#   css         -- compress folders of css into single files
+	# sass          -- run a daemon to turn scss into css
+	# test          -- run all nosetests
 	# test-db       -- create a blank database and fill it with test data
 	# live-db       -- create a blank database and fill it with live data
 	# run           -- run the site in development mode
 	# clean         -- reset the folder to clean git checkout
+	# schemadiff    -- write out sql to upgrade the live schema
+	# help2         -- more commands (less frequently used)
+
+help2:
+	# cdnpush       -- push static files to CDN
+	# libs          -- fetch external libraries
 	# gource        -- generate a video of developer activity
 	# stats         -- run the interactive profile examiner
 	# pep8          -- strict syntax checking
+	# i18n-fr       -- generate a machine-translated french site
 	# api-doc       -- build civicboom/public/api.html
-	# libs          -- fetch external libraries
 	# shell         -- python shell with the pylons environment loaded
-	# cdnpush       -- push static files to CDN
-	# test          -- run all nosetests
 	# test-coverage -- run all nosetests and produce coverage html docs
 	# test-profile  -- run the test suite with profiling enabled (slow)
-	# schemadiff    -- write out sql to upgrade the live schema
+	# run-worker    -- run a local worker
+	# stopsys       -- stop the system cb-website and cb-worker
 
-site: i18n js css libs
+site: i18n js css
 
 i18n:
 	python setup.py extract_messages
@@ -51,12 +57,12 @@ js:
 css:
 	cd civicboom/public/styles && $(MAKE)
 
-skel-db:
-	../admin_scripts/init_cbdb
+sass:
+	cd civicboom/public/styles
+	sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
 
-test-db: skel-db
-	paster setup-app development.ini
-	nosetests
+test:
+	nosetests --verbose
 
 test-coverage:
 	nosetests --verbose --with-coverage --cover-erase --cover-html --cover-html-dir=../coverage/
@@ -64,8 +70,12 @@ test-coverage:
 test-profile:
 	time python -m cProfile -o /tmp/prof.out /usr/bin/nosetests --verbose
 
-test:
-	nosetests --verbose
+skel-db:
+	../admin_scripts/init_cbdb
+
+test-db: skel-db
+	paster setup-app development.ini
+	nosetests
 
 live-db: skel-db
 	mkdir -p data

@@ -84,11 +84,12 @@
     <div class="frag_left_col">
         <div class="frag_col vcard">
         ## Member Details
-		% if self.member['type'] == "group":
-			<h1 class="fn org">${self.member['name']}</h1><br />
-		% else:
+		## the org format is correct, but google only shows rich snippets for individuals...
+		##% if self.member['type'] == "group":
+		##	<h1 class="fn org">${self.member['name']}</h1><br />
+		##% else:
 			<h1 class="fn n">${h.guess_hcard_name(self.member['name'])}</h1><br />
-		% endif
+		##% endif
         <div>
           <div style="float:left; padding-right: 3px;">${member_avatar(img_class='photo')}</div>
           <div style="padding-left: 92px" >
@@ -161,7 +162,7 @@
         ## Comunity ----------------------------------------
         
         ${frag_list.member_list_thumbnails(
-            d['following'],
+            [f for f in d['following']['items'] if f.get('follow_type')!='trusted_invite'],
             _('Following'),
             #h.args_to_tuple('member_action', id=self.id, action='following'),
             h.args_to_tuple('members', followed_by=self.id),
@@ -169,12 +170,26 @@
         )}
         
         ${frag_list.member_list_thumbnails(
-            d['followers'] ,
+            [f for f in d['following']['items'] if f.get('follow_type')=='trusted_invite'],
+            _('Pending trusted follower invitations'),
+            #h.args_to_tuple('members', followed_by=self.id),
+            icon =  'invite'
+        )}
+        
+        ${frag_list.member_list_thumbnails(
+            [f for f in d['followers']['items'] if f.get('follow_type')!='trusted_invite'],
             _('Followers') ,
             #h.args_to_tuple('member_action', id=self.id, action='followers') ,
             h.args_to_tuple('members', follower_of=self.id),
             icon    = 'follow',
             actions = h.frag_link(value='', title='Invite Trusted Followers', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='trusted_follower')) if 'invite_trusted_followers' in self.actions else None ,
+        )}
+        
+        ${frag_list.member_list_thumbnails(
+            [f for f in d['followers']['items'] if f.get('follow_type')=='trusted_invite'],
+            _('Trusted follower invitations sent') ,
+            #h.args_to_tuple('members', follower_of=self.id),
+            icon    = 'invite',
         )}
         
         ${frag_list.member_list_thumbnails(

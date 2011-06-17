@@ -100,7 +100,6 @@ class MinimumAgeValidator(IsoFormatDateConverter):
     }
     def _to_python(self, value, state):
         date = super(MinimumAgeValidator, self)._to_python(value, state)
-        #log.debug("date %s - type %s" % (date,type(date)))
         if calculate_age(date) < self.age_min:
             raise formencode.Invalid(self.message('under_min_age', state), value, state)
         return date
