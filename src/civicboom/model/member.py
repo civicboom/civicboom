@@ -591,8 +591,6 @@ class User(Member):
     __to_dict__['default'     ].update(_extra_user_fields)
     __to_dict__['full'        ].update(_extra_user_fields)
 
-
-
     def __unicode__(self):
         return self.name or self.username
 
@@ -673,7 +671,6 @@ class Group(Member):
     }
     __to_dict__['default'].update(_extra_group_fields)
     __to_dict__['full'   ].update(_extra_group_fields)
-
 
 
     # Private admin integrity helper - used in set_role and remove_member

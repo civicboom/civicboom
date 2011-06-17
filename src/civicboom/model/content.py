@@ -473,7 +473,7 @@ class ArticleContent(UserVisibleContent):
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_article_fields = {
-        'rating'        : None ,
+        'rating'   : None ,
         'approval' : None ,
     }
     __to_dict__['default'     ].update(_extra_article_fields)
