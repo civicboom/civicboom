@@ -236,7 +236,7 @@ class Member(Base):
     _member_status  = Enum("pending", "active", "suspended", name="member_status")
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
-    name            = Column(Unicode(250),   nullable=False, default=u"")
+    name            = Column(Unicode(250),   nullable=False)
     join_date       = Column(DateTime(),     nullable=False, default=func.now())
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(String(40),     nullable=True)
@@ -565,6 +565,8 @@ class Member(Base):
 GeometryDDL(Member.__table__)
 
 DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', username || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
+DDL("ALTER TABLE member ADD CHECK (length(name) > 0);").execute_at('after-create', Member.__table__)
+DDL("ALTER TABLE member ADD CHECK (substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}');").execute_at('after-create', Member.__table__)
 
 
 class User(Member):

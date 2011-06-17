@@ -356,6 +356,8 @@ CREATE TRIGGER update_response_count
 GeometryDDL(Content.__table__)
 
 DDL("CREATE INDEX content_fts_idx ON content USING gin(to_tsvector('english', title || ' ' || content));").execute_at('after-create', Content.__table__)
+DDL("ALTER TABLE content ADD CHECK (length(title) > 0);").execute_at('after-create', Content.__table__)
+DDL("ALTER TABLE content ADD CHECK (substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}');").execute_at('after-create', Content.__table__)
 
 
 class DraftContent(Content):
