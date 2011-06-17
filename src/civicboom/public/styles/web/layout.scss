@@ -8,9 +8,13 @@
 HTML {
     overflow-x: scroll;
     /* overflow-y: hidden; */
-	background: $page-background;
-}
+	background: $frag-background;
+    
 
+}
+HTML.frag_containers {
+    background: $page-background;
+}
 
 /*----------------------------------------------------------------------------*/
 /*                                Main Level                                  */
