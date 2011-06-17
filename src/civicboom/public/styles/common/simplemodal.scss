@@ -1,16 +1,26 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
 /* http://www.ericmmartin.com/projects/simplemodal */
 #simplemodal-overlay   {
   background-color:#000;
   opacity: 0.6;
 }
+
 #simplemodal-container {
   /* bad form - just copied this from frag.css to get the same style - unify? */
-  border: 0.2em solid #4a73b8;
-  border-radius        : 0.25em;
-  -moz-border-radius   : 0.25em;
-  -webkit-border-radius: 0.25em;
+  border: 1em solid $frag-background;
+  @include border_radius(1em);
   
   background-color: white;
+  
+  .title_bar {
+    .title {
+      .title_text {
+        color: black;
+      }
+    }
+  }
 }
 
 #simplemodal-container .popup_content {
