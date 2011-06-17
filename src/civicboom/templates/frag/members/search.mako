@@ -36,6 +36,13 @@
                 <p><label for="term">Name</label><br/>
                 <input type="text" style="width: 210px" name="term" value="${kwargs.get('term')}"/>
 
+				<p><label for="type">Type</label><br>
+				<select name="type" style="width: 100%;">
+                    <option value="">${_("_Users and _Groups")}</option>
+                    <option value="user">${_("Just _Users")}</option>
+                    <option value="group">${_("Just _Groups")}</option>
+				</select>
+
                 <p><label for="sort">Order By</label><br/>
 				<select name="sort" style="width: 100%;">
 					<option value="-id">Newest First</option>
