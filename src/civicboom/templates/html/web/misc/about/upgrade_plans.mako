@@ -19,7 +19,7 @@
     <p>Why upgrade? In addition to the basic system, Premium account gives you: </p>
     <ul>
         <li>Unlimited requests - ask what you want, whenever you want.</li>
-        <li>Create open or closed requests - these are your call-to-actions for a community, audience or customer on any topic, issue or event.</p>
+        <li>Create open or closed requests - these are your call-to-actions for a community, audience or customer on any topic, issue or event.</li>
         <li>Create open or closed Hubs - they are your "brand" identity</li>
         <li>Filter out weak content - disassociate from "off brand" copy...</li>
         <li>Schedule requests - plan multiple requests for campaigns, set deadlines and event dates with automated alerts</li>

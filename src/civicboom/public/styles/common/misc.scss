@@ -67,6 +67,11 @@ BODY.c-misc.a-about {
 			margin: 4px;
 		}
 	}
+
+	TD.body ul li {
+		list-style: disc;
+		margin-left: 2em;
+	}
 }
 
 .error {
