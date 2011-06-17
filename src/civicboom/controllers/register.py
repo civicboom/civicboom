@@ -203,7 +203,7 @@ class RegisterController(BaseController):
         if config['demo_mode'] and (c.format=='html' or c.format=='redirect'):
             return redirect(validation_url(u, controller='register', action='new_user'))
 
-        user_log.info("Sending verification email")
+        user_log.info("Sending verification email to %s (%s)" % (u.username, u.email_unverified))
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
         
