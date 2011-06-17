@@ -3,15 +3,19 @@ $cb-darkblue: #3a4a97;
 
 /* -------------------------------------- */
 
-$button-top: #eee; /*$cb-lightblue;*/
-$button-bot: #ddd; /*$cb-darkblue;*/
-$button-txt: #444; /*white;*/
-$button-border: #ccc; /*#333;*/
+$button-top: lighten($cb-darkblue, 30%);/*#eee; /*$cb-lightblue;*/
+$button-bot: lighten($cb-darkblue, 20%);/*#ddd; /*$cb-darkblue;*/
+$button-txt: white; /*#444; /*white;*/
+$button-border: lighten($cb-darkblue, 10%);/*#ccc; /*#333;*/
+$button-radius: 0.2em;
 
 $button-member-top: #eee;
 $button-member-bot: #ddd;
 $button-member-txt: #444;
 $button-member-border: #ccc;
+
+$input-border: $button-border;
+$input-radius: $button-radius;
 
 $titlebar-top: #48689D; /*lighten($cb-darkblue, 30%);*/
 $titlebar-bot: $titlebar-top;
@@ -19,10 +23,10 @@ $titlebar-txt: white;
 
 $actionbar-back: $titlebar-top;
 
-$page-background: lighten($cb-lightblue, 40%);
+$page-background: lighten($cb-lightblue, 30%);
 
 $frag-border    : #4a73b8;
-$frag-background: lighten($cb-lightblue, 30%);
+$frag-background: lighten($cb-lightblue, 40%);
 
 $frag-action-bar-txt      : black;
 $frag-action-bar          : #EEE;

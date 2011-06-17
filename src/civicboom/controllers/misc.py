@@ -163,7 +163,6 @@ Disallow: /*.frag$
                 return action_ok(_("Thank you for your feedback"), code=201)
             return submit_feedback(**kwargs)
 
-
     #---------------------------------------------------------------------------
     # Featured content query
     #---------------------------------------------------------------------------

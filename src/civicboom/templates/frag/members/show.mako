@@ -100,25 +100,27 @@
 	
     ## Top row (avatar/about me)
     <div class="frag_top_row">
-	<h1 class="fn n">${h.guess_hcard_name(self.member['name'])}</h1>
 	<div  class="about_me">
-	    <table>
-		<tr>
-		    <td class="avatar" rowspan="2">${member_avatar(img_class='photo')}</td>
-		    
-		    <td>
-			<h2>About me</h2>
-		    </td>
-		    <td class="actions" rowspan="2">${actions_buttons()}</td>
-		</tr><tr>
-		    <td class="content">
-			% if self.member.get('description'):
-			<div>${self.member['description']}</div>
-			% endif
-		    </td>
-		    
-		</tr>
-	    </table>
+	    <div class="avatar">${member_avatar(img_class='photo')}</div>
+	    <div class="content">
+		<h2 class="fn n">${h.guess_hcard_name(self.member['name'])}</h2>
+		% if self.member.get('description'):
+		    <div>${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</div>
+		% endif
+	    </div>
+	    
+	    <div class="actions">
+		${actions_buttons()}
+		% if 'message' in self.actions:
+		    ${popup.link(
+			h.args_to_tuple('new_message', target=self.id),
+			title = _('Send Message'),
+			text  = h.literal("<div class='button'>%s</div>") % _('Send Message'),
+		    )}
+		    <span class="separtor"></span>
+		% endif
+	    </div>
+	    <div style="clear: both;"></div>
 	</div>
 	% for list, icon, description in [n for n in constants.contents_list_titles if n[0]  in ["assignments_active"]]:
 	    ${frag_list.content_list(
@@ -365,7 +367,7 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
             value           = _('Follow') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Follow'),
+            value_formatted = h.literal("<span class='button '>%s</span>") % _('Follow'),
             title           = _("Follow %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -421,7 +423,7 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_invite_trusted'  , id=self.id, format='redirect') ,
             value           = _('Invite trusted') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Invite trusted'),
+            value_formatted = h.literal("<span class='button mo-help'>%s</span>") % _('Invite trusted'),
             title           = _("Invite %s as a trusted follower" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -429,19 +431,21 @@
     % endif
     
 	% if 'follower_trust' in self.actions:
+	<% description = "Your trusted followers will be able to view your private content" %>
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_trust'  , id=self.id, format='redirect') ,
             value           = _('Trust') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Trust'),
+            value_formatted = h.literal("<span class='button mo-help'>%s<div class='mo-help-r'>%s</div></span>") % (_('Trust'), description),
             title           = _("Trust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
 	% elif 'follower_distrust' in self.actions:
+	<% description = "By untrusting this user they will no longer be able to view your private content" %>
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_distrust'  , id=self.id, format='redirect') ,
             value           = _('Distrust') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Distrust'),
+            value_formatted = h.literal("<span class='button mo-help'>%s<div class='mo-help-r'>%s</div></span>") % (_('Distrust'), description),
             title           = _("Distrust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -451,14 +455,7 @@
 
 
 <%def name="actions_common()">
-    % if 'message' in self.actions:
-        ${popup.link(
-            h.args_to_tuple('new_message', target=self.id),
-            title = _('Send Message'),
-            text  = h.literal("<span class='icon16 i_message'></span>%s") % _('Send Message'),
-        )}
-        <span class="separtor"></span>
-    % endif
+
     <%doc>
     % if 'settings_group' in self.actions:
         <a href="${h.url('edit_group', id=self.id)}" title="${_('_group Settings').capitalize()}"><span class="icon16 i_group"></span>${_('_group Settings').capitalize()}</a>

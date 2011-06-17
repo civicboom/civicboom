@@ -39,12 +39,12 @@
             recent                  = _('Just happened'),
         )
     %>
-
-    <div class="frag_left_col">        
+    
+    ${advert(content="Report your news from your Android mobile!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
+    ${advert(content="Are you an organisation, journalist, blogger or in PR? GET STARTED HERE", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
+    <span style="clear: both; display: block;"></span>
+    <div class="frag_top_row">        
         ## --- adverts --- ##
-	${advert(content="Report your news from your Android mobile!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
-	${advert(content="Are you an organisation, journalist, blooger or in PR? GET STARTED HERE", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
-        <div style="clear: both;"></div>
         <div class="frag_col">
             % for (title, cb_list) in d['sponsored'].iteritems():
                 <% title = list_names.get(title, title) %>
@@ -66,9 +66,9 @@
 <%def name="advert(content, href=None, icon=None, config_key=None, color=None)">
     % if config_key and config_key in self.advert_list:
     <div class="advert">
-	% if icon:
-	    <a class="icon16 i_${icon} icon"></a>
-	% endif
+	##% if icon:
+	##    <a class="icon16 i_${icon} icon"></a>
+	##% endif
 	% if color:
             <div class="box" style="background-color: ${color};">
         % else:
