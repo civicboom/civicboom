@@ -40,6 +40,33 @@ BODY.c-misc.a-about {
 	OL.legal {
 		font-size: 0.75em;
 	}
+
+	.form.upgrade {
+		margin: auto;
+		width: 350px;
+	}
+	.form.upgrade LABEL {
+		width: 100%;
+		text-align: right;
+		padding-right: 0.3em;
+	}
+	.form.upgrade TD:first-child {
+		width: 5em;
+		vertical-align: middle;
+	}
+
+	.toc {
+		margin-top: 32px;
+		margin-bottom: 32px;
+		background: rgba(255, 255, 255, 0.5);
+		border-radius: 8px;
+		padding: 2px;
+		LI A {
+			display: block;
+			width: 128px;
+			margin: 4px;
+		}
+	}
 }
 
 .error {
@@ -50,19 +77,6 @@ BODY.c-misc.a-about {
 .settinghint {
   color: #F00;
   font-weight: bold;
-}
-
-.toc {
-	margin-top: 32px;
-	margin-bottom: 32px;
-	background: rgba(255, 255, 255, 0.5);
-	border-radius: 8px;
-	padding: 2px;
-	LI A {
-		display: block;
-		width: 128px;
-		margin: 4px;
-	}
 }
 
 /*

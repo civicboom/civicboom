@@ -36,24 +36,26 @@
             ('name'    , _('Name')    , ''),
             ('company' , _('Company') , '(optional)'),
             ('phone'   , _('Phone')   , ''),
-            ('email'   , _('email')   , ''),
+            ('email'   , _('Email')   , ''),
             ('industry', _('Industry'), '(optional)'),
         )
         %>
-        <table>
+        <table class="upgrade form">
         % for name, title, extra in upgrade_form_meta:
         <tr>
             <td>
-                <label for="upgrade_${name}">${title}:</label>
+                <label for="upgrade_${name}">${title}</label>
             </td>
             <td>
-                <input type="text" id="upgrade_${name}" name="${name}"/>${extra}<br/>
+                <input type="text" id="upgrade_${name}" name="${name}" placeholder="${extra}">
             </td>
         </tr>
         % endfor
+		<tr><td colspan="2">
+			<input type="submit" value="Request Upgrade"/>
+		</td></tr>
         </table>
     ${h.end_form()}
-    <input type="submit" value="Request Upgrade"/>
     % endif
     
     ##<p>We promise we'll be in touch within 24 hours - or you get a free Premium upgrade!</p>
