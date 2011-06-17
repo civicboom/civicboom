@@ -201,6 +201,10 @@ class GroupsController(BaseController):
         # if only display name is specified, generate a user name
         if not kwargs.get('username') and kwargs.get("name"):
             kwargs["username"] = _gen_username(make_username(kwargs.get("name")))
+
+        # if only user name is specified, generate a display name
+        if not kwargs.get('name') and kwargs.get("username"):
+            kwargs["name"] = kwargs.get("username")
         
         # Need to validate before creating group, not sure how we could do this via settings controller :S GregM
         data       = {'settings':kwargs, 'action':'create'}
@@ -210,6 +214,7 @@ class GroupsController(BaseController):
         
         # Create and set group admin here!
         group              = Group()
+        group.name         = group_dict['name']
         group.username     = group_dict['username']
         group.status       = 'active'
         group_admin        = GroupMembership()
