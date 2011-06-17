@@ -117,20 +117,20 @@ HTML SELECT {
 	}
 	TD {
 		padding: 2px;
-
-		INPUT[type="text"],
-		INPUT[type="submit"],
-		INPUT[type="email"],
-		INPUT[type="search"],
-		INPUT[type="password"],
-		SELECT,
-		TEXTAREA {
-			width: 100%;
-		}
 		&:first-child {
 			text-align: right;
 			vertical-align: top;
 		}
+	}
+
+	INPUT[type="text"],
+	INPUT[type="submit"],
+	INPUT[type="email"],
+	INPUT[type="search"],
+	INPUT[type="password"],
+	SELECT,
+	TEXTAREA {
+		width: 100%;
 	}
 }
 
