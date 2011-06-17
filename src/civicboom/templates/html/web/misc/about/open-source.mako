@@ -107,7 +107,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 	&copy; The PostgreSQL Global Development Group
 
 <p>Cache -
-	<a href="http://redis.io/">Redis</a>
+	<a href="http://redis.io/">Redis</a> -
 	BSD
 
 </div>
