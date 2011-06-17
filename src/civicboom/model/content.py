@@ -498,6 +498,8 @@ class ArticleContent(UserVisibleContent):
         from civicboom.lib.database.actions import parent_disassociate
         return parent_disassociate(self)
 
+DDL("ALTER TABLE content_article ADD CHECK (rating >= 0 AND rating <= 1);").execute_at('after-create', ArticleContent.__table__)
+
 
 class SyndicatedContent(UserVisibleContent):
     __tablename__   = "content_syndicate"
