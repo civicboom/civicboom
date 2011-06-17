@@ -66,7 +66,7 @@
 <%def name="signup()">
 <section>
 	<h1>${_("Sign up (It's free!)")}</h1>
-	<form action="${h.url(controller='register', action='email')}" method="post">
+	<form action="${h.url(controller='register', action='email', format='redirect')}" method="post">
 		<table class="form">
 			<tr>
 				<td width="50"><label for="username_register">${_("Username")}</label></td>
