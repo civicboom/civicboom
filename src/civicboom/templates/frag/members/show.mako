@@ -25,8 +25,8 @@
         self.name      = self.member.get('name')
         self.actions   = d.get('actions', [])
         
-        self.num_unread_messages = d.get('num_unread_messages', 0);
-        self.num_unread_notifications = d.get('num_unread_notifications', 0);
+        self.num_unread_messages = d.get('num_unread_messages');
+        self.num_unread_notifications = d.get('num_unread_notifications');
         
         self.attr.title     = _('_' + self.member['type'].capitalize())
         self.attr.icon_type = self.member['type']
@@ -197,6 +197,10 @@
 	    
 	${share.AddThisFragList(**self.attr.share_kwargs)}
 	
+	% if self.num_unread_messages != None and self.num_unread_notifications != None:
+    	${messages_frag_list()}
+    % endif
+	
 	${frag_list.member_list_thumbnails(
 	    d['following'],
 	    _('Following'),
@@ -331,6 +335,21 @@
 
 </%def>
 
+##------------------------------------------------------------------------------
+## Messages Frag List
+##------------------------------------------------------------------------------
+<%def name="messages_frag_list()">
+    <div class="frag_list">
+        <h2>${_('Messages')}</h2>
+        <div class="frag_list_contents">
+            <div class="content note">
+                <span class="icon16 i_inbox"></span> ${self.num_unread_messages}
+                <span class="icon16 i_sent" ></span>
+                <span class="icon16 i_notifications"></span> ${self.num_unread_notifications}
+            </div>
+        </div>
+    </div>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Actions
