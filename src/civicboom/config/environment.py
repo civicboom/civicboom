@@ -12,8 +12,7 @@ from paste.deploy.converters import asbool
 import civicboom.lib.app_globals as app_globals
 import civicboom.lib.helpers
 from civicboom.config.routing import make_map
-from civicboom.model import init_model
-from civicboom.lib.civicboom_init import init as civicboom_init  # This will trigger a set of additional initalizers
+from civicboom.model import init_model, init_model_extra
 import cbutils.warehouse as wh
 
 # for setting up the redis backend to beaker
@@ -154,6 +153,6 @@ def load_environment(global_conf, app_conf):
     else:  # pragma: no cover
         log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
 
-    civicboom_init() # This will trigger a set of additional initalizers
+    init_model_extra() # This will trigger a set of additional initalizers
 
     return config

@@ -4,8 +4,8 @@ from civicboom.model.media   import Media
 from civicboom.model.message import Message
 from civicboom.model.meta    import Session
 
-from sqlalchemy.orm     import join, joinedload
-from sqlalchemy         import and_, or_, not_
+from sqlalchemy.orm     import joinedload
+from sqlalchemy         import and_
 from sqlalchemy.orm.exc import NoResultFound
 
 from cbutils.misc import make_username
