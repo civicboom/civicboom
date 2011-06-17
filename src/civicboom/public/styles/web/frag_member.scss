@@ -21,65 +21,58 @@
 				padding: 1em;
 				font-size: 88%;
 				
+				a {
+					text-decoration: none;
+				}
+				
 				table {
 					width: 100%;
 				}
 				
 				.avatar {
+					display: inline;
 					width: 90px;
+					padding: 5px;
+					float: right;
+				}
+				
+				.content {
+					display: inline;
+					color: #333;
 					
-					.thumbnail {
-						margin-right: 0.1em;
+					h2 {
+						font-size: 150%;
+						color: #666;
 					}
 				}
 				
-				h2 {
-					font-size: 150%;
-					color: #666;
+				.button {
+					font-size: 110%;
+					display: inline;
+					
+					border-color: $button-member-border;
+					background: $button-member-top; /* for non-css3 browsers */
+					filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-member-top}', endColorstr='#{$button-member-bot}'); /* for IE */
+					background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-member-top), color-stop(0.81, $button-member-bot)); /* for webkit browsers */
+					background: -moz-linear-gradient(top, $button-member-top, $button-member-bot 81%); /* for firefox 3.6+ */
+					color: $button-member-txt;
+					
+					-moz-box-shadow: 1px 1px 1px #666;
+					-webkit-box-shadow: 1px 1px 1px #666;
+					box-shadow: 1px 1px 1px #666;
 				}
-					
-				.content {
-					color: #333;
-					
-					div {
-						margin-left: 0.5em;
-						padding-right: 1em;
-					}
+				
+				.button:hover {
+					background: lighten($button-member-top, 5%); /* for non-css3 browsers */
+					filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{lighten($button-member-top, 5%)}', endColorstr='#{lighten($button-member-bot, 5%)}'); /* for IE */
+					background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, lighten($button-member-top, 5%)), color-stop(0.81, lighten($button-member-bot, 5%))); /* for webkit browsers */
+					background: -moz-linear-gradient(top, lighten($button-member-top, 5%), lighten($button-member-bot, 5%) 81%); /* for firefox 3.6+ */
+					color: lighten($button-member-txt, 5%);
 				}
 				
 				.actions {
 					width: 90px;
 					text-align: right;
-					
-					a {
-						text-decoration: none;
-					}
-				
-					.button {
-						font-size: 110%;
-						display: block;
-						margin-top: 0.5em;
-						
-						border-color: $button-member-border;
-						background: $button-member-top; /* for non-css3 browsers */
-						filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-member-top}', endColorstr='#{$button-member-bot}'); /* for IE */
-						background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-member-top), color-stop(0.81, $button-member-bot)); /* for webkit browsers */
-						background: -moz-linear-gradient(top, $button-member-top, $button-member-bot 81%); /* for firefox 3.6+ */
-						color: $button-member-txt;
-						
-						-moz-box-shadow: 1px 1px 1px #666;
-						-webkit-box-shadow: 1px 1px 1px #666;
-						box-shadow: 1px 1px 1px #666;
-					}
-					
-					.button:hover {
-	
-						background: lighten($button-member-top, 5%); /* for non-css3 browsers */
-						filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{lighten($button-member-top, 5%)}', endColorstr='#{lighten($button-member-bot, 5%)}'); /* for IE */
-						background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, lighten($button-member-top, 5%)), color-stop(0.81, lighten($button-member-bot, 5%))); /* for webkit browsers */
-						background: -moz-linear-gradient(top, lighten($button-member-top, 5%), lighten($button-member-bot, 5%) 81%); /* for firefox 3.6+ */
-						color: lighten($button-member-txt, 5%);
-					}
 				}
 			}
 		}

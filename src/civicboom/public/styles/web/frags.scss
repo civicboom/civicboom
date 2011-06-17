@@ -127,19 +127,17 @@
 /*----------------------------------------------------------------------------*/
 /* Action/Title Bar                                                           */
 /*----------------------------------------------------------------------------*/
-
 .frag_bars {
-	float: right;
-	width: 12.5em;
-	
 	/* #frag_containers .frag_container - used in popups*/
 	.title_bar {
+		float: right;
+		display: inline;
 		height: 1.25em;
 		overflow: hidden;
 		color: white;
 		/* border-bottom: 0.1em solid $frag-border; /* to match .frag_container */
 		padding: 0.25em;
-		background-color: $cb-darkblue;
+		background-color: none;
 		
 		.common_actions {
 			float: right;
@@ -147,18 +145,17 @@
 	}
 	
 	.action_bar {
-		height: 1.35em;
+		float: left;
+		display: inline;
+		height: 1.25em;
 		overflow: hidden;
 		color: $frag-action-bar-txt;
 		font-size: .9em;
-		
-		border-bottom-left-radius        : 0.4em;
-		-moz-border-bottom-left-radius   : 0.4em;
-		-webkit-bottom-left-border-radius: 0.4em;
+		width: 200px;
 	
 		/* border-bottom: 0.1em solid darken($frag-action-bar, 30%); */
 	
-		background-color: $actionbar-back;
+		background-color: none;
 		padding: 0.25em;
 	
 		.object_actions_common {

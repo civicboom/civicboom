@@ -167,10 +167,10 @@
     
 <div class="menuh">
 	<ul>
-		<li>${h.secure_link(h.url('new_content', target_type='assignment'), _("Ask for news"), css_class="top_parent button")}</li>
+		<li>${h.secure_link(h.url('new_content', target_type='assignment'), _("Make a request"), css_class="top_parent button")}</li>
 	</ul>
 	<ul>
-		<li>${h.secure_link(h.url('new_content', target_type='article'   ), _("Post my news")   , css_class="top_parent button")}</li>
+		<li>${h.secure_link(h.url('new_content', target_type='article'   ), _("Post my story")   , css_class="top_parent button")}</li>
 	</ul>
 	<%doc>
     <ul>

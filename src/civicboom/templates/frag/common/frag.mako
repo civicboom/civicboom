@@ -174,11 +174,11 @@
                 </div>
             </div>
         </div>
-        
-        <div class="title">
+        <span style="clear: both; display: block;"></span>
+        ##<div class="title">
             ## Title
-            <span class="title_text">${self.attr.title}</span>
-        </div>
+        ##    <span class="title_text">${self.attr.title}</span>
+        ##</div>
         ${next.body()}
     </div>
 </%def>

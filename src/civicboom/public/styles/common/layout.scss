@@ -189,13 +189,14 @@ HTML SELECT {
 
 #flash_message {
 	position: fixed;
-	top: 0px;
-	left: 0px;
+	top: 0;
+	left: 0;
 	right: 0px;
 	z-index: 3;
 	padding: 8px;
 	display: none;
 	border-bottom: 1px solid black;
+	text-align: center;
     background: #FFA;
     opacity: 0.90;
 }
@@ -293,10 +294,10 @@ DIV#app .button {
 }
 
 .title_bar {
-	background: $titlebar-top; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$titlebar-top}', endColorstr='#{$titlebar-bot}'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $titlebar-top), color-stop(0.81, $titlebar-bot)); /* for webkit browsers */
-	background: -moz-linear-gradient(top, $titlebar-top, $titlebar-bot 81%); /* for firefox 3.6+ */
+	/*background: $titlebar-top; /* for non-css3 browsers */
+	/*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$titlebar-top}', endColorstr='#{$titlebar-bot}'); /* for IE */
+	/*background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $titlebar-top), color-stop(0.81, $titlebar-bot)); /* for webkit browsers */
+	/*background: -moz-linear-gradient(top, $titlebar-top, $titlebar-bot 81%); /* for firefox 3.6+ */
 	color: $titlebar-txt;
 }
 
@@ -306,6 +307,10 @@ DIV#app .button {
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-top), color-stop(0.81, $button-bot)); /* for webkit browsers */
 	background: -moz-linear-gradient(top, $button-top, $button-bot 81%); /* for firefox 3.6+ */
 	color: $button-txt;
+	
+						-moz-box-shadow: 1px 1px 1px #666;
+						-webkit-box-shadow: 1px 1px 1px #666;
+						box-shadow: 1px 1px 1px #666;
 }
 .button:hover {
 	background: $button-top + #101010; /* for non-css3 browsers */
