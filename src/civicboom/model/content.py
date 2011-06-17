@@ -697,7 +697,7 @@ class Tag(Base):
     """
     __tablename__ = "tag"
     id            = Column(Integer(),    primary_key=True)
-    name          = Column(Unicode(250), nullable=False, index=True) # FIXME: should be unique within its category
+    name          = Column(Unicode(250), nullable=False, index=True)
     #type          = Column(Unicode(250), nullable=False, default=u"Topic")
     #children      = relationship("Tag", backref=backref('parent', remote_side=id))
     parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True, index=True)
@@ -717,6 +717,9 @@ class Tag(Base):
             return self.parent.full_name + " --> " + self.name
         else:
             return self.name
+
+# FIXME: tag name should also be unique within its category
+DDL("ALTER TABLE tag ADD CHECK (length(name) > 0);").execute_at('after-create', Tag.__table__)
 
 
 # FIXME: unseeded
