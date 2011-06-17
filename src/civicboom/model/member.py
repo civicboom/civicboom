@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base, location_to_string
+from civicboom.model.meta import Base, location_to_string, JSONType
 from civicboom.model.message import Message
 from cbutils.misc import update_dict
 from civicboom.lib.helpers import wh_url
@@ -80,6 +80,7 @@ def lowest_role(a,b):
         return a
     else:
         return b
+
 
 def has_account_required(required, current):
     """
@@ -198,6 +199,34 @@ def _generate_salt():
     return os.urandom(256)
 
 
+import UserDict
+from ConfigParser import SafeConfigParser, NoOptionError
+
+
+class _ConfigManager(UserDict.DictMixin):
+    def __init__(self, base):
+        self.base = base
+
+    def __getitem__(self, name):
+        if name in self.base:
+            return self.base[name]
+        try:
+            user_defaults = SafeConfigParser()
+            user_defaults.read("user_defaults.ini")
+            return unicode(user_defaults.get("settings", name))
+        except NoOptionError:
+            raise KeyError(name)
+
+    def __setitem__(self, name, value):
+        self.base[name] = value
+
+    def __delitem__(self, name):
+        del self.base[name]
+
+    def keys(self):
+        return self.base.keys()
+
+
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
@@ -214,6 +243,8 @@ class Member(Base):
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
+    description     = Column(UnicodeText(),  nullable=False, default=u"")
+    extra_fields    = Column(JSONType(mutable=True), nullable=False, default={})
 
     num_following            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
@@ -260,8 +291,6 @@ class Member(Base):
     #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
 
 
-    _config = None
-
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'default': {
@@ -284,8 +313,8 @@ class Member(Base):
             'num_followers'       : None ,
             'utc_offset'          : None ,
             'join_date'           : None ,
-            'website'             : lambda member: member.config.get('website') ,
-            'description'         : lambda member: member.config.get('description') ,
+            'website'             : lambda member: member.extra_fields.get('website') ,
+            'description'         : None ,
             #'url'                 : None ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
@@ -297,13 +326,14 @@ class Member(Base):
     })
     
 
+    _config = None
+
     @property
     def config(self):
+        if not self.extra_fields:
+            self.extra_fields = {}
         if not self._config:
-            # import at the last minute -- importing at the start of the file
-            # causes a dependency loop
-            from civicboom.lib.settings import MemberSettingsManager
-            self._config = MemberSettingsManager(self)
+            self._config = _ConfigManager(self.extra_fields)
         return self._config
 
     def __unicode__(self):
@@ -426,7 +456,10 @@ class Member(Base):
     def avatar_url(self, size=80):
         if self.avatar:
             return wh_url("avatars", self.avatar)
-        return wh_url("public", "images/default/avatar.png")
+        if self.__type__ == "user":
+            return wh_url("public", "images/default/avatar.png")
+        else:
+            return wh_url("public", "images/default/avatar_group.png")
 
     def delete(self):
         from civicboom.lib.database.actions import del_member
@@ -530,6 +563,8 @@ class Member(Base):
 
 GeometryDDL(Member.__table__)
 
+DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', username || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
+
 
 class User(Member):
     __tablename__    = "member_user"
@@ -571,23 +606,14 @@ class User(Member):
         return self.email or self.email_unverified
 
     @property
-    def config(self):
-        if not self._config:
-            # import at the last minute -- importing at the start of the file
-            # causes a dependency loop
-            from civicboom.lib.settings import MemberSettingsManager
-            self._config = MemberSettingsManager(self)
-        return self._config
-
-    @property
     def avatar_url(self, size=80):
         if self.avatar:
             return wh_url("avatars", self.avatar)
         email = self.email or self.email_unverified
         if email:
             hash    = hashlib.md5(email.lower()).hexdigest()
-            default = "identicon"
-            #default = "http://www.civicboom.com/images/default/avatar.jpg"
+            #default = "identicon"
+            default =  wh_url("public", "images/default/avatar.png")
             args    = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
             return "https://secure.gravatar.com/avatar/%s?%s" % (hash, args)
         return Member.avatar_url
@@ -752,15 +778,6 @@ class UserLogin(Base):
     #type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
     type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time
     token       = Column(String(250),  nullable=False)
-
-
-class MemberSetting(Base):
-    __tablename__    = "member_setting"
-    member_id   = Column(Integer(),     ForeignKey('member.id'), primary_key=True, index=True)
-    name        = Column(String(250),   primary_key=True)
-    value       = Column(UnicodeText(), nullable=False)
-
-    member      = relationship("Member", backref=backref('settings', cascade="all,delete-orphan"))
 
 
 class PaymentAccount(Base):

@@ -40,7 +40,7 @@ log      = logging.getLogger(__name__)
 class PrivateGroupValidator(formencode.validators.FancyValidator):
     messages = {
         'invalid'           : _('Value must be one of: public; private'),
-        'require_upgrade'   : _('You require a paid account to use the private content feature, please contact us!'),
+        'require_upgrade'   : _('You require a paid account to use this feature, please contact us!'),
         }
 
     def _to_python(self, value, state):
@@ -56,7 +56,7 @@ class GroupSchema(DefaultSchema):
     description                = formencode.validators.String(max=4096, min=0              , not_empty=False)
     default_role               = formencode.validators.OneOf(group_member_roles.enums      , not_empty=False)
     join_mode                  = formencode.validators.OneOf(group_join_mode.enums         , not_empty=False)
-    member_visibility          = formencode.validators.OneOf(group_member_visibility.enums , not_empty=False)
+    member_visibility          = PrivateGroupValidator()
     default_content_visibility = PrivateGroupValidator()
 
 
@@ -174,8 +174,24 @@ class GroupsController(BaseController):
 
         @api groups 1.0 (WIP)
         
-        @param username  a unique username, cannot clash with existing usernames
-        @param *         see "POST /groups"
+        @param username                   a unique username, cannot clash with existing usernames
+        @param name                       display name
+        @param description                description of groups purpose
+        @param default_role
+            admin
+            editor
+            contributor
+            observer
+        @param join_mode
+            public
+            invite
+            invite_and_request
+        @param member_visibility
+            public
+            private 
+        @param default_content_visibility (plus account required)
+            public
+            private 
         
         @return 400  data invalid (ie, username that already exisits)
         @return 201  group created, data.id = new group id

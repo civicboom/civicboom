@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="https://www.civicboom.com/" />
+<title>Login as UT, Post Request, Login as UF, Respond, Login as UT, Check Response, Boom, Viewed, Logout</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Login as UT, Post Request, Login as UF, Respond, Login as UT, Check Response, Boom, Viewed, Logout</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>http://localhost/?ut=1307531040.32#cbhJTdCJTIyYmxvY2tzJTIyJTNBJTVCJTVEJTdE</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Sign in</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>username</td>
+	<td>unittest</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>password</td>
+	<td>password</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link__contents_new_target_type_assignment_POST</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>title_30</td>
+	<td>this is a test request for selenium</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>tinymce</td>
+	<td>&lt;p&gt;This is my test content&lt;/p&gt;</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>tags_30</td>
+	<td>test, content</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>name=due_date</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=select.ui-datepicker-month</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=option[value=11]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=option[value=1991]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=option[value=2011]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=15</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>event_date</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=select.ui-datepicker-month</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=option[value=1991]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=option[value=2011]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=15</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=fieldset:nth(2) &gt; legend &gt; span.icon16.i_plus</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=form:nth(1) &gt; input[type=submit]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>submit_publish</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=input[type=submit]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTitle</td>
+	<td>Social Network Sharing - Powered by Janrain</td>
+	<td></td>
+</tr>
+<tr>
+	<td>selectFrame</td>
+	<td>relative=up</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=img[alt=close]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=span.icon16.i_assignment</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=div.frag_col &gt; h1</td>
+	<td>this is a test request for selenium</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=div.content_text &gt; p</td>
+	<td>This is my test content</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link__account_signout_POST</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Sign in</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>username</td>
+	<td>unitfriend</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>password</td>
+	<td>password</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//a[contains(@href, '/contents?list=assignments_active')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=fieldset &gt; p:nth(1) &gt; input[name=term]</td>
+	<td>this is selenium</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Search']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>link=this is a test request for selenium</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=this is a test request for selenium</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=tr.bold &gt; td:nth(1)</td>
+	<td>Event Date</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=div.frag_col &gt; h1</td>
+	<td>this is a test request for selenium</td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>css=div.content_text &gt; p</td>
+	<td>This is my test content</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Respond Now</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>tinymce</td>
+	<td>I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! </td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=glob:#submit_draft_*</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>flash_message</td>
+	<td>content has been saved</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>submit_publish</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=form:nth(1) &gt; input[type=submit]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=input[type=submit]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForTitle</td>
+	<td>Social Network Sharing - Powered by Janrain</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=img[alt=close]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link__account_signout_POST</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Sign in</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>username</td>
+	<td>unittest</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>password</td>
+	<td>password</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=a.icon32.i_notification</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=p.content</td>
+	<td>Mr U's Friend has written new content : Re: this is a test request for selenium</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=exact:Re: this is a test request for selenium</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>css=div.content_text &gt; p</td>
+	<td>I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium! I have a lovely idea: Selenium!</td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Viewed</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Boom</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyText</td>
+	<td>link=Flag</td>
+	<td>Flag</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link__contents_32_boom_redirect_POST</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>flash_message</td>
+	<td>Content has been Boomed</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link__contents_32_seen_redirect_POST</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForText</td>
+	<td>flash_message</td>
+	<td>content has been marked as seen</td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=span.icon16.i_edit_lock</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link__account_signout_POST</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

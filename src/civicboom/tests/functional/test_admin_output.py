@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestAdminEmails(TestController):
     
     def test_summary_emails(self):
@@ -12,4 +13,3 @@ class TestAdminEmails(TestController):
         self.assertTrue(email_response.content_text)
         self.assertIn  ('unittest'  , email_response.content_text)
         self.assertIn  ('unitfriend', email_response.content_text)
-

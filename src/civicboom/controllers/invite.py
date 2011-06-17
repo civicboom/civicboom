@@ -20,8 +20,10 @@ group_actions_controller  = GroupActionsController()
 def check_member(member):
     return has_role_required('editor', c.logged_in_persona_role) and member == c.logged_in_persona
 
+
 def check_assignment(content):
     return content.editable_by(c.logged_in_persona)
+
 
 def roles_group(group):
     roles = group_member_roles.enums
@@ -131,7 +133,6 @@ class InviteController(BaseController):
                 if key.count('-') > 0:
                     list, order = key.split('-',1)
                     value       = request.POST[key]
-                        
                     if   list == 'inv' and order:
                         user = get_member(value)
                         invitee_list[int(order)] = user.to_dict()
@@ -158,6 +159,15 @@ class InviteController(BaseController):
                 
         invitee_list = re_key(invitee_list)
         
+        if 'submit-everyone' in request.POST:
+            if kwargs.get('search-type', '') != '':
+                lala = dict([(user['username'], get_member(user['username']).to_dict()) for user in self.search(limit_override=1000, **kwargs)['data']['invite_list']['items'] if user['username'] not in invitee_usernames])
+                invitee_add.update(lala)
+                print lala
+                pass
+            else:
+                set_flash_message({'status': 'error', 'message':_('You cannot invite everyone!')})
+        
         # Add new additions to invitee_list
         for username in invitee_add.keys():
             if username not in [user['username'] for user in invitee_list.values()]:
@@ -167,6 +177,7 @@ class InviteController(BaseController):
         
         message = None
         error_list = None
+        
         if 'submit-invite' in request.POST:
             error_list = {}
             if len(invitee_list) > 0:
@@ -211,7 +222,7 @@ class InviteController(BaseController):
             'id'              : kwargs.get('id'),
             'exclude-members' : ','.join(invitee_usernames),
             'actions'         : [],
-            'invite-role'            : role,
+            'invite-role'     : role,
         } )
         
         if error_list:
@@ -244,7 +255,7 @@ class InviteController(BaseController):
         
         invite_list = members_controller.index(
             type   = None,                                      # could search for users and hubs separately kwargs.get('type')
-            limit  = search_limit,
+            limit  = kwargs.get('limit_override') or search_limit,
             offset = search_offset,
             term   = kwargs.get('search-name'),
             exclude_members = kwargs.get('exclude-members'),

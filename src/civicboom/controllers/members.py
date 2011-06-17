@@ -39,9 +39,10 @@ def _init_search_filters():
             return query.filter(Member.id       == normalize_member(member))
 
     def append_search_name(query, name):
-        if name:
-            return query.filter(or_(Member.name.ilike("%"+name+"%"), Member.username.ilike("%"+name+"%")))
-        return query
+        return query.filter("""
+            to_tsvector('english', username || ' ' || name || ' ' || description) @@
+            plainto_tsquery(:text)
+        """).params(text=name)
     
     def append_search_type(query, type_text):
         if type_text:
@@ -257,9 +258,9 @@ class MembersController(BaseController):
                 'responses',
                 
                 # Other
-                'assignments_accepted', #TODO need to limit to 'search.default.limit.sub_list' .. maybe?
+                'assignments_accepted', # AllanC - see limit imposed below
                 'actions',
-                'boomed' , #TODO need to limit to 'search.default.limit.sub_list' .. maybe?
+                'boomed' ,              # AllanC - see limit imposed below
             ]
         
         data = {'member': member.to_dict(list_type='full', **kwargs)}
@@ -277,6 +278,9 @@ class MembersController(BaseController):
         
         # Member Lists
         for list in [list for list in lists if hasattr(member_actions_controller, list)]:
-            data[list] = getattr(member_actions_controller, list)(member, **kwargs)['data']['list']
+            limit = None
+            if list in ['boomed', 'assignments_accepted']: # AllanC - we dont want to limit member lists, but we do want to limit content lists to 3
+                limit = config['search.default.limit.sub_list']
+            data[list] = getattr(member_actions_controller, list)(member, limit=limit, **kwargs)['data']['list']
         
         return action_ok(data=data)

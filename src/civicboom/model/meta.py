@@ -21,6 +21,22 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
+# types
+
+from sqlalchemy import PickleType, UnicodeText
+import json
+
+
+class JSONType(PickleType):
+    """
+    fff. json dumps to str by default, and unicodetext complains
+    """
+    impl = UnicodeText
+
+    def __init__(self, mutable=False):
+        PickleType.__init__(self, pickler=json, mutable=mutable)
+
+
 
 #-------------------------------------------------------------------------------
 # Object to Dict Conversion

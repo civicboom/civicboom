@@ -15,7 +15,7 @@ from webhelpers.html.tags import end_form
 from webhelpers.date import time_ago_in_words
 
 from cbutils.text import strip_html_tags, scan_for_embedable_view_and_autolink
-from cbutils.misc import args_to_tuple
+from cbutils.misc import args_to_tuple, make_username
 from civicboom.lib.web import current_url, url, current_protocol
 
 import webhelpers.html.tags as html
@@ -33,6 +33,11 @@ import datetime
 import logging
 
 user_log = logging.getLogger("user")
+
+# Regex to match absolute urls and allow removing of proto/host/domain name
+link_matcher = re.compile(r'\A(http[s]{0,1}://[\w\.\-\_]*)/{0,1}')
+# Regex to match any non html id/class safe chars
+funky_chars  = re.compile(r'[^\w]+')
 
 
 def guess_hcard_name(name):
@@ -130,6 +135,24 @@ def shorten_module(mod):
     'lib.helpers'
     """
     return re.sub("civicboom/(.*).py", "\\1", mod).replace("/", ".")
+
+
+def nicen_url(url):
+    """
+    Make a URL nicer for human readers
+
+    >>> nicen_url("http://www.shishnet.org/~shish")
+    'shishnet.org/~shish'
+    >>> nicen_url("http://www.shishnet.org/")
+    'shishnet.org'
+    >>> nicen_url("http://www.shishnet.org")
+    'shishnet.org'
+    >>> nicen_url("http://shishnet.org")
+    'shishnet.org'
+    >>> nicen_url("shishnet.org")
+    'shishnet.org'
+    """
+    return re.sub("^(http://|)?(www\.|)?(.*?)/?$", "\\3", url)
 
 
 def link_to_objects(text):
@@ -296,6 +319,7 @@ def url_pair(*args, **kwargs):
     
     return (href, href_formatted)
 
+
 ## AllanC - TODO - need to specify frag size as an optional arg
 def frag_link(value, title='', class_='', href_tuple=([],{})): #*args, **kwargs
     href, href_frag = url_pair(gen_format='frag', *href_tuple[0], **href_tuple[1]) # generate standard and frag URL's
@@ -306,6 +330,7 @@ def frag_link(value, title='', class_='', href_tuple=([],{})): #*args, **kwargs
         title   = title if title else value,
         onClick ="cb_frag($(this), '%s'); return false;" % href_frag ,
     )
+
 
 #-------------------------------------------------------------------------------
 # Secure Form
@@ -400,7 +425,9 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         href = url(*href[0], **href[1])
 
     # Keep track of number of secure links created so they can all have unique hash's
-    hhash = hashlib.md5(uniqueish_id(href, value, vals)).hexdigest()[0:6]
+    #hhash = hashlib.md5(uniqueish_id(href, value, vals)).hexdigest()[0:6]
+    # GregM: Semi-unique ids required for selenium, these will be unique to every action (multiple of same action can exist)
+    hhash = re.sub(funky_chars, '_', re.sub(link_matcher, '', href)) + '_' + method
 
     # Create Form --------
     values = ''
@@ -411,7 +438,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
             values +
             HTML.input(type="submit", value=value, name=value) + #AllanC: without the name attribute here the AJAX/JSON does not function, WTF! took me ages to track down :( NOTE: if the name="submit" jQuery wont submit! a known problem!?
         end_form(),
-        id='span_'+hhash)
+        id='span_'+hhash, class_='secure_hide') # GregM: secure_hide means js will hide element and remove class (to stop dup processing of same element)
 
     # Confirm JS -------
     ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
@@ -427,7 +454,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         id      = "link_"+hhash,
         style   = "display: none;",
         href    = href,
-        class_  = css_class,
+        class_  = css_class + ' secure_show', # GregM: secure_show means js will show element and remove class (to stop dup processing of same element)
         title   = title,
         # AllanC - the beast onclick even below does the following:
         #   - put yes/no proceed message up if specifyed
@@ -438,12 +465,14 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         #       - if not just serilze the form and submit
         #     - set timer so that in 1 seconds time the link 'disabled class is removed'
         #  - return false and ensure that the normal list is not followed
-        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled')) {$(this).addClass('disabled'); var e = document.getElementById('form_%(hhash)s'); if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout('$(\"#link_%(hhash)s\").removeClass(\"disabled\");', 1000);} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        # GregM: This now looks for jquery relative span > form instead of unique id
+        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled')) {$(this).addClass('disabled'); var e = $(this).siblings('span').children('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout('$(\"#link_%(hhash)s\").removeClass(\"disabled\");', 1000);} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
     # $('#form_%(hhash)s').onsubmit();
     
     # form vs link switcher (hide the compatable form)
-    hs = HTML.script(literal('$("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))
+    # GregM: Hides secure_hide classed elements & removes class (stop dups); Shows secure_show classed elements & removes class (ditto)
+    hs = HTML.script(literal('$(".secure_hide").hide().removeClass("secure_hide"); $(".secure_show").show().removeClass("secure_show");   $("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))
     
     return HTML.span(hf+hl+hs, class_="secure_link") #+json_submit_script
 

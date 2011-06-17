@@ -3,6 +3,7 @@ from civicboom.model.meta import Session
 from civicboom.model import Content
 from civicboom.lib.web import url
 
+
 def worker_workout():
     print "worker_workout():"
 
