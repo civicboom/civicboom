@@ -603,6 +603,8 @@ class AssignmentContent(UserVisibleContent):
             invite_member(members)
         Session.commit()
 
+DDL("ALTER TABLE content_assignment ADD CHECK ((event_date IS NULL) OR (due_date IS NULL) OR (due_date >= event_date));").execute_at('after-create', AssignmentContent.__table__)
+
 
 class MemberAssignment(Base):
     __tablename__ = "member_assignment"
