@@ -73,6 +73,10 @@ python-recaptcha  - MIT
 python-decorator  - 2-clause BSD
 python-lxml       - BSD + Python (plus some other bits which are explicitly marked as aggregated not linked)
 python-pybabel    - BSD-like?
+python-decorator  - BSD
+python-dateutil   - Simplified BSD
+python-redis      - MIT
+python-beautifulsoup - Python
 
 mako              - MIT
 formalchemy       - MIT
@@ -80,6 +84,10 @@ python-magic      - PSF
 GeoAlchemy        - MIT
 GeoFormAlchemy    - MIT
 twitter           - MIT
+
+ffmpeg            - GPL [aggregated]
+
+python-psycopg2
 -->
 
 <p>DB Framework -
