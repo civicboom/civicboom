@@ -128,6 +128,8 @@
 /* Action/Title Bar                                                           */
 /*----------------------------------------------------------------------------*/
 .frag_bars {
+	background-color: $frag-background;
+
 	/* #frag_containers .frag_container - used in popups*/
 	.title_bar {
 		float: right;

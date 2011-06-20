@@ -14,11 +14,12 @@
         % endif
     >
         <div class="title_bar">
-            <div class="title">
-                <span class="icon16 i_popup"></span><span class="title_text">${title}</span>
-            </div>
+            ##<div class="title">
+            ##    <span class="icon16 i_popup"></span><span class="title_text">${title}</span>
+            ##</div>
             <div class="common_actions">
-                <a href='' title='${_('Close popup')}' class="icon16 i_close simplemodalClose"><span>Close</span></a>
+                ## <a href='' title='${_('Close popup')}' class="icon16 i_close simplemodalClose"><span>Close</span></a>
+                <a href='' title='${_('Close popup')}' class="simplemodalClose">Close</a>
             </div>
         </div>
         
