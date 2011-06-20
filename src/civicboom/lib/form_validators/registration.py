@@ -128,9 +128,9 @@ class ReCaptchaValidator(validators.FancyValidator):
     validate_partial_python = None
     validate_partial_other  = None
 
-    def __init__(self, remote_ip, *args, **kw):
+    def __init__(self, remoteip, *args, **kw):
         super(ReCaptchaValidator, self).__init__(args, kw)
-        self.remote_ip = remote_ip
+        self.remoteip = remoteip
         self.field_names = ['recaptcha_challenge_field',
                             'recaptcha_response_field']
     
@@ -144,7 +144,7 @@ class ReCaptchaValidator(validators.FancyValidator):
     def validate_python(self, field_dict, state):
         
         recaptcha_response = reCAPTCHA_verify(
-            remote_ip = self.remote_ip, #request.environ['REMOTE_ADDR'],
+            remoteip  = self.remoteip, #request.environ['REMOTE_ADDR'],
             challenge = field_dict['recaptcha_challenge_field'],
             response  = field_dict['recaptcha_response_field'],
         )

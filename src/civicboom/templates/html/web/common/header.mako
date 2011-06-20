@@ -1,3 +1,7 @@
+<%
+    logged_in = c.logged_in_persona and c.logged_in_persona.status == 'active'
+%>
+
 ##------------------------------------------------------------------------------
 ## Logo
 ##------------------------------------------------------------------------------
@@ -13,7 +17,8 @@
 ##------------------------------------------------------------------------------
 ## Persona Switching
 ##------------------------------------------------------------------------------
-% if c.logged_in_persona:
+  ## AllanC - must check status=active otherwise registration page keeps displaying 'unauthroised error' repeatedly
+% if logged_in:
 <%
 	from civicboom.model import Group
 %>
@@ -157,7 +162,7 @@
         <li><a href="#" class="top_parent button">${_("Explore")}</a>
         <ul>
             <!--<li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="${_("Quick Search")}"></form></li>-->
-% if c.logged_in_persona:
+% if logged_in:
 <!--
             <li><a href="/feeds" class="parent">${_("News Feeds")}</a>
 				<ul>
