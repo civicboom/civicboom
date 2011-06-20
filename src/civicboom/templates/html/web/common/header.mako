@@ -31,19 +31,19 @@
 				for (var key in icons) {
 					if (typeof data.data[key] != 'undefined') {
 						//alert (icons[key].html());
-						icons[key].html('&nbsp;' + data.data[key] + '&nbsp;');
+						$(icons[key]).html('&nbsp;' + data.data[key] + '&nbsp;');
 						_total += (data.data[key] * 1);
 					}
 				}
 				if (typeof icons['_total'] != 'undefined')
-				    icons['_total'].html('&nbsp;' + _total + '&nbsp;')
+				    $(icons['_total']).html('&nbsp;' + _total + '&nbsp;')
 			}
 		});
 	}
 	$(function() {
-		icons = {num_unread_messages: $('#msg_c_m'),
-				 num_unread_notifications: $('#msg_c_n'),
-				 _total: $('#msg_c_o')
+		icons = {num_unread_messages: '.msg_c_m',
+				 num_unread_notifications: '.msg_c_n',
+				 _total: '.msg_c_o'
 				}
 		setInterval(refreshMessages, 60000);
 	});
@@ -59,7 +59,7 @@
 	  </div>
       <%def name="messageIcon(messages, id)">
         % if messages > 0:
-          <div id="${id}" class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
+          <div class="icon_overlay_red ${id}">&nbsp;${messages}&nbsp;</div>
         % endif
       </%def>
       <div id="message_holder">
