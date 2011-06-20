@@ -19,7 +19,7 @@
     <p>Why upgrade? In addition to the basic system, Premium account gives you: </p>
     <ul>
         <li>Unlimited requests - ask what you want, whenever you want.</li>
-        <li>Create open or closed requests - these are your call-to-actions for a community, audience or customer on any topic, issue or event.</p>
+        <li>Create open or closed requests - these are your call-to-actions for a community, audience or customer on any topic, issue or event.</li>
         <li>Create open or closed Hubs - they are your "brand" identity</li>
         <li>Filter out weak content - disassociate from "off brand" copy...</li>
         <li>Schedule requests - plan multiple requests for campaigns, set deadlines and event dates with automated alerts</li>
@@ -36,24 +36,26 @@
             ('name'    , _('Name')    , ''),
             ('company' , _('Company') , '(optional)'),
             ('phone'   , _('Phone')   , ''),
-            ('email'   , _('email')   , ''),
+            ('email'   , _('Email')   , ''),
             ('industry', _('Industry'), '(optional)'),
         )
         %>
-        <table>
+        <table class="upgrade form">
         % for name, title, extra in upgrade_form_meta:
         <tr>
             <td>
-                <label for="upgrade_${name}">${title}:</label>
+                <label for="upgrade_${name}">${title}</label>
             </td>
             <td>
-                <input type="text" id="upgrade_${name}" name="${name}"/>${extra}<br/>
+                <input type="text" id="upgrade_${name}" name="${name}" placeholder="${extra}">
             </td>
         </tr>
         % endfor
+		<tr><td colspan="2">
+			<input type="submit" value="Request Upgrade"/>
+		</td></tr>
         </table>
     ${h.end_form()}
-    <input type="submit" value="Request Upgrade"/>
     % endif
     
     ##<p>We promise we'll be in touch within 24 hours - or you get a free Premium upgrade!</p>
