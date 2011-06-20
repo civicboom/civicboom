@@ -664,7 +664,7 @@ class ContentsController(BaseController):
         
         # Tags
         if 'tags_string' in kwargs:
-            tags_input   = set([tag.strip().lower() for tag in kwargs['tags_string'].split(config['setting.content.tag_string_separator']) if tag!=""]) # Get tags from form removing any empty strings
+            tags_input   = set([tag.strip().lower() for tag in kwargs['tags_string'].split(config['setting.content.tag_string_separator']) if tag.strip()!=""]) # Get tags from form removing any empty strings
             tags_current = set([tag.name for tag in content.tags]) # Get tags form current content object
             content.tags = [tag for tag in content.tags if not tag.name in tags_current - tags_input] # remove unneeded tags
             for new_tag_name in tags_input - tags_current: # add new tags

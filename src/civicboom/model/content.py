@@ -356,6 +356,8 @@ CREATE TRIGGER update_response_count
 GeometryDDL(Content.__table__)
 
 DDL("CREATE INDEX content_fts_idx ON content USING gin(to_tsvector('english', title || ' ' || content));").execute_at('after-create', Content.__table__)
+DDL("ALTER TABLE content ADD CHECK (length(title) > 0);").execute_at('after-create', Content.__table__)
+DDL("ALTER TABLE content ADD CHECK (substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}');").execute_at('after-create', Content.__table__)
 
 
 class DraftContent(Content):
@@ -471,7 +473,7 @@ class ArticleContent(UserVisibleContent):
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_article_fields = {
-        'rating'        : None ,
+        'rating'   : None ,
         'approval' : None ,
     }
     __to_dict__['default'     ].update(_extra_article_fields)
@@ -495,6 +497,8 @@ class ArticleContent(UserVisibleContent):
     def parent_disassociate(self):
         from civicboom.lib.database.actions import parent_disassociate
         return parent_disassociate(self)
+
+DDL("ALTER TABLE content_article ADD CHECK (rating >= 0 AND rating <= 1);").execute_at('after-create', ArticleContent.__table__)
 
 
 class SyndicatedContent(UserVisibleContent):
@@ -599,6 +603,8 @@ class AssignmentContent(UserVisibleContent):
             invite_member(members)
         Session.commit()
 
+DDL("ALTER TABLE content_assignment ADD CHECK ((event_date IS NULL) OR (due_date IS NULL) OR (due_date >= event_date));").execute_at('after-create', AssignmentContent.__table__)
+
 
 class MemberAssignment(Base):
     __tablename__ = "member_assignment"
@@ -691,7 +697,7 @@ class Tag(Base):
     """
     __tablename__ = "tag"
     id            = Column(Integer(),    primary_key=True)
-    name          = Column(Unicode(250), nullable=False, index=True) # FIXME: should be unique within its category
+    name          = Column(Unicode(250), nullable=False, index=True)
     #type          = Column(Unicode(250), nullable=False, default=u"Topic")
     #children      = relationship("Tag", backref=backref('parent', remote_side=id))
     parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True, index=True)
@@ -711,6 +717,9 @@ class Tag(Base):
             return self.parent.full_name + " --> " + self.name
         else:
             return self.name
+
+# FIXME: tag name should also be unique within its category
+DDL("ALTER TABLE tag ADD CHECK (length(name) > 0);").execute_at('after-create', Tag.__table__)
 
 
 # FIXME: unseeded

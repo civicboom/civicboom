@@ -174,6 +174,7 @@ class RegisterController(BaseController):
         u = User()
         u.username         = kwargs['username']
         u.email_unverified = kwargs['email']
+        u.name             = u.username  # display name will be asked for in step #2. For now, copying username is a good enough space filler
         Session.add(u)
         Session.commit()
         
@@ -202,7 +203,7 @@ class RegisterController(BaseController):
         if config['demo_mode'] and (c.format=='html' or c.format=='redirect'):
             return redirect(validation_url(u, controller='register', action='new_user'))
 
-        user_log.info("Sending verification email")
+        user_log.info("Sending verification email to %s (%s)" % (u.username, u.email_unverified))
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
         
