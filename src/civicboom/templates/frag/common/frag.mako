@@ -112,68 +112,68 @@
     <a class="frag_source" href="${self.attr.frag_url}" style="display: none;">frag source</a>
     ##.current_url()##
     
-    <div class="frag_data ${self.attr.frag_data_css_class}">
-        <div class="frag_bars">
-            <div class="title_bar">       
-                <div class="common_actions">
-                    ## Reload
-                    % if config['development_mode']:
-                        ##c.format=='frag' and 
-                        <a href='' class="icon16 i_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
-                        <span class="icon"></span>
+    <div class="frag_bars">
+        <div class="title_bar">       
+            <div class="common_actions">
+                ## Reload
+                % if config['development_mode']:
+                    ##c.format=='frag' and 
+                    <a href='' class="icon16 i_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
+                    <span class="icon"></span>
+                % endif
+                <%doc>
+                ## Share
+                % if self.attr.share_kwargs:
+                    ${share.share(**self.attr.share_kwargs)}
+                    ## padding
+                    <span class="icon"></span>
+                % endif
+                </%doc>
+                ## Help
+                % if self.attr.help_frag:
+                    <%
+                        help_url = '/help/' + self.attr.help_frag
+                        js_open_help = h.literal("cb_frag($(this), '%s', 'frag_col_1 frag_help');" % help_url) # GregM: Added frag_help class for help fragments
+                    %>
+                    <a href="${help_url}" class="icon16 i_help" onclick="${js_open_help} return false;" title="${_('Help')}"><span>${_('Help')}</span></a>
+                    % if 'help' in kwargs:
+                    <script type="text/javascript">${js_open_help}</script>
                     % endif
-                    <%doc>
-                    ## Share
-                    % if self.attr.share_kwargs:
-                        ${share.share(**self.attr.share_kwargs)}
-                        ## padding
-                        <span class="icon"></span>
-                    % endif
-                    </%doc>
-                    ## Help
-                    % if self.attr.help_frag:
-                        <%
-                            help_url = '/help/' + self.attr.help_frag
-                            js_open_help = h.literal("cb_frag($(this), '%s', 'frag_col_1 frag_help');" % help_url) # GregM: Added frag_help class for help fragments
-                        %>
-                        <a href="${help_url}" class="icon16 i_help" onclick="${js_open_help} return false;" title="${_('Help')}"><span>${_('Help')}</span></a>
-                        % if 'help' in kwargs:
-                        <script type="text/javascript">${js_open_help}</script>
-                        % endif
-                    % endif
-                    
-                    ## RSS
-                    % if self.attr.rss_url:
-                        <a href='${self.attr.rss_url}' class="icon16 i_rss" title='RSS'><span>RSS</span></a>
-                    % endif
-                    
-                    ## Close
-                    % if c.format=='frag':
-                        <a href='' class="icon16 i_close" onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}'><span>${_('Close')}</span></a>
-                    % else:
-                        <span class="icon16 i_blank"></span>
-                    % endif
-                </div>
-            </div>
-        
-            <div class="action_bar">
-                <div class="object_actions_specific">
-                    % if hasattr(next, 'actions_specific'):
-                    ${next.actions_specific()}
-                    % endif
-                </div>
+                % endif
                 
-                <div class="object_actions_common">
-                    % if hasattr(next, 'actions_common'):
-                    ${next.actions_common()}
-                    % endif
-        
-                    ##% if self.attr.auto_georss_link:
-                    ##    ${georss_link()}
-                    ##% endif
-                </div>
+                ## RSS
+                % if self.attr.rss_url:
+                    <a href='${self.attr.rss_url}' class="icon16 i_rss" title='RSS'><span>RSS</span></a>
+                % endif
+                
+                ## Close
+                % if c.format=='frag':
+                    <a href='' class="icon16 i_close" onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}'><span>${_('Close')}</span></a>
+                % else:
+                    <span class="icon16 i_blank"></span>
+                % endif
             </div>
         </div>
+        <div class="action_bar">
+            <div class="object_actions_specific">
+                % if hasattr(next, 'actions_specific'):
+                ${next.actions_specific()}
+                % endif
+            </div>
+            
+            <div class="object_actions_common">
+                % if hasattr(next, 'actions_common'):
+                ${next.actions_common()}
+                % endif
+    
+                ##% if self.attr.auto_georss_link:
+                ##    ${georss_link()}
+                ##% endif
+            </div>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+    <div class="frag_data ${self.attr.frag_data_css_class}">
         <span style="clear: both; display: block;"></span>
         ##<div class="title">
             ## Title

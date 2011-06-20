@@ -15,9 +15,21 @@
   background-color: white;
   
   .title_bar {
+    color: black;
+    
     .title {
       .title_text {
-        color: black;
+        
+      }
+    }
+    
+    .common_actions {
+      text-align: right;
+      
+      a {
+          color: #666;
+          text-decoration: none;
+          margin: 0.2em 0.2em 0 0;
       }
     }
   }
