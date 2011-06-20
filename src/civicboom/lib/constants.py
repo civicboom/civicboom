@@ -38,3 +38,12 @@ actions_list = [
 #/contents/new?parent_id=26&type=comment
 
 ]
+
+setting_titles = {
+    'password'      :   _('Password and mobile access'),
+    'help_adverts'  :   _('Help and adverts')
+}
+
+setting_icons = {
+    
+}

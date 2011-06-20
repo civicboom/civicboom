@@ -5,8 +5,8 @@
     from sets import Set
     rss_url   = False
     help_frag = 'settings'
-%>
 
+%>
 <%namespace name="loc" file="/html/web/common/location.mako"/>
 
 <%def name="title()">${_("Edit your account settings")}</%def>
@@ -17,6 +17,7 @@
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
     <%
         panel = c.result.get('panel', d.get('panel'))
+        panel_name = d.get('panels', {}).get(panel, {}).get('title')
         settings_meta = d['settings_meta']
         settings_meta = dict( [ (setting['name'], setting) for setting in settings_meta.values() if setting['group'].split('/')[0] == panel] )
         
@@ -28,8 +29,9 @@
         
         setting_group_order = sorted(setting_group_order.keys(), key=setting_group_order.__getitem__)
         
-        settings_hints = d.get('settings_hints') or {}
+        settings_hints = d.get('settings_hints', {})
     %>
+    <h1>Username ${panel_name} settings</h1>
     % for group_name in setting_group_order:
         <div style="margin: 0;">
     	% if group_name == 'password':
@@ -40,7 +42,7 @@
 				and make a note of your Username to log into the mobile app.
 			</div>
     		<div class="setting_group_name setting_pad"  style="padding-top: 12px">${_('How to change your password, or to create one to access your account via the mobile app:')}</div>
-        % else:
+        % elif group_name.lower() != panel.lower():
      		<div class="setting_group_name setting_pad">${group_name.capitalize()}</div>
      	% endif
         % for setting_name in setting_groups[group_name]:
