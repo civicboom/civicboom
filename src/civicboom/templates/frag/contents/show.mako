@@ -275,7 +275,7 @@
 
 <%def name="content_content()">
     <div class="content_text">
-      ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content']))}
+      ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content'], protocol=h.current_protocol(), size=(config['media.display.video.width'], config['media.display.video.height'])))}
     </div>
 </%def>
 
