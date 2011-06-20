@@ -43,14 +43,22 @@ class Boom(Base):
     member_id     = Column(Integer(),    ForeignKey('member.id') , nullable=False, primary_key=True)
     timestamp     = Column(DateTime(),   nullable=False, default=func.now())
     member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
-    content       = relationship("Content", primaryjoin='Content.id==Boom.content_id') # AllanC - could we enforce that content is user visible at the DB level here?
+    content       = relationship("Content", primaryjoin='Content.id==Boom.content_id')
+    # AllanC - could we enforce that content is user visible at the DB level here?
+    # Shish - it can be done, but is a little ugly (join the boom to the contents table,
+    #         check that __type__ is in the whitelist, make sure the whitelist is up to date)
 
 
 class Rating(Base):
     __tablename__ = "map_ratings"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
-    rating        = Column(Integer(),    nullable=False, default=0)
+    rating        = Column(Integer(),    nullable=False)
+
+    __table_args__ = (
+        CheckConstraint("rating > 0 AND rating <= 5"),
+        {}
+    )
 
 
 class Interest(Base):
@@ -666,6 +674,11 @@ class License(Base):
     url           = Column(Unicode(250),  nullable=False)
     description   = Column(UnicodeText(), nullable=False)
     #articles      = relationship("Content", backref=backref('license'))
+
+    __table_args__ = (
+        CheckConstraint("length(id) > 0"),
+        {}
+    )
 
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
