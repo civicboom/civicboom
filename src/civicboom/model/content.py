@@ -9,7 +9,7 @@ from sqlalchemy import Enum, Integer, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.schema import DDL
+from sqlalchemy.schema import DDL, CheckConstraint, UniqueConstraint
 
 import hashlib
 import copy
@@ -43,14 +43,22 @@ class Boom(Base):
     member_id     = Column(Integer(),    ForeignKey('member.id') , nullable=False, primary_key=True)
     timestamp     = Column(DateTime(),   nullable=False, default=func.now())
     member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
-    content       = relationship("Content", primaryjoin='Content.id==Boom.content_id') # AllanC - could we enforce that content is user visible at the DB level here?
+    content       = relationship("Content", primaryjoin='Content.id==Boom.content_id')
+    # AllanC - could we enforce that content is user visible at the DB level here?
+    # Shish - it can be done, but is a little ugly (join the boom to the contents table,
+    #         check that __type__ is in the whitelist, make sure the whitelist is up to date)
 
 
 class Rating(Base):
     __tablename__ = "map_ratings"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
-    rating        = Column(Integer(),    nullable=False, default=0)
+    rating        = Column(Integer(),    nullable=False)
+
+    __table_args__ = (
+        CheckConstraint("rating > 0 AND rating <= 5"),
+        {}
+    )
 
 
 class Interest(Base):
@@ -117,6 +125,12 @@ class Content(Base):
     
     comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="(CommentContent.id==Content.parent_id) & (Content.visible==True)")
     flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
+
+    __table_args__ = (
+        CheckConstraint("length(title) > 0"),
+        CheckConstraint("substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}'"),
+        {}
+    )
     
 
     # used by obj_to_dict to create a string dictonary representation of this object
@@ -356,8 +370,6 @@ CREATE TRIGGER update_response_count
 GeometryDDL(Content.__table__)
 
 DDL("CREATE INDEX content_fts_idx ON content USING gin(to_tsvector('english', title || ' ' || content));").execute_at('after-create', Content.__table__)
-DDL("ALTER TABLE content ADD CHECK (length(title) > 0);").execute_at('after-create', Content.__table__)
-DDL("ALTER TABLE content ADD CHECK (substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}');").execute_at('after-create', Content.__table__)
 
 
 class DraftContent(Content):
@@ -465,6 +477,11 @@ class ArticleContent(UserVisibleContent):
     ratings    = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
     approval   = Column(_approval, nullable=False, default="none")
 
+    __table_args__ = (
+        CheckConstraint("rating >= 0 AND rating <= 1"),
+        {}
+    )
+
     # AllanC TODO:
     # Could have derived fields for count="20" min="1" max="10"
     # This is used by Yahoos RSS guide and could be very usefull for statistical processing in future
@@ -498,8 +515,6 @@ class ArticleContent(UserVisibleContent):
         from civicboom.lib.database.actions import parent_disassociate
         return parent_disassociate(self)
 
-DDL("ALTER TABLE content_article ADD CHECK (rating >= 0 AND rating <= 1);").execute_at('after-create', ArticleContent.__table__)
-
 
 class SyndicatedContent(UserVisibleContent):
     __tablename__   = "content_syndicate"
@@ -522,6 +537,11 @@ class AssignmentContent(UserVisibleContent):
 
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
+
+    __table_args__ = (
+        CheckConstraint("(event_date IS NULL) OR (due_date IS NULL) OR (due_date >= event_date)"),
+        {}
+    )
     
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
@@ -603,8 +623,6 @@ class AssignmentContent(UserVisibleContent):
             invite_member(members)
         Session.commit()
 
-DDL("ALTER TABLE content_assignment ADD CHECK ((event_date IS NULL) OR (due_date IS NULL) OR (due_date >= event_date));").execute_at('after-create', AssignmentContent.__table__)
-
 
 class MemberAssignment(Base):
     __tablename__ = "member_assignment"
@@ -657,6 +675,11 @@ class License(Base):
     description   = Column(UnicodeText(), nullable=False)
     #articles      = relationship("Content", backref=backref('license'))
 
+    __table_args__ = (
+        CheckConstraint("length(id) > 0"),
+        {}
+    )
+
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'default': {
@@ -703,6 +726,12 @@ class Tag(Base):
     parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True, index=True)
     parent        = relationship('Tag',      backref=backref('children'), remote_side='tag.c.id')
 
+    __table_args__ = (
+        CheckConstraint("length(name) > 0"),
+        UniqueConstraint('parent_id', 'name'),
+        {}
+    )
+
     def __init__(self, name=None, parent=None):
         self.name = name
         self.parent = parent
@@ -717,9 +746,6 @@ class Tag(Base):
             return self.parent.full_name + " --> " + self.name
         else:
             return self.name
-
-# FIXME: tag name should also be unique within its category
-DDL("ALTER TABLE tag ADD CHECK (length(name) > 0);").execute_at('after-create', Tag.__table__)
 
 
 # FIXME: unseeded

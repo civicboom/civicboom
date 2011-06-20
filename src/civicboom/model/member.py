@@ -10,7 +10,7 @@ from sqlalchemy import Enum, Integer, DateTime, Boolean
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.schema import DDL
+from sqlalchemy.schema import DDL, CheckConstraint
 
 import urllib
 import hashlib
@@ -291,6 +291,12 @@ class Member(Base):
 
     #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
 
+    __table_args__ = (
+        CheckConstraint("username ~* '^[a-z0-9_-]{4,}$'"),
+        CheckConstraint("length(name) > 0"),
+        CheckConstraint("substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}'"),
+        {}
+    )
 
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
@@ -565,8 +571,6 @@ class Member(Base):
 GeometryDDL(Member.__table__)
 
 DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', username || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
-DDL("ALTER TABLE member ADD CHECK (length(name) > 0);").execute_at('after-create', Member.__table__)
-DDL("ALTER TABLE member ADD CHECK (substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}');").execute_at('after-create', Member.__table__)
 
 
 class User(Member):

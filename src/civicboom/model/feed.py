@@ -3,7 +3,7 @@ from civicboom.model.meta import Base
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, Integer, PickleType
-from sqlalchemy.schema import DDL
+from sqlalchemy.schema import CheckConstraint
 
 
 class Feed(Base):
@@ -13,4 +13,7 @@ class Feed(Base):
     name          = Column(Unicode(),     nullable=False)
     query         = Column(PickleType(),  nullable=False)
 
-DDL("ALTER TABLE feed ADD CHECK (length(name) > 0);").execute_at('after-create', Feed.__table__)
+    __table_args__ = (
+        CheckConstraint("length(name) > 0"),
+        {}
+    )
