@@ -57,6 +57,11 @@ def _init_search_filters():
         else:
             return query
 
+    def append_search_username(query, username_text):
+        if username_text:
+            return query.filter(Member.username==username_text)
+        return query
+
     def append_search_type(query, type_text):
         if type_text:
             return query.filter(Member.__type__==type_text)
@@ -78,6 +83,7 @@ def _init_search_filters():
     search_filters = {
         'member'       : append_search_member      ,
         'name'         : append_search_name        ,
+        'username'     : append_search_username    ,
         'type'         : append_search_type        ,
         'location'     : append_search_location    ,
         #'followed_by'  : append_search_followed_by ,
