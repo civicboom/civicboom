@@ -286,7 +286,7 @@
 
 <%def name="content_content()">
     <div class="content_text">
-      ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content']))}
+      ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content'], protocol=h.current_protocol(), size=(config['media.display.video.width'], config['media.display.video.height'])))}
     </div>
 </%def>
 
@@ -348,7 +348,14 @@
 		% endif
 		</td>
 		<td class="tip"><div>
-		    ${get_involved_popup()}   
+		    <a href="" class="get-involved-popup">Why should you get involved?</a>
+		    <script>
+			$('.get-involved-popup').click(function() {
+			    $('#get-involved').modal({ onShow: function (dialog) {}});
+			    return false;
+			});
+		    </script>
+		    ${popup.popup_static('Why get involved?', get_involved, 'get-involved')}
 		</div></td>
 	    </tr>
 	</table>
@@ -692,37 +699,34 @@
     ##% endif
 
 </%def>
-	
-##------------------------------------------------------------------------------
-## Get involved popup
-##------------------------------------------------------------------------------
-<%def name="get_involved_popup()">
-    <a>Why should you get involved?</a>
-    ${popup.popup_static(title="Why get involved", content=get_involved, html_id="get_involved")}
-</%def>
 
 ##------------------------------------------------------------------------------
 ## Get involved
 ##------------------------------------------------------------------------------
 <%def name="get_involved()">
-    <div class="get_involved">
-        <div class="title">
-            Why should you get involved?
-        </div>
-        <div class="message">
-            By sharing your story with <strong>${self.content['creator']['name']}</strong> as video, images or augio, you can:
-            <ol>
-                <li>Get published</li>
-                <li>Get recognition</li>
-                <li>Make the news!</li>
-            </ol>
-        </div>
-        <div class="tag-line">
-            Don't just read it. Feed it.
-        </div>
-        <div class="actions">
-            JUNK
-        </div>
+    <div class="information">
+	<div class="popup-title">
+	    Why should you get involved?
+	</div>
+	<div class="popup-message">
+	    By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
+	    <ol>
+		<li>Get published</li>
+		<li>Get recognition</li>
+		<li>Make the news!</li>
+	    </ol>
+	</div>
+	<div class="popup-tag-line">
+	    Don't just read it. Feed it.
+	</div>
+    </div>
+    <div class="popup-icons">
+	<img src="/images/misc/shareicons/video_icon.png" />
+	<img src="/images/misc/shareicons/camera_icon.png" />
+	<img src="/images/misc/shareicons/audio_icon.png" />
+    </div>
+    <div class="popup-actions">
+	<span class="button">Share your story now!</span>
     </div>
 </%def>
 

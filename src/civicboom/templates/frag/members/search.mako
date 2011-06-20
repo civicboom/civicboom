@@ -25,7 +25,7 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     <div class="frag_col">
-        <form id="form_search" action="${url('members')}" method="GET"
+        <form class="form" id="form_search" action="${url('members')}" method="GET"
               onsubmit="cb_frag($(this), '/members.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
             <fieldset>
 				<!--
@@ -34,16 +34,23 @@
 				-->
                 <% args, kwargs = c.web_params_to_kwargs %>
                 <p><label for="term">Name</label><br/>
-                <input type="text" style="width: 210px" name="term" value="${kwargs.get('term')}"/>
+                <input type="text" name="term" value="${kwargs.get('term')}"/>
+
+				<p><label for="type">Type</label><br>
+				<select name="type">
+                    <option value="">${_("_Users and _Groups")}</option>
+                    <option value="user">${_("Just _Users")}</option>
+                    <option value="group">${_("Just _Groups")}</option>
+				</select>
 
                 <p><label for="sort">Order By</label><br/>
-				<select name="sort" style="width: 100%;">
+				<select name="sort">
 					<option value="-id">Newest First</option>
 					<option value="name">Display Name</option>
 				</select>
 
                 <p>&nbsp;<br>
-                <input type="submit" value="Search" class="button" style="width: 100%;"/>
+                <input type="submit" value="Search" class="button"/>
             </fieldset>
         </form>
     </div>

@@ -202,8 +202,9 @@
 % endif
             <li><a href="/contents?list=assignments_active" class="sub_option">${_("_Assignments")}</a></li>
             <li><a href="/contents?list=articles"           class="sub_option">${_("_Articles")}</a></li>
-            <li><a href="/members?type=user"                class="sub_option">${_("_Users")}</a></li>
-            <li><a href="/members?type=group"               class="sub_option">${_("_Groups")}</a></li>
+            <!-- <li><a href="/members?type=user"                class="sub_option">${_("_Users")}</a></li>  -->
+            <!-- <li><a href="/members?type=group"               class="sub_option">${_("_Groups")}</a></li> -->
+            <li><a href="/members"                          class="sub_option">${_("_Members")}</a></li>
         </ul>
         </li>
     </ul>

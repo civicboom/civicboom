@@ -10,7 +10,9 @@ HTML {
     /* overflow-y: hidden; */
 	background: $page-background;
 }
-
+HTML.frag_containers {
+    background: $page-background;
+}
 
 /*----------------------------------------------------------------------------*/
 /*                                Main Level                                  */
@@ -422,7 +424,7 @@ H1 {
 .mo-help {
 	position: relative;
 
-	.mo-help-r {
+	.mo-help-r, .mo-help-l {
 		font-size: 12px;
 		display: none;
 		position: absolute;
@@ -432,7 +434,6 @@ H1 {
 		padding: 12px;
 		border: 1px solid #2a3a87;
 		text-align: left;
-		right: 0em;
 		bottom: 3em;
 		text-align: center;
 		
@@ -452,13 +453,21 @@ H1 {
 		box-shadow: 0px 0px 15px #888;
 	}
 	
-	.mo-help-r:hover {
+	.mo-help-l {
+	    right: 0em;
+	}
+	
+	.mo-help-r {
+	    left: 0em;
+	}
+	
+	.mo-help-r:hover, .mo-help-l:hover {
 	    display: none;
 	}
 }
 
 .mo-help:hover {
-    .mo-help-r {
+    .mo-help-r, .mo-help-l {
 	display: block;
     }
 }

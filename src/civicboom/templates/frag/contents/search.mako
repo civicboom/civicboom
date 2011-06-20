@@ -41,14 +41,14 @@
         <p>&nbsp;
 		-->
 		
-		<form id="form_search" action="${url('contents')}" method="GET"
+		<form class="form" id="form_search" action="${url('contents')}" method="GET"
               onsubmit="unplacehold('#form_search'); cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
             <!--<fieldset style="border: 1px solid black; padding: 4px;">-->
             <fieldset>
                 <!--<legend>${_("Advanced search")}</legend>-->
 
 				<p><label>Search for</label><br>
-				<select name="list" style="width: 100%;">
+				<select name="list">
                 % for list, type, name in contents_list_titles:
                     <% checked = 'selected' if (kwargs.get('list') == list) else '' %>
                     <option value="${list}" ${checked}>${name}</option>
@@ -56,13 +56,13 @@
 				</select>
 
 				<p><label>Talking about</label><br>
-                <input type="search" style="width: 100%;" name="term" placeholder="Enter key words" value="${kwargs.get('term')}"/>
+                <input type="search" name="term" placeholder="Enter key words" value="${kwargs.get('term')}"/>
 
                 <p><label>Near to</label>
-                ${loc.location_picker(width='213px', height="213px")}
+                ${loc.location_picker(width='100%', height="213px")}
 
                 <p>&nbsp;<br>
-				<input type="submit" style="width: 100%;" value="Search" class="button"/>
+				<input type="submit" value="Search" class="button"/>
             </fieldset>
         </form>
     </div>

@@ -101,25 +101,23 @@
     ## Top row (avatar/about me)
     <div class="frag_top_row">
 	<div  class="about_me">
-	    <div class="avatar">${member_avatar(img_class='photo')}</div>
 	    <div class="content">
+		<div class="avatar">${member_avatar(img_class='photo')}</div>
 		<h2 class="fn n">${h.guess_hcard_name(self.member['name'])}</h2>
 		% if self.member.get('description'):
 		    <div>${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</div>
 		% endif
 	    </div>
-	    
-	    <div class="actions">
-		${actions_buttons()}
-		% if 'message' in self.actions:
-		    ${popup.link(
-			h.args_to_tuple('new_message', target=self.id),
-			title = _('Send Message'),
-			text  = h.literal("<div class='button'>%s</div>") % _('Send Message'),
-		    )}
-		    <span class="separtor"></span>
-		% endif
-	    </div>
+	    <div style="clear: both;"></div>
+	    ${actions_buttons()}
+	    % if 'message' in self.actions:
+		${popup.link(
+		    h.args_to_tuple('new_message', target=self.id),
+		    title = _('Send Message'),
+		    text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send Message'),
+		)}
+		## <span class="separtor"></span>
+	    % endif
 	    <div style="clear: both;"></div>
 	</div>
 	% for list, icon, description in [n for n in constants.contents_list_titles if n[0]  in ["assignments_active"]]:

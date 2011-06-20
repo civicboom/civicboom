@@ -2,6 +2,13 @@
 .thumbnail {
     display: inline-block;
 	border: 0.04em solid #ccc;
+
+	/*
+	 * avatar image outer edge is clipped tighter than the border's
+	 * inner edge, so some background colour slips into the crack.
+	 */
+	background: #ccc;
+
     border-radius        : 0.1em;
 	-moz-border-radius   : 0.1em;
 	-webkit-border-radius: 0.1em;
@@ -21,16 +28,22 @@
 	position: relative;
 }
 
-.thumbnail_small {font-size: 20px;}
-.thumbnail_large {font-size: 80px;}
+.thumbnail_small {
+	font-size: 20px;
+	border: none;
+	background: none;
+}
+.thumbnail_large {
+	font-size: 80px;
+}
 
 .thumbnail .img {
 	position: absolute;
 	top: 0px;
 	left: 0px;
 
-    widlth: 1em;
-    height: 1em;
+	width: 1em;
+	height: 1em;
 
 	/*
 	 * an image inside a div can overflow the div's rounded corners;

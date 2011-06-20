@@ -55,7 +55,9 @@ OL OL LI {
 INPUT[type="search"] {
 	-webkit-appearance: none; /* chrome thinks it knows best when <input type="search"> */
 }
+.mceEditor.defaultSkin table.mceLayout,
 INPUT[type="text"],
+INPUT[type="date"],
 INPUT[type="search"],
 INPUT[type="email"],
 INPUT[type="password"],
@@ -70,6 +72,9 @@ TEXTAREA {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
+}
+.mceEditor.defaultSkin table.mceLayout tr.mceFirst td {
+	border-top: none;
 }
 HTML INPUT, HTML TEXTAREA {
 	padding: 2px 5px;
@@ -117,20 +122,20 @@ HTML SELECT {
 	}
 	TD {
 		padding: 2px;
-
-		INPUT[type="text"],
-		INPUT[type="submit"],
-		INPUT[type="email"],
-		INPUT[type="search"],
-		INPUT[type="password"],
-		SELECT,
-		TEXTAREA {
-			width: 100%;
-		}
 		&:first-child {
 			text-align: right;
 			vertical-align: top;
 		}
+	}
+
+	INPUT[type="text"],
+	INPUT[type="submit"],
+	INPUT[type="email"],
+	INPUT[type="search"],
+	INPUT[type="password"],
+	SELECT,
+	TEXTAREA {
+		width: 100%;
 	}
 }
 
@@ -215,19 +220,20 @@ HTML.no-js #flash_message {
 /*----------------------------------------------------------------------------*/
 
 .olMap {
-	border: 1px solid gray;
-	/*border-radius: 8px 8px;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;*/
+	border: 1px solid $input-border;
+
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 .olControlAttribution {
 	bottom: 0em !important;
 	right: 0em !important;
 	padding: 2px;
 	border-top-left-radius: 6px 6px;
-	background: #CCC;
-	border-top: 1px solid black;
-	border-left: 1px solid black;
+	background: $page-background;
+	border-top: 1px solid $input-border;
+	border-left: 1px solid $input-border;
 	font-size: 10px;
 }
 .olPopup {

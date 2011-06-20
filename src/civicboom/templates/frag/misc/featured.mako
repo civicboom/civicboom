@@ -63,7 +63,7 @@
 ##------------------------------------------------------------------------------
 ## Advert
 ##------------------------------------------------------------------------------
-<%def name="advert(content, href=None, icon=None, config_key=None, color=None)">
+<%def name="advert(content, href=None, icon=None, config_key=None, color=None, background=None)">
     % if config_key and config_key in self.advert_list:
     <div class="advert">
 	##% if icon:

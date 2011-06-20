@@ -8,12 +8,73 @@
 
 
 <%def name="content_list(contents)">
-    <ul id="widget_carousel" class="jcarousel-skin-tango">
-    % for content in contents:
-        ${content_item(content)}
-    % endfor
-    </ul>
-    <a href="" class="more_link">See more requests >></a>
+    <div id="widget_carousel" class="jcarousel-skin-widget-gradient">
+        <div class="jcarousel-control">
+            <a href="#">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <a href="#">5</a>
+            <a href="#">6</a>
+            <a href="#">7</a>
+            <a href="#">8</a>
+            <a href="#">9</a>
+            <a href="#">10</a>
+        </div>
+        <ul>
+            % for content in contents:
+                ${content_item(content)}
+            % endfor
+        </ul>
+        <a href="" class="more_link">See more requests >></a>
+    </div>
+    
+    <script type="text/javascript">
+        ## http://sorgalla.com/projects/jcarousel/
+        
+        function widget_carousel_initCallback(carousel) {
+            // Disable autoscrolling if the user clicks the prev or next button.
+            carousel.buttonNext.bind('click', function() {carousel.startAuto(0);});
+            carousel.buttonPrev.bind('click', function() {carousel.startAuto(0);});
+            // Pause autoscrolling if the user moves with the cursor over the clip.
+            carousel.clip.hover(
+                function() {carousel.stopAuto(); },
+                function() {carousel.startAuto();}
+            );
+            
+            jQuery('.jcarousel-control a').bind('click', function() {
+                carousel.scroll(jQuery.jcarousel.intval(jQuery(this).text()));
+                return false;
+            });
+        };
+        
+        function widget_carousel_itemVisibleInCallbackAfterAnimation(carousel, item, idx, state) {
+            console.log('Item #' + idx + ' is now visible');
+        };
+        
+        function widget_carousel_itemVisibleOutCallbackAfterAnimation(carousel, item, idx, state) {
+            console.log('Item #' + idx + ' is no longer visible');
+        };
+        
+        jQuery(document).ready(function() {
+            jQuery('#widget_carousel').jcarousel({
+                auto   : 2 ,
+                wrap   : 'last' ,
+                scroll : 1 ,
+                visible: 1 ,
+                initCallback: widget_carousel_initCallback ,
+                itemVisibleInCallback: {
+                    onAfterAnimation:  widget_carousel_itemVisibleInCallbackAfterAnimation
+                },
+                itemVisibleOutCallback: {
+                    onAfterAnimation:  widget_carousel_itemVisibleOutCallbackAfterAnimation
+                }
+            });
+            
+        });
+        $(".jcarousel-skin-widget-gradient LI").css({ display: "block" });
+    </script>
+
 </%def>
 
 
