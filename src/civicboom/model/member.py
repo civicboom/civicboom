@@ -292,6 +292,7 @@ class Member(Base):
     #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
 
     __table_args__ = (
+        CheckConstraint("username ~* '^[a-z0-9_-]{4,}$'"),
         CheckConstraint("length(name) > 0"),
         CheckConstraint("substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}'"),
         {}
