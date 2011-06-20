@@ -713,9 +713,9 @@ class Tag(Base):
     parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True, index=True)
     parent        = relationship('Tag',      backref=backref('children'), remote_side='tag.c.id')
 
-    # FIXME: tag name should also be unique within its category
     __table_args__ = (
         CheckConstraint("length(name) > 0"),
+        UniqueConstraint('parent_id', 'name'),
         {}
     )
 
