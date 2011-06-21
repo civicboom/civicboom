@@ -7,8 +7,7 @@ from civicboom.controllers.group_actions  import GroupActionsController
 
 import copy
 
-from civicboom.model.member import Member, Group, group_member_roles
-from civicboom.model.content import AssignmentContent
+from civicboom.model.member import group_member_roles
 
 
 contents_controller       = ContentsController()

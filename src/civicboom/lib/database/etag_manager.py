@@ -48,6 +48,7 @@ def gen_cache_key(**kargs):
         if c.logged_in_persona:
             return c.logged_in_persona.username
         return ""
+
     def getsafe_flash_message():
         #if 'flash_message' in session: return session['flash_message']
         return ""
@@ -59,8 +60,10 @@ def gen_cache_key(**kargs):
         #if key in etag_keys: #Unnessisary as if the code is using a non setup tag then it's wrong damn it!
         etag_key   = etag_keys[key]
         seek_value = str(kargs[key])
-        if seek_value in etag_key: cache_key+=str(etag_key[seek_value])+"-"
-        else                     : cache_key+=                         "X-"
+        if seek_value in etag_key:
+            cache_key+=str(etag_key[seek_value])+"-"
+        else:
+            cache_key+=                         "X-"
     if not app_globals.cache_enabled:
         log.debug('Cache disabled: eTag hash generated from: %s' % cache_key)
     cache_key = hashlib.md5(cache_key).hexdigest()

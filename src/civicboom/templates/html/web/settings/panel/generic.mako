@@ -12,8 +12,8 @@
 
 <%def name="body()">
     <%
-        self.attr.frags = [menu, generic, help]
-        self.attr.frag_col_sizes = [1,2,1]
+        self.attr.frags = [menu, generic]
+        self.attr.frag_col_sizes = [1,2]
     %>
 </%def>
 
@@ -22,7 +22,7 @@
 </%def>
 
 <%def name="generic()">
-  ${frag.frag_basic(title=_('Settings'), icon='group', frag_content=generic_settings.body)}
+  ${frag.frag_basic( frag_content=generic_settings.body)}
 </%def>
 
 <%def name="help()">

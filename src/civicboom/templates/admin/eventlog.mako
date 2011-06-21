@@ -109,15 +109,15 @@
 					<br><a href="https://dev.civicboom.com/gitweb/?p=website;a=blob;f=src/${event.module}#l${event.line_num}">View source code</a>
 				</div>
 			</td>
-			<td>
-				<a href="javascript: show_extra('extra_${event.id}_u');">${h.shorten_url(event.url)}</a>
+			<td style="white-space: nowrap;">
+				<a href="javascript: show_extra('extra_${event.id}_u');" style="overflow: hidden; width: 20em; display: block;">${h.shorten_url(event.url)}</a>
 				<div id="extra_${event.id}_u" style="display: none;">
 					<center>${event.url}</center>
 					<br><a href="?url=${event.url}">Find other messages from this url</a>
 					<br><a href="${event.url}">Visit this url</a>
 				</div>
 			</td>
-			<td>
+			<td style="white-space: nowrap;">
 				% if event.username == "None":
 				<a href="javascript: show_extra('extra_${event.id}_a');">${event.address}</a>
 				% else:

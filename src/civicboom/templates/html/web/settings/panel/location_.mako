@@ -1,7 +1,7 @@
 <%inherit file="/html/web/common/frag_container.mako"/>
 
 <%namespace name="frag" file="/frag/common/frag.mako"/>
-<%namespace name="location_settings" file="/frag/settings/panel/location.mako" import="body,title"/>
+<%namespace name="location_settings" file="/frag/settings/panel/generic.mako" import="body,title"/>
 
 <%def name="title()">General Settings</%def>
 
@@ -12,8 +12,8 @@
 
 <%def name="body()">
     <%
-        self.attr.frags = [menu, location, help]
-        self.attr.frag_col_sizes = [1,2,1]
+        self.attr.frags = [menu, location]
+        self.attr.frag_col_sizes = [1,2]
     %>
 </%def>
 

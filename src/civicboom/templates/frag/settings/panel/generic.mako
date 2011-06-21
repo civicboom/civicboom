@@ -3,9 +3,10 @@
 
 <%!
     from sets import Set
-    rss_url   = False
-    help_frag = 'settings'
-
+    rss_url             = False
+    help_frag           = 'settings'
+    field_name_sizes    = {'boolean': '_long' , }
+    field_sizes         = {'boolean': '_short', 'location': '_full' , }
 %>
 <%namespace name="loc" file="/html/web/common/location.mako"/>
 
@@ -34,17 +35,13 @@
     <h1>Username ${panel_name} settings</h1>
     % for group_name in setting_group_order:
         <div style="margin: 0;">
-    	% if group_name == 'password':
-    		<div class="setting_group_name setting_pad" style="padding-top: 12px">${_('Accessing your account via the mobile app:')}</div>
-    		<div class="setting_hint" style="padding-top: 12px">
-    			If you have downloaded our <a href="/about/mobile">mobile app</a> but have signed up to Civicboom
-				via Facebook, Twitter, LinkedIn etc, you will need to set up a password
-				and make a note of your Username to log into the mobile app.
-			</div>
-    		<div class="setting_group_name setting_pad"  style="padding-top: 12px">${_('How to change your password, or to create one to access your account via the mobile app:')}</div>
-        % elif group_name.lower() != panel.lower():
+        % if group_name.lower() != panel.lower():
      		<div class="setting_group_name setting_pad">${group_name.capitalize()}</div>
      	% endif
+        ## Insert header for group if it is defined below:
+        % if hasattr(self, group_name+"_header") and callable(getattr(self, group_name+"_header")):
+            ${getattr(self, group_name+"_header")()}
+        % endif
         % for setting_name in setting_groups[group_name]:
             <%
                 setting_meta  = d['settings_meta'][setting_name[0]]
@@ -67,64 +64,86 @@
 		    		disabled="disabled"
 		    	% endif
 		    </%def>
-
-            <div class="setting_name setting_pad">${setting_meta['description']}</div>
-
-            % if setting_hint:
-                <div class="setting_hint setting_pad">
-                	${ setting_hint | n }
-                </div>
-            % endif
-            
-            <div class="setting_field setting_pad">
-            	% if setting_type == 'boolean':
-                    <%
-                        selected = setting_value and setting_value!=''
-                    %>
-            		<select class="yesno" name="${setting_name[0]}" ${readonly()} id="${setting_name[0]}">
-            			<option class="yes" value="True" ${'selected="selected"' if selected else ''}>Yes</option>
-            			<option class="no" value="" ${'selected="selected"' if not selected else ''}>No</option>
-            		</select>
-                % elif setting_type == 'longstring':
-                    <textarea name="${setting_name[0]}" ${readonly()} ${placeholder()} rows="4">${setting_value}</textarea>
-                % elif 'password' in setting_type:
-                    <input name="${setting_name[0]}" ${readonly()} type="password" />
-                % elif setting_type == 'file':
-                    <input name="${setting_name[0]}" ${readonly()} type="file" />
-                % elif setting_type == 'enum':
-                    % for value in setting_values:
-                        <input type="radio" name="${setting_name}" ${readonly()} value="${value}" id="${setting_name}_${value}" />
-                        <label for="${setting_name}_${value}">${value.capitalize()}</label>
-                    % endfor
-                % elif setting_type == 'location':
-                    ##</tr><tr><td></td>
-                    <td colspan="1"><div style="text-align: left;">
-                    <%
-                    try:
-                      (lon, lat) = [float(f) for f in setting_value.split(" ")]
-                    except:
-                      (lon, lat) = (None, None)
-                    %>
-                    ${loc.location_picker(field_name=setting_name[0], width='100%', height='300px', always_show_map=True, label_class="norm", lon=lon, lat=lat)}
-                    </div>
-                % elif setting_type == 'display':
-                	<input name="${setting_name[0]}" type="text" readonly="readonly" ${placeholder()} value="${setting_value}">
-                % else:
-                	<input name="${setting_name[0]}" type="text" ${readonly()} ${placeholder()} value="${setting_value}">
+            <div class="setting_block">
+                <div class="setting_name${ field_name_sizes.get(setting_type, '') } setting_pad">${setting_meta['description'] if setting_meta['description'].lower() != group_name.lower() else ''}</div>
+                % if field_sizes.get(setting_type, '') == "_full":
+                    <br />
                 % endif
-        	</div>
-            % if 'invalid' in d and setting_name[0] in d['invalid']:
-                <div class="setting_error">
-                	<span class="error-message">${d['invalid'][setting_name[0]]}</span>
-                </div>
-            % endif
+                <div class="setting_field${ field_sizes.get(setting_type, '') } setting_pad">
+                	% if setting_type == 'boolean':
+                        <%
+                            selected = setting_value and setting_value!=''
+                        %>
+                		<select class="yesno" name="${setting_name[0]}" ${readonly()} id="${setting_name[0]}">
+                			<option class="yes" value="True" ${'selected="selected"' if selected else ''}>Yes</option>
+                			<option class="no" value="" ${'selected="selected"' if not selected else ''}>No</option>
+                		</select>
+                    % elif setting_type == 'longstring':
+                        <textarea name="${setting_name[0]}" ${readonly()} ${placeholder()} rows="4">${setting_value}</textarea>
+                    % elif 'password' in setting_type:
+                        <input name="${setting_name[0]}" ${readonly()} type="password" />
+                    % elif setting_type == 'file':
+                        <input name="${setting_name[0]}" ${readonly()} type="file" />
+                    % elif setting_type == 'enum':
+                        % for value in setting_values:
+                            <input type="radio" name="${setting_name}" ${readonly()} value="${value}" id="${setting_name}_${value}" />
+                            <label for="${setting_name}_${value}">${value.capitalize()}</label>
+                        % endfor
+                    % elif setting_type == 'location':
+                        <%
+                        try:
+                          (lon, lat) = [float(f) for f in setting_value.split(" ")]
+                        except:
+                          (lon, lat) = (None, None)
+                        %>
+                        ${loc.location_picker(field_name=setting_name[0], width='100%', height='300px', always_show_map=True, label_class="norm", lon=lon, lat=lat)}
+                    % elif setting_type == 'display':
+                    	<input name="${setting_name[0]}" type="text" readonly="readonly" ${placeholder()} value="${setting_value}">
+                    % else:
+                    	<input name="${setting_name[0]}" type="text" ${readonly()} ${placeholder()} value="${setting_value}">
+                    % endif
+            	</div>
+                % if 'invalid' in d and setting_name[0] in d['invalid']:
+                    <div class="setting_error">
+                    	<span class="error-message">${d['invalid'][setting_name[0]]}</span>
+                    </div>
+                % endif
+                % if setting_hint:
+                    <div class="setting_hint">
+                        ${ setting_hint | n }
+                    </div>
+                % endif
+            </div>
 		% endfor
-##        GregM: Add the janrain & notifications links to the general group.
-##            % if group_name == 'contact':
-##                <a href="${url(controller='account' , action='link_janrain')}">${_("Link Additional Accounts (Facebook, LinkedIn, Google and more)")}</a>
-##            % endif
+		## Insert footer for group if it is defined below:
+        % if hasattr(self, group_name+"_footer") and callable(getattr(self, group_name+"_footer")):
+            ${getattr(self, group_name+"_footer")()}
+        % endif
         </div>
     % endfor
     <input class="button" type="submit" name="submit" value="${_('Save settings')}" style="margin: 16px;"/>
     ${h.end_form()}
+</%def>
+
+
+<%def name="password_footer()">
+    <div class="setting_group_name setting_pad" style="padding-top: 12px">${_('Accessing your account via the mobile app:')}</div>
+    <div class="setting_pad" style="font-style: italic;">
+        ${_('You can set requests, post responses and stories directly from you Android mobile.')} <a href="${h.url('misc', action='mobile')}">${_('Click here to get it.')}</a>
+    </div>
+    <div class="setting_pad">
+        ${_('If you have signed up to Civicboom via Facebook, Twitter, LinkedIn etc, you will need to set up a password (as above) and use these to log into the mobile app. Your username remains the same.')}
+    </div>
+</%def>
+
+<%def name="location_header()">
+    <div class="setting_group_name setting_pad" style="padding-top: 12px">${_('Optional')}</div>
+    <div class="setting_pad">
+        
+    </div>
+    <div class="setting_pad">
+        If you have signed up to Civicboom via Facebook, Twitter,
+        LinkedIn etc, you will need to set up a password (as above) and
+        use these to log into the mobile app. Your username remains the same.
+    </div>
 </%def>

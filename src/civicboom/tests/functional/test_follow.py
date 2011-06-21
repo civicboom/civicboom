@@ -1,7 +1,4 @@
 from civicboom.tests import *
-from pylons import config
-
-#import json
 
 
 class TestFollowController(TestController):

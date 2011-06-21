@@ -10,7 +10,7 @@ Only the form fields that are sent are validated and saved
 """
 
 from civicboom.lib.base import *
-from civicboom.model import User, Group
+from civicboom.model import User
 
 from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
 
@@ -18,7 +18,6 @@ from civicboom.lib.constants import setting_titles
 
 import cbutils.warehouse as wh
 
-import hashlib
 import copy
 import tempfile
 import Image
@@ -29,7 +28,7 @@ from civicboom.lib.communication.messages import generators
 from civicboom.lib.form_validators.validator_factory import build_schema
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
-from civicboom.lib.civicboom_lib import set_password, send_verifiy_email
+from civicboom.lib.accounts import set_password, send_verifiy_email
 from civicboom.model.meta import location_to_string
 
 from civicboom.lib.web import _find_template_basic
@@ -438,8 +437,6 @@ class SettingsController(BaseController):
             except:
                 pass
         
-        print data['settings']
-        
         if len(settings) == 0:
             raise action_error(code=400, message=_("No settings to update"))
         
@@ -447,7 +444,6 @@ class SettingsController(BaseController):
         # List validators required
         validators = {}
         if len(set(settings.keys()) - set(settings_validators.keys())) > 0:
-            print set(settings.keys()) - set(settings_validators.keys())
             raise action_error(code=400, message=_("You are trying to update a setting that does not exist!"))
         for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings_base[setting_name.split('-')[0]].get('who', user.__type__) == user.__type__]:
             log.debug("adding validator: %s" % validate_fieldname)
@@ -570,7 +566,8 @@ class SettingsController(BaseController):
         
         Session.commit()
         
-        if private: return
+        if private:
+            return
         
         if c.format == 'html':
             set_flash_message(action_ok(_('Settings updated')))

@@ -12,8 +12,8 @@
 
 <%def name="body()">
     <%
-        self.attr.frags = [menu, messages, help]
-        self.attr.frag_col_sizes = [1,2,1]
+        self.attr.frags = [menu, messages]
+        self.attr.frag_col_sizes = [1,2]
     %>
 </%def>
 

@@ -3,11 +3,10 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom, UserVisibleContent
-from civicboom.lib.database.get_cached import update_content, get_licenses, get_license, get_tag, get_assigned_to, get_content as _get_content
+from civicboom.lib.database.get_cached import update_content, get_license, get_tag, get_assigned_to, get_content as _get_content
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
-from civicboom.lib.civicboom_lib import profanity_filter, twitter_global
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.database.actions             import respond_assignment
@@ -20,7 +19,6 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 # Search imports
 from civicboom.model.filters import *
-from civicboom.lib.database.gis import get_engine
 from civicboom.model      import Content, Member
 from sqlalchemy           import or_, and_, null, func, Unicode
 from sqlalchemy.orm       import join, joinedload, defer
@@ -29,9 +27,9 @@ import datetime
 from dateutil.parser import parse as parse_date
 
 # Other imports
-from sets import Set # may not be needed in Python 2.7+
 import re
 from cbutils.text import strip_html_tags
+import cbutils.worker as worker
 
 # Logging setup
 log      = logging.getLogger(__name__)
@@ -668,7 +666,7 @@ class ContentsController(BaseController):
         
         # Tags
         if 'tags_string' in kwargs:
-            tags_input   = set([tag.strip().lower() for tag in kwargs['tags_string'].split(config['setting.content.tag_string_separator']) if tag!=""]) # Get tags from form removing any empty strings
+            tags_input   = set([tag.strip().lower() for tag in kwargs['tags_string'].split(config['setting.content.tag_string_separator']) if tag.strip()!=""]) # Get tags from form removing any empty strings
             tags_current = set([tag.name for tag in content.tags]) # Get tags form current content object
             content.tags = [tag for tag in content.tags if not tag.name in tags_current - tags_input] # remove unneeded tags
             for new_tag_name in tags_input - tags_current: # add new tags
@@ -730,8 +728,13 @@ class ContentsController(BaseController):
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
         # Profanity Check --------------------------------------------------
-        if (submit_type=='publish' and content.private==False) or content.__type__ == 'comment':
-            profanity_filter(content) # Filter any naughty words and alert moderator
+        if config['feature.profanity_filter']:
+            if (submit_type=='publish' and content.private==False) or content.__type__ == 'comment':
+                worker.add_job({
+                    'task'     : 'profanity_check',
+                    'content_id': content.id,
+                    'url_base' : url('',qualified=True) #'http://www.civicboom.com/' , # AllanC - get this from the ENV instead please
+                })
         
         # -- Redirect (if needed)-----------------------------------------------
 

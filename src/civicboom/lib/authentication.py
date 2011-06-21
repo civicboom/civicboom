@@ -10,11 +10,11 @@ from civicboom.lib.database.get_cached import get_membership, get_member #note g
 from pylons.i18n import _ #WHY THE *** IS THIS NEEDED!! .. it's part of lib.base above?! but without it, it's not imported
 
 # Civicboom imports
-from civicboom.model      import User, UserLogin, Member, GroupMembership
+from civicboom.model      import User, UserLogin, GroupMembership
 from civicboom.model.meta import Session
 from civicboom.model.member import lowest_role, has_role_required
 
-from civicboom.lib.web     import multidict_to_dict, cookie_set, cookie_remove, cookie_get, cookie_delete
+from civicboom.lib.web     import multidict_to_dict, cookie_set, cookie_delete
 
 from cbutils.misc import make_username
 
@@ -134,7 +134,7 @@ def authorize(_target, *args, **kwargs):
     else:
         # If request was a browser - prompt for login
             #raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
-        if c.format=="redirect":
+        if c.format == "redirect":
             session_set('login_action_referer', current_referer(), login_expire_time)
             # The redirect auto formater looked for this and redirects as appropriate
         if c.format == "html" or c.format == "redirect":
@@ -289,7 +289,7 @@ def get_lowest_role_for_user(user_list=None):
     
     role = 'admin'
     for r in roles:
-        role = lowest_role(role,r.role)
+        role = lowest_role(role, r.role)
     return role
 
     # AllanC - old and poo recursive way to do this

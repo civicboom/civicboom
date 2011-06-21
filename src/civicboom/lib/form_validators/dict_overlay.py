@@ -29,19 +29,20 @@ def validate_dict(data, schema, dict_to_validate_key=None, template_error=None):
         
         #log.debug(dict_validated)
         #log.debug(dict_validated_errors)
-        
+        invalid_text = ""
         for key in dict_validated_errors:
             e = dict_validated_errors[key]
             if hasattr(e, 'msg'):
                 e = e.msg
             invalid_dict[key] = e
-            
+            invalid_text     += " %s-%s" % (key,e)
+        
         # Raise Validation Error
         log.debug("Validation fail:" + pprint.pformat(data))
         raise action_error(
             status   = 'invalid' ,
             code     = 400 ,
-            message  = _('failed validation') ,
+            message  = _('failed validation: %s' % invalid_text) ,
             data     = data ,
             template = template_error ,
         )

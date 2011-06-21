@@ -26,7 +26,7 @@ server {
 	access_log /var/log/nginx/civicboom.log cb_combined;
 	access_log /var/log/nginx/civicboom.timing.log cb_timing; # DC_TIMING
 	root /opt/cb/share/website-web/;
-	error_page 500 /errors/50x.html;
+	error_page 500 /errors/500.html;
 	error_page 502 /errors/502.html;
 	error_page 503 /errors/503.html;
 	error_page 504 /errors/504.html;
@@ -66,6 +66,7 @@ server {
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Url-Scheme $cb_scheme;
 	proxy_pass_header Set-Cookie;
+	proxy_intercept_errors on;  # intercept error_page errors (see above), still proxy others though (eg 404)
 
 	# redirect civicboom.com to www.civicboom.com
 	if ($host = civicboom.com) {
