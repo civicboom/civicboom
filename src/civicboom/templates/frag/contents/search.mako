@@ -4,7 +4,7 @@
 
 
 <%!
-    from civicboom.lib.constants import contents_list_titles
+    import civicboom.lib.constants as constants
     rss_url = False
 %>
 
@@ -48,8 +48,8 @@
                 <!--<legend>${_("Advanced search")}</legend>-->
 
 				<p><label>Search for</label><br>
-				<select name="list">
-                % for list, type, name in contents_list_titles:
+				<select name="list" style="width: 100%;">
+                % for list, type, name in constants.contents_list_titles:
                     <% checked = 'selected' if (kwargs.get('list') == list) else '' %>
                     <option value="${list}" ${checked}>${name}</option>
                 % endfor

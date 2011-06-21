@@ -3,6 +3,7 @@
 <%!
     from civicboom.lib.constants import setting_icons
     from sets import Set
+
     rss_url   = False
     help_frag = None
 %>
@@ -19,7 +20,6 @@
     	panels['janrain'] = {'weight':1000, 'title':'Link additional login accounts', 'panel':'link_janrain'}
     panelorder = sorted(panels.values(), key=lambda x: int(x['weight']))
     print panelorder
-    
 %>
     <%def name="link(title, panel)">
         <li>

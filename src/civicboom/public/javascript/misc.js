@@ -237,3 +237,13 @@ function convertYesNoCheckbox() {
 }
 
 $(convertYesNoCheckbox);
+
+function init_validation(element, validator) {
+	var check_timer = null;
+	element.keyup(function() {
+		element.removeClass("valid");
+		element.removeClass("invalid");
+		clearTimeout(check_timer);
+		check_timer = setTimeout(validator, 500);
+	});
+}
