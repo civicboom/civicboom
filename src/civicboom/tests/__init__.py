@@ -90,6 +90,24 @@ class TestController(TestCase):
         )
         return json.loads(response.body)[key]
 
+    def generate_image(self, size):
+        import Image
+        import StringIO
+        b = (0,   0,   0)
+        w = (255, 255, 255)
+        d = [
+            [b, w, b],
+            [w, b, w],
+            [b, w, b],
+        ]
+        im = Image.new('RGB', (len(d), len(d[0])))
+        for y in range(0, len(d)):
+            for x in range(0, len(d[y])):
+                im.putpixel((x, y), b)
+        buf = StringIO.StringIO()
+        im.save(buf, format= 'PNG')
+        return buf.getvalue()
+
     def server_datetime(self, new_datetime=None):
         """
         Used to get and set server date for tests
