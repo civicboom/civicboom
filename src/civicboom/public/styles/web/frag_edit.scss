@@ -1,0 +1,48 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+.a-edit {
+    
+    #frag_containers {
+    
+        .frag_col {
+        
+            background-color: white;
+            padding: 1em;
+            @include border_radius(0.5em);
+        
+            label {
+                width: 25%;
+                font-size: 110%;
+                color: #333;
+            }
+        
+            .edit_input {
+                width: 70%;
+                float: right;
+            }
+        
+            .editor, .mceEditor, .mceLayout {
+                width: 70%;
+                height: 150px;
+                float: right;
+            }
+            
+            .separator {
+                clear: both;
+                padding: 0.5em;
+            }
+            
+            .button {
+                padding: 0.5em;
+            }
+            
+            .hideable {
+                clear: both;
+            }
+            
+        }
+        
+    }
+    
+}

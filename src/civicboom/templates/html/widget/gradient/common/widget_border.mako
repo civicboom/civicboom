@@ -6,7 +6,7 @@
 
 .widget_border {
     font-size: ${font_size}px;
-    /*color    : #${c.widget['color_font']};*/
+    ##color    : #${c.widget['color_font']};
     width : ${c.widget['width' ]}px;
     height: ${c.widget['height']}px;
     
