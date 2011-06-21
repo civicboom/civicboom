@@ -62,7 +62,7 @@ def copy_to_warehouse(src, warehouse, hash=None, filename=None, placeholder=Fals
 
     log.info("Copying %s/%s (%s) to %s warehouse" % (warehouse, hash, filename, config["warehouse"]))
 
-    if config["warehouse"] == "local" or not config.get('online', True):
+    if config["warehouse"] == "local":  #  or not config.get('online', True):  # hrm, tests with s3 access are nice, sometimes...
         dest = "/tmp/warehouse/%s/%s" % (warehouse, hash)
         if not os.path.exists(os.path.dirname(dest)):
             os.makedirs(os.path.dirname(dest))
