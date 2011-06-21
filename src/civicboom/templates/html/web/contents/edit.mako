@@ -6,13 +6,13 @@
 <%def name="body()">
 	<%
 		if d['content']['parent']:
-			self.attr.frags          = [content_edit, parent, help]  # If the content being edited has a parent, place the parent beside it for reference
+			self.attr.frags          = [content_edit, parent]  # If the content being edited has a parent, place the parent beside it for reference
 			self.attr.frag_col_sizes = [2,2,1]
-			self.attr.frag_classes   = [None, None, 'flag_help']
+			self.attr.frag_classes   = [None, None]
 		else:
-			self.attr.frags          = [content_edit, help]
+			self.attr.frags          = [content_edit]
 			self.attr.frag_col_sizes = [2,1]
-			self.attr.frag_classes   = [None, 'flag_help']
+			self.attr.frag_classes   = [None]
 	%>
 </%def>
 

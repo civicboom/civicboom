@@ -3,6 +3,7 @@
 <%!
     from civicboom.lib.constants import setting_icons
     from sets import Set
+
     rss_url   = False
     help_frag = None
 %>

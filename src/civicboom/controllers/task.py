@@ -61,7 +61,7 @@ class TaskController(BaseController):
         to be run once every 24 hours
         """
         from civicboom.model.member import User
-        from civicboom.lib.civicboom_lib import validation_url
+        from civicboom.lib.accounts import validation_url
         
         frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
         remind_after            = timedelta_str(remind_after           )

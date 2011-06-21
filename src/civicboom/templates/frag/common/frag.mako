@@ -107,13 +107,12 @@
     % if self.attr.popup_url:
         ${popup.popup_frag(_('What next ...'), self.attr.popup_url)}
     % endif
-
-    ## AJAX Fragment refresh (not visible to user)
-    <a class="frag_source" href="${self.attr.frag_url}" style="display: none;">frag source</a>
-    ##.current_url()##
     
     <div class="frag_bars">
-        <div class="title_bar">       
+        <div class="title_bar">
+            ## AJAX Fragment refresh (not visible to user)
+            <a class="frag_source" href="${self.attr.frag_url}" style="display: none;">frag source</a>
+            ##.current_url()##
             <div class="common_actions">
                 ## Reload
                 % if config['development_mode']:

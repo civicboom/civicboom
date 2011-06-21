@@ -46,7 +46,7 @@ class TestSignup(TestController):
             url(controller='register', action='email', format="json"),
             params={
                 'username': u'test_signup',
-                'email'   : u'test@moose.com',
+                'email'   : u'test+test@civicboom.com',
             },
         )
         
@@ -156,7 +156,7 @@ class TestSignup(TestController):
             url(controller='register', action='email', format="json"),
             params={
                 'username': u'test_signup_follow',
-                'email'   : u'signup_autofollow@moose.com',
+                'email'   : u'test+signup_autofollow@civicboom.com',
             },
         )
         
