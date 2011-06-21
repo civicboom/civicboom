@@ -114,9 +114,8 @@
             ${location()}
             ${privacy()}
             ${tags()}
+            ${submit_buttons()}
             ${license()}
-	    ${submit_buttons()}
-            ${what_now_link()}
         ${h.end_form()}
     </div>
 </%def>
@@ -638,6 +637,7 @@
     % endif
 </%doc>
     <span class="smaller"><a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution">View the Creative Commons license</a></span>
+    ${what_now_link()}
     <div class="separator"></div>
 </%def>
 
@@ -659,7 +659,6 @@
             <img src="/images/misc/contenticons/privacy.png" alt="Content Privacy" />
         </legend>
         <div class="hideable">
-            <div class="separator"></div>
               <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either public for anyone to see or private to you, your trusted followers and anyone you invite to respond to your request.</div>
               <div class="padded">
                 <select id="private" name="private">
@@ -721,7 +720,6 @@
     </%def>
     
     <div style="font-size: 130%; text-align: center;">
-        
         % if self.content['type'] == "draft":
             <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}</span>
             ${submit_button('preview', _("Preview"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once published." )}
@@ -735,14 +733,14 @@
             <a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
         % endif
     </div>
-    <div class="separator"></div>
+    <div class="separator"></div><div class="separator"></div>
 </%def>
 
 ##------------------------------------------------------------------------------
 ## What happens now?
 ##------------------------------------------------------------------------------
 <%def name="what_now_link()">
-    <div class="what_now">
+    <div class="what_now" style="float: right;">
         <a href="" class="what-now-popup">What happens once I post this?</a>
         <script>
             $('.what-now-popup').click(function() {
