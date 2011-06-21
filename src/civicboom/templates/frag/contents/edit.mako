@@ -1,5 +1,6 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%namespace name="popup" file="/html/web/common/popup_base.mako" />
 <%namespace name="loc" file="/html/web/common/location.mako" />
 
 <%!    
@@ -44,6 +45,15 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     <div class="frag_col">
+        
+        <h1>
+            % if self.selected_type == 'assignment':
+                Request a story
+            % elif self.selected_type == 'article':
+                Post a story
+            % endif
+        </h1>
+        <div class="separator"></div>
         
         <!-- Toggle Section -->
         <script type="text/javascript">
@@ -97,13 +107,16 @@
             </script>
             ${invalid_messages()}
             ${base_content()}
-            ${content_type()}
             ${media()}
+            % if self.selected_type == 'assignment':
+                ${content_type()}
+            % endif
             ${location()}
             ${privacy()}
+            ${tags()}
             ${license()}
 	    ${submit_buttons()}
-            ${what_next()}
+            ${what_now_link()}
         ${h.end_form()}
     </div>
 </%def>
@@ -184,17 +197,17 @@
         ##${form_instruction(_("Got an opinion? want to ask a question?"))}
         
         ##<p>
-            <label for="title_${self.id}">${_('Add your title')}</label><br />
-            <input style="width: 100%" id="title_${self.id}" name="title" type="text" value="${self.content['title']}" placeholder="${_('Enter a title')}"/><br />
+            <label for="title_${self.id}">${_('Add your title')}</label>
+            <input id="title_${self.id}" name="title" type="text" class="edit_input" value="${self.content['title']}" placeholder="${_('Enter a title')}"/><br />
             ##${popup(_("extra info"))}
         ##</p>
-        
+        <div class="separator"></div>
         ##${YUI.richtext(c.content.content, width='100%', height='300px')}
 		<%
 		area_id = h.uniqueish_id("content")
 		%>
-		<label for="${area_id}">Add your content</label><br />
-		<textarea class="editor" name="content" id="${area_id}">${self.content['content']}</textarea>
+		<label for="${area_id}">Add more detail and supporting links, etc</label>
+		<textarea class="editor edit_input" name="content" id="${area_id}">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
         
 		<script type="text/javascript">
@@ -239,7 +252,7 @@
             cb_frag_set_variable($("#${area_id}"), 'autoSaveDraftTimer', setInterval('ajaxSave()', 60000));
             % endif
 		</script>
-
+        <div class="separator"></div>
         ## Owner
         <%doc>
         <p><label for="owner">${_("By")}</label>
@@ -265,30 +278,34 @@
         ${popup(_("extra_info"))}
         </p>
         </%doc>
-        
-        
-        ## Tags
-
-        <p>
-            <span class="padded"><label for="tags_${self.id}">${_("Tags")}</label></span>
-            <%
-            tags = []
-            separator = config['setting.content.tag_string_separator']
-            if   isinstance(self.content['tags'], list):
-                tags = self.content['tags']
-            elif isinstance(self.content['tags'], basestring):
-                tags = self.content['tags'].split(separator)
-                
-            tags_string = u""
-            for tag in tags:
-                tags_string += tag + separator
-            %>
-            <input class="detail" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
-            <span>(${_('separated by commas')} ',')</span>
-            ##${popup(_("extra_info"))}
-        </p>
 
     </fieldset>
+    <div class="separator"></div>
+</%def>
+
+##------------------------------------------------------------------------------
+## Tags
+##------------------------------------------------------------------------------
+<%def name="tags()">
+    <fieldset>
+        <label for="tags_${self.id}">${_("Tags")}</label>
+        <%
+        tags = []
+        separator = config['setting.content.tag_string_separator']
+        if   isinstance(self.content['tags'], list):
+            tags = self.content['tags']
+        elif isinstance(self.content['tags'], basestring):
+            tags = self.content['tags'].split(separator)
+            
+        tags_string = u""
+        for tag in tags:
+            tags_string += tag + separator
+        %>
+        <input class="detail edit_input" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
+        ##<span>(${_('separated by commas')} ',')</span>
+        ##${popup(_("extra_info"))}
+    </fieldset>
+    <div class="separator"></div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -297,10 +314,20 @@
 
 <%def name="media()">
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Media")}<span class="smaller"> - ${_("you can add video, images and audio to your content")}</span></legend>
+        <label>
+            % if self.selected_type == 'assignment':
+                Got media to help build a better request?
+            % elif self.selected_type == 'article':
+                Got media to help build a better story?
+            % endif
+        </label>
+        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+            <span class="icon16 i_plus"></span>
+            <img src="/images/misc/contenticons/media_trio.png" alt="Media" />
+        </legend>
         <div class="hideable">
         ##${form_instruction(_("Add any relevent pictures, videos, sounds, links to your content"))}
-        
+        <div class="separator"></div>
         <ul class="media_files">
             <li class="media_file" style="display: none;" id="mediatemplate">
               <div class="file_type_overlay icon"></div>
@@ -397,6 +424,7 @@
         </ul>
         </div>
     </fieldset>
+    <div class="separator"></div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -466,7 +494,15 @@
             ${type}
         % endif
         </%doc>
-
+            
+    <fieldset>
+        <label>Got a deadline?</label>
+        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+            <span class="icon16 i_plus"></span>
+            <img src="/images/misc/contenticons/calendar.png" alt="Deadline" />
+        </legend>
+        <div class="hideable">
+        <div class="separator"></div>
         <div id="content_type_additional_fields">
             ## See CSS for "active" class
             <div id="type_assignment_extras" class="hideable, additional_fields">
@@ -535,6 +571,9 @@
         </script>
 		##</div>
     ##</fieldset>
+        </div>
+    </fieldset>
+    <div class="separator"></div>
 </%def>
 
 
@@ -544,12 +583,18 @@
 <%def name="location()">
     <!-- Licence -->
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Location")}<span class="smaller"> - set the location of your event or request</span></legend>
+        <label>Got a location?</label>
+        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+            <span class="icon16 i_plus"></span>
+            <img src="/images/misc/contenticons/map.png" alt="Location" />
+        </legend>
         <div class="hideable">
+            <div class="separator"></div>
             ##${form_instruction(_("why give us this..."))}
 			${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
         </div>
     </fieldset>
+    <div class="separator"></div>
 </%def>
 
 
@@ -557,14 +602,14 @@
 ## License
 ##------------------------------------------------------------------------------
 <%def name="license()">
-
+<%doc>
     % if self.content['type'] == 'draft':
     <% from civicboom.lib.database.get_cached import get_licenses %>
     <!-- Licence -->
     <fieldset>
         <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Licence")}</legend>
         <div class="hideable">
-            <%doc>
+            </%doc><%doc>
             <span style="padding-top: 3px;">
               ${form_instruction(_("What is licensing explanation"))}
             </span>
@@ -583,7 +628,7 @@
                 ##${popup(_(license.description))}
             % endfor
 			</table>
-            </%doc>
+            </%doc><%doc>
               <div class="padded">This content will be published under the Creative Commons Attributed licence</div>
               <div class="padded">
                 <a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution"><img src="/images/licenses/CC-BY.png" alt="Creative Commons Attribution"/></a>
@@ -591,6 +636,9 @@
         </div>
     </fieldset>
     % endif
+</%doc>
+    <span class="smaller"><a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution">View the Creative Commons license</a></span>
+    <div class="separator"></div>
 </%def>
 
 
@@ -605,8 +653,13 @@
 		%endif
 	</%def>
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Content Privacy")}</legend>
+        <label>Want to tell the world, or just a select few?</label>
+        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+            <span class="icon16 i_plus"></span>
+            <img src="/images/misc/contenticons/privacy.png" alt="Content Privacy" />
+        </legend>
         <div class="hideable">
+            <div class="separator"></div>
               <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either public for anyone to see or private to you, your trusted followers and anyone you invite to respond to your request.</div>
               <div class="padded">
                 <select id="private" name="private">
@@ -616,22 +669,8 @@
               </div>
         </div>
     </fieldset>
+    <div class="separator"></div>
     % endif
-</%def>
-
-##------------------------------------------------------------------------------
-## What Happens Next?
-##------------------------------------------------------------------------------
-<%def name="what_next()">
-    <div class="what-next">
-        <h2>What happens once I publish?</h2>
-        <p>This request will appear...</p>
-        <ol>
-            <li>${_("In your _widget for your community to respond to.")}</li>
-            <li>${_("In your follower's notification stream.")}</li>
-            <li>${_("On the _site_name _request stream.")}</li>
-        </ol>
-    </div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -640,7 +679,7 @@
 <%def name="submit_buttons()">
 
     ## AllanC - note the class selectors are used by jQuery to simulate clicks
-    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None)">
+    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r')">
 
         <%
             button_id = "submit_%s_%s" % (name, self.id)
@@ -650,7 +689,7 @@
 
         % if mo_text:
             <span class="mo-help">
-            <div class="mo-help-r">
+            <div class="${mo_class}">
                 <h2>${title_text}</h2>
                 <p>${_(mo_text)}</p>
             </div>
@@ -681,12 +720,13 @@
         % endif
     </%def>
     
-    <div style="text-align: right;">
+    <div style="font-size: 130%; text-align: center;">
+        
         % if self.content['type'] == "draft":
-            ${submit_button('draft'  , _("Save"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}</span>
             ${submit_button('preview', _("Preview"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once published." )}
             % if 'publish' in self.actions:
-            ${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!" )}
+            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l" )}</span>
             % endif
         % else:
             % if 'update' in self.actions:
@@ -694,5 +734,49 @@
             % endif
             <a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
         % endif
+    </div>
+    <div class="separator"></div>
+</%def>
+
+##------------------------------------------------------------------------------
+## What happens now?
+##------------------------------------------------------------------------------
+<%def name="what_now_link()">
+    <div class="what_now">
+        <a href="" class="what-now-popup">What happens once I post this?</a>
+        <script>
+            $('.what-now-popup').click(function() {
+                $('#what-now').modal({ onShow: function (dialog) {}});
+                return false;
+            });
+        </script>
+        ##${popup.popup_static('What happens now?', what_now, 'what-now')}
+    </div>
+</%def>
+
+<%def name="what_now()">
+    <div class="information">
+	<div class="popup-title">
+	    Why should you get involved?
+	</div>
+	<div class="popup-message">
+	    By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
+	    <ol>
+		<li>Get published</li>
+		<li>Get recognition</li>
+		<li>Make the news!</li>
+	    </ol>
+	</div>
+	<div class="popup-tag-line">
+	    Don't just read it. Feed it.
+	</div>
+    </div>
+    <div class="popup-icons">
+	<img src="/images/misc/shareicons/video_icon.png" />
+	<img src="/images/misc/shareicons/camera_icon.png" />
+	<img src="/images/misc/shareicons/audio_icon.png" />
+    </div>
+    <div class="popup-actions">
+	<span class="button">Share your story now!</span>
     </div>
 </%def>
