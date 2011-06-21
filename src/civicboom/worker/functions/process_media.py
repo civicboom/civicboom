@@ -139,3 +139,5 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     log.debug("deleting status_key %s" % status_key)
 
     Session.commit()
+
+    return True
