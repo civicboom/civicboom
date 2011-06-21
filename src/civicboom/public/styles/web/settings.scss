@@ -21,22 +21,40 @@ BODY.c-settings {
 		padding-right: 4px;
 	}
 	DIV.setting_pad {
-		padding-top: 3px;
+		padding-top: 1em;
 	}
 	DIV.setting_group_name {
 		font-weight: bold;
 	}
 	DIV.setting_name {
-		padding-left: 40px;
+		width: 10em;
+		vertical-align: top;
+		display: inline-block;
+	}
+  DIV.setting_name_long {
+    width: 30em;
+    vertical-align: top;
+    display: inline-block;
+  }
+	DIV.setting_block {
+	 //padding-top: 1em;
 	}
 	DIV.setting_field, BODY.c-settings DIV.setting_hint {
-		padding-left: 80px;
+		//padding-left: 40px; //80
+		display: inline-block;
+		width: 30em;
 	}
+  DIV.setting_field_short {
+    //padding-left: 40px; //80
+    display: inline-block;
+    width: 10em;
+  }
 	DIV.setting_hint {
 		font-weight: bold;
 		color: #F00;
 	}
-	DIV.setting_field INPUT, BODY.c-settings DIV.setting_field TEXTAREA {
+	DIV.setting_field INPUT, DIV.setting_field TEXTAREA {
 		width: 100%;
+		max-width: 100%;
 	}
 }
