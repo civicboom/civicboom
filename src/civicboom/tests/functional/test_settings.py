@@ -1,5 +1,4 @@
 from civicboom.tests import *
-from base64 import b64encode, b64decode
 import warnings
 
 
@@ -255,7 +254,7 @@ class TestSettingsController(TestController):
         self.assertIn(self.email_address, response) # Email address has changed
     
     def test_change_avatar(self):
-        self.png2x2 = b64decode('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAAAAABX3VL4AAAADklEQVQI12P4z8DA8B8ABgAB/8h3K8wAAAAASUVORK5CYII=')
+        self.png2x2 = self.generate_image((2, 2))
         self.log_in_as('unittest')
         response = self.app.post(
             url('setting',id="me",format="frag"),
