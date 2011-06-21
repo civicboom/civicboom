@@ -539,7 +539,7 @@ def auto_format_output(target, *args, **kwargs):
         else:
             result = ae.original_dict
 
-            if result.get('code') == 404 and environ.get("HTTP_REFERER", "-") == "-":
+            if result.get('code') == 404 and request.environ.get("HTTP_REFERER", "-") == "-":
                 # 404 with no referer is normally a web spider
                 pass
             else:
