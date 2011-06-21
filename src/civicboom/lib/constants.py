@@ -5,6 +5,8 @@ Consistants
 """
 from pylons.i18n.translation import _
 
+import re
+
 
 # in the form list_name, icon, display_text
 contents_list_titles = [
