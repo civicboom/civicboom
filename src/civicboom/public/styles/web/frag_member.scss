@@ -25,20 +25,15 @@
 					text-decoration: none;
 				}
 				
-				table {
-					width: 100%;
-				}
-				
 				.avatar {
-					display: inline;
 					width: 90px;
 					padding: 5px;
 					float: right;
 				}
 				
 				.content {
-					display: inline;
 					color: #333;
+					margin-bottom: 10px;
 					
 					h2 {
 						font-size: 150%;
@@ -48,7 +43,8 @@
 				
 				.button {
 					font-size: 110%;
-					display: inline;
+					float: left;
+					margin-right: 10px;
 					
 					border-color: $button-member-border;
 					background: $button-member-top; /* for non-css3 browsers */

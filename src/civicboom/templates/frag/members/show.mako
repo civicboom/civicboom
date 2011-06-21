@@ -101,25 +101,23 @@
     ## Top row (avatar/about me)
     <div class="frag_top_row">
 	<div  class="about_me">
-	    <div class="avatar">${member_avatar(img_class='photo')}</div>
 	    <div class="content">
+		<div class="avatar">${member_avatar(img_class='photo')}</div>
 		<h2 class="fn n">${h.guess_hcard_name(self.member['name'])}</h2>
 		% if self.member.get('description'):
 		    <div>${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</div>
 		% endif
 	    </div>
-	    
-	    <div class="actions">
-		${actions_buttons()}
-		% if 'message' in self.actions:
-		    ${popup.link(
-			h.args_to_tuple('new_message', target=self.id),
-			title = _('Send Message'),
-			text  = h.literal("<div class='button'>%s</div>") % _('Send Message'),
-		    )}
-		    <span class="separtor"></span>
-		% endif
-	    </div>
+	    <div style="clear: both;"></div>
+	    ${actions_buttons()}
+	    % if 'message' in self.actions:
+		${popup.link(
+		    h.args_to_tuple('new_message', target=self.id),
+		    title = _('Send Message'),
+		    text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send Message'),
+		)}
+		## <span class="separtor"></span>
+	    % endif
 	    <div style="clear: both;"></div>
 	</div>
 	% for list, icon, description in [n for n in constants.contents_list_titles if n[0]  in ["assignments_active"]]:
@@ -260,39 +258,6 @@
     <div class="frag_right_col">
 	    <div class="frag_col">
 	    
-	    <%doc> ## Messages/notification icons
-	    % if self.current_user:
-	    <div style="float: right; width: 66%; text-align: center;">
-	      <%def name="messageIcon(messages)">
-		% if messages > 0:
-		  <div class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
-		% endif
-	      </%def>
-	      <a style="text-align:left; float:left;" class   = "icon32 i_message"
-		 href    = "${h.url('messages',list='to')}"
-		 title   = "${_('Messages')}"
-		 onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
-	      ><span>${_('Messages')}</span>
-	      ${messageIcon(self.num_unread_messages)}
-	      </a>
-	      <a class   = "icon32 i_message_sent"
-		 href    = "${h.url('messages',list='sent')}"
-		 title   = "${_('Messages Sent')}"
-		 onclick = "cb_frag($(this), '${h.url('messages', list='sent'        , format='frag')}', 'frag_col_1'); return false;"
-	      ><span>${_('Messages')}</span></a>
-	      <a style="text-align:left; float:right;" class   = "icon32 i_notification"
-		 href    = "${h.url('messages', list='notification')}"
-		 title   = "${_('Notifications')}"
-		 onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
-	      ><span>${_('Notifications')}</span>
-	      ${messageIcon(self.num_unread_notifications)}
-	      </a>
-	    </div>
-	    <div style="clear: both; width: 100%; height: 0;"></div>
-	    % endif
-	    </%doc>
-	    
-	    
 	    ## Accepted Assignments --------------------------------------
 	    
 	    ${frag_list.content_list(
@@ -342,10 +307,12 @@
     <div class="frag_list">
         <h2>${_('Messages')}</h2>
         <div class="frag_list_contents">
-            <div class="content note">
-                <span class="icon16 i_inbox"></span> ${self.num_unread_messages}
-                <span class="icon16 i_sent" ></span>
-                <span class="icon16 i_notifications"></span> ${self.num_unread_notifications}
+            <div class="content">
+                <ul>
+                    <li><a href="${h.url('messages', list='to')          }"><div style="float:left; width: 5em;"><span class="icon16 i_message"     ></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_messages}&nbsp;     </div></div>${_('Inbox')        }</a></li>
+                    <li><a href="${h.url('messages', list='sent')        }"><div style="float:left; width: 5em;"><span class="icon16 i_message_sent"></span>                                                                                 </div>${_('Sent')         }</a></li>
+                    <li><a href="${h.url('messages', list='notification')}"><div style="float:left; width: 5em;"><span class="icon16 i_notification"></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_notifications}&nbsp;</div></div>${_('Notifications')}</a></li>
+                </ul>
             </div>
         </div>
     </div>

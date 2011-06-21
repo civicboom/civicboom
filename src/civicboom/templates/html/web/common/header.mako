@@ -1,3 +1,7 @@
+<%
+    logged_in = c.logged_in_persona and c.logged_in_persona.status == 'active'
+%>
+
 ##------------------------------------------------------------------------------
 ## Logo
 ##------------------------------------------------------------------------------
@@ -13,7 +17,8 @@
 ##------------------------------------------------------------------------------
 ## Persona Switching
 ##------------------------------------------------------------------------------
-% if c.logged_in_persona:
+  ## AllanC - must check status=active otherwise registration page keeps displaying 'unauthroised error' repeatedly
+% if logged_in:
 <%
 	from civicboom.model import Group
 %>
@@ -26,19 +31,19 @@
 				for (var key in icons) {
 					if (typeof data.data[key] != 'undefined') {
 						//alert (icons[key].html());
-						icons[key].html('&nbsp;' + data.data[key] + '&nbsp;');
+						$(icons[key]).html('&nbsp;' + data.data[key] + '&nbsp;');
 						_total += (data.data[key] * 1);
 					}
 				}
 				if (typeof icons['_total'] != 'undefined')
-				    icons['_total'].html('&nbsp;' + _total + '&nbsp;')
+				    $(icons['_total']).html('&nbsp;' + _total + '&nbsp;')
 			}
 		});
 	}
 	$(function() {
-		icons = {num_unread_messages: $('#msg_c_m'),
-				 num_unread_notifications: $('#msg_c_n'),
-				 _total: $('#msg_c_o')
+		icons = {num_unread_messages: '.msg_c_m',
+				 num_unread_notifications: '.msg_c_n',
+				 _total: '.msg_c_o'
 				}
 		setInterval(refreshMessages, 60000);
 	});
@@ -54,7 +59,7 @@
 	  </div>
       <%def name="messageIcon(messages, id)">
         % if messages > 0:
-          <div id="${id}" class="icon_overlay_red">&nbsp;${messages}&nbsp;</div>
+          <div class="icon_overlay_red ${id}">&nbsp;${messages}&nbsp;</div>
         % endif
       </%def>
       <div id="message_holder">
@@ -188,7 +193,7 @@
         <li><a href="#" class="top_parent buttonesque_link">${_("Explore...")}</a>
         <ul>
             <!--<li><form action="${h.url('contents')}" method='GET'><input type="search" name="query" placeholder="${_("Quick Search")}"></form></li>-->
-% if c.logged_in_persona:
+% if logged_in:
 <!--
             <li><a href="/feeds" class="parent">${_("News Feeds")}</a>
 				<ul>
