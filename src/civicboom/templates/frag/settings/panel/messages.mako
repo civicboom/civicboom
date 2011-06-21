@@ -10,6 +10,7 @@
 <%def name="body()">
     ${h.form(h.url('setting', id=c.result.get('username', 'me')), method='PUT')}
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
+    <h1>${_('%(username)s message settings') % dict(username= c.logged_in_persona.username.capitalize()) }</h1>
     <%
         panel = c.result.get('panel', 'messages')
         settings_meta = d['settings_meta']
@@ -76,9 +77,8 @@
           % endfor
         </tr>
       % endfor
-        <tr><td>
-        </td><td colspan="2"><input class="button" type="submit" value="Save" style="width: 100%"></td></tr>
       </table>
     % endfor
+    <input class="button" type="submit" name="submit" value="${_('Save settings')}" style="margin: 16px;"/>
 ${h.end_form()}
 </%def>
