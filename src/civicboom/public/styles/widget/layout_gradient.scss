@@ -165,3 +165,14 @@ a {
         letter-spacing: $title-kerning;
     }
 }
+
+.jcarousel-skin-widget-gradient {
+    .jcarousel-control {
+        position: absolute;
+        bottom: 0.1em;
+        
+        a {
+            /* position */
+        }
+    }
+}
