@@ -99,16 +99,17 @@ for gen in generators:
         i = i + 1
 
 add_setting('location_home'             , _('Home Location' )            , group='location/location'  , weight=300, type='location' )
+add_setting('location_home_name'        , _('Home Location' )            , group='location/location'  , weight=301, type='string_location' )
 
-add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='advanced/follower_settings', weight=400, type='boolean')
-add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=401, type='boolean', info=_('Please speak to our team before you change this option!'))
+add_setting('help_popup_created_user', _('Hide the help popup shown upon login to the site'), group='help_adverts/help_popups', weight=400, type='boolean')
+add_setting('help_popup_created_group', _('Hide the help popup shown upon switching to a group'), group='help_adverts/help_popups', weight=401, type='boolean')
+add_setting('help_popup_created_assignment', _('Hide the help popup shown upon creating an assignment'), group='help_adverts/help_popups', weight=402, type='boolean')
 
-add_setting('help_popup_created_user', _('Hide the help popup shown upon login to the site'), group='help_adverts/help_popups', weight=500, type='boolean')
-add_setting('help_popup_created_group', _('Hide the help popup shown upon switching to a group'), group='help_adverts/help_popups', weight=501, type='boolean')
-add_setting('help_popup_created_assignment', _('Hide the help popup shown upon creating an assignment'), group='help_adverts/help_popups', weight=502, type='boolean')
+add_setting('advert_profile_mobile', _('Hide the info box encouraging the use of the mobile app'), group='help_adverts/adverts', weight=403, type='boolean')
+add_setting('advert_profile_group', _('Hide the info box encouraging the use of _groups'), group='help_adverts/adverts', weight=404, type='boolean')
 
-add_setting('advert_profile_mobile', _('Hide the info box encouraging the use of the mobile app'), group='help_adverts/advert', weight=503, type='boolean')
-add_setting('advert_profile_group', _('Hide the info box encouraging the use of _groups'), group='help_adverts/advert', weight=504, type='boolean')
+add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='advanced/follower_settings', weight=1000, type='boolean')
+add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=1001, type='boolean', info=_('Please speak to our team before you change this option!'))
 
 #---------------------------------------------------------------------------
 # Setting Validators (for dynamic scema construction)
@@ -129,6 +130,7 @@ type_validators = { 'string':           formencode.validators.UnicodeString(),
                     'password_current': civicboom.lib.form_validators.base.CurrentUserPasswordValidator(),
                     'file':             formencode.validators.FieldStorageUploadConverter(),
                     'location':         civicboom.lib.form_validators.base.LocationValidator(),
+                    'string_location':  formencode.validators.UnicodeString(),
                     'boolean':          formencode.validators.UnicodeString(max=10, strip=True),
 }
 
@@ -150,7 +152,6 @@ for setting in settings_base.values():
     # Anything else from default type_validators
     else:
         settings_validators[setting['name']] = type_validators.get(setting['type'])
-
 
 def build_meta(user, user_type, panel):
     settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
@@ -376,7 +377,7 @@ class SettingsController(BaseController):
         # id will always contain me if it was passed
         
         private = kwargs.get('private')
-        
+        if private: del kwargs['private']
         #username = id
         #if not username or username == 'me':
         #    username = c.logged_in_persona.username
@@ -444,6 +445,8 @@ class SettingsController(BaseController):
         # List validators required
         validators = {}
         if len(set(settings.keys()) - set(settings_validators.keys())) > 0:
+            print settings
+            print set(settings.keys()) - set(settings_validators.keys())
             raise action_error(code=400, message=_("You are trying to update a setting that does not exist!"))
         for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings_base[setting_name.split('-')[0]].get('who', user.__type__) == user.__type__]:
             log.debug("adding validator: %s" % validate_fieldname)

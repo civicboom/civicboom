@@ -20,7 +20,7 @@
     panelorder = sorted(panels.values(), key=lambda x: int(x['weight']))
 %>
     <%def name="link(title, panel)">
-        <li style="vertical-align: middle; padding-top:1em;">
+        <li style="vertical-align: middle; padding-top:1em; font-weight: bold; color: black;">
             <a href="${h.url('setting_action', id=c.id or 'me', action=panel)}">
                 <div style="vertical-align: middle;display: inline-block;width: 8em;">${title}:</div>
                 <div style="vertical-align: middle;display: inline-block;width: 6em;">
