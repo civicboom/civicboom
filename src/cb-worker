@@ -169,6 +169,7 @@ def add_test_jobs():
     w.add_job({
         'task': 'die',
     })
+    w.flush()
 
 
 def run():
