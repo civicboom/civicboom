@@ -90,23 +90,22 @@ class TestController(TestCase):
         )
         return json.loads(response.body)[key]
 
-    def generate_image(self, size):
+    def generate_image(self, size, seed=0):
         import Image
         import StringIO
-        b = (0,   0,   0)
-        w = (255, 255, 255)
-        d = [
-            [b, w, b],
-            [w, b, w],
-            [b, w, b],
-        ]
-        im = Image.new('RGB', (len(d), len(d[0])))
-        for y in range(0, len(d)):
-            for x in range(0, len(d[y])):
-                if (x+y)%2 == 0:
-                    im.putpixel((x, y), b)
-                else:
-                    im.putpixel((x, y), w)
+        import random
+        random.seed(seed)
+        im = Image.new('RGB', size)
+        for x in range(0, size[0]):
+            for y in range(0, size[1]):
+                im.putpixel(
+                    (x, y),
+                    (
+                        random.randint(0, 255),
+                        random.randint(0, 255),
+                        random.randint(0, 255),
+                    )
+                )
         buf = StringIO.StringIO()
         im.save(buf, format= 'PNG')
         return buf.getvalue()
