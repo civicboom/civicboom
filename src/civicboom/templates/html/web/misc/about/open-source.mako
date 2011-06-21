@@ -84,10 +84,9 @@ python-magic      - PSF
 GeoAlchemy        - MIT
 GeoFormAlchemy    - MIT
 twitter           - MIT
+pexif             - MIT
 
 ffmpeg            - GPL [aggregated]
-
-python-psycopg2
 -->
 
 <p>DB Framework -

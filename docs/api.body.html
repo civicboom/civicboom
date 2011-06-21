@@ -75,6 +75,12 @@
 <h3><span>(1.0 WIP)</span>Transport</h3>
 <div>
     <ul>
+	<li>All API requests should have a contact email address; preferably in the HTTP
+	    User-Agent field, though adding ?client_contact=[email address] to the URL
+		can suffice (altering the URL will lower performance though). If your client
+		is found to be problematic we will try to contact you to discuss and improve
+		it - if the address is empty or unreachable, we may have to resort to blocking
+		your IP to bring it under control.
     <li>All content-modifying actions (POST, PUT, DELETE) require an _authentication_token
         argument; since this is universal, it isn't mentioned in the docs for each action
         separately. The token can be found by calling /account/signin.json or /account/signin.xml
