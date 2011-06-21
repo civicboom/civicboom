@@ -103,7 +103,10 @@ class TestController(TestCase):
         im = Image.new('RGB', (len(d), len(d[0])))
         for y in range(0, len(d)):
             for x in range(0, len(d[y])):
-                im.putpixel((x, y), b)
+                if (x+y)%2 == 0:
+                    im.putpixel((x, y), b)
+                else:
+                    im.putpixel((x, y), w)
         buf = StringIO.StringIO()
         im.save(buf, format= 'PNG')
         return buf.getvalue()
