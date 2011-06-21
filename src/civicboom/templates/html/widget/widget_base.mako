@@ -34,9 +34,9 @@
     
     <style type="text/css">
         ## AllanC - IE7 does not support CSS inheritence so they have to be specified manually
-        .ie7 a         {color:#${c.widget['color_font']};}
-        .ie7 a:active  {color:#${c.widget['color_font']};}
-        .ie7 a:visited {color:#${c.widget['color_font']};}
+        .ie7 a         {color:#${c.widget.get('color_font')};}
+        .ie7 a:active  {color:#${c.widget.get('color_font')};}
+        .ie7 a:visited {color:#${c.widget.get('color_font')};}
     </style>
 </head>
 

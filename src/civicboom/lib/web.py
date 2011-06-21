@@ -5,6 +5,7 @@ from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detect
 
 from cbutils.cbxml import dictToXMLString
 
+from civicboom.lib.widget import widget_defaults
 
 from webhelpers.html import literal
 import formencode
@@ -92,11 +93,20 @@ def url(*args, **kwargs):
 
     # Encode current widget state into URL if in widget mode
     if kwargs.get('sub_domain')=='widget' or (get_subdomain_format(_url.environ)=='widget' and 'sub_domain' not in kwargs): # If widget and not linking to new subdomain
-        widget_var_prefix = config["setting.widget.var_prefix"]
+        widget_var_prefix = config['setting.widget.var_prefix'   ]
+        widget_theme      = config['setting.widget.default_theme']
+        try:
+            # Just in case c does not exisit in thread
+            widget_theme = c.widget.get('theme')
+        except:
+            pass
+        widget_default = dict(widget_defaults.get(widget_theme))
         for key, value in c.widget.iteritems():
             if isinstance(value, dict) and 'username' in value: # the owner may be a dict, convert it back to a username
                 value = value['username']
-            kwargs[widget_var_prefix+key] = value
+            # Check if value is the same as widget default - there is no need to add this to the URL if they match
+            if widget_default.get(widget_var_prefix+key) != value:
+                kwargs[widget_var_prefix+key] = value
 
     args = list(args)
     if 'current' in args:
