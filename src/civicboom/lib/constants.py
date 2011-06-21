@@ -46,5 +46,11 @@ setting_titles = {
 }
 
 setting_icons = {
-    
+    'general'       :   'general',
+    'password'      :   'password',
+    'messages'      :   'messages',
+    'location'      :   'location',
+    'advanced'      :   None,
+    'help_adverts'  :   None,
+    'link_janrain'  :   None,
 }

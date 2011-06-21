@@ -92,8 +92,7 @@
                         <label for="${setting_name}_${value}">${value.capitalize()}</label>
                     % endfor
                 % elif setting_type == 'location':
-                    ##</tr><tr><td></td>
-                    <td colspan="1"><div style="text-align: left;">
+                    <div style="text-align: left;">
                     <%
                     try:
                       (lon, lat) = [float(f) for f in setting_value.split(" ")]
