@@ -2,6 +2,12 @@
 
 <%namespace name="member_includes" file="../common/member.mako"/>
 
+## Include caousel javascripts in header
+<%def name="scripts_head()">
+    ##<script type='text/javascript' src='/javascript/jquery-1.5.1.js'        ></script>
+    ##<script type='text/javascript' src='/javascript/jquery.jcarousel.min.js'></script>
+</%def>
+
 % if d['list']['count'] == 0:
     ${_('No content')}
 % else:
@@ -10,6 +16,7 @@
 
 
 <%def name="content_list(contents)">
+    <%doc>
     <style type="text/css">
         <%
             width  = c.widget['width'] - 12
@@ -58,6 +65,7 @@
             content: "P";
         }
     </style>
+    </%doc>
 
     ##<div class="widget_content_assignment_list">
     ##<ul class="content_list jcarousel-skin-tango" id="widget_carousel">
@@ -71,6 +79,7 @@
     </div>
     ##</div>
     
+    <%doc>
     <script type="text/javascript">
         ## http://sorgalla.com/projects/jcarousel/
         
@@ -97,7 +106,7 @@
         });
         jQuery('#widget_carousel_fallback_container').removeClass('content_list');
     </script>
-
+    </%doc>
 </%def>
 
 <%def name="content_item(content)">

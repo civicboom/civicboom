@@ -1,5 +1,11 @@
 <%inherit file="../common/widget_border.mako"/>
 
+## Include caousel javascripts in header
+<%def name="scripts_head()">
+    <script type='text/javascript' src='/javascript/jquery-1.5.1.js'        ></script>
+    <script type='text/javascript' src='/javascript/jquery.jcarousel.min.js'></script>
+</%def>
+
 % if d['list']['count'] == 0:
     ${_('No content')}
 % else:
@@ -19,7 +25,7 @@
                 ${content_item(content)}
             % endfor
         </ul>
-        <a href="" class="more_link">See more requests >></a>
+        <a href="${h.url('member', id=c.widget['owner']['username'], sub_domain='www')}" target="_blank" class="more_link">See more requests >></a>
     </div>
     
     <script type="text/javascript">
@@ -38,6 +44,10 @@
             carousel.buttonPrev.bind('click', function() {carousel.startAuto(0);});
             // Pause autoscrolling if the user moves with the cursor over the clip.
             carousel.clip.hover(
+                function() {carousel.stopAuto(); },
+                function() {carousel.startAuto();}
+            );
+            jQuery('.jcarousel-control').hover(
                 function() {carousel.stopAuto(); },
                 function() {carousel.startAuto();}
             );
@@ -91,7 +101,7 @@
                 ##% endif
                 ##<p class="content">${content['content_short']}</p>
             </div>
-            <p class="respond"><a href="" class="button">Click to share your story</a></p>
+            <p class="respond"><a href="${h.url('new_content', parent_id=content['id'], sub_domain='www')}" target="_blank" class="button">Click to share your story</a></p>
         </a>
         <div style="clear:both;"></div>
     </li>
