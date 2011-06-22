@@ -20,13 +20,13 @@
     panelorder = sorted(panels.values(), key=lambda x: int(x['weight']))
 %>
     <%def name="link(title, panel)">
-        <li style="vertical-align: middle; padding-top:1.25em; font-weight: bold; color: black;">
-            <div style="vertical-align: middle;display: inline-block;width: 7em;">
-                <a href="${h.url('setting_action', id=c.id or 'me', action=panel)}">
+        <li>
+            <div class="name">
+                <a class="" href="${h.url('setting_action', id=c.id or 'me', action=panel)}">
                     ${title}:
                 </a>
             </div>
-            <div style="vertical-align: middle;display: inline-block;width: 5em;">
+            <div class="image">
                 % if setting_icons.get(panel):
                     <img src="/images/settings/${setting_icons.get(panel)}.png" />
                 % endif
@@ -38,7 +38,7 @@
     </%def>
     <div>
         <h1>${_('%(username)s settings') % dict(username= c.logged_in_persona.username.capitalize()) }</h1>
-        <ul>
+        <ul class="setting_menu">
         % for panel in panelorder:
             ${link(panel['title'].capitalize(), panel['panel'])}
         % endfor
