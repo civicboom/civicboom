@@ -19,7 +19,8 @@ FOOT=\
 	jquery.ba-hashchange.min.js \
 	jquery.limit-1.2.js \
 	jquery.getUrlParam.js \
-        jquery.cookie.js \
+    jquery.cookie.js \
+	jquery.jcarousel.min.js \
 	invite.js \
 	mobile.js \
 	gears_init.js \
