@@ -3,15 +3,13 @@
 
 #frag_containers {
 
-    .frag_col {
-    
         .frag_list {
+
+            padding: 1em;
         
             a {
                 color: $button-txt;
             }
-        
-            padding: 1em;
         
             label {
                 width: 25%;
@@ -42,9 +40,7 @@
             .hideable {
                 clear: both;
             }
-        
+
         }
-        
-    }
-    
+
 }
