@@ -21,6 +21,16 @@
 	
 		.frag_content {
 			.frag_top_row {
+				margin-bottom: 0;
+				
+				.frag_col {
+					margin-bottom: 0;
+				}
+				
+				.creator_avatar {
+					float: right;
+				}
+				
 				h1 {
 					color: #333;
 					font-size: 200%;
