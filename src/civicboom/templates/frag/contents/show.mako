@@ -8,7 +8,6 @@
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="media_includes"  file="/html/web/media/show.mako"        />
 
-
 ## for deprication
 <%namespace name="loc"             file="/html/web/common/location.mako"     />
 
@@ -92,7 +91,7 @@
 		${content_map()}
 		${content_action_buttons()}
 		## ${content_why_resond()}
-		## ${content_comments()}
+		${content_comments()}
 		## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
 		<%def name="flag_form()">
 		    ${flag.flag_form(self.id)}
@@ -177,7 +176,14 @@
 <%def name="content_title()">
     ##----Title----
     <h1>${self.content['title']}</h1>
-    <div style="margin: 0 0 1em 0.5em;">By: ${self.content['creator']['name']}</div>
+    <div style="clear: both;"></div>
+    <div style="margin: 0 0 1em 0.5em; float: left;">By: ${self.content['creator']['name']}</div>
+    <div class="creator_avatar">
+	% if c.logged_in_user:
+	${member_includes.avatar(self.content['creator'])}
+	%endif
+    </div>
+    <div style="clear: both;"></div>
 </%def>
 
 ##------------------------------------------------------------------------------

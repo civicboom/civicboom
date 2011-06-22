@@ -45,7 +45,7 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     <div class="frag_col">
-        
+        <div class="frag_list">
         <h1>
             % if self.selected_type == 'assignment':
                 Request a story
@@ -117,6 +117,7 @@
             ${submit_buttons()}
             ${license()}
         ${h.end_form()}
+        </div>
     </div>
 </%def>
 
@@ -159,7 +160,7 @@
 ##------------------------------------------------------------------------------
 ## Display Utils
 ##------------------------------------------------------------------------------
-<%def name="popup(text)">
+<%def name="tooltip(text)">
 <span class="tooltip tooltip_icon"><span>${_(text)}</span></span>
 </%def>
 
@@ -414,8 +415,8 @@
                 </div>
                 <div class="media_fields">
                     <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></p>
-                    <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" />${popup(_("extra_info"))}</p>
-                    <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" />${popup(_("extra_info"))}</p>
+                    <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" />${tooltip(_("extra_info"))}</p>
+                    <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" />${tooltip(_("extra_info"))}</p>
                 </div>              
             </li>
             <!-- End Add media -->
@@ -511,8 +512,8 @@
                 %>
                   <span class="padded"><label for="due_date">${_("Due Date")}</label></span>
                   <input class="detail" type="date" name="due_date"   value="${due_date}">
-                  <span class="padded"><label for="event_date">${_("Event Date")}</label></span>
-                  <input class="detail" type="date" name="event_date" value="${event_date}">
+                  ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
+                  ##<input class="detail" type="date" name="event_date" value="${event_date}">
                 <%doc>
                 <p>${_("Response License:")}
 				<table>
@@ -721,8 +722,8 @@
     
     <div style="font-size: 130%; text-align: center;">
         % if self.content['type'] == "draft":
-            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}</span>
-            ${submit_button('preview', _("Preview"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once published." )}
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}</span>
+            ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once published." )}
             % if 'publish' in self.actions:
             <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l" )}</span>
             % endif
@@ -730,7 +731,7 @@
             % if 'update' in self.actions:
             ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
             % endif
-            <a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
+            <a class="button" style="color: #444;" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
         % endif
     </div>
     <div class="separator"></div><div class="separator"></div>
@@ -748,33 +749,25 @@
                 return false;
             });
         </script>
-        ##${popup.popup_static('What happens now?', what_now, 'what-now')}
+        ${popup.popup_static('What happens now?', what_now, 'what-now')}
     </div>
 </%def>
 
 <%def name="what_now()">
     <div class="information">
 	<div class="popup-title">
-	    Why should you get involved?
+	    What happens once I publish this?
 	</div>
 	<div class="popup-message">
-	    By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
+	    Once you publish this, it will appear:
 	    <ol>
-		<li>Get published</li>
-		<li>Get recognition</li>
-		<li>Make the news!</li>
+		<li>${_("In your _Widget for your community to respond to")}</li>
+		<li>${_("In your follower's notification stream")}</li>
+		<li>${_("On the _site_name request stream")}</li>
 	    </ol>
 	</div>
 	<div class="popup-tag-line">
 	    Don't just read it. Feed it.
 	</div>
-    </div>
-    <div class="popup-icons">
-	<img src="/images/misc/shareicons/video_icon.png" />
-	<img src="/images/misc/shareicons/camera_icon.png" />
-	<img src="/images/misc/shareicons/audio_icon.png" />
-    </div>
-    <div class="popup-actions">
-	<span class="button">Share your story now!</span>
     </div>
 </%def>

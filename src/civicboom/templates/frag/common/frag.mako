@@ -110,10 +110,11 @@
     
     <div class="frag_bars">
         <div class="title_bar">
-            ## AJAX Fragment refresh (not visible to user)
-            <a class="frag_source" href="${self.attr.frag_url}" style="display: none;">frag source</a>
-            ##.current_url()##
             <div class="common_actions">
+                ## AJAX Fragment refresh (not visible to user)
+                <a class="frag_source" href="${self.attr.frag_url}" style="display: none;">frag source</a>
+                ##.current_url()##
+                
                 ## Reload
                 % if config['development_mode']:
                     ##c.format=='frag' and 
@@ -121,6 +122,7 @@
                     <span class="icon"></span>
                 % endif
                 <%doc>
+                    
                 ## Share
                 % if self.attr.share_kwargs:
                     ${share.share(**self.attr.share_kwargs)}
@@ -128,6 +130,7 @@
                     <span class="icon"></span>
                 % endif
                 </%doc>
+                    
                 ## Help
                 % if self.attr.help_frag:
                     <%
