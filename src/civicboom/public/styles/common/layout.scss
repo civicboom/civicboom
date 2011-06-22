@@ -139,16 +139,6 @@ HTML SELECT {
 	}
 }
 
-/* HACK because for some reason, input fields in TDs overflow :/  */
-.form.border TD INPUT[type='text'] {
-	width: 97%;
-}
-
-.formpage {
-	margin: auto;
-	margin-top: 8px;
-}
-
 
 /*----------------------------------------------------------------------------*/
 /* Form Validation                                                            */
