@@ -26,7 +26,7 @@
     <div class="widget_header">
         <div class="padding">
         See the latest requests
-        <a href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_blank"><img class="logo" src="/images/logo.png" /></a>
+        <a href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_blank"><img class="logo" src="/images/logo_com.png" /></a>
         </div>
     </div>
     

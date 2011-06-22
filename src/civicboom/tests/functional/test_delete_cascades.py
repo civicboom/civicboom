@@ -16,10 +16,10 @@ class TestDeleteCascadesController(TestController):
         response_json = json.loads(response.body)
         return response_json['data']['list']['count']
 
-    def num_members_public(self, term=None):
+    def num_members_public(self, **kwargs):
         url_index = url('members', format='json')
-        if term:
-            url_index = url('members', format='json', term=term)
+        if kwargs:
+            url_index = url('members', format='json', **kwargs)
         return self.get_list_count(url_index)
     
     def num_content_public(self, term=None):
@@ -65,8 +65,8 @@ class TestDeleteCascadesController(TestController):
     #---------------------------------------------------------------------------
     def test_delete_user(self):
         
-        self.assertEqual(self.num_members_public('delete_cascade'), 0)
-        self.assertEqual(self.num_content_public('delete_cascade'), 0)
+        self.assertEqual(self.num_members_public(username='delete_cascade'), 0)
+        self.assertEqual(self.num_content_public(         'delete_cascade'), 0)
         
         num_members_start = self.num_members_public()
         num_content_start = self.num_content_public()
@@ -178,8 +178,9 @@ class TestDeleteCascadesController(TestController):
         #-----------------------------------------------------------------------
         # check tables deeply for all instances of the member id for removal
         
-        self.assertEqual(self.num_members_public('delete_cascade'), 2) # 'delete_cascade' and 'delete_cascade_group'
-        self.assertEqual(self.num_content_public('delete_cascade'), 1) # 'delete_cascade' in public content # unittest assignment has delete cascade in title and content
+        self.assertEqual(self.num_members_public(username='delete_cascade'      ), 1) # 'delete_cascade' and 'delete_cascade_group' are both public members
+        self.assertEqual(self.num_members_public(username='delete_cascade_group'), 1)
+        self.assertEqual(self.num_content_public(         'delete_cascade'      ), 1) # 'delete_cascade' in public content # unittest assignment has delete cascade in title and content
         
         self.assertEqual(Session.query(Media           ).filter_by(         id = self.media_id                ).count(), 1)
         self.assertEqual(Session.query(Content         ).filter_by(         id = self.content_id              ).count(), 1)
@@ -216,8 +217,9 @@ class TestDeleteCascadesController(TestController):
         # Step 4: Check for successful removal
         #-----------------------------------------------------------------------
         
-        self.assertEqual(self.num_members_public('delete_cascade'), 0)
-        self.assertEqual(self.num_content_public('delete_cascade'), 0)
+        self.assertEqual(self.num_members_public(username='delete_cascade'      ), 0)
+        self.assertEqual(self.num_members_public(username='delete_cascade_group'), 0)
+        self.assertEqual(self.num_content_public(         'delete_cascade'      ), 0)
         self.assertEqual(num_members_start, self.num_members_public())
         self.assertEqual(num_content_start, self.num_content_public() - 1) # -1 because unittest set an assignment
         
