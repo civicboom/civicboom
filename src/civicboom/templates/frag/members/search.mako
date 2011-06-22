@@ -29,7 +29,7 @@
         <form class="form" id="form_search" action="${url('members')}" method="GET"
               onsubmit="cb_frag($(this), '/members.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
             <fieldset>
-                <p><label for="term">Search For</label><br/>
+                <p><label for="term">Search for</label><br/>
                 <input type="text" name="term" value="${kwargs.get('term')}" placeholder="Enter key words"/>
 
 				<p><label for="type">Type</label><br>
@@ -39,7 +39,7 @@
                     <option value="group">${_("Just _Groups")}</option>
 				</select>
 
-                <p><label for="sort">Order By</label><br/>
+                <p><label for="sort">Order by</label><br/>
 				<select name="sort">
 					<option value="-id">Newest First</option>
 					<option value="name">Display Name</option>
