@@ -25,7 +25,7 @@
 <script type="text/javascript">
 	var icons;
 	function refreshMessages() {
-		$.getJSON('/profile.json',function(data) {
+		$.getJSON('/profile/messages.json',function(data) {
 			if (typeof data['data'] != 'undefined') {
 			    var _total = 0;
 				for (var key in icons) {
@@ -45,7 +45,7 @@
 				 num_unread_notifications: '.msg_c_n',
 				 _total: '.msg_c_o'
 				}
-		setInterval(refreshMessages, 60000);
+		setInterval(refreshMessages, 180000);
 	});
 </script>
 <div id="persona_select">

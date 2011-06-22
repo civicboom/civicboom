@@ -648,9 +648,9 @@
 ##------------------------------------------------------------------------------
 <%def name="privacy()">
     % if c.logged_in_persona.has_account_required('plus'):
-	<%def name="selected(private)">
+	<%def name="selected(private, text='selected')">
 		%if private == self.content.get('private'):
-			selected="selected"
+			${text}="${text}"
 		%endif
 	</%def>
     <fieldset>
@@ -663,15 +663,17 @@
               <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either public for anyone to see or private to you, your trusted followers and anyone you invite to respond to your request.</div>
               <div class="padded">
                   <div class="jqui-radios">
-                      <input type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
-                      <input type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
+                      <input ${selected(False, "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
+                      <input ${selected(True, "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
                   </div>
                   <script type="text/javascript">
-                      $('.jqui-radios').buttonset().removeClass('.jqui-radios');
+                    $(function() {
+                        $('.jqui-radios').buttonset().removeClass('.jqui-radios');
+                    })
                   </script>
 ##                <select id="private" name="private">
-##                    <option ${selected("False")} value="False">Public</option>
-##                    <option ${selected("True")} value="True">Private</option>
+##                    <option ${selected(False)} value="False">Public</option>
+##                    <option ${selected(True)} value="True">Private</option>
 ##                </select>
               </div>
         </div>
