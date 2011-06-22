@@ -21,23 +21,27 @@
 %>
     <%def name="link(title, panel)">
         <li style="vertical-align: middle; padding-top:1em; font-weight: bold; color: black;">
+            <div style="vertical-align: middle;display: inline-block;width: 8em;">
+                <a href="${h.url('setting_action', id=c.id or 'me', action=panel)}">
+                    ${title}:
+                </a>
+            </div>
+            <div style="vertical-align: middle;display: inline-block;width: 6em;">
+                % if setting_icons.get(panel):
+                    <img src="/images/settings/${setting_icons.get(panel)}.png" />
+                % endif
+            </div>
             <a href="${h.url('setting_action', id=c.id or 'me', action=panel)}">
-                <div style="vertical-align: middle;display: inline-block;width: 8em;">${title}:</div>
-                <div style="vertical-align: middle;display: inline-block;width: 6em;">
-                    % if setting_icons.get(panel):
-                        <img src="/images/settings/${setting_icons.get(panel)}.png" />
-                    % endif
-                </div>
                 <img src="/images/settings/arrow.png" />
             </a>
         </li>
     </%def>
     <div style="padding: 3px 3px 3px 3px;">
-        <h1>Username settings</h1>
-      <ul>
-      % for panel in panelorder:
-        ${link(panel['title'].capitalize(), panel['panel'])}
-      % endfor
-      </ul>
+        <h1>${_('%(username)s settings') % dict(username= c.logged_in_persona.username.capitalize()) }</h1>
+        <ul>
+        % for panel in panelorder:
+            ${link(panel['title'].capitalize(), panel['panel'])}
+        % endfor
+        </ul>
     </div>
 </%def>

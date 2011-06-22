@@ -139,15 +139,17 @@
 </%def>
 
 <%def name="location_header()">
-    <div class="setting_group_name setting_pad" style="padding-top: 12px">${_('Optional')}</div>
-    <div class="setting_group_name setting_pad">
+    ##<div class="setting_group_name setting_pad" style="padding-top: 12px">${_('Optional')}</div>
+    <div class="setting_pad">
         ${_('_site_name will be adding new features in the coming months. Part of this development is the ability to geo-locate content in your area and get alerted to local story requests based on where you are.')}
     </div>
-    <div class="setting_group_name setting_pad">
+    <div class="setting_pad">
         ${_('You can add your location now but this will not be used until the features are rolled out.')}
     </div>
-    <div class="setting_group_name setting_pad">
+    <div class="setting_pad">
         ${_('Your location will not be shared with other users. Your geo-location will be used in order for relevant requests to be pushed to you.')}<br />
+    </div>
+    <div class="setting_pad">
         <span style="font-size: 130%; font-weight: bold">${_('This is an opt-in function.')}</span>
     </div>
 </%def>
