@@ -11,7 +11,7 @@
     <div id="widget_carousel" class="jcarousel-skin-widget-gradient">
         <div class="jcarousel-control">
             % for i in range(len(contents)):
-            <a href="#" class="icon16 i_item_unselec jcarousel-control-item_${i+1}"><span>${i+1}</span></a>
+            <a href="#" class="item_feedback item_unselected jcarousel-control-item_${i+1}"><span>${i+1}</span></a>
             % endfor
         </div>
         <ul>
@@ -50,12 +50,12 @@
         
         function widget_carousel_itemVisibleInCallbackAfterAnimation(carousel, item, idx, state) {
             console.log('Item #' + idx + ' is now visible');
-            get_jcarousel_control_item(item, idx).addClass('i_item_selec').removeClass('i_item_unselec');
+            get_jcarousel_control_item(item, idx).addClass('item_selected').removeClass('item_unselected');
         };
         
         function widget_carousel_itemVisibleOutCallbackAfterAnimation(carousel, item, idx, state) {
             console.log('Item #' + idx + ' is no longer visible');
-            get_jcarousel_control_item(item, idx).removeClass('i_item_selec').addClass('i_item_unselec');
+            get_jcarousel_control_item(item, idx).removeClass('item_selected').addClass('item_unselected');
         };
         
         jQuery(document).ready(function() {
@@ -83,9 +83,9 @@
 <%def name="content_item(content)">
     <li>
         <a href="${h.url('content', id=content['id'])}">
-            <img class="thumbnail" src="${content['thumbnail_url']}" />
+            <div class="thumbnail_border"><div class="padding"><img class="thumbnail" src="${content['thumbnail_url']}" /></div></div>
             <div class="details">
-                <p class="title">${content['title']}</p>
+                <p class="title">${h.truncate(content['title']  , length=60, indicator='...', whole_word=True)}</p>
                 ##% if 'creator' in content and c.widget['owner']['username'] != content['creator']['username']:
                 ##<p class="creator">${member_includes.by_member(content['creator'], link=False)}</p>
                 ##% endif
