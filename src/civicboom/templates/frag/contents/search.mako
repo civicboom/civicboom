@@ -26,37 +26,30 @@
 ## Content Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
+	<% args, kwargs = c.web_params_to_kwargs %>
     <div class="frag_col">
-		<!--
-        <form id="form_search" action="${url('contents')}" method="GET"
-              onsubmit="cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
-			<% args, kwargs = c.web_params_to_kwargs %>
-            <fieldset style="border: 1px solid black; padding: 4px;">
-                <legend>${_("Basic Search")}</legend>
-                <input type="search" style="width: 100%;" name="term" placeholder="Search terms" value="${kwargs.get('term')}"/>
-                <br/><input type="submit" style="width: 100%;" value="Search" class="button"/>
-            </fieldset>
-		</form>
-
-        <p>&nbsp;
-		-->
-		
 		<form class="form" id="form_search" action="${url('contents')}" method="GET"
               onsubmit="unplacehold('#form_search'); cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
-            <!--<fieldset style="border: 1px solid black; padding: 4px;">-->
             <fieldset>
-                <!--<legend>${_("Advanced search")}</legend>-->
-
 				<p><label>Search for</label><br>
+                <input type="search" name="term" placeholder="Enter key words" value="${kwargs.get('term')}"/>
+
+				<p><label>Type</label><br>
 				<select name="list" style="width: 100%;">
-                % for list, type, name in constants.contents_list_titles:
+				<%
+				types = [
+					("all",                  _("All _Content")),
+					("assignments_active",   _("_Assignments")),
+					("responses",            _("_Responses")),
+					("articles",             _("_Articles")),
+					("assignments_previous", _("Past _Assignments")),
+				]
+				%>
+                % for list, name in types:
                     <% checked = 'selected' if (kwargs.get('list') == list) else '' %>
                     <option value="${list}" ${checked}>${name}</option>
                 % endfor
 				</select>
-
-				<p><label>Talking about</label><br>
-                <input type="search" name="term" placeholder="Enter key words" value="${kwargs.get('term')}"/>
 
                 <p><label>Near to</label>
                 ${loc.location_picker(width='100%', height="213px")}
