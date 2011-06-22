@@ -28,6 +28,7 @@ from civicboom.lib.accounts import deny_pending_user
 from civicboom.lib.widget import widget_defaults, setup_widget_env
 
 from cbutils.misc import now
+import cbutils.worker as worker
 
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
@@ -385,3 +386,7 @@ class BaseController(WSGIController):
             # http://www.mail-archive.com/sqlalchemy@googlegroups.com/msg05489.html
             #meta.Session.remove()
             meta.Session.close()
+
+            # now that the database objects officially exist, we can run the
+            # jobs that use them
+            worker.flush()
