@@ -92,7 +92,7 @@
 
 <%def name="content_item(content)">
     <li>
-        <a href="${h.url('content', id=content['id'])}">
+        <a href="${h.url('content', id=content['id'], sub_domain='www')}" target="_blank">
             <div class="thumbnail_border"><div class="padding"><img class="thumbnail" src="${content['thumbnail_url']}" /></div></div>
             <div class="details">
                 <p class="title">${h.truncate(content['title']  , length=60, indicator='...', whole_word=True)}</p>
