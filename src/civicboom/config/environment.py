@@ -12,8 +12,7 @@ from paste.deploy.converters import asbool
 import civicboom.lib.app_globals as app_globals
 import civicboom.lib.helpers
 from civicboom.config.routing import make_map
-from civicboom.model import init_model
-from civicboom.lib.civicboom_init import init as civicboom_init  # This will trigger a set of additional initalizers
+from civicboom.model import init_model, init_model_extra
 import cbutils.warehouse as wh
 
 # for setting up the redis backend to beaker
@@ -119,31 +118,6 @@ def load_environment(global_conf, app_conf):
         worker.add_worker_function('send_notification' , send_notification)
         worker.add_worker_function('profanity_check'   , profanity_check  )
 
-        # HACK: Shish: this results in jobs causing commits mid-process for pages
-        def setup(job):
-            """
-            pre-commit, so that content.new() is finished before media is added
-            """
-            from civicboom.model.meta import Session
-            Session.commit()
-        worker.setup = setup
-
-        def teardown(job, success, exception):
-            """
-            post-commit, so that profanity_check() is finished before content is
-            returned for checking
-            """
-            from civicboom.model.meta import Session
-            import logging
-            if success:
-                Session.commit()
-            else:
-                Session.rollback()
-            if exception:  # pragma: no cover -- exceptions shouldn't happen in testing, if they do, tests stop anyway
-                log = logging.getLogger("cbutils.worker")
-                log.exception('Error in worker:')
-        worker.teardown = teardown
-
     # set up worker queue
     if pylons.config['worker.queue'] == "inline":
         worker.init_queue(None)
@@ -154,6 +128,6 @@ def load_environment(global_conf, app_conf):
     else:  # pragma: no cover
         log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
 
-    civicboom_init() # This will trigger a set of additional initalizers
+    init_model_extra() # This will trigger a set of additional initalizers
 
     return config

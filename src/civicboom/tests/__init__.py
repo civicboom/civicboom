@@ -90,6 +90,26 @@ class TestController(TestCase):
         )
         return json.loads(response.body)[key]
 
+    def generate_image(self, size, seed=0):
+        import Image
+        import StringIO
+        import random
+        random.seed(seed)
+        im = Image.new('RGB', size)
+        for x in range(0, size[0]):
+            for y in range(0, size[1]):
+                im.putpixel(
+                    (x, y),
+                    (
+                        random.randint(0, 255),
+                        random.randint(0, 255),
+                        random.randint(0, 255),
+                    )
+                )
+        buf = StringIO.StringIO()
+        im.save(buf, format= 'PNG')
+        return buf.getvalue()
+
     def server_datetime(self, new_datetime=None):
         """
         Used to get and set server date for tests
@@ -179,7 +199,7 @@ class TestController(TestCase):
             url(controller='register', action='email', format="json"),
             params={
                 'username': username,
-                'email'   : username+'@moose.com',
+                'email'   : 'test+'+username+'@civicboom.com',
             },
         )
         
@@ -401,14 +421,15 @@ class TestController(TestCase):
 
     def getNumNotificationsInDB(self):
         return Session.query(Message).filter(Message.source_id==null()).count()
+
     def getNotificationsFromDB(self, limit=10):
         return Session.query(Message).filter(Message.source_id==null()).order_by(Message.id.desc()).limit(limit).all()
 
     def getNumMessagesInDB(self):
         return Session.query(Message).filter(not_(Message.source_id==null())).filter(not_(Message.target_id==null())).count()
+
     def getMessagesFromDB(self, limit=10):
         return Session.query(Message).filter(not_(Message.source_id==null())).filter(not_(Message.target_id==null())).order_by(Message.id.desc()).limit(limit).all()
-
 
     def getNumNotifications(self, username=None, password=None):
         if username:

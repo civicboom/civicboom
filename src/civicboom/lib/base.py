@@ -21,11 +21,12 @@ from civicboom.lib.web                 import url, redirect, redirect_to_referer
 from civicboom.lib.database.get_cached import get_member as _get_member, get_group as _get_group, get_membership as _get_membership, get_membership_tree as _get_membership_tree, get_message as _get_message, get_content as _get_content, get_members
 from civicboom.lib.database.etag_manager import gen_cache_key
 from civicboom.lib.database.query_helpers import to_apilist
-from civicboom.lib.civicboom_lib       import deny_pending_user
 from civicboom.lib.authentication      import authorize, get_lowest_role_for_user
 from civicboom.lib.permissions         import account_type, role_required, age_required, has_role_required, raise_if_current_role_insufficent
+from civicboom.lib.accounts import deny_pending_user
 
 from cbutils.misc import now
+import cbutils.worker as worker
 
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
@@ -386,7 +387,7 @@ class BaseController(WSGIController):
             
         # Set Env - In the event of a server error these will be visable
         for field in login_session_fields:
-            request.environ[field] = str(getattr(c,field))
+            request.environ[field] = str(getattr(c, field))
             #print request.environ[field]
         
         if c.logged_in_user:
@@ -409,15 +410,17 @@ class BaseController(WSGIController):
         
         # User pending regisration? --------------------------------------------
         # redirect to complete registration process
-        if c.logged_in_user and c.logged_in_user.status=='pending' and deny_pending_user(url('current')):
+        if c.logged_in_user and c.logged_in_user.status == 'pending' and deny_pending_user(url('current')):
             set_flash_message(_('Please complete the registration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
 
         # Session Flash Message ------------------------------------------------
         flash_message_session = session_remove('flash_message')
         if flash_message_session:
-            try:               overlay_status_message(c.result, json.loads(flash_message_session))
-            except ValueError: overlay_status_message(c.result,            flash_message_session )
+            try:
+                overlay_status_message(c.result, json.loads(flash_message_session))
+            except ValueError:
+                overlay_status_message(c.result,            flash_message_session )
             
 
     def __call__(self, environ, start_response):
@@ -433,3 +436,7 @@ class BaseController(WSGIController):
             # http://www.mail-archive.com/sqlalchemy@googlegroups.com/msg05489.html
             #meta.Session.remove()
             meta.Session.close()
+
+            # now that the database objects officially exist, we can run the
+            # jobs that use them
+            worker.flush()

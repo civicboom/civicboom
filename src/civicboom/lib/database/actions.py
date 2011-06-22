@@ -64,6 +64,7 @@ def upgrade_user_to_group(member_to_upgrade_to_group, new_admins_username, new_g
     
     # Create new admin user
     admin_user = User()
+    admin_user.name              = new_admins_username
     admin_user.username          = new_admins_username
     admin_user.status            = 'active'
     admin_user.email             = to_group.email
@@ -866,7 +867,8 @@ def find_content_root(content):
     if not content:
         raise action_error(_('unable to find content'), code=404)
     
-    if not content.parent: return False
+    if not content.parent:
+        return False
     
     qry = Hierarchy(
         Session,

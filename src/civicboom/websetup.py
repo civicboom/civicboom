@@ -2,7 +2,6 @@
 
 """Setup the civicboom application"""
 from civicboom.config.environment import load_environment
-from civicboom.model import meta
 
 from civicboom.model.meta import Base, Session
 from civicboom.model import License, Tag
