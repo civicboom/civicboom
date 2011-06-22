@@ -79,7 +79,8 @@
             %>
             <tr
                 % if current_persona:
-                    class   = "current_persona"
+                    class   = "current_persona selectable"
+                    onclick = "window.location = '/profile';"
                 % else:
                     class   = "selectable"
                     ##onclick = "$(this).find('.persona_link').click();"
