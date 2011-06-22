@@ -3,8 +3,9 @@
 
 <%!
     from sets import Set
+    from civicboom.lib.constants import setting_icons
     rss_url             = False
-    help_frag           = 'settings'
+    help_frag           = None
     field_name_sizes    = {'boolean': '_long' , }
     field_sizes         = {'boolean': '_short', 'location': '_full' , }
 %>
@@ -18,7 +19,9 @@
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
     <%
         panel = c.result.get('panel', d.get('panel'))
-        panel_name = d.get('panels', {}).get(panel, {}).get('title')
+        panel_title = d.get('panels', {}).get(panel, {}).get('title')
+        panel_name  = d.get('panels', {}).get(panel, {}).get('panel')
+        print panel_name, panel_title
         settings_meta = d['settings_meta']
         settings_meta = dict( [ (setting['name'], setting) for setting in settings_meta.values() if setting['group'].split('/')[0] == panel] )
         
@@ -32,11 +35,14 @@
         
         settings_hints = d.get('settings_hints', {})
     %>
-    <h1>Username ${panel_name} settings</h1>
+    % if setting_icons.get(panel_name):
+        <img style="float:right;" src="/images/settings/${setting_icons.get(panel_name)}.png" />
+    % endif
+    <h1>${_('%(username)s %(panel_title)s settings') % dict(username= c.logged_in_persona.username.capitalize(), panel_title=panel_title.lower()) }</h1>
     % for group_name in setting_group_order:
-        <div style="margin: 0;">
+        <div style="margin: 0; clear: both;">
         % if group_name.lower() != panel.lower():
-     		<div class="setting_group_name setting_pad">${group_name.capitalize()}</div>
+     		<div class="setting_group_name setting_pad">${group_name.replace('_',' ').capitalize()}</div>
      	% endif
         ## Insert header for group if it is defined below:
         % if hasattr(self, group_name+"_header") and callable(getattr(self, group_name+"_header")):
@@ -48,6 +54,8 @@
                 setting_type  = None
                 if 'type' in setting_meta:
                     setting_type  = setting_meta['type']
+                if setting_type == 'string_location':
+                    continue
                 setting_value = ''
                 setting_values = setting_meta.get('value')
                 if setting_name[0] in d['settings']:
@@ -137,13 +145,17 @@
 </%def>
 
 <%def name="location_header()">
-    <div class="setting_group_name setting_pad" style="padding-top: 12px">${_('Optional')}</div>
+    ##<div class="setting_group_name setting_pad" style="padding-top: 12px">${_('Optional')}</div>
     <div class="setting_pad">
-        
+        ${_('_site_name will be adding new features in the coming months. Part of this development is the ability to geo-locate content in your area and get alerted to local story requests based on where you are.')}
     </div>
     <div class="setting_pad">
-        If you have signed up to Civicboom via Facebook, Twitter,
-        LinkedIn etc, you will need to set up a password (as above) and
-        use these to log into the mobile app. Your username remains the same.
+        ${_('You can add your location now but this will not be used until the features are rolled out.')}
+    </div>
+    <div class="setting_pad">
+        ${_('Your location will not be shared with other users. Your geo-location will be used in order for relevant requests to be pushed to you.')}<br />
+    </div>
+    <div class="setting_pad">
+        <span style="font-size: 130%; font-weight: bold">${_('This is an opt-in function.')}</span>
     </div>
 </%def>

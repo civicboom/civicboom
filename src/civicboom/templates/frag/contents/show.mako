@@ -138,8 +138,9 @@
             </div>
           </div>
         </div>
-        
-        ${share.AddThisFragList(**self.attr.share_kwargs)}
+        % if self.attr.share_kwargs:
+            ${share.AddThisFragList(**self.attr.share_kwargs)}
+        % endif
         
         ##<h2>${_("Content by")}</h2>
         

@@ -10,16 +10,9 @@
 <%def name="content_list(contents)">
     <div id="widget_carousel" class="jcarousel-skin-widget-gradient">
         <div class="jcarousel-control">
-            <a href="#">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">6</a>
-            <a href="#">7</a>
-            <a href="#">8</a>
-            <a href="#">9</a>
-            <a href="#">10</a>
+            % for i in range(len(contents)):
+            <a href="#" class="icon16 i_item_unselec jcarousel-control-item_${i+1}"><span>${i+1}</span></a>
+            % endfor
         </div>
         <ul>
             % for content in contents:
@@ -31,6 +24,13 @@
     
     <script type="text/javascript">
         ## http://sorgalla.com/projects/jcarousel/
+        
+        ## AllanC - I wanted a control item selector that would work for multiple similtainious carousels
+        ##          It looks inside it's own jcoursel to find the control items
+        ##          This is used to style the items
+        function get_jcarousel_control_item(item, idx) {
+            return $(item).parents('.jcarousel-container').find('.jcarousel-control-item_'+idx);
+        }
         
         function widget_carousel_initCallback(carousel) {
             // Disable autoscrolling if the user clicks the prev or next button.
@@ -50,10 +50,12 @@
         
         function widget_carousel_itemVisibleInCallbackAfterAnimation(carousel, item, idx, state) {
             console.log('Item #' + idx + ' is now visible');
+            get_jcarousel_control_item(item, idx).addClass('i_item_selec').removeClass('i_item_unselec');
         };
         
         function widget_carousel_itemVisibleOutCallbackAfterAnimation(carousel, item, idx, state) {
             console.log('Item #' + idx + ' is no longer visible');
+            get_jcarousel_control_item(item, idx).removeClass('i_item_selec').addClass('i_item_unselec');
         };
         
         jQuery(document).ready(function() {
@@ -87,7 +89,7 @@
                 ##% if 'creator' in content and c.widget['owner']['username'] != content['creator']['username']:
                 ##<p class="creator">${member_includes.by_member(content['creator'], link=False)}</p>
                 ##% endif
-                <p class="content">${content['content_short']}</p>
+                ##<p class="content">${content['content_short']}</p>
             </div>
             <p class="respond"><a href="" class="button">Click to share your story</a></p>
         </a>

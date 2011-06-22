@@ -3,10 +3,10 @@ $cb-darkblue: #3a4a97;
 
 /* -------------------------------------- */
 
-$button-top: #eee; /*$cb-lightblue;*/
-$button-bot: #ddd; /*$cb-darkblue;*/
-$button-txt: #444; /*white;*/
-$button-border: #ccc; /*#333;*/
+$button-top: $cb-lightblue;// #eee; /*$cb-lightblue;*/
+$button-bot: $cb-darkblue; //#ddd; /*$cb-darkblue;*/
+$button-txt: #fff; /*white; 444 */
+$button-border: #333; /*#333; ccc*/
 $button-radius: 0.2em;
 
 $button-member-top: #eee;
