@@ -40,7 +40,7 @@
     % endif
     <h1>${_('%(username)s %(panel_title)s settings') % dict(username= c.logged_in_persona.username.capitalize(), panel_title=panel_title.lower()) }</h1>
     % for group_name in setting_group_order:
-        <div style="margin: 0;">
+        <div style="margin: 0; clear: both;">
         % if group_name.lower() != panel.lower():
      		<div class="setting_group_name setting_pad">${group_name.replace('_',' ').capitalize()}</div>
      	% endif
