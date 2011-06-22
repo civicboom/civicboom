@@ -2,6 +2,7 @@
 
 <%namespace name="frag" file="/frag/common/frag.mako"/>
 <%namespace name="message_settings" file="/frag/settings/panel/messages.mako" import="body"/>
+<%namespace name="settings_menu" file="/frag/settings/menu.mako" import="body"/>
 
 <%def name="title()">General Settings</%def>
 
@@ -18,7 +19,7 @@
 </%def>
 
 <%def name="menu()">
-  <%include file="/frag/settings/menu.mako"/>
+  ${frag.frag_basic(title=_('Settings menu'), icon='group', frag_content=settings_menu.body)}
 </%def>
 
 <%def name="messages()">

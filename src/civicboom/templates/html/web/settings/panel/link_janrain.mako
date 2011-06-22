@@ -2,6 +2,7 @@
 
 <%namespace name="frag" file="/frag/common/frag.mako"/>
 <%namespace name="link_janrain" file="/frag/settings/panel/link_janrain.mako" import="body,title"/>
+<%namespace name="settings_menu" file="/frag/settings/menu.mako" import="body"/>
 
 <%def name="title()">Settings</%def>
 
@@ -18,7 +19,7 @@
 </%def>
 
 <%def name="menu()">
-  <%include file="/frag/settings/menu.mako"/>
+  ${frag.frag_basic(title=_('Settings menu'), icon='group', frag_content=settings_menu.body)}
 </%def>
 
 <%def name="janrain()">

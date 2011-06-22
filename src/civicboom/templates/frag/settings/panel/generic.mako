@@ -3,6 +3,7 @@
 
 <%!
     from sets import Set
+    from civicboom.lib.constants import setting_icons
     rss_url             = False
     help_frag           = None
     field_name_sizes    = {'boolean': '_long' , }
@@ -18,7 +19,9 @@
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
     <%
         panel = c.result.get('panel', d.get('panel'))
-        panel_name = d.get('panels', {}).get(panel, {}).get('title')
+        panel_title = d.get('panels', {}).get(panel, {}).get('title')
+        panel_name  = d.get('panels', {}).get(panel, {}).get('panel')
+        print panel_name, panel_title
         settings_meta = d['settings_meta']
         settings_meta = dict( [ (setting['name'], setting) for setting in settings_meta.values() if setting['group'].split('/')[0] == panel] )
         
@@ -32,7 +35,10 @@
         
         settings_hints = d.get('settings_hints', {})
     %>
-    <h1>${_('%(username)s %(panel_name)s settings') % dict(username= c.logged_in_persona.username.capitalize(), panel_name=panel_name.lower()) }</h1>
+    % if setting_icons.get(panel_name):
+        <img style="float:right;" src="/images/settings/${setting_icons.get(panel_name)}.png" />
+    % endif
+    <h1>${_('%(username)s %(panel_title)s settings') % dict(username= c.logged_in_persona.username.capitalize(), panel_title=panel_title.lower()) }</h1>
     % for group_name in setting_group_order:
         <div style="margin: 0;">
         % if group_name.lower() != panel.lower():
