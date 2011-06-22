@@ -62,6 +62,10 @@
 		.thumbnail       {font-size: 45px;} /* AllanC - humm ... horrible hack to just notch up the size of the thumbnail in content lists to match the text. This not a long term solution */
 		.thumbnail_small {font-size: 20px;} /* dont override small size ... jesus this is a HACK */
 
+		border-radius        : $frag-radius;
+		-moz-border-radius   : $frag-radius;
+		-webkit-border-radius: $frag-radius;
+
 		td, li, ul {
 			padding-bottom: 1em;
 		}
