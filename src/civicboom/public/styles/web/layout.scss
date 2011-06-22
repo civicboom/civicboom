@@ -42,6 +42,8 @@ HEADER {
 	 * useful for IE7/8
 	 */
 	min-width: 780px;
+
+	border-bottom: 1px solid #ccc;
 }
 
 BODY>DIV#app {
@@ -60,7 +62,7 @@ FOOTER {
 	padding       : 0.50em;
     padding-top   : 0.25em;
     padding-bottom: 0.00em;
-	border-top: 1px solid #CCC;
+	border-top: 1px solid #ccc;
 }
 
 
