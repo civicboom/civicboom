@@ -44,7 +44,7 @@ def _init_search_filters():
 
         parts = []
         for word in text.split():
-            word = re.sub("[^a-zA-Z0-9]", "", word)
+            word = re.sub("[^a-zA-Z0-9_-]", "", word)
             if word:
                 parts.append(word)
 
