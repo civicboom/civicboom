@@ -1,15 +1,17 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
-.a-edit {
+#frag_containers {
+
+    .frag_col {
     
-    #frag_containers {
-    
-        .frag_col {
+        .frag_list {
         
-            background-color: white;
+            a {
+                color: $button-txt;
+            }
+        
             padding: 1em;
-            @include border_radius(0.5em);
         
             label {
                 width: 25%;
@@ -40,7 +42,7 @@
             .hideable {
                 clear: both;
             }
-            
+        
         }
         
     }
