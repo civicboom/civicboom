@@ -53,6 +53,7 @@ jquery.ui.js:
 		jquery.ui.position.js \
 		jquery.ui.autocomplete.js \
 		jquery.ui.datepicker.js \
+		jquery.ui.button.js \
 		> ../../jquery.ui.js
 	rm -rf jquery-ui
 
