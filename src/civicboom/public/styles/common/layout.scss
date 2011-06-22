@@ -88,12 +88,13 @@ HTML SELECT {
 /*                                Title Styles                                */
 /*----------------------------------------------------------------------------*/
 
+// important because YUI tries to override these -_-
 H1,H2,H3,H4 {
-    font-weight: bold;
-    margin: 0.25em 0em;
+    font-weight: bold !important;
+    margin: 0.25em 0em !important;
 }
 H1 {
-    font-size: 150%;
+    font-size: 150% !important;
 }
 
 
