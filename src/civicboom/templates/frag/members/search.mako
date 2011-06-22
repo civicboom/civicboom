@@ -24,17 +24,13 @@
 ## Content Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
+	<% args, kwargs = c.web_params_to_kwargs %>
     <div class="frag_col">
         <form class="form" id="form_search" action="${url('members')}" method="GET"
               onsubmit="cb_frag($(this), '/members.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
             <fieldset>
-				<!--
-                <legend>Search</legend>
-                <br/>
-				-->
-                <% args, kwargs = c.web_params_to_kwargs %>
-                <p><label for="term">Name</label><br/>
-                <input type="text" name="term" value="${kwargs.get('term')}"/>
+                <p><label for="term">Search For</label><br/>
+                <input type="text" name="term" value="${kwargs.get('term')}" placeholder="Enter key words"/>
 
 				<p><label for="type">Type</label><br>
 				<select name="type">
