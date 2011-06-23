@@ -1,6 +1,56 @@
 <%inherit file="base.mako"/>
 <%def name="title()">${_("_site_name Mobile")}</%def>
 
+<style>
+.mobile {
+	width: 100%;
+}
+.mobile TD {
+	width: 33%;
+	vertical-align: center;
+	text-align: center;
+	font-size: 1.3em;
+}
+.mobile TD .button {
+	font-size: 1.7em;
+	background: orange;
+}
+</style>
+
+<h1>${_("Make news with the _site_name mobile app")}</h1>
+
+<p>&nbsp;
+
+<table class="mobile"><tr>
+
+<td style="text-align: left;">
+<h3>${_("Ask for news out in the field:")}</h3>
+${_("Post directly to your organisation's website _widget")}
+
+<p><h3>${_("Get story _requests:")}</h3>
+${_("Respond in an instant")}
+
+<P><h3>${_("Post stories from the scene:")}</h3>
+${_("Get your news")} <i>${_("in")}</i> ${_("the news")}
+</td>
+
+<td>
+<img src="/images/about/mobile/phone.png" alt="mobile phone" height="230">
+</td>
+
+<td>
+<h3>${_("Get the Android app now:")}</h3>
+<img src="/images/about/mobile/android.png" alt="android">
+<br><a class="button" href="http://market.android.com/details?id=com.civicboom.mobile2">Download</a>
+</td>
+
+</tr></table>
+
+<p>&nbsp;
+<hr>
+<p>&nbsp;
+
+<!--
 <a href="http://market.android.com/details?id=com.civicboom.mobile2"><img src="/images/about/qr_mobile2.png" style="float: right;"></a>
 
 <h1>${_('_site_name Mobile')}</h1>
@@ -19,66 +69,16 @@ ${_("Scan the barcode (opposite) into your phone by using the barcode reader on 
 <a href="http://market.android.com/details?id=com.civicboom.mobile2">Android marketplace</a> on your handset)
 
 <p>&nbsp;
+-->
 
 <h1>${_("Signed up to _site_name via Facebook, Twitter, LinkedIn, etc? Then once you've downloaded the app:")}</h1>
 
 <ol class="bulleted">
-<li>${_("Go to your website settings page")}
+<li>${_("Go to your")} <a href="/settings/me/password">${_("website settings page")}</a>
 <li>${_("Make a note of your username")}
 <li>${_("Create a password")}
 <li>${_("Log into the mobile app with your username and password")}
 </ol>
-
-<p>&nbsp;
-
-<% 
-    images = [
-      ['login', 15, 20, True],
-      ['live_feed', 110, 145, True],
-      ['work_drafts', 110, 305, True],
-      ['read_alerts', 110, 475, True],
-      ['respond_messages', 100, 610, True],
-      ['read_feed', 299, 10, True],
-      ['view_requests', 299, 145, True],
-      ['respond_request', 292, 275, True],
-      ['add_media', 303, 405, True],
-      ['geotag', 281, 542, True],
-      ['publish', 503, 370, False]
-    ]
-%>
-<h1>${_("Android app features and functions")}</h1>
-<style tyle="text/css">
-  #mobileflow {
-    position: relative; width:735px; height:567px; background: url(/images/about/mobile/background.png);
-  }
-  .abs {
-    position: absolute;
-  }
-  .hov div {
-    border: solid white 3px;
-    top: -70px;
-    left: -40px;
-    width: 237px;
-    height: 345px;
-    position: absolute;
-    display: none;
-    background-repeat: no-repeat;
-    background-color: #FFF;
-    z-index: 10;
-  }
-  .hov:hover div {
-    display: block;
-  }
-  % for image in images:
-    #h-${image[0]} { top: ${image[1]}px; left: ${image[2]}px; }
-    #m-${image[0]} { background-image: url(/images/about/mobile/${image[0]}-l.png); }
-  % endfor
-</style>
-<div style="position: relative; width:735px; height:567px; background: url(/images/about/mobile/background.png);" id="mobileflow">
-  % for image in images:
-    <div class="abs ${'hov' if image[3] else ''}" id="h-${image[0]}"><div id="m-${image[0]}"></div><img src="/images/about/mobile/${image[0]}.png" /></div>
-  % endfor
-</div>
 
 
 <%def name="breadcrumbs()">
