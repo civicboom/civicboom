@@ -196,19 +196,6 @@ NAV {
 	.menuh ul {
 		width: 120px;
 	}
-	.menuh LI:hover a.top_parent {
-		border-top: 1px solid #555;
-		border-left: 1px solid #555;
-		border-right: 1px solid #555;
-
-		/* remove rounding when drop-downs are shown, so the
-		 * button corner lines up with the menu */
-		border-bottom-left-radius: 0px;
-		-webkit-border-bottom-left-radius: 0px;
-		border-bottom-right-radius: 0px;
-		-webkit-border-bottom-right-radius: 0px;
-		-moz-border-radius: 0.2em 0.2em 0px 0px;
-	}
 	.menuh a.sub_option,
 	.menuh a.sub_option:visited,
 	.menuh a.parent {
