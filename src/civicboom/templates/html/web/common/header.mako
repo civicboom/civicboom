@@ -196,7 +196,6 @@
         <div class="icon_overlay_red ${id}">&nbsp;${messages}&nbsp;</div>
     % endif
 </%def>
-
 <%doc>
 <div id="persona_select_new">
     <ul>

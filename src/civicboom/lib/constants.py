@@ -13,7 +13,7 @@ contents_list_titles = [
     #list name , icon, description
     ('all'                 , 'article'    , _('all').capitalize()   ),
     ('drafts'              , 'draft'      , _("What I am working on now")   ),
-    ('assignments_active'  , 'assignment' , _("News I want you to respond to")  ),
+    ('assignments_active'  , 'assignment' , _("Stories I want you to respond to")  ),
     ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
     ('responses'           , 'response'   , _("Responses I've written") ),
     ('articles'            , 'article'    , _("My news")    ),
