@@ -227,49 +227,18 @@ HEADER #home_link {
 /*                                Navigation                                  */
 /*----------------------------------------------------------------------------*/
 
-NAV {
+HEADER NAV {
 	position: absolute;
 	top: 11px;
 	left: 260px;
 	z-index: 500;
 
-	.menuh>UL {
-		margin-left: 8px;
-		margin-right: 8px;
-		height: 20px;
-	}
-	.menuh>UL>LI>UL{
-		margin-top: 0px;
-		padding-top: 0px;
-	}
-	.menuh ul {
+	.button {
+		margin-left: 6px;
+		margin-right: 6px;
 		width: 120px;
-	}
-	.menuh a.sub_option,
-	.menuh a.sub_option:visited,
-	.menuh a.parent {
-		display: block;
-		background: white;
-		color: black;
-		border-left: 1px solid #555;
-		border-right: 1px solid #555;
-		border-bottom: 1px solid #ddd;
-	}
-	.menuh a.sub_option:hover {
-		background: #eef;
-	}
-	.menuh LI:last-child>a.sub_option {
-		border-bottom: 1px solid #555;
-
-		border-bottom-left-radius         : 0.2em;
-		border-bottom-right-radius        : 0.2em;
-		-webkit-border-bottom-right-radius: 0.2em;
-		-webkit-border-bottom-left-radius : 0.2em;
-		-moz-border-radius                : 0px 0px 0.2em 0.2em;
-
-	}
-	.menuh INPUT {
-		width: 100%;
+		padding-top: 2px;
+		padding-bottom: 2px;
 	}
 }
 
@@ -315,7 +284,7 @@ HEADER #search {
 	top: 12px;
 	left: 540px;
 	width: $search_width;
-	height: 20px;
+	height: 40px;
 
 	/* things that apply un-hoverred and hoverred */
 	.search_input {
@@ -455,29 +424,43 @@ FOOTER {
 /*                                  Thin Mode                                 */
 /*----------------------------------------------------------------------------*/
 
+@media (min-width: 941px) and (max-width: 1200px) {
+	HEADER #actions {
+		left: 150px;
+	}
+	HEADER #search {
+		left: 430px;
+	}
+}
+
 @media (max-width: 940px) {
 	HEADER {
 		min-width: 480px;
-		height: 84px;
+		height: 137px;
 	}
-	HEADER #persona_select {
-		z-index: 501; /* above the create/explore/manage */
-	}
-	HEADER #aboutbtns {
-		display: none;
-	}
-	NAV {
+	HEADER #actions {
 		top: 53px;
 		left: 0px;
 		right: 0px;
+		text-align: center;
+		.button {
+			width: 40%;
+		}
 	}
-	NAV .menuh {
-		width: 400px;
-		margin: auto;
+	HEADER #search {
+		top: 87px;
+		left: (480px - 300px) / 2;
+		.button {&.b1, &.b2, &.b3 {opacity: 1.0;}}
+		.search_input {
+			border-bottom-left-radius: 0px;
+			-webkit-border-bottom-left-radius: 0px;
+			border-bottom-right-radius: 0px;
+			-webkit-border-bottom-right-radius: 0px;
+			-moz-border-radius: $input-radius $input-radius 0px 0px;
+		}
 	}
-	NAV .menuh>UL {
-		margin-left: 4px;
-		margin-right: 4px;
+	HEADER #persona_select {
+		z-index: 501; /* above the create/explore/manage */
 	}
 
 	BODY>DIV#app {

@@ -16,7 +16,6 @@
 ##------------------------------------------------------------------------------
 ## Home Link
 ##------------------------------------------------------------------------------
-
 <%doc>
 % if c.logged_in_persona:
 <a id="home_link" href="${url(controller='profile', action='index')}">
@@ -28,8 +27,17 @@
 </%doc>
 
 ##------------------------------------------------------------------------------
+## Content creation actions
+##------------------------------------------------------------------------------
+<nav id="actions">
+	${h.secure_link(h.url('new_content', target_type='assignment'), _("Make a request"), css_class="button")}
+	${h.secure_link(h.url('new_content', target_type='article'   ), _("Post my story") , css_class="button")}
+</nav>
+
+##------------------------------------------------------------------------------
 ## Menu
 ##------------------------------------------------------------------------------
+<%doc>
 <nav class="menuh-container">
     
 <div class="menuh">
@@ -39,7 +47,6 @@
 	<ul>
 		<li>${h.secure_link(h.url('new_content', target_type='article'   ), _("Post my story")   , css_class="top_parent button")}</li>
 	</ul>
-	<%doc>
     <ul>
         <li><a href="#" class="top_parent button">${_("Create")}</a>
         <ul>
@@ -49,8 +56,6 @@
         </ul>
         </li>
     </ul>
-    </%doc>
-    <%doc>
     <ul>
         <li><a href="#" class="top_parent buttonesque_link">${_("Explore...")}</a>
         <ul>
@@ -75,8 +80,6 @@
         </ul>
         </li>
     </ul>
-    </%doc>
-<%doc>
 % if c.logged_in_persona:
     <ul>
         <li><a href="#" class="top_parent button">${_("Manage")}</a>
@@ -90,15 +93,15 @@
         </li>
     </ul>
 % endif
-</%doc>
 
 </div>
 </nav>
+</%doc>
 
+##------------------------------------------------------------------------------
+## About Buttons
+##------------------------------------------------------------------------------
 <%doc>
-##------------------------------------------------------------------------------
-## Search
-##------------------------------------------------------------------------------
 <div id="aboutbtns">
     <a class="buttonesque_link" style="padding: 0 5px;" href="${url(controller='about', action='howto')}">
         ${_('How to')}
