@@ -503,11 +503,11 @@
         <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
             <p>${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
-        <div class="content_avatar">
+        <%doc><div class="content_avatar">
             % if content and 'creator' in content:
                 ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
             % endif
-        </div>
+        </div></%doc>
     </div>
 
     <div class="separator"></div>

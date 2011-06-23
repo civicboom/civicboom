@@ -4,7 +4,7 @@
     from civicboom.lib.civicboom_lib import get_action_objects_for_url
 %>
 
-
+<%def name="html_class_additions()">blank_background</%def>
 <%def name="title()">${_("Confirm action")}</%def>
 
 <%

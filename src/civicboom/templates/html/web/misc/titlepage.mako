@@ -119,7 +119,7 @@
 	<div class="windows">
 		<div id="window-orgs" class="window">
 			<div class="window-content">
-				<h1>Need news?</h1>
+				<div class="window_title">Journalists:<br /> >> NEED NEWS?</div>
 				<ol class="content-list">
 					<li>
 						Sign up
@@ -128,25 +128,23 @@
 						Post a request for news
 					</li>
 					<li>
-						Publish content generated for your needs
+						Assess, verify and publish responses
 					</li>
 				</ol>
 			</div>
 		</div>
 		<div id="window-indvs" class="window">
 			<div class="window-content">
-				<h1>Got news?</h1>
+				<div class="window_title">Sources:<br /> >> GOT NEWS?</div>
 				<ol class="content-list">
 					<li>
 						Sign up
 					</li>
 					<li>
-						<span class="larger"><span class="hilite">Interact</span> and respond</span><br />
-						<span class="indent">to breaking news requests.</span>
+						View requests for news
 					</li>
 					<li>
-						<span class="larger"><span class="hilite">Gain</span> recognition</span><br />
-						<span class="indent">from content publishers.</span>
+						Post your story and get published
 					</li>
 				</ol>
 			</div>
@@ -154,7 +152,7 @@
 		<a class="signup-link" href="${url(controller='account', action='signin')}">
 			<div id="window-signup" class="window">
 				<div class="window-content">
-					<div class="signup-link hilite">Sign up now!</div>
+					<div class="signup-link hilite">Start now!</div>
 				</div>
 			</div>
 		</a>
