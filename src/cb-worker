@@ -151,10 +151,12 @@ def add_test_jobs():
     from webhelpers.html import literal
     w.add_job({
         'task': 'send_notification',
-        'default_route': 'ne',
-        'name': 'article_published_by_followed',
         'members': [u'unitfriend', u'follow_test'],
-        'rendered_message': {
+        'message': {
+            'default_route': u'ne',
+            'subject': u'test',
+            'content': u'default content',
+            'name': u'assignment_created',
             'e': {
                 'subject': u'Civicboom: new content',
                 'content_text': u'Testing User (https://...) has written new content : Untitled (https://...)',
