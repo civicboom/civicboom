@@ -3,34 +3,58 @@
 import babel.messages.pofile as po
 import sys
 
+from enchant import DictWithPWL
+from enchant.checker import SpellChecker
+spell = SpellChecker(DictWithPWL("en_GB", "words.txt"))
 
-def trans(text):
+
+def trans(text, locations):
+    banned = [
+        "reporter",
+        "report",
+        "civicboom",   # use _site_name
+    ]
+    for b in banned:
+        if "_"+b in text.lower():
+            print "Warning: banned word:", b, locations
+            #raise Exception("Banned word "+b+" in "+locations)
+
+    # FIXME: loads of false positives
+    #if ("." not in text) and (text[1:] != text[1:].lower()):
+    #    print "Warning: multiple capitals:", text, locations
+
+    spell.set_text(text)
+    for err in spell:
+        print "Warning: spelling error:",err.word,locations
+
     text = text.replace("_site_name", "Civicboom")
     text = text.replace("_tagline", "Don't just read it. Feed it.")
     text = text.replace("_site_description", "Building the world's first true community and audience assignment system")
 
-    banned = [
-        "reporter",
-        "report",
-    ]
-    for b in banned:
-        if "_"+b in text:
-            raise Exception("Banned word "+b+" in "+sys.argv[1])
-
+    # plurals only need to be specified if the plural of X is not Xs
+    # eg.
+    # - (cake) -> (pie) automatically covers (cake)s -> (pie)s
+    # - (cat) -> (sheep) gives the incorrect (cat)s -> (sheep)s,
+    #   so we need to add an explicit (cats) -> (sheep) rule to
+    #   cover that case first
     words = [
         ("contents",   "content"),
         ("content",    "content"),
         ("articles",   "content"),
         ("article",    "content"),
+        ("draft",      "draft"),
         ("assignment", "request"),
+        ("request",    "request"),
+        ("response",   "response"),
+
         ("member",     "member"),
         ("user",       "user"),
-        ("users",      "users"),
         ("group",      "hub"),
-        ("draft",      "draft"),
+
         ("free",       "basic"),
-        ("plus",    "premium"),
+        ("plus",       "premium"),
         ("corporate",  "corporate"),
+
         ("widget",  "Boombox"),
         ("respond", "respond"),
         ("request", "request"),
@@ -49,9 +73,9 @@ def trans_cat(cat):
         #    print "\rParsing message %d" % n,
         #    print ".",
         if type(msg.id) == tuple:
-            msg.string = tuple([trans(i) for i in msg.id])
+            msg.string = tuple([trans(i, msg.locations) for i in msg.id])
         else:
-            msg.string = trans(msg.id)
+            msg.string = trans(msg.id, msg.locations)
     #print
 
 

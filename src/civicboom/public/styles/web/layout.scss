@@ -159,6 +159,10 @@ HEADER #persona_select {
 		width: 24em;
 		font-size: 88%;
 		background-color: white;
+
+		border-bottom-left-radius        : 8px;
+		-webkit-border-bottom-left-radius: 8px;
+		-moz-border-radius               : 0px 0px 8px 0px;
 	}
 	&:hover table {display: block;}
 	.current_persona {background-color: #e9e9e9;}

@@ -114,8 +114,8 @@
 	    % if 'message' in self.actions:
 		${popup.link(
 		    h.args_to_tuple('new_message', target=self.id),
-		    title = _('Send Message'),
-		    text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send Message'),
+		    title = _('Send message'),
+		    text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send message'),
 		)}
 		## <span class="separtor"></span>
 	    % endif

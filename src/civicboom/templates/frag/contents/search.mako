@@ -39,11 +39,11 @@
 				<select name="list" style="width: 100%;">
 				<%
 				types = [
-					("all",                  _("All _Content")),
+					("all",                  _("All _content")),
 					("assignments_active",   _("_Assignments")),
 					("responses",            _("_Responses")),
 					("articles",             _("_Articles")),
-					("assignments_previous", _("Past _Assignments")),
+					("assignments_previous", _("Past _assignments")),
 				]
 				%>
                 % for list, name in types:
