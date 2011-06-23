@@ -258,11 +258,13 @@ HEADER #aboutbtns .button {
 /*                                Search                                      */
 /*----------------------------------------------------------------------------*/
 
+$search_width: 300px;
+
 HEADER #search {
 	position: absolute;
 	top: 12px;
 	right: 486px;
-	width: 300px;
+	width: $search_width;
 	height: 20px;
 
 	/* things that apply un-hoverred and hoverred */
@@ -270,19 +272,19 @@ HEADER #search {
 		position: absolute;
 		top: 0px;
 		left: 0px;
-		width: 100%;
+		width: $search_width;
 		height: 20px;
 	}
 	
 	.button {
 		position: absolute;
 		top: 20px;
-		width: 100px;
+		width: $search_width/3;
 
 		&.b0 {display: none;}
-		&.b1 {left: 0px;}
-		&.b2 {left: 100px;}
-		&.b3 {left: 200px;}
+		&.b1 {left: $search_width/3*0;}
+		&.b2 {left: $search_width/3*1;}
+		&.b3 {left: $search_width/3*2;}
 
 		&.b0, &.b1, &.b2, &.b3 {
 			-webkit-transition: opacity 0.25s ease-in;
