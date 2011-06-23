@@ -259,6 +259,7 @@ HEADER #aboutbtns .button {
 /*----------------------------------------------------------------------------*/
 
 $search_width: 300px;
+$search_buttons: 3;
 
 HEADER #search {
 	position: absolute;
@@ -279,12 +280,12 @@ HEADER #search {
 	.button {
 		position: absolute;
 		top: 20px;
-		width: $search_width/3;
+		width: $search_width/$search_buttons;
 
 		&.b0 {display: none;}
-		&.b1 {left: $search_width/3*0;}
-		&.b2 {left: $search_width/3*1;}
-		&.b3 {left: $search_width/3*2;}
+		&.b1 {left: $search_width/$search_buttons*0;}
+		&.b2 {left: $search_width/$search_buttons*1;}
+		&.b3 {left: $search_width/$search_buttons*2;}
 
 		&.b0, &.b1, &.b2, &.b3 {
 			-webkit-transition: opacity 0.25s ease-in;
