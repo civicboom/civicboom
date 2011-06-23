@@ -41,7 +41,7 @@
     %>
     
     ${advert(content="Report your news from your Android mobile!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
-    ${advert(content="Are you an organisation, journalist, blogger or in PR? GET STARTED HERE", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
+    ## ${advert(content="Are you an organisation, journalist, blogger or in PR? GET STARTED HERE", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
     <span style="clear: both; display: block;"></span>
     <div class="frag_top_row">        
         ## --- adverts --- ##
@@ -56,6 +56,7 @@
                 ${frag_list.content_list(cb_list, title)}
             % endfor
         </div>
+        <div style="padding: 0.15em"></div>
     </div>
 
 </%def>
@@ -91,6 +92,6 @@
         ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
         ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
         <input type='hidden' name='${config_key}' value='True'/>
-        <input class='hide_advert_submit' type='submit' name='submit' value='hide'/>
+        <input class='hide_advert_submit' src="/styles/common/icons/close_16.png" type='submit' name='submit' value='hide'/>
     </form>
 </%def>

@@ -496,7 +496,6 @@
 %>
 
 <div class="comments">
-    <h2 style="padding-top: 20px; padding-bottom: 10px;">${_("Additional info request")}</h2>
 
     <table>
         <tr style="display: none;">
@@ -504,36 +503,15 @@
 			<th>${_('Comment')}</th>
 			<th>${_('Actions')}</th>
 		</tr>
-        % for comment in comments:
-        <tr>
-            <td class="comment_avatar">
-                ${member_includes.avatar(comment['creator'])}
-            </td>
-            <td class="comment">
-                <p class="comment_by"     >${comment['creator']['name']}</p>
-                
-                <p class="comment_content">${comment['content']}</p>
-                
-                <p style="float: right;">
-                ##	${comment['creator']['name']}
-                    ##${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
-                	<i>${h.time_ago(comment['creation_date'])} ${_('ago')}</i>
-                </p>
-            </td>
-            <td>
-                ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon16 i_flag')}
-            </td>
-        </tr>
-        % endfor
 	<tr>
 	    <td colspan="3">
-		<span class="comments-option">
+		<div class="comments-option">
 		    % if c.logged_in_user:
 		    ${_("Need more info on this request? ")}<span class="show-comments">Ask here...</span>
 		    % else:
 		    To comment on this content, please <a href="${url(controller='account', action='signin')}">sign up or log in!</a>
 		    % endif
-		</span>
+		</div>
 	    </td>
 	    <script>
 		$(function() {
@@ -582,6 +560,27 @@
                 ##padding col for flag actions
             </td>
         </tr>
+        % for comment in comments:
+        <tr>
+            <td class="comment_avatar">
+                ${member_includes.avatar(comment['creator'])}
+            </td>
+            <td class="comment">
+                <p class="comment_by"     >${comment['creator']['name']}</p>
+                
+                <p class="comment_content">${comment['content']}</p>
+                
+                <p style="float: right;">
+                ##	${comment['creator']['name']}
+                    ##${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
+                	<i>${h.time_ago(comment['creation_date'])} ${_('ago')}</i>
+                </p>
+            </td>
+            <td>
+                ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon16 i_flag')}
+            </td>
+        </tr>
+        % endfor
     </table>
     
 </div>

@@ -169,7 +169,7 @@ HEADER #persona_select {
 
 		border-bottom-left-radius        : 8px;
 		-webkit-border-bottom-left-radius: 8px;
-		-moz-border-radius               : 0px 0px 8px 0px;
+		-moz-border-radius               : 0px 0px 0px 8px;
 
 		-webkit-transition: right 0.15s ease-in;
 		-moz-transition: right 0.15s ease-in;
@@ -371,6 +371,7 @@ HEADER #search {
 		.button {
 			&.b1, &.b2, &.b3 {
 				opacity: 0.0;
+				filter: alpha(opacity=0);
 			}
 		}
 	}
@@ -390,6 +391,7 @@ HEADER #search {
 		.button {
 			&.b1, &.b2, &.b3 {
 				opacity: 1.0;
+				filter: alpha(opacity=100);
 			}
 		}
 	}

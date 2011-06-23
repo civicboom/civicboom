@@ -32,13 +32,13 @@
 ## This could be refactored and integrated into body below so we dont have the duplication of this
 <%def name="frag_basic(title='', icon='', frag_content=None)">
     <div class="frag_bars">
-        <div class="title_bar">
+        <%doc><div class="title_bar">
             <div class="title">
                 <span class="icon16 i_${icon}"></span><span class="title_text">${title() if hasattr(title, '__call__') else title}</span>
             </div>
             <div class="common_actions">
             </div>
-        </div>
+        </div></%doc>
         
         <div class="action_bar">
             <div class="object_actions_specific">
@@ -136,6 +136,7 @@
                 % endif
                 </%doc>
                     
+                <%doc>
                 ## Help
                 % if self.attr.help_frag:
                     <%
@@ -147,6 +148,7 @@
                     <script type="text/javascript">${js_open_help}</script>
                     % endif
                 % endif
+                </%doc>
                 
                 ## RSS
                 % if self.attr.rss_url:

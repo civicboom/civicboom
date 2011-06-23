@@ -1,68 +1,15 @@
 @import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
 /*----------------------------------------------------------------------------*/
 /*                                 Titlepage                                  */
 /*----------------------------------------------------------------------------*/
 
 BODY.c-misc.a-titlepage {
-    text-align: center;
-
-	/* --- Header --- */
-
-	HEADER {
-		display: block;
-		background-image: none;
-		background-color: #FFF;
-		width: 65em;
-		height: 3em;
-		margin: 0 auto 0 auto;
-		padding: 1em 0 1em 0;
-		text-align: left;
-
-		table {
-			display: inline;
-			height: 100%;
-			width: 100%;
-			margin: 0;
-			padding: 0;
-		}
-
-		.how-to {
-			padding-left: 54.5em;
-		}
-
-		.how-to a {
-			text-decoration: none;
-		}
-
-		.logo {
-			padding-left: 1em;
-			padding-right: 5em;
-		}
-
-		.signin {
-			padding-right: 1em;
-		}
-
-		.links {
-			padding-right: 19em;
-		}
-
-		.search {
-			
-		}
-
-		.logo a {
-			text-decoration: none;
-		}
-		
-		.button {
-		    padding: 3px;
-		}
-	}
 
 	/* --- Title-box --- */
-
 	.title-box {
+		text-align: center;
 		padding: 0;
 		margin: 8em auto 6em auto;
 		width: 65em;
@@ -79,7 +26,7 @@ BODY.c-misc.a-titlepage {
 			padding: 0;
 			margin: 0 auto 0 auto;
 			color: #666;
-			font-size: 200%;
+			font-size: 300%;
 			font-weight: normal;
 		}
 	}
@@ -87,6 +34,7 @@ BODY.c-misc.a-titlepage {
 	/* --- Windows --- */
 
 	.windows {
+		text-align: left;
 		margin: 0 auto 0 auto;
 		width: 65em;
 

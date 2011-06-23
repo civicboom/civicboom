@@ -49,37 +49,49 @@
 		display: block;
 		min-height: 15em;
 		
+		a {
+			color: $link-colour;
+		}
+		
 		.content {
+			position: relative;
 			text-align: left;
 			color: #333;
 			font-size: 110%;
 			word-wrap: break-word;
 			padding: 0.5em 1em 0 1em;
+			min-height: 125px;
 			
 			.thumbnail {
 				min-width: 125px;
 				max-width: 125px;
 				min-height: 125px;
 				max-height: 125px;
-				margin: 0 0.25em 0.15em 0;
+				margin: 0 0.5em 0 0;
 				padding: 0;
-				float: right;
+				float: left;
 				
 				img {
 					width: 100%;
 					height: 100%;
 				}
 			}
+			
+			.prompt {
+				position: absolute;
+				bottom: 0.1em;
+				right: 1em;
+			}
 		}
 		
 		.content-info {
 			margin-bottom: 1em;
-		}
-		
-		.content-info div {
-			display: inline;
-			float: left;
-			margin: 0 5px 5px 15px;
+			padding-left: 2em;
+			
+			div {
+				float: left;
+				margin-right: 2em;
+			}
 		}
 		
 		.content_title {
@@ -96,9 +108,9 @@
 			
 			.content_avatar {
 				float: right;
-				margin-right: 5px;
-				width: 40px;
-				height: 40px;
+				margin-right: 1em;
+				width: 20px;
+				height: 20px;
 				
 				border: 0.04em solid #CCC;
 				@include border_radius(0.1em);
