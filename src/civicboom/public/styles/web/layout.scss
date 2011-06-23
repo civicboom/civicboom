@@ -230,7 +230,7 @@ HEADER #home_link {
 HEADER NAV {
 	position: absolute;
 	top: 11px;
-	left: 260px;
+	left: 240px;
 	z-index: 500;
 
 	.button {
@@ -282,7 +282,7 @@ $search_buttons: 3;
 HEADER #search {
 	position: absolute;
 	top: 12px;
-	left: 540px;
+	left: 520px;
 	width: $search_width;
 	height: 40px;
 
