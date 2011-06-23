@@ -19,7 +19,7 @@ FOOT=\
 	jquery.ba-hashchange.min.js \
 	jquery.limit-1.2.js \
 	jquery.getUrlParam.js \
-    jquery.cookie.js \
+	jquery.cookie.js \
 	jquery.jcarousel.min.js \
 	invite.js \
 	mobile.js \
@@ -55,6 +55,7 @@ jquery.ui.js:
 		jquery.ui.autocomplete.js \
 		jquery.ui.datepicker.js \
 		jquery.ui.button.js \
+		jquery.ui.tabs.js \
 		> ../../jquery.ui.js
 	rm -rf jquery-ui
 
