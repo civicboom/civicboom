@@ -14,7 +14,6 @@ import os
 
 
 from pylons.templating  import render_mako # AllanC - this needs to be a setable function that can be called from mako directyly
-from pylons             import config
 
 
 def send_notification(members, message): #members, rendered_message
@@ -22,6 +21,8 @@ def send_notification(members, message): #members, rendered_message
     Threaded message system
     Save and handles propogating the message to different technologies for all members of a group or an indvidual
     """
+
+    from cbutils.worker import config
 
     message['source'] = get_member(message.get('source')) or message.get('source') # Attempt to normalize source member
 
