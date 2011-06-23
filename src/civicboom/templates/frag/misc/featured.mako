@@ -30,7 +30,7 @@
     <%
         list_names = dict(
             sponsored_assignment    = _('Top _request'),
-            sponsored_responded     = _('Most responded'),
+            sponsored_responded     = _('Most responses'),
             
             top_viewed_assignments  = _('Top _requests'),
             most_responses          = _('What people are getting involved in'),
@@ -40,7 +40,7 @@
         )
     %>
     
-    ${advert(content="Report your news from your Android mobile!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
+    ${advert(content="Make news with the Civicboom mobile app!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
     ## ${advert(content="Are you an organisation, journalist, blogger or in PR? GET STARTED HERE", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
     <span style="clear: both; display: block;"></span>
     <div class="frag_top_row">        
@@ -92,6 +92,6 @@
         ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
         ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
         <input type='hidden' name='${config_key}' value='True'/>
-        <input class='hide_advert_submit' src="/styles/common/icons/close_16.png" type='submit' name='submit' value='hide'/>
+        <input class='hide_advert_submit' src="/styles/common/icons/close_16.png" type='image' src="/styles/common/icons/close_16.png" name='submit' value='hide'/>
     </form>
 </%def>
