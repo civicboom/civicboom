@@ -47,8 +47,10 @@
     <div class="frag_col">
         <div class="frag_list">
         <h1>
-            % if self.selected_type == 'assignment':
-                Request a story
+            % if self.content.get('parent'):
+                ${_("You are responding to: %s") % self.content['parent']['title']}
+            % elif self.selected_type == 'assignment':
+                Post a request
             % elif self.selected_type == 'article':
                 Post a story
             % endif
@@ -73,9 +75,7 @@
             }
         </script>
         
-        % if self.content.get('parent'):
-            <h1>${_("You are responding to: %s") % self.content['parent']['title']}</h1>
-        % endif
+        
         
         ## pre_onsubmit is needed to save the contents of the TinyMCE component back to the text area
         ##  reference - http://www.dreamincode.net/forums/topic/52581-textarea-value-not-updating/
@@ -316,9 +316,9 @@
     <fieldset>
         <label>
             % if self.selected_type == 'assignment':
-                Add media to help build a better request?
+                Add media to help build a better request!
             % elif self.selected_type == 'article':
-                Add media to help build a better story?
+                Add media to help build a better story!
             % endif
         </label>
         <legend onclick="toggle_edit_section($(this));" class="edit_input">

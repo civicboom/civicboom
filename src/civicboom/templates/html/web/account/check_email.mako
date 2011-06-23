@@ -1,5 +1,6 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
+<%def name="html_class_additions()">blank_background</%def>
 <%def name="title()">${_("Please check your email")}</%def>
 
 <%def name="show_error(name)">
