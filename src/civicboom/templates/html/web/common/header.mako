@@ -357,7 +357,7 @@
         % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
             ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
         % endfor
-        <tr>
+        <tr class="extras">
             <td colspan="4">
                 <span style="float:right;">
                     ${h.secure_link(

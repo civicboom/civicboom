@@ -4,5 +4,5 @@
 <%def name="body()"></%def>
 
 <%def name="content_after()">
-    <p>${_('To alter your notificaitons visit your ')}<a href="${h.url('setting_action', id=kwargs.get('target_username','me'), action='messages', protocol='https', sub_domain='www', qualified=True)}">${_('notification settings')}</a></p>
+    <p>${_('To alter your email notifications visit your ')}<a href="${h.url('setting_action', id=kwargs.get('target_username','me'), action='notifications', protocol='https', sub_domain='www', qualified=True)}">${_('notification settings')}</a></p>
 </%def>

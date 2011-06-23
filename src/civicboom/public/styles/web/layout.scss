@@ -13,11 +13,16 @@ HTML {
 HTML.frag_containers {
     background: $page-background;
 }
+HTML.blank_background {
+    background: #ffffff;
+}
 
 /*----------------------------------------------------------------------------*/
 /*                                Main Level                                  */
 /*                   Three big blocks - header, app, footer                   */
 /*----------------------------------------------------------------------------*/
+
+$header_height: 42px;
 
 HEADER {
 	clear: both;
@@ -28,7 +33,7 @@ HEADER {
 	left : 0px;
 	right: 0px;
 	/* height: 64px; */
-    height: 42px;
+    height: $header_height;
 	z-index: 1;
 	/*
 	 * really, the minimum width is 830px; but on an
@@ -49,7 +54,7 @@ HEADER {
 BODY>DIV#app {
 	position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
 	z-index: 0;
-    top: 49px;
+    top: $header_height + 5px;
 }
 
 FOOTER {
@@ -130,11 +135,13 @@ HEADER #persona_select_new {
 }
 
 HEADER #persona_select {
-  position: absolute;
-  top : 8px;
-  right: 0px;
+	position: absolute;
+	top : 0px;
+	right: 0px;
 	z-index: 499; /* below the create/explore/manage */
-	width: 21em;
+	width: 280px;
+	height: $header_height;
+
 	P {
 		margin: 0px;
 	}
@@ -143,28 +150,36 @@ HEADER #persona_select {
 		width : 28px;
 		height: 28px;
 		border: 1px solid #888;
-		border-radius        : 0.1em;
-		-moz-border-radius   : 0.1em;
-		-webkit-border-radius: 0.1em;
+		border-radius        : 1px;
+		-moz-border-radius   : 1px;
+		-webkit-border-radius: 1px;
 	}
 
 	table {
-		display: none;
+		//display: none;
 		border: 1px solid #ccc; /*#e9e9e9*/
 		border-top: none;
-		position: relative;
-		left: -0.25em;
-		//right: 6.5em;//-0.5em;
-		top: -0.8em;
-		width: 24em;
+		border-right: none;
+		position: absolute;
+		right: -280px;
+		top: $header_height;
+		width: 280px;
 		font-size: 88%;
 		background-color: white;
 
 		border-bottom-left-radius        : 8px;
 		-webkit-border-bottom-left-radius: 8px;
 		-moz-border-radius               : 0px 0px 8px 0px;
+
+		-webkit-transition: right 0.15s ease-in;
+		-moz-transition: right 0.15s ease-in;
+		-o-transition: right 0.15s ease-in;
+		transition: right 0.15s ease-in;
 	}
-	&:hover table {display: block;}
+	&:hover table {
+		//display: block;
+		right: 0px;
+	}
 	.current_persona {background-color: #e9e9e9;}
 	.name {font-weight: bold;}
 
@@ -175,6 +190,9 @@ HEADER #persona_select {
 	.info {
 		font-size: 88%;
 	}
+	.extras {
+		border-top: 1px solid #e9e9e9;
+	}
 
 	.selectable:hover {
 		background-color: #e9e9e9;
@@ -183,11 +201,13 @@ HEADER #persona_select {
 
 	#persona_holder {
 	  vertical-align: center;
+	  padding-left: 6px;
+	  padding-top: 6px;
 	}
 
 	#persona_holder #message_holder {
 	  position: relative;
-	  top: -3px;
+	  top: -4px;
 	  vertical-align: center;
 	  //height: 32px;
 	  display: inline-block;
@@ -310,10 +330,10 @@ HEADER #search {
 		&.b3 {left: $search_width/$search_buttons*2;}
 
 		&.b0, &.b1, &.b2, &.b3 {
-			-webkit-transition: opacity 0.25s ease-in;
-			-moz-transition: opacity 0.25s ease-in;
-			-o-transition: opacity 0.25s ease-in;
-			transition: opacity 0.25s ease-in;
+			-webkit-transition: opacity 0.15s ease-in;
+			-moz-transition: opacity 0.15s ease-in;
+			-o-transition: opacity 0.15s ease-in;
+			transition: opacity 0.15s ease-in;
 
 			border-top: none;
 			border-top-left-radius: 0px;
