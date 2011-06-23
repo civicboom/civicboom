@@ -76,12 +76,59 @@
 				<td><label for="email_signup">${_("Email")}</label></td>
 				<td><input type="email" id="email_signup" name="email" placeholder="e.g. dave@coolnews.net"/></td>
 			</tr>
+			<tr class="validation-result">
+				<td></td>
+				<td><div id="urldemo"></div></td>
+			</tr>
 			<tr>
 				<td></td>
 				<td><input class="button" type="submit" name="submit" value="${_("Sign up")}"/></td>
 			</tr>
 		</table>
 	</form>
+<script>
+$(function() {
+	init_validation(
+		$("#username_register"),
+		function() {
+			$(".validation-result").css("display", "table-row");
+			var val = $("#username_register").val();
+			if(val.length < 4) {
+				$("#urldemo").html("Username must be at least 4 characters");
+				$("#username_register").addClass("invalid");
+			}
+			else {
+				var username = val.toLowerCase().replace(/[^a-z0-9_-]/g, '-').replace(/^-+|-+$/g, '');
+				$.ajax("/members.json?username="+username, {
+					"success": function(result) {
+					if(result.data.list.count == 0) {
+						$("#urldemo").html("Your profile page will be https://www.civicboom.com/members/"+username);
+						$("#username_register").addClass("valid");
+					}
+					else {
+						$("#urldemo").html("The username "+val+" is already taken")
+						$("#username_register").addClass("invalid");
+					}
+				}});
+			}
+		}
+	);
+
+	init_validation(
+		$("#email_signup"),
+		function() {
+			var val = $("#email_signup").val();
+			// really really really simple validation
+			if(val.match(/.+@.+\..+/)) {
+				$("#email_signup").addClass("valid");
+			}
+			else {
+				$("#email_signup").addClass("invalid");
+			}
+		}
+	);
+});
+</script>
 </section>
 </%def>
 

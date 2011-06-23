@@ -538,7 +538,14 @@ def auto_format_output(target, *args, **kwargs):
             raise ae
         else:
             result = ae.original_dict
-            user_log.debug('%s: %s' % (result.get('code',''), result.get('message'))) # Log big user error as small server error
+
+            if result.get('code') == 404 and request.environ.get("HTTP_REFERER", "-") == "-":
+                # 404 with no referer is normally a web spider
+                pass
+            else:
+                # Log big user error as small server error
+                user_log.debug('%s: %s' % (result.get('code'), result.get('message')))
+
             if c.format == "html" or c.format == "redirect":
                 if result.get('code') == 402:
                     return redirect(url(controller='misc', action='about', id='upgrade_plans'))

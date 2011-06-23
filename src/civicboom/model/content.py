@@ -538,10 +538,12 @@ class AssignmentContent(UserVisibleContent):
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
 
-    __table_args__ = (
-        CheckConstraint("(event_date IS NULL) OR (due_date IS NULL) OR (due_date >= event_date)"),
-        {}
-    )
+    ## there is a case where "due date < event date" makes sense, sort
+    ## of -- when submitting eg photos to be displayed at an event
+    #__table_args__ = (
+    #    CheckConstraint("(event_date IS NULL) OR (due_date IS NULL) OR (due_date >= event_date)"),
+    #    {}
+    #)
     
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)

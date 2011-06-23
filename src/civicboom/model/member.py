@@ -6,7 +6,7 @@ from civicboom.lib.helpers import wh_url
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
-from sqlalchemy import Enum, Integer, DateTime, Boolean
+from sqlalchemy import Enum, Integer, DateTime, Boolean, Interval
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
@@ -240,7 +240,7 @@ class Member(Base):
     join_date       = Column(DateTime(),     nullable=False, default=func.now())
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(String(40),     nullable=True)
-    utc_offset      = Column(Integer(),      nullable=False, default=0)
+    utc_offset      = Column(Interval(),     nullable=False, default="0 hours")
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
@@ -318,7 +318,7 @@ class Member(Base):
     })
     __to_dict__['full'].update({
             'num_followers'       : None ,
-            'utc_offset'          : None ,
+            'utc_offset'          : lambda member: (member.utc_offset.days * 86400 + member.utc_offset.days),
             'join_date'           : None ,
             'website'             : lambda member: member.extra_fields.get('website') ,
             'description'         : None ,

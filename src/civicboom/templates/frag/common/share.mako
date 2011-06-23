@@ -295,7 +295,7 @@
 <%def name="janrain_social_call_content(content, share_type)">
 	## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
-from civicboom.lib.civicboom_lib import aggregation_dict
+from civicboom.lib.aggregation import aggregation_dict
 cd = aggregation_dict(content, safe_strings=True)
 def clean(s):
 	if isinstance(s, basestring):
