@@ -71,7 +71,7 @@ def send_notification(members, message): #members, rendered_message
                             return template_path
                         return 'email/notifications/default.mako'
                     
-                    l = TemplateLookup(directories=['civicboom/templates'])
+                    l = TemplateLookup(directories=['.', 'civicboom/templates'])
                     f = os.path.join("civicboom/templates", notification_template(message.get('name')))
                     t = Template(filename=f, lookup=l)
                     c = t.render(kwargs=message, h=helpers)
