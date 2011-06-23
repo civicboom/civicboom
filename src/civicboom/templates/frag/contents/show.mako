@@ -184,7 +184,7 @@
 	%endif
     </div>
     <div class="content_creator">By: ${self.content['creator']['name']}</div>
-    ${map_icon()}
+    ## ${map_icon()}
     <div style="clear: both; padding-bottom: 10px;"></div>
 </%def>
 
@@ -353,7 +353,7 @@
 		    ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
 		% endif
 		
-      
+<%doc>
 	      ## --- Accept ------------------------------------------------------------
 		% if 'accept' in self.actions:
 		    ${h.secure_link(
@@ -375,6 +375,7 @@
 			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
 		    )}
 		% endif
+</%doc>
 		</td>
 		<td class="tip"><div>
 		    <a href="" class="get-involved-popup">Why should you get involved?</a>
@@ -753,7 +754,7 @@
 ## Get involved
 ##------------------------------------------------------------------------------
 <%def name="get_involved()">
-    <div class="information">
+    <div class="information" style="width: 35em;">
 	<div class="popup-title">
 	    Why should you get involved?
 	</div>

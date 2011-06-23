@@ -4,57 +4,39 @@
 #frag_containers .frag_container {
 	/*---------------------------Frag Member Adverts------------------------------*/
 	.advert {
-		padding: 0;
-		margin-top: 0.5em;
-                width: 46.25%;
-                margin-left: 2.5%;
-                float: left;
+		position: relative;
+		padding: 0.75em;
+		margin: 1em 1em 0 1em;
+		
+		text-align: left;
+		font-size: 110%;
+		font-weight: bold;
 
+		background-color: #ff8300;			
+		@include border_radius(0.3em);
+		@include drop_shadow(1px, 1px, 1px, #666);
+		
 		a {
 			text-decoration: none;
 			color: #666;
 		}
 
-		.box {
-			position: relative;
-			padding: 5px;
-			padding-top: 1em;
-			min-height: 6em;
-			
-			font-size: 110%;
-			font-weight: bold;
-			text-align: right;
-
-			background-color: #ff8300;
-			background-position: left bottom;
-			background-repeat: no-repeat;
-			
-			@include border_radius(0.3em);
-                        @include drop_shadow(1px, 1px, 1px, #666);
-		}
-
 		.content {
 			color: #fff;
-			margin-left: 15px;
+			max-width: 85%;
+			margin-right: 10px;
+			float: left;
 		}
 
-		.icon {
-			position: relative;
-			z-index: 1;
-			left: 5px;
-			top: 8px;
+		form {
+			float: right;
 		}
 
 		.hide_advert_submit {
 			position: relative;
-			mottom: 0em;
                         font-size: 75%;
-			margin-top: 5px;
 
-			/* --- Cross browser border rounding --- */
-			border-radius        : 0.5em;
-			-moz-border-radius   : 0.5em;
-			-webkit-border-radius: 0.5em;
+			@include border-radius(0.5em);
 		}
 	}
 	
@@ -62,36 +44,31 @@
 	.sponsored_content {
 		margin: 0;
 		padding: 0;
+		padding-top: 1em;
 		width: 100%;
 		display: block;
 		min-height: 15em;
 		
-		.thumbnail {
-			min-width: 125px;
-			max-width: 125px;
-			min-height: 125px;
-			max-height: 125px;
-			margin: 0 0.25em 0.25em 0.25em;
-			margin-bottom: 0.15em;
-			padding: 0;
-			float: left;
-			
-			img {
-				height: 100%;
-				width: 100%;
-			}
-		}
-		
 		.content {
 			text-align: left;
 			color: #333;
-			font-size: 120%;
+			font-size: 110%;
 			word-wrap: break-word;
-			float: left;
+			padding: 0.5em 1em 0 1em;
 			
-			p {
-				margin-top: 10px;
-				margin-bottom: 10px;
+			.thumbnail {
+				min-width: 125px;
+				max-width: 125px;
+				min-height: 125px;
+				max-height: 125px;
+				margin: 0 0.25em 0.15em 0;
+				padding: 0;
+				float: right;
+				
+				img {
+					width: 100%;
+					height: 100%;
+				}
 			}
 		}
 		
@@ -107,9 +84,8 @@
 		
 		.content_title {
 			text-align: center;
-			font-size: 120%;
-			top: 0.25em;
-			
+			font-size: 140%;
+			font-weight: bold;
 			
 			a {
 				display: inline;
@@ -118,19 +94,14 @@
 				margin-left: 10px;
 			}
 			
-			.creator-avatar {
-				display: inline;
+			.content_avatar {
 				float: right;
 				margin-right: 5px;
 				width: 40px;
 				height: 40px;
-				border: none;
 				
-				img, .thumbnail, .thumbnail_small {
-					border: none;
-					width: 40px;
-					height: 40px;
-				}
+				border: 0.04em solid #CCC;
+				@include border_radius(0.1em);
 			}
 		}
 	}

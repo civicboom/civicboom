@@ -193,6 +193,7 @@
         <div class="icon_overlay_red ${id}">&nbsp;${messages}&nbsp;</div>
     % endif
 </%def>
+	<%doc>
 <div id="persona_select_new">
     <ul>
         <li class="current_persona">
@@ -254,8 +255,8 @@
             ${persona_new(membership.group, role=membership.role, members=membership.group.num_members)}
         % endfor
     </ul>
-</div>
-
+	</div>
+</%doc>
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
       <a class="name" href="${url(controller='profile', action='index')}"><!--
