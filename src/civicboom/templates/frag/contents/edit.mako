@@ -302,7 +302,7 @@
             tags_string += tag + separator
         %>
         <input class="detail edit_input" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
-        ##<span>(${_('separated by commas')} ',')</span>
+        <span>(${_('separated by commas')} ',')</span>
         ##${popup(_("extra_info"))}
     </fieldset>
     <div class="separator"></div><div class="separator"></div>
@@ -316,9 +316,9 @@
     <fieldset>
         <label>
             % if self.selected_type == 'assignment':
-                Got media to help build a better request?
+                Add media to help build a better request?
             % elif self.selected_type == 'article':
-                Got media to help build a better story?
+                Add media to help build a better story?
             % endif
         </label>
         <legend onclick="toggle_edit_section($(this));" class="edit_input">
@@ -583,7 +583,7 @@
 <%def name="location()">
     <!-- Licence -->
     <fieldset>
-        <label>Got a location?</label>
+        <label>Add a location?</label>
         <legend onclick="toggle_edit_section($(this));" class="edit_input">
             <span class="icon16 i_plus"></span>
             <img src="/images/misc/contenticons/map.png" alt="Location" />
@@ -754,10 +754,6 @@
 ## What happens now?
 ##------------------------------------------------------------------------------
 <%def name="what_now_link()">
-    <div class="what_now" style="float: right;">
-        <a href="" onclick="$(this).siblings('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" class="what-now-popup">What happens once I post this?</a>
-        
-    </div>
 </%def>
 
 <%def name="what_now()">
@@ -841,7 +837,7 @@
         <div style="font-size: 130%; text-align: center;">
             % if self.content['type'] == "draft":
                 % if 'publish' in self.actions:
-                <span >${submit_button('publish', _("Yes I want to Post!"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l" )}</span>
+                <span >${submit_button('publish', _("Yes I want to Post!"), show_content_frag_on_submit_complete=True, prompt_aggregate=True)}</span>
                 % endif
             % else:
                 % if 'update' in self.actions:
