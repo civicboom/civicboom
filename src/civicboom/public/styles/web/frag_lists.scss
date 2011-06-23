@@ -11,7 +11,7 @@
 
 		background: $frag-list-top; /* for non-css3 browsers */
 
-		@include border_radius(0.5em);
+		@include border_radius($frag_radius);
 		
 		margin-top: inherit;
 		padding: 0.6em;
@@ -28,9 +28,9 @@
 			padding: 0.5em 0.5em 0.25em 0.5em;
 			
 			/* Proto - Have to put this here too to round entire list for some reason */
-			border-radius        : 0.3em;
-			-moz-border-radius   : 0.3em;
-			-webkit-border-radius: 0.3em;
+			border-radius        : $frag-radius;
+			-moz-border-radius   : $frag-radius;
+			-webkit-border-radius: $frag-radius;
 		}
 		
 		h2 .count {
@@ -60,6 +60,10 @@
 
 		.thumbnail       {font-size: 45px;} /* AllanC - humm ... horrible hack to just notch up the size of the thumbnail in content lists to match the text. This not a long term solution */
 		.thumbnail_small {font-size: 20px;} /* dont override small size ... jesus this is a HACK */
+
+		border-radius        : $frag-radius;
+		-moz-border-radius   : $frag-radius;
+		-webkit-border-radius: $frag-radius;
 
 		td, li, ul {
 			padding-bottom: 1em;

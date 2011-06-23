@@ -49,6 +49,16 @@ class MiscController(BaseController):
             return redirect(url(controller="profile", action="index"))
         return action_ok()
 
+    def search_redirector(self):
+        if request.GET.get("type") == "Members": # these need to match the submit buttons
+            return redirect(url(controller="members", action="index", term=request.GET.get("term")))
+        elif request.GET.get("type") == "Requests":
+            return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="assignments_active"))
+        elif request.GET.get("type") == "Stories":
+            return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="articles"))
+        else:
+            return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="all"))
+
     # don't cache this, it does UA-specific things
     @auto_format_output
     def qr(self):

@@ -79,7 +79,8 @@
             %>
             <tr
                 % if current_persona:
-                    class   = "current_persona"
+                    class   = "current_persona selectable"
+                    onclick = "window.location = '/profile';"
                 % else:
                     class   = "selectable"
                     ##onclick = "$(this).find('.persona_link').click();"
@@ -285,4 +286,14 @@
         ${_('Sign in')}
     </a>
 % endif
+</div>
+
+<div id="search">
+	<form action="${url(controller='misc', action='search_redirector')}">
+		<input type="search" name="term" placeholder="Search" class="search_input">
+		<input type="submit" name="type" class="button b0" value="All">
+		<input type="submit" name="type" class="button b1" value="Requests">
+		<input type="submit" name="type" class="button b2" value="Stories">
+		<input type="submit" name="type" class="button b3" value="Members">
+	</form>
 </div>

@@ -18,9 +18,9 @@
 				
 			.about_me {
 				/* --- Cross browser border rounding --- */
-				border-radius        : 0.5em;
-				-moz-border-radius   : 0.5em;
-				-webkit-border-radius: 0.5em;
+				border-radius        : $frag-radius;
+				-moz-border-radius   : $frag-radius;
+				-webkit-border-radius: $frag-radius;
 				background-color: #fff;
 				padding: 1em;
 				font-size: 88%;

@@ -3,9 +3,9 @@
 
 #frag_containers {
 
-    .frag_col {
-    
         .frag_list {
+
+            padding: 1em;
         
             a {
                 color: $button-txt;
@@ -40,9 +40,7 @@
             .hideable {
                 clear: both;
             }
-        
+
         }
-        
-    }
-    
+
 }

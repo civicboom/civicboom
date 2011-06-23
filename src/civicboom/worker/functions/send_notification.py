@@ -8,13 +8,15 @@ from civicboom.model.meta              import Session
 from civicboom.model.message           import Message
 from civicboom.lib.database.get_cached import update_member_messages
 from civicboom.lib.communication.email_lib import send_email
+import civicboom.lib.helpers as helpers
 
 import collections
 import os
 
 
-from pylons.templating  import render_mako # AllanC - this needs to be a setable function that can be called from mako directyly
-from pylons             import config
+#from pylons.templating  import render_mako # AllanC - this needs to be a setable function that can be called from mako directyly
+from mako.template import Template
+from mako.lookup import TemplateLookup
 
 
 def send_notification(members, message): #members, rendered_message
@@ -22,6 +24,8 @@ def send_notification(members, message): #members, rendered_message
     Threaded message system
     Save and handles propogating the message to different technologies for all members of a group or an indvidual
     """
+
+    from cbutils.worker import config
 
     message['source'] = get_member(message.get('source')) or message.get('source') # Attempt to normalize source member
 
@@ -62,20 +66,19 @@ def send_notification(members, message): #members, rendered_message
                     # Feature #498 - Check for existing email template and attempt to render
                     def notification_template(template):
                         template_path = os.path.join("email", "notifications", template+".mako")
-                        if os.path.exists(os.path.join(config['path.templates'], template_path)):
+                        #if os.path.exists(os.path.join(config['path.templates'], template_path)):
+                        if os.path.exists(os.path.join("civicboom/templates", template_path)):
                             return template_path
                         return 'email/notifications/default.mako'
                     
+                    l = TemplateLookup(directories=['.', 'civicboom/templates'])
+                    f = os.path.join("civicboom/templates", notification_template(message.get('name')))
+                    t = Template(filename=f, lookup=l)
+                    c = t.render(kwargs=message, h=helpers)
                     send_email(
                         member,
                         subject      = message.get('subject'), #, _('_site_name notification')
-                        content_html = render_mako(
-                                            notification_template(message.get('name')) ,
-                                            extra_vars ={
-                                                "kwargs"      : message       ,
-                                                #"content_html": content_html ,
-                                            }
-                                        ),
+                        content_html = c,
                     )
             
             # -- Notification --------------------------------------------------

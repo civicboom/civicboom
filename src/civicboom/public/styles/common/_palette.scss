@@ -3,8 +3,8 @@ $cb-darkblue: #3a4a97;
 
 /* -------------------------------------- */
 
-$button-top: $cb-lightblue;// #eee; /*$cb-lightblue;*/
-$button-bot: $cb-darkblue; //#ddd; /*$cb-darkblue;*/
+$button-top: #4974b8; // lighten($cb-lightblue, 10%);// #eee; /*$cb-lightblue;*/
+$button-bot: #3e68af; // lighten($cb-darkblue, 20%); //#ddd; /*$cb-darkblue;*/
 $button-txt: #fff; /*white; 444 */
 $button-border: #333; /*#333; ccc*/
 $button-radius: 0.2em;
@@ -27,6 +27,7 @@ $page-background: lighten($cb-lightblue, 30%);
 
 $frag-border    : none;
 $frag-background: lighten($cb-lightblue, 40%);
+$frag-radius    : 0.5em;
 
 $frag-action-bar-txt      : black;
 $frag-action-bar          : #EEE;

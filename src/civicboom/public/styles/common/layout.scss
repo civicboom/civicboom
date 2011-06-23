@@ -85,6 +85,20 @@ HTML SELECT {
 
 
 /*----------------------------------------------------------------------------*/
+/*                                Title Styles                                */
+/*----------------------------------------------------------------------------*/
+
+// important because YUI tries to override these -_-
+H1,H2,H3,H4 {
+    font-weight: bold !important;
+    margin: 0.25em 0em !important;
+}
+H1 {
+    font-size: 150% !important;
+}
+
+
+/*----------------------------------------------------------------------------*/
 /* Table - Zebra Colours                                                      */
 /*----------------------------------------------------------------------------*/
 
@@ -137,16 +151,6 @@ HTML SELECT {
 	TEXTAREA {
 		width: 100%;
 	}
-}
-
-/* HACK because for some reason, input fields in TDs overflow :/  */
-.form.border TD INPUT[type='text'] {
-	width: 97%;
-}
-
-.formpage {
-	margin: auto;
-	margin-top: 8px;
 }
 
 
@@ -281,7 +285,6 @@ HTML.no-js #flash_message {
 	text-align: center;
 	text-decoration: none;
 	font-weight: bold;
-	font-size: 90%;
 
 	cursor: pointer;
 }
@@ -416,4 +419,60 @@ DIV#app .button {
 
 .content_short P {
 	margin-bottom: 1em;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                          Content Mouse Over Help                           */
+/*----------------------------------------------------------------------------*/
+
+.mo-help {
+	position: relative;
+
+	.mo-help-r, .mo-help-l {
+		font-size: 12px;
+		display: none;
+		position: absolute;
+		z-index: 100;
+		width: 200px;
+		background-color: #FFF;
+		padding: 12px;
+		border: 1px solid #2a3a87;
+		text-align: left;
+		bottom: 3em;
+		text-align: center;
+		
+		opacity: 0.8;
+		filter:alpha(opacity=8);
+		
+		border-radius        : 0.2em;
+		-moz-border-radius   : 0.2em;
+		-webkit-border-radius: 0.2em;
+		
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		
+		-moz-box-shadow: 0px 0px 15px #888;
+		-webkit-box-shadow: 0px 0px 15px #888;
+		box-shadow: 0px 0px 15px #888;
+	}
+	
+	.mo-help-l {
+	    right: 0em;
+	}
+	
+	.mo-help-r {
+	    left: 0em;
+	}
+	
+	.mo-help-r:hover, .mo-help-l:hover {
+	    display: none;
+	}
+}
+
+.mo-help:hover {
+    .mo-help-r, .mo-help-l {
+	display: block;
+    }
 }

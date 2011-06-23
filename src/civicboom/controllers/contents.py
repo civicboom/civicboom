@@ -44,7 +44,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     filter_extra_fields = False
     ignore_key_missing  = True
     type        = formencode.validators.OneOf(content_types.enums, not_empty=False)
-    title       = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=False, strip=True, max=250, min=2, html='strip_html_tags')
+    title       = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, strip=True, max=250, min=2, html='strip_html_tags')
     content     = civicboom.lib.form_validators.base.ContentUnicodeValidator()
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=False)
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)

@@ -419,25 +419,45 @@
         #media_width  = config['media.display.video.width' ]
         #media_height = config['media.display.video.height']
     %>
-
-    <ul class="media">
+    <div class="media_container">
+    
+    <ul id="media_carousel_content_${content['id']}" class="media_carousel">
     % for media in content['attachments']:
-        <li class="paddedbottom">
+        <li>
             ${media_includes.preview(media)}
-        % if media.get('caption') or media.get('credit'):
-          <br />
-        % endif
-        % if media.get('caption'):
-          <span class="caption">${media['caption']}</span>
-        % endif
-        % if media.get('credit'):
-          <span class="credit">(${_('Credit to')}: ${media['credit']})</span>
-        % endif
-        <br />
+            <p>
+            % if media.get('caption'):
+                <span class="caption">${media['caption']}</span>
+            % endif
+            % if media.get('credit'):
+                <span class="credit">(${_('Credit to')}: ${media['credit']})</span>
+            % endif
+            </p>
         </li>
     % endfor
     </ul>
-
+    
+    </div>
+    
+    <%doc>
+    <script type="text/javascript">
+        ## http://sorgalla.com/projects/jcarousel/
+        
+        function media_carousel_content_${content['id']}_initCallback(carousel) {
+            // future control options go here
+        };
+        
+        jQuery(document).ready(function() {
+            jQuery('#media_carousel_content_${content['id']}').jcarousel({
+                wrap   : 'last' ,
+                scroll : 1 ,
+                visible: 1 ,
+                initCallback: media_carousel_content_${content['id']}_initCallback,
+            });
+        });
+    </script>
+    </%doc>
+    
 </%def>
 
 ##------------------------------------------------------------------------------
