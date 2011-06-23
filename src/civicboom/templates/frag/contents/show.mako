@@ -397,8 +397,8 @@
         #media_width  = config['media.display.video.width' ]
         #media_height = config['media.display.video.height']
     %>
+    <div class="media_container">
     
-    ## http://sorgalla.com/projects/jcarousel/
     <ul id="media_carousel_content_${content['id']}" class="media_carousel">
     % for media in content['attachments']:
         <li>
@@ -414,7 +414,10 @@
         </li>
     % endfor
     </ul>
-
+    
+    </div>
+    
+    <%doc>
     <script type="text/javascript">
         ## http://sorgalla.com/projects/jcarousel/
         
@@ -431,6 +434,8 @@
             });
         });
     </script>
+    </%doc>
+    
 </%def>
 
 ##------------------------------------------------------------------------------
