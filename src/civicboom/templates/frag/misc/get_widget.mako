@@ -35,6 +35,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="widget_preview(member)">
+<div class="get_widget">
     <%
         member = normalize_member_username(member);
     %>
@@ -95,6 +96,7 @@
             widget_creator.find('.code').find('textarea').val(link);
         }
     </script>
+</div>
 </%def>
 
 
@@ -142,7 +144,7 @@ what
 ##----------------------------------
 
 <%def name="basic(member)">
-<div class="widget_creator">
+<div class="widget_creator"><div class="padding">
     <%
         theme          = 'basic'
         widget_default = widget_defaults[theme]
@@ -213,7 +215,7 @@ what
             <textarea>${widget_iframe(theme=theme, member=member, protocol=current_protocol())}</textarea>
         </form>
     </div>
-</div>
+</div></div>
 </%def>
 
 ##----------------------------------

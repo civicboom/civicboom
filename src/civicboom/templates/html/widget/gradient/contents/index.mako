@@ -6,10 +6,12 @@
     <script type='text/javascript' src='/javascript/jquery.jcarousel.min.js'></script>
 </%def>
 
+## AllanC - this isnt the best way to enforce a limit ... should be at API level .. short term fix only
+<% limit = 8 %>
 % if d['list']['count'] == 0:
-    ${_('No content')}
+    ${_('Check out all of our _assignments here! Comming soon.')}
 % else:
-    ${content_list(d['list']['items'])}
+    ${content_list(d['list']['items'][:limit])}
 % endif
 
 
