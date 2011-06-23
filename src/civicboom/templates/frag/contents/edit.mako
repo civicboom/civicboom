@@ -715,9 +715,11 @@
                             $(this).addClass('disabled');
                             add_onclick_submit_field($(this));
                             % if show_content_frag_on_submit_complete:
-                            submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
                             % endif
-                            setTimeout('$(\'#${button_id}\').removeClass(\'disabled\');', 1000);
+                            setTimeout(function() {
+                                $(this).removeClass('disabled');
+                            }, 1000);
                         }
                         else {
                             return false;
@@ -751,18 +753,55 @@
 ##------------------------------------------------------------------------------
 <%def name="what_now_link()">
     <div class="what_now" style="float: right;">
-        <a href="" class="what-now-popup">What happens once I post this?</a>
-        <script>
-            $('.what-now-popup').click(function() {
-                $('#what-now').modal({ onShow: function (dialog) {}});
-                return false;
-            });
-        </script>
-        ${popup.popup_static('What happens now?', what_now, 'what-now')}
+        <a href="" onclick="$(this).siblings('.what-now-pop').modal(); return false;" class="what-now-popup">What happens once I post this?</a>
+        ${popup.popup_static('What happens now?', what_now, '', html_class="what-now-pop")}
     </div>
 </%def>
 
 <%def name="what_now()">
+    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r')">
+
+        <%
+            button_id = "submit_%s_%s" % (name, self.id)
+            if not title_text:
+                title_text = _(name)
+        %>
+
+        % if mo_text:
+            <span class="mo-help">
+            <div class="${mo_class}">
+                <h2>${title_text}</h2>
+                <p>${_(mo_text)}</p>
+            </div>
+        % endif
+                <input
+                    type    = "submit"
+                    id      = "${button_id}"
+                    name    = "submit_${name}"
+                    class   = "submit_${name} button"
+                    value   = "${title_text}"
+                    onclick = "
+                        alert ($(this));
+                        ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
+                        if (!$(this).hasClass('disabled')) {
+                            $(this).addClass('disabled');
+                            add_onclick_submit_field($(this));
+                            % if show_content_frag_on_submit_complete:
+                            submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                            % endif
+                            setTimeout(function() {
+                                $(this).removeClass('disabled');
+                            }, 1000);
+                        }
+                        else {
+                            return false;
+                        }
+                    "
+                />
+        % if mo_text:
+            </span>
+        % endif
+    </%def>
     <div class="information">
 	<div class="popup-title">
 	    What happens once I publish this?
@@ -775,8 +814,19 @@
 		<li>${_("On the _site_name request stream")}</li>
 	    </ol>
 	</div>
-	<div class="popup-tag-line">
-	    Don't just read it. Feed it.
-	</div>
+    <div style="font-size: 130%; text-align: center;">
+        % if self.content['type'] == "draft":
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}</span>
+            ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once published." )}
+            % if 'publish' in self.actions:
+            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l" )}</span>
+            % endif
+        % else:
+            % if 'update' in self.actions:
+            ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
+            % endif
+            <a class="button" style="color: #444;" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
+        % endif
+    </div>
     </div>
 </%def>
