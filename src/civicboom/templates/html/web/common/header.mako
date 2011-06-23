@@ -196,6 +196,8 @@
         <div class="icon_overlay_red ${id}">&nbsp;${messages}&nbsp;</div>
     % endif
 </%def>
+
+<%doc>
 <div id="persona_select_new">
     <ul>
         <li class="current_persona">
@@ -212,7 +214,7 @@
             </div>
         </li>
         
-        <%def name="persona_new(member, **kwargs)">
+##        <%def name="persona_new(member, **kwargs)">
             <%
                 current_persona = member==c.logged_in_persona
             %>
@@ -228,7 +230,6 @@
                     ${member.name}
                 </div>
                 <div class="message_holder">
-                        <%doc>
                         <a class   = "icon16 i_message"
                            href    = "${h.url('messages',list='to')}"
                            title   = "${_('Messages')}"
@@ -236,7 +237,6 @@
                         ><span>${_('Messages')}</span>
                         </a>
                         ${messageIcon(member.num_unread_messages, "msg_%s_m" % ('c' if current_persona else member.id))}
-                        </%doc>
                         <br />
                         <a class   = "icon16 i_notification"
                            href    = "${h.url('messages',list='notification')}"
@@ -247,7 +247,7 @@
                         ${messageIcon(member.num_unread_notifications, "msg_%s_n" % ('c' if current_persona else member.id))}
                 </div>
             </li>
-        </%def>
+##        </%def>
         ## Show default persona (the user logged in)
         ${persona_new(c.logged_in_user)}
         ## Show current persona (current group persona if applicable)
@@ -260,13 +260,13 @@
         % endfor
     </ul>
 </div>
-
+</%doc>
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
       <a class="name" href="${url(controller='profile', action='index')}"><!--
         --><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' /><!--
       --></a>
-      <div id="persona_details" class="name">
+      <div id="persona_details">
         ${c.logged_in_persona.name}
       </div>
       <div id="message_holder">
@@ -280,6 +280,12 @@
       </div>
     </div>
     <table>
+        <tr>
+            <td colspan="4">
+                <a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
+                <span style="float:right;"><a href="${h.url('new_group')}" class="sub_option">${_("Create a _Group")}</a></span>
+            </td>
+        </tr>
         <%def name="persona_select(member, **kwargs)">
             <%
                 current_persona = member==c.logged_in_persona
@@ -304,11 +310,6 @@
                         <p class="info">${k.capitalize()}: ${str(v).capitalize()}</p>
                         % endif
                     % endfor
-                    % if current_persona:
-                        <p>
-                            <a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
-                        </p>
-                    % endif
                 </td>
                 <td>
                   <a class   = "icon16 i_message"
@@ -359,13 +360,22 @@
         % endfor
         <tr>
             <td colspan="4">
-                ${h.secure_link(
-                    h.url(controller='account', action='signout'),
-                    _('Sign out'),
-                    css_class="button"
-                )}
+                <span style="float:right;">
+                    ${h.secure_link(
+                        h.url(controller='account', action='signout'),
+                        _('Sign out'),
+                        css_class="button"
+                    )}
+                </span>
             </td>
         </tr>
     </table>
 </div>
+% else:
+    <div id="signin">
+        <a class="button" href="${url(controller='account', action='signin')}">
+            ##<img src="/styles/web/login.png" alt="${_("Log in")}" width="68" height="17">
+            ${_('Sign in')}
+        </a>
+    </div>
 % endif
