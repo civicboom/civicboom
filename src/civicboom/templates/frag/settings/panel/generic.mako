@@ -21,7 +21,6 @@
         panel = c.result.get('panel', d.get('panel'))
         panel_title = d.get('panels', {}).get(panel, {}).get('title')
         panel_name  = d.get('panels', {}).get(panel, {}).get('panel')
-        print panel_name, panel_title
         settings_meta = d['settings_meta']
         settings_meta = dict( [ (setting['name'], setting) for setting in settings_meta.values() if setting['group'].split('/')[0] == panel] )
         
