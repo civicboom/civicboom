@@ -14,7 +14,7 @@
     % if setting_icons.get('messages'):
         <img style="float:right;" src="/images/settings/${setting_icons.get('messages')}.png" />
     % endif
-    <h1>${_('%(username)s message settings') % dict(username= c.logged_in_persona.username.capitalize()) }</h1>
+    <h1>${_('%(username)s notification settings') % dict(username= c.logged_in_persona.username.capitalize()) }</h1>
     <%
         panel = c.result.get('panel', 'messages')
         settings_meta = d['settings_meta']
@@ -63,9 +63,9 @@
     % for group_name in setting_groups.keys():
       <table class="zebra" style="width: 100%">
         <tr>
-          <th>Message</th>
+          <th>Type<span style="float: right;">via&nbsp;&nbsp;</span></th>
           % for notif_type in notification_types:
-            <th>${notif_names.get(notif_type, '').capitalize()}</th>
+            <th>${notif_names.get(notif_type, '').replace('Notification', 'Website').capitalize()}</th>
           % endfor
         </tr>
       % for setting_name in setting_groups[group_name]:

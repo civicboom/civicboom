@@ -1,7 +1,7 @@
 <%inherit file="/html/web/common/frag_container.mako"/>
 
 <%namespace name="frag" file="/frag/common/frag.mako"/>
-<%namespace name="message_settings" file="/frag/settings/panel/messages.mako" import="body"/>
+<%namespace name="message_settings" file="/frag/settings/panel/notifications.mako" import="body"/>
 <%namespace name="settings_menu" file="/frag/settings/menu.mako" import="body"/>
 
 <%def name="title()">General Settings</%def>
