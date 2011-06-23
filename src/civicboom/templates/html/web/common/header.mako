@@ -187,19 +187,83 @@
         setInterval(refreshMessages, 180000);
     });
 </script>
+
+<%def name="messageIcon(messages, id)">
+    % if messages > 0:
+        <div class="icon_overlay_red ${id}">&nbsp;${messages}&nbsp;</div>
+    % endif
+</%def>
+<div id="persona_select_new">
+    <ul>
+        <li class="current_persona">
+            <div class="persona_detail">
+                <a class="name" href="${url(controller='profile', action='index')}">
+                    <img src="${c.logged_in_persona.avatar_url}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' />
+                </a>
+                ##RAR<br />
+                ${c.logged_in_persona.name}
+            </div>
+            <div class="message_holder">
+                <span class="icon16 i_blank"></span>
+                ${messageIcon(c.logged_in_persona.num_unread_messages + c.logged_in_persona.num_unread_notifications, "msg_c_o")}
+            </div>
+        </li>
+        
+        <%def name="persona_new(member, **kwargs)">
+            <%
+                current_persona = member==c.logged_in_persona
+            %>
+            <li
+                % if current_persona:
+                    onclick = "window.location = '/profile';"
+                % else:
+                    onclick = "$(this).find('form').submit();"
+                % endif
+            class="hover">
+                <div class="persona_detail">
+                    <img src="${member.avatar_url}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' />
+                    ${member.name}
+                </div>
+                <div class="message_holder">
+                        <a class   = "icon16 i_message"
+                           href    = "${h.url('messages',list='to')}"
+                           title   = "${_('Messages')}"
+                           onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
+                        ><span>${_('Messages')}</span>
+                        </a>
+                        ${messageIcon(member.num_unread_messages, "msg_%s_m" % ('c' if current_persona else member.id))}
+                        <br />
+                        <a class   = "icon16 i_notification"
+                           href    = "${h.url('messages',list='notification')}"
+                           title   = "${_('Notifications')}"
+                           onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
+                        ><span>${_('Notifications')}</span>
+                        </a>
+                        ${messageIcon(member.num_unread_notifications, "msg_%s_n" % ('c' if current_persona else member.id))}
+                </div>
+            </li>
+        </%def>
+        ## Show default persona (the user logged in)
+        ${persona_new(c.logged_in_user)}
+        ## Show current persona (current group persona if applicable)
+        % if c.logged_in_persona != c.logged_in_user:
+            ${persona_new(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
+        % endif
+        ## Show currently logged in persona's groups:
+        % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
+            ${persona_new(membership.group, role=membership.role, members=membership.group.num_members)}
+        % endfor
+    </ul>
+</div>
+
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
       <a class="name" href="${url(controller='profile', action='index')}"><!--
         --><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' /><!--
       --></a>
-      <div id="persona_details">
+      <div id="persona_details" class="name">
         ${c.logged_in_persona.name}
       </div>
-      <%def name="messageIcon(messages, id)">
-        % if messages > 0:
-          <div class="icon_overlay_red ${id}">&nbsp;${messages}&nbsp;</div>
-        % endif
-      </%def>
       <div id="message_holder">
 ##        <a class   = "icon16 i_message"
 ##           href    = "${h.url('messages',list='to')}"
