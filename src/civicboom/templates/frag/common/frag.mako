@@ -136,6 +136,7 @@
                 % endif
                 </%doc>
                     
+                <%doc>
                 ## Help
                 % if self.attr.help_frag:
                     <%
@@ -147,6 +148,7 @@
                     <script type="text/javascript">${js_open_help}</script>
                     % endif
                 % endif
+                </%doc>
                 
                 ## RSS
                 % if self.attr.rss_url:

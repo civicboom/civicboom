@@ -32,7 +32,6 @@
 ##------------------------------------------------------------------------------
 <%def name="downloads()">
 	<div class="downloads">
-		<h2>Downloads</h2>
 		<div class="downloads-android">
 			<h3>Mobile App</h3>
 			<a class="button" href="/about/mobile">
@@ -120,31 +119,26 @@
 	<div class="windows">
 		<div id="window-orgs" class="window">
 			<div class="window-content">
-				<img src="/images/misc/titlepage/phone_window.png" />
-				<%doc><ul class="content-list">
+				<h1>Need news?</h1>
+				<ol class="content-list">
 					<li>
-						<span class="larger"><span class="hilite">Multi-media</span> interaction</span><br />
-						<span class="indent">with your audience.</span>
+						Sign up
 					</li>
 					<li>
-						<span class="larger"><span class="hilite">Secure</span> communication</span><br />
-						<span class="indent">from trusted followers.</span>
+						Post a request for news
 					</li>
 					<li>
-						<span class="larger"><span class="hilite">Real-time</span> contribution</span><br />
-						<span class="indent">from your users.</span>
+						Publish content generated for your needs
 					</li>
-				</ul></%doc>
+				</ol>
 			</div>
-			<div class="window-tab"><b>Leverage</b> our platform from your phone</div>
 		</div>
 		<div id="window-indvs" class="window">
 			<div class="window-content">
-				<img src="/images/misc/titlepage/you_window.png" />
-				<%doc><ul class="content-list">
+				<h1>Got news?</h1>
+				<ol class="content-list">
 					<li>
-						<span class="larger"><span class="hilite">Participate</span> and share</span><br />
-						<span class="indent">your local news.</span>
+						Sign up
 					</li>
 					<li>
 						<span class="larger"><span class="hilite">Interact</span> and respond</span><br />
@@ -154,9 +148,8 @@
 						<span class="larger"><span class="hilite">Gain</span> recognition</span><br />
 						<span class="indent">from content publishers.</span>
 					</li>
-				</ul></%doc>
+				</ol>
 			</div>
-			<div class="window-tab"><b>You</b> become the source of information</div>
 		</div>
 		<a class="signup-link" href="${url(controller='account', action='signin')}">
 			<div id="window-signup" class="window">
