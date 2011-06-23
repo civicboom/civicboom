@@ -36,7 +36,11 @@
 <%def name="actions_common()">
     ${self.georss_link()}
 </%def>
+    
 <%def name="actions_specific()">
+</%def>
+    
+<%def name="pagination()">
     ## Pagination
     <%
         args, kwargs = c.web_params_to_kwargs
@@ -48,14 +52,17 @@
         count  = d['list']['count']
         items  = len(d['list']['items'])
     %>
-    % if offset > 0:
-        <% kwargs['offset'] = offset - limit %>
-        <a href="${h.url('current', format='html', **kwargs)}" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">prev</a>
-    % endif
-    % if offset + items < count:
-        <% kwargs['offset'] = offset + limit %>
-        <a href="${h.url('current', format='html', **kwargs)}" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">next</a>
-    % endif
+    <div class="pagination">
+        % if offset > 0:
+            <% kwargs['offset'] = offset - limit %>
+            <a href="${h.url('current', format='html', **kwargs)}" class="prev" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">Prev</a>
+        % endif
+        % if offset + items < count:
+            <% kwargs['offset'] = offset + limit %>
+            <a href="${h.url('current', format='html', **kwargs)}" class="next" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">Next</a>
+        % endif
+        <div style="clear: both;"></div>
+    </div>
 </%def>
 
 
@@ -84,7 +91,7 @@
 </%def>
 
 <%def name="sponsored_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_sponsored, type_=('table','tr'),   content_class='sponsored_content',  list_class='content',   *args,  **kwargs)}
+    ${frag_list(render_item_function=render_item_sponsored, type_=('table','tr'),   show_count=False, content_class='sponsored_content',  list_class='content',   *args,  **kwargs)}
 </%def>
 
 
@@ -92,7 +99,7 @@
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(cb_list, title, href=None, show_heading=True, hide_if_empty=True, type_=('ul','li'), content_class=None, list_class='', icon='', render_item_function=None, empty_message=None, actions=None, *args, **kwargs)">
+<%def name="frag_list(cb_list, title, href=None, show_heading=True, show_count=True, paginate=False, hide_if_empty=True, type_=('ul','li'), content_class=None, list_class='', icon='', render_item_function=None, empty_message=None, actions=None, *args, **kwargs)">
     <%
         count = None
         if isinstance(cb_list, dict) and 'items' in cb_list:
@@ -139,9 +146,9 @@
                 % else:
                 ${title}
                 % endif
-                ##% if show_count:
+                % if show_count:
                 <span class="count">${count}</span>
-                ##% endif
+                % endif
                 % if actions:
                     <div class="list_actions">
                     % if type(actions) == types.FunctionType:
@@ -172,6 +179,9 @@
             </${type_[0]}>
             % if href and show_heading and len(items) < count:
             <a href="${href}" ${js_link_to_frag_list} class="link_more">${count-len(items)} more</a>
+            % endif
+            % if paginate:
+                ${pagination()}
             % endif
             </div>
             ##<div style="clear: both;"></div>
@@ -489,34 +499,37 @@
             js_link_to_frag = ''
     %>
 
-    <td colspan="2" class="content_title">
+    <div class="content_title">
         <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
             <p>${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
-        % if content and 'creator' in content:
-            <div class="creator-avatar">
-                ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+        <%doc>% if content and 'creator' in content:
+            <div class="creator_avatar">
+                % if c.logged_in_user:
+                    ${member_includes.avatar(self.content['creator'])}
+                % endif
             </div>
-        % endif
-    </td>
-</tr>
-<tr>
-    <td class="thumbnail" >
+        % endif</%doc>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="thumbnail">
         <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
             ${content_thumbnail_icons(content)}
             <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
         </a>
-    </td>
+    </div>
     
-    <td class="content">
+    <div class="content">
         % if content and 'content_short' in content:
             <p>"${content['content_short']}"</p>
         % endif
-    </td>
-    
-</tr>
-<tr>
-    <td colspan="2" class="content-info">
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="content-info">
         % if content and 'creator' in content:
             <div class="creator">
                 <small class="content_by">By: ${content['creator']['name']}</small>
@@ -539,12 +552,14 @@
             </div>
         % endif
         
-        % if content and 'num_comments' in content:
+        <%doc>% if content and 'num_comments' in content:
             <div class="comments">
                 <small>${content['num_comments']} comments</small>
             </div>
-        % endif
-    </td>
+        % endif</%doc>
+    
+        <div class="separator"></div>
+    </div>
 </tr>
 <tr>
     % if location:

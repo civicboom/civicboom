@@ -27,8 +27,27 @@
 					margin-bottom: 0;
 				}
 				
-				.creator_avatar {
+				.content_creator {
+					margin: 0 0 1em 0.5em;
+					float: left;
+				}
+				
+				.media_icon {
+					padding: 0;
+					width: 40px;
+					height: 40px;
 					float: right;
+					border: 1px solid #ddd;
+					
+					img {
+						width: inherit;
+						height: inherit;
+					}
+				}
+				
+				.creator_avatar {
+					float: left;
+					margin-right: 5px;
 				}
 				
 				h1 {
@@ -60,7 +79,6 @@
 						}
 						
 						.tip {
-							
 							font-size: 85%;
 							color: #666;
 							width: 75px;

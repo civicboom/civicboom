@@ -1,4 +1,5 @@
 @import "../common/_palette.scss";
+@import "../common/_mixin.scss";
 
 /*----------------------------------------------------------------------------*/
 /* Fragment Lists
@@ -10,12 +11,10 @@
 
 		background: $frag-list-top; /* for non-css3 browsers */
 
-		/* border: 0.1em solid $frag-list-border; /* AllanC - removed border for experimenting */
-		border-radius        : $frag-radius;
-		-moz-border-radius   : $frag-radius;
-		-webkit-border-radius: $frag-radius;
+		@include border_radius($frag_radius);
 		
-		margin-top: 1.5em;
+		margin-top: inherit;
+		padding: 0.6em;
 
 		color: $frag-list-title-txt;
 
@@ -23,7 +22,7 @@
 		   Frag list Headings (for lists in content and member frags)
 		   -------------------------- */
 		h2 {
-			font-size: 150%;
+			font-size: 130%;
 			margin: 0em;
 			background-color: #fff; /* $frag-list-title; */
 			padding: 0.5em 0.5em 0.25em 0.5em;
@@ -86,7 +85,7 @@
 			padding: 0.2em;
 			
 			position: relative;
-			top: -0.75em;
+			top: -0.30em;
 			
 			border-radius        : 0.2em;
 			-moz-border-radius   : 0.2em;
@@ -148,78 +147,22 @@
 		}
 	}
 	
-	/* --- Sponsored Feature Content --- */
-	.sponsored_content {
-		margin: 0;
-		padding: 0;
-		width: 100%;
-		display: block;
-		min-height: 15em;
-		
-		.thumbnail {
-			min-width: 125px;
-			max-width: 125px;
-			min-height: 125px;
-			max-height: 125px;
-			margin: 0.25em;
-			padding: 0;
-			
-			img {
-				height: 100%;
-				width: 100%;
-			}
+	.pagination {
+	
+		padding: 0 1em 0.5em 1em;
+		font-weight: bold;
+	
+		a {
+			font-size: 125%;
+		}
+	
+		.next {
+			float: right;
 		}
 		
-		.content_title {
-			text-align: center;
-			font-size: 120%;
-			top: 0.25em;
-			
-			
-			a {
-				display: inline;
-				float: left;
-				margin-top: 5px;
-				margin-left: 10px;
-			}
-			
-			.creator-avatar {
-				display: inline;
-				float: right;
-				margin-right: 5px;
-				width: 40px;
-				height: 40px;
-				border: none;
-				
-				img, .thumbnail, .thumbnail_small {
-					border: none;
-					width: 40px;
-					height: 40px;
-				}
-			}
-		}
-		
-		.content {
-			text-align: left;
-			min-width: 305px;
-			max-width: 305px;
-			color: #333;
-			font-size: 105%;
-			word-wrap: break-word;
-			
-			p {
-				margin-top: 10px;
-				margin-bottom: 10px;
-			}
-		}
-		
-		.content-info {
-		}
-		
-		.content-info div {
-			display: inline;
+		.prev {
 			float: left;
-			margin: 0 5px 5px 15px;
 		}
+	
 	}
 }

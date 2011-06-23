@@ -57,4 +57,81 @@
 			-webkit-border-radius: 0.5em;
 		}
 	}
+	
+	/* --- Sponsored Feature Content --- */
+	.sponsored_content {
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		display: block;
+		min-height: 15em;
+		
+		.thumbnail {
+			min-width: 125px;
+			max-width: 125px;
+			min-height: 125px;
+			max-height: 125px;
+			margin: 0 0.25em 0.25em 0.25em;
+			margin-bottom: 0.15em;
+			padding: 0;
+			float: left;
+			
+			img {
+				height: 100%;
+				width: 100%;
+			}
+		}
+		
+		.content {
+			text-align: left;
+			color: #333;
+			font-size: 120%;
+			word-wrap: break-word;
+			float: left;
+			
+			p {
+				margin-top: 10px;
+				margin-bottom: 10px;
+			}
+		}
+		
+		.content-info {
+			margin-bottom: 1em;
+		}
+		
+		.content-info div {
+			display: inline;
+			float: left;
+			margin: 0 5px 5px 15px;
+		}
+		
+		.content_title {
+			text-align: center;
+			font-size: 120%;
+			top: 0.25em;
+			
+			
+			a {
+				display: inline;
+				float: left;
+				margin-top: 5px;
+				margin-left: 10px;
+			}
+			
+			.creator-avatar {
+				display: inline;
+				float: right;
+				margin-right: 5px;
+				width: 40px;
+				height: 40px;
+				border: none;
+				
+				img, .thumbnail, .thumbnail_small {
+					border: none;
+					width: 40px;
+					height: 40px;
+				}
+			}
+		}
+	}
 }

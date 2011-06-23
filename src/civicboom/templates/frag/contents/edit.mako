@@ -216,7 +216,7 @@
                     mode     : "exact" ,
                     elements : "${area_id}" ,
                     theme    : "advanced" ,
-                    theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
+                    theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,link,unlink",
                     theme_advanced_buttons2 : "",
                     theme_advanced_buttons3 : "",
                     theme_advanced_toolbar_location : "top",
@@ -496,7 +496,7 @@
         </%doc>
             
     <fieldset>
-        <label>Got a deadline?</label>
+        <label>Click here to set a deadline!</label>
         <legend onclick="toggle_edit_section($(this));" class="edit_input">
             <span class="icon16 i_plus"></span>
             <img src="/images/misc/contenticons/calendar.png" alt="Deadline" />
@@ -734,7 +734,7 @@
             <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}</span>
             ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once published." )}
             % if 'publish' in self.actions:
-            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l" )}</span>
+            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l" )}</span>
             % endif
         % else:
             % if 'update' in self.actions:
