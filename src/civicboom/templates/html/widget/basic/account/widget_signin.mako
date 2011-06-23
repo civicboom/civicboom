@@ -9,7 +9,7 @@
     ##% if int(c.widget_width) >= 420:
     ##    ${h.get_janrain(lang=c.lang)}
     ##% else:
-        <a href="" onclick="return janrain_signin();">Signin with other services</a>
+        <a href="" onclick="return janrain_signin();">Sign in with other services</a>
         ${popup(h.get_janrain(lang=c.lang, popup_close=True), javascript_function_name='janrain_signin', title=_('Sign in to _site_name'), height=260, width=420)}
     ##% endif
 % endif

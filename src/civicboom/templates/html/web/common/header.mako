@@ -16,7 +16,6 @@
 ##------------------------------------------------------------------------------
 ## Home Link
 ##------------------------------------------------------------------------------
-
 <%doc>
 % if c.logged_in_persona:
 <a id="home_link" href="${url(controller='profile', action='index')}">
@@ -28,8 +27,17 @@
 </%doc>
 
 ##------------------------------------------------------------------------------
+## Content creation actions
+##------------------------------------------------------------------------------
+<nav id="actions">
+	${h.secure_link(h.url('new_content', target_type='assignment'), _("Make a request"), css_class="button")}
+	${h.secure_link(h.url('new_content', target_type='article'   ), _("Post a story") , css_class="button")}
+</nav>
+
+##------------------------------------------------------------------------------
 ## Menu
 ##------------------------------------------------------------------------------
+<%doc>
 <nav class="menuh-container">
     
 <div class="menuh">
@@ -39,7 +47,6 @@
 	<ul>
 		<li>${h.secure_link(h.url('new_content', target_type='article'   ), _("Post my story")   , css_class="top_parent button")}</li>
 	</ul>
-	<%doc>
     <ul>
         <li><a href="#" class="top_parent button">${_("Create")}</a>
         <ul>
@@ -49,8 +56,6 @@
         </ul>
         </li>
     </ul>
-    </%doc>
-    <%doc>
     <ul>
         <li><a href="#" class="top_parent buttonesque_link">${_("Explore...")}</a>
         <ul>
@@ -75,8 +80,6 @@
         </ul>
         </li>
     </ul>
-    </%doc>
-<%doc>
 % if c.logged_in_persona:
     <ul>
         <li><a href="#" class="top_parent button">${_("Manage")}</a>
@@ -90,15 +93,15 @@
         </li>
     </ul>
 % endif
-</%doc>
 
 </div>
 </nav>
+</%doc>
 
+##------------------------------------------------------------------------------
+## About Buttons
+##------------------------------------------------------------------------------
 <%doc>
-##------------------------------------------------------------------------------
-## Search
-##------------------------------------------------------------------------------
 <div id="aboutbtns">
     <a class="buttonesque_link" style="padding: 0 5px;" href="${url(controller='about', action='howto')}">
         ${_('How to')}
@@ -193,6 +196,7 @@
         <div class="icon_overlay_red ${id}">&nbsp;${messages}&nbsp;</div>
     % endif
 </%def>
+<%doc>
 <div id="persona_select_new">
     <ul>
         <li class="current_persona">
@@ -209,7 +213,7 @@
             </div>
         </li>
         
-        <%def name="persona_new(member, **kwargs)">
+##        <%def name="persona_new(member, **kwargs)">
             <%
                 current_persona = member==c.logged_in_persona
             %>
@@ -242,7 +246,7 @@
                         ${messageIcon(member.num_unread_notifications, "msg_%s_n" % ('c' if current_persona else member.id))}
                 </div>
             </li>
-        </%def>
+##        </%def>
         ## Show default persona (the user logged in)
         ${persona_new(c.logged_in_user)}
         ## Show current persona (current group persona if applicable)
@@ -255,13 +259,13 @@
         % endfor
     </ul>
 </div>
-
+</%doc>
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;">
       <a class="name" href="${url(controller='profile', action='index')}"><!--
         --><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' /><!--
       --></a>
-      <div id="persona_details" class="name">
+      <div id="persona_details">
         ${c.logged_in_persona.name}
       </div>
       <div id="message_holder">
@@ -275,6 +279,12 @@
       </div>
     </div>
     <table>
+        <tr>
+            <td colspan="4">
+                <a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
+                <span style="float:right;"><a href="${h.url('new_group')}" class="sub_option">${_("Create a _Group")}</a></span>
+            </td>
+        </tr>
         <%def name="persona_select(member, **kwargs)">
             <%
                 current_persona = member==c.logged_in_persona
@@ -299,11 +309,6 @@
                         <p class="info">${k.capitalize()}: ${str(v).capitalize()}</p>
                         % endif
                     % endfor
-                    % if current_persona:
-                        <p>
-                            <a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
-                        </p>
-                    % endif
                 </td>
                 <td>
                   <a class   = "icon16 i_message"
@@ -352,15 +357,24 @@
         % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
             ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
         % endfor
-        <tr>
+        <tr class="extras">
             <td colspan="4">
-                ${h.secure_link(
-                    h.url(controller='account', action='signout'),
-                    _('Sign out'),
-                    css_class="button"
-                )}
+                <span style="float:right;">
+                    ${h.secure_link(
+                        h.url(controller='account', action='signout'),
+                        _('Sign out'),
+                        css_class="button"
+                    )}
+                </span>
             </td>
         </tr>
     </table>
 </div>
+% else:
+    <div id="signin">
+        <a class="button" href="${url(controller='account', action='signin')}">
+            ##<img src="/styles/web/login.png" alt="${_("Log in")}" width="68" height="17">
+            ${_('Sign in')}
+        </a>
+    </div>
 % endif

@@ -22,6 +22,8 @@ HTML.blank_background {
 /*                   Three big blocks - header, app, footer                   */
 /*----------------------------------------------------------------------------*/
 
+$header_height: 42px;
+
 HEADER {
 	clear: both;
 	//background: url("headerbk.png") #e6e6e6;
@@ -31,7 +33,7 @@ HEADER {
 	left : 0px;
 	right: 0px;
 	/* height: 64px; */
-    height: 42px;
+    height: $header_height;
 	z-index: 1;
 	/*
 	 * really, the minimum width is 830px; but on an
@@ -52,7 +54,7 @@ HEADER {
 BODY>DIV#app {
 	position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
 	z-index: 0;
-    top: 49px;
+    top: $header_height + 5px;
 }
 
 FOOTER {
@@ -105,11 +107,10 @@ HEADER #persona_select_new {
     white-space: nowrap;
   }
   
-
-  
   li {
     padding-bottom: 4px;
     background-color: #fff;
+    vertical-align: text-bottom;
   }
   
   img {
@@ -134,11 +135,13 @@ HEADER #persona_select_new {
 }
 
 HEADER #persona_select {
-  position: absolute;
-  top : 8px;
-  right: 8px;
+	position: absolute;
+	top : 0px;
+	right: 0px;
 	z-index: 499; /* below the create/explore/manage */
-	width: 14em;
+	width: 280px;
+	height: $header_height;
+
 	P {
 		margin: 0px;
 	}
@@ -147,23 +150,36 @@ HEADER #persona_select {
 		width : 28px;
 		height: 28px;
 		border: 1px solid #888;
-		border-radius        : 0.1em;
-		-moz-border-radius   : 0.1em;
-		-webkit-border-radius: 0.1em;
+		border-radius        : 1px;
+		-moz-border-radius   : 1px;
+		-webkit-border-radius: 1px;
 	}
 
 	table {
-		display: none;
+		//display: none;
 		border: 1px solid #ccc; /*#e9e9e9*/
 		border-top: none;
-		position: relative;
-		right: 7em;//-0.5em;
-		top: -1.25em;
-		width: 22em;
+		border-right: none;
+		position: absolute;
+		right: -280px;
+		top: $header_height;
+		width: 280px;
 		font-size: 88%;
 		background-color: white;
+
+		border-bottom-left-radius        : 8px;
+		-webkit-border-bottom-left-radius: 8px;
+		-moz-border-radius               : 0px 0px 8px 0px;
+
+		-webkit-transition: right 0.15s ease-in;
+		-moz-transition: right 0.15s ease-in;
+		-o-transition: right 0.15s ease-in;
+		transition: right 0.15s ease-in;
 	}
-	&:hover table {display: block;}
+	&:hover table {
+		//display: block;
+		right: 0px;
+	}
 	.current_persona {background-color: #e9e9e9;}
 	.name {font-weight: bold;}
 
@@ -174,6 +190,9 @@ HEADER #persona_select {
 	.info {
 		font-size: 88%;
 	}
+	.extras {
+		border-top: 1px solid #e9e9e9;
+	}
 
 	.selectable:hover {
 		background-color: #e9e9e9;
@@ -182,11 +201,13 @@ HEADER #persona_select {
 
 	#persona_holder {
 	  vertical-align: center;
+	  padding-left: 6px;
+	  padding-top: 6px;
 	}
 
 	#persona_holder #message_holder {
 	  position: relative;
-	  top: -3px;
+	  top: -4px;
 	  vertical-align: center;
 	  //height: 32px;
 	  display: inline-block;
@@ -199,7 +220,7 @@ HEADER #persona_select {
     vertical-align: middle;
     height: 32px;
     display: inline-block;
-    width: 9.5em;
+    width: 15.5em;
     overflow: hidden;
     white-space: nowrap;
     #settings {
@@ -230,49 +251,18 @@ HEADER #home_link {
 /*                                Navigation                                  */
 /*----------------------------------------------------------------------------*/
 
-NAV {
+HEADER NAV {
 	position: absolute;
 	top: 11px;
-	left: 260px;
+	left: 240px;
 	z-index: 500;
 
-	.menuh>UL {
-		margin-left: 8px;
-		margin-right: 8px;
-		height: 20px;
-	}
-	.menuh>UL>LI>UL{
-		margin-top: 0px;
-		padding-top: 0px;
-	}
-	.menuh ul {
+	.button {
+		margin-left: 6px;
+		margin-right: 6px;
 		width: 120px;
-	}
-	.menuh a.sub_option,
-	.menuh a.sub_option:visited,
-	.menuh a.parent {
-		display: block;
-		background: white;
-		color: black;
-		border-left: 1px solid #555;
-		border-right: 1px solid #555;
-		border-bottom: 1px solid #ddd;
-	}
-	.menuh a.sub_option:hover {
-		background: #eef;
-	}
-	.menuh LI:last-child>a.sub_option {
-		border-bottom: 1px solid #555;
-
-		border-bottom-left-radius         : 0.2em;
-		border-bottom-right-radius        : 0.2em;
-		-webkit-border-bottom-right-radius: 0.2em;
-		-webkit-border-bottom-left-radius : 0.2em;
-		-moz-border-radius                : 0px 0px 0.2em 0.2em;
-
-	}
-	.menuh INPUT {
-		width: 100%;
+		padding-top: 2px;
+		padding-bottom: 2px;
 	}
 }
 
@@ -316,9 +306,9 @@ $search_buttons: 3;
 HEADER #search {
 	position: absolute;
 	top: 12px;
-	left: 540px;
+	left: 520px;
 	width: $search_width;
-	height: 20px;
+	height: 40px;
 
 	/* things that apply un-hoverred and hoverred */
 	.search_input {
@@ -340,10 +330,10 @@ HEADER #search {
 		&.b3 {left: $search_width/$search_buttons*2;}
 
 		&.b0, &.b1, &.b2, &.b3 {
-			-webkit-transition: opacity 0.25s ease-in;
-			-moz-transition: opacity 0.25s ease-in;
-			-o-transition: opacity 0.25s ease-in;
-			transition: opacity 0.25s ease-in;
+			-webkit-transition: opacity 0.15s ease-in;
+			-moz-transition: opacity 0.15s ease-in;
+			-o-transition: opacity 0.15s ease-in;
+			transition: opacity 0.15s ease-in;
 
 			border-top: none;
 			border-top-left-radius: 0px;
@@ -458,29 +448,43 @@ FOOTER {
 /*                                  Thin Mode                                 */
 /*----------------------------------------------------------------------------*/
 
+@media (min-width: 941px) and (max-width: 1200px) {
+	HEADER #actions {
+		left: 150px;
+	}
+	HEADER #search {
+		left: 430px;
+	}
+}
+
 @media (max-width: 940px) {
 	HEADER {
 		min-width: 480px;
-		height: 84px;
+		height: 137px;
 	}
-	HEADER #persona_select {
-		z-index: 501; /* above the create/explore/manage */
-	}
-	HEADER #aboutbtns {
-		display: none;
-	}
-	NAV {
+	HEADER #actions {
 		top: 53px;
 		left: 0px;
 		right: 0px;
+		text-align: center;
+		.button {
+			width: 40%;
+		}
 	}
-	NAV .menuh {
-		width: 400px;
-		margin: auto;
+	HEADER #search {
+		top: 87px;
+		left: (480px - 300px) / 2;
+		.button {&.b1, &.b2, &.b3 {opacity: 1.0;}}
+		.search_input {
+			border-bottom-left-radius: 0px;
+			-webkit-border-bottom-left-radius: 0px;
+			border-bottom-right-radius: 0px;
+			-webkit-border-bottom-right-radius: 0px;
+			-moz-border-radius: $input-radius $input-radius 0px 0px;
+		}
 	}
-	NAV .menuh>UL {
-		margin-left: 4px;
-		margin-right: 4px;
+	HEADER #persona_select {
+		z-index: 501; /* above the create/explore/manage */
 	}
 
 	BODY>DIV#app {

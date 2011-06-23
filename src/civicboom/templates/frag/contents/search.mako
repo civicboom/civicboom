@@ -30,7 +30,7 @@
     <div class="frag_col">
 	    <div class="frag_list">
 		<form class="form" id="form_search" action="${url('contents')}" method="GET"
-              onsubmit="unplacehold('#form_search'); cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
+              onsubmit="unplacehold('#form_search'); cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_2'); return false;">
             <fieldset>
 				<p><label>Search for</label><br>
                 <input type="search" name="term" placeholder="Enter key words" value="${kwargs.get('term')}"/>
@@ -39,11 +39,11 @@
 				<select name="list" style="width: 100%;">
 				<%
 				types = [
-					("all",                  _("All _Content")),
+					("all",                  _("All _content")),
 					("assignments_active",   _("_Assignments")),
 					("responses",            _("_Responses")),
 					("articles",             _("_Articles")),
-					("assignments_previous", _("Past _Assignments")),
+					("assignments_previous", _("Past _assignments")),
 				]
 				%>
                 % for list, name in types:

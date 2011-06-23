@@ -503,27 +503,24 @@
         <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
             <p>${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
-        <%doc>% if content and 'creator' in content:
-            <div class="creator_avatar">
-                % if c.logged_in_user:
-                    ${member_includes.avatar(self.content['creator'])}
-                % endif
-            </div>
-        % endif</%doc>
+        <div class="content_avatar">
+            % if content and 'creator' in content:
+                ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+            % endif
+        </div>
     </div>
 
     <div class="separator"></div>
-
-    <div class="thumbnail">
-        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
-            ${content_thumbnail_icons(content)}
-            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
-        </a>
-    </div>
     
     <div class="content">
+        <div class="thumbnail">
+            <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+                ${content_thumbnail_icons(content)}
+                <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
+            </a>
+        </div>
         % if content and 'content_short' in content:
-            <p>"${content['content_short']}"</p>
+            "${content['content_short']}"
         % endif
     </div>
 
@@ -557,9 +554,8 @@
                 <small>${content['num_comments']} comments</small>
             </div>
         % endif</%doc>
-    
-        <div class="separator"></div>
     </div>
+    <div class="separator"></div>
 </tr>
 <tr>
     % if location:

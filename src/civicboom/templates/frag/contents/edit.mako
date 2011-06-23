@@ -302,10 +302,10 @@
             tags_string += tag + separator
         %>
         <input class="detail edit_input" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
-        ##<span>(${_('separated by commas')} ',')</span>
+        <span>(${_('separated by commas')} ',')</span>
         ##${popup(_("extra_info"))}
     </fieldset>
-    <div class="separator"></div>
+    <div class="separator"></div><div class="separator"></div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -316,9 +316,9 @@
     <fieldset>
         <label>
             % if self.selected_type == 'assignment':
-                Got media to help build a better request?
+                Add media to help build a better request?
             % elif self.selected_type == 'article':
-                Got media to help build a better story?
+                Add media to help build a better story?
             % endif
         </label>
         <legend onclick="toggle_edit_section($(this));" class="edit_input">
@@ -583,7 +583,7 @@
 <%def name="location()">
     <!-- Licence -->
     <fieldset>
-        <label>Got a location?</label>
+        <label>Add a location?</label>
         <legend onclick="toggle_edit_section($(this));" class="edit_input">
             <span class="icon16 i_plus"></span>
             <img src="/images/misc/contenticons/map.png" alt="Location" />
@@ -688,6 +688,76 @@
 <%def name="submit_buttons()">
 
     ## AllanC - note the class selectors are used by jQuery to simulate clicks
+    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r', extrajs='')">
+
+        <%
+            button_id = "submit_%s_%s" % (name, self.id)
+            if not title_text:
+                title_text = _(name)
+        %>
+
+        % if mo_text:
+            <span class="mo-help">
+            <div class="${mo_class}">
+                <h2>${title_text}</h2>
+                <p>${_(mo_text)}</p>
+            </div>
+        % endif
+                <input
+                    type    = "submit"
+                    id      = "${button_id}"
+                    name    = "submit_${name}"
+                    class   = "submit_${name} button"
+                    value   = "${title_text}"
+                    onclick = "
+                        ${extrajs}
+                        ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
+                        if (!$(this).hasClass('disabled')) {
+                            $(this).addClass('disabled');
+                            add_onclick_submit_field($(this));
+                            % if show_content_frag_on_submit_complete:
+                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                            % endif
+                            setTimeout(function() {
+                                $(this).removeClass('disabled');
+                            }, 1000);
+                        }
+                        else {
+                            return false;
+                        }
+                    "
+                />
+        % if mo_text:
+            </span>
+        % endif
+    </%def>
+    
+    <div style="font-size: 130%; text-align: center;" class="buttons">
+        ${popup.popup_static('What happens now?', what_now, '', html_class="what-now-pop")}
+        % if self.content['type'] == "draft":
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}</span>
+            ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once published." )}
+            % if 'publish' in self.actions:
+            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l", extrajs="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
+            % endif
+        % else:
+            % if 'update' in self.actions:
+            ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
+            % endif
+            <a class="button" style="color: #444;" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
+        % endif
+    </div>
+    <div class="separator"></div><div class="separator"></div>
+</%def>
+
+##------------------------------------------------------------------------------
+## What happens now?
+##------------------------------------------------------------------------------
+<%def name="what_now_link()">
+</%def>
+
+<%def name="what_now()">
+
     <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r')">
 
         <%
@@ -715,9 +785,11 @@
                             $(this).addClass('disabled');
                             add_onclick_submit_field($(this));
                             % if show_content_frag_on_submit_complete:
-                            submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
                             % endif
-                            setTimeout('$(\'#${button_id}\').removeClass(\'disabled\');', 1000);
+                            setTimeout(function() {
+                                $(this).removeClass('disabled');
+                            }, 1000);
                         }
                         else {
                             return false;
@@ -728,55 +800,50 @@
             </span>
         % endif
     </%def>
-    
-    <div style="font-size: 130%; text-align: center;">
-        % if self.content['type'] == "draft":
-            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}</span>
-            ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once published." )}
-            % if 'publish' in self.actions:
-            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l" )}</span>
-            % endif
-        % else:
-            % if 'update' in self.actions:
-            ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
-            % endif
-            <a class="button" style="color: #444;" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
-        % endif
-    </div>
-    <div class="separator"></div><div class="separator"></div>
-</%def>
-
-##------------------------------------------------------------------------------
-## What happens now?
-##------------------------------------------------------------------------------
-<%def name="what_now_link()">
-    <div class="what_now" style="float: right;">
-        <a href="" class="what-now-popup">What happens once I post this?</a>
-        <script>
-            $('.what-now-popup').click(function() {
-                $('#what-now').modal({ onShow: function (dialog) {}});
-                return false;
-            });
-        </script>
-        ${popup.popup_static('What happens now?', what_now, 'what-now')}
-    </div>
-</%def>
-
-<%def name="what_now()">
     <div class="information">
-	<div class="popup-title">
-	    What happens once I publish this?
-	</div>
-	<div class="popup-message">
-	    Once you publish this, it will appear:
-	    <ol>
-		<li>${_("In your _Widget for your community to respond to")}</li>
-		<li>${_("In your follower's notification stream")}</li>
-		<li>${_("On the _site_name request stream")}</li>
-	    </ol>
-	</div>
-	<div class="popup-tag-line">
-	    Don't just read it. Feed it.
-	</div>
+        
+        % if self.selected_type == "assignment":
+        	<div class="popup-title">
+        	    Once you post this request, it will appear:
+        	</div>
+        	<div class="popup-message">
+        	    <ol>
+        		<li>${_("In your _Widget for your community to respond to")}</li>
+        		<li>${_("In your follower's notification stream")}</li>
+        		<li>${_("On the _site_name request stream")}</li>
+        	    </ol>
+        	</div>
+        % elif self.selected_type == "article":
+            % if self.content.get('parent'):
+                <div class="popup-title">
+                    Once you share this story, it will:
+                </div>
+                <div class="popup-message">
+                    <ol>
+                    <li>${_("Be sent directly to")} ${self.content.get('parent',dict()).get('creator', dict()).get('name')}</li>
+                    <li>${_("Be listed as a response against the request")}</li>
+                    <li>${_("Appear in your follower's notification stream")}</li>
+                    </ol>
+                </div>
+            % else:
+                <div class="popup-title">
+                    Once you post this story, it will appear in your follower's notification stream.
+                </div>
+                <div class="popup-title">
+                    You will also be able to share it on Facebook, LinkedIn and Twitter once you post.
+                </div>
+            % endif
+        % endif
+        <div style="font-size: 130%; text-align: center;">
+            % if self.content['type'] == "draft":
+                % if 'publish' in self.actions:
+                <span >${submit_button('publish', _("Yes I want to Post!"), show_content_frag_on_submit_complete=True, prompt_aggregate=True)}</span>
+                % endif
+            % else:
+                % if 'update' in self.actions:
+                ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
+                % endif
+            % endif
+        </div>
     </div>
 </%def>

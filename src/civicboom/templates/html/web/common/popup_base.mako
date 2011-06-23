@@ -5,10 +5,10 @@
     ${popup_static(_('Dialog'), "", "popup", display_none=True)}
 </%def>
 
-<%def name="popup_static(title, content, html_id, display_none=False)">
+<%def name="popup_static(title, content, html_id, display_none=False, html_class='')">
     ## ${popup.popup('flag_content', _('Flag content'), flag_form)}
     ## involke with <a href='' onclick="$('#flag_content').modal(); return false;">
-    <div id="${html_id}" class="hideable"
+    <div id="${html_id}" class="hideable ${html_class}"
         % if display_none:
         style="display:none;"
         % endif

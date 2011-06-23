@@ -23,6 +23,7 @@
 <li><a class="button" href="${h.url(controller='misc', action='about', id='upgrade_plans')}">${_("Upgrade Plans")}</a>
 <li><p>
 <li><a class="button" href="${h.url(controller='misc', action='about', id='mobile'     )}">${_("Mobile")}</a>
+<li><a class="button" href="${h.url(controller='misc', action='about', id='mobile-map' )}">${_("Mobile Map")}</a>
 <li><p>
 <li><a class="button" href="${h.url(controller='misc', action='about', id='developers' )}">${_("Developers")}</a>
 <li><a class="button" href="${h.url(controller='misc', action='about', id='open-source')}">${_("Open Source")}</a>
