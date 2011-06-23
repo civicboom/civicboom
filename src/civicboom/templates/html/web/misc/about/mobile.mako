@@ -41,7 +41,7 @@ ${_("Get your news")} <i>${_("in")}</i> ${_("the news")}
 <td>
 <h3>${_("Get the Android app now:")}</h3>
 <img src="/images/about/mobile/android.png" alt="android">
-<br><a class="button" target="none" href="http://market.android.com/details?id=com.civicboom.mobile2">Download</a>
+<br><a class="button" href="http://market.android.com/details?id=com.civicboom.mobile2" target="blank">Download</a>
 </td>
 
 </tr></table>
@@ -74,10 +74,10 @@ ${_("Scan the barcode (opposite) into your phone by using the barcode reader on 
 <h1>${_("Signed up to _site_name via Facebook, Twitter, LinkedIn, etc? Then once you've downloaded the app:")}</h1>
 
 <ol class="bulleted">
-<li>${_("Go to your")} <a href="/settings/me/password">${_("website settings page")}</a>
+<li>${_("Go to your")} <a href="/settings/me/password">${_("password and mobile access page")}</a>
 <li>${_("Make a note of your username")}
 <li>${_("Create a password")}
-<li>${_("Log into the mobile app with your username and password")}
+<li>${_("Log into the mobile app on your handset with your username and password")}
 </ol>
 
 
