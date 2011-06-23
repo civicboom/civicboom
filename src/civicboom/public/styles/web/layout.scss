@@ -84,12 +84,58 @@ HEADER #logo {
 /*                             Persona Select                                 */
 /*----------------------------------------------------------------------------*/
 
+HEADER #persona_select_new {
+  position: absolute;
+  top: 8px;
+  right: 200px;
+  z-index: 499;
+  width: 20em;
+  
+  div {
+    display: inline-block;
+  }
+  
+  .persona_detail {
+    //vertical-align: middle;
+    width: 15em;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+
+  
+  li {
+    padding-bottom: 4px;
+    background-color: #fff;
+  }
+  
+  img {
+    width : 28px;
+    height: 28px;
+    border: 1px solid #888;
+    border-radius        : 0.1em;
+    -moz-border-radius   : 0.1em;
+    -webkit-border-radius: 0.1em;
+    float: left;
+    margin-right: 3px;
+  }
+  
+  
+  li.hover {
+    //display:none;
+  }
+  ul:hover li.hover {
+    display: block;
+  }
+  
+}
+
 HEADER #persona_select {
   position: absolute;
   top : 8px;
-  left: 260px;
+  right: 8px;
 	z-index: 499; /* below the create/explore/manage */
-
+	width: 14em;
 	P {
 		margin: 0px;
 	}
@@ -108,7 +154,9 @@ HEADER #persona_select {
 		border: 1px solid #ccc; /*#e9e9e9*/
 		border-top: none;
 		position: relative;
-		left: -0.5em;
+		right: 7em;//-0.5em;
+		top: -1.25em;
+		width: 22em;
 		font-size: 88%;
 		background-color: white;
 	}
@@ -142,9 +190,10 @@ HEADER #persona_select {
 	}
 	
   #persona_holder #persona_details {
+    vertical-align: middle;
     position: relative;
     top: -3px;
-    vertical-align: center;
+    vertical-align: middle;
     height: 32px;
     display: inline-block;
     width: 9.5em;
@@ -181,7 +230,7 @@ HEADER #home_link {
 NAV {
 	position: absolute;
 	top: 11px;
-	left: 505px;
+	left: 260px;
 	z-index: 500;
 
 	.menuh>UL {
@@ -264,7 +313,7 @@ $search_buttons: 3;
 HEADER #search {
 	position: absolute;
 	top: 12px;
-	right: 486px;
+	left: 540px;
 	width: $search_width;
 	height: 20px;
 
@@ -365,7 +414,7 @@ HEADER #signin {
 
     /*
     width: 54px;
-    height: 18px; /* +2px border 
+    height: 18px; // +2px border 
     text-align: center;
     vertical-align: middle;
     background-color: #eee;
