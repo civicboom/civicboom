@@ -85,6 +85,10 @@
             link += "<a href='${h.url('member', id=member, sub_domain='www')}'>${_('%s on _site_name' % member)}</a>";
             link += "</iframe>";
             
+            % if current_protocol() != 'http':
+            link = link.replace('http://','${current_protocol()}://');
+            % endif
+            
             // Set preview area to generated iframe url
             widget_creator.find('.preview').html(link);
             // Populate textarea with generated iframe url string
@@ -106,9 +110,9 @@
 % if member:
 <iframe \
  name='${_("_site_name")}'\
- id='CivicboomWidget'\
+ id='CivicboomWidget-${theme}'\
  title='${_("_site_name _widget")}'\
- src='${h.url('member_action', id=widget_default['owner'], action=widget_default['base_list'], sub_domain='widget', protocol=protocol)}'\
+ src='${h.url('member_action', id=widget_default['owner'], action=widget_default['base_list'], theme=theme ,sub_domain='widget', protocol=protocol)}'\
  width='${widget_default['width']}'\
  height='${widget_default['height']}'\
  scrolling='no'\
@@ -125,9 +129,17 @@
 ## Tab content
 ##------------------------------------------------------------------------------
 
+##----------------------------------
+## What is a widget
+##----------------------------------
+
 <%def name="what(member)">
 what
 </%def>
+
+##----------------------------------
+## Basic
+##----------------------------------
 
 <%def name="basic(member)">
 <div class="widget_creator">
@@ -136,7 +148,7 @@ what
         widget_default = widget_defaults[theme]
     %>
     <div class="params">
-        <form name="widget_customisation" action="">
+        <form action="">
             
             <label>${_("Title")}</label>
                 <input type="text" name="title" value="${widget_default['title']}" size="30"/><br/>
@@ -179,6 +191,13 @@ what
                 % for color_name, color_field in colors:
                 <label>${color_name}</label><input type="text" id="${color_field}" name="${color_field}" value="${widget_default[color_field]}" size="6" />
                 % endfor
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        % for color_name, color_field in colors:
+                        $('#${color_field}').simpleColorPicker();
+                        % endfor
+                    });
+                </script>
             </fieldset>
         
         </form>
@@ -197,6 +216,31 @@ what
 </div>
 </%def>
 
+##----------------------------------
+## Gradient
+##----------------------------------
+
 <%def name="gradient(member)">
-gradient
+<div class="widget_creator">
+    <%
+        theme          = 'gradient'
+        widget_default = widget_defaults[theme]
+    %>
+    <div class="params">
+        <form action="">
+        </form>
+        <input type="button" value=${_("Preview _widget")} onClick="preview_widget($(this));" />
+        
+    </div>
+    
+    <div class="preview">
+        ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
+    </div>
+    
+    <div class="code">
+        <form action="">
+            <textarea>${widget_iframe(theme=theme, member=member, protocol=current_protocol())}</textarea>
+        </form>
+    </div>
+</div>
 </%def>

@@ -43,180 +43,183 @@ $title-kerning: 0.08em;
 
 /* -------------------------------------------------------------------------- */
 
-a {
-    color: inherit;
-}
-
-.button {
-    display: inline-block;
-
-    border    : 0.1em solid $button-border;
-    @include horiz_gradient($button-top, $button-bot);
-    @include border_radius(0.4em);
+#CivicboomWidget-gradient {
     
-    color: $button-txt;
-    
-    font-size: 70%;
-    font-weight: bold;
-    
-    text-decoration: none;
-    padding: 0.6em;
-    padding-top: 0.7em;
-}
-.button:hover {
-    @include horiz_gradient($button-bot, $button-top);
-}
-
-.item_feedback {
-    display :inline-block;
-    width  :10px;
-    height :10px;
-    span {
-        display: none;
-    }
-}
-.item_selected {
-    background:url('/images/widget/item_selected.png') no-repeat;
-}
-.item_unselected {
-    background:url('/images/widget/item_unselected.png') no-repeat;
-}
-
-/* -------------------------------------------------------------------------- */
-
-.widget_border {
-    position: relative;
-    .padding {
-        padding: 0.1em;
-    }
-}
-
-.widget_header {
-    position: relative;
-    
-    margin-bottom: 0.1em;
-    height: 2.2em;
-    
-    letter-spacing: $title-kerning;
-    
-    border: $border-size solid $header_border;
-    @include horiz_gradient($header-top, $header-bot);
-    
-    color: $widget-header-txt;
-    
-    .padding {
-        padding: 0.15em;
-        padding-left: 0.4em;
+    a {
+        color: inherit;
     }
     
-    .logo {
-        position: absolute;
-        bottom: 0.1em;
-        right : 0.1em;
-        opacity: 0.5;
-        width: 4em;
-    }
-}
-
-.widget_content {
-    border: $border-size solid $content-border;
-
-    @include horiz_gradient_mid($content-top-bot,$content-mid);
+    .button {
+        display: inline-block;
     
-    position: absolute;
-    top   : 2.6em;
-    bottom: 0.1em;
-    left  : 0.1em;
-    right : 0.1em;
-    
-    overflow  : hidden;
-    /* overflow-y: scroll; */
-    
-    color: $widget-content-txt;
-    
-    $widget_content_padding: 0.2em;
-    .padding {
-        padding: $widget_content_padding;
-    }
-    
-    UL>:first-child {
-        display: block;
-    }
-    
-    LI {
-        font-size: 80%;
-        display: none;
-        /* margin-bottom: $widget_content_padding; */
-        margin: 0.1em;
+        border    : 0.1em solid $button-border;
+        @include horiz_gradient($button-top, $button-bot);
+        @include border_radius(0.4em);
         
-        .thumbnail_border {
+        color: $button-txt;
         
-            width: 30%;
-            float: left;
-            border: $border-size solid $content-thumbnail-border;
-            background-color: #ffffff;
-            
-            .padding {
-                padding: 0.4em;
-            }
-            
-            .thumbnail {
-                width: 100%;
-                border: $border-size solid $content-thumbnail-border;
-            }
+        font-size: 70%;
+        font-weight: bold;
+        
+        text-decoration: none;
+        padding: 0.6em;
+        padding-top: 0.7em;
+    }
+    .button:hover {
+        @include horiz_gradient($button-bot, $button-top);
+    }
+    
+    .item_feedback {
+        display :inline-block;
+        width  :10px;
+        height :10px;
+        span {
+            display: none;
         }
-        .details {
-            width: 65%;
-            float: right;
-            
-            .title {
-                margin: 0.3em 0em;
-                font-weight: bold;
-            }
-            .title:after {
-                content: '”'; /* &#148; */
-                font-size: 500%;
-                position: absolute;
-                margin-top : -0.2em;
-                
-                color: #ffffff;
-            }
-            
+    }
+    .item_selected {
+        background:url('/images/widget/item_selected.png') no-repeat;
+    }
+    .item_unselected {
+        background:url('/images/widget/item_unselected.png') no-repeat;
+    }
+    
+    /* -------------------------------------------------------------------------- */
+    
+    .widget_border {
+        position: relative;
+        .padding {
+            padding: 0.1em;
         }
-        .respond {
+    }
+    
+    .widget_header {
+        position: relative;
+        
+        margin-bottom: 0.1em;
+        height: 2.2em;
+        
+        letter-spacing: $title-kerning;
+        
+        border: $border-size solid $header_border;
+        @include horiz_gradient($header-top, $header-bot);
+        
+        color: $widget-header-txt;
+        
+        .padding {
+            padding: 0.15em;
+            padding-left: 0.4em;
+        }
+        
+        .logo {
             position: absolute;
-            margin-top: 4em;
-            margin-left: 5.8em;
+            bottom: 0.1em;
+            right : 0.1em;
+            opacity: 0.5;
+            width: 4em;
+        }
+    }
+    
+    .widget_content {
+        border: $border-size solid $content-border;
+    
+        @include horiz_gradient_mid($content-top-bot,$content-mid);
+        
+        position: absolute;
+        top   : 2.6em;
+        bottom: 0.1em;
+        left  : 0.1em;
+        right : 0.1em;
+        
+        overflow  : hidden;
+        /* overflow-y: scroll; */
+        
+        color: $widget-content-txt;
+        
+        $widget_content_padding: 0.2em;
+        .padding {
+            padding: $widget_content_padding;
+        }
+        
+        UL>:first-child {
+            display: block;
+        }
+        
+        LI {
+            font-size: 80%;
+            display: none;
+            /* margin-bottom: $widget_content_padding; */
+            margin: 0.1em;
+            
+            .thumbnail_border {
+            
+                width: 30%;
+                float: left;
+                border: $border-size solid $content-thumbnail-border;
+                background-color: #ffffff;
+                
+                .padding {
+                    padding: 0.4em;
+                }
+                
+                .thumbnail {
+                    width: 100%;
+                    border: $border-size solid $content-thumbnail-border;
+                }
+            }
+            .details {
+                width: 65%;
+                float: right;
+                
+                .title {
+                    margin: 0.3em 0em;
+                    font-weight: bold;
+                }
+                .title:after {
+                    content: '”'; /* &#148; */
+                    font-size: 500%;
+                    position: absolute;
+                    margin-top : -0.2em;
+                    
+                    color: #ffffff;
+                }
+                
+            }
+            .respond {
+                position: absolute;
+                margin-top: 4em;
+                margin-left: 7em;
+                /* letter-spacing: $title-kerning; */
+            }
+        }
+        
+        .more_link {
+            position: absolute;
+            float : right;
+            right : 1em;
+            bottom: 0em;
+            
+            font-size: 60%;
+            color: $button-txt;
             letter-spacing: $title-kerning;
         }
     }
     
-    .more_link {
-        position: absolute;
-        float : right;
-        right : 1em;
-        bottom: 0em;
-        
-        font-size: 60%;
-        color: $button-txt;
-        letter-spacing: $title-kerning;
-    }
-}
-
-.jcarousel-skin-widget-gradient {
-    .jcarousel-control {
-        position: absolute;
-        bottom: 0em;
-        padding-left: 4px;
-        z-index: 100;
-        font-size: 0px;
-
-        .item_feedback {
-            padding-left: 4px; /* only px will work because we've had to set the font size to 0px what a hack */
+    .jcarousel-skin-widget-gradient {
+        .jcarousel-control {
+            position: absolute;
+            bottom: 0em;
+            padding-left: 4px;
+            z-index: 100;
+            font-size: 0px;
+    
+            .item_feedback {
+                padding-left: 4px; /* only px will work because we've had to set the font size to 0px what a hack */
+            }
         }
-    }
-    .jcarousel-item-horizontal {
-        height: 110px;
-
+        .jcarousel-item-horizontal {
+            height: 110px;
+    
+        }
     }
 }

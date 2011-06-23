@@ -59,12 +59,12 @@
         };
         
         function widget_carousel_itemVisibleInCallbackAfterAnimation(carousel, item, idx, state) {
-            console.log('Item #' + idx + ' is now visible');
+            ##console.log('Item #' + idx + ' is now visible');
             get_jcarousel_control_item(item, idx).addClass('item_selected').removeClass('item_unselected');
         };
         
         function widget_carousel_itemVisibleOutCallbackAfterAnimation(carousel, item, idx, state) {
-            console.log('Item #' + idx + ' is no longer visible');
+            ##console.log('Item #' + idx + ' is no longer visible');
             get_jcarousel_control_item(item, idx).removeClass('item_selected').addClass('item_unselected');
         };
         

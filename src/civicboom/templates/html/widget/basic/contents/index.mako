@@ -71,7 +71,9 @@
     ##<ul class="content_list jcarousel-skin-tango" id="widget_carousel">
     ## AllanC - buggy peice of crap!! .. UL can only have ONE class or the courasel breaks .. ***ing great
     <div id="widget_carousel_fallback_container" class="content_list">
-    <ul id="widget_carousel" class="jcarousel-skin-tango">
+    ##<ul id="widget_carousel" class="jcarousel-skin-tango">
+    ## AllanC - WTF!!! with the ID present the js scripts bleed between iframes .. WTF WTF WTF!!!!
+    <ul class="jcarousel-skin-tango">
     % for content in contents:
         ${content_item(content)}
     % endfor

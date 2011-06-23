@@ -97,13 +97,20 @@ def url(*args, **kwargs):
             widget_theme = c.widget.get('theme')
         except:
             pass
+        if kwargs.get('theme'):
+            widget_theme = kwargs['theme']
+            del kwargs['theme']
+        
         widget_default = dict(widget_defaults.get(widget_theme))
-        for key, value in c.widget.iteritems():
+        for key, value in widget_default.iteritems():
+            #print "key:%s value:%s" % (key,value)
             if isinstance(value, dict) and 'username' in value: # the owner may be a dict, convert it back to a username
                 value = value['username']
             # Check if value is the same as widget default - there is no need to add this to the URL if they match
-            if widget_default.get(widget_var_prefix+key) != value:
-                kwargs[widget_var_prefix+key] = value
+            required_fields = ['theme']
+            wkey = widget_var_prefix + key
+            if key in required_fields or widget_default.get(wkey) != value:
+                kwargs[wkey] = value
 
     args = list(args)
     if 'current' in args:
