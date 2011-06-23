@@ -23,8 +23,9 @@
 </%def>
 
 <%def name="search()">
-	<%include file="/frag/contents/search.mako"/>
+    <%include file="/frag/contents/search.mako"/>
 </%def>
+
 <%def name="list()">
     <%include file="/frag/contents/index.mako"/>
 </%def>

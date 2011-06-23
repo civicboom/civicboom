@@ -27,6 +27,7 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     <div class="frag_col">
+	    <div class="frag_list">
 		<!--
         <form id="form_search" action="${url('contents')}" method="GET"
               onsubmit="cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
@@ -65,5 +66,6 @@
 				<input type="submit" value="Search" class="button"/>
             </fieldset>
         </form>
+	    </div>
     </div>
 </%def>

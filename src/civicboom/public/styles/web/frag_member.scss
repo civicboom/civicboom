@@ -4,12 +4,16 @@
 	.frag_member {
 		/*-------------------------- Frag Member Cols---------------------------------*/
 		.frag_top_row {
-			padding: 0.5em 0.9em 0 0.9em;
+			/*padding: 0.5em 0.9em 0 0.9em;*/
 			color: #333;
 			
 			h1 {
 				margin-left: 0.5em;
 				margin-bottom: 0.5em;
+			}
+			
+			.frag_col {
+				margin-bottom: 0;
 			}
 				
 			.about_me {
