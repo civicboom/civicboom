@@ -80,6 +80,7 @@ python-magic      - PSF
 GeoAlchemy        - MIT
 GeoFormAlchemy    - MIT
 twitter           - MIT
+pexif             - MIT
 -->
 
 <p>DB Framework -

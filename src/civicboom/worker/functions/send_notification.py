@@ -95,6 +95,8 @@ def send_notification(members, message): #members, rendered_message
             member.username, message.get('name'), message_tech_options
         ))
 
+    return True
+
 
 
 #-------------------------------------------------------------------------------

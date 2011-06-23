@@ -92,7 +92,7 @@ def _init_search_filters():
     def append_search_text(query, text):
         parts = []
         for word in text.split():
-            word = re.sub("[^a-zA-Z0-9]", "", word)
+            word = re.sub("[^a-zA-Z0-9_-]", "", word)
             if word:
                 parts.append(word)
 
@@ -664,7 +664,7 @@ class ContentsController(BaseController):
         
         # Tags
         if 'tags_string' in kwargs:
-            tags_input   = set([tag.strip().lower() for tag in kwargs['tags_string'].split(config['setting.content.tag_string_separator']) if tag!=""]) # Get tags from form removing any empty strings
+            tags_input   = set([tag.strip().lower() for tag in kwargs['tags_string'].split(config['setting.content.tag_string_separator']) if tag.strip()!=""]) # Get tags from form removing any empty strings
             tags_current = set([tag.name for tag in content.tags]) # Get tags form current content object
             content.tags = [tag for tag in content.tags if not tag.name in tags_current - tags_input] # remove unneeded tags
             for new_tag_name in tags_input - tags_current: # add new tags

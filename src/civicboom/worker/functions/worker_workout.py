@@ -30,3 +30,5 @@ def worker_workout():
     print url(protocol='test', host='cake', controller="misc", action="about", id="civicboom")
     print url(protocol='test', controller="misc", action="about", id="civicboom")
     print url(sub_domain='subdom', controller="misc", action="about", id="civicboom")
+
+    return True

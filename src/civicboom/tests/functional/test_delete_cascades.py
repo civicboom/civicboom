@@ -5,8 +5,6 @@ from civicboom.lib.database.get_cached import get_member, get_group, get_content
 from civicboom.model         import Boom, Content, Media, Member, Follow, GroupMembership, Message, Tag, MemberAssignment, PaymentAccount
 from civicboom.model.meta    import Session
 
-from base64 import b64encode, b64decode
-
 import logging
 log = logging.getLogger(__name__)
 
@@ -95,7 +93,7 @@ class TestDeleteCascadesController(TestController):
         #  - group membership
         
         # Create content with media
-        self.png1x1 = b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAAXNSR0IArs4c6QAAAApJREFUCNdj+AcAAQAA/8I+2MAAAAAASUVORK5CYII=')
+        self.png1x1 = self.generate_image((1, 1))
         response = self.app.post(
             url('contents', format='json'),
             params={

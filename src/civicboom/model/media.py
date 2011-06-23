@@ -2,6 +2,7 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, DateTime
 from sqlalchemy import func
+from sqlalchemy.schema import CheckConstraint
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 
 from civicboom.model.meta import Base
@@ -33,6 +34,12 @@ class Media(Base):
     filesize      = Column(Integer(),        nullable=True, doc="the length of the processed media file in bytes")
     location      = Golumn(Point(2),         nullable=True)
     timestamp     = Column(DateTime(),       nullable=False, default=func.now())
+
+    __table_args__ = (
+        CheckConstraint("length(subtype) > 0"),
+        CheckConstraint("length(hash) = 40"),
+        {}
+    )
     
     __to_dict__ = Base.__to_dict__.copy()
     __to_dict__.update({

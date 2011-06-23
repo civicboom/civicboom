@@ -6,6 +6,8 @@ import subprocess
 
 import cbutils.warehouse as wh
 from cbutils.worker import config
+from civicboom.model.meta import Session
+from civicboom.model import Media
 
 import logging
 log = logging.getLogger(__name__)
@@ -25,19 +27,13 @@ def _ffmpeg(args):
     log.debug("return: %d", proc.returncode)
 
 
-def _update_media_length(hash, length):
-    """
-    Placeholder to update media file length in DB
-    """
-    #import database actions
-    # update the record in db
-
-
 def _reformed(name, ext):
     return os.path.splitext(name)[0] + "." + ext
 
 
 def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
+    db_object = Session.query(Media).filter(Media.hash==file_hash).first()
+
     import redis
     m               = redis.Redis(config['service.redis.server'])
     status_key    = str("media_processing_"+file_hash)
@@ -59,6 +55,12 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
 
     m.setex(status_key, "encoding media", status_expire)
     if file_type == "image":
+        try:
+            import pexif
+            (lat, lon) = pexif.JpegFile.fromFile(tmp_file).get_geo()
+            db_object.location = "SRID=4326;POINT(%f %f)" % (lon, lat)
+        except Exception as e:
+            pass
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
         size = (int(config["media.media.width"]), int(config["media.media.height"]))
         im = Image.open(tmp_file)
@@ -91,7 +93,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         # TODO:
         # for RSS 2.0 'enclosure' we need to know the length of the processed file in bytes
         # We should include here a call to database to update the length field
-        #_update_media_length(file_hash, os.path.getsize(processed.name))
+        db_object.filesize = os.path.getsize(processed.name)
         processed.close()
 
     # Get the thumbnail processed and uploaded ASAP
@@ -135,3 +137,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
 
     m.delete(status_key)
     log.debug("deleting status_key %s" % status_key)
+
+    Session.commit()
+
+    return True

@@ -164,6 +164,11 @@ class RegisterController(BaseController):
         @comment AllanC GET triggers HTML page
         """
         
+        # record the username exactly as given (eg Bob Bobson), the validator
+        # will return a valid username (bob-bobson). Have the username exactly
+        # as given as their default display name.
+        given_username = kwargs.get("username", "")
+
         # Check the username and email and raise any problems via the flash message session system
         try:
             kwargs = RegisterSchemaEmailUsername().to_python(kwargs) #dict(request.params)
@@ -174,6 +179,7 @@ class RegisterController(BaseController):
         u = User()
         u.username         = kwargs['username']
         u.email_unverified = kwargs['email']
+        u.name             = given_username  # display name will be asked for in step #2. For now, copying username is a good enough space filler
         Session.add(u)
         Session.commit()
         
@@ -202,7 +208,7 @@ class RegisterController(BaseController):
         if config['demo_mode'] and (c.format=='html' or c.format=='redirect'):
             return redirect(validation_url(u, controller='register', action='new_user'))
 
-        user_log.info("Sending verification email")
+        user_log.info("Sending verification email to %s (%s)" % (u.username, u.email_unverified))
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
         
