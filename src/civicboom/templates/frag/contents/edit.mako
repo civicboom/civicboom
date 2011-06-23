@@ -305,7 +305,7 @@
         ##<span>(${_('separated by commas')} ',')</span>
         ##${popup(_("extra_info"))}
     </fieldset>
-    <div class="separator"></div>
+    <div class="separator"></div><div class="separator"></div>
 </%def>
 
 ##------------------------------------------------------------------------------
