@@ -85,11 +85,11 @@ ${_('What did you expect to happen:')}
             % endif
 
 			<tr>
-		        <td style="padding: 3px 0 0 3px" colspan="2"><input type="submit" name="submit" value="submit"/></td>
+		        <td style="padding: 3px 0 0 3px" colspan="2"><input type="submit" name="submit" value="Send message"/></td>
 			</tr>
         </table>
     </form>
     <br />
-    <a href="mailto:feedback@civicboom.com">${_("Alternatively email us your feedback")}</a>
+    <a href="mailto:feedback@civicboom.com">${_("Alternatively, email us your feedback")}</a>
     
 </%def>

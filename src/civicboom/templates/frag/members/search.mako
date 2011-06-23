@@ -34,15 +34,15 @@
 
 				<p><label for="type">Type</label><br>
 				<select name="type">
-                    <option value="">${_("_Users and _Groups")}</option>
-                    <option value="user">${_("Just _Users")}</option>
-                    <option value="group">${_("Just _Groups")}</option>
+                    <option value="">${_("_Users and _groups")}</option>
+                    <option value="user">${_("Just _users")}</option>
+                    <option value="group">${_("Just _groups")}</option>
 				</select>
 
                 <p><label for="sort">Order by</label><br/>
 				<select name="sort">
-					<option value="-id">Newest First</option>
-					<option value="name">Display Name</option>
+					<option value="-id">Newest first</option>
+					<option value="name">Display name</option>
 				</select>
 
                 <p>&nbsp;<br>
