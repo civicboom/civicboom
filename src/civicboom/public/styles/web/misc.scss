@@ -1,3 +1,4 @@
+@import "../common/_palette.scss";
 /*----------------------------------------------------------------------------*/
 /*                                 Titlepage                                  */
 /*----------------------------------------------------------------------------*/
@@ -238,6 +239,80 @@ BODY.c-register.a-new_user.u-user {
 	}
 }
 
+table.upgrade_plans {
+
+  $thin-border: 1px solid gray;
+  $hilt-border: 2px solid $button-top;
+  $cell-width:  5em;
+  $head-font:   120%;
+  
+  tbody tr:nth-child(odd) {
+    background: lighten($cb-lightblue, 40%);
+  }
+  
+  .larger {
+    font-size: 120%;
+  }
+  
+  td {
+    padding-left: 1.5em;
+    padding-right: 1em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+  }
+  
+  thead {
+    td {
+      border-top: $thin-border;
+      border-bottom: $thin-border;
+      font-weight: bold;
+      font-size: $head-font;
+      padding-top: 0.4em;
+      padding-bottom: 0.4em;
+    }
+      .hilight {
+          border: $hilt-border;
+      }
+  }
+  
+  tbody {
+    border: $thin-border;
+    td.title {
+      border-right: $thin-border;
+    }
+    td.item {
+        width: $cell-width;
+    }
+    .hilight {
+      border-left: $hilt-border;
+      border-right: $hilt-border;
+    }
+  }
+  
+  tfoot {
+    .foot{
+      td {
+        border-top: $thin-border;
+        border-bottom: $thin-border;
+        font-weight: bold;
+        padding-top: 0.25em;
+        padding-bottom: 0.25em;
+      }
+      .hilight {
+        border: $hilt-border;
+      }
+    }
+    .upgrade{
+      td {
+        padding : 0.2em;
+        text-align: center;
+        .button {
+          //width: $cell-width * $head-font;
+        }
+      }
+    }
+  }
+}
 
 /*
  * about page, lots of text with a couple of custom bits

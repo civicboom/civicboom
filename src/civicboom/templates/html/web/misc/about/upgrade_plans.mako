@@ -2,7 +2,7 @@
 <%def name="title()">${_("Payment Plans")}</%def>
 
 <%def name="body()">
-    <h1>Get more from Civicboom</h1>
+    <h1>${_('_site_name plans')}</h1>
     ${upgrade_details()}
 </%def>
 
@@ -15,15 +15,119 @@
 
 
 <%def name="upgrade_details()">
-    <p>£50.00 per month (no lengthy contracts - pay as you go).</p>
-    <p>Why upgrade? In addition to the basic system, Premium account gives you: </p>
-    <ul>
-        <li>Unlimited requests - ask what you want, whenever you want.</li>
-        <li>Create open or closed requests - these are your call-to-actions for a community, audience or customer on any topic, issue or event.</li>
-        <li>Create open or closed Hubs - they are your "brand" identity</li>
-        <li>Filter out weak content - disassociate from "off brand" copy...</li>
-        <li>Schedule requests - plan multiple requests for campaigns, set deadlines and event dates with automated alerts</li>
-    </ul>
+    <%
+        plans = ['free', 'plus', 'corp']
+        hilight_plan = 'plus'
+        plan_details = {
+            'free': {
+                'title': _('Free'),
+                'cost':  _('Free'),
+            },
+            'plus': {
+                'title': _('Pro Lite'),
+                'cost':  _(u'£10/month'),
+            },
+            'corp': {
+                'title': _('Pro Premium'),
+                'cost':  _(u'£200/month'),
+            }
+        }
+        features = [
+            {
+                'title': _('Up to 5 requests per month'),
+                'who'  : ['free'],
+            },
+            {
+                'title': _('Up to 20 requests per month'),
+                'who'  : ['plus'],
+            },
+            {
+                'title': _('Unlimited requests per month'),
+                'who'  : ['corp'],
+            },
+            {
+                'title': _('Scheduled requests'),
+                'who'  : ['plus', 'corp'],
+            },
+            {
+                'title': _('Multiple messaging'),
+                'who'  : ['plus', 'corp'],
+            },
+            {
+                'title': _('Post requests and get responses via own site'),
+                'who'  : ['plus', 'corp'],
+            },
+            {
+                'title': _('Basic Hubs'),
+                'who'  : ['free'],
+            },
+            {
+                'title': _('Up to 3 Pro Hubs'),
+                'who'  : ['plus'],
+            },
+            {
+                'title': _('Unlimited Pro Hubs (for multiple titles/sites)'),
+                'who'  : ['plus', 'corp'],
+            },
+        ]
+    %>
+
+    <p>
+        ${_('_site_name is free to use')} - 
+        ${_("we offer a limited version that's perfect for non-professionals who want to respond to requests and share their stories directly to news organisations.")}
+    </p>
+    <p>
+        ${_('We also offer enhanced versions - the Pro Lite and the Pro Premium')}<br />
+        ${_("There are no long-term commitments - just upgrade and pay on a month-by-month basis. If you want to revert to the free plan, you can. Hover over each of the features for more details.")}
+    </p>
+    <table class="upgrade_plans">
+        <thead>
+            <tr>
+                <td class="larger">${_('Features')}</td>
+                % for plan in plans:
+                    <td class="item ${'hilight' if plan == hilight_plan else ''}">
+                        ${plan_details[plan]['title']}
+                    </td>
+                % endfor
+            </tr>
+        </thead>
+        <tbody>
+            % for feature in features:
+                <tr>
+                    <td class="title">${feature['title']}</td>
+                    % for plan in plans:
+                        <td class="item  ${'hilight' if plan == hilight_plan else ''}">
+                            % if plan in feature['who']:
+                                YES
+                            % else:
+                                N/A
+                            % endif
+                        </td>
+                    % endfor
+                </tr>
+            % endfor
+        </tbody>
+        <tfoot>
+            <tr class="foot">
+                <td class="title">${_('Cost')}</td>
+                % for plan in plans:
+                    <td class="item  ${'hilight' if plan == hilight_plan else ''}">
+                        ${plan_details[plan]['cost']}
+                    </td>
+                % endfor
+            </tr>
+            <tr class="upgrade">
+                <td></td>
+                % if len(plans)-2 > 0:
+                    % for x in range(len(plans)-2):
+                        <td></td>
+                    % endfor
+                % endif
+                <td><a class="button">Upgrade Now</a></td>
+                <td><a class="button">Learn More</a></td>
+            </tr>
+        </tfoot>
+    </table>
     
     % if not c.logged_in_user:
     <p>Please sign in to upgrade you account.</p>
@@ -60,116 +164,4 @@
     
     ##<p>We promise we'll be in touch within 24 hours - or you get a free Premium upgrade!</p>
     ##<p>Civicboom Team</p>
-</%def>
-
-
-
-
-
-<%doc>
-<%
-  c.upgrade_plans_title = None
-  c.upgrade_plans_subtitle = None
-  %>
-
-
-<%def name="init_vars()">
-    <%
-        self.attr.title     = _('Upgrade Account')
-        self.attr.icon_type = 'dialog'
-    %>
-</%def>
-
-${payplans()}
-
-<%def name="old_payplans()">
-  % if c.upgrade_plans_title:
-    <h1 style="font-size: 200%; text-align: center">${c.upgrade_plans_title}</h1>
-  % endif
-    % if c.upgrade_plans_subtitle:
-    <h1 style="text-align: center">${c.upgrade_plans_subtitle}</h1>
-  % endif
-
-
-  <div style="text-align: left;">
-  <h1>Organisations, get the Premium plan:</h1>
-  <h1>&pound;50 per month</h1>
-  <style>
-  	ul.circle li {
-  		font-size: 1.25em;
-  		list-style: outside circle;
-  		margin-left: 1.5em;
-  		padding-bottom: 0.25em;
-  	}
-  </style>
-  <ul class="circle">
-  <li>
-  	<b>Unlimited requests</b> - ask what you want, whenever you want.
-  </li>
-  <li>
-  	<b>Create open or closed requests</b> - these are your call-to-actions for a
-  	community, audience or customer on any topic, issue or event.
-  </li>
-  <li>
-	<b>Create open or closed Hubs</b> - they are your "brand" identity
-  </li>
-  <li>
-	<b>Collaborate</b> - with other Hubs/organisations
-  </li>
-  <li>
-	<b>Monitor uptake</b> - know who has accepted a request prior to responding
-  </li>
-  <li>
-	<b>Schedule requests</b> - plan multiple requests for campaigns, set deadlines and event dates with automated alerts 
-  </li>
-  <li>
-	<b>Add audio to requests and responses</b> - both from your PC and out in the field via your mobile.
-  </li>
-  <li>
-	<b>Filter out weak content</b> - disassociate from "off brand" copy
-  </li>
-  <li>
-	<b>Connect directly</b> - message you Hubs and followers for cross-referencing 
-  </li>
-  <li>
-	<b>Geolocate content</b> - view requests and responses on an interactive map 
-  </li>
-  <li>
-	<b>Go mobile</b> - push out requests and gather content from your audience on the move
-  </li>
-  <li>
-	<b>Build on the Civicboom API</b>	 - create your own hyperlocal pages, 
-	community engagement/mapping, live feeds into multiple sites.
-  </li>
-  </ul>
-  <div style="padding-top: 3.5em;text-align:center;" class="front_center">
-  	<a class="button" style="width: 15em; font-size: 2em;" href="mailto:sales@civicboom.com">Email to register your interest</a>
-  </div>
-  </div>
-</%def>
-  
-  
-
-
-    ##    c.upgrade_plans_title = 'You have reached your Basic account limit for this month.'
-    ##    c.upgrade_plans_subtitle = 'If you want to get more from Civicboom you can choose premium or above:'
-
-
-
-  
-</%doc>
-
-
-<%def name="breadcrumbs()">
-<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-	<a href="${h.url(controller='misc', action='about', id='index')}" itemprop="url">
-		<span itemprop="title">About</span>
-	</a>
-</span>
-&rarr;
-<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-	<a href="${h.url(controller='misc', action='about', id='index')}" itemprop="url">
-		<span itemprop="title">Company</span>
-	</a>
-</span>
 </%def>
