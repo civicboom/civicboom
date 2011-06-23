@@ -1,4 +1,6 @@
 @import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
 /*----------------------------------------------------------------------------*/
 /*                                 Titlepage                                  */
 /*----------------------------------------------------------------------------*/
@@ -79,7 +81,7 @@ BODY.c-misc.a-titlepage {
 			padding: 0;
 			margin: 0 auto 0 auto;
 			color: #666;
-			font-size: 200%;
+			font-size: 300%;
 			font-weight: normal;
 		}
 	}

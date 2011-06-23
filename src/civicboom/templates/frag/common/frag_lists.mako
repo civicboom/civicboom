@@ -347,7 +347,7 @@
                         % endif
                     </a>
                 </p>
-            % elif content['type']=='article'   :
+            % elif content['type']=='article':
                 <p class="extra">
                 ${_('Views')}:${content['views']}
                 % if content.get('tags'):
@@ -361,6 +361,18 @@
                 <p class="extra"><a href="${response_url_static}" onclick="cb_frag($(this), '${response_url_frag}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
             % endif
         % endif
+        
+        ## Creator avatar
+        <%doc>% if creator and 'creator' in content:
+            ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+        % endif</%doc>
+        ## Responses show parent Creator
+        ##% if content.get('parent') and content['parent'].get('creator'):
+        ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
+        ##% endif
+        <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
+        
+        <div style="clear: both;"></div>
     </td>
 
     <%doc>
@@ -368,18 +380,6 @@
           <p><small class="content_by">By: ${content['creator']['name']}</small>
         % endif
     </%doc>
-
-    <td class="creator">
-        ## Creator avatar
-        % if creator and 'creator' in content:
-            ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
-        % endif
-        ## Responses show parent Creator
-        ##% if content.get('parent') and content['parent'].get('creator'):
-        ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
-        ##% endif
-    </td>
-    
 </tr>
 % if request.GET.get('term', '') and 'content_short' in content:
 <tr><td colspan="5">
@@ -513,15 +513,19 @@
     <div class="separator"></div>
     
     <div class="content">
+        % if not 'images/default/thumbnail' in content['thumbnail_url']:
         <div class="thumbnail">
             <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
                 ${content_thumbnail_icons(content)}
                 <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
             </a>
         </div>
-        % if content and 'content_short' in content:
-            "${content['content_short']}"
         % endif
+        % if content and 'content_short' in content:
+            ${h.truncate(content['content_short'], length=140, indicator='...', whole_word=True)}
+            <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag} style="font-size: 75%;">learn more</a>
+        % endif
+        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag} class="prompt">Click here to participate <img src="/images/settings/arrow.png" style="vertical-align: middle;" /></a>
     </div>
 
     <div class="separator"></div>

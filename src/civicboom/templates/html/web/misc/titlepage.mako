@@ -12,7 +12,6 @@
 	<div class="new_front" style="margin-bottom: 20em;">
 		${front_headline()}
 		${front_windows()}
-		${front_about()}
 		<div style="width:100%;left:0;bottom:17px;position:fixed;padding:1.5em 0 0 0;background-color:#cee2fa;">
 			<div style="width:100%;height:10em;background-color:#adcef7;">
 				<div style="width:61em;padding:1em 0 1em 0;margin: auto;">
@@ -23,6 +22,8 @@
 		</div>
 	</div>
 </%def>
+	
+	
 
 ##------------------------------------------------------------------------------
 ## Download / Mobile App
@@ -67,7 +68,7 @@
 ## New Front Title
 ##------------------------------------------------------------------------------
 
-<%def name="header()">
+<%doc><%def name="header()">
 	<table><tr>
 		<td colspan="4" class="how-to"><a>How to</a> | <a href="${url(controller='misc', action='about', id='mobile')}">Mobile</a></td>
 	</tr><tr>
@@ -103,15 +104,12 @@
 			</form>
 		</td>
 	</tr></table>
-</%def>
+</%def></%doc>
 
 <%def name="front_headline()">
 	<div class="title-box">
-		<h1 class="headline">
-			The simple way to source and share news
-		</h1>
 		<h2 class="tagline">
-			${_('_Respond to _requests and generate news or feature _content for your needs.')}
+			${_("_site_name: Connecting people that need news with people that have news")}
 		</h2>
 	</div>
 </%def>
@@ -165,16 +163,6 @@
 				</div>
 			</div>
 		</a>
-	</div>
-</%def>
-	
-<%def name="front_about()">
-	<div class="about">
-		<a>Get started!</a><br />
-		<a href="${url(controller='account', action='signin')}">Sign up as a user.</a><br />
-		<a href="${url(controller='contents', action='index', list='assignments_active')}">${_('Browse _requests.')}</a><br />
-		<a>${_('Respond and share your news.')}</a><br />
-		<a>${_('Set _requests for other to respond to & upload your news _content to share.')}</a><br />
 	</div>
 </%def>
 	
