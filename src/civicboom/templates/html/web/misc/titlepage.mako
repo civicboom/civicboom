@@ -1,6 +1,8 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
-<%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
+##<%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
+
+<%def name="html_class_additions()">blank_background</%def>
 
 <%def name="title()">${_("Welcome")}</%def>
 
