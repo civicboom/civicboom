@@ -117,7 +117,7 @@
     
     <div class="frag_right_col">
       <div class="frag_col">
-        <div style="clear:left;" class="frag_list">
+        <%doc><div style="clear:left;" class="frag_list">
           <h2>Set&nbsp;by</h2>
           <div class="frag_list_contents">
             <div class="content">
@@ -137,7 +137,7 @@
               </div>
             </div>
           </div>
-        </div>
+	</div></%doc>
         % if self.attr.share_kwargs:
             ${share.AddThisFragList(**self.attr.share_kwargs)}
         % endif
@@ -178,13 +178,35 @@
     ##----Title----
     <h1>${self.content['title']}</h1>
     <div style="clear: both;"></div>
-    <div style="margin: 0 0 1em 0.5em; float: left;">By: ${self.content['creator']['name']}</div>
     <div class="creator_avatar">
 	% if c.logged_in_user:
 	${member_includes.avatar(self.content['creator'])}
 	%endif
     </div>
-    <div style="clear: both;"></div>
+    <div class="content_creator">By: ${self.content['creator']['name']}</div>
+    ${map_icon()}
+    <div style="clear: both; padding-bottom: 10px;"></div>
+</%def>
+
+##------------------------------------------------------------------------------
+## Media icons
+##------------------------------------------------------------------------------
+<%def name="map_icon()">
+    <% content = self.content %>
+    % if content.get('location'):
+	##<a href="" class="map_popup">
+	    <div class="media_icon">
+		<img src="/images/misc/contenticons/map.png" />
+	    </div>
+	##</a>
+	##<script>
+	##    $('.map_popup').click(function() {
+	##	$('#map-popup').modal({ onShow: function (dialog) {}});
+	##	return false;
+	##    });
+	##</script>
+	##${popup.popup_static('map', content_map, 'map-popup')}
+    % endif
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -305,7 +327,7 @@
     <div style="padding-top: 20px;" class="acceptrequest">
 	<table>
 	    <tr>
-		<td class="tip"><div>Make the news!</div></td>
+		<td class="tip"></td>
 		<td>
 		## --- Publish -----------------------------------------------------------
 		% if 'publish' in self.actions:
@@ -444,22 +466,22 @@
 <%def name="content_map()">
     <% content = self.content %>
     % if content.get('location'):
-        <%
-        lon = content['location'].split(' ')[0]
-        lat = content['location'].split(' ')[1]
-        %>
-        <p>
-        ${loc.minimap(
-            name=h.uniqueish_id("map", content['id']),
-            width="100%", height="200px",
-            lat = lat,
-            lon = lon,
-            feeds = [
-                dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)      ),
-                dict(pin='red',     url='/contents.rss?id=%s'          % content['id']  ),
-            ]
-        )}
-        </p>
+	<%
+	lon = content['location'].split(' ')[0]
+	lat = content['location'].split(' ')[1]
+	%>
+	<p>
+	${loc.minimap(
+	    name=h.uniqueish_id("map", content['id']),
+	    width="100%", height="200px",
+	    lat = lat,
+	    lon = lon,
+	    feeds = [
+		dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)      ),
+		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']  ),
+	    ]
+	)}
+	</p>
     % endif
 </%def>
 

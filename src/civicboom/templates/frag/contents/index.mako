@@ -16,5 +16,11 @@
             list_title = kwargs['list'].capitalize()
     %>
             
-    ${parent.content_list(d['list'], list_title, show_heading=False, creator=creator)}
+    ## Display first item in content list as 'sponsored'
+    ## Temporary -> designed to be replaced by actual sponsored/partner content
+    <div class="frag_list">
+    <div style="border: 1px solid #ddd; padding: 10px;">${parent.sponsored_list(d['list']['items'][0], list_title, show_heading=False)}</div>
+    <div style="clear: both;"></div>
+    ## Rest of content list
+    ${parent.content_list(d['list']['items'][1:], list_title, show_heading=False, paginate=True, creator=creator)}</div>
 </%def>
