@@ -130,9 +130,9 @@ HEADER #persona_select_new {
 }
 
 HEADER #persona_select {
-  position: absolute;
-  top : 8px;
-  right: 0px;
+	position: absolute;
+	top : 6px;
+	right: 0px;
 	z-index: 499; /* below the create/explore/manage */
 	width: 21em;
 	P {
