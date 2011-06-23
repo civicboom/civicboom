@@ -62,7 +62,7 @@
     if not isinstance(c.widget['owner'], dict):
         c.widget['owner'] = dict(avatar_url='', username='', name='')
 %>
-<body id="CivicboomWidget" class="${additonal_layout_class}" style="width:${c.widget['width']}px; height:${c.widget['height']}px;">
+<body id="CivicboomWidget-${c.widget['theme']}" class="${additonal_layout_class}" style="width:${c.widget['width']}px; height:${c.widget['height']}px;">
     ${next.body()}
     ${scripts_end.google_analytics_end()}
 </body>

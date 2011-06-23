@@ -7,8 +7,8 @@
 .widget_border {
     font-size: ${font_size}px;
     ##color    : #${c.widget['color_font']};
-    width : ${c.widget['width' ]}px;
-    height: ${c.widget['height']}px;
+    width : ${c.widget['width' ]-2}px;
+    height: ${c.widget['height']-2}px;
     
     border: 0.1em solid #c4cdd2;
     ##${c.widget['color_border']};
