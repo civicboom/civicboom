@@ -291,17 +291,23 @@ HEADER #search {
 		top: 20px;
 		width: 100px;
 
-		display: none;
-
 		&.b1 {left: 0px;}
 		&.b2 {left: 100px;}
 		&.b3 {left: 200px;}
+
+		&.b0, &.b1, &.b2, &.b3 {
+			opacity: 0.0;
+			-webkit-transition:opacity 0.25s ease-in;
+			-moz-transition:opacity 0.25s ease-in;
+			-o-transition:opacity 0.25s ease-in;
+			transition:opacity 0.25s ease-in;
+		}
 	}
 
 	&:hover .button {
-		&.b1 {display: inline-block;}
-		&.b2 {display: inline-block;}
-		&.b3 {display: inline-block;}
+		&.b1, &.b2, &.b3 {
+			opacity: 1.0;
+		}
 	}
 }
 
