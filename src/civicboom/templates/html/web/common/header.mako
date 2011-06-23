@@ -31,7 +31,7 @@
 ##------------------------------------------------------------------------------
 <nav id="actions">
 	${h.secure_link(h.url('new_content', target_type='assignment'), _("Make a request"), css_class="button")}
-	${h.secure_link(h.url('new_content', target_type='article'   ), _("Post my story") , css_class="button")}
+	${h.secure_link(h.url('new_content', target_type='article'   ), _("Post a story") , css_class="button")}
 </nav>
 
 ##------------------------------------------------------------------------------
