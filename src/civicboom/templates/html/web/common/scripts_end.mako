@@ -108,7 +108,7 @@
 function refresh_fragment_height() {
 	var height = $('footer').offset().top - $('#app').offset().top;
 	//Y.log(height);
-	createCSS(".frag_data", "height: "+(height-20)+"px !important;");
+	createCSS(".frag_data", "height: "+(height-40)+"px !important;");
 }
 refresh_fragment_height();
 $(window).resize(refresh_fragment_height);

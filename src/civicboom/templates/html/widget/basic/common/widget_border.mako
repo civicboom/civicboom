@@ -9,21 +9,6 @@
     
     self.size_content = size_content
     
-    #if not c.widget['owner']:
-    #    c.widget['owner'] = d.get('content',dict()).get('creator')
-    #if not c.widget['owner']:
-    #    c.widget['owner'] = d.get('member')
-    if not c.widget['owner']:
-        from civicboom.lib.database.get_cached import get_member
-        from civicboom.lib.web                 import current_url
-        args, kwargs = h.get_object_from_action_url(current_url())
-        if args and kwargs and 'member' in args and 'id' in kwargs:
-            owner_obj = get_member(kwargs['id'])
-            if owner_obj:
-                c.widget['owner'] = owner_obj.to_dict()
-    if not isinstance(c.widget['owner'], dict):
-        c.widget['owner'] = dict(avatar_url='', username='', name='')
-    
     owner = c.widget['owner']
     title = c.widget['title']
     

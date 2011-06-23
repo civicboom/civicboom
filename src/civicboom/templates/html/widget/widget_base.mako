@@ -24,8 +24,8 @@
     ##----------------------------------------------------------------------
     ## Scripts
     ##----------------------------------------------------------------------
-    <script type='text/javascript' src='/javascript/jquery-1.5.1.js'        ></script>
-    <script type='text/javascript' src='/javascript/jquery.jcarousel.min.js'></script>
+    <%def name="scripts_head()"></%def>
+    ${self.scripts_head()}
 
     ##----------------------------------------------------------------------
     ## Google Analitics (async setup, see scripts_end for more)
@@ -41,9 +41,26 @@
 </head>
 
 <%
-additonal_layout_class = ""
-#if isinstance(c.widget_width, basestring) and int(c.widget_width) >= 280:
-#    additonal_layout_class = "wide"
+    additonal_layout_class = ""
+    
+    #if isinstance(c.widget_width, basestring) and int(c.widget_width) >= 280:
+    #    additonal_layout_class = "wide"
+
+
+    #if not c.widget['owner']:
+    #    c.widget['owner'] = d.get('content',dict()).get('creator')
+    #if not c.widget['owner']:
+    #    c.widget['owner'] = d.get('member')
+    if not c.widget['owner']:
+        from civicboom.lib.database.get_cached import get_member
+        from civicboom.lib.web                 import current_url
+        args, kwargs = h.get_object_from_action_url(current_url())
+        if args and kwargs and 'member' in args and 'id' in kwargs:
+            owner_obj = get_member(kwargs['id'])
+            if owner_obj:
+                c.widget['owner'] = owner_obj.to_dict()
+    if not isinstance(c.widget['owner'], dict):
+        c.widget['owner'] = dict(avatar_url='', username='', name='')
 %>
 <body id="CivicboomWidget" class="${additonal_layout_class}" style="width:${c.widget['width']}px; height:${c.widget['height']}px;">
     ${next.body()}
