@@ -225,6 +225,7 @@
                     ${member.name}
                 </div>
                 <div class="message_holder">
+                        <%doc>
                         <a class   = "icon16 i_message"
                            href    = "${h.url('messages',list='to')}"
                            title   = "${_('Messages')}"
@@ -232,6 +233,7 @@
                         ><span>${_('Messages')}</span>
                         </a>
                         ${messageIcon(member.num_unread_messages, "msg_%s_m" % ('c' if current_persona else member.id))}
+                        </%doc>
                         <br />
                         <a class   = "icon16 i_notification"
                            href    = "${h.url('messages',list='notification')}"
