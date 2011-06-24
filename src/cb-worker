@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import logging
+import logging.handlers
 import optparse
 import sys
 
@@ -37,6 +38,11 @@ def main(argv):
     c.read(options.ini)
     w.config = c.defaults()
     w.config["sqlalchemy.main.url"] = c.get("app:main", "sqlalchemy.main.url")
+
+    if ("error_email_from" in w.config) and ("email_to" in w.config):
+        smtp = logging.handlers.SMTPHandler("localhost", w.config["error_email_from"], w.config["email_to"].split(","), "Worker Error")
+        smtp.setLevel(logging.WARNING)
+        logging.getLogger('').addHandler(smtp)
 
     if w.config['worker.queue'] in ['inline', 'threads']:
         log.error("Separate worker doesn't make sense for inline or threaded mode")
@@ -151,10 +157,12 @@ def add_test_jobs():
     from webhelpers.html import literal
     w.add_job({
         'task': 'send_notification',
-        'default_route': 'ne',
-        'name': 'article_published_by_followed',
         'members': [u'unitfriend', u'follow_test'],
-        'rendered_message': {
+        'message': {
+            'default_route': u'ne',
+            'subject': u'test',
+            'content': u'default content',
+            'name': u'assignment_created',
             'e': {
                 'subject': u'Civicboom: new content',
                 'content_text': u'Testing User (https://...) has written new content : Untitled (https://...)',
