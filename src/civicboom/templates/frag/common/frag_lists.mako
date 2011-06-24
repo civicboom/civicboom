@@ -326,7 +326,7 @@
         </a>
     </td>
     
-    <td class="content_details">
+    <td class="content_details"> 
         <a href="${item_url}" ${js_link_to_frag}>
             <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
@@ -370,7 +370,7 @@
         ##% if content.get('parent') and content['parent'].get('creator'):
         ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
         ##% endif
-        <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
+        <%doc><a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a></%doc>
         
         <div style="clear: both;"></div>
     </td>
