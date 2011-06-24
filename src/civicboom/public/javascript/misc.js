@@ -217,6 +217,27 @@ function countInputLength (event, textElement, maxLength, statusElement) {
 	if (typeof statusElement != 'undefined') statusElement.text(maxLength - (textLength));
 }
 
+function convertYesNoCheckbox() {
+	var selects = $('select.yesno').filter(':visible');
+	if (selects.length == 0) return;
+	selects.after('<input type="checkbox" class="yesnocheck unproc" />');
+	selects.hide();
+	var checks = $('input.yesnocheck').filter('.unproc');
+	checks.each(function(index) {
+	    var value = $(this).prev('select.yesno').val();
+	    $(this).attr('checked', (value == '' || value == 'no')?'':'checked');
+	});
+	checks.unbind().change(function() {
+	    var yesno = $(this).prev('select.yesno');
+	    var yes = yesno.children('.yes').val();
+	    var no  = yesno.children('.no' ).val();
+	    yesno.val(this.checked ? yes:no);
+	});
+	checks.removeClass('unproc');
+}
+
+$(convertYesNoCheckbox);
+
 function init_validation(element, validator) {
 	var check_timer = null;
 	element.keyup(function() {

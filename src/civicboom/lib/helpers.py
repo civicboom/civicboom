@@ -15,7 +15,7 @@ from webhelpers.html.tags import end_form
 from webhelpers.date import time_ago_in_words
 
 from cbutils.text import strip_html_tags, scan_for_embedable_view_and_autolink
-from cbutils.misc import args_to_tuple, make_username
+from cbutils.misc import args_to_tuple, make_username, now
 from civicboom.lib.web import current_url, url, current_protocol
 
 import webhelpers.html.tags as html
@@ -271,6 +271,8 @@ def icon(icon_type, description=None, class_=''):
 #-------------------------------------------------------------------------------
 
 def api_datestr_to_datetime(date_str):
+    if not date_str:
+        return None
     return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
 
 
@@ -466,13 +468,13 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         #     - set timer so that in 1 seconds time the link 'disabled class is removed'
         #  - return false and ensure that the normal list is not followed
         # GregM: This now looks for jquery relative span > form instead of unique id
-        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled')) {$(this).addClass('disabled'); var e = $(this).siblings('span').children('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout('$(\"#link_%(hhash)s\").removeClass(\"disabled\");', 1000);} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled')) {$(this).addClass('disabled'); var e = $(this).siblings('span').children('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout(function (elem){elem.removeClass('disabled');}, 1000, $(this));} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
     # $('#form_%(hhash)s').onsubmit();
     
     # form vs link switcher (hide the compatable form)
     # GregM: Hides secure_hide classed elements & removes class (stop dups); Shows secure_show classed elements & removes class (ditto)
-    hs = HTML.script(literal('$(".secure_hide").hide().removeClass("secure_hide"); $(".secure_show").show().removeClass("secure_show");   $("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))
+    hs = HTML.script(literal('$(".secure_hide").hide().removeClass("secure_hide"); $(".secure_show").show().removeClass("secure_show");'))
     
     return HTML.span(hf+hl+hs, class_="secure_link") #+json_submit_script
 

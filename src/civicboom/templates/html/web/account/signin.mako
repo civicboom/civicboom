@@ -1,4 +1,7 @@
 <%inherit file="/html/web/common/html_base.mako"/>
+
+<%def name="html_class_additions()">blank_background</%def>
+
 <%def name="title()">${_("Sign in")}</%def>
 
 <style>

@@ -1,5 +1,6 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
+<%def name="html_class_additions()">blank_background</%def>
 <%def name="title()">${_("Please check your email")}</%def>
 
 <%def name="show_error(name)">
@@ -44,17 +45,17 @@
 						See what's being asked...
 					</li>
 					<li>
-						<h2><a href="${h.url('contents', list='articles')}">Content HERE</a></h2>
+						<h2><a href="${h.url('contents', list='articles')}">Requests and stories HERE</a></h2>
 						View the latest crowd-sourced news...
 					</li>
-					<li>
+					<%doc><li>
 						<h2><a href="${h.url('members', type='user')}">Users HERE</a></h2>
 						Check out the Civicboom community...
 					</li>
 					<li>
 						<h2><a href="${h.url('members', type='group')}">Hubs HERE</a></h2>
 						From news organisations to local fesitvals... they're all here
-					</li>
+					</li></%doc>
 				</ul>
 			</td>
 		</tr>

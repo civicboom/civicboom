@@ -45,7 +45,19 @@ class MiscController(BaseController):
         # redirect to an un-cached page
         if request.GET.get("r") == "qr":
             return redirect(url(controller="misc", action="qr"))
+        if c.logged_in_user:
+            return redirect(url(controller="profile", action="index"))
         return action_ok()
+
+    def search_redirector(self):
+        if request.GET.get("type") == "Members": # these need to match the submit buttons
+            return redirect(url(controller="members", action="index", term=request.GET.get("term")))
+        elif request.GET.get("type") == "Requests":
+            return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="assignments_active"))
+        elif request.GET.get("type") == "Stories":
+            return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="articles"))
+        else:
+            return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="all"))
 
     # don't cache this, it does UA-specific things
     @auto_format_output
@@ -162,7 +174,6 @@ Disallow: /*.frag$
                 return action_ok(_("Thank you for your feedback"), code=201)
             return submit_feedback(**kwargs)
 
-
     #---------------------------------------------------------------------------
     # Featured content query
     #---------------------------------------------------------------------------
@@ -176,7 +187,7 @@ Disallow: /*.frag$
         """
         
         featured_content = []
-        
+               
         def rnd_content_items(return_items=1, **kwargs):
             if 'limit' not in kwargs:
                 kwargs['limit'] = 3
@@ -195,12 +206,22 @@ Disallow: /*.frag$
         
         #return to_apilist(featured_content, obj_type='content') # AllanC - a liniear list of featured contebt
         
+        # Sponsored content dictionary
+        sponsored =  {
+            'sponsored_assignment'  :   rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 ),
+            'sponsored_responded'   :   rnd_content_items(return_items=1, sort='-num_responses',              limit=3 ),
+        }
+        # Featured content dictionary
+        featured =  {
+            'top_viewed_assignments' : rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5),
+            'most_responses'         : rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5),
+            'near_me'                : rnd_content_items(return_items=2,                        location='me'    , limit=5),
+            'recent_assignments'     : rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5),
+            'recent'                 : rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5),
+        }
         return action_ok(
             data={
-                'top_viewed_assignments' : rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5),
-                'most_responses'         : rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5),
-                'near_me'                : rnd_content_items(return_items=2,                        location='me'    , limit=5),
-                'recent_assignments'     : rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5),
-                'recent'                 : rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5),
+                'sponsored' : sponsored,
+                'featured' : featured,
             }
         )

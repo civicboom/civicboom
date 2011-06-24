@@ -1,0 +1,68 @@
+BODY.c-groups.u-user, BODY.c-settings.u-user {
+	.group-edit {
+		width: 300px;
+	}
+
+	TEXTAREA.group-edit {
+		resize: vertical;
+		height: 75px;
+	}
+
+	TR TD  {
+		vertical-align: top;
+	}
+
+	TR.padding TD  {
+		padding-bottom: 0.6em;
+	}
+
+	TR.doublepadding TD  {
+		padding-bottom: 1.8em;
+	}
+
+	TD.bold  {
+		font-weight: bold;
+	}
+
+	TD.bigger  {
+		font-size: 2em;
+	}
+
+	TD.center  {
+		text-align: center;
+	}
+
+	TD.bigger  {
+		font-size: 1.5em;
+	}
+
+	TABLE.group-table {
+		width: 475px;
+	}
+
+	TABLE.quickgroup-table {
+		width: 210px;
+	}
+
+	.quickbutton {
+		width: 100px;
+		height: 60px;
+		white-space: normal;
+	}
+
+	.quickhilite {
+		color: #FF0;
+	}
+
+	TD.quickchangehilite {
+		background-color: #AAFFAA;
+	}
+
+	TR.quickchangehilite TD {
+		background-color: #AAFFAA;
+	}
+
+	.role_description {
+		color: #555;
+	}
+}

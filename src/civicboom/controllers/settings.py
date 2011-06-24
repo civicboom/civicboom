@@ -14,6 +14,8 @@ from civicboom.model import User
 
 from civicboom.model.member import group_member_roles, group_join_mode, group_member_visibility, group_content_visibility
 
+from civicboom.lib.constants import setting_titles
+
 import cbutils.warehouse as wh
 
 import copy
@@ -73,18 +75,15 @@ add_setting('default_content_visibility', _('Default Content Visibility'), group
 
 add_setting('website'                   , _('Website'      )             , group='general/contact'    , weight=7  , type='url'             , info=_('Optional: add your website or blog etc. to your profile'))
 add_setting('email'                     , _('Email Address')             , group='general/contact'    , weight=8  , type='email'           , who='user'                                                      )
-add_setting('password_current'          , _('Current password')          , group='general/password'   , weight=9  , type='password_current', who='user'                                                      )
-add_setting('password_new'              , _('New password')              , group='general/password'   , weight=10 , type='password'        , who='user'                                                      )
-add_setting('password_new_confirm'      , _('New password again')        , group='general/password'   , weight=11 , type='password'        , who='user'                                                      )
 #add_setting('twitter_username'          , _('Twitter username')          , group='aggregation')
 #add_setting('twitter_auth_key'          , _('Twitter authkey' )          , group='aggregation')
 #add_setting('broadcast_instant_news'    , _('Twitter instant news')      , group='aggregation', type='boolean')
 #add_setting('broadcast_content_posts'   , _('Twitter content' )          , group='aggregation', type='boolean')
-add_setting('avatar'                    , _('Avatar' )                   , group='general/avatar'     , weight=12 , type='file'                                                                              )
+add_setting('avatar'                    , _('Avatar' )                   , group='general/avatar'     , weight=9 , type='file'                                                                              )
 
-
-add_setting('location_home'             , _('Home Location' )            , group='location/location'  , weight=100, type='location' )
-
+add_setting('password_current'          , _('Current password')          , group='password/password'  , weight=100, type='password_current', who='user'                                                      )
+add_setting('password_new'              , _('New password')              , group='password/password'  , weight=101, type='password'        , who='user'                                                      )
+add_setting('password_new_confirm'      , _('New password again')        , group='password/password'  , weight=102, type='password'        , who='user'                                                      )
 
 # Ignore these messages generators!
 ignore_generators = ['msg_test',
@@ -93,18 +92,24 @@ ignore_generators = ['msg_test',
                      'syndicate_decline',
                      'syndicate_expire',
                     ]
-i = 500
+i = 200
 for gen in generators:
     if not gen[0] in ignore_generators:
-        add_setting('route_'+gen[0], str(gen[2]).capitalize(), group='messages/messages', weight=i, type="set", value=('n','e'), default=gen[1])
+        add_setting('route_'+gen[0], str(gen[2]).capitalize(), group='notifications/notifications', weight=i, type="set", value=('n','e'), default=gen[1])
         i = i + 1
 
-add_setting('help_popup_created_user', _('Hide the help popup shown upon login to the site'), group='miscellaneous/help_popups', weight=700, type='boolean')
-add_setting('help_popup_created_group', _('Hide the help popup shown upon switching to a group'), group='miscellaneous/help_popups', weight=701, type='boolean')
-add_setting('help_popup_created_assignment', _('Hide the help popup shown upon creating an assignment'), group='miscellaneous/help_popups', weight=702, type='boolean')
+add_setting('location_home'             , _('Home Location' )            , group='location/location'  , weight=300, type='location' )
+add_setting('location_home_name'        , _('Home Location' )            , group='location/location'  , weight=301, type='string_location' )
 
-add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='miscellaneous/miscellaneous', weight=703, type='boolean')
-add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='miscellaneous/miscellaneous', weight=704, type='boolean', info=_('Please speak to our team before you change this option!'))
+add_setting('help_popup_created_user', _('Hide the help popup shown upon login to the site'), group='help_adverts/help_popups', weight=400, type='boolean')
+add_setting('help_popup_created_group', _('Hide the help popup shown upon switching to a group'), group='help_adverts/help_popups', weight=401, type='boolean')
+add_setting('help_popup_created_assignment', _('Hide the help popup shown upon creating an assignment'), group='help_adverts/help_popups', weight=402, type='boolean')
+
+add_setting('advert_profile_mobile', _('Hide the info box encouraging the use of the mobile app'), group='help_adverts/adverts', weight=403, type='boolean')
+add_setting('advert_profile_group', _('Hide the info box encouraging the use of _groups'), group='help_adverts/adverts', weight=404, type='boolean')
+
+add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='advanced/follower_settings', weight=1000, type='boolean')
+add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=1001, type='boolean', info=_('Please speak to our team before you change this option!'))
 
 #---------------------------------------------------------------------------
 # Setting Validators (for dynamic scema construction)
@@ -125,6 +130,7 @@ type_validators = { 'string':           formencode.validators.UnicodeString(),
                     'password_current': civicboom.lib.form_validators.base.CurrentUserPasswordValidator(),
                     'file':             formencode.validators.FieldStorageUploadConverter(),
                     'location':         civicboom.lib.form_validators.base.LocationValidator(),
+                    'string_location':  formencode.validators.UnicodeString(),
                     'boolean':          formencode.validators.UnicodeString(max=10, strip=True),
 }
 
@@ -147,10 +153,9 @@ for setting in settings_base.values():
     else:
         settings_validators[setting['name']] = type_validators.get(setting['type'])
 
-
 def build_meta(user, user_type, panel):
     settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
-    panels = dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title':setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] )
+    panels = dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title': setting_titles.get(setting['group'].split('/')[0]) if setting_titles.get(setting['group'].split('/')[0]) else setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] )
     
     settings_hints = {}
     # Populate settings dictionary for this user
@@ -372,7 +377,7 @@ class SettingsController(BaseController):
         # id will always contain me if it was passed
         
         private = kwargs.get('private')
-        
+        if private: del kwargs['private']
         #username = id
         #if not username or username == 'me':
         #    username = c.logged_in_persona.username
@@ -427,11 +432,21 @@ class SettingsController(BaseController):
         
         settings = kwargs
         
+        for delete in ['action', 'controller', 'sub_domain', 'format', '_authentication_token', 'submit', '_method']:
+            try:
+                del settings[delete]
+            except:
+                pass
+        
+        if len(settings) == 0:
+            raise action_error(code=400, message=_("No settings to update"))
         
         # Setup custom schema for this update
         # List validators required
         validators = {}
-        for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings_base[setting_name.split('-')[0]].get('who', user.__type__) == user.__type__ ]:
+        if len(set(settings.keys()) - set(settings_validators.keys())) > 0:
+            raise action_error(code=400, message=_("You are trying to update a setting that does not exist!"))
+        for validate_fieldname in [setting_name for setting_name in settings.keys() if setting_name in settings_validators and setting_name in kwargs and settings_base[setting_name.split('-')[0]].get('who', user.__type__) == user.__type__]:
             log.debug("adding validator: %s" % validate_fieldname)
             validators[validate_fieldname] = settings_validators[validate_fieldname]
         # Build a dynamic validation schema based on these required fields and validate the form
