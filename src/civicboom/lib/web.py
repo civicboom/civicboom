@@ -5,6 +5,8 @@ from pylons.decorators.secure import authenticated_form, get_pylons, secure_form
 
 from cbutils.cbxml import dictToXMLString
 
+from civicboom.lib.widget import widget_defaults
+
 import os
 import time
 import json
@@ -88,11 +90,40 @@ def url(*args, **kwargs):
 
     # Encode current widget state into URL if in widget mode
     if kwargs.get('sub_domain')=='widget' or (get_subdomain_format(_url.environ)=='widget' and 'sub_domain' not in kwargs): # If widget and not linking to new subdomain
-        widget_var_prefix = config["setting.widget.var_prefix"]
-        for key, value in c.widget.iteritems():
-            if isinstance(value, dict) and 'username' in value: # the owner may be a dict, convert it back to a username
-                value = value['username']
-            kwargs[widget_var_prefix+key] = value
+        widget_var_prefix = config['setting.widget.var_prefix'   ]
+        widget_theme      = config['setting.widget.default_theme']
+        try:
+            # Just in case c does not exisit in thread
+            widget_theme = c.widget['theme']
+        except:
+            pass
+        if kwargs.get('theme'):
+            widget_theme = kwargs['theme']
+        
+        # AllanC - ***ING MASSIVE HACK ... it's 5:30 AM FFS!
+        if widget_theme=='gradient':
+            kwargs[widget_var_prefix+'theme'] = widget_theme
+        else:
+            #print "-----------------------------------------"
+            widget_default = dict(widget_defaults.get(widget_theme))
+            #print widget_default
+            for key, default_value in widget_default.iteritems():
+                default_value = str(default_value)
+                # Check if value is the same as widget default - there is no need to add this to the URL if they match
+                required_fields = ['theme']
+                try:
+                    w_key = widget_var_prefix + key
+                    c_val = c.widget[key]
+                    try:
+                        c_val = c_val['username']
+                    except:
+                        c_val = str(c_val)
+                    #print "key:%s dv:%s cv:%s" %(key,default_value, c_val)
+                    if key in required_fields or c_val!=default_value:
+                        #print "STORE: %s:%s" % (w_key,c_val)
+                        kwargs[w_key] = c_val
+                except:
+                    pass
 
     args = list(args)
     if 'current' in args:
@@ -339,6 +370,8 @@ def _find_template(result, type):
             os.path.join("html", subformat, template_part),
             os.path.join("html", "web",     template_part),
         ]
+        if subformat=='widget':
+            paths.insert(0, os.path.join("html", subformat, c.widget['theme'], template_part)) # AllanC - widgets have a special case and can have multiple themes - see addtion for list types below as well
         ## AllanC: TODO
         ## if there is no web template but there is a frag for this template part
         ## wrap the fragment in a frag_container.mako
@@ -365,6 +398,10 @@ def _find_template(result, type):
                 os.path.join("html", subformat, list_part) ,
                 os.path.join("html", "web"    , list_part) ,
             ]
+            # HACK - AllanC - insert 1 so it's after os.path.join(type, list_part)
+            if subformat=='widget':
+                paths.insert(1, os.path.join("html", subformat, c.widget['theme'], list_part)) # AllanC - widgets have a special case and can have multiple themes - hack here to inset at item 1
+            
     
     for path in paths:
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):

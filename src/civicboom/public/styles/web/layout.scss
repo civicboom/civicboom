@@ -1,0 +1,521 @@
+@import "../common/_palette.scss";
+
+/*----------------------------------------------------------------------------*/
+/*                                Top Level                                   */
+/*                         There is one HTML / BODY                           */
+/*----------------------------------------------------------------------------*/
+
+HTML {
+    overflow-x: scroll;
+    /* overflow-y: hidden; */
+	background: $page-background;
+}
+HTML.frag_containers {
+    background: $page-background;
+}
+HTML.blank_background {
+    background: #ffffff;
+}
+
+/*----------------------------------------------------------------------------*/
+/*                                Main Level                                  */
+/*                   Three big blocks - header, app, footer                   */
+/*----------------------------------------------------------------------------*/
+
+$header_height: 42px;
+
+HEADER {
+	clear: both;
+	//background: url("headerbk.png") #e6e6e6;
+	background: #fff;
+	position: fixed;
+    top  : 0px;
+	left : 0px;
+	right: 0px;
+	/* height: 64px; */
+    height: $header_height;
+	z-index: 1;
+	/*
+	 * really, the minimum width is 830px; but on an
+	 * 800px screen, overlapping is slightly less bad
+	 * than the Sign In button going off the edge of
+	 * the screen
+	 */
+	/*
+	 * this should never matter, as for thin browsers
+	 * we go into thin mode; but possibly this is still
+	 * useful for IE7/8
+	 */
+	min-width: 780px;
+
+	border-bottom: 1px solid #ccc;
+}
+
+BODY>DIV#app {
+	position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
+	z-index: 0;
+    top: $header_height + 5px;
+    color: $text-colour;
+    .button { color: $button-txt; }
+    a { color: $link-colour; }
+}
+
+FOOTER {
+	background: white;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	font-size: 10px;
+	padding       : 0.50em;
+    padding-top   : 0.25em;
+    padding-bottom: 0.00em;
+	border-top: 1px solid #ccc;
+}
+
+
+
+/*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
+/*                                Logo                                        */
+/*----------------------------------------------------------------------------*/
+
+HEADER #logo {
+	.logo_img     {position: absolute; left:  12px; top:  6px; width: 128px;}
+	.beta_overlay {position: absolute; left: 113px; top: 30px; width:  24px;}
+	.logo_text    {display: none;}
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
+/*                             Persona Select                                 */
+/*----------------------------------------------------------------------------*/
+
+HEADER #persona_select_new {
+  position: absolute;
+  top: 8px;
+  right: 200px;
+  z-index: 499;
+  width: 20em;
+  
+  div {
+    display: inline-block;
+  }
+  
+  .persona_detail {
+    //vertical-align: middle;
+    width: 15em;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+  li {
+    padding-bottom: 4px;
+    background-color: #fff;
+    vertical-align: text-bottom;
+  }
+  
+  img {
+    width : 28px;
+    height: 28px;
+    border: 1px solid #888;
+    border-radius        : 0.1em;
+    -moz-border-radius   : 0.1em;
+    -webkit-border-radius: 0.1em;
+    float: left;
+    margin-right: 3px;
+  }
+  
+  
+  li.hover {
+    //display:none;
+  }
+  ul:hover li.hover {
+    display: block;
+  }
+  
+}
+
+HEADER #persona_select {
+	position: absolute;
+	top : 0px;
+	right: 0px;
+	z-index: 499; /* below the create/explore/manage */
+	width: 280px;
+	height: $header_height;
+
+	P {
+		margin: 0px;
+	}
+
+	img {
+		width : 28px;
+		height: 28px;
+		border: 1px solid #888;
+		border-radius        : 1px;
+		-moz-border-radius   : 1px;
+		-webkit-border-radius: 1px;
+	}
+
+	table {
+		//display: none;
+		border: 1px solid #ccc; /*#e9e9e9*/
+		border-top: none;
+		border-right: none;
+		position: absolute;
+		right: -280px;
+		top: $header_height;
+		width: 280px;
+		font-size: 88%;
+		background-color: white;
+
+		border-bottom-left-radius        : 8px;
+		-webkit-border-bottom-left-radius: 8px;
+		-moz-border-radius               : 0px 0px 0px 8px;
+
+		-webkit-transition: right 0.15s ease-in;
+		-moz-transition: right 0.15s ease-in;
+		-o-transition: right 0.15s ease-in;
+		transition: right 0.15s ease-in;
+	}
+	&:hover table {
+		//display: block;
+		right: 0px;
+	}
+	.current_persona {background-color: #e9e9e9;}
+	.name {font-weight: bold;}
+
+	table td {
+		padding: 0.5em;
+		vertical-align: top;
+	}
+	.info {
+		font-size: 88%;
+	}
+	.extras {
+		border-top: 1px solid #e9e9e9;
+	}
+
+	.selectable:hover {
+		background-color: #e9e9e9;
+		cursor: pointer;
+	}
+
+	#persona_holder {
+	  vertical-align: center;
+	  padding-left: 6px;
+	  padding-top: 6px;
+	}
+
+	#persona_holder #message_holder {
+	  position: relative;
+	  top: -4px;
+	  vertical-align: center;
+	  //height: 32px;
+	  display: inline-block;
+	}
+	
+  #persona_holder #persona_details {
+    vertical-align: middle;
+    position: relative;
+    top: -3px;
+    vertical-align: middle;
+    height: 32px;
+    display: inline-block;
+    width: 15.5em;
+    overflow: hidden;
+    white-space: nowrap;
+    #settings {
+      font-size: 88%;
+    }
+  }
+
+	#persona_holder #message_holder .icon_overlay_red {
+	  font-size: 88%;
+	}
+}
+
+/*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
+/*                                  Home                                      */
+/*----------------------------------------------------------------------------*/
+
+HEADER #home_link {
+    position: absolute;
+    top : 13px;
+    /* left: 172px;*/
+    left: 190px;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
+/*                                Navigation                                  */
+/*----------------------------------------------------------------------------*/
+
+HEADER NAV {
+	position: absolute;
+	top: 11px;
+	left: 240px;
+	z-index: 500;
+
+	.button {
+		margin-left: 6px;
+		margin-right: 6px;
+		width: 120px;
+		padding-top: 2px;
+		padding-bottom: 2px;
+	}
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
+/*                             About buttons                                  */
+/*----------------------------------------------------------------------------*/
+
+HEADER #aboutbtns {
+    position: absolute;
+    top: 11px;
+    right: 245px;
+
+    /*
+    width: 54px;
+    height: 18px; /* +2px border 
+    text-align: center;
+    vertical-align: middle;
+    background-color: #eee;
+    border: 1px solid #ccc;
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+    */
+}
+
+HEADER #aboutbtns .button {
+	padding: 0.2em;
+    width: 64px;
+}
+
+/*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
+/*                                Search                                      */
+/*----------------------------------------------------------------------------*/
+
+$search_width: 300px;
+$search_buttons: 3;
+
+HEADER #search {
+	position: absolute;
+	top: 12px;
+	left: 520px;
+	width: $search_width;
+	height: 40px;
+
+	/* things that apply un-hoverred and hoverred */
+	.search_input {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: $search_width;
+		height: 20px;
+	}
+	
+	.button {
+		position: absolute;
+		top: 20px;
+		width: $search_width/$search_buttons;
+
+		&.b0 {display: none;}
+		&.b1 {left: $search_width/$search_buttons*0;}
+		&.b2 {left: $search_width/$search_buttons*1;}
+		&.b3 {left: $search_width/$search_buttons*2;}
+
+		&.b0, &.b1, &.b2, &.b3 {
+			-webkit-transition: opacity 0.15s ease-in;
+			-moz-transition: opacity 0.15s ease-in;
+			-o-transition: opacity 0.15s ease-in;
+			transition: opacity 0.15s ease-in;
+
+			border-top: none;
+			border-top-left-radius: 0px;
+			-webkit-border-top-left-radius: 0px;
+			border-top-right-radius: 0px;
+			-webkit-border-top-right-radius: 0px;
+
+			// shadow on buttons but not on input looks weird, as we are
+			// counting search + buttons as a single widget
+			box-shadow: none;
+		}
+		&.b1 {
+			-moz-border-radius: 0px 0px $input-radius 0px;
+			border-bottom-right-radius: 0px;
+			-webkit-border-bottom-right-radius: 0px;
+		}
+		&.b2 {
+			border-left: none;
+			border-right: none;
+			-moz-border-radius: 0px 0px 0px 0px;
+			border-bottom-left-radius: 0px;
+			-webkit-border-bottom-left-radius: 0px;
+			border-bottom-right-radius: 0px;
+			-webkit-border-bottom-right-radius: 0px;
+		}
+		&.b3 {
+			-moz-border-radius: 0px 0px 0px $input-radius;
+			border-bottom-left-radius: 0px;
+			-webkit-border-bottom-left-radius: 0px;
+		}
+	}
+
+	/* things that only apply un-hoverred */
+	& {
+		.button {
+			&.b1, &.b2, &.b3 {
+				opacity: 0.0;
+				filter: alpha(opacity=0);
+			}
+		}
+	}
+
+	/* things that only apply hoverred */
+	&:hover {
+		.search_input {
+			// remove rounding when drop-downs are shown, so the
+			// button corner lines up with the menu
+			border-bottom-left-radius: 0px;
+			-webkit-border-bottom-left-radius: 0px;
+			border-bottom-right-radius: 0px;
+			-webkit-border-bottom-right-radius: 0px;
+			-moz-border-radius: $input-radius $input-radius 0px 0px;
+		}
+
+		.button {
+			&.b1, &.b2, &.b3 {
+				opacity: 1.0;
+				filter: alpha(opacity=100);
+			}
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------*/
+/*                             Header detail:                                 */
+/*                             Signin / Signout                               */
+/*----------------------------------------------------------------------------*/
+
+HEADER #signin {
+    position: absolute;
+    top: 11px;
+    right: 8px;
+
+    /*
+    width: 54px;
+    height: 18px; // +2px border 
+    text-align: center;
+    vertical-align: middle;
+    background-color: #eee;
+    border: 1px solid #ccc;
+	border-radius        : 0.5em;
+	-moz-border-radius   : 0.5em;
+	-webkit-border-radius: 0.5em;
+    */
+}
+
+HEADER #signin .button {
+	padding: 0.2em;
+    width: 64px;
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                             Footer detail:                                 */
+/*                            Links & copyright                               */
+/*----------------------------------------------------------------------------*/
+
+FOOTER {
+	A {
+		/*vertical-align : middle;*/
+		text-decoration: none;
+		margin-right: 8px;
+	}
+	.links {
+		float: left;
+	}
+	.copyright {
+		float: right;
+	}
+}
+
+
+/*----------------------------------------------------------------------------*/
+/*                                  Thin Mode                                 */
+/*----------------------------------------------------------------------------*/
+
+@media (min-width: 941px) and (max-width: 1200px) {
+	HEADER #actions {
+		left: 150px;
+	}
+	HEADER #search {
+		left: 430px;
+	}
+}
+
+@media (max-width: 940px) {
+	HEADER {
+		min-width: 480px;
+		height: 137px;
+	}
+	HEADER #actions {
+		top: 53px;
+		left: 0px;
+		right: 0px;
+		text-align: center;
+		.button {
+			width: 40%;
+		}
+	}
+	HEADER #search {
+		top: 87px;
+		left: (480px - 300px) / 2;
+		.button {&.b1, &.b2, &.b3 {opacity: 1.0;}}
+		.search_input {
+			border-bottom-left-radius: 0px;
+			-webkit-border-bottom-left-radius: 0px;
+			border-bottom-right-radius: 0px;
+			-webkit-border-bottom-right-radius: 0px;
+			-moz-border-radius: $input-radius $input-radius 0px 0px;
+		}
+	}
+	HEADER #persona_select {
+		z-index: 501; /* above the create/explore/manage */
+	}
+
+	BODY>DIV#app {
+		margin-top: 86px;
+	}
+
+	BODY>DIV#app #frag_containers {
+		margin: 0px;
+	}
+	BODY>DIV#app #frag_containers .frag_container {
+		margin: 0px;
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+	}
+	BODY>DIV#app #frag_containers .frag_container.frag_col_1 {
+		width: 240px;
+	}
+	BODY>DIV#app #frag_containers .frag_container.frag_col_2 {
+		width: 480px;
+	}
+
+	FOOTER .links, FOOTER .copyright {
+		float: left;
+		clear: both;
+		width: 100%;
+		text-align: center;
+	}
+}

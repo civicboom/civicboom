@@ -1,11 +1,10 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
-<%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
+##<%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
+
+<%def name="html_class_additions()">blank_background</%def>
 
 <%def name="title()">${_("Welcome")}</%def>
-
-
-
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -13,70 +12,54 @@
 
 <%def name="body()">
 	<div class="new_front" style="margin-bottom: 20em;">
-		${new_front_headline()}
-		${new_front_about()}
-##		${new_front_who_is()}
-##		<div class="front_sub">
-##			${new_front_price()}
-##			${new_front_tag()}
-##		</div>
-##			${new_front_key_elems()}
-##		<div class="front_sub">
-##			${new_front_plans()}
-##			${new_front_how_title()}
-##		</div>
-##		${new_front_how()}
-##		<div class="front_sub">
-##			${new_front_tag()}
-##			${new_front_you()}
-##			${new_front_tag()}
-##			<div style="margin-top: 2em"></div>
-##			${new_front_register()}
-##		</div>
+		${front_headline()}
+		${front_windows()}
 		<div style="width:100%;left:0;bottom:17px;position:fixed;padding:1.5em 0 0 0;background-color:#cee2fa;">
 			<div style="width:100%;height:10em;background-color:#adcef7;">
 				<div style="width:61em;padding:1em 0 1em 0;margin: auto;">
-					<div style="float: left; width: 30em">
-						<h2 style="text-align:left;">Downloads</h2>
-						<div style="width: 20em; margin: 0;">
-							<div style="position: absolute;">
-								<div style="float:left; width: 10em;">
-									<h3>Mobile App</h3>
-									<a class="button" href="/about/mobile">
-										Download now
-									</a>
-									(Android OS)
-								</div>
-##								<div style="float:left; width: 10em;">
-##									<h3>Browser Widget</h3>
-##									<a class="button" href="/about/mobile">
-##										Download now
-##									</a>
-##								</div>
-							</div>
-						</div>
-					</div>
-					<div style="text-align:left;float: right; width: 28em;">
-						<h2>Who's using us?</h2>
-						<div class="partners" style="background-color:#FFF;padding: 0.5em;height: 4em;">
-							<div style="width: 6em;float:left; padding-right: 1em;">
-								<a href="http://www.kentonline.co.uk"><img style="width:100%" src="/images/client-logo/km.png" alt="Kent Messenger" /></a>
-							</div>
-							<div style="width: 10em;float:left">
-								##<h3>Media</h3>
-								<a href="http://www.kentuni.com/news/"><img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" /></a>
-							</div>
-							<div style="width: 10em;float:left">
-								##<h3>Business</h3>
-								<a href="http://www.fxcompared.com/civic-boom.php"><img style="width:100%" src="/images/client-logo/fx-compared.jpg" alt="FX Compared" /></a>
-							</div>
-##							<div style="width: 10em;float:left">
-##								<h3>Media</h3>
-##								<img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" />
-##							</div>
-						</div>
-					</div>
+					${partners()}
+					${downloads()}
 				</div>
+			</div>
+		</div>
+	</div>
+</%def>
+	
+	
+
+##------------------------------------------------------------------------------
+## Download / Mobile App
+##------------------------------------------------------------------------------
+<%def name="downloads()">
+	<div class="downloads">
+		<div class="downloads-android">
+			<h3>Mobile App</h3>
+			<a class="button" href="/about/mobile">
+				Download now
+			</a>
+			(Android OS)
+		</div>
+	</div>
+</%def>
+
+##------------------------------------------------------------------------------
+## Partners
+##------------------------------------------------------------------------------
+
+<%def name="partners()">
+	<div class="using-us">
+		<h2>Who's using us?</h2>
+		<div class="partners">
+			<div class="partner" style="width: 10em; padding-right: 1em;">
+				<a href="http://www.kentonline.co.uk"><img style="width:100%" src="/images/client-logo/km.png" alt="Kent Messenger" /></a>
+			</div>
+			<div class="partner" style="width: 18em; padding-right: 1em;">
+				##<h3>Media</h3>
+				<a href="http://www.kentuni.com/news/"><img style="width:100%" src="/images/client-logo/gradvine.png" alt="Gradvine" /></a>
+			</div>
+			<div class="partner" style="width: 18em; padding-right: 1em;">
+				##<h3>Business</h3>
+				<a href="http://www.fxcompared.com/civic-boom.php"><img style="width:100%" src="/images/client-logo/fx-compared.jpg" alt="FX Compared" /></a>
 			</div>
 		</div>
 	</div>
@@ -86,12 +69,106 @@
 ## New Front Title
 ##------------------------------------------------------------------------------
 
+<%doc><%def name="header()">
+	<table><tr>
+		<td colspan="4" class="how-to"><a>How to</a> | <a href="${url(controller='misc', action='about', id='mobile')}">Mobile</a></td>
+	</tr><tr>
+		<td class="logo">
+			<a href='/'>
+				<img  class='logo_img' src='${h.wh_url("public", "images/logo.png")}' alt='${_("_site_name")}' />
+				## <img  class='beta_overlay' src='${h.wh_url("public", "images/logo_beta_overlay.png")}' alt='${_("Beta")}' />
+				## <span class='logo_text'>${_("_site_name")}</span>
+			</a>
+		</td>
+		<td class="signin">
+			% if c.logged_in_persona:
+			    ${h.secure_link(
+				h.url(controller='account', action='signout'),
+				_('Sign out'),
+				css_class="button"
+			    )}
+			% else:
+			    <a class="button" href="${url(controller='account', action='signin')}">
+				##<img src="/styles/web/login.png" alt="${_("Log in")}" width="68" height="17">
+				${_('Sign in')}
+			    </a>
+			% endif
+		</td>
+		<td class="links">
+			<a href="${url('contents', list='assignments_active')}">What to explore first?</a>
+
+		</td>
+		<td class="search">
+			<form action="${h.url('contents')}" method='GET'>
+				<input type="search" class="search_input" name="term" placeholder="${_("Search Content")}" />
+				<input type="submit" class="button" value="GO">
+			</form>
+		</td>
+	</tr></table>
+</%def></%doc>
+
+<%def name="front_headline()">
+	<div class="title-box">
+		<h2 class="tagline">
+			${_("_site_name: Connecting people that need news with people that have news")}
+		</h2>
+	</div>
+</%def>
+
+<%def name="front_windows()">
+	<div class="windows">
+		<div id="window-orgs" class="window">
+			<div class="window-content">
+				<div class="window_title">Journalists:<br /> >> NEED NEWS?</div>
+				<ol class="content-list">
+					<li>
+						Sign up
+					</li>
+					<li>
+						Post a request for news
+					</li>
+					<li>
+						Assess, verify and publish responses
+					</li>
+				</ol>
+			</div>
+		</div>
+		<div id="window-indvs" class="window">
+			<div class="window-content">
+				<div class="window_title">Sources:<br /> >> GOT NEWS?</div>
+				<ol class="content-list">
+					<li>
+						Sign up
+					</li>
+					<li>
+						View requests for news
+					</li>
+					<li>
+						Post your story and get published
+					</li>
+				</ol>
+			</div>
+		</div>
+		<a class="signup-link" href="${url(controller='account', action='signin')}">
+			<div id="window-signup" class="window">
+				<div class="window-content">
+					<div class="signup-link hilite">Start now!</div>
+				</div>
+			</div>
+		</a>
+	</div>
+</%def>
+	
+##------------------------------------------------------------------------------
+## New Front Title
+##------------------------------------------------------------------------------
+
 <%def name="new_front_headline()">
-	<div style="margin: 5em auto 0 auto; width: 61em;">
-		<h1 class="headline" style="padding:0;margin:0;font-size: 300%; text-align: left; color: #333">
+	<div class="title-box">
+		<h1 class="headline">
 			Sourcing and sharing news just got easier
 		</h1>
-		<h2 style="padding: 0em 0 0.5em 0;text-align: left; color: #666; font-size: 175%; font-weight: normal;">
+		<h2 class="tagline">
 			Respond to requests and generate news or feature content for your needs.
 		</h2>
 	</div>
@@ -114,6 +191,7 @@
 			$('.tab-title:first').trigger('mouseover');
 		});
 	</script>
+
 	<style>
 		.tab-title {
 			display: inline;
@@ -175,6 +253,7 @@
 			left: -5.75em;
 		}
 	</style>
+
 	<div style="margin: 1em auto 0 auto; width: 61em; text-align: left;">
 		<div style="height:15em;">
 			<div style="position: absolute">

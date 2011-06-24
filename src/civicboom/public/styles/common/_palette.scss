@@ -1,0 +1,57 @@
+/* --- Civicboom colours --- */
+$cb-lightblue: #4974b8;
+$cb-darkblue: #3a4a97;
+
+/* --- Misc --- */
+$link-colour: #666;
+$text-colour: #333;
+
+/* --- Buttons --- */
+$button-top: #4974b8; // lighten($cb-lightblue, 10%);// #eee; /*$cb-lightblue;*/
+$button-bot: #3e68af; // lighten($cb-darkblue, 20%); //#ddd; /*$cb-darkblue;*/
+$button-txt: #fff; /*white; 444 */
+$button-border: #333; /*#333; ccc*/
+$button-radius: 0.2em;
+
+
+/* --- Inputs --- */
+$input-border: $button-border;
+$input-radius: $button-radius;
+
+
+/* --- Titlebar --- */
+$titlebar-top: #48689D; /*lighten($cb-darkblue, 30%);*/
+$titlebar-bot: $titlebar-top;
+$titlebar-txt: white;
+
+
+/* --- Action bar --- */
+$actionbar-back: $titlebar-top;
+
+
+/* --- Page --- */
+$page-background: lighten($cb-lightblue, 30%);
+
+
+/* --- Frags --- */
+$frag-border    : none;
+$frag-background: lighten($cb-lightblue, 40%);
+$frag-radius    : 0.5em;
+
+$frag-action-bar-txt      : black;
+$frag-action-bar          : #EEE;
+
+
+/* --- Frag lists --- */
+$frag-list-title    : #8aadd7;
+$frag-list-title-txt: #666;
+$frag-list-top      : #ffffff;
+$frag-list-bot      : #ffffff;
+$frag-list-txt      : #111;
+$frag-list-border   : darken($frag-list-bot  , 15%);
+$frag-list-count    : lighten($frag-list-title-txt, 20%);
+
+
+/* --- Profile --- */
+$profile-description-title  :   #666;
+$profile-description-txt    :   #333;

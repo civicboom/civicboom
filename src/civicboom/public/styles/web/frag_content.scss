@@ -1,0 +1,196 @@
+#frag_containers {
+	.frag_container {
+		.what-next, .why-respond {
+		    color: #666;
+		    margin: 1.5em auto 0 0.5em;
+		    font-size: 105%;
+		}
+		
+		.featured-mobile {
+			width: 100%;
+			font-size: 120%;
+			text-align: center;
+			font-weight: bold;
+			padding-top: 15px;
+			
+			a {
+				color: #333;
+				text-decoration: none;
+			}
+		}
+	
+		.frag_content {
+			.frag_top_row {
+				margin-bottom: 0;
+				
+				.frag_col {
+					margin-bottom: 0;
+				}
+				
+				.content_creator {
+					margin: 0 0 1em 0.5em;
+					float: left;
+				}
+				
+				.media_icon {
+					padding: 0;
+					width: 40px;
+					height: 40px;
+					float: right;
+					border: 1px solid #ddd;
+					
+					img {
+						width: inherit;
+						height: inherit;
+					}
+				}
+				
+				.creator_avatar {
+					float: left;
+					margin-right: 5px;
+				}
+				
+				h1 {
+					color: #333;
+					font-size: 200%;
+				}
+				
+				.content_text {
+					color: #666;
+					font-size: 125%;
+					margin-bottom: 0.5em;
+				}
+				
+				.olMap {
+					margin-bottom: 1em;
+				}
+				
+				.acceptrequest {
+					font-size: 125%;
+					display: inline;
+					text-align: left;
+					
+					table {
+						width: 100%;
+						
+						.button {
+							width: 250px;
+							padding: 10px;
+						}
+						
+						.tip {
+							font-size: 85%;
+							color: #666;
+							width: 75px;
+						}
+					}
+				}
+				
+				.details {
+					color: #666;
+					display: inline;
+				
+					.separator {
+						padding-left: 1em;
+					}
+				}
+			}
+			
+			.frag_left_col {
+				width: 66%;
+				float: left;
+			}
+		
+			.frag_right_col {
+				width: 33%;
+				float: right;
+				
+				.license {
+					text-align: right;
+				}
+			}
+			
+			.content_box {
+				.media {
+					text-align: center;
+				}
+			}
+			
+			.content_text {
+				word-wrap: break-word;
+			}
+		
+			/*----------------------------Content Comments--------------------------------*/
+		
+			.new-comment {
+				display: none;
+			}
+		
+			.comments-option {
+				color: #666;
+				padding-top: 1em;
+			}
+		
+			.show-comments {
+				font-weight: bold;
+				text-decoration: underline;
+				cursor: pointer;
+			}
+		
+			.comments {
+				table {
+					width: 100%;
+				}
+				h2 {
+					font-size: 150%;
+				}
+				td {
+					vertical-align: top;
+					color: #444;
+					padding-bottom: 1em;
+				}
+				textarea {
+					width: 100%;
+					min-height: 60px;
+				}
+				input {
+					width: 100%;
+				}
+		
+				.comment_avatar {
+					width: 40px;
+				}
+		
+				.comment {
+					padding-left: 1em;
+		
+					.comment_by {
+						font-weight: bold;
+						margin-bottom: 0.25em;
+					}
+					.comment_content {
+						font-size:  88%;
+						line-height: 1em;
+		
+						/* stop over-wide comments */
+						max-width: 228px;
+						word-wrap: break-word;
+					}
+					//could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
+					//.comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
+					//.comment_content:after  {font-size: 120%; font-weight: bold; content: close-quote;}
+				}
+			}
+		}
+	}
+}
+
+HTML.no-js #frag_containers .frag_container .frag_content {
+	.new-comment {
+		visibility: visible;
+	}
+
+	.comments-option {
+		display: none;
+	}
+}
