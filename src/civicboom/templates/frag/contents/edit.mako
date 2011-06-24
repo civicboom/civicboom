@@ -744,7 +744,7 @@
             % if 'update' in self.actions:
             ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
             % endif
-            <a class="button" style="color: #444;" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
+            <a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
         % endif
     </div>
     <div class="separator"></div><div class="separator"></div>

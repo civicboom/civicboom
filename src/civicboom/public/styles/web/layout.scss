@@ -55,6 +55,9 @@ BODY>DIV#app {
 	position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
 	z-index: 0;
     top: $header_height + 5px;
+    color: $text-colour;
+    .button { color: $button-txt; }
+    a { color: $link-colour; }
 }
 
 FOOTER {

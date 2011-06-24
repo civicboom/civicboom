@@ -613,7 +613,7 @@
 
     ## --- Pubish --------------------------------------------------------------
 
-    % if 'publish' in self.actions:
+<%doc>    % if 'publish' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
             method = "PUT" ,
@@ -650,7 +650,7 @@
         )}
         ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
         <span class="separtor"></span>
-    % endif
+    % endif 
     
     % if 'withdraw' in self.actions:
         ${h.secure_link(
@@ -660,7 +660,7 @@
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         <span class="separtor"></span>
-    % endif
+    % endif</%doc>
     
     ## --- Boom ----------------------------------------------------------------
     

@@ -281,7 +281,7 @@ HTML.no-js #flash_message {
 	
 	border: 1px solid $button-border;
 
-	color: white;
+	color: $button-txt;
 	text-align: center;
 	text-decoration: none;
 	font-weight: bold;
@@ -303,7 +303,7 @@ HTML.no-js #flash_message {
   
   border: 1px solid $button-border;
 
-  color: white;
+  color: $button-txt;
   text-align: center;
   text-decoration: none;
   font-weight: bold;
