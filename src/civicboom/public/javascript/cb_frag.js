@@ -341,15 +341,15 @@ function update_history(url, replace) {
       history.pushState(createStateObj(), "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
     }
   } else {
-    if (replace) {
-      if (location.hash.substr(1,3) != 'cbh') {
-        location.replace('#cbh' + encode64($.JSON.encode(createStateObj())));
-      } else {
-        $(window).hashchange();
-      }
-    } else {
-      location.hash = '#cbh' + encode64($.JSON.encode(createStateObj()));
-    }
+    // if (replace) {
+      // if (location.hash.substr(1,3) != 'cbh') {
+        // location.replace('#cbh' + encode64($.JSON.encode(createStateObj())));
+      // } else {
+        // $(window).hashchange();
+      // }
+    // } else {
+      // location.hash = '#cbh' + encode64($.JSON.encode(createStateObj()));
+    // }
   }
 }
 
