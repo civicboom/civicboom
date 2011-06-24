@@ -15,7 +15,7 @@ import os
 
 
 # AllanC - sorry Shish - this broke notifications before the KM demo and we needed it working
-from pylons.templating  import render_mako
+#from pylons.templating  import render_mako
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
@@ -72,16 +72,16 @@ def send_notification(members, message): #members, rendered_message
                             return template_path
                         return 'email/notifications/default.mako'
                     
-                    #l = TemplateLookup(directories=['.', 'civicboom/templates'])
-                    #f = os.path.join("civicboom/templates", notification_template(message.get('name')))
-                    #t = Template(filename=f, lookup=l)
-                    #c = t.render(kwargs=message, h=helpers)
-                    c = render_mako(
-                        notification_template(message.get('name')) ,
-                        extra_vars ={
-                            "kwargs": message,
-                        }
-                    )
+                    l = TemplateLookup(directories=['.', 'civicboom/templates'])
+                    f = os.path.join("civicboom/templates", notification_template(message.get('name')))
+                    t = Template(filename=f, lookup=l)
+                    c = t.render(kwargs=message, h=helpers)
+                    #c = render_mako(
+                    #    notification_template(message.get('name')) ,
+                    #    extra_vars ={
+                    #        "kwargs": message,
+                    #    }
+                    #)
                     send_email(
                         member,
                         subject      = message.get('subject'), #, _('_site_name notification')
