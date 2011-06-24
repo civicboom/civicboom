@@ -15,7 +15,7 @@ import os
 
 
 # AllanC - sorry Shish - this broke notifications before the KM demo and we needed it working
-from pylons.templating  import render_mako
+#from pylons.templating  import render_mako
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
