@@ -1,18 +1,17 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
 
 .thumbnail {
     display: inline-block;
-	border: 0.04em solid #ccc;
+    border: 0.04em solid $thumbnail-border;
+    @include border_radius(0.1em);
 
-	/*
-	 * avatar image outer edge is clipped tighter than the border's
-	 * inner edge, so some background colour slips into the crack.
-	 */
-	background: #ccc;
+    /*
+     * avatar image outer edge is clipped tighter than the border's
+     * inner edge, so some background colour slips into the crack.
+     */
+    background: $thumbnail-back;
 
-    border-radius        : 0.1em;
-	-moz-border-radius   : 0.1em;
-	-webkit-border-radius: 0.1em;
-    
     font-size: 40px;
     widlth: 1em;
     height: 1em;
