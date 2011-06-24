@@ -72,16 +72,18 @@ def send_notification(members, message): #members, rendered_message
                             return template_path
                         return 'email/notifications/default.mako'
                     
-                    #l = TemplateLookup(directories=['.', 'civicboom/templates'])
-                    #f = os.path.join("civicboom/templates", notification_template(message.get('name')))
-                    #t = Template(filename=f, lookup=l)
-                    #c = t.render(kwargs=message, h=helpers)
-                    c = render_mako(
-                        notification_template(message.get('name')) ,
-                        extra_vars ={
-                            "kwargs": message,
-                        }
-                    )
+                    if config['debug']:
+                        c = render_mako(
+                            notification_template(message.get('name')) ,
+                            extra_vars ={
+                                "kwargs": message,
+                            }
+                        )
+                    else:
+                        l = TemplateLookup(directories=['.', 'civicboom/templates'])
+                        f = os.path.join("civicboom/templates", notification_template(message.get('name')))
+                        t = Template(filename=f, lookup=l)
+                        c = t.render(kwargs=message, h=helpers)
                     send_email(
                         member,
                         subject      = message.get('subject'), #, _('_site_name notification')

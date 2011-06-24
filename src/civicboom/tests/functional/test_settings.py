@@ -460,7 +460,7 @@ class TestSettingsController(TestController):
     def test_messages(self):
         self.log_in_as('unittest')
         #Get current
-        response = self.app.get(url('settings', id="me", panel="messages", format='json'))
+        response = self.app.get(url('settings', id="me", panel="notifications", format='json'))
         response_json = json.loads(response.body)
         
         self.old_route = response_json['data']['settings']['route_assignment_interest_withdrawn']
@@ -474,12 +474,12 @@ class TestSettingsController(TestController):
                 params={
                     '_method': 'PUT',
                     '_authentication_token': self.auth_token,
-                    'panel': 'messages',
+                    'panel': 'notifications',
                     'route_assignment_interest_withdrawn': route,
                 },
                 status=200
             )
-            response = self.app.get(url('settings', id="me", panel="messages", format='json'))
+            response = self.app.get(url('settings', id="me", panel="notifications", format='json'))
             response_json = json.loads(response.body)
             assert response_json['data']['settings']['route_assignment_interest_withdrawn'] == route.replace(',','')
             print self.old_route
@@ -488,7 +488,7 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'panel': 'messages',
+                'panel': 'notifications',
                 'route_assignment_interest_withdrawn': self.old_route,
             },
             status=200
@@ -508,7 +508,7 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'panel': 'messages',
+                'panel': 'notifications',
                 'help_popup_created_user': 'True',
             },
             status=200
