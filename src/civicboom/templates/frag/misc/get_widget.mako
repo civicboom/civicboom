@@ -136,7 +136,34 @@
 ##----------------------------------
 
 <%def name="what(member)">
-what
+<div class="widget_creator"><div class="padding">
+<h1>What is a _Widget?</h1>
+<p>
+    ${_('The _Widget is a little "widget" that lives on your website within which all requests for stories set by you will automatically appear.')}
+    ${_('People can respond to requests for news and submit their news through your _Widget, as video, images or audio directly to you for you to edit and publish.')}
+</p>
+
+<p>${_('We offer two versions of the _Widget:')}</p>
+<ol>
+    <li>
+        <p>Fixed size - dynamic design</p>
+        <ul>
+            <li>Requests appear on a carousel</li>
+            <li>Larger font for clear reading</li>
+            <li>Direct "Share your story" button</li>
+        </ul>
+    </li>
+    <li>
+        <p>Editable - basic design:</p>
+        <ul>
+            <li>Size adaptable to fit website needs</li>
+            <li>Editable colours</li>
+            <li>Lists requests</li>
+        </ul>
+    </li>
+</ol>
+
+</div></div>
 </%def>
 
 ##----------------------------------
@@ -235,9 +262,9 @@ what
         
     </div>
     
-    <div class="preview">
-        ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
-    </div>
+    ##<div class="preview">
+    ##    ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
+    ##</div>
     
     <div class="code">
         <form action="">
