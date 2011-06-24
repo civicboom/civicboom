@@ -1,4 +1,5 @@
 @import "../common/_palette.scss";
+@import "../common/_mixin.scss";
 
 /*----------------------------------------------------------------------------*/
 /*                                Top Level                                   */
@@ -120,9 +121,7 @@ HEADER #persona_select_new {
     width : 28px;
     height: 28px;
     border: 1px solid #888;
-    border-radius        : 0.1em;
-    -moz-border-radius   : 0.1em;
-    -webkit-border-radius: 0.1em;
+    @include border_radius(0.1em);
     float: left;
     margin-right: 3px;
   }
@@ -153,9 +152,7 @@ HEADER #persona_select {
 		width : 28px;
 		height: 28px;
 		border: 1px solid #888;
-		border-radius        : 1px;
-		-moz-border-radius   : 1px;
-		-webkit-border-radius: 1px;
+		@include border_radius(1px);
 	}
 
 	table {
@@ -170,9 +167,12 @@ HEADER #persona_select {
 		font-size: 88%;
 		background-color: white;
 
+		/*
 		border-bottom-left-radius        : 8px;
 		-webkit-border-bottom-left-radius: 8px;
 		-moz-border-radius               : 0px 0px 0px 8px;
+		*/
+		@include border_radius(8px);
 
 		-webkit-transition: right 0.15s ease-in;
 		-moz-transition: right 0.15s ease-in;
@@ -287,9 +287,7 @@ HEADER #aboutbtns {
     vertical-align: middle;
     background-color: #eee;
     border: 1px solid #ccc;
-	border-radius        : 0.5em;
-	-moz-border-radius   : 0.5em;
-	-webkit-border-radius: 0.5em;
+    @include border_radius(0.5em);
     */
 }
 
@@ -417,9 +415,7 @@ HEADER #signin {
     vertical-align: middle;
     background-color: #eee;
     border: 1px solid #ccc;
-	border-radius        : 0.5em;
-	-moz-border-radius   : 0.5em;
-	-webkit-border-radius: 0.5em;
+    @include border_radius(0.5em);
     */
 }
 

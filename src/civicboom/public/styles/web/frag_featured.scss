@@ -4,15 +4,17 @@
 #frag_containers .frag_container {
 	/*---------------------------Frag Member Adverts------------------------------*/
 	.advert {
+		$advert-height: 2em;
+		min-height: $advert-height;
 		position: relative;
 		padding: 0.75em;
 		margin: 1em 1em 0 1em;
-		
 		text-align: left;
 		font-size: 110%;
 		font-weight: bold;
 
-		background-color: #ff8300;			
+		background-color: $advert-back;
+		@include horiz_gradient($advert-back-top, $advert-back-bot);
 		@include border_radius(0.3em);
 		@include drop_shadow(1px, 1px, 1px, #666);
 		
@@ -26,6 +28,7 @@
 			max-width: 85%;
 			margin-right: 10px;
 			float: left;
+			margin-top: ($advert-height / 2) - 0.5em;
 		}
 
 		form {
@@ -34,9 +37,6 @@
 
 		.hide_advert_submit {
 			position: relative;
-                        font-size: 75%;
-
-			@include border-radius(0.5em);
 		}
 	}
 	

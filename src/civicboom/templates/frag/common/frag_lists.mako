@@ -513,14 +513,12 @@
     <div class="separator"></div>
     
     <div class="content">
-        % if not 'images/default/thumbnail' in content['thumbnail_url']:
         <div class="thumbnail">
             <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
                 ${content_thumbnail_icons(content)}
                 <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
             </a>
         </div>
-        % endif
         % if content and 'content_short' in content:
             ${h.truncate(content['content_short'], length=140, indicator='...', whole_word=True)}
             <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag} style="font-size: 75%;">learn more</a>

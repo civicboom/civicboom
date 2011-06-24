@@ -2,9 +2,11 @@
 $cb-lightblue: #4974b8;
 $cb-darkblue: #3a4a97;
 
+
 /* --- Misc --- */
 $link-colour: #666;
 $text-colour: #333;
+
 
 /* --- Buttons --- */
 $button-top: #4974b8; // lighten($cb-lightblue, 10%);// #eee; /*$cb-lightblue;*/
@@ -12,6 +14,11 @@ $button-bot: #3e68af; // lighten($cb-darkblue, 20%); //#ddd; /*$cb-darkblue;*/
 $button-txt: #fff; /*white; 444 */
 $button-border: #333; /*#333; ccc*/
 $button-radius: 0.2em;
+
+
+/* --- Thumbnails --- */
+$thumbnail-back: #eee;
+$thumbnail-border: #ccc;
 
 
 /* --- Inputs --- */
@@ -55,3 +62,11 @@ $frag-list-count    : lighten($frag-list-title-txt, 20%);
 /* --- Profile --- */
 $profile-description-title  :   #666;
 $profile-description-txt    :   #333;
+
+
+/* --- Adverts --- */
+$advert-back: #ff8300;
+$advert-back-top: lighten($advert-back, 5%);
+$advert-back-bot: darken($advert-back, 5%);
+$advert-text: $text-colour;
+$advert-link: $link-colour;
