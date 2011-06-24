@@ -194,7 +194,7 @@ function cb_frag_reload(param) {
     
     function get_parent_container_element_source(jquery_element) {
         var container_element   = jquery_element.parents('.'+fragment_container_class);
-        var frag_source_element = container_element.children('.'+fragment_source_class);
+        var frag_source_element = container_element.find('.'+fragment_source_class);
         var frag_source_href    = frag_source_element.attr('href');
         return [container_element, frag_source_href];
     }
