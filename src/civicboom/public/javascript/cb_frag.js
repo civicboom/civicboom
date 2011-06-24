@@ -248,7 +248,7 @@ function cb_frag_reload(param) {
 }
 
 function cb_frag_set_source(jquery_element, url) {
-    jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href', url);
+    jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('href', url);
 }
 
 function cb_frag_get_source(jquery_element) {
