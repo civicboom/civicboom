@@ -11,7 +11,7 @@ BODY.c-misc.a-titlepage {
 	.title-box {
 		text-align: center;
 		padding: 0;
-		margin: 8em auto 6em auto;
+		margin: 4em auto 4em auto;
 		width: 65em;
 
 		.headline {
@@ -128,6 +128,8 @@ BODY.c-misc.a-titlepage {
 	.downloads {
 		float: right;
 		width: 10em;
+		margin-top: 1em;
+		text-align: center;
 	}
 
 	.downloads h2 {
