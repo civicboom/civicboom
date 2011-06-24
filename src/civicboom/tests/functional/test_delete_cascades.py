@@ -5,8 +5,6 @@ from civicboom.lib.database.get_cached import get_member, get_group, get_content
 from civicboom.model         import Boom, Content, Media, Member, Follow, GroupMembership, Message, Tag, MemberAssignment, PaymentAccount
 from civicboom.model.meta    import Session
 
-from base64 import b64encode, b64decode
-
 import logging
 log = logging.getLogger(__name__)
 
@@ -18,10 +16,10 @@ class TestDeleteCascadesController(TestController):
         response_json = json.loads(response.body)
         return response_json['data']['list']['count']
 
-    def num_members_public(self, term=None):
+    def num_members_public(self, **kwargs):
         url_index = url('members', format='json')
-        if term:
-            url_index = url('members', format='json', term=term)
+        if kwargs:
+            url_index = url('members', format='json', **kwargs)
         return self.get_list_count(url_index)
     
     def num_content_public(self, term=None):
@@ -67,8 +65,8 @@ class TestDeleteCascadesController(TestController):
     #---------------------------------------------------------------------------
     def test_delete_user(self):
         
-        self.assertEqual(self.num_members_public('delete_cascade'), 0)
-        self.assertEqual(self.num_content_public('delete_cascade'), 0)
+        self.assertEqual(self.num_members_public(username='delete_cascade'), 0)
+        self.assertEqual(self.num_content_public(         'delete_cascade'), 0)
         
         num_members_start = self.num_members_public()
         num_content_start = self.num_content_public()
@@ -95,7 +93,7 @@ class TestDeleteCascadesController(TestController):
         #  - group membership
         
         # Create content with media
-        self.png1x1 = b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAAXNSR0IArs4c6QAAAApJREFUCNdj+AcAAQAA/8I+2MAAAAAASUVORK5CYII=')
+        self.png1x1 = self.generate_image((1, 1))
         response = self.app.post(
             url('contents', format='json'),
             params={
@@ -180,8 +178,9 @@ class TestDeleteCascadesController(TestController):
         #-----------------------------------------------------------------------
         # check tables deeply for all instances of the member id for removal
         
-        self.assertEqual(self.num_members_public('delete_cascade'), 2) # 'delete_cascade' and 'delete_cascade_group'
-        self.assertEqual(self.num_content_public('delete_cascade'), 1) # 'delete_cascade' in public content # unittest assignment has delete cascade in title and content
+        self.assertEqual(self.num_members_public(username='delete_cascade'      ), 1) # 'delete_cascade' and 'delete_cascade_group' are both public members
+        self.assertEqual(self.num_members_public(username='delete_cascade_group'), 1)
+        self.assertEqual(self.num_content_public(         'delete_cascade'      ), 1) # 'delete_cascade' in public content # unittest assignment has delete cascade in title and content
         
         self.assertEqual(Session.query(Media           ).filter_by(         id = self.media_id                ).count(), 1)
         self.assertEqual(Session.query(Content         ).filter_by(         id = self.content_id              ).count(), 1)
@@ -218,8 +217,9 @@ class TestDeleteCascadesController(TestController):
         # Step 4: Check for successful removal
         #-----------------------------------------------------------------------
         
-        self.assertEqual(self.num_members_public('delete_cascade'), 0)
-        self.assertEqual(self.num_content_public('delete_cascade'), 0)
+        self.assertEqual(self.num_members_public(username='delete_cascade'      ), 0)
+        self.assertEqual(self.num_members_public(username='delete_cascade_group'), 0)
+        self.assertEqual(self.num_content_public(         'delete_cascade'      ), 0)
         self.assertEqual(num_members_start, self.num_members_public())
         self.assertEqual(num_content_start, self.num_content_public() - 1) # -1 because unittest set an assignment
         

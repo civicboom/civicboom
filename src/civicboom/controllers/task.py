@@ -19,6 +19,7 @@ log = logging.getLogger(__name__)
 
 response_completed_ok = "task:ok" #If this is changed please update tasks.py to reflect the same "task ok" string
 
+
 def normalize_datetime(datetime):
     return datetime.replace(minute=0, second=0, microsecond=0)
     
@@ -60,7 +61,7 @@ class TaskController(BaseController):
         to be run once every 24 hours
         """
         from civicboom.model.member import User
-        from civicboom.lib.civicboom_lib import validation_url
+        from civicboom.lib.accounts import validation_url
         
         frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
         remind_after            = timedelta_str(remind_after           )
@@ -201,3 +202,17 @@ class TaskController(BaseController):
 
     def test(self):
         return "<task happened>"
+
+
+    #---------------------------------------------------------------------------
+    # One-off things
+    #---------------------------------------------------------------------------
+
+    def convert_descriptions(self):
+        from civicboom.model.member import Member
+        for m in Session.query(Member):
+            if not m.description and "description" in m.config:
+                m.description = m.config.get("description", "")
+                del m.config['description']
+            yield str(m.username + "\n")
+        Session.commit()

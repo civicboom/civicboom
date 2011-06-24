@@ -4,7 +4,7 @@ Base Formencode Validators
 
 # Formencode Imports
 import formencode
-from formencode import validators, compound, Invalid
+from formencode import validators
 
 from pylons.i18n.translation import _
 
@@ -16,15 +16,14 @@ from civicboom.lib.authentication import encode_plain_text_password, get_user_an
 from cbutils.text import clean_html_markup, strip_html_tags
 
 # Misc Imports
-import datetime
 from dateutil.parser import parse as parse_date
-import hashlib
 import re
 
 
 class DefaultSchema(formencode.Schema):
     allow_extra_fields  = True
     filter_extra_fields = True
+
 
 class UnicodeStripHTMLValidator(validators.UnicodeString):
     def _to_python(self, value, state):
@@ -38,9 +37,11 @@ class MemberValidator(validators.FancyValidator):
         'empty'     : _('You must specify a member'),
         'not_member': _('Not a valid member'),
     }
+
     def __init__(self, return_object=False, *args, **kwargs):
         validators.FancyValidator.__init__(self, *args, **kwargs)
         self.return_object = return_object
+
     def _to_python(self, value, state):
         from civicboom.lib.database.get_cached import get_member
         member = get_member(value)
@@ -58,6 +59,7 @@ class LocationValidator(validators.FancyValidator):
     messages = {
         'not_in_range': _('location is out of range'),
     }
+
     def _to_python(self, value, state):
         try:
             value = value.replace(",", " ")
@@ -65,7 +67,6 @@ class LocationValidator(validators.FancyValidator):
             return "SRID=4326;POINT(%f %f)" % (float(lon), float(lat))
         except:
             raise formencode.Invalid(self.message("not_in_range", state), value, state)
-
 
 
 class ContentObjectValidator(validators.FancyValidator):
@@ -77,9 +78,11 @@ class ContentObjectValidator(validators.FancyValidator):
         'not_content' : _('Not valid content'),
         'not_viewable': _('content not viewable by your user'),
     }
+
     def __init__(self, return_object=False, *args, **kwargs):
         validators.FancyValidator.__init__(self, *args, **kwargs)
         self.return_object = return_object
+
     def _to_python(self, value, state):
         from pylons import tmpl_context as c
         from civicboom.lib.database.get_cached import get_content
@@ -97,9 +100,11 @@ class ContentObjectValidator(validators.FancyValidator):
 class ContentUnicodeValidator(validators.UnicodeString):
     not_empty = False
     strip     = True
+
     def __init__(self, html='clean_html_markup', *args, **kwargs):
         self.html = html
         return validators.UnicodeString.__init__(self, *args, **kwargs)
+
     def _to_python(self, value, state):
         value = validators.UnicodeString._to_python(self, value, state)
         if self.html=='clean_html_markup':
@@ -114,6 +119,7 @@ class ContentTagsValidator(validators.FancyValidator):
     strip      = True
     if_missing = []
     if_empty   = []
+
     def _to_python(self, value, state):
         from civicboom.lib.database.get_cached import get_tag
         tags_raw = value.split(" ")
@@ -127,9 +133,11 @@ class LicenseValidator(validators.FancyValidator):
         'empty'      : _('you must specify a licence type'),
         'not_license': _('not a valid licence type'),
     }
+
     def __init__(self, return_object=False, *args, **kwargs):
         validators.FancyValidator.__init__(self, *args, **kwargs)
         self.return_object = return_object
+
     def _to_python(self, value, state):
         from civicboom.lib.database.get_cached import get_license
         license = get_license(value)
@@ -139,10 +147,12 @@ class LicenseValidator(validators.FancyValidator):
             return license
         return license.id
 
+
 class PrivateContentValidator(validators.StringBool):
     messages = {
         'not_account_type': _('unable to use private content features without account upgrade'),
     }
+
     def _to_python(self, value, state):
         value = validators.StringBool._to_python(self, value, state)
         from pylons import tmpl_context as c
@@ -157,6 +167,7 @@ class CurrentUserPasswordValidator(validators.FancyValidator):
         'empty'     : _('You must enter your current password'),
         'invalid'   : _('Invalid password'),
     }
+
     def _to_python(self, value, state):
         if get_user_and_check_password(c.logged_in_persona.username, value):
             return value
@@ -172,7 +183,8 @@ class PasswordValidator(validators.FancyValidator):
         'empty'     : _('You must enter a password'),
         'too_few'   : _('Your password must be longer than %(min)i characters'),
         'non_letter': _('You must include at least %(non_letter)i non-letter in your password'),
-        }
+    }
+
     def _to_python(self, value, state):
         value = value.strip()
         if len(value) < self.min:
@@ -192,7 +204,7 @@ class IsoFormatDateConverter(validators.DateConverter):
 
     def _to_python(self, value, state):
         try:
-            value = parse_date(value).strftime("%d/%m/%Y")
+            value = parse_date(value, dayfirst=True).strftime("%d/%m/%Y")
         except ValueError:
             raise formencode.Invalid("Invalid date", value, state)
         return super(IsoFormatDateConverter, self)._to_python(value, state)
@@ -205,7 +217,8 @@ class SetValidator(validators.FancyValidator):
     messages = {
         'invalid'   : _('Some item(s) not in set'),
         'empty'     : _('Set cannot be empty'),
-        }
+    }
+
     def _to_python(self, value, state):
         value = value.strip()
         values = value.split(self.separator)
@@ -219,10 +232,12 @@ class SetValidator(validators.FancyValidator):
                 raise formencode.Invalid(self.message("invalid", state), value, state)
         return values
 
+
 class EmptyValidator(validators.FancyValidator):
     messages = {
         'invalid'   : _('You cannot enter a value here due to other errors'),
-        }
+    }
+
     def _to_python(self, value, state):
         if len(value) > 0:
             raise formencode.Invalid(self.message("invalid", state), value, state)

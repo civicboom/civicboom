@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+<%def name="html_class_additions()"></%def>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
-<!--[if lt IE 7 ]> <html lang="en" class="no-js ie ie6"> <![endif]-->
-<!--[if IE 7 ]>    <html lang="en" class="no-js ie ie7"> <![endif]-->
-<!--[if IE 8 ]>    <html lang="en" class="no-js ie ie8"> <![endif]-->
-<!--[if IE 9 ]>    <html lang="en" class="no-js ie ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie ie6 ${self.html_class_additions()}"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie ie7 ${self.html_class_additions()}"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie ie8 ${self.html_class_additions()}"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie ie9 ${self.html_class_additions()}"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js ${self.html_class_additions()}"> <!--<![endif]-->
 <head>
 ##----------------------------------------------------------------------------
 ## Meta Text
@@ -15,7 +16,7 @@
 <%def name="description()">${_("_site_description")}</%def>
 	<meta name="description" content="${self.description()}"/>
 	<meta name="keywords"    content="civicboom, social media, community, information, news" />
-	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling, Greg Miell" />
+	<meta name="authors"     content="${config['email.contact']}, Elizabeth Hodgson, Allan Callaghan, Chris Girling, Greg Miell, Greg Mackelden" />
 	<meta name="robots"      content="all" />
 	<meta name="viewport"    content="width=480, initial-scale=1">
 	<meta name="google-site-verification" content="IeUt8MCUCpzq14C8DaxD5w8c-5iiRB1V5E4uh7nq3NY" />
@@ -25,7 +26,7 @@
 	<link rel="fluid-icon" href="/images/boom128.png" />
 	<link rel="search" type="application/opensearchdescription+xml" href="/misc/opensearch.xml" title="${_("_site_name")}" />
 	<link rel="profile" href="http://microformats.org/profile/hcard">
-<%def name="canonical_url()">${h.url('current', sub_domain='www', protocol='https', qualified=True)}</%def>
+<%def name="canonical_url()">${h.url('current', sub_domain='www', protocol='https', qualified=True, format=None)}</%def>
 	<link rel="canonical" href="${self.canonical_url()}"/>
 
 ##----------------------------------------------------------------------------
@@ -144,7 +145,13 @@ else:
 <body class="c-${c.controller} a-${c.action} u-${u}">    
 	${flash_message()}
 	##<nav><%include file="navigation.mako"/></nav>
-	<header><%include file="header.mako"/></header>
+        <header>
+            % if hasattr(next, 'header'):
+                ${next.header()}
+            % else:
+                <%include file="header.mako"/>
+            % endif
+        </header>
 	<div id="app">${next.body()}</div>
 	<footer><%include file="footer.mako"/></footer>
 

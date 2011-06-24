@@ -1,19 +1,17 @@
-from pylons import url as url_pylons, session, request, response, config, tmpl_context as c, app_globals
+from pylons import url as url_pylons, session, request, response, config, tmpl_context as c
 from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
-from pylons.decorators.secure import authenticated_form, get_pylons, csrf_detected_message, secure_form
+from pylons.decorators.secure import authenticated_form, get_pylons, secure_form
 
 from cbutils.cbxml import dictToXMLString
 
+from civicboom.lib.widget import widget_defaults
 
-from webhelpers.html import literal
-import formencode
 import os
 import time
 import json
 import re
 from decorator import decorator
-from pprint import pformat
 import logging
 import urllib
 
@@ -44,6 +42,7 @@ subdomain_formats = {
     'm'     : 'mobile' ,
     'api-v1': 'api'    ,
 }
+
 
 def get_subdomain_format(environ=None):
     """
@@ -91,11 +90,40 @@ def url(*args, **kwargs):
 
     # Encode current widget state into URL if in widget mode
     if kwargs.get('sub_domain')=='widget' or (get_subdomain_format(_url.environ)=='widget' and 'sub_domain' not in kwargs): # If widget and not linking to new subdomain
-        widget_var_prefix = config["setting.widget.var_prefix"]
-        for key, value in c.widget.iteritems():
-            if isinstance(value, dict) and 'username' in value: # the owner may be a dict, convert it back to a username
-                value = value['username']
-            kwargs[widget_var_prefix+key] = value
+        widget_var_prefix = config['setting.widget.var_prefix'   ]
+        widget_theme      = config['setting.widget.default_theme']
+        try:
+            # Just in case c does not exisit in thread
+            widget_theme = c.widget['theme']
+        except:
+            pass
+        if kwargs.get('theme'):
+            widget_theme = kwargs['theme']
+        
+        # AllanC - ***ING MASSIVE HACK ... it's 5:30 AM FFS!
+        if widget_theme=='gradient':
+            kwargs[widget_var_prefix+'theme'] = widget_theme
+        else:
+            #print "-----------------------------------------"
+            widget_default = dict(widget_defaults.get(widget_theme))
+            #print widget_default
+            for key, default_value in widget_default.iteritems():
+                default_value = str(default_value)
+                # Check if value is the same as widget default - there is no need to add this to the URL if they match
+                required_fields = ['theme']
+                try:
+                    w_key = widget_var_prefix + key
+                    c_val = c.widget[key]
+                    try:
+                        c_val = c_val['username']
+                    except:
+                        c_val = str(c_val)
+                    #print "key:%s dv:%s cv:%s" %(key,default_value, c_val)
+                    if key in required_fields or c_val!=default_value:
+                        #print "STORE: %s:%s" % (w_key,c_val)
+                        kwargs[w_key] = c_val
+                except:
+                    pass
 
     args = list(args)
     if 'current' in args:
@@ -282,6 +310,7 @@ class action_error(Exception):
         self.original_dict.update(kwargs)
         #if template:
         #    self.original_dict["template"] = template
+
     def __str__( self ):
         return str(self.original_dict)
 
@@ -341,6 +370,8 @@ def _find_template(result, type):
             os.path.join("html", subformat, template_part),
             os.path.join("html", "web",     template_part),
         ]
+        if subformat=='widget':
+            paths.insert(0, os.path.join("html", subformat, c.widget['theme'], template_part)) # AllanC - widgets have a special case and can have multiple themes - see addtion for list types below as well
         ## AllanC: TODO
         ## if there is no web template but there is a frag for this template part
         ## wrap the fragment in a frag_container.mako
@@ -367,6 +398,10 @@ def _find_template(result, type):
                 os.path.join("html", subformat, list_part) ,
                 os.path.join("html", "web"    , list_part) ,
             ]
+            # HACK - AllanC - insert 1 so it's after os.path.join(type, list_part)
+            if subformat=='widget':
+                paths.insert(1, os.path.join("html", subformat, c.widget['theme'], list_part)) # AllanC - widgets have a special case and can have multiple themes - hack here to inset at item 1
+            
     
     for path in paths:
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
@@ -540,8 +575,15 @@ def auto_format_output(target, *args, **kwargs):
             raise ae
         else:
             result = ae.original_dict
-            user_log.debug('%s: %s' % (result.get('code',''), result.get('message'))) # Log big user error as small server error
-            if c.format=="html" or c.format=="redirect":
+
+            if result.get('code') == 404 and request.environ.get("HTTP_REFERER", "-") == "-":
+                # 404 with no referer is normally a web spider
+                pass
+            else:
+                # Log big user error as small server error
+                user_log.debug('%s: %s' % (result.get('code'), result.get('message')))
+
+            if c.format == "html" or c.format == "redirect":
                 if result.get('code') == 402:
                     return redirect(url(controller='misc', action='about', id='upgrade_plans'))
                 if c.html_action_fallback_url:
@@ -551,7 +593,7 @@ def auto_format_output(target, *args, **kwargs):
     
     # After
     # Is result a dict with data?
-    if auto_format_output_flag and isinstance(result,dict): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
+    if auto_format_output_flag and isinstance(result, dict): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
         # set the HTTP status code
         if 'code' in result:
             response.status = int(result['code'])
@@ -640,7 +682,6 @@ def cacheable(time=60*60*24*365, anon_only=True):
             response.headers["Vary"] = "cookie"
             if "Pragma" in response.headers:
                 del response.headers["Pragma"]
-            #log.info(pprint.pformat(response.headers))
         return func(*args, **kwargs)
     return decorator(_cacheable)
 
@@ -721,7 +762,5 @@ def web_params_to_kwargs(_target, *args, **kwargs):
         if varname in new_kwargs:
             del new_kwargs[varname]
 
-    #user_log.info("calling "+target.func_name+", given param names, defaults, kwargs, web params are "+pformat(arg_names)+pformat(args)+pformat(kwargs)+pformat(params))
-    #user_log.info("calling "+target.func_name+", now have param values and kwargs "+pformat(new_args)+pformat(new_kwargs))
     c.web_params_to_kwargs = (new_args, new_kwargs)
     return _target(*new_args, **new_kwargs) # Execute the wrapped function

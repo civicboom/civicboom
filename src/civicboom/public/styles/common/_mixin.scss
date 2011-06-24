@@ -1,0 +1,19 @@
+@mixin horiz_gradient($top, $bot) {
+    background: $bot;
+    background: -moz-linear-gradient(top                      ,                  $top 20% ,                  $bot 100% );
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.20, $top    ), color-stop(1.00, $bot     ));
+    filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='$top', endColorstr='$bot');
+
+}
+
+@mixin border_radius($rad) {
+    border-radius        : $rad;
+    -moz-border-radius   : $rad;
+    -webkit-border-radius: $rad;
+}
+
+@mixin drop_shadow($offset-x, $offset-y, $size, $color) {
+    -moz-box-shadow:    $offset-x $offset-y $size $color;
+    -webkit-box-shadow: $offset-x $offset-y $size $color;
+    box-shadow:         $offset-x $offset-y $size $color;
+}

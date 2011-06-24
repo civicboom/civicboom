@@ -2,6 +2,7 @@ from formalchemy.fields import FieldRenderer
 from formalchemy.fields import TextAreaFieldRenderer
 from civicboom.model.meta import location_to_string
 
+
 def create_autocompleter(url):
     class AutoCompleteRenderer(FieldRenderer):
         def render(self, options={}):

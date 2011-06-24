@@ -231,6 +231,26 @@ class ContentActionsController(BaseController):
             return flag_action(id, **kwargs)
 
 
+    #---------------------------------------------------------------------------
+    # Action - Push to members
+    #---------------------------------------------------------------------------
+    @web
+    @auth
+    @role_required('editor')
+    def push_to(self, id=None, members=[], **kwargs):
+        """
+        POST /contents/{id}/push_to: push this content with a notification to members
+        @type action
+        @api contents 1.0 (WIP)
+
+        @param members a comma separated list of usernames that will be alerted to this content
+
+        @return 500   error not implemented yet
+        """
+
+        raise action_error(_('not implemented'), code=500)
+
+
     #-----------------------------------------------------------------------------
     # Action - Add to Interest List
     #-----------------------------------------------------------------------------
@@ -319,10 +339,11 @@ class ContentActionsController(BaseController):
     def responses(self, id, **kwargs):
         """
         GET /contents/{id}/responses: Get a list of responses
+
+        shortcut to /contents?response_to={id}
+
         @type list
         @api contents 1.0 (WIP)
-        
-        shotcut to /contents?response_to={id}
         """
         #content = _get_content(id, is_viewable=True)
         #if 'include_fields' not in kwargs:
@@ -338,10 +359,11 @@ class ContentActionsController(BaseController):
     def contributors(self, id, **kwargs):
         """
         GET /contents/{id}/contributors: Get list of contributors (unimplemented)
+
+        shortcut to /contents?response_to={id}
+
         @type list
         @api contents 1.0 (WIP)
-        
-        shotcut to /contents?response_to={id}
         
         @comment AllanC will currently return empty list - unimplemented
         """

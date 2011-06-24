@@ -142,6 +142,21 @@ function map_picker(field_name, options) {
 
 	$('#'+field_name+'_name').autocomplete({
 		source: function(req, respond) {
+			req.q = req.term;
+			$.getJSON("/misc/nominatim/search?format=json&countrycodes=gb&email=developers@civicboom.com&json_callback=?", req, function(response) {
+				// translate from nominatim formatted data ('response')
+				// to jQueryUI formatted ('suggestions')
+				var suggestions = [];
+				$.each(response, function(i, val) {
+					suggestions.push({
+						"label": val.display_name,
+						"value": "POINT("+val.lon+" "+val.lat+")",
+						"bbox": val.boundingbox
+					});
+				});
+				respond(suggestions);
+			});
+			/*
 			$.getJSON("/search/location.json?", req, function(response) {
 				// translate from CB-API formatted data ('response')
 				// to jQueryUI formatted ('suggestions')
@@ -151,6 +166,7 @@ function map_picker(field_name, options) {
 				});
 				respond(suggestions);
 			});
+			*/
 		},
 		select: function(event, ui) {
 			var typelonlat = ui.item.value.split(/[ ()]/);

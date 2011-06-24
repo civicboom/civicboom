@@ -2,13 +2,10 @@ from civicboom.lib.base import *
 from cbutils.misc import make_username
 from civicboom.model import User, Group
 
-import civicboom.lib.constants as constants
-
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
-#from civicboom.lib.web              import cookie_get
-from civicboom.lib.civicboom_lib    import verify_email_hash, associate_janrain_account, set_password, get_action_objects_for_url, has_account_without_password, send_verifiy_email #send_forgot_password_email,
-#from civicboom.lib.database.get_cached import get_member
+from civicboom.lib.accounts         import verify_email_hash, associate_janrain_account, set_password, has_account_without_password, send_verifiy_email
+from civicboom.lib.civicboom_lib    import get_action_objects_for_url
 
 from civicboom.controllers.register import register_new_janrain_user
 

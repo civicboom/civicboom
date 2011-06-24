@@ -1,7 +1,6 @@
 from webhelpers.html.tools import auto_link
 from webhelpers.html       import literal
 
-from cbutils.misc                          import update_dict
 from cbutils.text                          import convert_html_to_plain_text
 from civicboom.lib.communication.email_log import email_log
 
@@ -12,6 +11,7 @@ log = logging.getLogger(__name__)
 
 
 config = {}
+
 
 def configure(c):
     global config
@@ -132,14 +132,18 @@ def send_email_smtp(email_to, subject, content_text, content_html, **kwargs):
     msgRoot.attach(msgAlternative)
     
     #content_text - encoded correctly
-    try                : content_text = content_text.encode('UTF-8')
-    except UnicodeError: pass
+    try:
+        content_text = content_text.encode('UTF-8')
+    except UnicodeError:
+        pass
     msgText = MIMEText(content_text, 'plain', 'UTF-8')
     msgAlternative.attach(msgText)
     
     #content_html - encoded correctly
-    try                : content_html = content_html.encode('UTF-8')
-    except UnicodeError: pass
+    try:
+        content_html = content_html.encode('UTF-8')
+    except UnicodeError:
+        pass
     msgText = MIMEText(content_html, 'html', 'UTF-8')
     msgAlternative.attach(msgText)
     

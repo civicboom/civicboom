@@ -6,11 +6,11 @@ from civicboom.lib.helpers import wh_url
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
-from sqlalchemy import Enum, Integer, DateTime, Boolean
+from sqlalchemy import Enum, Integer, DateTime, Boolean, Interval
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
-from sqlalchemy.orm import relationship, backref, dynamic_loader
-from sqlalchemy.schema import DDL
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.schema import DDL, CheckConstraint
 
 import urllib
 import hashlib
@@ -62,7 +62,7 @@ def has_role_required(required, current):
     return _enum_level_comparison(required, current, group_member_roles_level)
 
 
-def lowest_role(a,b):
+def lowest_role(a, b):
     """
     >>> lowest_role('admin'  ,'admin'   )
     'admin'
@@ -80,6 +80,7 @@ def lowest_role(a,b):
         return a
     else:
         return b
+
 
 def has_account_required(required, current):
     """
@@ -198,6 +199,35 @@ def _generate_salt():
     return os.urandom(256)
 
 
+import UserDict
+from ConfigParser import SafeConfigParser, NoOptionError
+
+
+class _ConfigManager(UserDict.DictMixin):
+    def __init__(self, base):
+        self.base = base
+
+    def __getitem__(self, name):
+        if name in self.base:
+            return self.base[name]
+        try:
+            user_defaults = SafeConfigParser()
+            user_defaults.read("user_defaults.ini")
+            return unicode(user_defaults.get("settings", name))
+        except NoOptionError:
+            raise KeyError(name)
+
+    def __setitem__(self, name, value):
+        self.base[name] = value
+
+    def __delitem__(self, name):
+        if name in self.base:
+            del self.base[name]
+
+    def keys(self):
+        return self.base.keys()
+
+
 class Member(Base):
     "Abstract class"
     __tablename__   = "member"
@@ -206,14 +236,15 @@ class Member(Base):
     _member_status  = Enum("pending", "active", "suspended", name="member_status")
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
-    name            = Column(Unicode(250),   nullable=False, default=u"")
+    name            = Column(Unicode(250),   nullable=False)
     join_date       = Column(DateTime(),     nullable=False, default=func.now())
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(String(40),     nullable=True)
-    utc_offset      = Column(Integer(),      nullable=False, default=0)
+    utc_offset      = Column(Interval(),     nullable=False, default="0 hours")
     location_home   = Golumn(Point(2),       nullable=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
+    description     = Column(UnicodeText(),  nullable=False, default=u"")
     extra_fields    = Column(JSONType(mutable=True), nullable=False, default={})
 
     num_following            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
@@ -260,8 +291,12 @@ class Member(Base):
 
     #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
 
-
-    _config = None
+    __table_args__ = (
+        CheckConstraint("username ~* '^[a-z0-9_-]{4,}$'"),
+        CheckConstraint("length(name) > 0"),
+        CheckConstraint("substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}'"),
+        {}
+    )
 
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
@@ -283,10 +318,10 @@ class Member(Base):
     })
     __to_dict__['full'].update({
             'num_followers'       : None ,
-            'utc_offset'          : None ,
+            'utc_offset'          : lambda member: (member.utc_offset.days * 86400 + member.utc_offset.days),
             'join_date'           : None ,
-            'website'             : lambda member: member.config.get('website') ,
-            'description'         : lambda member: member.config.get('description') or '',
+            'website'             : lambda member: member.extra_fields.get('website') ,
+            'description'         : None ,
             #'url'                 : None ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
@@ -298,9 +333,15 @@ class Member(Base):
     })
     
 
+    _config = None
+
     @property
     def config(self):
-        return self.extra_fields
+        if not self.extra_fields:
+            self.extra_fields = {}
+        if not self._config:
+            self._config = _ConfigManager(self.extra_fields)
+        return self._config
 
     def __unicode__(self):
         return self.name or self.username
@@ -314,8 +355,8 @@ class Member(Base):
 
     def hash(self):
         h = hashlib.md5()
-        for field in ("id","username","name","join_date","status","avatar","utc_offset"): #TODO: includes relationship fields in list?
-            h.update(str(getattr(self,field)))
+        for field in ("id", "username", "name", "join_date", "status", "avatar", "utc_offset"): #TODO: includes relationship fields in list?
+            h.update(str(getattr(self, field)))
         return h.hexdigest()
 
     def action_list_for(self, member, **kwargs):
@@ -529,6 +570,8 @@ class Member(Base):
 
 GeometryDDL(Member.__table__)
 
+DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', username || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
+
 
 class User(Member):
     __tablename__    = "member_user"
@@ -552,15 +595,13 @@ class User(Member):
     __to_dict__['default'     ].update(_extra_user_fields)
     __to_dict__['full'        ].update(_extra_user_fields)
 
-
-
     def __unicode__(self):
         return self.name or self.username
 
     def hash(self):
         h = hashlib.md5(Member.hash(self))
         for field in ("email",):
-            h.update(str(getattr(self,field)))
+            h.update(str(getattr(self, field)))
         for login in self.login_details:
             h.update(login.token)
         return h.hexdigest()
@@ -568,15 +609,6 @@ class User(Member):
     @property
     def email_normalized(self):
         return self.email or self.email_unverified
-
-    @property
-    def config(self):
-        if not self._config:
-            # import at the last minute -- importing at the start of the file
-            # causes a dependency loop
-            from civicboom.lib.settings import MemberSettingsManager
-            self._config = MemberSettingsManager(self)
-        return self._config
 
     @property
     def avatar_url(self, size=80):
@@ -645,7 +677,6 @@ class Group(Member):
     __to_dict__['full'   ].update(_extra_group_fields)
 
 
-
     # Private admin integrity helper - used in set_role and remove_member
     def _check_last_admin(self, member=None, membership=None):
         if not membership:
@@ -669,13 +700,13 @@ class Group(Member):
             # AllanC - because we now swich persona to the group, If we provide a deep check of user membership here, but don't on the operations, this provides a problem
             #          for now - we check to see if member == self .. 
             #if self.is_admin(member, membership) or has_role_required('admin',role):
-            if (member == self and not role) or (member == self and has_role_required('admin',role)):
+            if (member == self and not role) or (member == self and has_role_required('admin', role)):
                 action_list.append('delete')
                 action_list.append('remove') #AllanC - could be renamed? this means remove member?
                 action_list.append('set_role')
                 action_list.append('invite_members')
                 action_list.append('settings_group')
-                if self.num_admins>1:
+                if self.num_admins > 1:
                     action_list.append('remove_self')
                     action_list.append('set_role_self')
             if membership:
@@ -751,15 +782,6 @@ class UserLogin(Base):
     #type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
     type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time
     token       = Column(String(250),  nullable=False)
-
-
-class MemberSetting(Base):
-    __tablename__    = "member_setting"
-    member_id   = Column(Integer(),     ForeignKey('member.id'), primary_key=True, index=True)
-    name        = Column(String(250),   primary_key=True)
-    value       = Column(UnicodeText(), nullable=False)
-
-    member      = relationship("Member", backref=backref('settings', cascade="all,delete-orphan"))
 
 
 class PaymentAccount(Base):

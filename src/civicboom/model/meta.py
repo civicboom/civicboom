@@ -26,6 +26,7 @@ Base = declarative_base()
 from sqlalchemy import PickleType, UnicodeText
 import json
 
+
 class JSONType(PickleType):
     """
     fff. json dumps to str by default, and unicodetext complains
@@ -55,7 +56,7 @@ def to_dict(self, list_type='default', include_fields=None, exclude_fields=None,
     """
     from cbutils.misc import obj_to_dict
     
-    if list_type=='empty': # Don't copy a base list if empty list is requested
+    if list_type == 'empty': # Don't copy a base list if empty list is requested
         fields = {}
     else:
         if list_type not in self.__to_dict__:
@@ -78,7 +79,7 @@ def to_dict(self, list_type='default', include_fields=None, exclude_fields=None,
         for field in [field for field in exclude_fields if field in fields]:
             del fields[field]
 
-    return obj_to_dict(self,fields)
+    return obj_to_dict(self, fields)
 
 #def to_dict_update(self, name, field_list, clone_name=None):
 #    __to_dict__ =  self.__to_dict__

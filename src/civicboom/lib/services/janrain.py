@@ -15,15 +15,16 @@ log = logging.getLogger(__name__)
 service_url = 'https://rpxnow.com/api/v2/'
 
 
-def janrain(method, **kargs):  # pragma: no cover - online services aren't active in test mode
+def janrain(method, **kwargs):  # pragma: no cover - online services aren't active in test mode
     """
     Make Janrain API calls from python - more info for each call at https://rpxnow.com/docs
     """
-    kargs['apiKey'] = config['api_key.janrain']
-    kargs['format'] = 'json'
+    if 'apiKey' not in kwargs:
+        kwargs['apiKey'] = config['api_key.janrain']
+    kwargs['format'] = 'json'
     
     try:
-        http_response  = urllib2.urlopen(service_url+method, urllib.urlencode(kargs), timeout=10)
+        http_response  = urllib2.urlopen(service_url+method, urllib.urlencode(kwargs), timeout=10)
         janrain_python = json.loads(http_response.read())
         http_response.close()
     except:
@@ -32,5 +33,6 @@ def janrain(method, **kargs):  # pragma: no cover - online services aren't activ
     
     if janrain_python['stat'] != 'ok':
         log.error(janrain_python['err']['msg'])
+        #print janrain_python['err']['msg']
         return None
     return janrain_python

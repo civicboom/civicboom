@@ -60,7 +60,7 @@ def init_base_data():
         u1.location_home = "SRID=4326;POINT(1.0652 51.2976)"
         u1.location_current = "SRID=4326;POINT(1.0803 51.2789)"
         u1.config['home_location'] = u"The Moon"
-        u1.config['description']   = u"A user for automated tests to log in as"
+        u1.description   = u"A user for automated tests to log in as"
 
         u1_login = UserLogin()
         u1_login.user   = u1
@@ -72,7 +72,8 @@ def init_base_data():
         #u1.payment_account = u1_account
         u1.set_payment_account('plus', delay_commit=True)
 
-        Session.add_all([u1, u1_login]); Session.commit();
+        Session.add_all([u1, u1_login])
+        Session.commit()
         assert u1.id == 1
         assert u1.login_details[0].type == "password"
         assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
@@ -90,7 +91,8 @@ def init_base_data():
         u2_login.type   = "password"
         u2_login.token  = hashlib.sha1("password").hexdigest()
 
-        Session.add_all([u2, u2_login]); Session.commit();
+        Session.add_all([u2, u2_login])
+        Session.commit()
         assert u2.id == 2
 
         #follow(u1,u2)
@@ -126,7 +128,8 @@ def init_base_data():
         u5.email         = u""
         u5.avatar        = u"2ca1c359d090e6a9a68dac6b3cc7a14d195ef4d8"
 
-        Session.add_all([u3, u3_login, u4, u5]); Session.commit()
+        Session.add_all([u3, u3_login, u4, u5])
+        Session.commit()
 
 
         # test data for kent messenger demo
@@ -154,12 +157,12 @@ def init_base_data():
         u7_login.type   = "password"
         u7_login.token  = hashlib.sha1("password").hexdigest()
 
-        Session.add_all([u6, u6_login, u7, u7_login]);
+        Session.add_all([u6, u6_login, u7, u7_login])
         u6.follow(u7, delay_commit=True)
         u6.follow(u3, delay_commit=True)
         u6.follow(u4, delay_commit=True)
         u6.follow(u5, delay_commit=True)
-        Session.commit();
+        Session.commit()
 
         #follow(u6,u7)
         #follow(u6,u3)
@@ -180,13 +183,13 @@ def init_base_data():
         u8_login.type   = "password"
         u8_login.token  = hashlib.sha1("password").hexdigest()
 
-        Session.add_all([u8, u8_login]);
-        
+        Session.add_all([u8, u8_login])
+
         u8.follow(u7, delay_commit=True)
         u8.follow(u3, delay_commit=True)
         u8.follow(u4, delay_commit=True)
         u8.follow(u5, delay_commit=True)
-        Session.commit();
+        Session.commit()
 
         #follow(u8,u7)
         #follow(u8,u3)

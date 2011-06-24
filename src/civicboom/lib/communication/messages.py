@@ -12,15 +12,7 @@ from pylons import config
 from pylons.i18n          import lazy_ugettext as _
 from webhelpers.html      import HTML
 
-from civicboom.model                   import Message
-from civicboom.model.meta              import Session
-from civicboom.lib.database.get_cached import get_member as _get_member, update_member_messages
-from civicboom.lib.communication.email_lib import render_email
-
 import cbutils.worker as worker
-
-import re
-import os
 
 import logging
 log = logging.getLogger(__name__)
@@ -150,6 +142,8 @@ generators = [
 # Turn the table into classes
 #
 for _name, _default_route, _subject, _content in generators:
+    # a blank line because pep8 says so
+
     class gen(MessageData):
         name          = _name
         default_route = _default_route

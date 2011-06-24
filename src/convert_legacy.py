@@ -2,18 +2,17 @@
 
 import optparse
 
-import pylons
 from paste.deploy import appconfig
 
 from civicboom.config.environment import load_environment
 
 
-from civicboom.model.meta import Base, Session
+from civicboom.model.meta import Session
 
-from civicboom.model import License, Tag, Rating
+from civicboom.model import Rating
 from civicboom.model import User, UserLogin
 from civicboom.model import ArticleContent, CommentContent, AssignmentContent, Media
-from civicboom.model import MemberAssignment, Follow
+from civicboom.model import MemberAssignment
 from civicboom.model import Message
 
 from civicboom.lib.services import warehouse as wh
@@ -21,13 +20,11 @@ from civicboom.lib.database.get_cached import get_tag, get_license
 from civicboom.lib.database.gis import get_location_by_name
 from civicboom.lib import worker
 
-import datetime
 from glob import glob
 import os
 import re
 import Image
 import tempfile
-import hashlib
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker

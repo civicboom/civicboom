@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+
 class TestFormats(TestController):
 
     def test_formats(self):
@@ -18,4 +19,3 @@ class TestFormats(TestController):
         test_all_formats() # Logged in user
         self.log_out()
         test_all_formats() # Anon user
-

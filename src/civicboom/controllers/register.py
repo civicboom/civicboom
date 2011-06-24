@@ -1,3 +1,16 @@
+"""
+Registration process can be done in 2 ways:
+    1.a) Collect email address and username
+        - this can be done from a variaty of sources (e.g widget, webpage or mobile)
+        - server creates new user record and sends validation email
+    1.b) User forwarded from validation email
+        - validates email hash
+        - collects password and addtional data
+        
+    2.a) Janrain
+    2.b) additional details
+"""
+
 from civicboom.lib.base import *
 
 # Database Objects
@@ -8,7 +21,7 @@ from civicboom.model.member            import User, UserLogin
 from civicboom.lib.database.get_cached import get_member as _get_member
 
 # Communication & Messages
-from civicboom.lib.civicboom_lib       import send_verifiy_email, verify_email_hash, validation_url, associate_janrain_account, set_password
+from civicboom.lib.accounts       import send_verifiy_email, verify_email_hash, validation_url, associate_janrain_account, set_password
 
 # Signin
 from civicboom.lib.authentication import signin_user_and_redirect
@@ -33,18 +46,6 @@ log      = logging.getLogger(__name__)
 
 new_user_prefix = "newuser__"
 
-"""
-Registration process can be done in 2 ways:
-    1.a) Collect email address and username
-        - this can be done from a variaty of sources (e.g widget, webpage or mobile)
-        - server creates new user record and sends validation email
-    1.b) User forwarded from validation email
-        - validates email hash
-        - collects password and addtional data
-        
-    2.a) Janrain
-    2.b) additional details
-"""
 
 class RegisterController(BaseController):
     """
@@ -107,10 +108,14 @@ class RegisterController(BaseController):
         
         # If the validator has not forced a page render
         # then the data is fine - save the new user data
-        if 'username' in form: c.logged_in_persona.username         = form['username']
-        if 'name'     in form: c.logged_in_persona.name             = form['name']
-        if 'dob'      in form: c.logged_in_persona.config['dob']    = form['dob']
-        if 'email'    in form: c.logged_in_persona.email_unverified = form['email']
+        if 'username' in form:
+            c.logged_in_persona.username         = form['username']
+        if 'name'     in form:
+            c.logged_in_persona.name             = form['name']
+        if 'dob'      in form:
+            c.logged_in_persona.config['dob']    = str(form['dob'])
+        if 'email'    in form:
+            c.logged_in_persona.email_unverified = form['email']
         if 'password' in form:
             set_password(c.logged_in_persona, form['password'], delay_commit=True)
         c.logged_in_persona.status = "active"
@@ -159,6 +164,11 @@ class RegisterController(BaseController):
         @comment AllanC GET triggers HTML page
         """
         
+        # record the username exactly as given (eg Bob Bobson), the validator
+        # will return a valid username (bob-bobson). Have the username exactly
+        # as given as their default display name.
+        given_username = kwargs.get("username", "")
+
         # Check the username and email and raise any problems via the flash message session system
         try:
             kwargs = RegisterSchemaEmailUsername().to_python(kwargs) #dict(request.params)
@@ -169,6 +179,7 @@ class RegisterController(BaseController):
         u = User()
         u.username         = kwargs['username']
         u.email_unverified = kwargs['email']
+        u.name             = given_username  # display name will be asked for in step #2. For now, copying username is a good enough space filler
         Session.add(u)
         Session.commit()
         
@@ -197,11 +208,11 @@ class RegisterController(BaseController):
         if config['demo_mode'] and (c.format=='html' or c.format=='redirect'):
             return redirect(validation_url(u, controller='register', action='new_user'))
 
-        user_log.info("Sending verification email")
+        user_log.info("Sending verification email to %s (%s)" % (u.username, u.email_unverified))
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
         
-        if c.format=="html":
+        if c.format in ["html", "redirect"]:
             return redirect(url(controller="register", action="check_email"))
         
         return action_ok(_("Thank you. Please check your email to complete the registration process"))
@@ -238,6 +249,7 @@ def _fetch_avatar(url):
         log.exception("Error fetching janrain user's avatar")
         return None
 
+
 def register_new_janrain_user(profile):
     """
     With a Janrain user dictonary create a new user with whatever data has been provided as best we can
@@ -246,14 +258,20 @@ def register_new_janrain_user(profile):
     Session.flush() # AllanC - for some mythical reason the commit below wont function because the database is in an odd state, this flush makes the commit below work, more investigation may be needed or maybe a newer version of SQL alchemy will fix this issue
     
     u = User()
-    try   : u.username         = UniqueUsernameValidator().to_python(profile.get('displayName'))
-    except: u.username         = UniqueUsernameValidator().to_python(new_user_prefix+random_string())
+    try:
+        u.username         = UniqueUsernameValidator().to_python(profile.get('displayName'))
+    except Exception:
+        u.username         = UniqueUsernameValidator().to_python(new_user_prefix+random_string())
     
-    try   : u.email            = UniqueEmailValidator().to_python(profile.get('verifiedEmail'))
-    except: pass
+    try:
+        u.email            = UniqueEmailValidator().to_python(profile.get('verifiedEmail'))
+    except Exception:
+        pass
     
-    try   : u.email_unverified = UniqueEmailValidator().to_python(profile.get('email'))
-    except: pass
+    try:
+        u.email_unverified = UniqueEmailValidator().to_python(profile.get('email'))
+    except Exception:
+        pass
     
     u.name          = profile.get('name', dict()).get('formatted')
     u.status        = "pending"

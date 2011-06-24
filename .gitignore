@@ -9,6 +9,7 @@ src/data
 src/.coverage
 src/civicboom/public/warehouse
 src/civicboom/public/doc
+src/.sass-cache
 
 # files created while package building
 debian/*.deb
@@ -26,3 +27,4 @@ tmp/
 .project
 .pydevproject
 .settings/*
+.sass-cache

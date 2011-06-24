@@ -9,7 +9,7 @@ from sqlalchemy import Enum, Integer, DateTime, Boolean, Float
 from geoalchemy import GeometryColumn, Point, GeometryDDL
 from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.schema import DDL
+from sqlalchemy.schema import DDL, CheckConstraint, UniqueConstraint
 
 import hashlib
 import copy
@@ -43,14 +43,22 @@ class Boom(Base):
     member_id     = Column(Integer(),    ForeignKey('member.id') , nullable=False, primary_key=True)
     timestamp     = Column(DateTime(),   nullable=False, default=func.now())
     member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
-    content       = relationship("Content", primaryjoin='Content.id==Boom.content_id') # AllanC - could we enforce that content is user visible at the DB level here?
+    content       = relationship("Content", primaryjoin='Content.id==Boom.content_id')
+    # AllanC - could we enforce that content is user visible at the DB level here?
+    # Shish - it can be done, but is a little ugly (join the boom to the contents table,
+    #         check that __type__ is in the whitelist, make sure the whitelist is up to date)
 
 
 class Rating(Base):
     __tablename__ = "map_ratings"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
-    rating        = Column(Integer(),    nullable=False, default=0)
+    rating        = Column(Integer(),    nullable=False)
+
+    __table_args__ = (
+        CheckConstraint("rating > 0 AND rating <= 5"),
+        {}
+    )
 
 
 class Interest(Base):
@@ -117,6 +125,12 @@ class Content(Base):
     
     comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="(CommentContent.id==Content.parent_id) & (Content.visible==True)")
     flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
+
+    __table_args__ = (
+        CheckConstraint("length(title) > 0"),
+        CheckConstraint("substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}'"),
+        {}
+    )
     
 
     # used by obj_to_dict to create a string dictonary representation of this object
@@ -173,8 +187,8 @@ class Content(Base):
 
     def clone(self, content):
         if content and content.id:
-            for field in ["title","content","creator","parent_id","location","creation_date","private","license_id"]:
-                setattr(self,field,getattr(content,field))
+            for field in ["title", "content", "creator", "parent_id", "location", "creation_date", "private", "license_id"]:
+                setattr(self, field, getattr(content, field))
 
     def hash(self):
         h = hashlib.md5()
@@ -185,8 +199,8 @@ class Content(Base):
         #          solutions on a postcard?
         # is there a way in SQLAlchemy to force and object to resolve ID's without a commit?
         # need to add hash to sub objects? like Media etc
-        for field in ("id","title","content","creator","parent","update_date","status","private","license","attachments"): # AllanC: unfinished field list? include relations?
-            h.update(str(getattr(self,field)))
+        for field in ("id", "title", "content", "creator", "parent", "update_date", "status", "private", "license", "attachments"): # AllanC: unfinished field list? include relations?
+            h.update(str(getattr(self, field)))
         return h.hexdigest()
 
     def action_list_for(self, member, **kwargs):
@@ -195,9 +209,9 @@ class Content(Base):
             action_list.append('edit')
         if self.viewable_by(member):
             action_list.append('view')
-        if self.private==False and self.creator != member:
+        if self.private == False and self.creator != member:
             action_list.append('flag')
-        if self.private==False:
+        if self.private == False:
             action_list.append('aggregate')
         return action_list
 
@@ -267,7 +281,7 @@ class Content(Base):
         """
         Aggregate a summary of this content to Twitter, Facebook, LinkedIn, etc via the content creators user account
         """
-        from civicboom.lib.civicboom_lib import aggregate_via_user
+        from civicboom.lib.aggregation import aggregate_via_user
         if self.__type__ == 'article' or self.__type__ == 'assignment':
             return aggregate_via_user(self, self.creator)
     
@@ -295,7 +309,7 @@ class Content(Base):
                 return thumbnail_url
 
         thumbnail_type = self.__type__
-        if thumbnail_type=='article' and self.approval != None:
+        if thumbnail_type == 'article' and self.approval != None:
             thumbnail_type = 'response'
 
         from civicboom.lib.helpers import wh_url
@@ -387,6 +401,7 @@ class DraftContent(Content):
             action_list.append('delete')
         return action_list
 
+
 class CommentContent(Content):
     __tablename__   = "content_comment"
     __mapper_args__ = {'polymorphic_identity': 'comment'}
@@ -462,6 +477,11 @@ class ArticleContent(UserVisibleContent):
     ratings    = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
     approval   = Column(_approval, nullable=False, default="none")
 
+    __table_args__ = (
+        CheckConstraint("rating >= 0 AND rating <= 1"),
+        {}
+    )
+
     # AllanC TODO:
     # Could have derived fields for count="20" min="1" max="10"
     # This is used by Yahoos RSS guide and could be very usefull for statistical processing in future
@@ -470,7 +490,7 @@ class ArticleContent(UserVisibleContent):
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
     _extra_article_fields = {
-        'rating'        : None ,
+        'rating'   : None ,
         'approval' : None ,
     }
     __to_dict__['default'     ].update(_extra_article_fields)
@@ -517,6 +537,13 @@ class AssignmentContent(UserVisibleContent):
 
     assigned_to     = relationship("MemberAssignment", backref=backref("content"), cascade="all,delete-orphan")
     #assigned_to     = relationship("Member", backref=backref("assigned_assignments"), secondary="MemberAssignment")
+
+    ## there is a case where "due date < event date" makes sense, sort
+    ## of -- when submitting eg photos to be displayed at an event
+    #__table_args__ = (
+    #    CheckConstraint("(event_date IS NULL) OR (due_date IS NULL) OR (due_date >= event_date)"),
+    #    {}
+    #)
     
     # Setup __to_dict__fields
     __to_dict__ = copy.deepcopy(UserVisibleContent.__to_dict__)
@@ -553,13 +580,15 @@ class AssignmentContent(UserVisibleContent):
     
     def hash(self):
         h = hashlib.md5(UserVisibleContent.hash(self))
-        for field in ("event_date","due_date","closed"): #TODO: includes assigned_to in list?
-            h.update(str(getattr(self,field)))
+        for field in ("event_date", "due_date", "closed"): #TODO: includes assigned_to in list?
+            h.update(str(getattr(self, field)))
         return h.hexdigest()
 
     def acceptable_by(self, member):
-        if self.creator==member: return False
-        if self.closed         : return False #TODO - finish - "closed and not in assinged_to list"
+        if self.creator == member:
+            return False
+        if self.closed:
+            return False #TODO - finish - "closed and not in assinged_to list"
         #if member has accepted before? (will this break templates?)
         return True
         
@@ -585,8 +614,10 @@ class AssignmentContent(UserVisibleContent):
         """
         from civicboom.lib.database.actions import accept_assignment
         from civicboom.model.meta import Session
+
         def invite_member(member):
             return accept_assignment(self, member, status="pending", delay_commit=True)
+
         if isinstance(members, list):
             for member in members:
                 invite_member(member)
@@ -646,6 +677,11 @@ class License(Base):
     description   = Column(UnicodeText(), nullable=False)
     #articles      = relationship("Content", backref=backref('license'))
 
+    __table_args__ = (
+        CheckConstraint("length(id) > 0"),
+        {}
+    )
+
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'default': {
@@ -686,11 +722,17 @@ class Tag(Base):
     """
     __tablename__ = "tag"
     id            = Column(Integer(),    primary_key=True)
-    name          = Column(Unicode(250), nullable=False, index=True) # FIXME: should be unique within its category
+    name          = Column(Unicode(250), nullable=False, index=True)
     #type          = Column(Unicode(250), nullable=False, default=u"Topic")
     #children      = relationship("Tag", backref=backref('parent', remote_side=id))
     parent_id     = Column(Integer(),    ForeignKey('tag.id'), nullable=True, index=True)
     parent        = relationship('Tag',      backref=backref('children'), remote_side='tag.c.id')
+
+    __table_args__ = (
+        CheckConstraint("length(name) > 0"),
+        UniqueConstraint('parent_id', 'name'),
+        {}
+    )
 
     def __init__(self, name=None, parent=None):
         self.name = name

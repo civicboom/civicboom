@@ -1,8 +1,11 @@
 
-all: magic.py twitter formalchemy geoalchemy
+all: magic.py pexif.py twitter formalchemy geoalchemy
 
 magic.py:
 	wget --no-check-certificate https://github.com/ahupp/python-magic/raw/a75cf0a4a7790eb106155c947af9612f15693b6e/magic.py
+
+pexif.py:
+	wget http://pexif.googlecode.com/svn/trunk/pexif.py
 
 twitter:
 	wget http://pypi.python.org/packages/source/t/twitter/twitter-1.5.2.tar.gz

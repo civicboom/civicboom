@@ -15,7 +15,7 @@ from webhelpers.html.tags import end_form
 from webhelpers.date import time_ago_in_words
 
 from cbutils.text import strip_html_tags, scan_for_embedable_view_and_autolink
-from cbutils.misc import args_to_tuple, make_username
+from cbutils.misc import args_to_tuple, make_username, now
 from civicboom.lib.web import current_url, url, current_protocol
 
 import webhelpers.html.tags as html
@@ -38,6 +38,7 @@ user_log = logging.getLogger("user")
 link_matcher = re.compile(r'\A(http[s]{0,1}://[\w\.\-\_]*)/{0,1}')
 # Regex to match any non html id/class safe chars
 funky_chars  = re.compile(r'[^\w]+')
+
 
 def guess_hcard_name(name):
     """
@@ -81,7 +82,7 @@ def get_captcha(lang='en', theme='red'):
     """
     Generate reCAPTCHA html
     """
-    return literal(reCAPTCHA_html(lang,theme))
+    return literal(reCAPTCHA_html(lang, theme))
     # Old use of pythonrecaptcha
     # (currently the python-recaptcha API does not support the lang or theme option, but these are fields in the html, maybe we need a modifyed version, see the django example for more info)
     # http://k0001.wordpress.com/2007/11/15/using-recaptcha-with-python-and-django/
@@ -270,6 +271,8 @@ def icon(icon_type, description=None, class_=''):
 #-------------------------------------------------------------------------------
 
 def api_datestr_to_datetime(date_str):
+    if not date_str:
+        return None
     return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
 
 
@@ -318,8 +321,9 @@ def url_pair(*args, **kwargs):
     
     return (href, href_formatted)
 
+
 ## AllanC - TODO - need to specify frag size as an optional arg
-def frag_link(value, title='', class_='', href_tuple=([],{})): #*args, **kwargs
+def frag_link(value, title='', class_='', href_tuple=([], {})): #*args, **kwargs
     href, href_frag = url_pair(gen_format='frag', *href_tuple[0], **href_tuple[1]) # generate standard and frag URL's
     return HTML.a(
         value ,
@@ -328,6 +332,7 @@ def frag_link(value, title='', class_='', href_tuple=([],{})): #*args, **kwargs
         title   = title if title else value,
         onClick ="cb_frag($(this), '%s'); return false;" % href_frag ,
     )
+
 
 #-------------------------------------------------------------------------------
 # Secure Form
@@ -463,13 +468,13 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         #     - set timer so that in 1 seconds time the link 'disabled class is removed'
         #  - return false and ensure that the normal list is not followed
         # GregM: This now looks for jquery relative span > form instead of unique id
-        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled')) {$(this).addClass('disabled'); var e = $(this).siblings('span').children('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout('$(\"#link_%(hhash)s\").removeClass(\"disabled\");', 1000);} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled')) {$(this).addClass('disabled'); var e = $(this).siblings('span').children('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout(function (elem){elem.removeClass('disabled');}, 1000, $(this));} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
     )
     # $('#form_%(hhash)s').onsubmit();
     
     # form vs link switcher (hide the compatable form)
     # GregM: Hides secure_hide classed elements & removes class (stop dups); Shows secure_show classed elements & removes class (ditto)
-    hs = HTML.script(literal('$(".secure_hide").hide().removeClass("secure_hide"); $(".secure_show").show().removeClass("secure_show");   $("#span_'+hhash+'").hide(); $("#link_'+hhash+'").show();'))
+    hs = HTML.script(literal('$(".secure_hide").hide().removeClass("secure_hide"); $(".secure_show").show().removeClass("secure_show");'))
     
     return HTML.span(hf+hl+hs, class_="secure_link") #+json_submit_script
 
@@ -563,7 +568,7 @@ def get_object_from_action_url(action_url=None):
         m = re.match(re_url, action_url)
         if m:
             return ( [object_type], dict(id=m.group(1)) )
-    return (None,None)
+    return (None, None)
 
 #-------------------------------------------------------------------------------
 # Notification "Links" to "Frag Links"

@@ -64,6 +64,7 @@ def upgrade_user_to_group(member_to_upgrade_to_group, new_admins_username, new_g
     
     # Create new admin user
     admin_user = User()
+    admin_user.name              = new_admins_username
     admin_user.username          = new_admins_username
     admin_user.status            = 'active'
     admin_user.email             = to_group.email
@@ -123,6 +124,7 @@ def is_follower(a,b):
         pass
     return False
 
+
 def is_follower_trusted(a,b):
     """
     True if 'b' is following 'a' and is trusted by 'a'
@@ -140,6 +142,7 @@ def is_follower_trusted(a,b):
         pass
     return False
 
+
 def is_follow_trusted_invitee(a,b): # Was is_follower_invited_trust
     """
     True if 'b' has been invited to follow 'a' as a trusted follower
@@ -156,6 +159,7 @@ def is_follow_trusted_invitee(a,b): # Was is_follower_invited_trust
     except:
         pass
     return False
+
 
 def follow(follower, followed, delay_commit=False):
     followed = get_member(followed)
@@ -222,6 +226,7 @@ def unfollow(follower, followed, delay_commit=False):
 
     return True
 
+
 def follower_trust(followed, follower, delay_commit=False):
     followed = get_member(followed)
     follower = get_member(follower)
@@ -250,6 +255,7 @@ def follower_trust(followed, follower, delay_commit=False):
     follower.send_notification(messages.follower_trusted(member=followed, you=follower))
     
     return True
+
 
 def follower_distrust(followed, follower, delay_commit=False):
     followed = get_member(followed)
@@ -282,6 +288,7 @@ def follower_distrust(followed, follower, delay_commit=False):
     
     return True
 
+
 def follower_invite_trusted(followed, follower, delay_commit=False):
     followed = get_member(followed)
     follower = get_member(follower)
@@ -313,6 +320,7 @@ def follower_invite_trusted(followed, follower, delay_commit=False):
     follower.send_notification(messages.follow_invite_trusted(member=followed, you=follower))
     
     return True
+
 
 #-------------------------------------------------------------------------------
 # Message Actions
@@ -629,11 +637,13 @@ def del_content(content):
     Session.delete(content)
     Session.commit()
     
+
 def del_member(member):
     member = get_member(member)
     update_member(member) #invalidate the cache
     Session.delete(member)
     Session.commit()
+
 
 def flag_content(content, member=None, type="automated", comment=None, url_base=None, delay_commit=False, moderator_address=None):
     """
@@ -850,13 +860,15 @@ def add_to_interests(member, content, delay_commit=False):
 
     return True
 
+
 def find_content_root(content):
     content = get_content(content)
     
     if not content:
         raise action_error(_('unable to find content'), code=404)
     
-    if not content.parent: return False
+    if not content.parent:
+        return False
     
     qry = Hierarchy(
         Session,
@@ -872,6 +884,7 @@ def find_content_root(content):
         return get_content(ev.id) or False
     else:
         return False
+
 
 #-------------------------------------------------------------------------------
 # Set Payment Account
@@ -903,4 +916,3 @@ def validate_user(username, password):
     m.email = m.email_unverified
     m.email_unverified = None
     "insert into member_user_login(member_id, type, token) values((select id from member where username='%s'), 'password', 'cbfdac6008f9cab4083784cbd1874f76618d2a97');"
-

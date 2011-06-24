@@ -4,8 +4,8 @@ from civicboom.model.media   import Media
 from civicboom.model.message import Message
 from civicboom.model.meta    import Session
 
-from sqlalchemy.orm     import join, joinedload
-from sqlalchemy         import and_, or_, not_
+from sqlalchemy.orm     import joinedload
+from sqlalchemy         import and_
 from sqlalchemy.orm.exc import NoResultFound
 
 from cbutils.misc import make_username
@@ -124,6 +124,7 @@ def get_membership(group, member):
     except NoResultFound:
         return None
 
+
 def get_group_member_username_list(group, members=None, exclude_list=None):
     """
     Get linear list of all members and sub members - list is guaranteeded to
@@ -141,6 +142,7 @@ def get_group_member_username_list(group, members=None, exclude_list=None):
             exclude_list.append(member.username)
             get_group_member_username_list(member, members, exclude_list)
     return members.keys()
+
 
 def get_members(members, expand_group_members=True):
     """
@@ -193,6 +195,7 @@ def get_members(members, expand_group_members=True):
     
     return member_objects
 
+
 # GregM: Dirty, do not cache, see redmine #414
 def get_membership_tree(group, member, iter = 0):
     if iter > 5:
@@ -227,6 +230,7 @@ def get_membership_tree(group, member, iter = 0):
         except NoResultFound:
             return None
 
+
 def get_follower_type(member, follower):
     member   = get_member(member)
     follower = get_member(follower)
@@ -243,6 +247,7 @@ def get_follower_type(member, follower):
         ).one().type
     except NoResultFound:
         return None
+
 
 def get_assigned_to(content, member):
     content = get_content(content)

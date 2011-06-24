@@ -1,22 +1,21 @@
-ALL=web.css widget.css mobile.css common/icons.css
+ALL=web.css widget.css mobile.css common/icons.scss
 TIMESTAMP := $(shell date +%s)
 
 all: $(ALL)
 	cp */*.png ./
 
 clean:
-	rm -f $(ALL) *.png
+	rm -f $(ALL) *.png */*.css
 
-common/icons.css: common/icons/*
-	iconmapper -q -c common/icons.css -p icons.png -a icons.png?ut=${TIMESTAMP} common/icons/*
+common/icons.scss: common/icons/*
+	iconmapper -q -c common/icons.scss -p icons.png -a icons.png?ut=${TIMESTAMP} common/icons/*
 	cp icons.png common/
 
-web.css:    common/*.css  common/icons.css  web/*.css     Makefile
-	cat common/*.css web/*.css | yui-compressor --type css -o web.css
+web.css:    common/*.scss  common/icons.scss  web/*.scss     Makefile
+	ls -1 common/*.scss web/*.scss | sed 's/\(.*\)/@import "\1";/' | sass --stdin --scss --style compressed web.css
 
-widget.css: common/yui-3.2.0-reset-fonts.css  common/icons.css  widget/*.css  Makefile
-	cat common/yui-3.2.0-reset-fonts.css common/icons.css widget/*.css | yui-compressor --type css -o widget.css
+widget.css: common/yui-3.2.0-reset-fonts.scss  common/icons.scss  widget/*.scss  Makefile
+	ls -1 common/yui-3.2.0-reset-fonts.scss widget/*.scss | sed 's/\(.*\)/@import "\1";/' | sass --stdin --scss --style compressed widget.css
 
-mobile.css: common/*.css  common/icons.css  mobile/*.css  Makefile
-	cat common/*.css mobile/*.css | yui-compressor --type css -o mobile.css
-
+mobile.css: common/*.scss  common/icons.scss  mobile/*.scss  Makefile
+	ls -1 common/*.scss mobile/*.scss | sed 's/\(.*\)/@import "\1";/' | sass --stdin --scss --style compressed mobile.css

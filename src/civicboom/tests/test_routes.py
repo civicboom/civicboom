@@ -14,6 +14,7 @@ class TestRoutes(TestController):
             url(controller='misc', action='foo', protocol="https"),
             "https://www.civicboom.com/misc/foo"
         )
+
     def test_proto_named_route(self):
         self.assertEqual(
             url('member', id='shish', format='rss', protocol="http"),
@@ -23,6 +24,7 @@ class TestRoutes(TestController):
             url('member', id='shish', format='rss', protocol="https"),
             "https://www.civicboom.com/members/shish.rss"
         )
+
     def test_proto_static_route(self):
         self.assertEqual(
             url('/waffo', protocol="http"),
@@ -47,6 +49,7 @@ class TestRoutes(TestController):
             url(controller='misc', action='foo', sub_domain="www", qualified=True),
             "https://www.civicboom.com/misc/foo"
         )
+
     def test_subdomain_named_route(self):
         self.assertEqual(  # named route, same domain
             url('member', id='shish', format='rss', sub_domain='www'),
@@ -56,6 +59,7 @@ class TestRoutes(TestController):
             url('member', id='shish', format='rss', sub_domain='m'),
             "https://m.civicboom.com/members/shish.rss"
         )
+
     def test_subdomain_static_route(self):
         return
         # FIXME: static routes are static, generation is flaky
@@ -172,4 +176,3 @@ class TestRoutes(TestController):
             url(controller='mobile', action='media_init', format="json"),
             "/mobile/media_init.json"
         )
-

@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import optparse
-import pylons
 from paste.deploy import appconfig
 from civicboom.config.environment import load_environment
 from civicboom.lib.services import warehouse as wh

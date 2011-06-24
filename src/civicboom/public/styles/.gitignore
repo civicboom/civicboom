@@ -3,4 +3,7 @@
 /widget.css
 /common/icons.png
 /common/icons.css
+/common/icons.scss
 /*.png
+*.css
+.sass-cache

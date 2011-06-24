@@ -24,6 +24,7 @@
 		<script src="/javascript/jquery.limit-1.2.js"></script>
 		<script src="/javascript/jquery.getUrlParam.js"></script>
         <script src="/javascript/jquery.cookie.js"></script>
+        <script src="/javascript/jquery.jcarousel.min.js"></script>
 		<script src="/javascript/invite.js"></script>
 		<script src="/javascript/mobile.js"></script>
 		<!-- maps -->
@@ -54,7 +55,7 @@
 				dialog.overlay.fadeOut('slow');
 				dialog.container.fadeOut('slow');
 				dialog.data.fadeOut('slow', function () {$.modal.close();});
-			},
+			}
 		});
 	</script>
 
@@ -108,7 +109,7 @@
 function refresh_fragment_height() {
 	var height = $('footer').offset().top - $('#app').offset().top;
 	//Y.log(height);
-	createCSS(".frag_data", "height: "+(height-52)+"px !important;");
+	createCSS(".frag_data", "height: "+(height-40)+"px !important;");
 }
 refresh_fragment_height();
 $(window).resize(refresh_fragment_height);

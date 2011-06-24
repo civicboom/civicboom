@@ -27,6 +27,7 @@ log = logging.getLogger(__name__)
 
 _workers           = []
 _worker_queue      = None
+_local_queue       = []
 _worker_functions = {}
 
 config = {}
@@ -55,20 +56,34 @@ def init_queue(q):
 ##############################################################################
 # Client API
 
-def add_job(job):
+def add_job(job, autoflush=False):
     """
-    Adds a job to the worker's queue if there is one; if no queues have
-    been initialised, runs the job directly
+    Queue a job to be run; autoflush is false so that eg jobs involving
+    database objects can be added to the queue, the request finishes,
+    the database connection is committed, and *then* the jobs are started.
     """
-    if _worker_queue:
-        log.info('Adding job to worker queue: %s' % job["task"])
-        _worker_queue.put(job)
-    else:
-        log.info('Running job in foreground: %s' % job["task"])
-        # in production, jobs are encoded for the queue; in testing, we want
-        # un-encodable jobs to fail
-        import json; json.dumps(job)
-        run_one_job(job)
+    global _local_queue
+    _local_queue.append(job)
+    if autoflush:
+        flush()
+
+
+def flush():
+    """
+    Adds locally queued jobs to the central job list
+    """
+    global _local_queue
+    for job in _local_queue:
+        if _worker_queue:
+            log.info('Adding job to worker queue: %s' % job["task"])
+            _worker_queue.put(job)
+        else:
+            log.info('Running job in foreground: %s' % job["task"])
+            # in production, jobs are encoded for the queue; in testing, we want
+            # un-encodable jobs to fail
+            import json; json.dumps(job)
+            run_one_job(job)
+    _local_queue = []
 
 
 ##############################################################################

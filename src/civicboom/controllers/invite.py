@@ -7,8 +7,7 @@ from civicboom.controllers.group_actions  import GroupActionsController
 
 import copy
 
-from civicboom.model.member import Member, Group, group_member_roles
-from civicboom.model.content import AssignmentContent
+from civicboom.model.member import group_member_roles
 
 
 contents_controller       = ContentsController()
@@ -20,8 +19,10 @@ group_actions_controller  = GroupActionsController()
 def check_member(member):
     return has_role_required('editor', c.logged_in_persona_role) and member == c.logged_in_persona
 
+
 def check_assignment(content):
     return content.editable_by(c.logged_in_persona)
+
 
 def roles_group(group):
     roles = group_member_roles.enums

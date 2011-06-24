@@ -4,11 +4,13 @@ http://wiki.cdyne.com/wiki/index.php?title=Profanity_Filter
 http://www.webserviceshare.com/reference/language/tools/service/CDYNE-Profanity-Filter-FREE.htm
 """
 
-import urllib, urllib2, logging
+import urllib
+import urllib2
 from paste.deploy.converters import asbool
 
 from cbutils.cbxml import readXMLStringtoDic
 
+import logging
 log = logging.getLogger(__name__)
 
 filter_operation_address = "http://ws.cdyne.com/ProfanityWS/Profanity.asmx/SimpleProfanityFilter"
@@ -34,8 +36,10 @@ def profanity_check(content):  # pragma: no cover - online services aren't activ
     if not content:
         return
 
-    try                : content = content.encode('utf-8')
-    except UnicodeError: pass
+    try:
+        content = content.encode('utf-8')
+    except UnicodeError:
+        pass
 
     data  = urllib.urlencode({
         'Text'           : content ,
@@ -43,6 +47,7 @@ def profanity_check(content):  # pragma: no cover - online services aren't activ
         #'UseNumberFilter': 'True'  ,
     })
     request = urllib2.Request(filter_operation_address, data)
+
     def do_request(request):
         try:
             response = urllib2.urlopen(request, timeout=10)

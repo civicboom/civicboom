@@ -7,22 +7,10 @@
 We have no idea what will be built - but that's the fun part. We hope to
 see some interesting creations that bring Civicboom to life for yourselves.
 
-<p><a class="button" style="width: 200px" href="/api.html">API documentation</a>
+<p><a class="button" style="width: 200px" href="/doc/">API documentation</a>
 <p><a class="button" style="width: 200px" href="${url(controller='misc', action='about', id='developer-terms')}">API Terms & Conditions</a>
 
 <p>Email <a href="mailto:developers@civicboom.com">developers@civicboom.com</a> if you have questions or suggestions
-
-<!-- hack to widen the table up to its max-width, while remaining shrinkable -->
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 
 
 <%def name="breadcrumbs()">

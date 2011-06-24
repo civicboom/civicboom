@@ -3,8 +3,6 @@ from civicboom.model import Media
 
 from civicboom.lib.database.get_cached import get_content, get_member, get_media
 
-import pprint
-
 # Logging setup
 log      = logging.getLogger(__name__)
 

@@ -148,9 +148,15 @@ class AdminControllerBase(BaseController):
         return render(prefix + "eventlog.mako", extra_vars={"events": result})
 
     def user_emails(self, format):
-        from civicboom.lib.civicboom_lib import user_emails_csv
+        """
+        Output CSV of all users ov civicboom
+        """
+        from civicboom.model import User
         response.headers['Content-type'] = "text/csv; charset=utf-8"
-        return user_emails_csv()
+        csv = []
+        for user in Session.query(User).all():
+            csv.append(','.join([user.username, user.name or "", user.email_normalized or ""]))
+        return "\n".join(csv)
 
 
 AdminController = ModelsController(AdminControllerBase,
@@ -158,4 +164,3 @@ AdminController = ModelsController(AdminControllerBase,
                                    member_name='model',
                                    collection_name='models',
                                   )
-

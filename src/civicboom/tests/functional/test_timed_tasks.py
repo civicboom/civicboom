@@ -116,7 +116,7 @@ class TestTimedTasksController(TestController):
             url(controller='register', action='email', format="json"),
             params={
                 'username': u'pending_test',
-                'email'   : u'pending@moose.com',
+                'email'   : u'test+pending@civicboom.com',
             },
         )
         self.assertEquals(count_pending_members(), num_pending + 1)

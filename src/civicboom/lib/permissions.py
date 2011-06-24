@@ -1,7 +1,6 @@
 from decorator import decorator
 
-from pylons import tmpl_context as c, url, request
-from pylons.controllers.util  import redirect
+from pylons import tmpl_context as c
 
 import civicboom.lib.errors as errors
 
@@ -15,6 +14,7 @@ api_datestr_to_datetime = IsoFormatDateConverter().to_python
 
 import logging
 log = logging.getLogger(__name__)
+
 
 def account_type(required_account_type):
     """
@@ -79,4 +79,3 @@ def raise_if_current_role_insufficent(role_required, group=None):
         if has_role_required(role_required, c.logged_in_persona_role):
             return
     raise errors.error_role()
-

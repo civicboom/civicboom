@@ -2,8 +2,8 @@ from civicboom.lib.base import *
 
 #from civicboom.controllers.contents import _normalize_member
 
-
 from cbutils.misc import update_dict
+import re
 
 # AllanC - for members autocomplete index
 from civicboom.model      import Member, Follow, GroupMembership, Group
@@ -38,16 +38,30 @@ def _init_search_filters():
         else:
             return query.filter(Member.id       == normalize_member(member))
 
-    def append_search_name(query, name):
-        if name:
-            parts = []
-            for word in name.split():
-                parts.append(Member.name.ilike("%"+word+"%"))
-                parts.append(Member.username.ilike("%"+word+"%"))
-                #parts.append(Member.description.ilike("%"+word+"%"))
-            return query.filter(or_(*parts))
+    def append_search_name(query, text):
+        if not text:  # o_O
+            return query
+
+        parts = []
+        for word in text.split():
+            word = re.sub("[^a-zA-Z0-9_-]", "", word)
+            if word:
+                parts.append(word)
+
+        if parts:
+            text = " | ".join(parts)
+            return query.filter("""
+                to_tsvector('english', username || ' ' || name || ' ' || description) @@
+                to_tsquery(:text)
+            """).params(text=text)
+        else:
+            return query
+
+    def append_search_username(query, username_text):
+        if username_text:
+            return query.filter(Member.username==username_text)
         return query
-    
+
     def append_search_type(query, type_text):
         if type_text:
             return query.filter(Member.__type__==type_text)
@@ -69,6 +83,7 @@ def _init_search_filters():
     search_filters = {
         'member'       : append_search_member      ,
         'name'         : append_search_name        ,
+        'username'     : append_search_username    ,
         'type'         : append_search_type        ,
         'location'     : append_search_location    ,
         #'followed_by'  : append_search_followed_by ,
@@ -141,6 +156,7 @@ class MembersController(BaseController):
                     results = results.filter(GroupMembership.group_id==normalize_member(group))
                 else:
                     results = None
+
                 # to_dict transform
                 def member_roles_to_dict_transform(results, **kwargs):
                     return [update_dict(member_role.member.to_dict(**kwargs),{'role':member_role.role, 'status':member_role.status}) for member_role in results]
@@ -159,6 +175,7 @@ class MembersController(BaseController):
                 else:
                     results = results.filter(GroupMembership.status  == 'active')
                     results = results.filter(Group.member_visibility == 'public')
+
                 # to_dict transform
                 def group_roles_to_dict_transform(results, **kwargs):
                     return [update_dict(group_role.group.to_dict(**kwargs), {'role':group_role.role, 'status':group_role.status}) for group_role in results]
@@ -172,10 +189,13 @@ class MembersController(BaseController):
             if 'followed_by' in kwargs:
                 results.options(joinedload(Follow.member))
                 results = results.filter(Follow.follower==member)
+
                 def me_followed_by_to_dict_transform(results, **kwargs):
                     return [update_dict(follow.member.to_dict(**kwargs), {'follow_type':follow.type}) for follow in results]
+
                 def followed_by_to_dict_transform(results, **kwargs):
                     return [follow.member.to_dict(**kwargs) for follow in results]
+
                 if member == c.logged_in_persona:
                     list_to_dict_transform = me_followed_by_to_dict_transform
                 else:
@@ -184,10 +204,13 @@ class MembersController(BaseController):
             if 'follower_of' in kwargs:
                 results.options(joinedload(Follow.follower))
                 results = results.filter(Follow.member==member)
+
                 def me_follower_of_to_dict_transform(results, **kwargs):
                     return [update_dict(follow.follower.to_dict(**kwargs), {'follow_type':follow.type}) for follow in results]
+
                 def follower_of_to_dict_transform(results, **kwargs):
                     return [follow.follower.to_dict(**kwargs) for follow in results]
+
                 if member == c.logged_in_persona:
                     list_to_dict_transform = me_follower_of_to_dict_transform
                 else:

@@ -108,6 +108,7 @@ function cb_frag(current_element, url, list_type, from_history, callback) {
                   //$(window)._scrollable().scrollTo('100%',0, {duration: scroll_duration});
                   //$.scrollTo(frag_loading, {duration: scroll_duration}); //(fragment_containers_id)
                   //$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});    
+                  $(convertYesNoCheckbox);
             }
         }
     );
@@ -193,7 +194,7 @@ function cb_frag_reload(param) {
     
     function get_parent_container_element_source(jquery_element) {
         var container_element   = jquery_element.parents('.'+fragment_container_class);
-        var frag_source_element = container_element.children('.'+fragment_source_class);
+        var frag_source_element = container_element.find('.'+fragment_source_class);
         var frag_source_href    = frag_source_element.attr('href');
         return [container_element, frag_source_href];
     }
@@ -247,7 +248,7 @@ function cb_frag_reload(param) {
 }
 
 function cb_frag_set_source(jquery_element, url) {
-    jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href', url);
+    jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('href', url);
 }
 
 function cb_frag_get_source(jquery_element) {

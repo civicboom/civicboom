@@ -59,6 +59,7 @@ class TestContentsController(TestController):
         self.part_can_update_own_article()
         self.part_cant_update_someone_elses_article()
         self.part_cant_update_article_that_doesnt_exist()
+        self.part_null_tags_removed()
 
         self.part_can_delete_own_article()
         self.part_cant_delete_someone_elses_article()
@@ -413,6 +414,16 @@ class TestContentsController(TestController):
             },
             status=404
         )
+
+    def part_null_tags_removed(self):
+        response = self.app.put(
+            url('content', id=self.my_article_id, format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'tags_string': ', ,, ,,    ,',
+            }
+        )
+        # for now, just check that there is no error code
 
 
     ## delete ################################################################

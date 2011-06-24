@@ -7,13 +7,12 @@ from pylons import config
 import logging
 log = logging.getLogger(__name__)
 
+
 def dob_for_age(age):
     return datetime.datetime.now() - datetime.timedelta(days=365 * age)
 
+
 class TestAge(TestController):
-    
-    
-    
     def test_age_limit(self):
         assignment_id = self.create_content(title="Assignment for age test", type='assignment')
         
