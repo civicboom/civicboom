@@ -1,25 +1,46 @@
+
+$widget_unit_width : 280px;
+$widget_unit_height: 300px;
+
+.get_widget {
+    display: inline-block;
+    width : $widget_unit_width * 3 + 60px;
+    height: $widget_unit_height;
+}
+
 .widget_creator {
-    width: 900px;
-    height: 500px;
+    width : $widget_unit_width * 3 + 60px;
+    height: $widget_unit_height;
+    
     .padding {
-        
     }
     
     .params {
-        display: inline-block;
-        width: 300px;
-        text-align: center;
+        float: left;
+        width: $widget_unit_width;
+        
+        .params_extra {
+            font-size: 70%;
+            label {
+                display: inline-block;
+                width: 6em;
+            }
+        }
     }
     
     .preview {
-        display: inline-block;
-        width: 300px;
+        float: left;
+        width: $widget_unit_width;
+        text-align: center;
     }
     
-    .code textarea {
+    .code {
+        float: left;
         
-        width: 300px;
-        height: 300px;
+        textarea {
+            width : $widget_unit_width;
+            height: $widget_unit_height;
+        }
     }
     
 }

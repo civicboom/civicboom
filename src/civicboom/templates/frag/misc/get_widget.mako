@@ -204,10 +204,13 @@
                 </select>
             
             <label>${_("Size")}</label>
-                <label>${_('Width')} </label><input type="text" name="width"  value="${widget_default['width' ]}" size="3" />
+                <div class="params_extra">
+                <label>${_('Width')} </label><input type="text" name="width"  value="${widget_default['width' ]}" size="3" /><br/>
                 <label>${_('Height')}</label><input type="text" name="height" value="${widget_default['height']}" size="3" />
+                </div>
             
             <fieldset><legend>${_("Colours")}</legend>
+                <div class="params_extra">
                 <%
                     colors = [
                         (_('Border') , 'color_border'    ),
@@ -218,8 +221,9 @@
                     ]
                 %>
                 % for color_name, color_field in colors:
-                <label>${color_name}</label><input type="text" id="${color_field}" name="${color_field}" value="${widget_default[color_field]}" size="6" />
+                <label>${color_name}</label><input type="text" id="${color_field}" name="${color_field}" value="${widget_default[color_field]}" size="6" /><br/>
                 % endfor
+                </div>
                 <script type="text/javascript">
                     $(document).ready(function() {
                         % for color_name, color_field in colors:
@@ -258,13 +262,13 @@
     <div class="params">
         <form action="">
         </form>
-        <input type="button" value=${_("Preview _widget")} onClick="preview_widget($(this));" />
+        ##<input type="button" value=${_("Preview _widget")} onClick="preview_widget($(this));" />
         
     </div>
     
-    ##<div class="preview">
-    ##    ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
-    ##</div>
+    <div class="preview">
+        ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
+    </div>
     
     <div class="code">
         <form action="">

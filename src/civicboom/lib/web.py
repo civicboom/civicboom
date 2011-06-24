@@ -94,23 +94,36 @@ def url(*args, **kwargs):
         widget_theme      = config['setting.widget.default_theme']
         try:
             # Just in case c does not exisit in thread
-            widget_theme = c.widget.get('theme')
+            widget_theme = c.widget['theme']
         except:
             pass
         if kwargs.get('theme'):
             widget_theme = kwargs['theme']
-            del kwargs['theme']
         
-        widget_default = dict(widget_defaults.get(widget_theme))
-        for key, value in widget_default.iteritems():
-            #print "key:%s value:%s" % (key,value)
-            if isinstance(value, dict) and 'username' in value: # the owner may be a dict, convert it back to a username
-                value = value['username']
-            # Check if value is the same as widget default - there is no need to add this to the URL if they match
-            required_fields = ['theme']
-            wkey = widget_var_prefix + key
-            if key in required_fields or widget_default.get(wkey) != value:
-                kwargs[wkey] = value
+        # AllanC - ***ING MASSIVE HACK ... it's 5:30 AM FFS!
+        if widget_theme=='gradient':
+            kwargs[widget_var_prefix+'theme'] = widget_theme
+        else:
+            #print "-----------------------------------------"
+            widget_default = dict(widget_defaults.get(widget_theme))
+            #print widget_default
+            for key, default_value in widget_default.iteritems():
+                default_value = str(default_value)
+                # Check if value is the same as widget default - there is no need to add this to the URL if they match
+                required_fields = ['theme']
+                try:
+                    w_key = widget_var_prefix + key
+                    c_val = c.widget[key]
+                    try:
+                        c_val = c_val['username']
+                    except:
+                        c_val = str(c_val)
+                    #print "key:%s dv:%s cv:%s" %(key,default_value, c_val)
+                    if key in required_fields or c_val!=default_value:
+                        #print "STORE: %s:%s" % (w_key,c_val)
+                        kwargs[w_key] = c_val
+                except:
+                    pass
 
     args = list(args)
     if 'current' in args:
