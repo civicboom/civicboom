@@ -41,7 +41,9 @@
             font-size: 150%;
         }
     </style>
+    <div class="frag_top_row">
     <div class="frag_col frag_signin">
+        <div class="frag_list">
     % if hasattr(c, 'action_objects'):
         ## Approved actions
         
@@ -92,11 +94,14 @@
         ##${c.action_objects['action_object']}
         <br/>
     % endif
+    
         <table>
             <tr>
                 <td style="padding-right: 1em;">${signin.signin()}</td>
                 <td>${signin.signup()}</td>
+                <div style="padding: 0.5em;"></div>
             </tr>
+            
             <tr>
                 <td colspan="2">
                     ${signin.janrain()}
@@ -104,7 +109,10 @@
             </tr>
         </table>
         ${signin.forgot()}
-        ${content_mobile()}
+        ## ${content_mobile()}
+        <div class="separator"></div>
+    </div>
+    </div>
     </div>
 </%def>
 
@@ -132,4 +140,5 @@
         <div class="left-col">Did you know you can also respond with your Android phone?</div>
         <div class="right-col"><a href="${url(controller='misc', action='about', id='mobile')}"><img src="/images/about/qr_mobile2.png" style="float: right;"></a></div>
     </div>
+    
 </%def>
