@@ -125,6 +125,9 @@ function cb_frag_load(jquery_element, url) {
     // AllanC - this is not ideal as it will have the.frag and not record the actual pageview ... but it's better than nothing for now
     _gaq.push(['_trackPageview', url]);
     
+  if (typeof cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer') != 'undefined')
+    clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
+    
     var frag_container = jquery_element.parents('.'+fragment_container_class)
     frag_container.load(url, function() {
         html5ize(frag_container);
@@ -138,7 +141,7 @@ function cb_frag_load(jquery_element, url) {
 
 function cb_frag_remove(jquery_element, callback, from_history) {
     var parent = jquery_element.parents('.'+fragment_container_class); // find parent
-  if (typeof cb_frag_get_variable(jquery_element, 'autosavedrafttimer') != 'undefined')
+  if (typeof cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer') != 'undefined')
     clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
     parent.toggle(scroll_duration, function(){
         parent.remove();
