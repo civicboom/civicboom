@@ -174,17 +174,19 @@ function cb_frag_remove_sibblings(jquery_element, callback, ignorehelp) {
 //                               Reload Frag
 //------------------------------------------------------------------------------
 
-function cb_frag_reload(param) {
+function cb_frag_reload(param, exclude_frag) {
     // Can be passed a JQuery object or a String
-    //  JQuery - find frag_container parent - find hidden source link for that frag - reload
-    //  String - find hidden source link for all frags - dose source href contain param - reload
-
+    //  pamam can be:
+    //    JQuery - find frag_container parent - find hidden source link for that frag - reload
+    //    String - find hidden source link for all frags - dose source href contain param - reload
+    // Sometimes we want to exclude a fragment in the reload search, these can be passed with OPTIONAL exclude_frag as a jquery object
+    
     function display_reload_feedback(jquery_element) {
         //jquery_element.find('.title_text').first() += ' <img src="/images/ajax-loader.gif" />';
         var title = jquery_element.find('.title_text').first();
         title.html(title.html() + ' <img src="/images/ajax-loader.gif" />');
     }
-
+    
     // Remove auto-save timer if refreshing fragment! GM
     function clear_autosave_timer(jquery_element) {
         if (typeof cb_frag_get_variable(jquery_element, 'autosavedrafttimer') != 'undefined') {
@@ -211,7 +213,7 @@ function cb_frag_reload(param) {
         frag_element.load(frag_source);
     }
     
-    function reload_frags_containing(array_of_urls) {
+    function reload_frags_containing(array_of_urls, exclude_frag) {
         // Look through all <A> tags in every frgament for the string
         // if the link contains this string
         // add the <A>'s parent frag to a refresh list (preventing duplicates)
@@ -231,19 +233,26 @@ function cb_frag_reload(param) {
                 }
             }
         });
+        
+        // normalize exclude fragment if present
+        if (exclude_frag && !exclude_frag.hasClass('fragment_container_class')) {
+            exclude_frag = exclude_frag.parents('.'+fragment_container_class);
+        }
         // Go though all frags found reloading them
         for (var frag_source in frags_to_refresh) {
             var frag_element = frags_to_refresh[frag_source]
-            display_reload_feedback(frag_element);
-            frag_element.load(frag_source);
+            if (exclude_frag==null || exclude_frag.attr('id')!=frag_element.attr('id')) {
+                display_reload_feedback(frag_element);
+                frag_element.load(frag_source);
+            }
         }
     }
     
     if      (param === false) return;
     
-    if      (                            typeof param    == 'string') {reload_frags_containing([param]);}
-    else if (typeOf(param) == 'array' && typeof param[0] == 'string') {reload_frags_containing( param );}
-    else                                                              {reload_element(          param );}
+    if      (                            typeof param    == 'string') {reload_frags_containing([param],exclude_frag);}
+    else if (typeOf(param) == 'array' && typeof param[0] == 'string') {reload_frags_containing( param ,exclude_frag);}
+    else                                                              {reload_element(          param              );}
 
 }
 
@@ -251,22 +260,24 @@ function cb_frag_set_source(jquery_element, url) {
     jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('href', url);
 }
 
-function cb_frag_get_source(jquery_element) {
-  jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href');
-}
+// AllanC - Where is this used?
+//function cb_frag_get_source(jquery_element) {
+//  jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href');
+//}
 
 function cb_frag_set_variable(jquery_element, variable, value) {
   var valueClean = (typeof value == 'undefined')?(''):(value);
-  jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('cb'+variable, valueClean);
+  jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('cb'+variable, valueClean);
 }
 
 function cb_frag_get_variable(jquery_element, variable) {
-  return jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('cb'+variable);
+  return jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('cb'+variable);
 }
 
-function cb_frag_previous(jquery_element) {
-    return jquery_element.parents('.'+fragment_container_class).prev().children('.'+fragment_source_class);
-}
+// AllanC - in what circumstance is this used?
+//function cb_frag_previous(jquery_element) {
+//    return jquery_element.parents('.'+fragment_container_class).prev().children('.'+fragment_source_class);
+//}
 
 //------------------------------------------------------------------------------
 //                            Browser URL updating
